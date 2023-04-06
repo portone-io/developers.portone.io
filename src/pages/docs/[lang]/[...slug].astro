@@ -1,0 +1,25 @@
+---
+import type { Lang } from "../../../type";
+import { getCollection } from "astro:content";
+import LayoutBase from "../../../layouts/LayoutBase.astro";
+
+export async function getStaticPaths() {
+  const docEntries = await getCollection("docs");
+  return docEntries.map((entry) => {
+    const [lang, ...fragments] = entry.slug.split("/");
+    const slug = fragments.join("/");
+    return {
+      params: { lang, slug },
+      props: { entry },
+    };
+  });
+}
+
+const lang = Astro.params.lang as Lang;
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<LayoutBase lang={lang} title={entry.data.title}>
+  <Content />
+</LayoutBase>
