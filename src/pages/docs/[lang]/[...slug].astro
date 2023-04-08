@@ -26,9 +26,34 @@ export async function getStaticPaths() {
 
 const lang = Astro.params.lang as Lang;
 const { entry } = Astro.props;
+const { emoji, title, description } = entry.data;
 const { Content } = await entry.render();
 ---
 
-<LayoutBase lang={lang} title={entry.data.title}>
-  <Content />
+<LayoutBase lang={lang} title={title}>
+  <style is:global>
+    .content {
+      color: rgb(51, 65, 85);
+    }
+    .content h1 {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .content h3 {
+      margin-top: 1.2em;
+      margin-bottom: 0.5em;
+      font-weight: bold;
+    }
+    .content p {
+      margin: 0.5em 0;
+    }
+  </style>
+  <div class="content m-4 flex flex-col">
+    <h1>
+      {emoji}
+      {title}
+    </h1>
+    {description && <p class="my-4 text-xl text-gray">{description}</p>}
+    <Content />
+  </div>
 </LayoutBase>
