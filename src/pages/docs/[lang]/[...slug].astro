@@ -1,13 +1,22 @@
 ---
-import type { Lang } from "../../../type";
+import * as path from "node:path";
 import { getCollection } from "astro:content";
+
+import type { Lang } from "../../../type";
+import { frontmattersSignal } from "../../../state/server-only/frontmatters";
 import LayoutBase from "../../../layouts/LayoutBase.astro";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
+  frontmattersSignal.value;
   return docEntries.map((entry) => {
     const [lang, ...fragments] = entry.slug.split("/");
+    const absSlug = path.posix.join("/", entry.slug);
     const slug = fragments.join("/");
+    frontmattersSignal.value = {
+      ...frontmattersSignal.value,
+      [absSlug]: entry.data,
+    };
     return {
       params: { lang, slug },
       props: { entry },
