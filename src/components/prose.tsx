@@ -6,11 +6,27 @@ export function h1({ children, ...props }: any) {
   );
 }
 
+export function h2({ children, ...props }: any) {
+  return (
+    <h2 {...props} class="font-bold mb-2 text-xl md:text-2xl">
+      {children}
+    </h2>
+  );
+}
+
 export function h3({ children, ...props }: any) {
   return (
-    <h1 {...props} class="mt-5 mb-2 font-bold md:text-xl">
+    <h3 {...props} class="mt-5 mb-2 font-bold md:text-xl">
       {children}
-    </h1>
+    </h3>
+  );
+}
+
+export function h4({ children, ...props }: any) {
+  return (
+    <h4 {...props} class="mt-5 mb-2 font-bold">
+      {children}
+    </h4>
   );
 }
 
