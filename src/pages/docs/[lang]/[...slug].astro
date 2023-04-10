@@ -5,10 +5,10 @@ import { getCollection } from "astro:content";
 import type { Lang } from "../../../type";
 import { frontmattersSignal } from "../../../state/server-only/frontmatters";
 import LayoutBase from "../../../layouts/LayoutBase.astro";
+import { h1 as H1 } from "../../../components/prose";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
-  frontmattersSignal.value;
   return docEntries.map((entry) => {
     const [lang, ...fragments] = entry.slug.split("/");
     const absSlug = path.posix.join("/", entry.slug);
@@ -31,29 +31,12 @@ const { Content } = await entry.render();
 ---
 
 <LayoutBase lang={lang} title={title}>
-  <style is:global>
-    .content {
-      color: rgb(51, 65, 85);
-    }
-    .content h1 {
-      font-size: 2rem;
-      font-weight: bold;
-    }
-    .content h3 {
-      margin-top: 1.2em;
-      margin-bottom: 0.5em;
-      font-weight: bold;
-    }
-    .content p {
-      margin: 0.5em 0;
-    }
-  </style>
-  <div class="content m-4 flex flex-col">
-    <h1>
+  <article class="m-4 flex flex-col text-slate-700">
+    <H1>
       {emoji}
       {title}
-    </h1>
+    </H1>
     {description && <p class="my-4 text-xl text-gray">{description}</p>}
     <Content />
-  </div>
+  </article>
 </LayoutBase>
