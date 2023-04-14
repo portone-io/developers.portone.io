@@ -4,6 +4,7 @@ import preact from "@astrojs/preact";
 import solid from "@astrojs/solid-js";
 import mdx from "@astrojs/mdx";
 import unocss from "unocss/astro";
+import yaml from "@rollup/plugin-yaml";
 
 export default defineConfig({
   integrations: [
@@ -18,5 +19,6 @@ export default defineConfig({
         "~": path.resolve("./src/"),
       },
     },
+    plugins: [yaml()],
   },
 });
