@@ -1,7 +1,7 @@
 import { computed } from "@preact/signals";
 
 import navYamlKo from "~/content/docs/ko/_nav.yaml";
-import type { YamlNavMenuItem } from "../../type";
+import type { YamlNavMenuToplevelItem } from "~/type";
 import { Frontmatters, frontmattersSignal } from "./frontmatters";
 
 export interface NavMenu {
@@ -11,13 +11,14 @@ export type NavMenuItem = NavMenuPage | NavMenuGroup;
 export interface NavMenuPage {
   type: "page";
   slug: string;
-  frontmatter: Record<string, any>;
-  items: NavMenuItem[];
+  emoji: string;
+  title: string;
+  items: NavMenuPage[];
 }
 export interface NavMenuGroup {
   type: "group";
   label: string;
-  items: NavMenuItem[];
+  items: NavMenuPage[];
 }
 export const navMenuSignal = computed<NavMenu>(() => {
   const frontmatters = frontmattersSignal.value;
@@ -26,8 +27,21 @@ export const navMenuSignal = computed<NavMenu>(() => {
   };
 });
 
+interface EmojiAndTitle {
+  emoji: string;
+  title: string;
+}
+function frontmatterToEmojiAndTitle(
+  frontmatter?: Record<string, any>,
+): EmojiAndTitle {
+  return {
+    emoji: frontmatter?.["emoji"] || "",
+    title: frontmatter?.["title"] || "",
+  };
+}
+
 function toNavMenuItems(
-  yaml: YamlNavMenuItem[],
+  yaml: YamlNavMenuToplevelItem[],
   frontmatters: Frontmatters,
 ): NavMenuItem[] {
   return yaml.map((item) => {
@@ -35,21 +49,21 @@ function toNavMenuItems(
       return {
         type: "page",
         slug: item,
-        frontmatter: frontmatters[item] || {},
+        ...frontmatterToEmojiAndTitle(frontmatters[item]),
         items: [],
       };
     } else if ("slug" in item) {
       return {
         type: "page",
         slug: item.slug,
-        frontmatter: frontmatters[item.slug] || {},
-        items: toNavMenuItems(item.items, frontmatters),
+        ...frontmatterToEmojiAndTitle(frontmatters[item.slug]),
+        items: toNavMenuItems(item.items, frontmatters) as NavMenuPage[],
       };
     } else {
       return {
         type: "group",
         label: item.label,
-        items: toNavMenuItems(item.items, frontmatters),
+        items: toNavMenuItems(item.items, frontmatters) as NavMenuPage[],
       };
     }
   });

@@ -1,9 +1,12 @@
 export type Lang = "ko" | "en";
 
-export type YamlNavMenuItem =
+export type YamlNavMenuToplevelItem =
   | YamlNavMenuPageSugar
   | YamlNavMenuPage
   | YamlNavMenuGroup;
+export type YamlNavMenuItem =
+  | YamlNavMenuPageSugar
+  | YamlNavMenuPage;
 type YamlNavMenuPageSugar = string;
 interface YamlNavMenuPage {
   slug: string;

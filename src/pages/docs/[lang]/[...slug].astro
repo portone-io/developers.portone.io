@@ -6,6 +6,7 @@ import type { Lang } from "../../../type";
 import { frontmattersSignal } from "../../../state/server-only/frontmatters";
 import LayoutBase from "../../../layouts/LayoutBase.astro";
 import { h1 as H1 } from "../../../components/prose";
+import LeftSidebar from "~/layouts/sidebar/LeftSidebar.astro";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
@@ -31,12 +32,16 @@ const { Content } = await entry.render();
 ---
 
 <LayoutBase lang={lang} title={title}>
-  <article class="m-4 flex flex-col text-slate-700">
-    <H1>
-      {emoji}
-      {title}
-    </H1>
-    {description && <p class="my-4 text-xl text-gray">{description}</p>}
-    <Content />
-  </article>
+  <div class="flex">
+    <LeftSidebar lang={lang}/>
+    <div class="mx-auto basis-200 shrink">
+      <article class="m-4 flex flex-col text-slate-700">
+        <H1>
+          <span class="mr-2 text-[1.2em]">{emoji}</span>{title}
+        </H1>
+        {description && <p class="my-4 text-xl text-gray">{description}</p>}
+        <Content />
+      </article>
+    </div>
+  </div>
 </LayoutBase>

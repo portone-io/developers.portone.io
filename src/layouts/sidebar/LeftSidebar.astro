@@ -1,0 +1,47 @@
+---
+import type { Lang } from "~/type";
+import { navMenuSignal } from "~/state/server-only/nav";
+
+import LeftSidebarItem from "./LeftSidebarItem";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const navMenu = navMenuSignal.value;
+const navMenuItems = navMenu[lang] || [];
+---
+
+<aside class="hidden md:block relative shrink-0 w-60 text-slate-700">
+  <div class="fixed overflow-y-scroll w-inherit h-full border-r bg-white">
+    <nav>
+      <ul class="p-2 pt-6 flex flex-col gap-1">
+        {
+          navMenuItems.map((item) => {
+            if (item.type === "group")
+              return (
+                <li>
+                  <h4 class="mt-4 p-2 text-xs text-gray font-bold tracking-widest">
+                    {item.label}
+                  </h4>
+                  <ul class="flex flex-col gap-1">
+                    {item.items.map((item) => (
+                      <li>
+                        <LeftSidebarItem client:visible {...item} />
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              );
+            return (
+              <li>
+                <LeftSidebarItem client:visible {...item} />
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+  </div>
+</aside>
