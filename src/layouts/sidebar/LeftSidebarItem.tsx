@@ -1,4 +1,5 @@
 import type * as React from "react";
+
 import type { NavMenuPage } from "~/state/server-only/nav";
 
 const LeftSidebarItem: React.FC<NavMenuPage> = (props) => {

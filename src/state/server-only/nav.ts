@@ -27,6 +27,34 @@ export const navMenuSignal = computed<NavMenu>(() => {
   };
 });
 
+export interface NavMenuAncestors {
+  [slug: string]: string[];
+}
+export const navMenuAncestorsSignal = computed<NavMenuAncestors>(() => {
+  const navMenu = navMenuSignal.value;
+  const navMenuAncestors: NavMenuAncestors = {};
+  for (const items of Object.values(navMenu)) {
+    for (const { slug, ancestors } of iterNavMenuAncestors(items)) {
+      navMenuAncestors[slug] = ancestors;
+    }
+  }
+  return navMenuAncestors;
+});
+function* iterNavMenuAncestors(
+  navMenuItems: NavMenuItem[],
+  ancestors: string[] = [],
+): Generator<{ slug: string; ancestors: string[] }> {
+  for (const item of navMenuItems) {
+    if (item.type === "group") {
+      yield* iterNavMenuAncestors(item.items, ancestors);
+    } else {
+      const { slug, items } = item;
+      yield { slug, ancestors };
+      yield* iterNavMenuAncestors(items, [...ancestors, slug]);
+    }
+  }
+}
+
 interface EmojiAndTitle {
   emoji: string;
   title: string;

@@ -1,18 +1,30 @@
 ---
 import type { Lang } from "~/type";
-import { navMenuSignal } from "~/state/server-only/nav";
+import { navMenuAncestorsSignal, navMenuSignal } from "~/state/server-only/nav";
+import { navOpenStatesSignal } from "~/state/nav";
 
 import LeftSidebarItem from "./LeftSidebarItem";
 
 interface Props {
   lang: Lang;
+  slug: string;
 }
-const { lang } = Astro.props;
+const { lang, slug } = Astro.props;
 
 const navMenu = navMenuSignal.value;
 const navMenuItems = navMenu[lang] || [];
+const navMenuAncestors = navMenuAncestorsSignal.value;
+const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
+  ...navMenuAncestors[slug]?.map((ancestor) => [ancestor, true])!,
+  [slug, true],
+]));
 ---
 
+<!-- TODO --><!-- <script
+  type="module"
+  src={Astro.resolve("./client.ts")}
+  define:vars={{ navOpenStates }}
+></script> -->
 <aside class="hidden md:block relative shrink-0 w-60 text-slate-700">
   <div class="fixed overflow-y-scroll w-inherit h-full border-r bg-white">
     <nav>

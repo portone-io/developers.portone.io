@@ -20,20 +20,20 @@ export async function getStaticPaths() {
     };
     return {
       params: { lang, slug },
-      props: { entry },
+      props: { entry, slug: absSlug },
     };
   });
 }
 
 const lang = Astro.params.lang as Lang;
-const { entry } = Astro.props;
+const { entry, slug } = Astro.props;
 const { emoji, title, description } = entry.data;
 const { Content } = await entry.render();
 ---
 
 <LayoutBase lang={lang} title={title}>
   <div class="flex">
-    <LeftSidebar lang={lang}/>
+    <LeftSidebar lang={lang} slug={slug} />
     <div class="mx-auto basis-200 shrink">
       <article class="m-4 flex flex-col text-slate-700">
         <H1>
