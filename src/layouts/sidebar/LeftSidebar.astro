@@ -1,7 +1,7 @@
 ---
 import type { Lang } from "~/type";
 import { navMenuAncestorsSignal, navMenuSignal } from "~/state/server-only/nav";
-import { navOpenStatesSignal } from "~/state/nav";
+import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 
 import LeftSidebarItem from "./LeftSidebarItem";
 
@@ -18,14 +18,24 @@ const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
   ...navMenuAncestors[slug]?.map((ancestor) => [ancestor, true])!,
   [slug, true],
 ]));
+slugSignal.value = slug;
 ---
 
-<!-- TODO --><!-- <script
-  type="module"
-  src={Astro.resolve("./client.ts")}
-  define:vars={{ navOpenStates }}
-></script> -->
-<aside class="hidden md:block relative shrink-0 w-60 text-slate-700">
+<script>
+  import { navOpenStatesSignal, slugSignal } from "~/state/nav";
+  const leftSidebar = document.getElementById("left-sidebar")!;
+  navOpenStatesSignal.value = {
+    ...navOpenStatesSignal.value,
+    ...JSON.parse(leftSidebar.dataset.navopenstates!),
+  };
+  slugSignal.value = leftSidebar.dataset.slug!;
+</script>
+<aside
+  id="left-sidebar"
+  class="hidden md:block relative shrink-0 w-60 text-slate-700"
+  data-slug={slug}
+  data-navopenstates={JSON.stringify(navOpenStates)}
+>
   <div class="fixed overflow-y-scroll w-inherit h-full border-r bg-white">
     <nav>
       <ul class="p-2 pt-6 flex flex-col gap-1">

@@ -1,6 +1,8 @@
+import { useComputed } from "@preact/signals";
 import type * as React from "react";
 
 import type { NavMenuPage } from "~/state/server-only/nav";
+import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 
 const LeftSidebarItem: React.FC<NavMenuPage> = (props) => {
   if (props.items.length > 0) return <FolderLink {...props} />;
@@ -9,23 +11,36 @@ const LeftSidebarItem: React.FC<NavMenuPage> = (props) => {
 };
 export default LeftSidebarItem;
 
-export const FolderLink: React.FC<NavMenuPage> = ({
-  emoji,
-  title,
-  slug,
-  items,
-}) => {
+const FolderLink: React.FC<NavMenuPage> = ({ emoji, title, slug, items }) => {
+  const openSignal = useComputed(() => !!navOpenStatesSignal.value[slug]);
+  const open = openSignal.value;
+  const pageSlug = slugSignal.value;
+  const isActive = pageSlug === slug;
   return (
     <div>
-      <div class={`flex ${anchorStyle} pr-0`}>
+      <div class={`flex ${getLinkStyle(isActive)} pr-0`}>
         <a href={`/docs${slug}`} class="grow">
           <LinkTitle emoji={emoji} title={title} />
         </a>
-        <button class="p-2 h-full flex items-center">
-          <i class="inline-block i-ic-baseline-keyboard-arrow-down" />
+        <button
+          class="p-2 h-full flex items-center"
+          onClick={() => {
+            navOpenStatesSignal.value = {
+              ...navOpenStatesSignal.value,
+              [slug]: !open,
+            };
+          }}
+        >
+          <i
+            class={`inline-block ${
+              open
+                ? "i-ic-baseline-keyboard-arrow-down"
+                : "i-ic-baseline-keyboard-arrow-right"
+            }`}
+          />
         </button>
       </div>
-      <div class="pl-2">
+      <div class={`${open ? "block" : "hidden"} pl-2`}>
         <ul class="pl-2 flex flex-col gap-1 border-l">
           {items.map((item) => (
             <li key={item.slug}>
@@ -38,21 +53,28 @@ export const FolderLink: React.FC<NavMenuPage> = ({
   );
 };
 
-export interface JustLinkProps {
+interface JustLinkProps {
   emoji: string;
   title: string;
   slug: string;
 }
-export const JustLink: React.FC<JustLinkProps> = ({ emoji, title, slug }) => {
+const JustLink: React.FC<JustLinkProps> = ({ emoji, title, slug }) => {
+  const pageSlug = slugSignal.value;
+  const isActive = pageSlug === slug;
   return (
-    <a href={`/docs${slug}`} class={anchorStyle}>
+    <a href={`/docs${slug}`} class={getLinkStyle(isActive)}>
       <LinkTitle emoji={emoji} title={title} />
     </a>
   );
 };
 
-const anchorStyle =
-  "px-2 block text-sm text-slate-500 rounded hover:bg-slate-1";
+function getLinkStyle(isActive: boolean): string {
+  return `px-2 block text-sm rounded ${
+    isActive
+      ? "font-bold text-orange-600 bg-orange-1"
+      : "text-slate-500 hover:bg-slate-1"
+  }`;
+}
 
 interface LinkTitleProps {
   emoji: string;

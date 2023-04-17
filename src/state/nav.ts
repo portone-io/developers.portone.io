@@ -13,3 +13,5 @@ effect(() => {
     JSON.stringify(navOpenStates),
   );
 });
+
+export const slugSignal = signal<string>("");
