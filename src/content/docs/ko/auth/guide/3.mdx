@@ -1,0 +1,178 @@
+---
+emoji: 🪧
+title: 3. 결제 요청하기
+description: 파라미터값을 조합하여 결제창을 호출 할 수 있습니다.
+---
+
+import Embed from "~/components/gitbook/Embed.astro";
+import Hint from "~/components/gitbook/Hint";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+[**IMP 객체 초기화**](2..md)가 완료 되었으면 이제 결제창을 호출할 차례입니다.
+
+결제창 호출시 필요한 [**파라미터**](../../sdk/javascript-sdk-old/)**를 request_pay** 함수 첫번째 파라미터 인자로 설정합니다.
+
+<Tabs>
+<Tab title="JavaScript">
+```javascript
+<script>
+  function requestPay() {
+    IMP.request_pay({
+      pg: "kcp.{상점ID}",
+      pay_method: "card",
+      merchant_uid: "ORD20180131-0000011",   // 주문번호
+      name: "노르웨이 회전 의자",
+      amount: 64900,                         // 숫자 타입
+      buyer_email: "gildong@gmail.com",
+      buyer_name: "홍길동",
+      buyer_tel: "010-4242-4242",
+      buyer_addr: "서울특별시 강남구 신사동",
+      buyer_postcode: "01181"
+    }, function (rsp) { // callback
+      if (rsp.success) {
+        // 결제 성공 시 로직
+      } else {
+        // 결제 실패 시 로직
+      }
+    });
+  }
+</script>
+```
+</Tab>
+
+<Tab title="React.js">
+```jsx
+class RequestPay extends React.Component {
+  requestPay = () => {
+    IMP.request_pay({ // param
+      pg: "kcp.{상점ID}",
+      pay_method: "card",
+      merchant_uid: "ORD20180131-0000011",
+      name: "노르웨이 회전 의자",
+      amount: 64900,
+      buyer_email: "gildong@gmail.com",
+      buyer_name: "홍길동",
+      buyer_tel: "010-4242-4242",
+      buyer_addr: "서울특별시 강남구 신사동",
+      buyer_postcode: "01181"
+    }, rsp => { // callback
+      if (rsp.success) {
+        ...,
+        // 결제 성공 시 로직,
+        ...
+      } else {
+        ...,
+        // 결제 실패 시 로직,
+        ...
+      }
+    });
+  }
+```
+</Tab>
+
+<Tab title="Vue.js">
+```javascript
+<script>
+  export default {
+    methods: {
+      requestPay: function () {
+        IMP.request_pay({ // param
+          pg: "kcp.{상점ID}",
+          pay_method: "card",
+          merchant_uid: "ORD20180131-0000011",
+          name: "노르웨이 회전 의자",
+          amount: 64900,
+          buyer_email: "gildong@gmail.com",
+          buyer_name: "홍길동",
+          buyer_tel: "010-4242-4242",
+          buyer_addr: "서울특별시 강남구 신사동",
+          buyer_postcode: "01181"
+        }, rsp => { // callback
+          if (rsp.success) {
+            ...,
+            // 결제 성공 시 로직,
+            ...
+          } else {
+            ...,
+            // 결제 실패 시 로직,
+            ...
+          }
+        });
+      }
+    }
+  }
+</script>
+```
+</Tab>
+</Tabs>
+
+<Hint style="info">
+**주문번호(merchant\_uid) 생성 시 유의사항**
+
+- 주문번호는 결제창 요청 시 항상 **고유 값**으로 채번 되어야 합니다.
+- 결제 완료 이후 **결제 위변조** 대사 작업시 주문번호를 이용하여 검증이 필요하므로 주문번호는 가맹점 서버에서 **고유하게**(unique)채번하여 **DB 상에 저장**해주세요
+
+</Hint>
+
+현재까지 진행한 소스코드에 <mark style="color:red;">**결제 버튼을 추가**</mark>**한 샘플 코드**입니다.
+
+```html title="sample.html"
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- jQuery -->
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+    ></script>
+    <!-- iamport.payment.js -->
+    <script
+      type="text/javascript"
+      src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
+    ></script>
+    <script>
+      var IMP = window.IMP;
+      IMP.init("impXXXXXXXXX");
+
+      function requestPay() {
+        IMP.request_pay(
+          {
+            pg: "kcp.{상점ID}",
+            pay_method: "card",
+            merchant_uid: "57008833-33004",
+            name: "당근 10kg",
+            amount: 1004,
+            buyer_email: "Iamport@chai.finance",
+            buyer_name: "포트원 기술지원팀",
+            buyer_tel: "010-1234-5678",
+            buyer_addr: "서울특별시 강남구 삼성동",
+            buyer_postcode: "123-456",
+          },
+          function (rsp) {
+            // callback
+            if (rsp.success) {
+              console.log(rsp);
+            } else {
+              console.log(rsp);
+            }
+          }
+        );
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <title>Sample Payment</title>
+  </head>
+  <body>
+    <button onclick="requestPay()">결제하기</button>
+    <!-- 결제하기 버튼 생성 -->
+  </body>
+</html>
+```
+
+<Embed
+  url="https://youtu.be/Gq7r5AUoMKs"
+  caption="결제하기 버튼 생성 및 결제창 호출"
+/>
+
+<Embed url="https://codepen.io/chaiport/pen/NWXrGvQ" caption="결제창 예제" />

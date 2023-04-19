@@ -5,6 +5,25 @@ import solid from "@astrojs/solid-js";
 import mdx from "@astrojs/mdx";
 import unocss from "unocss/astro";
 import yaml from "@rollup/plugin-yaml";
+import rehypePrettyCode, {
+  Options as PrettyCodeOptions,
+} from "rehype-pretty-code";
+
+const prettyCodeOptions: Partial<PrettyCodeOptions> = {
+  theme: "material-theme-lighter",
+  onVisitLine(node) {
+    if (node.children.length === 0) {
+      node.children = [{ type: "text", value: " " }];
+    }
+  },
+  onVisitHighlightedLine(node) {
+    node.properties.className.push("highlighted");
+  },
+  onVisitHighlightedWord(node) {
+    node.properties.className = ["word"];
+  },
+  tokensMap: {},
+};
 
 export default defineConfig({
   integrations: [
@@ -20,5 +39,9 @@ export default defineConfig({
       },
     },
     plugins: [yaml()],
+  },
+  markdown: {
+    syntaxHighlight: false,
+    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
   },
 });
