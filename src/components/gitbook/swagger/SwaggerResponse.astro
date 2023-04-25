@@ -6,7 +6,44 @@ interface Props {
 const { status, description } = Astro.props;
 ---
 
-<div>
-  <p>{status}, {description}</p>
+<details class="group/swagger border-b last:border-b-0 border-slate-1 text-sm">
+  <style>
+    summary {
+      display: block;
+      cursor: pointer;
+      border-left: 4px solid transparent;
+    }
+    summary > .chevron {
+      width: 1.25em;
+      height: 1.25em;
+      transition: transform 0.1s;
+    }
+    details[open] > summary > .chevron {
+      transform-origin: center;
+      transform: rotate(90deg);
+    }
+  </style>
+  <summary class="py-4 grid grid-cols-[2fr_3fr_2em] gap-2 cursor-pointer">
+    <div class="flex items-center font-bold">
+      <span
+        class={`mr-2 inline-block w-2 h-2 rounded-full ${
+          status[0] == "2"
+            ? "bg-green-6"
+            : status[0] == "3"
+            ? "bg-yellow-5"
+            : status[0] == "4"
+            ? "bg-red-6"
+            : status[0] == "5"
+            ? "bg-red-6"
+            : ""
+        }`}></span><span>{status}</span>
+    </div>
+    <div class="text-slate-5">{description}</div>
+    <div class="chevron" role="img">
+      <i
+        class="inline-block group-hover/swagger:text-orange i-ic-sharp-chevron-right"
+      ></i>
+    </div>
+  </summary>
   <slot />
-</div>
+</details>
