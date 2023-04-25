@@ -25,7 +25,9 @@ export const Tabs: React.FC<TabsProps> = ({ children }) => {
           const isLast = index === titles.length - 1;
           const selected = index === currentTab;
           const cornerStyle = isFirst
-            ? "rounded-tl"
+            ? isLast
+              ? "rounded-t"
+              : "rounded-tl"
             : isLast
             ? "-ml-px rounded-tr"
             : "-ml-px";

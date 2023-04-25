@@ -48,3 +48,11 @@ export function a({ children, ...props }: any) {
     </a>
   );
 }
+
+export function blockquote({ children, ...props }: any) {
+  return (
+    <blockquote {...props} class="my-2 pl-4 border-l-4">
+      <div class="-my-1">{children}</div>
+    </blockquote>
+  );
+}
