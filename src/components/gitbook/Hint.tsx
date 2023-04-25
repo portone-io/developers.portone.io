@@ -5,7 +5,7 @@ export interface HintProps {
   style: "info" | "warning" | "success";
 }
 const Hint: React.FC<HintProps> = ({ children, style = "info" }) => {
-  const cls = `my-4 px-4 py-2 flex gap-3 rounded border-l-4 bg-slate-1 ${
+  const cls = `my-4 p-4 flex gap-3 rounded border-l-4 bg-slate-1 ${
     style === "info"
       ? "border-blue-600"
       : style === "warning"
@@ -14,7 +14,7 @@ const Hint: React.FC<HintProps> = ({ children, style = "info" }) => {
       ? "border-green-6"
       : ""
   }`;
-  const iconCls = `text-2xl mt-2 ${
+  const iconCls = `text-2xl ${
     style === "info"
       ? "i-ic-outline-info text-blue-600"
       : style === "warning"
