@@ -5,24 +5,39 @@ import Logo from "./Logo.astro";
 interface Props {
   lang: Lang;
 }
-// const { lang } = Astro.props;
+const { lang } = Astro.props;
+
+const ko = {
+  developers: "개발자센터",
+  "sdk-playground": "SDK 놀이터",
+  console: "콘솔",
+  language: "언어",
+};
+const en: typeof ko = {
+  developers: "Developers",
+  "sdk-playground": "SDK Playground",
+  console: "Console",
+  language: "Language",
+};
+const t = lang === "ko" ? ko : en;
 ---
 
 <div class="h-14">
   <header
     class="fixed w-full h-14 pl-6 flex items-center justify-between border-b bg-white z-10"
   >
-    <a href="/">
+    <a href={`/docs/${lang}`}>
       <div class="flex gap-2">
         <Logo class="w-22" />
-        <span>개발자센터</span>
+        <span>{t["developers"]}</span>
       </div>
     </a>
-    <div class="hidden md:flex gap-4 pr-6">
-      <a href="">SDK 놀이터</a>
-      <a href="">콘솔</a>
-      <div>검색</div>
-      <div>언어</div>
+    <div class="hidden md:flex gap-4 pr-6 items-center">
+      <a href="https://sdk-playground.portone.io/">{t["sdk-playground"]}</a>
+      <a href="https://admin.portone.io/">{t["console"]}</a>
+      <a href={`/docs/${lang === "ko" ? "en" : "ko"}`}>
+        {lang === "ko" ? "🇺🇸 English" : "🇰🇷 한국어"}
+      </a>
     </div>
     <div class="flex md:hidden h-full">
       <button class="px-4"

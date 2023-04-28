@@ -1,5 +1,6 @@
 import { computed } from "@preact/signals";
 
+import navYamlEn from "~/content/docs/en/_nav.yaml";
 import navYamlKo from "~/content/docs/ko/_nav.yaml";
 import type { YamlNavMenuToplevelItem } from "~/type";
 import { Frontmatters, frontmattersSignal } from "./frontmatters";
@@ -23,6 +24,7 @@ export interface NavMenuGroup {
 export const navMenuSignal = computed<NavMenu>(() => {
   const frontmatters = frontmattersSignal.value;
   return {
+    "en": toNavMenuItems(navYamlEn, frontmatters),
     "ko": toNavMenuItems(navYamlKo, frontmatters),
   };
 });
