@@ -1,0 +1,89 @@
+---
+import type { GetStaticPaths, Page } from "astro";
+import { getCollection } from "astro:content";
+import { format } from "date-fns";
+import LayoutKo from "~/layouts/LayoutKo.astro";
+
+interface Props {
+  page: Page;
+}
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const blogEntries = await getCollection("blog");
+  blogEntries.map((entry) => {
+    const [date] = entry.slug.split("/");
+    entry.data.date = date ? new Date(`${date}Z+9`) : undefined;
+  });
+  blogEntries.sort((a, b) => b.data.date!.getTime() - a.data.date!.getTime());
+  return paginate(
+    blogEntries.filter(
+      (entry) =>
+        !entry.data.draft ||
+        import.meta.env.DEV ||
+        import.meta.env.VERCEL_ENV === "preview"
+    ),
+    { pageSize: 10 }
+  );
+};
+
+const { page } = Astro.props;
+---
+
+<LayoutKo>
+  <div class="flex min-h-full flex-col items-center text-center">
+    <div class="my-4 flex-1">
+      {
+        page.data.length > 0 ? (
+          <dl class="max-w-150 mx-auto flex w-screen shrink flex-col gap-8 p-6 text-left">
+            {page.data.map((entry) => (
+              <a
+                class="flex flex-col items-start gap-2"
+                href={`/blog/${entry.slug}`}
+              >
+                <dt class="text-2xl font-medium">
+                  {entry.data.title}
+                  {entry.data.draft && (
+                    <span class="text-slate-4 font-normal">(Draft)</span>
+                  )}
+                </dt>
+                <dd>{entry.data.description}</dd>
+                <span>{format(entry.data.date, "yyyy. M. d.")}</span>
+              </a>
+            ))}
+          </dl>
+        ) : (
+          <div>게시글이 없습니다.</div>
+        )
+      }
+    </div>
+    <div class="flex items-center py-4">
+      {
+        page.currentPage > 1 ? (
+          <a
+            href={`/blog/${page.currentPage - 1}`}
+            class="flex w-8 items-center justify-center"
+          >
+            <i class="i-ic-baseline-chevron-left text-slate-5 inline-block text-2xl" />
+          </a>
+        ) : (
+          <div class="w-8" />
+        )
+      }
+      <div class="text-slate-6 text-lg">
+        {page.currentPage}
+      </div>
+      {
+        page.currentPage < page.lastPage ? (
+          <a
+            href={`/blog/${page.currentPage + 1}`}
+            class="flex w-8 items-center justify-center"
+          >
+            <i class="i-ic-baseline-chevron-right text-slate-5 inline-block text-2xl" />
+          </a>
+        ) : (
+          <div class="w-8" />
+        )
+      }
+    </div>
+  </div>
+</LayoutKo>
