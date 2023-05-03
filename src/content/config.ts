@@ -8,6 +8,16 @@ const docCollection = defineCollection({
   }),
 });
 
+const blogCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.date().optional(),
+    draft: z.boolean().optional(),
+  }),
+});
+
 export const collections = {
-  "docs": docCollection,
+  docs: docCollection,
+  blog: blogCollection,
 };
