@@ -1,6 +1,6 @@
 export function h1({ children, ...props }: any) {
   return (
-    <h1 {...props} class="mt-5 first:mt-0 font-bold text-3xl md:text-4xl">
+    <h1 {...props} class="mt-5 text-3xl font-bold first:mt-0 md:text-4xl">
       {children}
     </h1>
   );
@@ -8,7 +8,7 @@ export function h1({ children, ...props }: any) {
 
 export function h2({ children, ...props }: any) {
   return (
-    <h2 {...props} class="mt-5 first:mt-0 mb-2 font-bold text-xl md:text-2xl">
+    <h2 {...props} class="mb-2 mt-5 text-xl font-bold first:mt-0 md:text-2xl">
       {children}
     </h2>
   );
@@ -16,7 +16,7 @@ export function h2({ children, ...props }: any) {
 
 export function h3({ children, ...props }: any) {
   return (
-    <h3 {...props} class="mt-5 first:mt-0 mb-2 font-bold md:text-xl">
+    <h3 {...props} class="mb-2 mt-5 font-bold first:mt-0 md:text-xl">
       {children}
     </h3>
   );
@@ -24,7 +24,7 @@ export function h3({ children, ...props }: any) {
 
 export function h4({ children, ...props }: any) {
   return (
-    <h4 {...props} class="mt-5 first:mt-0 mb-2 font-bold">
+    <h4 {...props} class="mb-2 mt-5 font-bold first:mt-0">
       {children}
     </h4>
   );
@@ -42,7 +42,7 @@ export function a({ children, ...props }: any) {
   return (
     <a
       {...props}
-      class="text-orange-5 hover:text-orange-7 hover:underline cursor-pointer"
+      class="text-orange-5 hover:text-orange-7 cursor-pointer hover:underline"
     >
       {children}
     </a>
@@ -51,7 +51,7 @@ export function a({ children, ...props }: any) {
 
 export function blockquote({ children, ...props }: any) {
   return (
-    <blockquote {...props} class="my-2 pl-4 border-l-4">
+    <blockquote {...props} class="my-2 border-l-4 pl-4">
       {children}
     </blockquote>
   );

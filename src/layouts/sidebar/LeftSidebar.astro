@@ -32,19 +32,21 @@ slugSignal.value = slug;
 </script>
 <aside
   id="left-sidebar"
-  class="hidden md:block relative shrink-0 w-60 text-slate-700"
+  class="w-65 relative hidden shrink-0 text-slate-700 md:block"
   data-slug={slug}
   data-navopenstates={JSON.stringify(navOpenStates)}
 >
-  <div class="fixed overflow-y-scroll w-inherit h-full border-r bg-white">
+  <div
+    class="w-inherit fixed h-[calc(100%-3.5rem)] overflow-y-scroll border-r bg-white"
+  >
     <nav>
-      <ul class="p-2 pt-6 flex flex-col gap-1">
+      <ul class="flex flex-col gap-1 p-2 py-4">
         {
           navMenuItems.map((item) => {
-            if (item.type === "group")
+            if (item.type === "group") {
               return (
                 <li>
-                  <h4 class="mt-4 p-2 text-xs text-gray font-bold tracking-widest">
+                  <h4 class="text-gray mt-4 p-2 text-xs font-bold tracking-widest first:mt-0">
                     {item.label}
                   </h4>
                   <ul class="flex flex-col gap-1">
@@ -56,6 +58,14 @@ slugSignal.value = slug;
                   </ul>
                 </li>
               );
+            }
+            if (item.slug === "===") {
+              return (
+                <li>
+                  <hr class="mx-2 my-4" />
+                </li>
+              );
+            }
             return (
               <li>
                 <LeftSidebarItem client:visible {...item} />

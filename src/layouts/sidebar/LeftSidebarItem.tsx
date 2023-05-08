@@ -23,7 +23,7 @@ const FolderLink: React.FC<NavMenuPage> = ({ emoji, title, slug, items }) => {
           <LinkTitle emoji={emoji} title={title} />
         </a>
         <button
-          class="p-2 h-full flex items-center"
+          class="flex h-full items-center p-2"
           onClick={() => {
             navOpenStatesSignal.value = {
               ...navOpenStatesSignal.value,
@@ -41,7 +41,7 @@ const FolderLink: React.FC<NavMenuPage> = ({ emoji, title, slug, items }) => {
         </button>
       </div>
       <div class={`${open ? "block" : "hidden"} pl-2`}>
-        <ul class="pl-2 flex flex-col gap-1 border-l">
+        <ul class="flex flex-col gap-1 border-l pl-2">
           {items.map((item) => (
             <li key={item.slug}>
               <LeftSidebarItem {...item} />
@@ -82,8 +82,8 @@ interface LinkTitleProps {
 }
 const LinkTitle: React.FC<LinkTitleProps> = ({ emoji, title }) => {
   return (
-    <span class="block py-1">
-      {emoji && <span class="mr-2">{emoji}</span>}
+    <span class="flex gap-2 py-1">
+      {emoji && <span>{emoji}</span>}
       <span>{title || <span class="text-red">(unknown page)</span>}</span>
     </span>
   );
