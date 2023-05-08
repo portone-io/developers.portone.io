@@ -47,7 +47,7 @@ PC와 모바일에서 결제창이 각기 다른 방식으로 호출되기 때�
 
 그런데 **페이조아 → 포트원로의 결제 결과가 전달 → 포트원 DB 업데이트와 포트원 → 가맹점 클라이언트로의 응답이 비동기로 동작**하기 때문에 **실제로는 결제가 정상적으로 완료 됐어도 아직 포트원 DB에 업데이트가 안 된 시점이라 가맹점 클라이언트로 응답되는 `imp_success` 또는 `success` 파라미터가 `false`일 수** 있습니다.
 
-따라서 포트원 → 가맹점 클라이언트로 응답되는 결과 데이터 중 신뢰할 수 있는 값은 오로지 포트원 주문 번호(`imp_uid`)와 가맹점 주문 번호(`merchant_uid`)이며, 이 값을 가맹점 서버로 전달해 포트원 결제내역 조회 API([GET /payments/{imp\_uid}](https://api.iamport.kr/#!/payments/getPaymentByImpUid))를 호출한 결과(`status`)를 보고 결제 실패(`failed`)/성공(`paid`) 여부를 판단하시길 바랍니다.
+따라서 포트원 → 가맹점 클라이언트로 응답되는 결과 데이터 중 신뢰할 수 있는 값은 오로지 포트원 주문 번호(`imp_uid`)와 가맹점 주문 번호(`merchant_uid`)이며, 이 값을 가맹점 서버로 전달해 포트원 결제내역 조회 API([GET /payments/\{imp\_uid}](https://api.iamport.kr/#!/payments/getPaymentByImpUid))를 호출한 결과(`status`)를 보고 결제 실패(`failed`)/성공(`paid`) 여부를 판단하시길 바랍니다.
 
 </Details>
 
@@ -95,7 +95,7 @@ PC와 모바일에서 결제창이 각기 다른 방식으로 호출되기 때�
 <Details>
 <p slot="summary">가상계좌 입금 완료시, 송금자 이름만 알 수 있음</p>
 
-페이조아는 (발급된) 가상계좌에 입금 완료시, 송금자의 정보(은행명, 계좌번호, 송금인) 중 송금자 이름만 알려줍니다. 따라서 포트원 결제내역 조회([**GET /payments/{imp\_uid}**](../../../api/api-1/api-1.md))시 송금자의 은행코드(`bank_code`)과 은행명(`bank_name`)은 모두 NULL로 내려가며, 송금자 이름을 확인하기 위해서는 아래 예시와 같이 별도의 쿼리 파라미터(`extension`)를 `true`로 설정해주셔야 합니다.
+페이조아는 (발급된) 가상계좌에 입금 완료시, 송금자의 정보(은행명, 계좌번호, 송금인) 중 송금자 이름만 알려줍니다. 따라서 포트원 결제내역 조회([**GET /payments/\{imp\_uid}**](../../../api/api-1/api-1.md))시 송금자의 은행코드(`bank_code`)과 은행명(`bank_name`)은 모두 NULL로 내려가며, 송금자 이름을 확인하기 위해서는 아래 예시와 같이 별도의 쿼리 파라미터(`extension`)를 `true`로 설정해주셔야 합니다.
 
 ```jsx
 GET http://api.iamport.kr/payments/{포트원 번호}?**extension=true**

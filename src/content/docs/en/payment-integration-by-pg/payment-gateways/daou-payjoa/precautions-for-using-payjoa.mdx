@@ -15,7 +15,7 @@ import Details from "~/components/gitbook/Details.astro";
 <Details>
 <p slot="summary">Returns <code>success</code> in PC and <code>imp_success</code> in mobile</p>
 
-The payment window call (`IMP.request_pay`) and post-payment processing differs for PC and mobile. In PC, the call is made using iframe and the callback function (the second argument of IMP.request\_pay) is called after the payment process is completed. In mobile, the page is redirected (302) to the specified URL (`m_redirect_url`_)._ At this time, the payment result (success/failure) is returned using the `success` parameter for PC and `imp_success` parameter for mobile. To summarize the flow:&#x20;
+The payment window call (`IMP.request_pay`) and post-payment processing differs for PC and mobile. In PC, the call is made using iframe and the callback function (the second argument of IMP.request\_pay) is called after the payment process is completed. In mobile, the page is redirected (302) to the specified URL (`m_redirect_url`_)._ At this time, the payment result (success/failure) is returned using the `success` parameter for PC and `imp_success` parameter for mobile. To summarize the flow:
 
 *   \[PC] iframe → callback → result delivered in response.`success` returned via callback
 
@@ -25,7 +25,7 @@ The payment window call (`IMP.request_pay`) and post-payment processing differs 
     IMP.request_pay({
       // Omitted
     }, function (response) {
-    	const { **success** } = response; // payment successul or failed
+    	const { success } = response; // payment successul or failed
     	if (success) {
     		// Success logic
     	} else {
@@ -45,13 +45,13 @@ The payment window call (`IMP.request_pay`) and post-payment processing differs 
     https://myservice.com/payments/complete?**imp_success=true**&imp_uid=imp1234567890&merchant_uid=mid_123467890
     ```
 
-#### &#x20;**`imp_success` and `success` are deprecated**
+#### **`imp_success` and `success` are deprecated**
 
 Regardless you should not determine the success/failure of a payment based on either of these parameters. It only indicates the failure/success of payment at the time of the response from i'mport → merchant client, and its value can only be finalized when notification of the result is sent from PAYJOA → i'mport and then it is updated in the i'mport DB.
 
-Since the **payment result is sent asynchronously in \[PAYJOA → i'mport → i'mport DB update] and \[i'mport → merchant client]**, **the `imp_success` or `success` parameter received by the merchant client can be false (failed) for a successful transaction if it has not been updated in the database yet**.&#x20;
+Since the **payment result is sent asynchronously in \[PAYJOA → i'mport → i'mport DB update] and \[i'mport → merchant client]**, **the `imp_success` or `success` parameter received by the merchant client can be false (failed) for a successful transaction if it has not been updated in the database yet**.
 
-Hence, only the i'mport order ID (`imp_uid`) and the merchant order ID (`merchant_uid`) of the result are accurate. You must send these values to the merchant server and use them to call the i'mport Get payment API ([GET /payments/{imp\_uid}](https://api.iamport.kr/#!/payments/getPaymentByImpUid)) to accurately determine whether the payment is successful (`status`=`paid`) or failed (`status`=`failed`).
+Hence, only the i'mport order ID (`imp_uid`) and the merchant order ID (`merchant_uid`) of the result are accurate. You must send these values to the merchant server and use them to call the i'mport Get payment API ([GET /payments/\{imp\_uid}](https://api.iamport.kr/#!/payments/getPaymentByImpUid)) to accurately determine whether the payment is successful (`status`=`paid`) or failed (`status`=`failed`).
 
 </Details>
 
@@ -84,7 +84,7 @@ If you are experiencing this, make sure that pop-ups are allowed for the `*.payj
 <Details>
 <p slot="summary">Instant account transfer payment flow difference</p>
 
-&#x20;Since PAYJOA internally uses Toss Payments - account transfer, account transfer is available only through Toss Simple Payment, NH Apps Cache, and direct input of account information. Entering account information directly requires security card/OTP authentication → public certificate authentication.&#x20;
+Since PAYJOA internally uses Toss Payments - account transfer, account transfer is available only through Toss Simple Payment, NH Apps Cache, and direct input of account information. Entering account information directly requires security card/OTP authentication → public certificate authentication.
 
 For mobile payment, account transfer payment is available only through Toss Simple Payment and NH Apps Cache.
 
@@ -97,10 +97,10 @@ For mobile payment, account transfer payment is available only through Toss Simp
 <Details>
 <p slot="summary">Only depositor's name can be accessed after virtual account deposit</p>
 
-When deposit is made to the (issued) virtual account, PAYJOA only reveals the name among the depositor's information (bank name, account number, sender). Therefore, when you retrieve the i'mport payment details ([**GET /payments/{imp\_uid}**](../../../api/payment-api/get-payment-api.md)), the depositor's bank code (`bank_code`) and bank name (`bank_name`) are both NULL. To get the depositor's name, you must set the query parameter (`extension`) to `true` as follows:
+When deposit is made to the (issued) virtual account, PAYJOA only reveals the name among the depositor's information (bank name, account number, sender). Therefore, when you retrieve the i'mport payment details ([**GET /payments/\{imp\_uid}**](../../../api/payment-api/get-payment-api.md)), the depositor's bank code (`bank_code`) and bank name (`bank_name`) are both NULL. To get the depositor's name, you must set the query parameter (`extension`) to `true` as follows:
 
 ```jsx
-GET http://api.iamport.kr/payments/{i'mport number}?**extension=true**
+GET http://api.iamport.kr/payments/{i'mport number}?extension=true
 
 {
 	// ... Omitted

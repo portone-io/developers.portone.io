@@ -123,7 +123,7 @@ display.card\_quota 파라미터로 결제창에 렌더링 될 할부 개월수 
 <Details>
 <p slot="summary">카카오페이 일부 카드의 경우 카드 정보를 확인할 수 없는 이슈</p>
 
-카카오페이로 결제시 일부 카드(2022년 6월 이후 카드사 측에서 신규 생성 된 카드)의 경우, 카카오페이 → 토스페이먼츠로 카드 정보를 정상적으로 내려주지 않기 때문에 포트원 REST API로 결제내역 조회(GET /payments/{imp\_uid})시 카드사 정보(card\_code: 카드 코드, card\_name: 카드 이름)를 확인할 수 없습니다.
+카카오페이로 결제시 일부 카드(2022년 6월 이후 카드사 측에서 신규 생성 된 카드)의 경우, 카카오페이 → 토스페이먼츠로 카드 정보를 정상적으로 내려주지 않기 때문에 포트원 REST API로 결제내역 조회(GET /payments/\{imp\_uid})시 카드사 정보(card\_code: 카드 코드, card\_name: 카드 이름)를 확인할 수 없습니다.
 
 </Details>
 
@@ -145,8 +145,6 @@ display.card\_quota 파라미터로 결제창에 렌더링 될 할부 개월수 
       }
     }
     ```
-
-<!---->
 
 *   예2. 삼성카드 다이렉트 호출 + 5개월 고정 할부 개월수 지정 → 5개월 할부 적용
 
@@ -174,20 +172,21 @@ display.card\_quota 파라미터로 결제창에 렌더링 될 할부 개월수 
 
     <figure><img src="/gitbook-assets/ko/image (181).png" alt=""/><figcaption></figcaption></figure>
 
-<pre class="language-javascript"><code class="lang-javascript">card: {
+```javascript
+card: {
   direct: {
-<strong>    code: '361',
-</strong>    quota: 5
+    code: '361',
+    quota: 5
   }
 }
-</code></pre>
+```
 
 </Details>
 
 <Details>
 <p slot="summary">페이북을 통한 ISP 계열 카드 결제시, 카드 번호가 정상적으로 내려오지 않음</p>
 
-페이북 통한 ISP 계열 카드 결제시 토스페이먼츠로부터 실제 카드 번호와 다른 9200으로 시작하는 카드 번호가 내려오고 있어 결제 승인 내역 조회(POST /payments/{imp\_uid})시 응답되는 카드 번호(card\_numer)가 정확하지 않습니다.
+페이북 통한 ISP 계열 카드 결제시 토스페이먼츠로부터 실제 카드 번호와 다른 9200으로 시작하는 카드 번호가 내려오고 있어 결제 승인 내역 조회(POST /payments/\{imp\_uid})시 응답되는 카드 번호(card\_numer)가 정확하지 않습니다.
 
 </Details>
 
@@ -203,7 +202,7 @@ display.card\_quota 파라미터로 결제창에 렌더링 될 할부 개월수 
 <Details>
 <p slot="summary">가상계좌 발급 완료시 예금주 명 알 수 없음</p>
 
-토스페이먼츠는 가상계좌 발급 완료시 발급 된 가상계좌의 **예금주 명을 전달해주지 않습니다**. 따라서 포트원 REST API로 결제내역 조회(GET /payments/{imp\_uid})시 `vbank_holder`가 null로 전달됩니다.
+토스페이먼츠는 가상계좌 발급 완료시 발급 된 가상계좌의 **예금주 명을 전달해주지 않습니다**. 따라서 포트원 REST API로 결제내역 조회(GET /payments/\{imp\_uid})시 `vbank_holder`가 null로 전달됩니다.
 
 실제 가상계좌 예금주 명은 토스페이먼츠와 계약된 가맹점 이름과 동일하다고 하니, 참고 부탁드립니다.
 

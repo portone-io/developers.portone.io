@@ -33,18 +33,19 @@ SDK 스크립트의 주소가 `https://cdn.iamport.kr/v1/iamport.js 인지 확�
 </Hint>
 
 <Hint style="info">
-<pre><code>&#x3C;script src="https://cdn.iamport.kr/v1/iamport.js">&#x3C;/script>
+```html
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+```
 
 위 JS SDK 를 이용하여 토스페이먼츠,케이에스넷,페이팔 SPB 연동시 callback Data는 
 아래와 같이 두가지 형태로만 내려갑니다.
 
-imp_uid
-merchant_uid
+- `imp_uid`
+- `merchant_uid`
 
 위 PG사를 제외한 다른 PG사는 imp_success 파라미터가 기존처럼 내려가지만 
-해당 파리미터는 <a data-footnote-ref href="#user-content-fn-1">deprecated</a> 된 값이기 때문에 해당 값에 의존성을 가진 프로그램 로직은 모두 삭제하시는
+해당 파리미터는 deprecated 된 값이기 때문에 해당 값에 의존성을 가진 프로그램 로직은 모두 삭제하시는
 방향성을 잡아가셔야 하는점 유념하시기 바랍니다.
-</code></pre>
 
 </Hint>
 
@@ -225,7 +226,7 @@ merchant_uid
 
 #### 결제 처리
 
-페이팔 결제 건은 승인 요청 시 바로 승인 되지 않고 일정 시간 후 처리되는 `승인 대기(pending)` 상태가 존재합니다. 따라서 가맹점은 트랜잭션 종료시 콜백 함수로 전달되는 아임포트 번호(imp\_uid)로 결제 내역을 조회([GET /payments/{imp\_uid}](../../api/api-1/api-1.md))한 후 응답 되는 status를 보고 각 상황에 맞는 후 처리 로직을 작성해야 합니다.
+페이팔 결제 건은 승인 요청 시 바로 승인 되지 않고 일정 시간 후 처리되는 `승인 대기(pending)` 상태가 존재합니다. 따라서 가맹점은 트랜잭션 종료시 콜백 함수로 전달되는 아임포트 번호(imp\_uid)로 결제 내역을 조회([GET /payments/\{imp\_uid}](../../api/api-1/api-1.md))한 후 응답 되는 status를 보고 각 상황에 맞는 후 처리 로직을 작성해야 합니다.
 
 승인 대기 상태에서는 최종적으로 승인(paid)이 될 수도 있고 승인이 되지 않을 수도(failed) 있기 때문에 가맹점은 반드시 (가상계좌나 정기결제와 같이 결제가 비동기로 승인되는 경우 포트원 → 가맹점으로 결제 결과를 통보해주는) **웹훅 기능을 연동해야** 합니다.
 

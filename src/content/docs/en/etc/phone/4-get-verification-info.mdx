@@ -16,12 +16,13 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 Use the **`imp_uid`** obtained from mobile identity verification to get the customer's verification information.
 
-### <mark style="color:blue;">**STEP 01.**</mark> Get verification ID (imp\_uid) on the server-side
+### <mark style="color:blue;"> **STEP 01.** </mark> Get verification ID (imp\_uid) on the server-side
 
 The following server-side code fetches the data returned from mobile identity verification.
 
 <Tabs>
 <Tab title="Node.js (popup)">
+
 ```javascript title="server-side"
 app.use(bodyParser.json());
   ...
@@ -36,20 +37,21 @@ app.use(bodyParser.json());
 </Tab>
 
 <Tab title="Node.js (redirection)">
-<pre class="language-javascript" data-title="server-side"><code class="lang-javascript">app.use(bodyParser.json());
+```javascript
+app.use(bodyParser.json());
   ...
-<strong>  // controller that handles GET request to "/certifications/redirect"
-</strong>  app.get("/certifications/redirect", async (request, response) => {
+  // controller that handles GET request to "/certifications/redirect"
+  app.get("/certifications/redirect", async (request, response) => {
     const { imp_uid } = request.query; // Get imp_uid from req.query
 })
-</code></pre>
+```
 
 </Tab>
 </Tabs>
 
-### <mark style="color:blue;">**STEP 02.**</mark> Get verification information
+### <mark style="color:blue;"> **STEP 02.** </mark> Get verification information
 
-To get verification information from the i'mport server, you must first get a [**REST API access token**](../../api/rest-api-access-token.md). Use the `access token` and `imp_uid` (verification ID) to call the <mark style="color:blue;">**Get identity verification info REST API**</mark> that returns the verification information as follows:
+To get verification information from the i'mport server, you must first get a [**REST API access token**](../../api/rest-api-access-token.md). Use the `access token` and `imp_uid` (verification ID) to call the <mark style="color:blue;"> **Get identity verification info REST API** </mark> that returns the verification information as follows:
 
 ```javascript title="sever-side"
 app.use(bodyParser.json());
@@ -72,7 +74,7 @@ app.use(bodyParser.json());
       ...
       // Get verification info from i'mport server using imp_uid
       const getCertifications = await axios({
-        url: \`https://api.iamport.kr/certifications/\${imp_uid}\`, // Pass imp_uid
+        url: `https://api.iamport.kr/certifications/\${imp_uid}\`, // Pass imp_uid
         method: "get", // GET method
         headers: { "Authorization": access_token } // Add access token to Authorization header
       });
@@ -85,7 +87,7 @@ app.use(bodyParser.json());
 ```
 
 
-### <mark style="color:blue;">**STEP 03.**</mark> Using verification information
+### <mark style="color:blue;"> **STEP 03.** </mark> Using verification information
 
 Retrieve the following user information from the verification information and add the necessary service logic.
 

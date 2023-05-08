@@ -25,10 +25,11 @@ Refer to the [**KG INICIS settings**](../../ready/2.-pg/payment-gateway-settings
 
 To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
+In PC browsers, <mark style="color:red;"> **callback** </mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_redirect\_url** </mark>.
 
 <Tabs>
 <Tab title="Authenticated payment request">
+
 ```javascript title="Javascript SDK"
 IMP.request_pay({
     pg : 'html5_inicis',
@@ -52,7 +53,7 @@ IMP.request_pay({
 
 ### Key parameter description
 
-**`pg`** <mark style="color:red;">**\***</mark>**  **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
 
 **PG code**
 
@@ -61,7 +62,7 @@ IMP.request_pay({
 
 
 
-**`pay_method`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
 
 **Payment method code**
 
@@ -75,7 +76,7 @@ IMP.request_pay({
 * `samsung`(Samsung Pay hub-type)
 * `kakaopay`(Kakao Pay)
 * `payco` ( PAYCO hub-type)
-* `tosspay` (Toss Simple Pay hub-type)&#x20;
+* `tosspay` (Toss Simple Pay hub-type)
 * `ssgpay` (SSG Pay hub-type)
 * `chai` (CHAI Pay)
 * `lpay` (LPAY hub-type)
@@ -88,7 +89,7 @@ IMP.request_pay({
 
 
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
 
 **Order ID**
 
@@ -96,7 +97,7 @@ Must be unique for each request.
 
 
 
-**`amount`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+**`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
 **Payment amount**
 
@@ -104,7 +105,7 @@ Must be an integer (not string)
 
 
 
-**`buyer_tel`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+**`buyer_tel`** <mark style="color:red;"> **`*`** </mark><mark style="color:green;"> **`string`** </mark>
 
 **Customer phone number**
 
@@ -117,7 +118,7 @@ Must be an integer (not string)
 <Tab title="Non-authenticated payment request">
 ### You can request for a billing key through the KG INICIS payment window.
 
-* To open non-authenticated payment window, specify the **customer\_uid** parameter.&#x20;
+* To open non-authenticated payment window, specify the **customer\_uid** parameter.
 * After getting a billing key from the window, you can request payment using the billing key.
 * **`amount`** parameter is for display purpose only. <mark style="color:red;">Actual payment approval is not processed.</mark>
 
@@ -147,7 +148,7 @@ IMP.request_pay({
 
 ### Key parameter description
 
-**`pg`** <mark style="color:red;">**\***</mark>**  **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
 
 **PG code**
 
@@ -158,7 +159,7 @@ IMP.request_pay({
 
 
 
-**`customer_uid`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+**`customer_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
 **Credit card billing key**
 
@@ -166,7 +167,7 @@ Billing key to be mapped 1:1 with the user-entered credit card information.
 
 
 
-**`amount`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**Integer**</mark>
+**`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **Integer** </mark>
 
 **Payment amount**
 
@@ -178,7 +179,7 @@ Amount to display in the payment window, but <mark style="color:red;">actual pay
 After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api.md) with the `customer_uid` as follows:
 
 ``` title="sever-side"
-curl -H "Content-Type: application/json" \   
+curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
 ```
@@ -196,7 +197,7 @@ curl -H "Content-Type: application/json" \
 To request a one-time payment, use the key-in REST[ **API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api.md). The card information is not saved during this process.
 
 ```
-curl -H "Content-Type: application/json" \   
+curl -H "Content-Type: application/json" \
      -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
 ```
@@ -205,10 +206,10 @@ curl -H "Content-Type: application/json" \
 
 ### Request billing key
 
-To request a billing key, use the billing key request REST [**API POST /subscribe/customers/{customer\_uid}**](../../api/billing-key-api/api-1.md).
+To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer\_uid}**](../../api/billing-key-api/api-1.md).
 
 ```
-curl -H "Content-Type: application/json" \   
+curl -H "Content-Type: application/json" \
      -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
      https://api.iamport.kr/subscribe/customers/your-customer-unique-id
 ```
@@ -222,7 +223,7 @@ To request a billing key and initial payment, use the key-in REST [**API POST /s
 * **`customer_uid`** : required for saving the billing key.
 
 ```
-curl -H "Content-Type: application/json" \   
+curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime 
 ```
@@ -234,7 +235,7 @@ curl -H "Content-Type: application/json" \
 After successfully getting the billing key and making the initial payment, the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api.md)) with the `customer_uid` as follows:
 
 ```
-curl -H "Content-Type: application/json" \   
+curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
 ```
@@ -243,7 +244,7 @@ curl -H "Content-Type: application/json" \
 
 **For detailed information, refer to:**
 
-<ContentRef slug="/en///auth/guide-1/readme" />
+<ContentRef slug="/en/auth/guide-1/readme" />
 
 </Tab>
 </Tabs>
@@ -254,6 +255,7 @@ curl -H "Content-Type: application/json" \
 
 <Tabs>
 <Tab title="Installment setting">
+
 ```javascript title="javascript"
 display: {
     card_quota: [6]  // Display up to 6 months installment plans
@@ -277,11 +279,12 @@ Installment plan option is available only for **KRW 50,000 or more**.
 
 
 
-<Codepen user="chaiport" slug="gOvoxpw" caption="Example of allowing up to <mark style="color:red;">**3 months**</mark>** installment plans**" />
+<Codepen user="chaiport" slug="gOvoxpw" caption="Example of allowing up to 3 months installment plans" />
 
 </Tab>
 
 <Tab title="Direct credit card module call">
+
 ```javascript title="javascript"
 card: {
      direct: {
@@ -296,16 +299,17 @@ card: {
 
 **Parameters**
 
-* **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
+* **code**: [<mark style="color:red;"> **Credit card code** </mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
 * **quota**: Installment plan. For immediate, set to 0. (**integer**)
 
 
 
-<Codepen user="chaiport" slug="Yzewbeg" caption="Example of direct call to <mark style="color:red;">**Hyundai Card**</mark> module" />
+<Codepen user="chaiport" slug="Yzewbeg" caption="Example of direct call to Hyundai Card module" />
 
 </Tab>
 
 <Tab title="Enable specific credit cards">
+
 ```javascript title="javascript"
 card : {
     detail : [
@@ -320,8 +324,8 @@ card : {
 
 **Parameters**
 
-* **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
-* **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+* **card\_code:** [<mark style="color:red;"> **Credit card code** </mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) <mark style="color:green;"> (**string**) </mark>
+* **enabled:** Option to enable the credit card <mark style="color:orange;"> (**boolean**)</mark>
 
 </Tab>
 </Tabs>
