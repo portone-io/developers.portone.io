@@ -1,0 +1,167 @@
+---
+emoji: 🛡
+title: PG결제창 이용하기
+description: PG사에서 제공하는 결제창을 이용하여 빌링키를 획득합니다
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Figure from "~/components/gitbook/Figure.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+#### PG사가 제공하는 일반 결제창에 고객이 카드정보를 입력하여 빌링키를 발급 받을수 있습니다.
+
+* **장점**: 카드정보가 서버 또는 포트원의 서버를 거치지 않고 직접 PG사로 전달되기 때문에 데이터 및 통신구간 암호화 등의 **추가 보안 프로세스가 없다**.
+* **단점**: PG사의 일반결제창을 통해 카드정보를 입력받기 때문에 웹브라우저를 통해서만 빌링키 발급이 이루어지며, **카드정보 입력란을 커스터마이징 할 수 없다.**(가맹점 사이트 친화적인 UI/UX 구성불가)
+
+<Figure src="/gitbook-assets/ko/image (269).png" caption="PG사 카드정보 획득 결제창 예제" />
+
+### <mark style="color:blue;">**STEP 01.**</mark> 발급 요청하기
+
+인증결제와 동일하게 **JavaScript SDK** 를 이용하여 PG사 결제창을 호출합니다. 빌링키를 획득하기 위해 아래 파라미터를 추가적으로 설정하면 모든 준비가 완료됩니다.
+
+> #### customer\_uid : 빌링키와 1:1로 매칭될 고유키
+
+<Tabs>
+<Tab title="JavaScript">
+```javascript title="client-side"
+  IMP.request_pay({ 
+    customer_uid: "gildong_0001_1234", // 카드(빌링키)와 1:1로 대응하는 값
+    /* ...생략... */
+  }, function (rsp) { // callback
+    if (rsp.success) {
+      // 빌링키 발급 성공
+    } else {
+      // 빌링키 발급 실패
+    }
+  });
+```
+
+
+
+
+<Hint style="info">
+**customer\_uid 란?**
+
+PG사가 발급한 빌링키와 1:1로 맵핑되는 가맹점이 지정한 고유값입니다. customer\_uid 는 카드번호 단위로 구분되서 저장되어야 합니다.
+
+예) **홍길동** 고객이 **A카드** 빌링키를 요청하는 경우 customer\_uid는 **회원 별 카드번호 단위**로 고유하게 발급되어야 합니다.
+
+</Hint>
+
+</Tab>
+</Tabs>
+
+### <mark style="color:blue;">**STEP 02.**</mark> 발급 응답 처리하기
+
+<Tabs>
+<Tab title="JavaScript">
+```javascript title="client-side"
+  IMP.request_pay({ 
+    /* ...중략... */
+  }, function (rsp) { // callback
+    if (rsp.success) {
+      // 빌링키 발급 성공
+      // jQuery로 HTTP 요청
+      jQuery.ajax({
+        url: "{customer_uid를 받을 서비스 URL}", 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        data: {
+          customer_uid: "gildong_0001_1234", // 카드(빌링키)와 1:1로 대응하는 값
+        }
+      });
+    } else {
+      // 빌링키 발급 실패
+    }
+  });
+```
+
+
+
+
+빌링키가 성공적으로 발급되면 가맹점 서버로 **customer\_uid** 를 전달합니다. 서버에서는 클라이언트로부터 **customer\_uid**를 전달받는 API endpoint를 생성합니다. 서버에서 해당 **customer\_uid** 를 사용하여 차후에 결제를 요청할 수 있습니다.
+
+```javascript title="server-side"
+  app.post("/billings", async (req, res) => {
+    try {
+      const { customer_uid } = req.body; // req body에서 customer_uid 추출
+        ...
+    } catch (e) {
+      res.status(400).send(e);
+    }
+  });
+```
+
+
+전달받은 customer\_uid 를 가맹점 내부서버 DB에 저장 후 추후 해당 정보를 이용하여 결제를 요청 합니다.
+
+</Tab>
+</Tabs>
+
+### <mark style="color:blue;">**STEP 03.**</mark> 결제 요청하기
+
+위에서 저장된 **customer\_uid** 를 이용하여 [**비 인증 결제(빌링키)API**](../../../api/api-4/api.md)를 호출하여 결제를 요청합니다.
+
+<Hint style="success">
+**REST API 를 이용하기 위해서는** [**Access Token**](../../../api/rest-api-access-token.md) **획득이 선행되어야 하는점 잊지 마세요**
+
+</Hint>
+
+<Tabs>
+<Tab title="Node.js">
+```javascript title="server-side"
+app.post("/billings", async (req, res) => {
+    try {
+      const { customer_uid } = req.body; // req의 body에서 customer_uid 추출
+      // 인증 토큰 발급 받기
+      const getToken = await axios({
+        url: "https://api.iamport.kr/users/getToken",
+        method: "post", // POST method
+        headers: { "Content-Type": "application/json" }, 
+        data: {
+          imp_key: "imp_apikey", // REST API 키
+          imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
+        }
+      });
+      const { access_token } = getToken.data; // 인증 토큰
+      ...
+      // 결제(재결제) 요청
+      const paymentResult = await axios({
+        url: \`https://api.iamport.kr/subscribe/payments/again\`,
+        method: "post",
+        // 인증 토큰을 Authorization header에 추가
+        headers: { "Authorization": access_token }, 
+        data: {
+          customer_uid,
+          merchant_uid: "order_monthly_0001", // 새로 생성한 결제(재결제)용 주문 번호
+          amount: 8900,
+          name: "월간 이용권 정기결제"
+        }
+      });
+      ...
+      const { code, message } = paymentResult;
+      if (code === 0) { // 카드사 통신에 성공(실제 승인 성공 여부는 추가 판단이 필요함)
+        if ( paymentResult.status === "paid" ) { //카드 정상 승인
+          res.send({ ... });
+        } else { //카드 승인 실패 (예: 고객 카드 한도초과, 거래정지카드, 잔액부족 등)
+          //paymentResult.status : failed 로 수신됨
+          res.send({ ... });
+        }
+        res.send({ ... });
+      } else { // 카드사 요청에 실패 (paymentResult is null)
+        res.send({ ... });
+      }
+    } catch (e) {
+      res.status(400).send(e);
+    }
+  });
+```
+
+
+</Tab>
+</Tabs>

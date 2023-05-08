@@ -8,13 +8,14 @@ import * as prose from "~/components/prose";
 export const components = prose;
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/gitbook/Hint";
+import Hint from "~/components/gitbook/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+
 
 ### **결제수단 및 PG사와 상관없이 취소 및 부분취소가 가능합니다.**
 
@@ -30,77 +31,99 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 #### Body
 
-<SwaggerParameter name="imp_uid" type="String(32)" required>
-
+<SwaggerParameter name="imp_uid" type="String(32)" required="true">
 <mark style="color:red;">
 
 **포트원 거래고유번호**
 
 </mark>
-</SwaggerParameter>
 
-<SwaggerParameter name="merchant_uid" type="String(40)">
-  **주문번호 (imp_uid 누락시 필수)**
 </SwaggerParameter>
+<SwaggerParameter name="merchant_uid" type="String(40)" required="false">
+**주문번호 (imp_uid 누락시 필수)**
 
-<SwaggerParameter name="amount" type="Double" >
+</SwaggerParameter>
+<SwaggerParameter name="amount" type="Double" required="false">
 취소 요청금액
 
-(**누락시 전액취소**)
+(
+
+**누락시 전액취소**
+
+)
 
 </SwaggerParameter>
+<SwaggerParameter name="tax_free" type="Double" required="false">
+취소요청금액 중 면세금액 (
 
-<SwaggerParameter name="tax_free" type="Double" >
-취소요청금액 중 면세금액 (**누락되면 0원처리**)
+**누락되면 0원처리**
+
+)
 
 </SwaggerParameter>
-
-<SwaggerParameter type="integer" name="vat_amount" >
+<SwaggerParameter type="integer" name="vat_amount" required="false">
 부가세 지정(기본값: null)
 
 **결제 시 부가세를 지정했던 경우 필수** 입력 바랍니다.
 
 지원 PG사
 
-\- 나이스페이먼츠
+\-나이스페이먼츠
 
-\- 이니시스
-
-</SwaggerParameter>
-
-<SwaggerParameter name="refund_tel" type="String(16)" >
-환불계좌 예금주 연락처(**가상계좌 취소**, <mark style="color:red;">**스마트로 PG사인 경우**</mark> 필수)
+\-이니시스
 
 </SwaggerParameter>
+<SwaggerParameter name="refund_tel" type="String(16)" required="false">
+환불계좌 예금주 연락처(
 
-<SwaggerParameter name="checksum" type="Double">
-  현재시점의 취소 가능한 잔액.
+**가상계좌**
+
+취소,
+
+<mark style="color:red;">**스마트로 PG사 인경우 필수**</mark>
+
+)
+
 </SwaggerParameter>
+<SwaggerParameter name="checksum" type="Double" required="false">
+현재시점의 취소 가능한 잔액.
 
-<SwaggerParameter name="reason" type="String(256)">
-  **취소사유**
 </SwaggerParameter>
+<SwaggerParameter name="reason" type="String(256)" required="false">
+**취소사유**
 
-<SwaggerParameter name="refund_holder" type="String(16)" >
+</SwaggerParameter>
+<SwaggerParameter name="refund_holder" type="String(16)" required="false">
 **환불계좌 예금주**
 
-(**가상계좌 취소**시 필수)
+(
+
+**가상계좌**
+
+취소시 필수)
 
 </SwaggerParameter>
+<SwaggerParameter name="refund_bank" type="String(4)" required="false">
+환불계좌 은행코드 (하단 은행코드표 참조, 
 
-<SwaggerParameter name="refund_bank" type="String(4)" >
-환불계좌 은행코드 (하단 은행코드표 참조, **가상계좌 취소**시 필수)
+**가상계좌 취소 시**
 
-</SwaggerParameter>
-
-<SwaggerParameter name="refund_account" type="String(16)" >
-환불계좌 계좌번호 (**가상계좌 취소**시 필수)
+ 필수)
 
 </SwaggerParameter>
+<SwaggerParameter name="refund_account" type="String(16)" required="false">
+환불계좌 계좌번호 (
 
+**가상계좌 취소**
+
+ 시 필수)
+
+</SwaggerParameter>
 <SwaggerParameter name="extra" type="Object">
-  추가 파라미터
+추가 파라미터
+
 </SwaggerParameter>
+
 
 ### Responses
 
@@ -238,7 +261,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`buyer_email`** <mark style="color:green;">**string(64)**</mark>
 
-**주문자 Email주소**
+**주문자 Email주소**\\
 
 **`buyer_tel`** <mark style="color:green;">**string(16)**</mark>
 
@@ -298,11 +321,11 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`customer_uid`** <mark style="color:green;">**string(80)**</mark>
 
-**해당 결제처리에 사용된 customer_uid**
+**해당 결제처리에 사용된 customer\_uid**
 
 **`customer_uid_usage`** <mark style="color:green;">**string**</mark>**(20)**
 
-**customer_uid 사용 구분코드**
+**customer\_uid 사용 구분코드**
 
 \['issue', 'payment', 'payment.scheduled']
 
@@ -315,7 +338,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 <Tabs>
 <Tab title="PaymentCancelAnnotation">
-**cancel_history array \[]**
+**cancel\_history array \[]**
 
 **`pg_tid`** <mark style="color:green;">**string**</mark>
 
@@ -344,7 +367,9 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 <SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
 
+
 </SwaggerResponse>
+
 </Swagger>
 
 ### **주요 요청 파라미터 상세 설명**
@@ -371,13 +396,13 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > 네이버페이 사용시 `extra.requester`를 설정해야 합니다.
 >
-> - `customer`: 구매자에 의한 요청
-> - `admin`: (기본값) 관리자에 의한 요청
+> * `customer`: 구매자에 의한 요청
+> * `admin`: (기본값) 관리자에 의한 요청
 >
 > 예시) `{ "extra": { "requester": "customer" } }`
 
 <Details>
-<p slot="summary">**Response Model Schema**</p>
+<p slot="summary">Response Model Schema</p>
 
 ```json
 {
@@ -435,7 +460,9 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
         "receipt_url": "string"
       }
     ],
-    "cancel_receipt_urls": ["string"],
+    "cancel_receipt_urls": [
+      "string"
+    ],
     "cash_receipt_issued": true,
     "customer_uid": "string",
     "customer_uid_usage": "issue"

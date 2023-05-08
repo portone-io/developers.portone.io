@@ -1,0 +1,100 @@
+---
+title: 2. 결제 요청하기
+description: 추가한 포트원 SDK를 통해 결제를 요청할 수 있습니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Hint from "~/components/gitbook/Hint.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+`PortOne.requestPayment()` 함수의 첫번째 파라미터를 설정하여 호출하면 결제창 호출이 가능합니다.
+
+이전 단계의 설치 방법에 따라 함수를 호출하는 방법이 다르니 참고해주세요.
+
+<Tabs>
+<Tab title="NPM으로 추가한 경우">
+```javascript
+import * as PortOne from '@portone/browser-sdk/v2';
+function requestPayment() {
+  PortOne.requestPayment({
+    // 가맹점 storeId로 변경해주세요.
+    storeId: 'store-9bf6076d-beef-4729-9521-ae66c14e0569',
+    orderName: '나이키 와플 트레이너 2 SD',
+    totalAmount: 1000,
+    pgProvider: 'PG_PROVIDER_TOSSPAYMENTS',
+    payMethod: 'CARD',
+    paymentId: 'paymentId_now',
+    taxFreeAmount: 300,
+    customer: {
+      customerId: 'customerId_now',
+      fullName: '신현성',
+      phoneNumber: '1670-5176',
+      email: 'test@portone.io',
+      address: '성수이로 길 16 JK타워 3층',
+      zipcode: '04783',
+    },
+    windowType: {
+      pc: 'IFRAME',
+    },
+    noticeUrls: ['https://www.naver.com'],
+    confirmUrl: 'https://www.naver.com',
+    appScheme: 'portone://',
+    isCulturalExpense: false,
+    currency: 'CURRENCY_KRW',
+    locale: 'KO_KR',
+  });
+}
+```
+
+</Tab>
+
+<Tab title="<script> 태그로 추가한 경우">
+`<script>` 태그를 이용해 추가한 경우 전역 객체 `window`에 `PortOne` 객체가 추가됩니다.
+
+```html
+<script>
+  function requestPayment() {
+    PortOne.requestPayment({
+      // 가맹점 storeId로 변경해주세요.
+      storeId: 'store-9bf6076d-beef-4729-9521-ae66c14e0569',
+      orderName: '나이키 와플 트레이너 2 SD',
+      totalAmount: 1000,
+      pgProvider: 'PG_PROVIDER_TOSSPAYMENTS',
+      payMethod: 'CARD',
+      paymentId: 'paymentId_now',
+      taxFreeAmount: 300,
+      customer: {
+        customerId: 'customerId_now',
+        fullName: '신현성',
+        phoneNumber: '1670-5176',
+        email: 'test@portone.io',
+        address: '성수이로 길 16 JK타워 3층',
+        zipcode: '04783',
+      },
+      windowType: {
+        pc: 'IFRAME',
+      },
+      noticeUrls: ['https://www.naver.com'],
+      confirmUrl: 'https://www.naver.com',
+      appScheme: 'portone://',
+      isCulturalExpense: false,
+      currency: 'CURRENCY_KRW',
+      locale: 'KO_KR',
+    });
+  }
+</script>
+```
+
+</Tab>
+</Tabs>
+
+<Hint style="info">
+**주문번호(paymentId) 생성 시 유의사항**
+
+주문번호는 결제창 요청 시 항상 **고유 값**으로 채번 되어야 합니다. 결제 완료 이후 **결제 위변조** 대사 작업시 주문번호를 이용하여 검증이 필요하므로 주문번호는 가맹점 서버에서 고유하게(**unique**)채번하여 **DB에 저장**해주세요
+
+</Hint>

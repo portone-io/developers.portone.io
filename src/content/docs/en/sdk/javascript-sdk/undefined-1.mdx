@@ -1,0 +1,231 @@
+---
+emoji: 📀
+title: Payment response parameters
+description: ''
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+
+
+## Callback response data for payment request
+
+<Hint style="info">
+Properties that are returned vary by PG or payment method.
+
+</Hint>
+
+> **`success`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**boolean**</mark>
+>
+> **Whether or not the payment succeded**
+>
+> True when payment is approved or virtual account is issued
+>
+> _<mark style="color:red;"><mark style="color:red;">(<mark style="color:red;"></mark><mark style="color:red;">returned as</mark> <mark style="color:red;"></mark><mark style="color:red;">`imp_success`</mark> <mark style="color:red;"></mark><mark style="color:red;">for some PG/payment method)</mark>_
+
+> **`error_code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Error code**
+>
+> PG's error code when payment fails.
+
+> **`error_msg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Error message**
+>
+> PG's error message when payment fails.
+
+> **`imp_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Unique i'mport payment ID**
+>
+> This may be null if success is false and validation fails.
+
+> **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Order ID**
+
+> **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Payment method code**
+
+<Details>
+<p slot="summary">Payment method codes</p>
+
+* `card` (credit card)
+* `trans`(instant account transfer)
+* `vbank`(virtual account)
+* `phone`(mobile micropayment)
+* `samsung`(Samsung Pay)
+* `kpay` (KPay app)
+* `kakaopay`(Kakao Pay)
+* `payco` ( PAYCO)
+* `lpay` (LPAY)
+* `ssgpay`(SSG Pay)
+* `tosspay`(Toss simple pay)
+* `cultureland`(Cultureland)
+* `smartculture`(Smart Culture)
+* `happymoney`(Happy Money)
+* `booknlife`(Book culture gift certificate)
+* `point`(points, e.g., Benepia)
+* `wechat`(WeChat Pay)
+* `alipay`(Alipay)
+* `unionpay`(UnionPay)
+* `tenpay`(TenPay)
+
+</Details>
+
+> **`paid_amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
+>
+> **Amount**
+
+> **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Status**
+>
+> * `ready` (payment in progress: payment window lost focus, virtual account issued)
+> * `paid` (payment complete)
+> * `failed` (payment failed: credit card limit exceeded, insufficient check card balance, payment window closed or cancel button clicked)
+
+> **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Customer name**
+
+> **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **PG code**
+>
+> [**PG codes**](../../tips/pg-codes.md)
+
+> **`emb_pg_provider`** <mark style="color:green;">**string**</mark>
+>
+> **Simple pay PG code**
+>
+> Simple pay PG that approved the payment
+>
+> * [x] This is omitted for some PGs or when simple payment is not selected.
+
+<Details>
+<p slot="summary">Simple pay codes</p>
+
+* naverpay
+* kakopay
+* payco
+* samsungpay
+* ssgpay
+* lpay
+* kpay
+
+</Details>
+
+> **`pg_tid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **PG transaction ID**
+>
+> PG assigned unique transaction ID.
+
+> **`buyer_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Customer name**
+
+> **`buyer_email`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Customer email**
+
+> **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Customer phone number**
+
+> **`buyer_addr`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Customer address**
+
+> **`buyer_postcode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Customer zip code**
+
+> **`custom_data`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Merchant custom data**
+
+> **`paid_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Payment approved at** **(UNIX timestamp)**
+
+<Hint style="info">
+**What is UNIX timestamp?**
+
+**Unix time** is a way of representing time. It is also called POSIX time or **Epoch time**. The time elapsed from 00:00:00 Coordinated Universal Time (UTC) on January 1, 1970 is converted into seconds and expressed as an integer. In Unix time, leap seconds are ignored. It is used by Unix-like operating systems and several other operating systems and file formats. Because of the leap second processing method, time cannot be expressed linearly, and leap seconds cannot be expressed in Coordinated Universal Time.
+
+</Hint>
+
+> **`receipt_url`**   <mark style="color:green;">**string**</mark>
+>
+> **Transaction receipt URL**
+
+## Additional properties
+
+> **`apply_num`**  <mark style="color:green;">**string**</mark>
+>
+> **Credit card approval number**
+>
+> * For credit card payment only
+
+> **`vbank_num`**  <mark style="color:green;">**string**</mark>
+>
+> **Virtual account number**
+
+<Hint style="warning">
+As received from PG, may contain special characters (-).
+
+</Hint>
+
+> **`vbank_name`**  <mark style="color:green;">**string**</mark>
+>
+> **Virtual account bank**
+
+> **`vbank_holder`**  <mark style="color:green;">**string**</mark>
+>
+> **Virtual account holder**
+
+<Hint style="warning">
+Shows business name on the contract. Some PGs may return null and requires additional processing.&#x20;
+
+</Hint>
+
+> **`vbank_date`**  <mark style="color:green;">**string**</mark>
+>
+> **Virtual account expiration** **(UNIX timestamp)**
+
+```json title="Sample response object"
+{
+    apply_num: "42827474",
+    bank_name: null,
+    buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
+    buyer_email: "Iamport@chai.finance",
+    buyer_name: "iamport tech support",
+    buyer_postcode: "123-456",
+    buyer_tel: "010-1234-5678",
+    card_name: "Shinhan card",
+    card_number: "5428790000000294",
+    card_quota: 0,
+    currency: "KRW",
+    custom_data: null,
+    imp_uid: "imp_347242536261",
+    merchant_uid: "57008833-33004",
+    name: "Carrot 10kg",
+    paid_amount: 1004,
+    paid_at: 1648344363,
+    pay_method: "card",
+    pg_provider: "kcp",
+    pg_tid: "22336466628585",
+    pg_type: "payment",
+    receipt_url: "https://admin8.kcp.co.kr/assist/bill.BillActionNew.do?cmd=card_bill&tno=22336466628585&order_no=imp_347242536261&trade_mony=1004",
+    status: "paid",
+    success: true
+}
+```
+

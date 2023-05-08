@@ -1,0 +1,178 @@
+---
+emoji: ⌨
+title: Get cash receipt API
+description: ''
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### Gets cash receipt information issued via i'mport.
+
+<Swagger method="get" path="/receipts/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Gets cash receipt information issued via i'mport.">
+<SwaggerDescription>
+
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="imp_uid" type="String" required="true">
+<mark style="color:red;">
+
+**i'mport transaction ID**
+
+</mark>
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="Success">
+<Tabs>
+<Tab title="ReceiptResponse">
+**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+
+**Response code**
+
+0: success, Not 0: check the message
+
+
+
+**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**Response message**
+
+A non-zero code includes a message like 'Invalid payment info'.
+
+
+
+**`response`` `**<mark style="color:red;">**`(ReceiptAnnotation, optional)`**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="ReceiptAnnotation">
+**`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+**`i'mport transaction ID`**
+
+
+
+**`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
+
+**`Cash receipt ID issued by PG`**
+
+&#x20;
+
+**`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>&#x20;
+
+**`Cash receipt ID issued by National Tax Service`**
+
+&#x20;
+
+**`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+**`Recipient type`**
+
+* Personal use: `person`&#x20;
+* Business use: `company`
+
+
+
+**`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+**`Cash receipt Amount`**
+
+&#x20;
+
+**`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+**`VAT`**
+
+&#x20;
+
+**`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
+
+**`Cash receipt URL`**&#x20;
+
+
+
+**`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+**Issued at** `UNIX TIMESTAMP`
+
+&#x20;
+
+**`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
+
+**`Cancelled at`** `UNIX TIMESTAMP`
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="404: Not Found" description="Transaction not found">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```json
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "imp_uid": "string",
+    "receipt_tid": "string",
+    "apply_num": "string",
+    "type": "person",
+    "amount": 0,
+    "vat": 0,
+    "receipt_url": "string",
+    "applied_at": 0,
+    "cancelled_at": 0
+ }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/receipts/getReceipt**](https://api.iamport.kr/#!/receipts/getReceipt)
+
+</Hint>

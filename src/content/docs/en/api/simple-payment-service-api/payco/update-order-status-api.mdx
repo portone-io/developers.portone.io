@@ -1,0 +1,124 @@
+---
+emoji: ⌨
+title: Update order status API
+description: ''
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### Updates the status of a PAYCO order.
+
+<Swagger method="post" path="/payco/orders/status/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Updates the status of a PAYCO order.">
+<SwaggerDescription>
+
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="imp_uid" type="String" required="true">
+<mark style="color:red;">
+
+**i'mport transaction ID**
+
+</mark>
+
+</SwaggerParameter>
+#### Body
+
+<SwaggerParameter name="status" type="String" required="true">
+<mark style="color:red;">**Status code**</mark>
+
+`DELIVERY_START`
+
+`PURCHASE_DECISION`
+
+`CANCELED`
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="Success">
+<Tabs>
+<Tab title="PaycoStatusResponse">
+**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+
+**Response code**
+
+0: success, Not 0: check the message
+
+
+
+**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**Response message**
+
+A non-zero code includes a message like 'Invalid payment info'.
+
+
+
+**`response` **<mark style="color:red;">**(PaycoStatusAnnotation, optional)**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="PaycoStatusAnnotation">
+**`status`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+**`PAYCO updated order status`**
+
+&#x20;\['DELIVERY\_START', 'PURCHASE\_DECISION', 'CANCELED']
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="Missing or invalid token">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "status": "DELIVERY_START"
+  }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/payco/changeOrderStatus**](https://api.iamport.kr/#!/payco/changeOrderStatus)
+
+</Hint>

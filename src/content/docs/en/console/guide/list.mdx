@@ -1,0 +1,145 @@
+---
+title: Payment activity
+description: Check the details of each payment transaction.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+
+
+Payment activity page
+
+* Filter payments by date range during which payment was attempted.&#x20;
+* Perform comprehensive search by specifying a search condition or for all data if no condition is specified.&#x20;
+* Filter payments by payment status, method, PG, type, and mode.
+* Total search results by status.
+* Payment activity list that shows payment status, customer information, payment method, PG, payment amount, mode, request time, and completion time.
+* Click the right corner of a payment record in the list to copy MID, UID or cancel payment.&#x20;
+* Click on a payment to view its details.
+* Click on a payment to cancel it.
+* Click on a payment to resend a webhook.
+* Total transaction amount of search results - Total sales by currency calculated based on the total refund amount.&#x20;
+* Excel download of basic payment details and selected additional data including customer, PG, credit card payment, and account transfer payment information.
+
+## Calendar filter&#x20;
+
+![](</gitbook-assets/en/Screen Shot 2022-06-20 at 5.23.19 PM.png>)
+
+* Specify the start and end date/time of the payment request to search for.&#x20;
+  * A payment request occurs when a customer attempts to make a payment.&#x20;
+  * Hence, the time of refund and completion may occur outside of the specified search period.&#x20;
+* You can specify the year, month, day, hour, and minute.&#x20;
+* For convenience, you can quickly set the dates using the buttons for today, yesterday, past 7 days, 30 days, or 90 days.
+* You can also manually enter the dates.
+
+## Comprehensive search
+
+![](</gitbook-assets/en/Screen Shot 2022-06-20 at 5.36.36 PM.png>)
+
+
+
+* Perform a search by specifying a filter or on all payment data.
+* Comprehensive search filters:
+  * i'mport transaction number
+  * Merchant transaction number
+  * Credit card approval number
+  * Customer name
+  * Customer mobile number
+  * Customer email&#x20;
+  * PG approval number
+  * Credit card number
+  * Merchant ID
+  * Payment environment
+  * Live account bank
+  * Virtual account bank&#x20;
+  * Bank account number
+  * Name of depositor
+  * Cash receipt issuance number
+  * Customer address
+  * Reason for cancellation
+  * Payment environment details
+  * Order name
+* The search logic is specified as 'like %value' that returns the values that start with the specified value.
+  * In the future, the order name and customer address will be changed to 'like %value%'.
+
+## Filters
+
+![](</gitbook-assets/en/Screen Shot 2022-06-20 at 6.27.42 PM.png>)
+
+* You can search payments by filtering on payment status, payment method, PG, payment type, and payment mode.&#x20;
+  * Payment status: All, Scheduled, Completed, Cancelled (full), Cancelled (partial), Failed&#x20;
+  * Payment method: Payment method&#x20;
+  * PG: PG&#x20;
+  * Payment type: All, subscription, general&#x20;
+  * Payment mode: All, live, test
+
+## Total payments by status
+
+![](</gitbook-assets/en/Screen Shot 2022-06-20 at 6.37.46 PM.png>)
+
+* Shows payment totals by status (all, completed, scheduled, failed, and cancelled).
+  * Failed payments include partial and full cancellations.
+
+## Payment activity list
+
+<figure><img src="https://files.gitbook.com/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FhTv8JEzyM5h4cYcL5StH%2Fuploads%2FZGe5GfaJyKteJXRaPrrU%2Fimage.png?alt=media&#x26;token=f08b1c85-c83a-4b5f-9aeb-107c40fb0445" alt=""/><figcaption></figcaption></figure>
+
+* Payment activity list shows results from a date range, comprehensive, or data filter search.
+* The default view shows all payment data for the last 6 months.
+* The list shows the payment status, customer information, payment method, PG, payment amount, payment type, request time, and approval time.&#x20;
+  * Customer information includes the customer's name, email, and phone number (displayed in order) that are specified at payment request via SDK.
+  * Payment type is general, subscription, or test.
+* Request and approval times are displayed in descending order, and you can click on either value to sort based the value.
+* If you click on the the dots to the right of a payment row in the Payment activity list, you can copy the merchant transaction number (merchant\_uid) and i'mport transaction number (imp\_uid). You can also cancel a completed or cancelled (partial) payment.
+
+## Payment details&#x20;
+
+![](</gitbook-assets/en/Screen Shot 2022-06-20 at 7.06.01 PM.png>)
+
+* The Payment details page consists of the customer and payment information sections.&#x20;
+* Customer information shows the customer's name, phone number, e-mail, and address submitted via SDK.&#x20;
+* Payment information shows:
+  * Payment status
+  * i'mport transaction number
+  * Each payment method shows:
+    * Credit card: acquirer and masked card number
+    * Virtual account: account bank, account holder, account number, and time of deposit
+    * Bank transfer: account bank
+    * Mobile micropayment: carrier
+  * Total payment amount&#x20;
+    * Order amount - discount amount
+  * Order amount
+  * List price (VAT)&#x20;
+  * Paid with points
+    * Paid with points refers to the points rewarded by simple payment companies and PGs.&#x20;
+  * Discount amount
+    * &#x20;Value retrieved from PG's message. Note that the availability of this data varies by PG.
+  * Credit card approval number
+  * Merchant ID
+  * PG
+  * PG approval number
+    * Payment ID assigned by the PG.
+  * Payment environment
+    * Parsed device and web/app environment information
+
+## Payment cancellation
+
+![](</gitbook-assets/en/Screen Shot 2022-06-20 at 8.28.25 PM.png>)
+
+![](</gitbook-assets/en/Screen Shot 2022-06-20 at 8.28.37 PM (1).png>)
+
+* You can cancel a payment from the Payment details page of a completed or partially cancelled payment.&#x20;
+* The default setting is full refund. If you want a partial refund, you can directly edit the refund amount or click `Partial refund` to edit and then click `Cancel Payment` at the bottom to finish.&#x20;
+* When you cancel a payment, the reason for cancellation is saved and sent to i'mport and PG.
+* If a payment to cancel includes tax-free amount, you can specify this amount in the provided input field.
+* When you cancel from the Admin console, a webhook is sent to the merchant's database for status update.&#x20;
+* For virtual accounts, you can additionally enter the following refund account information:&#x20;
+  * Refund account bank&#x20;
+  * Refund bank account number&#x20;
+  * Refund account holder
+
+## Resend webhook
+
+![](</gitbook-assets/en/Screen Shot 2022-06-20 at 8.44.01 PM.png>)
+

@@ -1,0 +1,54 @@
+---
+emoji: 🥏
+title: 통합인증 요청하기
+description: 통합인증 페이지를 호출하는 방법을 확인합니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### 통합인증은 아래 두가지 방법으로 호출할 수 있습니다.
+
+> **팝업**(**Default**) 방식
+>
+> 통합인증 본인인증 팝업창이 열리고 본인인증를 완료하면 두 번째 인자로 지정된 `callback` 함수가 실행됩니다.
+
+> **리디렉션**(redirect)방식(**Mobile** 환경에서만 적용)
+>
+> 모바일 환경에서 `param.popup`을 <mark style="color:red;">**`false`**</mark>`(기본값)`로 설정하면 본인인증 페이지로 리디렉션되고 본인인증을 완료하면 `param.m_redirect_url`로 다시 리디렉션됩니다.
+>
+> `param.popup`을 <mark style="color:red;">**`true`**</mark>로 설정하면 팝업(기본) 방식으로 작동합니다.
+>
+> **WebView 등 팝업이 차단되는 환경**에서는 `popup : false`로 설정하는 것을 권장합니다
+
+아래는 JavaScript SDK [**IMP.certification**](../../sdk/javascript-sdk/cft.md) 함수를 이용하여 통합인증 본인인증창을 호출하는 예제입니다.
+
+<Tabs>
+<Tab title="JavaScript">
+```javascript title="client-side"
+// IMP.certification(param, callback) 호출
+  IMP.certification({ // param
+    pg:'inicis_unified.{CPID}',//본인인증 설정이 2개이상 되어 있는 경우 필수 
+    merchant_uid: "ORD20180131-0000011", // 주문 번호
+    m_redirect_url : "{리디렉션 될 URL}", // 모바일환경에서 popup:false(기본값) 인 경우 필수, 예: https://www.myservice.com/payments/complete/mobile
+    popup : false // PC환경에서는 popup 파라미터가 무시되고 항상 true 로 적용됨
+  }, function (rsp) { // callback
+    if (rsp.success) {
+      ...,
+      // 인증 성공 시 로직,
+      ...
+    } else {
+      ...,
+      // 인증 실패 시 로직,
+      ...
+    }
+  });
+```
+
+
+</Tab>
+</Tabs>

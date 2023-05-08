@@ -1,0 +1,214 @@
+---
+emoji: ⌨
+title: Cancel cash receipt (external) API
+description: ''
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### Cancels a cash receipt issued for an external transaction.
+
+<Details>
+<p slot="summary"><strong>Supported PGs</strong></p>
+
+* **KG INICIS**
+* **NHN KCP**
+* **Settle Bank**
+* **NICE Payments**
+* **PAYJOA (Daou)**
+* **KICC**
+
+</Details>
+
+<Swagger method="delete" path="/receipts/external/{merchant_uid}" baseUrl="https://api.iamport.kr" summary="Cancels a cash receipt issued for an external transaction.">
+<SwaggerDescription>
+This cancels the issuance of a cash receipt for a payment processed externally through an i'mport supported PG. Pass the 
+
+**merchant_uid**
+
+, the unique order number for the cash transaction, that was used to request the issuance of cash receipt.
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="merchant_uid" type="String" required="true">
+<mark style="color:red;">
+
+**i'mport transaction ID**
+
+</mark>
+
+ 
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="Success">
+<Tabs>
+<Tab title="ExternalReceiptResponse">
+**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+
+**Response code**
+
+0: success, Not 0: check the message
+
+
+
+**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**Response message**
+
+A non-zero code includes a message like 'Invalid payment info'.
+
+
+
+**`response`**<mark style="color:red;">**`(ExternalReceiptAnnotation, optional)`**</mark>&#x20;
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="ExternalReceiptAnnotation">
+**`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+**`i'mport transaction ID`**
+
+
+
+**`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
+
+**`Cash receipt ID issued by PG`**
+
+&#x20;
+
+**`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>&#x20;
+
+**`Cash receipt ID issued by National Tax Service`**
+
+&#x20;
+
+**`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+**`Recipient type`**
+
+* Personal use: `person`&#x20;
+* Business use: `company`
+
+
+
+**`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+**`Cash receipt Amount`**
+
+&#x20;
+
+**`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+**`VAT`**
+
+&#x20;
+
+**`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
+
+**`Cash receipt URL`**&#x20;
+
+
+
+**`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+**Issued at** `UNIX TIMESTAMP`
+
+&#x20;
+
+**`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
+
+**`Cancelled at`** `UNIX TIMESTAMP`
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="400: Bad Request" description="Missing merchant_uid">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="404: Not Found" description="Result not found">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="500: Internal Server Error" description="Request failed">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "merchant_uid": "string",
+    "receipt_tid": "string",
+    "apply_num": "string",
+    "type": "person",
+    "amount": 0,
+    "vat": 0,
+    "receipt_url": "string",
+    "applied_at": 0,
+    "cancelled_at": 0
+  }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/receipts/revokeExternalReceipt**](https://api.iamport.kr/#!/receipts/revokeExternalReceipt)
+
+</Hint>

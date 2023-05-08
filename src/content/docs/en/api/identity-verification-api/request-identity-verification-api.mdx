@@ -1,0 +1,210 @@
+---
+emoji: ⌨
+title: Request identity verification API
+description: ''
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### Sends OTP number via SMS confirming the user's identity based on the submitted personal information.
+
+<Swagger method="post" path="/certifications/otp/request" baseUrl="https://api.iamport.kr" summary="Sends OTP number confirming user's identity via SMS.">
+<SwaggerDescription>
+If the user's personal information is passed to the API and verified by the carrier, an OTP (6-digit verification number) is sent to the user via SMS. This is only supported by some merchants who have been pre-approved by the carrier, and is currently only being serviced through **Danal**.&#x20;
+
+You can call the API by directly entering the name, date of birth + 7th digit of social security number, mobile phone number, and carrier information from the merchant. If the transmitted personal information is correct, a verification code SMS is sent to the mobile phone.&#x20;
+
+When you receive an HTTP Status 200 response, it contains the verification ID (`imp_uid`) in the response body. To complete the verification process, call the /certifications/otp/confirm/{imp\_uid} API with the OTP number.
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Body
+
+<SwaggerParameter required="true" name="name" type="String">
+<mark style="color:red;">
+
+**User name**
+
+</mark>
+
+</SwaggerParameter>
+<SwaggerParameter name="phone" type="String" required="true">
+<mark style="color:red;">**Mobile number**</mark>
+
+May contain special characters.
+
+</SwaggerParameter>
+<SwaggerParameter name="birth" type="String" required="true">
+<mark style="color:red;">**DOB**</mark>&#x20;
+
+**`YYYYMMDD (6-digit)`**
+
+May contain special characters.
+
+</SwaggerParameter>
+<SwaggerParameter name="gender_digit" type="String" required="true">
+<mark style="color:red;">**Gender code**</mark>&#x20;
+
+7th digit of 13-digit social security number
+
+</SwaggerParameter>
+<SwaggerParameter name="carrier" type="String" required="true">
+<mark style="color:red;">**Carrier code**</mark>
+
+**`SKT`**
+
+**`KT`**
+
+**`LGT`**
+
+</SwaggerParameter>
+<SwaggerParameter name="is_mvno" type="Boolean">
+**Budget phone?**
+
+</SwaggerParameter>
+<SwaggerParameter name="company" type="String">
+**Merchant service name**
+
+</SwaggerParameter>
+<SwaggerParameter name="merchant_uid" type="String">
+**Order ID**
+
+</SwaggerParameter>
+<SwaggerParameter name="pg" type="String">
+**PG code**
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="Success">
+<Tabs>
+<Tab title="CertificationOTPResponse">
+**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+
+**Response code**
+
+0: success, Not 0: check the message
+
+
+
+**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**Response message**
+
+A non-zero code includes a message like 'Invalid payment info'.
+
+
+
+**response **<mark style="color:red;">**(CertificationOTPAnnotation, optional)**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="CertificationOTPAnnotation">
+**`imp_uid *`` `**<mark style="color:green;">**`String`**</mark>
+
+**`i'mport verification ID`**&#x20;
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="400: Bad Request" description="Missing or invalid parameter error">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="500: Internal Server Error" description="Danal server error">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+### **Key request parameter description**
+
+> **`gender_digit`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`String`**</mark>
+>
+> **`Gender code`**
+>
+> 7th digit of 13-digit social security number
+>
+> 1 or 2 for those born before 2000, 3 or 4 those born on or after 2000 (odd: male, even: female)
+
+> **`carrier`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`String`**</mark>
+>
+> **`Carrier code`**&#x20;
+>
+> For budget phone users, set <mark style="color:red;">**`carrier`**</mark> to one of SKT, KT, or LGT, and set&#x20;
+>
+> **`is_mvno : true`**&#x20;
+
+> **`company`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`String`**</mark>
+>
+> **`Merchant service name`**&#x20;
+>
+> Service name to use in the SMS sent by KISA
+
+> **`pg`` `**<mark style="color:green;">**`String`**</mark>
+>
+> **`PG code`**&#x20;
+>
+> &#x20;Specify this value as follows only when you are using multiple Danal Merchant IDs.
+>
+> **danal.{Merchant ID}**
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```json
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "imp_uid": "string"
+  }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/certifications/requestOTP**](https://api.iamport.kr/#!/certifications/requestOTP)
+
+</Hint>

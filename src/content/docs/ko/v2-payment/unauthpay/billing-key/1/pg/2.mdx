@@ -1,0 +1,103 @@
+---
+title: 2. 결제창을 통해 빌링키 발급하기
+description: PG사가 제공하는 일반 결제창에 고객이 카드정보를 입력하여 빌링키를 발급 받을수 있습니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+## 포트원 SDK를 통해 빌링키 발급 요청하기
+
+`PortOne.requestIssueBillingKey()` 함수를 호출하면 빌링키를 발급하기 위한 결제창을 열 수 있습니다.
+
+<Tabs>
+<Tab title="NPM으로 추가한 경우">
+```javascript
+import * as PortOne from "@portone/browser-sdk/v2";
+function requestIssueBillingKey() {
+  PortOne.requestIssueBillingKey({
+    storeId: "store-9bf6076d-beef-4729-9521-ae66c14e0569",
+    pgProvider: "PG_PROVIDER_TOSSPAYMENTS",
+  });
+}
+```
+
+</Tab>
+
+<Tab title="<script> 태그로 추가한 경우">
+```javascript
+<script>
+  function requestIssueBillingKey() {
+    PortOne.requestIssueBillingKey({
+      storeId: "store-9bf6076d-beef-4729-9521-ae66c14e0569",
+      pgProvider: "PG_PROVIDER_TOSSPAYMENTS",
+    });
+  }
+</script>
+```
+
+</Tab>
+</Tabs>
+
+## 빌링키 발급 응답 처리하기
+
+빌링키가 성공적으로 발급되면 앞서 구현한 API로 빌링키를 전달합니다. API를 통해 빌링키로 즉시 결제를 진행하거나, 빌링키를 저장하여 정기결제를 예약할 수 있습니다.
+
+<Tabs>
+<Tab title="ES6 (async-await)">
+```javascript
+async function issueAndSendBillingKey() {
+  try {
+    const response = await PortOne.requestIssueBillingKey({
+      storeId: "store-9bf6076d-beef-4729-9521-ae66c14e0569",
+      pgProvider: "PG_PROVIDER_TOSSPAYMENTS",
+    });
+    // 결제가 제대로 완료되지 않은 경우 에러 코드가 존재합니다
+    if (response.code != null) {
+      return alert(response.message);
+    }
+    await axios({
+      url: MY_SEVER_URL + "/billings", // 앞서 구현한 결제 요청 API 혹은 저장 API
+      method: "post",
+      body: {
+        billingKey: response.billingKey,
+      }
+    });
+  } catch (error) {
+    // 빌링키 발급 실패
+  }
+}
+```
+
+</Tab>
+
+<Tab title="ES5 (then)">
+```javascript
+function issueAndSendBillingKey() {
+  PortOne.requestIssueBillingKey({
+    storeId: "store-9bf6076d-beef-4729-9521-ae66c14e0569",
+    pgProvider: "PG_PROVIDER_TOSSPAYMENTS",
+  }).then(function (response) {
+    // 결제가 제대로 완료되지 않은 경우 에러 코드가 존재합니다
+    if (response.code != null) {  
+      return alert(response.message);
+    }
+    axios({
+      url: MY_SEVER_URL + "/billings", // 앞서 구현한 결제 요청 API 혹은 저장 API
+      method: "post",
+      body: {
+        billingKey: response.billingKey,
+      },
+    }).then(/* 구현한 API 응답을 구성한 대로 처리하세요 */);
+  }).catch(function (error) {
+    // 빌링키 발급 실패
+  });
+}
+```
+
+</Tab>
+</Tabs>

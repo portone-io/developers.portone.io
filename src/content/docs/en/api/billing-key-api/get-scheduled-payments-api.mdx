@@ -1,0 +1,264 @@
+---
+emoji: ⌨
+title: Get scheduled payments API
+description: ''
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### Gets scheduled payments by billing key.
+
+<Swagger method="get" path="/subscribe/customers/{customer_uid}/schedules" baseUrl="https://api.iamport.kr" summary="Gets scheduled payments by billing key.">
+<SwaggerDescription>
+Returns scheduled payments using pagination (up to 3 months period).
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="customer_uid" type="String" required="true">
+<mark style="color:red;">
+
+**Billing key**
+
+</mark>
+
+</SwaggerParameter>
+#### Query
+
+<SwaggerParameter name="page" type="integer">
+**Search result paging**
+
+Starts at 1 (default: 1)
+
+</SwaggerParameter>
+<SwaggerParameter name="from" type="integer" required="true">
+<mark style="color:red;">**Search start time**</mark>&#x20;
+
+UNIX timestamp
+
+</SwaggerParameter>
+<SwaggerParameter name="to" type="integer" required="true">
+<mark style="color:red;">**Search end time**</mark>
+
+UNIX timestamp
+
+</SwaggerParameter>
+<SwaggerParameter name="schedule-status	" type="String">
+**Schedule status**&#x20;
+
+If not specified, returns for all status
+
+`scheduled`
+
+`executed`
+
+`revoked`
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="Success">
+<Tabs>
+<Tab title="CustomerResponse">
+**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+
+**Response code**
+
+0: success, Not 0: check the message
+
+
+
+**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**Response message**
+
+A non-zero code includes a message like 'Invalid payment info'.
+
+
+
+**`response`** <mark style="color:red;">**(CustomerAnnotation, optional)**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="CustomerAnnotation">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**Response code**
+
+0: success, Not 0: check the message
+
+
+
+**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**Response message**
+
+A non-zero code includes a message like 'Invalid payment info'.
+
+
+
+**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**`Customer ID`**\
+
+
+**`pg_provider`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**PG code for billing key**
+
+
+
+**`pg_id`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**PG merchant ID (MID) for billing key**
+
+
+
+**`card_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**`Credit card name`**
+
+
+
+**`card_code`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**`Credit card code`**
+
+&#x20;
+
+**`card_number`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**`Masked card number`**
+
+
+
+**`card_type`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**`Credit card type`**
+
+**Not supported in some PGs (returns null)**
+
+
+
+**`customer_name`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**`Customer name`**
+
+
+
+**`customer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**`Customer phone`**
+
+
+
+**`customer_email`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**`Customer email`**
+
+
+
+**`customer_addr`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**`Customer address`**&#x20;
+
+&#x20;
+
+**`customer_postcode`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**`Customer zip code`**
+
+
+
+**`inserted`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+
+**`Billing key issued at`** (UNIX timestamp)
+
+
+
+**`updated`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+
+**`Billing key updated at`** (UNIX timestamp)
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="400: Bad Request" description="Invalid parameter value">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```json
+{
+  "code": 0,
+  "message": "string",
+  "response": [
+    {
+      "customer_uid": "string",
+      "merchant_uid": "string",
+      "imp_uid": "string",
+      "schedule_at": "0",
+      "executed_at": "0",
+      "revoked_at": "0",
+      "amount": 0,
+      "name": "string",
+      "buyer_name": "string",
+      "buyer_email": "string",
+      "buyer_tel": "string",
+      "buyer_addr": "string",
+      "buyer_postcode": "string",
+      "custom_data": "string",
+      "schedule_status": "scheduled",
+      "payment_status": "paid",
+      "fail_reason": "string"
+    }
+  ]
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/subscribe.customer/findSchedulesByCustomer**](https://api.iamport.kr/#!/subscribe.customer/findSchedulesByCustomer)
+
+</Hint>

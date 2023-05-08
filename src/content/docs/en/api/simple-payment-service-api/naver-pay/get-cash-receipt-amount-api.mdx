@@ -1,0 +1,156 @@
+---
+emoji: ⌨
+title: Get cash receipt amount API
+description: ''
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### Gets Naver Pay amount subject to issuance of a cash receipt.
+
+<Swagger method="get" path="/payments/{imp_uid}/naver/cash-amount" baseUrl="https://api.iamport.kr" summary="Gets Naver Pay amount subject to issuance of a cash receipt.">
+<SwaggerDescription>
+
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="imp_uid" type="String" required="true">
+<mark style="color:red;">
+
+**i'mport transaction ID**
+
+</mark>
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="Success">
+<Tabs>
+<Tab title="NaverCashAmountResponse">
+**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+
+**Response code**
+
+0: success, Not 0: check the message
+
+
+
+**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+
+**Response message**
+
+A non-zero code includes a message like 'Invalid payment info'.
+
+
+
+**`response`` `**<mark style="color:red;">**`(NaverCashAmountAnnotation, optional)`**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="NaverCashAmountAnnotation">
+**`amount_total`` `**<mark style="color:purple;">**`integer`**</mark>
+
+**`Total amount subject to cash receipt issuance`**&#x20;
+
+&#x20;
+
+**`amount_by_npoint`** <mark style="color:purple;">**`integer`**</mark>&#x20;
+
+**`Npoint amount out of the amount_total`**
+
+
+
+**`amount_by_primary`** <mark style="color:purple;">**`integer`**</mark>
+
+**`Amount charged with the main payment method (credit card, account transfer etc.) out of the amount_total`**
+
+
+
+**`amount_supply`** <mark style="color:purple;">**`integer`**</mark>
+
+**`List price amount out of the amount_total`**
+
+
+
+**`amount_vat`** <mark style="color:purple;">**`integer`**</mark>
+
+**`VAT out of the amount_total`**
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="400: Bad Request" description="Invalid request - non-Naver Pay transaction specified">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access ">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="500: Internal Server Error" description="Invalid response">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "amount_total": 0,
+    "amount_by_npoint": 0,
+    "amount_by_primary": 0,
+    "amount_supply": 0,
+    "amount_vat": 0
+  }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/naver/queryCashAmount**](https://api.iamport.kr/#!/naver/queryCashAmount)
+
+</Hint>

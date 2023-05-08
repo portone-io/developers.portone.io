@@ -1,0 +1,86 @@
+---
+emoji: 🥏
+title: 2. Request verification
+description: Call the mobile identity verification window.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Hint from "~/components/gitbook/Hint.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+The mobile identity verification window can be invoked in the following two modes:
+
+> **Popup** (Default)
+>
+> Opens the identity verification popup window. When verification is complete, post-processing is performed through the `callback` function specified as the second argument of `IMP.certification`.
+
+> **Redirection** (applicable in **mobile** environment only)
+>
+> Redirects to the identity verification page by setting `param.popup` to `false (default)` in a mobile environment. When verification is complete, the page is redirected back to the URL specified by `param.m_redirect_url`.&#x20;
+>
+> To use the popup (default) mode, set `param.popup` to `true`.
+>
+> In environments where **popups are blocked, such as WebView**, it is recommended to set `popup` to `false`.
+
+<Hint style="warning">
+**Redirection mode**
+
+Redirection is supported in i'mport JavaScript **SDK 1.1.7** or later versions.
+
+</Hint>
+
+The following example calls the mobile identity verification window.
+
+<Tabs>
+<Tab title="JavaScript">
+```javascript title="client-side"
+  // Call IMP.certification(param, callback)
+  IMP.certification({ // param
+    merchant_uid: "ORD20180131-0000011", // Order ID
+    m_redirect_url : "{Redirect URL}", // Required when popup:false in mobile, Example: https://www.myservice.com/payments/complete/mobile
+    popup : false // Always set to true in PC
+  }, function (rsp) { // callback
+    if (rsp.success) {
+      ...,
+      // When verification is successful,
+      ...
+    } else {
+      ...,
+      // When verification fails,
+      ...
+    }
+  });
+```
+
+
+Check the [<mark style="color:blue;">**parameters list**</mark>](../../sdk/javascript-sdk/identity-verification-request-parameters.md) for requesting the mobile identity verification window.
+
+</Tab>
+
+<Tab title="JS ES Next">
+```javascript title="client-side"
+  // Call IMP.certification(param, callback)
+  IMP.certification({ // param
+    merchant_uid: "ORD20180131-0000011", // Order ID
+    m_redirect_url : "{Redirect URL}", // Required when popup:false in mobile, Example: https://www.myservice.com/payments/complete/mobile
+    popup : false // Always set to true in PC
+  }, rsp => { // callback
+    if (rsp.success) {
+      ...,
+      // When verification is successful,
+      ...
+    } else {
+      ...,
+      // When verification fails,
+      ...
+    }
+  });
+```
+
+
+</Tab>
+</Tabs>

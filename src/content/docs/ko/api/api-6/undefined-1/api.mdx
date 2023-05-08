@@ -1,0 +1,123 @@
+---
+emoji: ⌨
+title: 주문상태 단건 수정 API
+description: 페이코 주문상품의 상태를 변경합니다
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### 판매상품의 주문상태를 변경합니다.
+
+<Swagger method="post" path="/payco/orders/status/{imp_uid}" baseUrl="https://api.iamport.kr" summary="페이코 주문상품 단건상태 변경">
+<SwaggerDescription>
+
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="imp_uid" type="String" required="true">
+<mark style="color:red;">
+
+**포트원 고유번호**
+
+</mark>
+
+</SwaggerParameter>
+#### Body
+
+<SwaggerParameter name="status" type="String" required="true">
+<mark style="color:red;">**주문상태코드**</mark>
+
+`DELIVERY_START (배송시작-출고지시)`
+
+`PURCHASE_DECISION (구매확정)`
+
+`CANCELED (취소)`
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="성공">
+<Tabs>
+<Tab title="PaycoStatusResponse">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+
+
+**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+
+
+**`response`** <mark style="color:red;">**(PaycoStatusAnnotation, optional)**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="PaycoStatusAnnotation">
+**`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`PAYCO 주문변경된 상태`**
+
+\['DELIVERY\_START', 'PURCHASE\_DECISION', 'CANCELED']
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "status": "DELIVERY_START"
+  }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/payco/changeOrderStatus**](https://api.iamport.kr/#!/payco/changeOrderStatus)
+</Hint>

@@ -1,0 +1,259 @@
+---
+emoji: ⌨
+title: 페이먼트월 배송등록 API
+description: 페이먼트월 PG 사 이용시 실물상품 배송등록을 수행합니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### 배송정보를 등록합니다.
+
+이커머스(실물 상품) 비즈니스의 경우 페이먼트월에서 필수적으로 요구되는 배송정보 등록 API
+
+<Swagger method="post" path="/paymentwall/delivery" baseUrl="https://api.iamport.kr" summary="실물상품 배송정보를 등록합니다.">
+<SwaggerDescription>
+해당 배송등록을 누락한 경우 페이먼트월 PG사로부터 정산대금을 받지 못합니다.
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Body
+
+<SwaggerParameter name="imp_uid" type="String" required="true">
+<mark style="color:red;">
+
+**포트원 거래번호**
+
+</mark>
+
+</SwaggerParameter>
+<SwaggerParameter name="merchant_uid" type="String(40)" required="true">
+<mark style="color:red;">
+
+**주문번호**
+
+</mark>
+
+</SwaggerParameter>
+<SwaggerParameter name="type" type="String(10)" required="true">
+<mark style="color:red;">**상품구분코드**</mark>
+
+**`physical:실물`**
+
+**`digital:디지털`** 
+
+</SwaggerParameter>
+<SwaggerParameter name="status" type="String(10)" required="true">
+<mark style="color:red;">**배송상태 구분코드**</mark>
+
+**`order_placed`**
+
+**`order_shipped`**
+
+**`delivering`**
+
+**`delivered`** 
+
+</SwaggerParameter>
+<SwaggerParameter name="carrier_tracking_id" type="String(64)">
+**운송장 번호**
+
+physical 주문인 경우 필수 파라미터
+
+</SwaggerParameter>
+<SwaggerParameter name="carrier_type" type="String(64)">
+**운송사 이름**
+
+physical 주문인 경우 필수 파라미터
+
+</SwaggerParameter>
+<SwaggerParameter name="estimated_delivery_datetime" type="integer">
+**도착예상시간**
+
+Unix timestamp
+
+(digital 인 경우 현 시간을 기록해도 무방)
+
+</SwaggerParameter>
+<SwaggerParameter name="estimated_update_datetime" type="integer">
+**배송상태 업데이트 예정시간**
+
+Unix timestamp sec
+
+(digital 인 경우 지금 시간을 기록해도 무방)
+
+</SwaggerParameter>
+<SwaggerParameter name="reason" type="String(64)">
+**사유**
+
+</SwaggerParameter>
+<SwaggerParameter name="refundable" type="String" required="true">
+<mark style="color:red;">**환불가능여부**</mark>
+
+`yes`
+
+`no`
+
+</SwaggerParameter>
+<SwaggerParameter name="details" type="String(400)">
+**상세 사항**
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_email" type="String(50)" required="true">
+<mark style="color:red;">
+
+**수신자 email**
+
+</mark>
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_country" type="String(40)">
+**수신자 국가**
+
+(physical 주문인 경우 필수 파라미터)
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_city" type="String(40)">
+**수신자 시**
+
+(physical 주문인 경우 필수 파라미터)
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_zip" type="String(40)">
+**수신자 우편번호**
+
+(physical 주문인 경우 필수 파라미터)
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_state" type="String(40)">
+**수신자 주**
+
+미국이 아닌 경우 'N/A'로 표기
+
+(physical 주문인 경우 필수 파라미터)
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_street" type="String(40)">
+**수신자 거리명**
+
+(physical 주문인 경우 필수 파라미터)
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_phone" type="String(40)">
+**수신자 전화번호**
+
+(physical 주문인 경우 필수 파라미터)
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_firstname" type="String(40)">
+**수신자 이름**
+
+(physical 주문인 경우 필수 파라미터)
+
+</SwaggerParameter>
+<SwaggerParameter name="shipping_address_lastname" type="String(40)">
+**수신자 성**
+
+(physical 주문인 경우 필수 파라미터)
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="성공">
+<Tabs>
+<Tab title="PaymentwallDeliveryAnnotation">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+
+
+**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+
+
+**response** <mark style="color:red;">**(PaymentwallDeliveryDetailAnnotation, optional):**</mark>
+
+에러 메시지를 포함하거나, 성공시 success: 1 메시지를 포함합니다.
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="PaymentwallDeliveryDetailAnnotation">
+**`error_code`** <mark style="color:orange;">**`integer`**</mark>
+
+이 값이 없으면 정상적인 경우, 없으면 notices를 확인해봐야 합니다
+
+
+
+**`error`** <mark style="color:green;">**`string`**</mark>
+
+**`에러 메시지`**
+
+
+
+**`notices`** <mark style="color:yellow;background-color:yellow;">**`Array[string]`**</mark>
+
+**`자세한 에러 메시지`**
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```json
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "error_code": 0,
+    "error": "string",
+    "notices": [
+      "string"
+    ]
+  }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/paymentwall/paymentwall\_delivery**](https://api.iamport.kr/#!/paymentwall/paymentwall\_delivery)
+</Hint>

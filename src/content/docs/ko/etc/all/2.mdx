@@ -1,0 +1,72 @@
+---
+emoji: 🚚
+title: 인증 완료정보 전달하기
+description: 통합인증 이후 획득된 정보를 처리하는 방법을 안내합니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+인증 프로세스가 완료되면 반환되는 응답 객체(<mark style="color:red;">**`rsp`**</mark>)의 인증 성공 여부에 따라 처리 로직을 **`callback`** 함수에 작성합니다. 요청이 성공했을 경우에 **인증번호(`imp_uid`)를 서버에 전달**하는 로직을 다음 예제를 참고하여 작성합니다. 인증 성공시 [**반환되는 값**](../../sdk/javascript-sdk/cft-rt.md)을 확인하세요
+
+### 1. callback Data 전달 예제
+
+<Tabs>
+<Tab title="JavaScript">
+```javascript title="client-side"
+IMP.certification({
+    /* ...중략... */
+  }, function (rsp) { // callback
+    if (rsp.success) { // 인증 성공 시
+      // jQuery로 HTTP 요청
+      jQuery.ajax({
+        url: "{서버의 인증 정보를 받는 endpoint}", 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        data: { imp_uid: rsp.imp_uid }
+      });
+    } else {
+      alert("인증에 실패하였습니다. 에러 내용: " +  rsp.error_msg);
+    }
+  });
+```
+
+
+</Tab>
+
+<Tab title="JS ES Next">
+```javascript title="client-side"
+IMP.certification({
+    /* ...중략... */
+  }, rsp => { // callback
+    if (rsp.success) { // 인증 성공 시
+      // axios로 HTTP 요청
+      axios({
+        url: "{서버의 인증 정보를 받는 endpoint}", 
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        data: { imp_uid: rsp.imp_uid }
+      });
+    } else {
+      alert(\`인증에 실패하였습니다. 에러 내용: \${rsp.error_msg}\`);
+    }
+  });
+
+```
+
+
+</Tab>
+</Tabs>
+
+### 2. 리디렉션 전달 예제
+
+`IMP.`<mark style="color:red;">**`certification`**</mark> 호출 시 설정한 `param.`**`m_redirect_url`**로 인증 정보와 함께 다음과 같이 리디렉션됩니다.
+
+```uri title="Query String"
+GET {m_redirect_url}?imp_uid={}&merchant_uid={본인인증 건의 merchant_uid}&success={true 또는 false}
+```
+

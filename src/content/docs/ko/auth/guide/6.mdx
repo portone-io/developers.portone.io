@@ -1,0 +1,57 @@
+---
+emoji: 🛬
+title: 6. 결제완료 처리하기
+description: 결제가 완료되면 사용자에게 결제 실패 유무 메세지를 작성하는 예제입니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Hint from "~/components/gitbook/Hint.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+**Iframe** 방식으로 진행되는 대부분의 PC환경 결제인 경우 결제응답은 **callback** 함수로 받아볼 수 있으며 가맹점 서버에서 결제결과 처리가 최종적으로 완료되면 아래 예제처럼 결제 성공유무에 따른 분기를 통해 결과 메세지 처리를 진행 하실 수 있습니다.
+
+<Tabs>
+<Tab title="JavaScript">
+```javascript
+IMP.request_pay(
+  {/* 결제 요청 객체 */},
+  async requestPayResponse => {
+    const { success, error_msg } = requestPayResponse;
+    if (!success) {
+      alert(`결제에 실패하였습니다. 에러 내용: ${error_msg}`);
+      return;
+    }
+    // 이전 단계에서 구현한 결제정보 사후 검증 API 호출
+    const res = await axios({
+      url: "/payments/complete",
+      method: "post",
+      headers: { "Content-Type": "application/json" }, 
+      data: { imp_uid: "...", merchant_uid: "..." },
+    });
+    switch (res.status) {
+      case: "vbankIssued":
+        // 가상계좌 발급 시 로직
+        break;
+      case: "success":
+        // 결제 성공 시 로직
+        break;
+    }
+  }
+);
+```
+
+</Tab>
+</Tabs>
+
+새로운 페이지로 리디렉션되어 결제가 진행되는 대부분의 **모바일환경**에서의 결제는 **m\_redirect\_url** 파라미터로 설정하신 가맹점 **EndPoint URL 에서 최종 결제완료 메세지 처리**를 진행해 주시면 됩니다.
+
+<Hint style="info">
+**error\_msg, error\_code 정의**
+
+결제 실패 시 응답으로 내려가는 해당 파라미터는 PG사에서 내려준 오류코드와 메세지를 2차 가공없이 그대로 내려드리고 있습니다.
+
+</Hint>
