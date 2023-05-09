@@ -56,3 +56,19 @@ export function blockquote({ children, ...props }: any) {
     </blockquote>
   );
 }
+
+export function ul({ children, ...props }: any) {
+  return (
+    <ol {...props} class="my-2 list-disc pl-6 first:mt-0 last:mb-0">
+      {children}
+    </ol>
+  );
+}
+
+export function ol({ children, ...props }: any) {
+  return (
+    <ol {...props} class="my-2 list-decimal pl-6 first:mt-0 last:mb-0">
+      {children}
+    </ol>
+  );
+}
