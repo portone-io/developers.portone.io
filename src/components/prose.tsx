@@ -72,3 +72,27 @@ export function ol({ children, ...props }: any) {
     </ol>
   );
 }
+
+export function table({ children, ...props }: any) {
+  return (
+    <table {...props} class="my-2">
+      {children}
+    </table>
+  );
+}
+
+export function th({ children, ...props }: any) {
+  return (
+    <th {...props} class="bg-slate-1 border p-2">
+      {children}
+    </th>
+  );
+}
+
+export function td({ children, ...props }: any) {
+  return (
+    <th {...props} class="border p-2">
+      {children}
+    </th>
+  );
+}
