@@ -99,8 +99,29 @@ export const components = prose;
 >
 > * `CARD` (카드)
 > * `MOBILE` (휴대폰 소액결제)
+> * `EASY_PAY` (간편 결제)
 >
 > </details>
+
+### **`issueName`** <mark style="color:green;">**string**</mark>
+
+> **빌링키 발급 시 결제창에 표시되는 제목**
+
+### **`issueId`** <mark style="color:green;">**string**</mark>
+
+> **가맹점에서 채번하는 빌링키 발급 건 고유 ID**
+
+### **`displayAmount`** <mark style="color:green;">**number**</mark>
+
+> **빌링키 발급창에 띄워줄 금액**
+>
+> 해당 파라미터를 입력할 경우 `currency` 필드도 함께 입력해야 합니다.
+
+### **`currency`** <mark style="color:green;">**string**</mark>
+
+> **빌링키 발급창에 띄워줄 금액의 화폐**
+>
+> 해당 파라미터를 입력할 경우 `displayAmount` 필드도 함께 입력해야 합니다.
 
 ### **`customer`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
@@ -194,6 +215,38 @@ export const components = prose;
 
 > **결제 정보와 함께 관리하고 싶은 가맹점 커스텀 JSON 데이터**
 
+### **`bypass`** <mark style="color:blue;">**oneof object**</mark>
+
+> **PG사 빌링키 발급 창 호출 시 PG사로 그대로 bypass할 값들의 모음**
+>
+> > **`kakaopay`** <mark style="color:blue;">**object**</mark>
+> >
+> > 카카오페이 bypass 파라미터
+> >
+> > > **`custom_message`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 카카오페이 결제창에 띄워줄 사용자 정의 문구
+>
+>
+>
+> > **`smartro_v2`** <mark style="color:blue;">**object**</mark>
+> >
+> > 스마트로 V2 bypass 파라미터
+> >
+> > > **`SkinColor`** <mark style="color:green;">**string**</mark>
+> > >
+> > > UI 스타일 (기본값: `"RED"`)
+> > >
+> > > `"RED"`, `"GREEN"`, `"BLUE"`, `"PURPLE"` 중 하나의 값으로 입력해주세요.
+> > >
+> > > **`IsPwdPass`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 결제 비밀번호 등록 Skip 여부 (`"Y"`: 비밀번호 설정 미사용, `"N"`(기본값): 비밀번호 설정 사용)
+> > >
+> > > `"Y"`, `"N"` 중 하나의 값으로 입력해주세요.
+> > >
+
+
 ### **`card`** <mark style="color:blue;">**object**</mark>
 
 > `billingKeyMethod`가 `CARD`인 경우에만 허용됩니다.
@@ -259,3 +312,33 @@ export const components = prose;
 > > * CARRIER\_SK7 (SK7)
 > >
 > > </details>
+
+### **`easyPay`** <mark style="color:blue;">**object**</mark>
+
+> `billingKeyMethod`가 `EASY_PAY`인 경우에만 허용됩니다.
+>
+> **간편결제 정보**
+>
+> * 간편결제시, 간편 결제에 대한 세부 정보
+>
+> > **`easyPayProvider`** <mark style="color:green;">**string**</mark>
+> >
+> > **간편결제 수단**
+> >
+> > <details>
+  > >
+  > > <summary>간편결제 수단 유형</summary>
+  > >
+  > > * PAYCO (페이코)
+  > > * SAMSUNGPAY (삼성페이)
+  > > * APPLEPAY (애플페이)
+  > > * SSGPAY (SSGPAY)
+  > > * KAKAOPAY (KAKAOPAY)
+  > > * NAVERPAY (NAVERPAY)
+  > > * CHAI (CHAI)
+  > > * LPAY (LPAY)
+  > > * KPAY (KPAY)
+  > > * TOSSPAY (TOSSPAY)
+  > > * LGPAY (LGPAY)
+  > >
+  > > </details>
