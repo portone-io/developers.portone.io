@@ -12,16 +12,15 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 ### 1. 엑심베이 PG 설정하기
 
-[**엑심베이 설정**](../../ready/2.-pg/payment-gateway/exim.md) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**엑심베이 설정**](../../ready/2.-pg/payment-gateway/exim) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
 ![](</gitbook-assets/ko/스크린샷 2022-06-03 오후 3.34.40.png>)
 
 ### 2.결제 요청하기
 
-[JavaScript SDK](../../sdk/javascript-sdk-old/) IMP.**request\_pay**(param, callback)을 호출하여 엑심베이 결제창을 호출할 수 있습니다. **결제결과**는 **PC / 모바일** 모두 <mark style="color:red;">**callback**</mark> 으로 전달됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 엑심베이 결제창을 호출할 수 있습니다. **결제결과**는 **PC / 모바일** 모두 <mark style="color:red;">**callback**</mark> 으로 전달됩니다.
 
 <Tabs>
 <Tab title="인증결제창 요청">
@@ -44,7 +43,6 @@ IMP.request_pay({
 });
 ```
 
-
 **주요 파라미터 설명**
 
 **`pg` \***<mark style="color:green;">**string**</mark>
@@ -53,21 +51,17 @@ IMP.request_pay({
 
 **`eximbay`** 로 지정하면 됩니다.
 
-
-
 **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **결제수단 구분코드**
 
-* 신용카드: card
-* 위챗 : wechat
-* 알리페이 : alipay
-* 해외카드 : card
-* 유니온페이 : unionpay
-* 텐페이 : tenpay
-* 일본 편의점결제(eContext) : econtext
-
-
+- 신용카드: card
+- 위챗 : wechat
+- 알리페이 : alipay
+- 해외카드 : card
+- 유니온페이 : unionpay
+- 텐페이 : tenpay
+- 일본 편의점결제(eContext) : econtext
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -75,13 +69,9 @@ IMP.request_pay({
 
 매번 고유하게 채번되어야 합니다.
 
-
-
 **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
 **`주문자 연락처`**
-
-
 
 **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
 
@@ -89,32 +79,28 @@ IMP.request_pay({
 
 <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
 
-
-
 **`currency`** <mark style="color:green;">**`string`**</mark>
 
 **결제통화코드**
 
-* KRW
-* USD
-* EUR
-* GBP
-* JPY
-* THB
-* SGD
-* RUB
-* HKD
-* CAD
-* AUD
-
-
+- KRW
+- USD
+- EUR
+- GBP
+- JPY
+- THB
+- SGD
+- RUB
+- HKD
+- CAD
+- AUD
 
 **`language`** <mark style="color:green;">**`string`**</mark>
 
-* 한국어 : ko
-* 영어 : en
-* 중국어 : zh
-* 일본어 : jp
+- 한국어 : ko
+- 영어 : en
+- 중국어 : zh
+- 일본어 : jp
 
 </Tab>
 </Tabs>
@@ -133,9 +119,9 @@ IMP.request_pay({
 
 한국의 가상계좌와 같이 결제창 내에서는 등록을 한 다음에 고객에게 이메일 / 문자로 전달되는 화면을 편의점 카운터에서 지불하며 처리합니다.
 
-* 포트원 내부에서는 pay\_method : vbank 로 기록됨
-* Econtext 등록이 완료되었다는 콜백함수 및 웹훅 전송 (status : ready 상태 / vbank\_num 은 unknown 으로 고정)
-* Econtext 로부터 입금확인이 되면 포트원에서 엑심베이로부터 응답을 받아 status : paid 로 변경 후 결제완료처리에 대한 웹훅 전송
+- 포트원 내부에서는 pay_method : vbank 로 기록됨
+- Econtext 등록이 완료되었다는 콜백함수 및 웹훅 전송 (status : ready 상태 / vbank_num 은 unknown 으로 고정)
+- Econtext 로부터 입금확인이 되면 포트원에서 엑심베이로부터 응답을 받아 status : paid 로 변경 후 결제완료처리에 대한 웹훅 전송
 
 **편의점결제 테스트 진행순서**
 
@@ -143,7 +129,7 @@ IMP.request_pay({
 
 1.엑심베이 테스트모드 ON상태에서 1번과 같이 결제창 진행
 
-2\. 콜백 응답 중 pg\_tid 값을 별도로 메모 (포트원 관리자콘솔 PG사승인번호 컬럼에서 확인 가능) 3. [http://test.econ.ne.jp/site/tuchi\_2/tuchi\_menu\_2.html](http://test.econ.ne.jp/site/tuchi\_2/tuchi\_menu\_2.html) 로 이동 후 계정 로그인
+2\. 콜백 응답 중 pg_tid 값을 별도로 메모 (포트원 관리자콘솔 PG사승인번호 컬럼에서 확인 가능) 3. [http://test.econ.ne.jp/site/tuchi_2/tuchi_menu_2.html](http://test.econ.ne.jp/site/tuchi_2/tuchi_menu_2.html) 로 이동 후 계정 로그인
 
 (아이디 : ectest / 비번 : #eg0810# ) 4. ShopID : 361301, orderID : 2번에서 확보한 PG사승인번호 입력 5. 하단에 있는 **登録** 버튼 클릭 6. 다음 페이지에서 한 번 더 **登録** 클릭 7. 10분 후 결제상태가 status : **paid** 로 바뀌는지 확인 ( 이 때 입금에 대한 웹훅 발송됨 )
 

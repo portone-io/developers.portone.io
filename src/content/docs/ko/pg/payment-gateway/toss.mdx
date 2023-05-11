@@ -10,7 +10,6 @@ export const components = prose;
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 
-
 <Hint style="warning">
 **토스페이먼츠 구 모듈 연동 방법에 관한 매뉴얼**입니다.
 
@@ -20,37 +19,40 @@ import Hint from "~/components/gitbook/Hint.astro";
 
 ### 1. 토스페이먼츠 PG 설정하기
 
-[**토스페이먼츠 설정** ](../../ready/2.-pg/payment-gateway/tosspayments.md)페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**토스페이먼츠 설정** ](../../ready/2.-pg/payment-gateway/tosspayments)페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
 ![](</gitbook-assets/ko/screenshot 2022-05-29 7.38.40.png>)
 
 ### 2. 결제창 호출
 
-[JavaScript SDK](../../sdk/javascript-sdk-old/) IMP.**request\_pay**(param, callback)을 호출하여 토스페이먼츠 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request\_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되 모바일의 경우<mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 토스페이먼츠 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되 모바일의 경우<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
 
 예시 코드는 아래와 같습니다.
 
 ```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'uplus.{MID}',
-    pay_method : 'card',
+IMP.request_pay(
+  {
+    pg: "uplus.{MID}",
+    pay_method: "card",
     merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
-    name : '주문명:결제테스트',
-    amount : 1004,
-    buyer_email : 'test@portone.io',
-    buyer_name : '구매자이름',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : '서울특별시 강남구 삼성동',
-    buyer_postcode : '123-456',
-    m_redirect_url : '{모바일에서 결제 완료 후 리디렉션 될 URL}',
-    appCard: true // 설정시 신용카드 결제모듈에서 앱카드 결제만 활성화됩니다.
-}, function(rsp) { // callback 로직
-	//* ...중략... *//
-});
+    name: "주문명:결제테스트",
+    amount: 1004,
+    buyer_email: "test@portone.io",
+    buyer_name: "구매자이름",
+    buyer_tel: "010-1234-5678",
+    buyer_addr: "서울특별시 강남구 삼성동",
+    buyer_postcode: "123-456",
+    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+    appCard: true, // 설정시 신용카드 결제모듈에서 앱카드 결제만 활성화됩니다.
+  },
+  function (rsp) {
+    // callback 로직
+    //* ...중략... *//
+  }
+);
 ```
 
-
-***
+---
 
 **주요 파라미터 설명**
 
@@ -64,17 +66,17 @@ IMP.request_pay({
 
 **결제수단 구분코드**
 
-* card(신용카드)
-* trans(실시간 계좌이체)
-* vbank(가상계좌)
-* phone(휴대폰소액결제)
-* applepay(애플페이)
-* tosspay(토스페이)
-* naverpay(네이버페이)
-* kakaopay(카카오페이)
-* lpay(엘페이)
-* payco(페이코)
-* samsung(삼성페이)
+- card(신용카드)
+- trans(실시간 계좌이체)
+- vbank(가상계좌)
+- phone(휴대폰소액결제)
+- applepay(애플페이)
+- tosspay(토스페이)
+- naverpay(네이버페이)
+- kakaopay(카카오페이)
+- lpay(엘페이)
+- payco(페이코)
+- samsung(삼성페이)
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -92,7 +94,11 @@ IMP.request_pay({
 
 **에스크로 설정여부**
 
-<Codepen user="chaiport" slug="qBxbGXy" caption="토스페이먼츠 **결**제창 예제" />
+<Codepen
+  user="chaiport"
+  slug="qBxbGXy"
+  caption="토스페이먼츠 **결**제창 예제"
+/>
 
 <Hint style="info">
 **허브형 간편결제**

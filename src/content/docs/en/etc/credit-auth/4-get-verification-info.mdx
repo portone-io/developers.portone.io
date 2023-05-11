@@ -13,10 +13,9 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 Use the **`imp_uid`** obtained through identity verification to get the customer's verification information.
 
-### <mark style="color:blue;">**STEP 01.**</mark> Get verification ID (imp\_uid) on the server-side
+### <mark style="color:blue;">**STEP 01.**</mark> Get verification ID (imp_uid) on the server-side
 
 The following server-side code fetches the data returned from identity verification.
 
@@ -32,7 +31,6 @@ app.use(bodyParser.json());
 })
 ```
 
-
 </Tab>
 
 <Tab title="Node.js (redirection)">
@@ -45,13 +43,12 @@ app.use(bodyParser.json());
 })
 ```
 
-
 </Tab>
 </Tabs>
 
 ### <mark style="color:blue;">**STEP 02.**</mark> Get verification information
 
-To get verification information from the i'mport server, you must first get a [**REST API access token**](../../api/rest-api-access-token.md). Use the `access token` and `imp_uid` (verification ID) to call the <mark style="color:blue;">**Get identity verification info REST API**</mark> that returns the verification information as follows:
+To get verification information from the i'mport server, you must first get a [**REST API access token**](../../api/rest-api-access-token). Use the `access token` and `imp_uid` (verification ID) to call the <mark style="color:blue;">**Get identity verification info REST API**</mark> that returns the verification information as follows:
 
 ```javascript title="sever-side"
   app.use(bodyParser.json());
@@ -86,22 +83,20 @@ To get verification information from the i'mport server, you must first get a [*
   });
 ```
 
-
 ### <mark style="color:blue;">**STEP 03.**</mark> Using verification information
 
 Retrieve the following user information from the verification information and add the necessary service logic.
 
-* `name`: name
-* `gender`: gender (to be supported)
-* `birth`: date of birth
-* `unique_key`: same as CI value - unique key to identify the user, such as online social security number.
-* `unique_in_site`: same as DI value - unique key to identify the user per Merchant ID (website).
+- `name`: name
+- `gender`: gender (to be supported)
+- `birth`: date of birth
+- `unique_key`: same as CI value - unique key to identify the user, such as online social security number.
+- `unique_in_site`: same as DI value - unique key to identify the user per Merchant ID (website).
 
 <Hint style="info">
 **unique\_key and unique\_in\_site**
 
 Even if multiple credit cards are used to verify the same person, the same `unique_key` and `unique_in_site` values are returned for the cards under the same name.\
-
 
 </Hint>
 
@@ -112,7 +107,7 @@ Even if multiple credit cards are used to verify the same person, the same `uniq
     try {
       // Get access token
       /* ...Omitted... */
-      // Get verification info using imp_uid 
+      // Get verification info using imp_uid
       /* ...Omitted... */
       const certificationsInfo = getCertifications.data.response; // Save verification info
       // unique_key: Unique key for user, unique_in_site: Unique key for user per site
@@ -140,4 +135,3 @@ Even if multiple credit cards are used to verify the same person, the same `uniq
     }
   });
 ```
-

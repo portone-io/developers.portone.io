@@ -12,12 +12,14 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 ## 0. Definition
 
 Authenticated payment refers to a payment method that requests a credit card payment with the authentication key after receiving the authentication result for payment from the PG. It is the most popular payment method in Korea. When a payment is requested from the checkout page, the payment window of each PG is presented to the user. Once payment is authenticated in the the payment module of the credit card company selected by the user, payment request is processed based on the authentication result.
 
-<Figure src="/gitbook-assets/en/payment flow.png" caption="Basic authenticated payment flow" />
+<Figure
+  src="/gitbook-assets/en/payment flow.png"
+  caption="Basic authenticated payment flow"
+/>
 
 <Hint style="info">
 Communication for a live payment request is made directly between the merchant server and the PG server, and card information is not used in the payment request process.
@@ -26,12 +28,15 @@ Communication for a live payment request is made directly between the merchant s
 
 #### Authenticated payment is traditionally categorized into the following two types based on the authentication method.
 
-* ISP: authenticates pre-registered card information through a public key-based digital certificate
-* MPI: authenticates card information by entering the card number, CVC, and secure click password.
+- ISP: authenticates pre-registered card information through a public key-based digital certificate
+- MPI: authenticates card information by entering the card number, CVC, and secure click password.
 
 Recently, most credit card companies support their own **simple payment** service that allows users to pre-register a credit card and use the **6-digit payment password** to easily make a payment.
 
-<Figure src="/gitbook-assets/en/image (138).png" caption="NHN KCP authenticated payment - Shinhan Card simple pay window" />
+<Figure
+  src="/gitbook-assets/en/image (138).png"
+  caption="NHN KCP authenticated payment - Shinhan Card simple pay window"
+/>
 
 #### You can easily integrate authenticated payments through i'mport!
 
@@ -46,15 +51,20 @@ You must first install **jQuery 1.0 or later version**.
 
 ```html title="client-side"
 <!-- jQuery -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+<script
+  type="text/javascript"
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+></script>
 <!-- iamport.payment.js -->
-<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-{SDK-latest version}.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdn.iamport.kr/js/iamport.payment-{SDK-latest version}.js"
+></script>
 ```
-
 
 ## 2. Initialize IMP object
 
-#### On the checkout page, initialize the IMP object using your [Merchant ID](../../ready/3..md).
+#### On the checkout page, initialize the IMP object using your [Merchant ID](../../ready/3.).
 
 <Tabs>
 <Tab title="JavaScript">
@@ -63,7 +73,6 @@ You must first install **jQuery 1.0 or later version**.
   IMP.init("Merchant ID"); // Example: imp00000000 
 ```
 
-
 </Tab>
 
 <Tab title="JavaScript (ES Next)">
@@ -71,7 +80,6 @@ You must first install **jQuery 1.0 or later version**.
   const IMP = window.IMP; // Can be omitted
   IMP.init("{Merchant ID}"); // Example: imp00000000a
 ```
-
 
 </Tab>
 </Tabs>
@@ -83,9 +91,9 @@ Be sure to initialize the IMP object **only once**.
 
 ## 3. Request payment
 
-Once [**IMP object initialization**](2..md) is complete, you can open the payment window.
+Once [**IMP object initialization**](2.) is complete, you can open the payment window.
 
-You can pass the [**parameters**](../../sdk/javascript-sdk/) required to call the payment window in the first argument of the **request\_pay** function.
+You can pass the [**parameters**](../../sdk/javascript-sdk/) required to call the payment window in the first argument of the **request_pay** function.
 
 <Tabs>
 <Tab title="JavaScript">
@@ -191,8 +199,8 @@ class RequestPay extends React.Component {
 <Hint style="info">
 **Note -  Creating an order ID (merchant\_uid)**
 
-* The order number must always be assigned a **unique** **value** each time the payment window is requested.
-* After the payment process is complete, the server uses the order ID to retrieve the order information for **payment fraud check**. Be sure to create a **unique ID** on the merchant server and **store it in the DB**.
+- The order number must always be assigned a **unique** **value** each time the payment window is requested.
+- After the payment process is complete, the server uses the order ID to retrieve the order information for **payment fraud check**. Be sure to create a **unique ID** on the merchant server and **store it in the DB**.
 
 </Hint>
 
@@ -201,53 +209,63 @@ class RequestPay extends React.Component {
 ```html title="sample.html"
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <!-- jQuery -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+    ></script>
     <!-- iamport.payment.js -->
-    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
+    ></script>
     <script>
-        var IMP = window.IMP; 
-        IMP.init("impXXXXXXXXX"); 
+      var IMP = window.IMP;
+      IMP.init("impXXXXXXXXX");
 
-        function requestPay() {
-            IMP.request_pay({
-                pg : 'kcp',
-                pay_method : 'card',
-                merchant_uid: "57008833-33004", 
-                name : 'Carrots 10kg',
-                amount : 1004,
-                buyer_email : 'Iamport@chai.finance',
-                buyer_name : 'iamport tech support',
-                buyer_tel : '010-1234-5678',
-                buyer_addr : 'Samsung-dong, Gangnam-gu, Seoul',
-                buyer_postcode : '123-456'
-            }, function (rsp) { // callback
-                if (rsp.success) {
-                    console.log(rsp);
-                } else {
-                    console.log(rsp);
-                }
-            });
-        }
+      function requestPay() {
+        IMP.request_pay(
+          {
+            pg: "kcp",
+            pay_method: "card",
+            merchant_uid: "57008833-33004",
+            name: "Carrots 10kg",
+            amount: 1004,
+            buyer_email: "Iamport@chai.finance",
+            buyer_name: "iamport tech support",
+            buyer_tel: "010-1234-5678",
+            buyer_addr: "Samsung-dong, Gangnam-gu, Seoul",
+            buyer_postcode: "123-456",
+          },
+          function (rsp) {
+            // callback
+            if (rsp.success) {
+              console.log(rsp);
+            } else {
+              console.log(rsp);
+            }
+          }
+        );
+      }
     </script>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Sample Payment</title>
-</head>
-<body>
-    <button onclick="requestPay()">Pay</button> <!-- Pay button -->
-</body>
+  </head>
+  <body>
+    <button onclick="requestPay()">Pay</button>
+    <!-- Pay button -->
+  </body>
 </html>
 ```
-
 
 ## 4-a. Process payment result (iframe)
 
 When the payment process is completed successfully, you can receive the payment result depending on the payment window type as follows:
 
-|         iframe        |         Popup        |
-| :-------------------: | :------------------: |
-| **callback function** | **m\_redirect\_url** |
+|        iframe         |       Popup        |
+| :-------------------: | :----------------: |
+| **callback function** | **m_redirect_url** |
 
 <Hint style="info">
 **What is an iframe?**\
@@ -255,9 +273,12 @@ It is a nested browser that effectively **embeds another HTML page into the curr
 
 </Hint>
 
-<Figure src="/gitbook-assets/en/spaces\_hTv8JEzyM5h4cYcL5StH\_uploads\_tTzTD0S6IF5zvCag4EKG\_image (1).png" caption="iframe example" />
+<Figure
+  src="/gitbook-assets/en/spaces\_hTv8JEzyM5h4cYcL5StH\_uploads\_tTzTD0S6IF5zvCag4EKG\_image (1).png"
+  caption="iframe example"
+/>
 
-#### Most payments that are processed in the PC environment can receive payment results through the callback function, which is the second argument of the request\_pay() function.
+#### Most payments that are processed in the PC environment can receive payment results through the callback function, which is the second argument of the request_pay() function.
 
 <Hint style="success">
 For **PayPal** payments, the payment window is loaded as a **pop-up (new window)** in a PC environment and you can also receive the payment result through **m\_redirect\_url**.
@@ -291,7 +312,6 @@ IMP.request_pay({
     });
 ```
 
-
 </Tab>
 
 <Tab title="JavaScript (ES Next)">
@@ -318,16 +338,15 @@ IMP.request_pay({
   });
 ```
 
-
 </Tab>
 </Tabs>
 
-Based on the the payment result (sucess/fail) in the response object ([**rsp**](../../sdk/javascript-sdk/)) returned after the payment process is complete, add the post-payment processing logic in the **callback** function. When the payment is successful, add the logic to **send the payment ID (imp\_uid) and order ID (merchant\_uid) to the server** as shown above.
+Based on the the payment result (sucess/fail) in the response object ([**rsp**](../../sdk/javascript-sdk/)) returned after the payment process is complete, add the post-payment processing logic in the **callback** function. When the payment is successful, add the logic to **send the payment ID (imp_uid) and order ID (merchant_uid) to the server** as shown above.
 
-> For information about the response parameter passed to the **callback** function, refer to [<mark style="color:red;">**rsp**</mark>](../../sdk/javascript-sdk/undefined-1.md).
+> For information about the response parameter passed to the **callback** function, refer to [<mark style="color:red;">**rsp**</mark>](../../sdk/javascript-sdk/undefined-1).
 
 <Hint style="danger">
-The final payment result logic processing must be handled stably by using a [<mark style="color:red;">**webhook**</mark>](../../result/webhook.md). If you don't set up a webhook, you may fail to receive the payment result.
+The final payment result logic processing must be handled stably by using a [<mark style="color:red;">**webhook**</mark>](../../result/webhook). If you don't set up a webhook, you may fail to receive the payment result.
 
 </Hint>
 
@@ -344,7 +363,6 @@ IMP.request_pay({
   }, /* callback */);     // callback is not called
 ```
 
-
 </Tab>
 
 <Tab title="JavaScript (ES Next)">
@@ -355,11 +373,10 @@ IMP.request_pay({
 }, /* callback */); // callback is not called
 ```
 
-
 </Tab>
 </Tabs>
 
-If **m\_redirect\_url** is specified as the **request\_pay** function parameter as above, the payment result is sent to the URL address in the form of a query string after payment is completed.
+If **m_redirect_url** is specified as the **request_pay** function parameter as above, the payment result is sent to the URL address in the form of a query string after payment is completed.
 
 The following is an example of redirecting URL based on the query string.
 
@@ -379,13 +396,13 @@ curl https://myservice.com/payments/complete?imp_uid=unique_iamport_paymentID&me
 </Tab>
 </Tabs>
 
-|                  Parameter                  |          Description          |    Remarks   |
-| :-----------------------------------------: | :---------------------------: | :----------: |
-|                 **imp\_uid**                |       i'mport payment ID      |    Common    |
-|              **merchant\_uid**              |       Merchant order ID       |    Common    |
-|               **imp\_success**              | Whether payment is successful |    Common    |
-| <mark style="color:red;">error\_code</mark> |           Error code          | Upon failure |
-|  <mark style="color:red;">error\_msg</mark> |         Error message         | Upon failure |
+|                 Parameter                  |          Description          |   Remarks    |
+| :----------------------------------------: | :---------------------------: | :----------: |
+|                **imp_uid**                 |      i'mport payment ID       |    Common    |
+|              **merchant_uid**              |       Merchant order ID       |    Common    |
+|              **imp_success**               | Whether payment is successful |    Common    |
+| <mark style="color:red;">error_code</mark> |          Error code           | Upon failure |
+| <mark style="color:red;">error_msg</mark>  |         Error message         | Upon failure |
 
 <Hint style="danger">
 If the **payment window is redirected to a new page**, you cannot receive the payment result via callback.
@@ -396,15 +413,15 @@ If the **payment window is redirected to a new page**, you cannot receive the pa
 >
 > The `payment process is complete` when:
 >
-> 1. **Payment is successful** (Status: `paid`, imp\_success: `true`)
-> 2. **Payment fails** (Status: `failed`, imp\_success: `false`)
+> 1. **Payment is successful** (Status: `paid`, imp_success: `true`)
+> 2. **Payment fails** (Status: `failed`, imp_success: `false`)
 > 3. **Payment window fails to open** due to PG module setting error
 > 4. User **terminates the payment process** by clicking the X or Cancel button
 > 5. **Payment is suspended** due to invalid card information, limit exceeded, insufficient balance, etc.
-> 6. **Virtual account is issued** (status: `ready`, imp\_success: `true`)
+> 6. **Virtual account is issued** (status: `ready`, imp_success: `true`)
 
 <Hint style="danger">
-The final payment result logic processing must be handled stably by using a [<mark style="color:red;">**webhook**</mark>](../../result/webhook.md). If you don't set up a webhook, you may fail to receive the payment result.
+The final payment result logic processing must be handled stably by using a [<mark style="color:red;">**webhook**</mark>](../../result/webhook). If you don't set up a webhook, you may fail to receive the payment result.
 
 </Hint>
 
@@ -412,9 +429,9 @@ The final payment result logic processing must be handled stably by using a [<ma
 
 Based on the payment information from the client, the server verifies the <mark style="color:red;">**payment amount for fraud**</mark> and saves the payment information in the database if needed. The following are the steps for verifying the payment information.
 
-* Server receives the i'mport payment ID (**imp\_uid**) and order ID (**merchant\_uid**)
-* Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the payment details.
-* Based on the response, compare the actual payment amount with the payment request amount (from merchant's database).
+- Server receives the i'mport payment ID (**imp_uid**) and order ID (**merchant_uid**)
+- Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the payment details.
+- Based on the response, compare the actual payment amount with the payment request amount (from merchant's database).
 
 ### <mark style="color:green;">**STEP 01**</mark> Server receives payment result
 
@@ -424,17 +441,16 @@ Example of handling a POST request to the merchant endpoint URL that receives th
 
 ```javascript title="server-side"
 app.use(bodyParser.json());
-  // "{Merchant endpoint that receives server's payment info}" POST request receiver
-  app.post("/payments/complete", async (req, res) => {
-    try {
-      // Get imp_uid, merchant_uid from req.body
-      const { imp_uid, merchant_uid } = req.body; 
-    } catch (e) {
-      res.status(400).send(e);
-    }
-  });
+// "{Merchant endpoint that receives server's payment info}" POST request receiver
+app.post("/payments/complete", async (req, res) => {
+  try {
+    // Get imp_uid, merchant_uid from req.body
+    const { imp_uid, merchant_uid } = req.body;
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
 ```
-
 
 </Tab>
 </Tabs>
@@ -451,13 +467,13 @@ app.use(bodyParser.json());
     app.post("/payments/complete", async (req, res) => {
       try {
         // Get imp_uid, merchant_uid from req.body
-        const { imp_uid, merchant_uid } = req.body; 
+        const { imp_uid, merchant_uid } = req.body;
         ...
         // Get access token
         const getToken = await axios({
           url: "https://api.iamport.kr/users/getToken",
           method: "post", // POST method
-          headers: { "Content-Type": "application/json" }, 
+          headers: { "Content-Type": "application/json" },
           data: {
             imp_key: "imp_apikey", // REST API key
             imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
@@ -468,11 +484,11 @@ app.use(bodyParser.json());
         // Get payment info from i'mport server using imp_uid
         const getPaymentData = await axios({
           // Pass imp_uid
-          url: \`https://api.iamport.kr/payments/\${imp_uid}\`, 
+          url: \`https://api.iamport.kr/payments/\${imp_uid}\`,
           // GET method
-          method: "get", 
+          method: "get",
           // Add access toke to Authorization header
-          headers: { "Authorization": access_token } 
+          headers: { "Authorization": access_token }
         });
         const paymentData = getPaymentData.data.response; // Payment info
         ...
@@ -481,7 +497,6 @@ app.use(bodyParser.json());
       }
     });
 ```
-
 
 </Tab>
 </Tabs>
@@ -506,7 +521,7 @@ app.use(bodyParser.json());
   app.post("/payments/complete", async (req, res) => {
     try {
       // Get imp_uid, merchant_uid from req.body
-      const { imp_uid, merchant_uid } = req.body; 
+      const { imp_uid, merchant_uid } = req.body;
       // Get access token
       /* ...Omitted... */
       // Get payment info from iamport server using imp_uid
@@ -520,7 +535,7 @@ app.use(bodyParser.json());
       // Verify payment
       const { amount, status } = paymentData;
       // If amount matches. Processed amount === Requested amount
-      if (amount === amountToBePaid) { 
+      if (amount === amountToBePaid) {
         await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Save payment info to DB
         ...
         switch (status) {
@@ -545,14 +560,13 @@ app.use(bodyParser.json());
   });
 ```
 
-
 </Tab>
 </Tabs>
 
 The original requested amount is queried from the database with the **`merchant_uid`**, and the actual processed amount is retrieved from the i'mport server with the **`imp_uid`**. The **two values ​​are compared** to verify that they match. **If the verification is successful, the payment information is saved in the database** and a response is returned based on the payment status (**`status`**). Otherwise, an error message is returned.
 
 <Hint style="danger">
-The payment result must be processed on the database based on the data received through a [**webhook**](../../result/webhook.md) for stable processing without any missing result data.
+The payment result must be processed on the database based on the data received through a [**webhook**](../../result/webhook) for stable processing without any missing result data.
 
 </Hint>
 
@@ -586,7 +600,6 @@ IMP.request_pay({
   });
 ```
 
-
 </Tab>
 
 <Tab title="JavaScript (ES Next)">
@@ -612,7 +625,9 @@ IMP.request_pay({
     } else {
       alert(\`Payment failed. Error message: \${rsp.error_msg}\`);
     }
-  });
+
+});
+
 ```
 
 
@@ -627,3 +642,4 @@ In a typical **mobile environment** payment processed by redirecting to a new pa
 These parameters are returned as a response when the payment fails and they contains the same values returned from the PG without additional processing. Note that we don't yet provide definitions for the error codes and error messages that have accumulated in our system.
 
 </Hint>
+```
