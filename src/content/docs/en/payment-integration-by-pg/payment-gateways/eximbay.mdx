@@ -12,16 +12,15 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 ### 1. Configure Eximbay PG settings
 
-Refer to the [**Eximbay settings**](../../ready/2.-pg/payment-gateway-settings/undefined-6.md) page to configure the PG settings.
+Refer to the [**Eximbay settings**](../../ready/2.-pg/payment-gateway-settings/undefined-6) page to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-03 3.34.40.png>)
 
 ### 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request\_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
 
 In PC and mobile browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
 
@@ -45,84 +44,72 @@ IMP.request_pay({
 });
 ```
 
-
 ####
 
 ### Key parameter description
 
-**`pg`** <mark style="color:red;">**\***</mark>**  **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
 
 **PG code**
 
-* If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-* If there are multiple PG settings, set to **`eximbay`**.
+- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+- If there are multiple PG settings, set to **`eximbay`**.
 
-
-
-**`pay_method`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`pay_method`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
 
 **Payment method code**
 
 <Details>
 <p slot="summary">Payment method codes</p>
 
-* `card` (credit card)
-* `wechat`  
-* `alipay`  
-* `card` (foreign credit card)
-* `unionpay`  
-* `tenpay`
-* `econtext` (payment via Japanese convenience store)
+- `card` (credit card)
+- `wechat`
+- `alipay`
+- `card` (foreign credit card)
+- `unionpay`
+- `tenpay`
+- `econtext` (payment via Japanese convenience store)
 
 </Details>
 
-
-
-**`merchant_uid`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
 
 **Order ID**
 
 Must be unique for each request.\
 
-
 **`buyer_tel`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
 **`Customer phone`**
 
-
-
-**`amount`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
 
 **Payment amount**
 
 Must be an integer (not string)
 
-
-
 **`currency`**<mark style="color:green;">**`string`**</mark>
 
 **Currency**
 
-* KRW    
-* USD    
-* EUR    
-* GBP     
-* JPY    
-* THB    
-* SGD    
-* RUB    
-* HKD    
-* CAD    
-* AUD
+- KRW
+- USD
+- EUR
+- GBP
+- JPY
+- THB
+- SGD
+- RUB
+- HKD
+- CAD
+- AUD
 
+**` language``  `**<mark style="color:green;">**`string`**</mark>
 
-
-**`language`` `**<mark style="color:green;">**`string`**</mark>
-
-* Korean : ko  
-* English : en  
-* Chinese : zh   
-* Japanese : jp
+- Korean : ko
+- English : en
+- Chinese : zh
+- Japanese : jp
 
 </Tab>
 </Tabs>
@@ -139,11 +126,11 @@ i'mport does not support Eximbay subscription payment.
 
 ### Convenience store payment method
 
-As with virtual accounts in Korea, payment is processed at the convenience store counter  using the message sent to the customer by e-mail or text message after requesting payment via the payment window.
+As with virtual accounts in Korea, payment is processed at the convenience store counter using the message sent to the customer by e-mail or text message after requesting payment via the payment window.
 
-* i'mport internally sets pay\_method : vbank
-* Sends callback and webhook to notify that Econtext has been created (status: ready / vbank\_num is fixed as unknown)
-* When Econtext confirms payment deposit, i'mport receives a response from Eximbay, changes status to `paid`, and sends a webhook for post-payment processing
+- i'mport internally sets pay_method : vbank
+- Sends callback and webhook to notify that Econtext has been created (status: ready / vbank_num is fixed as unknown)
+- When Econtext confirms payment deposit, i'mport receives a response from Eximbay, changes status to `paid`, and sends a webhook for post-payment processing
 
 ### **Convenience store payment test procedure**
 
@@ -151,7 +138,7 @@ As with the virtual account, you need to test the result of the customer's depos
 
 1. Set Eximbay test mode to `ON` and proceed with the payment window.
 2. Write down the `pg_tid` value from the callback response (check the value from the PG approval number column in the i'mport Admin console)
-3. Log in from [http://test.econ.ne.jp/site/tuchi\_2/tuchi\_menu\_2.html](http://test.econ.ne.jp/site/tuchi\_2/tuchi\_menu\_2.html)  \
+3. Log in from [http://test.econ.ne.jp/site/tuchi_2/tuchi_menu_2.html](http://test.econ.ne.jp/site/tuchi_2/tuchi_menu_2.html) \
    (ID: ectest / password: #eg0810# )
 4. ShopID : 361301, orderID : `pg_tid` (from step 2)
 5. Click **登録** button at the bottom

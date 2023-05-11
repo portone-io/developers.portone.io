@@ -12,11 +12,9 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 ### <mark style="color:blue;">**STEP 01.**</mark> Request cancellation
 
 Request a refund to the server with the required refund information. In the case of virtual account refund, you need to specify additional parameters for the refund deposit account information. The following example requests a refund with the required refund information.\
-
 
 <Tabs>
 <Tab title="HTML">
@@ -45,9 +43,6 @@ Request a refund to the server with the required refund information. In the case
   }
 </script>
 ```
-
-
-
 
 <Codepen user="chaiport" slug="jOYXyNd" caption="Sample refund button" />
 
@@ -80,7 +75,6 @@ class CancelPay extends React.Component {
 }
 ```
 
-
 </Tab>
 </Tabs>
 
@@ -104,7 +98,6 @@ Assume that there is a **`Payments`** table that stores payment information as f
   module.exports = mongoose.model('Payments', PaymentsSchema);
 ```
 
-
 Query the payment information of the order from the **`Payments`** table using the order ID (**`merchant_uid`**) received from the client.
 
 ```javascript title="server-side"
@@ -117,7 +110,7 @@ Query the payment information of the order from the **`Payments`** table using t
       /* Get payment information */
       const { body } = req;
       const { merchant_uid } = body; // Order ID from the client
-      Payments.find({ merchant_uid }, async function(err, payment) { 
+      Payments.find({ merchant_uid }, async function(err, payment) {
         if (err) {
           return res.json(err);
         }
@@ -132,15 +125,14 @@ Query the payment information of the order from the **`Payments`** table using t
 
 ```
 
-
 ### <mark style="color:blue;">**STEP 03.**</mark> Request refund to i'mport server
 
-To request a refund, you must first get a [<mark style="color:blue;">**REST API access token**</mark>](../../api/rest-api-access-token.md). Use the **`access token`** to call the [**i'mport cancel **<mark style="color:blue;">**API**</mark>](../../api/payment-api/cancel-payment-api.md) to request a refund.
+To request a refund, you must first get a [<mark style="color:blue;">**REST API access token**</mark>](../../api/rest-api-access-token). Use the **`access token`** to call the [**i'mport cancel **<mark style="color:blue;">**API**</mark>](../../api/payment-api/cancel-payment-api) to request a refund.
 
 <Hint style="info">
 **Note - Refunding mobile micropayments**
 
-* If a refund is **requested on a different month from when the payment is made, a full refund is not allowed**. For example, a payment made on January 31st is not refundable on February 1st.
+- If a refund is **requested on a different month from when the payment is made, a full refund is not allowed**. For example, a payment made on January 31st is not refundable on February 1st.
 
 </Hint>
 
@@ -180,7 +172,7 @@ If you attempt to make a refund request with `checksum(10000)`, the request will
       /* Get payment information */
       const { body } = req;
       const { merchant_uid, reason, cancel_request_amount } = body; // Order ID from the client, reason for refund, refund amount
-      Payments.find({ merchant_uid }, async function(err, payment) { 
+      Payments.find({ merchant_uid }, async function(err, payment) {
         /* ... Omitted ... */
         const paymentData = payment[0]; // Save payment information
         const { imp_uid, amount, cancel_amount } = paymentData; // Get imp_uid, amount(paid amount), cancel_amount(total refund amount) from payment information
@@ -214,38 +206,42 @@ If you attempt to make a refund request with `checksum(10000)`, the request will
   });
 ```
 
-
 ### <mark style="color:blue;">**STEP 04.**</mark> Save refund result
 
 #### After the refund process is completed, save the result in the database as follows:
 
 ```javascript title="Node.js"
-  /* ... Omitted ... */
-  app.post('/payments/cancel', async (req, res, next) => {
-    try {
-      /* Get access token */
+/* ... Omitted ... */
+app.post("/payments/cancel", async (req, res, next) => {
+  try {
+    /* Get access token */
+    /* ... Omitted ... */
+    /* Get payment information */
+    Payments.find({ merchant_uid }, async function (err, payment) {
       /* ... Omitted ... */
-      /* Get payment information */
-      Payments.find({ merchant_uid }, async function(err, payment) { 
-        /* ... Omitted ... */
-        /* Call i'mport REST API to request refund */
-        /* ... Omitted ... */
-        const { response } = getCancelData.data; // Refund result
-        /* Save refund result */
-        const { merchant_uid } = response; // Get order info from refund response
-        Payments.findOneAndUpdate({ merchant_uid }, response, { new: true }, function(err, payment) { // Get and update payment information for the order
+      /* Call i'mport REST API to request refund */
+      /* ... Omitted ... */
+      const { response } = getCancelData.data; // Refund result
+      /* Save refund result */
+      const { merchant_uid } = response; // Get order info from refund response
+      Payments.findOneAndUpdate(
+        { merchant_uid },
+        response,
+        { new: true },
+        function (err, payment) {
+          // Get and update payment information for the order
           if (err) {
             return res.json(err);
           }
           res.json(payment); // Return refund result to the client
-        });
-      });
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  });
+        }
+      );
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 ```
-
 
 <Hint style="warning">
 **Note - When cancelling a payment**
@@ -279,7 +275,6 @@ Add the client-side logic to handle the response from the server as follows:
 </script>
 ```
 
-
 </Tab>
 
 <Tab title="React.js">
@@ -300,7 +295,6 @@ class CancelPay extends React.Component {
   }
 }
 ```
-
 
 </Tab>
 </Tabs>

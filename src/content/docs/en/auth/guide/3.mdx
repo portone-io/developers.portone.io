@@ -13,10 +13,9 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 import Youtube from "~/components/gitbook/Youtube.astro";
 
+Once [**IMP object initialization**](2.) is complete, you can open the payment window.
 
-Once [**IMP object initialization**](2..md) is complete, you can open the payment window.
-
-You can pass the [**parameters**](../../sdk/javascript-sdk/) required to call the payment window in the first argument of the **request\_pay** function.
+You can pass the [**parameters**](../../sdk/javascript-sdk/) required to call the payment window in the first argument of the **request_pay** function.
 
 <Tabs>
 <Tab title="JavaScript">
@@ -122,8 +121,8 @@ class RequestPay extends React.Component {
 <Hint style="info">
 **Note -  Creating an order ID (merchant\_uid)**
 
-* The order number must always be assigned a **unique** **value** when the payment window is requested.
-* After the payment process is complete, the server uses the order ID to retrieve the order information for **payment fraud check**. Be sure to create a **unique ID** on the merchant server and **store it in the DB**.
+- The order number must always be assigned a **unique** **value** when the payment window is requested.
+- After the payment process is complete, the server uses the order ID to retrieve the order information for **payment fraud check**. Be sure to create a **unique ID** on the merchant server and **store it in the DB**.
 
 </Hint>
 
@@ -132,46 +131,59 @@ class RequestPay extends React.Component {
 ```html title="sample.html"
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <!-- jQuery -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+    ></script>
     <!-- iamport.payment.js -->
-    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
+    ></script>
     <script>
-        var IMP = window.IMP; 
-        IMP.init("impXXXXXXXXX"); 
+      var IMP = window.IMP;
+      IMP.init("impXXXXXXXXX");
 
-        function requestPay() {
-            IMP.request_pay({
-                pg : 'kcp',
-                pay_method : 'card',
-                merchant_uid: "57008833-33004", 
-                name : 'Carrots 10kg',
-                amount : 1004,
-                buyer_email : 'Iamport@chai.finance',
-                buyer_name : 'iamport tech support',
-                buyer_tel : '010-1234-5678',
-                buyer_addr : 'Samsung-dong, Gangnam-gu, Seoul',
-                buyer_postcode : '123-456'
-            }, function (rsp) { // callback
-                if (rsp.success) {
-                    console.log(rsp);
-                } else {
-                    console.log(rsp);
-                }
-            });
-        }
+      function requestPay() {
+        IMP.request_pay(
+          {
+            pg: "kcp",
+            pay_method: "card",
+            merchant_uid: "57008833-33004",
+            name: "Carrots 10kg",
+            amount: 1004,
+            buyer_email: "Iamport@chai.finance",
+            buyer_name: "iamport tech support",
+            buyer_tel: "010-1234-5678",
+            buyer_addr: "Samsung-dong, Gangnam-gu, Seoul",
+            buyer_postcode: "123-456",
+          },
+          function (rsp) {
+            // callback
+            if (rsp.success) {
+              console.log(rsp);
+            } else {
+              console.log(rsp);
+            }
+          }
+        );
+      }
     </script>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Sample Payment</title>
-</head>
-<body>
-    <button onclick="requestPay()">Pay</button> <!-- Pay button -->
-</body>
+  </head>
+  <body>
+    <button onclick="requestPay()">Pay</button>
+    <!-- Pay button -->
+  </body>
 </html>
 ```
 
-
-<Youtube videoId="Gq7r5AUoMKs" caption="Creating the Pay button for opening the payment window" />
+<Youtube
+  videoId="Gq7r5AUoMKs"
+  caption="Creating the Pay button for opening the payment window"
+/>
 
 <Codepen user="chaiport" slug="NWXrGvQ" caption="Sample payment window" />

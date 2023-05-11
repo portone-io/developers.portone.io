@@ -15,7 +15,7 @@ const navMenu = navMenuSignal.value;
 const navMenuItems = navMenu[lang] || [];
 const navMenuAncestors = navMenuAncestorsSignal.value;
 const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
-  ...navMenuAncestors[slug]?.map((ancestor) => [ancestor, true])!,
+  ...(navMenuAncestors[slug]?.map((ancestor) => [ancestor, true]) || []),
   [slug, true],
 ]));
 slugSignal.value = slug;
@@ -29,6 +29,13 @@ slugSignal.value = slug;
     ...JSON.parse(leftSidebar.dataset.navopenstates!),
   };
   slugSignal.value = leftSidebar.dataset.slug!;
+  const scrollArea: HTMLElement =
+    leftSidebar.querySelector(".overflow-y-scroll")!;
+  const activeElement = scrollArea.querySelector("[data-active=active]");
+  if (activeElement) {
+    scrollArea.scrollTop =
+      activeElement.getBoundingClientRect().top - scrollArea.offsetTop - 30;
+  }
 </script>
 <aside
   id="left-sidebar"

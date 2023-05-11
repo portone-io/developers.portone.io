@@ -16,20 +16,24 @@ import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro"
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 ### 현금영수증을 발급할 수 있습니다.
 
-포트원을 통해 발생된 현금성 거래(**가상계좌,게좌이체**)의 포트원 거래번호(<mark style="color:red;">**`imp_uid`**</mark>)를 기준으로 현금영수증이 발급 됩니다. 현금영수증 발급 금액은 **현금성 거래의 금액으로 자동 적용**됩니다. 부분취소된 거래인 경우 **남은 잔액으로 발급**됩니다.
+포트원을 통해 발생된 현금성 거래(**가상계좌, 게좌이체**)의 포트원 거래번호(<mark style="color:red;">**`imp_uid`**</mark>)를 기준으로 현금영수증이 발급 됩니다.
+현금영수증 발급 금액은 **현금성 거래의 금액으로 자동 적용**됩니다. 부분취소된 거래인 경우 **남은 잔액으로 발급**됩니다.
 
 <Details>
 <p slot="summary"><strong>지원되는 PG사</strong> 확인하기</p>
 
-* **KG 이니시스**
-* **NHN KCP**
-* **Settle Bank**
-* **NICE Payments**
-* **PayJoa(다우)**
-* **KICC**
+- **KG 이니시스**
+- **NHN KCP**
+- **Settle Bank**
+- **NICE Payments**
+- **PayJoa(다우)**
+- **KICC**
+- **헥토파이낸셜**
+- **케이에스넷**
+- **스마트로 - 신모듈**
+- **토스페이먼츠 - 신모듈**
 
 </Details>
 
@@ -126,7 +130,6 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </SwaggerParameter>
 
-
 ### Responses
 
 <SwaggerResponse status="200: OK" description="성공">
@@ -138,15 +141,11 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
 
-
-
 **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **응답메세지**
 
 code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
-
-
 
 **`response`** <mark style="color:red;">**`(ReceiptAnnotation, optional)`**</mark>
 
@@ -159,51 +158,36 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`포트원 거래번호`**
 
-
-
 **`receipt_tid`** <mark style="color:green;">**`string`**</mark>
 
 **`현금영수증 PG사 발행고유번호`**
-
-
 
 **`apply_num`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
 **`현금영수증 국세청 발행번호`**
 
-
-
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
 **`현금영수증 발행대상 타입`**
 
-* 개인 : `person`
-* 사업자 : `company`
-
-
+- 개인 : `person`
+- 사업자 : `company`
 
 **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`integer`**</mark>
 
 **`현금영수증 발행금액`**
 
-
-
 **`vat`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`integer`**</mark>
 
 **`부가세`**
-
-
 
 **`receipt_url`** <mark style="color:green;">**`string`**</mark>
 
 **`발행된 현금영수증 URL`**
 
-
 **`applied_at`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`integer`**</mark>
 
 **현금영수증 발행시각** `UNIX TIMESTAMP`
-
-
 
 **`cancelled_at`** <mark style="color:orange;">**`integer`**</mark>
 
@@ -217,7 +201,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <SwaggerResponse status="400: Bad Request" description="필수 파라미터가 누락된 경우, 결제완료(paid)가 아닌 결제 건에 대해 발행요청한 경우, 이미 현금영수증 발행된 건에 대해 요청한 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 
@@ -226,7 +210,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 
@@ -235,7 +219,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <SwaggerResponse status="500: Internal Server Error" description="현금영수증 발행에 실패한 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 
@@ -276,7 +260,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
     "receipt_url": "string",
     "applied_at": 0,
     "cancelled_at": 0
- }
+  }
 }
 ```
 
@@ -286,4 +270,5 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 **Swagger Test Link**
 
 [**https://api.iamport.kr/#!/receipts/issueReceipt**](https://api.iamport.kr/#!/receipts/issueReceipt)
+
 </Hint>

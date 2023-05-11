@@ -12,19 +12,21 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 #### You can enter the card information through the PG's payment window to get a billing key.
 
-* **Pros**: **no need to establish additional security process** for transmitting card information because the data is transmitted directly to PG without going through the server or i'mport server.
-* **Cons**: **cannot customize card registration form** since billing key is requested through the PG's payment window via web browser (cannot implement merchant site friendly UI/UX).
+- **Pros**: **no need to establish additional security process** for transmitting card information because the data is transmitted directly to PG without going through the server or i'mport server.
+- **Cons**: **cannot customize card registration form** since billing key is requested through the PG's payment window via web browser (cannot implement merchant site friendly UI/UX).
 
-<Figure src="/gitbook-assets/en/image (122).png" caption="Sample PG's window for card info entry" />
+<Figure
+  src="/gitbook-assets/en/image (122).png"
+  caption="Sample PG's window for card info entry"
+/>
 
 ### <mark style="color:blue;">**STEP 01.**</mark> Request billing key
 
 As with authenticated payment, use the **JavaScript SDK** to call the PG's payment window. To get a billing key, specify the following additional parameters.
 
-> #### customer\_uid: unique key that maps 1:1 with billing key
+> #### customer_uid: unique key that maps 1:1 with billing key
 
 <Tabs>
 <Tab title="JavaScript">
@@ -41,15 +43,12 @@ As with authenticated payment, use the **JavaScript SDK** to call the PG's payme
   });
 ```
 
-
-
-
 <Hint style="info">
 **What is a customer\_uid?**
 
 It is a unique value specified by the merchant that maps 1:1 with the billing key issued by PG. A unique `customer_uid` must be created for each card.
 
-Example: If a customer named **Hong Gildong** requests for a billing key from **A card**, the customer\_uid must be issued for the **specified member's credit card number**
+Example: If a customer named **Hong Gildong** requests for a billing key from **A card**, the customer_uid must be issued for the **specified member's credit card number**
 
 </Hint>
 
@@ -81,11 +80,7 @@ Example: If a customer named **Hong Gildong** requests for a billing key from **
   });
 ```
 
-
-
-
-Once the billing key is issued successfully, the **customer\_uid** is sent to the merchant server. The server creates an API endpoint that receives the **customer\_uid** from the client. The server can use the **customer\_uid** to request future payments.\
-
+Once the billing key is issued successfully, the **customer_uid** is sent to the merchant server. The server creates an API endpoint that receives the **customer_uid** from the client. The server can use the **customer_uid** to request future payments.\
 
 ```javascript title="server-side"
   app.post("/billings", async (req, res) => {
@@ -99,7 +94,6 @@ Once the billing key is issued successfully, the **customer\_uid** is sent to th
   });
 ```
 
-
 Save the `customer_uid` in the merchant's database and use it to request future payments.
 
 </Tab>
@@ -107,10 +101,10 @@ Save the `customer_uid` in the merchant's database and use it to request future 
 
 ### <mark style="color:blue;">**STEP 03.**</mark> Request payment
 
-Use the saved **customer\_uid** and call the i'mport [**Non-authenticated payment (billing key) API**](../../../api/api/api.md) to request payment.
+Use the saved **customer_uid** and call the i'mport [**Non-authenticated payment (billing key) API**](../../../api/api/api) to request payment.
 
 <Hint style="success">
-**To use the i'mport REST API, you must first get an** [**access token**](../../../api/rest-api-access-token.md).
+**To use the i'mport REST API, you must first get an** [**access token**](../../../api/rest-api-access-token).
 
 </Hint>
 
@@ -162,7 +156,6 @@ app.post("/billings", async (req, res) => {
     }
   });
 ```
-
 
 </Tab>
 </Tabs>

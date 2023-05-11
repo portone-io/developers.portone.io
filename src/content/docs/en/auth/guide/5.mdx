@@ -11,12 +11,11 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 Based on the payment information from the client, the server verifies the <mark style="color:red;">**payment amount for fraud**</mark> and saves the payment information in the database if needed. The following are the steps for verifying the payment information.
 
-* Server receives the i'mport payment ID (**imp\_uid**) and order ID (**merchant\_uid**)
-* Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the payment details.
-* Based on the response, compare the actual payment amount with the payment request amount (from merchant's database).
+- Server receives the i'mport payment ID (**imp_uid**) and order ID (**merchant_uid**)
+- Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the payment details.
+- Based on the response, compare the actual payment amount with the payment request amount (from merchant's database).
 
 ### <mark style="color:green;">**STEP 01**</mark> Server receives payment result
 
@@ -26,17 +25,16 @@ Example of receiving a POST request to the merchant endpoint URL that receives t
 
 ```javascript title="server-side"
 app.use(bodyParser.json());
-  // "{Merchant endpoint that receives server's payment info}" POST request receiver
-  app.post("/payments/complete", async (req, res) => {
-    try {
-      // Get imp_uid, merchant_uid from req.body
-      const { imp_uid, merchant_uid } = req.body; 
-    } catch (e) {
-      res.status(400).send(e);
-    }
-  });
+// "{Merchant endpoint that receives server's payment info}" POST request receiver
+app.post("/payments/complete", async (req, res) => {
+  try {
+    // Get imp_uid, merchant_uid from req.body
+    const { imp_uid, merchant_uid } = req.body;
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
 ```
-
 
 </Tab>
 </Tabs>
@@ -53,13 +51,13 @@ app.use(bodyParser.json());
     app.post("/payments/complete", async (req, res) => {
       try {
         // Get imp_uid, merchant_uid from req.body
-        const { imp_uid, merchant_uid } = req.body; 
+        const { imp_uid, merchant_uid } = req.body;
         ...
         // Get access token
         const getToken = await axios({
           url: "https://api.iamport.kr/users/getToken",
           method: "post", // POST method
-          headers: { "Content-Type": "application/json" }, 
+          headers: { "Content-Type": "application/json" },
           data: {
             imp_key: "imp_apikey", // REST API key
             imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
@@ -70,11 +68,11 @@ app.use(bodyParser.json());
         // Get payment info from i'mport server using imp_uid
         const getPaymentData = await axios({
           // Pass imp_uid
-          url: \`https://api.iamport.kr/payments/\${imp_uid}\`, 
+          url: \`https://api.iamport.kr/payments/\${imp_uid}\`,
           // GET method
-          method: "get", 
+          method: "get",
           // Add access toke to Authorization header
-          headers: { "Authorization": access_token } 
+          headers: { "Authorization": access_token }
         });
         const paymentData = getPaymentData.data.response; // Payment info
         ...
@@ -83,7 +81,6 @@ app.use(bodyParser.json());
       }
     });
 ```
-
 
 </Tab>
 </Tabs>
@@ -108,7 +105,7 @@ app.use(bodyParser.json());
   app.post("/payments/complete", async (req, res) => {
     try {
       // Get imp_uid, merchant_uid from req.body
-      const { imp_uid, merchant_uid } = req.body; 
+      const { imp_uid, merchant_uid } = req.body;
       // Get access token
       /* ...Omitted... */
       // Get payment info from iamport server using imp_uid
@@ -122,7 +119,7 @@ app.use(bodyParser.json());
       // Verify payment
       const { amount, status } = paymentData;
       // If amount matches. Processed amount === Requested amount
-      if (amount === amountToBePaid) { 
+      if (amount === amountToBePaid) {
         await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Save payment info to DB
         ...
         switch (status) {
@@ -147,14 +144,12 @@ app.use(bodyParser.json());
   });
 ```
 
-
 </Tab>
 </Tabs>
 
 The original requested amount is queried from the database with the **`merchant_uid`**, and the actual processed amount is retrieved from the i'mport server with the **`imp_uid`**. The **two values ​​are compared** to verify that they match. **If the verification is successful, the payment information is saved in the database** and a response is returned based on the payment status (**`status`**). Otherwise, an error message is returned.\
 
-
 <Hint style="danger">
-The payment result must be processed on the database based on the data received through a [**webhook**](../../result/webhook.md) for stable processing without any missing result data.
+The payment result must be processed on the database based on the data received through a [**webhook**](../../result/webhook) for stable processing without any missing result data.
 
 </Hint>

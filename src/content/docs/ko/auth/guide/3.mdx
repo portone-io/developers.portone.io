@@ -13,10 +13,9 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 import Youtube from "~/components/gitbook/Youtube.astro";
 
+[**IMP 객체 초기화**](2.)가 완료 되었으면 이제 결제창을 호출할 차례입니다.
 
-[**IMP 객체 초기화**](2..md)가 완료 되었으면 이제 결제창을 호출할 차례입니다.
-
-결제창 호출시 필요한 [**파라미터**](../../sdk/javascript-sdk-old/)**를 request\_pay** 함수 첫번째 파라미터 인자로 설정합니다.
+결제창 호출시 필요한 [**파라미터**](../../sdk/javascript-sdk-old/readme)**를 request_pay** 함수 첫번째 파라미터 인자로 설정합니다.
 
 <Tabs>
 <Tab title="JavaScript">
@@ -112,8 +111,8 @@ class RequestPay extends React.Component {
 <Hint style="info">
 **주문번호(merchant\_uid) 생성 시 유의사항**
 
-* 주문번호는 결제창 요청 시 항상 **고유 값**으로 채번 되어야 합니다.
-* 결제 완료 이후 **결제 위변조** 대사 작업시 주문번호를 이용하여 검증이 필요하므로 주문번호는 가맹점 서버에서 **고유하게**(unique)채번하여 **DB 상에 저장**해주세요
+- 주문번호는 결제창 요청 시 항상 **고유 값**으로 채번 되어야 합니다.
+- 결제 완료 이후 **결제 위변조** 대사 작업시 주문번호를 이용하여 검증이 필요하므로 주문번호는 가맹점 서버에서 **고유하게**(unique)채번하여 **DB 상에 저장**해주세요
 
 </Hint>
 
@@ -122,41 +121,51 @@ class RequestPay extends React.Component {
 ```html title="sample.html"
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <!-- jQuery -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-1.12.4.min.js"
+    ></script>
     <!-- iamport.payment.js -->
-    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"
+    ></script>
     <script>
-        var IMP = window.IMP; 
-        IMP.init("impXXXXXXXXX"); 
-    
-        function requestPay() {
-            IMP.request_pay({
-                pg : 'kcp.{상점ID}',
-                pay_method : 'card',
-                merchant_uid: "57008833-33004", 
-                name : '당근 10kg',
-                amount : 1004,
-                buyer_email : 'Iamport@chai.finance',
-                buyer_name : '포트원 기술지원팀',
-                buyer_tel : '010-1234-5678',
-                buyer_addr : '서울특별시 강남구 삼성동',
-                buyer_postcode : '123-456'
-            }, function (rsp) { // callback
-                //rsp.imp_uid 값으로 결제 단건조회 API를 호출하여 결제결과를 판단합니다.
-            });
-        }
+      var IMP = window.IMP;
+      IMP.init("impXXXXXXXXX");
+
+      function requestPay() {
+        IMP.request_pay(
+          {
+            pg: "kcp.{상점ID}",
+            pay_method: "card",
+            merchant_uid: "57008833-33004",
+            name: "당근 10kg",
+            amount: 1004,
+            buyer_email: "Iamport@chai.finance",
+            buyer_name: "포트원 기술지원팀",
+            buyer_tel: "010-1234-5678",
+            buyer_addr: "서울특별시 강남구 삼성동",
+            buyer_postcode: "123-456",
+          },
+          function (rsp) {
+            // callback
+            //rsp.imp_uid 값으로 결제 단건조회 API를 호출하여 결제결과를 판단합니다.
+          }
+        );
+      }
     </script>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Sample Payment</title>
-</head>
-<body>
-    <button onclick="requestPay()">결제하기</button> <!-- 결제하기 버튼 생성 -->
-</body>
+  </head>
+  <body>
+    <button onclick="requestPay()">결제하기</button>
+    <!-- 결제하기 버튼 생성 -->
+  </body>
 </html>
 ```
-
 
 <Youtube videoId="Gq7r5AUoMKs" caption="결제하기 버튼 생성 및 결제창 호출" />
 

@@ -18,7 +18,10 @@ const FolderLink: React.FC<NavMenuPage> = ({ emoji, title, slug, items }) => {
   const isActive = pageSlug === slug;
   return (
     <div>
-      <div class={`flex ${getLinkStyle(isActive)} pr-0`}>
+      <div
+        class={`flex ${getLinkStyle(isActive)} pr-0`}
+        data-active={isActive && "active"} // true로 지정하면 SSR시에는 값 없이 attr key만 들어감
+      >
         <a href={`/docs${slug}`} class="grow">
           <LinkTitle emoji={emoji} title={title} />
         </a>
@@ -62,7 +65,11 @@ const JustLink: React.FC<JustLinkProps> = ({ emoji, title, slug }) => {
   const pageSlug = slugSignal.value;
   const isActive = pageSlug === slug;
   return (
-    <a href={`/docs${slug}`} class={getLinkStyle(isActive)}>
+    <a
+      href={`/docs${slug}`}
+      class={getLinkStyle(isActive)}
+      data-active={isActive && "active"}
+    >
       <LinkTitle emoji={emoji} title={title} />
     </a>
   );

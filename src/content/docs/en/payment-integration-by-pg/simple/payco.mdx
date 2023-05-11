@@ -13,18 +13,17 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 ### 1. Configure PAYCO simple payment PG settings
 
-Refer to the [**PAYCO settings**](../../ready/2.-pg/pg/undefined-3.md) page to configure the PG settings.
+Refer to the [**PAYCO settings**](../../ready/2.-pg/pg/undefined-3) page to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-01 6.25.22.png>)
 
 ### 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request\_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
 
 <Tabs>
 <Tab title="General payment request">
@@ -44,42 +43,35 @@ IMP.request_pay({
 });
 ```
 
-
 ####
 
 ### Key parameter description
 
-**`pg`** <mark style="color:red;">**\***</mark>**  **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
 
 **PG code**
 
-* If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-* If there are multiple PG settings, set to **`payco`**.
+- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+- If there are multiple PG settings, set to **`payco`**.
 
-
-
-**`pay_method`**  <mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`pay_method`** <mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
 
 **Payment method code**
 
 <Details>
 <p slot="summary">Payment method codes</p>
 
-* `card` (credit card)
-* `trans`(instant account transfer)
-* `vbank`(virtual account)
+- `card` (credit card)
+- `trans`(instant account transfer)
+- `vbank`(virtual account)
 
 </Details>
 
-
-
-**`merchant_uid`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
 
 **Order ID**
 
 Must be unique for each request.
-
-
 
 **`buyer_tel`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
@@ -87,17 +79,17 @@ Must be unique for each request.
 
 <mark style="color:red;">Required</mark>
 
-
-
-**`amount`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
 
 **Payment amount**
 
 Must be an integer (not string)
 
-
-
-<Codepen user="chaiport" slug="PoQebLQ" caption="PAYCO payment window example" />
+<Codepen
+  user="chaiport"
+  slug="PoQebLQ"
+  caption="PAYCO payment window example"
+/>
 
 </Tab>
 
@@ -107,69 +99,62 @@ To open subscription payment window, specify the **customer\_uid** parameter.
 <Hint style="info">
 **amount**
 
-* For display purpose only. No payment approval.
+- For display purpose only. No payment approval.
 
 </Hint>
 
 ```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'payco',
-    merchant_uid : '{Merchant created Order ID}', // Example: issue_billingkey_monthly_0001
-    name : 'Order name: Billing key request test',
-    amount : 0, // For display purpose only 
-    customer_uid : '{Unique ID for the card (billing key)}', // Required (Example: gildong_0001_1234)
+IMP.request_pay(
+  {
+    pg: "payco",
+    merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+    name: "Order name: Billing key request test",
+    amount: 0, // For display purpose only
+    customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
     buyer_email: "johndoe@gmail.com",
     buyer_name: "John Doe",
-    buyer_tel : '02-1234-1234'
-}, function(rsp) {
-    if ( rsp.success ) {
-        alert('Success');
+    buyer_tel: "02-1234-1234",
+  },
+  function (rsp) {
+    if (rsp.success) {
+      alert("Success");
     } else {
-        alert('Failed');
+      alert("Failed");
     }
-});
+  }
+);
 ```
-
-
-
 
 ### Key parameter description
 
-**`pg`** <mark style="color:red;">**\***</mark>**  **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
 
 **PG code**
 
-* If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-* If there are multiple PG settings, set to **`payco`**.
+- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+- If there are multiple PG settings, set to **`payco`**.
 
-
-
-**`customer_uid`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+**`customer_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
 
 **Credit card billing key**
 
 Billing key to be mapped 1:1 with the user-entered credit card information.
 
-
-
-**`amount`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**Integer**</mark>
+**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**Integer\*\*</mark>
 
 **Payment amount**
 
 For display purpose only. No payment approval.
 
+### Request payment with billing key (customer_uid)
 
+After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api) with the `customer_uid` as follows:
 
-### Request payment with billing key (customer\_uid)
-
-After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api.md) with the `customer_uid` as follows:
-
-``` title="sever-side"
-curl -H "Content-Type: application/json" \   
+```title="sever-side"
+curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
 ```
-
 
 </Tab>
 
