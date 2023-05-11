@@ -8,10 +8,10 @@ import * as prose from "~/components/prose";
 export const components = prose;
 
 import Details from "~/components/gitbook/Details.astro";
+import Figure from "~/components/gitbook/Figure.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
-
 
 <Hint style="info">
 **네이버페이는 테스트 연동정보를 별도로 제공하지 않습니다. 가입신청 후 연동정보를 받아서 테스트 모드로 연동/개발 할 수 있습니다.**
@@ -26,16 +26,20 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 [포트원 관리자 콘솔](https://admin.portone.io/) → 결제연동 → 테스트/실 연동 관리 → 테스트 → 네이버페이 결제형 → 네이버페이 결제형 → 추가 선택
 
+- **PG상점아이디(파트너 ID)** : 네이버페이 결제형 파트너ID를 입력합니다.
+- **ClientID** : 네이버페이측에서 카드사 심사 완료시 가맹점으로 직접 안내됩니다.
+- **Client Secret** : 네이버페이측에서 카드사 심사 완료시 가맹점으로 직접 안내됩니다.
+- **Chain ID** : 포트원 정산 서비스 및 [V2 모듈](../../../v2-payment/v2) 사용 시 입력 필요합니다. V1 모듈을 사용할 경우엔 SDK 파라미터로 Chain ID를 넘기셔야 합니다. [V1 모듈 네이버페이 연동 가이드 참고](../../../pg/simple/naver)
+- **과세구분** : 부가세신고자료용으로 과세 설정을 할 수 있습니다. 미설정/과세/면세/복합과세 중 선택할 수 있습니다.
+- **정산용 사이트 키 (API Key)** : 포트원 정산 서비스를 사용하시는 경우, 네이버페이로부터 정산 데이터를 불러오기 위한 사이트 키를 입력하셔야 합니다.
 
-* **PG상점아이디(파트너 ID)** : 네이버페이 결제형 파트너ID를 입력합니다.
-* **ClientID** : 네이버페이측에서 카드사 심사 완료시 가맹점으로 직접 안내됩니다.
-* **Client Secret** : 네이버페이측에서 카드사 심사 완료시 가맹점으로 직접 안내됩니다.
-* **Chain ID** : 포트원 정산 서비스 및 [V2 모듈](../../../v2-payment/v2) 사용 시 입력 필요합니다. V1 모듈을 사용할 경우엔 SDK 파라미터로 Chain ID를 넘기셔야 합니다. [V1 모듈 네이버페이 연동 가이드 참고](../../../pg/simple/naver)
-* **과세구분** : 부가세신고자료용으로 과세 설정을 할 수 있습니다. 미설정/과세/면세/복합과세 중 선택할 수 있습니다.
-* **정산용 사이트 키 (API Key)** : 포트원 정산 서비스를 사용하시는 경우, 네이버페이로부터 정산 데이터를 불러오기 위한 사이트 키를 입력하셔야 합니다.
+import image1 from "./_assets/naverpay/naverpay_setup_1.png";
+import image2 from "./_assets/naverpay/naverpay_setup_2.png";
+import image3 from "./_assets/naverpay/naverpay_setup_3.png";
 
-![](</assets/ko/naverpay_setup_1.png>)
-![](</assets/ko/naverpay_setup_2.png>)
+<Figure src={image1} />
+
+<Figure src={image2} />
 
 </Tab>
 
@@ -44,7 +48,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 네이버페이 실 검수가 시작되면 채널의 유형을 "실 연동"으로 변경하고 동일하게 결제채널을 등록하시면 됩니다.
 
-![](</assets/ko/naverpay_setup_3.png>)
+<Figure src={image3} />
 
 </Tab>
 </Tabs>
@@ -66,7 +70,6 @@ V1 모듈의 경우 SDK 파라미터를 통해 Chain Id를 입력하셔야 하�
 
 정기결제용 ChainID를 입력하여 새로운 채널을 생성해주셔야 합니다. 생성한 채널의 이름을 `requestIssueBillingKey` 함수의 `channelName` 파라미터에 입력해주시면 빌링키를 발급하실 수 있습니다.
 
-
 </Tab>
 </Tabs>
 
@@ -82,19 +85,19 @@ V1 모듈의 경우 SDK 파라미터를 통해 Chain Id를 입력하셔야 하�
 
 네이버페이 기술검수를 위해서는 아래 질문리스트를 작성하여 아래 이메일 주소로 검수요청을 주시면 됩니다.
 
-```
-<사업자 및 계약정보>  
+```text
+<사업자 및 계약정보>
     - 상호명 : 
     - 사업자번호 : 
     - 포트원계정 : 
     - 네이버페이 결제형 파트너ID : 단건/반복(정기) 이용하실 방식 구분하여 전달 주시기 바랍니다.
     - 검수 진행가능한 URL : 
     - 테스트 가능한 로그인계정 :
-    - 네이버페이 결제형 연동 개발자 정보(이름/이메일/전화번호): 
+    - 네이버페이 결제형 연동 개발자 정보(이름/이메일/전화번호):
     - 네이버페이 결제형 연동 검수 담당자 정보(이름/이메일/전화번호):
     - 판매상품 과/면세 여부: ​
     - 에스크로 사용여부: ​
-    - 모바일앱 보유 여부: 
+    - 모바일앱 보유 여부:
     - 부분취소 제공여부: ​
     - IMP.request_pay 함수 호출 시 naverProducts 파라미터 설정여부 및 셋팅 예시:
 
