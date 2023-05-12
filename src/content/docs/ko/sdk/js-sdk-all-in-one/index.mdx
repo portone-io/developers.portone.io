@@ -1,0 +1,140 @@
+---
+emoji: ⚒️
+title: JavaScript SDK 연동하기
+description: SDK 연동을 위한 모든 내용을 담고 있습니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+import FeatureSetSelector from "./_components/FeatureSetSelector.astro";
+import ServiceVersionGate from "./_components/ServiceVersionGate.astro";
+
+JavaScript SDK는 웹사이트에 포트원의 기능들을 연동하기 위해 포트원에서 제공하는 모듈입니다.
+
+<div class="my-4">
+  <FeatureSetSelector />
+</div>
+
+<Details>
+<p slot="summary"><strong>PG사 모듈이란?</strong></p>
+
+PG사 모듈은 개별 PG사의 기능을 활용하기 위해 제공되는 모듈을 의미하며,
+포트원은 각 PG사들의 모듈을 단일 SDK로 묶어서 제공합니다.
+
+각 PG사별로 1개의 모듈만을 제공하는 경우도 존재하지만, 다음과 같은 이유로 여러 종류의 모듈을 제공하기도 합니다.
+
+- **기능별 모듈 분리**: 일반결제와 정기결제, 통장 결제 등의 기능별로 모듈을 분리하여 제공하는 경우입니다.
+
+- **버전별 모듈 분리**: PG사에서 신모듈을 출시하여, 다양한 버전의 모듈이 제공되는 경우입니다.
+
+각 모듈이 제공하는 기능을 잘 확인하여, 적절한 모듈을 선택하여 연동하시기 바랍니다.
+
+</Details>
+
+<Details>
+<p slot="summary"><strong>V2 서비스란?</strong></p>
+
+포트원에서 기존 서비스를 개선하기 위해 신규 출시한 서비스입니다.
+
+### 기존 서비스와의 차별점
+
+#### 더욱 강화된 안정성을 제공합니다.
+
+- 트래픽 제한없는 안정적인 결제 시스템을 구축했습니다.
+  - [Akka](https://akka.io/)를 기반으로 하는 분산 시스템과 Auto scaling 기능을 통해 대규모 이벤트, 성수기 시즌 등 예상치 못한 결제 트래픽 증가에도 안정적인 결제 시스템을 유지할 수 있도록 강화했습니다.
+- 시스템 자동화를 통해 휴먼 에러의 가능성을 최소화했습니다.
+  - 더욱 완벽한 시스템 관리를 위해 [Terraform](https://www.terraform.io/), [Kubernetes](https://kubernetes.io/) 등의 [IaC](https://en.wikipedia.org/wiki/Infrastructure_as_code)(Infrastructure as a code) 기술을 도입하여 자동화되고 신속하며, 반복 가능한 프로비저닝을 제공하는 방식으로 인프라를 관리합니다.
+
+#### 방대한 데이터 저장을 통해 완벽한 대사, 정산 작업을 제공합니다.
+
+- [이벤트 소싱 패턴](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)을 활용하여 대사, 정산 작업의 정확성을 높입니다.
+  - 시간을 되돌릴 수 있는 마법 같은 기술로, 과거 시점의 결제 데이터를 재현할 수 있으므로 더 정확한 대사, 정산 작업이 가능합니다.
+- 모든 데이터를 완전하게 복원 가능하도록 설계되었습니다.
+  - 이벤트 소싱을 통해 데이터의 유실 걱정 없이 결제 시 발생한 모든 이슈를 누락 없이 기록합니다.
+  - PG사와 통신한 내용을 모두 이벤트로 기록하여 포트원과 PG사 간의 데이터 정합성 확인 등 사전에 오류 발생을 방지하는 자료로 활용될 수 있습니다.
+- 사용자의 행동 패턴을 파악할 수 있는 정보로 활용할 수 있습니다.
+  - 정교한 데이터 분석 툴을 제작할 수 있는 기능을 지원하여 고객에게 꼭 필요한 가치를 제공할 수 있습니다.
+
+### V1 vs V2 선택하기
+
+신규 연동 사용자의 경우 V2 사용이 권장되나, 사용하려는 PG사 모듈에 따라 V2 서비스를 사용할 수 없는 경우도 있습니다.
+
+- V2 서비스를 지원하지 않는 PG사 모듈을 사용하려면 V1 서비스를 사용해야 합니다.
+- V2 서비스를 지원하는 모듈을 사용하는 경우에는 V2 서비스를 사용하는 것이 권장됩니다.
+- 일부 PG사 모듈은 V2 서비스에서만 지원됩니다.
+
+</Details>
+
+<ServiceVersionGate version={null}>
+
+**서비스 버전을 선택해주세요.**
+
+<div slot="fallback">
+
+## SDK 로딩하기
+
+<Tabs>
+<ServiceVersionGate version="v1">
+
+<Tab title="ECMAScript import">
+
+다음과 같이 포트원 SDK를 가져올 수 있습니다.
+
+```js
+import IMP from "https://cdn.iamport.kr/v1/iamport.esm.js";
+```
+
+</Tab>
+
+</ServiceVersionGate>
+<ServiceVersionGate version="v2">
+<Tab title="NPM 모듈">
+
+아래 명령어로 NPM에서 포트원 SDK를 설치할 수 있습니다.
+
+```bash
+# npm 사용 시 (기본)
+npm install @portone/browser-sdk
+# Yarn 사용 시
+yarn add @portone/browser-sdk
+# pnpm 사용 시
+pnpm add @portone/browser-sdk
+```
+
+다음과 같이 포트원 SDK를 가져올 수 있습니다.
+
+```js
+import PortOne from "@portone/browser-sdk";
+```
+
+</Tab>
+</ServiceVersionGate>
+<ServiceVersionGate version="v1">
+<Tab title="<script> 태그">
+
+다음 태그를 추가하면 포트원 SDK가 전역 객체 `IMP`로 등록됩니다.
+
+```js
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+```
+
+</Tab>
+</ServiceVersionGate>
+<ServiceVersionGate version="v2">
+<Tab title="<script> 태그">
+
+다음 태그를 추가하면 포트원 SDK가 전역 객체 `PortOne`으로 등록됩니다.
+
+```js
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+```
+
+</Tab>
+</ServiceVersionGate>
+</Tabs>
+</div>
+</ServiceVersionGate>
