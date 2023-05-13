@@ -27,6 +27,8 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 - 페이조아(다우)
 
+- 스마트로-신모듈
+
 </Details>
 
 <Swagger method="post" path="/escrows/logis/{imp_uid}" baseUrl="https://api.iamport.kr" summary="에스크로 거래 배송등록">
@@ -102,21 +104,21 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <Tab title="EscrowLogisAnnotation">
 **`company`** <mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`택배사코드`**
+**택배사코드**
 
 **`invoice`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
-**`송장번호`**
+**송장번호**
 
 **`sent_at`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`integer`**</mark>
 
-**`발송일시`** _**UNIX TIMESTAMP**_
+**발송일시 (UNIX TIMESTAMP)**
 
 \_\_
 
 **`applied_at`**_<mark style="color:red;">**`*`**</mark>_<mark style="color:orange;">**`integer`**</mark>
 
-**`배송정보 등록일시`** _**UNIX TIMESTAMP**_
+**배송정보 등록일시 (UNIX TIMESTAMP)**
 
 </Tab>
 </Tabs>
@@ -181,86 +183,140 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 ### **주요 요청 파라미터 상세 설명**
 
-> **`sender`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**`Json`**</mark>
+> **`sender`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**`json`**</mark>
 >
-> **`발신자 정보`**
+> **발신자 정보**
 
 <Details>
 <p slot="summary">EscrowLogisSenderAnnotation</p>
 
 **`name (string, optional)`**
 
-**`보내는분 성함(필수 : KG이니시스)`**
+**보내는분 성함(필수 : KG이니시스, 스마트로-신모듈)**
 
 **`tel (string, optional)`**
 
-**`보내는분 전화번호(필수 : KG이니시스)`**
+**보내는분 전화번호(필수 : KG이니시스, 스마트로-신모듈)**
 
 **`addr (string, optional)`**
 
-**`보내는분 주소(필수 : KG이니시스)`**
+**보내는분 주소(필수 : KG이니시스)**
 
 **`postcode (string, optional)`**
 
-**`보내는분 우편번호(필수 : KG이니시스)`**
+**보내는분 우편번호(필수 : KG이니시스, 스마트로-신모듈)**
 
 **`relationship (string, optional)`**
 
 **`보내는분과의 관계(필수 : 페이조아, 예: 본인)`**
 
+**`formed_address (Json, optional)`**
+
+**보내는분 주소 (필수 : 스마트로-신모듈 // 스마트로-신모듈의 경우 기존 파라미터인 addr 가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다. )**
+
+**`address_line_1 (string, optional)`**
+
+**지번주소 또는 도로명주소**
+
+**`address_line_2 (string, optional)`**
+
+**상세주소**
+
+```json title="JSON" showLineNumbers
+{
+    "name" : "string",
+    "tel" : "string",
+    "addr" : "string",
+    "postcode" : "string",
+    "relationship" : "string",
+    "formed_address" : {
+        "address_line_1" : "string",
+        "address_line_2" : "string"
+    }
+}
+```
+
+
+
 </Details>
 
 > **`receiver`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**`Json`**</mark>
 >
-> **`수신자 정보`**
+> **수신자 정보**
 
 <Details>
 <p slot="summary">EscrowLogisReceiverAnnotation</p>
 
 **`name (string, optional)`**
 
-**`받는 분 성함(필수 : KG이니시스)`**
+**받는 분 성함(필수 : KG이니시스, 스마트로-신모듈)**
 
 **`tel (string, optional)`**
 
-**`받는 분 전화번호(필수 : KG이니시스)`**
+**받는 분 전화번호(필수 : KG이니시스, 스마트로-신모듈)**
 
 **`addr (string, optional)`**
 
-**`받는 분 주소(필수 : KG이니시스)`**
+**받는 분 주소(필수 : KG이니시스)**
 
 **`postcode (string, optional)`**
 
-**`받는 분 우편번호(필수 : KG이니시스)`**
+**받는 분 우편번호(필수 : KG이니시스, 스마트로-신모듈)**
+
+**`formed_address (Json, optional)`**
+
+**받는 분 주소 (필수 : 스마트로-신모듈 // 스마트로-신모듈의 경우 기존 파라미터인 addr 가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다. )**
+
+**`address_line_1 (string, optional)`**
+
+**지번주소 또는 도로명주소**
+
+**`address_line_2 (string, optional)`**
+
+**상세주소**
+
+```json title="JSON" showLineNumbers
+{
+    "name" : "string",
+    "tel" : "string",
+    "addr" : "string",
+    "postcode" : "string",
+    "relationship" : "string",
+    "formed_address" : {
+        "address_line_1" : "string",
+        "address_line_2" : "string"
+    }
+}
+```
 
 </Details>
 
 > **`logis`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**`Json`**</mark>
 >
-> **`배송정보`**
+> **배송정보**
 
 <Details>
 <p slot="summary">EscrowLogisInfoAnnotation</p>
 
 **`company (string)`**
 
-**`택배사코드`**
+**택배사코드 (필수 : 스마트로-신모듈)**
 
 **`invoice (string)`**
 
-**`송장번호`**
+**송장번호 (필수 : 스마트로-신모듈)**
 
 **`sent_at (integer)`**
 
-**`발송일시 UNIX TIMESTAMP`**
+**발송일시 (UNIX TIMESTAMP) (필수 : 스마트로-신모듈)**
 
 **`receiving_at (string, optional)`**
 
-**`수령일시(필수: 페이조아 / 예: YYYYMMDD)`**
+**수령일시(필수: 페이조아 / 예: YYYYMMDD)**
 
 **`address (string, optional)`**
 
-**`발송주소(필수: 페이조아)`**
+**발송주소(필수: 페이조아)**
 
 </Details>
 
