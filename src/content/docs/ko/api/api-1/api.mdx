@@ -44,26 +44,15 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </SwaggerParameter>
 <SwaggerParameter name="amount" type="Double" required="false">
-취소 요청금액
-
-(
-
-**누락시 전액취소**
-
-)
+취소 요청금액(**누락시 전액취소**)
 
 </SwaggerParameter>
 <SwaggerParameter name="tax_free" type="Double" required="false">
-취소요청금액 중 면세금액 (
-
-**누락되면 0원처리**
-
-)
+취소요청금액 중 면세금액 (**누락되면 0원처리**)
 
 </SwaggerParameter>
 <SwaggerParameter type="integer" name="vat_amount" required="false">
 부가세 지정(기본값: null)
-
 **결제 시 부가세를 지정했던 경우 필수** 입력 바랍니다.
 
 지원 PG사
@@ -73,50 +62,30 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 \-이니시스
 
 </SwaggerParameter>
-<SwaggerParameter name="refund_tel" type="String(16)" required="false">
-환불계좌 예금주 연락처(
 
-**가상계좌**
-
-취소,
-
-<mark style="color:red;">**스마트로 PG사 인경우 필수**</mark>
-
-)
-
-</SwaggerParameter>
 <SwaggerParameter name="checksum" type="Double" required="false">
-현재시점의 취소 가능한 잔액.
+현재시점의 취소 가능한 잔액 
 
 </SwaggerParameter>
 <SwaggerParameter name="reason" type="String(256)" required="false">
-**취소사유**
+취소사유
 
 </SwaggerParameter>
 <SwaggerParameter name="refund_holder" type="String(16)" required="false">
-**환불계좌 예금주**
+환불계좌 예금주(가상계좌 취소 시 필수)
 
-(
+</SwaggerParameter>
+<SwaggerParameter name="refund_tel" type="String(16)" required="false">
+환불계좌 예금주 연락처(가상계좌 취소 시 사용,스마트로-구모듈/신모듈의 경우 필수값임)**
 
-**가상계좌**
-
-취소시 필수)
 
 </SwaggerParameter>
 <SwaggerParameter name="refund_bank" type="String(4)" required="false">
-환불계좌 은행코드 (하단 은행코드표 참조, 
-
-**가상계좌 취소 시**
-
- 필수)
+환불계좌 은행코드 (하단 은행코드표 참조, 가상계좌 취소 시 필수)
 
 </SwaggerParameter>
 <SwaggerParameter name="refund_account" type="String(16)" required="false">
-환불계좌 계좌번호 (
-
-**가상계좌 취소**
-
- 시 필수)
+환불계좌 계좌번호 (가상계좌 취소 시 필수)
 
 </SwaggerParameter>
 <SwaggerParameter name="extra" type="Object">
@@ -261,7 +230,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`buyer_email`** <mark style="color:green;">**string(64)**</mark>
 
-**주문자 Email주소**\\
+**주문자 Email주소**
 
 **`buyer_tel`** <mark style="color:green;">**string(16)**</mark>
 
@@ -293,7 +262,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`paid_at`** <mark style="color:green;">**string**</mark>
 
-**결제완료시점 (UNIX timestamp)**\\
+**결제완료시점 (UNIX timestamp)**
 
 **`failed_at`** <mark style="color:green;">**string**</mark>
 
@@ -350,7 +319,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`cancelled_at`** <mark style="color:green;">**string**</mark>
 
-결제취소된 시각 UNIX timestamp
+**결제취소된 시각 (UNIX timestamp)**
 
 **`reason`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string(256)**</mark>
 
@@ -389,6 +358,12 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 > **취소금액**
 >
 > 누락시 전액취소 됩니다.
+
+> **`tax_free`** <mark style="color:skyblue;">**double**</mark>
+>
+> **면세금액**
+>
+> 부분취소시 면세 금액이 포함된 경우 반드시 취소 면세금액(tax_free)을 포함하여 요청해야합니다.
 
 > **`extra`** <mark style="color:purple;">**object**</mark>
 >
