@@ -1,5 +1,5 @@
 ---
-title: iframe 방식의 결과처리
+title: iframe/popup 방식의 결과처리
 description: windowType 파라미터에서 iframe을 선택한 경우의 결과 처리 방법을 안내합니다.
 ---
 
@@ -83,7 +83,20 @@ async function requestPayment() {
 function requestPaymentAndLogResult() {
   const response = PortOne.requestPayment({ /* 객체 생략 */ })
     .then(function (response) {
-      console.log(response); // 응답 객체가 개발자 도구 - 콘솔에 출력됩니다.
+      // 결제가 제대로 완료되지 않은 경우 에러 코드가 존재합니다
+      if (response.code != null) {
+        return alert(response.message);
+      }
+      axios({
+        url: MY_SERVER_URL + "/payments/complete", // 앞서 구현한 API 주소
+        method: "POST",
+        body: {
+          txId: repsonse.txId,
+          paymentId: response.paymentId,
+        },
+      }).then(function (validation) {
+        // 결제검증 API의 응답을 구성한 대로 결제결과를 처리하세요!
+      })
     });
 }
 ```
