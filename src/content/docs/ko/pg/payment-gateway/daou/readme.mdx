@@ -7,6 +7,7 @@ description: 다우 연동 방법을 안내합니다.
 import * as prose from "~/components/prose";
 export const components = prose;
 
+import Figure from "~/components/gitbook/Figure.astro";
 import ContentRef from "~/components/gitbook/ContentRef.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
@@ -14,13 +15,13 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### 1. 다우 PG 설정하기
 
-[**다우 설정**](../../../ready/2.-pg/payment-gateway/payjoa) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**다우 설정**](../../../ready/2-pg/payment-gateway/payjoa) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-![](</gitbook-assets/ko/스크린샷 2022-06-05 오전 11.53.10.png>)
+<Figure src="/gitbook-assets/ko/screenshot 2022-06-05 11.53.10.png" />
 
 ### 2.결제 요청하기
 
-[JavaScript SDK](../../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 다우 페이조아 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되고 모바일의 경우<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 다우 페이조아 결제창을 호출할 수 있습니다. **결제 결과**는 PC의 경우 `IMP.request_pay(param, callback)` 호출 후 <mark style="color:red;">**callback**</mark>으로 수신되고 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark>로 리디렉션됩니다.
 
 <Hint style="warning">
 **페이조아 결제창 연동을 위해서는 **<mark style="color:red;">**JS SDK Version 1.2.0**</mark>** 이상을 사용하셔야 합니다.**
@@ -29,30 +30,35 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 <Tabs>
 <Tab title="인증결제창 요청">
+
 ```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg: 'daou.{상점 ID}',
-    pay_method: 'card',
-    merchant_uid: 'mid_1234567890',
+IMP.request_pay(
+  {
+    pg: "daou.{상점 ID}",
+    pay_method: "card",
+    merchant_uid: "mid_1234567890",
     escrow: false,
     amount: 1004,
-    name: '노스페이스 롱패딩 M',
-    buyer_name: '홍길동',
-    buyer_email: 'hello@world.com',
-    buyer_tel: '01012345678',
-    digital : false, // 디지털로 계약되었다면 true로 설정
-    m_redirect_url: 'https://allerts.com/payments/complete', 
+    name: "노스페이스 롱패딩 M",
+    buyer_name: "홍길동",
+    buyer_email: "hello@world.com",
+    buyer_tel: "01012345678",
+    digital: false, // 디지털로 계약되었다면 true로 설정
+    m_redirect_url: "https://allerts.com/payments/complete",
     bypass: {
-	// 페이조아(다우데이타) 전용 파라미터
-        daou: {
-	    PRODUCTCODE: 'portone',
-	    CASHRECEIPTFLAG: 2,
-	},
+      // 페이조아(다우데이타) 전용 파라미터
+      daou: {
+        PRODUCTCODE: "portone",
+        CASHRECEIPTFLAG: 2,
+      },
     },
-    app_scheme: 'portoneappscheme',
-}, function(rsp) { // callback 로직
-	//* ...중략... *//
-});
+    app_scheme: "portoneappscheme",
+  },
+  function (rsp) {
+    // callback 로직
+    // * ...중략... *
+  }
+);
 ```
 
 **주요 파라미터 설명**
@@ -89,15 +95,15 @@ IMP.request_pay({
 
 값에 대해 정해진 규격이 없고 보내지 않을 경우 포트원에서 기본값(iamport)을 설정해 페이조아 측으로 전달
 
-**`bypass.daou.CASHRECEIPTFLAG`** <mark style="color:green;">**``**</mark><mark style="color:purple;">**`integer`**</mark>
+**`bypass.daou.CASHRECEIPTFLAG`** <mark style="color:green;">**``**</mark><mark style="color:purple;">**`number`**</mark>
 
 **현금영수증 발급 구분코드**
 
 비 신용결제(계좌,가상)시 페이조아에서 자동발급 여부 구분코드
 
-**`1: 허용`**
+**`1`: 허용**
 
-**`2: 차단`**
+**`2`: 차단**
 
 **`app_scheme`** <mark style="color:green;">**`string`**</mark>
 
@@ -105,11 +111,11 @@ IMP.request_pay({
 
 모바일 앱 환경에서 결제시 필수 파라미터
 
-**`amount` \***<mark style="color:purple;">**integer**</mark>
+**`amount` \***<mark style="color:purple;">**number**</mark>
 
 **결제금액**
 
-<mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
+<mark style="color:green;">**string**</mark> 이 아닌 점에 유의하세요.
 
 **`escrow`** <mark style="color:orange;">**`boolean`**</mark>
 
@@ -126,7 +132,7 @@ IMP.request_pay({
 
 REST[ **API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호출하여 일회성 결제를 요청합니다. 요청 시 전달된 카드는 포트원에 등록되지 않습니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
@@ -136,7 +142,7 @@ curl -H "Content-Type: application/json" \
 
 REST [**API POST /subscribe/customers/\{customer_uid}**](../../../api/api-2/api-1)를 호출하여 빌링키 발급을 요청합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
      https://api.iamport.kr/subscribe/customers/your-customer-unique-id
@@ -148,7 +154,7 @@ REST [**API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호
 
 - **`customer_uid`** : 빌링키 등록을 위해서 지정해야 합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
@@ -158,7 +164,7 @@ curl -H "Content-Type: application/json" \
 
 빌링키 발급과 최초 결제가 성공하면 빌링키는 전달된 `customer_uid` 와 1:1 매칭되어 포트원에 저장됩니다. 보안상의 이유로 서버는 빌링키에 직접 접근할 수 없기 때문에 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
@@ -166,7 +172,7 @@ curl -H "Content-Type: application/json" \
 
 **자세한 가이드는 아래 링크를 참조하세요**
 
-<ContentRef slug="/ko////auth/guide-1/readme" />
+<ContentRef slug="/ko/auth/guide-1/readme" />
 
 </Tab>
 </Tabs>
@@ -177,17 +183,18 @@ curl -H "Content-Type: application/json" \
 <Tab title="할부개월수 설정">
 ```javascript title="javascript"
 display: {
-    card_quota: [6]  // 할부개월 6개월까지만 활성화
+  card_quota: [6]  // 할부개월 6개월까지만 활성화
 }
 ```
 
 **파라미터 설명**
 
-- **card_quota :**
+- **`card_quota` :**
   - `[]`: 일시불만 결제 가능
-  - `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능\\
+  - `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능
 
 <Hint style="info">
+
 할부결제는 **5만원 이상 결제 요청시**에만 이용 가능합니다.
 
 </Hint>
@@ -197,44 +204,45 @@ display: {
 <Tab title="카드사 모듈 바로 호출">
 ```javascript title="javascript"
 card: {
-     direct: {
-        code: "367",
-        quota: 3
-    }
+  direct: {
+    code: "367",
+    quota: 3
+  }
 }
 ```
 
 **파라미터 설명**
 
-- **code** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
-- **quota** : 할부 개월 수. 일시불일 시 0 으로 지정. (**integer**)
+- **`code`** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
+- **`quota`** : 할부 개월 수. 일시불일 시 0으로 지정 (**number**)
 
 </Tab>
 
 <Tab title="에스크로 결제">
-에스크로 결제를 위해서는 **`escrow`** 파라미터를 추가하고 <mark style="color:red;">**true**</mark> 값으로 설정되어야 합니다. 에스크로 결제가 완료되면 가맹점은 배송정보 등록을 진행해야 하며 해당 작업이 누락되는경우 **정산이 진행되지 않습니다**. [**배송정보 등록**](../../../api/api-7/api-1) 및 [**배송수정 API**](../../../api/api-7/api-2) 를 이용하여 배송정보를 관리할 수 있습니다.
+에스크로 결제를 위해서는 **`escrow`** 파라미터를 추가하고 <mark style="color:red;">**true**</mark> 값으로 설정해야 합니다. 에스크로 결제가 완료되면 가맹점은 배송정보 등록을 진행해야 하며 해당 작업이 누락되는 경우 **정산이 진행되지 않습니다**. [**배송정보 등록**](../../../api/api-7/api-1) 및 [**배송수정 API**](../../../api/api-7/api-2) 를 이용하여 배송정보를 관리할 수 있습니다.
 
-```javascript title="API Body 예시"
+```json title="API Body 예시"
 {
-    "logis": {
-        "invoice": "1728384716123",
-        "company": "CJGLS",
-        "receiving_at": "20220215",
-        "address": "성수이로20길16"
-    },
-    "receiver": {
-        "name": "홍길동"
-    },
-    "sender": {
-        "relationship": "본인"
-    }
+  "logis": {
+    "invoice": "1728384716123",
+    "company": "CJGLS",
+    "receiving_at": "20220215",
+    "address": "성수이로20길16"
+  },
+  "receiver": {
+    "name": "홍길동"
+  },
+  "sender": {
+    "relationship": "본인"
+  }
 }
 ```
 
 <Hint style="danger">
+
 **주의사항**
 
-- 에스크로 배송정보 등록/수정시 가맹점이 전달한 배송정보(운송장번호, 택배사이름 등)에 대해 페이조아 측에서 유효성 체크를 하지 않습니다.
+- 에스크로 배송정보 등록/수정 시 가맹점이 전달한 배송정보(운송장 번호, 택배사 이름 등)에 대해 페이조아 측에서 유효성 체크를 하지 않습니다.
 
 </Hint>
 

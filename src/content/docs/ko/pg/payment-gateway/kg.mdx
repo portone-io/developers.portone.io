@@ -19,7 +19,7 @@ import Hint from "~/components/gitbook/Hint.astro";
 
 ### 2.결제 요청하기
 
-[JavaScript SDK](../../sdk/javascript-sdk/readme) IMP.**request_pay**(param, callback)을 호출하여 KG 모빌리언스 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되고 모바일의 경우<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk/readme) `IMP.request_pay(param, callback)`을 호출하여 KG 모빌리언스 결제창을 호출할 수 있습니다. **결제 결과**는 PC의 경우 `IMP.request_pay(param, callback)` 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되고 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark>로 리디렉션됩니다.
 
 ```javascript title="Javascript SDK"
 IMP.request_pay(
@@ -53,9 +53,9 @@ IMP.request_pay(
 
 **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**결제수단 구분코드**
+**결제수단 구분 코드**
 
-- phone(휴대폰소액결제)
+- phone (휴대폰 소액 결제)
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -98,9 +98,10 @@ IMP.request_pay(
 ```
 
 <Hint style="info">
-* 비 인증 결제를 위해서는 **KG모빌리언스와 계약이 완료된 MID 정보를** 관리자콘솔에 설정하셔야 비 인증 결제창을 활성화 시킬수 있습니다.
-* **KG모빌리언스 휴대폰 결제는** 빌링키 발급시 <mark style="color:red;">**실 결제가 발생됩니다.**</mark>
-* 최초 승인일자 기준 매월 <mark style="color:red;">**동일한 일자에 동일금액**</mark>이 재 결제되어야 합니다.
+
+- 비 인증 결제를 위해서는 **KG모빌리언스와 계약이 완료된 MID 정보를** 관리자콘솔에 설정하셔야 비 인증 결제창을 활성화시킬 수 있습니다.
+- **KG모빌리언스 휴대폰 결제는** 빌링키 발급시 <mark style="color:red;">**실 결제가 발생됩니다.**</mark>
+- 최초 승인일자 기준 매월 <mark style="color:red;">**동일한 일자에 동일 금액**</mark>이 재결제되어야 합니다.
 
 </Hint>
 
@@ -118,17 +119,17 @@ IMP.request_pay(
 
 비 인증 결제창에서 고객이 입력한 카드정보와 1:1로 매칭될 빌링키를 지정합니다.
 
-**`amount` \***<mark style="color:purple;">**Integer**</mark>
+**`amount` \***<mark style="color:purple;">**number**</mark>
 
 **결제금액**
 
 결제창에 표시될 금액으로 <mark style="color:red;">실제 승인이 발생됩니다.</mark>
 
-(실 결제를 발생시키기 위해서는 **customer_uid** 로 **REST API 를 이용하여 결제요청**을 해주셔야 합니다.)\\
+(실 결제를 발생시키기 위해서는 **`customer_uid`** 로 **REST API 를 이용하여 결제를 요청**해주셔야 합니다.)
 
-#### 빌링키(customer_uid)로 결제 요청하기
+#### 빌링키(`customer_uid`)로 결제 요청하기
 
-빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api) 를 호출하시면 결제를 발생시킬 수 있습니다.
+빌링키 발급이 성공하면 실 빌링키는 `customer_uid` 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. `customer_uid`를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api) 를 호출하시면 결제를 발생시킬 수 있습니다.
 
 ```sh title="server-side"
 curl -H "Content-Type: application/json" \
@@ -136,4 +137,4 @@ curl -H "Content-Type: application/json" \
      https://api.iamport.kr/subscribe/payments/again
 ```
 
-**포트원을 통한 KG 모빌리언스는 API 방식 비 인증 결제는 지원되지 않습니다.**
+**포트원을 통해 KG 모빌리언스를 사용할 때에는 API 방식 비 인증 결제를 사용할 수 없습니다.**

@@ -1,58 +1,55 @@
 ---
 emoji: ⌨
-title: (주)케이에스넷
-description: (주)케이에스넷 결제창 연동 가이드입니다.
+title: KSNET
+description: KSNET 결제창 연동 가이드입니다.
 ---
 
 import * as prose from "~/components/prose";
 export const components = prose;
 
+import Figure from "~/components/gitbook/Figure.astro";
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-<figure>
-  <img src="/gitbook-assets/ko/image (74).png" alt="" />
-  <figcaption>
-    <p>(주)케이에스넷 </p>
-  </figcaption>
-</figure>
+<Figure src="/gitbook-assets/ko/image (74).png" caption="KSNET" />
 
-### 1. (주)케이에스넷 PG 설정하기
+### 1. KSNET PG 설정하기
 
-[**KSNET 설정**](../../../ready/2.-pg/payment-gateway/ksnet) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**KSNET 설정**](../../../ready/2-pg/payment-gateway/ksnet) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
 ### 2. 결제 요청하기
 
-[JavaScript SDK (신규))](../../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback)을 호출하여 KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark>으로 수신되고 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark>로 리디렉션됩니다.
+[JavaScript SDK (신규)](../../../sdk/javascript-sdk/readme)의 `IMP.request_pay(param, callback)`을 호출하여 KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 `IMP.request_pay(param, callback)` 호출 후 <mark style="color:red;">**callback**</mark>으로 수신되고 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark>로 리디렉션됩니다.
 
 <Hint style="warning">
-기존 JavaScript SDK를 사용 중이신 경우 [JavaScript SDK (신규))](../../../sdk/javascript-sdk/) 문서를 참고하여 업데이트를 진행해주세요.
+기존 JavaScript SDK를 사용 중이신 경우 [JavaScript SDK (신규)](../../../sdk/javascript-sdk/readme) 문서를 참고하여 업데이트를 진행해주세요.
 
 </Hint>
 
-(주)케이에스넷 결제는 최신 SDK에서만 지원되는 기능입니다.
+KSNET 결제는 최신 SDK에서만 지원되는 기능입니다.
 
 ```javascript title="JS SDK"
 <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 ```
 
 <Hint style="info">
-**(주)케이에스넷을 연동하기 위해서는 위에 안내된 JS SDK를 이용하셔야 합니다**
+
+**KSNET을 연동하기 위해서는 위에 안내된 JS SDK를 이용하셔야 합니다.**
 
 </Hint>
 
 <Hint style="danger">
 #### **기존에 deprecated된 응답들은 모두 제거**됐습니다. ⚠️
 
-케이에스넷 연동시에 사용되는 신규 JS SDK는 기존 모듈에서 제공했던 CallBack 파라미터가 대부분 삭제되었습니다.(특히 dprecated 로 명시된 파라미터는 모두 삭제되었습니다.)
+KSNET 연동시에 사용되는 신규 JS SDK는 기존 모듈에서 제공했던 CallBack 파라미터가 대부분 삭제되었습니다.(특히 deprecated 로 명시된 파라미터는 모두 삭제되었습니다.)
 
 해당 JS SDK 사용시 Callback 으로 내려받을수 있는 데이터는 오직 아래 두가지 입니다.
 
-**imp_uid, merchant_uid**
+**`imp_uid`, `merchant_uid`**
 
-따라서 해당 SDK를 사용하실때는 IMP.request_pay로부터 응답된 객체(또는 쿼리 파라미터)에서 imp_uid를 가지고 **아임포트 REST API(GET /payments/imp_uid)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여 응답파라미터중 status 파라미터로 결제 상태를 파악하셔야 합니다.
+따라서 해당 SDK를 사용하실때는 `IMP.request_pay`로부터 응답된 객체(또는 쿼리 파라미터)에서 `imp_uid`를 가지고 **아임포트 REST API(GET `/payments/imp_uid`)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여 응답 파라미터 중 status 파라미터로 결제 상태를 파악하셔야 합니다.
 
 </Hint>
 
@@ -61,13 +58,13 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 ```
 
-위 JS SDK 를 이용하여 토스페이먼츠,케이에스넷 연동시 callback Data는
+위 JS SDK를 이용하여 토스페이먼츠, KSNET 연동시 callback Data는
 아래와 같이 두가지 형태로만 내려갑니다.
 
 - `imp_uid`
 - `merchant_uid`
 
-위 PG사를 제외한 다른 PG사는 imp_success 파라미터가 기존처럼 내려가지만
+위 PG사를 제외한 다른 PG사는 `imp_success` 파라미터가 기존처럼 내려가지만
 해당 파리미터는 deprecated 된 값이기 때문에 해당 값에 의존성을 가진 프로그램 로직은 모두 삭제하시는
 방향성을 잡아가셔야 하는점 유념하시기 바랍니다.
 
@@ -75,41 +72,46 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 <Tabs>
 <Tab title="인증결제창 요청">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-  pg: "ksnet.{PG 상점 아이디}", // 테스트인경우 ksnet.2999199999
-  pay_method: "card",
-  merchant_uid: "order_id_1667634130160", // 상점에서 채번하는 고유 주문 번호
-  name: "나이키 와플 트레이너 2 SD",
-  pay_method: "card",
-  escrow: false,
-  amount: "109000",
-  tax_free: 3000,
-  buyer_name: "홍길동",
-  buyer_email: "buyer@example.com",
-  buyer_tel: "02-1670-5176",
-  buyer_addr: "성수이로 20길 16",
-  buyer_postcode: "04783",
-  app_scheme: "portone://",
-  m_redirect_url: "https://helloworld.com/payments/result",
-  notice_url: "https://helloworld.com/api/v1/payments/notice",
-  confirm_url: "https://helloworld.com/api/v1/payments/confirm",
-  currency: "KRW",
-  digital: false,
-  period: {
-    from: "2022-12-01",
-    to: "2023-01-01",
-  },
-  custom_data: { userId: 30930 },
-  display: { card_quota: [0, 6] },
-  bypass: {
-    ksnet: {
-      sndQpayType: "0",
+
+```javascript title="JavaScript SDK"
+IMP.request_pay(
+  {
+    pg: "ksnet.{PG 상점 아이디}", // 테스트인 경우 ksnet.2999199999
+    pay_method: "card",
+    merchant_uid: "order_id_1667634130160", // 상점에서 채번하는 고유 주문 번호
+    name: "나이키 와플 트레이너 2 SD",
+    pay_method: "card",
+    escrow: false,
+    amount: "109000",
+    tax_free: 3000,
+    buyer_name: "홍길동",
+    buyer_email: "buyer@example.com",
+    buyer_tel: "02-1670-5176",
+    buyer_addr: "성수이로 20길 16",
+    buyer_postcode: "04783",
+    app_scheme: "portone://",
+    m_redirect_url: "https://helloworld.com/payments/result",
+    notice_url: "https://helloworld.com/api/v1/payments/notice",
+    confirm_url: "https://helloworld.com/api/v1/payments/confirm",
+    currency: "KRW",
+    digital: false,
+    period: {
+      from: "2022-12-01",
+      to: "2023-01-01",
+    },
+    custom_data: { userId: 30930 },
+    display: { card_quota: [0, 6] },
+    bypass: {
+      ksnet: {
+        sndQpayType: "0",
+      },
     },
   },
-}, function (rsp) { // callback 로직
-  //* ...중략... *//
-});
+  function (rsp) {
+    // callback 로직
+    //* ...중략... *//
+  }
+);
 ```
 
 **주요 파라미터 설명**
@@ -146,13 +148,14 @@ IMP.request_pay({
 
 지정하지 않은 경우 0원입니다.
 
-**`tax_free`** <mark style="color:purple;">**integer**</mark>
+**`tax_free`** <mark style="color:purple;">**number**</mark>
 
 **면세금액**
 
 지정하지 않은 경우 0원입니다.
 
 <Hint style="info">
+
 포트원을 통해 KSNET를 사용하는 경우 과세 설정이 `복합과세`이므로 면세금액을 반드시 입력해야 합니다.
 
 </Hint>
@@ -162,6 +165,7 @@ IMP.request_pay({
 **디지털 상품 유형 여부**
 
 <Hint style="info">
+
 해당 필드는 **휴대폰 결제**에서만 사용되며, 상점이 `디지털 상품유형`으로 설정된 경우 항상 `true`로 전달해야 합니다.
 
 </Hint>
@@ -182,7 +186,7 @@ IMP.request_pay({
 </Tab>
 
 <Tab title="비인증 결제창 요청">
-**(주)케이에스넷은 결제창 기반 비인증 결제를 지원하지 않습니다.**
+**KSNET은 결제창 기반 비인증 결제를 지원하지 않습니다.**
 
 </Tab>
 
@@ -191,25 +195,21 @@ IMP.request_pay({
 
 REST [**API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호출하여 일회성 결제를 요청합니다. 요청 시 전달된 카드는 포트원에 등록되지 않습니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
 ```
 
-####
-
 ### 빌링키 발급 요청하기
 
 REST [**API POST /subscribe/customers/\{customer_uid}**](../../../api/api-2/api-1)를 호출하여 빌링키 발급을 요청합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
      https://api.iamport.kr/subscribe/customers/your-customer-unique-id
 ```
-
-####
 
 ### 빌링키 발급 및 최초 결제 요청하기
 
@@ -217,19 +217,17 @@ REST [**API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호
 
 - **`customer_uid`** : 빌링키 등록을 위해서 지정해야 합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
 ```
 
-####
-
 ### 빌링키로 결제 요청하기
 
 빌링키 발급과 최초 결제가 성공하면 빌링키는 전달된 `customer_uid` 와 1:1 매칭되어 포트원에 저장됩니다. 보안상의 이유로 서버는 빌링키에 직접 접근할 수 없기 때문에 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
@@ -252,7 +250,7 @@ REST [**API POST /receipts/\{imp_uid}**](../../../api/api-8/api-2)를 호출하�
 
 - `product_type`, `buyer_name` 파라미터는 KSPAY 필수 입력 대상입니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"identifier": "1178178260", "identifier_type": "business", "type": "company", "product_type": "digital"}' \
      https://api.iamport.kr/receipts/{imp_uid}
@@ -265,7 +263,7 @@ REST [**API POST /receipts/external/\{merchant_uid}**](../../../api/api-8/api-5)
 
 - `product_type`, `pg`, `buyer_name` 파라미터는 KSPAY 필수 입력 대상입니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"merchant_uid": "order_id_1667643230720", "name": "나이키 와플 트레이너 2 SD", "amount": 109000, "identifier": "1178178260",  "identifier_type": "business", "type": "company", "product_type": "digital", "tax_free": "3000", "pg": "ksnet"}' \
      https://api.iamport.kr/receipts/external/{merchant_uid}
@@ -281,7 +279,7 @@ display: {
 
 **파라미터 설명**
 
-- **card_quota :**
+- **`card_quota` :**
   - `[]`: 일시불만 결제 가능
   - `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능\\
 
@@ -290,6 +288,8 @@ display: {
 
 </Hint>
 
-할부개월수 <mark style="color:red;">**3개월**</mark>**까지 활성화 예제**
-
-<Codepen user="chaiport" slug="yLpMvYJ" />
+<Codepen
+  user="chaiport"
+  slug="yLpMvYJ"
+  caption="할부개월수 3개월까지 활성화 예제"
+/>

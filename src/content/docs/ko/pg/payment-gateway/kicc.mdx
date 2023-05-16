@@ -7,6 +7,7 @@ description: KICC 결제창 연동 방법을 안내합니다.
 import * as prose from "~/components/prose";
 export const components = prose;
 
+import Figure from "~/components/gitbook/Figure.astro";
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
@@ -14,27 +15,27 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### 1. KICC PG 설정하기
 
-[**KICC 설정**](../../ready/2.-pg/payment-gateway/kicc) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**KICC 설정**](../../ready/2-pg/payment-gateway/kicc) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-![](</gitbook-assets/ko/스크린샷 2022-06-03 오후 4.54.05.png>)
+<Figure src="/gitbook-assets/ko/screenshot 2022-06-03 4.54.05.png" />
 
-### 2.결제 요청하기
+### 2. 결제 요청하기
 
 <Tabs>
 <Tab title="인증결제">
-[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request\_pay**(param, callback)을 호출하여 KICC 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request\_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되고 모바일의 경우<mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 KICC 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 `IMP.request_pay(param, callback)` 호출 후 <mark style="color:red;">**callback**</mark>으로 수신되고 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark>로 리디렉션됩니다.
 
 ```javascript title="Javascript SDK"
 IMP.request_pay(
   {
     pg: "kicc.{상점 ID}",
     pay_method: "card",
-    merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
+    merchant_uid: "order_no_0001", // 상점에서 생성한 고유 주문번호
     name: "주문명:결제테스트",
     amount: 1004,
     buyer_email: "test@portone.io",
     buyer_name: "구매자이름",
-    buyer_tel: "010-1234-5678", //필수
+    buyer_tel: "010-1234-5678", // 필수
     buyer_addr: "서울특별시 강남구 삼성동",
     buyer_postcode: "123-456",
     m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
@@ -73,7 +74,7 @@ IMP.request_pay(
 
 **`주문자 연락처`**
 
-**`amount` \***<mark style="color:purple;">**integer**</mark>
+**`amount` \***<mark style="color:purple;">**number**</mark>
 
 **결제금액**
 
@@ -83,13 +84,14 @@ IMP.request_pay(
 
 **에스크로 설정여부**
 
-계좌이체,가상계좌만 지원됩니다.
+계좌이체, 가상계좌만 지원됩니다.
 
 <Codepen user="chaiport" slug="YzevrGz" />
 </Tab>
 
 <Tab title="비인증 결제(결제창)">
-인증결제창 호출 파라미터에서 **customer\_uid** 값을 추가하면 비 인증 결제창을 호출할 수 있습니다. 비 인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
+
+인증결제창 호출 파라미터에서 **`customer_uid`** 값을 추가하면 비 인증 결제창을 호출할 수 있습니다. 비 인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
 
 ```javascript title="Javascript SDK"
 IMP.request_pay(
@@ -116,8 +118,9 @@ IMP.request_pay(
 ```
 
 <Hint style="info">
-* 비 인증 결제를 위해서는 **KICC와 협의가 완료된 MID 정보** 관리자콘솔에 설정하셔야 비인증 결제창을 활성화 시킬수 있습니다.
-* KICC는 빌링키 발급시 <mark style="color:red;">**실 결제 발생되지 않습니다**</mark>.(금액을 지정해도 결제가 발생되지 않음)
+
+- 비 인증 결제를 위해서는 **KICC와 협의가 완료된 MID 정보** 관리자콘솔에 설정하셔야 비인증 결제창을 활성화 시킬수 있습니다.
+- KICC는 빌링키 발급시 <mark style="color:red;">**실 결제가 발생되지 않습니다**</mark>.(금액을 지정해도 결제가 발생되지 않음)
 
 </Hint>
 
@@ -135,19 +138,19 @@ IMP.request_pay(
 
 비 인증 결제창에서 고객이 입력한 카드정보와 1:1로 매칭될 빌링키를 지정합니다.
 
-**`amount` \***<mark style="color:purple;">**Integer**</mark>
+**`amount` \***<mark style="color:purple;">**number**</mark>
 
 **결제금액**
 
 결제창에 표시될 금액으로 <mark style="color:red;">실제 승인은 이루어지지 않습니다.</mark>
 
-(실 결제를 발생시키기 위해서는 **customer_uid** 로 **REST API 를 이용하여 결제요청**을 해주셔야 합니다.)\\
+(실 결제를 발생시키기 위해서는 **`customer_uid`** 로 **REST API 를 이용하여 결제요청**을 해 주셔야 합니다.)
 
-#### 빌링키(customer_uid)로 결제 요청하기
+#### 빌링키(`customer_uid`)로 결제 요청하기
 
-빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api) 를 호출하시면 결제를 발생시킬 수 있습니다.
+빌링키 발급이 성공하면 실 빌링키는 `customer_uid` 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. `customer_uid`를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api) 를 호출하시면 결제를 발생시킬 수 있습니다.
 
-```title="server-side"
+```sh title="server-side"
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":1004}' \
      https://api.iamport.kr/subscribe/payments/again
@@ -164,13 +167,14 @@ curl -H "Content-Type: application/json" \
 
 <Tabs>
 <Tab title="에스크로 설정">
-KICC는 **현금성 결제수단** (실시간계좌이체, 가상계좌)에 한하여 에스크로 결제수단을 지원합니다.
+
+KICC는 **현금성 결제수단** (실시간 계좌이체, 가상계좌)에 한하여 에스크로 결제수단을 지원합니다.
 
 > 에스크로 설정을 위해서는 아래 파라미터를 기본적으로 설정한 후 추가적인 파라미터를
 >
 > 입력해야 합니다.
 >
-> - **escrow : true**
+> - **`escrow: true`**
 
 **추가 파라미터 안내**
 
@@ -186,47 +190,43 @@ KICC는 **현금성 결제수단** (실시간계좌이체, 가상계좌)에 한�
   - `amount` : 상품 가격
 
 ```javascript title="JavaScript SDK"
-IMP.request_pay({
-   ...
-   escrow : true, //에스크로 결제인 경우 필요
-   kiccProducts : [
-    	       {
-			"orderNumber" : "xxxx",
-			"name" : "상품A",
-			"quantity" : 3,
-			"amount" : 1000
-		},
-		{
-			"orderNumber" : "yyyy",
-			"name" : "상품B",
-			"quantity" : 2,
-			"amount" : 3000
-		}
-	       ]
-    ...
-}, function(rsp) { // callback 로직
-	//* ...중략 ... *//
-});
+escrow: true, // 에스크로 결제인 경우 필요
+kiccProducts: [
+  {
+    orderNumber: "xxxx",
+    name: "상품A",
+    quantity: 3,
+    amount: 1000,
+  },
+  {
+    orderNumber: "yyyy",
+    name: "상품B",
+    quantity: 2,
+    amount: 3000,
+  },
+],
 ```
 
 </Tab>
 
 <Tab title="카드사 모듈 바로 호출">
+
 ```javascript title="javascript"
 card: {
-     direct: {
-        code: "367",
-        quota: 3
-    }
+  direct: {
+    code: "367",
+    quota: 3
+  }
 }
 ```
 
 **파라미터 설명**
 
-- **code** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
-- **quota** : 할부 개월 수. 일시불일 시 0 으로 지정. (**integer**)
+- **`code`** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
+- **`quota`** : 할부 개월 수. 일시불일 시 0 으로 지정. (**number**)
 
 <Hint style="danger">
+
 **주의사항**
 
 - 일부 PG사의 경우, 모든 상점아이디에 대하여 카드사 결제창 direct 노출 기능을 지원하지 않습니다. 반드시 포트원을 통해 현재 사용중인 상점아이디가 카드사 결제창 direct 호출이 가능하도록 설정이 되어있는지 PG사에 확인이 필요합니다.
@@ -237,21 +237,24 @@ card: {
 
 <Tab title="특정 카드사 노출">
 ```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     //모든 카드사 비활성화
-        {card_code:'366', enabled:true}     //특정 카드만 활성화
-    ]
+card: {
+  detail: [
+    { card_code: "*", enabled: false },     //모든 카드사 비활성화
+    { card_code: '366', enabled: true }     //특정 카드만 활성화
+  ]
 }
 ```
 
 **파라미터 설명**
 
-- **card_code :** 금결원 카드사코드 [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (<mark style="color:green;">**string)**</mark>
-- **enabled :** 해당카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
+- **`card_code` :** 금융결제원 카드사 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (<mark style="color:green;">**string)**</mark>
+- **`enabled` :** 해당카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
 
-<Codepen user="chaiport" slug="MWQKdVo" />
-<mark style="color:red;">**신한카드**</mark>**만 결제창 노출 처리 예제**" />
+<Codepen
+  user="chaiport"
+  slug="MWQKdVo"
+  caption="신한카드만 결제창 노출 처리 예제"
+/>
 
 </Tab>
 </Tabs>

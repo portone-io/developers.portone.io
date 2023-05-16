@@ -7,6 +7,7 @@ description: 나이스페이먼츠 결제창 연동 가이드를 안내합니다
 import * as prose from "~/components/prose";
 export const components = prose;
 
+import Figure from "~/components/gitbook/Figure.astro";
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
@@ -14,37 +15,40 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### 1. NICE페이먼츠 PG 설정하기
 
-[**나이스페이먼츠 설정**](../../ready/2.-pg/payment-gateway/nice) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**나이스페이먼츠 설정**](../../ready/2-pg/payment-gateway/nice) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-![](</gitbook-assets/ko/screenshot 2022-05-29 7.44.33.png>)
+<Figure src="/gitbook-assets/ko/screenshot 2022-05-29 7.44.33.png" />
 
 ### 2.결제 요청하기
 
-[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 NICE페이먼츠 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되고 모바일의 경우<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 NICE페이먼츠 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 `IMP.request_pay(param, callback)` 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되고 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
 <Tab title="인증결제창 요청">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'nice.{상점 ID}',
-    pay_method : 'card',
-    merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
-    name : '주문명:결제테스트',
-    amount : 1004,
-    buyer_email : 'test@portone.io',
-    buyer_name : '구매자이름',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : '서울특별시 강남구 삼성동',
-    buyer_postcode : '123-456',
-    language : 'en' // 결제창 언어 선택 파라미터  ko: 한국어, en: 영문
-    m_redirect_url : '{모바일에서 결제 완료 후 리디렉션 될 URL}',
-    niceMobileV2 : true  // 신규 모바일 버전 적용 시 설정 
-}, function(rsp) { // callback 로직
-	//* ...중략... *//
-});
-```
 
-#### \*\*\*\*
+```javascript title="Javascript SDK"
+IMP.request_pay(
+  {
+    pg: "nice.{상점 ID}",
+    pay_method: "card",
+    merchant_uid: "order_no_0001", // 상점에서 생성한 고유 주문번호
+    name: "주문명:결제테스트",
+    amount: 1004,
+    buyer_email: "test@portone.io",
+    buyer_name: "구매자이름",
+    buyer_tel: "010-1234-5678",
+    buyer_addr: "서울특별시 강남구 삼성동",
+    buyer_postcode: "123-456",
+    language: "en", // 결제창 언어 선택 파라미터  ko: 한국어, en: 영문
+    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+    niceMobileV2: true, // 신규 모바일 버전 적용 시 설정
+  },
+  function (rsp) {
+    // callback 로직
+    //* ...중략... *//
+  }
+);
+```
 
 #### **주요 파라미터 설명**
 
@@ -75,7 +79,7 @@ IMP.request_pay({
 
 매번 고유하게 채번되어야 합니다.
 
-**`amount` \***<mark style="color:purple;">**integer**</mark>
+**`amount` \***<mark style="color:purple;">**number**</mark>
 
 **결제금액**
 
@@ -83,7 +87,7 @@ IMP.request_pay({
 
 **`niceMobileV2`** <mark style="color:orange;">**`boolean`**</mark>
 
-나이스 모바일 신규버전 적용 여부(기본 값: false)
+나이스 모바일 신규버전 적용 여부(기본 값: `false`)
 
 **`escrow`** <mark style="color:orange;">**`boolean`**</mark>
 
@@ -101,6 +105,7 @@ IMP.request_pay({
 </Tab>
 
 <Tab title="비인증 API 요청">
+
 **API 방식으로 빌링키 발급,결제요청,예약결제를 구현할수 있습니다.**
 
 ---
@@ -109,7 +114,7 @@ IMP.request_pay({
 
 REST[ **API POST /subscribe/payments/onetime**](../../api/api-4/api-1)을 호출하여 일회성 결제를 요청합니다. 요청 시 전달된 카드는 포트원에 등록되지 않습니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
@@ -121,7 +126,7 @@ curl -H "Content-Type: application/json" \
 
 REST [**API POST /subscribe/customers/\{customer_uid}**](../../api/api-2/api-1)를 호출하여 빌링키 발급을 요청합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
      https://api.iamport.kr/subscribe/customers/your-customer-unique-id
@@ -135,7 +140,7 @@ REST [**API POST /subscribe/payments/onetime**](../../api/api-4/api-1)을 호출
 
 - **`customer_uid`** : 빌링키 등록을 위해서 지정해야 합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
@@ -147,13 +152,14 @@ curl -H "Content-Type: application/json" \
 
 빌링키 발급과 최초 결제가 성공하면 빌링키는 전달된 `customer_uid` 와 1:1 매칭되어 포트원에 저장됩니다. 보안상의 이유로 서버는 빌링키에 직접 접근할 수 없기 때문에 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
 ```
 
 <Hint style="info">
+
 **나이스페이먼츠는 비인증 결제는 API 방식으로만 지원됩니다.**
 
 비인증 결제를 연동하기 위해서는 카드정보를 획득할수 있는 UI를 구성해 주셔야 하며 해당 가이드는 [**링크**](../../auth/guide-1/bill/rest-api)에서 확인해주시면 됩니다.
@@ -167,20 +173,22 @@ curl -H "Content-Type: application/json" \
 
 <Tabs>
 <Tab title="할부개월수 설정">
+
 ```javascript title="javascript"
 display: {
-    card_quota: [6]  // 할부개월 6개월까지만 활성화
+  card_quota: [6], // 할부개월 6개월까지만 활성화
 }
 ```
 
 **파라미터 설명**
 
-- **card_quota :**
+- **`card_quota`:**
   - `[]`: 일시불만 결제 가능
   - `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능\\
 
 <Hint style="info">
-할부결제는 **5만원 이상 결제 요청시**에만 이용 가능합니다.
+
+할부결제는 **5만원 이상 결제 요청 시**에만 이용 가능합니다.
 
 </Hint>
 
@@ -195,19 +203,20 @@ display: {
 <Tab title="카드사 모듈 바로 호출">
 ```javascript title="javascript"
 card: {
-     direct: {
-        code: "367",
-        quota: 3
-    }
+  direct: {
+    code: "367",
+    quota: 3
+  }
 }
 ```
 
 **파라미터 설명**
 
-- **code** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
-- **quota** : 할부 개월 수. 일시불일 시 0 으로 지정. (**integer**)
+- **`code`** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
+- **`quota`** : 할부 개월 수. 일시불일 시 0으로 지정. (**number**)
 
 <Hint style="danger">
+
 **주의사항**
 
 - 일부 PG사의 경우, 모든 상점아이디에 대하여 카드사 결제창 direct 노출 기능을 지원하지 않습니다. 반드시 포트원을 통해 현재 사용중인 상점아이디가 카드사 결제창 direct 호출이 가능하도록 설정이 되어있는지 PG사에 확인이 필요합니다.
@@ -223,19 +232,20 @@ card: {
 </Tab>
 
 <Tab title="특정 카드사 노출">
+
 ```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     //모든 카드사 비활성화
-        {card_code:'366', enabled:true}     //특정 카드만 활성화
-    ]
+card: {
+  detail: [
+    { card_code: "*", enabled: false }, //모든 카드사 비활성화
+    { card_code: "366", enabled: true }, //특정 카드만 활성화
+  ],
 }
 ```
 
 **파라미터 설명**
 
-- **card_code :** 금결원 카드사코드 [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (<mark style="color:green;">**string)**</mark>
-- **enabled :** 해당카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
+- **`card_code` :** 금융결제원 카드사 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (<mark style="color:green;">**string)**</mark>
+- **`enabled` :** 해당 카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
 
 <Codepen
   user="chaiport"
@@ -246,6 +256,7 @@ card : {
 </Tab>
 
 <Tab title="부가세 지정">
+
 ```javascript
 // 영세율 결제 경우
 amount: 1000,
@@ -255,9 +266,10 @@ vat_amount: 0, // 부가세 지정
 
 **파라미터 설명**
 
-- **vat_amount**: 상점 아이디 설정이 지정금액 방식인 경우 부가세 지정 가능(integer)
+- **`vat_amount`**: 상점 아이디 설정이 지정금액 방식인 경우 부가세 지정 가능 (number)
 
 <Hint style="danger">
+
 주의사항
 
 - 상점 아이디 설정이 지정금액 방식인 경우에는 취소 시에 공급가액, 부가세, 봉사료, 면세금액 등을 설정하도록 하고 있습니다.([링크](https://developers.nicepay.co.kr/tip.php)의 1617 코드 참조). 취소 시 취소할 금액, 부가세, 면세금액을 정확하게 전달해 주셔야 공급가액, 부가세, 면세금액, 봉사료(0원)가 설정되어 정상적으로 취소가 된다는 점 주의해주시기 바랍니다.

@@ -7,24 +7,19 @@ description: 토스페이먼츠 (신 모듈 / 2022-07-27 버전) 연동 방법�
 import * as prose from "~/components/prose";
 export const components = prose;
 
+import Figure from "~/components/gitbook/Figure.astro";
 import Details from "~/components/gitbook/Details.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-## 1. 토스페이먼츠 PG 설정하기 <a href="#1.-pg" id="1.-pg"></a>
+## 1. 토스페이먼츠 PG 설정하기
 
-[**토스페이먼츠 설정**](../../../ready/2.-pg/payment-gateway/tosspayments) 페이지의 **신 모듈 연동 내용**을 참고하여 PG 설정을 진행합니다.
+[**토스페이먼츠 설정**](../../../ready/2-pg/payment-gateway/tosspayments) 페이지의 **신 모듈 연동 내용**을 참고하여 PG 설정을 진행합니다.
 
-<figure>
-  <img
-    src="https://3669620100-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FwWX2hlvRZLZrXeH1aacF%2Fuploads%2FBmd0RfmYo113trhP47u0%2F%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202022-05-29%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%207.38.40.png?alt=media&#x26;token=a6fbe019-7770-445e-8d9c-5919531cdf14"
-    alt=""
-  />
-  <figcaption></figcaption>
-</figure>
+<Figure src="https://3669620100-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FwWX2hlvRZLZrXeH1aacF%2Fuploads%2FBmd0RfmYo113trhP47u0%2F%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202022-05-29%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%207.38.40.png?alt=media&#x26;token=a6fbe019-7770-445e-8d9c-5919531cdf14" />
 
-## 2. 최신 JavaScript SDK로 업데이트하기 <a href="#2." id="2."></a>
+## 2. 최신 JavaScript SDK로 업데이트하기
 
 토스페이먼츠 신 모듈 결제는 최신 SDK에서만 지원되는 기능입니다.
 
@@ -37,55 +32,57 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </Hint>
 
-[javascript-sdk](../../../sdk/javascript-sdk/ "mention")문서를 통해 최신 SDK를 설치해주세요.
+[JavaScript SDK](../../../sdk/javascript-sdk/readme)문서를 통해 최신 SDK를 설치해주세요.
 
 ## 3. 결제 요청하기
 
 신규 SDK가 제공하는 `IMP` 모듈에서 `request_pay` 함수를 호출합니다.
 
-`pg` 파라미터를 \*\*`tosspayments`\*\*로 지정하여 토스페이먼츠 신 모듈 연동임을 명시해주세요.
+`pg` 파라미터를 `tosspayments`로 지정하여 토스페이먼츠 신 모듈 연동임을 명시해주세요.
 
 토스페이먼츠 신 모듈을 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
 <Tab title="인증결제창 요청">
+
 ```javascript showLineNumbers
-const userCode = '가맹점 식별코드';
+const userCode = "가맹점 식별코드";
 IMP.init(userCode); // 가맹점 식별 코드를 넣어 모듈을 초기화해주세요.
 
-IMP.request_pay({
-pg: 'tosspayments', // 반드시 "tosspayments"임을 명시해주세요.
-merchant_uid: 'order_id_1667634130160',
-name: '나이키 와플 트레이너 2 SD',
-pay_method: 'card',
-escrow: false,
-amount: '109000',
-tax_free: 3000,
-buyer_name: '홍길동',
-buyer_email: 'buyer@example.com',
-buyer_tel: '02-1670-5176',
-buyer_addr: '성수이로 20길 16',
-buyer_postcode: '04783',
-m_redirect_url: 'https://helloworld.com/payments/result', // 모바일 환경에서 필수 입력
-notice_url: 'https://helloworld.com/api/v1/payments/notice',
-confirm_url: 'https://helloworld.com/api/v1/payments/confirm',
-currency: 'KRW',
-locale: 'ko',
-custom_data: { userId: 30930 },
-display: { card_quota: [0, 6] },
-appCard: false,
-useCardPoint: true,
-bypass: {
-tosspayments: {
-useInternationalCardOnly: true // 영어 결제창 활성화
-}
-}
-}, response => {
-// PC 환경에서 결제 프로세스 완료 후 실행 될 로직
-})
-
-````
-
+IMP.request_pay(
+  {
+    pg: "tosspayments", // 반드시 "tosspayments"임을 명시해주세요.
+    merchant_uid: "order_id_1667634130160",
+    name: "나이키 와플 트레이너 2 SD",
+    pay_method: "card",
+    escrow: false,
+    amount: "109000",
+    tax_free: 3000,
+    buyer_name: "홍길동",
+    buyer_email: "buyer@example.com",
+    buyer_tel: "02-1670-5176",
+    buyer_addr: "성수이로 20길 16",
+    buyer_postcode: "04783",
+    m_redirect_url: "https://helloworld.com/payments/result", // 모바일 환경에서 필수 입력
+    notice_url: "https://helloworld.com/api/v1/payments/notice",
+    confirm_url: "https://helloworld.com/api/v1/payments/confirm",
+    currency: "KRW",
+    locale: "ko",
+    custom_data: { userId: 30930 },
+    display: { card_quota: [0, 6] },
+    appCard: false,
+    useCardPoint: true,
+    bypass: {
+      tosspayments: {
+        useInternationalCardOnly: true, // 영어 결제창 활성화
+      },
+    },
+  },
+  (response) => {
+    // PC 환경에서 결제 프로세스 완료 후 실행 될 로직
+  }
+);
+```
 
 <Details>
 <p slot="summary"><strong>주요 파라미터 설명</strong></p>
@@ -96,26 +93,23 @@ useInternationalCardOnly: true // 영어 결제창 활성화
 
 _tosspayments_ 로 지정하면 됩니다.
 
-
-
 **`pay_method`** <mark style="color:green;">**string**</mark>
 
-* 카드 (card)
-* 계좌이체(trans)
-* 가상계좌(vbank)
-* 휴대폰 소액결제(phone)
-* 도서문화상품권(booknlife)
-* 스마트문상(smartculture)
-* 컬쳐랜드(cultureland)
-* 카카오페이 (kakaopay)
-* 네이버페이 (naverpay)
-* 엘페이 (lpay)
-* 삼성페이(samsung)
-* SSGpay (ssgpay)
-* 애플페이 (applepay)
-* 페이코 (payco)
-* 토스간편결제 (tosspay)
-*
+- 카드 (card)
+- 계좌이체(trans)
+- 가상계좌(vbank)
+- 휴대폰 소액결제(phone)
+- 도서문화상품권(booknlife)
+- 스마트문상(smartculture)
+- 컬쳐랜드(cultureland)
+- 카카오페이 (kakaopay)
+- 네이버페이 (naverpay)
+- 엘페이 (lpay)
+- 삼성페이(samsung)
+- SSGpay (ssgpay)
+- 애플페이 (applepay)
+- 페이코 (payco)
+- 토스간편결제 (tosspay)
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -123,41 +117,29 @@ _tosspayments_ 로 지정하면 됩니다.
 
 매번 고유하게 채번되어야 합니다.
 
-
-
-**`amount` \***<mark style="color:purple;">**integer**</mark>
+**`amount` \***<mark style="color:purple;">**number**</mark>
 
 **결제금액**
 
 <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
 
-
-
 **`buyer_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
 **`구매자 이름`**
-
-
 
 **`buyer_email`** <mark style="color:green;">**`string`**</mark>
 
 **`구매자 email 주소`**
 
-
-
 **`currency`** <mark style="color:green;">**`string`**</mark>
 
 **`통화구분코드`**
 
-
-
-**` appCard`` `` `**<mark style="color:orange;">**`boolean`**</mark>
+**`appCard`** <mark style="color:orange;">**`boolean`**</mark>
 
 카드 결제시, 카드 결제창에 앱카드만 선택 가능하도록 할지 여부 (기본값: **false**)
 
-
-
-**useCardPoint** <mark style="color:orange;">**`boolean`**</mark>
+**`useCardPoint`** <mark style="color:orange;">**`boolean`**</mark>
 
 카드 결제시, 카드 포인트 사용 허용할지 여부
 
@@ -166,27 +148,23 @@ _tosspayments_ 로 지정하면 됩니다.
 <Details>
 <p slot="summary">기타 <strong>파라미터 설명</strong></p>
 
-**bypass   **<mark style="color:purple;">**object**</mark>
+**`bypass`** <mark style="color:purple;">**object**</mark>
 
-**isCulturalExpense** <mark style="color:orange;">**boolean**</mark>
+**`isCulturalExpense`** <mark style="color:orange;">**boolean**</mark>
 
 문화비 지출여부
 
-
-
-**useInternationalCardOnly** <mark style="color:orange;">**boolean**</mark>
+**`useInternationalCardOnly`** <mark style="color:orange;">**boolean**</mark>
 
 해외카드(Visa, MasterCard, UnionPay) 결제 여부입니다. 값이 `true`면 해외카드 결제가 가능한 영문 결제창이 열립니다.
 
-
-
-**cashReceiptType**  <mark style="color:green;">**string**</mark>
+**`cashReceiptType`** <mark style="color:green;">**string**</mark>
 
 현금성 결제(계좌이체, 가상계좌)창에서 선택할 수 있는 현금영수증 발급 유형 (기본값: 결제창에서 선택 가능)
 
-* anonymous (미발행, 자진발급)
-* personal (소득공제)
-* corporate (지출증빙)
+- anonymous (미발행, 자진발급)
+- personal (소득공제)
+- corporate (지출증빙)
 
 ```javascript
 {
@@ -196,7 +174,7 @@ _tosspayments_ 로 지정하면 됩니다.
 		cashReceiptType: 'personal'
 	}
 }
-````
+```
 
 </Details>
 
@@ -250,11 +228,11 @@ IMP.request_pay(
 
 비 인증 결제창에서 고객이 입력한 카드정보와 1:1로 매칭될 빌링키를 지정합니다.
 
-**`amount` \***<mark style="color:purple;">**Integer**</mark>
+**`amount` \***<mark style="color:purple;">**number**</mark>
 
 **결제금액**
 
-결제창에 표시될 금액으로 <mark style="color:red;">실제 승인은 이루어지지 않습니다.</mark>(실 결제를 발생시키기 위해서는 **customer_uid** 로 **REST API 를 이용하여 결제요청**을 해주셔야 합니다.)\\
+결제창에 표시될 금액으로 <mark style="color:red;">실제 승인은 이루어지지 않습니다.</mark>(실 결제를 발생시키기 위해서는 **customer_uid** 로 **REST API 를 이용하여 결제요청**을 해주셔야 합니다.)
 
 **`customer_id`** <mark style="color:green;">**`string`**</mark>
 
@@ -266,7 +244,7 @@ IMP.request_pay(
 
 빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
 
-```title="server-side"
+```sh title="server-side"
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
@@ -288,7 +266,7 @@ curl -H "Content-Type: application/json" \
 
 REST[ **API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호출하여 일회성 결제를 요청합니다. 요청 시 전달된 카드는 포트원에 등록되지 않습니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
@@ -298,7 +276,7 @@ curl -H "Content-Type: application/json" \
 
 REST [**API POST /subscribe/customers/\{customer_uid}**](../../../api/api-2/api-1)를 호출하여 빌링키 발급을 요청합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
      https://api.iamport.kr/subscribe/customers/your-customer-unique-id
@@ -310,7 +288,7 @@ REST [**API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호
 
 - **`customer_uid`** : 빌링키 등록을 위해서 지정해야 합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/onetime
@@ -320,7 +298,7 @@ curl -H "Content-Type: application/json" \
 
 빌링키 발급과 최초 결제가 성공하면 빌링키는 전달된 `customer_uid` 와 1:1 매칭되어 포트원에 저장됩니다. 보안상의 이유로 서버는 빌링키에 직접 접근할 수 없기 때문에 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
 
-```
+```sh
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
@@ -333,10 +311,11 @@ curl -H "Content-Type: application/json" \
 
 <Tabs>
 <Tab title="할부개월수 설정">
+
 ```javascript title="javascript"
 display: {
-    card_quota: [6],  // 할부개월 6개월만 활성화
-    only_installment: true  // 일시불 항목은 제
+  card_quota: [6],  // 할부개월 6개월만 활성화
+  only_installment: true  // 일시불 항목은 제외
 }
 ```
 
@@ -350,7 +329,7 @@ display: {
 
 \- `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능\\
 
-- **only_installment : `true`** 인 경우 card_quota 에 설정한 할부개월수만 표
+- **`only_installment` : `true`** 인 경우 `card_quota` 에 설정한 할부개월수만 표시
 
 <Hint style="info">
 할부결제는 **5만원 이상 결제 요청시**에만 이용 가능합니다.
@@ -362,38 +341,39 @@ display: {
 <Tab title="카드사 모듈 바로 호출">
 ```javascript title="javascript"
 card: {
-     direct: {
-        code: "367",
-        quota: 3
-    }
+  direct: {
+    code: "367",
+    quota: 3
+  }
 }
 ```
 
 **파라미터 설명**
 
-- **code** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
-- **quota** : 할부 개월 수. 일시불일 시 0 으로 지정. (**integer**)
+- **`code`** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
+- **`quota`** : 할부 개월 수. 일시불일 시 0 으로 지정. (**number**)
 
 </Tab>
 
 <Tab title="특정 카드사 노출">
 ```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     //모든 카드사 비활성화
-        {card_code:'366', enabled:true}     //특정 카드만 활성화
-    ]
+card: {
+  detail: [
+    { card_code: "*", enabled: false },     //모든 카드사 비활성화
+    { card_code: '366', enabled: true }     //특정 카드만 활성화
+  ]
 }
 ```
 
 **파라미터 설명**
 
-- **card_code :** 금결원 카드사코드 [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (<mark style="color:green;">**string)**</mark>
-- **enabled :** 해당카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
+- **`card_code` :** 금결원 카드사코드 [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (<mark style="color:green;">**string)**</mark>
+- **`enabled` :** 해당카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
 
 </Tab>
 
 <Tab title="고정식 가상계좌 발급">
+
 토스페이먼츠 고정식 가상계좌 발급 서비스를 이용하기 위해서는 **토스페이먼츠 측과 협의**를 통해 결제에 이용하는 MID에 고정식 가상계좌 설정이 반드시 선행되어야 합니다.
 
 해당 설정이 완료되면 두가지 방식으로 고정식 가상계좌를 발급할 수 있습니다.
@@ -407,7 +387,7 @@ card : {
 
 ![](</gitbook-assets/ko/image (15).png>)
 
-API 방식 또한 vbank_key 파라미터가 고유식별번호에 대응되는 값으로 API방식은 가맹점에서 직접 해당 값을 기재해서 호출할수 있기 때문에 고객 편의차원에서 훨씬 간편한 고정식 가상계좌 서비스를 제공할수 있습니다.
+API 방식 또한 `vbank_key` 파라미터가 고유식별번호에 대응되는 값으로 API방식은 가맹점에서 직접 해당 값을 기재해서 호출할수 있기 때문에 고객 편의차원에서 훨씬 간편한 고정식 가상계좌 서비스를 제공할수 있습니다.
 
 </Tab>
 </Tabs>
@@ -416,25 +396,27 @@ API 방식 또한 vbank_key 파라미터가 고유식별번호에 대응되는 �
 
 토스페이먼츠 신모듈을 통해서 사용가능한 추가 기능들은 다음과 같습니다. 자세한 내용은 API 문서를 참고해주세요.
 
-- [api-5](../../../api/api-1/api-5 "mention")
-- [api](../../../api/api-1/api "mention")
-- [api-8](../../../api/api-8/ "mention")
-- [api-5](../../../api/api-8/api-5 "mention")
+- [결제금액 사전등록 API](../../../api/api-1/api-5)
+- [결제취소 API](../../../api/api-1/api)
+- [현금영수증 API](../../../api/api-8/readme)
+- [현금영수증 발급(외부) API](../../../api/api-8/api-5)
 
 <Hint style="danger">
+
 **기존에 deprecated된 응답들은 모두 제거됐습니다. ⚠️**
 
-신 토스페이먼츠 모듈 연동시에 사용되는 신규 JS SDK는 기존 모듈에서 제공했던 CallBack 파라미터가 대부분 삭제되었습니다.(특히 dprecated 로 명시된 파라미터는 모두 삭제되었습니다.)
+신 토스페이먼츠 모듈 연동시에 사용되는 신규 JS SDK는 기존 모듈에서 제공했던 CallBack 파라미터가 대부분 삭제되었습니다.(특히 deprecated 로 명시된 파라미터는 모두 삭제되었습니다.)
 
 해당 JS SDK 사용시 Callback 으로 내려받을수 있는 데이터는 오직 아래 두가지 입니다.
 
-**imp_uid, merchant_uid**
+**`imp_uid`, `merchant_uid`**
 
-따라서 해당 SDK를 사용하실때는 IMP.request_pay로부터 응답된 객체(또는 쿼리 파라미터)에서 imp_uid를 가지고 **아임포트 REST API(GET /payments/imp_uid)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여 응답파라미터중 status 파라미터로 결제 상태를 파악하셔야 합니다.
+따라서 해당 SDK를 사용하실때는 `IMP.request_pay()`로부터 응답된 객체(또는 쿼리 파라미터)에서 `imp_uid`를 가지고 **아임포트 REST API(GET `/payments/imp_uid`)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여 응답 파라미터 중 status 파라미터로 결제 상태를 파악하셔야 합니다.
 
 </Hint>
 
 <Hint style="info">
+
 ```html
 <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 ```
@@ -445,7 +427,7 @@ API 방식 또한 vbank_key 파라미터가 고유식별번호에 대응되는 �
 - `imp_uid`
 - `merchant_uid`
 
-위 PG사를 제외한 다른 PG사는 imp_success 파라미터가 기존처럼 내려가지만
+위 PG사를 제외한 다른 PG사는 `imp_success` 파라미터가 기존처럼 내려가지만
 해당 파리미터는 deprecated 된 값이기 때문에 해당 값에 의존성을 가진 프로그램 로직은 모두 삭제하시는
 방향성을 잡아가셔야 하는점 유념하시기 바랍니다.
 
