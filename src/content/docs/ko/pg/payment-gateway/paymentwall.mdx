@@ -7,50 +7,49 @@ description: 페이먼트월 결제창 연동가이드를 확인 합니다.
 import * as prose from "~/components/prose";
 export const components = prose;
 
+import Figure from "~/components/gitbook/Figure.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### 1. 페이먼트월 PG 설정하기
 
-[**페이먼트월 설정**](../../ready/2.-pg/payment-gateway/undefined-1) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**페이먼트월 설정**](../../ready/2-pg/payment-gateway/undefined-1) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-![](/gitbook-assets/ko/Paymentwall_logo_dark_latest.jpeg)
+<Figure src="/gitbook-assets/ko/Paymentwall_logo_dark_latest.jpeg" />
 
 ### 2.결제 요청하기
 
-[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 페이먼트월 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되며 모바일의 경우<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 페이먼트월 결제창을 호출할 수 있습니다.
+**결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되며 모바일의 경우<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
 <Tab title="인증결제창 요청">
 ```javascript title="Javascript SDK"
 IMP.request_pay({
-    pg : 'paymentwall.{project_key}',
-    pay_method : 'card', // 페이먼트월은 국가IP에 따라 결제수단이 활성화 됩니다.(생략가능)
-    merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
-    name : '주문명:결제테스트',
-    amount : 1004,
-    currency : 'KRW'  // 필수 파라미터
-    buyer_email : 'test@portone.io',  //필수 파라미터 
-    buyer_name : 'Jack Son',   //반드시 Firstname Lastname 이 빈칸으로 구분되어야 
-    buyer_tel : '010-1234-5678',
-    buyer_addr : '서울특별시 강남구 삼성동',
-    buyer_postcode : '123-456',
-    m_redirect_url : '{모바일에서 결제 완료 후 리디렉션 될 URL}',
-    bypass: {
-      //터미날3 인경우 해당 파라미터 설정, 미 설정시 Defualt(일반) 결제창 활성화
-      widget_code: "t3_1",  
-      // 특정 결제수단만 활성화 하는 경우 사용 all 인 경우(default) 국가 지원 결제수단 모두 표
-      ps : "all",
-      country_code:"DE"  // 코드가 지정되면 지정된 국가에서 지원하는 결제수단이 활성화됩니다.
-    },
-    
-}, function(rsp) { // callback 로직
-	//* ...중략... *//
+  pg: "paymentwall.{project_key}",
+  pay_method: "card", // 페이먼트월은 국가IP에 따라 결제수단이 활성화 됩니다.(생략가능)
+  merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
+  name: "주문명:결제테스트",
+  amount: 1004,
+  currency: "KRW" // 필수 파라미터
+  buyer_email: "test@portone.io", //필수 파라미터 
+  buyer_name: "Jack Son", // 반드시 Firstname Lastname 이 빈칸으로 구분되어야 
+  buyer_tel: "010-1234-5678",
+  buyer_addr: "서울특별시 강남구 삼성동",
+  buyer_postcode: "123-456",
+  m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+  bypass: {
+    // 터미날3 인경우 해당 파라미터 설정, 미 설정시 Defualt(일반) 결제창 활성화
+    widget_code: "t3_1",
+    // 특정 결제수단만 활성화 하는 경우 사용 all 인 경우(default) 국가 지원 결제수단 모두 표
+    ps: "all",
+    country_code: "DE" // 코드가 지정되면 지정된 국가에서 지원하는 결제수단이 활성화됩니다.
+  },
+}, function (rsp) { // callback 로직
+  /* ...중략... */
 });
 ```
-
-###
 
 ### **주요 파라미터 설명**
 
@@ -105,27 +104,28 @@ IMP.request_pay({
 </Tab>
 
 <Tab title="비 인증 결제">
-인증결제창 호출 파라미터에서 **customer\_uid** 값을 추가하면 비 인증 결제창을 호출할 수 있습니다. 비 인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
+인증결제창 호출 파라미터에서 **`customer_uid`** 값을 추가하면 비 인증 결제창을 호출할 수 있습니다.
+비 인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
 
 ```javascript title="Javascript SDK"
 IMP.request_pay({
-    pg : 'paymentwall.{project_key}',
-    pay_method : 'card', // 빌링키 결제는 오직 신용카드만 가능합니다.
-    merchant_uid: "order_monthly_0001", // 상점에서 관리하는 주문 번호
-    name : '최초인증결제',
-    amount : 20, // 결제창에 표시될 금액. 실제 승인이 이뤄지지는 않습니다.
-    currency : 'USD'  // 필수 파라미터
-    customer_uid : 'your-customer-unique-id', // 필수 입력.
-    buyer_email : 'test@portone.io',
-    buyer_name : '포트원',
-    buyer_tel : '02-1234-1234',
-    m_redirect_url : '{모바일에서 결제 완료 후 리디렉션 될 URL}'
-}, function(rsp) {
-    if ( rsp.success ) {
-        alert('빌링키 발급 성공');
-    } else {
-        alert('빌링키 발급 실패');
-    }
+  pg: "paymentwall.{project_key}",
+  pay_method: "card", // 빌링키 결제는 오직 신용카드만 가능합니다.
+  merchant_uid: "order_monthly_0001", // 상점에서 관리하는 주문 번호
+  name: "최초인증결제",
+  amount: 20, // 결제창에 표시될 금액. 실제 승인이 이뤄지지는 않습니다.
+  currency: "USD" // 필수 파라미터
+  customer_uid: "your-customer-unique-id", // 필수 입력.
+  buyer_email: "test@portone.io",
+  buyer_name: "포트원",
+  buyer_tel: "02-1234-1234",
+  m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}"
+}, function (rsp) {
+  if (rsp.success) {
+    alert("빌링키 발급 성공");
+  } else {
+    alert("빌링키 발급 실패");
+  }
 });
 ```
 
@@ -151,9 +151,10 @@ IMP.request_pay({
 
 **빌링키(customer_uid)로 결제 요청하기**
 
-빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
+빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다.
+`customer_uid`를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
 
-```title="server-side"
+```sh title="server-side"
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again

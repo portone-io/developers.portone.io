@@ -8,28 +8,30 @@ import * as prose from "~/components/prose";
 export const components = prose;
 
 import Codepen from "~/components/gitbook/Codepen.astro";
+import Figure from "~/components/gitbook/Figure.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### 1. 다날 PG 설정하기
 
-[**다날 설정**](../../ready/2.-pg/payment-gateway/undefined) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**다날 설정**](../../ready/2-pg/payment-gateway/undefined) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-![](</gitbook-assets/ko/스크린샷 2022-05-30 오후 5.30.00.png>)
+<Figure src="/gitbook-assets/ko/screenshot 2022-05-30 5.30.00.png" />
 
 ### 2.결제 요청하기
 
 <Tabs>
 <Tab title="인증결제창 호출">
-[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request\_pay**(param, callback)을 호출하여 다날 Tpay 결제창을 호출할 수 있습니다. **결제결과**는 PC/모바일 환경 모두 경우 IMP.request\_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 다날 Tpay 결제창을 호출할 수 있습니다.
+**결제결과**는 PC/모바일 환경 모두 경우 IMP.request\_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신됩니다.
 
 ```javascript title="Javascript SDK" showLineNumbers
 IMP.request_pay(
   {
     pg: "danal_tpay.{CPID}",
     pay_method: "card",
-    merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
+    merchant_uid: "order_no_0001", // 상점에서 생성한 고유 주문번호
     name: "주문명:결제테스트",
     amount: 1004,
     buyer_email: "test@portone.io",
@@ -167,7 +169,7 @@ IMP.request_pay(
 
 빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
 
-```title="server-side"
+```sh title="server-side"
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
@@ -180,24 +182,24 @@ curl -H "Content-Type: application/json" \
 
 <Tabs>
 <Tab title="통신사 노출 제어">
-``` title="특정 통신사만 노출"
+```js title="특정 통신사만 노출"
 {
   phone: {
     detail: [
       {
-        carrier: "*",    // 모두 활성화
+        carrier: "*", // 모두 활성화
         enabled: false
       },
       {
-        carrier: "SKT",    //SKT만 활성화
+        carrier: "SKT", // SKT만 활성화
         enabled: true
-      },      
+      },
     ]
   }
 }
 ```
 
-```title="2개 이상 통신사 노출"
+```js title="2개 이상 통신사 노출"
 {
   phone: {
     detail: [
@@ -223,14 +225,14 @@ curl -H "Content-Type: application/json" \
 KCT, SKL 을 제외한 나머지 통신사는 비활성화 됩니다.
 ```
 
-```title="특정 통신사만 비노출"
+```js title="특정 통신사만 비노출"
 phone: {
-    detail: [
-      {
-        carrier: "SKT",
-        enabled: false
-      }
-   ]
+  detail: [
+    {
+      carrier: "SKT",
+      enabled: false,
+    },
+  ];
 }
 ```
 
@@ -244,7 +246,7 @@ phone: {
 <Tab title="카드결제 할부개월수">
 ```javascript title="javascript"
 display: {
-    card_quota: [6]  // 할부개월 6개월까지만 활성화
+  card_quota: [6] // 할부개월 6개월까지만 활성화
 }
 ```
 
@@ -268,11 +270,11 @@ display: {
 <Tab title="카드사 모듈 호출">
 ```javascript title="javascript"
 card: {
-     direct: {
-        code: "367",
-        quota: 3,
-        usePoint : “Y”
-    }
+  direct: {
+    code: "367",
+    quota: 3,
+    usePoint: "Y"
+  }
 }
 ```
 

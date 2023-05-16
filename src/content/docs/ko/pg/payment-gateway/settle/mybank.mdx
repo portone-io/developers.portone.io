@@ -7,6 +7,7 @@ description: 핵토파이낸셜에서 제공하는 오픈뱅킹 기반 계좌간
 import * as prose from "~/components/prose";
 export const components = prose;
 
+import Figure from "~/components/gitbook/Figure.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
@@ -15,38 +16,36 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 [**내통장 결제설정** ](../../../ready/2.-pg/payment-gateway/settle/undefined)페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-<figure>
-  <img src="/gitbook-assets/ko/image (111).png" alt="" />
-  <figcaption></figcaption>
-</figure>
+<Figure src="/gitbook-assets/ko/image (111).png" />
 
 ### 2.결제 요청하기
 
-[JavaScript SDK](../../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 내통장 결제 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 내통장 결제 결제창을 호출할 수 있습니다.
+**결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
 <Tab title="인증결제창 요청">
 ```javascript title="Javascript SDK"
 IMP.request_pay({ // param
-      pg: "settle_acc.MID", //발급받은 가맹점아이디  
-      pay_method: "trans",   
-      merchant_uid: "ORD20180131-0000011",
-      name: "노르웨이 회전 의자",
-      buyer_email: "gildong@gmail.com",
-      buyer_name: "홍길동",
-      buyer_tel : '010-1234-5678', 
-      buyer_addr : '서울특별시 강남구 삼성동',
-      m_redirect_url : '{모바일에서 결제 완료 후 리디렉션 될 URL}'
-      amount: 1000,
-      bypass: {
-          settle: {
-	      addDeductionYn: "N", // 추가공제구분 (대중교통:Y, 도서,공연비:C, 추가공제없음:N)
-	      criPsblYn: "N", // 현금영수증 발행가능 여부 ( Y or N or ""빈문자열은 Y로인식)
-	  }
-      }
-  }, function (rsp) { // callback
-      // 생략
-  });
+  pg: "settle_acc.MID", // 발급받은 가맹점아이디  
+  pay_method: "trans",
+  merchant_uid: "ORD20180131-0000011",
+  name: "노르웨이 회전 의자",
+  buyer_email: "gildong@gmail.com",
+  buyer_name: "홍길동",
+  buyer_tel: "010-1234-5678", 
+  buyer_addr: "서울특별시 강남구 삼성동",
+  m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+  amount: 1000,
+  bypass: {
+    settle: {
+      addDeductionYn: "N", // 추가공제구분 (대중교통:Y, 도서,공연비:C, 추가공제없음:N)
+      criPsblYn: "N", // 현금영수증 발행가능 여부 ( Y or N or ""빈문자열은 Y로인식)
+    }
+  }
+}, function (rsp) { // callback
+  // 생략
+});
 ```
 
 #### 주요 파라미터 설명
@@ -103,31 +102,34 @@ criPsblYn: "N", // 현금영수증 발행가능 여부 ( Y or N or ""빈문자�
 인증결제창 호출 파라미터에서 **customer\_uid** 값을 추가하면 비 인증 결제창을 호출할 수 있습니다. 비인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
 
 ```javascript title="Javascript SDK"
-IMP.request_pay({
+IMP.request_pay(
+  {
     pg: "settle_acc.MID", //발급받은 가맹점아이디
     pay_method: "trans",
     merchant_uid: "ORD20180131-0000011",
     name: "노르웨이 회전 의자",
     buyer_email: "gildong@gmail.com",
     buyer_name: "홍길동",
-    buyer_tel : '010-1234-5678',
-    buyer_addr : '서울특별시 강남구 삼성동',
-    m_redirect_url : '{모바일에서 결제 완료 후 리디렉션 될 URL}'
-    customer_uid :'A00001-001' //빌링키와 맵핑되는
+    buyer_tel: "010-1234-5678",
+    buyer_addr: "서울특별시 강남구 삼성동",
+    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+    customer_uid: "A00001-001", // 빌링키와 맵핑되는
     amount: 1000,
     bypass: {
-        settle: {
-	   addDeductionYn: "N", // 추가공제구분 (대중교통:Y, 도서,공연비:C, 추가공제없음:N)
-	    criPsblYn: "N", // 현금영수증 발행가능 여부 ( Y or N or ""빈문자열은 Y로인식)
-	  }
-      }
-}, function(rsp) {
-    if ( rsp.success ) {
-        alert('빌링키 발급 성공');
+      settle: {
+        addDeductionYn: "N", // 추가공제구분 (대중교통:Y, 도서,공연비:C, 추가공제없음:N)
+        criPsblYn: "N", // 현금영수증 발행가능 여부 ( Y or N or ""빈문자열은 Y로인식)
+      },
+    },
+  },
+  function (rsp) {
+    if (rsp.success) {
+      alert("빌링키 발급 성공");
     } else {
-        alert('빌링키 발급 실패');
+      alert("빌링키 발급 실패");
     }
-});
+  }
+);
 ```
 
 <Hint style="info">
@@ -160,7 +162,7 @@ IMP.request_pay({
 
 빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
 
-```title="server-side"
+```sh title="server-side"
 curl -H "Content-Type: application/json" \
      -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
      https://api.iamport.kr/subscribe/payments/again
@@ -169,10 +171,12 @@ curl -H "Content-Type: application/json" \
 **추가 파라미터 안내**
 
 ```json
-"extra": {
-      "addDeductionYn": "N", // 추가공제구분 (대중교통:Y, 도서,공연비:C, 추가공제없음:N)
-      "criPsblYn": "N", // 현금영수증 발행가능 여부 ( Y or N or ""빈문자열은 Y로인식)
- }
+{
+  "extra": {
+    "addDeductionYn": "N", // 추가공제구분 (대중교통:Y, 도서,공연비:C, 추가공제없음:N)
+    "criPsblYn": "N" // 현금영수증 발행가능 여부 ( Y or N or ""빈문자열은 Y로인식)
+  }
+}
 ```
 
 </Tab>

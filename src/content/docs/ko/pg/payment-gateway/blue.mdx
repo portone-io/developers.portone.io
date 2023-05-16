@@ -8,35 +8,37 @@ import * as prose from "~/components/prose";
 export const components = prose;
 
 import Codepen from "~/components/gitbook/Codepen.astro";
+import Figure from "~/components/gitbook/Figure.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### 1. 블루월넛 PG 설정하기
 
-[**블루월넛 설정**](../../ready/2.-pg/payment-gateway/blue) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**블루월넛 설정**](../../ready/2-pg/payment-gateway/blue) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-![](</gitbook-assets/ko/screenshot 2022-06-03 6.13.31.png>)
+<Figure src="/gitbook-assets/ko/screenshot 2022-06-03 6.13.31.png" />
 
 ### 2.결제 요청하기
 
-[Ja](../../sdk/javascript-sdk-old/readme)[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 블루월넛 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 블루월넛 결제창을 호출할 수 있습니다.
+**결제결과**는 PC의 경우 `IMP.request_pay(param, callback)` 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신되 모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
 <Tab title="인증결제창 요청">
 ```javascript title="Javascript SDK"
 IMP.request_pay({
-    pg : 'bluewalnut.{상점 ID}',
-    pay_method : 'card',
-    merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
-    name : '주문명:결제테스트',
-    amount : 14000,
-    buyer_email : 'test@portone.io',
-    buyer_name : '구매자이름',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : '서울특별시 강남구 삼성동',
-    buyer_postcode : '123-456'
-}, function(rsp) { // callback 로직
-	//* ...중략... *//
+  pg: "bluewalnut.{상점 ID}",
+  pay_method: "card",
+  merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
+  name: "주문명:결제테스트",
+  amount: 14000,
+  buyer_email: "test@portone.io",
+  buyer_name: "구매자이름",
+  buyer_tel: "010-1234-5678",
+  buyer_addr: "서울특별시 강남구 삼성동",
+  buyer_postcode: "123-456"
+}, function (rsp) { // callback 로직
+  /* ...중략... */
 });
 ```
 
