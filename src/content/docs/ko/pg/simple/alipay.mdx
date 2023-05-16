@@ -7,6 +7,7 @@ description: 알리페이 결제 연동 방법을 안내합니다.
 import * as prose from "~/components/prose";
 export const components = prose;
 
+import Figure from "~/components/gitbook/Figure.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
@@ -14,29 +15,30 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 [**알리페이 설정**](../../ready/2.-pg/pg/alipay) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-![](</gitbook-assets/ko/screenshot 2022-06-03 6.30.01.png>)
+<Figure src="/gitbook-assets/ko/screenshot 2022-06-03 6.30.01.png" />
 
 ### 2.결제 요청하기
 
-[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 알리페이 결제창을 호출할 수 있습니다. **결제결과**는 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 알리페이 결제창을 호출할 수 있습니다.
+**결제결과**는 <mark style="color:red;">**`m_redirect_url`**</mark> 로 리디렉션됩니다.
 
 <Tabs>
 <Tab title="인증결제창 요청">
 ```javascript title="Javascript SDK"
 IMP.request_pay({
-    pg : 'alipay',
-    merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
-    name : '주문명:결제테스트',
-    amount : 1.2, //USD 1.2 달러 결제
-    currency : 'USD' // Default USD
-    buyer_email : 'test@portone.io',
-    buyer_name : '구매자이름',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : '서울특별시 강남구 삼성동',
-    buyer_postcode : '123-456',
-    m_redirect_url : '{결제 완료 후 리디렉션 될 URL}' 
-}, function(rsp) { // callback 로직
-	//* ...중략... *//
+  pg: "alipay",
+  merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
+  name: "주문명:결제테스트",
+  amount: 1.2, // USD 1.2 달러 결제
+  currency: "USD" // Default USD
+  buyer_email: "test@portone.io",
+  buyer_name: "구매자이름",
+  buyer_tel: "010-1234-5678",
+  buyer_addr: "서울특별시 강남구 삼성동",
+  buyer_postcode: "123-456",
+  m_redirect_url: "{결제 완료 후 리디렉션 될 URL}"
+}, function (rsp) { // callback 로직
+  /* ...중략... */
 });
 ```
 

@@ -8,60 +8,64 @@ import * as prose from "~/components/prose";
 export const components = prose;
 
 import Details from "~/components/gitbook/Details.astro";
+import Figure from "~/components/gitbook/Figure.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### 1. 네이버페이(결제형) PG 설정하기
 
-[**네이버페이(결제형) 설정**](../../ready/2.-pg/pg/undefined) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[**네이버페이(결제형) 설정**](../../ready/2-pg/pg/undefined) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-![](</gitbook-assets/ko/screenshot 2022-05-30 2.00.33.png>)
+<Figure src="/gitbook-assets/ko/screenshot 2022-05-30 2.00.33.png" />
 
 ### 2.결제 요청하기
 
-[JavaScript SDK](../../sdk/javascript-sdk-old/readme) IMP.**request_pay**(param, callback)을 호출하여 네이버페이 결제형 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 되며 모바일의 경우<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 네이버페이 결제형 결제창을 호출할 수 있습니다.
+**결제결과**는 PC의 경우 IMP.request_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 되며 모바일의 경우<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
 <Tab title="일반결제창 요청">
 ```javascript title="Javascript SDK"
 IMP.request_pay({
-    pg : 'naverpay.{파트너 ID}',
-    merchant_uid: "order_no_0001", //상점에서 관리하는 주문 번호
-    name : '주문명:결제테스트',
-    amount : 1004,
-    buyer_email : 'test@portone.io',
-    buyer_name : '구매자이름',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : '서울특별시 강남구 삼성동',
-    buyer_postcode : '123-456',
-    naverUseCfm : '20221231', //이용완료일자(필요시 설정합니다)
-    naverPopupMode : true,   //팝업모드 활성화
-    m_redirect_url : "{결제 완료 후 리디렉션 될 URL}", 
-    naverPurchaserName: "구매자이름",
-    naverPurchaserBirthday: "20151201",
-    naverChainId: "sAMplEChAINid",
-    naverMerchantUserKey: "가맹점의 사용자 키",
-    naverProducts : [{
-                      "categoryType": "BOOK",
-			"categoryId": "GENERAL",
-			"uid": "107922211",
-			"name": "한국사",
-			"payReferrer": "NAVER_BOOK",
-			"sellerId": "sellerA",
-			"count": 10
-		},
-		{
-			"categoryType": "MUSIC",
-			"categoryId": "CD",
-			"uid": "299911002",
-			"name": "러블리즈",
-			"payReferrer": "NAVER_BOOK",
-			"sellerId": "sellerB",
-			"count": 1
-		}]
-}, function(rsp) { // callback 로직
-	//* ...중략... *//
+  pg: "naverpay.{파트너 ID}",
+  merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
+  name: "주문명:결제테스트",
+  amount: 1004,
+  buyer_email: "test@portone.io",
+  buyer_name: "구매자이름",
+  buyer_tel: "010-1234-5678",
+  buyer_addr: "서울특별시 강남구 삼성동",
+  buyer_postcode: "123-456",
+  naverUseCfm: "20221231", // 이용완료일자(필요시 설정합니다)
+  naverPopupMode: true, // 팝업모드 활성화
+  m_redirect_url: "{결제 완료 후 리디렉션 될 URL}", 
+  naverPurchaserName: "구매자이름",
+  naverPurchaserBirthday: "20151201",
+  naverChainId: "sAMplEChAINid",
+  naverMerchantUserKey: "가맹점의 사용자 키",
+  naverProducts: [
+    {
+      "categoryType": "BOOK",
+      "categoryId": "GENERAL",
+      "uid": "107922211",
+      "name": "한국사",
+      "payReferrer": "NAVER_BOOK",
+      "sellerId": "sellerA",
+      "count": 10
+    },
+    {
+      "categoryType": "MUSIC",
+      "categoryId": "CD",
+      "uid": "299911002",
+      "name": "러블리즈",
+      "payReferrer": "NAVER_BOOK",
+      "sellerId": "sellerB",
+      "count": 1
+    }
+  ]
+}, function (rsp) { // callback 로직
+  /* ...중략... */
 });
 ```
 
@@ -87,7 +91,7 @@ IMP.request_pay({
 
 **`naverUseCfm`** <mark style="color:green;">**`string`**</mark>
 
-**`이용 완료일`** (yyyyMMdd 형식의 문자열로 **결제 당일 또는 미래의 일자**여야 함)
+**`이용 완료일`** (`yyyyMMdd` 형식의 문자열로 **결제 당일 또는 미래의 일자**여야 함)
 
 - 상품 유형에 따라 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다
 
@@ -144,7 +148,7 @@ IMP.request_pay({
 - 네이버페이 기준 <mark style="color:red;">**고위험군 제품을 판매하는 가맹점의 경우 필수**</mark> 입력합니다.
 - 비 대상 가맹점은 입력하지 않습니다.
 
-> \*\*`naverProducts`\*\*는 다음 6개의 속성으로 하나의 상품 정보를 표현하는 객체의 배열입니다.
+> `naverProducts`는 다음 6개의 속성으로 하나의 상품 정보를 표현하는 객체의 배열입니다.
 >
 > - **`categoryType`** (<mark style="color:red;">필수</mark>) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
 > - **`categoryId`** (<mark style="color:red;">필수</mark>) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
@@ -165,22 +169,22 @@ IMP.request_pay({
 IMP.request_pay(
   {
     pg: "naverpay.{파트너 ID}",
-    customer_uid: "gildong_0001_1234", //빌링, 필수 입력.
-    merchant_uid: "order_monthly_0001", //상점에서 생성한 고유 주문번호
+    customer_uid: "gildong_0001_1234", // 빌링, 필수 입력.
+    merchant_uid: "order_monthly_0001", // 상점에서 생성한 고유 주문번호
     name: "Slim 요금제(1개월 단위)",
-    amount: 1004, //실 결제는 발생되지 않습니다.
+    amount: 1004, // 실 결제는 발생되지 않습니다.
     buyer_email: "test@portone.io",
     buyer_name: "구매자이름",
-    buyer_tel: "010-1234-5678", //필수 입력.
+    buyer_tel: "010-1234-5678", // 필수 입력.
     buyer_addr: "서울특별시 강남구 삼성동",
     buyer_postcode: "123-456",
     naverProductCode: "반복결제 상품코드",
-    naverPopupMode: true, //팝업모드 활성화
+    naverPopupMode: true, // 팝업모드 활성화
     m_redirect_url: "{등록 완료 후 리디렉션 될 URL}",
   },
   function (rsp) {
     // callback 로직
-    //* ...중략... *//
+    /* ...중략... */
   }
 );
 ```
@@ -247,12 +251,12 @@ IMP.request_pay(
 
 REST API [**/subscribe/payments/again**](../../api/api-4/api) 를 호출하여 결제를 요청할 수 있습니다.
 
-- `customer_uid` : 정기/반복결제 등록 시 사용된 해당 고객의 `customer_uid`
-- `merchant_uid` : 가맹점 주문번호
-- `amount` : 결제승인 요청금액 (결제고객 등록 시 지정된 금액과 달라도 무방함)
-- `tax_free` : `amount` 중 면세공급가액 (기본값: 0)
-- `name` : 주문의 명칭
-- `extra.naverUseCfm` : 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다.
+- `customer_uid`: 정기/반복결제 등록 시 사용된 해당 고객의 `customer_uid`
+- `merchant_uid`: 가맹점 주문번호
+- `amount`: 결제승인 요청금액 (결제고객 등록 시 지정된 금액과 달라도 무방함)
+- `tax_free`: `amount` 중 면세공급가액 (기본값: 0)
+- `name`: 주문의 명칭
+- `extra.naverUseCfm`: 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다.
 
 ```json title="sample json"
 {
@@ -309,9 +313,10 @@ customer_uid={가맹점의 결제 고객을 특정하는 Unique Key}&schedules[0
 
 **에러 메시지 비 가공**
 
-결제창 호출(IMP.request_pay 함수)후 결제창 하단의 “취소" 버튼 클릭 등으로 결제 프로세스가 중단되거나 잔액 부족, 한도 초과, 100원 미만 결제 등의 사유로 결제에 실패하면 콜백 함수(popup 방식)/m_redirect_url(리디렉션 방식)로 전달되는 결제 결과(response 객체/쿼리 파라미터)에 실패 사유(error_msg)가 전달됩니다. 이 에러 메시지는 사용자에게 가공 없이 그대로 노출되어야 합니다. 해당 규칙 미 준수시 네이버페이 실 검수 진행시 수정요청 받게 됩니다.
+결제창 호출(IMP.request_pay 함수)후 결제창 하단의 "취소" 버튼 클릭 등으로 결제 프로세스가 중단되거나 잔액 부족, 한도 초과, 100원 미만 결제 등의 사유로 결제에 실패하면 콜백 함수(popup 방식)/m_redirect_url(리디렉션 방식)로 전달되는 결제 결과(response 객체/쿼리 파라미터)에 실패 사유(error_msg)가 전달됩니다.
+이 에러 메시지는 사용자에게 가공 없이 그대로 노출되어야 합니다. 해당 규칙 미 준수시 네이버페이 실 검수 진행시 수정요청 받게 됩니다.
 
-예) error_msg가 “잔액 부족"이라고 가정할때, "결제에 실패하였습니다. 실패 사유:" + "잔액 부족"과 같은 형태로 가공되면 안됨
+예) error_msg가 "잔액 부족"이라고 가정할때, "결제에 실패하였습니다. 실패 사유:" + "잔액 부족"과 같은 형태로 가공되면 안됨
 
 **100원 미만 결제 처리**
 
@@ -364,9 +369,9 @@ imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
 
 포트원 환불 API인 `POST` [**`/payments/cancel`**](../../api/api-1/api) 호출시 아래 파라미터를 반드시 설정해 주셔야 합니다. (**해당 파라미터 누락시 네이버페이 실 검수를 통과할 수 없습니다.**)
 
-- **`extra.requester`** : API를 호출하는 출처
-  - **`customer`** : 구매자에 의한 요청
-  - **`admin`**(기본값) : 어드민에 의한 요청
+- **`extra.requester`**: API를 호출하는 출처
+  - **`customer`**: 구매자에 의한 요청
+  - **`admin`**(기본값): 어드민에 의한 요청
 - **`reason`**: 결제 취소 사유.
 
 **예시(json)**
