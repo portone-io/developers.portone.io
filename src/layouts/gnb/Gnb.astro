@@ -1,5 +1,6 @@
 ---
 import type { Lang } from "~/type";
+import { getCollection } from "astro:content";
 import Logo from "./Logo.astro";
 
 interface Props {
@@ -36,7 +37,14 @@ const t = lang === "ko" ? ko : en;
       {
         lang === "ko" && (
           <div class="hidden items-center gap-4 md:flex">
-            <a href="/release-notes/api-sdk/2023-05-12">릴리즈 노트</a>
+            <a
+              href={`/release-notes/${(await getCollection("release-notes"))
+                .map((entry) => entry.slug)
+                .sort()
+                .pop()}`}
+            >
+              릴리즈 노트
+            </a>
           </div>
         )
       }
