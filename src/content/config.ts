@@ -17,7 +17,15 @@ const blogCollection = defineCollection({
   }),
 });
 
+const releaseNoteCollection = defineCollection({
+  schema: z.object({
+    releasedAt: z.date(),
+    writtenAt: z.date(),
+  }),
+});
+
 export const collections = {
   docs: docCollection,
   blog: blogCollection,
+  "release-notes": releaseNoteCollection,
 };

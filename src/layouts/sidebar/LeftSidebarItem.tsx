@@ -7,7 +7,12 @@ import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 const LeftSidebarItem: React.FC<NavMenuPage> = (props) => {
   if (props.items.length > 0) return <FolderLink {...props} />;
   const { emoji, title, slug } = props;
-  return <JustLink emoji={emoji} title={title} slug={slug} />;
+  const pageSlug = slugSignal.value;
+  const isActive = pageSlug === slug;
+  const href = `/docs${slug}`;
+  return (
+    <JustLink emoji={emoji} title={title} href={href} isActive={isActive} />
+  );
 };
 export default LeftSidebarItem;
 
@@ -56,26 +61,30 @@ const FolderLink: React.FC<NavMenuPage> = ({ emoji, title, slug, items }) => {
   );
 };
 
-interface JustLinkProps {
-  emoji: string;
+export interface JustLinkProps {
+  emoji?: string;
   title: string;
-  slug: string;
+  href: string;
+  isActive: boolean;
 }
-const JustLink: React.FC<JustLinkProps> = ({ emoji, title, slug }) => {
-  const pageSlug = slugSignal.value;
-  const isActive = pageSlug === slug;
+export const JustLink: React.FC<JustLinkProps> = ({
+  emoji,
+  title,
+  href,
+  isActive,
+}) => {
   return (
     <a
-      href={`/docs${slug}`}
+      href={href}
       class={getLinkStyle(isActive)}
       data-active={isActive && "active"}
     >
-      <LinkTitle emoji={emoji} title={title} />
+      <LinkTitle emoji={emoji || ""} title={title} />
     </a>
   );
 };
 
-function getLinkStyle(isActive: boolean): string {
+export function getLinkStyle(isActive: boolean): string {
   return `px-2 block text-sm rounded ${
     isActive
       ? "font-bold text-orange-600 bg-orange-1"

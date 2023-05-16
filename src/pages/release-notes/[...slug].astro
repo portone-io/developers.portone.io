@@ -1,0 +1,129 @@
+---
+import { CollectionEntry, getCollection } from "astro:content";
+import { format } from "date-fns";
+
+import LayoutBase from "../../layouts/LayoutBase.astro";
+import { h1 as H1 } from "../../components/prose";
+import Banner from "~/components/release-note/Banner.astro";
+import Footer from "~/components/release-note/Footer.astro";
+import { JustLink } from "~/layouts/sidebar/LeftSidebarItem";
+
+export async function getStaticPaths() {
+  const docEntries = await getCollection("release-notes");
+  const apiSdkNotes: string[] = [];
+  const consoleNotes: string[] = [];
+  interface Frontmatters {
+    [slug: string]: CollectionEntry<"release-notes">["data"];
+  }
+  const frontmatters: Frontmatters = {};
+  for (const entry of docEntries) {
+    const slug = entry.slug;
+    if (slug.startsWith("api-sdk")) apiSdkNotes.push(slug);
+    else if (slug.startsWith("console")) consoleNotes.push(slug);
+    frontmatters[slug] = entry.data;
+  }
+  apiSdkNotes.sort().reverse();
+  consoleNotes.sort().reverse();
+  return docEntries.map((entry) => {
+    const slug = entry.slug;
+    return {
+      params: { slug },
+      props: { entry, apiSdkNotes, consoleNotes, frontmatters },
+    };
+  });
+}
+
+const pageSlug = Astro.params.slug;
+const { entry, apiSdkNotes, consoleNotes, frontmatters } = Astro.props;
+const { releasedAt, writtenAt } = entry.data;
+const { Content } = await entry.render();
+
+const label = apiSdkNotes.includes(pageSlug) ? "API/SDK" : "관리자콘솔";
+const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
+---
+
+<LayoutBase lang="ko" title={title}>
+  <div class="flex">
+    <aside
+      id="left-sidebar"
+      class="w-65 relative hidden shrink-0 text-slate-700 md:block"
+    >
+      <div
+        class="w-inherit fixed h-[calc(100%-3.5rem)] overflow-y-scroll border-r bg-white"
+      >
+        <nav>
+          <ul class="flex flex-col gap-1 p-2 py-4">
+            <li>
+              <h4
+                class="text-gray mt-4 p-2 text-xs font-bold tracking-widest first:mt-0"
+              >
+                관리자콘솔 릴리즈노트
+              </h4>
+              <ul class="flex flex-col gap-1">
+                {
+                  consoleNotes.map((slug: string) => {
+                    const title = `${format(
+                      frontmatters[slug].releasedAt,
+                      "yyyy-MM-dd"
+                    )} 업데이트`;
+                    const isActive = pageSlug === slug;
+                    const href = `/release-notes/${slug}`;
+                    return (
+                      <li>
+                        <JustLink
+                          title={title}
+                          href={href}
+                          isActive={isActive}
+                        />
+                      </li>
+                    );
+                  })
+                }
+              </ul>
+            </li>
+            <li>
+              <h4
+                class="text-gray mt-4 p-2 text-xs font-bold tracking-widest first:mt-0"
+              >
+                API/SDK 릴리즈노트
+              </h4>
+              <ul class="flex flex-col gap-1">
+                {
+                  apiSdkNotes.map((slug: string) => {
+                    const title = `${format(
+                      frontmatters[slug].releasedAt,
+                      "yyyy-MM-dd"
+                    )} 업데이트`;
+                    const isActive = pageSlug === slug;
+                    const href = `/release-notes/${slug}`;
+                    return (
+                      <li>
+                        <JustLink
+                          title={title}
+                          href={href}
+                          isActive={isActive}
+                        />
+                      </li>
+                    );
+                  })
+                }
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+    <div class="basis-200 mx-auto shrink">
+      <article class="m-4 flex flex-col text-slate-700">
+        <H1>{title}</H1>
+        <p class="text-gray my-4 text-xl">
+          {format(releasedAt, "yyyy년 M월 d일")}
+          {label} 업데이트 소식을 안내드립니다.
+        </p>
+        <Banner />
+        <Content />
+        <Footer date={format(writtenAt, "yyyy년 M월 d일")} />
+      </article>
+    </div>
+  </div>
+</LayoutBase>
