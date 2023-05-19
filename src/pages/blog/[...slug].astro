@@ -1,0 +1,84 @@
+---
+import { CollectionEntry, getCollection } from "astro:content";
+
+import LayoutKo from "../../layouts/LayoutKo.astro";
+import githubSdk from "~/githubSdk";
+import NAMES from "~/content/blog/_names";
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection("blog");
+  return blogEntries.map((entry) => {
+    return {
+      params: { slug: entry.slug },
+      props: { entry, slug: entry.slug },
+    };
+  });
+}
+
+interface Props {
+  entry: CollectionEntry<"blog">;
+  slug: string;
+}
+
+const { entry } = Astro.props;
+const { title, description, author } = entry.data;
+const { Content } = await entry.render();
+
+const date = entry.slug.split("/")[0];
+
+const { user } = await githubSdk.getUser({ login: author });
+const name = NAMES[author as keyof typeof NAMES];
+const { avatarUrl } = user ?? {};
+---
+
+<LayoutKo title={`${title} - PortOne 기술블로그`}>
+  <div class="max-w-900px mx-auto my-8 flex flex-col gap-6 px-6">
+    <div class="flex flex-col gap-4">
+      <h1 class="text-3xl font-bold">{title}</h1>
+      <h2 class="text-xl font-medium text-gray-400">{description}</h2>
+    </div>
+    <div class="flex items-end justify-between">
+      <a href=`https://github.com/${author}`>
+        <dl class="flex items-stretch gap-4">
+          <div>
+            <img
+              src={avatarUrl}
+              alt={`Avatar image of ${name}`}
+              class="h-14 w-14 rounded-full"
+            />
+          </div>
+          <div class="flex flex-col justify-evenly">
+            <dt class="text-lg font-medium">{name}</dt>
+            <dd class="flex items-center gap-1.5 text-sm text-gray-400">
+              <i class="i-ic-baseline-calendar-month inline-block"></i>
+              {date}
+            </dd>
+          </div>
+        </dl>
+      </a>
+    </div>
+    <article>
+      <Content />
+    </article>
+  </div>
+  <style>
+    article :global(h2) {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    article :global(h3) {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    article :global(p) {
+      line-height: 1.7;
+      font-size: 1.1rem;
+    }
+  </style>
+</LayoutKo>
