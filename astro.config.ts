@@ -9,6 +9,8 @@ import rehypePrettyCode, {
   Options as PrettyCodeOptions,
 } from "rehype-pretty-code";
 
+import contentIndex from "./src/content-index";
+
 const prettyCodeOptions: Partial<PrettyCodeOptions> = {
   theme: "material-theme-lighter",
   onVisitLine(node) {
@@ -31,6 +33,7 @@ export default defineConfig({
     solid(),
     mdx(),
     unocss(),
+    contentIndex,
   ],
   vite: {
     resolve: {
