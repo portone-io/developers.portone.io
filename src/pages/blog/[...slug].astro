@@ -4,6 +4,7 @@ import { CollectionEntry, getCollection } from "astro:content";
 import LayoutKo from "../../layouts/LayoutKo.astro";
 import githubSdk from "~/githubSdk";
 import NAMES from "~/content/blog/_names";
+import * as prose from "~/components/prose-blog";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
@@ -58,27 +59,7 @@ const { avatarUrl } = user ?? {};
       </a>
     </div>
     <article>
-      <Content />
+      <Content components={prose} />
     </article>
   </div>
-  <style>
-    article :global(h2) {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    article :global(h3) {
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-top: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    article :global(p) {
-      line-height: 1.7;
-      font-size: 1.1rem;
-    }
-  </style>
 </LayoutKo>
