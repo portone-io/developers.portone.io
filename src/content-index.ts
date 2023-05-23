@@ -1,7 +1,11 @@
+import { readFile, writeFile } from "node:fs/promises";
+import { relative, resolve } from "node:path/posix";
 import type { AstroConfig, AstroIntegration } from "astro";
-import { readFile } from "node:fs/promises";
-import { relative } from "node:path/posix";
+import { effect, signal } from "@preact/signals";
+import { debounce } from "@mobily/ts-belt/dist/types/Function";
 import * as yaml from "js-yaml";
+import Fuse from "fuse.js";
+import { toPlainText } from "./misc/mdx";
 
 const integration: AstroIntegration = {
   name: "developers.portone.io:content-index",
@@ -14,31 +18,37 @@ const integration: AstroIntegration = {
 
 export default integration;
 
-const table: { [slug: string]: string } = {};
-
 function vitePlugin(config: AstroConfig) {
   const outDir = config.outDir.pathname;
   const root = config.root.pathname;
+  effect(() => {
+    const fuseIndex = fuseIndexSignal.value;
+    if (!fuseIndex) return;
+    writeFile(
+      resolve(outDir, "content-index.json"),
+      JSON.stringify(fuseIndex.toJSON())
+    );
+  });
   return {
     name: "developers.portone.io:content-index",
     async transform(_: any, id: string) {
       const path = relative(root, id);
       const match = path.match(/^src\/content\/(.+)\.mdx$/);
       if (!match) return;
-      const s = match[1];
       const { frontmatter, md } = cutFrontmatter(await readFile(id, "utf-8"));
-      const slug = String(frontmatter?.slug || s);
-      table[slug] = md;
-      console.log({ slug, md });
+      const slug = String(frontmatter?.slug || match[1]);
+      const title = String(frontmatter?.title || "");
+      const description = String(frontmatter?.description || "");
+      updateMdxTable(slug, { slug, md, title, description });
     },
-    configureServer(server: any) {
-      server.middlewares.use(async (req: any, res: any, next: any) => {
-        // if (req.url?.startsWith('/content-index/')) {
-        //   //
-        // }
-        return next();
-      });
-    },
+    // configureServer(server: any) {
+    //   server.middlewares.use(async (req: any, res: any, next: any) => {
+    //     // if (req.url?.startsWith('/content-index/')) {
+    //     //   //
+    //     // }
+    //     return next();
+    //   });
+    // },
   };
 }
 
@@ -60,3 +70,44 @@ function cutFrontmatter(md: string): CutFrontmatterResult {
     return { frontmatter: {}, md };
   }
 }
+
+interface Mdx {
+  slug: string;
+  md: string;
+  title?: string;
+  description?: string;
+}
+interface MdxTable {
+  [slug: string]: Mdx;
+}
+const mdxTableSignal = signal<MdxTable>({});
+function updateMdxTable(slug: string, mdx: Mdx) {
+  const mdxTable = mdxTableSignal.value;
+  if (mdxEq(mdxTable[slug]!, mdx)) return;
+  mdxTableSignal.value = { ...mdxTable, [slug]: mdx };
+}
+function mdxEq(a?: Mdx, b?: Mdx): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return (
+    a.slug === b.slug &&
+    a.md === b.md &&
+    a.title === b.title &&
+    a.description === b.description
+  );
+}
+const fuseIndexSignal = signal<Fuse.FuseIndex<Mdx> | undefined>(undefined);
+const updateFuseIndexSignal = debounce((mdxTable: MdxTable) => {
+  fuseIndexSignal.value = Fuse.createIndex(
+    ["title", "description", "text"],
+    Object.values(mdxTable).map((mdx) => ({
+      ...mdx,
+      text: toPlainText(mdx.md),
+    }))
+  );
+}, 500);
+
+effect(() => {
+  const mdxTable = mdxTableSignal.value;
+  updateFuseIndexSignal(mdxTable);
+});
