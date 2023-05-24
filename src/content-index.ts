@@ -1,8 +1,9 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { relative, resolve } from "node:path/posix";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
+import * as posixPath from "node:path/posix";
 import type { AstroConfig, AstroIntegration } from "astro";
 import { effect, signal } from "@preact/signals";
-import { debounce } from "@mobily/ts-belt/dist/types/Function";
+import { debounce } from "lodash-es";
 import * as yaml from "js-yaml";
 import Fuse from "fuse.js";
 import { toPlainText } from "./misc/mdx";
@@ -19,23 +20,27 @@ const integration: AstroIntegration = {
 export default integration;
 
 function vitePlugin(config: AstroConfig) {
-  const outDir = config.outDir.pathname;
-  const root = config.root.pathname;
+  const outDir = config.outDir.pathname.replace(/^\/(\w:)/, "$1");
+  const root = config.root.pathname.replace(/^\/(\w:)/, "$1");
   effect(() => {
     const fuseIndex = fuseIndexSignal.value;
     if (!fuseIndex) return;
-    writeFile(
-      resolve(outDir, "content-index.json"),
-      JSON.stringify(fuseIndex.toJSON())
-    );
+    fs.mkdir(outDir, { recursive: true }).then(() => {
+      fs.writeFile(
+        path.resolve(outDir, "content-index.json"),
+        JSON.stringify(fuseIndex.toJSON())
+      );
+    });
   });
   return {
     name: "developers.portone.io:content-index",
     async transform(_: any, id: string) {
-      const path = relative(root, id);
+      const path = posixPath.relative(root, id);
       const match = path.match(/^src\/content\/(.+)\.mdx$/);
       if (!match) return;
-      const { frontmatter, md } = cutFrontmatter(await readFile(id, "utf-8"));
+      const { frontmatter, md } = cutFrontmatter(
+        await fs.readFile(id, "utf-8")
+      );
       const slug = String(frontmatter?.slug || match[1]);
       const title = String(frontmatter?.title || "");
       const description = String(frontmatter?.description || "");
