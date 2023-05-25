@@ -4,6 +4,7 @@ import { navMenuAncestorsSignal, navMenuSignal } from "~/state/server-only/nav";
 import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 
 import LeftSidebarItem from "./LeftSidebarItem";
+import { SearchButton } from "./search";
 
 interface Props {
   lang: Lang;
@@ -34,7 +35,9 @@ slugSignal.value = slug;
   const activeElement = scrollArea.querySelector("[data-active=active]");
   if (activeElement) {
     scrollArea.scrollTop =
-      activeElement.getBoundingClientRect().top - scrollArea.offsetTop - 30;
+      activeElement.getBoundingClientRect().top -
+      scrollArea.getBoundingClientRect().top -
+      30;
   }
 </script>
 <aside
@@ -43,10 +46,11 @@ slugSignal.value = slug;
   data-slug={slug}
   data-navopenstates={JSON.stringify(navOpenStates)}
 >
-  <div
-    class="w-inherit fixed h-[calc(100%-3.5rem)] overflow-y-scroll border-r bg-white"
-  >
-    <nav>
+  <div class="w-inherit fixed h-[calc(100%-3.5rem)] border-r bg-white">
+    <div class="flex p-2">
+      <SearchButton lang={lang} client:idle />
+    </div>
+    <nav class="relative h-full overflow-y-scroll">
       <ul class="flex flex-col gap-1 p-2 py-4">
         {
           navMenuItems.map((item) => {
