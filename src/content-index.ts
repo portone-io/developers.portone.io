@@ -2,11 +2,17 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as posixPath from "node:path/posix";
 import type { AstroConfig, AstroIntegration } from "astro";
-import { effect, signal } from "@preact/signals";
+import { computed, effect, signal } from "@preact/signals";
 import { debounce } from "lodash-es";
 import * as yaml from "js-yaml";
-import Fuse from "fuse.js";
 import { toPlainText } from "./misc/mdx";
+
+const indexFilesMapping = {
+  "blog/": "blog.json",
+  "docs/en/": "docs-en.json",
+  "docs/ko/": "docs-ko.json",
+  "release-notes/": "release-notes.json",
+} as const satisfies Record<string, string>;
 
 const integration: AstroIntegration = {
   name: "developers.portone.io:content-index",
@@ -22,14 +28,15 @@ export default integration;
 function vitePlugin(config: AstroConfig) {
   const outDir = config.outDir.pathname.replace(/^\/(\w:)/, "$1");
   const root = config.root.pathname.replace(/^\/(\w:)/, "$1");
+  const contentIndexDir = path.resolve(outDir, "content-index");
   effect(() => {
-    const fuseIndex = fuseIndexSignal.value;
-    if (!fuseIndex) return;
-    fs.mkdir(outDir, { recursive: true }).then(() => {
-      fs.writeFile(
-        path.resolve(outDir, "content-index.json"),
-        JSON.stringify(fuseIndex.toJSON())
-      );
+    const indexFiles = indexFilesSignal.value;
+    if (!indexFiles) return;
+    fs.mkdir(contentIndexDir, { recursive: true }).then(() => {
+      for (const [filename, indexFile] of Object.entries(indexFiles)) {
+        const indexFilePath = path.resolve(contentIndexDir, filename);
+        fs.writeFile(indexFilePath, indexFile);
+      }
     });
   });
   return {
@@ -42,18 +49,20 @@ function vitePlugin(config: AstroConfig) {
         await fs.readFile(id, "utf-8")
       );
       const slug = String(frontmatter?.slug || match[1]);
-      const title = String(frontmatter?.title || "");
-      const description = String(frontmatter?.description || "");
-      updateMdxTable(slug, { slug, md, title, description });
+      updateMdxTable(slug, { ...frontmatter, slug, md });
     },
-    // configureServer(server: any) {
-    //   server.middlewares.use(async (req: any, res: any, next: any) => {
-    //     // if (req.url?.startsWith('/content-index/')) {
-    //     //   //
-    //     // }
-    //     return next();
-    //   });
-    // },
+    configureServer(server: any) {
+      server.middlewares.use(async (req: any, res: any, next: any) => {
+        const url: string = req.url;
+        if (!url?.startsWith("/content-index/")) return next();
+        const filename = url.slice("/content-index/".length);
+        const indexFiles = indexFilesSignal.value;
+        if (!(filename in indexFiles)) return next();
+        return res
+          .setHeader("Content-Type", "application/json")
+          .end(indexFiles[filename]);
+      });
+    },
   };
 }
 
@@ -79,8 +88,6 @@ function cutFrontmatter(md: string): CutFrontmatterResult {
 interface Mdx {
   slug: string;
   md: string;
-  title?: string;
-  description?: string;
 }
 interface MdxTable {
   [slug: string]: Mdx;
@@ -94,25 +101,44 @@ function updateMdxTable(slug: string, mdx: Mdx) {
 function mdxEq(a?: Mdx, b?: Mdx): boolean {
   if (a === b) return true;
   if (!a || !b) return false;
-  return (
-    a.slug === b.slug &&
-    a.md === b.md &&
-    a.title === b.title &&
-    a.description === b.description
-  );
+  if (a.slug !== b.slug) return false;
+  for (const key in a) if ((a as any)[key] !== (b as any)[key]) return false;
+  return true;
 }
-const fuseIndexSignal = signal<Fuse.FuseIndex<Mdx> | undefined>(undefined);
-const updateFuseIndexSignal = debounce((mdxTable: MdxTable) => {
-  fuseIndexSignal.value = Fuse.createIndex(
-    ["title", "description", "text"],
-    Object.values(mdxTable).map((mdx) => ({
-      ...mdx,
-      text: toPlainText(mdx.md),
-    }))
-  );
+type Index = IndexItem[];
+interface IndexItem {
+  slug: string;
+  text: string;
+}
+const indexSignal = signal<Index>([]);
+const updateIndexSignal = debounce((mdxTable: MdxTable) => {
+  indexSignal.value = Object.values(mdxTable).map((mdx) => {
+    const result: any = { ...mdx };
+    delete result.md;
+    result.text = toPlainText(mdx.md);
+    return result;
+  });
 }, 500);
+const indexFilesSignal = computed(() => {
+  const index = indexSignal.value;
+  const result: Record<string, Index> = {};
+  index: for (const item of index) {
+    for (const [slugPrefix, file] of Object.entries(indexFilesMapping)) {
+      if (item.slug.startsWith(slugPrefix)) {
+        (result[file] ??= []).push(item);
+        continue index;
+      }
+    }
+  }
+  return Object.fromEntries(
+    Object.entries(result).map(([filename, index]) => [
+      filename,
+      JSON.stringify(index),
+    ])
+  );
+});
 
 effect(() => {
   const mdxTable = mdxTableSignal.value;
-  updateFuseIndexSignal(mdxTable);
+  updateIndexSignal(mdxTable);
 });
