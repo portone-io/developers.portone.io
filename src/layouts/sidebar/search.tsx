@@ -61,6 +61,7 @@ export interface SearchScreenProps {
 export const SearchScreen: React.FC<SearchScreenProps> = ({ lang }) => {
   const searchScreenOpen = searchScreenOpenSignal.value;
   const searchText = searchTextSignal.value;
+  const fuse = fuseSignal.value;
   const searchResult = searchResultSignal.value;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const className = `fixed left-0 top-0 z-10 h-full w-full transition bg-[rgba(0,0,0,0.6)] ${
@@ -104,8 +105,10 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({ lang }) => {
                 </a>
               ))}
             </ul>
-          ) : (
+          ) : fuse ? (
             <Empty lang={lang} />
+          ) : (
+            <Waiting />
           )}
         </div>
       </div>
@@ -113,13 +116,38 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({ lang }) => {
   );
 };
 
-export interface EmptyProps {
+interface EmptyProps {
   lang: string;
 }
 const Empty: React.FC<EmptyProps> = ({ lang }) => {
   return (
     <div class="text-slate-3 flex flex-1 flex-col items-center justify-center">
       <div>{t(lang, "empty")}</div>
+    </div>
+  );
+};
+
+const Waiting: React.FC = () => {
+  return (
+    <div class="text-slate-3 flex flex-1 items-center justify-center">
+      <div class="scale-300">
+        <svg
+          class="waiting scale-150"
+          width="1rem"
+          height="1rem"
+          viewBox="0 0 30 30"
+        >
+          <circle
+            cx="15"
+            cy="15"
+            r="12"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            fill="transparent"
+          />
+        </svg>
+      </div>
     </div>
   );
 };
