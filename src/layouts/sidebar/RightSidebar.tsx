@@ -23,7 +23,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ lang, slug, toc }) => {
                 {item.children.map((item) => (
                   <SidebarItem
                     key={item.slug}
-                    href={item.slug}
+                    href={`#${item.slug}`}
                     label={item.text}
                   />
                 ))}
@@ -34,7 +34,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ lang, slug, toc }) => {
         <h2 class="mb-2 mt-4 px-2 font-bold">{t(lang, "contribute")}</h2>
         <ul>
           <SidebarItem
-            href={`https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs/${slug}.mdx`}
+            href={`https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs${slug}.mdx`}
             icon="i-ic-baseline-edit"
             label={t(lang, "edit-this-page")}
           />
