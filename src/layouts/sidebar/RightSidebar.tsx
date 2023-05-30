@@ -14,16 +14,16 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ lang, toc }) => {
   return (
     <div class="text-slate-7 hidden w-56 min-w-0 shrink-0 lg:block">
       <nav class="w-inherit fixed my-4 h-[calc(100%-5.5rem)] overflow-y-auto px-2">
-        <h2 class="px-2 font-bold">{t(lang, "toc")}</h2>
+        <h2 class="mb-2 px-2 font-bold">{t(lang, "toc")}</h2>
         <ul>
           {toc.map((item) => (
-            <li>
-              <a href={`#${item.slug}`}>
-                <div class="hover:bg-slate-1 text-slate-5 rounded-sm px-2 py-1 text-sm">
-                  {item.text}
-                </div>
-              </a>
-            </li>
+            <TocLink key={item.slug} slug={item.slug} text={item.text}>
+              <ul class="pl-2">
+                {item.children.map((item) => (
+                  <TocLink key={item.slug} slug={item.slug} text={item.text} />
+                ))}
+              </ul>
+            </TocLink>
           ))}
         </ul>
       </nav>
@@ -32,6 +32,31 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ lang, toc }) => {
 };
 
 export default RightSidebar;
+
+interface TocLinkProps {
+  slug: string;
+  text: string;
+  children?: any;
+}
+const TocLink: React.FC<TocLinkProps> = ({ slug, text, children }) => {
+  return (
+    <li key={slug}>
+      <a
+        href={`#${slug}`}
+        onClick={(e) => {
+          e.preventDefault();
+          history.replaceState(null, "", `#${slug}`);
+          document.getElementById(slug)?.scrollIntoView({ behavior: "smooth" });
+        }}
+      >
+        <div class="hover:bg-slate-1 text-slate-5 overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-sm">
+          {text}
+        </div>
+      </a>
+      {children}
+    </li>
+  );
+};
 
 export interface Heading {
   depth: number;
