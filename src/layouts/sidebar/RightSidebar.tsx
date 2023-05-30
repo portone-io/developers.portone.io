@@ -18,7 +18,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ lang, slug, toc }) => {
         <h2 class="mb-2 px-2 font-bold">{t(lang, "toc")}</h2>
         <ul>
           {toc.map((item) => (
-            <SidebarItem key={item.slug} href={item.slug} label={item.text}>
+            <SidebarItem
+              key={item.slug}
+              href={`#${item.slug}`}
+              label={item.text}
+            >
               <ul class="pl-2">
                 {item.children.map((item) => (
                   <SidebarItem
