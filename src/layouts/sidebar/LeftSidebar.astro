@@ -24,7 +24,9 @@ slugSignal.value = slug;
 ---
 
 <script>
+  import { effect } from "@preact/signals";
   import { navOpenStatesSignal, slugSignal } from "~/state/nav";
+  import { sidebarOpenSignal } from "~/state/sidebar";
   const leftSidebar = document.getElementById("left-sidebar")!;
   navOpenStatesSignal.value = {
     ...navOpenStatesSignal.value,
@@ -40,55 +42,61 @@ slugSignal.value = slug;
       scrollArea.getBoundingClientRect().top -
       30;
   }
+  effect(() => {
+    const sidebarOpen = sidebarOpenSignal.value;
+    const div = leftSidebar.children[0] as HTMLDivElement;
+    div.style.transform = sidebarOpen ? "none" : "translateX(-100%)";
+  });
 </script>
+<SidebarBackground client:visible />
 <aside
   id="left-sidebar"
   class="w-65 absolute z-10 shrink-0 text-slate-700 md:relative md:block"
   data-slug={slug}
   data-navopenstates={JSON.stringify(navOpenStates)}
 >
-  <div class="w-inherit fixed h-[calc(100%-3.5rem)] border-r bg-white">
-    <SidebarBackground client:visible />
-    <div class="relative flex h-full flex-col bg-white">
-      <div class="relative flex p-2">
-        <SearchButton lang={lang} client:visible />
-      </div>
-      <nav class="relative flex-1 overflow-y-scroll">
-        <ul class="flex flex-col gap-1 p-2 py-4">
-          {
-            navMenuItems.map((item) => {
-              if (item.type === "group") {
-                return (
-                  <li>
-                    <h4 class="text-gray mt-4 p-2 text-xs font-bold tracking-widest first:mt-0">
-                      {item.label}
-                    </h4>
-                    <ul class="flex flex-col gap-1">
-                      {item.items.map((item) => (
-                        <li>
-                          <LeftSidebarItem client:visible {...item} />
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                );
-              }
-              if (item.slug === "===") {
-                return (
-                  <li>
-                    <hr class="mx-2 my-4" />
-                  </li>
-                );
-              }
+  <div
+    style="transform:translateX(-100%)"
+    class="w-inherit fixed flex h-[calc(100vh-3.5rem)] flex-col border-r bg-white transition-transform md:!transform-none"
+  >
+    <div class="relative flex p-2">
+      <SearchButton lang={lang} client:visible />
+    </div>
+    <nav class="relative flex-1 overflow-y-scroll">
+      <ul class="flex flex-col gap-1 p-2 py-4">
+        {
+          navMenuItems.map((item) => {
+            if (item.type === "group") {
               return (
                 <li>
-                  <LeftSidebarItem client:visible {...item} />
+                  <h4 class="text-gray mt-4 p-2 text-xs font-bold tracking-widest first:mt-0">
+                    {item.label}
+                  </h4>
+                  <ul class="flex flex-col gap-1">
+                    {item.items.map((item) => (
+                      <li>
+                        <LeftSidebarItem client:visible {...item} />
+                      </li>
+                    ))}
+                  </ul>
                 </li>
               );
-            })
-          }
-        </ul>
-      </nav>
-    </div>
+            }
+            if (item.slug === "===") {
+              return (
+                <li>
+                  <hr class="mx-2 my-4" />
+                </li>
+              );
+            }
+            return (
+              <li>
+                <LeftSidebarItem client:visible {...item} />
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
   </div>
 </aside>

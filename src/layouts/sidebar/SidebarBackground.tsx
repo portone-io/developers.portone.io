@@ -1,14 +1,14 @@
-import React from "react";
 import { sidebarOpenSignal } from "~/state/sidebar";
 
 const SidebarBackground = () => {
-  const a = sidebarOpenSignal.value;
-  React.useEffect(() => {
-    console.log(a);
-  }, []);
+  const sidebarOpen = sidebarOpenSignal.value;
   return (
     <div
-      class="absolute left-0 top-0 h-screen w-screen bg-[rgba(0,0,0,0.6)] md:hidden"
+      class="fixed left-0 top-[3.5rem] h-[calc(100vh-3.5rem)] w-screen bg-[rgba(0,0,0,0.6)] transition-opacity md:hidden"
+      style={{
+        pointerEvents: sidebarOpen ? "auto" : "none",
+        opacity: sidebarOpen ? 1 : 0,
+      }}
       onClick={() => (sidebarOpenSignal.value = false)}
     ></div>
   );
