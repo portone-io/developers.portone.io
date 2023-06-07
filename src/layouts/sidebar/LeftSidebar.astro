@@ -5,6 +5,7 @@ import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 
 import LeftSidebarItem from "./LeftSidebarItem";
 import { SearchButton } from "./search";
+import SidebarBackground from "./SidebarBackground";
 
 interface Props {
   lang: Lang;
@@ -23,7 +24,9 @@ slugSignal.value = slug;
 ---
 
 <script>
+  import { effect } from "@preact/signals";
   import { navOpenStatesSignal, slugSignal } from "~/state/nav";
+  import { sidebarOpenSignal } from "~/state/sidebar";
   const leftSidebar = document.getElementById("left-sidebar")!;
   navOpenStatesSignal.value = {
     ...navOpenStatesSignal.value,
@@ -39,15 +42,24 @@ slugSignal.value = slug;
       scrollArea.getBoundingClientRect().top -
       30;
   }
+  effect(() => {
+    const sidebarOpen = sidebarOpenSignal.value;
+    const div = leftSidebar.children[0] as HTMLDivElement;
+    div.style.transform = sidebarOpen ? "none" : "translateX(-100%)";
+  });
 </script>
+<SidebarBackground client:visible />
 <aside
   id="left-sidebar"
-  class="w-65 relative hidden shrink-0 text-slate-700 md:block"
+  class="w-65 absolute z-10 shrink-0 text-slate-700 md:relative md:block"
   data-slug={slug}
   data-navopenstates={JSON.stringify(navOpenStates)}
 >
-  <div class="w-inherit flex flex-col fixed h-[calc(100%-3.5rem)] border-r bg-white">
-    <div class="flex p-2">
+  <div
+    style="transform:translateX(-100%)"
+    class="w-inherit fixed flex h-[calc(100vh-3.5rem)] flex-col border-r bg-white transition-transform md:!transform-none"
+  >
+    <div class="relative flex p-2">
       <SearchButton lang={lang} client:visible />
     </div>
     <nav class="relative flex-1 overflow-y-scroll">

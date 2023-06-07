@@ -78,19 +78,24 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({ lang }) => {
   return (
     <div class={className} onClick={closeSearchScreen}>
       <div
-        class="mt-18 w-150 min-h-80 max-h-1/2 mx-auto flex flex-col rounded-lg border bg-white"
+        class="sm:mt-18 sm:w-150 sm:min-h-80 sm:max-h-1/2 mx-auto flex h-full w-full flex-col border bg-white sm:rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <input
-          class="bg-transparent p-4"
-          ref={inputRef}
-          placeholder={t(lang, "searchContent")}
-          value={searchText}
-          onInput={(e) => (searchTextSignal.value = e.currentTarget.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") closeSearchScreen();
-          }}
-        />
+        <div class="flex">
+          <input
+            class="flex-1 bg-transparent p-4"
+            ref={inputRef}
+            placeholder={t(lang, "searchContent")}
+            value={searchText}
+            onInput={(e) => (searchTextSignal.value = e.currentTarget.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") closeSearchScreen();
+            }}
+          />
+          <button class="px-4 sm:hidden" onClick={closeSearchScreen}>
+            <i class="i-ic-baseline-close block text-2xl"></i>
+          </button>
+        </div>
         <div class="flex flex-1 flex-col overflow-y-auto border-t">
           {searchResult.length ? (
             <ul>
