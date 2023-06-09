@@ -20,13 +20,11 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 <Swagger method="post" path="/onetime" baseUrl="https://api.iamport.kr/subscribe/payments" summary="구매자로부터 별도의 인증과정을 거치지 않고 카드정보만으로 결제를 진행하는 API 입니다.">
 <SwaggerDescription>
-**customer_uid**
+**customer_uid** 를 전달해주시면 결제 후 다음 번 결제를 위해 성공된 결제에 사용된 빌링키를 저장해두게되고 customer_uid가 없는 경우 저장되지 않습니다. 
 
-를 전달해주시면 결제 후 다음 번 결제를 위해 성공된 결제에 사용된 빌링키를 저장해두게되고 customer_uid가 없는 경우 저장되지 않습니다. 동일한
+동일한 **merchant_uid는 재사용이 불가** 능하며 고유한 값을 전달해주셔야 합니다.
 
-**merchant_uid는 재사용이 불가**
-
-능하며 고유한 값을 전달해주셔야 합니다.
+빌링키 저장 시, buyer_email, buyer_name 등의 정보는 customer 부가정보인 customer_email, customer_name 등으로 함께 저장됩니다. (빌링키 발급 API참조)
 
 </SwaggerDescription>
 
@@ -37,7 +35,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="merchant_uid" type="String" required="true">
 <mark style="color:red;">
 
-**주문번호**
+**가맹점 주문번호**
 
 </mark>
 
@@ -83,7 +81,7 @@ KRW, USD, VND ...
 
 </SwaggerParameter>
 <SwaggerParameter name="birth" type="String" required="true">
-<mark style="color:red;">**생년월일 6자리**</mark>** (yymmdd)**
+<mark style="color:red;">**생년월일 6자리**</mark>**(yymmdd)**
 
 (법인카드의 경우 사업자등록번호10자리)
 
@@ -99,13 +97,15 @@ KRW, USD, VND ...
 
 </SwaggerParameter>
 <SwaggerParameter name="customer_uid" type="String">
+빌링키
+
 결제에 사용된 카드정보를 빌링키 형태로 저장해두고 재 결제에 사용하시려면 customer_uid를 지정해주세요
 
 </SwaggerParameter>
 <SwaggerParameter name="pg" type="String" required="true">
 <mark style="color:red;">
 
-**pg 구분코드**
+**PG 구분코드**
 
 </mark>
 
@@ -116,6 +116,8 @@ KRW, USD, VND ...
 </SwaggerParameter>
 <SwaggerParameter name="buyer_name" type="String">
 구매자명
+
+**(KSNET 필수)**
 
 </SwaggerParameter>
 <SwaggerParameter name="buyer_email" type="String">
@@ -137,13 +139,18 @@ KRW, USD, VND ...
 <SwaggerParameter name="card_quota" type="integer">
 카드할부개월수
 
+(결제금액 50,000원 이상 한정, default = 일시불)
 </SwaggerParameter>
 <SwaggerParameter name="interest_free_by_merchant" type="boolen">
 가맹점부담 무이자 할부여부
 
+카드할부처리할 때, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 고객대신 가맹점이 지불하고자 PG사와 계약된 경우
+
+(현재, 나이스페이먼츠만 지원됨)
+
 </SwaggerParameter>
 <SwaggerParameter name="custom_data" type="String">
-에코항목
+거래정보와 함께 저장할 추가 정보
 
 </SwaggerParameter>
 <SwaggerParameter name="notice_url" type="String">
@@ -151,7 +158,7 @@ KRW, USD, VND ...
 
 </SwaggerParameter>
 <SwaggerParameter name="browser_ip" type="String">
-매자 브라우져(PC)의 IP
+구매자 브라우져(PC)의 IP
 
 </SwaggerParameter>
 <SwaggerParameter name="secure_3d_charge_id" type="String">
@@ -160,6 +167,13 @@ KRW, USD, VND ...
 </SwaggerParameter>
 <SwaggerParameter name="secure_3d_token" type="String">
 (해외PG 전용) 3D secure 인증 후 재결제시 PG사에서 부여한 토큰
+
+</SwaggerParameter>
+<SwaggerParameter name="product_type" type="Integer" required="false">
+**결제 상품에 대한 구분 값**
+
+판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠)
+**(KSNET 필수)**
 
 </SwaggerParameter>
 
@@ -205,7 +219,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`주문번호`**
+**`가맹점 고유주문번호`**
 
 **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -454,7 +468,7 @@ JSON string으로 전달
 >
 > 매 결제요청 시 고유값으로 요청해야 합니다.
 
-> **`card_numb`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+> **`card_number`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 >
 > **카드번호**
 >
@@ -493,7 +507,7 @@ JSON string으로 전달
 >
 > 페이먼트월 PG를 이용하는 경우 구매자명은 first name 과 last name이 <mark style="color:red;">**한칸 띄어쓰기**</mark> 형태로 구분되서 유입되어야 합니다.
 >
-> #### <mark style="color:green;">**예시)**</mark>** Michael Jackson**
+> #### <mark style="color:green;">**예시)**</mark>**Michael Jackson**
 
 > **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 >

@@ -25,7 +25,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 본인인증 대상자의 성명, 생년월일 + 주민등록 뒷부분 첫 자리, 휴대폰번호, 통신사 정보를 가맹점에서 직접 입력받아 API를 요청하면 됩니다. 전달된 개인정보가 올바른 경우 해당 휴대폰으로 인증번호 SMS가 전송됩니다.
 
-HTTP Status 200응답 시 imp\_uid 가 응답데이터로 전달되며 SMS전송된 인증번호를 /certifications/otp/confirm/\{imp\_uid} API 로 요청주시면 최종 본인인증 프로세스가 완료됩니다.
+HTTP Status 200응답 시 imp_uid 가 응답데이터로 전달되며 SMS전송된 인증번호를 본인인증 완료 API로 요청주시면 최종 본인인증 프로세스가 완료됩니다.
 
 </SwaggerDescription>
 
@@ -46,6 +46,8 @@ HTTP Status 200응답 시 imp\_uid 가 응답데이터로 전달되며 SMS전송
 
 특수기호가 삽입되어도 무방합니다.
 
+(포트원 내에서 숫자 외에는 정규식으로 모두 제거처리)
+
 </SwaggerParameter>
 <SwaggerParameter name="birth" type="String" required="true">
 <mark style="color:red;">**생년월일**</mark>
@@ -54,11 +56,15 @@ HTTP Status 200응답 시 imp\_uid 가 응답데이터로 전달되며 SMS전송
 
 특수기호가 삽입되어도 무방합니다.
 
+(포트원 내에서 숫자 외에는 정규식으로 모두 제거처리)
+
 </SwaggerParameter>
 <SwaggerParameter name="gender_digit" type="String" required="true">
 <mark style="color:red;">**성별구분코드**</mark>
 
 주민번호 뒷부분 첫자리
+
+(주민등록번호 13자리 중 7번째 자리. 2000년 이전 출생자는 1 또는 2, 2000년 이후 출생자는 3 또는 4)
 
 </SwaggerParameter>
 <SwaggerParameter name="carrier" type="String" required="true">
@@ -82,7 +88,7 @@ HTTP Status 200응답 시 imp\_uid 가 응답데이터로 전달되며 SMS전송
 
 </SwaggerParameter>
 <SwaggerParameter name="merchant_uid" type="String">
-**주문번호**
+**가맹점 주문번호**
 
 </SwaggerParameter>
 <SwaggerParameter name="pg" type="String">
@@ -93,7 +99,7 @@ HTTP Status 200응답 시 imp\_uid 가 응답데이터로 전달되며 SMS전송
 
 ### Responses
 
-<SwaggerResponse status="200: OK" description="성공">
+<SwaggerResponse status="200: OK" description="본인인증을 위한 대상자 정보 검증 완료(인증번호 SMS전송요청 중)">
 <Tabs>
 <Tab title="CertificationOTPResponse">
 **`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
@@ -121,7 +127,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <Tab title="CertificationOTPAnnotation">
 **`imp_uid *`** <mark style="color:green;">**`string`**</mark>
 
-**`포트원 거래고유번호`**
+**`포트원 인증고유번호`**
 
 </Tab>
 </Tabs>

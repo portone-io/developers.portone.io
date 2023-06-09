@@ -1,6 +1,6 @@
 ---
 emoji: ⌨
-title: 결제예약 복수조회(빌키) API
+title: 결제예약 복수조회(빌링키) API
 description: customer_uid 기준으로 예약된 내역을 조회할 수 있는 API 입니다.
 ---
 
@@ -19,9 +19,11 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### customer\_uid 별 결제예약목록을 조회할 수 있습니다
 
-<Swagger method="get" path="/subscribe/payments/schedule/customers/{customer_uid}" baseUrl="https://api.iamport.kr" summary="빌키(customer_uid) 기준 결제내역 복수조회 API">
+<Swagger method="get" path="/subscribe/payments/schedule/customers/{customer_uid}" baseUrl="https://api.iamport.kr" summary="빌링키(customer_uid) 기준 결제내역 복수조회 API">
 <SwaggerDescription>
 결제예약정보가 목록으로 전달되며 최대 3개월 단위로 조회가 가능합니다.
+
+결제예약정보가 예약된 시각 기준으로 최신순으로 정렬되어 전달됩니다.
 
 </SwaggerDescription>
 
@@ -32,7 +34,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="customer_uid" type="String" required="true">
 <mark style="color:red;">
 
-**빌키**
+**빌링키**
 
 </mark>
 
@@ -50,11 +52,15 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 unix timestamp
 
+(결제예약건의 '예약시각'기준으로 조회합니다. from {'<='} '예약시각')
+
 </SwaggerParameter>
 <SwaggerParameter name="to" type="integer" required="true">
 <mark style="color:red;">**조회 종료시각**</mark>
 
 unix timestamp
+
+(결제예약건의 '예약시각'기준으로 조회합니다. '예약시각' {'<'} to)
 
 </SwaggerParameter>
 <SwaggerParameter name="schedule-status" type="String" required="false">

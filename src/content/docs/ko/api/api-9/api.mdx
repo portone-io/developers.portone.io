@@ -24,7 +24,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 - 나이스페이먼츠
 - KG이니시스
 - 토스페이먼츠 - 신모듈
-- KSPAY
+- KSNET
 - 스마트로-신모듈
 
 <Swagger method="post" path="/vbanks" baseUrl="https://api.iamport.kr" summary="가상계좌 번호를 발급합니다.">
@@ -40,9 +40,10 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="merchant_uid" type="String(40)" required="true">
 <mark style="color:red;">
 
-**주문번호**
+**가맹점주문번호**
 
 </mark>
+이미 결제가 이뤄진 적이 있는 merchant_uid로는 추가적인 가상계좌 생성이 불가능합니다. 
 
 </SwaggerParameter>
 <SwaggerParameter name="amount" type="Double" required="true">
@@ -51,6 +52,16 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 **발급금액**
 
 </mark>
+
+</SwaggerParameter>
+<SwaggerParameter name="product_type" type="String" required="false">
+
+**상품구분**
+
+(필수 : KSNET)
+
+* real : 실물상품
+* digital : 디지털컨텐츠
 
 </SwaggerParameter>
 <SwaggerParameter name="vbank_code" type="String" required="true">
@@ -72,6 +83,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </mark>
 
+(필수 : 이니시스, 나이스, 헥토파이낸셜(구 세틀뱅크), 스마트로 - 신모듈) 토스페이먼츠 - 신모듈, KSNET의 경우 적용되지 않고 가맹점명이 사용됨
 </SwaggerParameter>
 <SwaggerParameter name="name" type="String(40)" required="false">
 주문명
@@ -80,14 +92,17 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="buyer_name" type="String(16)" required="false">
 주문자명
 
+(필수 : 이니시스, 토스페이먼츠 - 신모듈, KSNET,스마트로 - 신모듈)
 </SwaggerParameter>
 <SwaggerParameter name="buyer_email" type="String(64)" required="false">
 주문자 E-mail 주소
 
+(필수 : 이니시스,스마트로 - 신모듈)
 </SwaggerParameter>
 <SwaggerParameter name="buyer_tel" type="String(16)" required="false">
 주문자 전화번호
 
+(필수 : 스마트로 - 신모듈)
 </SwaggerParameter>
 <SwaggerParameter name="buyer_addr" type="String(128)" required="false">
 주문자 주소
@@ -106,8 +121,13 @@ PG사 구분코드
 
 </SwaggerParameter>
 <SwaggerParameter name="custom_data" type="Array" required="false">
-에코항목
+결제정보와 함께 저장할 추가 정보
 
+</SwaggerParameter>
+<SwaggerParameter name="tax_free" type="Integer" required="false">
+면세금액
+
+(나이스페이먼츠에서만 사용 가능)
 </SwaggerParameter>
 <SwaggerParameter name="vat_amount" type="integer" required="false">
 부가세(기본값: null)\
@@ -117,8 +137,14 @@ PG사 구분코드
 <SwaggerParameter name="vbank_key" type="String">
 계좌 고유 키\
 고정식 가상계좌를 발급받기 위한 고객과 매칭시킨 계좌 고유 키
-(토스페이먼츠 - 신모듈의 경우 필수값임)
+(필수 : 토스페이먼츠 - 신모듈)
 (사용을 위해 PG사와 협의 필요)
+
+</SwaggerParameter>
+<SwaggerParameter name="product_count" type="Integer" required="false">
+결제 상품의 개수
+
+(Default : 1개)
 
 </SwaggerParameter>
 <SwaggerParameter name="vbank_num" type="string">
@@ -172,15 +198,32 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`imp_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**포트원 결제 고유 UID**
+**포트원 거래고유번호**
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**주문번호**
+**가맹점 주문번호**
 
 **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **결제수단 구분코드**
+
+- samsung : 삼성페이
+- card : 신용카드
+- trans : 계좌이체 
+- vbank : 가상계좌
+- phone : 휴대폰
+- cultureland : 문화상품권
+- smartculture : 스마트문상
+- booknlife : 도서문화상품권
+- happymoney : 해피머니
+- point : 포인트
+- ssgpay : SSGPAY
+- lpay : LPAY
+- payco : 페이코
+- kakaopay : 카카오페이
+- tosspay : 토스
+- naverpay : 네이버페이
 
 **`channel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -216,11 +259,13 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`bank_code`** <mark style="color:green;">**string**</mark>
 
-**은행 표준코드**[**`(링크보기)`**](../../tip/pg-1)
+**은행 표준코드** (금융결제원 표준코드: [**`(링크보기)`**](../../tip/pg-1)
 
 **`bank_name`** <mark style="color:green;">**string**</mark>
 
 **은행 명칭**
+
+실시간 계좌이체 결제건의 경우
 
 **`card_code`** <mark style="color:green;">**string**</mark>
 
@@ -236,18 +281,22 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`card_number`** <mark style="color:green;">**string**</mark>
 
-**마스킹 카드번호**
+**결제에 사용된 마스킹된 카드번호**
+
+7~12번째 자리를 마스킹하는 것이 일반적이지만, PG사의 정책/설정에 따라 다소 차이가 있을 수 있습니다.
 
 **`card_type`** <mark style="color:green;">**string**</mark>
 
 **카드 구분코드**
+
+(주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. JTNet, 이니시스-빌링)
 
 - 0 : 신용카드
 - 1 : 체크카드
 
 **`vbank_code`** <mark style="color:green;">**string**</mark>
 
-**가상계좌 은행 표준코드(하단이미지 참고)**
+**가상계좌 은행 표준코드(금융결제원 기준)**
 
 **`vbank_name`** <mark style="color:green;">**string**</mark>
 
@@ -281,10 +330,6 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **통화구분코드**
 
-- USD
-- KRW
-- EUR
-
 **`buyer_name`** <mark style="color:green;">**string**</mark>
 
 **주문자명**
@@ -311,16 +356,16 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`user_agent`** <mark style="color:green;">**string**</mark>
 
-**UserAgent** 결제를 시작한 단말기
+**UserAgent** 구매자가 결제를 시작한 단말기의 UserAgent 문자열
 
 **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **결제상태 구분코드**
 
-- ready
-- paid
-- cancelled
-- failed
+- ready : 미결제
+- paid : 결제완료
+- cancelled : 결제취소
+- failed : 결제실패
 
 **`started_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -362,6 +407,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **customer_uid 사용 구분코드**
 
+- null : 일반결제
 - issue : 빌링키 발급
 - payment : 결제
 - payment.scheduled : 예약결제
@@ -421,7 +467,16 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > `스마트로-신모듈` PG사인 경우 `merchant_uid` 파라미터에 특수문자 포함이 불가능합니다.  
 
->**`vbank_code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+> **`product_type`** <mark style="color:green;">**`string`**</mark>
+> 
+> **상품구분**
+> 
+> (필수 : KSNET)
+> 
+> * real: 실물상품 
+> * digital: 디지털컨텐츠
+
+> **`vbank_code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 >
 > **은행구분코드 ** [**은행코드표**](../../tip/pg-1) 참조
 
@@ -437,6 +492,8 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > - 나이스페이먼츠, JTNet 2가지 PG설정이 되어있다면, pg 파라미터로 **nice** 또는 **jtnet**로 구분 가능
 > - 나이스페이먼츠로부터 2개 이상의 상점아이디를 발급받았다면, **nice.MID1** 또는 **nice.MID2**로 구분 가능
+> 
+> (단, **이니시스 경우 필수값임** `inicis.{상점아이디}` 형태로 지정)
 
 > **`notice_url`** <mark style="color:green;">**`string`**</mark>
 >
@@ -469,6 +526,24 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 > 고정식 가상계좌 번호
 >
 > (**스마트로-신모듈에서 고정식 가상계좌 사용할 경우에만 필수 값임**) (**사용을 위해 PG사와 협의 필요**)
+
+> **`tax_free`**<mark style="color:purple;">**`Integer`**</mark>
+>
+> 면세금액
+>
+> 나이스페이먼츠 전용, 상점아이디의 과세설정이 **지정금액방식(복합과세)** 으로 설정되어 있는 경우 필수값 입니다.
+>
+>과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.
+ 
+> **`vat_amount`**<mark style="color:purple;">**`Double`**</mark>
+>
+> 부가세
+>
+> 부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)
+>
+> 지원되는 PG사
+> * 나이스페이먼츠
+
 <Details>
 <p slot="summary">Response Model Schema</p>
 

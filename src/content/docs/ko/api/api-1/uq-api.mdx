@@ -33,7 +33,7 @@ payment_status를 추가로 지정하시면, 해당 status에 해당하는 가�
 <SwaggerParameter name="merchant_uid" type="String" required="true">
 <mark style="color:red;">
 
-**주문번호**
+**가맹점 주문번호**
 
 </mark>
 
@@ -81,21 +81,54 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 <Tabs>
 <Tab title="PaymentAnnotation">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
 **`imp_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**포트원 결제 고유 UID**
+**포트원 거래고유번호**
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**주문번호**
+**가맹점 주문번호**
 
 **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **결제수단 구분코드**
 
+- samsung : 삼성페이
+- card : 신용카드
+- trans : 계좌이체
+- vbank : 가상계좌
+- phone : 휴대폰
+- cultureland : 문화상품권
+- smartculture : 스마트문상
+- booknlife : 도서문화상품권
+- happymoney : 해피머니
+- point : 포인트
+- ssgpay : SSGPAY
+- lpay : LPAY
+- payco : 페이코
+- kakaopay : 카카오페이
+- tosspay : 토스
+- naverpay : 네이버페이
+
 **`channel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **결제환경 구분코드**
+
+- pc:(인증방식)PC결제
+- mobile:(인증방식)모바일결제
+- api:정기결제 또는 비인증 결제
 
 **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -123,11 +156,13 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`bank_code`** <mark style="color:green;">**string**</mark>
 
-**은행 표준코드**[**(링크보기)**](../../tip/pg-1)
+**은행 표준코드** (금융결제원 표준코드: [**`(링크보기)`**](../../tip/pg-1)
 
 **`bank_name`** <mark style="color:green;">**string**</mark>
 
 **은행 명칭**
+
+실시간 계좌이체 결제건의 경우
 
 **`card_code`** <mark style="color:green;">**string**</mark>
 
@@ -143,15 +178,22 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`card_number`** <mark style="color:green;">**string**</mark>
 
-**마스킹 카드번호**
+**결제에 사용된 마스킹된 카드번호**
+
+7~12번째 자리를 마스킹하는 것이 일반적이지만, PG사의 정책/설정에 따라 다소 차이가 있을 수 있습니다.
 
 **`card_type`** <mark style="color:green;">**string**</mark>
 
 **카드 구분코드**
 
+(주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. JTNet, 이니시스-빌링)
+
+- 0 : 신용카드
+- 1 : 체크카드
+
 **`vbank_code`** <mark style="color:green;">**string**</mark>
 
-**가상계좌 은행 표준코드(하단이미지 참고)**
+**가상계좌 은행 표준코드(금융결제원 기준)**
 
 **`vbank_name`** <mark style="color:green;">**string**</mark>
 
@@ -191,7 +233,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`buyer_email`** <mark style="color:green;">**string**</mark>
 
-**주문자 Email주소**\
+**주문자 Email주소**
 
 **`buyer_tel`** <mark style="color:green;">**string**</mark>
 
@@ -207,15 +249,20 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`custom_data`** <mark style="color:green;">**string**</mark>
 
-**echo data JSON string으로 전달**
+**가맹점 custom 데이터** JSON string으로 전달
 
 **`user_agent`** <mark style="color:green;">**string**</mark>
 
-**결제를 시작한 단말기의 UserAgent**
+**UserAgent** 구매자가 결제를 시작한 단말기의 UserAgent 문자열
 
 **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **결제상태 구분코드**
+
+- ready : 미결제
+- paid : 결제완료
+- cancelled : 결제취소
+- failed : 결제실패
 
 **`started_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -223,7 +270,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`paid_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**결제완료시점 (UNIX timestamp)**\
+**결제완료시점 (UNIX timestamp)**\\
 
 **`failed_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -257,9 +304,14 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **customer_uid 사용 구분코드**
 
+- null : 일반결제
+- issue : 빌링키 발급
+- payment : 결제
+- payment.scheduled : 예약결제
+
 **`cancel_history`** <mark style="color:red;">**(Array\[PaymentCancelAnnotation], optional):**</mark>
 
-**`취소/부분취소 내역`**
+**취소/부분취소 내역**
 
 </Tab>
 </Tabs>
@@ -278,7 +330,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`cancelled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-결제취소된 시각 UNIX timestamp
+**결제취소된 시각 UNIX timestamp**
 
 **`reason`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 

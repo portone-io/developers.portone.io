@@ -39,7 +39,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="merchant_uid" type="string" required="true">
 <mark style="color:red;">
 
-**주문번호**
+**가맹점 주문번호**
 
 </mark>
 
@@ -82,14 +82,18 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="buyer_name" type="string" required="false">
 **주문자명**
 
+**(KSNET, 스마트로 - 신모듈 필수)**
+
 </SwaggerParameter>
 <SwaggerParameter name="buyer_email" type="string" required="false">
 **주문자 E-mail 주소**
 
+**(페이먼트월, 스마트로 - 신모듈 필수)**
 </SwaggerParameter>
 <SwaggerParameter name="buyer_tel" type="string" required="false">
 **주문자 전화번호**
 
+**(스마트로 - 신모듈 필수)**
 </SwaggerParameter>
 <SwaggerParameter name="buyer_addr" type="string" required="false">
 **주문자 주소**
@@ -102,14 +106,22 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="card_quota" type="integer" required="false">
 **카드 할부개월수**
 
+(결제금액 50,000원 이상 한정, default = 일시불)
 </SwaggerParameter>
 <SwaggerParameter name="interest_free_by_merchant" type="boolean" required="false">
 **가맹점부담 무이자 할부여부**
+
+카드할부처리할 때, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 고객대신 가맹점이 지불하고자 PG사와 계약된 경우
+
+(현재, 나이스페이먼츠만 지원됨)
 
 </SwaggerParameter>
 <SwaggerParameter name="use_card_point" type="boolean" required="false">
 **카드포인트 사용여부**
 
+승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요
+
+(현재, 나이스페이먼츠, 스마트로 - 신모듈만 지원됨)
 </SwaggerParameter>
 <SwaggerParameter name="custom_data" type="string" required="false">
 **빌링키 발급 시 같이 저장할 가맹점 custom 데이터**
@@ -123,8 +135,21 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 **구매자 브라우저(PC)의 IP**
 
 </SwaggerParameter>
+<SwaggerParameter name="product_type" type="Integer" required="false">
+**결제 상품에 대한 구분 값**
+
+판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠) 
+**(KSNET 필수)**
+
+</SwaggerParameter>
 <SwaggerParameter name="product_count" type="Integer" required="false">
 **결제 상품의 개수 (Deafault : 1)**
+
+</SwaggerParameter>
+<SwaggerParameter name="bypass" type="Integer" required="false">
+**PG사에 전달될 bypass 데이터**
+
+포트원이 정규화하기 어려운 JSON string 형식의 PG사별 specific 파라미터
 
 </SwaggerParameter>
 
@@ -425,7 +450,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > **결제통화 구분코드**
 >
-> KRW, USD, VND...
+> KRW, USD, VND... (Default: KRW)
 >
 > 페이먼트월 PG사인 경우 필수
 
@@ -447,6 +472,11 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > 페이먼트월 PG사인 경우 필수파라미터 입니다.
 
+> **`bypass`** <mark style="color:green;">**string**</mark>
+>
+> **PG사에 전달될 bypass 데이터**
+>
+> 전달 한 값은 가공 없이 그대로 PG사로 전달 됩니다. 각 PG사별 스펙은 PG사별 연동 문서 참고해주세요.
 <Details>
 <p slot="summary">Response Model Schema</p>
 

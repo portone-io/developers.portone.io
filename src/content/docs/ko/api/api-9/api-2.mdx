@@ -21,7 +21,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Details>
 <p slot="summary"><strong>지원되는 PG사 확인하기</strong></p>
 
-- 세틀뱅크
+- 핵토파이낸셜 (구 세틀뱅크)
 
 </Details>
 
@@ -38,7 +38,7 @@ imp_uid가 지정되어야 합니다.(포트원 기획 의도상 동일한 merch
 <SwaggerParameter name="imp_uid" type="String" required="true">
 <mark style="color:red;">
 
-**포트원 고유번호**
+**포트원 거래고유번호**
 
 </mark>
 
@@ -48,10 +48,13 @@ imp_uid가 지정되어야 합니다.(포트원 기획 의도상 동일한 merch
 <SwaggerParameter name="amount" type="integer" required="false">
 **발급금액**
 
+수정할 결제금액
+
 </SwaggerParameter>
 <SwaggerParameter name="vbank_due" type="integer" required="false">
 **입금기한**
 
+수정할 가상계좌 입금기한
 `UNIX TIMESTAMP`
 
 </SwaggerParameter>
@@ -82,203 +85,218 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <Tab title="PaymentAnnotation">
 **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`응답코드`**
+**응답코드**
 
 0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
 
 **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`응답메세지`**
+**응답메세지**
 
 code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
 
 **`imp_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`포트원 결제 고유 UID`**
+**포트원 거래고유번호**
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`주문번호`**
+**가맹점 주문번호**
 
 **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`결제수단 구분코드`**
+**결제수단 구분코드**
+
+- samsung : 삼성페이
+- card : 신용카드
+- trans : 계좌이체
+- vbank : 가상계좌
+- phone : 휴대폰
+- cultureland : 문화상품권
+- smartculture : 스마트문상
+- booknlife : 도서문화상품권
+- happymoney : 해피머니
+- point : 포인트
+- ssgpay : SSGPAY
+- lpay : LPAY
+- payco : 페이코
+- kakaopay : 카카오페이
+- tosspay : 토스
+- naverpay : 네이버페이
 
 **`channel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`결제환경 구분코드`**
+**결제환경 구분코드**
 
-- pc **:** (인증방식)PC결제
+- pc:(인증방식)PC결제
 - mobile:(인증방식)모바일결제
 - api:정기결제 또는 비인증 결제
 
 **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`PG사 구분코드`**
+**PG사 구분코드**
 
 **`emb_pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`허브형결제 PG사 구분코드`**
+**허브형결제 PG사 구분코드**
 
 **`pg_tid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg사 거래번호`**
+**pg사 거래번호**
 
 **`pg_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`PG사 MID`**
+**PG사 MID**
 
 **`escrow`** <mark style="color:orange;">**boolean**</mark>
 
-**`에스크로 결제여부`**
+**에스크로 결제여부**
 
 **`apply_num`** <mark style="color:green;">**string**</mark>
 
-**`신용카드 승인번호`**
+**신용카드 승인번호**
 
 **`bank_code`** <mark style="color:green;">**string**</mark>
 
-**`은행 표준코드`**[**`(링크보기)`**](../../tip/pg-1)
+**은행 표준코드** (금융결제원 표준코드: [**`(링크보기)`**](../../tip/pg-1)
 
 **`bank_name`** <mark style="color:green;">**string**</mark>
 
-**`은행 명칭`**
+**은행 명칭**
+
+실시간 계좌이체 결제건의 경우
 
 **`card_code`** <mark style="color:green;">**string**</mark>
 
-**`카드사 코드번호`(금융결제원 표준코드번호 :** [<mark style="color:red;">**링크**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) )
+**카드사 코드번호(금융결제원 표준코드번호 :** [<mark style="color:red;">**링크**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) )
 
 **`card_name`** <mark style="color:green;">**string**</mark>
 
-**`카드사명`**
+**카드사명**
 
 **`card_quota`** <mark style="color:purple;">**integer**</mark>
 
-**`할부개월 수`(0이면 일시불)**
+**할부개월 수(0이면 일시불)**
 
 **`card_number`** <mark style="color:green;">**string**</mark>
 
-**`마스킹 카드번호`**
+**결제에 사용된 마스킹된 카드번호**
+
+7~12번째 자리를 마스킹하는 것이 일반적이지만, PG사의 정책/설정에 따라 다소 차이가 있을 수 있습니다.
 
 **`card_type`** <mark style="color:green;">**string**</mark>
 
-**`카드 구분코드`**
+**카드 구분코드**
+
+(주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. JTNet, 이니시스-빌링)
 
 - 0 : 신용카드
 - 1 : 체크카드
 
 **`vbank_code`** <mark style="color:green;">**string**</mark>
 
-**`가상계좌 은행 표준코드`(하단이미지 참고)**
+**가상계좌 은행 표준코드(금융결제원 기준)**
 
 **`vbank_name`** <mark style="color:green;">**string**</mark>
 
-**`입금받을 가상계좌 은행명`**
+**입금받을 가상계좌 은행명**
 
 **`vbank_holder`** <mark style="color:green;">**string**</mark>
 
-**`입금받을 가상계좌 예금주`**
+**입금받을 가상계좌 예금주**
 
 **`vbank_date`** <mark style="color:green;">**string**</mark>
 
-**`입금받을 가상계좌 마감기한` (UNIX timestamp)**
+**입금받을 가상계좌 마감기한 (UNIX timestamp)**
 
 **`vbank_issued_at`** <mark style="color:green;">**string**</mark>
 
-**`가상계좌 생성 시각` (UNIX timestamp)**
+**가상계좌 생성 시각 (UNIX timestamp)**
 
 **`name`** <mark style="color:green;">**string**</mark>
 
-**`제품명`**
+**제품명**
 
 **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`주문(결제)금액`**
+**주문(결제)금액**
 
 **`cancel_amount`** <mark style="color:purple;">**integer**</mark>
 
-**`결제취소금액`**
+**결제취소금액**
 
 **`currency`** <mark style="color:green;">**string**</mark>
 
-**`통화구분코드`**
-
-- USD
-- KRW
-- EUR
+**통화구분코드**
 
 **`buyer_name`** <mark style="color:green;">**string**</mark>
 
-**`주문자명`**
+**주문자명**
 
 **`buyer_email`** <mark style="color:green;">**string**</mark>
 
-**`주문자 Email주소`**\\
+**주문자 Email주소**
 
 **`buyer_tel`** <mark style="color:green;">**string**</mark>
 
-**`주문자 전화번호`**
+**주문자 전화번호**
 
 **`buyer_addr`** <mark style="color:green;">**string**</mark>
 
-**`주문자 주소`**
+**주문자 주소**
 
 **`buyer_postcode`** <mark style="color:green;">**string**</mark>
 
-**`주문자 우편번호`**
+**주문자 우편번호**
 
 **`custom_data`** <mark style="color:green;">**string**</mark>
 
-**`echo data`**
-
-JSON string으로 전달
+**가맹점 custom 데이터** JSON string으로 전달
 
 **`user_agent`** <mark style="color:green;">**string**</mark>
 
-**UserAgent**
-
-결제를 시작한 단말기 **정**
+**UserAgent** 구매자가 결제를 시작한 단말기의 UserAgent 문자열
 
 **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`결제상태 구분코드`**
+**결제상태 구분코드**
 
-- ready
-- paid
-- cancelled
-- failed
+- ready : 미결제
+- paid : 결제완료
+- cancelled : 결제취소
+- failed : 결제실패
 
 **`started_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`결제시작시점` (UNIX timestamp)**
+**결제시작시점 (UNIX timestamp)**
 
 **`paid_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`결제완료시점` (UNIX timestamp)**\\
+**결제완료시점 (UNIX timestamp)**\\
 
 **`failed_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`결제실패시점` (UNIX timestamp)**
+**결제실패시점 (UNIX timestamp)**
 
 **`cancelled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`결제취소시점` (UNIX timestamp)**
+**결제취소시점 (UNIX timestamp)**
 
 **`fail_reason`** <mark style="color:green;">**string**</mark>
 
-**`결제실패 사유`**
+**결제실패 사유**
 
 **`cancel_reason`** <mark style="color:green;">**string**</mark>
 
-**`결제취소 사유`**
+**결제취소 사유**
 
 **`receipt_url`** <mark style="color:green;">**string**</mark>
 
-**`신용카드 매출전표 확인 URL`**
+**신용카드 매출전표 확인 URL**
 
 **`cash_receipt_issued`** <mark style="color:orange;">**boolean**</mark>
 
-**`현금영수증 자동발급 여부`**
+**현금영수증 자동발급 여부**
 
 **`customer_uid`** <mark style="color:green;">**string**</mark>
 
@@ -286,15 +304,16 @@ JSON string으로 전달
 
 **`customer_uid_usage`** <mark style="color:green;">**string**</mark>
 
-**`customer_uid 사용 구분코드`**
+**customer_uid 사용 구분코드**
 
-- issue **: 빌링키 발급**
+- null : 일반결제
+- issue : 빌링키 발급
 - payment : 결제
 - payment.scheduled : 예약결제
 
 **`cancel_history`** <mark style="color:red;">**(Array\[PaymentCancelAnnotation], optional):**</mark>
 
-**`취소/부분취소 내역`**
+**취소/부분취소 내역**
 
 </Tab>
 </Tabs>
@@ -313,7 +332,7 @@ JSON string으로 전달
 
 **`cancelled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-결제취소된 시각 UNIX timestamp
+**결제취소된 시각 UNIX timestamp**
 
 **`reason`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -328,7 +347,7 @@ JSON string으로 전달
 
 </SwaggerResponse>
 
-<SwaggerResponse status="400: Bad Request" description="imp_uid가 누락된 경우">
+<SwaggerResponse status="400: Bad Request" description="imp_uid가 누락된 경우/ 가상계좌 결제 건이 아닌 경우/ 가상계좌가 입금대기 상태(ready)가 아닌 경우">
 ```javascript
 {
     // Response

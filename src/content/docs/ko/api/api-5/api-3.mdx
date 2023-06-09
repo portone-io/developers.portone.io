@@ -17,13 +17,15 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 
-### 포트원거래번호와 SMS 인증번호를 이용하여 본인인증을 완료합니다.
+### 포트원 거래고유번호(imp_uid)와 SMS 인증번호를 이용하여 본인인증을 완료합니다.
 
 <Swagger method="post" path="/certifications/otp/confirm/{imp_uid}" baseUrl="https://api.iamport.kr" summary="본인인증을 완료합니다.">
 <SwaggerDescription>
+본인인증 요청 API를 통해 SMS로 전송된 인증번호를 전달하여 본인인증을 완료합니다.
+
 본인인증이 완료되면 대상자의 이름, 전화번호, 통신사, 성별, 외국인여부, 생년월일, CI, DI 값을 응답받을 수 있습니다.
 
-\\
+
 
 </SwaggerDescription>
 
@@ -35,6 +37,8 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <mark style="color:red;">
 
 **포트원 거래고유번호**
+
+본인인증 요청 API 요청 후 응답된 imp_uid
 
 </mark>
 
@@ -77,11 +81,11 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <Tab title="CertificationAnnotation">
 **`imp_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`인증고유번호`**
+**`포트원 인증고유번호`**
 
 **`merchant_uid`** <mark style="color:green;">**string**</mark>
 
-**`주문번호`**
+**`가맹점 고유주문번호`**
 
 **`pg_tid`** <mark style="color:green;">**string**</mark>
 
@@ -123,20 +127,23 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 
 **`휴대폰번호`**
 
+(신용카드 본인인증의 경우 해당사항없음)
+
 특수기호없이 숫자로만 구성된 휴대폰번호가 전달. 통신사 사전승인이 이뤄지지 않으면 phone 속성은 존재하지 않습니다. 통신사 사전승인이 필요하므로 **cs@portone.io ** 로 다날 CPID 와 함께 사용승인 요청이 필요합니다.
 
 **`carrier`** <mark style="color:green;">**string**</mark>
 
 **`휴대폰번호의 통신사`**
 
-통신사 사전승인이 필요하므로 **cs@portone.io ** 로 다날 CPID 와 함께 사용승인 요청이 필요합니다.
+(신용카드 본인인증의 경우 해당사항없음)
+통신사 사전승인이 이뤄지지 않으면 carrier 속성은 존재하지 않습니다. 통신사 사전승인이 필요하므로 **cs@portone.io ** 로 다날 CPID 와 함께 사용승인 요청이 필요합니다.
 
 * SKT
 * KT
 * LGT
-* SKT\_MVNO
-* KT\_MVNO
-* LGT\_MVNO
+* SKT_MVNO
+* KT_MVNO
+* LGT_MVNO
 
 **`certified`** <mark style="color:orange;">**boolean**</mark>
 
@@ -145,7 +152,7 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 
 **`certified_at`** <mark style="color:green;">**string**</mark>
 
-**`인증처리시각`** (UNIX timestamp) 
+**`인증처리시각`** (UNIX timestamp)
 
 
 
@@ -156,6 +163,8 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 **`unique_in_site`**  **<mark style="color:green;">**string**</mark>
 
 **가맹점 내 개인 고유구분 식별키 (`DI`)**
+
+본인인증 PG MID별로 할당되는 개인 식별키
 
 **`origin`** <mark style="color:green;">**string**</mark>
 
@@ -168,7 +177,7 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 * true : 외국인
 * false : 내국인
 
-다날 본인인증서비스 계약시 외국인 구분기능 추가 요청필요
+**다날 본인인증서비스 계약시** 외국인 구분기능 추가 요청필요
 
 </Tab>
 </Tabs>

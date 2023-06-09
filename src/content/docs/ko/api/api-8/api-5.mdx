@@ -26,16 +26,20 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 * **NHN KCP**
 * **헥토파이낸셜 (구. 세틀뱅크)**
 * **나이스페이먼츠**
-* **페이조아(다우)**
+* **키움페이(구 다우, 페이조아)**
 * **KICC**
 * **스마트로-신모듈**
 
 </Details>
 
-<Swagger method="post" path="/receipts/external/{merchant_uid}" baseUrl="https://api.iamport.kr" summary="현금영수증 발급 API">
+<Swagger method="post" path="/receipts/external/{merchant_uid}" baseUrl="https://api.iamport.kr" summary="현금영수증 발급(외부) API">
 <SwaggerDescription>
-포트원 거래와 무관하게 현금영수증을 발급할수 있습니다. 단 주문번호는 현금거래 주문번호와 동일한 번호를 기재해야 추후 대사가 가능한점 유념하시기 바랍니다.
+포트원와 별개로 거래된 일반 현금결제에 대해, 포트원 내에 설정된 PG사로 현금영수증 발행 요청하는 API입니다. 
 
+단 주문번호는 현금거래 주문번호와 동일한 번호를 기재해야 추후 대사가 가능한점 유념하시기 바랍니다.
+
+pg 파라메터를 지정하지 않으면, 기본 PG설정값을 이용해 발행시도하게 됩니다.
+발행금액의 1/11 이 부가세로 자동 적용되므로, 부가세금액 조정을 위해서는 tax_free 파라메터를 활용해주세요.
 </SwaggerDescription>
 
 ### Parameters
@@ -45,10 +49,11 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="merchant_uid" type="String" required="true">
 <mark style="color:red;">
 
-**주문번호**
+**가맹점 주문번호**
 
 </mark>
 
+(스마트로 - 신모듈의 경우, 특수문자 포함이 불가능합니다.)
 </SwaggerParameter>
 #### Body
 
@@ -68,8 +73,17 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 </mark>
 
 </SwaggerParameter>
+<SwaggerParameter name="product_type" type="String" required="false">
+**현금영수증 발행 주문 상품구분**
+
+(필수 : KSNET)
+
+* real: 실물상품
+* digital: 디지털컨텐츠
+
+</SwaggerParameter>
 <SwaggerParameter name="identifier" type="String" required="true">
-<mark style="color:red;">**현금영수증 식별정보 구분코드**</mark>
+<mark style="color:red;">**현금영수증 발행대상 식별정보**</mark>
 
 `국세청현금영수증카드`
 
@@ -77,7 +91,9 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 `주민등록번호`
 
-`사업자등록번호`
+`사업자등록번호` 
+
+을 기재합니다.
 
 </SwaggerParameter>
 <SwaggerParameter name="identifier_type" type="String" required="false">
@@ -93,7 +109,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </SwaggerParameter>
 <SwaggerParameter name="type" type="String" required="false">
-**현금영수증 발행 구분코드**
+**현금영수증 발행 타입(대상)**
 
 `소득공제용(개인) : person`
 
@@ -124,7 +140,11 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 **PG 구분코드**
 
 </SwaggerParameter>
+<SwaggerParameter name="vat" type="double" required="false">
+**부가세 지정 금액**
 
+부가세 지정 가맹점에 한해 현금영수증 발행 금액 중 부가세 금액으로 부가세를 지정할 수 있습니다.
+</SwaggerParameter>
 
 ### Responses
 
@@ -152,7 +172,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <Tab title="ExternalReceiptAnnotation">
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
-**주문번호**
+**가맹점 주문번호**
 
 **`receipt_tid`** <mark style="color:green;">**`string`**</mark>
 
@@ -166,7 +186,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
-**현금영수증 발행대상 타입**
+**현금영수증 발행 타입(대상)**
 
 * 개인 : `person`
 * 사업자 : `company`
@@ -178,7 +198,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`vat`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`integer`**</mark>
 
-**부가세**
+**현금영수증 발행금액 중 부가세금액**
 
 
 **`receipt_url`** <mark style="color:green;">**`string`**</mark>
@@ -225,13 +245,30 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 </SwaggerResponse>
 
+<SwaggerResponse status="501: Not Implemented" description="현재 포트원이 현금영수증 관련 지원하지 않는 PG사인 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
 </Swagger>
 
 ### **주요 요청 파라미터 상세 설명**
 
+> **`product_type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+>
+> **현금영수증 발행 주문 상품구분**
+>
+> (필수 : KSNET)
+> * real: 실물상품
+> * digital: 디지털컨텐츠보
+>
 > **`identifier`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 >
-> **현금영수증 식별정보 구분코드**
+> **현금영수증 발행대상 식별정보**
 >
 > 국세청현금영수증카드, 휴대폰번호, 주민등록번호, 사업자등록번호 를 기재합니다.
 
@@ -239,9 +276,9 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > **현금영수증 식별정보 구분코드**
 >
-> **KICC, 세틀뱅크**인 경우에만 <mark style="color:red;">**필수**</mark>
+> **KICC, 헥토파이낸셜(구 세틀뱅크)** 인 경우에만 <mark style="color:red;">**필수**</mark>
 >
-> KG이니시스/NHN KCP/나이스페이먼츠/페이조아/스마트로-신모듈은 **identifier 만으로 자동 처리**
+> KG이니시스/NHN KCP/나이스페이먼츠/키움페이(구 다우, 페이조아)/스마트로-신모듈은 **identifier 만으로 자동 처리**
 
 > **`pg`** <mark style="color:green;">**string**</mark>
 >
@@ -263,7 +300,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 > **`buyer_name`** <mark style="color:green;">**`string`**</mark>
 >
-> **구매자 이름 (현금영수증 발행건 사후 추적을 위해 입력을 강력히 권장합니다.)** (필수 : 스마트로-신모듈)
+> **구매자 이름 (현금영수증 발행건 사후 추적을 위해 입력을 강력히 권장합니다.)** (필수 : KSNET, 스마트로-신모듈)
 
 > **`buyer_tel`** <mark style="color:green;">**`string`**</mark>
 >
