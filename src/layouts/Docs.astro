@@ -1,0 +1,39 @@
+---
+import type { Lang } from "../type";
+import LayoutBase from "../layouts/LayoutBase.astro";
+import { h1 as H1 } from "../components/prose";
+import LeftSidebar from "~/layouts/sidebar/LeftSidebar.astro";
+import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
+import { SearchScreen } from "~/layouts/sidebar/search";
+
+interface Props {
+  lang: Lang;
+  slug: string;
+  entry: any;
+}
+const { lang, slug, entry } = Astro.props;
+const { emoji, title, description } = entry.data;
+const mdx = await entry.render();
+const Content = mdx.Content;
+
+const toc = headingsToToc(lang, mdx.headings);
+---
+
+<LayoutBase lang={lang} title={title}>
+  <div class="flex">
+    <LeftSidebar lang={lang} slug={slug} />
+    <div class="flex flex-1 justify-center">
+      <article class="basis-200 shrink-1 m-4 flex flex-col text-slate-700">
+        <H1 id="overview">
+          {emoji && <span class="mr-2 text-[1.2em]">{emoji}</span>}
+          {title}
+        </H1>
+        {description && <p class="text-gray my-4 text-xl">{description}</p>}
+        <Content />
+      </article>
+      <div class="shrink-10 hidden basis-10 lg:block"></div>
+      <RightSidebar lang={lang} slug={slug} toc={toc} client:idle />
+    </div>
+  </div>
+  <SearchScreen lang={lang} client:idle />
+</LayoutBase>

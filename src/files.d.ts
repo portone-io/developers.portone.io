@@ -3,3 +3,12 @@ declare module "*/_nav.yaml" {
   const value: YamlNavMenuItem[];
   export default value;
 }
+
+declare module "*/_redir.yaml" {
+  interface Redir {
+    old: string;
+    new: string;
+  }
+  const value: Redir[];
+  export default value;
+}
