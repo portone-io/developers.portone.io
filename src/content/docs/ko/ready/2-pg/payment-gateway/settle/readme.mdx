@@ -1,7 +1,7 @@
 ---
 emoji: ⌨
-title: 핵토파이낸셜 설정
-description: 핵토파이낸셜 설정방법을 안내합니다.
+title: 헥토파이낸셜 설정
+description: 헥토파이낸셜 설정방법을 안내합니다.
 ---
 
 import * as prose from "~/components/prose";
@@ -13,58 +13,44 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-## 인증결제
+import image1 from "../_assets/settle/settle-1.png";
+import image2 from "../_assets/settle/settle-2.png";
+import image3 from "../_assets/settle/settle-3.png";
+import image4 from "../_assets/settle/settle-4.png";
+
+## 인증결제 및 비인증결제
 
 <Tabs>
 <Tab title="테스트 결제">
 #### 테스트 환경 구성방법
 
-[포트원 관리자 콘솔](https://admin.portone.io/) → 시스템설정 → PG설정(**일반결제 및 정기결제**) → PG사 세틀뱅크 선택 → <mark style="color:red;">**테스트모드 \[ON]**</mark> → \[전체 저장] 클릭
+1. [포트원 관리자 콘솔 로그인](https://admin.portone.io)
+2. 결제연동 탭 클릭
+3. 결제 대행사 설정에 테스트 → 핵토파이낸셜 → 핵토파이낸셜 선택후 오른쪽 `+ 추가` 버튼 클릭
 
-<Figure
-  src="/gitbook-assets/ko/image (149).png"
-  caption="테스트 환경 설정예시"
-/>
+<Figure src={image1} caption="테스트 환경 설정예시" />
+
+4. 자동입력된 정보 확인후 저장
+   - **헥토파이낸셜 인증결제** 테스트 nxca_jt_il : 카드사 인증창 결제 요청
+   - **헥토파이낸셜 비인증결제** 테스트 nxca_jt_bi : 카드번호, 유효기간 입력으로 결제 요청
+   - **헥토파이낸셜 구인증결제** 테스트 nxca_ks_gu : 카드번호, 유효기간, 생년월일, 카드비밀번호 입력으로 결제 요청
+
+<Figure src={image2} caption="테스트 환경 상세 설정 예시" />
 
 </Tab>
 
 <Tab title="실 결제">
 #### **실** 환경 구성방법
 
-카드사 심사 완료 후 세틀뱅크에서 발급받은 실상점 정보를 <mark style="color:red;">**테스트모드 OFF**</mark> 처리 이후 설정합니다.
+1. [포트원 관리자 콘솔 로그인](https://admin.portone.io)
+2. 결제연동 탭 클릭
+3. 결제 대행사 설정에 실연동 → 헥토파이낸셜 → 헥토파이낸셜 선택후 오른쪽 `+ 추가` 버튼 클릭
 
-<Figure src="/gitbook-assets/ko/image (196).png" caption="실 계정 설정 예시" />
+<Figure src={image3} caption="실 환경 설정 예시" />
 
-</Tab>
-</Tabs>
+4. 카드사 심사 완료 후 헥토파이낸셜에서 발급받은 실상점 정보 기재 후 저장
 
-## 비 인증 결제
-
-<Tabs>
-<Tab title="결제창 방식">
-핵토파이낸셜 정기결제는 <mark style="color:red;">**REST API 방식**</mark>만 지원합니다.
-
-</Tab>
-
-<Tab title="API 방식">
-#### 테스트 환경 구성방법
-
-[포트원 관리자 콘솔](https://admin.portone.io/) → 시스템설정 → PG설정(<mark style="color:red;">**정기결제 및 키인결제**</mark>) → PG사 세틀뱅크 선택 → \[**카드사 심사 전 개발용 계정 설정**] 클릭 → \[저장] 클릭
-
-<Figure
-  src="/gitbook-assets/ko/image (144).png"
-  caption="테스트 환경 설정 예시"
-/>
-
-#### **실** 환경 구성방법
-
-카드사 심사 완료 후 세틀뱅크에서 발급받은 실상점 정보를 설정합니다.
-
-#### 가상계좌 연동 방법
-
-아래 링크를 참조하여 가상계좌 발급 및 취소 API 를 연동합니다.
-
-<ContentRef slug="/ko/api/api-9/readme" />
+<Figure src={image4} caption="실 환경 상세 설정 예시" />
 
 </Tab>
 </Tabs>
@@ -72,7 +58,6 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Hint style="info">
 #### **체크사항**
 
-- **핵토파이낸셜** 테스트 모드의 경우 실제 출금 되지만 매일 23:00\~23:50분 사이 자동 취소됩니다.
-- **핵토파이낸셜** 가상계좌 발급은 API방식으로 지원합니다.
+- **헥토파이낸셜** 테스트 모드의 경우 실제 출금 되지만 매일 23:00\~23:50분 사이 자동 취소됩니다.
 
 </Hint>
