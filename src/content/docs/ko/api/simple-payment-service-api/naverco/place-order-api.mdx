@@ -1,0 +1,425 @@
+---
+emoji: ⌨
+title: 상품발주처리 API
+description: 네이버페이 상품주문들을 발주처리합니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### 네이버페이 주문형 상품발주처리 API
+
+<Swagger method="post" path="/payments/{imp_uid}/naver/place" baseUrl="https://api.iamport.kr" summary="네이버페이 주문형 상품주문들 발주처리">
+<SwaggerDescription>
+
+네이버페이 상품주문들을 발주처리합니다.
+
+주문상품의 종류가 여러 개인 경우, 한 건의 포트원 거래건(imp_uid)에 여러 개의 네이버페이 상품주문이 존재하며 일부 또는 전체를 발주처리할 수 있습니다.
+
+`product_order_id` 가 생략될 경우, imp_uid에 해당되는 모든 네이버페이 상품주문들을 발주처리합니다.
+
+여러 건의 상품주문이 발주처리 시도되는 경우, 일부 주문건만 발주처리에 성공할 수 있습니다.
+
+시도된 상품주문 중 <b>발주처리에 성공한 상품주문</b>에 대한 최종 정보만 제공됩니다.
+
+(NaverProductOrderAnnotation 참조 : 응답 DATA속성은 <b>네이버페이 주문형 포트원 거래고유번호 기준 상품주문 조회 API</b> 의 data 속성과 동일한 구조를 가집니다.)
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="imp_uid	" type="String" required="true">
+<mark style="color:red;">
+
+**포트원 거래고유번호**
+
+</mark>
+
+네이버페이 발주처리 할 거래건의 포트원 거래고유번호
+
+</SwaggerParameter>
+
+<SwaggerParameter name="product_order_id	" type="Array" required="false">
+
+**발주처리 햘 거래건의 네이버페이 상품주문번호**
+
+생략되면 imp_uid에 해당되는 모든 상품주문을 발주처리합니다.
+
+
+</SwaggerParameter>
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="모든 상품주문 발주처리 성공">
+<Tabs>
+<Tab title="NaverProductOrderResponse">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+
+
+**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+**`response`** <mark style="color:red;">**(NaverProductOrderArrayResponse, optional)**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="NaverProductOrderArrayResponse">
+
+**`product_order_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문번호`**
+
+**`product_order_status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문상태`**
+
+**`claim_type`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문관련 클레임 타입`**
+
+취소/교환/환불 등 클레임에 대한 유형
+
+**`claim_status`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문관련 클레임에 대한 처리 상태`**
+
+취소/교환/환불 등 클레임에 대해 처리 진행 상태
+
+**`product_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품 고유번호`**
+
+**`product_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품명`**
+
+**`product_option_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품옵션 고유번호`**
+
+**`product_option_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품옵션명`**
+
+**`product_amount`** <mark style="color:red;"></mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 개별상품 주문금액`**
+
+**`delivery_amount`** <mark style="color:red;"></mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 개별상품 배송비`**
+
+**`quantity`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 상품주문의 상품 수량`**
+
+**`orderer`** <mark style="color:red;"></mark><mark style="color:green;">**`NaverOrderer`**</mark>
+
+**`네이버페이 상품주문의 주문자 정보`**
+
+**`shipping_address`** <mark style="color:red;"></mark> <mark style="color:green;">**`NaverAddress`**</mark>
+
+**`네이버페이 상품주문별 배송주소 정보`**
+
+**`shipping_memo`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문별 배송메모`**
+
+**`shipping_due`** <mark style="color:red;"></mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 상품주문별 배송기한`**
+
+Unix Timestamp
+
+**`individual_code`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 주문자의 개인통고유부호`**
+
+</Tab>
+
+<Tab title="NaverOrderer">
+
+**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`주문자 이름`**
+
+**`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`주문자 마스킹된 네이버 아이디`**
+
+**`tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`주문자 연락처`**
+</Tab>
+<Tab title="NaverAddress">
+
+**`base`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`기본 주소`**
+
+**`detail`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`상세 주소`**
+
+**`postcode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`우편번호`**
+
+**`tel1`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`연락처1`**
+
+**`tel2`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`연락처2`**
+
+**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`대상 이름`**
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="207: Multi-Status" description="일부 상품주문 발주처리성공 & 일부주문 발주처리실패">
+발주처리 요청시 product_order_id 개별로 발주요청이 진행되어야 합니다. 일부 건만 성공하는 경우 207 응답이 내려갑니다.
+
+<Tabs>
+<Tab title="ResponseAnnotation">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+
+
+**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+**`response`** <mark style="color:red;">**(NaverProductOrderArrayResponse, optional)**</mark>
+
+</Tab>
+</Tabs>
+
+
+<Tabs>
+<Tab title="NaverProductOrderArrayResponse">
+
+**`product_order_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문번호`**
+
+**`product_order_status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문상태`**
+
+**`claim_type`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문관련 클레임 타입`**
+
+취소/교환/환불 등 클레임에 대한 유형
+
+**`claim_status`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문관련 클레임에 대한 처리 상태`**
+
+취소/교환/환불 등 클레임에 대해 처리 진행 상태
+
+**`product_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품 고유번호`**
+
+**`product_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품명`**
+
+**`product_option_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품옵션 고유번호`**
+
+**`product_option_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품옵션명`**
+
+**`product_amount`** <mark style="color:red;"></mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 개별상품 주문금액`**
+
+**`delivery_amount`** <mark style="color:red;"></mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 개별상품 배송비`**
+
+**`quantity`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 상품주문의 상품 수량`**
+
+**`orderer`** <mark style="color:red;"></mark><mark style="color:green;">**`NaverOrderer`**</mark>
+
+**`네이버페이 상품주문의 주문자 정보`**
+
+**`shipping_address`** <mark style="color:red;"></mark> <mark style="color:green;">**`NaverAddress`**</mark>
+
+**`네이버페이 상품주문별 배송주소 정보`**
+
+**`shipping_memo`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문별 배송메모`**
+
+**`shipping_due`** <mark style="color:red;"></mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 상품주문별 배송기한`**
+
+Unix Timestamp
+
+**`individual_code`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 주문자의 개인통고유부호`**
+
+</Tab>
+
+<Tab title="NaverOrderer">
+
+**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`주문자 이름`**
+
+**`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`주문자 마스킹된 네이버 아이디`**
+
+**`tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`주문자 연락처`**
+</Tab>
+<Tab title="NaverAddress">
+
+**`base`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`기본 주소`**
+
+**`detail`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`상세 주소`**
+
+**`postcode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`우편번호`**
+
+**`tel1`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`연락처1`**
+
+**`tel2`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`연락처2`**
+
+**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`대상 이름`**
+</Tab>
+</Tabs>
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="404: Not Found" description="imp_uid에 해당되는 거래건을 찾을 수 없거나 접근 권한이 없는 계정인 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="500: Internal Server Error" description="모든 상품주문 발주처리실패">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```
+{
+  "code": 0,
+  "message": "string",
+  "response": [
+    {
+      "product_order_id": "string",
+      "product_order_status": "string",
+      "claim_type": "string",
+      "claim_status": "string",
+      "product_id": "string",
+      "product_name": "string",
+      "product_option_id": "string",
+      "product_option_name": "string",
+      "product_amount": 0,
+      "delivery_amount": 0,
+      "quantity": 0,
+      "orderer": {
+        "name": "string",
+        "id": "string",
+        "tel": "string"
+      },
+      "shipping_address": {
+        "base": "string",
+        "detail": "string",
+        "postcode": "string",
+        "tel1": "string",
+        "tel2": "string",
+        "name": "string"
+      },
+      "shipping_memo": "string",
+      "shipping_due": 0,
+      "individual_code": "string"
+    }
+  ]
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/naver/naverPlaceProductOrder**](https://api.iamport.kr/#!/naver/naverPlaceProductOrder)
+</Hint>
