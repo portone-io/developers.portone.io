@@ -97,6 +97,11 @@ function requestPay() {
 
 웹훅(Webhook) 이벤트가 호출되면 설정한 URL endpoint에 대해 다음과 같은 `POST` 요청이 생성됩니다.
 
+<b>가맹점 서버는 웹훅을 수신하고 반드시 [결제내역 단건조회 API](../api/payment-api/get-payment-by-impuid-api)를 통해 결제건을 조회하여 검증 후 저장할 수 있습니다.</b>
+네트워크 상의 문제로 웹훅을 수신받지 못 한 경우에도 [결제내역 단건조회 API](../api/payment-api/get-payment-by-impuid-api)를 통해 결제건을 상태를 조회 후 결제건을 처리해주시길 바랍니다.
+
+웹훅 수신 후 가맹점에서는 정상 응답을 하였으나 네트워크 상의 문제로 웹훅의 response가 포트원 서버로 도달하지 않아 웹훅이 재발송 될 수 있으니, 멱등성을 보장하여 처리해주시길 권장드립니다.
+
 <Tabs>
 <Tab title="cURL">
 ```url
@@ -106,9 +111,7 @@ curl -H "Content-Type: application/json" -X POST -d '{ "imp_uid": "imp_123456789
 </Tab>
 </Tabs>
 
-> Webhook `POST` 요청의 본문은 다음의 정보를 포함합니다. <b>가맹점 서버는 해당 정보를 수신하고 반드시 [결제내역 단건조회 API](../api/payment-api/get-payment-by-impuid-api)를 통해 결제건을 조회하여 검증 후 저장할 수 있습니다.</b>
-> 통신 상의 문제로 웹훅을 수신받지 못 한 경우에도 [결제내역 단건조회 API](../api/payment-api/get-payment-by-impuid-api)를 통해 결제건을 상태를 조회 후 결제건을 처리해주시길 바랍니다.
->
+> Webhook `POST` 요청의 본문은 다음의 정보를 포함합니다. 가맹점 서버는 해당 정보를 수신하고 포트원 서버에서 결제 정보를 조회하여 검증 및 저장할 수 있습니다.
 > - <mark style="color:red;">**`imp_uid`**</mark>
 >   <mark style="color:red;">**: 결제번호**</mark>
 > - <mark style="color:red;">**`merchant_uid`**</mark>
