@@ -32,13 +32,14 @@ IMP.request_pay({
   merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
   name: "주문명:결제테스트",
   amount: 1004,
-  currency: "KRW" // 필수 파라미터
+  currency: "KRW", // 필수 파라미터
   buyer_email: "test@portone.io", //필수 파라미터 
   buyer_name: "Jack Son", // 반드시 Firstname Lastname 이 빈칸으로 구분되어야 
   buyer_tel: "010-1234-5678",
   buyer_addr: "서울특별시 강남구 삼성동",
   buyer_postcode: "123-456",
   m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+  use_test_method : true, // 테스트 결제 수단을 활성화하는 파라미터,
   bypass: {
     // 터미날3 인경우 해당 파라미터 설정, 미 설정시 Defualt(일반) 결제창 활성화
     widget_code: "t3_1",
@@ -93,13 +94,30 @@ IMP.request_pay({
 
 **`통화구분코드`**
 
+**`use_test_method`** <mark style="color:orange;">**boolean**</mark>
+
+**테스트 결제수단 활성화 여부**
+
+LIVE 프로젝트에서 테스트 결제수단을 활성화 하는 경우 사용합니다.
+
+만약 LIVE 프로젝트가 아니라면(페이먼트월 심사 완료 전 단계), `use_test_method` 파라미터 설정과 동시에 bypass의 `ps` 파라미터를 `test`로 설정해야 테스트 결제수단 사용이 가능합니다.
+
+```javascript title="Javascript SDK"
+IMP.request_pay({
+  use_test_method: true,
+  bypass: {
+    ps: "test", // LIVE 프로젝트가 아닌 경우, ps도 test로 설정해야만 테스트 결제수단이 활성화됩니다.
+  },
+});
+```
+
 **`bypass`**
 
 **`페이먼트월 전용 파라미터`**
 
-- **`widget_code` :** 터미날3 인 경우 <mark style="color:red;">**t3_1**</mark> 파라미터 설정, 미 설정시 Defualt(일반) 결제창 활성화
-- **`ps` :** 특정 결제수단만 활성화 하는 경우 사용합니다. 해당 파라미터에 설정할 코드표는 [**링크**](https://docs.paymentwall.com/reference/payment-system-shortcodes)를 참조해 주세요. ex) `kakaopaykr` = 카카오페이
-- **country_code** : 지정된 코드 값에 해당하는 국가 지원 결제수단이 위젯상에 노출됩니다.([**코드확인**](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2))
+- **`widget_code`:** 터미날3 인 경우 <mark style="color:red;">**t3_1**</mark> 파라미터 설정, 미 설정시 Defualt(일반) 결제창 활성화
+- **`ps`:** 특정 결제수단만 활성화 하는 경우 사용합니다. 해당 파라미터에 설정할 코드표는 [**링크**](https://docs.paymentwall.com/reference/payment-system-shortcodes)를 참조해 주세요. ex) `kakaopaykr` = 카카오페이
+- **country_code**: 지정된 코드 값에 해당하는 국가 지원 결제수단이 위젯상에 노출됩니다.([**코드확인**](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2))
 
 </Tab>
 
@@ -108,25 +126,28 @@ IMP.request_pay({
 비 인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
 
 ```javascript title="Javascript SDK"
-IMP.request_pay({
-  pg: "paymentwall.{project_key}",
-  pay_method: "card", // 빌링키 결제는 오직 신용카드만 가능합니다.
-  merchant_uid: "order_monthly_0001", // 상점에서 관리하는 주문 번호
-  name: "최초인증결제",
-  amount: 20, // 결제창에 표시될 금액. 실제 승인이 이뤄지지는 않습니다.
-  currency: "USD" // 필수 파라미터
-  customer_uid: "your-customer-unique-id", // 필수 입력.
-  buyer_email: "test@portone.io",
-  buyer_name: "포트원",
-  buyer_tel: "02-1234-1234",
-  m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}"
-}, function (rsp) {
-  if (rsp.success) {
-    alert("빌링키 발급 성공");
-  } else {
-    alert("빌링키 발급 실패");
+IMP.request_pay(
+  {
+    pg: "paymentwall.{project_key}",
+    pay_method: "card", // 빌링키 결제는 오직 신용카드만 가능합니다.
+    merchant_uid: "order_monthly_0001", // 상점에서 관리하는 주문 번호
+    name: "최초인증결제",
+    amount: 20, // 결제창에 표시될 금액. 실제 승인이 이뤄지지는 않습니다.
+    currency: "USD", // 필수 파라미터
+    customer_uid: "your-customer-unique-id", // 필수 입력
+    buyer_email: "test@portone.io",
+    buyer_name: "포트원",
+    buyer_tel: "02-1234-1234",
+    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+  },
+  function (rsp) {
+    if (rsp.success) {
+      alert("빌링키 발급 성공");
+    } else {
+      alert("빌링키 발급 실패");
+    }
   }
-});
+);
 ```
 
 **주요 파라미터 설명**
