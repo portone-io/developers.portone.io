@@ -52,13 +52,13 @@ import Details from "~/components/gitbook/Details.astro";
     import * as PortOne from '@portone/browser-sdk/v2';
     function requestPayment() {
       PortOne.requestPayment({
-      storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
-      paymentId: 'paymentId_{now()}',
-      orderName: '나이키 와플 트레이너 2 SD',
-      totalAmount: 1000,
-      currency: 'CURRENCY_KRW',
-      channelName: 'tosspayments', // 콘솔 결제 연동 화면에서 채널 연동 시 사용한 이름을 입력해주세요.
-      payMethod: "CARD"
+        storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
+        paymentId: 'paymentId_{now()}',
+        orderName: '나이키 와플 트레이너 2 SD',
+        totalAmount: 1000,
+        currency: 'CURRENCY_KRW',
+        channelName: 'tosspayments', // 콘솔 결제 연동 화면에서 채널 연동 시 사용한 이름을 입력해주세요.
+        payMethod: "CARD"
       });
     }
     ```
@@ -68,11 +68,11 @@ import Details from "~/components/gitbook/Details.astro";
 <Tab title="SDK 빌링키 발급 요청">
   ```javascript
     import * as PortOne from '@portone/browser-sdk/v2';
-    function billingKeyMethod() {
-      PortOne.billingKeyMethod({
-      storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
-      channelName: 'tosspayments', // 콘솔 결제 연동 화면에서 채널 연동 시 사용한 이름을 입력해주세요.
-      billingKeyMethod : 'CARD'
+    function requestIssueBillingKey() {
+      PortOne.requestIssueBillingKey({
+        storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
+        channelName: 'tosspayments', // 콘솔 결제 연동 화면에서 채널 연동 시 사용한 이름을 입력해주세요.
+        billingKeyMethod : 'CARD'
       });
     }
     ```
@@ -118,25 +118,25 @@ import Details from "~/components/gitbook/Details.astro";
   async function schedulePayment() {
     // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기를 진행해주세요.
     // 2. 포트원 결제 예약 API 호출
-  const response = await axios({
-    url: `https://api.portone.io/v2/payments/${PAYMENT_ID_HERE}/schedules`,
-    method: "post",
-    // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-    headers: { Authorization: "Bearer " + access_token },
-    data: {
-      payment_id: UNIQUE_PAYMENT_ID,
-      billing_key: BILLING_KEY_HERE,
-      order_name: "월간 이용권 정기결제",
-      customer: {
-        customer_id: CUSTOMER_ID_HERE,
-        // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+    const response = await axios({
+      url: `https://api.portone.io/v2/payments/${PAYMENT_ID_HERE}/schedules`,
+      method: "post",
+      // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
+      headers: { Authorization: "Bearer " + access_token },
+      data: {
+        payment_id: UNIQUE_PAYMENT_ID,
+        billing_key: BILLING_KEY_HERE,
+        order_name: "월간 이용권 정기결제",
+        customer: {
+          customer_id: CUSTOMER_ID_HERE,
+          // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+        },
+        total_amount: 8900,
+        currency: "KRW",
+        scheduled_at: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
       },
-      total_amount: 8900,
-      currency: "KRW",
-      scheduled_at: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
-    },
-  });
-  // 결제 예약 이후 로직을 구성해주세요.
+    });
+    // 결제 예약 이후 로직을 구성해주세요.
 }
 ```
 </Tab>
@@ -267,8 +267,8 @@ import Details from "~/components/gitbook/Details.astro";
         "installment": {
           "monthOption": {
             "availableMonthList": [0]
-            }
           }
+        }
       }
     }
     ```
@@ -281,8 +281,8 @@ import Details from "~/components/gitbook/Details.astro";
         "installment": {
           "monthOption": {
             "availableMonthList": [5]
-            }
           }
+        }
       }
     }
     ```
@@ -295,8 +295,8 @@ import Details from "~/components/gitbook/Details.astro";
         "installment": {
           "monthOption": {
             "availableMonthList": [0, 1, 2, 3, 4, 5] 
-            }
           }
+       }
       }
     }
     ```
@@ -309,8 +309,8 @@ import Details from "~/components/gitbook/Details.astro";
         "installment": {
           "monthOption": {
             "availableMonthList": [0, 1, 2, 3, 4, 5] // [5], [3,5] 로 입력해도 됨
-            }
           }
+        }
       }
     }
     ```
@@ -323,8 +323,8 @@ import Details from "~/components/gitbook/Details.astro";
         "installment": {
           "monthOption": {
             "availableMonthList": [0, 1, 2, 3, 4, 5] // [5], [3,5] 로 입력해도 됨
-            }
           }
+        }
       }
     }
     ```
@@ -337,8 +337,8 @@ import Details from "~/components/gitbook/Details.astro";
         "installment": {
           "monthOption": {
             "availableMonthList": [3, 5]
-            }
           }
+        }
       }
     }
     ```
@@ -372,7 +372,7 @@ import Details from "~/components/gitbook/Details.astro";
    {
     // ... 기타 파라미터
     "card": {
-    "cardCompany": "HYUNDAI_CARD"
+      "cardCompany": "HYUNDAI_CARD"
     }
    }
   ```
@@ -381,10 +381,10 @@ import Details from "~/components/gitbook/Details.astro";
    {
     // ... 기타 파라미터
     "card": {
-    "cardCompany": "SAMSUNG_CARD",
-    "installment": {
-      "monthOption": {
-        "fixedMonth": 5
+      "cardCompany": "SAMSUNG_CARD",
+      "installment": {
+        "monthOption": {
+          "fixedMonth": 5
         }
       }
     }
@@ -401,10 +401,10 @@ import Details from "~/components/gitbook/Details.astro";
    {
     // ... 기타 파라미터
     "card": {
-    "cardCompany": "BC_CARD",
-    "installment": {
-      "monthOption": {
-        "fixedMonth": 5
+      "cardCompany": "BC_CARD",
+      "installment": {
+        "monthOption": {
+          "fixedMonth": 5
         }
       }
     }
