@@ -1,0 +1,179 @@
+---
+emoji: ⌨
+title: 예금주 조회 API
+description: 은행코드 및 계좌번호를 이용하여 예금주 성명을 조회합니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### 예금주 성명을 은행계좌번호를 이용하여 획득합니다.
+
+<Swagger method="get" path="/vbanks/holder" baseUrl="https://api.iamport.kr" summary="은행코드, 계좌번호를 이용해 해당 계좌의 예금주 명을 조회합니다.">
+<SwaggerDescription>
+
+가상계좌 환불 전, 확인차원에서 예금주를 조회하는 API
+
+<table><tbody><tr><td>KB국민은행</td><td>004
+      </td></tr><tr><td>SC제일은행</td><td>023
+      </td></tr><tr><td>경남은행</td><td>039
+      </td></tr><tr><td>광주은행</td><td>034
+      </td></tr><tr><td>기업은행</td><td>003
+      </td></tr><tr><td>농협</td><td>011
+      </td></tr><tr><td>대구은행</td><td>031
+      </td></tr><tr><td>부산은행</td><td>032
+      </td></tr><tr><td>산업은행</td><td>002
+      </td></tr><tr><td>수협</td><td>007
+      </td></tr><tr><td>신한은행</td><td>088
+      </td></tr><tr><td>신협</td><td>048
+      </td></tr><tr><td>외환은행</td><td>005
+      </td></tr><tr><td>우리은행</td><td>020
+      </td></tr><tr><td>우체국</td><td>071
+      </td></tr><tr><td>전북은행</td><td>037
+      </td></tr><tr><td>제주은행</td><td>035
+      </td></tr><tr><td>축협</td><td>012
+      </td></tr><tr><td>하나은행(서울은행)</td><td>081
+      </td></tr><tr><td>한국씨티은행(한미은행)</td><td>027
+      </td></tr><tr><td>K뱅크</td><td>089
+      </td></tr><tr><td>카카오뱅크</td><td>090
+      </td></tr><tr><td>유안타증권</td><td>209
+      </td></tr><tr><td>현대증권</td><td>218
+      </td></tr><tr><td>미래에셋증권</td><td>230
+      </td></tr><tr><td>대우증권</td><td>238
+      </td></tr><tr><td>삼성증권</td><td>240
+      </td></tr><tr><td>한국투자증권</td><td>243
+      </td></tr><tr><td>우리투자증권</td><td>247
+      </td></tr><tr><td>교보증권</td><td>261
+      </td></tr><tr><td>하이투자증권</td><td>262
+      </td></tr><tr><td>에이치엠씨투자증권</td><td>263
+      </td></tr><tr><td>키움증권</td><td>264
+      </td></tr><tr><td>이트레이드증권</td><td>265
+      </td></tr><tr><td>에스케이증권</td><td>266
+      </td></tr><tr><td>대신증권</td><td>267
+      </td></tr><tr><td>솔로몬투자증권</td><td>268
+      </td></tr><tr><td>한화증권</td><td>269
+      </td></tr><tr><td>하나대투증권</td><td>270
+      </td></tr><tr><td>굿모닝신한증권</td><td>278
+      </td></tr><tr><td>동부증권</td><td>279
+      </td></tr><tr><td>유진투자증권</td><td>280
+      </td></tr><tr><td>메리츠증권</td><td>287
+      </td></tr><tr><td>엔에이치투자증권</td><td>289
+      </td></tr><tr><td>부국증권</td><td>290</td></tr></tbody></table>
+</SwaggerDescription>
+
+### Parameters
+
+#### Query
+
+<SwaggerParameter name="bank_code" type="String" required="true">
+<mark style="color:red;">
+
+**은행코드**
+
+</mark>
+
+</SwaggerParameter>
+<SwaggerParameter name="bank_num" type="String" required="true">
+<mark style="color:red;"> **계좌번호** </mark>
+
+`숫자외 기호 포함 가능`
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="">
+<Tabs>
+<Tab title="VbankHolderResponse">
+**`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+
+
+**`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+
+
+**response** <mark style="color:red;"> **(VbankHolderAnnotation, optional)** </mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="VbankHolderAnnotation">
+**`bank_holder`** <mark style="color:red;"> **`*`** </mark> <mark style="color:green;"> **`string`** </mark>
+
+**`예금주명`**
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="400: Bad Request" description="bank_code가 누락된 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="404: Not Found" description="계좌정보 조회 실패">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```json
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "bank_holder": "string"
+  }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/vbanks/queryBankHolder**](https://api.iamport.kr/#!/vbanks/queryBankHolder)
+</Hint>

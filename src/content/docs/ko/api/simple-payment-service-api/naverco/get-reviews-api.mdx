@@ -1,0 +1,199 @@
+---
+emoji: ⌨
+title: 네이버페이 구매평 조회API
+description: 네이버페이 주문형 네이버페이 구매평 조회합니다
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### 네이버페이 주문형 네이버페이 구매평 조회
+
+<Swagger method="get" path="/naver/reviews" baseUrl="https://api.iamport.kr" summary="네이버페이 구매평 조회">
+<SwaggerDescription>
+
+네이버페이 구매평을 조회합니다.
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="from" type="Integer" required="true">
+<mark style="color:red;">
+
+**조회기간 시작** (UNIX timestamp)
+
+</mark>
+
+</SwaggerParameter>
+
+<SwaggerParameter name="to" type="Integer" required="true">
+<mark style="color:red;">
+
+**조회기간 종료** (UNIX timestamp)
+
+</mark>
+
+</SwaggerParameter>
+
+<SwaggerParameter name="review_type" type="String" required="true">
+<mark style="color:red;">
+
+**구매평 유형** 
+
+</mark>
+
+* general : 일반 구매평
+* preminum : 프리미엄 구매평
+</SwaggerParameter>
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="구매평 조회 성공">
+<Tabs>
+<Tab title="NaverReviewsResponse">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+
+
+**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+**`response`** <mark style="color:red;">**(NaverReviewAnnotation, optional)**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="NaverReviewAnnotation">
+
+**`review_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 구매평 고유 ID`**
+
+**`score`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 구매만족도. 1, 2, 3, 4, 5 (점)`**
+
+**`title`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 일반 구매평 내용 또는 프리미엄 구매평 제목`**
+
+
+**`content`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 프리미엄 구매평 내용`**
+
+(일반 구매평인 경우 없음)
+
+**`product_order_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문번호`**
+
+**`product_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품 고유번호`**
+
+**`product_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품명`**
+
+**`product_option_name`** <mark style="color:red;"></mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 상품주문의 상품옵션명`**
+
+**`writer`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`네이버페이 구매평 작성자 아이디`**
+
+**`created_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 구매평 작성시각`** (Unix timestamp)
+
+**`modified_at`** <mark style="color:red;"></mark> <mark style="color:green;">**`integer`**</mark>
+
+**`네이버페이 구매평 수정시각`** (Unix timestamp)
+</Tab>
+</Tabs>
+</SwaggerResponse>
+
+<SwaggerResponse status="400: Bad Request" description="요청 파라메터에 from, to, review_type 가 누락되거나 올바르지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="500: Internal Server Error" description="네이버페이 구매평 조회시 네이버응답이 올바르지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```
+{
+  "code": 0,
+  "message": "string",
+  "response": [
+    {
+      "review_id": "string",
+      "score": "string",
+      "title": "string",
+      "content": "string",
+      "product_order_id": "string",
+      "product_id": "string",
+      "product_name": "string",
+      "product_option_name": "string",
+      "writer": "string",
+      "created_at": 0,
+      "modified_at": 0
+    }
+  ]
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/naver/getReviews**](https://api.iamport.kr/#!/naver/getReviews)
+</Hint>
