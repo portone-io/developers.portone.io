@@ -1,0 +1,176 @@
+---
+emoji: ⌨
+title: 발급내역 단건 조회 API
+description: 포트원을 통해 발행된 현금영수증 상세정보를 조회할 수 있습니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### 포트원을 통해 발급된 현금영수증을 단건 조회 합니다.
+
+<Swagger method="get" path="/receipts/{imp_uid}" baseUrl="https://api.iamport.kr" summary="현금영수증 단건조회 API">
+<SwaggerDescription>
+
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Path
+
+<SwaggerParameter name="imp_uid" type="String" required="true">
+<mark style="color:red;">
+
+**포트원 거래고유번호**
+
+</mark>
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="성공">
+<Tabs>
+<Tab title="ReceiptResponse">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+
+
+**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+
+
+**`response`** <mark style="color:red;">**`(ReceiptAnnotation, optional)`**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="ReceiptAnnotation">
+**`imp_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`포트원 거래고유번호`**
+
+
+
+**`receipt_tid`** <mark style="color:green;">**`string`**</mark>
+
+**`현금영수증 PG사 발행고유번호`**
+
+
+
+**`apply_num`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`현금영수증 국세청 발행번호`**
+
+
+
+**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**`현금영수증 발행대상 타입`**
+
+* 개인 : `person`
+* 사업자 : `company`
+
+
+
+**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`integer`**</mark>
+
+**`현금영수증 발행금액`**
+
+
+
+**`vat`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`integer`**</mark>
+
+**`현금영수증 발행금액 중 부가세금액`**
+
+
+
+**`receipt_url`** <mark style="color:green;">**`string`**</mark>
+
+**`발행된 현금영수증 URL`**
+
+
+**`applied_at`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`integer`**</mark>
+
+**현금영수증 발행시각** `UNIX TIMESTAMP`
+
+
+
+**`cancelled_at`** <mark style="color:orange;">**`integer`**</mark>
+
+**`현금영수증 발행취소시각`** `UNIX TIMESTAMP`
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+<SwaggerResponse status="404: Not Found" description="존재하지 않는 포트원 거래 정보이거나 현금영수증 발행된 내역이 확인되지 않는 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```json
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "imp_uid": "string",
+    "receipt_tid": "string",
+    "apply_num": "string",
+    "type": "person",
+    "amount": 0,
+    "vat": 0,
+    "receipt_url": "string",
+    "applied_at": 0,
+    "cancelled_at": 0
+ }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/receipts/getReceipt**](https://api.iamport.kr/#!/receipts/getReceipt)
+</Hint>
