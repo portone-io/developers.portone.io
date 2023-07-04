@@ -1,0 +1,63 @@
+---
+emoji: 🥏
+title: 2. 본인인증 요청하기
+description: 추가한 포트원 SDK를 통해 본인인증을 요청할 수 있습니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Hint from "~/components/gitbook/Hint.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+`PortOne.requestIdentityVerification()` 함수의 첫번째 파라미터를 설정하여 호출하면 결제창 호출이 가능합니다.
+
+이전 단계의 설치 방법에 따라 함수를 호출하는 방법이 다르니 참고해주세요.
+
+<Tabs>
+<Tab title="NPM으로 추가한 경우">
+```javascript
+import * as PortOne from '@portone/browser-sdk/v2';
+function requestIdentityVerification() {
+  PortOne.requestIdentityVerification({
+    // 가맹점 storeId로 변경해주세요.
+    storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec',
+    identityVerificationId: 'identityVerificationId_{now()}',
+    // 콘솔에서 추가한 채널 이름으로 변경해주세요.
+    channelName: 'my-channel-name',
+  });
+}
+```
+
+</Tab>
+
+<Tab title="<script> 태그로 추가한 경우">
+`<script>` 태그를 이용해 추가한 경우 전역 객체 `window`에 `PortOne` 객체가 추가됩니다.
+
+```html
+<script>
+function requestIdentityVerification() {
+  PortOne.requestIdentityVerification({
+    // 가맹점 storeId로 변경해주세요.
+    storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec',
+    identityVerificationId: 'identityVerificationId_{now()}',
+    // 콘솔에서 추가한 채널 이름으로 변경해주세요.
+    channelName: 'my-channel-name',
+  });
+}
+</script>
+```
+
+</Tab>
+</Tabs>
+
+<Hint style="info">
+**본인인증 고유번호(identityVerificationId) 생성 시 유의사항**
+
+본인인증 고유번호는 본인인증 창 요청 시 항상 **고유 값**으로 채번 되어야 합니다.
+
+같은 고유번호로 본인인증 창을 여러번 열고 닫기를 반복하거나 실패한 경우에 재시도하는 등의 동작은 가능하지만, 한번 본인인증이 성공적으로 완료된 고유번호로는 다시 본인인증을 시도하는 것이 불가능합니다.
+
+</Hint>
