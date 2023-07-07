@@ -26,6 +26,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 - 토스페이먼츠 - 신모듈
 - KSNET
 - 스마트로-신모듈
+- (신)나이스페이
 
 <Swagger method="post" path="/vbanks" baseUrl="https://api.iamport.kr" summary="가상계좌 번호를 발급합니다.">
 <SwaggerDescription>
@@ -127,11 +128,12 @@ PG사 구분코드
 <SwaggerParameter name="tax_free" type="Integer" required="false">
 면세금액
 
-(나이스페이먼츠에서만 사용 가능)
+(나이스페이먼츠, (신)나이스페이에서만 사용 가능)
+
 </SwaggerParameter>
 <SwaggerParameter name="vat_amount" type="integer" required="false">
 부가세(기본값: null)\
-(나이스페이먼츠에서만 사용 가능)
+(나이스페이먼츠, (신)나이스페이에서만 사용 가능)
 
 </SwaggerParameter>
 <SwaggerParameter name="vbank_key" type="String">
@@ -151,6 +153,11 @@ PG사 구분코드
 고정 가상 계좌 번호\
 고정식 가상계좌 사용 시 발급된 가상계좌 번호
 (스마트로-신모듈의 고정식 가상계좌 사용시 필수값)
+</SwaggerParameter>
+<SwaggerParameter name="business_registration_number" type="string">
+주문자 사업자 등록번호\
+가상계좌 발급 건 에스크로 등록시, 가상계좌 발급시 전달 한 주문자의 전화번호나 사업자 등록 번호가 사용 됨
+((신) 나이스페이 전용)
 </SwaggerParameter>
 
 #### Query
@@ -531,7 +538,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > 면세금액
 >
-> 나이스페이먼츠 전용, 상점아이디의 과세설정이 **지정금액방식(복합과세)** 으로 설정되어 있는 경우 필수값 입니다.
+> 나이스페이먼츠, (신)나이스페이 전용, 상점아이디의 과세설정이 **지정금액방식(복합과세)** 으로 설정되어 있는 경우 필수값 입니다.
 >
 >과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.
  
@@ -543,6 +550,17 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > 지원되는 PG사
 > * 나이스페이먼츠
+> * (신)나이스페이
+
+> **`business_registration_number`**<mark style="color:purple;">**`string`**</mark>
+>
+> 주문자 사업자 등록번호
+>
+> 가상계좌 발급 건 에스크로 등록시, 가상계좌 발급시 전달 한 주문자의 전화번호나 사업자 등록 번호가 사용 됨
+>
+> 지원되는 PG사
+>
+> * (신)나이스페이
 
 <Details>
 <p slot="summary">Response Model Schema</p>
