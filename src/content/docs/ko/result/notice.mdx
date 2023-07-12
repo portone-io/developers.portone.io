@@ -1,6 +1,6 @@
 ---
 emoji: ✔
-title: 가상결제 입금통보 설정
+title: 가상계좌 입금통보 설정
 description: PG사별 입금통보 설정을 통해 가상계좌 결제를 사용할 수 있습니다.
 ---
 
@@ -8,20 +8,30 @@ import * as prose from "~/components/prose";
 export const components = prose;
 
 import Figure from "~/components/gitbook/Figure.astro";
+import tosspayments_image1 from "./_assets/tosspayments/tosspayments-webhook-guide-1.png";
+import tosspayments_image2 from "./_assets/tosspayments/tosspayments-webhook-guide-2.png";
+import smartro_image1 from "./_assets/smartro/smartro-webhook-guide-1.png";
+import smartro_image2 from "./_assets/smartro/smartro-webhook-guide-2.png";
+import nice_v2_image1 from "./_assets/nice-v2/nice-v2-webhook-guide-1.png";
+import nice_v2_image2 from "./_assets/nice-v2/nice-v2-webhook-guide-2.png";
+import nice_v1_image1 from "./_assets/nice-v1/nice-v1-webhook-guide-1.png";
 
 가상계좌를 이용하는 가맹점의 경우 가상계좌 결제 이후 포트원에 입금통보를 받을 수 있도록 준비해야 합니다.
 
 ## PG사별 가상계좌 입금통보 URL
 
-| PG         | 입금통보 주소                                                                                                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| KG이니시스 | https://service.iamport.kr/inicis_payments/notice_vbank                                                                                                       |
-| NHN KCP    | https://service.iamport.kr/kcp_payments/notice_vbank                                                                                                          |
-| 나이스     | https://service.iamport.kr/nice_payments/notice_vbank                                                                                                         |
-| JTNET      | https://service.iamport.kr/jtnet_payments/result                                                                                                              |
-| KICC       | https://service.iamport.kr/kicc_payments/notice_vbank                                                                                                         |
-| 세틀뱅크   | https://service.iamport.kr/settle_payments/notice_vbank                                                                                                       |
-| 다우데이타 | <ul><li>발행 통지 URL: https://service.iamport.kr/daou_payments/result</li><li>결과 통지 URL: https://service.iamport.kr/daou_payments/notice_vbank</li></ul> |
+| PG                   | 입금통보 주소                                                                                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| KG이니시스           | https://service.iamport.kr/inicis_payments/notice_vbank                                                                                                       |
+| NHN KCP              | https://service.iamport.kr/kcp_payments/notice_vbank                                                                                                          |
+| (구) 나이스페이먼츠               | https://service.iamport.kr/nice_payments/notice_vbank                                                                                                         |
+| KICC                 | https://service.iamport.kr/kicc_payments/notice_vbank                                                                                                         |
+| 헥토파이낸셜             | https://service.iamport.kr/settle_payments/notice_vbank                                                                                                       |
+| 키움페이          | <ul><li>발행 통지 URL: https://service.iamport.kr/daou_payments/result</li><li>결과 통지 URL: https://service.iamport.kr/daou_payments/notice_vbank</li></ul> |
+| (산) 토스페이먼츠 | https://tx-gateway-service.prod.iamport.co/virtual-account/webhook-event/tosspayments                                                                         |
+| KSNET                | https://tx-gateway-service.prod.iamport.co/ksnet                                                                                                              |
+| (신) 스마트로         | 입금 통보, 환불이체 URL 동일: https://tx-gateway-service.prod.iamport.co/smartro-v2                                                                           |
+| (신) 나이스페이먼츠   | https://tx-gateway-service.prod.iamport.co/nicepay-v2                                                                                                         |
 
 ### KG 이니시스
 
@@ -37,27 +47,20 @@ import Figure from "~/components/gitbook/Figure.astro";
 
 <Figure src="https://djqafk2qzyjhg.cloudfront.net/img/kcp_vbank.png" />
 
-### 나이스
+### (구) 나이스페이먼츠
 
-"나이스정보통신" > "포트원 서버"로 이루어지는 통지는 **나이스페이 상점관리자 페이지**에서 다음과 같은 추가 설정이 필요합니다.
+"나이스페이먼츠" > "포트원 서버"로 이루어지는 통지는 **나이스페이 상점관리자 페이지**에서 다음과 같은 추가 설정이 필요합니다.
 "가맹점정보" > "기본정보" 메뉴에서, "결제데이터 통보의 가상계좌" 부분을 `https://service.iamport.kr/nice_payments/notice_vbank` 로 설정해주세요.
 (OK체크를 체크해주시고, 재전송 횟수는 1혹은 그 이상으로 해주세요.)
 
-<Figure src="https://djqafk2qzyjhg.cloudfront.net/img/nice_vbank.png" />
-
-### JTNet
-
-"tPay서버" > "포트원 서버"로 이루어지는 통지는 **tPay 상점관리자 페이지**에서 다음과 같은 추가 설정이 필요합니다.
-"회원사정보" > "일반정보" 메뉴에서, "결제데이터 통보의 가상계좌"부분을 `https://service.iamport.kr/jtnet_payments/result` 로 설정해주세요.
-
-<Figure src="https://djqafk2qzyjhg.cloudfront.net/img/jtnet_vbank.png" />
+<Figure src={nice_v1_image1} />
 
 ### KICC
 
 > "KICC서버" > "포트원 서버"로 이루어지는 통지는 MID 발급 시 자동으로 등록됩니다.
 > 만약, 입금통보가 수신되지 않는다면 KICC 영업담당자 혹은 대표 연락처(1644-2004, [easypay_cs@kicc.co.kr](mailto:easypay_cs@kicc.co.kr))로 연락하셔서 "가상계좌 입금통보 URL" 설정 확인을 요청주세요.
 
-### 세틀뱅크
+### 헥토파이낸셜
 
 "헥토파이낸셜 서버" > "포트원 서버"로 이루어지는 통지는 **헥토파이낸셜 담당자 및 기술팀**에 메일로 요청해주셔야 합니다.
 (헥토파이낸셜 관리자 페이지에 오류가 있어 저장이 안됨)\
@@ -70,7 +73,7 @@ settle_pgdev@settlebank.co.kr(개발팀) 에 발급받으신 MID와 함께 아�
 >
 > 설정이 완료되면 회신 부탁드립니다.
 
-### 다우데이타
+### 키움페이
 
 <Figure src="/gitbook-assets/ko/image (184) (1).png" />
 
@@ -80,3 +83,39 @@ settle_pgdev@settlebank.co.kr(개발팀) 에 발급받으신 MID와 함께 아�
 
 - 발행 통지 URL: https://service.iamport.kr/daou_payments/result
 - 결과 통지 URL: https://service.iamport.kr/daou_payments/notice_vbank
+
+### (신) 토스페이먼츠
+
+[토스페이먼츠 상점 관리자 페이지](https://app.tosspayments.com/) -> 개발 정보 -> 웹훅 페이지에서 설정이 필요합니다.
+구독할 이벤트를 **DEPOSIT_CALLBACK** 으로 해야 정상적으로 입금 통보가 가능합니다.
+
+<Figure src={tosspayments_image1} />
+
+<Figure src={tosspayments_image2} />
+
+### KSNET
+
+KSNET은 포트원을 통해 발급된 MID에 대해 자동으로 입금통보 URL이 설정됩니다. 만약 입금통보를 받지 못하는 경우 KSNET 담당자에게 메일을 통해 확인 요청 후 변경이 필요합니다.
+
+### (신)스마트로
+
+[스마트로 관리자 페이지](https://www.smilepay.co.kr/login.do) -> 가맹점 -> 가맹점정보 -> 기본정보 페이지에서 입금통보, 환불이체 URL 설정이 가능합니다.
+
+<Figure src={smartro_image1} />
+
+<Figure src={smartro_image2} />
+
+- 재전송 간격: 최소 1분 ~ 최대 10분까지만 입력 가능합니다.
+- 재전송 횟수: 최소 1회 ~ 최대 10회까지 재전송 가능합니다.(전송 실패 건에 대해 자동 재전송)
+
+### (신)나이스페이먼츠
+
+[나이스 관리자 페이지](https://npg.nicepay.co.kr/logIn.do) -> 가맹점정보 -> 페이지 하단의 결제데이터통보 탭에서 설정이 필요합니다.
+정상적인 입금통보 전송, 재전송을 위해 **암호화 전송 여부, 미전송시 체크를 해제**하셔야 합니다, OK여부는 체크하지 않으셔도 무관한 옵션입니다.
+
+- 재전송 간격: 최소 1분 ~ 최대 10분까지만 입력 가능합니다.
+- 재전송 횟수: 최소 1회 ~ 최대 10회까지 재전송 가능합니다.(전송 실패 건에 대해 자동 재전송)
+
+<Figure src={nice_v2_image1} />
+
+<Figure src={nice_v2_image2} />
