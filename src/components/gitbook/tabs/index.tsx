@@ -5,18 +5,38 @@ export interface TabsProps {
 }
 export const Tabs: React.FC<TabsProps> = ({ children }) => {
   const tabsRef = React.useRef<HTMLDivElement>(null);
+  const latestTabsRef = React.useRef<HTMLDivElement[]>([]);
   const [currentTab, setCurrentTab] = React.useState(0);
   const [titles, setTitles] = React.useState<string[]>([]);
-  React.useEffect(() => {
+
+  const setupTitles = () => {
     const tabs = getTabElements(tabsRef.current);
     setTitles(tabs.map((tab) => tab.dataset.title!));
-  }, []);
-  React.useEffect(() => {
+  };
+  const updateTabVisibility = () => {
+    for (const tab of latestTabsRef.current) {
+      tab.style.display = "none";
+    }
     const tabs = getTabElements(tabsRef.current);
     tabs.forEach((tab, index) => {
       tab.style.display = index === currentTab ? "block" : "none";
     });
-  }, [currentTab]);
+    latestTabsRef.current = tabs;
+  };
+
+  React.useEffect(setupTitles, []);
+  React.useLayoutEffect(updateTabVisibility, [titles, currentTab]);
+
+  React.useEffect(() => {
+    const tabsEl = tabsRef.current;
+    if (!tabsEl) return;
+    const observer = new MutationObserver(() => {
+      setupTitles();
+    });
+    observer.observe(tabsEl, { attributeFilter: ["hidden"], subtree: true });
+    return () => observer.disconnect();
+  }, [tabsRef.current]);
+
   return (
     <div ref={tabsRef} class="my-4 flex flex-col">
       <div class="-mb-px flex">
@@ -38,23 +58,27 @@ export const Tabs: React.FC<TabsProps> = ({ children }) => {
             <button
               key={index}
               onClick={() => setCurrentTab(index)}
-              class={`px-4 py-2 text-sm border ${selectedStyle} ${cornerStyle}`}
+              class={`border px-4 py-2 text-sm ${selectedStyle} ${cornerStyle}`}
             >
               {title}
             </button>
           );
         })}
       </div>
-      <div class="px-6 py-4 rounded rounded-tl-none border">{children}</div>
+      <div class="rounded rounded-tl-none border px-6 py-4">{children}</div>
     </div>
   );
 };
 
 function getTabElements(container?: Element | null) {
   if (!container) return [];
-  return Array.from(
+  const tabs = Array.from(
     container.querySelectorAll("[data-gitbook-tab]")
   ) as HTMLDivElement[];
+  const hiddenTabs = Array.from(
+    container.querySelectorAll("[hidden] [data-gitbook-tab]")
+  ) as HTMLDivElement[];
+  return tabs.filter((tab) => !hiddenTabs.includes(tab));
 }
 
 export interface TabProps {
