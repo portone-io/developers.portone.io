@@ -40,9 +40,9 @@ import Details from "~/components/gitbook/Details.astro";
 
 ### SDK 결제 및 빌링키 발급 요청하기
 
-결제 요청 시에는 `requestPayment` 함수를 호출하고, 빌링키 발급 시에는 `requestIssueBillingKey`함수를 호출해야합니다.
-`channelName`파라미터에 결제 채널 연동 시 입력한 채널 이름을 지정하여 토스페이먼츠 연동임을 명시해주세요.
-만약 `channelName`이 입력되지 않는 경우 `pgProvider` 파라미터에 입력된 값에 따라 결제 및 빌링키 발급 창이 호출됩니다.
+결제 요청 시에는 `requestPayment` 함수를 호출하고, 빌링키 발급 시에는 `requestIssueBillingKey` 함수를 호출해야합니다.
+`channelKey` 파라미터에 결제 채널 연동 시 입력한 채널 키를 지정하여 토스페이먼츠 연동임을 명시해주세요.
+만약 `channelKey`가 입력되지 않는 경우 `pgProvider` 파라미터에 입력된 값에 따라 결제 및 빌링키 발급 창이 호출됩니다.
 
 토스페이먼츠 기준으로 작성한 예시 코드는 아래와 같습니다.
 
@@ -57,7 +57,7 @@ import Details from "~/components/gitbook/Details.astro";
         orderName: '나이키 와플 트레이너 2 SD',
         totalAmount: 1000,
         currency: 'CURRENCY_KRW',
-        channelName: 'tosspayments', // 콘솔 결제 연동 화면에서 채널 연동 시 사용한 이름을 입력해주세요.
+        channelKey: 'tosspayments', // 콘솔 결제 연동 화면에서 채널 연동 시 사용한 이름을 입력해주세요.
         payMethod: "CARD"
       });
     }
@@ -71,7 +71,7 @@ import Details from "~/components/gitbook/Details.astro";
     function requestIssueBillingKey() {
       PortOne.requestIssueBillingKey({
         storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
-        channelName: 'tosspayments', // 콘솔 결제 연동 화면에서 채널 연동 시 사용한 이름을 입력해주세요.
+        channelKey: 'tosspayments', // 콘솔 결제 연동 화면에서 채널 연동 시 사용한 이름을 입력해주세요.
         billingKeyMethod : 'CARD'
       });
     }
@@ -149,8 +149,8 @@ import Details from "~/components/gitbook/Details.astro";
   - 가맹점이 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다.
 - `orderName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
   - 주문명으로 가맹점에서 자유롭게 입력합니다.
-- `channelName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 채널 이름으로 콘솔에서 결제 연동에 채널 연동 시 입력한 채널 이름을 입력해야 합니다. 
+- `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - 콘솔의 결제 연동 메뉴에 표시되는 채널 키를 입력해야 합니다. 
 - `totalAmount` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
   - 결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
 - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
