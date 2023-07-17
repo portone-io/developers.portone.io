@@ -4,6 +4,7 @@ export interface RightSidebarProps {
   lang: string;
   slug: string;
   toc: Toc;
+  editThisPagePrefix?: string;
 }
 export type Toc = TocItem[];
 export interface TocItem {
@@ -11,7 +12,12 @@ export interface TocItem {
   text: string;
   children: TocItem[];
 }
-const RightSidebar: React.FC<RightSidebarProps> = ({ lang, slug, toc }) => {
+const RightSidebar: React.FC<RightSidebarProps> = ({
+  lang,
+  slug,
+  toc,
+  editThisPagePrefix = "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
+}) => {
   return (
     <div class="text-slate-7 hidden w-56 min-w-0 shrink-0 lg:block">
       <nav class="w-inherit fixed my-4 h-[calc(100%-5.5rem)] overflow-y-auto px-2">
@@ -38,7 +44,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ lang, slug, toc }) => {
         <h2 class="mb-2 mt-4 px-2 font-bold">{t(lang, "contribute")}</h2>
         <ul>
           <SidebarItem
-            href={`https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs${slug}.mdx`}
+            href={`${editThisPagePrefix}${slug}.mdx`}
             icon="i-ic-baseline-edit"
             label={t(lang, "edit-this-page")}
           />
