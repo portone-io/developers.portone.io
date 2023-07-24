@@ -1,6 +1,6 @@
 ---
-title: 파트너정산 API - alpha 버전
-description: 파트너정산에 관련된 API 를 확인할 수 있습니다
+title: 파트너 정산 API - alpha 버전
+description: 파트너 정산에 관련된 API 를 확인할 수 있습니다
 ---
 
 import Details from "~/components/gitbook/Details.astro";
@@ -15,7 +15,7 @@ import Details from "~/components/gitbook/Details.astro";
 
 또한, 대량 이체 API는 곧 업데이트될 예정입니다.
 
-개발이 완료되기 전에 알파 버전으로 제공드리며, 개발이 완료되면 동일한 문서 url에 업데이트 되며 테스트 해볼 수 있는 페이지를 swagger형식으로 제공해드리겠습니다.
+개발이 완료되기 전에 알파 버전으로 제공드리며, 개발이 완료되면 동일한 문서 url에 업데이트 되며 테스트 해볼 수 있는 페이지를 제공해드리겠습니다.
 
 더 궁금한 사항이 있으시거나 추가적인 도움이 필요하시면 언제든지 연락주세요.
 
@@ -66,6 +66,15 @@ Attributes
 
 [partner attribute](#파트너-객체)
 
+**type** enum
+
+| Enum Values | Description                    |
+| ----------- | ------------------------------ |
+| ORDER       | 주문 결제건(order)에 대한 정산 |
+| MANUAL      | 수동 정산에 대한 정산          |
+
+---
+
 **status** enum
 
 정산의 상태값
@@ -73,9 +82,10 @@ Attributes
 | --- | --- |
 | SCHEDULED | 정산 시작일(settlementStartDate)이 현시점 이후일때 예약 상태 |
 | IN_PROCESS | 현시점이 정산 시작일 이후 정산일(settlementDate) 이전일때 진행중 상태 |
-| IN_PAYOUT| 이체 중. 관리자 콘솔 내에서 대량이체 엑셀 파일을 받은 후 아직 이체완료 상태값 업데이트를 하지 않았을때|
 | SETTLED | 현시점이 정산일 이후일때 완료 상태 |
 | PAID_OUT | 이체 완료 상태 |
+| REJECTED | 이체 취소 상태. SETTLED이고 이체파일 생성하였으나 실제 이체를 진행하지 않은 경우. |
+| PENDING | 이체 보류 상태. 특정 정산건에 대해서 정산일과 무관하게 보류로 지정할시 이체(payout) batch에 포함되지 않습니다. |
 
 ---
 
@@ -91,46 +101,15 @@ Attributes
 
 ---
 
-**settlementDate** Dictionary
+**settlementDate** Date
 
 정산일. 정산주기에 맞게 파트너에게 이체되어야 하는 시점이다.
 
-<table>
-  <tr>
-    <td>
-
-      settlementDate.**year** integer required
-
-      정산일의 연도
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**month** integer required
-
-      정산일의 월
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**day** integer required
-
-      정산일의 일
-    </td>
-
-  </tr>
-</table>
 ---
 
 **payoutId** string
 
 정산 객체가 정산주기에 맞춰서 포함될 이체 객체의 고유 아이디
-
-status 가 IN_PAYOUT 일때부터 생성됩니다성
 
 ---
 
@@ -142,55 +121,32 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
 
 ---
 
-**payment** dictionary required
+**settlementType** enum
 
-주문 정산건에 해당되는 결제 정보. 포트원(Portone) 결제일때 와 외부 결제(External) 일때 요구되는 값이 다릅니다.
-해당 값은 one of 로직으로 간주되어 `"payment": {"portOne": { ... } 혹은 "external": { ... }}` 와 같이 전달해야 합니다.
+주문 정산에 대해서 결제건에 대한 양수 정산인지 결제 취소에 대한 음수 정산인지 구분합니다.
 
-- 포트원 결제일때 ("payment": {"portOne"})
-  포트원 결제 연동 서비스 (sdk, api)에 등록되는 가맹점의 merchant_uid (V1) 혹은 payment_id(V2) 값을 건내주셔야 합니다.
+| Enum Value | Description                               |
+| ---------- | ----------------------------------------- |
+| PAYMENT    | 주문 결제에 대한 주문정산(order) 일 경우  |
+| CANCEL     | 주문 취소에 대한 환불정산(refund) 일 경우 |
 
-<table>
-  <tr>
-    <td>
+---
 
-      portOne.**id** string required
+**payment** dictionary
 
-      merchant_uid(V1) 혹은 payment_id(V2)
-
-      혹여나 주문은 이루어 졌지만 결제가 이루어지지 않은 경우가 있습니다. 대표적인 예로 포인트 및 쿠폰 (할인) 으로 상품을 사는 case 입니다.
-      해당 경우에는 포트원 결제는 없어도 가맹점 내에서 해당 주문에 대한 주문 아이디를 전달해주셔야 합니다.
-
-    </td>
-
-  </tr>
-</table>
-
-- 외부 결제일때 ("payment": {"external"})
-
-포트원 결제연동 외에 다른 결제연동 서비스를 통해 결제된 주문건일 경우 외부 결제건으로 간주합니다.
-
-그럴경우 해당 결제의 가맹점 주문번호와 결제통화를 필수로 전달해야 하며 optional로 주문이름, 결제 수단과 같은 부수적인 정보를 전달할 수 있습니다.
+주문 정산건(order) 에 적용된 결제정보 입니다.
+payment attribute
 
 <table>
   <tr>
     <td>
 
-      external.**id** string required
+      payment.**source** enum
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 가맹점 주문번호
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**currency** enum required
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제통화
-
-      현재는 'KRW', 'JPY', 'USD' 만 지원합니다.
+      | Enum Value | Description |
+      | ---------- | ----------- |
+      | PORTONE    | 포트원 결제    |
+      | EXTERNAL   | 포트원 외 결제  |
 
     </td>
 
@@ -198,99 +154,9 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
   <tr>
     <td>
 
-      external.**orderName** string optional
+      payment.**paymentId** string
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 주문이름
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**method** optional enum
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제수단
-      아래 결제 수단중 하나만 택해서 전달해야 합니다.
-      간편 결제수단("easyPay") 를 제외하고 특정 결제수단에 해당된다면 빈 json 값 (```{}```) 을 전달해야 합니다.
-
-      <table>
-        <tr>
-          <td>
-
-            method.**card** dictionary optional
-
-            신용카드
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**transfer** dictionary optional
-
-            계좌이체
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**virtualAccount** dictionary optional
-
-            가상계좌
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**giftCertificate** dictionary optional
-
-            상품권
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**mobile** dictionary optional
-
-            휴대폰 소액결휴
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**easyPay** dictionary optional
-
-            간편결제
-            <table>
-              <tr>
-                <td>
-
-                    easyPay.**provider** enum required
-
-                    간편결제 브랜드 (i.e. "KAKAOPAY")
-
-
-
-                </td>
-              </tr>
-              <tr>
-                <td>
-
-                  easyPay.**method** enum required
-
-                  간편결제 내의 결제 수단 (i.e. "CARD", "TRANSFER")
-                </td>
-              </tr>
-            </table>
-
-          </td>
-        </tr>
-      </table>
+      결제 아이디. 포트원 결제 SDK 혹은 API에 전달하는 주문번호입니다.
 
     </td>
 
@@ -298,9 +164,69 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
   <tr>
     <td>
 
-      payment.**paidAt** optional Date
+      payment.**storeId** string
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제완료 시점
+      포트원이 부여하는 상점 아이디입니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**channelKey** string
+
+      포트원이 부여하는 결제 채널 아이디입니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**orderName** string
+
+      포트원이 부여하는 주문명입니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**paymentMethod** enum
+
+      주문 결제에 사용된 결제 수단. 자세한 수단 정보는 결제 SDK 문서를 참고해주세요.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**paidAt** Date
+
+      결제 완료 시간
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**easyPayReceipt** dictionary
+
+      간편결제에 대한 정보
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**currency** enum
+
+      결제 통화
 
     </td>
 
@@ -309,139 +235,110 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
 
 ---
 
-**orderDetails** dictionary required
+**paymentCancellationId** string
 
-주문 정산건에 해당되는 주문 상세 정보. 주문건에 포함된 상품의 정보를 전달해야 합니다.
-
-one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우에는 `"orderDetails" : {"orderAmount": 금액}` 와 같이 전달하시면 됩니다.
-상품 정보 및 상품별 할인 및 추가수수료를 적용하여 전달하고 싶으신 경우에는 `"orderDetails" : {"orderLines": [{...}, {...}]}` 와 같이 전달하시면 됩니다.
-
-**payment.portOne** 일경우 전달하시지 않으셔도 됩니다. 그럴경우 주문금액은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 으로 계산됩니다.
-
-- 주문금액만 전달할 경우 (`"orderDetails": {"orderAmount": 금액}`)
-
-<table>
-  <tr>
-    <td>
-  
-        **orderAmount** int optional
-
-            정산건에 해당되는 주문금액. 결제금액 + 할인금액 입니다.
-
-            단일 주문건에 정산해야할 파트너 대상이 여러명일 경우, 혹은 다른 이유로 여러 정산 건을 생성하고 싶을 경우, 해당되는 주문금액을 전달하시면 됩니다.
-
-            전달하지 기본값은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 입니다.
-
-            **payment.external** 일때는 **orderAmount** 혹은 **orderLines** 를 통해서 주문금액을 전달해주셔야 합니다.
-    </td>
-
-  </tr>
-</table>
-
-- 상품 정보 및 상품별 금액, 수량 할인 및 추가수수료를 적용하여 전달할 경우 (`"orderDetails": {"orderLines": [{...}, {...}]}`)
-
-해당 정보를 전달하면 주문금액은 전체 상품별 금액들의 합으로 계산됩니다.
-
-<table>
-  <tr>
-    <td>  
-      orderLines.**product** dictionary required
-
-      주문정산건에 해당되는 낱개 상품 정보.
-
-      <table>
-        <tr>
-          <td>
-
-            product.**id** string required
-
-            상품 아이디. 가맹점의 서버에 등록된 상품 아이디를 임의로 보내주시면 됩니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**name** string required
-
-            상품 이름. 가맹점의 서버에 등록된 상품 이름을 임의로 보내주시면 됩니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**amount** int required
-
-            상품 가격. 상품의 낱개 가격입니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**tag** list of string optional
-
-            상품 태그. 내부 구분을 위한 태그입니다.
-
-          </td>
-
-        </tr>
-      </table>
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-      orderLines.**quantity** int required
-
-      상품 갯수
-
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**discounts** list of dictionary optional
-
-        해당 상품에 적용될 할인정보 리스트
-        <table>
-          <tr>
-            <td>
-              discounts.**amount** int required
-
-              할인 금액. 상품에 적용될 할인 금액으로써 상품의 가격보다 클 수 없습니다.
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              discounts.**discountShareId** string required
-
-              할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
-
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**additionalFeeIds** list of string optional
-
-        해당 상품에 적용될 추가수수료 아이디 리스트. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
-      </td>
-    </tr>
-
- </table>
+결제 취소 아이디. 주문건에 대해서 전체 및 부분취소진행시 연관된 정산 객체의 조정을 위해 필요한 포트원 결제취소 아이디 입니다. \*결제취소 아이디는 포트원의 v2/api로 발급되는점 유의하시기 바랍니다. [링크](https://app.gitbook.com/o/nad6nqI7LNE1TGdY19Od/s/wWX2hlvRZLZrXeH1aacF/api-v2/payment)
 
 ---
 
 **settlementStartDate** Date
 
 정산 시작일. 정산주기에 맞춰서 정산이 진행되는 시점이다. 정산 주기가 적용되는 시점이다.
+
+---
+
+**product** list of dictionary
+
+단일 주문 정산에 적용될 상품 정보와 적용될 할인과 추가 수수료 정보.
+
+현재는 단일 주문정산의 단일 파트너 기준으로 받습니다.
+
+따라서 단일 주문건에 대해서 여러 파트너 정산건이 존재한다면 각각의 파트너에 대해서 별도의 정산 객체가 생성됩니다.
+
+또한, 이에 따라서 해당 상품들은 하나의 계약정보가 (정산주기, 중개 수수료) 적용됩니다.
+
+각 상품별로 다른 계약정보가 적용되어야 한다면, 상품별로 주문을 분리하여 주문 정산건을 생성해야 합니다.
+
+훗날 하나의 정산객체 안에서 상품별로 여러 파트너 및 계약이 적용되도록 확장될 예정입니다.
+
+상품별로 구분이 필요없을 경우 하단의 **discounts**, **additionalFee**, **settlementAmount** 를 통해서 전체 주문정보에 대해서 정산을 등록 할 수 있습니다.
+
+<table>
+  <tr>
+    <td>
+
+      product.**id** string
+
+      상품 아이디
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**name** string
+
+      상품명
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**amount** int64
+
+      낱개 상품 가격
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**tag** string
+
+      상품 태그
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**quantity** int64
+
+      상품 수량
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**discounts** list of dictionary
+
+      상품에 적용된 할인 정보들
+
+      [할인 정보 참고](#할인-유형)
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**additionalFees** list of dictionary
+
+      상품에 적용된 추가 수수료 정보
+
+      [추가 수수료 정보 참고](#추가-수수료)
+
+    </td>
+
+  </tr>
+</table>
 
 ---
 
@@ -606,19 +503,25 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 </div>
 <div>
 
-**Response**
+**Response (order)**
+
+```json
+
+```
+
+**Response (manual)**
 
 ```json
 {
-  "id": "string",
+  "id": "transfer_id",
   "partner": {
     "id": "string",
     "name": "string",
     "email": "string",
     "businessRegistrationNumber": "string",
     "account": {
-      "bank": "BNP",
-      "currency": "AED",
+      "bank": "string",
+      "currency": "JPY",
       "number": "string",
       "holder": "string",
       "status": "EXPIRED"
@@ -628,19 +531,17 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
     "memo": "string",
     "tags": ["string"],
     "isHidden": true,
-    "appliedAt": "2023-07-24T02:57:58.170Z"
+    "appliedAt": "2023-06-16T08:24:18.178Z"
   },
-  "status": "IN_PAYOUT",
+  "type": "MANUAL",
+  "status": "SETTLED",
+  "settlementDate": "2023-01-01",
   "memo": "string",
-  "settlementDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
-  },
-  "payoutId": "string",
-  "currency": "AED",
-  "isForTest": true,
-  "settlementAmount": 0
+  "currency": "KRW",
+  "payoutId": "payout-id",
+  "settlementAmount": {
+    "settlement": 1000
+  }
 }
 ```
 
@@ -1487,7 +1388,7 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
 
 **isForTest** boolean optional 기본값은 false
 
-포트원의 테스트 서버로 정산 데이터를 전달할지 여부를 결정한다. 기본값은 false이다. 테스트 서버로 전달할 경우 정산 데이터는 테스트 서버에만 저장되며 실제 정산에는 반영되지 않는다.
+## 포트원의 테스트 서버로 정산 데이터를 전달할지 여부를 결정한다. 기본값은 false이다. 테스트 서버로 전달할 경우 정산 데이터는 테스트 서버에만 저장되며 실제 정산에는 반영되지 않는다.
 
 </div>
 <div>

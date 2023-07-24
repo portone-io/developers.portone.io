@@ -1,6 +1,6 @@
 ---
-title: 파트너정산 API - alpha 버전
-description: 파트너정산에 관련된 API 를 확인할 수 있습니다
+title: 파트너 정산 API - alpha 버전
+description: 파트너 정산에 관련된 API 를 확인할 수 있습니다
 ---
 
 import Details from "~/components/gitbook/Details.astro";
@@ -15,7 +15,7 @@ import Details from "~/components/gitbook/Details.astro";
 
 또한, 대량 이체 API는 곧 업데이트될 예정입니다.
 
-개발이 완료되기 전에 알파 버전으로 제공드리며, 개발이 완료되면 동일한 문서 url에 업데이트 되며 테스트 해볼 수 있는 페이지를 swagger형식으로 제공해드리겠습니다.
+개발이 완료되기 전에 알파 버전으로 제공드리며, 개발이 완료되면 동일한 문서 url에 업데이트 되며 테스트 해볼 수 있는 페이지를 제공해드리겠습니다.
 
 더 궁금한 사항이 있으시거나 추가적인 도움이 필요하시면 언제든지 연락주세요.
 
@@ -40,6 +40,7 @@ POST /platform/order-transfers
 POST /platform/order-cancel-transfers
 POST /platform/manual-transfers
 GET /platform/transfers/{id}
+GET /platform/transfers-summaries
 ```
 
 </div>
@@ -66,6 +67,15 @@ Attributes
 
 [partner attribute](#파트너-객체)
 
+**type** enum
+
+| Enum Values | Description                    |
+| ----------- | ------------------------------ |
+| ORDER       | 주문 결제건(order)에 대한 정산 |
+| MANUAL      | 수동 정산에 대한 정산          |
+
+---
+
 **status** enum
 
 정산의 상태값
@@ -73,9 +83,10 @@ Attributes
 | --- | --- |
 | SCHEDULED | 정산 시작일(settlementStartDate)이 현시점 이후일때 예약 상태 |
 | IN_PROCESS | 현시점이 정산 시작일 이후 정산일(settlementDate) 이전일때 진행중 상태 |
-| IN_PAYOUT| 이체 중. 관리자 콘솔 내에서 대량이체 엑셀 파일을 받은 후 아직 이체완료 상태값 업데이트를 하지 않았을때|
 | SETTLED | 현시점이 정산일 이후일때 완료 상태 |
 | PAID_OUT | 이체 완료 상태 |
+| REJECTED | 이체 취소 상태. SETTLED이고 이체파일 생성하였으나 실제 이체를 진행하지 않은 경우. |
+| PENDING | 이체 보류 상태. 특정 정산건에 대해서 정산일과 무관하게 보류로 지정할시 이체(payout) batch에 포함되지 않습니다. |
 
 ---
 
@@ -91,46 +102,15 @@ Attributes
 
 ---
 
-**settlementDate** Dictionary
+**settlementDate** Date
 
 정산일. 정산주기에 맞게 파트너에게 이체되어야 하는 시점이다.
 
-<table>
-  <tr>
-    <td>
-
-      settlementDate.**year** integer required
-
-      정산일의 연도
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**month** integer required
-
-      정산일의 월
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**day** integer required
-
-      정산일의 일
-    </td>
-
-  </tr>
-</table>
 ---
 
 **payoutId** string
 
 정산 객체가 정산주기에 맞춰서 포함될 이체 객체의 고유 아이디
-
-status 가 IN_PAYOUT 일때부터 생성됩니다성
 
 ---
 
@@ -142,55 +122,32 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
 
 ---
 
-**payment** dictionary required
+**settlementType** enum
 
-주문 정산건에 해당되는 결제 정보. 포트원(Portone) 결제일때 와 외부 결제(External) 일때 요구되는 값이 다릅니다.
-해당 값은 one of 로직으로 간주되어 `"payment": {"portOne": { ... } 혹은 "external": { ... }}` 와 같이 전달해야 합니다.
+주문 정산에 대해서 결제건에 대한 양수 정산인지 결제 취소에 대한 음수 정산인지 구분합니다.
 
-- 포트원 결제일때 ("payment": {"portOne"})
-  포트원 결제 연동 서비스 (sdk, api)에 등록되는 가맹점의 merchant_uid (V1) 혹은 payment_id(V2) 값을 건내주셔야 합니다.
+| Enum Value | Description                               |
+| ---------- | ----------------------------------------- |
+| PAYMENT    | 주문 결제에 대한 주문정산(order) 일 경우  |
+| CANCEL     | 주문 취소에 대한 환불정산(refund) 일 경우 |
 
-<table>
-  <tr>
-    <td>
+---
 
-      portOne.**id** string required
+**payment** dictionary
 
-      merchant_uid(V1) 혹은 payment_id(V2)
-
-      혹여나 주문은 이루어 졌지만 결제가 이루어지지 않은 경우가 있습니다. 대표적인 예로 포인트 및 쿠폰 (할인) 으로 상품을 사는 case 입니다.
-      해당 경우에는 포트원 결제는 없어도 가맹점 내에서 해당 주문에 대한 주문 아이디를 전달해주셔야 합니다.
-
-    </td>
-
-  </tr>
-</table>
-
-- 외부 결제일때 ("payment": {"external"})
-
-포트원 결제연동 외에 다른 결제연동 서비스를 통해 결제된 주문건일 경우 외부 결제건으로 간주합니다.
-
-그럴경우 해당 결제의 가맹점 주문번호와 결제통화를 필수로 전달해야 하며 optional로 주문이름, 결제 수단과 같은 부수적인 정보를 전달할 수 있습니다.
+주문 정산건(order) 에 적용된 결제정보 입니다.
+payment attribute
 
 <table>
   <tr>
     <td>
 
-      external.**id** string required
+      payment.**source** enum
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 가맹점 주문번호
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**currency** enum required
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제통화
-
-      현재는 'KRW', 'JPY', 'USD' 만 지원합니다.
+      | Enum Value | Description |
+      | ---------- | ----------- |
+      | PORTONE    | 포트원 결제    |
+      | EXTERNAL   | 포트원 외 결제  |
 
     </td>
 
@@ -198,99 +155,9 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
   <tr>
     <td>
 
-      external.**orderName** string optional
+      payment.**paymentId** string
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 주문이름
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**method** optional enum
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제수단
-      아래 결제 수단중 하나만 택해서 전달해야 합니다.
-      간편 결제수단("easyPay") 를 제외하고 특정 결제수단에 해당된다면 빈 json 값 (```{}```) 을 전달해야 합니다.
-
-      <table>
-        <tr>
-          <td>
-
-            method.**card** dictionary optional
-
-            신용카드
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**transfer** dictionary optional
-
-            계좌이체
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**virtualAccount** dictionary optional
-
-            가상계좌
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**giftCertificate** dictionary optional
-
-            상품권
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**mobile** dictionary optional
-
-            휴대폰 소액결휴
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**easyPay** dictionary optional
-
-            간편결제
-            <table>
-              <tr>
-                <td>
-
-                    easyPay.**provider** enum required
-
-                    간편결제 브랜드 (i.e. "KAKAOPAY")
-
-
-
-                </td>
-              </tr>
-              <tr>
-                <td>
-
-                  easyPay.**method** enum required
-
-                  간편결제 내의 결제 수단 (i.e. "CARD", "TRANSFER")
-                </td>
-              </tr>
-            </table>
-
-          </td>
-        </tr>
-      </table>
+      결제 아이디. 포트원 결제 SDK 혹은 API에 전달하는 주문번호입니다.
 
     </td>
 
@@ -298,9 +165,69 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
   <tr>
     <td>
 
-      payment.**paidAt** optional Date
+      payment.**storeId** string
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제완료 시점
+      포트원이 부여하는 상점 아이디입니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**channelKey** string
+
+      포트원이 부여하는 결제 채널 아이디입니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**orderName** string
+
+      포트원이 부여하는 주문명입니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**paymentMethod** enum
+
+      주문 결제에 사용된 결제 수단. 자세한 수단 정보는 결제 SDK 문서를 참고해주세요.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**paidAt** Date
+
+      결제 완료 시간
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**easyPayReceipt** dictionary
+
+      간편결제에 대한 정보
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**currency** enum
+
+      결제 통화
 
     </td>
 
@@ -309,139 +236,110 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
 
 ---
 
-**orderDetails** dictionary required
+**paymentCancellationId** string
 
-주문 정산건에 해당되는 주문 상세 정보. 주문건에 포함된 상품의 정보를 전달해야 합니다.
-
-one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우에는 `"orderDetails" : {"orderAmount": 금액}` 와 같이 전달하시면 됩니다.
-상품 정보 및 상품별 할인 및 추가수수료를 적용하여 전달하고 싶으신 경우에는 `"orderDetails" : {"orderLines": [{...}, {...}]}` 와 같이 전달하시면 됩니다.
-
-**payment.portOne** 일경우 전달하시지 않으셔도 됩니다. 그럴경우 주문금액은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 으로 계산됩니다.
-
-- 주문금액만 전달할 경우 (`"orderDetails": {"orderAmount": 금액}`)
-
-<table>
-  <tr>
-    <td>
-  
-        **orderAmount** int optional
-
-            정산건에 해당되는 주문금액. 결제금액 + 할인금액 입니다.
-
-            단일 주문건에 정산해야할 파트너 대상이 여러명일 경우, 혹은 다른 이유로 여러 정산 건을 생성하고 싶을 경우, 해당되는 주문금액을 전달하시면 됩니다.
-
-            전달하지 기본값은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 입니다.
-
-            **payment.external** 일때는 **orderAmount** 혹은 **orderLines** 를 통해서 주문금액을 전달해주셔야 합니다.
-    </td>
-
-  </tr>
-</table>
-
-- 상품 정보 및 상품별 금액, 수량 할인 및 추가수수료를 적용하여 전달할 경우 (`"orderDetails": {"orderLines": [{...}, {...}]}`)
-
-해당 정보를 전달하면 주문금액은 전체 상품별 금액들의 합으로 계산됩니다.
-
-<table>
-  <tr>
-    <td>  
-      orderLines.**product** dictionary required
-
-      주문정산건에 해당되는 낱개 상품 정보.
-
-      <table>
-        <tr>
-          <td>
-
-            product.**id** string required
-
-            상품 아이디. 가맹점의 서버에 등록된 상품 아이디를 임의로 보내주시면 됩니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**name** string required
-
-            상품 이름. 가맹점의 서버에 등록된 상품 이름을 임의로 보내주시면 됩니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**amount** int required
-
-            상품 가격. 상품의 낱개 가격입니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**tag** list of string optional
-
-            상품 태그. 내부 구분을 위한 태그입니다.
-
-          </td>
-
-        </tr>
-      </table>
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-      orderLines.**quantity** int required
-
-      상품 갯수
-
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**discounts** list of dictionary optional
-
-        해당 상품에 적용될 할인정보 리스트
-        <table>
-          <tr>
-            <td>
-              discounts.**amount** int required
-
-              할인 금액. 상품에 적용될 할인 금액으로써 상품의 가격보다 클 수 없습니다.
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              discounts.**discountShareId** string required
-
-              할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
-
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**additionalFeeIds** list of string optional
-
-        해당 상품에 적용될 추가수수료 아이디 리스트. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
-      </td>
-    </tr>
-
- </table>
+결제 취소 아이디. 주문건에 대해서 전체 및 부분취소진행시 연관된 정산 객체의 조정을 위해 필요한 포트원 결제취소 아이디 입니다. \*결제취소 아이디는 포트원의 v2/api로 발급되는점 유의하시기 바랍니다. [링크](https://app.gitbook.com/o/nad6nqI7LNE1TGdY19Od/s/wWX2hlvRZLZrXeH1aacF/api-v2/payment)
 
 ---
 
 **settlementStartDate** Date
 
 정산 시작일. 정산주기에 맞춰서 정산이 진행되는 시점이다. 정산 주기가 적용되는 시점이다.
+
+---
+
+**product** list of dictionary
+
+단일 주문 정산에 적용될 상품 정보와 적용될 할인과 추가 수수료 정보.
+
+현재는 단일 주문정산의 단일 파트너 기준으로 받습니다.
+
+따라서 단일 주문건에 대해서 여러 파트너 정산건이 존재한다면 각각의 파트너에 대해서 별도의 정산 객체가 생성됩니다.
+
+또한, 이에 따라서 해당 상품들은 하나의 계약정보가 (정산주기, 중개 수수료) 적용됩니다.
+
+각 상품별로 다른 계약정보가 적용되어야 한다면, 상품별로 주문을 분리하여 주문 정산건을 생성해야 합니다.
+
+훗날 하나의 정산객체 안에서 상품별로 여러 파트너 및 계약이 적용되도록 확장될 예정입니다.
+
+상품별로 구분이 필요없을 경우 하단의 **discounts**, **additionalFee**, **settlementAmount** 를 통해서 전체 주문정보에 대해서 정산을 등록 할 수 있습니다.
+
+<table>
+  <tr>
+    <td>
+
+      product.**id** string
+
+      상품 아이디
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**name** string
+
+      상품명
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**amount** int64
+
+      낱개 상품 가격
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**tag** string
+
+      상품 태그
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**quantity** int64
+
+      상품 수량
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**discounts** list of dictionary
+
+      상품에 적용된 할인 정보들
+
+      [할인 정보 참고](#할인-유형)
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**additionalFees** list of dictionary
+
+      상품에 적용된 추가 수수료 정보
+
+      [추가 수수료 정보 참고](#추가-수수료)
+
+    </td>
+
+  </tr>
+</table>
 
 ---
 
@@ -606,19 +504,161 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 </div>
 <div>
 
-**Response**
+**Response (order)**
 
 ```json
 {
-  "id": "string",
+  "id": "transfer_id",
+  "partner": {
+    "id": "lecturer_1",
+    "name": "string",
+    "email": "string",
+    "businessRegistrationNumber": "string",
+    "account": {
+      "bank": "string",
+      "currency": "JPY",
+      "number": "string",
+      "holder": "string",
+      "status": "EXPIRED"
+    },
+    "status": "APPROVED",
+    "defaultContractId": "contract_1",
+    "memo": "string",
+    "tags": ["string"],
+    "isHidden": true,
+    "appliedAt": "2023-06-16T08:24:18.178Z"
+  },
+  "type": "ORDER",
+  "status": "SETTLED",
+  "memo": "string",
+  "settlementDate": "2023-01-01",
+  "currency": "KRW",
+  "payoutId": "payout-id",
+  "contract": {
+    "id": "contract_1",
+    "memo": "string",
+    "platformFee": {
+      "amount": 0
+    },
+    "settlementCycle": {
+      "lagDays": 0,
+      "datePolicy": "CALENDAR_DAY",
+      "method": {}
+    },
+    "vatPayer": "MERCHANT",
+    "isHidden": true,
+    "appliedAt": "2023-06-16T08:21:27.949Z"
+  },
+  "settlementType": "PAYMENT",
+  "payment": {
+    /* value: PORTONE, EXTERNAL */
+    "source": "PORTONE",
+    "paymentId": "",
+    "storeId": "",
+    "channelKey": "",
+    "orderName": "",
+    "paymentMethod": "CARD",
+    "paidAt": "2023-06-16T08:21:27.949Z",
+    "easyPayReceipt": {
+      "easyPayProvider": "SAMSUNGPAY",
+      "method": "CARD",
+      "amount": 1000,
+      "discount": 0
+    },
+    "currency": "KRW"
+  },
+  "paymentCancellationId": "",
+  "settlementStartDate": "2023-06-16T08:21:27.949Z",
+  "product": [
+    {
+      "id": "",
+      "name": "",
+      "amount": 1000,
+      "tag": "",
+      "quantity": 1,
+      "discounts": [
+        {
+          "amount": 100,
+          "discountShare": {
+            "id": "string",
+            "partnerShareRate": 500000000,
+            "memo": "string",
+            "isHidden": true,
+            "appliedAt": "2023-06-16T08:30:28.044Z"
+          }
+        }
+      ],
+      "additionalFees": [
+        {
+          "additionalFee": {
+            "id": "string",
+            "fee": {
+              // 5%
+              "rate": 50000000
+            },
+            "memo": "string",
+            "isHidden": true,
+            "vatPayer": "PARTNER",
+            "appliedAt": "2023-06-16T08:29:11.812Z"
+          }
+        }
+      ]
+    }
+  ],
+  "discounts": [
+    {
+      "amount": 100,
+      "discountShare": {
+        "id": "string",
+        "partnerShareRate": 500000000,
+        "memo": "string",
+        "isHidden": true,
+        "appliedAt": "2023-06-16T08:30:28.044Z"
+      }
+    }
+  ],
+  "additionalFees": [
+    {
+      "additionalFee": {
+        "id": "string",
+        "fee": {
+          // 5%
+          "rate": 50000000
+        },
+        "memo": "string",
+        "isHidden": true,
+        "vatPayer": "PARTNER",
+        "appliedAt": "2023-06-16T08:29:11.812Z"
+      }
+    }
+  ],
+  "settlementAmount": {
+    "order": 1000,
+    "payment": 900,
+    "platformFee": 100,
+    "platformFeeVat": 10,
+    "additionalFee": 50,
+    "additionalFeeVat": 5,
+    "discountShare": 50,
+    "discount": 100,
+    "settlement": 785
+  }
+}
+```
+
+**Response (manual)**
+
+```json
+{
+  "id": "transfer_id",
   "partner": {
     "id": "string",
     "name": "string",
     "email": "string",
     "businessRegistrationNumber": "string",
     "account": {
-      "bank": "BNP",
-      "currency": "AED",
+      "bank": "string",
+      "currency": "JPY",
       "number": "string",
       "holder": "string",
       "status": "EXPIRED"
@@ -628,19 +668,17 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
     "memo": "string",
     "tags": ["string"],
     "isHidden": true,
-    "appliedAt": "2023-07-24T02:57:58.170Z"
+    "appliedAt": "2023-06-16T08:24:18.178Z"
   },
-  "status": "IN_PAYOUT",
+  "type": "MANUAL",
+  "status": "SETTLED",
+  "settlementDate": "2023-01-01",
   "memo": "string",
-  "settlementDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
-  },
-  "payoutId": "string",
-  "currency": "AED",
-  "isForTest": true,
-  "settlementAmount": 0
+  "currency": "KRW",
+  "payoutId": "payout-id",
+  "settlementAmount": {
+    "settlement": 1000
+  }
 }
 ```
 
@@ -649,7 +687,7 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 
 ---
 
-### 주문 정산건 생성
+### 주문 정산건 생성 (POST v2/platform/order-transfers)
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -658,25 +696,25 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 
 **Parameters**
 
-**partnerId** string required
+**partnerId** required
 
 주문 정산건에 해당되는 파트너 지정
 
 ---
 
-**contractId** string optional
+**contractId** optional
 
 주문 정산건에 적용될 계약의 아이디. 기본으로 정산될 파트너의 기본 계약이 적용되지만 **contractId** 를 통해 다른 계약을 지정할 경우 지정된 계약의 정보가 적용된다.
 
 ---
 
-**memo** string optional
+**memo** optional
 
 정산건에 내부 구분을 위한 메모
 
 ---
 
-**payment** dictionary required
+**payment** required
 
 주문 정산건에 해당되는 결제 정보. 포트원(Portone) 결제일때 와 외부 결제(External) 일때 요구되는 값이 다릅니다.
 해당 값은 one of 로직으로 간주되어 `"payment": {"portOne": { ... } 혹은 "external": { ... }}` 와 같이 전달해야 합니다.
@@ -688,622 +726,10 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
   <tr>
     <td>
 
-      portOne.**id** string required
-
-      merchant_uid(V1) 혹은 payment_id(V2)
-
-      혹여나 주문은 이루어 졌지만 결제가 이루어지지 않은 경우가 있습니다. 대표적인 예로 포인트 및 쿠폰 (할인) 으로 상품을 사는 case 입니다.
-      해당 경우에는 포트원 결제는 없어도 가맹점 내에서 해당 주문에 대한 주문 아이디를 전달해주셔야 합니다.
-
-    </td>
-
-  </tr>
-</table>
-
-- 외부 결제일때 ("payment": {"external"})
-
-포트원 결제연동 외에 다른 결제연동 서비스를 통해 결제된 주문건일 경우 외부 결제건으로 간주합니다.
-
-그럴경우 해당 결제의 가맹점 주문번호와 결제통화를 필수로 전달해야 하며 optional로 주문이름, 결제 수단과 같은 부수적인 정보를 전달할 수 있습니다.
-
-<table>
-  <tr>
-    <td>
-
-      external.**id** string required
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 가맹점 주문번호
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**currency** enum required
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제통화
-
-      현재는 'KRW', 'JPY', 'USD' 만 지원합니다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**orderName** string optional
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 주문이름
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**method** optional enum
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제수단
-      아래 결제 수단중 하나만 택해서 전달해야 합니다.
-      간편 결제수단("easyPay") 를 제외하고 특정 결제수단에 해당된다면 빈 json 값 (```{}```) 을 전달해야 합니다.
-
-      <table>
-        <tr>
-          <td>
-
-            method.**card** dictionary optional
-
-            신용카드
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**transfer** dictionary optional
-
-            계좌이체
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**virtualAccount** dictionary optional
-
-            가상계좌
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**giftCertificate** dictionary optional
-
-            상품권
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**mobile** dictionary optional
-
-            휴대폰 소액결휴
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**easyPay** dictionary optional
-
-            간편결제
-            <table>
-              <tr>
-                <td>
-
-                    easyPay.**provider** enum required
-
-                    간편결제 브랜드 (i.e. "KAKAOPAY")
-
-
-
-                </td>
-              </tr>
-              <tr>
-                <td>
-
-                  easyPay.**method** enum required
-
-                  간편결제 내의 결제 수단 (i.e. "CARD", "TRANSFER")
-                </td>
-              </tr>
-            </table>
-
-          </td>
-        </tr>
-      </table>
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      payment.**paidAt** optional Date
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제완료 시점
-
-    </td>
-
-  </tr>
-</table>
-
----
-
-**orderDetails** dictionary required
-
-주문 정산건에 해당되는 주문 상세 정보. 주문건에 포함된 상품의 정보를 전달해야 합니다.
-
-one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우에는 `"orderDetails" : {"orderAmount": 금액}` 와 같이 전달하시면 됩니다.
-상품 정보 및 상품별 할인 및 추가수수료를 적용하여 전달하고 싶으신 경우에는 `"orderDetails" : {"orderLines": [{...}, {...}]}` 와 같이 전달하시면 됩니다.
-
-**payment.portOne** 일경우 전달하시지 않으셔도 됩니다. 그럴경우 주문금액은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 으로 계산됩니다.
-
-- 주문금액만 전달할 경우 (`"orderDetails": {"orderAmount": 금액}`)
-
-<table>
-  <tr>
-    <td>
-  
-        **orderAmount** int optional
-
-            정산건에 해당되는 주문금액. 결제금액 + 할인금액 입니다.
-
-            단일 주문건에 정산해야할 파트너 대상이 여러명일 경우, 혹은 다른 이유로 여러 정산 건을 생성하고 싶을 경우, 해당되는 주문금액을 전달하시면 됩니다.
-
-            전달하지 기본값은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 입니다.
-
-            **payment.external** 일때는 **orderAmount** 혹은 **orderLines** 를 통해서 주문금액을 전달해주셔야 합니다.
-    </td>
-
-  </tr>
-</table>
-
-- 상품 정보 및 상품별 금액, 수량 할인 및 추가수수료를 적용하여 전달할 경우 (`"orderDetails": {"orderLines": [{...}, {...}]}`)
-
-해당 정보를 전달하면 주문금액은 전체 상품별 금액들의 합으로 계산됩니다.
-
-<table>
-  <tr>
-    <td>  
-      orderLines.**product** dictionary required
-
-      주문정산건에 해당되는 낱개 상품 정보.
-
-      <table>
-        <tr>
-          <td>
-
-            product.**id** string required
-
-            상품 아이디. 가맹점의 서버에 등록된 상품 아이디를 임의로 보내주시면 됩니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**name** string required
-
-            상품 이름. 가맹점의 서버에 등록된 상품 이름을 임의로 보내주시면 됩니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**amount** int required
-
-            상품 가격. 상품의 낱개 가격입니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**tag** list of string optional
-
-            상품 태그. 내부 구분을 위한 태그입니다.
-
-          </td>
-
-        </tr>
-      </table>
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-      orderLines.**quantity** int required
-
-      상품 갯수
-
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**discounts** list of dictionary optional
-
-        해당 상품에 적용될 할인정보 리스트
-        <table>
-          <tr>
-            <td>
-              discounts.**amount** int required
-
-              할인 금액. 상품에 적용될 할인 금액으로써 상품의 가격보다 클 수 없습니다.
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              discounts.**discountShareId** string required
-
-              할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
-
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**additionalFeeIds** list of string optional
-
-        해당 상품에 적용될 추가수수료 아이디 리스트. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
-      </td>
-    </tr>
-
-</table>
-
----
-
-**settlementStartDate** dictionary 기본값은 결제완료 시점
-
-정산 시작일로써 정산 주기가 적용될 날짜이다. 주문완료, 배송완료 등 정산이 고려되기 시작해야하는 시간을 뜻한다. 기본값은 주문정산건과 연결된 결제의 완료 시점으로 업데이트 된다.
-
-따라서 **payment.portOne** 일때는 포트원 결제완료 시점, **payment.external** 일때는 **payment.paidAt** 값이 기본값으로 적용되며 **payment.paidAt** 값을 전달하지 않을경우 현재시점으로 적용된다.
-
-배송완료 예정일, 수강 오픈일, 등 미래시점으로 지정해 놓으면 해당 시점부터 정산주기가 적용되며 그동안 정산객체의 상태값은 준비 (**PREPARE**)로 적용된다.
-
-<table>
-  <tr>
-    <td>
-
-      settlementStartDate.**year** integer required
-
-      정산 시작일의 연도
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementStartDate.**month** integer required
-
-      정산 시작일의 월
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementStartDate.**day** integer required
-
-      정산 시작일의 일
-    </td>
-
-  </tr>
-</table>
-
----
-
-**discounts** optional
-
-주문 정산건에 적용할 할인 유형들의 리스트. 할인 유형 객체들로 이루어져 있다.
-
-할인 유형이란 특정 주문에 적용된 할인에 대해서 유형별 파트너 분담율을 정산에 계산하기 위한 객체이다.
-
-**orderLines**를 통해 각 상품별 적용될 할인 정보와 **orderLines.discounts** 별개로 해당 파라미터는 주문건 전체에 적용될 할인 정보를 전달할 때 사용합니다.
-
-<table>
-  <tr>
-    <td>
-
-      discount.*discountShareId** string required
-
-      할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      discount.**amount** int64 required
-
-      할인 금액. 주문금액보다 클 수 없습니다.
-
-
-
-    </td>
-
-  </tr>
-
-</table>
-
----
-
-**additionalFeesIds** string optional
-
-주문 정산건에 적용될 추가 수수료 아이디들의 리스트
-
-추가수수료란 특정 주문정산건에 가맹점이 파트너에게 추가 서비스를 제공함으로써 과금되는 수수료 이다. 정산수식에대한 수정이 있지 않는한 기본으로 추가수수료는 주문금액에 부과된다.
-
----
-
-**isForTest** boolean optional 기본값은 false
-
-포트원의 테스트 서버로 정산 데이터를 전달할지 여부를 결정한다. 기본값은 false이다. 테스트 서버로 전달할 경우 정산 데이터는 테스트 서버에만 저장되며 실제 정산에는 반영되지 않는다.
-
----
-
-</div>
-<div>
-**Request body**
-```json
-{
-  "partnerId": "string",
-  "contractId": "string",
-  "memo": "string",
-  "payment": {
-    "portOne": {
-      "id": "string"
-    },
-    "external": {
-      "id": "string",
-      "currency": "AED",
-      "orderName": "string",
-      "paidAt": "2023-07-23T06:27:26.804Z",
-      "method": {
-        "card": {},
-        "transfer": {},
-        "virtualAccount": {},
-        "giftCertificate": {},
-        "mobile": {},
-        "easyPay": {
-          "provider": "KAKAOPAY",
-          "method": "CARD"
-        }
-      }
-    }
-  },
-  "orderDetail": {
-    "orderAmount": 0,
-    "orderLines": [
-      {
-        "product": {
-          "id": "string",
-          "name": "string",
-          "amount": 0,
-          "tag": "string"
-        },
-        "quantity": 0,
-        "discounts": [
-          {
-            "discountShareId": "string",
-            "amount": 0
-          }
-        ],
-        "additionalFeeIds": [
-          "string"
-        ]
-      }
-    ]
-  },
-  "settlementStartDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
-  },
-  "discounts": [
-    {
-      "discountShareId": "string",
-      "amount": 0
-    }
-  ],
-  "additionalFeeIds": [
-    "string"
-  ],
-  "isForTest": true
-}
-```
-
-**Request Examples**
-
-- 포트원 결제일 경우
-
-```text
-curl -X POST https://api.portone.com/v2/platform/transfer/order \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'payment[portOne[paymentId]]=merchant_uid1' \
-     -d 'discounts=[{"amount":1000, "discountShareId": "discount_1"}]'
-```
-
-- 포트원 결제일 경우
-- 상품 정보를 전달할 경우
-
-```text
-curl -X POST https://api.portone.com/v2/platform/transfer/order \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'payment[portOne[paymentId]]=merchant_uid1' \
-     -d 'orderDetail[orderLines]=[{"product":{"name":"product1", "amount":10000, "tag": "tag1"}, "quantity": 1, "discounts": [{"amount":1000, "discountShareId": "discount_1"}], "additionalFeeIds": ["additionalFee_1"]}]'
-```
-
-- 외부 결제일 경우 (**payment[source]** = **EXTERNAL**)
-
-```text
-curl -X POST https://api.portone.com/v2/platform/transfer/order \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'payment[external] = {"payment_id" : "merchant_uid", "currency": "KRW"} \
-     -d 'orderAmount = 10000' \
-     -d 'discounts=[{"amount":1000, "discountShareId": "discount_1"}]'
-```
-
-- 외부 결제일 경우
-- 상품 정보를 전달할 경우
-
-```text
-curl -X POST https://api.portone.com/v2/platform/transfer/order \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'payment[external] = {"payment_id" : "merchant_uid", "currency": "KRW"} \
-     -d 'orderDetail[orderLines]=[{"product":{"name":"product1", "amount":10000, "tag": "tag1"}, "quantity": 1, "discounts": [{"amount":1000, "discountShareId": "discount_1"}], "additionalFeeIds": ["additionalFee_1"]}]'
-```
-
-**Response**
-
-주문 정산객체가 반환됩니다.
-
-**정산 시작일 참고**
-
-- 정산시작일(settlementStartDate)을 전달하지 않을경우 결제완료 시점으로 기본으로 지정됩니다. 이 경우 정산 api호출시점에 결제완료가 아직 되지 않았다면 에러를 반환합니다.
-- 정산시작일(settlementStartDate)을 미래의 시점으로 전달할 경우 status 는 PREPARE이고 이에 적용될 계약정보는 정산api를 호출한 시점에 등록된 계약으로 적용되나 계약정보가 바뀌어 업데이트 될 여지가 있습니다.
-
----
-
-- 포트원 결제일 경우
-- 상품 정보를 전달할 경우
-
-```json
-{
-  "transfer": {
-    "id": "transfer_id1",
-    "partner": {
-      "id": "lecturer_1",
-      "name": "파이썬 강사",
-      "email": "python@platform.com",
-      "businessRegistrationNumber": "",
-      "account": {
-        "bank": "신한은행",
-        "currency": "KRW",
-        "number": "110-123-456789",
-        "holder": "파이썬 강사",
-        "status": "APPROVED"
-      },
-      "status": "APPROVED",
-      "defaultContractId": "lecture_contract_1",
-      "memo": "컴싸 강사",
-      "tags": ["코딩"],
-      "isHidden": false,
-      "appliedAt": "2023-07-23T06:35:29.110Z"
-    },
-    "status": "SETTLED",
-    "memo": "string",
-    "settlementDate": {
-      "year": 2023,
-      "month": 7,
-      "day": 31
-    },
-    "payoutId": "payout_1", // 이체 ID는 실제 이체완료 상태값 업데이트 후에 생성됩니다
-    "currency": "KRW",
-    "isForTest": false,
-    "settlementAmount": {
-      "order": 1000,
-      "payment": 900,
-      "platformFee": 100,
-      "platformFeeVat": 10,
-      "additionalFee": 50,
-      "additionalFeeVat": 5,
-      "discountShare": 50,
-      "discount": 100,
-      "settlement": 785
-    }
-  }
-}
-```
-
-</div>
-</div>
-
----
-
-### 주문 취소 정산건 생성
-
-<div class="grid-cols-2 gap-4 md:grid">
-<div>
-
-주문 취소 정산건이란 결제 취소를 기반으로 파트너에게 정산금을 차감할 수 있는 api입니다.
-
-취소 정산 등록은 사전에 주문 정산이 등록되어 있는 경우에만 사용할 수 있습니다.
-
-결제 취소에 대한 id를 전달주셔야 하며 취소시 차감되는 주문금액 및 할인금액 에 따라 차감될 정산금액을 계산합니다.
-
-**Parameters**
-
-**partnerId** required
-
-주문 취소 정산건에 해당되는 파트너 지정
-
----
-
-**memo** optional
-
-주문 취소 정산 건에 내부 구분을 위한 메모
-
----
-
-**payment** required
-
-주문 정산건에 해당되는 결제 정보. 포트원(Portone) 결제일때 와 외부 결제(External) 일때 요구되는 값이 다릅니다.
-해당 값은 one of 로직으로 간주되어 `"payment": {"portOne": { ... } 혹은 "external": { ... }}` 와 같이 전달해야 합니다.
-
-주문 정산건의 **payment** 에서 추가되는 부분은 결제취소 아이디 (cancellationId)를 전달하는 점입니다.
-
-- 포트원 결제일때 ("payment": {"portOne"})
-  포트원 결제 연동 서비스 (sdk, api)에 소록되는 가맹점의 merchant_uid (V1) 혹은 payment_id(V2) 값을 건내주셔야 합니다.
-
-<table>
-  <tr>
-    <td>
-
       portOne.**id** required
 
       merchant_uid(V1) 혹은 payment_id(V2)
 
-      혹여나 주문은 이루어 졌지만 결제가 이루어지지 않은 경우가 있습니다. 대표적인 예로 포인트 및 쿠폰 (할인) 으로 상품을 사는 case 입니다.
-      해당 경우에는 포트원 결제는 없어도 가맹점 내에서 해당 주문에 대한 주문 아이디를 전달해주셔야 합니다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      portOne.**cancellationId** required
-
-      포트원 결제 취소 아이디. 주문취소 정산시 검증을 위해 결제 취소 아이디를 요구합니다.
-
-      cancellation_id 에 대한 정보는 [v2 결제관련 api](https://developers.portone.io/docs/ko/api-v2/payment) 를 참고해주세요.
-      `v2/payments/{'{payment_id}'}` 혹은 `v2/payments` 를 통해 결제내역 조회한뒤 cancellations json 에서 확인하실 수 있습니다.
     </td>
 
   </tr>
@@ -1329,9 +755,52 @@ curl -X POST https://api.portone.com/v2/platform/transfer/order \
   <tr>
     <td>
 
-    external.**cancellationId** optional
+      external.**currency** required
 
-    외부 결제연동 서비스를 통해 결제된 주문건의 결제 취소 아이디. 외부 결제서비스는 검증을 할수 없기에 필수값이 아닙니다.
+      외부 결제연동 서비스를 통해 결제된 주문건의 결제통화
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      external.**orderName** optional
+
+      외부 결제연동 서비스를 통해 결제된 주문건의 주문이름
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      external.**method** optional enum
+
+      외부 결제연동 서비스를 통해 결제된 주문건의 결제수단
+      아래 결제 수단중 하나만 택해서 전달해야 합니다.
+      간편 결제수단("easyPay") 를 제외하고 특정 결제수단에 해당된다면 빈 json 값 ('{}') 을 전달해야 합니다.
+
+      <table>
+        <tr>
+          <td>
+
+            method.card
+
+          </td>
+        </tr>
+      </table>
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      payment.**paidAt** optional Date
+
+      외부 결제연동 서비스를 통해 결제된 주문건의 결제완료 시점
+
     </td>
 
   </tr>
@@ -1339,113 +808,137 @@ curl -X POST https://api.portone.com/v2/platform/transfer/order \
 
 ---
 
-**orderDetails** required
+**settlementStartDate** optional 기본값은 결제완료 시점
 
-주문취소 정산건에 해당되는 주문 상세 정보. 기존 주문건에 포함된 상품의 정보중 취소하고자 한는 항목을 전달해야 합니다.
+정산 시작일로써 정산 주기가 적용될 날짜이다. 주문완료, 배송완료 등 정산이 고려되기 시작해야하는 시간을 뜻한다. 기본값은 주문정산건과 연결된 결제의 완료 시점으로 업데이트 된다.
 
-one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 경우에는 `"orderDetails" : {"orderAmount": 금액}` 와 같이 전달하시면 됩니다.
-취소하고자 하는 상품 정보 및 상품별 할인금 을 전달하고 싶으신 경우에는 `"orderDetails" : {"orderLines": [{...}, {...}]}` 와 같이 전달하시면 됩니다.
+따라서 **payment[source]** : **PORTONE** 일때는 포트원 결제완료 시점, **payment[source]** : **EXTERNAL** 일때는 **payment[paidAt]** 값이 기본값으로 적용된다.
 
-- 주문취소 금액만 전달할 경우 (`"orderDetails": {"orderAmount": 금액}`)
-
-<table>
-  <tr>
-    <td>
-  
-        **orderAmount** optional
-
-            주문 취소시 적용될 주문 취소금액. 주문금액 인점 유의 하셔야 합니다. 주문금액은 결제금액 + 할인금액 입니다.
-
-            해당 값이 주문 정산시 주문금액과 동일한 경우에는 따로 취소하실 할인금액을 전달하지 않으셔도 환불 처리 됩니다.
-    </td>
-
-  </tr>
-</table>
-
-- 상품 정보 및 상품별 금액, 수량 할인 및 추가수수료를 적용하여 전달할 경우 (`"orderDetails": {"orderLines": [{...}, {...}]}`)
-
-해당 정보를 전달하면 주문금액은 전체 상품별 금액들의 합으로 계산됩니다.
-
-<table>
-  <tr>
-    <td>  
-      orderLines.**productId** dictionary required
-
-      취소하고자 하는 상품 아이디
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-      orderLines.**quantity** required
-
-      취소하고자 하는 상품 갯수
-
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**discounts** list of dictionary optional
-
-        해당 상품에서 취소하고자 하는  할인정보 리스트
-
-        상품에 대한 모든 수량 취소시 모든 discount도 자동으로 취소됩니다.
-        <table>
-          <tr>
-            <td>
-              discounts.**amount** required
-
-              취소할 할인 금액. 해당 상품에 적용되었던 할인 금액중 환불에 해당하는 금액을 전달 주시면 됩니다.
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              discounts.**discountShareId** required
-
-              할인 유형 아이디. 주문 정산시 상품에 등록되었던 할인 유형 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
-
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-
-</table>
+배송완료 예정일, 수강 오픈일, 등 미래시점으로 지정해 놓으면 해당 시점부터 정산주기가 적용되며 그동안 정산객체의 상태값은 준비 (**PREPARE**)로 적용된다.
 
 ---
 
-**settlementStartDate** dictionary 기본값은 결제완료 시점
+**orderAmount** optional
 
-취소 정산 또한 주문 정산과 동일하게 정산주기가 적용됩니다. 따라서 주문 정산건이 이미 정산이 되었고 해당 주문건에 대한 취소정산이 이루어졌을때 취소금액은 다음 정산주기에 적용됩니다.
+정산건에 해당되는 주문금액. 결제금액 + 할인금액 입니다.
 
-따라서 **payment.portOne** 일때는 포트원 결제취소 시점 값이 기본값으로 적용됩니다.
+단일 주문건에 정산해야할 파트너 대상이 여러명일 경우, 혹은 다른 이유로 여러 정산 건을 생성하고 싶을 경우, 해당되는 주문금액을 전달하시면 됩니다.
+
+기본값은 주어진 **payment[source]** 에 해당되는 결제금액 + **discounts[amount]** 의 합에 해당되는 할인금액 입니다.
+
+해당 파라미터를 통해 주문금액을 전달할 경우, **product** 파라미터를 사용하실 수 없습니다. **product** 를 사용하실 경우 **product** 의 각 상품별 금액과 갯수의 합이 주문금액이 됩니다.
+
+따라서, **product**를 사용할 경우 **orderAmount** 는 전달하지 않으셔도 되며, **orderAmount**의 기본값은 적용되지 않습니다.
+
+**payment[source] = EXTERNAL** 일때는 **orderAmount** 혹은 **product** 를 통해서 주문금액을 전달해주셔야 합니다.
+
+---
+
+**product** list of dictionary
+
+주문정산건에 해당되는 상품들의 리스트. 상품 객체들로 이루어져있다.
 
 <table>
   <tr>
     <td>
 
-      settlementStartDate.**year** integer required
+      product.**id** required
 
-      정산 시작일의 연도
+      상품 아이디. 가맹점의 서버에 등록된 상품 아이디를 임의로 보내주시면 됩니다.
+
     </td>
 
   </tr>
   <tr>
     <td>
 
-      settlementStartDate.**month** integer required
+      product.**name** required
 
-      정산 시작일의 월
+      상품 이름. 가맹점의 서버에 등록된 상품 이름을 임의로 보내주시면 됩니다.
+
     </td>
 
   </tr>
   <tr>
     <td>
 
-      settlementStartDate.**day** integer required
+      product.**amount** required
 
-      정산 시작일의 일
+      상품 가격. 상품의 낱개 가격입니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**tag** optional
+
+      상품 태그. 내부 구분을 위한 태그입니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**quantity** optional
+
+      상품 갯수
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**discounts** optional
+
+      해당 상품에 적용될 할인정보 리스트
+
+      <table>
+        <tr>
+          <td>
+
+            discounts.**amount** required
+
+            할인 금액. 상품에 적용될 할인 금액으로써 상품의 가격보다 클 수 없습니다.
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            discounts.**discountShareId** required
+
+            할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
+
+          </td>
+        </tr>
+      </table>
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      product.**additionalFees** optional
+
+      해당 상품에 적용될 추가수수료 정보 리스트
+
+      <table>
+        <tr>
+          <td>
+
+            additionalFees.**additionalFeeId** required
+
+            추가수수료 아이디. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
+
+          </td>
+        </tr>
+      </table>
+
     </td>
 
   </tr>
@@ -1455,17 +948,19 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
 
 **discounts** optional
 
-주문 취소시 적용될 할인정보 리스트
+주문 정산건에 적용할 할인 유형들의 리스트. 할인 유형 객체들로 이루어져 있다.
 
-모든 금액 취소시 모든 discount도 자동으로 취소됩니다.
+할인 유형이란 특정 주문에 적용된 할인에 대해서 유형별 파트너 분담율을 정산에 계산하기 위한 객체이다.
+
+**product**를 통해 각 상품별 적용될 할인 정보와 **product[discounts]** 별개로 해당 파라미터는 주문건 전체에 적용될 할인 정보를 전달할 때 사용합니다.
 
 <table>
   <tr>
     <td>
 
-      discount.*discountShareId** string required
+      discount.*discountShareId** string
 
-      할인 유형 아이디. 주문 정산시 등록되었던 할인 유형 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
+      할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
 
     </td>
 
@@ -1473,9 +968,9 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
   <tr>
     <td>
 
-      discount.**amount** int64 required
+      discount.**amount** int64
 
-      취소할 할인 금액. 해당 주문에 적용되었던 할인 금액중 환불에 해당하는 금액을 전달 주시면 됩니다.
+      할인 금액. 주문금액보다 클 수 없습니다.
 
     </td>
 
@@ -1485,72 +980,389 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
 
 ---
 
-**isForTest** boolean optional 기본값은 false
+**additionalFees** optional
 
-포트원의 테스트 서버로 정산 데이터를 전달할지 여부를 결정한다. 기본값은 false이다. 테스트 서버로 전달할 경우 정산 데이터는 테스트 서버에만 저장되며 실제 정산에는 반영되지 않는다.
+주문 정산건에 적용될 추가 수수료들의 리스트. 추가 수수료 객체들로 이루어져있다.
+
+추가수수료란 특정 주문정산건에 가맹점이 파트너에게 추가 서비스를 제공함으로써 과금되는 수수료 이다. 정산수식에대한 수정이 있지 않는한 기본으로 추가수수료는 주문금액에 부과된다.
+
+<table>
+  <tr>
+    <td>
+
+      additionalFee.**id** string
+
+      추가수수료 아이디. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
+
+    </td>
+
+  </tr>
+</table>
+
+---
+
+</div>
+<div>
+
+**Request**
+
+- 포트원 결제일 경우 (**payment[source]** = **PORTONE**)
+
+```text
+curl -X POST https://api.portone.com/v2/platform/transfer/order \
+     -u {api_key} \
+     -d 'partnerId=lecturer_1' \
+     -d 'payment[source] = PORTONE' \
+     -d 'payment[paymentId]=merchant_uid1' \
+     -d 'discounts=[{"amount":1000, "discountShareId": "discount_1"}]'
+```
+
+- 포트원 결제일 경우 (**payment[source]** = **PORTONE**)
+- 상품 정보를 전달할 경우 (**product**)
+
+```text
+curl -X POST https://api.portone.com/v2/platform/transfer/order \
+     -u {api_key} \
+     -d 'partnerId=lecturer_1' \
+     -d 'payment[source] = PORTONE' \
+     -d 'payment[paymentId]=merchant_uid1' \
+     -d 'products=[{"name":"product1", "amount":10000, "tag": "tag1", "quantity": 1, "discounts": [{"amount":1000, "discountShareId": "discount_1"}], "additionalFees": [{"additionalFeeId": "additionalFee_1"}]}]'
+```
+
+- 외부 결제일 경우 (**payment[source]** = **EXTERNAL**)
+
+```text
+curl -X POST https://api.portone.com/v2/platform/transfer/order \
+     -u {api_key} \
+     -d 'partnerId=lecturer_1' \
+     -d 'payment[source] = EXTERNAL' \
+     -d 'payment[paymentId] = merchant_uid' \
+     -d 'orderAmount = 10000' \
+     -d 'discounts=[{"amount":1000, "discountShareId": "discount_1"}]'
+```
+
+- 외부 결제일 경우 (**payment[source]** = **EXTERNAL**)
+- 상품 정보를 전달할 경우 (**product**)
+
+```text
+curl -X POST https://api.portone.com/v2/platform/transfer/order \
+     -u {api_key} \
+     -d 'partnerId=lecturer_1' \
+     -d 'payment[source] = EXTERNAL' \
+     -d 'payment[paymentId] = merchant_uid' \
+     -d 'products=[{"name":"product1", "amount":1000, "tag": "tag1", "quantity": 1, "discounts": [{"amount":1000, "discountShareId": "discount_1"}], "additionalFees": [{"additionalFeeId": "additionalFee_1"}]}]'
+```
+
+**Response**
+
+주문 정산객체가 반환됩니다.
+
+**정산 시작일 참고**
+
+- 정산시작일(settlementStartDate)을 전달하지 않을경우 결제완료 시점으로 기본으로 지정됩니다. 이 경우 정산 api호출시점에 결제완료가 아직 되지 않았다면 에러를 반환합니다.
+- 정산시작일(settlementStartDate)을 미래의 시점으로 전달할 경우 status 는 PREPARE이고 이에 적용될 계약정보는 정산api를 호출한 시점에 등록된 계약으로 적용되나 계약정보가 바뀌어 업데이트 될 여지가 있습니다.
+
+---
+
+- 포트원 결제일 경우 (**payment[source]** = **PORTONE**)
+- 상품 정보를 전달할 경우 (**product**)
+
+```json
+{
+  "id": "transfer_id",
+  "partner": {
+    "id": "lecturer_1",
+    "name": "파이썬 강사",
+    "email": "python@platform.com",
+    "businessRegistrationNumber": "",
+    "account": {
+      "bank": "신한은행",
+      "currency": "KRW",
+      "number": "110-123-456789",
+      "holder": "파이썬 강사",
+      "status": "APPROVED"
+    },
+    "status": "APPROVED",
+    "defaultContractId": "lecture_contract_1",
+    "memo": "컴싸 강사",
+    "tags": ["코딩"],
+    "isHidden": false,
+    "appliedAt": "2023-01-16T08:24:18.178Z"
+  },
+  "type": "ORDER",
+  "status": "SETTLED",
+  "memo": "",
+  "settlementDate": "2023-01-31",
+  "currency": "KRW",
+  "payoutId": "payout-id",
+  "contract": {
+    "id": "lectur_contract_1",
+    "memo": "",
+    "platformFee": {
+      "rate": 100000000
+    },
+    "settlementCycle": {
+      "lagDays": 3,
+      "datePolicy": "CALENDAR_DAY",
+      "method": { "dayOfMonth": [31] }
+    },
+    "vatPayer": "PARTNER",
+    "isHidden": false,
+    "appliedAt": "2023-06-16T08:21:27.949Z"
+  },
+  "settlementType": "PAYMENT", // or CANCEL
+  "payment": {
+    /* value: PORTONE, EXTERNAL */
+    "source": "PORTONE",
+    "paymentId": "merchant_uid_1",
+    "storeId": "lectureplatform1",
+    "channelKey": "toss",
+    "orderName": "",
+    "paymentMethod": "CARD",
+    "paidAt": "2023-06-16T08:21:27.949Z",
+    "easyPayReceipt": {
+      "easyPayProvider": "SAMSUNGPAY",
+      "method": "CARD",
+      "amount": 9000,
+      "discount": 0
+    },
+    "currency": "KRW"
+  },
+  "paymentCancellationId": "",
+  "settlementStartDate": "2023-01-18T08:21:27.949Z",
+  "product": [
+    {
+      "id": "python_lecture_1",
+      "name": "파이썬 여름 강의",
+      "amount": 10000,
+      "tag": "",
+      "quantity": 1,
+      "discounts": [
+        {
+          "amount": 1000,
+          "discountShare": {
+            "id": "product_coupon1",
+            "partnerShareRate": 500000000,
+            "memo": "상품 쿠폰",
+            "isHidden": false,
+            "appliedAt": "2023-01-16T08:30:28.044Z"
+          }
+        }
+      ],
+      "additionalFees": [
+        {
+          "additionalFee": {
+            "id": "additional_fee1",
+            "fee": {
+              // 5%
+              "rate": 50000000
+            },
+            "memo": "마케팅 채널 수수료",
+            "isHidden": false,
+            "vatPayer": "PARTNER",
+            "appliedAt": "2023-01-16T08:29:11.812Z"
+          }
+        }
+      ]
+    }
+  ],
+  "discounts": [
+    {
+      "amount": 100,
+      "discountShare": {
+        "id": "general_point_1",
+        "partnerShareRate": 500000000,
+        "memo": "전체 포인트",
+        "isHidden": false,
+        "appliedAt": "2023-01-16T08:30:28.044Z"
+      }
+    }
+  ],
+  "additionalFees": [],
+  "settlementAmount": {
+    "order": 1000,
+    "payment": 900,
+    "platformFee": 100,
+    "platformFeeVat": 10,
+    "additionalFee": 50,
+    "additionalFeeVat": 5,
+    "discountShare": 50,
+    "discount": 100,
+    "settlement": 785
+  }
+}
+```
+
+</div>
+</div>
+
+---
+
+### 주문 취소 정산건 생성 (Cancel)
+
+<div class="grid-cols-2 gap-4 md:grid">
+<div>
+
+주문 취소 정산건이란 결제 취소를 기반으로 파트너에게 정산금을 차감할 수 있는 api입니다.
+
+취소 정산 등록은 사전에 주문 정산이 등록되어 있는 경우에만 사용할 수 있습니다.
+
+**Parameters**
+
+**partnerId** required
+
+주문 취소 정산건에 해당되는 파트너 지정
+
+---
+
+**paymentId** required
+
+주문 취소 정산건에 해당되는 결제 아이디 지정
+
+---
+
+**cancellationId** optional
+
+PORTONE 결제인 경우에만 입력하셔도 됩니다.
+
+cancellation_id 에 대한 정보는 [v2 결제관련 api](https://developers.portone.io/docs/ko/api-v2/payment) 를 참고해주세요.
+v2/payments/{'{payment_id}'} 혹은 v2/payments 를 통해 결제내역 조회한뒤 cancellations json 에서 확인하실 수 있습니다.
+
+---
+
+**memo** optional
+
+정산건에 내부 구분을 위한 메모
+
+---
+
+**cancelProduct** list of dictionary
+
+취소 주문정산건에 해당되는 상품들의 리스트.
+
+주문 정산시 등록한 상품들 중 취소하고자 하는 상품들을 리스트로 보내주시면 됩니다.
+
+따라서 상품 과 그 수량 그리고 환불하고자 하는 각 상품별 할인금액을 전달 주실 수 있습니다.
+
+<table>
+  <tr>
+    <td>
+
+      cancelProduct.**id** required
+
+      상품 아이디. 주문 정산시 등록되었던 상품 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      cancelProduct.**quantity** optional
+
+      취소하고자 하는 상품 갯수
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      cancelProduct.**discounts** optional
+
+      해당 상품취소에 적용될 할인정보 리스트
+
+      상품에 대한 모든 수량 취소시 모든 discount도 자동으로 취소됩니다.
+
+      <table>
+        <tr>
+          <td>
+
+            discounts.**amount** required
+
+            취소할 할인 금액. 해당 상품에 적용되었던 할인 금액중 환불에 해당하는 금액을 전달 주시면 됩니다.
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            discounts.**discountShareId** required
+
+            할인 유형 아이디. 주문 정산시 상품에 등록되었던 할인 유형 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
+
+          </td>
+        </tr>
+      </table>
+
+    </td>
+
+  </tr>
+</table>
+
+**discounts** optinal list of dictionary
+
+주문 취소시 적용될 할인정보 리스트
+
+모든 금액 취소시 모든 discount도 자동으로 취소됩니다.
+
+<table>
+  <tr>
+    <td>
+
+      discounts.**amount** required
+
+      취소할 할인 금액. 해당 주문에 적용되었던 할인 금액중 환불에 해당하는 금액을 전달 주시면 됩니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      discounts.**discountShareId** required
+
+      할인 유형 아이디. 주문 정산시 등록되었던 할인 유형 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
+
+    </td>
+
+  </tr>
+</table>
+
+---
+
+**cancelAmount** optional int64
+
+주문 취소시 적용될 주문 취소금액. 주문금액 인점 유의 하셔야 합니다. 주문금액은 결제금액 + 할인금액 입니다.
+
+해당 값이 주문 정산시 주문금액과 동일한 경우에는 따로 취소하실 할인금액을 전달하지 않으셔도 환불 처리 됩니다.
+
+해당 값을 전달할 경우 cancelProduct을 전달하실 수 없습니다.
+
+---
+
+**settlementStartDate** optional 기본값은 결제완료 시점
+
+정산 시작일로써 정산 주기가 적용될 날짜이다. 주문완료, 배송완료 등 정산이 고려되기 시작해야하는 시간을 뜻한다. 기본값은 주문정산건과 연결된 결제의 완료 시점으로 업데이트 된다.
+
+취소 정산 또한 주문 정산과 동일하게 정산주기가 적용됩니다. 따라서 주문 정산건이 이미 정산이 되었고 해당 주문건에 대한 취소정산이 이루어졌을때 취소금액은 다음 정산주깅
 
 </div>
 <div>
 
 취소 정산의 취소 주문금액 , 상품별 취소 주문 금액 및 수량, 주문 취소 할인금액 및 상품별 취소 할인 금액에 따라 새로운 음수 정산금액을 계산하신다고 이해하시면 됩니다.
 
-**Request Body**
-
-```json
-{
-  "partnerId": "string",
-  "memo": "string",
-  "payment": {
-    "portOne": {
-      "id": "string",
-      "cancellationId": "string"
-    },
-    "external": {
-      "id": "string",
-      "cancellationId": "string"
-    }
-  },
-  "orderDetail": {
-    "orderAmount": 0,
-    "orderLines": [
-      {
-        "productId": "string",
-        "quantity": 0,
-        "discounts": [
-          {
-            "discountShareId": "string",
-            "amount": 0
-          }
-        ]
-      }
-    ]
-  },
-  "discounts": [
-    {
-      "discountShareId": "string",
-      "amount": 0
-    }
-  ],
-  "settlementStartDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
-  },
-  "isForTest": false
-}
-```
-
 **Request**
 
 - PORTONE 결제인 경우 (cancellationId 필수)
 
 ```text
-curl -X POST https://api.portone.com/v2/platform/order-cancel-transfer \
+curl -X POST https://api.portone.com/v2/platform/transfer/cancel \
      -u {api_key} \
      -d 'partnerId=lecturer_1' \
-     -d  payment[portOne[paymentId]]=merchant_uid1' \
-     -d 'payment[portOne[cancellationId]]=merchant_uid1_cancel1' \
-     -d 'orderDetail[orderLines]=[{"productId" : "python_lecture_1", "quantity":1 }]' \
+     -d  paymentId=merchant_uid1' \
+     -d 'cancellationId=merchant_uid1_cancel1' \
+     -d 'cancelProduct=[{id : python_lecture_1, amount : 10000 }]' \
 ```
 
 **Response**
@@ -1559,48 +1371,126 @@ curl -X POST https://api.portone.com/v2/platform/order-cancel-transfer \
 
 ```json
 {
-  "transfer": {
-    "id": "transfer_id",
-    "partner": {
-      "id": "lecturer_1",
-      "name": "파이썬 강사",
-      "email": "python@platform.com",
-      "businessRegistrationNumber": "",
-      "account": {
-        "bank": "신한은행",
-        "currency": "KRW",
-        "number": "110-123-456789",
-        "holder": "파이썬 강사",
-        "status": "APPROVED"
-      },
-      "status": "APPROVED",
-      "defaultContractId": "lecutre_contract_1",
-      "memo": "컴싸 강사",
-      "tags": ["코딩"],
-      "isHidden": true,
-      "appliedAt": "2023-07-23T15:25:33.518Z"
+  "id": "transfer_id",
+  "partner": {
+    "id": "lecturer_1",
+    "name": "파이썬 강사",
+    "email": "python@platform.com",
+    "businessRegistrationNumber": "",
+    "account": {
+      "bank": "신한은행",
+      "currency": "KRW",
+      "number": "110-123-456789",
+      "holder": "파이썬 강사",
+      "status": "APPROVED"
     },
-    "status": "SETTLED",
+    "status": "APPROVED",
+    "defaultContractId": "lecture_contract_1",
+    "memo": "컴싸 강사",
+    "tags": ["코딩"],
+    "isHidden": false,
+    "appliedAt": "2023-01-16T08:24:18.178Z"
+  },
+  "type": "ORDER",
+  "status": "SETTLED",
+  "memo": "",
+  "settlementDate": "2023-01-31",
+  "currency": "KRW",
+  "payoutId": "payout-id",
+  "contract": {
+    "id": "lectur_contract_1",
     "memo": "",
-    "settlementDate": {
-      "year": 2023,
-      "month": 7,
-      "day": 31
+    "platformFee": {
+      "rate": 100000000
     },
-    "payoutId": "",
-    "currency": "KRW",
-    "isForTest": false,
-    "settlementAmount": {
-      "order": 1000,
-      "payment": 900,
-      "platformFee": 100,
-      "platformFeeVat": 10,
-      "additionalFee": 50,
-      "additionalFeeVat": 5,
-      "discountShare": 50,
-      "discount": 100,
-      "settlement": 785
+    "settlementCycle": {
+      "lagDays": 3,
+      "datePolicy": "CALENDAR_DAY",
+      "method": { "dayOfMonth": [31] }
+    },
+    "vatPayer": "PARTNER",
+    "isHidden": false,
+    "appliedAt": "2023-06-16T08:21:27.949Z"
+  },
+  "settlementType": "PAYMENT", // or CANCEL
+  "payment": {
+    /* value: PORTONE, EXTERNAL */
+    "source": "PORTONE",
+    "paymentId": "merchant_uid_1",
+    "storeId": "lectureplatform1",
+    "channelKey": "toss",
+    "orderName": "",
+    "paymentMethod": "CARD",
+    "paidAt": "2023-06-16T08:21:27.949Z",
+    "easyPayReceipt": {
+      "easyPayProvider": "SAMSUNGPAY",
+      "method": "CARD",
+      "amount": 9000,
+      "discount": 0
+    },
+    "currency": "KRW"
+  },
+  "paymentCancellationId": "",
+  "settlementStartDate": "2023-01-18T08:21:27.949Z",
+  "product": [
+    {
+      "id": "python_lecture_1",
+      "name": "파이썬 여름 강의",
+      "amount": 10000,
+      "tag": "",
+      "quantity": 1,
+      "discounts": [
+        {
+          "amount": 1000,
+          "discountShare": {
+            "id": "product_coupon1",
+            "partnerShareRate": 500000000,
+            "memo": "상품 쿠폰",
+            "isHidden": false,
+            "appliedAt": "2023-01-16T08:30:28.044Z"
+          }
+        }
+      ],
+      "additionalFees": [
+        {
+          "additionalFee": {
+            "id": "additional_fee1",
+            "fee": {
+              // 5%
+              "rate": 50000000
+            },
+            "memo": "마케팅 채널 수수료",
+            "isHidden": false,
+            "vatPayer": "PARTNER",
+            "appliedAt": "2023-01-16T08:29:11.812Z"
+          }
+        }
+      ]
     }
+  ],
+  "discounts": [
+    {
+      "amount": 100,
+      "discountShare": {
+        "id": "general_point_1",
+        "partnerShareRate": 500000000,
+        "memo": "전체 포인트",
+        "isHidden": false,
+        "appliedAt": "2023-01-16T08:30:28.044Z"
+      }
+    }
+  ],
+  "additionalFees": [],
+  "settlementAmount": {
+    "order": 1000,
+    "payment": 900,
+    "platformFee": 100,
+    "platformFeeVat": 10,
+    "additionalFee": 50,
+    "additionalFeeVat": 5,
+    "discountShare": 50,
+    "discount": 100,
+    "settlement": 785
   }
 }
 ```
@@ -1617,93 +1507,39 @@ curl -X POST https://api.portone.com/v2/platform/order-cancel-transfer \
 
 **Parameters**
 
-**partnerId** string required
+**partnerId** required
 
 해당 수동 정산건이 적용될 파트너의 고유 아이디
 
 ---
 
-**settlementAmount** int required
+**settlementAmount** required
 
 해당 수동 정산건으로 적용하길 원하는 금액. 음수 및 양수 둘다 가능하다.
 
 ---
 
-**settlementDate** dictionary optional 기본값은 파트너의 다가올 정산일
+**settlementDate** optional 기본값은 파트너의 다가올 정산일
 
 해당 수동 정산건이 적용되길 원하는 정산일. 전달하지 않을경우 해당 파트너의 가장 가까운 미래 정산일이 적용된다.
 
-<table>
-  <tr>
-    <td>
-
-      settlementDate.**year** integer required
-
-      정산일 연도
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**month** integer required
-
-      정산 월
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**day** integer required
-
-      정산일
-    </td>
-
-  </tr>
-</table>
-
 ---
 
-**memo** string optional
+**memo** optional
 
 해당 수동 정산건 등록시 내부 관리를 위해 전달하는 메모.
-50자 까지 가능하다다
-
----
-
-**isForTest** boolean optional 기본값은 false
-
-포트원의 테스트 서버로 정산 데이터를 전달할지 여부를 결정한다. 기본값은 false이다. 테스트 서버로 전달할 경우 정산 데이터는 테스트 서버에만 저장되며 실제 정산에는 반영되지 않는다.
 
 </div>
 <div>
-**Request Body**
-
-```json
-Example Value
-Schema
-{
-  "partnerId": "string",
-  "memo": "string",
-  "settlementAmount": 0,
-  "settlementDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
-  },
-  "isForTest": true
-}
-```
 
 **Request**
 
 ```text
-curl -X POST https://api.portone.com/v2/platform/manual-transfers \
+curl -X POST https://api.portone.com/v2/platform/transfer/manual \
      -u {api_key} \
      -d 'partnerId=lecturer_1' \
      -d 'settlementAmount=300000' \
-     -d 'settlementDate={"year":2023,"month":7,"day":31}' \
+     -d 'settlementDate=2023-01-31' \
      -d 'memo=이체건 차감'
 ```
 
@@ -1713,38 +1549,34 @@ curl -X POST https://api.portone.com/v2/platform/manual-transfers \
 
 ```json
 {
-  "transfer": {
-    "id": "transfer_id",
-    "partner": {
-      "id": "lecturer_1",
-      "name": "파이썬 강사",
-      "email": "python@platform.com",
-      "businessRegistrationNumber": "",
-      "account": {
-        "bank": "신한은행",
-        "currency": "KRW",
-        "number": "110-123-456789",
-        "holder": "string",
-        "status": "APPROVED"
-      },
-      "status": "APPROVED",
-      "defaultContractId": "lecutre_contract_1",
-      "memo": "string",
-      "tags": ["string"],
-      "isHidden": false,
-      "appliedAt": "2023-07-24T02:39:29.892Z"
+  "id": "transfer_id",
+  "partner": {
+    "id": "lecturer_1",
+    "name": "파이썬 강사",
+    "email": "string",
+    "businessRegistrationNumber": "string",
+    "account": {
+      "bank": "string",
+      "currency": "KRW",
+      "number": "string",
+      "holder": "string",
+      "status": "APPROVED"
     },
-    "status": "IN_PAYOUT",
-    "memo": "수동정산",
-    "settlementDate": {
-      "year": 2023,
-      "month": 7,
-      "day": 31
-    },
-    "payoutId": "",
-    "currency": "KRW",
-    "isForTest": false,
-    "settlementAmount": 300000
+    "status": "APPROVED",
+    "defaultContractId": "string",
+    "memo": "파이썬 강사",
+    "tags": ["string"],
+    "isHidden": true,
+    "appliedAt": "2023-06-16T08:24:18.178Z"
+  },
+  "type": "MANUAL",
+  "status": "SETTLED",
+  "settlementDate": "2023-01-01",
+  "memo": "이체건 차감",
+  "currency": "KRW",
+  "payoutId": "payout-id",
+  "settlementAmount": {
+    "settlement": 300000
   }
 }
 ```
@@ -1763,7 +1595,7 @@ curl -X POST https://api.portone.com/v2/platform/manual-transfers \
 
 **Parameters**
 
-Request Body 는 없습니다.
+없습니다.
 
 </div>
 <div>
@@ -1771,59 +1603,13 @@ Request Body 는 없습니다.
 **Request**
 
 ```text
-curl -X GET https://api.portone.com/v2/platform/transfers/{id} \
+curl -X GET https://api.portone.com/v2/platform/transfer/{id} \
      -u {api_key}
 ```
 
 **Response**
 
-정산정보가 반환됩니다.
-
-```json
-{
-  "id": "transfer_id1",
-  "partner": {
-    "id": "lecturer_1",
-    "name": "파이썬 강사",
-    "email": "python@platform.com",
-    "businessRegistrationNumber": "",
-    "account": {
-      "bank": "신한은행",
-      "currency": "KRW",
-      "number": "110-123-456789",
-      "holder": "파이썬 강사",
-      "status": "APPROVED"
-    },
-    "status": "APPROVED",
-    "defaultContractId": "lecture_contract_1",
-    "memo": "컴싸 강사",
-    "tags": ["코딩"],
-    "isHidden": false,
-    "appliedAt": "2023-07-23T06:35:29.110Z"
-  },
-  "status": "SETTLED",
-  "memo": "string",
-  "settlementDate": {
-    "year": 2023,
-    "month": 7,
-    "day": 31
-  },
-  "payoutId": "payout_1", // 이체 ID는 실제 이체완료 상태값 업데이트 후에 생성됩니다
-  "currency": "KRW",
-  "isForTest": false,
-  "settlementAmount": {
-    "order": 1000,
-    "payment": 900,
-    "platformFee": 100,
-    "platformFeeVat": 10,
-    "additionalFee": 50,
-    "additionalFeeVat": 5,
-    "discountShare": 50,
-    "discount": 100,
-    "settlement": 785
-  }
-}
-```
+정산객체가 반환됩니다.
 
 </div>
 </div>
