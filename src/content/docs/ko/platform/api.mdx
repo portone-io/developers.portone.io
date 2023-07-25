@@ -50,9 +50,8 @@ GET /platform/transfers/{id}
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
-정산 객체는
 
-Attributes
+**Attributes**
 
 **id** string
 
@@ -445,6 +444,92 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 
 ---
 
+**amount** dictionary
+
+<table>
+  <tr>
+    <td>
+      
+        amount.**settlement** int64
+  
+        계산된 정산금액. 
+        
+        기본적으로 `주문금액 - 플랫폼_중계_수수료 - 중계_수수료_부가세 - PG사_수수료 - PG사_수수료_부가세- 할인분담금 - 추가수수료 - 추가수수료_부가세` 로 계산됩니다.
+
+        수식설정을 통해 계산법을 변경하실 수 있습니다. 수식 설정은 관리자 콘솔에서 가능합니다.
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      
+        amount.**payment** int64
+  
+        결제금액. 
+    </td>
+  </tr>
+  <tr>
+    <td>
+      
+        amount.**order** int64
+  
+        주문금액. 주문금액 = 결제금액 + 할인금액 으로 통상적으로 계산됩니다. 
+    </td>
+  </tr>
+  <tr>
+    <td>
+      
+        amount.**platformFee** int64
+  
+        계산된 플랫폼 중개 수수료. 기본적으로 contractId 에 해당되는 수수료가 주문금액에 적용됩니다. 수식설정을 통해 계산법을 변경하실 수 있습니다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      
+        amount.**platformFeeVat** int64
+  
+        계산된 중개수수료 부가세. 기본적으로 중개 수수료의 10% 의 내림처리입니다. 수식설정을 통해 소수점 처리를 변경하실 수 있습니다.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      
+        amount.**additionalFee** int64
+  
+        계산된 추가 수수료. 기본적으로 additionalFeeIds 에 해당되는 추가 수수료가 주문금액에 적용됩니다. 수식설정을 통해 계산법을 변경하실 수 있습니다.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      
+        amount.**additionalFeeVat** int64
+  
+        계산된 추가 수수료 부가세. 기본적으로 추가 수수료의 10% 의 내림처리입니다. 수식설정을 통해 소수점 처리를 변경하실 수 있습니다.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      
+        amount.**discountShare** int64
+  
+        계산된 파트너 할인 분담 금액. discountShareId 의 분담율이 적용됩니다. 
+    </td>
+  </tr>
+  <tr>
+    <td>
+      
+        amount.**discount** int64
+  
+        할인금
+    </td>
+  </tr>
+</table>
+
+---
+
 **discounts** list of dictionary
 
 할인 금액과 유형 (discountShares) 객체의 리스트
@@ -606,41 +691,148 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 </div>
 <div>
 
-**Response**
+**Response (주문 정산 기준)**
 
 ```json
 {
-  "id": "string",
-  "partner": {
+  "transfer": {
+    "type": "string",
+    "graphqlId": "string",
     "id": "string",
-    "name": "string",
-    "email": "string",
-    "businessRegistrationNumber": "string",
-    "account": {
-      "bank": "BNP",
-      "currency": "AED",
-      "number": "string",
-      "holder": "string",
-      "status": "EXPIRED"
+    "partner": {
+      "graphqlId": "string",
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "businessRegistrationNumber": "string",
+      "account": {
+        "bank": "BNP",
+        "currency": "AED",
+        "number": "string",
+        "holder": "string",
+        "status": "EXPIRED"
+      },
+      "status": "APPROVED",
+      "defaultContractId": "string",
+      "memo": "string",
+      "tags": ["string"],
+      "isHidden": true,
+      "appliedAt": "2023-07-25T14:05:50.702Z"
     },
-    "status": "APPROVED",
-    "defaultContractId": "string",
+    "status": "IN_PAYOUT",
     "memo": "string",
-    "tags": ["string"],
-    "isHidden": true,
-    "appliedAt": "2023-07-24T02:57:58.170Z"
-  },
-  "status": "IN_PAYOUT",
-  "memo": "string",
-  "settlementDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
-  },
-  "payoutId": "string",
-  "currency": "AED",
-  "isForTest": true,
-  "settlementAmount": 0
+    "settlementDate": "string",
+    "payoutId": "string",
+    "currency": "AED",
+    "isForTest": true,
+    "amount": {
+      "settlement": 0,
+      "payment": 0,
+      "order": 0,
+      "platformFee": 0,
+      "platformFeeVat": 0,
+      "additionalFee": 0,
+      "additionalFeeVat": 0,
+      "discountShare": 0,
+      "discount": 0
+    },
+    "contract": {
+      "graphqlId": "string",
+      "id": "string",
+      "memo": "string",
+      "platformFee": {
+        "amount": 0
+      },
+      "settlementCycle": {
+        "lagDays": 0,
+        "datePolicy": "CALENDAR_DAY",
+        "method": {}
+      },
+      "vatPayer": "MERCHANT",
+      "isHidden": true,
+      "appliedAt": "2023-07-25T14:05:50.702Z"
+    },
+    "payment": {
+      "id": "string",
+      "orderName": "string",
+      "currency": "AED",
+      "method": {},
+      "paidAt": "2023-07-25T14:05:50.702Z"
+    },
+    "settlementStartDate": "string",
+    "orderLines": [
+      {
+        "product": {
+          "id": "string",
+          "name": "string",
+          "amount": 0,
+          "tag": "string"
+        },
+        "quantity": 0,
+        "discounts": [
+          {
+            "discountShare": {
+              "graphqlId": "string",
+              "id": "string",
+              "partnerShareRate": 0,
+              "memo": "string",
+              "isHidden": true,
+              "appliedAt": "2023-07-25T14:05:50.702Z"
+            },
+            "amount": 0
+          }
+        ],
+        "additionalFees": [
+          {
+            "graphqlId": "string",
+            "id": "string",
+            "fee": {
+              "amount": 0
+            },
+            "memo": "string",
+            "isHidden": true,
+            "appliedAt": "2023-07-25T14:05:50.702Z"
+          }
+        ],
+        "amount": {
+          "settlement": 0,
+          "payment": 0,
+          "order": 0,
+          "platformFee": 0,
+          "platformFeeVat": 0,
+          "additionalFee": 0,
+          "additionalFeeVat": 0,
+          "discountShare": 0,
+          "discount": 0
+        }
+      }
+    ],
+    "additionalFees": [
+      {
+        "graphqlId": "string",
+        "id": "string",
+        "fee": {
+          "amount": 0
+        },
+        "memo": "string",
+        "isHidden": true,
+        "appliedAt": "2023-07-25T14:05:50.702Z"
+      }
+    ],
+    "discounts": [
+      {
+        "discountShare": {
+          "graphqlId": "string",
+          "id": "string",
+          "partnerShareRate": 0,
+          "memo": "string",
+          "isHidden": true,
+          "appliedAt": "2023-07-25T14:05:50.702Z"
+        },
+        "amount": 0
+      }
+    ]
+  }
 }
 ```
 
@@ -1196,8 +1388,11 @@ curl -X POST https://api.portone.com/v2/platform/transfer/order \
 ```json
 {
   "transfer": {
-    "id": "transfer_id1",
+    "type": "ORDER",
+    "graphqlId": "string",
+    "id": "transferId1",
     "partner": {
+      "graphqlId": "string",
       "id": "lecturer_1",
       "name": "파이썬 강사",
       "email": "python@platform.com",
@@ -1214,29 +1409,120 @@ curl -X POST https://api.portone.com/v2/platform/transfer/order \
       "memo": "컴싸 강사",
       "tags": ["코딩"],
       "isHidden": false,
-      "appliedAt": "2023-07-23T06:35:29.110Z"
+      "appliedAt": "2023-07-25T14:05:50.702Z"
     },
     "status": "SETTLED",
     "memo": "string",
-    "settlementDate": {
-      "year": 2023,
-      "month": 7,
-      "day": 31
-    },
+    "settlementDate": "2023-07-25T14:05:50.702Z",
     "payoutId": "payout_1", // 이체 ID는 실제 이체완료 상태값 업데이트 후에 생성됩니다
     "currency": "KRW",
     "isForTest": false,
-    "settlementAmount": {
-      "order": 1000,
+    "amount": {
+      "settlement": 785,
       "payment": 900,
+      "order": 1000,
       "platformFee": 100,
       "platformFeeVat": 10,
       "additionalFee": 50,
       "additionalFeeVat": 5,
       "discountShare": 50,
-      "discount": 100,
-      "settlement": 785
-    }
+      "discount": 100
+    },
+    "contract": {
+      "graphqlId": "string",
+      "id": "lecture_contract_1",
+      "memo": "파이선강사 계약",
+      "platformFee": {
+        "rate": 10000000
+      },
+      "settlementCycle": {
+        "lagDays": 2,
+        "datePolicy": "CALENDAR_DAY",
+        "method": {}
+      },
+      "vatPayer": "PARTNER",
+      "isHidden": false,
+      "appliedAt": "2023-07-25T14:05:50.702Z"
+    },
+    "payment": {
+      "id": "paymentId1",
+      "currency": "KRW",
+      "method": {},
+      "paidAt": "2023-07-25T14:05:50.702Z"
+    },
+    "settlementStartDate": "2023-07-25T14:05:50.702Z",
+    "orderLines": [
+      {
+        "product": {
+          "id": "product1",
+          "name": "파이썬 하반기 강의",
+          "amount": 10000,
+          "tag": "코딩"
+        },
+        "quantity": 1,
+        "additionalFees": [
+          {
+            "graphqlId": "string",
+            "id": "string",
+            "fee": {
+              "amount": 0
+            },
+            "memo": "string",
+            "isHidden": true,
+            "appliedAt": "2023-07-25T14:05:50.702Z"
+          }
+        ],
+        "discounts": [
+          {
+            "discountShare": {
+              "graphqlId": "string",
+              "id": "string",
+              "partnerShareRate": 0,
+              "memo": "string",
+              "isHidden": true,
+              "appliedAt": "2023-07-25T14:05:50.702Z"
+            },
+            "amount": 0
+          }
+        ],
+        "amount": {
+          "settlement": 785,
+          "payment": 900,
+          "order": 1000,
+          "platformFee": 100,
+          "platformFeeVat": 10,
+          "additionalFee": 50,
+          "additionalFeeVat": 5,
+          "discountShare": 50,
+          "discount": 100
+        }
+      }
+    ],
+    "discounts": [
+      {
+        "discountShare": {
+          "graphqlId": "string",
+          "id": "discountShareId1",
+          "partnerShareRate": 50,
+          "memo": "강사 할인 쿠폰",
+          "isHidden": false,
+          "appliedAt": "2023-07-25T14:05:50.702Z"
+        },
+        "amount": 100
+      }
+    ],
+    "additionalFees": [
+      {
+        "graphqlId": "string",
+        "id": "additionalFeeId1",
+        "fee": {
+          "amount": 50
+        },
+        "memo": "string",
+        "isHidden": true,
+        "appliedAt": "2023-07-25T14:05:50.702Z"
+      }
+    ]
   }
 }
 ```
@@ -1555,13 +1841,16 @@ curl -X POST https://api.portone.com/v2/platform/order-cancel-transfer \
 
 **Response**
 
-취소 정산시 반환되는 금액 및 수수 값들은 다 **음수** 입니다.
+취소 정산시 반환되는 금액 및 수수 값들은 다 주문정산객체 값의 음수처리 입니다.
 
 ```json
 {
   "transfer": {
-    "id": "transfer_id",
+    "type": "ORDER",
+    "graphqlId": "string",
+    "id": "transferId1",
     "partner": {
+      "graphqlId": "string",
       "id": "lecturer_1",
       "name": "파이썬 강사",
       "email": "python@platform.com",
@@ -1574,32 +1863,127 @@ curl -X POST https://api.portone.com/v2/platform/order-cancel-transfer \
         "status": "APPROVED"
       },
       "status": "APPROVED",
-      "defaultContractId": "lecutre_contract_1",
+      "defaultContractId": "lecture_contract_1",
       "memo": "컴싸 강사",
       "tags": ["코딩"],
-      "isHidden": true,
-      "appliedAt": "2023-07-23T15:25:33.518Z"
+      "isHidden": false,
+      "appliedAt": "2023-07-25T14:05:50.702Z"
     },
     "status": "SETTLED",
-    "memo": "",
-    "settlementDate": {
-      "year": 2023,
-      "month": 7,
-      "day": 31
-    },
-    "payoutId": "",
+    "memo": "string",
+    "settlementDate": "2023-07-25T14:05:50.702Z",
+    "payoutId": "payout_1", // 이체 ID는 실제 이체완료 상태값 업데이트 후에 생성됩니다
     "currency": "KRW",
     "isForTest": false,
-    "settlementAmount": {
-      "order": 1000,
+    "amount": {
+      "settlement": 785,
       "payment": 900,
+      "order": 1000,
       "platformFee": 100,
       "platformFeeVat": 10,
       "additionalFee": 50,
       "additionalFeeVat": 5,
       "discountShare": 50,
-      "discount": 100,
-      "settlement": 785
+      "discount": 100
+    },
+    "contract": {
+      "graphqlId": "string",
+      "id": "lecture_contract_1",
+      "memo": "파이선강사 계약",
+      "platformFee": {
+        "rate": 10000000
+      },
+      "settlementCycle": {
+        "lagDays": 2,
+        "datePolicy": "CALENDAR_DAY",
+        "method": {}
+      },
+      "vatPayer": "PARTNER",
+      "isHidden": false,
+      "appliedAt": "2023-07-25T14:05:50.702Z"
+    },
+    "payment": {
+      "id": "paymentId1",
+      "currency": "KRW",
+      "method": {},
+      "paidAt": "2023-07-25T14:05:50.702Z"
+    },
+    "settlementStartDate": "2023-07-25T14:05:50.702Z",
+    "orderLines": [
+      {
+        "product": {
+          "id": "product1",
+          "name": "파이썬 하반기 강의",
+          "amount": 10000,
+          "tag": "코딩"
+        },
+        "quantity": 1,
+        "additionalFees": [
+          {
+            "graphqlId": "string",
+            "id": "string",
+            "fee": {
+              "amount": 0
+            },
+            "memo": "string",
+            "isHidden": true,
+            "appliedAt": "2023-07-25T14:05:50.702Z"
+          }
+        ],
+        "discounts": [
+          {
+            "discountShare": {
+              "graphqlId": "string",
+              "id": "string",
+              "partnerShareRate": 0,
+              "memo": "string",
+              "isHidden": true,
+              "appliedAt": "2023-07-25T14:05:50.702Z"
+            },
+            "amount": 0
+          }
+        ],
+        "amount": {
+          "settlement": 785,
+          "payment": 900,
+          "order": 1000,
+          "platformFee": 100,
+          "platformFeeVat": 10,
+          "additionalFee": 50,
+          "additionalFeeVat": 5,
+          "discountShare": 50,
+          "discount": 100
+        }
+      }
+    ],
+    "discounts": [
+      {
+        "discountShare": {
+          "graphqlId": "string",
+          "id": "discountShareId1",
+          "partnerShareRate": 50,
+          "memo": "강사 할인 쿠폰",
+          "isHidden": false,
+          "appliedAt": "2023-07-25T14:05:50.702Z"
+        },
+        "amount": 100
+      }
+    ],
+    "additionalFees": [
+      {
+        "graphqlId": "string",
+        "id": "additionalFeeId1",
+        "fee": {
+          "amount": 50
+        },
+        "memo": "string",
+        "isHidden": true,
+        "appliedAt": "2023-07-25T14:05:50.702Z"
+      }
+    ]
+    "cancellation": {
+      "id": "string",
+      "cancelledAt": "2023-07-25T14:36:27.155Z"
     }
   }
 }
