@@ -14,34 +14,16 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 import image1 from "./_assets/multi-pg-guide-1.png";
 import image2 from "./_assets/multi-pg-guide-2.png";
-import image3 from "./_assets/multi-pg-guide-3.png";
-import image4 from "./_assets/multi-pg-guide-4.png";
 
 ### 이 문서는 포트원 관리자 콘솔에서 복수의 PG사를 설정하여 원하는 결제 수단으로 결제창을 호출하는 방법을 설명합니다.
 
-### 1. 인증결제(일반결제) 설정하기
+### PG 설정하기
+추가 설정이 필요한 PG설정정보를 아래와 같이 설정 해 주세요.
 
 [포트원 관리자 콘솔](https://admin.portone.io/) > 결제 연동 > 테스트/실 연동 > 실 연동 또는 테스트 연동 선택 > PG사 / PG 모듈 선택 > [+추가] 클릭
 
 <Figure src={image1} />
 
-### 2. 정기 결제용(비 인증/**PG사 결제창 이용**) PG사 추가하기
-
-[포트원 관리자 콘솔](https://admin.portone.io/) > 결제 연동 > 테스트/실 연동 > 실 연동 또는 테스트 연동 선택 > PG사 / PG 모듈 선택 > [+추가] 클릭
-
-<Figure src={image2} />
-
-### 3. **간편결제(카카오페이) 추가하기**
-
-[포트원 관리자 콘솔](https://admin.portone.io/) > 결제 연동 > 테스트/실 연동 > 실 연동 또는 테스트 연동 선택 > PG사 / PG 모듈 선택 > [+추가] 클릭
-
-<Figure src={image3} />
-
-### 4. 허브형 간편결제
-
-[포트원 관리자 콘솔](https://admin.portone.io/) > 결제 연동 > 테스트/실 연동 > 실 연동 또는 테스트 연동 선택 > PG사 / PG 모듈 선택 > [+추가] 클릭
-
-<Figure src={image4} />
 ## 특정 PG사의 결제창 열기 <a href="#pg" id="pg"></a>
 
 결제창을 호출하기 위한 [**JavaScript SDK**](../sdk/javascript-sdk-old/readme) `IMP.request_pay`를 호출할 때 `param.pg` 속성에 미리 등록한 PG사를 지정하여 해당 PG사의 결제 창을 호출 할 수 있습니다. `pg` 속성에는 다음과 같은 형태로 [PG 값](https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-pg)을 지정할 수 있습니다.
@@ -49,9 +31,9 @@ import image4 from "./_assets/multi-pg-guide-4.png";
 - **`{ PG사 코드값 }`**
 - **`{ PG사 코드값 }.{ PG사 상점아이디 }`**
 
-만약 포트원 관리자 콘솔 PG사 등록 현황이 아래와 같이 **3개의 PG설정**을 등록했다고 가정해 봅시다.
+만약 포트원 관리자 콘솔 PG사 등록 현황이 아래와 같이 **3개의 PG설정**을 등록했다고 가정해 보면,
 
-|       PG사       |  상점아이디   |      용도       | 기본 PG사 |
+|       PG사       |  상점아이디   |      용도       | 대표 PG사 |
 | :--------------: | :-----------: | :-------------: | :-------: |
 | **`KG이니시스`** | `MID-a`(예시) | **일반 결제용** |     O     |
 | **`KG이니시스`** | `MID-b`(예시) | **정기 결제용** |     X     |
@@ -102,6 +84,8 @@ IMP.request_pay({
 <Hint style="info">
 **pg 속성 매칭 우선순위**
 
-관리자 콘솔에 저장한 PG 설정 순서대로 pg 속성의 조건과 일치하는 설정을 찾습니다. 이때 가장 먼저 매칭되는 PG 설정에 해당하는 결제창을 호출합니다.
+관리자 콘솔에 저장한 PG 설정 순서대로 pg 속성의 조건과 일치하는 설정을 찾습니다.
+[대표설정]으로 적용하지 않는 경우, 가장 먼저 설정 된 PG사에 설정된 값으로 결제창이 호출 됩니다.
+<Figure src={image2} />
 
 </Hint>
