@@ -11,7 +11,7 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-휴대폰 본인인증 완료이후 획득한 `identity_verification_id`와 `identity_verification_tx_id`를 이용하여 고객 인증정보를 조회할 수 있습니다.
+휴대폰 본인인증 완료이후 획득한 `identity_verification_id`를 이용하여 고객 인증정보를 조회할 수 있습니다.
 
 ### 인증 결과 조회 API 구현하기 (TODO odin & fina)
 
@@ -23,7 +23,7 @@ app.use(bodyParser.json());
   // "/identity-verifications"에 대한 POST 요청을 처리하는 controller
   app.post("/identity-verifications", async (request, response) => {
     // request의 body에서 identityVerificationId와 identityVerificationTxId 추출
-    const { identityVerificationId, identityVerificationTxId } = request.body;
+    const { identityVerificationId } = request.body;
     try {
       // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
       const signinResponse = await axios({
@@ -43,9 +43,11 @@ app.use(bodyParser.json());
         // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
         headers: { "Authorization": "Bearer " + access_token },
       });
-      const { identityVerification: { id, identityVerificationTransactions } } = verificationResponse.data;
-      // 현재 조회하고자 하는 트랜잭션을 선택합니다.
-      const identityVerificationResult = identityVerificationTransactions.find(tx => tx.id === identityVerificationTxId);
+      const identityVerification = verificationResponse.data;
+      if (identityVerification.status !== "VERIFIED") {
+        // 인증 실패
+        ...
+      }
       ...
     } catch(e) {
       console.error(e);
@@ -57,62 +59,58 @@ app.use(bodyParser.json());
 
 조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.
 
+- `ci`: 연계 정보(Connecting Information). 사람마다 고유하고 서비스별로 달라지지 않기 때문에, 서비스 간 연계에 사용할 수 있음.
+- `di`: 중복 가입 확인 정보(Duplication Information). 해당 서비스 안에서만 사람마다 고유함. 이용자의 중복 가입을 확인하는 데 사용할 수 있음.
 - `name`: 이름
 - `gender`: 성별
-- `birth`: 생년월일
-- `unique_key`: CI 값과 동일. 온라인 주민번호와 같은 개인고유식별키
-- `unique_in_site`: DI 값과 동일. 상점아이디(사이트)별로 할당되는 식별키
+- `birthDate`: 생년월일 (YYYY-MM-DD)
 
 <Hint style="info">
-  위의 정보 외에 휴대폰 번호(**`phone`**) 및 통신사(**`carrier`**) 또는 외국인(**`foreigner`**) 여부는 **개인정보 제공동의 약관을 사이트에 게재**한 후 <mark style="color:red;">**cs@portone.io**</mark>**로 신청**하여 취득할 수 있습니다. 해당 부분은 당사 계약 이후 다날PG사로 요청 후 승인이 완료되면 이용 가능한 점 참고해 주시기 바랍니다.
+  위의 정보 외에 외국인(**`isForeigner`**) 여부는 **API 방식** 본인인증에 한하여 **개인정보 제공동의 약관을 사이트에 게재**한 후 <mark style="color:red;">**cs@portone.io**</mark>**로 신청**하여 취득할 수 있습니다. 해당 부분은 당사 계약 이후 다날PG사로 요청 후 승인이 완료되면 이용 가능한 점 참고해 주시기 바랍니다.
 
-  **메일 요청 신청 양식**
+**메일 요청 신청 양식**
 
-  - 상호명 :
-  - 사업자번호 :
-  - 본인인증용 다날 상점ID(CPID) :
-  - 업종 :
-  - 필요사유 :
-  - 개인정보취급방침 url : 앱서비스로 URL형태로 전달이 어려우신 경우 '개인정보취급방침' 경로를 캡쳐하여 전달주시기 바랍니다.
+- 상호명 :
+- 사업자번호 :
+- 본인인증용 다날 상점ID(CPID) :
+- 업종 :
+- 필요사유 :
+- 개인정보취급방침 url : 앱서비스로 URL형태로 전달이 어려우신 경우 '개인정보취급방침' 경로를 캡쳐하여 전달주시기 바랍니다.
 
-  **참고 - 포트원 이용 가맹점의 개인정보처리방침 적용 예시**
+**참고 - 포트원 이용 가맹점의 개인정보처리방침 적용 예시**
 
-  - `(주)마플 : https://marpple.shop/kr/@/privacy`
-  - `(주)브레이브모바일 / 숨고 : https://soomgo.com/terms/privacy`
-  - `(주)마켓잇 : https://static.marketit.asia/static/privacy-terms.pdf`
+- `(주)마플 : https://marpple.shop/kr/@/privacy`
+- `(주)브레이브모바일 / 숨고 : https://soomgo.com/terms/privacy`
+- `(주)마켓잇 : https://static.marketit.asia/static/privacy-terms.pdf`
 
 </Hint>
 
 ```javascript title="Node.js"
 // "/identity-verifications"에 대한 POST 요청을 처리하는 controller
   app.post("/identity-verifications", async (request, response) => {
-    const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
+    const { identity_verification_id } = request.body; // request의 body에서 identity_verification_id 추출
     try {
       // 인증 토큰 발급 받기
       /* ...중략... */
-      // imp_uid로 인증 정보 조회
+      // identity_verification_id로 인증 정보 조회
       /* ...중략... */
-      const certificationsInfo = getCertifications.data; // 조회한 인증 정보
-      // unique_key: 개인식별 고유 키, unique_in_site: 사이트 별 개인식별 고유 키
-      const { unique_key, unique_in_site, name, gender, birth } = certificationsInfo;
+      const { ci, di, name, gender, birthDate } = identityVerification.customer;
       ...
       // 연령 제한 로직
-      if (new Date(birth).getFullYear() <= 1999) {
+      if (new Date(birthDate).getFullYear() <= 1999) {
         // 연령 만족
       } else {
         // 연령 미달
       }
       ...
       // 1인 1계정 허용 로직
-      // DB에서 unique_key 조회 후 가입여부 검사
-      Users.find({ certificationKey: unique_key })
-      .then((user) => {
-        if (!user) {
-          // 신규 고객
-        } else {
-          // 이미 가입된 고객
-        }
-      });
+      // DB에서 di 조회 후 가입여부 검사
+      const user = await Users.find({ di: di });
+      if (!user) {
+        // 신규 고객
+      } else {
+        // 이미 가입된 고객
+      }
     } catch(e) {
       console.error(e);
     }
