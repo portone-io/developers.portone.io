@@ -20,12 +20,13 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 해당 API 는 아래 PG사를 이용하는 경우에만 사용 가능합니다.
 
-- 핵토파이낸셜(구 세틀뱅크)
-- 나이스페이먼츠
+- 핵토파이낸셜((구) 세틀뱅크)
+- (구) 나이스페이먼츠
 - KG이니시스
-- 토스페이먼츠 - 신모듈
+- (신) 토스페이먼츠
 - KSNET
-- 스마트로-신모듈
+- (신) 스마트로
+- (신) 나이스페이먼츠
 
 <Swagger method="post" path="/vbanks" baseUrl="https://api.iamport.kr" summary="가상계좌 번호를 발급합니다.">
 <SwaggerDescription>
@@ -83,7 +84,8 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </mark>
 
-(필수 : 이니시스, 나이스, 헥토파이낸셜(구 세틀뱅크), 스마트로 - 신모듈) 토스페이먼츠 - 신모듈, KSNET의 경우 적용되지 않고 가맹점명이 사용됨
+(필수 : KG이니시스, (구) 나이스페이먼츠, 헥토파이낸셜((구) 세틀뱅크), (신) 스마트로)
+(예외 : (신) 토스페이먼츠, KSNET의 경우 적용되지 않고 가맹점명이 사용됨)
 </SwaggerParameter>
 <SwaggerParameter name="name" type="String(40)" required="false">
 주문명
@@ -92,17 +94,17 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="buyer_name" type="String(16)" required="false">
 주문자명
 
-(필수 : 이니시스, 토스페이먼츠 - 신모듈, KSNET,스마트로 - 신모듈)
+(필수 : KG이니시스, (신) 토스페이먼츠, KSNET, (신) 스마트로)
 </SwaggerParameter>
 <SwaggerParameter name="buyer_email" type="String(64)" required="false">
 주문자 E-mail 주소
 
-(필수 : 이니시스,스마트로 - 신모듈)
+(필수 : KG이니시스, (신) 스마트로)
 </SwaggerParameter>
 <SwaggerParameter name="buyer_tel" type="String(16)" required="false">
 주문자 전화번호
 
-(필수 : 스마트로 - 신모듈)
+(필수 : (신) 스마트로)
 </SwaggerParameter>
 <SwaggerParameter name="buyer_addr" type="String(128)" required="false">
 주문자 주소
@@ -127,17 +129,18 @@ PG사 구분코드
 <SwaggerParameter name="tax_free" type="Integer" required="false">
 면세금액
 
-(나이스페이먼츠에서만 사용 가능)
+((구) 나이스페이먼츠, (신) 나이스페이먼츠에서만 사용 가능)
+
 </SwaggerParameter>
 <SwaggerParameter name="vat_amount" type="integer" required="false">
 부가세(기본값: null)\
-(나이스페이먼츠에서만 사용 가능)
+((구) 나이스페이먼츠, (신) 나이스페이먼츠에서만 사용 가능)
 
 </SwaggerParameter>
 <SwaggerParameter name="vbank_key" type="String">
 계좌 고유 키\
 고정식 가상계좌를 발급받기 위한 고객과 매칭시킨 계좌 고유 키
-(필수 : 토스페이먼츠 - 신모듈)
+(필수 : (신) 토스페이먼츠)
 (사용을 위해 PG사와 협의 필요)
 
 </SwaggerParameter>
@@ -150,13 +153,18 @@ PG사 구분코드
 <SwaggerParameter name="vbank_num" type="string">
 고정 가상 계좌 번호\
 고정식 가상계좌 사용 시 발급된 가상계좌 번호
-(스마트로-신모듈의 고정식 가상계좌 사용시 필수값)
+((신) 스마트로의 고정식 가상계좌 사용시 필수값)
+</SwaggerParameter>
+<SwaggerParameter name="business_registration_number" type="string">
+주문자 사업자 등록번호\
+가상계좌 발급 건 에스크로 등록시, 가상계좌 발급시 전달 한 주문자의 전화번호나 사업자 등록 번호가 사용 됨
+((신) 나이스페이먼츠 전용)
 </SwaggerParameter>
 
 #### Query
 
 <SwaggerParameter name="pg_api_key" type="String" required="false">
-**API Key (이니시스 전용)**
+**API Key (KG이니시스 전용)**
 
 </SwaggerParameter>
 
@@ -222,7 +230,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 - lpay : LPAY
 - payco : 페이코
 - kakaopay : 카카오페이
-- tosspay : 토스
+- tosspay : 토스페이
 - naverpay : 네이버페이
 
 **`channel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -465,7 +473,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > **주문번호**
 >
-> `스마트로-신모듈` PG사인 경우 `merchant_uid` 파라미터에 특수문자 포함이 불가능합니다.  
+> `(신) 스마트로` PG사인 경우 `merchant_uid` 파라미터에 특수문자 포함이 불가능합니다.  
 
 > **`product_type`** <mark style="color:green;">**`string`**</mark>
 > 
@@ -490,10 +498,10 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > **\{PG사}.\{PG상점아이디}**
 >
-> - 나이스페이먼츠, JTNet 2가지 PG설정이 되어있다면, pg 파라미터로 **nice** 또는 **jtnet**로 구분 가능
-> - 나이스페이먼츠로부터 2개 이상의 상점아이디를 발급받았다면, **nice.MID1** 또는 **nice.MID2**로 구분 가능
+> - (구) 나이스페이먼츠, JTNet 2가지 PG설정이 되어있다면, pg 파라미터로 **nice** 또는 **jtnet**로 구분 가능
+> - (구) 나이스페이먼츠로부터 2개 이상의 상점아이디를 발급받았다면, **nice.MID1** 또는 **nice.MID2**로 구분 가능
 > 
-> (단, **이니시스 경우 필수값임** `inicis.{상점아이디}` 형태로 지정)
+> (단, **KG이니시스 경우 필수값임** `inicis.{상점아이디}` 형태로 지정)
 
 > **`notice_url`** <mark style="color:green;">**`string`**</mark>
 >
@@ -511,27 +519,27 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 >
 > **API Key**
 >
-> 이니시스의 가맹점 콘솔에서 확인하셔야 하는 API Key 값으로 가상계좌 발급 및 말소 신청에 사용됩니다. 누락하거나 잘못된 키 입력 시 hashData 불일치 오류가 발생합니다.
+> KG이니시스의 가맹점 콘솔에서 확인하셔야 하는 API Key 값으로 가상계좌 발급 및 말소 신청에 사용됩니다. 누락하거나 잘못된 키 입력 시 hashData 불일치 오류가 발생합니다.
 >
-> (**이니시스 전용이며, 이니시스의 경우 필수값 Query parameter임**)
+> (**KG이니시스 전용이며, KG이니시스의 경우 필수값 Query parameter임**)
 
 > **`vbank_key`**<mark style="color:green;">**`string`**</mark>
 >
 > 고정식 가상계좌를 발급받기 위한 고객과 매칭시킨 계좌 고유 키
 >
-> (**토스페이먼츠 - 신모듈의 경우 필수값임**) (**사용을 위해 PG사와 협의 필요**)
+> (**(신) 토스페이먼츠의 경우 필수값임**) (**사용을 위해 PG사와 협의 필요**)
 
 > **`vbank_num`**<mark style="color:green;">**`string`**</mark>
 >
 > 고정식 가상계좌 번호
 >
-> (**스마트로-신모듈에서 고정식 가상계좌 사용할 경우에만 필수 값임**) (**사용을 위해 PG사와 협의 필요**)
+> (**(신) 스마트로에서 고정식 가상계좌 사용할 경우에만 필수 값임**) (**사용을 위해 PG사와 협의 필요**)
 
 > **`tax_free`**<mark style="color:purple;">**`Integer`**</mark>
 >
 > 면세금액
 >
-> 나이스페이먼츠 전용, 상점아이디의 과세설정이 **지정금액방식(복합과세)** 으로 설정되어 있는 경우 필수값 입니다.
+> (구) 나이스페이먼츠, (신) 나이스페이먼츠 전용으로 상점아이디의 과세설정이 **지정금액방식(복합과세)** 으로 설정되어 있는 경우 필수값 입니다.
 >
 >과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.
  
@@ -542,7 +550,18 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 > 부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)
 >
 > 지원되는 PG사
-> * 나이스페이먼츠
+> * (구) 나이스페이먼츠
+> * (신) 나이스페이먼츠
+
+> **`business_registration_number`**<mark style="color:purple;">**`string`**</mark>
+>
+> 주문자 사업자 등록번호
+>
+> 가상계좌 발급 건 에스크로 등록시, 가상계좌 발급시 전달 한 주문자의 전화번호나 사업자 등록 번호가 사용 됨
+>
+> 지원되는 PG사
+>
+> * (신) 나이스페이먼츠
 
 <Details>
 <p slot="summary">Response Model Schema</p>

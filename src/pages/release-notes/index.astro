@@ -1,0 +1,60 @@
+---
+import { format } from "date-fns";
+
+import LayoutBase from "~/layouts/LayoutBase.astro";
+import * as prose from "~/components/prose";
+import Banner from "~/components/release-note/Banner.astro";
+import Nav from "~/components/release-note/Nav.astro";
+import { getReleaseNotes } from "~/misc/releaseNote";
+
+const { consoleNotes, apiSdkNotes } = await getReleaseNotes();
+---
+
+<LayoutBase lang="ko" title="포트원 릴리즈노트">
+  <div class="flex">
+    <aside
+      id="left-sidebar"
+      class="w-65 relative hidden shrink-0 text-slate-700 md:block"
+    >
+      <div
+        class="w-inherit fixed h-[calc(100%-3.5rem)] overflow-y-scroll border-r bg-white"
+      >
+        <Nav consoleNotes={consoleNotes} apiSdkNotes={apiSdkNotes} />
+      </div>
+    </aside>
+    <div class="basis-200 mx-auto shrink">
+      <article class="m-4 flex flex-col text-slate-700">
+        <prose.h1>포트원 릴리즈노트</prose.h1>
+        <p class="text-gray my-4 text-xl">
+          포트원의 업데이트 소식을 전해드립니다.
+        </p>
+        <Banner />
+        <prose.h2>최신 릴리즈노트 보기</prose.h2>
+        <div class="flex flex-wrap">
+          {
+            (
+              [
+                ["관리자콘솔", consoleNotes],
+                ["API/SDK", apiSdkNotes],
+              ] as const
+            ).map(([title, notes]) => (
+              <section class="my-4 flex-1 whitespace-nowrap pr-4">
+                <prose.h3>{title}</prose.h3>
+                <prose.ul>
+                  {notes.slice(0, 3).map((note) => (
+                    <li>
+                      <prose.a href={`/release-notes/${note.slug}`}>
+                        {format(note.entry.data.releasedAt, "yyyy-MM-dd")}{" "}
+                        업데이트
+                      </prose.a>
+                    </li>
+                  ))}
+                </prose.ul>
+              </section>
+            ))
+          }
+        </div>
+      </article>
+    </div>
+  </div>
+</LayoutBase>
