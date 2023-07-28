@@ -12,87 +12,74 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
+import image1 from "./_assets/multi-pg-guide-1.png";
+import image2 from "./_assets/multi-pg-guide-2.png";
+
 ### 이 문서는 포트원 관리자 콘솔에서 복수의 PG사를 설정하여 원하는 결제 수단으로 결제창을 호출하는 방법을 설명합니다.
 
-### 1. 인증결제(일반결제) 설정하기
+### PG 설정하기
+추가 설정이 필요한 PG설정정보를 아래와 같이 설정해 주세요.
 
-[**포트원 관리자 콘솔 > 시스템 설정 > PG 설정 탭 > 기본 PG사 탭**](https://admin.portone.io/settings#tab_pg)에서 `기본 PG사`를 **주로 사용할 PG사**로 설정합니다.
+[포트원 관리자 콘솔](https://admin.portone.io/) > 결제 연동 > 테스트/실 연동 > 실 연동 또는 테스트 연동 선택 > PG사 / PG 모듈 선택 > [+추가] 클릭
 
-<Figure
-  src="/gitbook-assets/ko/image (282).png"
-  caption="인증결제(일반결제) 설정하기"
-/>
-
-### 2. 정기 결제용(비 인증/**PG사 결제창 이용**) PG사 추가하기
-
-PG사로부터 정기결제용(비 인증) 상점ID(MID)를 추가로 발급 받은 이후 해당 MID정보를 [**포트원 관리자 콘솔 > 시스템 설정 >PG설정(일반결제 및 정기결제)**](https://admin.portone.io/settings#tab_pg) 메뉴에 추가 합니다.
-
-<Figure
-  src="/gitbook-assets/ko/image (212).png"
-  caption="새로운 PG사 추가 화면"
-/>
-
-### 3. **간편결제(카카오페이) 추가하기**
-
-동일한 방법으로 카카오페이를 추가 합니다.
-
-<Figure
-  src="/gitbook-assets/ko/image (113).png"
-  caption="간편결제 카카오페이 등록 예시"
-/>
+<Figure src={image1} />
 
 ## 특정 PG사의 결제창 열기 <a href="#pg" id="pg"></a>
 
-결제창을 호출하기 위한 [**JavaScript SDK**](../sdk/javascript-sdk-old/readme) `IMP.request_pay`를 호출할 때 `param.pg` 속성에 미리 등록한 PG사를 지정하여 해당 PG사의 결제 창을 호출 할 수 있습니다. `pg` 속성에는 다음과 같은 형태로 [PG 값](https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-pg)을 지정할 수 있습니다.
+결제창을 호출하기 위한 [**JavaScript SDK**](../sdk/javascript-sdk-old/readme) `IMP.request_pay`를 호출할 때 `param.pg` 속성에 미리 등록한 PG사를 지정하여 해당 PG사의 결제창을 호출할 수 있습니다. `pg` 속성에는 다음과 같은 형태로 [PG 값](https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-pg)을 지정할 수 있습니다.
 
-- **`{ PG사 코드값 }`**
-- **`{ PG사 코드값 }.{ PG사 상점아이디 }`**
+- **\{ PG사 코드값 \}**
+- **\{ PG사 코드값 \}.\{ PG사 상점아이디 \}**
 
-만약 포트원 관리자 콘솔 PG사 등록 현황이 아래와 같이 **3개의 PG설정**을 등록했다고 가정해 봅시다.
+만약 포트원 관리자 콘솔 PG사 등록 현황이 아래와 같이 **3개의 PG설정**을 등록했다고 가정해 보면,
 
-|       PG사       |  상점아이디   |      용도       | 기본 PG사 |
-| :--------------: | :-----------: | :-------------: | :-------: |
-| **`KG이니시스`** | `MID-a`(예시) | **일반 결제용** |     O     |
-| **`KG이니시스`** | `MID-b`(예시) | **정기 결제용** |     X     |
-|   `카카오페이`   | `MID-c`(예시) |   간편 결제용   |     X     |
+|       PG사       |  상점아이디 (예시)  |      용도       |
+| :--------------: | :-----------: | :-------------: |
+| **(신) 나이스페이먼츠** | MID-a | **인증 결제용** |
+| **(신) 나이스페이먼츠** | MID-b | **비인증 결제용** |
+|   카카오페이   | MID-c |   인증 결제용   |
 
-위에서 등록한 PG 설정 중 `pg사 코드값`\*\*`{ PG사 코드값 }`\*\*으로만 구분할 수 있는 PG사는 `카카오페이`입니다. 다음과 같이 `pg` 속성에 \*\*`kakaopay`\*\*를 지정하면 등록한 카카오페이 설정으로 결제창이 호출됩니다
+위에서 등록한 PG 설정 중 **\{ PG사 코드값 \}** 으로만 구분할 수 있는 PG사는 **카카오페이**입니다. 다음과 같이 `pg` 속성에 `kakaopay`를 지정하면 등록한 카카오페이 설정으로 결제창이 호출됩니다
 
-```javascript title="client-side"
+<Tabs>
+<Tab title="카카오페이 호출">
+```javascript
 IMP.request_pay({
-  pg: "kakaopay", //카카오페이 결제창 호출
+  pg: "kakaopay", // 카카오페이 결제창 호출
   amount: 1000,
   name: "테스트 주문",
   buyer_name: "구매자",
   buyer_email: "buyer@iamport.kr",
 });
 ```
+</Tab>
+</Tabs>
 
-위에서 등록한 PG 설정 중 \*\*`KG이니시스(일반결제용)`\*\*와 \*\*`KG이니시스(정기결제용)`\*\*는 \*\*<mark style="color:red;">**PG사 코드값이 동일**</mark>**하기 때문에 `pg` 속성을 코드값과 상점아이디를 조합한 값**`{ PG사 코드값 }.{ PG사 상점아이디 }`\*\*으로 설정해서 구분해야 합니다.
+위에서 등록한 PG 설정 중 **(신) 나이스페이먼츠 (인증 결제용)** 와 **(신) 나이스페이먼츠 (비인증 결제용)** 의 경우 <mark style="color:red;">**PG사 코드값이 동일**</mark>하기 때문에 `pg` 속성을 코드값과 상점아이디를 조합한 값 **\{ PG사 코드값 \}.\{ PG사 상점아이디 \}** 으로 설정해서 구분해야 합니다.
 
 <Tabs>
-<Tab title="KG이니시스 일반결제창 호출">
-```javascript title="JavaScript"
+<Tab title="(신) 나이스페이먼츠 인증 결제용 호출">
+```javascript
 IMP.request_pay({
-    pg : "html5_inicis.MID-a",  // KG이니시스 일반결제창 호출(상점아이디 MID-a 적용)
-    amount : 1000,
-    name : "테스트 주문",
-    buyer_name : "구매자",
-    buyer_email : "buyer@iamport.kr"
+  pg: "nice_v2.MID-a", // (신) 나이스페이먼츠 인증 결제용 호출 (상점아이디 MID-a 적용)
+  amount: 1000,
+  name: "테스트 주문",
+  buyer_name: "구매자",
+  buyer_email: "buyer@iamport.kr"
   });
 ```
 
 </Tab>
 
-<Tab title="KG이니시스 정기결제창 호출">
-```javascript title="JavaScript"
+<Tab title="(신) 나이스페이먼츠 비인증 결제용 호출">
+```javascript
 IMP.request_pay({
-    pg : "html5_inicis.MID-b",  // KG이니시스 정기결제창 호출(상점아이디 MID-b 적용)
-    amount : 1000,
-    name : "테스트 주문",
-    buyer_name : "구매자",
-    buyer_email : "buyer@iamport.kr"
-  });
+  pg: "nice_v2.MID-b", // (신) 나이스페이먼츠 인증 결제용 호출 (상점아이디 MID-b 적용)
+  amount: 1000,
+  name: "테스트 주문",
+  buyer_name: "구매자",
+  buyer_email: "buyer@iamport.kr"
+});
 ```
 
 </Tab>
@@ -101,6 +88,5 @@ IMP.request_pay({
 <Hint style="info">
 **pg 속성 매칭 우선순위**
 
-관리자 콘솔에 저장한 PG 설정 순서대로 pg 속성의 조건과 일치하는 설정을 찾습니다. 이때 가장 먼저 매칭되는 PG 설정에 해당하는 결제창을 호출합니다.
-
+관리자 콘솔에서 PG 설정을 저장한 순서(오래된순)대로 pg 속성의 조건과 일치하는 설정을 찾습니다. 
 </Hint>
