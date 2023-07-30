@@ -1,0 +1,269 @@
+---
+emoji: ⌨
+title: 토스페이먼츠 브랜드페이
+description: 토스페이먼츠 브랜드페이 연동 방법을 안내합니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Codepen from "~/components/gitbook/Codepen.astro";
+import Details from "~/components/gitbook/Details.astro";
+import Figure from "~/components/gitbook/Figure.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+<Hint style="warning">
+토스페이먼츠 브랜드페는 **SDK 1.3.0 부터 사용 가능**합니다.
+
+SDK 스크립트의 주소가 `https://cdn.iamport.kr/v1/iamport.js` 인지 확인해주세요.
+
+</Hint>
+
+<Hint style="info">
+```html
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+```
+
+위 JS SDK 를 이용하여 토스페이먼츠 브랜드페이 연동시 callback data는
+아래와 같이 두가지 형태로만 내려갑니다.
+
+- `imp_uid`
+- `merchant_uid`
+
+</Hint>
+
+## 1. 토스페이먼츠 브랜드페이 설정하기
+
+[**토스페이먼츠 브랜드페이 설정**](../../ready/2-pg/pg/toss-brandpay) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+
+<Figure src="/gitbook-assets/ko/screenshot 2022-05-29 7.38.40.png" />
+
+## 2.결제 요청하기
+
+[JavaScript SDK](../../sdk/javascript-sdk/readme) `IMP.request_pay(param, callback)`을 호출하여 브랜드페이 결제창을 호출할 수 있습니다.
+**결제결과**는 PC 환경은 <mark style="color:red;">**callback**</mark>, 모바일 환경은 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+
+<Tabs>
+<Tab title="인증결제창 요청">
+```javascript title="Javascript SDK"
+IMP.request_pay(
+  {
+    pg: "toss-brandpay.{상점 ID}",
+    pay_method: "toss-brandpay",
+    merchant_uid: "orderNo0001",
+    name: "주문명:결제테스트",
+    amount: 1004,
+    buyer_email: "test@portone.io",
+    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+    bypass: {
+      isCulturalExpense: true
+    }
+  },
+  function (rsp) {
+    // callback 로직
+  }
+);
+```
+
+<Details>
+<p slot="summary"><strong>주요 파라미터 설명</strong></p>
+
+**`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**PG사 구분코드**
+
+`toss-brandpay` 로 지정하면 됩니다.
+
+**`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**결제수단 구분코드**
+
+`toss-brandpay` 로 지정하면 됩니다.
+
+**`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**주문번호**
+
+매번 고유하게 채번되어야 합니다.
+
+**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**주문명**
+
+**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**integer**</mark>
+
+**결제금액**
+
+브랜드페이는 한화 결제만 지원합니다. KRW 기준으로 금액을 입력해주세요.
+
+**`buyer_email`** <mark style="color:green;">**string**</mark>
+
+**구매자 email 주소**
+
+**`bypass.isCulturalExpense`** <mark style="color:green;">**boolean**</mark>
+
+**문화비 결제 여부**
+
+해당 결제건이 문화비 결제건인지 나타내는 파라미터입니다. 기본값은 `false`입니다.
+
+</Details>
+</Tab>
+</Tabs>
+
+## 3. UI 커스터마이징
+
+브랜드페이의 경우 결제창의 UI를 커스터마이징 할 수 있는 옵션들을 제공하고 있습니다.
+포트원을 통한 연동시에도 `IMP.request_pay` 호출시 `bypass.toss_brandpay.ui` 객체를 넘기면 UI 커스터마이징 기능을 사용할 수 있습니다.
+<Tabs>
+<Tab title="UI 커스터마이징">
+
+```javascript title="Javascript SDK"
+IMP.request_pay(
+  {
+    pg: "toss-brandpay.{상점 ID}",
+    pay_method: "toss-brandpay",
+    merchant_uid: "orderNo0001",
+    name: "주문명:결제테스트",
+    amount: 1004,
+    buyer_email: "test@portone.io",
+    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+    bypass: {
+      toss_brandpay: {
+        ui: {
+          buttonStyle: "default",
+          highlightColor: "#3182f6",
+          navigationBar: {
+            visible: true,
+            paddingTop: 10
+          },
+          labels: {
+            oneTouchPay: "원터치결제"
+          }
+        }
+      }
+    }
+  },
+  function (rsp) {
+    // callback 로직
+  }
+);
+```
+
+**`buttonStyle`** <mark style="color:green;">**string**</mark>
+
+**버튼스타일 구분코드**
+
+`default`와 `full` 두가지 값을 가질 수 있으며, `default`의 경우 모서리가 둥글고 주변에 여백을 가진 버튼을 사용할 수 있고,
+`full`로 설정하면 하단 영역이 전부채워지는 버튼을 사용할 수 있습니다.
+
+**`highlightColor`** <mark style="color:green;">**string**</mark>
+
+**UI 메인색상**
+
+UI 전체적으로 사용되는 메인 색상을 정할 수 있는 파라미터입니다. 기본값은 `#3182f6`입니다.
+
+**`navigationBar.visible`** <mark style="color:green;">**boolean**</mark>
+
+**내비게이션 바 사용 여부**
+
+기본값은 `true`입니다.
+
+**`navigationBar.paddingTop`** <mark style="color:green;">**number**</mark>
+
+**내비게이션 바 상단 여백**
+
+내비게이션 바 상단 여백 값입니다. 값의 단위는 `px`입니다.
+
+**`labels.oneTouchPay`**  <mark style="color:green;">**string**</mark>
+
+**원터치결제 대체 텍스트**
+
+UI에 표시되는 `원터치결제`를 대신해 사용할 텍스트입니다.
+
+</Tab>
+</Tabs>
+
+## 4. 결제수단 지정 바로 결제
+
+브랜드페이에 등록된 각 결제수단은 `methodId`라는 고유값을 할당 받습니다.
+결제창 호출 시 `methodId`를 넘기면 UI에서 결제수단을 선택하지 않고 해당 결제수단으로 바로 결제를 할 수 있습니다.
+`methodId`는 `IMP.loadModule()`을 호출 후 사용할 수 있는, `getPaymentMethods()` 함수를 통해 알아낼 수 있습니다.
+
+<Tabs>
+<Tab title="바로 결제">
+
+```javascript title="Javascript SDK"
+IMP.request_pay(
+  {
+    pg: "toss-brandpay.{상점 ID}",
+    pay_method: "toss-brandpay",
+    merchant_uid: "orderNo0001",
+    name: "주문명:결제테스트",
+    amount: 1004,
+    buyer_email: "test@portone.io",
+    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+    useCardPoint: true,
+    display: {
+      card_quota: [6]
+    },
+    bypass: {
+      cashReceiptType: "personal",
+      customerIdentifier: "01000000000",
+      toss_brandpay: {
+        methodId: "3nKLoSBV7l8zUHU14cZxK",
+        discountCode: "001"
+      }
+    }
+  },
+  function (rsp) {
+    // callback 로직
+  }
+);
+```
+### `methodId`와 함께 사용할 수 있는 파라미터
+
+**`useCardPoint`** <mark style="color:green;">**boolean**</mark>
+
+**카드결제시 포인트 사용 여부**
+
+기본값은 `false`입니다.
+
+**`display.card_quota`** <mark style="color:green;">**number array**</mark>
+
+**카드 할부개월수**
+
+카드결제시 할부개월수를 지정할 수 있습니다. `[3]` 형식으로 전달하면 3개월 할부로 결제가 진행됩니다.
+결제금액이 5만원 이상일 때만 적용됩니다.
+
+**`bypass.cashReceiptType`** <mark style="color:green;">**string**</mark>
+
+**현금영수증 발급 타입**
+
+`unable`로 설정시 현금영수증을 발행하지 않으며, `personal`로 설정시에는 소득공제용, `corporate`으로 설정시에는 지출증빙용으로 현금영수증을 발급합니다.
+`anonymous`으로 설정하면 현금영수증 자진발급이 가능합니다. 기본값은 `unable`입니다.
+
+**`bypass.customerIdentifier`** <mark style="color:green;">**string**</mark>
+
+**현금영수증 발급 식별번호**
+
+현금영수증 발급을 위한 식별번호입니다. 현금영수증 종류에 따라 휴대폰번호, 사업자등록번호, 현금영수증 카드번호를 입력할 수 있습니다.
+
+**`bypass.toss_brandpay.discountCode`** <mark style="color:green;">**string**</mark>
+
+**카드사 즉시 할인 코드**
+
+토스페이먼츠의 [카드혜택 조회 API](https://docs.tosspayments.com/reference#%EC%B9%B4%EB%93%9C-%ED%98%9C%ED%83%9D-%EC%A1%B0%ED%9A%8C-1)로 적용할 수 있는 할인 코드 목록을 조회할 수 있습니다.
+해당 API는 포트원에서는 제공하지 않고 있기 때문에, 직접 토스페이먼츠 API를 연동해야 합니다.
+
+</Tab>
+</Tabs>
+
+## 5. API 기능
+
+### 승인 취소
+
+결제 승인 완료 건에 대해 승인 취소를 할 수 있는 API입니다.\
+REST [**API POST /payments/cancel**](../../../api/api-1/api)를 호출하여 승인 취소(환불)을 요청합니다.
+
