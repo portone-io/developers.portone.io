@@ -27,18 +27,18 @@ app.use(bodyParser.json());
     try {
       // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
       const signinResponse = await axios({
-        url: "https://api.portone.io/v2/signin/api-key",
+        url: "https://api.portone.io/v2/login/api-key",
         method: "post",
         headers: { "Content-Type": "application/json" },
         data: {
-          api_key: PORTONE_API_KEY, // 포트원 API Key
+          apiKey: PORTONE_API_KEY, // 포트원 API Key
         },
       });
       const { access_token } = signinResponse.data;
 
-      // 2. 포트원 결제내역 단건조회 API 호출
+      // 2. 포트원 본인인증 내역 단건조회 API 호출
       const verificationResponse = await axios({
-        url: `https://api.portone.io/v2/identity-verifications/${identityVerificationId}`,
+        url: `https://api.portone.io/v2/identity-verifications/${identityVerificationId}?storeId=${storeId}`,
         method: "get",
         // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
         headers: { "Authorization": "Bearer " + access_token },
@@ -58,6 +58,7 @@ app.use(bodyParser.json());
 ### 인증 정보 활용하기
 
 조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.
+아래 파라미터들은 모두 본인인증 단건 조회의 결과가 인증 완료 상태일 때 (status = `"VERIFIED"`) 제공되는 `verifiedCustomer` 필드 내에 존재합니다.
 
 - `ci`: 연계 정보(Connecting Information). 사람마다 고유하고 서비스별로 달라지지 않기 때문에, 서비스 간 연계에 사용할 수 있음.
 - `di`: 중복 가입 확인 정보(Duplication Information). 해당 서비스 안에서만 사람마다 고유함. 이용자의 중복 가입을 확인하는 데 사용할 수 있음.
