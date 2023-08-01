@@ -1,22 +1,19 @@
 import { useComputed } from "@preact/signals";
-import type * as React from "react";
 
 import type { NavMenuPage } from "~/state/server-only/nav";
 import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 
-const LeftSidebarItem: React.FC<NavMenuPage> = (props) => {
+function LeftSidebarItem(props: NavMenuPage) {
   if (props.items.length > 0) return <FolderLink {...props} />;
-  const { emoji, title, slug } = props;
+  const { title, slug } = props;
   const pageSlug = slugSignal.value;
   const isActive = pageSlug === slug;
   const href = `/docs${slug}`;
-  return (
-    <JustLink emoji={emoji} title={title} href={href} isActive={isActive} />
-  );
-};
+  return <JustLink title={title} href={href} isActive={isActive} />;
+}
 export default LeftSidebarItem;
 
-const FolderLink: React.FC<NavMenuPage> = ({ emoji, title, slug, items }) => {
+function FolderLink({ title, slug, items }: NavMenuPage) {
   const openSignal = useComputed(() => !!navOpenStatesSignal.value[slug]);
   const open = openSignal.value;
   const pageSlug = slugSignal.value;
@@ -28,7 +25,7 @@ const FolderLink: React.FC<NavMenuPage> = ({ emoji, title, slug, items }) => {
         data-active={isActive && "active"} // true로 지정하면 SSR시에는 값 없이 attr key만 들어감
       >
         <a href={`/docs${slug}`} class="grow">
-          <LinkTitle emoji={emoji} title={title} />
+          <LinkTitle title={title} />
         </a>
         <button
           class="flex h-full items-center p-2"
@@ -59,30 +56,24 @@ const FolderLink: React.FC<NavMenuPage> = ({ emoji, title, slug, items }) => {
       </div>
     </div>
   );
-};
+}
 
 export interface JustLinkProps {
-  emoji?: string;
   title: string;
   href: string;
   isActive: boolean;
 }
-export const JustLink: React.FC<JustLinkProps> = ({
-  emoji,
-  title,
-  href,
-  isActive,
-}) => {
+export function JustLink({ title, href, isActive }: JustLinkProps) {
   return (
     <a
       href={href}
       class={getLinkStyle(isActive)}
       data-active={isActive && "active"}
     >
-      <LinkTitle emoji={emoji || ""} title={title} />
+      <LinkTitle title={title} />
     </a>
   );
-};
+}
 
 export function getLinkStyle(isActive: boolean): string {
   return `px-2 block text-sm rounded ${
@@ -93,14 +84,12 @@ export function getLinkStyle(isActive: boolean): string {
 }
 
 interface LinkTitleProps {
-  emoji: string;
   title: string;
 }
-const LinkTitle: React.FC<LinkTitleProps> = ({ emoji, title }) => {
+function LinkTitle({ title }: LinkTitleProps) {
   return (
     <span class="flex gap-2 py-1">
-      {emoji && <span>{emoji}</span>}
       <span>{title || <span class="text-red">(unknown page)</span>}</span>
     </span>
   );
-};
+}
