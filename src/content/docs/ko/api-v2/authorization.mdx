@@ -14,7 +14,7 @@ import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro"
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-## ⌨ API Key 방식으로 로그인 (New)
+## ⌨ API Key 방식으로 로그인
 
 <Swagger method="post" path="/login/api-key" baseUrl="https://api.portone.io/v2" summary="API Key 방식 로그인">
 <SwaggerDescription>API key 를 통해 API 인증에 사용할 토큰을 가져옵니다.</SwaggerDescription>
@@ -29,7 +29,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 </SwaggerParameter>
 ### Responses
 
-<SwaggerResponse status="200" description="본인인증 요청 전송 성공 응답">
+<SwaggerResponse status="200" description="로그인 성공 응답">
 <Tabs>
 <Tab title="Response">
 **`accessToken`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -90,23 +90,23 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 </SwaggerResponse>
 </Swagger>
 
-## ⌨ API Key 방식으로 로그인
-<Swagger method="post" path="/signin/api-key" baseUrl="https://api.portone.io/v2" summary="API Key 방식으로 로그인">
+## ⌨ 토큰 재발급
+<Swagger method="post" path="/token-regeneration" baseUrl="https://api.portone.io/v2" summary="토큰 재발급">
 <SwaggerDescription>
-API Key 방식으로 로그인
+리프레시 토큰을 이용한 토큰 재발급
 </SwaggerDescription>
 ### Parameters
 
 #### Body
 
-<SwaggerParameter name="api_key" type="string" required="true">
-사용자의 API Key
+<SwaggerParameter name="refresh_token" type="string" required="true">
+새로운 token을 발급받기 위한 refresh token
 
 </SwaggerParameter>
 
 ### Responses
 
-<SwaggerResponse status="200" description="로그인 성공">
+<SwaggerResponse status="200" description="토큰 재발급 응답">
 <Tabs>
 <Tab title="Response">
 **`access_token`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -126,7 +126,7 @@ API Key 방식으로 로그인
 </Tabs>
 
 </SwaggerResponse>
-<SwaggerResponse status="401" description="인증 실패">
+<SwaggerResponse status="401" description="유효하지 않은 refresh token">
 <Tabs>
 <Tab title="Response">
 **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -192,23 +192,23 @@ API Key 방식으로 로그인
 </SwaggerResponse>
 
 </Swagger>
-## ⌨ 토큰 재발급
-<Swagger method="post" path="/token-regeneration" baseUrl="https://api.portone.io/v2" summary="토큰 재발급">
+## ⌨ API Key 방식으로 로그인 (Deprecated)
+<Swagger method="post" path="/signin/api-key" baseUrl="https://api.portone.io/v2" summary="API Key 방식으로 로그인">
 <SwaggerDescription>
-리프레시 토큰을 이용한 토큰 재발급
+API Key 방식으로 로그인
 </SwaggerDescription>
 ### Parameters
 
 #### Body
 
-<SwaggerParameter name="refresh_token" type="string" required="true">
-새로운 token을 발급받기 위한 refresh token
+<SwaggerParameter name="api_key" type="string" required="true">
+사용자의 API Key
 
 </SwaggerParameter>
 
 ### Responses
 
-<SwaggerResponse status="200" description="토큰 재발급 응답">
+<SwaggerResponse status="200" description="로그인 성공">
 <Tabs>
 <Tab title="Response">
 **`access_token`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -228,7 +228,7 @@ API Key 방식으로 로그인
 </Tabs>
 
 </SwaggerResponse>
-<SwaggerResponse status="401" description="유효하지 않은 refresh token">
+<SwaggerResponse status="401" description="인증 실패">
 <Tabs>
 <Tab title="Response">
 **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>

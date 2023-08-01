@@ -186,11 +186,13 @@ PG사 가맹점 식별 아이디
 
 성별
 
+`MALE`, `FEMALE`, `OTHER`
+
 ***
 
 **`isForeigner`** <mark style="color:green;">**boolean**</mark>
 
-외국인 여부
+외국인 여부 (`true` - 외국인, `false` - 내국인)
 
 ***
 
@@ -226,9 +228,9 @@ di
 
 ---
 
-(status - `"VERIFIED"` 일 때만 존재)
-
 **`pgRawResponse`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+(status - `"VERIFIED"` 일 때만 존재)
 
 PG사 응답 데이터
 
@@ -243,6 +245,8 @@ PG사 응답 데이터
 <Tabs>
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+에러 타입
 
 `"InvalidRequestError"`
 
@@ -308,6 +312,8 @@ PG사 응답 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"NotFoundError"`
 
 ---
@@ -327,7 +333,11 @@ PG사 응답 데이터
 ## ⌨ 본인인증 요청 전송
 
 <Swagger method="post" path="/identity-verifications/send" baseUrl="https://api.portone.io/v2" summary="본인인증 요청 전송">
-<SwaggerDescription>SMS 또는 APP 방식을 이용하여 본인인증 요청을 전송합니다.</SwaggerDescription>
+<SwaggerDescription>
+본인인증 요청을 전송합니다.
+
+SMS 방식을 이용할 경우 입력한 전화번호로 문자 메시지가 발송되며 APP 방식을 이용할 경우에는 PASS 앱으로 푸쉬 알람이 전송됩니다.
+</SwaggerDescription>
 
 ### Parameters
 
@@ -363,10 +373,6 @@ PG사 별 추가 데이터
 `SKT`, `KT`, `LGU`, `SKT_MVNO`, `KT_MVNO`, `LGU_MVNO`
 
 </SwaggerParameter>
-<SwaggerParameter name="customerIdentityNumber" type="string" required="false">
-주민등록번호 앞 7자리
-
-</SwaggerParameter>
 <SwaggerParameter name="method" type="IdentityVerificationMethod" required="true">
 본인인증 수단 
 
@@ -388,6 +394,8 @@ PG사 별 추가 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"InvalidRequestError"`
 
 ---
@@ -408,6 +416,8 @@ PG사 별 추가 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"UnauthorizedError"`
 
 ---
@@ -426,6 +436,8 @@ PG사 별 추가 데이터
 <Tabs>
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+에러 타입
 
 `"ForbiddenError"`
 
@@ -446,6 +458,8 @@ PG사 별 추가 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"NotFoundError"`, `"IdentityVerificationChannelNotFoundError"`
 
 ---
@@ -465,6 +479,8 @@ PG사 별 추가 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"AlreadyExistsError"`
 
 ---
@@ -483,6 +499,8 @@ PG사 별 추가 데이터
 <Tabs>
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+에러 타입
 
 `"PgProviderError"`
 
@@ -526,13 +544,23 @@ PG사 에러 메시지
 
 ---
 
+**`customerIdentityNumber`** <mark style="color:green;">**string**</mark>
+
+주민등록번호 앞 7자리 (SMS 방식의 경우 필수 입력)
+
+---
+
 </Tab>
 </Tabs>
 
 ## ⌨ 본인인증 확인
 
 <Swagger method="post" path="/identity-verifications/confirm" baseUrl="https://api.portone.io/v2" summary="본인인증 확인">
-<SwaggerDescription>요청된 본인인증에 대한 확인을 진행합니다.</SwaggerDescription>
+<SwaggerDescription>
+요청된 본인인증에 대한 확인을 진행합니다.
+
+SMS 방식의 경우에는 입력된 OTP가 실제 발송되었던 OTP와 일치하는지 확인하며, APP 방식의 경우 PASS 인증이 완료되었는지 여부를 검사합니다.
+</SwaggerDescription>
 
 ### Parameters
 
@@ -552,7 +580,7 @@ OTP (SMS 방식일 때만 입력, APP 방식은 입력하지 않음)
 </SwaggerParameter>
 ### Responses
 
-<SwaggerResponse status="200" description="본인인증 요청 전송 성공 응답">
+<SwaggerResponse status="200" description="본인인증 확인 성공 응답">
 <Tabs>
 <Tab title="Response">
 
@@ -675,6 +703,8 @@ PG사 가맹점 식별 아이디
 
 성별
 
+`MALE`, `FEMALE`, `OTHER`
+
 ***
 
 **`isForeigner`** <mark style="color:green;">**boolean**</mark>
@@ -729,6 +759,8 @@ PG사 응답 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"InvalidRequestError"`
 
 ---
@@ -749,6 +781,8 @@ PG사 응답 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"UnauthorizedError"`
 
 ---
@@ -767,6 +801,8 @@ PG사 응답 데이터
 <Tabs>
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+에러 타입
 
 `"ForbiddenError"`
 
@@ -787,6 +823,8 @@ PG사 응답 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"NotFoundError"`
 
 ---
@@ -806,6 +844,8 @@ PG사 응답 데이터
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"AlreadyExistsError"`
 
 ---
@@ -824,6 +864,8 @@ PG사 응답 데이터
 <Tabs>
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+에러 타입
 
 `"PgProviderError"`
 
@@ -847,10 +889,14 @@ PG사 에러 메시지
 
 </Swagger>
 
-## ⌨ 본인인증 요청 재전송
+## ⌨ 본인인증 요청 재전송 (SMS)
 
-<Swagger method="post" path="/identity-verifications/resend" baseUrl="https://api.portone.io/v2" summary="본인인증 내역 조회">
-<SwaggerDescription>주어진 아이디에 대응되는 본인인증 내역을 조회합니다.</SwaggerDescription>
+<Swagger method="post" path="/identity-verifications/resend" baseUrl="https://api.portone.io/v2" summary="본인인증 요청 재전송 (SMS)">
+<SwaggerDescription>
+본인인증 요청을 재전송합니다.
+
+SMS 방식일 때에만 사용 가능하며, 기존 OTP가 만료되고 새로운 OTP가 전송됩니다.
+</SwaggerDescription>
 
 ### Parameters
 
@@ -866,7 +912,7 @@ PG사 에러 메시지
 </SwaggerParameter>
 ### Responses
 
-<SwaggerResponse status="200" description="본인인증 요청 전송 성공 응답">
+<SwaggerResponse status="200" description="본인인증 요청 재전송 성공 응답">
 <Tabs>
 <Tab title="Response">
 </Tab>
@@ -878,6 +924,8 @@ PG사 에러 메시지
 <Tabs>
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+에러 타입
 
 `"InvalidRequestError"`
 
@@ -899,6 +947,8 @@ PG사 에러 메시지
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"UnauthorizedError"`
 
 ---
@@ -917,6 +967,8 @@ PG사 에러 메시지
 <Tabs>
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+에러 타입
 
 `"ForbiddenError"`
 
@@ -937,6 +989,8 @@ PG사 에러 메시지
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"NotFoundError"`
 
 ---
@@ -956,6 +1010,8 @@ PG사 에러 메시지
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
+에러 타입
+
 `"AlreadyExistsError"`
 
 ---
@@ -974,6 +1030,8 @@ PG사 에러 메시지
 <Tabs>
 <Tab title="Response">
 **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+에러 타입
 
 `"PgProviderError"`
 
