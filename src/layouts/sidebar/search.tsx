@@ -6,7 +6,7 @@ import { lazy } from "~/misc/async";
 export interface SearchButtonProps {
   lang: string;
 }
-export const SearchButton: React.FC<SearchButtonProps> = ({ lang }) => {
+export function SearchButton({ lang }: SearchButtonProps) {
   return (
     <button
       class="bg-slate-2 text-slate-4 m-2 flex flex-1 gap-2 rounded p-2"
@@ -16,7 +16,7 @@ export const SearchButton: React.FC<SearchButtonProps> = ({ lang }) => {
       <span>{t(lang, "search")}</span>
     </button>
   );
-};
+}
 
 export const searchScreenOpenSignal = signal(false);
 export const searchTextSignal = signal("");
@@ -58,7 +58,7 @@ export function closeSearchScreen() {
 export interface SearchScreenProps {
   lang: string;
 }
-export const SearchScreen: React.FC<SearchScreenProps> = ({ lang }) => {
+export function SearchScreen({ lang }: SearchScreenProps) {
   const searchScreenOpen = searchScreenOpenSignal.value;
   const searchText = searchTextSignal.value;
   const fuse = fuseSignal.value;
@@ -119,20 +119,20 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({ lang }) => {
       </div>
     </div>
   );
-};
+}
 
 interface EmptyProps {
   lang: string;
 }
-const Empty: React.FC<EmptyProps> = ({ lang }) => {
+function Empty({ lang }: EmptyProps) {
   return (
     <div class="text-slate-3 flex flex-1 flex-col items-center justify-center">
       <div>{t(lang, "empty")}</div>
     </div>
   );
-};
+}
 
-const Waiting: React.FC = () => {
+function Waiting() {
   return (
     <div class="text-slate-3 flex flex-1 items-center justify-center">
       <div class="scale-300">
@@ -155,7 +155,7 @@ const Waiting: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 const ko = {
   empty: "검색된 내용이 없습니다",

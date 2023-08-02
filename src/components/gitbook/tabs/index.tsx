@@ -3,7 +3,7 @@ import * as React from "react";
 export interface TabsProps {
   children: React.ReactNode; // <astro-slot>
 }
-export const Tabs: React.FC<TabsProps> = ({ children }) => {
+export function Tabs({ children }: TabsProps) {
   const tabsRef = React.useRef<HTMLDivElement>(null);
   const [currentTab, setCurrentTab] = React.useState(0);
   const [titles, setTitles] = React.useState<string[]>([]);
@@ -38,17 +38,17 @@ export const Tabs: React.FC<TabsProps> = ({ children }) => {
             <button
               key={index}
               onClick={() => setCurrentTab(index)}
-              class={`px-4 py-2 text-sm border ${selectedStyle} ${cornerStyle}`}
+              class={`border px-4 py-2 text-sm ${selectedStyle} ${cornerStyle}`}
             >
               {title}
             </button>
           );
         })}
       </div>
-      <div class="px-6 py-4 rounded rounded-tl-none border">{children}</div>
+      <div class="rounded rounded-tl-none border px-6 py-4">{children}</div>
     </div>
   );
-};
+}
 
 function getTabElements(container?: Element | null) {
   if (!container) return [];
@@ -61,10 +61,10 @@ export interface TabProps {
   title: string;
   children: React.ReactNode;
 }
-export const Tab: React.FC<TabProps> = ({ children, title }) => {
+export function Tab({ children, title }: TabProps) {
   return (
     <div data-gitbook-tab data-title={title}>
       {children}
     </div>
   );
-};
+}

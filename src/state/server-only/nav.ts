@@ -12,7 +12,6 @@ export type NavMenuItem = NavMenuPage | NavMenuGroup;
 export interface NavMenuPage {
   type: "page";
   slug: string;
-  emoji: string;
   title: string;
   items: NavMenuPage[];
 }
@@ -24,8 +23,8 @@ export interface NavMenuGroup {
 export const navMenuSignal = computed<NavMenu>(() => {
   const frontmatters = frontmattersSignal.value;
   return {
-    "en": toNavMenuItems(navYamlEn, frontmatters),
-    "ko": toNavMenuItems(navYamlKo, frontmatters),
+    en: toNavMenuItems(navYamlEn, frontmatters),
+    ko: toNavMenuItems(navYamlKo, frontmatters),
   };
 });
 
@@ -44,7 +43,7 @@ export const navMenuAncestorsSignal = computed<NavMenuAncestors>(() => {
 });
 function* iterNavMenuAncestors(
   navMenuItems: NavMenuItem[],
-  ancestors: string[] = [],
+  ancestors: string[] = []
 ): Generator<{ slug: string; ancestors: string[] }> {
   for (const item of navMenuItems) {
     if (item.type === "group") {
@@ -57,36 +56,23 @@ function* iterNavMenuAncestors(
   }
 }
 
-interface EmojiAndTitle {
-  emoji: string;
-  title: string;
-}
-function frontmatterToEmojiAndTitle(
-  frontmatter?: Record<string, any>,
-): EmojiAndTitle {
-  return {
-    emoji: frontmatter?.["emoji"] || "",
-    title: frontmatter?.["title"] || "",
-  };
-}
-
 function toNavMenuItems(
   yaml: YamlNavMenuToplevelItem[],
-  frontmatters: Frontmatters,
+  frontmatters: Frontmatters
 ): NavMenuItem[] {
   return yaml.map((item) => {
     if (typeof item === "string") {
       return {
         type: "page",
         slug: item,
-        ...frontmatterToEmojiAndTitle(frontmatters[item]),
+        title: frontmatters[item]?.["title"] || "",
         items: [],
       };
     } else if ("slug" in item) {
       return {
         type: "page",
         slug: item.slug,
-        ...frontmatterToEmojiAndTitle(frontmatters[item.slug]),
+        title: frontmatters[item.slug]?.["title"] || "",
         items: toNavMenuItems(item.items, frontmatters) as NavMenuPage[],
       };
     } else {

@@ -1,5 +1,3 @@
-import type React from "react";
-
 export interface RightSidebarProps {
   lang: string;
   slug: string;
@@ -12,12 +10,12 @@ export interface TocItem {
   text: string;
   children: TocItem[];
 }
-const RightSidebar: React.FC<RightSidebarProps> = ({
+function RightSidebar({
   lang,
   slug,
   toc,
   editThisPagePrefix = "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
-}) => {
+}: RightSidebarProps) {
   return (
     <div class="text-slate-7 hidden w-56 min-w-0 shrink-0 lg:block">
       <nav class="w-inherit fixed my-4 h-[calc(100%-5.5rem)] overflow-y-auto px-2">
@@ -52,7 +50,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
       </nav>
     </div>
   );
-};
+}
 
 export default RightSidebar;
 
@@ -62,7 +60,7 @@ interface LinkProps {
   label: any;
   children?: any;
 }
-const SidebarItem: React.FC<LinkProps> = ({ href, icon, label, children }) => {
+function SidebarItem({ href, icon, label, children }: LinkProps) {
   return (
     <li>
       <a
@@ -87,7 +85,7 @@ const SidebarItem: React.FC<LinkProps> = ({ href, icon, label, children }) => {
       {children}
     </li>
   );
-};
+}
 
 export interface Heading {
   depth: number;
