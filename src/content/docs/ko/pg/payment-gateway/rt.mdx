@@ -1,7 +1,7 @@
 ---
 emoji: ⌨
-title: 페이팔 정기결제 빌링키 발급
-description: 페이팔 정기결제 빌링키 발급 연동 방법을 안내합니다.
+title: (신) 페이팔 정기결제
+description: (신) 페이팔 빌링키 발급 및 정기결제 연동 방법을 안내합니다.
 ---
 
 import * as prose from "~/components/prose";
@@ -12,43 +12,32 @@ import Figure from "~/components/gitbook/Figure.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 
 <Hint style="info">
-(신)페이팔 정기결제의 경우 RT(Reference Transaction) 방식만 지원합니다.
+  (신)페이팔 정기결제의 경우 RT(Reference Transaction) 방식만 지원합니다.
 </Hint>
 
 <Hint style="warning">
-페이팔 정기결제 빌링키 발급은 **SDK 1.3.0 부터 사용 가능**합니다.
+(신) 페이팔 빌링키 발급 및 정기결제는 **SDK 1.3.0 부터 사용 가능**합니다.
 
 SDK 스크립트의 주소가 `https://cdn.iamport.kr/v1/iamport.js 인지 확인해주세요.`
+
+위 JS SDK 를 이용하여 페이팔 정기결제 연동시 callback Data는 아래와 같이 두가지 형태로만 내려갑니다.
+
+- `imp_uid`
+- `merchant_uid`
 
 </Hint>
 
 <Hint style="danger">
 #### **기존에 deprecated된 응답들은 모두 제거**됐습니다. ⚠️
 
-페이팔 연동시에 사용되는 신규 JS SDK는 기존 모듈에서 제공했던 CallBack 파라미터가 대부분 삭제되었습니다.(특히 deprecated 로 명시된 파라미터는 모두 삭제되었습니다.)
+(구) 페이팔 연동시에 사용되는 신규 JS SDK는 기존 모듈에서 제공했던 CallBack 파라미터가 대부분 삭제되었습니다.(특히 deprecated 로 명시된 파라미터는 모두 삭제되었습니다. 따라서 삭제된 값에 의존성을 가진 프로그램 로직은 모두 삭제하시는
+방향성을 잡아가셔야 하는점 유념하시기 바랍니다.)
 
 해당 JS SDK 사용시 Callback 으로 내려받을수 있는 데이터는 오직 아래 두가지 입니다.
 
 **imp_uid, merchant_uid**
 
 따라서 해당 SDK를 사용하실때는 IMP.request_pay로부터 응답된 객체(또는 쿼리 파라미터)에서 imp_uid를 가지고 **아임포트 REST API(GET /payments/imp_uid)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여 응답파라미터중 status 파라미터로 결제 상태를 파악하셔야 합니다.
-
-</Hint>
-
-<Hint style="info">
-```html
-<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
-```
-
-위 JS SDK 를 이용하여 토스페이먼츠,케이에스넷,페이팔 정기결제 연동시 callback Data는
-아래와 같이 두가지 형태로만 내려갑니다.
-
-- `imp_uid`
-- `merchant_uid`
-
-위 PG사를 제외한 다른 PG사는 imp_success 파라미터가 기존처럼 내려가지만
-해당 파리미터는 deprecated 된 값이기 때문에 해당 값에 의존성을 가진 프로그램 로직은 모두 삭제하시는
-방향성을 잡아가셔야 하는점 유념하시기 바랍니다.
 
 </Hint>
 
@@ -179,23 +168,23 @@ attribute가 `paypal-rt`인 elemente도 2개 이상인 경우, “동일한 data
 
 ## loadUI 요청 객체
 
-| 파라미터                                                                                  | 데이터타입 | 필수여부 | 의미                                                                                                                                                                                                                           |
-| ----------------------------------------------------------------------------------------- | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| merchant_uid                                                                              | string     | required | 가맹점 채번 주문 고유 번호                                                                                                                                                                                                     |
-| name                                                                                      | string     | optional | 제품명                                                                                                                                                                                                                         |
-| pg                                                                                        | string     | required | paypal_v2                                                                                                                                                                                                                      |
-| [pay_method](https://chaifinance.notion.site/pay_method-9edc2ae955d2434996bb0c3f1c53802b) | string     | optional | 빌링키 발급 수단                                                                                                                                                                                                               |
-| customer_uid                                                                              | string     | required | 가맹점이 구매자를 특정하기 위해 채번한 고유 번호로 빌링키 발급시 필수 입력                                                                                                                                                     |
-| customer_id                                                                               | string     | optional | 빌링키 발급 수단을 특정하는 고유 번호                                                                                                                                                                                          |
-| notice_url                                                                                | string     | optional | <p>빌링키 발급 창에서 빌링키 발급 완료시 가맹점에게 노티 될 웹훅 URL string 또는 string[]로 N개 설정 가능</p><p>웹훅이 잘 발송 됐는지는 결제 승인 내역에서 아임포트 번호를 눌러봤을때 웹훅 발송 내역을 보고 확인할 수 있음</p> |
-| custom_data                                                                               | object     | optional | 빌링키 발급 정보와 함께 관리하고 싶은 가맹점 커스텀 JSON 데이터                                                                                                                                                                |
+| 파라미터     | 데이터타입 | 필수여부 | 의미                                                                                                                                                                                                                           |
+| ------------ | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| merchant_uid | string     | required | 가맹점 채번 주문 고유 번호                                                                                                                                                                                                     |
+| name         | string     | optional | 제품명                                                                                                                                                                                                                         |
+| pg           | string     | required | paypal_v2                                                                                                                                                                                                                      |
+| pay_method   | string     | optional | paypal (결제수단)                                                                                                                                                                                                              |
+| customer_uid | string     | required | 가맹점이 구매자를 특정하기 위해 채번한 고유 번호로 빌링키 발급시 필수 입력                                                                                                                                                     |
+| customer_id  | string     | optional | 빌링키 발급 수단을 특정하는 고유 번호                                                                                                                                                                                          |
+| notice_url   | string     | optional | <p>빌링키 발급 창에서 빌링키 발급 완료시 가맹점에게 노티 될 웹훅 URL string 또는 string[]로 N개 설정 가능</p><p>웹훅이 잘 발송 됐는지는 결제 승인 내역에서 아임포트 번호를 눌러봤을때 웹훅 발송 내역을 보고 확인할 수 있음</p> |
+| custom_data  | object     | optional | 빌링키 발급 정보와 함께 관리하고 싶은 가맹점 커스텀 JSON 데이터                                                                                                                                                                |
 
 <Hint style="warning">
 <mark style="color:red;">**파라미터 유의사항**</mark>
 
 아래 링크로 반드시 유의사항을 숙지하셔야 합니다.
 
-[파라미터 유의사항](../../pg/payment-gateway/rt/warning)
+[연동 유의사항](../../pg/payment-gateway/rt/warning)
 
 </Hint>
 
@@ -314,7 +303,7 @@ withAdditionalData:@{}];
 
 페이팔은 판매자 보호 정책을 통해 가맹점 거래에서 이상 거래나 사기 등이 발생 시, 판매자 보호 정책을 통해 가맹점이 손해 입을 수 있는 부분을 보존하는 판매자 보호 프로그램을 가지고 있습니다. 이 판매자 보호 정책을 적용하기 위해서는 페이팔 측에서 제공하는 STC 기능을 사용해야 합니다.
 
-정기결제 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다.
+STC 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다.
 
 1. 페이팔 Business 계정 가입시 산업 종류(Industry)를 결정하는데, 계정의 산업 종류를 확인해야 합니다.
 2. 계정의 산업 종류를 확인하신 뒤, loadUI 호출 해 빌링키를 발급 받을때 그리고 발급 된 빌링키로 재결제(again API 호출)할때 모두 bypass.paypal_v2 객체에 아래와 같은 형식으로 전달해주셔야 합니다.
@@ -411,8 +400,39 @@ withAdditionalData:@{}];
   ```
 </Details>
 
-**고위험 산업(게임과 같은 디지털 상품, 중고거래)의 경우에는 STC API를 통해 보호 정책을 적용하는 것을 페이팔 측에서 권장하고 있습니다.**
+<Hint style="warning">
 
-**판매자 보호 정책에 관한 자세한 내용과 협의가 필요하시다면 페이팔 측에 직접 문의를 하셔야 합니다. 각 산업별 필수, 선택 파라미터는 페이팔에서 제공해준 다음 문서에 상세내용이 나와있습니다.**
+**고위험 산업(게임과 같은 디지털 상품, 중고거래)의 경우에는 STC API를 통해 판매자 보호 정책을 적용하는 것을 페이팔에서 필수로 요구하고 있습니다.**
 
-[**https://github.com/portone-io/developers.portone.io/files/11166636/7_STC_ConsolidatedIndustryPacks_v_3.4.pdf**](https://github.com/portone-io/developers.portone.io/files/11166636/7_STC_ConsolidatedIndustryPacks_v_3.4.pdf)
+**판매자 보호 정책에 관한 자세한 내용과 협의가 필요하시다면 페이팔 측에 직접 문의를 하셔야 합니다.**
+
+**고위험 산업이 아닌 경우에도 STC API를 연동하는 것을 권장하고 있습니다.**
+
+<br />
+
+---
+
+<br />
+
+고위험 산업에 해당하는 산업군들은 다음과 같습니다.
+
+각 산업별 STC에 필요한 요청 파라미터들이 달라, 고위험 산업에 해당하는 가맹점 분들께는 페이팔 전자결제 신청 시 포트원 지원팀에서 안내가 될 예정입니다.
+
+1. 이벤트/티켓 판매 산업
+2. 연료 산업
+3. 게임/디지털 상품 산업
+4. 마켓플레이스 사업
+5. 온라인 여행 산업(렌터카, 숙박, 여행 패키지, 교통)
+6. P2P 산업
+7. 소매, 식품 산업
+   - **소매, 식품 산업의 경우 다음과 같은 경우에만 STC 연동이 필요합니다.**
+     - 모바일 기기를 통해 매장 내 구매가 가능한 산업
+   - **다음 산업의 경우에는 STC 연동이 필요하지 않습니다.**
+     - 타사 배송업체를 통해 주소로 실물 상품을 배송하는 산업
+     - 자체 배송 트럭을 통해 주소로 실물 상품을 배송하는 산업
+     - 소비자가 수령할 수 있도록 자체 매장으로 실물 상품을 배송하는 산업
+8. 택시, 공유 이동수단 사업
+9. 통신사
+10. 결제 시스템 보안 서비스 산업
+
+</Hint>
