@@ -31,13 +31,15 @@ import screenshot3 from "./_assets/updateloadui.png";
 <Figure src={screenshot2} />
 
 ```html
-// 1. 가맹점 체크아웃 페이지가 렌더링됩니다.
-// 브랜드페이 위젯을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣어줍니다.
-// data-portone-ui-type는 브랜드페이 위젯용임을 나타내는 toss-brandpay-widget로 설정합니다.
-// 결제하기 버튼 역할을 하는 element의 경우 id를 "portone-toss-brandpay-widget-button"로 설정해주어야 합니다.
-// 포트원 SDK는 해당 id를 가지는 element를 찾아 결제하기 event를 등록해줍니다.
+<!--
+  1. 가맹점 체크아웃 페이지가 렌더링됩니다.
+  브랜드페이 위젯을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣어줍니다.
+  data-portone-ui-type는 브랜드페이 위젯용임을 나타내는 toss-brandpay-widget로 설정합니다.
+  결제하기 버튼 역할을 하는 element의 경우 id를 "portone-toss-brandpay-widget-button"로 설정해주어야 합니다.
+  포트원 SDK는 해당 id를 가지는 element를 찾아 결제하기 event를 등록해줍니다.
+-->
 <div class="portone-ui-container" data-portone-ui-type="toss-brandpay-widget">
-	<!-- 3. 여기에 결제수단 위젯이 생성됩니다. -->
+  <!-- 3. 여기에 결제수단 위젯이 생성됩니다. -->
 </div>
 
 <div id="portone-toss-brandpay-widget-button">
@@ -45,21 +47,21 @@ import screenshot3 from "./_assets/updateloadui.png";
 </div>
 
 <script>
-	window.onload = function() {
-		// 2. 가맹점 체크아웃 페이지가 렌더링 되면
-		// 2-1. "가맹점 식별코드"를 전달 해 포트원 객체를 초기화합니다.
-		IMP.init(가맹점 식별코드);
+  window.onload = function () {
+    // 2. 가맹점 체크아웃 페이지가 렌더링 되면
+    // 2-1. "가맹점 식별코드"를 전달 해 포트원 객체를 초기화합니다.
+    IMP.init(가맹점_식별코드);
 
-		// 2-2. "결제 요청 데이터"와 결제 프로세스가 종료되면 호출 될 "콜백 함수"를 전달하여 브랜드페이 위젯 렌더링을 시도합니다.
-		// 이때 전달하는 파라미터는 IMP.request_pay 함수 호출시 전달하는 파라미터와 동일합니다.
-		IMP.loadUI('toss-brandpay-widget', 결제 요청 데이터, 콜백 함수);
+    // 2-2. "결제 요청 데이터"와 결제 프로세스가 종료되면 호출 될 "콜백 함수"를 전달하여 브랜드페이 위젯 렌더링을 시도합니다.
+    // 이때 전달하는 파라미터는 IMP.request_pay 함수 호출시 전달하는 파라미터와 동일합니다.
+    IMP.loadUI("toss-brandpay-widget", 결제_요청_데이터, 콜백_함수);
 
-		// 4. 구매자가 결제하기 버튼을 누르면 PG사 결제창이 렌더링 됩니다.
+    // 4. 구매자가 결제하기 버튼을 누르면 PG사 결제창이 렌더링 됩니다.
     // 5. 이때 포트원은 내부적으로 IMP.request_pay 함수를 가맹점 대신 호출합니다.
     // 6-7. 포트원 DB에 미결제(ready) 결제 건이 생성됩니다.
-		// 8. PG사 결제창이 호출됩니다.
-		// 9. 결제 프로세스가 종료되면 2-2번에 두번째 파라미터로 전달 한 콜백 함수가 호출됩니다.
-  });
+    // 8. PG사 결제창이 호출됩니다.
+    // 9. 결제 프로세스가 종료되면 2-2번에 두번째 파라미터로 전달 한 콜백 함수가 호출됩니다.
+  };
 </script>
 ```
 
@@ -70,8 +72,8 @@ import screenshot3 from "./_assets/updateloadui.png";
 element를 찾지 못할 경우 "portone-ui-container를 찾을 수 없습니다." 라는 에러가 발생합니다.
 
 <mark style="color:red;">`portone-ui-container`</mark> element가 2개 이상인데, `data-portone-ui-type`
-attribute가 `toss-brandpay-widget`인 element를 찾지 못할 경우, "data-portone-ui-type에 올바른
-UI 타입을 입력해주세요."라는 에러가 발생합니다.
+attribute가 `toss-brandpay-widget`인 element를 찾지 못할 경우, "data-portone-ui-type에
+올바른 UI 타입을 입력해주세요."라는 에러가 발생합니다.
 
 <mark style="color:red;">`portone-ui-container`</mark> element가 2개 이상이고, `data-portone-ui-type`
 attribute가 `oss-brandpay-widget`인 elemente도 2개 이상인 경우, “동일한 data-portone-ui-type을
@@ -91,20 +93,22 @@ attribute가 `oss-brandpay-widget`인 elemente도 2개 이상인 경우, “동�
 
 ```html
 <form>
-	<!-- 결제 요청 데이터를 입력 받는 form -->
-	<!-- ...중략 -->
-	<label for="amount">결제 금액</label>
-	<!-- 4. 구매자가 쿠폰을 적용해 결제 요청 금액이 변경(예) 1000 -> 2000)되었습니다. -->
-	<input id="amount" name="amount" value="1000" onchnage="onChangeAmount()" />
+  <!-- 결제 요청 데이터를 입력 받는 form -->
+  <!-- ...중략 -->
+  <label for="amount">결제 금액</label>
+  <!-- 4. 구매자가 쿠폰을 적용해 결제 요청 금액이 변경(예) 1000 -> 2000)되었습니다. -->
+  <input id="amount" name="amount" value="1000" onchnage="onChangeAmount()" />
 </form>
 
-// 1. 가맹점 체크아웃 페이지가 렌더링됩니다.
-// 브랜드페이 위젯을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣어줍니다.
-// data-portone-ui-type는 브랜드페이 위젯용임을 나타내는 toss-brandpay-widget로 설정합니다.
-// 결제하기 버튼 역할을 하는 element의 경우 id를 "portone-toss-brandpay-widget-button"로 설정해주어야 합니다.
-// 포트원 SDK는 해당 id를 가지는 element를 찾아 결제하기 event를 등록해줍니다.
+<!-- 
+  1. 가맹점 체크아웃 페이지가 렌더링됩니다.
+  브랜드페이 위젯을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣어줍니다.
+  data-portone-ui-type는 브랜드페이 위젯용임을 나타내는 toss-brandpay-widget로 설정합니다.
+  결제하기 버튼 역할을 하는 element의 경우 id를 "portone-toss-brandpay-widget-button"로 설정해주어야 합니다.
+  포트원 SDK는 해당 id를 가지는 element를 찾아 결제하기 event를 등록해줍니다.
+-->
 <div class="portone-ui-container" data-portone-ui-type="toss-brandpay-widget">
-	<!-- 3. 여기에 결제수단 위젯이 생성됩니다. -->
+  <!-- 3. 여기에 결제수단 위젯이 생성됩니다. -->
 </div>
 
 <div id="portone-toss-brandpay-widget-button">
@@ -112,35 +116,35 @@ attribute가 `oss-brandpay-widget`인 elemente도 2개 이상인 경우, “동�
 </div>
 
 <script>
-	var requestData = {
-		pg: 'toss_brandpay',
-		amount: 1000,
-		...중략
-	}
-	window.onload = function() {
-		// 2. 가맹점 체크아웃 페이지가 렌더링 되면
-		// 2-1. "가맹점 식별코드"를 전달 해 포트원 객체를 초기화합니다.
-		IMP.init(가맹점 식별코드);
+  var requestData = {
+    pg: "toss_brandpay",
+    amount: 1000,
+    // ...중략
+  };
+  window.onload = function () {
+    // 2. 가맹점 체크아웃 페이지가 렌더링 되면
+    // 2-1. "가맹점 식별코드"를 전달 해 포트원 객체를 초기화합니다.
+    IMP.init(가맹점_식별코드);
 
-		// 2-2. "결제 요청 데이터"와 결제 프로세스가 종료되면 호출 될 "콜백 함수"를 전달하여 브랜드페이 위젯 렌더링을 시도합니다.
-		// 이때 전달하는 파라미터는 IMP.request_pay 함수 호출시 전달하는 파라미터와 동일합니다.
-		IMP.loadUI('toss-brandpay-widget', requestData, 콜백 함수);
+    // 2-2. "결제 요청 데이터"와 결제 프로세스가 종료되면 호출 될 "콜백 함수"를 전달하여 브랜드페이 위젯 렌더링을 시도합니다.
+    // 이때 전달하는 파라미터는 IMP.request_pay 함수 호출시 전달하는 파라미터와 동일합니다.
+    IMP.loadUI("toss-brandpay-widget", requestData, 콜백_함수);
 
-		// 6. 구매자가 결제하기 버튼을 누르면 PG사 결제창이 렌더링 됩니다.
-		// 7. 이떄 포트원은 내부적으로 IMP.request_pay 함수를 가맹점 대신 호출하며
-		// 결제 요청 금액은 1000에서 2000으로 변경됩니다.
+    // 6. 구매자가 결제하기 버튼을 누르면 PG사 결제창이 렌더링 됩니다.
+    // 7. 이떄 포트원은 내부적으로 IMP.request_pay 함수를 가맹점 대신 호출하며
+    // 결제 요청 금액은 1000에서 2000으로 변경됩니다.
 
-		// 8-9. 포트원 DB에 미결제(ready) 결제 건이 생성됩니다.
-		// 10. PG사 결제창이 호출됩니다.
-		// 11. 결제 프로세스가 종료되면 2-2번에 두번째 파라미터로 전달 한 콜백 함수가 호출됩니다.
-  });
+    // 8-9. 포트원 DB에 미결제(ready) 결제 건이 생성됩니다.
+    // 10. PG사 결제창이 호출됩니다.
+    // 11. 결제 프로세스가 종료되면 2-2번에 두번째 파라미터로 전달 한 콜백 함수가 호출됩니다.
+  };
 
-	function onChangeAmount() {
-		// 5. 결제 요청 금액이 변경되면 가맹점이 선언한 onChangeAmount 함수가 호출됩니다.
-		// IMP.updateLoadUIRequest에 최종적으로 변경 된 결제 요청 데이터를 전달합니다.
-		requestData.amount = document.getElementById('amount').value
-		IMP.updateLoadUIRequest('toss-brandpay-widget', requestData)
-	}
+  function onChangeAmount() {
+    // 5. 결제 요청 금액이 변경되면 가맹점이 선언한 onChangeAmount 함수가 호출됩니다.
+    // IMP.updateLoadUIRequest에 최종적으로 변경 된 결제 요청 데이터를 전달합니다.
+    requestData.amount = document.getElementById("amount").value;
+    IMP.updateLoadUIRequest("toss-brandpay-widget", requestData);
+  }
 </script>
 ```
 
