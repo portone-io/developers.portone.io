@@ -4,9 +4,7 @@ export type YamlNavMenuToplevelItem =
   | YamlNavMenuPageSugar
   | YamlNavMenuPage
   | YamlNavMenuGroup;
-export type YamlNavMenuItem =
-  | YamlNavMenuPageSugar
-  | YamlNavMenuPage;
+export type YamlNavMenuItem = YamlNavMenuPageSugar | YamlNavMenuPage;
 type YamlNavMenuPageSugar = string;
 interface YamlNavMenuPage {
   slug: string;
@@ -15,4 +13,8 @@ interface YamlNavMenuPage {
 interface YamlNavMenuGroup {
   label: string;
   items: YamlNavMenuItem[];
+  side?: {
+    label: string;
+    link: string;
+  };
 }

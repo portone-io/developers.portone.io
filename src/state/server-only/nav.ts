@@ -19,6 +19,12 @@ export interface NavMenuGroup {
   type: "group";
   label: string;
   items: NavMenuPage[];
+  side?:
+    | {
+        label: string;
+        link: string;
+      }
+    | undefined;
 }
 export const navMenuSignal = computed<NavMenu>(() => {
   const frontmatters = frontmattersSignal.value;
@@ -48,7 +54,7 @@ function* iterNavMenuAncestors(
   for (const item of navMenuItems) {
     if (item.type === "group") {
       yield* iterNavMenuAncestors(item.items, ancestors);
-    } else {
+    } else if (item.type === "page") {
       const { slug, items } = item;
       yield { slug, ancestors };
       yield* iterNavMenuAncestors(items, [...ancestors, slug]);
@@ -80,6 +86,7 @@ function toNavMenuItems(
         type: "group",
         label: item.label,
         items: toNavMenuItems(item.items, frontmatters) as NavMenuPage[],
+        side: item.side,
       };
     }
   });
