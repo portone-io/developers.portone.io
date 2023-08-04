@@ -1,0 +1,59 @@
+---
+title: redirect 방식에서의 결과처리
+description: windowType 파라미터에서 redirect를 선택한 경우의 결과 처리 방법을 안내합니다.
+---
+
+import * as prose from "~/components/prose";
+export const components = prose;
+
+import Hint from "~/components/gitbook/Hint.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+redirect 방식은 새로운 페이지에서 본인인증 프로세스가 진행된 뒤, 프로세스가 완료되고 나면 본인인증 요청 시에 전달하신 `redirectUrl`로 리디렉션됩니다.
+
+```javascript
+function requestIdentityVerification() {
+  // 리디렉션의 경우 결제 프로세스 완료 시(성공, 실패 모두) redirectUrl로 이동되므로
+  // 함수의 반환 값을 이용해 결과처리할 수 없습니다.
+  PortOne.requestIdentityVerification({
+    /* 객체 생략 */
+    redirectUrl: "https://리디렉션될-URL",
+  });
+}
+```
+
+함수의 반환 값을 사용할 수 없는 대신, redirectUrl 주소로 결과 값을 Query string(쿼리 스트링) 형태로 전달받을 수 있습니다.
+
+<Hint style="info">
+  **Query string 이란?**
+
+URL 뒤에 데이터를 전달하는 가장 단순한 방법으로 주로 GET 요청과 함께 데이터를 전송할 때 사용합니다.
+
+</Hint>
+
+아래는 쿼리 스트링 형태로 리디렉션되는 URL의 예시입니다.
+
+<Tabs>
+  <Tab title="프로세스 완료 (실패 포함)">
+    ``` showLineNumbers
+    https://my-redirect-url.com/payments/redirect?
+    identity_verification_id=가맹점_본인인증_고유번호
+    ```
+
+  </Tab>
+</Tabs>
+
+| 파라미터명               | 설명                     | 비고    |
+| ------------------------ | ------------------------ | ------- |
+| identity_verification_id | 가맹점 본인인증 고유번호 | 공통    |
+| code                     | 오류코드                 | 실패 시 |
+| message                  | 오류메세지               | 실패 시 |
+
+## 인증결과 조회 API를 이용하여 이후 로직 작성하기
+
+리디렉션 URL에 해당하는 페이지에서 쿼리 스트링으로 결과 정보를 받은 뒤, 인증결과를 조회하는 API를 호출하여 이후 로직을 작성하세요.
+
+인증 결과를 조회하는 엔드포인트를 서버에서 구현하셔야 하며, 이에 대한 예시는 아래 링크에서 확인하실 수 있습니다.
+
+[인증 결과 조회 API 구현하기](../4)
