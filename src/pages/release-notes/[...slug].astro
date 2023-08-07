@@ -27,12 +27,12 @@ type Params = InferGetStaticParamsType<typeof getStaticPaths>;
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { slug } = Astro.params as Params;
-const { entry, apiSdkNotes, consoleNotes } = Astro.props;
+const { entry, apiSdkNotes, consoleNotes } = Astro.props as Props;
 const { releasedAt, writtenAt } = entry.data;
 const { Content } = await entry.render();
 
 const label = apiSdkNotes.some((note) => note.slug === slug)
-  ? "API/SDK"
+  ? "API / SDK"
   : "관리자콘솔";
 const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
 ---
