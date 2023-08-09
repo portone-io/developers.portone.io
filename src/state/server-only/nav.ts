@@ -2,7 +2,7 @@ import { computed } from "@preact/signals";
 
 import navYamlEn from "~/content/docs/en/_nav.yaml";
 import navYamlKo from "~/content/docs/ko/_nav.yaml";
-import type { YamlNavMenuToplevelItem } from "~/type";
+import type { SystemVersion, YamlNavMenuToplevelItem } from "~/type";
 import { Frontmatters, frontmattersSignal } from "./frontmatters";
 
 export interface NavMenu {
@@ -14,11 +14,13 @@ export interface NavMenuPage {
   slug: string;
   title: string;
   items: NavMenuPage[];
+  systemVersion: SystemVersion;
 }
 export interface NavMenuGroup {
   type: "group";
   label: string;
   items: NavMenuPage[];
+  systemVersion: SystemVersion;
   side?:
     | {
         label: string;
@@ -73,6 +75,7 @@ function toNavMenuItems(
         slug: item,
         title: frontmatters[item]?.["title"] || "",
         items: [],
+        systemVersion: "all",
       };
     } else if ("slug" in item) {
       return {
@@ -80,12 +83,14 @@ function toNavMenuItems(
         slug: item.slug,
         title: frontmatters[item.slug]?.["title"] || "",
         items: toNavMenuItems(item.items, frontmatters) as NavMenuPage[],
+        systemVersion: item.systemVersion || "all",
       };
     } else {
       return {
         type: "group",
         label: item.label,
         items: toNavMenuItems(item.items, frontmatters) as NavMenuPage[],
+        systemVersion: item.systemVersion || "all",
         side: item.side,
       };
     }
