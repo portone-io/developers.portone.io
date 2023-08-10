@@ -28,12 +28,18 @@ export interface NavMenuGroup {
       }
     | undefined;
 }
-export const navMenuSignal = computed<NavMenu>(() => {
+export const navMenuItemsEnSignal = computed<NavMenuItem[]>(() => {
   const frontmatters = frontmattersSignal.value;
-  return {
-    en: toNavMenuItems(navYamlEn, frontmatters),
-    ko: toNavMenuItems(navYamlKo, frontmatters),
-  };
+  return toNavMenuItems(navYamlEn, frontmatters);
+});
+export const navMenuItemsKoSignal = computed<NavMenuItem[]>(() => {
+  const frontmatters = frontmattersSignal.value;
+  return toNavMenuItems(navYamlKo, frontmatters);
+});
+export const navMenuSignal = computed<NavMenu>(() => {
+  const navMenuItemsEn = navMenuItemsEnSignal.value;
+  const navMenuItemsKo = navMenuItemsKoSignal.value;
+  return { en: navMenuItemsEn, ko: navMenuItemsKo };
 });
 
 export interface NavMenuAncestors {
@@ -66,7 +72,8 @@ function* iterNavMenuAncestors(
 
 function toNavMenuItems(
   yaml: YamlNavMenuToplevelItem[],
-  frontmatters: Frontmatters
+  frontmatters: Frontmatters,
+  systemVersion: SystemVersion = "all"
 ): NavMenuItem[] {
   return yaml.map((item) => {
     if (typeof item === "string") {
@@ -75,22 +82,32 @@ function toNavMenuItems(
         slug: item,
         title: frontmatters[item]?.["title"] || "",
         items: [],
-        systemVersion: "all",
+        systemVersion,
       };
     } else if ("slug" in item) {
+      const _systemVersion = item.systemVersion || systemVersion;
       return {
         type: "page",
         slug: item.slug,
         title: frontmatters[item.slug]?.["title"] || "",
-        items: toNavMenuItems(item.items, frontmatters) as NavMenuPage[],
-        systemVersion: item.systemVersion || "all",
+        items: toNavMenuItems(
+          item.items,
+          frontmatters,
+          _systemVersion
+        ) as NavMenuPage[],
+        systemVersion: _systemVersion,
       };
     } else {
+      const _systemVersion = item.systemVersion || systemVersion;
       return {
         type: "group",
         label: item.label,
-        items: toNavMenuItems(item.items, frontmatters) as NavMenuPage[],
-        systemVersion: item.systemVersion || "all",
+        items: toNavMenuItems(
+          item.items,
+          frontmatters,
+          _systemVersion
+        ) as NavMenuPage[],
+        systemVersion: _systemVersion,
         side: item.side,
       };
     }

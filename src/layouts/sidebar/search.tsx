@@ -9,7 +9,7 @@ export interface SearchButtonProps {
 export function SearchButton({ lang }: SearchButtonProps) {
   return (
     <button
-      class="bg-slate-2 text-slate-4 m-2 flex flex-1 gap-2 rounded p-2"
+      class="bg-slate-2 text-slate-4 mx-2 flex flex-1 gap-2 rounded p-2"
       onClick={openSearchScreen}
     >
       <i class="i-ic-baseline-search text-2xl"></i>
