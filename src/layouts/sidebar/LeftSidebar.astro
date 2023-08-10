@@ -1,6 +1,6 @@
 ---
 import type { Lang } from "~/type";
-import { navMenuAncestorsSignal, navMenuSignal } from "~/state/server-only/nav";
+import { calcNavMenuAncestors, navMenuSignal } from "~/state/server-only/nav";
 import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 
 import LeftSidebarItem from "./LeftSidebarItem";
@@ -16,7 +16,7 @@ const { lang, slug } = Astro.props;
 
 const navMenu = navMenuSignal.value;
 const navMenuItems = navMenu[lang] || [];
-const navMenuAncestors = navMenuAncestorsSignal.value;
+const navMenuAncestors = calcNavMenuAncestors(navMenuItems);
 const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
   ...(navMenuAncestors[slug]?.map((ancestor) => [ancestor, true]) || []),
   [slug, true],

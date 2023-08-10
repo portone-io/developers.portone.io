@@ -42,19 +42,32 @@ export const navMenuSignal = computed<NavMenu>(() => {
   return { en: navMenuItemsEn, ko: navMenuItemsKo };
 });
 
+export interface NavMenuSystemVersions {
+  [slug: string]: SystemVersion;
+}
+export function calcNavMenuSystemVersions(
+  navMenuItems: NavMenuItem[]
+): NavMenuSystemVersions {
+  const result: NavMenuSystemVersions = {};
+  for (const item of iterNavMenuItems(navMenuItems)) {
+    if (!("slug" in item)) continue;
+    result[item.slug] = item.systemVersion;
+  }
+  return result;
+}
+
 export interface NavMenuAncestors {
   [slug: string]: string[];
 }
-export const navMenuAncestorsSignal = computed<NavMenuAncestors>(() => {
-  const navMenu = navMenuSignal.value;
+export function calcNavMenuAncestors(
+  navMenuItems: NavMenuItem[]
+): NavMenuAncestors {
   const navMenuAncestors: NavMenuAncestors = {};
-  for (const items of Object.values(navMenu)) {
-    for (const { slug, ancestors } of iterNavMenuAncestors(items)) {
-      navMenuAncestors[slug] = ancestors;
-    }
+  for (const { slug, ancestors } of iterNavMenuAncestors(navMenuItems)) {
+    navMenuAncestors[slug] = ancestors;
   }
   return navMenuAncestors;
-});
+}
 function* iterNavMenuAncestors(
   navMenuItems: NavMenuItem[],
   ancestors: string[] = []
@@ -67,6 +80,13 @@ function* iterNavMenuAncestors(
       yield { slug, ancestors };
       yield* iterNavMenuAncestors(items, [...ancestors, slug]);
     }
+  }
+}
+
+function* iterNavMenuItems(items: NavMenuItem[]): Generator<NavMenuItem> {
+  for (const item of items) {
+    yield item;
+    if ("items" in item) yield* iterNavMenuItems(item.items);
   }
 }
 
