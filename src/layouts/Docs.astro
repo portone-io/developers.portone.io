@@ -5,6 +5,10 @@ import * as prose from "~/components/prose";
 import LeftSidebar from "~/layouts/sidebar/LeftSidebar.astro";
 import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
 import { SearchScreen } from "~/layouts/sidebar/search";
+import {
+  calcNavMenuSystemVersions,
+  navMenuSignal,
+} from "~/state/server-only/nav";
 
 interface Props {
   lang: Lang;
@@ -17,6 +21,10 @@ const mdx = await entry.render();
 const Content = mdx.Content;
 
 const toc = headingsToToc(lang, mdx.headings);
+
+const navMenu = navMenuSignal.value;
+const navMenuItems = navMenu[lang] || [];
+const navMenuSystemVersions = calcNavMenuSystemVersions(navMenuItems);
 ---
 
 <LayoutBase lang={lang} title={title}>
@@ -34,5 +42,9 @@ const toc = headingsToToc(lang, mdx.headings);
       <RightSidebar lang={lang} slug={slug} toc={toc} client:idle />
     </div>
   </div>
-  <SearchScreen lang={lang} client:idle />
+  <SearchScreen
+    lang={lang}
+    navMenuSystemVersions={navMenuSystemVersions}
+    client:idle
+  />
 </LayoutBase>
