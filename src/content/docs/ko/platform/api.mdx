@@ -1,5 +1,5 @@
 ---
-title: 파트너정산 API - alpha 버전
+title: 파트너정산 API
 description: 파트너정산에 관련된 API 를 확인할 수 있습니다
 ---
 
@@ -13,11 +13,13 @@ import Details from "~/components/gitbook/Details.astro";
 
 포트원이 제공하는 관리자 콘솔을 통해 정산 업무를 확인하고자 한다면, **정산** 부분을 참고해주시고, 귀사의 자체 백오피스에 통합하길 원하신다면 전체 API 스펙을 검토해주시기 바랍니다.
 
-또한, 대량 이체 API는 곧 업데이트될 예정입니다.
+간단하게 api 사용방법을 원하신다면 [예제 페이지](https://developers.portone.io/platform/examples)를 참고해주세요.
 
-개발이 완료되기 전에 알파 버전으로 제공드리며, 개발이 완료되면 동일한 문서 url에 업데이트 되며 테스트 해볼 수 있는 페이지를 swagger형식으로 제공해드리겠습니다.
+이체 관련 API는 문서 작업중이며 빠른시일내에 업데이트 하겠습니다.
 
 더 궁금한 사항이 있으시거나 추가적인 도움이 필요하시면 언제든지 연락주세요.
+
+openapi.yaml 파일 혹은 graphql로 개발하시길 희망하실 경우 편하게 연락주시면 됩니다.
 
 ---
 
@@ -25,8 +27,6 @@ import Details from "~/components/gitbook/Details.astro";
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
-
-`정산` 객체는 특정 파트너에게 정산금액을 등록할때 생성 됩니다.
 
 고객의 주문(order-transfer) 와 주문취소(order-cancel-transfer)로 부터 계약 규칙에 맞게 파생되는 정산금과 수동으로(manual-transfer) 임의의 정산금액을 등록할 수 있습니다. 고객의 주문건에 대해서는 결제/환불 모두 적용할 수 있습니다.
 
@@ -36,10 +36,13 @@ import Details from "~/components/gitbook/Details.astro";
 **Endpoints**
 
 ```text
-POST /platform/order-transfers
-POST /platform/order-cancel-transfers
-POST /platform/manual-transfers
+POST /platform/transfers/order
+POST /platform/transfers/order-cancel
+POST /platform/transfers/manual
 GET /platform/transfers/{id}
+GET /platform/transfer-sumaries
+GET /platform/transfer-dashbaord
+GET /platform/transfer-filter-options
 ```
 
 </div>
@@ -47,15 +50,32 @@ GET /platform/transfers/{id}
 
 ### 정산 객체
 
+정산 생성 및 조회시 response 로 반환되는 transfer 객체의 파라미터 별 설명입니다.
+
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
-
 **Attributes**
+**type** enum
+정산 타입
+
+| Enum Value   | Description    |
+| ------------ | -------------- |
+| ORDER        | 주문 정산      |
+| ORDER_CANCEL | 주문 취소 정산 |
+| MANUAL       | 수동 정산      |
+
+---
 
 **id** string
 
 정산 객체 아이디
+
+---
+
+**graphqlId** string
+
+포트원 내부에서 사용되는 정산 객체 graphql 아이디. 혹시 graphql을 더 선호하신다면 연락 부탁드립니다.
 
 ---
 
@@ -72,8 +92,8 @@ GET /platform/transfers/{id}
 | --- | --- |
 | SCHEDULED | 정산 시작일(settlementStartDate)이 현시점 이후일때 예약 상태 |
 | IN_PROCESS | 현시점이 정산 시작일 이후 정산일(settlementDate) 이전일때 진행중 상태 |
-| IN_PAYOUT| 이체 중. 관리자 콘솔 내에서 대량이체 엑셀 파일을 받은 후 아직 이체완료 상태값 업데이트를 하지 않았을때|
 | SETTLED | 현시점이 정산일 이후일때 완료 상태 |
+| IN_PAYOUT| 이체 중. 관리자 콘솔 내에서 대량이체 엑셀 파일을 받은 후 아직 이체완료 상태값 업데이트를 하지 않았을때|
 | PAID_OUT | 이체 완료 상태 |
 
 ---
@@ -84,45 +104,12 @@ GET /platform/transfers/{id}
 
 ---
 
-**currency** enum
-
-정산건에 대한 통화. 현재는 결제 통화와 동일한 통화만 지원합니다.
-
----
-
-**settlementDate** Dictionary
+**settlementDate** string
 
 정산일. 정산주기에 맞게 파트너에게 이체되어야 하는 시점이다.
 
-<table>
-  <tr>
-    <td>
+`yyyy-MM-dd` 형식을 따릅니다.
 
-      settlementDate.**year** integer required
-
-      정산일의 연도
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**month** integer required
-
-      정산일의 월
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**day** integer required
-
-      정산일의 일
-    </td>
-
-  </tr>
-</table>
 ---
 
 **payoutId** string
@@ -130,6 +117,12 @@ GET /platform/transfers/{id}
 정산 객체가 정산주기에 맞춰서 포함될 이체 객체의 고유 아이디
 
 status 가 IN_PAYOUT 일때부터 생성됩니다성
+
+---
+
+**payoutGraphqlID** string
+
+payoutId의 내부 graphql 아이디
 
 ---
 
@@ -141,310 +134,12 @@ status 가 IN_PAYOUT 일때부터 생성됩니다성
 
 ---
 
-**payment** dictionary required
+**isForTest** boolean
 
-주문 정산건에 해당되는 결제 정보. 포트원(Portone) 결제일때 와 외부 결제(External) 일때 요구되는 값이 다릅니다.
-해당 값은 one of 로직으로 간주되어 `"payment": {"portOne": { ... } 혹은 "external": { ... }}` 와 같이 전달해야 합니다.
-
-- 포트원 결제일때 ("payment": {"portOne"})
-  포트원 결제 연동 서비스 (sdk, api)에 등록되는 가맹점의 merchant_uid (V1) 혹은 payment_id(V2) 값을 건내주셔야 합니다.
-
-<table>
-  <tr>
-    <td>
-
-      portOne.**id** string required
-
-      merchant_uid(V1) 혹은 payment_id(V2)
-
-      혹여나 주문은 이루어 졌지만 결제가 이루어지지 않은 경우가 있습니다. 대표적인 예로 포인트 및 쿠폰 (할인) 으로 상품을 사는 case 입니다.
-      해당 경우에는 포트원 결제는 없어도 가맹점 내에서 해당 주문에 대한 주문 아이디를 전달해주셔야 합니다.
-
-    </td>
-
-  </tr>
-</table>
-
-- 외부 결제일때 ("payment": {"external"})
-
-포트원 결제연동 외에 다른 결제연동 서비스를 통해 결제된 주문건일 경우 외부 결제건으로 간주합니다.
-
-그럴경우 해당 결제의 가맹점 주문번호와 결제통화를 필수로 전달해야 하며 optional로 주문이름, 결제 수단과 같은 부수적인 정보를 전달할 수 있습니다.
-
-<table>
-  <tr>
-    <td>
-
-      external.**id** string required
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 가맹점 주문번호
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**currency** enum required
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제통화
-
-      현재는 'KRW', 'JPY', 'USD' 만 지원합니다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**orderName** string optional
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 주문이름
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      external.**method** optional enum
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제수단
-      아래 결제 수단중 하나만 택해서 전달해야 합니다.
-      간편 결제수단("easyPay") 를 제외하고 특정 결제수단에 해당된다면 빈 json 값 (```{}```) 을 전달해야 합니다.
-
-      <table>
-        <tr>
-          <td>
-
-            method.**card** dictionary optional
-
-            신용카드
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**transfer** dictionary optional
-
-            계좌이체
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**virtualAccount** dictionary optional
-
-            가상계좌
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**giftCertificate** dictionary optional
-
-            상품권
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**mobile** dictionary optional
-
-            휴대폰 소액결휴
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            method.**easyPay** dictionary optional
-
-            간편결제
-            <table>
-              <tr>
-                <td>
-
-                    easyPay.**provider** enum required
-
-                    간편결제 브랜드 (i.e. "KAKAOPAY")
-
-
-
-                </td>
-              </tr>
-              <tr>
-                <td>
-
-                  easyPay.**method** enum required
-
-                  간편결제 내의 결제 수단 (i.e. "CARD", "TRANSFER")
-                </td>
-              </tr>
-            </table>
-
-          </td>
-        </tr>
-      </table>
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      payment.**paidAt** optional Date
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제완료 시점
-
-    </td>
-
-  </tr>
-</table>
-
----
-
-**orderDetails** dictionary required
-
-주문 정산건에 해당되는 주문 상세 정보. 주문건에 포함된 상품의 정보를 전달해야 합니다.
-
-one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우에는 `"orderDetails" : {"orderAmount": 금액}` 와 같이 전달하시면 됩니다.
-상품 정보 및 상품별 할인 및 추가수수료를 적용하여 전달하고 싶으신 경우에는 `"orderDetails" : {"orderLines": [{...}, {...}]}` 와 같이 전달하시면 됩니다.
-
-**payment.portOne** 일경우 전달하시지 않으셔도 됩니다. 그럴경우 주문금액은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 으로 계산됩니다.
-
-- 주문금액만 전달할 경우 (`"orderDetails": {"orderAmount": 금액}`)
-
-<table>
-  <tr>
-    <td>
-  
-        **orderAmount** int optional
-
-            정산건에 해당되는 주문금액. 결제금액 + 할인금액 입니다.
-
-            단일 주문건에 정산해야할 파트너 대상이 여러명일 경우, 혹은 다른 이유로 여러 정산 건을 생성하고 싶을 경우, 해당되는 주문금액을 전달하시면 됩니다.
-
-            전달하지 기본값은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 입니다.
-
-            **payment.external** 일때는 **orderAmount** 혹은 **orderLines** 를 통해서 주문금액을 전달해주셔야 합니다.
-    </td>
-
-  </tr>
-</table>
-
-- 상품 정보 및 상품별 금액, 수량 할인 및 추가수수료를 적용하여 전달할 경우 (`"orderDetails": {"orderLines": [{...}, {...}]}`)
-
-해당 정보를 전달하면 주문금액은 전체 상품별 금액들의 합으로 계산됩니다.
-
-<table>
-  <tr>
-    <td>  
-      orderLines.**product** dictionary required
-
-      주문정산건에 해당되는 낱개 상품 정보.
-
-      <table>
-        <tr>
-          <td>
-
-            product.**id** string required
-
-            상품 아이디. 가맹점의 서버에 등록된 상품 아이디를 임의로 보내주시면 됩니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**name** string required
-
-            상품 이름. 가맹점의 서버에 등록된 상품 이름을 임의로 보내주시면 됩니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**amount** int required
-
-            상품 가격. 상품의 낱개 가격입니다.
-
-          </td>
-
-        </tr>
-        <tr>
-          <td>
-
-            product.**tag** list of string optional
-
-            상품 태그. 내부 구분을 위한 태그입니다.
-
-          </td>
-
-        </tr>
-      </table>
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-      orderLines.**quantity** int required
-
-      상품 갯수
-
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**discounts** list of dictionary optional
-
-        해당 상품에 적용될 할인정보 리스트
-        <table>
-          <tr>
-            <td>
-              discounts.**amount** int required
-
-              할인 금액. 상품에 적용될 할인 금액으로써 상품의 가격보다 클 수 없습니다.
-
-            </td>
-          </tr>
-          <tr>
-            <td>
-              discounts.**discountShareId** string required
-
-              할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
-
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        orderLines.**additionalFeeIds** list of string optional
-
-        해당 상품에 적용될 추가수수료 아이디 리스트. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
-      </td>
-    </tr>
-
- </table>
-
----
-
-**settlementStartDate** Date
-
-정산 시작일. 정산주기에 맞춰서 정산이 진행되는 시점이다. 정산 주기가 적용되는 시점이다.
-
----
+테스트용 정산인지 여부. false 일때 실제 정산입니다.
 
 **amount** dictionary
+정산 금액 정보
 
 <table>
   <tr>
@@ -527,416 +222,67 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
     </td>
   </tr>
 </table>
-
 ---
 
-**discounts** list of dictionary
-
-할인 금액과 유형 (discountShares) 객체의 리스트
-
-리스트의 각 객체별 단일 할인에 해당된다.
-
-해당 값들은 전체 주문건에 대해서 적용된다. 상품별 적용이 아니다.
-
-[할인 유형 참고](#할인-유형)
-
-<table>
-  <tr>
-    <td>
-
-      discounts.**amount** int64
-
-      할인 금액
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      discounts.**discountShare** dictionary
-
-      할인 유형 (discountShare) 객체
-
-      <table>
-        <tr>
-          <td>
-
-            discountShare.**id** string
-
-            할인 유형 객체 고유 아이디
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            discountShare.**partnerShareRate** int64
-
-            할인 분담율
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            discountShare.**memo** string
-
-            할인유형 객체 가맹점 지정 내부 메모
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            discountShare.**isHidden** boolean
-
-            할인유형 객체 숨김 여부
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            discountShare.**appliedAt** Date
-
-            할인유형 객체 적용 시간
-
-          </td>
-        </tr>
-      </table>
-    </td>
-
-  </tr>
-</table>
-
----
-
-**additionalFees** list of dictionary
-
-추가수수료 (additionalFee) 객체의 리스트
-
-해당 값들은 전체 주문건에 대해서 적용된다. 상품별 적용이 아니다.
-
-[추가 수수료 참고](#추가-수수료)
-
-- additionalFee attributes
-
-<table>
-  <tr>
-    <td>
-
-    additionalFee.**id** string
-
-    추가수수료 객체 고유 아이디
-    </td>
-
-  </tr>
-
-  <tr>
-    <td>
-
-      additionalFee.**fee** dictionary
-
-      추가수수료 객체의 수수료 정보 로써 Fee attributes 이다. Fee attributes 은 정률,정액으로 나뉜다.
-
-      fee attribute
-
-      <table>
-        <tr>
-          <td>
-
-            fee.**type** enum
-
-            정액(fixed_amount) / 정률(fixedRate)
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            fee.**amount** int64
-
-            정액(fixed_amount) 일경우
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-            fee.**rate** int64
-
-            정률(fixedRate)일 경우
-
-          </td>
-        </tr>
-      </table>
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      additionalFee.**memo** string
-
-      추가수수료 객체 가맹점 지정 내부 메모
-
-    </td>
-
-  </tr>
-</table>
-
----
-
-</div>
-<div>
-
-**Response (주문 정산 기준)**
-
-```json
-{
-  "transfer": {
-    "type": "string",
-    "graphqlId": "string",
-    "id": "string",
-    "partner": {
-      "graphqlId": "string",
-      "id": "string",
-      "name": "string",
-      "email": "string",
-      "businessRegistrationNumber": "string",
-      "account": {
-        "bank": "BNP",
-        "currency": "AED",
-        "number": "string",
-        "holder": "string",
-        "status": "EXPIRED"
-      },
-      "status": "APPROVED",
-      "defaultContractId": "string",
-      "memo": "string",
-      "tags": ["string"],
-      "isHidden": true,
-      "appliedAt": "2023-07-25T14:05:50.702Z"
-    },
-    "status": "IN_PAYOUT",
-    "memo": "string",
-    "settlementDate": "string",
-    "payoutId": "string",
-    "currency": "AED",
-    "isForTest": true,
-    "amount": {
-      "settlement": 0,
-      "payment": 0,
-      "order": 0,
-      "platformFee": 0,
-      "platformFeeVat": 0,
-      "additionalFee": 0,
-      "additionalFeeVat": 0,
-      "discountShare": 0,
-      "discount": 0
-    },
-    "contract": {
-      "graphqlId": "string",
-      "id": "string",
-      "memo": "string",
-      "platformFee": {
-        "amount": 0
-      },
-      "settlementCycle": {
-        "lagDays": 0,
-        "datePolicy": "CALENDAR_DAY",
-        "method": {}
-      },
-      "vatPayer": "MERCHANT",
-      "isHidden": true,
-      "appliedAt": "2023-07-25T14:05:50.702Z"
-    },
-    "payment": {
-      "id": "string",
-      "orderName": "string",
-      "currency": "AED",
-      "method": {},
-      "paidAt": "2023-07-25T14:05:50.702Z"
-    },
-    "settlementStartDate": "string",
-    "orderLines": [
-      {
-        "product": {
-          "id": "string",
-          "name": "string",
-          "amount": 0,
-          "tag": "string"
-        },
-        "quantity": 0,
-        "discounts": [
-          {
-            "discountShare": {
-              "graphqlId": "string",
-              "id": "string",
-              "partnerShareRate": 0,
-              "memo": "string",
-              "isHidden": true,
-              "appliedAt": "2023-07-25T14:05:50.702Z"
-            },
-            "amount": 0
-          }
-        ],
-        "additionalFees": [
-          {
-            "graphqlId": "string",
-            "id": "string",
-            "fee": {
-              "amount": 0
-            },
-            "memo": "string",
-            "isHidden": true,
-            "appliedAt": "2023-07-25T14:05:50.702Z"
-          }
-        ],
-        "amount": {
-          "settlement": 0,
-          "payment": 0,
-          "order": 0,
-          "platformFee": 0,
-          "platformFeeVat": 0,
-          "additionalFee": 0,
-          "additionalFeeVat": 0,
-          "discountShare": 0,
-          "discount": 0
-        }
-      }
-    ],
-    "additionalFees": [
-      {
-        "graphqlId": "string",
-        "id": "string",
-        "fee": {
-          "amount": 0
-        },
-        "memo": "string",
-        "isHidden": true,
-        "appliedAt": "2023-07-25T14:05:50.702Z"
-      }
-    ],
-    "discounts": [
-      {
-        "discountShare": {
-          "graphqlId": "string",
-          "id": "string",
-          "partnerShareRate": 0,
-          "memo": "string",
-          "isHidden": true,
-          "appliedAt": "2023-07-25T14:05:50.702Z"
-        },
-        "amount": 0
-      }
-    ]
-  }
-}
-```
-
-</div>
-</div>
-
----
-
-### 주문 정산건 생성
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-주문 정산건이란 결제를 기반으로 한 주문건에 대해서 각 파트너에게 정산해주기 위한 정산객체를 api로 등록하는 겁니다.
-
-**Parameters**
-
-**partnerId** string required
-
-주문 정산건에 해당되는 파트너 지정
-
----
-
-**contractId** string optional
-
-주문 정산건에 적용될 계약의 아이디. 기본으로 정산될 파트너의 기본 계약이 적용되지만 **contractId** 를 통해 다른 계약을 지정할 경우 지정된 계약의 정보가 적용된다.
-
----
-
-**memo** string optional
-
-정산건에 내부 구분을 위한 메모
-
----
-
-**payment** dictionary required
+**payment** dictionary
 
 주문 정산건에 해당되는 결제 정보. 포트원(Portone) 결제일때 와 외부 결제(External) 일때 요구되는 값이 다릅니다.
-해당 값은 one of 로직으로 간주되어 `"payment": {"portOne": { ... } 혹은 "external": { ... }}` 와 같이 전달해야 합니다.
-
-- 포트원 결제일때 ("payment": {"portOne"})
-  포트원 결제 연동 서비스 (sdk, api)에 등록되는 가맹점의 merchant_uid (V1) 혹은 payment_id(V2) 값을 건내주셔야 합니다.
+해당 값은 one of 로직으로 간주되어 `"payment": { "type" : "INTERNAL" 혹은 "EXTERNAL"}` 와 같이 전달해야 합니다.
 
 <table>
   <tr>
+    <td>    
+          payment.**type** string required
+    
+          결제 타입. 포트원 결제일때는 "INTERNAL" 입니다. 
+    </td>
+  </tr>
+  <tr>
     <td>
 
-      portOne.**id** string required
+      payment.**id** string required
 
       merchant_uid(V1) 혹은 payment_id(V2)
 
       혹여나 주문은 이루어 졌지만 결제가 이루어지지 않은 경우가 있습니다. 대표적인 예로 포인트 및 쿠폰 (할인) 으로 상품을 사는 case 입니다.
       해당 경우에는 포트원 결제는 없어도 가맹점 내에서 해당 주문에 대한 주문 아이디를 전달해주셔야 합니다.
-
     </td>
 
   </tr>
-</table>
-
-- 외부 결제일때 ("payment": {"external"})
-
-포트원 결제연동 외에 다른 결제연동 서비스를 통해 결제된 주문건일 경우 외부 결제건으로 간주합니다.
-
-그럴경우 해당 결제의 가맹점 주문번호와 결제통화를 필수로 전달해야 하며 optional로 주문이름, 결제 수단과 같은 부수적인 정보를 전달할 수 있습니다.
-
-<table>
   <tr>
     <td>
+      payment.**storeId** string
 
-      external.**id** string required
+      포트원 가맹점의 스토어 아이디. 관리자 콘솔에서 확인하실 수 있습니다.
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 가맹점 주문번호
+      포트원 결제일때만 반환됩니다.
 
     </td>
 
   </tr>
   <tr>
     <td>
+      payment.**channelKey** string
 
-      external.**currency** enum required
+      포트원 결제시 사용된 채널키. 관리자 콘솔에서 확인하실 수 있습니다.
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제통화
-
-      현재는 'KRW', 'JPY', 'USD' 만 지원합니다.
-
+      포트원 결제일때만 반환됩니다.
     </td>
 
   </tr>
   <tr>
     <td>
+      payment.**orderName** string
 
-      external.**orderName** string optional
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 주문이름
-
+      주문명. 임의로 전달해주실 수 있습니다.
     </td>
 
   </tr>
   <tr>
     <td>
+      payment.**method** dicionary
 
-      external.**method** optional enum
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제수단
+      주문건의 결제수단
       아래 결제 수단중 하나만 택해서 전달해야 합니다.
       간편 결제수단("easyPay") 를 제외하고 특정 결제수단에 해당된다면 빈 json 값 (```{}```) 을 전달해야 합니다.
 
@@ -982,7 +328,7 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 
             method.**mobile** dictionary optional
 
-            휴대폰 소액결휴
+            휴대폰 소액결제
 
           </td>
         </tr>
@@ -996,7 +342,7 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
               <tr>
                 <td>
 
-                    easyPay.**provider** enum required
+                    easyPay.**provider** enum
 
                     간편결제 브랜드 (i.e. "KAKAOPAY")
 
@@ -1007,7 +353,7 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
               <tr>
                 <td>
 
-                  easyPay.**method** enum required
+                  easyPay.**method** enum
 
                   간편결제 내의 결제 수단 (i.e. "CARD", "TRANSFER")
                 </td>
@@ -1017,6 +363,18 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
           </td>
         </tr>
       </table>
+    <tr>
+    <td>
+
+      payment.**currency** enum
+
+      외부 결제연동 서비스를 통해 결제된 주문건의 결제통화
+
+      현재는 'KRW', 'JPY', 'USD' 만 지원합니다.
+
+    </td>
+
+  </tr>
 
     </td>
 
@@ -1024,14 +382,470 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
   <tr>
     <td>
 
-      payment.**paidAt** optional Date
+      payment.**paidAt** Date
 
-      외부 결제연동 서비스를 통해 결제된 주문건의 결제완료 시점
+      결제 완료 시점
+    </td>
+
+  </tr>
+</table>
+
+---
+
+**settlementStartDate** Date
+
+정산 시작일. 정산주기에 맞춰서 정산이 진행되는 시점이다. 정산 주기가 적용되는 시점이다.
+
+---
+
+**orderDetails** dictionary required
+
+주문 정산건에 해당되는 주문 상세 정보. 주문건에 포함된 상품의 정보를 전달해야 합니다.
+
+one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우에는 `"orderDetails" : {"orderAmount": 금액}` 와 같이 전달하시면 됩니다.
+상품 정보 및 상품별 할인 및 추가수수료를 적용하여 전달하고 싶으신 경우에는 `"orderDetails" : {"orderLines": [{...}, {...}]}` 와 같이 전달하시면 됩니다.
+
+**payment.type = INTERNAL** 일경우 전달하시지 않으셔도 됩니다. 그럴경우 주문금액은 주어진 **payment.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 으로 계산됩니다.
+
+- 주문금액만 전달할 경우 (`"orderDetails": {"orderAmount": 금액}`)
+
+<table>
+  <tr>
+    <td>
+  
+        **orderAmount** int optional
+
+            정산건에 해당되는 주문금액. 결제금액 + 할인금액 입니다.
+
+            단일 주문건에 정산해야할 파트너 대상이 여러명일 경우, 혹은 다른 이유로 여러 정산 건을 생성하고 싶을 경우, 해당되는 주문금액을 전달하시면 됩니다.
+
+            전달하지 기본값은 주어진 **payment.portOne.id** 에 해당되는 결제금액 + **discounts.amount** 의 합에 해당되는 할인금액 입니다.
+
+            **payment.external** 일때는 **orderAmount** 혹은 **orderLines** 를 통해서 주문금액을 전달해주셔야 합니다.
+    </td>
+
+  </tr>
+</table>
+
+- 상품 정보 및 상품별 금액, 수량 할인 및 추가수수료를 적용하여 전달할 경우 (`"orderDetails": {"orderLines": [{...}, {...}]}`)
+
+해당 정보를 전달하면 주문금액은 전체 상품별 금액들의 합으로 계산됩니다.
+
+<table>
+  <tr>
+    <td>  
+      orderLines.**product** dictionary required
+
+      주문정산건에 해당되는 낱개 상품 정보.
+
+      <table>
+        <tr>
+          <td>
+
+            product.**id** string required
+
+            상품 아이디. 가맹점의 서버에 등록된 상품 아이디를 임의로 보내주시면 됩니다.
+
+          </td>
+
+        </tr>
+        <tr>
+          <td>
+
+            product.**name** string required
+
+            상품 이름. 가맹점의 서버에 등록된 상품 이름을 임의로 보내주시면 됩니다.
+
+          </td>
+
+        </tr>
+        <tr>
+          <td>
+
+            product.**amount** int required
+
+            상품 가격. 상품의 낱개 가격입니다.
+
+          </td>
+
+        </tr>
+        <tr>
+          <td>
+
+            product.**tag** list of string optional
+
+            상품 태그. 내부 구분을 위한 태그입니다.
+
+          </td>
+
+        </tr>
+      </table>
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      orderLines.**quantity** int required
+
+      상품 갯수
+
+      </td>
+    </tr>
+    <tr>
+      <td>
+        orderLines.**discounts** list of dictionary optional
+
+        해당 상품에 적용될 할인정보 리스트
+        [할인 정책 참고](#할인-유형)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        orderLines.**additionalFees** list of dictionary optional
+
+        해당 상품에 적용된 추가수수료 정책 리스트. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
+        [추가수수료 참고](#추가-수수료-객체)]
+      </td>
+    </tr>
+
+ </table>
+
+---
+
+**discounts** list of dictionary
+
+할인 금액과 유형 (discountShares) 객체의 리스트
+
+리스트의 각 객체별 단일 할인에 해당된다.
+
+해당 값들은 전체 주문건에 대해서 적용된다. 상품별 적용이 아니다.
+
+[할인 정책 참고](#할인-유형)
+
+<table>
+  <tr>
+    <td>
+
+      discounts.**amount** int64
+
+      할인 금액
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+      discounts.**sharePolicy** dictionary
+
+      할인 정책 (sharePolicy) 객체
+
+      <table>
+        <tr>
+          <td>
+
+            sharePolicy.**id** string
+
+            할인 정책 객체 고유 아이디
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            sharePolicy.**partnerShareRate** int64
+
+            할인 분담율
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            sharePolicy.**memo** string
+
+            할인유형 객체 가맹점 지정 내부 메모
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            sharePolicy.**isHidden** boolean
+
+            할인유형 객체 숨김 여부
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            sharePolicy.**appliedAt** Date
+
+            할인유형 객체 적용 시간
+
+          </td>
+        </tr>
+      </table>
+    </td>
+
+  </tr>
+</table>
+
+---
+
+**additionalFees** list of dictionary
+
+추가수수료 (additionalFee) 객체의 리스트
+
+해당 값들은 전체 주문건에 대해서 적용된다. 상품별 적용이 아니다.
+
+[추가 수수료 참고](#추가-수수료)
+
+- additionalFee attributes
+
+<table>
+  <tr>
+    <td>
+
+      additionalFee.**policy** dictionary
+
+      추가수수료 정책 (additionalFeePolicy) 객체
+      <table>
+        <tr>
+          <td>
+
+              policy.**id** string
+
+              추가수수료 정책 객체 고유 아이디
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+              policy.**fee** dictionary
+
+              추가수수료 정책 객체 수수료
+              <table>
+                <tr>
+                  <td>
+
+                        fee.**amount** int64
+
+                        추가수수료 정책 객체 수수료 정액 금액
+                  </td>
+
+                </tr>
+                <tr>
+                  <td>
+
+                          fee.**rate** int64
+
+                          추가수수료 정책 객체 수수료 비율
+                          1*10^5 으로써 10% 일경우 100000 으로 입력
+                  </td>
+                </tr>
+              </table>
+
+          </td>
+          </tr>
+      </table>
 
     </td>
 
   </tr>
 </table>
+
+---
+
+</div>
+<div>
+
+**Response (주문 정산예시)**
+
+```json
+{
+  "transfer": {
+    "type": "ORDER",
+    "id": "01H7HVM3YYCYQC3HF6KN4VZYZ2",
+    "graphqlId": "NjowMUg3SFZNM1lZQ1lRQzNIRjZLTjRWWllaMg==",
+    "partner": {
+      "id": "partner_2",
+      "graphqlId": "NDpwYXJ0bmVyXzI=",
+      "name": "파이썬 강사",
+      "email": "kjnkyj12@gmail.com",
+      "businessRegistrationNumber": "1178178260",
+      "account": {
+        "bank": "SHINHAN",
+        "currency": "KRW",
+        "number": "10358907249",
+        "holder": "김준일",
+        "status": "VERIFIED"
+      },
+      "status": "APPROVED",
+      "defaultContractId": "contract_2",
+      "memo": "잭슨 테스트",
+      "tags": ["파이썬"],
+      "isHidden": false,
+      "appliedAt": "2023-08-09T07:39:25.645014Z"
+    },
+    "status": "IN_PROCESS",
+    "memo": "testing order transfer",
+    "settlementDate": "2023-08-18",
+    "settlementCurrency": "KRW",
+    "isForTest": true,
+    "amount": {
+      "settlement": 17250,
+      "payment": 20000,
+      "order": 25000,
+      "platformFee": 2500,
+      "platformFeeVat": 0,
+      "additionalFee": 2500,
+      "additionalFeeVat": 250,
+      "discount": 5000,
+      "discountShare": 2500
+    },
+    "contract": {
+      "id": "contract_2",
+      "graphqlId": "NTpjb250cmFjdF8y",
+      "memo": "contract 2",
+      "platformFee": { "type": "FIXED_RATE", "rate": 10000 },
+      "settlementCycle": {
+        "lagDays": 2,
+        "datePolicy": "CALENDAR_DAY",
+        "method": { "type": "WEEKLY", "daysOfWeek": ["FRI"] }
+      },
+      "platformFeeVatPayer": "MERCHANT",
+      "isHidden": false,
+      "appliedAt": "2023-08-09T07:39:17.207733Z"
+    },
+    "payment": {
+      "type": "EXTERNAL",
+      "id": "payment_1",
+      "orderName": "테스트 주문",
+      "currency": "KRW",
+      "method": { "type": "CARD" },
+      "paidAt": "2023-08-11T08:21:01.241Z"
+    },
+    "settlementStartDate": "2023-08-11",
+    "orderLines": [
+      {
+        "product": { "id": "1", "name": "product_1", "amount": 5000 },
+        "quantity": 5,
+        "discounts": [
+          {
+            "sharePolicy": {
+              "id": "discount_1",
+              "graphqlId": "MjpkaXNjb3VudF8x",
+              "partnerShareRate": 500000000,
+              "memo": "테스트 할인",
+              "isHidden": false,
+              "appliedAt": "2023-08-09T07:45:45.799176Z"
+            },
+            "amount": 2500,
+            "shareAmount": 1250
+          }
+        ],
+        "additionalFees": [
+          {
+            "policy": {
+              "id": "addtional_fee_1",
+              "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
+              "fee": { "type": "FIXED_RATE", "rate": 5000 },
+              "memo": "테스트 추가수수료",
+              "vatPayer": "PARTNER",
+              "isHidden": false,
+              "appliedAt": "2023-08-09T07:41:12.393974Z"
+            },
+            "amount": 1250,
+            "vat": 125
+          }
+        ],
+        "amount": {
+          "settlement": 19875,
+          "payment": 22500,
+          "order": 25000,
+          "platformFee": 2500,
+          "platformFeeVat": 0,
+          "additionalFee": 1250,
+          "additionalFeeVat": 125,
+          "discount": 2500,
+          "discountShare": 1250
+        }
+      }
+    ],
+    "additionalFees": [
+      {
+        "policy": {
+          "id": "addtional_fee_1",
+          "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
+          "fee": { "type": "FIXED_RATE", "rate": 5000 },
+          "memo": "테스트 추가수수료",
+          "vatPayer": "PARTNER",
+          "isHidden": false,
+          "appliedAt": "2023-08-09T07:41:12.393974Z"
+        },
+        "amount": 1250,
+        "vat": 125
+      }
+    ],
+    "discounts": [
+      {
+        "sharePolicy": {
+          "id": "discount_1",
+          "graphqlId": "MjpkaXNjb3VudF8x",
+          "partnerShareRate": 500000000,
+          "memo": "테스트 할인",
+          "isHidden": false,
+          "appliedAt": "2023-08-09T07:45:45.799176Z"
+        },
+        "amount": 2500,
+        "shareAmount": 1250
+      }
+    ]
+  }
+}
+```
+
+</div>
+</div>
+
+---
+
+### 주문 정산건 생성
+
+`POST https://plublic-api-service.iamport.co/platform/transfers/order`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+주문 정산건이란 결제를 기반으로 한 주문건에 대해서 각 파트너에게 정산해주기 위한 정산객체를 api로 등록하는 겁니다.
+
+**Parameters**
+
+**partnerId** string required
+
+주문 정산건에 해당되는 파트너 지정
+
+---
+
+**contractId** string optional
+
+주문 정산건에 적용될 계약의 아이디. 기본으로 정산될 파트너의 기본 계약이 적용되지만 **contractId** 를 통해 다른 계약을 지정할 경우 지정된 계약의 정보가 적용된다.
+
+---
+
+**memo** string optional
+
+정산건에 내부 구분을 위한 메모
+
+---
+
+**paymentId** dictionary required
+
+가맹점 주문 아이디. 포트원 결제일 경우 포트원 결제에 전달해주시는 merchant_uid (v1) 혹은 payment_id(v2) 를 전달하셔야 합니다.
+외부결제 일 경우 단순히 가맹점 주문번호를 전달해주시면 됩니다.
 
 ---
 
@@ -1133,21 +947,20 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
         orderLines.**discounts** list of dictionary optional
 
         해당 상품에 적용될 할인정보 리스트
+        [할인 정책 참고](#할인-유형)
         <table>
           <tr>
             <td>
-              discounts.**amount** int required
+              discounts.**sharePolicyId** string required
 
-              할인 금액. 상품에 적용될 할인 금액으로써 상품의 가격보다 클 수 없습니다.
-
+              적용될 할인정책 아이디.
             </td>
           </tr>
           <tr>
             <td>
-              discounts.**discountShareId** string required
+              discounts.**amount** int required
 
-              할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
-
+              해당 할인정책이 적용되는 할인금액. i.e. 1000원 쿠폰에 대한 할인이면 1000
             </td>
           </tr>
         </table>
@@ -1155,61 +968,43 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
     </tr>
     <tr>
       <td>
-        orderLines.**additionalFeeIds** list of string optional
+        orderLines.**additionalFees** list of dictionary optional
 
-        해당 상품에 적용될 추가수수료 아이디 리스트. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
+        해당 상품에 적용된 추가수수료 정책 리스트. 포트원에 등록된 추가수수료 아이디를 보내주시면 됩니다. 해당 아이디의 추가수수료가 정산에 적용됩니다.
+        [추가수수료 참고](#추가-수수료-객체)]
+        <table>
+          <tr>
+            <td>
+              additionalFees.**policyId** string required
+
+              적용될 추가 수수료 정책 아이디. i.e. 해당 상품에만 로켓배송 수수료가 적용될 경우 로켓배송 수수료 정책 아이디를 보내주시면 됩니다.
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
 
-</table>
+ </table>
 
 ---
 
-**settlementStartDate** dictionary 기본값은 결제완료 시점
+**settlementStartDate** string 기본값은 결제완료 시점 optional
+
+`'yyyy-MM-dd'` 형식을 따릅니다.
 
 정산 시작일로써 정산 주기가 적용될 날짜이다. 주문완료, 배송완료 등 정산이 고려되기 시작해야하는 시간을 뜻한다. 기본값은 주문정산건과 연결된 결제의 완료 시점으로 업데이트 된다.
 
-따라서 **payment.portOne** 일때는 포트원 결제완료 시점, **payment.external** 일때는 **payment.paidAt** 값이 기본값으로 적용되며 **payment.paidAt** 값을 전달하지 않을경우 현재시점으로 적용된다.
+따라서 **payment.type = 'INTERNAL'** 일때는 포트원 결제완료 시점, **payment.type = 'EXTERNAL'** 일때는 **externalPaymentDetail.paidAt** 값이 기본값으로 적용되며 **payment.paidAt** 값을 전달하지 않을경우 현재시점으로 적용된다.
 
-배송완료 예정일, 수강 오픈일, 등 미래시점으로 지정해 놓으면 해당 시점부터 정산주기가 적용되며 그동안 정산객체의 상태값은 준비 (**PREPARE**)로 적용된다.
-
-<table>
-  <tr>
-    <td>
-
-      settlementStartDate.**year** integer required
-
-      정산 시작일의 연도
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementStartDate.**month** integer required
-
-      정산 시작일의 월
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementStartDate.**day** integer required
-
-      정산 시작일의 일
-    </td>
-
-  </tr>
-</table>
+배송완료 예정일, 수강 오픈일, 등 미래시점으로 지정해 놓으면 해당 시점부터 정산주기가 적용되며 그동안 정산객체의 상태값은 준비 (**SCHEDULED**)로 적용된다.
 
 ---
 
-**discounts** optional
+**discounts** list of dictionary optional
 
-주문 정산건에 적용할 할인 유형들의 리스트. 할인 유형 객체들로 이루어져 있다.
+주문 정산건에 적용할 할인 정책들의 리스트. 할인 정책 객체들로 이루어져 있다.
 
-할인 유형이란 특정 주문에 적용된 할인에 대해서 유형별 파트너 분담율을 정산에 계산하기 위한 객체이다.
+할인 정책이란 특정 주문에 적용된 할인에 대해서 유형별 파트너 분담율을 정산에 계산하기 위한 객체이다.
 
 **orderLines**를 통해 각 상품별 적용될 할인 정보와 **orderLines.discounts** 별개로 해당 파라미터는 주문건 전체에 적용될 할인 정보를 전달할 때 사용합니다.
 
@@ -1217,9 +1012,9 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
   <tr>
     <td>
 
-      discount.*discountShareId** string required
+      discount.*sharePolicyId** string required
 
-      할인 유형 아이디. 포트원에 등록된 할인 유형 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
+      할인 정책 아이디. 포트원에 등록된 할인 정책 아이디를 보내주시면 됩니다. 해당 아이디의 할인분담율이 정산에 적용됩니다.
 
     </td>
 
@@ -1241,13 +1036,154 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 
 ---
 
-**additionalFeesIds** string optional
+**additionalFees** list of dictionary optional
 
 주문 정산건에 적용될 추가 수수료 아이디들의 리스트
 
 추가수수료란 특정 주문정산건에 가맹점이 파트너에게 추가 서비스를 제공함으로써 과금되는 수수료 이다. 정산수식에대한 수정이 있지 않는한 기본으로 추가수수료는 주문금액에 부과된다.
+[추가수수료 참고](#추가-수수료-객체)]
+
+<table>
+<tr>
+<td>
+additionalFees.**policyId** string required
+
+              적용될 추가 수수료 정책 아이디. i.e. 해당 상품에만 로켓배송 수수료가 적용될 경우 로켓배송 수수료 정책 아이디를 보내주시면 됩니다.
+            </td>
+          </tr>
+        </table>
 
 ---
+
+**externalPaymentDetail** dictionary optional
+
+포트원 결제가 아닌 경우에만 전달하셔야 합니다.
+
+<table>
+  <tr>
+    <td>
+      externalPaymentDetail.**currency** enum required
+
+      외부 결제 통화. 'KRW','USD','JPY'만 지원합니다.
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      externalPaymentDetail.**orderName** string optional
+
+      외부 결제 주문명.
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      externalPaymentDetail.**paidAt** string optional
+
+      외부 결제 완료 시점. 'yyyy-MM-dd'T'HH:mm:ss.SSSZ' 형식을 따릅니다. 기본값은 현재시점입니다.
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      externalPaymentDetail.**method** dicionary
+
+      외부 결제연동 서비스를 통해 결제된 주문건의 결제수단
+      아래 결제 수단중 하나만 택해서 전달해야 합니다.
+      간편 결제수단("easyPay") 를 제외하고 특정 결제수단에 해당된다면 빈 json 값 (```{}```) 을 전달해야 합니다.
+
+      <table>
+        <tr>
+          <td>
+
+            method.**card** dictionary optional
+
+            신용카드
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            method.**transfer** dictionary optional
+
+            계좌이체
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            method.**virtualAccount** dictionary optional
+
+            가상계좌
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            method.**giftCertificate** dictionary optional
+
+            상품권
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            method.**mobile** dictionary optional
+
+            휴대폰 소액결제
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+
+            method.**easyPay** dictionary optional
+
+            간편결제
+            <table>
+              <tr>
+                <td>
+
+                    easyPay.**provider** enum
+
+                    간편결제 브랜드 (i.e. "KAKAOPAY")
+
+
+
+                </td>
+              </tr>
+              <tr>
+                <td>
+
+                  easyPay.**method** enum
+
+                  간편결제 내의 결제 수단 (i.e. "CARD", "TRANSFER")
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+    </td>
+    </tr>
+    <tr>
+    <td>
+
+      payment.**currency** enum
+
+      외부 결제연동 서비스를 통해 결제된 주문건의 결제통화
+
+      현재는 'KRW', 'JPY', 'USD' 만 지원합니다.
+
+    </td>
+
+  </tr>
+</table>
 
 **isForTest** boolean optional 기본값은 false
 
@@ -1258,33 +1194,13 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
 </div>
 <div>
 **Request body**
+one of 까지 다 표현되어 모든 파라미터가 나옵니다. 
 ```json
 {
   "partnerId": "string",
   "contractId": "string",
   "memo": "string",
-  "payment": {
-    "portOne": {
-      "id": "string"
-    },
-    "external": {
-      "id": "string",
-      "currency": "AED",
-      "orderName": "string",
-      "paidAt": "2023-07-23T06:27:26.804Z",
-      "method": {
-        "card": {},
-        "transfer": {},
-        "virtualAccount": {},
-        "giftCertificate": {},
-        "mobile": {},
-        "easyPay": {
-          "provider": "KAKAOPAY",
-          "method": "CARD"
-        }
-      }
-    }
-  },
+  "paymentId": "string",
   "orderDetail": {
     "orderAmount": 0,
     "orderLines": [
@@ -1298,77 +1214,48 @@ one of 로직으로써 단순히 주문금액만 전달하고 싶으신 경우�
         "quantity": 0,
         "discounts": [
           {
-            "discountShareId": "string",
+            "sharePolicyId": "string",
             "amount": 0
           }
         ],
-        "additionalFeeIds": [
-          "string"
+        "additionalFees": [
+          {
+            "policyId": "string"
+          }
         ]
       }
     ]
   },
-  "settlementStartDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
-  },
+  "settlementStartDate": "string",
   "discounts": [
     {
-      "discountShareId": "string",
+      "sharePolicyId": "string",
       "amount": 0
     }
   ],
-  "additionalFeeIds": [
-    "string"
+  "additionalFees": [
+    {
+      "policyId": "string"
+    }
   ],
+  "externalPaymentDetail": {
+    "currency": "AED",
+    "orderName": "string",
+    "paidAt": "2023-08-15T08:14:26.703Z",
+    "method": {
+      "card": {},
+      "transfer": {},
+      "virtualAccount": {},
+      "giftCertificate": {},
+      "mobile": {},
+      "easyPay": {
+        "provider": "APPLEPAY",
+        "method": "CARD"
+      }
+    }
+  },
   "isForTest": true
 }
-```
-
-**Request Examples**
-
-- 포트원 결제일 경우
-
-```text
-curl -X POST https://api.portone.com/v2/platform/transfer/order \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'payment[portOne[paymentId]]=merchant_uid1' \
-     -d 'discounts=[{"amount":1000, "discountShareId": "discount_1"}]'
-```
-
-- 포트원 결제일 경우
-- 상품 정보를 전달할 경우
-
-```text
-curl -X POST https://api.portone.com/v2/platform/transfer/order \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'payment[portOne[paymentId]]=merchant_uid1' \
-     -d 'orderDetail[orderLines]=[{"product":{"name":"product1", "amount":10000, "tag": "tag1"}, "quantity": 1, "discounts": [{"amount":1000, "discountShareId": "discount_1"}], "additionalFeeIds": ["additionalFee_1"]}]'
-```
-
-- 외부 결제일 경우 (**payment[source]** = **EXTERNAL**)
-
-```text
-curl -X POST https://api.portone.com/v2/platform/transfer/order \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'payment[external] = {"payment_id" : "merchant_uid", "currency": "KRW"} \
-     -d 'orderAmount = 10000' \
-     -d 'discounts=[{"amount":1000, "discountShareId": "discount_1"}]'
-```
-
-- 외부 결제일 경우
-- 상품 정보를 전달할 경우
-
-```text
-curl -X POST https://api.portone.com/v2/platform/transfer/order \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'payment[external] = {"payment_id" : "merchant_uid", "currency": "KRW"} \
-     -d 'orderDetail[orderLines]=[{"product":{"name":"product1", "amount":10000, "tag": "tag1"}, "quantity": 1, "discounts": [{"amount":1000, "discountShareId": "discount_1"}], "additionalFeeIds": ["additionalFee_1"]}]'
 ```
 
 **Response**
@@ -1389,143 +1276,162 @@ curl -X POST https://api.portone.com/v2/platform/transfer/order \
 {
   "transfer": {
     "type": "ORDER",
-    "graphqlId": "string",
-    "id": "transferId1",
+    "id": "01H7HVM3YYCYQC3HF6KN4VZYZ2",
+    "graphqlId": "NjowMUg3SFZNM1lZQ1lRQzNIRjZLTjRWWllaMg==",
     "partner": {
-      "graphqlId": "string",
-      "id": "lecturer_1",
+      "id": "partner_2",
+      "graphqlId": "NDpwYXJ0bmVyXzI=",
       "name": "파이썬 강사",
-      "email": "python@platform.com",
-      "businessRegistrationNumber": "",
+      "email": "kjnkyj12@gmail.com",
+      "businessRegistrationNumber": "1178178260",
       "account": {
-        "bank": "신한은행",
+        "bank": "SHINHAN",
         "currency": "KRW",
-        "number": "110-123-456789",
-        "holder": "파이썬 강사",
-        "status": "APPROVED"
+        "number": "10358907249",
+        "holder": "김준일",
+        "status": "VERIFIED"
       },
       "status": "APPROVED",
-      "defaultContractId": "lecture_contract_1",
-      "memo": "컴싸 강사",
-      "tags": ["코딩"],
+      "defaultContractId": "contract_2",
+      "memo": "잭슨 테스트",
+      "tags": ["파이썬"],
       "isHidden": false,
-      "appliedAt": "2023-07-25T14:05:50.702Z"
+      "appliedAt": "2023-08-09T07:39:25.645014Z"
     },
-    "status": "SETTLED",
-    "memo": "string",
-    "settlementDate": "2023-07-25T14:05:50.702Z",
-    "payoutId": "payout_1", // 이체 ID는 실제 이체완료 상태값 업데이트 후에 생성됩니다
-    "currency": "KRW",
-    "isForTest": false,
+    "status": "IN_PROCESS",
+    "memo": "testing order transfer",
+    "settlementDate": "2023-08-18",
+    "settlementCurrency": "KRW",
+    "isForTest": true,
     "amount": {
-      "settlement": 785,
-      "payment": 900,
-      "order": 1000,
-      "platformFee": 100,
-      "platformFeeVat": 10,
-      "additionalFee": 50,
-      "additionalFeeVat": 5,
-      "discountShare": 50,
-      "discount": 100
+      "settlement": 17250,
+      "payment": 20000,
+      "order": 25000,
+      "platformFee": 2500,
+      "platformFeeVat": 0,
+      "additionalFee": 2500,
+      "additionalFeeVat": 250,
+      "discount": 5000,
+      "discountShare": 2500
     },
     "contract": {
-      "graphqlId": "string",
-      "id": "lecture_contract_1",
-      "memo": "파이선강사 계약",
-      "platformFee": {
-        "rate": 10000000
-      },
+      "id": "contract_2",
+      "graphqlId": "NTpjb250cmFjdF8y",
+      "memo": "contract 2",
+      "platformFee": { "type": "FIXED_RATE", "rate": 10000 },
       "settlementCycle": {
         "lagDays": 2,
         "datePolicy": "CALENDAR_DAY",
-        "method": {}
+        "method": { "type": "WEEKLY", "daysOfWeek": ["FRI"] }
       },
-      "vatPayer": "PARTNER",
+      "platformFeeVatPayer": "MERCHANT",
       "isHidden": false,
-      "appliedAt": "2023-07-25T14:05:50.702Z"
+      "appliedAt": "2023-08-09T07:39:17.207733Z"
     },
     "payment": {
-      "id": "paymentId1",
+      "type": "EXTERNAL",
+      "id": "payment_1",
+      "orderName": "테스트 주문",
       "currency": "KRW",
-      "method": {},
-      "paidAt": "2023-07-25T14:05:50.702Z"
+      "method": { "type": "CARD" },
+      "paidAt": "2023-08-11T08:21:01.241Z"
     },
-    "settlementStartDate": "2023-07-25T14:05:50.702Z",
+    "settlementStartDate": "2023-08-11",
     "orderLines": [
       {
-        "product": {
-          "id": "product1",
-          "name": "파이썬 하반기 강의",
-          "amount": 10000,
-          "tag": "코딩"
-        },
-        "quantity": 1,
-        "additionalFees": [
-          {
-            "graphqlId": "string",
-            "id": "string",
-            "fee": {
-              "amount": 0
-            },
-            "memo": "string",
-            "isHidden": true,
-            "appliedAt": "2023-07-25T14:05:50.702Z"
-          }
-        ],
+        "product": { "id": "1", "name": "product_1", "amount": 5000 },
+        "quantity": 5,
         "discounts": [
           {
-            "discountShare": {
-              "graphqlId": "string",
-              "id": "string",
-              "partnerShareRate": 0,
-              "memo": "string",
-              "isHidden": true,
-              "appliedAt": "2023-07-25T14:05:50.702Z"
+            "sharePolicy": {
+              "id": "discount_1",
+              "graphqlId": "MjpkaXNjb3VudF8x",
+              "partnerShareRate": 500000000,
+              "memo": "테스트 할인",
+              "isHidden": false,
+              "appliedAt": "2023-08-09T07:45:45.799176Z"
             },
-            "amount": 0
+            "amount": 2500,
+            "shareAmount": 1250
+          }
+        ],
+        "additionalFees": [
+          {
+            "policy": {
+              "id": "addtional_fee_1",
+              "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
+              "fee": { "type": "FIXED_RATE", "rate": 5000 },
+              "memo": "테스트 추가수수료",
+              "vatPayer": "PARTNER",
+              "isHidden": false,
+              "appliedAt": "2023-08-09T07:41:12.393974Z"
+            },
+            "amount": 1250,
+            "vat": 125
           }
         ],
         "amount": {
-          "settlement": 785,
-          "payment": 900,
-          "order": 1000,
-          "platformFee": 100,
-          "platformFeeVat": 10,
-          "additionalFee": 50,
-          "additionalFeeVat": 5,
-          "discountShare": 50,
-          "discount": 100
+          "settlement": 19875,
+          "payment": 22500,
+          "order": 25000,
+          "platformFee": 2500,
+          "platformFeeVat": 0,
+          "additionalFee": 1250,
+          "additionalFeeVat": 125,
+          "discount": 2500,
+          "discountShare": 1250
         }
-      }
-    ],
-    "discounts": [
-      {
-        "discountShare": {
-          "graphqlId": "string",
-          "id": "discountShareId1",
-          "partnerShareRate": 50,
-          "memo": "강사 할인 쿠폰",
-          "isHidden": false,
-          "appliedAt": "2023-07-25T14:05:50.702Z"
-        },
-        "amount": 100
       }
     ],
     "additionalFees": [
       {
-        "graphqlId": "string",
-        "id": "additionalFeeId1",
-        "fee": {
-          "amount": 50
+        "policy": {
+          "id": "addtional_fee_1",
+          "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
+          "fee": { "type": "FIXED_RATE", "rate": 5000 },
+          "memo": "테스트 추가수수료",
+          "vatPayer": "PARTNER",
+          "isHidden": false,
+          "appliedAt": "2023-08-09T07:41:12.393974Z"
         },
-        "memo": "string",
-        "isHidden": true,
-        "appliedAt": "2023-07-25T14:05:50.702Z"
+        "amount": 1250,
+        "vat": 125
+      }
+    ],
+    "discounts": [
+      {
+        "sharePolicy": {
+          "id": "discount_1",
+          "graphqlId": "MjpkaXNjb3VudF8x",
+          "partnerShareRate": 500000000,
+          "memo": "테스트 할인",
+          "isHidden": false,
+          "appliedAt": "2023-08-09T07:45:45.799176Z"
+        },
+        "amount": 2500,
+        "shareAmount": 1250
       }
     ]
   }
 }
 ```
+
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 400  | PlatformDiscountAmountOverflowError                                                                                           |
+| 400  | PlatformProductIdDuplicatedError                                                                                              |
+| 400  | PlatformSettlementExceededPaymentAmountError                                                                                  |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+| 404  | PlatformPartnerNotFoundError                                                                                                  |
+| 404  | PlatformContractNotFoundError                                                                                                 |
+| 404  | PlatformAdditionalFeePoliciesNotFoundError                                                                                    |
+| 404  | PlatformDiscountSharePoliciesNotFoundError                                                                                    |
+| 404  | PlatformPaymentNotFoundError                                                                                                  |
+| 409  | PlatformTransferAlreadyExistsError                                                                                            |
 
 </div>
 </div>
@@ -1533,6 +1439,8 @@ curl -X POST https://api.portone.com/v2/platform/transfer/order \
 ---
 
 ### 주문 취소 정산건 생성
+
+`POST https://plublic-api-service.iamport.co/platform/transfers/order-cancel`
 
 <div class="grid-cols-2 gap-4 md:grid">
 <div>
@@ -1551,77 +1459,22 @@ curl -X POST https://api.portone.com/v2/platform/transfer/order \
 
 ---
 
-**memo** optional
+**paymentId** required
 
-주문 취소 정산 건에 내부 구분을 위한 메모
+취소하고자 하는 기존 주문건의 paymentId. 기존에 주문정산으로써 등록 되어있어야 합니다.
 
 ---
 
-**payment** required
+**cancellationId** required
 
-주문 정산건에 해당되는 결제 정보. 포트원(Portone) 결제일때 와 외부 결제(External) 일때 요구되는 값이 다릅니다.
-해당 값은 one of 로직으로 간주되어 `"payment": {"portOne": { ... } 혹은 "external": { ... }}` 와 같이 전달해야 합니다.
+결제 취소 아이디. 포트원 결제일 경우 결제취소 아이디 (cancellation_id) 는 v2 api를 통해 발급 가능하며 #결제-취소(POST https://api.portone.io/v2/payments/{payment_id}/cancel),
+결제내역-단건조회 (GET https://api.portone.io/v2/payments) api를 통해 받으실 수 있습니다. (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
 
-주문 정산건의 **payment** 에서 추가되는 부분은 결제취소 아이디 (cancellationId)를 전달하는 점입니다.
+외부 결제일 경우 단순히 결제 취소건당 unique한 아이디를 전달해주시면 됩니다.
 
-- 포트원 결제일때 ("payment": {"portOne"})
-  포트원 결제 연동 서비스 (sdk, api)에 소록되는 가맹점의 merchant_uid (V1) 혹은 payment_id(V2) 값을 건내주셔야 합니다.
+**memo** optional
 
-<table>
-  <tr>
-    <td>
-
-      portOne.**id** required
-
-      merchant_uid(V1) 혹은 payment_id(V2)
-
-      혹여나 주문은 이루어 졌지만 결제가 이루어지지 않은 경우가 있습니다. 대표적인 예로 포인트 및 쿠폰 (할인) 으로 상품을 사는 case 입니다.
-      해당 경우에는 포트원 결제는 없어도 가맹점 내에서 해당 주문에 대한 주문 아이디를 전달해주셔야 합니다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      portOne.**cancellationId** required
-
-      포트원 결제 취소 아이디. 주문취소 정산시 검증을 위해 결제 취소 아이디를 요구합니다.
-
-      cancellation_id 에 대한 정보는 [v2 결제관련 api](https://developers.portone.io/docs/ko/api-v2/payment) 를 참고해주세요.
-      `v2/payments/{'{payment_id}'}` 혹은 `v2/payments` 를 통해 결제내역 조회한뒤 cancellations json 에서 확인하실 수 있습니다.
-    </td>
-
-  </tr>
-</table>
-
-- 외부 결제일때 ("payment": {"external"})
-
-포트원 결제연동 외에 다른 결제연동 서비스를 통해 결제된 주문건일 경우 외부 결제건으로 간주합니다.
-
-그럴경우 해당 결제의 가맹점 주문번호와 결제통화를 필수로 전달해야 하며 optional로 주문이름, 결제 수단과 같은 부수적인 정보를 전달할 수 있습니다.
-
-<table>
-  <tr>
-    <td>
-
-      external.**id** required
-
-      외부 결제연동 서비스를 통해 결제된 주문건의 가맹점 주문번호
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    external.**cancellationId** optional
-
-    외부 결제연동 서비스를 통해 결제된 주문건의 결제 취소 아이디. 외부 결제서비스는 검증을 할수 없기에 필수값이 아닙니다.
-    </td>
-
-  </tr>
-</table>
+주문 취소 정산 건에 내부 구분을 위한 메모
 
 ---
 
@@ -1631,6 +1484,7 @@ curl -X POST https://api.portone.com/v2/platform/transfer/order \
 
 one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 경우에는 `"orderDetails" : {"orderAmount": 금액}` 와 같이 전달하시면 됩니다.
 취소하고자 하는 상품 정보 및 상품별 할인금 을 전달하고 싶으신 경우에는 `"orderDetails" : {"orderLines": [{...}, {...}]}` 와 같이 전달하시면 됩니다.
+단순히 전체 취소를 하시고 싶으시다면 `"orderDetails" : {"all": []}` 와 같이 전달하시면 됩니다.
 
 - 주문취소 금액만 전달할 경우 (`"orderDetails": {"orderAmount": 금액}`)
 
@@ -1687,9 +1541,9 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
           </tr>
           <tr>
             <td>
-              discounts.**discountShareId** required
+              discounts.**sharePolicyId** required
 
-              할인 유형 아이디. 주문 정산시 상품에 등록되었던 할인 유형 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
+              할인 정책 아이디. 주문 정산시 상품에 등록되었던 할인 정책 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
 
             </td>
           </tr>
@@ -1699,43 +1553,7 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
 
 </table>
 
----
-
-**settlementStartDate** dictionary 기본값은 결제완료 시점
-
-취소 정산 또한 주문 정산과 동일하게 정산주기가 적용됩니다. 따라서 주문 정산건이 이미 정산이 되었고 해당 주문건에 대한 취소정산이 이루어졌을때 취소금액은 다음 정산주기에 적용됩니다.
-
-따라서 **payment.portOne** 일때는 포트원 결제취소 시점 값이 기본값으로 적용됩니다.
-
-<table>
-  <tr>
-    <td>
-
-      settlementStartDate.**year** integer required
-
-      정산 시작일의 연도
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementStartDate.**month** integer required
-
-      정산 시작일의 월
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementStartDate.**day** integer required
-
-      정산 시작일의 일
-    </td>
-
-  </tr>
-</table>
+- 전체 취소를 하고자 할 경우 (`"orderDetails": {"all": []}`)
 
 ---
 
@@ -1749,9 +1567,9 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
   <tr>
     <td>
 
-      discount.*discountShareId** string required
+      discount.**sharePolicyId** string required
 
-      할인 유형 아이디. 주문 정산시 등록되었던 할인 유형 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
+      할인 정책 아이디. 주문 정산시 등록되었던 할인 정책 아이디 중 취소하고자 하는 아이디를 전달주시면 됩니다.
 
     </td>
 
@@ -1771,6 +1589,16 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
 
 ---
 
+**settlementStartDate** string 기본값은 결제완료 시점
+
+`'yyyy-MM-dd'` 형식의 문자열로 전달해주시면 됩니다.
+
+취소 정산 또한 주문 정산과 동일하게 정산주기가 적용됩니다. 따라서 주문 정산건이 이미 정산이 되었고 해당 주문건에 대한 취소정산이 이루어졌을때 취소금액은 다음 정산주기에 적용됩니다.
+
+따라서 **payment.type = INTERNAL** 일때는 포트원 결제취소 시점 값이 기본값으로 적용됩니다.
+
+---
+
 **isForTest** boolean optional 기본값은 false
 
 포트원의 테스트 서버로 정산 데이터를 전달할지 여부를 결정한다. 기본값은 false이다. 테스트 서버로 전달할 경우 정산 데이터는 테스트 서버에만 저장되며 실제 정산에는 반영되지 않는다.
@@ -1781,21 +1609,14 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
 취소 정산의 취소 주문금액 , 상품별 취소 주문 금액 및 수량, 주문 취소 할인금액 및 상품별 취소 할인 금액에 따라 새로운 음수 정산금액을 계산하신다고 이해하시면 됩니다.
 
 **Request Body**
+one of 로직에 해당되는 parameter가 다 표기되었습니다.
 
 ```json
 {
   "partnerId": "string",
+  "paymentId": "string",
+  "cancellationId": "string",
   "memo": "string",
-  "payment": {
-    "portOne": {
-      "id": "string",
-      "cancellationId": "string"
-    },
-    "external": {
-      "id": "string",
-      "cancellationId": "string"
-    }
-  },
   "orderDetail": {
     "orderAmount": 0,
     "orderLines": [
@@ -1804,195 +1625,146 @@ one of 로직으로써 단순히 주문취소 금액만 전달하고 싶으신 �
         "quantity": 0,
         "discounts": [
           {
-            "discountShareId": "string",
+            "sharePolicyId": "string",
             "amount": 0
           }
         ]
       }
-    ]
+    ],
+    "all": {}
   },
   "discounts": [
     {
-      "discountShareId": "string",
+      "sharePolicyId": "string",
       "amount": 0
     }
   ],
-  "settlementStartDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
+  "settlementStartDate": "string",
+  "externalCancellationDetail": {
+    "cancelledAt": "2023-08-15T09:02:20.868Z"
   },
-  "isForTest": false
+  "isForTest": true
 }
-```
-
-**Request**
-
-- PORTONE 결제인 경우 (cancellationId 필수)
-
-```text
-curl -X POST https://api.portone.com/v2/platform/order-cancel-transfer \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d  payment[portOne[paymentId]]=merchant_uid1' \
-     -d 'payment[portOne[cancellationId]]=merchant_uid1_cancel1' \
-     -d 'orderDetail[orderLines]=[{"productId" : "python_lecture_1", "quantity":1 }]' \
 ```
 
 **Response**
 
 취소 정산시 반환되는 금액 및 수수 값들은 다 주문정산객체 값의 음수처리 입니다.
 
+- 외부 결제일때
+- orderAmount 일때
+
 ```json
 {
   "transfer": {
-    "type": "ORDER",
-    "graphqlId": "string",
-    "id": "transferId1",
+    "type": "ORDER_CANCEL",
+    "id": "01H7J87XQ4JAS28RWZBC29YCJ1",
+    "graphqlId": "NjowMUg3Sjg3WFE0SkFTMjhSV1pCQzI5WUNKMQ==",
     "partner": {
-      "graphqlId": "string",
-      "id": "lecturer_1",
+      "id": "partnerA",
+      "graphqlId": "NDpwYXJ0bmVyQQ==",
       "name": "파이썬 강사",
-      "email": "python@platform.com",
-      "businessRegistrationNumber": "",
+      "email": "kjnkyj12@gmail.com",
+      "businessRegistrationNumber": "1178178260",
       "account": {
-        "bank": "신한은행",
+        "bank": "SHINHAN",
         "currency": "KRW",
-        "number": "110-123-456789",
-        "holder": "파이썬 강사",
-        "status": "APPROVED"
+        "number": "10358907249",
+        "holder": "김준일",
+        "status": "VERIFIED"
       },
       "status": "APPROVED",
-      "defaultContractId": "lecture_contract_1",
-      "memo": "컴싸 강사",
-      "tags": ["코딩"],
+      "defaultContractId": "contractA",
+      "memo": "잭슨 테스트 예시문",
+      "tags": ["파이썬"],
       "isHidden": false,
-      "appliedAt": "2023-07-25T14:05:50.702Z"
+      "appliedAt": "2023-08-11T11:19:58.829787Z"
     },
-    "status": "SETTLED",
-    "memo": "string",
-    "settlementDate": "2023-07-25T14:05:50.702Z",
-    "payoutId": "payout_1", // 이체 ID는 실제 이체완료 상태값 업데이트 후에 생성됩니다
-    "currency": "KRW",
+    "status": "SCHEDULED",
+    "settlementDate": "2023-08-31",
+    "settlementCurrency": "KRW",
     "isForTest": false,
     "amount": {
-      "settlement": 785,
-      "payment": 900,
-      "order": 1000,
-      "platformFee": 100,
-      "platformFeeVat": 10,
-      "additionalFee": 50,
-      "additionalFeeVat": 5,
-      "discountShare": 50,
-      "discount": 100
+      "settlement": 4450,
+      "payment": 5000,
+      "order": 5000,
+      "platformFee": 500,
+      "platformFeeVat": 50,
+      "additionalFee": 0,
+      "additionalFeeVat": 0,
+      "discount": 0,
+      "discountShare": 0
     },
     "contract": {
-      "graphqlId": "string",
-      "id": "lecture_contract_1",
-      "memo": "파이선강사 계약",
+      "id": "contractA",
+      "graphqlId": "NTpjb250cmFjdEE=",
+      "memo": "contract A",
       "platformFee": {
-        "rate": 10000000
+        "type": "FIXED_RATE",
+        "rate": 10000
       },
       "settlementCycle": {
         "lagDays": 2,
-        "datePolicy": "CALENDAR_DAY",
-        "method": {}
+        "datePolicy": "HOLIDAY_BEFORE",
+        "method": {
+          "type": "MONTHLY",
+          "daysOfMonth": [31]
+        }
       },
-      "vatPayer": "PARTNER",
+      "platformFeeVatPayer": "PARTNER",
       "isHidden": false,
-      "appliedAt": "2023-07-25T14:05:50.702Z"
+      "appliedAt": "2023-08-11T11:18:52.944447Z"
     },
     "payment": {
-      "id": "paymentId1",
+      "type": "EXTERNAL",
+      "id": "payment_1",
+      "orderName": "테스트 주문",
       "currency": "KRW",
-      "method": {},
-      "paidAt": "2023-07-25T14:05:50.702Z"
+      "method": {
+        "type": "CARD"
+      },
+      "paidAt": "2023-08-11T08:21:01.241Z"
     },
-    "settlementStartDate": "2023-07-25T14:05:50.702Z",
-    "orderLines": [
-      {
-        "product": {
-          "id": "product1",
-          "name": "파이썬 하반기 강의",
-          "amount": 10000,
-          "tag": "코딩"
-        },
-        "quantity": 1,
-        "additionalFees": [
-          {
-            "graphqlId": "string",
-            "id": "string",
-            "fee": {
-              "amount": 0
-            },
-            "memo": "string",
-            "isHidden": true,
-            "appliedAt": "2023-07-25T14:05:50.702Z"
-          }
-        ],
-        "discounts": [
-          {
-            "discountShare": {
-              "graphqlId": "string",
-              "id": "string",
-              "partnerShareRate": 0,
-              "memo": "string",
-              "isHidden": true,
-              "appliedAt": "2023-07-25T14:05:50.702Z"
-            },
-            "amount": 0
-          }
-        ],
-        "amount": {
-          "settlement": 785,
-          "payment": 900,
-          "order": 1000,
-          "platformFee": 100,
-          "platformFeeVat": 10,
-          "additionalFee": 50,
-          "additionalFeeVat": 5,
-          "discountShare": 50,
-          "discount": 100
-        }
-      }
-    ],
-    "discounts": [
-      {
-        "discountShare": {
-          "graphqlId": "string",
-          "id": "discountShareId1",
-          "partnerShareRate": 50,
-          "memo": "강사 할인 쿠폰",
-          "isHidden": false,
-          "appliedAt": "2023-07-25T14:05:50.702Z"
-        },
-        "amount": 100
-      }
-    ],
-    "additionalFees": [
-      {
-        "graphqlId": "string",
-        "id": "additionalFeeId1",
-        "fee": {
-          "amount": 50
-        },
-        "memo": "string",
-        "isHidden": true,
-        "appliedAt": "2023-07-25T14:05:50.702Z"
-      }
-    ]
+    "settlementStartDate": "2023-08-12",
+    "orderLines": [],
+    "additionalFees": [],
+    "discounts": [],
     "cancellation": {
-      "id": "string",
-      "cancelledAt": "2023-07-25T14:36:27.155Z"
+      "id": "cancellation_1",
+      "cancelledAt": "2023-08-12T11:57:15.292Z"
     }
   }
 }
 ```
 
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 400  | PlatformCancelOrderDetailMismatchedError                                                                                      |
+| 400  | PlatformCancelProductQuantityExceededError                                                                                    |
+| 400  | PlatformCancellableAmountExceededError                                                                                        |
+| 400  | PlatformCancellableDiscountAmountExceededError                                                                                |
+| 400  | PlatformProductIdDuplicatedError                                                                                              |
+| 400  | PlatformDiscountSharePolicyIdDuplicatedError                                                                                  |
+| 400  | PlatformDiscountAmountOverflowError                                                                                           |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+| 404  | PlatformTransferNotFoundError                                                                                                 |
+| 404  | PlatformCancellationNotFoundError                                                                                             |
+| 404  | PlatformProductIdNotFoundError                                                                                                |
+| 404  | PlatformPaymentNotFoundError                                                                                                  |
+| 404  | PlatformTransferDiscountSharePolicyNotFoundError                                                                              |
+| 409  | PlatformTransferAlreadyExistsError                                                                                            |
+| 409  | PlatformOrderTransferAlreadyCancelledError                                                                                    |
+
 </div>
 </div>
 
 ### 수동 정산건 생성
+
+`POST https://plublic-api-service.iamport.co/platform/transfers/manual`
 
 <div class="grid-cols-2 gap-4 md:grid">
 <div>
@@ -2013,39 +1785,10 @@ curl -X POST https://api.portone.com/v2/platform/order-cancel-transfer \
 
 ---
 
-**settlementDate** dictionary optional 기본값은 파트너의 다가올 정산일
+**settlementDate** string required
 
-해당 수동 정산건이 적용되길 원하는 정산일. 전달하지 않을경우 해당 파트너의 가장 가까운 미래 정산일이 적용된다.
-
-<table>
-  <tr>
-    <td>
-
-      settlementDate.**year** integer required
-
-      정산일 연도
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**month** integer required
-
-      정산 월
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      settlementDate.**day** integer required
-
-      정산일
-    </td>
-
-  </tr>
-</table>
+`'yyyy-mm-dd'` 형식으로 보내주시면 됩니다.
+해당 수동 정산건이 적용되길 원하는 정산일. 꼭 정확한 정산일을 전달하셔야 합니다.
 
 ---
 
@@ -2071,24 +1814,9 @@ Schema
   "partnerId": "string",
   "memo": "string",
   "settlementAmount": 0,
-  "settlementDate": {
-    "year": 0,
-    "month": 0,
-    "day": 0
-  },
+  "settlementDate": "string",
   "isForTest": true
 }
-```
-
-**Request**
-
-```text
-curl -X POST https://api.portone.com/v2/platform/manual-transfers \
-     -u {api_key} \
-     -d 'partnerId=lecturer_1' \
-     -d 'settlementAmount=300000' \
-     -d 'settlementDate={"year":2023,"month":7,"day":31}' \
-     -d 'memo=이체건 차감'
 ```
 
 **Response**
@@ -2098,40 +1826,48 @@ curl -X POST https://api.portone.com/v2/platform/manual-transfers \
 ```json
 {
   "transfer": {
-    "id": "transfer_id",
+    "type": "MANUAL",
+    "id": "01H7W8JQF61EXTRYWCT667CYK2",
+    "graphqlId": "NjowMUg3VzhKUUY2MUVYVFJZV0NUNjY3Q1lLMg==",
     "partner": {
-      "id": "lecturer_1",
+      "id": "partnerA",
+      "graphqlId": "NDpwYXJ0bmVyQQ==",
       "name": "파이썬 강사",
-      "email": "python@platform.com",
-      "businessRegistrationNumber": "",
+      "email": "kjnkyj12@gmail.com",
+      "businessRegistrationNumber": "1178178260",
       "account": {
-        "bank": "신한은행",
+        "bank": "SHINHAN",
         "currency": "KRW",
-        "number": "110-123-456789",
-        "holder": "string",
-        "status": "APPROVED"
+        "number": "10358907249",
+        "holder": "김준일",
+        "status": "VERIFIED"
       },
       "status": "APPROVED",
-      "defaultContractId": "lecutre_contract_1",
-      "memo": "string",
-      "tags": ["string"],
+      "defaultContractId": "contractA",
+      "memo": "잭슨 테스트 예시문",
+      "tags": ["파이썬"],
       "isHidden": false,
-      "appliedAt": "2023-07-24T02:39:29.892Z"
+      "appliedAt": "2023-08-11T11:19:58.829787Z"
     },
-    "status": "IN_PAYOUT",
-    "memo": "수동정산",
-    "settlementDate": {
-      "year": 2023,
-      "month": 7,
-      "day": 31
-    },
-    "payoutId": "",
-    "currency": "KRW",
+    "status": "IN_PROCESS",
+    "memo": "테스트 수동 정산",
+    "settlementDate": "2023-09-27",
+    "settlementCurrency": "KRW",
     "isForTest": false,
-    "settlementAmount": 300000
+    "settlementAmount": 100000
   }
 }
 ```
+
+**Error Code**
+
+| Code | Description                                                                                                                                   |
+| :--- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.                 |
+| 400  | PlatformUnavailableSettlementDateError: 사용할 수 없는 정산일이 요청된 경우. 요청한 정산일에 이체되지 않은 주문 정산 건이 없을 때 발생합니다. |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                                             |
+| 404  | PlatformPartnerNotFoundError                                                                                                                  |
 
 </div>
 </div>
@@ -2139,6 +1875,8 @@ curl -X POST https://api.portone.com/v2/platform/manual-transfers \
 ---
 
 ### 정산 조회
+
+`GET https://plublic-api-service.iamport.co/platform/transfers/{id}`
 
 <div class="grid-cols-2 gap-4 md:grid">
 <div>
@@ -2156,7 +1894,7 @@ Request Body 는 없습니다.
 
 ```text
 curl -X GET https://api.portone.com/v2/platform/transfers/{id} \
-     -u {api_key}
+     -h {Authorization: Bearer {access_token}}
 ```
 
 **Response**
@@ -2165,1093 +1903,151 @@ curl -X GET https://api.portone.com/v2/platform/transfers/{id} \
 
 ```json
 {
-  "id": "transfer_id1",
-  "partner": {
-    "id": "lecturer_1",
-    "name": "파이썬 강사",
-    "email": "python@platform.com",
-    "businessRegistrationNumber": "",
-    "account": {
-      "bank": "신한은행",
-      "currency": "KRW",
-      "number": "110-123-456789",
-      "holder": "파이썬 강사",
-      "status": "APPROVED"
-    },
-    "status": "APPROVED",
-    "defaultContractId": "lecture_contract_1",
-    "memo": "컴싸 강사",
-    "tags": ["코딩"],
-    "isHidden": false,
-    "appliedAt": "2023-07-23T06:35:29.110Z"
-  },
-  "status": "SETTLED",
-  "memo": "string",
-  "settlementDate": {
-    "year": 2023,
-    "month": 7,
-    "day": 31
-  },
-  "payoutId": "payout_1", // 이체 ID는 실제 이체완료 상태값 업데이트 후에 생성됩니다
-  "currency": "KRW",
-  "isForTest": false,
-  "settlementAmount": {
-    "order": 1000,
-    "payment": 900,
-    "platformFee": 100,
-    "platformFeeVat": 10,
-    "additionalFee": 50,
-    "additionalFeeVat": 5,
-    "discountShare": 50,
-    "discount": 100,
-    "settlement": 785
-  }
-}
-```
-
-</div>
-</div>
----
-
-## 파트너
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-`파트너` 객체는 가맹점이 정산해줘야할 대상입니다.
-
-기본 사업자 정보와 정산정보, 그리고 적용될 계약의 정보를 등록 및 관리할 수 있습니다.
-
-</div>
-<div>
-
-#### Endpoints
-
-```text
-POST /platform/partners
-POST /platform/partners/batch
-GET /platform/partners/{id}
-GET /platform/partners/numbered-pages
-POST /platform/partners/{id}
-POST /platform/partners/{id}/account
-POST /platform/partners/{id}/schedule
-PUT /platform/partners/{id}/schedule
-GET /platform/partners/{id}/schedule
-DELETE /platform/partners/{id}/schedule
-```
-
-</div>
-</div>
-
----
-
-### 파트너 객체
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-#### Attributes
-
-**id** string
-
-파트너 고유 아이디
-
----
-
-**name** string
-
-파트너 법인명 혹은 이름
-
----
-
-**email** string
-
-파트너 이메일
-
----
-
-**businessRegistrationNumber** string
-
-파트너 사업자번호. 개인 혹은 법인 사업자일때만 존재합니다.
-
----
-
-**account** dictionary
-
-정산 계좌 Attribute
-
-<table name = "bank_account">
-  <tr>
-    <td>
-    
-    account.**bank** enum or string
-
-    은행 이름.
-
-    \- currnecy가 KRW일시 증권사가 제외된 한국 은행 코드별상의 은행값 enum 하단 참고. 해당 은행값 외의 은행은 에러 처리\
-    \- currency 가 KRW가 아닐때 해외 은행 string값으로 입력 가능
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    account.**currency** enum
-
-    화페로써 현재로썬 KRW, JPY, USD만 지원한다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    account.**number** string
-
-    계좌번호. currency가 KRW일경우 따로 예금주 조회 API를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    account.**holder** string
-
-    예금주. currency가 KRW일경우 따로 예금주 조회 API를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    account.**status** enum
-
-    계좌 상태. 현재로썬 승인 대기, 승인 완료, 승인 거절 세가지 상태만 존재한다.
-
-    <table>
-      <tr>
-        <td>
-
-        **PENDING** : 승인 대기 중
-
-        </td>
-      </tr>
-      <tr>
-        <td>
-
-        **APPROVED** : 승인 완료
-        </td>
-      </tr>
-      <tr>
-        <td>
-
-        **REJECTED** : 승인 거절
-        </td>
-      </tr>
-    </table>
-    </td>
-
-  </tr>
-</table>
-
----
-
-**defaultContractId** string
-
-파트너의 기본 계약 아이디
-
-기본 계약 아이디란 파트너가 정산을 받을 때 적용되는 계약을 의미합니다. 파트너 정산시 여러개의 계약을 적용 할 수 있으나, 정산 API에 파트너 아이디만 전달 할 경우 기본 계약이 적용됩니다.
-
----
-
-**memo** string
-
-파트너 메모. 내부 구분용으로 사용하실 수 있습니다.
-
----
-
-**tags** array
-
-파트너 태그. 내부 구분용으로 사용하실 수 있습니다.
-
----
-
-**isHidden** boolean
-
-파트너 숨김 여부. true일 경우 파트너 목록에서 숨김 처리됩니다.
-
-숨김이란 soft delete이라고 생각하시면 됩니다.
-
----
-
-**appliedAt** Datetime
-
-해당 파트너가 업데이트 된 시각
-
-</div>
-<div>
-
-#### Response
-
-```json
-{
-  "id": "lecturer_1",
-  "name": "파이선 강사 홍길동",
-  "email": "abc@gmail.com",
-  "businessRegistrationNumber": null,
-  "account": {
-    "bank": "신한",
-    "currency": "KRW",
-    "number": "123-45-6789",
-    "holder": "홍길동",
-    "status": "APPROVED"
-  },
-  "defaultContractId": "contract_1",
-  "memo": "파이선 일타 강사, rs 3%",
-  "tags": ["개발", "강사"],
-  "isHidden": false,
-  "appliedAt": "2023-05-07"
-}
-```
-
-</div>
-</div>
-
----
-
-### 파트너 생성
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-**Parameters**
-
-**id** optional
-
-파트너에 부여하는 고유 아이디. 가맹점 서버에 등록된 파트너지칭 아이디와 동일해야 합니다. 따로 없다면 포트원이 발급해 드립니다.
-
----
-
-**name** required
-
-파트너를 지칭하는 사업자명 및 이름
-
----
-
-**email** optional
-
-파트너 이메일
-
----
-
-**businessRegistrationNumber** optional
-
-파트너 사업자번호. 검증하지는 않음. 번호 기호 둘다 가능
-
----
-
-**account** required
-
-account attirbute
-
-<table name = "bank_account">
-  <tr>
-    <td>
-    
-    account.**bank** enum or string
-
-    은행 이름.
-
-    \- currnecy가 KRW일시 증권사가 제외된 한국 은행 코드별상의 은행값 enum 하단 참고. 해당 은행값 외의 은행은 에러 처리\
-    \- currency 가 KRW가 아닐때 해외 은행 string값으로 입력 가능
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    account.**currency** enum
-
-    화페로써 현재로썬 KRW, JPY, USD만 지원한다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    account.**number** string
-
-    계좌번호. currency가 krw일경우 따로 예금주 조회 api를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    account.**holder** string
-
-    예금주. currency가 krw일경우 따로 예금주 조회 api를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
-
-    </td>
-
-  </tr>
-
-</table>
-
----
-
-**defaultContractId** required
-
-이미 존재하는 계약객체의 아이디를 등록해야합니다.
-
----
-
-**memo** optional
-
-256자까지 가능합니다.
-
----
-
-**tag** optional
-
-최대 10개까지 가능합니다.
-
----
-
-</div>
-
-<div>
-**Request**
-
-```shell
-curl -X POST https://api.portone.com/v2/platform/partner \
-     -u {api_key} \
-     -d 'id=lecturer_1' \
-     -d 'name=파이선 강사 홍길동' \
-     -d 'email=abc@gmail.com' \
-     -d 'account={"bank": "신한", "currency": "KRW", "number": "123-45-6789"}' \
-     -d 'defaultContractId=contract_1' \
-     -d 'memo=파이선 일타 강사, rs 3%' \
-     -d 'tag = [개발, 강사]'
-```
-
-**Response**
-
-파트너 객체가 반환됩니다.
-
-```json
-{
-  "id": "lecturer_1",
-  "name": "파이선 강사 홍길동",
-  "email": "abc@gmail.com",
-  "businessRegistrationNumber": null,
-  "account": {
-    "bank": "신한",
-    "currency": "KRW",
-    "number": "123-45-6789",
-    "holder": "홍길동",
-    "status": "Verified"
-  },
-  "defaultContractId": "contract_1",
-  "memo": "파이선 일타 강사, rs 3%",
-  "tag": ["개발", "강사"],
-  "isHidden": false,
-  "appliedAt": "2023-05-07T07:17:07.064Z"
-}
-```
-
-</div>
-</div>
-
----
-
-### 파트너 조회
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-**Parameters**
-
-**id** required
-
-조회하고 싶은 파트너 고유 아이디
-
----
-
-</div>
-<div>
-**Request**
-
-```shell
-curl -X GET https://api.portone.com/v2/platform/partner/lecturer_1 \
-     -u {api_key}
-```
-
-**Response**
-
-파트너 객체가 반환됩니다.
-
-```json
-{
-  "id": "lecturer_1",
-  "name": "파이선 강사 홍길동",
-  "email": "abc@gmail.com",
-  "businessRegistrationNumber": null
-  "account":{
-    "bank":"신한",
-    "currency": "KRW",
-    "number": "123-45-6789",
-    "holder": "홍길동",
-    "status": "Verified",
-    },
-  "defaultContractId": "contract_1",
-  "memo": "파이선 일타 강사, rs 3%",
-  "tag": ["개발","강사"],
-  "isHidden": false,
-  "updatedAt": "2023-05-07T07:23:34.455"
-}
-```
-
-</div>
-</div>
----
-
-### 파트너 다건 조회
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-페이지 기반으로 여러 파트너를 조회합니다.
-
-**Parameters**
-
----
-
-**page** optional
-
-요청할 페이지 정보
-
-페이지 번호를 통한 다건 조회 API에 필요한 입력 정보
-
-<table>
-  <tr>
-    <td>
-      page.**size** integer required 각 페이지 당 포함할 객체 수. 기본값은 10
-    </td>
-  </tr>
-  <tr>
-    <td>page.**number** integer required 페이지 번호. 0 부터 시작합니다.</td>
-  </tr>
-</table>
----
-
-**filter** dictionary
-
-다건 조회시 적용하고 싶은 필터 값.
-
-<table name="bank_account">
-  <tr>
-    <td>
-    
-    filter.**includeHidden** boolean optional 
-    
-    true일 경우 숨김 처리된 파트너가 조회됩니다. 
-    
-    기본값은 false입니다. 
-    
-    </td>
-  </tr>
-  <tr>
-    <td>
-      filter.**tags** list of string optional 파트너에게 부여한 태그 리스트 값.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      filter.**keyword** one of dictionary 검색 조건. 조건중 한 값을 지정하여
-      %like% 검색한다.
-
-      \- keyword.id 파트너 아이디 \
-      \- keyword.name 파트너 이름 \
-      \- keyword.email 파트너 이메일 \
-      \- keyword.businessRegistrationNumber 파트너 사업자 번호 \
-      \- keyword.defaultContractId 파트너 기본 계약 아이디 \
-      \- keyword.memo 파트너 메모 \
-      \- keyword.accountBank 파트너 계좌 은행 \
-      \- keyword.accountCurrency 파트너 계좌 통화 \
-      \- keyword.accountNumber 파트너 계좌 번호\
-      \- keyword.accountHolder 파트너 계좌 예금주
-
-    </td>
-
-  </tr>
-</table>
-
----
-
-  </div>
-  <div>
-  **Request**
-
-```shell
-curl -X POST https://api.portone.com/v2/platform/partners/numbered-pages \
-     -u {api_key} \
-     -d 'filter[keyword[memo]]=파이선'
-
-
-```
-
-**Response**
-
-여러 파트너 객체들이 리스트 형태로 반환됩니다.
-
-```json
-{
-  "items": [
-    {
-      "id": "lecturer_1",
-      "name": "파이선 강사 홍길동",
-      "email": "abc@gmail.com",
-      "businessRegistrationNumber": null,
+  "transfer": {
+    "type": "ORDER",
+    "id": "01H7HVM3YYCYQC3HF6KN4VZYZ2",
+    "graphqlId": "NjowMUg3SFZNM1lZQ1lRQzNIRjZLTjRWWllaMg==",
+    "partner": {
+      "id": "partner_2",
+      "graphqlId": "NDpwYXJ0bmVyXzI=",
+      "name": "파이썬 강사",
+      "email": "kjnkyj12@gmail.com",
+      "businessRegistrationNumber": "1178178260",
       "account": {
-        "bank": "신한",
+        "bank": "SHINHAN",
         "currency": "KRW",
-        "number": "123-45-6789",
-        "holder": "홍길동",
-        "status": "Verified"
+        "number": "10358907249",
+        "holder": "김준일",
+        "status": "VERIFIED"
       },
-      "defaultContractId": "contract_1",
-      "memo": "파이선 일타 강사, rs 3%",
-      "tag": ["개발", "강사"],
+      "status": "APPROVED",
+      "defaultContractId": "contract_2",
+      "memo": "잭슨 테스트",
+      "tags": ["파이썬"],
       "isHidden": false,
-      "appliedAt": "2023-05-07T07:24:48.798Z"
-    }
-  ],
-  "page": {
-    "size": 10,
-    "number": 0,
-    "totalCount": 10
-  }
-}
-```
-
-  </div>
-</div>
-
----
-
-### 파트너 수정
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-주어진 아이디에 대응하는 파트너 정보를 업데이트 합니다.
-
-파트너의 정산계좌 정보를 업데이트 할 경우에는 POST partners/{"{id}"}/account를 통해서 하실 수 있습니다.
-**Parameters**
-
-**id** required
-
-수정하고 싶은 파트너의 아이디
-
----
-
-**name** optional
-
-파트너를 지칭하는 사업자명 및 이름
-
----
-
-**email** optional
-
-파트너 이메일
-
----
-
-**businessRegistrationNumber** optional
-
-파트너 사업자번호. 검증하지는 않음. 번호 기호 둘다 가능
-
----
-
-**defaultContractId** optional
-
-파트너의 기본 계약 아이디. 해당 api를 통해서 계약을 변경 할 경우 적용시점은 api 호출 시점입니다.
-따라서 해당 시점기준으로 해당 파트너의 정산건의 **settlementStartDate** 이후의 모든 정산 건에 적용됩니다.
-
----
-
-**memo** optional
-
-256자까지 가능합니다.
-
----
-
-**tag** optional
-
-최대 10개까지 가능합니다.
-
----
-
-**isHidden** optional
-
-파트너를 숨김처리 합니다. 숨김 처리는 soft delete 의 역할을 합니다.
-
-따로 DELETE partner api 없이 해당 파라미터를 통해서 파트너를 숨김처리 하실 수 있습니다.
-
-</div>
-<div>
-**Request**
-
-```shell
-curl -X POST https://api.portone.com/v2/platform/partner/lecturer_1 \
-     -u {api_key} \
-     -d 'email=new@gmail.com' \
-     -d 'defaultContract[defaultContractId]=contract_1' \
-     -d 'defaultContract[applied_at]=2022-03-01'
-```
-
-**Response**
-
-업데이트 된 파트너 객체가 반환됩니다.
-
-```json
-{
-  "id": "lecturer_1",
-  "name": "파이선 강사 홍길동",
-  "email": "new@gmail.com",
-  "businessRegistrationNumber": null,
-  "account": {
-    "bank": "신한",
-    "currency": "KRW",
-    "number": "123-45-6789",
-    "holder": "홍길동",
-    "status": "Verified"
-  },
-  "defaultContractId": "contract_1",
-  "memo": "파이선 일타 강사, rs 3%",
-  "tag": ["개발", "강사"],
-  "isHidden": false,
-  "appliedAt": "2023-05-07T00:00:00"
-}
-```
-
----
-
-\- 예금주 조회 검증을통해 계좌가 유효하지 않을경우 에러를 반환합니다
-
-    </div>
-
-</div>
-
----
-
-### 파트너 계좌정보 수정
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-**Parameters**
-
----
-
-**bank** optional enum or string
-
-은행 이름.
-
-\- **currnecy**가 KRW일시 증권사가 제외된 한국 은행 코드별상의 은행값 enum 하단 참고. 해당 은행값 외의 은행은 에러 처리\
-\- **currency** 가 KRW가 아닐때 해외 은행 string값으로 입력 가능
-
----
-
-**currency** optional enum
-
-화페로써 현재로썬 KRW, JPY, USD만 지원한다.
-
----
-
-**number** optional string
-
-계좌번호. currency가 krw일경우 따로 예금주 조회 api를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
-
----
-
-**holder** optional string
-
-예금주. currency가 krw일경우 따로 예금주 조회 api를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
-예금주 조회는 **account** 와 **bank** 만으로 자동 조회 한다.
-
----
-
-</div>
-<div>
-**Request**
-
-```shell
-curl -X POST https://api.portone.com/v2/platform/partner/lecturer_1/account \
-     -u {api_key} \
-     -d 'bank=우리' \
-     -d 'currency=KRW' \
-     -d 'number=123-45-6789' \
-```
-
-**Response**
-
-업데이트 된 파트너 객체가 반환됩니다.
-
-```json
-{
-  "id": "lecturer_1",
-  "name": "파이선 강사 홍길동",
-  "email": "new@gmail.com",
-  "businessRegistrationNumber": null,
-  "account": {
-    "bank": "우리",
-    "currency": "KRW",
-    "number": "123-45-6789",
-    "holder": "홍길동",
-    "status": "APPROVED"
-  },
-  "status": "APPROVED",
-  "defaultContractId": "contract_1",
-  "memo": "파이선 일타 강사, rs 3%",
-  "tag": ["개발", "강사"],
-  "isHidden": false,
-  "appliededAt": "2023-05-07T00:00:00"
-}
-```
-
-</div>
-</div>
----
-
-### 파트너 예약 업데이트
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-주어진 아이디에 대응하는 파트너의 업데이트를 예약합니다.
-
-**Parameters**
-
----
-
-**id** required string
-
-파트너 아이디.
-
----
-
-**update** required json dicionary
-
-업데이트 할 파트너의 정보를 담은 json dictionary
-
-<table>
-  <tr>
-    <td>
-
-    **name** optional string
-
-    파트너의 이름
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **email** optional string
-
-    파트너의 이메일
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **businessRegistrationNumber** optional string
-
-    파트너의 사업자등록번호
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **defaultContractId** optional string
-
-    파트너의 기본 계약 아이디
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **memo** optional string
-
-    파트너에 대한 메모
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **tags** optional array of string
-
-    파트너에 대한 태그
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **isHidden** optional boolean
-
-    파트너의 숨김 여부
-
-    </td>
-
-  </tr>
-</table>
----
-
-**appliedAt** required Datetime
-
-업데이트를 적용할 시간.
-정산 시작일(settlementStartDate) 기준으로 시간이 적용됩니다.
-예를들어 2일에 파트너 기본계약 업데이트를 예약했으면 1일까지 정산시작일이 되어있는 해당 파트너의 정산 건은 구버전의 계약이 적용되고
-2일부터는 새로운 계약이 적용됩니다.
-
-</div>
-<div>
-
-**Request**
-
-```shell
-curl -X POST https://api.portone.com/v2/platform/partner/lecturer_1/schedule \
-     -u {api_key} \
-     -d 'defaultContractId = lecture_contract_2' \
-     -d 'appliedAt=2023-06-30T00:00:00'
-```
-
-**Response**
-
-성공 응답으로 예약된 파트너 객체가 반환됩니다.
-
-```json
-{
-  "scheduledPartner": {
-    "id": "lecturer_1",
-    "name": "파이선 강사 홍길동",
-    "email": "new@gmail.com",
-    "businessRegistrationNumber": null,
-    "account": {
-      "bank": "우리",
-      "currency": "KRW",
-      "number": "123-45-6789",
-      "holder": "홍길동",
-      "status": "APPROVED"
+      "appliedAt": "2023-08-09T07:39:25.645014Z"
     },
-    "status": "APPROVED",
-    "defaultContractId": "contract_1",
-    "memo": "파이선 일타 강사, rs 3%",
-    "tag": ["개발", "강사"],
-    "isHidden": false,
-    "appliededAt": "2023-06-30T00:00:00"
-  }
-}
-```
-
-</div>
-</div>
-
-### 파트너 예약 업데이트 재설정
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-주어진 아이디에 대응하는 파트너의 업데이트를 재설정 합니다.
-기존에 예약이 예정되어 있는 업데이트가 있다면 취소되고 새로운 업데이트가 예약됩니다.
-
-**Parameters**
-
----
-
-**id** required string
-
-파트너 아이디.
-
----
-
-**update** required json dicionary
-
-업데이트 할 파트너의 정보를 담은 json dictionary
-
-<table>
-  <tr>
-    <td>
-
-    **name** optional string
-
-    파트너의 이름
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **email** optional string
-
-    파트너의 이메일
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **businessRegistrationNumber** optional string
-
-    파트너의 사업자등록번호
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **defaultContractId** optional string
-
-    파트너의 기본 계약 아이디
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **memo** optional string
-
-    파트너에 대한 메모
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **tags** optional array of string
-
-    파트너에 대한 태그
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-    **isHidden** optional boolean
-
-    파트너의 숨김 여부
-
-    </td>
-
-  </tr>
-</table>
----
-
-**appliedAt** required Datetime
-
-업데이트를 적용할 시간.
-정산 시작일(settlementStartDate) 기준으로 시간이 적용됩니다.
-예를들어 2일에 파트너 기본계약 업데이트를 예약했으면 1일까지 정산시작일이 되어있는 해당 파트너의 정산 건은 구버전의 계약이 적용되고
-2일부터는 새로운 계약이 적용됩니다.
-
-</div>
-<div>
-
-**Request**
-
-```shell
-curl -X PUT https://api.portone.com/v2/platform/partner/lecturer_1/schedule \
-     -u {api_key} \
-     -d 'defaultContractId = lecture_contract_2' \
-     -d 'appliedAt=2023-07-01T00:00:00'
-```
-
-**Response**
-
-성공 응답으로 예약된 파트너 객체가 반환됩니다.
-
-```json
-{
-  "scheduledPartner": {
-    "id": "lecturer_1",
-    "name": "파이선 강사 홍길동",
-    "email": "new@gmail.com",
-    "businessRegistrationNumber": null,
-    "account": {
-      "bank": "우리",
-      "currency": "KRW",
-      "number": "123-45-6789",
-      "holder": "홍길동",
-      "status": "APPROVED"
+    "status": "IN_PROCESS",
+    "memo": "testing order transfer",
+    "settlementDate": "2023-08-18",
+    "settlementCurrency": "KRW",
+    "isForTest": true,
+    "amount": {
+      "settlement": 17250,
+      "payment": 20000,
+      "order": 25000,
+      "platformFee": 2500,
+      "platformFeeVat": 0,
+      "additionalFee": 2500,
+      "additionalFeeVat": 250,
+      "discount": 5000,
+      "discountShare": 2500
     },
-    "status": "APPROVED",
-    "defaultContractId": "contract_1",
-    "memo": "파이선 일타 강사, rs 3%",
-    "tag": ["개발", "강사"],
-    "isHidden": false,
-    "appliededAt": "2023-07-01T00:00:00"
+    "contract": {
+      "id": "contract_2",
+      "graphqlId": "NTpjb250cmFjdF8y",
+      "memo": "contract 2",
+      "platformFee": { "type": "FIXED_RATE", "rate": 10000 },
+      "settlementCycle": {
+        "lagDays": 2,
+        "datePolicy": "CALENDAR_DAY",
+        "method": { "type": "WEEKLY", "daysOfWeek": ["FRI"] }
+      },
+      "platformFeeVatPayer": "MERCHANT",
+      "isHidden": false,
+      "appliedAt": "2023-08-09T07:39:17.207733Z"
+    },
+    "payment": {
+      "type": "EXTERNAL",
+      "id": "payment_1",
+      "orderName": "테스트 주문",
+      "currency": "KRW",
+      "method": { "type": "CARD" },
+      "paidAt": "2023-08-11T08:21:01.241Z"
+    },
+    "settlementStartDate": "2023-08-11",
+    "orderLines": [
+      {
+        "product": { "id": "1", "name": "product_1", "amount": 5000 },
+        "quantity": 5,
+        "discounts": [
+          {
+            "sharePolicy": {
+              "id": "discount_1",
+              "graphqlId": "MjpkaXNjb3VudF8x",
+              "partnerShareRate": 500000000,
+              "memo": "테스트 할인",
+              "isHidden": false,
+              "appliedAt": "2023-08-09T07:45:45.799176Z"
+            },
+            "amount": 2500,
+            "shareAmount": 1250
+          }
+        ],
+        "additionalFees": [
+          {
+            "policy": {
+              "id": "addtional_fee_1",
+              "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
+              "fee": { "type": "FIXED_RATE", "rate": 5000 },
+              "memo": "테스트 추가수수료",
+              "vatPayer": "PARTNER",
+              "isHidden": false,
+              "appliedAt": "2023-08-09T07:41:12.393974Z"
+            },
+            "amount": 1250,
+            "vat": 125
+          }
+        ],
+        "amount": {
+          "settlement": 19875,
+          "payment": 22500,
+          "order": 25000,
+          "platformFee": 2500,
+          "platformFeeVat": 0,
+          "additionalFee": 1250,
+          "additionalFeeVat": 125,
+          "discount": 2500,
+          "discountShare": 1250
+        }
+      }
+    ],
+    "additionalFees": [
+      {
+        "policy": {
+          "id": "addtional_fee_1",
+          "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
+          "fee": { "type": "FIXED_RATE", "rate": 5000 },
+          "memo": "테스트 추가수수료",
+          "vatPayer": "PARTNER",
+          "isHidden": false,
+          "appliedAt": "2023-08-09T07:41:12.393974Z"
+        },
+        "amount": 1250,
+        "vat": 125
+      }
+    ],
+    "discounts": [
+      {
+        "sharePolicy": {
+          "id": "discount_1",
+          "graphqlId": "MjpkaXNjb3VudF8x",
+          "partnerShareRate": 500000000,
+          "memo": "테스트 할인",
+          "isHidden": false,
+          "appliedAt": "2023-08-09T07:45:45.799176Z"
+        },
+        "amount": 2500,
+        "shareAmount": 1250
+      }
+    ]
   }
 }
 ```
 
 </div>
 </div>
-
 ---
-
-### 파트너 예약 업데이트 취소
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-주어진 아이디에 대응하는 파트너의 업데이트를 취소합니다.
-
-**Parameters**
-
----
-
-**id** required string
-
-파트너 아이디.
-
-</div>
-<div>
-
-**Request**
-
-```shell
-curl -X DELETE https://api.portone.com/v2/platform/partner/lecturer_1/schedule \
-     -u {api_key}
-```
-
-**Response**
-성공 응답(200) 이 반환됩니다.
-
-</div>
-</div>
-
 ## 계약
 
 <div class="gap-4 md:grid grid-cols-2">
@@ -3267,12 +2063,13 @@ curl -X DELETE https://api.portone.com/v2/platform/partner/lecturer_1/schedule \
 ```text
 POST /platform/contracts
 GET /platform/contract/{id}
-POST /platform/contract/{id}
+PATCH /platform/contract/{id}
 POST /platform/contracts/numered-pages
 POST /platform/contracts/{id}/schedule
 PUT /platform/contracts/{id}/schedule
 GET /platform/contracts/{id}/schedule
 DELETE /platform/contracts/{id}/schedule
+GET /platform/contract-filter-options
 ```
 
 </div>
@@ -3292,6 +2089,10 @@ Attributes
 
 ---
 
+**graphqlId** string
+
+계약객체의 고유 아이디 (포트원 내부 graphql버전)
+
 **memo** string
 
 계약객체 내부 표기를 위한 메모
@@ -3302,11 +2103,13 @@ Attributes
 
 중개수수료. 기본 **Fee** attribute 을 사용한다.
 
+one of logic 으로 정액, 정률 중 하나만 사용할 수 있다.
+
 <table>
   <tr>
     <td>
 
-      platformFee.**fixedAmount** int64
+      platformFee.**amount** int64
 
       정액일 경우 사용하는 parameter. 현재로서 정액 플랫폼 중개 수수료는 원화만 지원한다.
 
@@ -3318,7 +2121,7 @@ Attributes
 
       platformFee.**fixedRate** int64
 
-      정률일 경우 10^-9표기. 즉 10% → 100000000 으로 입력.
+      정률일 경우 10^-5표기. 즉 10% → 10000 으로 입력.
 
     </td>
 
@@ -3387,6 +2190,21 @@ Attributes
       계약별 정산 주기의 method는 매일, 주 n회, 달 n회, 지정된 날짜 중 하나만 택할 수 있습니다.
 
     <table>
+      <tr>
+        <td>
+
+            method.**type** enum
+
+            정산 주기의 종류를 나타냅니다. 값으론 daily, weekly, monthly, manualDates 가 있습니다.
+
+            | 값 | 설명 |
+            | --- | --- |
+            | **DAILY** | 매일 |
+            | **WEEKLY** | 주 n회. 최대 2회까지 가능 |
+            | **MONTHLY** | 달 n회. 최대 3회까지 가능  |
+            | **MANUALDATES** | 지정된 날짜 |
+        </td>
+      </tr>
       <tr>
         <td>
 
@@ -3581,7 +2399,7 @@ case 2: 13일 주문완료
 
 ---
 
-**vatPayer** enum
+**platformFeeVatPayer** enum
 
 해당 계약의 중개수수료에 대해서 부가세 포함 여부.
 값: PARTNER, MERCHANT
@@ -3610,23 +2428,18 @@ case 2: 13일 주문완료
 
 ```json
 {
-  "id": "contract_1",
-  "memo": "셀러 기본 계약 1",
-  "platformFee": {
-    "rate": "100000000"
-  },
+  "id": "contract_2",
+  "graphqlId": "NTpjb250cmFjdF8y",
+  "memo": "contract 2",
+  "platformFee": { "type": "FIXED_RATE", "rate": 10000 },
   "settlementCycle": {
-    "lagDays": 3,
-    "method": {
-      "monthly": {
-        "daysOfMonth": [15, 31]
-      }
-    },
-    "datePolicy": "HOLIDAY_BEFORE"
+    "lagDays": 2,
+    "datePolicy": "CALENDAR_DAY",
+    "method": { "type": "MONTHLY", "daysOfmonth": [31] }
   },
-  "vatPayer": "PARTNER",
+  "platformFeeVatPayer": "MERCHANT",
   "isHidden": false,
-  "appliedAt": "2020-01-01T00:00:00Z"
+  "appliedAt": "2023-08-09T07:39:17.207733Z"
 }
 ```
 
@@ -3634,20 +2447,18 @@ case 2: 13일 주문완료
 
 ```json
 {
-  "id": "contract_1",
-  "memo": "셀러 기본 계약 1",
-  "platformFee": {
-    "rate": "100000000"
-  },
+  "id": "contract_2",
+  "graphqlId": "NTpjb250cmFjdF8y",
+  "memo": "contract 2",
+  "platformFee": { "type": "FIXED_RATE", "rate": 10000 },
   "settlementCycle": {
-    "lagDays": 3,
-    "method": {
-      "daily": {}
-    },
-    "datePolicy": "HOLIDAY_BEFORE"
+    "lagDays": 2,
+    "datePolicy": "CALENDAR_DAY",
+    "method": { "type": "DAILY", "daily": {} }
   },
-  "vatPayer": "PARTNER",
-  "isHidden": false
+  "platformFeeVatPayer": "MERCHANT",
+  "isHidden": false,
+  "appliedAt": "2023-08-09T07:39:17.207733Z"
 }
 ```
 
@@ -3655,57 +2466,34 @@ case 2: 13일 주문완료
 
 ```json
 {
-  "id": "contract_1",
-  "memo": "셀러 기본 계약 1",
-  "platformFee": {
-    "rate": "100000000"
-  },
+  "id": "contract_2",
+  "graphqlId": "NTpjb250cmFjdF8y",
+  "memo": "contract 2",
+  "platformFee": { "type": "FIXED_RATE", "rate": 10000 },
   "settlementCycle": {
-    "lagDays": 3,
-    "method": {
-      "weekly": {
-        "daysOfWeek": ["FRI"]
-      }
-    },
-    "datePolicy": "HOLIDAY_BEFORE"
+    "lagDays": 2,
+    "datePolicy": "CALENDAR_DAY",
+    "method": { "type": "WEEKLY", "daysOfWeek": ["FRI"] }
   },
-  "vatPayer": "PARTNER",
+  "platformFeeVatPayer": "MERCHANT",
   "isHidden": false,
-  "appliedAt": "2021-01-01T00:00:00Z"
+  "appliedAt": "2023-08-09T07:39:17.207733Z"
 }
 ```
 
 **Response (월-일 정산)**
 
 ```json
-{
-  "id": "contract_1",
-  "memo": "셀러 기본 계약 1",
-  "platformFee": {
-    "rate": "100000000"
-  },
-  "settlementCycle": {
-    "lagDays": 3,
-    "method": {
-      "manualDates": {
-        "dates": [
-          {
-            "month": 1,
-            "day": 1
-          },
-          {
-            "month": 9,
-            "day": 1
-          }
-        ]
-      }
-    },
-    "datePolicy": "HOLIDAY_BEFORE"
-  },
-  "vatPayer": "PARTNER",
-  "isHidden": false,
-  "appliedAt": "2021-01-01T00:00:00Z"
-}
+{"id": "contract_2",
+ "graphqlId": "NTpjb250cmFjdF8y",
+ "memo": "contract 2",
+ "platformFee": {"type": "FIXED_RATE", "rate": 10000},
+ "settlementCycle": {"lagDays": 2,
+  "datePolicy": "CALENDAR_DAY",
+  "method": {"type": "MANUALDATES", "dates": ["month": 1, "day": 1]}},
+ "platformFeeVatPayer": "MERCHANT",
+ "isHidden": false,
+ "appliedAt": "2023-08-09T07:39:17.207733Z"}
 ```
 
 </div>
@@ -3714,6 +2502,8 @@ case 2: 13일 주문완료
 ---
 
 ### 계약 생성
+
+`POST https://plublic-api-service.iamport.co/platform/contracts`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -3737,13 +2527,13 @@ case 2: 13일 주문완료
 
 중개수수료. 기본 **Fee** attribute 을 사용한다.
 
-**fixedAmount** (정액 수수료) 혹은 **fixedRate** (정률 수수료) 둘 중 하나만 전달 하셔야 합니다.
+**Amount** (정액 수수료) 혹은 **dRate** (정률 수수료) 둘 중 하나만 전달 하셔야 합니다.
 
 <table>
   <tr>
     <td>
 
-      platformFee.**fixedAmount** int64
+      platformFee.**Amount** int64
 
       정액일 경우 사용하는 parameter. 현재로서 정액 플랫폼 중개 수수료는 원화만 지원한다.
     </td>
@@ -3752,9 +2542,9 @@ case 2: 13일 주문완료
   <tr>
     <td>
 
-      platformFee.**fixedRate** int64
+      platformFee.**Rate** int64
 
-      정률일 경우 10^-9표기. 즉 10% → 100000000 으로 입력.
+      정률일 경우 10^-5표기. 즉 10% → 10000 으로 입력.
     </td>
 
   </tr>
@@ -3844,7 +2634,7 @@ case 2: 13일 주문완료
               <tr>
                 <td>
 
-                  weekly.**dayOfWeek** enum
+                  weekly.**daysOfWeek** enum
 
                   정산 주기가 주 n회일때 n, 특정 요일들을 지정 할 수 있습니다. 최대 두가지 요일을 지정 할 수 있습니다.
                   i.e. ['MON', 'WED'] 는 매주 월요일, 수요일에 정산을 한다는 의미입니다.
@@ -3919,7 +2709,7 @@ case 2: 13일 주문완료
             <table>
               <tr>
                 <td>
-                  monthly.**dayOfMonth** list of int64
+                  monthly.**daysOfMonth** list of int64
 
                   정산 주기가 달 n회일때 n, 특정 날짜들을 지정 할 수 있습니다. 최대 두가지 날짜를 지정 할 수 있습니다.
                   i.e. [1, 15] 는 매월 1일, 15일에 정산을 한다는 의미입니다.
@@ -3994,7 +2784,7 @@ settlementCycle = {
   lay_days: 3,
   method: {
     monthly: {
-      dayOfMonth: [15, 31],
+      daysOfMonth: [15, 31],
     },
   },
   datePolicy: "HOLIDAY_BEFORE",
@@ -4017,7 +2807,7 @@ case 2: 13일 주문완료
 
 ---
 
-**vatPayer** optional
+**platformFeeVatPayer** optional
 
 부가세 여부
 
@@ -4030,19 +2820,41 @@ MERCHANT: 부가세 파트너 미부담
 </div>
 <div>
 
-**Request**
+**Request Example**
 
-```shell
-curl -X POST https://api.portone.com/v2/platform/contract \
-     -u {api_key} \
-     -d 'id=contract_1' \
-     -d 'platformFee[fixedRate]=100000000' \
-     -d 'settlementCycle[lagDays]=3' \
-     -d 'settlementCycle[method]={ monthly:{ daysOfMonth: [15,31]}}' \
-     -d 'settlementCycle[datePolicy]=HOLIDAY_BEFORE' \
-     -d 'vatPayer=PARTNER' \
-     -d 'memo=셀러 기본 계약 1'
+one of logic 을 다 담았습니다.
 
+```json
+{
+  "id": "string",
+  "memo": "string",
+  "platformFee": {
+    "fixedRate": 0,
+    "fixedAmount": 0
+  },
+  "settlementCycle": {
+    "lagDays": 0,
+    "datePolicy": "CALENDAR_DAY",
+    "method": {
+      "daily": {},
+      "weekly": {
+        "daysOfWeek": ["FRI"]
+      },
+      "monthly": {
+        "daysOfMonth": [0]
+      },
+      "manualDates": {
+        "dates": [
+          {
+            "month": 0,
+            "day": 0
+          }
+        ]
+      }
+    }
+  },
+  "platformFeeVatPayer": "MERCHANT"
+}
 ```
 
 **Response**
@@ -4051,24 +2863,18 @@ curl -X POST https://api.portone.com/v2/platform/contract \
 
 ```json
 {
-  "id": "contract_1",
-  "memo": "셀러 기본 계약 1",
-  "platformFee": {
-    "rate": 100000000
-  },
+  "id": "contract_2",
+  "graphqlId": "NTpjb250cmFjdF8y",
+  "memo": "contract 2",
+  "platformFee": { "type": "FIXED_RATE", "rate": 10000 },
   "settlementCycle": {
-    "lagDays": 3,
-    "method": "monthly",
-    "method": {
-      "monthly": {
-        "daysOfMonth": [15, 31]
-      }
-    },
-    "datePolicy": "HOLIDAY_BEFORE"
+    "lagDays": 2,
+    "datePolicy": "CALENDAR_DAY",
+    "method": { "type": "WEEKLY", "daysOfWeek": ["FRI"] }
   },
-  "vatPayer": "PARTNER",
+  "platformFeeVatPayer": "MERCHANT",
   "isHidden": false,
-  "appliedAt": "2021-01-01T00:00:00Z"
+  "appliedAt": "2023-08-09T07:39:17.207733Z"
 }
 ```
 
@@ -4078,6 +2884,8 @@ curl -X POST https://api.portone.com/v2/platform/contract \
 ---
 
 ### 계약 조회
+
+`GET https://plublic-api-service.iamport.co/platform/contracts{id}`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -4093,7 +2901,7 @@ None
 
 ```shell
 curl https://api.portone.com/v2/platform/contract/{id}\
-     -u {api_key}\
+     -h {'Bearer Token {YOUR TOKEN}'} \
 ```
 
 **Response**
@@ -4102,24 +2910,25 @@ curl https://api.portone.com/v2/platform/contract/{id}\
 
 ```json
 {
-  "id": "contract_1",
-  "memo": "셀러 기본 계약 1",
-  "platformFee": {
-    "rate": 100000000
-  },
-  "settlementCycle": {
-    "lagDays": 3,
-    "method": "monthly",
-    "method": {
-      "monthly": {
-        "daysOfMonth": [15, 31]
+  "contract": {
+    "id": "BBG4AY9P95",
+    "graphqlId": "NTpCQkc0QVk5UDk1",
+    "memo": "contract A",
+    "platformFee": {
+      "type": "FIXED_RATE",
+      "rate": 10000
+    },
+    "settlementCycle": {
+      "lagDays": 2,
+      "datePolicy": "HOLIDAY_AFTER",
+      "method": {
+        "type": "DAILY"
       }
     },
-    "datePolicy": "HOLIDAY_BEFORE"
-  },
-  "vatPayer": "PARTNER",
-  "isHidden": false,
-  "appliedAt": "2021-01-01T00:00:00Z"
+    "platformFeeVatPayer": "PARTNER",
+    "isHidden": false,
+    "appliedAt": "2023-08-15T14:31:23.586857Z"
+  }
 }
 ```
 
@@ -4129,6 +2938,8 @@ curl https://api.portone.com/v2/platform/contract/{id}\
 ---
 
 ### 계약 수정
+
+`PATCH https://plublic-api-service.iamport.co/platform/contracts/{id}`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -4141,7 +2952,7 @@ curl https://api.portone.com/v2/platform/contract/{id}\
 
 **Parameters**
 
-**id** required string
+**id** required string (url path)
 
 업데이트 하고자 하는 계약의 아이디
 
@@ -4157,13 +2968,13 @@ curl https://api.portone.com/v2/platform/contract/{id}\
 
 중개수수료. 기본 **Fee** attribute 을 사용한다.
 
-**fixedAmount** (정액 수수료) 혹은 **fixedRate** (정률 수수료) 둘 중 하나만 전달 하셔야 합니다.
+**Amount** (정액 수수료) 혹은 **Rate** (정률 수수료) 둘 중 하나만 전달 하셔야 합니다.
 
 <table>
   <tr>
     <td>
 
-      platformFee.**fixedAmount** int64
+      platformFee.**Amount** int64
 
       정액일 경우 사용하는 parameter. 현재로서 정액 플랫폼 중개 수수료는 원화만 지원한다.
 
@@ -4173,9 +2984,9 @@ curl https://api.portone.com/v2/platform/contract/{id}\
   <tr>
     <td>
 
-      platformFee.**fixedRate** int64
+      platformFee.**Rate** int64
 
-      정률일 경우 10^-9표기. 즉 10% → 100000000 으로 입력.
+      정률일 경우 10^-5표기. 즉 10% → 10000 으로 입력.
 
     </td>
 
@@ -4265,7 +3076,7 @@ curl https://api.portone.com/v2/platform/contract/{id}\
               <tr>
                 <td>
 
-                  weekly.**dayOfWeek** enum
+                  weekly.**daysOfWeek** enum
 
                   정산 주기가 주 n회일때 n, 특정 요일들을 지정 할 수 있습니다. 최대 두가지 요일을 지정 할 수 있습니다.
                   i.e. ['MON', 'WED'] 는 매주 월요일, 수요일에 정산을 한다는 의미입니다.
@@ -4342,7 +3153,7 @@ curl https://api.portone.com/v2/platform/contract/{id}\
               <tr>
                 <td>
 
-                  monthly.**dayOfMonth** list of int64
+                  monthly.**daysOfMonth** list of int64
 
                   정산 주기가 달 n회일때 n, 특정 날짜들을 지정 할 수 있습니다. 최대 두가지 날짜를 지정 할 수 있습니다.
                   i.e. [1, 15] 는 매월 1일, 15일에 정산을 한다는 의미입니다.
@@ -4409,37 +3220,9 @@ curl https://api.portone.com/v2/platform/contract/{id}\
   </tr>
 </table>
 
-- 정산주기 값 설정 예시
-
-```javascript
-settlementCycle = {
-  lay_days: 3,
-  method: {
-    monthly: {
-      dayOfMonth: [15, 31],
-    },
-  },
-  datePolicy: "HOLIDAY_BEFORE",
-};
-```
-
-case 1: 10일 주문완료 (settlementStartDate)
-
-- d + 3일 = 13일
-- 13일의 그다음 정산일 = 15일
-- if 15일이 영업일이라면 정산일 = 15일
-- elif 15일이 영업일이 아니라면 i.e. 토요일 이라면 정산일 = 14일
-
-case 2: 13일 주문완료
-
-- d + 3일 = 16일
-- 16일의 그다음 정산일 = 31일
-- if 31일이 영업일이라면 정산일 = 31일
-- elif 31일이 영업일이 아니라면 i.e. 토요일 이라면 정산일 = 30일
-
 ---
 
-**vatPayer** optional enum
+**platformVatPayer** optional enum
 
 부가세 여부
 
@@ -4456,38 +3239,57 @@ MERCHANT: 부가세 파트너 미부담
 </div>
 <div>
 
-**Request**
+**Request Example**
 
-```shell
-curl -X POST https://api.portone.com/v2/platform/contract/{id} \
-     -u {api_key} \
-     -d 'settlementCycle[lagDays]=2' \
-     -d 'settlementCycle[method]={weekly : {daysOfWeek : [FRI] }}'
-
+```json
+{
+  "memo": "string",
+  "platformFee": {
+    "fixedRate": 0,
+    "fixedAmount": 0
+  },
+  "settlementCycle": {
+    "lagDays": 0,
+    "datePolicy": "CALENDAR_DAY",
+    "method": {
+      "daily": {},
+      "weekly": {
+        "daysOfWeek": ["FRI"]
+      },
+      "monthly": {
+        "daysOfMonth": [0]
+      },
+      "manualDates": {
+        "dates": [
+          {
+            "month": 0,
+            "day": 0
+          }
+        ]
+      }
+    }
+  },
+  "platformFeeVatPayer": "MERCHANT",
+  "isHidden": true
+}
 ```
 
 **Response**
 
 ```json
 {
-  "id": "contract_1",
-  "memo": "셀러 기본 계약 1",
-  "platformFee": {
-    "rate": 100000000
-  },
+  "id": "contract_2",
+  "graphqlId": "NTpjb250cmFjdF8y",
+  "memo": "contract 2",
+  "platformFee": { "type": "FIXED_RATE", "rate": 10000 },
   "settlementCycle": {
-    "lagDays": 3,
-    "method": "monthly",
-    "method": {
-      "weekly": {
-        "daysOfWeek": ["FRI"]
-      }
-    },
-    "datePolicy": "HOLIDAY_BEFORE"
+    "lagDays": 2,
+    "datePolicy": "CALENDAR_DAY",
+    "method": { "type": "WEEKLY", "daysOfWeek": ["FRI"] }
   },
-  "vatPayer": "PARTNER",
+  "platformFeeVatPayer": "MERCHANT",
   "isHidden": false,
-  "appliedAt": "2021-01-01T00:00:00Z" //api 호출 시점
+  "appliedAt": "2023-08-09T07:39:17.207733Z"
 }
 ```
 
@@ -4497,6 +3299,8 @@ curl -X POST https://api.portone.com/v2/platform/contract/{id} \
 ---
 
 ### 계약 다건 조회 (TBU)
+
+`GET https://plublic-api-service.iamport.co/platform/contracts`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -4620,6 +3424,8 @@ request로 전달된 검색조건에 대응하는 여러 계약들이 반환됩�
 
 ### 계약 예약 업데이트
 
+`POST https://plublic-api-service.iamport.co/platform/contracts/{id}/schedule`
+
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
@@ -4647,12 +3453,40 @@ request로 전달된 검색조건에 대응하는 여러 계약들이 반환됩�
 
 **Request**
 
-```shell
-curl -X POST https://api.portone.com/v2/platform/contract/{id}/schedule \
-     -u {api_key} \
-     -d 'update[settlementCycle[lagDays]]=2' \
-     -d 'update[settlementCycle[method]]={weekly : {daysOfWeek : [FRI] }}'\
-     -d 'appliedAt=2023-05-01T00:00:00Z'
+```json
+{
+  "update": {
+    "memo": "string",
+    "platformFee": {
+      "fixedRate": 0,
+      "fixedAmount": 0
+    },
+    "settlementCycle": {
+      "lagDays": 0,
+      "datePolicy": "CALENDAR_DAY",
+      "method": {
+        "daily": {},
+        "weekly": {
+          "daysOfWeek": ["FRI"]
+        },
+        "monthly": {
+          "daysOfMonth": [0]
+        },
+        "manualDates": {
+          "dates": [
+            {
+              "month": 0,
+              "day": 0
+            }
+          ]
+        }
+      }
+    },
+    "platformFeeVatPayer": "MERCHANT",
+    "isHidden": true
+  },
+  "appliedAt": "2023-08-15T15:06:48.520Z"
+}
 ```
 
 **Response**
@@ -4661,6 +3495,7 @@ curl -X POST https://api.portone.com/v2/platform/contract/{id}/schedule \
 {
   "scheduledContract": {
     "id": "contract_1",
+    "graphqlId": "aslkdflkdmvl==",
     "memo": "셀러 기본 계약 1",
     "platformFee": {
       "rate": 100000000
@@ -4675,7 +3510,7 @@ curl -X POST https://api.portone.com/v2/platform/contract/{id}/schedule \
       },
       "datePolicy": "HOLIDAY_BEFORE"
     },
-    "vatPayer": "PARTNER",
+    "platformVatPayer": "PARTNER",
     "isHidden": false,
     "appliedAt": "2023-05-01T00:00:00Z" //예약 시점
   }
@@ -4688,6 +3523,8 @@ curl -X POST https://api.portone.com/v2/platform/contract/{id}/schedule \
 ---
 
 ### 계약 예약 업데이트 재설정
+
+`PUT https://plublic-api-service.iamport.co/platform/contracts/{id}/schedule`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -4716,16 +3553,6 @@ curl -X POST https://api.portone.com/v2/platform/contract/{id}/schedule \
 </div>
 <div>
 
-**Request**
-
-```shell
-curl -X PUT https://api.portone.com/v2/platform/contract/{id}/schedule \
-     -u {api_key} \
-     -d 'update[settlementCycle[lagDays]]=2' \
-     -d 'update[settlementCycle[method]]={weekly : {daysOfWeek : [MON] }}'\
-     -d 'appliedAt=2023-06-01T00:00:00Z'
-```
-
 **Response**
 
 ```json
@@ -4734,7 +3561,7 @@ curl -X PUT https://api.portone.com/v2/platform/contract/{id}/schedule \
     "id": "contract_1",
     "memo": "셀러 기본 계약 1",
     "platformFee": {
-      "rate": 100000000
+      "rate": 10000
     },
     "settlementCycle": {
       "lagDays": 2,
@@ -4746,7 +3573,7 @@ curl -X PUT https://api.portone.com/v2/platform/contract/{id}/schedule \
       },
       "datePolicy": "HOLIDAY_BEFORE"
     },
-    "vatPayer": "PARTNER",
+    "platformVatPayer": "PARTNER",
     "isHidden": false,
     "appliedAt": "2023-06-01T00:00:00Z" //예약 시점
   }
@@ -4760,6 +3587,8 @@ curl -X PUT https://api.portone.com/v2/platform/contract/{id}/schedule \
 
 ### 계약 예약 업데이트 조회
 
+`GET https://plublic-api-service.iamport.co/platform/contracts/{id}/schedule`
+
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
@@ -4767,19 +3596,12 @@ curl -X PUT https://api.portone.com/v2/platform/contract/{id}/schedule \
 
 **Parameter**
 
-**id** required string
+**id** required string (url path)
 
 예약 업데이트를 조회할 계약의 아이디
 
 </div>
 <div>
-
-**Request**
-
-```shell
-curl -X GET https://api.portone.com/v2/platform/contract/contract_1/schedule \
-     -u {api_key} \
-```
 
 **Response**
 
@@ -4789,7 +3611,7 @@ curl -X GET https://api.portone.com/v2/platform/contract/contract_1/schedule \
     "id": "contract_1",
     "memo": "셀러 기본 계약 1",
     "platformFee": {
-      "rate": 100000000
+      "rate": 10000
     },
     "settlementCycle": {
       "lagDays": 2,
@@ -4801,7 +3623,7 @@ curl -X GET https://api.portone.com/v2/platform/contract/contract_1/schedule \
       },
       "datePolicy": "HOLIDAY_BEFORE"
     },
-    "vatPayer": "PARTNER",
+    "platformFeeVatPayer": "PARTNER",
     "isHidden": false,
     "appliedAt": "2023-06-01T00:00:00Z" //예약 시점
   }
@@ -4815,6 +3637,8 @@ curl -X GET https://api.portone.com/v2/platform/contract/contract_1/schedule \
 
 ### 계약 예약 업데이트 삭제
 
+`DELETE https://plublic-api-service.iamport.co/platform/contracts/{id}/schedule`
+
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
@@ -4822,19 +3646,12 @@ curl -X GET https://api.portone.com/v2/platform/contract/contract_1/schedule \
 
 **Parameter**
 
-**id** required string
+**id** required string url path
 
 예약 업데이트를 삭제 할 계약의 아이디
 
 </div>
 <div>
-
-**Request**
-
-```shell
-curl -X DELETE https://api.portone.com/v2/platform/contract/contract_1/schedule \
-     -u {api_key} \
-```
 
 **Response**
 
@@ -4843,28 +3660,32 @@ curl -X DELETE https://api.portone.com/v2/platform/contract/contract_1/schedule 
 </div>
 </div>
 
----
-
-## 할인 유형
+## 파트너
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
-`할인 유형` 객체는 가맹점의 주문건에 대해서 쿠폰 및 포인트와 같은 할인금액이 적용될시 이에대해서 파트너 정산에 할인금과 할인에 따른 파트너와의 분담율을 적용하고자 사용할 수 있는 객체입니다.
+`파트너` 객체는 가맹점이 정산해줘야할 대상입니다.
 
-할인 유형에 대한 아이디와 메모 그리고 파트너 분담율로 정보 구성이 되어있습니다.
+기본 사업자 정보와 정산정보, 그리고 적용될 계약의 정보를 등록 및 관리할 수 있습니다.
 
 </div>
 <div>
 
-**Endpoints**
+#### Endpoints
 
 ```text
-POST /platform/discount-shares
-GET /platform/discount-shares/{id}
-GET /platform/discount-shares/numbered-pages
-POST /platform/discount-shares/{id}
-DELETE /platform/discount-shares/{id}
+POST /platform/partners
+POST /platform/partners/batch
+GET /platform/partners/{id}
+POST /platform/partners/{id}
+POST /platform/partners/{id}/schedule
+PUT /platform/partners/{id}/schedule
+GET /platform/partners/{id}/schedule
+DELETE /platform/partners/{id}/schedule
+GET /platform/partner-filter-options
+GET /platform/partners-dashbaord
+
 ```
 
 </div>
@@ -4872,7 +3693,200 @@ DELETE /platform/discount-shares/{id}
 
 ---
 
-### 할인 유형 생성
+### 파트너 객체
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+**Attributes**
+
+**id** string
+
+파트너 고유 아이디. 전달해 주시거나 발급받으실 수 있습니다.
+
+---
+
+**graphqlId** string
+
+파트너 고유 아이디. 포트원 내부 용도
+
+---
+
+**name** string
+
+파트너 법인명 혹은 이름.
+
+---
+
+**email** string
+
+파트너 이메일
+
+---
+
+**businessRegistrationNumber** string
+
+파트너 사업자번호. 개인 혹은 법인 사업자일때만 존재합니다. '-' 를 제외해야 합니다.
+
+---
+
+**account** dictionary
+
+정산 계좌 Attribute
+
+<table name = "bank_account">
+  <tr>
+    <td>
+    
+    account.**bank** enum or string
+
+    은행 이름.
+
+    \- currnecy가 KRW일시 증권사가 제외된 한국 은행 코드별상의 [은행값 enum](#은행-enum-values) 하단 참고. 해당 은행값 외의 은행은 에러 처리\
+    \- currency 가 KRW가 아닐때 해외 은행 string값으로 입력 가능
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+    account.**currency** enum
+
+    화페로써 현재로썬 KRW, JPY, USD만 지원한다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+    account.**number** string
+
+    계좌번호. currency가 KRW일경우 따로 예금주 조회 API를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+    account.**holder** string
+
+    예금주. currency가 KRW일경우 따로 예금주 조회 API를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+    account.**status** enum
+
+    계좌 상태.
+    <table>
+    <tr>
+        <td>enum</td>
+        <td>values</td>
+    </tr>
+    <tr>
+        <td>VERIFYING</td>
+        <td>계좌 인증 중</td>
+    </tr>
+    <tr>
+        <td>VERIFIED</td>
+        <td>계좌 인증 완료됨</td>
+    </tr>
+    <tr>
+        <td>VERIFY_FAILED</td>
+        <td>계좌 인증 실패함</td>
+    </tr>
+    <tr>
+        <td>EXPIRED</td>
+        <td>계좌 인증 만료됨</td>
+    </tr>
+    <tr>
+        <td>UNKNOWN</td>
+        <td>알 수 없는 상태</td>
+    </tr>
+    </table>
+    </td>
+
+  </tr>
+</table>
+
+---
+
+**defaultContractId** string
+
+파트너의 기본 계약 아이디
+
+기본 계약 아이디란 파트너가 정산을 받을 때 적용되는 계약을 의미합니다. 파트너 정산시 여러개의 계약을 적용 할 수 있으나, 정산 API에 파트너 아이디만 전달 할 경우 기본 계약이 적용됩니다.
+
+---
+
+**memo** string
+
+파트너 메모. 내부 구분용으로 사용하실 수 있습니다.
+
+---
+
+**tags** list of string
+
+파트너 태그. 내부 구분용으로 사용하실 수 있습니다.
+
+---
+
+**isHidden** boolean
+
+파트너 숨김 여부. true일 경우 파트너 목록에서 숨김 처리됩니다.
+
+숨김이란 soft delete이라고 생각하시면 됩니다.
+
+---
+
+**appliedAt** Datetime
+
+해당 파트너가 업데이트 된 시각
+
+</div>
+<div>
+
+#### Response
+
+```json
+{
+  "partner": {
+    "id": "partnerA",
+    "graphqlId": "NDpwYXJ0bmVyQQ==",
+    "name": "파이썬 강사",
+    "email": "kjnkyj12@gmail.com",
+    "businessRegistrationNumber": "1178178260",
+    "account": {
+      "bank": "SHINHAN",
+      "currency": "KRW",
+      "number": "10358907249",
+      "holder": "김준일",
+      "status": "VERIFIED"
+    },
+    "status": "APPROVED",
+    "defaultContractId": "contractA",
+    "memo": "잭슨 테스트 예시문",
+    "tags": ["파이썬"],
+    "isHidden": false,
+    "appliedAt": "2023-08-11T11:19:58.829787Z"
+  }
+}
+```
+
+</div>
+</div>
+
+---
+
+### 파트너 생성
+
+`POST https://plublic-api-service.iamport.co/platform/partners`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -4881,43 +3895,147 @@ DELETE /platform/discount-shares/{id}
 
 **id** optional
 
-할인 유형 고유아이디. 가맹점 서버에 저장되고 통용되는 아이디로 지정해주세요. 없다면 포트원에서 임의로 발급해드리며 이를 저장해주세요.
+파트너에 부여하는 고유 아이디. 가맹점 서버에 등록된 파트너지칭 아이디와 동일해야 합니다. 따로 없다면 포트원이 발급해 드립니다.
 
 ---
 
-**partnerShareRate** optional 기본값은 0
+**name** string required
 
-할인 분담율. 10^-9처리 값입니다. 예) 10% = 100000000
+파트너를 지칭하는 사업자명 및 이름
 
 ---
 
-**memo** optional
+**email** string required
 
-할인 유형 내부 메모. 예) 파트너 브랜드 쿠폰
+파트너 이메일
+
+---
+
+**businessRegistrationNumber** string optional
+
+파트너 사업자번호. 검증하지는 않음. 번호 기호 둘다 가능
+
+---
+
+**account** dictionary requried
+
+정산 계좌 Attribute
+
+<table name = "bank_account">
+  <tr>
+    <td>
+    
+    account.**bank** enum or string required
+
+    은행 이름.
+
+    \- currnecy가 KRW일시 증권사가 제외된 한국 은행 코드별상의 [은행값 enum](#은행-enum-values) 하단 참고. 해당 은행값 외의 은행은 에러 처리\
+    \- currency 가 KRW가 아닐때 해외 은행 string값으로 입력 가능
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+    account.**currency** enum required
+
+    화페로써 현재로썬 KRW, JPY, USD만 지원한다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+    account.**number** string required
+
+    계좌번호. currency가 KRW일경우 따로 예금주 조회 API를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+
+    account.**holder** string required
+
+    예금주. currency가 KRW일경우 따로 예금주 조회 API를 통해 검증한다. 그 외의 화폐일 경우 따로 검증하지는 않는다.
+
+    </td>
+
+  </tr>
+</table>
+
+---
+
+**defaultContractId** string required
+
+이미 존재하는 계약객체의 아이디를 등록해야합니다.
+
+---
+
+**memo** string optional
+
+256자까지 가능합니다.
+
+---
+
+**tag** list of string optional
+
+최대 10개까지 가능합니다.
+
+---
 
 </div>
-<div>
 
+<div>
 **Request**
 
-```shell
-curl -X POST https://api.portone.com/v2/platform/discount-shares \
-     -u {api_key} \
-     -d 'id=coupon_1' \
-     -d 'partnerShareRate=100000000' \
-     -d 'memo=파트너 브랜드 쿠폰'
+```json
+{
+  "id": "string",
+  "name": "string",
+  "email": "string",
+  "businessRegistrationNumber": "string",
+  "account": {
+    "bank": "BNP",
+    "currency": "AED",
+    "number": "string",
+    "holder": "string"
+  },
+  "defaultContractId": "string",
+  "memo": "string",
+  "tags": ["string"]
+}
 ```
 
 **Response**
 
-생성된 할인 유형 객체가 반환됩니다.
+파트너 객체가 반환됩니다.
 
 ```json
 {
-  "id": "coupon_1",
-  "partnerShareRate": 100000000,
-  "memo": "파트너 브랜드 쿠폰",
-  "isDeleted": false
+  "partner": {
+    "id": "partnerA",
+    "graphqlId": "NDpwYXJ0bmVyQQ==",
+    "name": "파이썬 강사",
+    "email": "kjnkyj12@gmail.com",
+    "businessRegistrationNumber": "1178178260",
+    "account": {
+      "bank": "SHINHAN",
+      "currency": "KRW",
+      "number": "10358907249",
+      "holder": "김준일",
+      "status": "VERIFIED"
+    },
+    "status": "APPROVED",
+    "defaultContractId": "contractA",
+    "memo": "잭슨 테스트 예시문",
+    "tags": ["파이썬"],
+    "isHidden": false,
+    "appliedAt": "2023-08-11T11:19:58.829787Z"
+  }
 }
 ```
 
@@ -4926,35 +4044,469 @@ curl -X POST https://api.portone.com/v2/platform/discount-shares \
 
 ---
 
-### 할인 유형 조회
+### 파트너 조회
+
+`GET https://plublic-api-service.iamport.co/platform/partners/{id}`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
 **Parameters**
 
-None
+**id** required (url path)
+
+조회하고 싶은 파트너 고유 아이디
+
+---
+
+</div>
+<div>
+
+**Response**
+
+파트너 객체가 반환됩니다.
+
+```json
+{
+  "partner": {
+    "id": "partnerA",
+    "graphqlId": "NDpwYXJ0bmVyQQ==",
+    "name": "파이썬 강사",
+    "email": "kjnkyj12@gmail.com",
+    "businessRegistrationNumber": "1178178260",
+    "account": {
+      "bank": "SHINHAN",
+      "currency": "KRW",
+      "number": "10358907249",
+      "holder": "김준일",
+      "status": "VERIFIED"
+    },
+    "status": "APPROVED",
+    "defaultContractId": "contractA",
+    "memo": "잭슨 테스트 예시문",
+    "tags": ["파이썬"],
+    "isHidden": false,
+    "appliedAt": "2023-08-11T11:19:58.829787Z"
+  }
+}
+```
+
+</div>
+</div>
+---
+
+### 파트너 다건 조회
+
+`GET https://plublic-api-service.iamport.co/platform/partners`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+페이지 기반으로 여러 파트너를 조회합니다.
+
+**Parameters**
+
+---
+
+**page** optional
+
+요청할 페이지 정보
+
+페이지 번호를 통한 다건 조회 API에 필요한 입력 정보
+
+<table>
+  <tr>
+    <td>
+      page.**size** integer required 각 페이지 당 포함할 객체 수. 기본값은 10
+    </td>
+  </tr>
+  <tr>
+    <td>page.**number** integer required 페이지 번호. 0 부터 시작합니다.</td>
+  </tr>
+</table>
+---
+
+**filter** dictionary
+
+다건 조회시 적용하고 싶은 필터 값.
+
+<table name="bank_account">
+  <tr>
+    <td>
+    
+    filter.**includeHidden** boolean optional 
+    
+    true일 경우 숨김 처리된 파트너가 조회됩니다. 
+    
+    기본값은 false입니다. 
+    
+    </td>
+  </tr>
+  <tr>
+    <td>
+      filter.**tags** list of string optional 파트너에게 부여한 태그 리스트 값.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      filter.**keyword** one of dictionary 검색 조건. 조건중 한 값을 지정하여
+      %like% 검색한다.
+
+      \- keyword.id 파트너 아이디 \
+      \- keyword.name 파트너 이름 \
+      \- keyword.email 파트너 이메일 \
+      \- keyword.businessRegistrationNumber 파트너 사업자 번호 \
+      \- keyword.defaultContractId 파트너 기본 계약 아이디 \
+      \- keyword.memo 파트너 메모 \
+      \- keyword.accountBank 파트너 계좌 은행 \
+      \- keyword.accountCurrency 파트너 계좌 통화 \
+      \- keyword.accountNumber 파트너 계좌 번호\
+      \- keyword.accountHolder 파트너 계좌 예금주
+
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      filter.**banks** list of string
+
+      파트너 계좌 은행 리스트 값.
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      filter.accountCurrencies list of enum
+
+      파트너 계좌 통화 리스트 값.
+      KRW, USD, JPY
+    </td>
+
+  </tr>
+</table>
+
+---
+
+  </div>
+  <div>
+  **Request**
+
+```json
+{
+  "page": {
+    "number": 0,
+    "size": 0
+  },
+  "filter": {
+    "includeHidden": true,
+    "tags": ["string"],
+    "banks": ["BNP"],
+    "accountCurrencies": ["AED"],
+    "keyword": {
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "businessRegistrationNumber": "string",
+      "defaultContractId": "string",
+      "memo": "string",
+      "accountNumber": "string",
+      "accountHolder": "string"
+    }
+  }
+}
+```
+
+**Response**
+
+여러 파트너 객체들이 리스트 형태로 반환됩니다.
+
+```json
+{
+  "items": [
+    {
+      "id": "string",
+      "graphqlId": "string",
+      "name": "string",
+      "email": "string",
+      "businessRegistrationNumber": "string",
+      "account": {
+        "bank": "BNP",
+        "currency": "AED",
+        "number": "string",
+        "holder": "string",
+        "status": "EXPIRED"
+      },
+      "status": "APPROVED",
+      "defaultContractId": "string",
+      "memo": "string",
+      "tags": ["string"],
+      "isHidden": true,
+      "appliedAt": "2023-08-15T16:06:03.321Z"
+    }
+  ],
+  "page": {
+    "number": 0,
+    "size": 0,
+    "totalCount": 0
+  }
+}
+```
+
+  </div>
+</div>
+
+---
+
+### 파트너 수정
+
+`PATCH https://plublic-api-service.iamport.co/platform/partners/{id}`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+주어진 아이디에 대응하는 파트너 정보를 업데이트 합니다.
+
+**Parameters**
+
+id 를 제외한 모든 값을 수정할 수 있습니다.
+[파트너 생성](#파트너-생성) API의 파라미터와 동일합니다.
+
+</div>
+<div>
+**Request**
+
+```json
+{
+  "name": "string",
+  "email": "string",
+  "businessRegistrationNumber": "string",
+  "account": {
+    "bank": "BNP",
+    "currency": "AED",
+    "number": "string",
+    "holder": "string"
+  },
+  "defaultContractId": "string",
+  "memo": "string",
+  "tags": ["string"],
+  "isHidden": true
+}
+```
+
+**Response**
+
+업데이트 된 파트너 객체가 반환됩니다.
+
+```json
+{
+  "partner": {
+    "id": "partnerA",
+    "graphqlId": "NDpwYXJ0bmVyQQ==",
+    "name": "파이썬 강사",
+    "email": "kjnkyj12@gmail.com",
+    "businessRegistrationNumber": "1178178260",
+    "account": {
+      "bank": "SHINHAN",
+      "currency": "KRW",
+      "number": "10358907249",
+      "holder": "김준일",
+      "status": "VERIFIED"
+    },
+    "status": "APPROVED",
+    "defaultContractId": "contractA",
+    "memo": "잭슨 테스트 예시문",
+    "tags": ["파이썬"],
+    "isHidden": false,
+    "appliedAt": "2023-08-11T11:19:58.829787Z"
+  }
+}
+```
+
+---
+
+\- UnauthorizedError: 인증 정보가 올바르지 않은 경우
+
+    </div>
+
+</div>
+
+---
+
+### 파트너 예약 업데이트
+
+`POST https://plublic-api-service.iamport.co/platform/partners/{id}/schedule`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+주어진 아이디에 대응하는 파트너의 업데이트를 예약합니다.
+
+**Parameters**
+
+---
+
+**id** required string url path
+
+파트너 아이디.
+
+---
+
+**update** required json dicionary
+
+업데이트 할 파트너의 정보를 담은 json dictionary
+[파트너 생성](#파트너-생성) API의 파라미터와 동일합니다.
+
+---
+
+**appliedAt** required Datetime
+
+업데이트를 적용할 시간.
+정산 시작일(settlementStartDate) 기준으로 시간이 적용됩니다.
+예를들어 2일에 파트너 기본계약 업데이트를 예약했으면 1일까지 정산시작일이 되어있는 해당 파트너의 정산 건은 구버전의 계약이 적용되고
+2일부터는 새로운 계약이 적용됩니다.
 
 </div>
 <div>
 
 **Request**
 
-```shell
-curl -X GET https://api.portone.com/v2/platform/discount-shares/{id} \
-     -u {api_key}
+```json
+{
+  "update": {
+    "name": "string",
+    "email": "string",
+    "businessRegistrationNumber": "string",
+    "account": {
+      "bank": "BNP",
+      "currency": "AED",
+      "number": "string",
+      "holder": "string"
+    },
+    "defaultContractId": "string",
+    "memo": "string",
+    "tags": ["string"],
+    "isHidden": true
+  },
+  "appliedAt": "2023-08-15T16:20:15.312Z"
+}
 ```
 
 **Response**
 
-조회 대상 할인 유형이 반환됩니다.
+성공 응답으로 예약된 파트너 객체가 반환됩니다.
 
 ```json
 {
-  "id": "coupon_1",
-  "partnerShareRate": 100000000,
-  "memo": "파트너 브랜드 쿠폰",
-  "isDeleted": false
+  "scheduledPartner": {
+    "id": "string",
+    "graphqlId": "string",
+    "name": "string",
+    "email": "string",
+    "businessRegistrationNumber": "string",
+    "account": {
+      "bank": "BNP",
+      "currency": "AED",
+      "number": "string",
+      "holder": "string",
+      "status": "EXPIRED"
+    },
+    "status": "APPROVED",
+    "defaultContractId": "string",
+    "memo": "string",
+    "tags": ["string"],
+    "isHidden": true,
+    "appliedAt": "2023-08-15T16:20:15.397Z"
+  }
+}
+```
+
+</div>
+</div>
+
+### 파트너 예약 업데이트 재설정
+
+`PUT https://plublic-api-service.iamport.co/platform/partners/{id}/schedule`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+주어진 아이디에 대응하는 파트너의 업데이트를 재설정 합니다.
+기존에 예약이 예정되어 있는 업데이트가 있다면 취소되고 새로운 업데이트가 예약됩니다.
+
+**Parameters**
+
+---
+
+**id** required string
+
+파트너 아이디.
+
+---
+
+**update** required json dicionary
+
+업데이트 할 파트너의 정보를 담은 json dictionary
+[파트너 생성](#파트너-생성) API의 파라미터와 동일합니다.
+
+---
+
+**appliedAt** required Datetime
+
+업데이트를 적용할 시간.
+정산 시작일(settlementStartDate) 기준으로 시간이 적용됩니다.
+예를들어 2일에 파트너 기본계약 업데이트를 예약했으면 1일까지 정산시작일이 되어있는 해당 파트너의 정산 건은 구버전의 계약이 적용되고
+2일부터는 새로운 계약이 적용됩니다.
+
+</div>
+<div>
+
+**Request**
+
+```json
+{
+  "update": {
+    "name": "string",
+    "email": "string",
+    "businessRegistrationNumber": "string",
+    "account": {
+      "bank": "BNP",
+      "currency": "AED",
+      "number": "string",
+      "holder": "string"
+    },
+    "defaultContractId": "string",
+    "memo": "string",
+    "tags": ["string"],
+    "isHidden": true
+  },
+  "appliedAt": "2023-08-15T16:23:15.265Z"
+}
+```
+
+**Response**
+
+성공 응답으로 예약된 파트너 객체가 반환됩니다.
+
+```json
+{
+  "scheduledPartner": {
+    "id": "string",
+    "graphqlId": "string",
+    "name": "string",
+    "email": "string",
+    "businessRegistrationNumber": "string",
+    "account": {
+      "bank": "BNP",
+      "currency": "AED",
+      "number": "string",
+      "holder": "string",
+      "status": "EXPIRED"
+    },
+    "status": "APPROVED",
+    "defaultContractId": "string",
+    "memo": "string",
+    "tags": ["string"],
+    "isHidden": true,
+    "appliedAt": "2023-08-15T16:23:15.340Z"
+  }
 }
 ```
 
@@ -4963,7 +4515,220 @@ curl -X GET https://api.portone.com/v2/platform/discount-shares/{id} \
 
 ---
 
-### 할인 유형 다건 조회
+### 파트너 예약 업데이트 취소
+
+`DELETE https://plublic-api-service.iamport.co/platform/partners/{id}/schedule`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+주어진 아이디에 대응하는 파트너의 업데이트를 취소합니다.
+
+**Parameters**
+
+---
+
+**id** required string
+
+파트너 아이디.
+
+</div>
+<div>
+
+**Response**
+성공 응답(200) 이 반환됩니다.
+
+</div>
+</div>
+
+---
+
+### 은행 Enum Values
+
+| enum           | values                            |
+| -------------- | --------------------------------- |
+| BOK            | 한국은행                          |
+| KDB            | 산업은행                          |
+| IBK            | 기업은행                          |
+| KB             | 국민은행                          |
+| SUHYUP         | 수협은행                          |
+| EIB            | 수출입은행                        |
+| NH             | NH농협은행                        |
+| REGIONAL_NH    | 지역농축협                        |
+| WOORI          | 우리은행                          |
+| SCB            | SC제일은행                        |
+| CITI           | 한국씨티은행                      |
+| DAEGU          | 대구은행                          |
+| BUSAN          | 부산은행                          |
+| GWANGJU        | 광주은행                          |
+| JEJU           | 제주은행                          |
+| JEONBUK        | 전북은행                          |
+| GYEONGNAM      | 경남은행                          |
+| KFCC           | 새마을금고                        |
+| CREDIT_UNION   | 신협                              |
+| FSB            | 저축은행                          |
+| MISC           | 기타 외국계은행(중국 농업은행 등) |
+| MORGAN_STANLEY | 모간스탠리은행                    |
+| HSBC           | HSBC은행                          |
+| DEUTSCHE       | 도이치은행                        |
+| JPMC           | 제이피모간체이스은행              |
+| MIZUHO         | 미즈호은행                        |
+| MUFG           | 엠유에프지은행                    |
+| BOA            | BOA은행                           |
+| BNP            | 비엔피파리바은행                  |
+| NFCF           | 산림조합중앙회                    |
+| EPOST          | 우체국                            |
+| HANA           | 하나은행                          |
+| SHINHAN        | 신한은행                          |
+| KBANK          | 케이뱅크                          |
+| KAKAO          | 카카오뱅크                        |
+| TOSS_BANK      | 토스뱅크                          |
+| DAISHIN_SB     | 대신저축은행                      |
+| SBI_SB         | 에스비아이저축은행                |
+| HK_SB          | 에이치케이저축은행                |
+| WELCOME_SB     | 웰컴저축은행                      |
+| SHINHAN_SB     | 신한저축은행                      |
+
+## 할인 정책
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+`할인 정책 ` 객체는 가맹점의 주문건에 대해서 쿠폰 및 포인트와 같은 할인금액이 적용될시 이에대해서 파트너 정산에 할인금과 할인에 따른 파트너와의 분담율을 적용하고자 사용할 수 있는 객체입니다.
+
+할인 정책에 대한 아이디와 메모 그리고 파트너 분담율로 정보 구성이 되어있습니다.
+
+현재 구조로는 할인금액 전달할시 꼭 해당 할인에 대한 할인 정책 아이디를 동반해서 전달해주셔야 합니다.
+
+</div>
+<div>
+
+**Endpoints**
+
+```text
+POST /platform/discount-share-policies
+GET /platform/discount-share-policies/{id}
+GET /platform/discount-share-policies
+PATCH /platform/discount-share/{id}
+POST /platform/discount-share/{id}/schedule
+GET /platform/discount-share/{id}/schedule
+PUT /platform/discount-share/{id}/schedule
+DELETE /platform/discount-share/{id}/schedule
+GET /platform/discount-share-policy-filter-options (To Be Documented)
+```
+
+</div>
+</div>
+
+---
+
+### 할인 정책 생성
+
+`POST https://plublic-api-service.iamport.co/platform/discount-share-policies`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+**Parameters**
+
+**id** optional
+
+할인 정책 고유아이디. 가맹점 서버에 저장되고 통용되는 아이디로 지정해주세요. 없다면 포트원에서 임의로 발급해드리며 이를 저장해주세요.
+
+---
+
+**partnerShareRate** required
+
+할인 분담율. 10^-5처리 값입니다. 예) 10% = 10000
+
+---
+
+**memo** optional
+
+할인 정책 내부 메모. 예) 파트너 브랜드 쿠폰
+
+</div>
+<div>
+
+**Request**
+
+```json
+{
+  "id": "string",
+  "partnerShareRate": 0,
+  "memo": "string"
+}
+```
+
+**Response**
+
+생성된 할인 정책 객체가 반환됩니다.
+
+```json
+{
+  "discountSharePolicy": {
+    "id": "string",
+    "graphqlId": "string",
+    "partnerShareRate": 0,
+    "memo": "string",
+    "isHidden": true,
+    "appliedAt": "2023-08-15T16:48:24.842Z"
+  }
+}
+```
+
+</div>
+</div>
+
+---
+
+### 할인 정책 조회
+
+`GET https://plublic-api-service.iamport.co/platform/discount-share-policies/{id}`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+**Parameters**
+
+**id** required (url path)
+
+조회할 할인 정책 아이디
+
+</div>
+<div>
+
+**Response**
+
+조회 대상 할인 정책이 반환됩니다.
+
+```json
+{
+  "id": "string",
+  "graphqlId": "string",
+  "partnerShareRate": 0,
+  "memo": "string",
+  "isHidden": true,
+  "appliedAt": "2023-08-15T16:55:36.587Z"
+}
+```
+
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+
+</div>
+</div>
+
+---
+
+### 할인 정책 다건 조회
+
+`GET https://plublic-api-service.iamport.co/platform/discount-share-policies`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -4992,7 +4757,7 @@ page attributes
 
       page.**size** optional 기본값은 10
 
-      각 page당 조회될 할인 유형 객체 갯수.
+      각 page당 조회될 할인 정책 객체 갯수.
 
     </td>
 
@@ -5011,9 +4776,9 @@ filter attributes
   <tr>
     <td>
 
-      filter.**includeDeleted** boolean optional 기본값은 false
+      filter.**includeHidden** boolean optional 기본값은 false
 
-      true로 설정시 삭제된 할인 유형 객체도 조회됩니다.
+      true로 설정시 삭제된 할인 정책 객체도 조회됩니다.
 
     </td>
 
@@ -5023,7 +4788,7 @@ filter attributes
 
       filter.**partnerShareRates** list of int64 optional
 
-      파트너 분담율로 구성된 리스트. 해당 리스트에 포함된 분담율과 매칭되는 모든 할인 유형 객체들을 반환한다.
+      파트너 분담율로 구성된 리스트. 해당 리스트에 포함된 분담율과 매칭되는 모든 할인 정책 객체들을 반환한다.
 
     </td>
 
@@ -5033,7 +4798,7 @@ filter attributes
 
       filter.**keyword** dictionary optional
 
-      통합검색을 위한 조건. 할인 유형 다건조회에 대해서는 할인유형 아이디 (id)와 메모 (memo)를 기반으로 검색 가능합니다. 검색 로직은 %like% 검색입니다.
+      통합검색을 위한 조건. 할인 정책 다건조회에 대해서는 할인유형 아이디 (id)와 메모 (memo)를 기반으로 검색 가능합니다. 검색 로직은 %like% 검색입니다.
 
         \- keyword.memo string \
         메모 값에 대한 검색. 해당 검색으로 진행시 id 검색을 추가할 수 없습니다.
@@ -5056,125 +4821,368 @@ filter attributes
 
 **Request**
 
-```shell
-curl -X GET https://api.portone.com/v2/platform/discount-shares/numbered-pages \
-     -u {api_key} \
-     -d 'page[size]=5' \
-     -d 'filter[includeDeleted]=true' \
-     -d 'filter[keyword[memo]]=쿠폰'
+```json
+{
+  "page": {
+    "number": 0,
+    "size": 0
+  },
+  "filter": {
+    "includeHidden": true,
+    "partnerShareRates": [0],
+    "keyword": {
+      "id": "string",
+      "memo": "string",
+      "all": "string"
+    }
+  }
+}
 ```
 
 **Response**
 
 ```json
-[
-  {
-    "id": "coupon_1",
-    "partnerShareRate": 100000000,
-    "memo": "파트너 fw23 브랜드 쿠폰",
-    "isDeleted": false
-  },
-  {
-    "id": "coupon_2",
-    "partnerShareRate": 500000000,
-    "memo": "파트너 ss23 브랜드 쿠폰",
-    "isDeleted": false
-  } // ...
-]
+{
+  "items": [
+    {
+      "id": "string",
+      "graphqlId": "string",
+      "partnerShareRate": 0,
+      "memo": "string",
+      "isHidden": true,
+      "appliedAt": "2023-08-15T17:00:00.572Z"
+    }
+  ],
+  "page": {
+    "number": 0,
+    "size": 0,
+    "totalCount": 0
+  }
+}
 ```
+
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
 
 </div>
 </div>
 
 ---
 
-### 할인 유형 수정
+### 할인 정책 수정
+
+주어진 아이디에 대응되는 할인 정책을 업데이트합니다.
+
+`PATCH https://plublic-api-service.iamport.co/platform/discount-share-policies/{id}`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
 Parameters
 
+**id** required (url path)
+
+할인 정책 아이디
+
 **partnerShareRate** optional 기본값은 0
 
-할인 분담율. 10^-9처리 값입니다. 예) 10% = 100000000
-정
+할인 분담율. 10^5처리 값입니다. 예) 10% = 1000
 
 ---
 
 **memo** optional
 
-할인 유형 내부 메모. 예) 파트너 브랜드 쿠폰
+할인 정책 내부 메모. 예) 파트너 브랜드 쿠폰
 
 ---
 
-**applyAt** Date optional 기본값은 api 호출일
+**isHidden** boolean optional 기본값은 fals본
 
-해당 업데이트가 적용되길 원하는 시점. 정산시작일 기준으로 적용날짜를 지정할 수 있다. 즉 **applyAt** 이 2023-03-01이라면 settlementStartDate > 2023-03-01인 transfer_api부터 해당 업데이트된 계약정보가 적용됩니다.
+숨김 처리 여부. true로 설정시 해당 할인 정책은 숨김됩니다
 
 </div>
 <div>
 
 **Request**
 
-```shell
-curl -X POST https://api.portone.com/v2/platform/discount-shares/{id} \
-     -u {api_key} \
-     -d 'memo=deprecated'
+```json
+{
+  "partnerShareRate": 0,
+  "memo": "string",
+  "isHidden": true
+}
 ```
 
 **Response**
 
 ```json
 {
-  "id": "coupon_1",
-  "partnerShareRate": 100000000,
-  "memo": "deprecated",
-  "isDeleted": false
+  "discountSharePolicy": {
+    "id": "string",
+    "graphqlId": "string",
+    "partnerShareRate": 0,
+    "memo": "string",
+    "isHidden": true,
+    "appliedAt": "2023-08-15T17:03:19.203Z"
+  }
 }
 ```
 
-\- **applyAt** 이 미래시점이라면 해당 업데이트 api의 response 값은 변경되기 전 현재 시점의 정보로 업데이트 됩니다.
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
 
 </div>
 </div>
 
 ---
 
-### 할인 유형 삭제
+### 할인 정책 삭제
+
+`DELETE https://plublic-api-service.iamport.co/platform/discount-share-policies/{id}`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
 **Parameters**
 
-None
+**id** required (url path)
 
 </div>
 <div>
 
-**Request**
+**Response**
 
-```shell
-curl -X DELETE https://api.portone.com/v2/platform/discount-shares/{id} \
-     -u {api_key}
+200 응답이 떨어집니다.
+
+</div>
+</div>
+
+---
+
+### 할인 정책 예약 업데이트
+
+`POST https://plublic-api-service.iamport.co/platform/discount-share-policies/{id}/schedule`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+“update” 필드에 업데이트를 예약할 정보를 입력합니다.
+
+“appliedAt” 필드에 적용되길 원하는 시점을 입력합니다
+
+**Parameters**
+
+**id** string required (url path)
+
+할인 정책 아이디
+
+**update** dictionary required
+
+예약 업데이트 하고 싶은 할인 정책 정보
+
+기존 [할인 정책 수정 API](#할인-정책-수정) 와 동일한 파라미터를 사용합니다.
+
+**appliedAt** Datetime required
+
+업데이트가 적용되길 원하는 시점 입니다
+
+**settlementStartDate** 기접으로 적용됩니다. 예를 들어 appliedAt 이 t-0 이라면 t-0 이후의 settlementStartDate 인 해당 계약의 정산건들은 업데이트가 적용됩니다.
+
+</div>
+<div>
+**Request**
+```json
+{
+  "update": {
+    "partnerShareRate": 0,
+    "memo": "string",
+    "isHidden": true
+  },
+  "appliedAt": "2023-08-15T17:09:36.812Z"
+}
 ```
 
 **Response**
 
 ```json
 {
-  "id": "coupon_1",
-  "partnerShareRate": 100000000,
-  "memo": "deprecated",
-  "isDeleted": true
+  "scheduledDiscountSharePolicy": {
+    "id": "string",
+    "graphqlId": "string",
+    "partnerShareRate": 0,
+    "memo": "string",
+    "isHidden": true,
+    "appliedAt": "2023-08-15T17:09:36.816Z"
+  }
 }
 ```
 
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+| 409  | PlatformDiscountSharePolicyScheduleAlreadyExistsError                                                                         |
+
 </div>
 </div>
 
----
+### 할인 정책 예약 업데이트 재설정
+
+`PUT https://plublic-api-service.iamport.co/platform/discount-share-policies/{id}/schedule`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+“update” 필드에 업데이트를 예약할 정보를 입력합니다.
+
+“appliedAt” 필드에 적용되길 원하는 시점을 입력합니다
+
+해당 정책 에 대해서 이미 예약 업데이트가 존재하는 경우에는 해당 api를 사용해야하며 , 해당 api를 통해 업데이트 할경우 기존 예약 업데이트는 삭제됩니다.
+
+**Parameters**
+
+**id** string required (url path)
+
+할인 정책 아이디
+
+**update** dictionary required
+
+예약 업데이트 하고 싶은 할인 정책 정보
+
+기존 [할인 정책 수정 API](#할인-정책-수정) 와 동일한 파라미터를 사용합니다.
+
+**appliedAt** Datetime required
+
+업데이트가 적용되길 원하는 시점 입니다
+
+**settlementStartDate** 기접으로 적용됩니다. 예를 들어 appliedAt 이 t-0 이라면 t-0 이후의 settlementStartDate 인 해당 계약의 정산건들은 업데이트가 적용됩니다.
+
+</div>
+<div>
+**Request**
+```json
+{
+  "update": {
+    "partnerShareRate": 0,
+    "memo": "string",
+    "isHidden": true
+  },
+  "appliedAt": "2023-08-15T17:09:36.812Z"
+}
+```
+
+**Response**
+
+```json
+{
+  "scheduledDiscountSharePolicy": {
+    "id": "string",
+    "graphqlId": "string",
+    "partnerShareRate": 0,
+    "memo": "string",
+    "isHidden": true,
+    "appliedAt": "2023-08-15T17:09:36.816Z"
+  }
+}
+```
+
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+
+</div>
+</div>
+### 할인 정책 예약 업데이트 조회
+
+`PUT https://plublic-api-service.iamport.co/platform/discount-share-policies/{id}/schedule`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+**Parameters**
+
+**id** string required (url path)
+
+할인 정책 아이디
+
+</div>
+<div>
+
+**Response**
+
+```json
+{
+  "id": "string",
+  "graphqlId": "string",
+  "partnerShareRate": 0,
+  "memo": "string",
+  "isHidden": true,
+  "appliedAt": "2023-08-15T17:21:52.542Z"
+}
+```
+
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+
+</div>
+</div>
+
+### 할인 정책 예약 업데이트 삭제
+
+`PUT https://plublic-api-service.iamport.co/platform/discount-share-policies/{id}/schedule`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+**Parameters**
+
+**id** string required (url path)
+
+예약된 업데이트를 제거하고 싶은 할인 정책 아이디의
+
+</div>
+<div>
+
+**Response**
+
+200 OK
+
+**Error Code**
+
+| Code | Description                                                                                                                   |
+| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
+| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
+| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
+| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+
+</div>
+</div>
 
 ## 추가 수수료
 
@@ -5189,11 +5197,15 @@ curl -X DELETE https://api.portone.com/v2/platform/discount-shares/{id} \
 **Endpoints**
 
 ```text
-POST /platform/additional-fees
-GET /platform/additional-fees/{id}
-GET /platform/additional-fees/numbered-pages
-POST /platform/additional-fees/{id}
-DELETE /platform/additional-fees/{id}
+POST /platform/additional-fee-policies
+GET /platform/additional-fee-policies/{id}
+GET /platform/additional-fee-policies
+PATCH /platform/additional-fee-policies/{id}
+POST /platform/additional-fee-policies/{id}/schedule
+PATCH /platform/additional-fee-policies/{id}/schedule
+GET /platform/additional-fee-policies/{id}/schedule
+DELETE /platform/additional-fee-policies/{id}/schedule
+GET /platform/additional-fee-policy-filter-options (To Be Documented)
 ```
 
 </div>
@@ -5222,17 +5234,7 @@ DELETE /platform/additional-fees/{id}
   <tr>
     <td>
 
-      additionalFees.**type enum**
-
-      정률 혹은 정액 구분값. 정률일 경우 ‘fixedRate’, 정액일 경우 ‘fixed_amount’
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      additionalFees.**amount int64**
+      fees.**amount int64**
 
       정액일 경우 사용하는 parameter. 현재로서 정액 플랫폼 중개 수수료는 원화만 지원한다.
 
@@ -5242,9 +5244,9 @@ DELETE /platform/additional-fees/{id}
   <tr>
     <td>
 
-      additionalFees.**rate int64**
+      fees.**rate int64**
 
-      정률일경우 백분율로 적용된다. 백분율로써 소수점 첫째자리 까지 가능하다
+      정률일경우 10^-5처리 된다. 10% = 10000
 
     </td>
 
@@ -5270,9 +5272,9 @@ MERCHANT: 부가세 파트너 미부담
 
 ---
 
-**isDeleted** boolean
+**isHidden** boolean
 
-삭제 여부. 파트너 정산의 객체들에 대해서 삭제는 soft delete임을 참고해 주세요! 이는 삭제시 해당 삭제된 객체와 동일한 아이디를 발급할경우 새롭게 생성된 객체가 overwrite 합니다.
+숨김처리 여부. 파트너 정산의 객체들에 대해서 삭제는 soft delete임을 참고해 주세요! 이는 삭리시 해당 삭제된 객체와 동일한 아이디를 발급할경우 새롭게 생성된 객체가 overwrite 합니다.
 
 ---
 
@@ -5283,14 +5285,16 @@ MERCHANT: 부가세 파트너 미부담
 
 ```json
 {
-  "id": "kakao_channel_1",
+  "id": "addtional_fee_1",
+  "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
   "fee": {
-    "type": "fixedRate",
-    "rate": 50000000 // 5%
+    "type": "FIXED_RATE",
+    "rate": 5000
   },
-  "memo": "카카오 마케팅 채널 수수료",
-  "isDeleted": false,
-  "vatPayer": "PARTNER"
+  "memo": "테스트 추가수수료",
+  "vatPayer": "PARTNER",
+  "isHidden": false,
+  "appliedAt": "2023-08-09T07:41:12.393974Z"
 }
 ```
 
@@ -5300,6 +5304,8 @@ MERCHANT: 부가세 파트너 미부담
 ---
 
 ### 추가 수수료 생성
+
+`POST https://plublic-api-service.iamport.co/platform/additional-fee-policies`
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -5320,17 +5326,7 @@ MERCHANT: 부가세 파트너 미부담
   <tr>
     <td>
 
-      additionalFees.**type enum**
-
-      정률 혹은 정액 구분값. 정률일 경우 ‘fixedRate’, 정액일 경우 ‘fixed_amount’
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      additionalFees.**amount int64**
+      fees.**amount int64**
 
       정액일 경우 사용하는 parameter. 현재로서 정액 플랫폼 중개 수수료는 원화만 지원한다.
 
@@ -5340,9 +5336,9 @@ MERCHANT: 부가세 파트너 미부담
   <tr>
     <td>
 
-      additionalFees.**rate int64**
+      fees.**rate int64**
 
-      정률일경우 백분율로 적용된다. 백분율로써 소수점 첫째자리 까지 가능하다
+      정률일경우 10^-5처리 된다. 10% = 10000
 
     </td>
 
@@ -5372,13 +5368,16 @@ MERCHANT: 부가세 파트너 미부담
 
 **Request**
 
-```shell
-curl -X POST https://api.portone.com/v2/platform/additional-fees/ \
-     -u {api_key} \
-     -d 'id=kakao_channel_1' \
-     -d 'fee[type]=fixedRate' \
-     -d 'fee[rate]=50000000' \
-     -d 'memo=카카오 마케팅 채널 수수료'
+```json
+{
+  "id": "string",
+  "fee": {
+    "fixedRate": 0,
+    "fixedAmount": 0
+  },
+  "memo": "string",
+  "vatPayer": "MERCHANT"
+}
 ```
 
 **Response**
@@ -5387,14 +5386,16 @@ curl -X POST https://api.portone.com/v2/platform/additional-fees/ \
 
 ```json
 {
-  "id": "kakao_channel_1",
+  "id": "addtional_fee_1",
+  "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
   "fee": {
-    "type": "fixedRate",
-    "rate": 50000000 // 5%
+    "type": "FIXED_RATE",
+    "rate": 5000
   },
-  "memo": "카카오 마케팅 채널 수수료",
-  "isDeleted": false,
-  "vatPayer": "PARTNER"
+  "memo": "테스트 추가수수료",
+  "vatPayer": "PARTNER",
+  "isHidden": false,
+  "appliedAt": "2023-08-09T07:41:12.393974Z"
 }
 ```
 
@@ -5409,17 +5410,10 @@ curl -X POST https://api.portone.com/v2/platform/additional-fees/ \
 
 **Parameters**
 
-None
+**id** required (url path)
 
 </div>
 <div>
-
-**Request**
-
-```bash
-curl -X GET https://api.portone.com/v2/platform/additional-fees/{id} \
-     -u {api_key}
-```
 
 **Response**
 
@@ -5427,68 +5421,16 @@ curl -X GET https://api.portone.com/v2/platform/additional-fees/{id} \
 
 ```json
 {
-  "id": "transfer_id",
-  "partner": {
-    "id": "lecturer_1",
-    "name": "파이썬 강사",
-    "email": "python@platform.com",
-    "businessRegistrationNumber": "",
-    "account": {
-      "bank": "신한은행",
-      "currency": "KRW",
-      "number": "110-123-456789",
-      "holder": "파이썬 강사",
-      "status": "APPROVED"
-    },
-    "status": "APPROVED",
-    "defaultContractId": "lecture_contract_1",
-    "memo": "컴싸 강사",
-    "tags": ["코딩"],
-    "isHidden": false,
-    "appliedAt": "2023-01-16T08:24:18.178Z"
+  "id": "addtional_fee_1",
+  "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
+  "fee": {
+    "type": "FIXED_RATE",
+    "rate": 5000
   },
-  "type": "ORDER",
-  "status": "SETTLED",
-  "memo": "",
-  "settlementDate": "2023-01-31",
-  "currency": "KRW",
-  "payoutId": "payout-id",
-  "contract": {
-    "id": "lectur_contract_1",
-    "memo": "",
-    "platformFee": {
-      "rate": 100000000
-    },
-    "settlementCycle": {
-      "lagDays": 3,
-      "datePolicy": "CALENDAR_DAY",
-      "method": { "dayOfMonth": [31] }
-    },
-    "vatPayer": "PARTNER",
-    "isHidden": false,
-    "appliedAt": "2023-06-16T08:21:27.949Z"
-  },
-  "settlementType": "PAYMENT", // or CANCEL
-  "payment": {
-    /* value: PORTONE, EXTERNAL */
-    "source": "PORTONE",
-    "paymentId": "merchant_uid_1",
-    "storeId": "lectureplatform1",
-    "channelKey": "channel-key-3b37819a-1c72-4deb-a245-8c810af5403d",
-    "orderName": "",
-    "paymentMethod": "CARD",
-    "paidAt": "2023-06-16T08:21:27.949Z",
-    "easyPayReceipt": {
-      "easyPayProvider": "SAMSUNGPAY",
-      "method": "CARD",
-      "amount": 9000,
-      "discount": 0
-    },
-    "currency": "KRW"
-  },
-  "memo": "카카오 마케팅 채널 수수료",
-  "isDeleted": false,
-  "vatPayer": "PARTNER"
+  "memo": "테스트 추가수수료",
+  "vatPayer": "PARTNER",
+  "isHidden": false,
+  "appliedAt": "2023-08-09T07:41:12.393974Z"
 }
 ```
 
@@ -5528,7 +5470,7 @@ page attributes
 
       page.**size** optional 기본값은 10
 
-      각 page당 조회될 할인 유형 객체 갯수.
+      각 page당 조회될 할인 정책 객체 갯수.
 
     </td>
 
@@ -5547,7 +5489,7 @@ filter attributes
   <tr>
     <td>
 
-      filter.**includeDeleted** boolean optional 기본값은 false
+      filter.**includeHidden** boolean optional 기본값은 false
 
     </td>
 
@@ -5555,7 +5497,7 @@ filter attributes
   <tr>
     <td>
 
-      filter.**additionalFeesIds** optional
+      filter.**ids** optional
 
       추가 수수료 객체 고유 아이디로 구성된 리스트
 
@@ -5565,9 +5507,9 @@ filter attributes
   <tr>
     <td>
 
-      filter.**vatApplied** boolean
+      filter.**vatPayers** enum
 
-      부가세 적용 여부 검색
+      부가세 적용 여부 검색 MERCHANT , PARTNER
 
     </td>
 
@@ -5581,36 +5523,41 @@ filter attributes
 
 **Request**
 
-```bash
-curl -X GET https://api.portone.com/v2/platform/additional-fees/numbered-pages \
-     -u {api_key} \
-     -d 'page[size]=5' \
-     -d 'filter[vatApplied]=true'
+```json
+{
+  "page": {
+    "number": 0,
+    "size": 0
+  },
+  "filter": {
+    "includeHidden": true,
+    "ids": ["string"],
+    "vatPayers": ["MERCHANT"]
+  }
+}
 ```
 
 ```json
-[
-  {
-    "id": "kakao_channel_1",
-    "fee": {
-      "type": "fixedRate",
-      "rate": 50000000 // 5%
-    },
-    "memo": "카카오 마케팅 채널 수수료",
-    "isDeleted": false,
-    "vatPayer": "PARTNER"
-  },
-  {
-    "id": "insta_channel_1",
-    "fee": {
-      "type": "fixedRate",
-      "rate": 70000000 //7%
-    },
-    "memo": "인스타 마케팅 채널 수수료",
-    "isDeleted": false,
-    "vatPayer": "PARTNER"
-  } // ...
-]
+{
+  "items": [
+    {
+      "id": "string",
+      "graphqlId": "string",
+      "fee": {
+        "amount": 0
+      },
+      "memo": "string",
+      "vatPayer": "MERCHANT",
+      "isHidden": true,
+      "appliedAt": "2023-08-15T17:47:27.702Z"
+    }
+  ],
+  "page": {
+    "number": 0,
+    "size": 0,
+    "totalCount": 0
+  }
+}
 ```
 
 </div>
@@ -5620,197 +5567,52 @@ curl -X GET https://api.portone.com/v2/platform/additional-fees/numbered-pages \
 
 ### 추가 수수료 수정
 
+`PATCH https://plublic-api-service.iamport.co/platform/additional-fee-policies`
+
 <div class="gap-4 md:grid grid-cols-2">
 <div>
 
 **Parameters**
 
-**id** required
+**id** required (url path)
 
 추가수수료 고유 아이디
 
 ---
 
-**fee** required
-
-추가 수수료 정보를 보여주는 fee attribute
-
-<table>
-  <tr>
-    <td>
-
-      additionalFees.**type enum**
-
-      정률 혹은 정액 구분값. 정률일 경우 ‘fixedRate’, 정액일 경우 ‘fixed_amount’
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      additionalFees.**amount int64**
-
-      정액일 경우 사용하는 parameter. 현재로서 정액 플랫폼 중개 수수료는 원화만 지원한다.
-
-    </td>
-
-  </tr>
-  <tr>
-    <td>
-
-      additionalFees.**rate int64**
-
-      정률일 경우 백분율로 적용된다. 백분율로써 소수점 첫째 자리까지 가능하다
-
-    </td>
-
-  </tr>
-</table>
-
----
-
-**memo** optional
-
-추가 수수료 내부 구분을 위한 내부 메모
-
----
-
-**vatPayer** optional 기본값은 PARTNER
-
-부가세 부담여부
-
-PARTNER: 부가세 파트너 부담
-
-MERCHANT: 부가세 파트너 미부담
-
----
-
-**applyAt** Date optional 기본값은 api 호출일
-
-해당 업데이트가 적용되길 원하는 시점. 정산시작일 기준으로 적용날짜를 지정할 수 있다. 즉 **applyAt** 이 2023-03-01이라면 settlementStartDate > 2023-03-01인 transfer_api부터 해당 업데이트된 계약정보가 적용됩니다.
-
----
+나머지 파라미터는 [추가수수료 생성](#추가-수수료-생성) 과 동일합니다.
 
 </div>
 <div>
 
 **Request**
 
-```shell
-curl -X PATCH https://api.portone.com/v2/platform/additional-fees/{id} \
-     -u {api_key} \
-     -d 'fee[rate]=700000000' \
-     -d 'applyAt=2023-06-01'
+```json
+{
+  "fee": {
+    "fixedRate": 0,
+    "fixedAmount": 0
+  },
+  "memo": "string",
+  "vatPayer": "MERCHANT",
+  "isHidden": true
+}
 ```
 
 **Resposne**
 
 ```json
 {
-  "id": "transfer_id",
-  "partner": {
-    "id": "lecturer_1",
-    "name": "파이썬 강사",
-    "email": "python@platform.com",
-    "businessRegistrationNumber": "",
-    "account": {
-      "bank": "신한은행",
-      "currency": "KRW",
-      "number": "110-123-456789",
-      "holder": "파이썬 강사",
-      "status": "APPROVED"
-    },
-    "status": "APPROVED",
-    "defaultContractId": "lecture_contract_1",
-    "memo": "컴싸 강사",
-    "tags": ["코딩"],
-    "isHidden": false,
-    "appliedAt": "2023-01-16T08:24:18.178Z"
-  },
-  "type": "ORDER",
-  "status": "SETTLED",
-  "memo": "",
-  "settlementDate": "2023-01-31",
-  "currency": "KRW",
-  "payoutId": "payout-id",
-  "contract": {
-    "id": "lectur_contract_1",
-    "memo": "",
-    "platformFee": {
-      "rate": 100000000
-    },
-    "settlementCycle": {
-      "lagDays": 3,
-      "datePolicy": "CALENDAR_DAY",
-      "method": { "dayOfMonth": [31] }
-    },
-    "vatPayer": "PARTNER",
-    "isHidden": false,
-    "appliedAt": "2023-06-16T08:21:27.949Z"
-  },
-  "settlementType": "PAYMENT", // or CANCEL
-  "payment": {
-    /* value: PORTONE, EXTERNAL */
-    "source": "PORTONE",
-    "paymentId": "merchant_uid_1",
-    "storeId": "lectureplatform1",
-    "channelKey": "channel-key-3b37819a-1c72-4deb-a245-8c810af5403d",
-    "orderName": "",
-    "paymentMethod": "CARD",
-    "paidAt": "2023-06-16T08:21:27.949Z",
-    "easyPayReceipt": {
-      "easyPayProvider": "SAMSUNGPAY",
-      "method": "CARD",
-      "amount": 9000,
-      "discount": 0
-    },
-    "currency": "KRW"
-  },
-  "memo": "카카오 마케팅 채널 수수료",
-  "isDeleted": false,
-  "vatPayer": "PARTNER"
-}
-```
-
-\- **applyAt** 이 미래시점이라면 해당 업데이트 api의 response 값은 변경되기 전 현재 시점의 정보로 업데이트 됩니다.
-
-</div>
-</div>
-
----
-
-### 추가 수수료 삭제
-
-<div class="gap-4 md:grid grid-cols-2">
-<div>
-
-**Parameters**
-
-None
-
-</div>
-<div>
-
-**Request**
-
-```shell
-curl -X DELETE https://api.portone.com/v2/platform/additional-fees/{id} \
-     -u {api_key}
-```
-
-**Response**
-
-```json
-{
-  "id": "kakao_channel_1",
+  "id": "addtional_fee_1",
+  "graphqlId": "MzphZGR0aW9uYWxfZmVlXzE=",
   "fee": {
-    "type": "fixedRate",
-    "rate": 50000000 // 5%
+    "type": "FIXED_RATE",
+    "rate": 5000
   },
-  "memo": "카카오 마케팅 채널 수수료",
-  "isDeleted": true,
-  "vatPayer": "PARTNER"
+  "memo": "테스트 추가수수료",
+  "vatPayer": "PARTNER",
+  "isHidden": false,
+  "appliedAt": "2023-08-09T07:41:12.393974Z"
 }
 ```
 
@@ -5819,7 +5621,7 @@ curl -X DELETE https://api.portone.com/v2/platform/additional-fees/{id} \
 
 ---
 
-## 파트너 정산 설정 (In Progress)
+## 파트너 정산 설정
 
 <div class="gap-4 md:grid grid-cols-2">
 <div>
@@ -5834,9 +5636,8 @@ curl -X DELETE https://api.portone.com/v2/platform/additional-fees/{id} \
 **Endpoints**
 
 ```text
-POST /platform/platform-merchant
-GET /platform/platform-merchant
-POST /platform/additional-fees/platform-merchant
+PATCH /platform
+GET /platform
 ```
 
 </div>
@@ -5851,7 +5652,7 @@ POST /platform/additional-fees/platform-merchant
 
 **Parameter**
 
-**merchant_id** string
+**merchantId** string
 
 포트원이 부여한 가맹점 고유 아이디
 
@@ -5864,15 +5665,6 @@ POST /platform/additional-fees/platform-merchant
 - OFF: 반올림
 - DOWN: 내림
 - UP: 올림
-
----
-
-**channelFeePayer** enum
-
-현재는 지원하지 않는 기능이나, PG사가 가맹점에게 부여하는 결제 수수료를 파트너에게 부담할 경우 해당 값을 파트너 (PARTNER)로 지정 하면 됩니다. 그럴경우 정산계산을 위해 사용하시는 pg사의 수수료를 계산하여 차감합니다.
-
-- PARTNER: 결제수수료 파트너 부담일경우
-- MERCHANT: 결제수수료를 가맹점이 부담할 경우
 
 ---
 
@@ -5930,6 +5722,166 @@ POST /platform/additional-fees/platform-merchant
 ---
 
 </div>
+<div>
+
+**Response**
+
+파트너정산을 사용하실수 있는 가맹점은 기본으로 해당 값이 설정이 됩니다.
+
+```json
+{
+  "merchantId": "merchant-58c965f5-85f7-4c49-b770-cc11f3294bda",
+  "graphqlId": "MTptZXJjaGFudC01OGM5NjVmNS04NWY3LTRjNDktYjc3MC1jYzExZjMyOTRiZGE=",
+  "roundType": "DOWN",
+  "settlementFormula": {
+    "platformFee": "(주문금액 * 플랫폼수수료율) + 플랫폼수수료액",
+    "discountShare": "할인금액 * 할인분담률",
+    "additionalFee": "(주문금액 * 추가수수료율) + 추가수수료액"
+  }
+}
+```
+
+</div>
 </div>
 
+### 파트너 정산 설정 수정
+
+`PATCH https://plublic-api-service.iamport.co/platform`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+**Parameter**
+
+**roundType** enum
+
+정산식 계산시 적용될 소수점 처리 방식. 내림, 올림, 반올림이 있다. 각각의 수수료와 부가세 및 할인 분담금액을 계산할때 적용된다.
+
+- OFF: 반올림
+- DOWN: 내림
+- UP: 올림
+
 ---
+
+**settlementFormula** dicitionary
+
+전체 정산과 각 수수료 및 할인분담금을 계산하는데 적용되는 수식에 대한 값입니다.
+
+<table>
+  <tr>
+    <td>
+      <div class="text-sm text-gray-500">
+
+        **settlementFormula.platformFee**\
+        중개수수료 수식
+
+      </div>
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      <div class="text-sm text-gray-500">
+
+        **settlementFormula.channelFee (TBA)**\
+        결제수수료 수식
+
+      </div>
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      <div class="text-sm text-gray-500">
+
+        **settlementFormula.discountShare**\
+        할인분담금 수식
+
+      </div>
+    </td>
+
+  </tr>
+  <tr>
+    <td>
+      <div class="text-sm text-gray-500">
+
+        **settlementFormula.additionalFee**\
+        추가 수수료 수식
+
+      </div>
+    </td>
+
+  </tr>
+</table>
+
+---
+
+</div>
+<div>
+
+**Request**
+
+```json
+{
+  "roundType": "DOWN",
+  "settlementFormula": {
+    "platformFee": "string",
+    "discountShare": "string",
+    "additionalFee": "string"
+  }
+}
+```
+
+**Response**
+
+파트너정산을 사용하실수 있는 가맹점은 기본으로 해당 값이 설정이 됩니다.
+
+```json
+{
+  "merchantId": "merchant-58c965f5-85f7-4c49-b770-cc11f3294bda",
+  "graphqlId": "MTptZXJjaGFudC01OGM5NjVmNS04NWY3LTRjNDktYjc3MC1jYzExZjMyOTRiZGE=",
+  "roundType": "DOWN",
+  "settlementFormula": {
+    "platformFee": "(주문금액 * 플랫폼수수료율) + 플랫폼수수료액",
+    "discountShare": "할인금액 * 할인분담률",
+    "additionalFee": "(주문금액 * 추가수수료율) + 추가수수료액"
+  }
+}
+```
+
+</div>
+</div>
+
+### 파트너 정산 설정 조회
+
+`GET https://plublic-api-service.iamport.co/platform`
+
+<div class="gap-4 md:grid grid-cols-2">
+<div>
+
+**Parameter**
+
+없음.가맹점의 플랫폼 정보를 조회합니다. 요청된 Authorization header 를 통해 자동으로 요청자의 가맹점을 특정합니다.
+
+</div>
+<div>
+
+**Response**
+
+파트너정산을 사용하실수 있는 가맹점은 기본으로 해당 값이 설정이 됩니다.
+
+```json
+{
+  "merchantId": "merchant-58c965f5-85f7-4c49-b770-cc11f3294bda",
+  "graphqlId": "MTptZXJjaGFudC01OGM5NjVmNS04NWY3LTRjNDktYjc3MC1jYzExZjMyOTRiZGE=",
+  "roundType": "DOWN",
+  "settlementFormula": {
+    "platformFee": "(주문금액 * 플랫폼수수료율) + 플랫폼수수료액",
+    "discountShare": "할인금액 * 할인분담률",
+    "additionalFee": "(주문금액 * 추가수수료율) + 추가수수료액"
+  }
+}
+```
+
+</div>
+</div>
