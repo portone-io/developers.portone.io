@@ -39,8 +39,9 @@ async function downloadV1Openapi() {
   await touchAndSaveText(downloadV1Openapi.dst, json);
   console.log("완료");
 }
-downloadV1Openapi.src = "https://api.iamport.kr/api/docs";
-downloadV1Openapi.dst = import.meta.resolve("../public/schema/v1.openapi.json");
+// downloadV1Openapi.src = "https://api.iamport.kr/api/docs";
+downloadV1Openapi.src = "https://core-api.dev.iamport.co/api/docs";
+downloadV1Openapi.dst = import.meta.resolve("../src/schema/v1.openapi.json");
 
 async function downloadV2Openapi() {
   const token = await ensureLoggedIn();
@@ -54,7 +55,7 @@ async function downloadV2Openapi() {
 }
 downloadV2Openapi.src =
   "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/openapi.yml";
-downloadV2Openapi.dst = import.meta.resolve("../public/schema/v2.openapi.json");
+downloadV2Openapi.dst = import.meta.resolve("../src/schema/v2.openapi.json");
 
 async function downloadV2Graphql() {
   const token = await ensureLoggedIn();
@@ -67,7 +68,7 @@ async function downloadV2Graphql() {
 }
 downloadV2Graphql.src =
   "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/schema.graphql";
-downloadV2Graphql.dst = import.meta.resolve("../public/schema/v2.graphql");
+downloadV2Graphql.dst = import.meta.resolve("../src/schema/v2.graphql");
 
 if (schema in downloadFns) await downloadFns[schema]();
 else {
