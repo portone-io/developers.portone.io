@@ -35,7 +35,7 @@ async function downloadV1Openapi() {
   console.log("내려받는 중...");
   const res = await fetch(downloadV1Openapi.src);
   const schema = await res.json();
-  const json = JSON.stringify(schema);
+  const json = JSON.stringify(schema, null, 2);
   await touchAndSaveText(downloadV1Openapi.dst, json);
   console.log("완료");
 }
@@ -49,7 +49,7 @@ async function downloadV2Openapi() {
   console.log(`저장할 위치: ${downloadV2Openapi.dst}`);
   console.log("내려받는 중...");
   const yaml = await fetchTextFromGithub(downloadV2Openapi.src, token);
-  const json = JSON.stringify(parseYaml(yaml));
+  const json = JSON.stringify(parseYaml(yaml), null, 2);
   await touchAndSaveText(downloadV2Openapi.dst, json);
   console.log("완료");
 }

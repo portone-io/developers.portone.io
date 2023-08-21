@@ -1,5 +1,28 @@
-import RestApi, { Tag } from "~/layouts/rest-api/RestApi";
+import RestApi, {
+  Endpoint,
+  Tag,
+  TypeDefinitions,
+} from "~/layouts/rest-api/RestApi";
 import schema from "../../schema/v1.openapi.json";
+
+(globalThis as any).schema = schema;
+
+type Endpoints = [Endpoint, any][];
+const everyEndpoints = Object.entries(schema.paths).flatMap(
+  ([path, methods]) => {
+    return Object.entries(methods).map(
+      ([method, operation]) =>
+        [
+          { method: method.toUpperCase(), path } as Endpoint,
+          operation,
+        ] satisfies [Endpoint, any]
+    );
+  }
+);
+
+function filterEndpointsByTag(tag: string, endpoints: Endpoints): Endpoints {
+  return endpoints.filter(([_, operation]) => operation.tags?.includes(tag));
+}
 
 export default function RestV1() {
   return (
@@ -11,33 +34,24 @@ export default function RestV1() {
       <p>
         비인증 결제, 정기 자동결제 등 부가기능을 위한 REST API도 제공합니다.
       </p>
+      {schema.tags.flatMap((tag) => {
+        const endpoints = filterEndpointsByTag(tag.name, everyEndpoints);
+        return [
+          <hr class="my-8" />,
+          <Tag
+            schema={schema}
+            title={tag.name}
+            summary={tag.description}
+            endpoints={endpoints.map(([endpoint]) => endpoint)}
+          />,
+        ];
+      })}
       <hr class="my-8" />
-      <Tag
+      <TypeDefinitions
         schema={schema}
-        title="authenticate"
-        summary="REST API사용을 위한 인증(access_token취득)"
-        endpoints={[{ method: "POST", path: "/users/getToken" }]}
-      />
-      <hr class="my-8" />
-      <Tag
-        schema={schema}
-        title="payments"
-        summary="결제내역 조회 및 결제 취소"
-        endpoints={[
-          { method: "GET", path: "/payments/{imp_uid}/balance" },
-          { method: "GET", path: "/payments/{imp_uid}" },
-          { method: "GET", path: "/payments" },
-          {
-            method: "GET",
-            path: "/payments/find/{merchant_uid}/{payment_status}",
-          },
-          {
-            method: "GET",
-            path: "/payments/findAll/{merchant_uid}/{payment_status}",
-          },
-          { method: "GET", path: "/payments/status/{payment_status}" },
-          { method: "POST", path: "/payments/cancel" },
-        ]}
+        typenames={Object.keys(schema.definitions).map(
+          (path) => path.split("/").pop()!
+        )}
       />
     </RestApi>
   );
