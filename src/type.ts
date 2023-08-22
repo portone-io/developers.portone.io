@@ -20,5 +20,10 @@ interface YamlNavMenuGroup {
   side?: {
     label: string;
     link: string;
+    eventname?: string;
   };
+}
+
+declare global {
+  function trackEvent(event: string, props: object, cb?: Function): void;
 }

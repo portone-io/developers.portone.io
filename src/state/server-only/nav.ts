@@ -25,6 +25,7 @@ export interface NavMenuGroup {
     | {
         label: string;
         link: string;
+        eventname?: string;
       }
     | undefined;
 }

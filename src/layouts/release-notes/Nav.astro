@@ -16,9 +16,7 @@ const { consoleNotes, apiSdkNotes, activeSlug } = Astro.props;
 <nav>
   <ul class="flex flex-col gap-1 p-2 py-4">
     <li>
-      <h4 class="p-2 text-lg font-bold first:mt-0">
-        관리자콘솔
-      </h4>
+      <h4 class="p-2 text-lg font-bold first:mt-0">관리자콘솔</h4>
       <ul class="flex flex-col gap-1">
         {
           consoleNotes.map((note) => {
@@ -30,7 +28,16 @@ const { consoleNotes, apiSdkNotes, activeSlug } = Astro.props;
             const href = `/release-notes/${note.slug}`;
             return (
               <li>
-                <JustLink title={title} href={href} isActive={isActive} />
+                <JustLink
+                  client:visible
+                  title={title}
+                  href={href}
+                  isActive={isActive}
+                  event={{
+                    name: "Developers_Releasenote_Menu_Click",
+                    props: { slug: note.slug },
+                  }}
+                />
               </li>
             );
           })
@@ -38,9 +45,7 @@ const { consoleNotes, apiSdkNotes, activeSlug } = Astro.props;
       </ul>
     </li>
     <li class="mb-4">
-      <h4 class="p-2 text-lg font-bold first:mt-0">
-        API / SDK
-      </h4>
+      <h4 class="p-2 text-lg font-bold first:mt-0">API / SDK</h4>
       <ul class="flex flex-col gap-1">
         {
           apiSdkNotes.map((note) => {
@@ -52,7 +57,15 @@ const { consoleNotes, apiSdkNotes, activeSlug } = Astro.props;
             const href = `/release-notes/${note.slug}`;
             return (
               <li>
-                <JustLink title={title} href={href} isActive={isActive} />
+                <JustLink
+                  title={title}
+                  href={href}
+                  isActive={isActive}
+                  event={{
+                    name: "Developers_Releasenote_Menu_Click",
+                    props: { slug: note.slug },
+                  }}
+                />
               </li>
             );
           })

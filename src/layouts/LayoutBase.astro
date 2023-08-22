@@ -42,25 +42,21 @@ const { lang, title } = Astro.props;
         }, ms);
       });
       // https://mixpanel.com/blog/link-tracking-in-mixpanel/
-      window.addEventListener(
-        "click",
-        (e) => {
-          const a = e.target.closest("a");
-          if (!a) return;
-          const targetIsSelf = !a.target || a.target === "_self";
-          if (targetIsSelf) e.preventDefault();
-          trackEvent(
-            "Developers_Link_Click",
-            {
-              label: a.textContent.trim(),
-              from: location.pathname,
-              to: a.href,
-            },
-            () => targetIsSelf && (location.href = a.href)
-          );
-        },
-        true
-      );
+      window.addEventListener("click", (e) => {
+        const a = e.target.closest("a");
+        if (!a) return;
+        const targetIsSelf = !a.target || a.target === "_self";
+        if (targetIsSelf) e.preventDefault();
+        trackEvent(
+          "Developers_Link_Click",
+          {
+            label: a.textContent.trim(),
+            from: location.pathname,
+            to: a.href,
+          },
+          () => targetIsSelf && (location.href = a.href)
+        );
+      });
     </script>
     <style is:global>
       :root {
