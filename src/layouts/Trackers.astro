@@ -35,6 +35,11 @@ const isProd = import.meta.env.VERCEL_ENV === "production";
 <script type="text/javascript">
   function trackEvent(event, props, callback) {
     gtag("event", event, props);
-    mixpanel.track(event, props, callback);
+    if (mixpanel.get_config) {
+      mixpanel.track(event, props, callback);
+    } else {
+      // blocked by adblocker
+      callback?.();
+    }
   }
 </script>
