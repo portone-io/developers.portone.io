@@ -18,25 +18,25 @@ import screenshot1 from "./_assets/widget_example.png";
 import screenshot2 from "./_assets/loadui.png";
 import screenshot3 from "./_assets/updateloadui.png";
 
-브랜드페이의 경우 가맹점의 주문 페이지에 바로 브랜드페이 결제수단 선택 UI를 렌더링 할 수 있는 위젯 기능을 제공합니다.
-위젯 기능을 연동하기 위해서는 일반적으로 포트원 SDK에서 사용하던 함수가 아닌 `IMP.loadUI` 함수와 `IMP.updateLoadUIRequest` 함수를 이용해야 합니다.
+브랜드페이의 경우 가맹점의 주문 페이지에 바로 브랜드페이를 통한 결제가 가능하도록 브랜드페이 UI를 렌더링 할 수 있는 위젯 기능을 제공합니다.
+위젯 기능을 연동하기 위해서는 일반적으로 포트원 SDK에서 사용하던 함수가 아닌 `IMP.loadUI` 함수와 `IMP.updateLoadUIRequest` 함수를 사용해야 합니다.
 
 <Figure src={screenshot1} />
 
 ## 브랜드페이 위젯 렌더링
 
 브랜드페이 위젯은 가맹점 체크아웃 페이지에 결제수단 선택 UI를 렌더링 한 후, 결제버튼 클릭시 브랜드페이로 결제를 하는 방식입니다.
-따라서 다른 PG사와 결제 플로우가 상이하기 때문에 가맹점은 **체크아웃 페이지가 렌더링 되는 시점에** `IMP.request_pay` 함수 대신 **`IMP.loadUI`라는 별도의 함수를 호출해 위젯을 렌더링 해야**합니다.
+따라서 다른 PG사와 결제 플로우가 상이하기 때문에 가맹점은 **체크아웃 페이지가 렌더링 되는 시점에 `IMP.request_pay` 함수 대신 `IMP.loadUI`라는 별도의 함수를 호출해 위젯을 렌더링 해야**합니다.
 
 <Figure src={screenshot2} />
 
 ```html
 <!--
   1. 가맹점 체크아웃 페이지가 렌더링됩니다.
-  브랜드페이 위젯을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣어줍니다.
+  브랜드페이 위젯을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣습니다.
   data-portone-ui-type는 브랜드페이 위젯용임을 나타내는 toss-brandpay-widget로 설정합니다.
-  결제하기 버튼 역할을 하는 element의 경우 id를 "portone-toss-brandpay-widget-button"로 설정해주어야 합니다.
-  포트원 SDK는 해당 id를 가지는 element를 찾아 결제하기 event를 등록해줍니다.
+  결제하기 버튼 역할을 하는 element의 경우 id를 "portone-toss-brandpay-widget-button"로 설정해야 합니다.
+  포트원 SDK는 해당 id를 가지는 element를 찾아 결제하기 event를 등록합니다.
 -->
 <div class="portone-ui-container" data-portone-ui-type="toss-brandpay-widget">
   <!-- 3. 여기에 결제수단 위젯이 생성됩니다. -->
@@ -49,7 +49,7 @@ import screenshot3 from "./_assets/updateloadui.png";
 <script>
   window.onload = function () {
     // 2. 가맹점 체크아웃 페이지가 렌더링 되면
-    // 2-1. "가맹점 식별코드"를 전달 해 포트원 객체를 초기화합니다.
+    // 2-1. "가맹점 식별코드"를 전달해 포트원 객체를 초기화합니다.
     IMP.init(가맹점_식별코드);
 
     // 2-2. "결제 요청 데이터"와 결제 프로세스가 종료되면 호출 될 "콜백 함수"를 전달하여 브랜드페이 위젯 렌더링을 시도합니다.
@@ -69,15 +69,13 @@ import screenshot3 from "./_assets/updateloadui.png";
 ### 위젯이 렌더링 되지 않을 때
 
 <mark style="color:red;">`portone-ui-container`</mark> 라는 class 이름을 갖는 div
-element를 찾지 못할 경우 "portone-ui-container를 찾을 수 없습니다." 라는 에러가 발생합니다.
+element를 찾지 못할 경우 **portone-ui-container를 찾을 수 없습니다.** 라는 에러가 발생합니다.
 
 <mark style="color:red;">`portone-ui-container`</mark> element가 2개 이상인데, `data-portone-ui-type`
-attribute가 `toss-brandpay-widget`인 element를 찾지 못할 경우, "data-portone-ui-type에
-올바른 UI 타입을 입력해주세요."라는 에러가 발생합니다.
+attribute가 `toss-brandpay-widget`인 element를 찾지 못할 경우, **data-portone-ui-type에 올바른 UI 타입을 입력해주세요.** 라는 에러가 발생합니다.
 
 <mark style="color:red;">`portone-ui-container`</mark> element가 2개 이상이고, `data-portone-ui-type`
-attribute가 `oss-brandpay-widget`인 elemente도 2개 이상인 경우, “동일한 data-portone-ui-type을
-갖는 DOM element가 2개 이상 존재합니다."라는 에러가 발생합니다.
+attribute가 `oss-brandpay-widget`인 elemente도 2개 이상인 경우, **동일한 data-portone-ui-type을 갖는 DOM element가 2개 이상 존재합니다.** 라는 에러가 발생합니다.
 
 </Hint>
 
@@ -102,10 +100,10 @@ attribute가 `oss-brandpay-widget`인 elemente도 2개 이상인 경우, “동�
 
 <!-- 
   1. 가맹점 체크아웃 페이지가 렌더링됩니다.
-  브랜드페이 위젯을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣어줍니다.
+  브랜드페이 위젯을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣습니다.
   data-portone-ui-type는 브랜드페이 위젯용임을 나타내는 toss-brandpay-widget로 설정합니다.
-  결제하기 버튼 역할을 하는 element의 경우 id를 "portone-toss-brandpay-widget-button"로 설정해주어야 합니다.
-  포트원 SDK는 해당 id를 가지는 element를 찾아 결제하기 event를 등록해줍니다.
+  결제하기 버튼 역할을 하는 element의 경우 id를 "portone-toss-brandpay-widget-button"로 설정해야 합니다.
+  포트원 SDK는 해당 id를 가지는 element를 찾아 결제하기 event를 등록합니다.
 -->
 <div class="portone-ui-container" data-portone-ui-type="toss-brandpay-widget">
   <!-- 3. 여기에 결제수단 위젯이 생성됩니다. -->
