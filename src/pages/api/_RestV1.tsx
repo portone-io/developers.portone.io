@@ -37,7 +37,7 @@ export default function RestV1() {
       {schema.tags.flatMap((tag) => {
         const endpoints = filterEndpointsByTag(tag.name, everyEndpoints);
         return [
-          <hr class="my-8" />,
+          <hr class="my-16" />,
           <Tag
             schema={schema}
             title={tag.name}
@@ -46,7 +46,7 @@ export default function RestV1() {
           />,
         ];
       })}
-      <hr class="my-8" />
+      <hr class="my-16" />
       <TypeDefinitions
         schema={schema}
         typenames={Object.keys(schema.definitions).map(

@@ -1,3 +1,4 @@
+import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 
 export interface RestApiProps {
@@ -29,15 +30,15 @@ export interface TagProps {
   endpoints: Endpoint[];
 }
 export function Tag({ schema, title, summary, endpoints }: TagProps) {
+  // const expandSignal = useSignal(false);
+  const expandSignal = useSignal(true);
   return (
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col">
+      <div>
+        <prose.h2>{title}</prose.h2>
+      </div>
       <TwoColumnLayout
-        left={
-          <>
-            <prose.h2>{title}</prose.h2>
-            <div class="mt-4">{summary}</div>
-          </>
-        }
+        left={<div class="mt-4">{summary}</div>}
         right={
           <ul class="border-slate-3 bg-slate-1 rounded-lg border px-2 py-4">
             {endpoints.map(({ method, path }, i) => (
@@ -49,7 +50,11 @@ export function Tag({ schema, title, summary, endpoints }: TagProps) {
           </ul>
         }
       />
-      <Expand renderWhenHidden>
+      <Expand
+        className="mt-10"
+        expand={expandSignal.value}
+        onExpand={(v) => (expandSignal.value = v)}
+      >
         {endpoints.map((endpoint) => (
           <EndpointDoc schema={schema} endpoint={endpoint} />
         ))}
@@ -63,17 +68,16 @@ export interface TypeDefinitionsProps {
   typenames: string[];
 }
 export function TypeDefinitions({ typenames }: TypeDefinitionsProps) {
+  const expandSignal = useSignal(false);
   return (
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col">
+      <prose.h2>타입 정의</prose.h2>
       <TwoColumnLayout
         left={
-          <>
-            <prose.h2>타입 정의</prose.h2>
-            <div class="mt-4">
-              API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수
-              있습니다
-            </div>
-          </>
+          <div class="mt-4">
+            API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수
+            있습니다
+          </div>
         }
         right={
           <div class="border-slate-3 bg-slate-1 grid-flow-rows grid gap-x-4 gap-y-1 rounded-lg border px-6 py-4 text-xs md:grid-cols-2">
@@ -83,7 +87,13 @@ export function TypeDefinitions({ typenames }: TypeDefinitionsProps) {
           </div>
         }
       />
-      <Expand renderWhenHidden></Expand>
+      <Expand
+        className="mt-10"
+        expand={expandSignal.value}
+        onExpand={(v) => (expandSignal.value = v)}
+      >
+        TODO
+      </Expand>
     </div>
   );
 }
@@ -92,8 +102,31 @@ export interface EndpointDocProps {
   schema: any;
   endpoint: Endpoint;
 }
-export function EndpointDoc(_props: EndpointDocProps) {
-  return null;
+export function EndpointDoc({ schema, endpoint }: EndpointDocProps) {
+  const operation = schema.paths[endpoint.path][endpoint.method.toLowerCase()];
+  console.log(operation);
+  return (
+    <div class="flex flex-col">
+      <prose.h3>
+        <div class="text-slate-5 flex gap-1 rounded font-mono text-sm">
+          <span class="font-bold">{endpoint.method}</span>
+          <span>{endpoint.path}</span>
+        </div>
+        <div>{operation.summary}</div>
+      </prose.h3>
+      <TwoColumnLayout
+        left={
+          <div
+            class="text-sm"
+            dangerouslySetInnerHTML={{
+              __html: operation.description,
+            }}
+          />
+        }
+        right={null}
+      />
+    </div>
+  );
 }
 
 export interface TwoColumnLayoutProps {
@@ -116,24 +149,26 @@ export function TwoColumnLayout({
 }
 
 export interface ExpandProps {
+  className?: string;
   children?: any;
   expand?: boolean;
   onExpand?: (expand: boolean) => void;
-  renderWhenHidden?: boolean;
 }
 export function Expand({
+  className = "",
   children,
   expand,
   onExpand,
-  renderWhenHidden,
 }: ExpandProps) {
   return (
-    <div class="flex flex-col gap-6 place-self-center">
-      {(expand || renderWhenHidden) && (
-        <div class={`flex flex-col ${expand ? "" : "hidden"}`}>{children}</div>
+    <div class={`flex flex-col gap-10 ${className}`}>
+      {expand && (
+        <div class={`flex flex-col gap-10 ${expand ? "" : "hidden"}`}>
+          {children}
+        </div>
       )}
       <button
-        class="bg-slate-1 border-slate-3 inline-flex gap-2 rounded-full border py-2 pl-6 pr-4"
+        class="bg-slate-1 border-slate-3 inline-flex gap-2 place-self-center rounded-full border py-2 pl-6 pr-4"
         onClick={() => onExpand?.(!expand)}
       >
         {expand ? (

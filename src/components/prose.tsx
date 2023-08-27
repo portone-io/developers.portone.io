@@ -1,6 +1,9 @@
 export function h1({ children, ...props }: any) {
   return (
-    <h1 {...props} class="mt-5 text-3xl font-bold first:mt-0 md:text-4xl">
+    <h1
+      {...props}
+      class="mt-5 text-3xl font-bold first:mt-0 last:mb-0 md:text-4xl"
+    >
       {children}
     </h1>
   );
@@ -8,7 +11,10 @@ export function h1({ children, ...props }: any) {
 
 export function h2({ children, ...props }: any) {
   return (
-    <h2 {...props} class="mb-2 mt-5 text-xl font-bold first:mt-0 md:text-2xl">
+    <h2
+      {...props}
+      class="mb-2 mt-5 text-xl font-bold first:mt-0 last:mb-0 md:text-2xl"
+    >
       {children}
     </h2>
   );
@@ -16,7 +22,7 @@ export function h2({ children, ...props }: any) {
 
 export function h3({ children, ...props }: any) {
   return (
-    <h3 {...props} class="mb-2 mt-5 font-bold first:mt-0 md:text-xl">
+    <h3 {...props} class="mb-2 mt-5 font-bold first:mt-0 last:mb-0 md:text-xl">
       {children}
     </h3>
   );
@@ -24,7 +30,7 @@ export function h3({ children, ...props }: any) {
 
 export function h4({ children, ...props }: any) {
   return (
-    <h4 {...props} class="mb-2 mt-5 font-bold first:mt-0">
+    <h4 {...props} class="mb-2 mt-5 font-bold first:mt-0 last:mb-0">
       {children}
     </h4>
   );
