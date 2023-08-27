@@ -14,7 +14,7 @@ const everyEndpoints = Object.entries(schema.paths).flatMap(
       ([method, operation]) =>
         [
           {
-            method: method.toUpperCase(),
+            method,
             path,
             title: operation.summary,
           } as Endpoint,

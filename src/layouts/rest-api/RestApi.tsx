@@ -41,12 +41,12 @@ export function Tag({ schema, title, summary, endpoints }: TagProps) {
       <TwoColumnLayout
         left={<div class="mt-4">{summary}</div>}
         right={
-          <ul class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border px-2 py-4">
+          <ul class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border p-4">
             {endpoints.map(({ method, path, title }, i) => (
               <li key={i} class="flex flex-col text-sm leading-tight">
-                <div class="text-slate-6 ml-4 font-bold">{title}</div>
-                <div class="text-slate-4 flex gap-2 font-mono">
-                  <span class="w-16 text-right font-bold">{method}</span>
+                <div class="text-slate-6 font-bold">{title}</div>
+                <div class="text-slate-4 ml-2 flex gap-2 font-mono">
+                  <span class="font-bold">{method}</span>
                   <span>{path}</span>
                 </div>
               </li>
@@ -107,25 +107,46 @@ export interface EndpointDocProps {
   endpoint: Endpoint;
 }
 export function EndpointDoc({ schema, endpoint }: EndpointDocProps) {
-  const operation = schema.paths[endpoint.path][endpoint.method.toLowerCase()];
+  const operation = schema.paths[endpoint.path][endpoint.method];
   console.log(operation);
   return (
     <div class="flex flex-col">
       <prose.h3>
         <div class="text-slate-5 flex items-end gap-1 rounded font-mono text-sm">
-          <span class="text-base font-bold">{endpoint.method}</span>
+          <span class="text-base font-bold uppercase">{endpoint.method}</span>
           <span>{endpoint.path}</span>
         </div>
         <div>{endpoint.title}</div>
       </prose.h3>
       <TwoColumnLayout
         left={
-          <article
-            class="bg-slate-1 rounded p-2 text-sm"
-            dangerouslySetInnerHTML={{
-              __html: operation.description,
-            }}
-          />
+          <>
+            <article
+              class="bg-slate-1 rounded p-2 text-sm"
+              dangerouslySetInnerHTML={{
+                __html: operation.description,
+              }}
+            />
+            <TwoColumnLayout
+              className="mt-2"
+              left={
+                <>
+                  <h4 class="text-xs font-bold uppercase">Path</h4>
+                  <h4 class="text-xs font-bold uppercase">Query</h4>
+                  <h4 class="text-xs font-bold uppercase">Body</h4>
+                </>
+              }
+              right={
+                <>
+                  <h4 class="text-xs font-bold uppercase">200</h4>
+                  <h4 class="text-xs font-bold uppercase">400</h4>
+                  <h4 class="text-xs font-bold uppercase">500</h4>
+                </>
+              }
+              bp="md"
+              gap={2}
+            />
+          </>
         }
         right={null}
       />
@@ -134,18 +155,24 @@ export function EndpointDoc({ schema, endpoint }: EndpointDocProps) {
 }
 
 export interface TwoColumnLayoutProps {
+  className?: string;
   left: any;
   right: any;
   stickyRight?: boolean;
+  bp?: string;
+  gap?: number;
 }
 export function TwoColumnLayout({
+  className = "",
   left,
   right,
   stickyRight,
+  bp = "lg",
+  gap = 4,
 }: TwoColumnLayoutProps) {
-  const rightClass = stickyRight ? "lg:sticky top-20 h-max" : "";
+  const rightClass = stickyRight ? `${bp}:sticky top-20 h-max` : "";
   return (
-    <div class="relative grid gap-8 lg:grid-cols-2 lg:gap-4">
+    <div class={`relative grid gap-${gap} ${bp}:grid-cols-2 ${className}`}>
       <div>{left}</div>
       <div class={rightClass}>{right}</div>
     </div>
