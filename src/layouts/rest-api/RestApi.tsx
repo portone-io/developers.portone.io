@@ -21,6 +21,7 @@ export default function RestApi({ title, children }: RestApiProps) {
 export interface Endpoint {
   method: string; // GET, POST ...
   path: string;
+  title: string;
 }
 export interface TagProps {
   schema: any;
@@ -40,11 +41,14 @@ export function Tag({ schema, title, summary, endpoints }: TagProps) {
       <TwoColumnLayout
         left={<div class="mt-4">{summary}</div>}
         right={
-          <ul class="border-slate-3 bg-slate-1 rounded-lg border px-2 py-4">
-            {endpoints.map(({ method, path }, i) => (
-              <li key={i} class="flex gap-2 font-mono text-sm leading-relaxed">
-                <span class="w-16 text-right font-bold">{method}</span>
-                <span>{path}</span>
+          <ul class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border px-2 py-4">
+            {endpoints.map(({ method, path, title }, i) => (
+              <li key={i} class="flex flex-col text-sm leading-tight">
+                <div class="text-slate-6 ml-4 font-bold">{title}</div>
+                <div class="text-slate-4 flex gap-2 font-mono">
+                  <span class="w-16 text-right font-bold">{method}</span>
+                  <span>{path}</span>
+                </div>
               </li>
             ))}
           </ul>
@@ -108,16 +112,16 @@ export function EndpointDoc({ schema, endpoint }: EndpointDocProps) {
   return (
     <div class="flex flex-col">
       <prose.h3>
-        <div class="text-slate-5 flex gap-1 rounded font-mono text-sm">
-          <span class="font-bold">{endpoint.method}</span>
+        <div class="text-slate-5 flex items-end gap-1 rounded font-mono text-sm">
+          <span class="text-base font-bold">{endpoint.method}</span>
           <span>{endpoint.path}</span>
         </div>
-        <div>{operation.summary}</div>
+        <div>{endpoint.title}</div>
       </prose.h3>
       <TwoColumnLayout
         left={
-          <div
-            class="text-sm"
+          <article
+            class="bg-slate-1 rounded p-2 text-sm"
             dangerouslySetInnerHTML={{
               __html: operation.description,
             }}
