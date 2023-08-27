@@ -1,7 +1,9 @@
 export interface TwoColumnLayoutProps {
   className?: string;
   left: any;
+  leftClassName?: string;
   right: any;
+  rightClassName?: string;
   stickyRight?: boolean;
   bp?: string;
   gap?: number;
@@ -9,16 +11,25 @@ export interface TwoColumnLayoutProps {
 export default function TwoColumnLayout({
   className = "",
   left,
+  leftClassName = "",
   right,
+  rightClassName = "",
   stickyRight,
   bp = "lg",
   gap = 4,
 }: TwoColumnLayoutProps) {
-  const rightClass = stickyRight ? `${bp}:sticky top-20 h-max` : "";
   return (
     <div class={`relative grid gap-${gap} ${bp}:grid-cols-2 ${className}`}>
-      <div>{left}</div>
-      <div class={rightClass}>{right}</div>
+      <div class={leftClassName}>{left}</div>
+      <div
+        class={
+          stickyRight
+            ? `${bp}:sticky top-20 h-max ${rightClassName}`
+            : rightClassName
+        }
+      >
+        {right}
+      </div>
     </div>
   );
 }

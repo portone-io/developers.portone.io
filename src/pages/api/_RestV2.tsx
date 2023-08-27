@@ -1,4 +1,4 @@
-import RestApi from "~/layouts/rest-api/RestApi";
+import RestApi from "~/layouts/rest-api";
 import schema from "../../schema/v2.openapi.json";
 
 export default function RestV2() {
