@@ -1,27 +1,23 @@
 import type { Endpoint } from "./endpoint";
+import { bakeProperties, type Property } from "./type-def";
 
 export interface Operation {
-  summary?: string;
-  description?: string;
-  parameters?: Parameter[];
+  summary?: string | undefined;
+  description?: string | undefined;
+  parameters?: Parameter[] | undefined;
   responses: { [statusCode: number]: Response };
-  tags?: string[];
+  tags?: string[] | undefined;
 }
 
-export interface Parameter {
-  name?: string;
-  in?: string; // formData, path, query
-  description?: string;
-  required?: boolean;
-  type?: string;
-  "x-portone-name"?: string;
-  "x-portone-summary"?: string;
-  "x-portone-description"?: string;
+export interface Parameter extends Property {
+  name: string;
+  in?: string | undefined; // formData, path, query
+  required?: boolean | undefined;
 }
 
 export interface Response {
-  description?: string;
-  schema?: any;
+  description?: string | undefined;
+  schema?: any | undefined;
 }
 
 export function getOperation(schema: any, endpoint: Endpoint): Operation {
@@ -52,11 +48,14 @@ export type ResponseParameters = [
   }
 ][];
 export function getResponseParameters(
+  schema: any,
   operation: Operation
 ): ResponseParameters {
   const result: ResponseParameters = [];
   for (const [statusCode, response] of Object.entries(operation.responses)) {
-    const parameters: Parameter[] = []; // TODO
+    const parameters: Parameter[] = response.schema
+      ? bakeProperties(schema, response.schema)
+      : [];
     result.push([statusCode, { response, parameters }]);
   }
   return result;

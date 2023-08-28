@@ -2,6 +2,7 @@ import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import TwoColumnLayout from "./TwoColumnLayout";
 import Expand from "./Expand";
+import { getTypenameByRef } from "./schema-utils/type-def";
 
 export interface TypeDefinitionsProps {
   schema: any;
@@ -39,5 +40,5 @@ export default function TypeDefinitions({ schema }: TypeDefinitionsProps) {
 }
 
 function getTypenames(schema: any) {
-  return Object.keys(schema.definitions).map((path) => path.split("/").pop()!);
+  return Object.keys(schema.definitions).map(getTypenameByRef);
 }

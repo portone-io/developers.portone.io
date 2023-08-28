@@ -10,7 +10,7 @@ import {
   Operation,
   getResponseParameters,
 } from "./schema-utils/operation";
-import { useSignal } from "@preact/signals";
+import { PropertyDoc } from "./PropertyDoc";
 
 export interface EndpointDocProps {
   schema: any;
@@ -43,7 +43,7 @@ export default function EndpointDoc({ schema, endpoint }: EndpointDocProps) {
               leftClassName="flex flex-col gap-2"
               rightClassName="flex flex-col gap-2"
               left={<RequestDoc operation={operation} />}
-              right={<ResponseDoc operation={operation} />}
+              right={<ResponseDoc schema={schema} operation={operation} />}
               bp="md"
               gap={2}
             />
@@ -78,10 +78,11 @@ function RequestDoc({ operation }: RequestDocProps) {
 }
 
 interface ResponseDocProps {
+  schema: any;
   operation: Operation;
 }
-function ResponseDoc({ operation }: ResponseDocProps) {
-  const responseParameters = getResponseParameters(operation);
+function ResponseDoc({ schema, operation }: ResponseDocProps) {
+  const responseParameters = getResponseParameters(schema, operation);
   return (
     <>
       {responseParameters.map(([statusCode, { response, parameters }]) => (
@@ -117,52 +118,17 @@ function Parameters({ title, description, parameters }: ParametersProps) {
       )}
       <div class="bg-slate-1 flex flex-col gap-4 rounded p-2">
         {parameters.length ? (
-          parameters.map((parameter) => <Parameter parameter={parameter} />)
+          parameters.map((parameter) => (
+            <PropertyDoc
+              name={parameter.name}
+              required={parameter.required}
+              property={parameter}
+            />
+          ))
         ) : (
           <div class="text-slate-5 text-xs">(내용 없음)</div>
         )}
       </div>
-    </div>
-  );
-}
-
-interface ParameterProps {
-  parameter: Parameter;
-}
-function Parameter({ parameter }: ParameterProps) {
-  const showMoreSignal = useSignal(false);
-  const { name, required, type } = parameter;
-  const label = parameter["x-portone-name"] || "";
-  const summary = parameter["x-portone-summary"] || parameter.summary || "";
-  const description =
-    parameter["x-portone-description"] || parameter.description || "";
-  const showMore = showMoreSignal.value;
-  const __html = showMore ? description : summary;
-  return (
-    <div class="flex flex-col gap-2">
-      <div>
-        <div class="text-slate-5 flex gap-1 text-xs">
-          {label && <span>{label}</span>}
-          <span>{required ? "(필수)" : "(선택)"}</span>
-        </div>
-        <div class="font-mono font-bold leading-none">
-          <span>{name}</span>
-          <span class="text-slate-5">: {type}</span>
-        </div>
-      </div>
-      {__html && (
-        <div class="text-slate-5 flex flex-col gap-1 text-sm">
-          <div dangerouslySetInnerHTML={{ __html }} />
-          {summary && description && (
-            <button
-              class="bg-slate-2 self-end px-1 text-xs"
-              onClick={() => (showMoreSignal.value = !showMore)}
-            >
-              {showMore ? "간단히" : "자세히"}
-            </button>
-          )}
-        </div>
-      )}
     </div>
   );
 }
