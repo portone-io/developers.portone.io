@@ -4,7 +4,7 @@ export interface Operation {
   summary?: string;
   description?: string;
   parameters?: Parameter[];
-  responses: { [statusCode: number]: any };
+  responses: { [statusCode: number]: Response };
   tags?: string[];
 }
 
@@ -17,6 +17,11 @@ export interface Parameter {
   "x-portone-name"?: string;
   "x-portone-summary"?: string;
   "x-portone-description"?: string;
+}
+
+export interface Response {
+  description?: string;
+  schema?: any;
 }
 
 export function getOperation(schema: any, endpoint: Endpoint): Operation {
@@ -39,23 +44,20 @@ export function getBodyParameters(operation: Operation): Parameter[] {
   // TODO: openapi 3.0
 }
 
-export interface ResponseParameters {
-  [statusCode: number]: {
-    response: any;
+export type ResponseParameters = [
+  string /* statusCode */,
+  {
+    response: Response;
     parameters: Parameter[];
-  };
-}
+  }
+][];
 export function getResponseParameters(
   operation: Operation
 ): ResponseParameters {
-  const result: ResponseParameters = {};
+  const result: ResponseParameters = [];
   for (const [statusCode, response] of Object.entries(operation.responses)) {
-    result[statusCode as any] = {
-      response,
-      parameters: [
-        // TODO
-      ],
-    };
+    const parameters: Parameter[] = []; // TODO
+    result.push([statusCode, { response, parameters }]);
   }
   return result;
 }

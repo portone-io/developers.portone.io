@@ -61,19 +61,19 @@ function RequestDoc({ operation }: RequestDocProps) {
   const pathParameters = getPathParameters(operation);
   const queryParameters = getQueryParameters(operation);
   const bodyParameters = getBodyParameters(operation);
-  return (
-    <>
-      {pathParameters.length ? (
-        <Parameters title="Path" parameters={pathParameters} />
-      ) : null}
-      {queryParameters.length ? (
-        <Parameters title="Query" parameters={queryParameters} />
-      ) : null}
-      {bodyParameters.length ? (
-        <Parameters title="Body" parameters={bodyParameters} />
-      ) : null}
-    </>
-  );
+  const showPath = pathParameters.length > 0;
+  const showQuery = queryParameters.length > 0;
+  const showBody = bodyParameters.length > 0;
+  if (showPath || showQuery || showBody) {
+    return (
+      <>
+        {showPath && <Parameters title="Path" parameters={pathParameters} />}
+        {showQuery && <Parameters title="Query" parameters={queryParameters} />}
+        {showBody && <Parameters title="Body" parameters={bodyParameters} />}
+      </>
+    );
+  }
+  return <div class="text-slate-5 text-xs font-bold">요청 인자 없음</div>;
 }
 
 interface ResponseDocProps {
@@ -83,27 +83,32 @@ function ResponseDoc({ operation }: ResponseDocProps) {
   const responseParameters = getResponseParameters(operation);
   return (
     <>
-      {Object.entries(responseParameters).map(
-        ([statusCode, { parameters }]) => (
-          <Parameters
-            key={statusCode}
-            title={statusCode}
-            parameters={parameters}
-          />
-        )
-      )}
+      {responseParameters.map(([statusCode, { response, parameters }]) => (
+        <Parameters
+          key={statusCode}
+          title={statusCode}
+          parameters={parameters}
+          description={response.description}
+        />
+      ))}
     </>
   );
 }
 
 interface ParametersProps {
   title?: string;
+  description?: string | undefined;
   parameters: Parameter[];
 }
-function Parameters({ title, parameters }: ParametersProps) {
+function Parameters({ title, description, parameters }: ParametersProps) {
   return (
     <div>
-      {title && <h4 class="text-xs font-bold uppercase">{title}</h4>}
+      {title && (
+        <div class="mb-1 inline-flex gap-2 text-xs">
+          <h4 class="font-bold uppercase">{title}</h4>
+          {description && <div class="text-slate-5">{description}</div>}
+        </div>
+      )}
       <div class="bg-slate-1 rounded p-2">
         {parameters.map((parameter) => {
           const { name, required, type } = parameter;

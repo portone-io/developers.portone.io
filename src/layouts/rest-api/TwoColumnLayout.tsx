@@ -33,3 +33,6 @@ export default function TwoColumnLayout({
     </div>
   );
 }
+
+// Ensure tailwind compilation
+("gap-2 gap-4 md:grid-cols-2 lg:grid-cols-2");
