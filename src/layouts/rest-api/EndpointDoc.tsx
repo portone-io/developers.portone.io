@@ -10,6 +10,7 @@ import {
   Operation,
   getResponseParameters,
 } from "./schema-utils/operation";
+import { useSignal } from "@preact/signals";
 
 export interface EndpointDocProps {
   schema: any;
@@ -106,20 +107,62 @@ function Parameters({ title, description, parameters }: ParametersProps) {
       {title && (
         <div class="mb-1 inline-flex gap-2 text-xs">
           <h4 class="font-bold uppercase">{title}</h4>
-          {description && <div class="text-slate-5">{description}</div>}
+          {description && (
+            <div
+              class="text-slate-5"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
+          )}
         </div>
       )}
-      <div class="bg-slate-1 rounded p-2">
-        {parameters.map((parameter) => {
-          const { name, required, type } = parameter;
-          return (
-            <div class="font-mono">
-              {name}
-              {!required && "?"}: {type}
-            </div>
-          );
-        })}
+      <div class="bg-slate-1 flex flex-col gap-4 rounded p-2">
+        {parameters.length ? (
+          parameters.map((parameter) => <Parameter parameter={parameter} />)
+        ) : (
+          <div class="text-slate-5 text-xs">(내용 없음)</div>
+        )}
       </div>
+    </div>
+  );
+}
+
+interface ParameterProps {
+  parameter: Parameter;
+}
+function Parameter({ parameter }: ParameterProps) {
+  const showMoreSignal = useSignal(false);
+  const { name, required, type } = parameter;
+  const label = parameter["x-portone-name"] || "";
+  const summary = parameter["x-portone-summary"] || parameter.summary || "";
+  const description =
+    parameter["x-portone-description"] || parameter.description || "";
+  const showMore = showMoreSignal.value;
+  const __html = showMore ? description : summary;
+  return (
+    <div class="flex flex-col gap-2">
+      <div>
+        <div class="text-slate-5 flex gap-1 text-xs">
+          {label && <span>{label}</span>}
+          <span>{required ? "(필수)" : "(선택)"}</span>
+        </div>
+        <div class="font-mono font-bold leading-none">
+          <span>{name}</span>
+          <span class="text-slate-5">: {type}</span>
+        </div>
+      </div>
+      {__html && (
+        <div class="text-slate-5 flex flex-col gap-1 text-sm">
+          <div dangerouslySetInnerHTML={{ __html }} />
+          {summary && description && (
+            <button
+              class="bg-slate-2 self-end px-1 text-xs"
+              onClick={() => (showMoreSignal.value = !showMore)}
+            >
+              {showMore ? "간단히" : "자세히"}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

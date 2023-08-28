@@ -57,7 +57,7 @@ export function Tag({ schema, title, summary, endpoints }: TagProps) {
               <li key={i} class="flex flex-col text-sm leading-tight">
                 <div class="text-slate-6 font-bold">{title}</div>
                 <div class="text-slate-4 ml-2 flex gap-2 font-mono">
-                  <span class="font-bold">{method}</span>
+                  <span class="font-bold uppercase">{method}</span>
                   <span>{path}</span>
                 </div>
               </li>
