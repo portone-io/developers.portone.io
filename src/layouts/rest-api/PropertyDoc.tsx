@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals";
-import type { Property } from "./schema-utils/type-def";
+import { repr, type Property } from "./schema-utils/type-def";
 
 export interface PropertyDocProps {
   name: string;
@@ -8,7 +8,6 @@ export interface PropertyDocProps {
 }
 export function PropertyDoc({ name, required, property }: PropertyDocProps) {
   const showMoreSignal = useSignal(false);
-  const { type } = property;
   const label = property["x-portone-name"] || "";
   const summary = property["x-portone-summary"] || property.summary || "";
   const description =
@@ -24,7 +23,7 @@ export function PropertyDoc({ name, required, property }: PropertyDocProps) {
         </div>
         <div class="font-mono font-bold leading-none">
           <span>{name}</span>
-          <span class="text-slate-5">: {type}</span>
+          <span class="text-slate-5">: {repr(property)}</span>
         </div>
       </div>
       {__html && (

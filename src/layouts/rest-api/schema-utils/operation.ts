@@ -1,9 +1,12 @@
 import type { Endpoint } from "./endpoint";
-import { bakeProperties, type Property } from "./type-def";
+import { bakeProperties, type TypeDef, type Property } from "./type-def";
 
 export interface Operation {
   summary?: string | undefined;
   description?: string | undefined;
+  requestBody?:
+    | { content: { "application/json": { schema: TypeDef } } }
+    | undefined;
   parameters?: Parameter[] | undefined;
   responses: { [statusCode: number]: Response };
   tags?: string[] | undefined;
@@ -13,11 +16,13 @@ export interface Parameter extends Property {
   name: string;
   in?: string | undefined; // formData, path, query
   required?: boolean | undefined;
+  schema?: TypeDef | undefined;
 }
 
 export interface Response {
   description?: string | undefined;
-  schema?: any | undefined;
+  schema?: TypeDef | undefined;
+  content?: { "application/json": { schema: TypeDef } };
 }
 
 export function getOperation(schema: any, endpoint: Endpoint): Operation {
