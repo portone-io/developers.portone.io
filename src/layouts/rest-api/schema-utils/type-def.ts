@@ -32,7 +32,7 @@ export interface Property {
 
 export interface BakedProperty extends Property {
   name: string;
-  required: boolean;
+  required?: boolean | undefined;
 }
 
 export function bakeProperties(schema: any, typeDef: TypeDef): BakedProperty[] {

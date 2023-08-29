@@ -10,7 +10,7 @@ import {
   Operation,
   getResponseParameters,
 } from "./schema-utils/operation";
-import { PropertyDoc } from "./PropertyDoc";
+import { PropertiesDoc } from "./type-def";
 
 export interface EndpointDocProps {
   schema: any;
@@ -116,19 +116,7 @@ function Parameters({ title, description, parameters }: ParametersProps) {
           )}
         </div>
       )}
-      <div class="bg-slate-1 flex flex-col gap-4 rounded p-2">
-        {parameters.length ? (
-          parameters.map((parameter) => (
-            <PropertyDoc
-              name={parameter.name}
-              required={parameter.required}
-              property={parameter}
-            />
-          ))
-        ) : (
-          <div class="text-slate-5 text-xs">(내용 없음)</div>
-        )}
-      </div>
+      <PropertiesDoc properties={parameters} />
     </div>
   );
 }

@@ -42,8 +42,7 @@ export interface TagProps {
   endpoints: Endpoint[];
 }
 export function Tag({ schema, title, summary, endpoints }: TagProps) {
-  // const expandSignal = useSignal(false);
-  const expandSignal = useSignal(true);
+  const expandSignal = useSignal(false);
   return (
     <div class="flex flex-col">
       <div>
