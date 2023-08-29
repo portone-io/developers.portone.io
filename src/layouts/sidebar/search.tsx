@@ -2,6 +2,8 @@ import * as React from "react";
 import { computed, signal } from "@preact/signals";
 import Fuse from "fuse.js";
 import { lazy } from "~/misc/async";
+import { systemVersionSignal } from "~/state/sidebar";
+import type { NavMenuSystemVersions } from "~/state/server-only/nav";
 
 export interface SearchButtonProps {
   lang: string;
@@ -9,7 +11,7 @@ export interface SearchButtonProps {
 export function SearchButton({ lang }: SearchButtonProps) {
   return (
     <button
-      class="bg-slate-2 text-slate-4 m-2 flex flex-1 gap-2 rounded p-2"
+      class="bg-slate-2 text-slate-4 mx-2 flex flex-1 gap-2 rounded p-2"
       onClick={openSearchScreen}
     >
       <i class="i-ic-baseline-search text-2xl"></i>
@@ -37,9 +39,18 @@ export interface SearchIndexItem {
 export const searchIndexSignal = signal<SearchIndex | undefined>(undefined);
 export const fuseSignal = computed(() => {
   const searchIndex = searchIndexSignal.value;
+  const systemVersion = systemVersionSignal.value;
+  const navMenuSystemVersions = navMenuSystemVersionsSignal.value;
   if (!searchIndex) return;
-  return new Fuse(searchIndex, { keys: ["title", "description", "text"] });
+  const filteredIndex = searchIndex.filter((item) => {
+    const navMenuSystemVersion =
+      navMenuSystemVersions[item.slug.replace(/^docs/, "")];
+    if (!navMenuSystemVersion || navMenuSystemVersion === "all") return true;
+    return navMenuSystemVersion === systemVersion;
+  });
+  return new Fuse(filteredIndex, { keys: ["title", "description", "text"] });
 });
+export const navMenuSystemVersionsSignal = signal<NavMenuSystemVersions>({});
 export const searchResultSignal = computed(() => {
   const searchText = searchTextSignal.value;
   const fuse = fuseSignal.value;
@@ -57,8 +68,12 @@ export function closeSearchScreen() {
 
 export interface SearchScreenProps {
   lang: string;
+  navMenuSystemVersions: NavMenuSystemVersions;
 }
-export function SearchScreen({ lang }: SearchScreenProps) {
+export function SearchScreen({
+  lang,
+  navMenuSystemVersions,
+}: SearchScreenProps) {
   const searchScreenOpen = searchScreenOpenSignal.value;
   const searchText = searchTextSignal.value;
   const fuse = fuseSignal.value;
@@ -67,6 +82,9 @@ export function SearchScreen({ lang }: SearchScreenProps) {
   const className = `fixed left-0 top-0 z-10 h-full w-full transition bg-[rgba(0,0,0,0.6)] ${
     searchScreenOpen ? "backdrop-blur-sm" : "pointer-events-none opacity-0"
   }`;
+  React.useEffect(() => {
+    navMenuSystemVersionsSignal.value = navMenuSystemVersions;
+  }, [navMenuSystemVersions]);
   React.useEffect(() => {
     if (!searchScreenOpen) return;
     inputRef.current?.focus();

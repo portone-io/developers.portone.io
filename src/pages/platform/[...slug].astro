@@ -2,9 +2,11 @@
 import { getCollection } from "astro:content";
 
 import Logo from "~/layouts/gnb/Logo.astro";
-import MobileMenuButton from "~/layouts/gnb/MobileMenuButton";
 import * as prose from "~/components/prose";
+import Trackers from "~/layouts/Trackers.astro";
 import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
+import GnbLink from "~/layouts/platform/GnbLink";
+import ContactLink from "~/layouts/platform/ContactLink";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
@@ -33,8 +35,47 @@ const toc = headingsToToc("ko", mdx.headings);
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <title>{title}</title>
+    <Trackers />
   </head>
   <body>
+    <script type="text/javascript">
+      trackEvent("Developers_Page_View", {
+        title: document.title,
+        pathname: location.pathname,
+      });
+      [
+        { ms: 1000, time: "1s" },
+        { ms: 10000, time: "10s" },
+        { ms: 30000, time: "30s" },
+        { ms: 60000, time: "1m" },
+        { ms: 600000, time: "10m" },
+        { ms: 1800000, time: "30m" },
+      ].map(({ ms, time }) => {
+        setTimeout(() => {
+          trackEvent("Developers_Page_Stay", {
+            title: document.title,
+            pathname: location.pathname,
+            time,
+          });
+        }, ms);
+      });
+      // https://mixpanel.com/blog/link-tracking-in-mixpanel/
+      window.addEventListener("click", (e) => {
+        const a = e.target.closest("a");
+        if (!a) return;
+        const targetIsSelf = !a.target || a.target === "_self";
+        if (targetIsSelf) e.preventDefault();
+        trackEvent(
+          "Developers_Link_Click",
+          {
+            label: a.textContent.trim(),
+            from: location.pathname,
+            to: a.href,
+          },
+          () => targetIsSelf && (location.href = a.href)
+        );
+      });
+    </script>
     <style is:global>
       :root {
         word-break: keep-all;
@@ -166,34 +207,22 @@ const toc = headingsToToc("ko", mdx.headings);
               </div>
             </a>
             <div class="hidden h-full items-center gap-4 md:flex">
-              <a
-                href="/platform/guide"
-                class={`h-full flex items-center ${
-                  slug === "guide"
-                    ? "font-bold border-t-2 border-t-transparent border-b-2 border-b-orange-6"
-                    : ""
-                }`}
-              >
+              <GnbLink client:visible slug="guide" active={slug === "guide"}>
                 서비스 가이드
-              </a>
-              <a
-                href="/platform/api"
-                class={`h-full flex items-center ${
-                  slug === "api"
-                    ? "font-bold border-t-2 border-t-transparent border-b-2 border-b-orange-6"
-                    : ""
-                }`}
-              >
+              </GnbLink>
+              <GnbLink client:visible slug="api" active={slug === "api"}>
                 API 문서
-              </a>
+              </GnbLink>
+              <GnbLink
+                client:visible
+                slug="examples"
+                active={slug === "examples"}
+              >
+                사용예제
+              </GnbLink>
             </div>
           </div>
-          <div
-            class="color-white bg-orange-6 hidden h-full items-center gap-4 px-6 font-bold md:flex"
-          >
-            <a href="http://platform.contact.portone.io/">사전 신청하기</a>
-          </div>
-          <MobileMenuButton client:visible />
+          <ContactLink client:visible />
         </header>
       </div>
 

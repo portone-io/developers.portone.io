@@ -62,13 +62,18 @@ export interface JustLinkProps {
   title: string;
   href: string;
   isActive: boolean;
+  event?: {
+    name: string;
+    props: object;
+  };
 }
-export function JustLink({ title, href, isActive }: JustLinkProps) {
+export function JustLink({ title, href, isActive, event }: JustLinkProps) {
   return (
     <a
       href={href}
       class={getLinkStyle(isActive)}
       data-active={isActive && "active"}
+      onClick={() => event && trackEvent(event.name, event.props)}
     >
       <LinkTitle title={title} />
     </a>
