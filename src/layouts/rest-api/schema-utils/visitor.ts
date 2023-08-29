@@ -38,7 +38,8 @@ export const defaultVisitor = {
   visitResponse(_statusCode: string, response: Response) {
     if (response.schema) {
       this.visitResponseRef(response.schema.$ref || "");
-    } else if (response.content) {
+    } else if (response.content?.["application/json"]?.schema.$ref) {
+      // TODO: handle others (e.g. "text/csv")
       this.visitResponseRef(
         response.content["application/json"].schema.$ref || ""
       );
