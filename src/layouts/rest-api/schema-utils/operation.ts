@@ -37,31 +37,32 @@ export function getQueryParameters(operation: Operation): Parameter[] {
   return operation.parameters?.filter((p) => p.in === "query") || [];
 }
 
-export function getBodyParameters(operation: Operation): Parameter[] {
+export function getBodyParameters(
+  schema: any,
+  operation: Operation
+): Parameter[] {
+  const requestSchema =
+    operation.requestBody?.content["application/json"]?.schema;
+  if (requestSchema) return bakeProperties(schema, requestSchema);
   return (
     operation.parameters?.filter((p) => p.in !== "path" && p.in !== "query") ||
     []
   );
-  // TODO: openapi 3.0
 }
 
-export type ResponseParameters = [
+export type ResponseSchemata = [
   string /* statusCode */,
   {
     response: Response;
-    parameters: Parameter[];
+    schema?: TypeDef | undefined;
   }
 ][];
-export function getResponseParameters(
-  schema: any,
-  operation: Operation
-): ResponseParameters {
-  const result: ResponseParameters = [];
+export function getResponseSchemata(operation: Operation): ResponseSchemata {
+  const result: ResponseSchemata = [];
   for (const [statusCode, response] of Object.entries(operation.responses)) {
-    const parameters: Parameter[] = response.schema
-      ? bakeProperties(schema, response.schema)
-      : [];
-    result.push([statusCode, { response, parameters }]);
+    const schema =
+      response.content?.["application/json"]?.schema || response.schema;
+    result.push([statusCode, { response, schema }]);
   }
   return result;
 }

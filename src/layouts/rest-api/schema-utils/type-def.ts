@@ -1,3 +1,4 @@
+import type { Parameter } from "./operation";
 import { type Visitor, defaultVisitor } from "./visitor";
 
 export interface TypeDef {
@@ -87,8 +88,9 @@ export function getTypenameByRef($ref: string): string {
   return $ref.split("/").pop()!;
 }
 
-export function repr(def: string | TypeDef | Property): string {
+export function repr(def: string | TypeDef | Property | Parameter): string {
   if (typeof def === "string") return def;
+  if ("schema" in def) return repr(def.schema!);
   if (def.items) return `${repr(def.items)}[]`;
   if (def.$ref) return getTypenameByRef(def.$ref);
   return def.type || "";

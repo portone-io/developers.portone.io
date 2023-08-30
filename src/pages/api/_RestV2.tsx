@@ -10,9 +10,11 @@ export default function RestV2() {
   return (
     <RestApi title="PortOne REST API - V2">
       <Hr />
-      {endpoints.map((endpoint) => (
-        <EndpointDoc schema={schema} endpoint={endpoint} />
-      ))}
+      <div class="flex flex-col gap-10">
+        {endpoints.map((endpoint) => (
+          <EndpointDoc schema={schema} endpoint={endpoint} />
+        ))}
+      </div>
       <Hr />
       <TypeDefinitions schema={schema} />
     </RestApi>

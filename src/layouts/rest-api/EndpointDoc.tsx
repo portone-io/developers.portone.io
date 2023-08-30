@@ -8,9 +8,10 @@ import {
   getQueryParameters,
   getBodyParameters,
   Operation,
-  getResponseParameters,
+  getResponseSchemata,
 } from "./schema-utils/operation";
 import { PropertiesDoc } from "./type-def";
+import { bakeProperties } from "./schema-utils/type-def";
 
 export interface EndpointDocProps {
   schema: any;
@@ -42,7 +43,7 @@ export default function EndpointDoc({ schema, endpoint }: EndpointDocProps) {
               className="mt-2"
               leftClassName="flex flex-col gap-2"
               rightClassName="flex flex-col gap-2"
-              left={<RequestDoc operation={operation} />}
+              left={<RequestDoc schema={schema} operation={operation} />}
               right={<ResponseDoc schema={schema} operation={operation} />}
               bp="md"
               gap={2}
@@ -56,12 +57,13 @@ export default function EndpointDoc({ schema, endpoint }: EndpointDocProps) {
 }
 
 interface RequestDocProps {
+  schema: any;
   operation: Operation;
 }
-function RequestDoc({ operation }: RequestDocProps) {
+function RequestDoc({ schema, operation }: RequestDocProps) {
   const pathParameters = getPathParameters(operation);
   const queryParameters = getQueryParameters(operation);
-  const bodyParameters = getBodyParameters(operation);
+  const bodyParameters = getBodyParameters(schema, operation);
   const showPath = pathParameters.length > 0;
   const showQuery = queryParameters.length > 0;
   const showBody = bodyParameters.length > 0;
@@ -82,17 +84,24 @@ interface ResponseDocProps {
   operation: Operation;
 }
 function ResponseDoc({ schema, operation }: ResponseDocProps) {
-  const responseParameters = getResponseParameters(schema, operation);
+  const responseSchemata = getResponseSchemata(operation);
   return (
     <>
-      {responseParameters.map(([statusCode, { response, parameters }]) => (
-        <Parameters
-          key={statusCode}
-          title={statusCode}
-          parameters={parameters}
-          description={response.description}
-        />
-      ))}
+      {responseSchemata.map(
+        ([statusCode, { response, schema: responseSchema }]) => {
+          const parameters: Parameter[] = responseSchema
+            ? bakeProperties(schema, responseSchema)
+            : [];
+          return (
+            <Parameters
+              key={statusCode}
+              title={statusCode}
+              parameters={parameters}
+              description={response.description}
+            />
+          );
+        }
+      )}
     </>
   );
 }

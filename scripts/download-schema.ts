@@ -10,6 +10,7 @@ import {
 } from "https://deno.land/x/pbkit@v0.0.61/misc/github/auth.ts";
 import { getToken } from "https://deno.land/x/pbkit@v0.0.61/misc/github/index.ts";
 import { open } from "https://deno.land/x/pbkit@v0.0.61/misc/browser.ts";
+import { render as renderGfm } from "https://deno.land/x/gfm/mod.ts";
 
 if (!import.meta.main) Deno.exit(1);
 
@@ -49,7 +50,28 @@ async function downloadV2Openapi() {
   console.log(`저장할 위치: ${downloadV2Openapi.dst}`);
   console.log("내려받는 중...");
   const yaml = await fetchTextFromGithub(downloadV2Openapi.src, token);
-  const json = JSON.stringify(parseYaml(yaml), null, 2);
+  const schema = parseYaml(yaml);
+  const mdProperties = new Set([
+    "summary",
+    "description",
+    "x-portone-summary",
+    "x-portone-description",
+  ]);
+  traverseEveryProperty(schema, (node, property) => {
+    if (typeof node[property] !== "string") return;
+    if (!mdProperties.has(property)) return;
+    node[property] = renderGfm(node[property]);
+  });
+  traverseEveryProperty(schema, (node, property) => {
+    if (property !== "x-portone-fields") return;
+    node.properties ||= {};
+    for (const { field, ...property } of node["x-portone-fields"]) {
+      node.properties[field] ||= {};
+      Object.assign(node.properties[field] || {}, property);
+    }
+    delete node["x-portone-fields"];
+  });
+  const json = JSON.stringify(schema, null, 2);
   await touchAndSaveText(downloadV2Openapi.dst, json);
   console.log("완료");
 }
@@ -114,5 +136,21 @@ async function ensureLoggedIn() {
     await writeGhHosts(pollTokenResult.accessToken);
     console.log("로그인 되었습니다.");
     return pollTokenResult.accessToken;
+  }
+}
+
+function traverseEveryProperty(
+  object: any,
+  fn: (node: any, property: string) => void,
+) {
+  if (!object) return;
+  if (typeof object !== "object") return;
+  if (Array.isArray(object)) {
+    for (const item of object) traverseEveryProperty(item, fn);
+  } else {
+    for (const property in object) {
+      traverseEveryProperty(object[property], fn);
+      fn(object, property);
+    }
   }
 }

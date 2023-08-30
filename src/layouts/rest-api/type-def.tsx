@@ -41,12 +41,10 @@ export function TypeDefinitions({ schema }: TypeDefinitionsProps) {
       >
         <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
           {typeDefPropsList.map(({ name, typeDef }) => (
-            <TypeDefDoc
-              key={name}
-              schema={schema}
-              name={name}
-              typeDef={typeDef}
-            />
+            <div key={name} class="flex flex-col gap-2">
+              <prose.h3>{name}</prose.h3>
+              <TypeDefDoc schema={schema} typeDef={typeDef} />
+            </div>
           ))}
         </div>
       </Expand>
@@ -54,19 +52,13 @@ export function TypeDefinitions({ schema }: TypeDefinitionsProps) {
   );
 }
 
-interface TypeDefDocProps {
+export interface TypeDefDocProps {
   schema: any;
-  name: string;
   typeDef: TypeDef;
 }
-function TypeDefDoc({ schema, name, typeDef }: TypeDefDocProps) {
+export function TypeDefDoc({ schema, typeDef }: TypeDefDocProps) {
   const properties = bakeProperties(schema, typeDef);
-  return (
-    <div class="flex flex-col gap-2">
-      <prose.h3>{name}</prose.h3>
-      <PropertiesDoc properties={properties} />
-    </div>
-  );
+  return <PropertiesDoc properties={properties} />;
 }
 
 export interface PropertiesDocProps {
@@ -115,19 +107,17 @@ function PropertyDoc({ name, required, property }: PropertyDocProps) {
           <span class="text-slate-5">: {repr(property)}</span>
         </div>
       </div>
-      {__html && (
-        <div class="text-slate-5 flex flex-col gap-1 text-sm">
-          <div dangerouslySetInnerHTML={{ __html }} />
-          {summary && description && (
-            <button
-              class="bg-slate-2 self-end px-1 text-xs"
-              onClick={() => (showMoreSignal.value = !showMore)}
-            >
-              {showMore ? "간단히" : "자세히"}
-            </button>
-          )}
-        </div>
-      )}
+      <div class="text-slate-5 flex flex-col gap-1 text-sm">
+        {__html && <div dangerouslySetInnerHTML={{ __html }} />}
+        {description && (
+          <button
+            class="bg-slate-2 self-end px-1 text-xs"
+            onClick={() => (showMoreSignal.value = !showMore)}
+          >
+            {showMore ? "간단히" : "자세히"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
