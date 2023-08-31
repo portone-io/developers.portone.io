@@ -2,6 +2,7 @@
 import type { Lang } from "~/type";
 import Logo from "./Logo.astro";
 import MobileMenuButton from "./MobileMenuButton";
+import Dropdown from "./Dropdown";
 
 interface Props {
   lang: Lang;
@@ -27,23 +28,39 @@ const t = lang === "ko" ? ko : en;
   <header
     class="h-inherit fixed z-10 flex w-full items-center justify-between border-b bg-white pl-6"
   >
-    <div class="flex gap-20">
-      <a href={`/docs/${lang}`}>
+    <div class="flex h-full items-center gap-20">
+      <a class="inline-flex h-full items-center" href={`/docs/${lang}`}>
         <div class="flex items-center gap-2">
           <Logo class="w-22" />
           <span>{t["developers"]}</span>
         </div>
       </a>
-      {
-        lang === "ko" && (
-          <div class="hidden items-center gap-4 md:flex">
-            <a href="/release-notes">릴리즈 노트</a>
-          </div>
-        )
-      }
+      <div class="hidden h-full items-center gap-4 md:flex">
+        {
+          lang === "ko" && (
+            <a class="inline-flex h-full items-center" href="/release-notes">
+              릴리즈 노트
+            </a>
+          )
+        }
+        <Dropdown
+          client:visible
+          link="/api"
+          items={[
+            { label: "REST API - V1", link: "/api/rest-v1" },
+            // { label: "REST API - V2", link: "/api/rest-v2" },
+            // { label: "GraphQL API", link: "/api/graphql" },
+            {
+              label: t["sdk-playground"],
+              link: "https://sdk-playground.portone.io/",
+            },
+          ]}
+        >
+          API & SDK
+        </Dropdown>
+      </div>
     </div>
-    <div class="hidden items-center gap-4 pr-6 md:flex">
-      <a href="https://sdk-playground.portone.io/">{t["sdk-playground"]}</a>
+    <div class="hidden h-full items-center gap-4 pr-6 md:flex">
       <a href="https://admin.portone.io/">{t["console"]}</a>
       <a href={`/docs/${lang === "ko" ? "en" : "ko"}`}>
         {lang === "ko" ? "🇺🇸 English" : "🇰🇷 한국어"}
