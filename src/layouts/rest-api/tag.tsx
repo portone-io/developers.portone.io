@@ -1,8 +1,8 @@
 import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import {
-  groupEndpointsByTag,
   type Endpoint,
+  groupEndpointsByTag,
   getEveryEndpoints,
 } from "./schema-utils/endpoint";
 import TwoColumnLayout from "./TwoColumnLayout";
@@ -52,15 +52,22 @@ export function Tag({ schema, title, summary, endpoints }: TagProps) {
         left={<div class="mt-4">{summary}</div>}
         right={
           <ul class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border p-4">
-            {endpoints.map(({ method, path, title }, i) => (
-              <li key={i} class="flex flex-col text-sm leading-tight">
-                <div class="text-slate-6 font-bold">{title}</div>
-                <div class="text-slate-4 ml-2 flex gap-2 font-mono">
-                  <span class="font-bold uppercase">{method}</span>
-                  <span>{path}</span>
-                </div>
-              </li>
-            ))}
+            {endpoints.map(
+              ({ method, path, title, deprecated, unstable }, i) => (
+                <li
+                  key={i}
+                  class={`flex flex-col text-sm leading-tight ${
+                    deprecated || unstable ? "opacity-50" : ""
+                  }`}
+                >
+                  <div class="text-slate-6 font-bold">{title}</div>
+                  <div class="text-slate-4 ml-2 flex gap-2 font-mono">
+                    <span class="font-bold uppercase">{method}</span>
+                    <span>{path}</span>
+                  </div>
+                </li>
+              )
+            )}
           </ul>
         }
       />

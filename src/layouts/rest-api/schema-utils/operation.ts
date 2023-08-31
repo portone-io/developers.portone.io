@@ -10,6 +10,8 @@ export interface Operation {
   parameters?: Parameter[] | undefined;
   responses: { [statusCode: number]: Response };
   tags?: string[] | undefined;
+  deprecated?: boolean | undefined;
+  "x-portone-unstable"?: boolean | undefined;
 }
 
 export interface Parameter extends Property {
@@ -25,8 +27,11 @@ export interface Response {
   content?: { "application/json": { schema: TypeDef } };
 }
 
-export function getOperation(schema: any, endpoint: Endpoint): Operation {
-  return schema.paths[endpoint.path][endpoint.method];
+export function getOperation(
+  schema: any,
+  { path, method }: Endpoint
+): Operation {
+  return schema.paths[path][method];
 }
 
 export function getPathParameters(operation: Operation): Parameter[] {

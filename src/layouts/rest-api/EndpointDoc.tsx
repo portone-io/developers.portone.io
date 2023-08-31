@@ -19,14 +19,27 @@ export interface EndpointDocProps {
 }
 export default function EndpointDoc({ schema, endpoint }: EndpointDocProps) {
   const operation = getOperation(schema, endpoint);
+  const { method, path, title, deprecated, unstable } = endpoint;
   return (
     <div class="flex flex-col">
       <prose.h3>
         <div class="text-slate-5 flex items-end gap-1 rounded font-mono text-sm">
-          <span class="text-base font-bold uppercase">{endpoint.method}</span>
-          <span>{endpoint.path}</span>
+          <span class="text-base font-bold uppercase">{method}</span>
+          <span>{path}</span>
         </div>
-        <div>{endpoint.title}</div>
+        <div class="flex items-center gap-2">
+          <span>{title}</span>
+          {deprecated && (
+            <span class="bg-slate-1 text-slate-5 px-2 text-sm uppercase">
+              deprecated
+            </span>
+          )}
+          {unstable && (
+            <span class="bg-slate-1 text-slate-5 px-2 text-sm uppercase">
+              unstable
+            </span>
+          )}
+        </div>
       </prose.h3>
       <TwoColumnLayout
         left={

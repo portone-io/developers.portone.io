@@ -163,12 +163,14 @@ interface PropertyDocProps {
 }
 function PropertyDoc({ name, required, property }: PropertyDocProps) {
   const label = property["x-portone-name"] || "";
+  const deprecated = Boolean(property.deprecated);
   return (
-    <div class="flex flex-col gap-2">
+    <div class={`flex flex-col gap-2 ${deprecated ? "opacity-50" : ""}`}>
       <div>
         <div class="text-slate-5 flex gap-1 text-xs">
           {label && <span>{label}</span>}
           <span>{required ? "(필수)" : "(선택)"}</span>
+          {deprecated && "(Deprecated)"}
         </div>
         <div class="font-mono font-bold leading-none">
           <span>{name}</span>
@@ -185,9 +187,9 @@ interface DescriptionDocProps {
 }
 function DescriptionDoc({ typeDef }: DescriptionDocProps) {
   const showMoreSignal = useSignal(false);
-  const summary = typeDef["x-portone-summary"] || typeDef.summary || "";
+  const summary = (typeDef["x-portone-summary"] ?? typeDef.summary) || "";
   const description =
-    typeDef["x-portone-description"] || typeDef.description || "";
+    (typeDef["x-portone-description"] ?? typeDef.description) || "";
   const showMore = showMoreSignal.value;
   const __html = showMore ? description : summary;
   return summary || description ? (

@@ -1,9 +1,11 @@
-import { getOperation } from "./operation";
+import { type Operation, getOperation } from "./operation";
 
 export interface Endpoint {
   method: string; // get, post ...
   path: string;
   title: string;
+  deprecated: boolean;
+  unstable: boolean;
 }
 
 export interface Tag {
@@ -33,13 +35,15 @@ export function groupEndpointsByTag(
 
 export function getEveryEndpoints(schema: any): Endpoint[] {
   return Object.entries(schema.paths).flatMap(([path, methods]) => {
-    return Object.entries(methods as any).map(
-      ([method, operation]) =>
-        ({
-          method,
-          path,
-          title: (operation as any).summary,
-        } as Endpoint)
-    );
+    return Object.entries(methods as any).map(([method, _operation]) => {
+      const operation = _operation as Operation;
+      return {
+        method,
+        path,
+        title: operation.summary || "",
+        deprecated: Boolean(operation.deprecated),
+        unstable: Boolean(operation["x-portone-unstable"]),
+      } as Endpoint;
+    });
   });
 }

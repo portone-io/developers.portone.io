@@ -29,6 +29,7 @@ export interface Property {
   description?: string | undefined;
   type?: string | undefined;
   items?: string | TypeDef | undefined;
+  deprecated?: boolean | undefined;
   "x-portone-name"?: string | undefined;
   "x-portone-summary"?: string | undefined;
   "x-portone-description"?: string | undefined;
