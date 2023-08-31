@@ -60,7 +60,7 @@ export function TypeDefinitions({ schema }: TypeDefinitionsProps) {
 
 export interface TypeDefDocProps {
   schema: any;
-  typeDef: TypeDef;
+  typeDef?: TypeDef | undefined;
 }
 export function TypeDefDoc({ schema, typeDef }: TypeDefDocProps) {
   const kind = getTypeDefKind(typeDef);
@@ -68,10 +68,40 @@ export function TypeDefDoc({ schema, typeDef }: TypeDefDocProps) {
     case "object":
       return <ObjectDoc schema={schema} typeDef={typeDef} />;
     case "enum":
-      return <EnumDoc xPortoneCases={typeDef["x-portone-cases"]!} />;
+      return <EnumDoc xPortoneCases={typeDef!["x-portone-cases"]!} />;
     case "union":
-      return null;
+      return <UnionDoc typeDef={typeDef!} />;
   }
+}
+
+interface UnionDocProps {
+  typeDef: TypeDef;
+}
+function UnionDoc({ typeDef }: UnionDocProps) {
+  const { propertyName, mapping } = typeDef.discriminator!;
+  return (
+    <div class=" bg-slate-1 flex flex-col rounded px-2 py-3 leading-none">
+      <div class="text-xs">
+        <span>match </span>
+        <code>union.{propertyName}</code>
+      </div>
+      <div class="flex flex-col gap-2">
+        {Object.entries(mapping).map(([type, ref]) => {
+          return (
+            <div key={type} class="ml-2 font-mono">
+              <span class="text-xs">
+                <code>"{type}"</code>
+                <span>{" => "}</span>
+              </span>
+              <span class="text-slate-5 font-bold">
+                {getTypenameByRef(ref)}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 interface EnumDocProps {
@@ -79,7 +109,7 @@ interface EnumDocProps {
 }
 function EnumDoc({ xPortoneCases }: EnumDocProps) {
   return (
-    <div class="bg-slate-1 flex flex-col gap-4 rounded p-2">
+    <div class="bg-slate-1 flex flex-col gap-4 rounded px-2 py-3">
       {xPortoneCases.map((enumCase) => {
         const label = enumCase["x-portone-name"] || "";
         return (
@@ -98,10 +128,10 @@ function EnumDoc({ xPortoneCases }: EnumDocProps) {
 
 interface ObjectDocProps {
   schema: any;
-  typeDef: TypeDef;
+  typeDef?: TypeDef | undefined;
 }
 function ObjectDoc({ schema, typeDef }: ObjectDocProps) {
-  const properties = bakeProperties(schema, typeDef);
+  const properties = typeDef ? bakeProperties(schema, typeDef) : [];
   return <PropertiesDoc properties={properties} />;
 }
 

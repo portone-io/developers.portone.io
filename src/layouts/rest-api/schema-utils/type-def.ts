@@ -5,6 +5,7 @@ export interface TypeDef {
   $ref?: string | undefined;
   allOf?: TypeDef[] | undefined;
   oneOf?: TypeDef[] | undefined;
+  discriminator?: { propertyName: string; mapping: Record<string, string> };
   summary?: string | undefined;
   description?: string | undefined;
   type?: string | undefined;
@@ -34,9 +35,9 @@ export interface Property {
 }
 
 export type TypeDefKind = "object" | "union" | "enum";
-export function getTypeDefKind(typeDef: TypeDef): TypeDefKind {
-  if (typeDef.oneOf) return "union";
-  if (typeDef.enum) return "enum";
+export function getTypeDefKind(typeDef?: TypeDef | undefined): TypeDefKind {
+  if (typeDef?.discriminator) return "union";
+  if (typeDef?.enum) return "enum";
   return "object";
 }
 

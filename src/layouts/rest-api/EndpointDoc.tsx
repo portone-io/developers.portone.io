@@ -10,8 +10,8 @@ import {
   Operation,
   getResponseSchemata,
 } from "./schema-utils/operation";
-import { PropertiesDoc } from "./type-def";
-import { bakeProperties } from "./schema-utils/type-def";
+import { PropertiesDoc, TypeDefDoc } from "./type-def";
+import { resolveTypeDef } from "./schema-utils/type-def";
 
 export interface EndpointDocProps {
   schema: any;
@@ -88,30 +88,42 @@ function ResponseDoc({ schema, operation }: ResponseDocProps) {
   return (
     <>
       {responseSchemata.map(
-        ([statusCode, { response, schema: responseSchema }]) => {
-          const parameters: Parameter[] = responseSchema
-            ? bakeProperties(schema, responseSchema)
-            : [];
-          return (
-            <Parameters
-              key={statusCode}
-              title={statusCode}
-              parameters={parameters}
-              description={response.description}
+        ([statusCode, { response, schema: responseSchema }]) => (
+          <ReqRes
+            key={statusCode}
+            title={statusCode}
+            description={response.description}
+          >
+            <TypeDefDoc
+              schema={schema}
+              typeDef={responseSchema && resolveTypeDef(schema, responseSchema)}
             />
-          );
-        }
+          </ReqRes>
+        )
       )}
     </>
   );
 }
 
 interface ParametersProps {
-  title?: string;
+  title?: string | undefined;
   description?: string | undefined;
   parameters: Parameter[];
 }
 function Parameters({ title, description, parameters }: ParametersProps) {
+  return (
+    <ReqRes title={title} description={description}>
+      <PropertiesDoc properties={parameters} />
+    </ReqRes>
+  );
+}
+
+interface ReqResProps {
+  title?: string | undefined;
+  description?: string | undefined;
+  children: any;
+}
+function ReqRes({ title, description, children }: ReqResProps) {
   return (
     <div>
       {title && (
@@ -125,7 +137,7 @@ function Parameters({ title, description, parameters }: ParametersProps) {
           )}
         </div>
       )}
-      <PropertiesDoc properties={parameters} />
+      {children}
     </div>
   );
 }
