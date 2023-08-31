@@ -8,12 +8,14 @@ export interface TypeDef {
   summary?: string | undefined;
   description?: string | undefined;
   type?: string | undefined;
+  enum?: string[];
   items?: TypeDef | undefined;
   required?: string[] | undefined;
   properties?: Properties | undefined;
   "x-portone-name"?: string | undefined;
   "x-portone-summary"?: string | undefined;
   "x-portone-description"?: string | undefined;
+  "x-portone-cases"?: ({ case: string } & TypeDef)[];
 }
 
 export interface Properties {
@@ -29,6 +31,13 @@ export interface Property {
   "x-portone-name"?: string | undefined;
   "x-portone-summary"?: string | undefined;
   "x-portone-description"?: string | undefined;
+}
+
+export type TypeDefKind = "object" | "union" | "enum";
+export function getTypeDefKind(typeDef: TypeDef): TypeDefKind {
+  if (typeDef.oneOf) return "union";
+  if (typeDef.enum) return "enum";
+  return "object";
 }
 
 export interface BakedProperty extends Property {

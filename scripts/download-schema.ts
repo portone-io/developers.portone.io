@@ -58,9 +58,12 @@ async function downloadV2Openapi() {
     "x-portone-description",
   ]);
   traverseEveryProperty(schema, (node, property) => {
-    if (typeof node[property] !== "string") return;
-    if (!mdProperties.has(property)) return;
-    node[property] = renderGfm(node[property]);
+    if (property !== "x-portone-cases") return;
+    for (const enumCase of node["x-portone-cases"]) {
+      if (!enumCase.description) continue;
+      enumCase["x-portone-name"] = enumCase.description;
+      delete enumCase.description;
+    }
   });
   traverseEveryProperty(schema, (node, property) => {
     if (property !== "x-portone-fields") return;
@@ -70,6 +73,11 @@ async function downloadV2Openapi() {
       Object.assign(node.properties[field] || {}, property);
     }
     delete node["x-portone-fields"];
+  });
+  traverseEveryProperty(schema, (node, property) => {
+    if (typeof node[property] !== "string") return;
+    if (!mdProperties.has(property)) return;
+    node[property] = renderGfm(node[property]);
   });
   const json = JSON.stringify(schema, null, 2);
   await touchAndSaveText(downloadV2Openapi.dst, json);

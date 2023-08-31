@@ -9,6 +9,7 @@ import {
   getTypeDefByRef,
   getTypenameByRef,
   repr,
+  getTypeDefKind,
 } from "./schema-utils/type-def";
 import Expand from "./Expand";
 
@@ -42,7 +43,12 @@ export function TypeDefinitions({ schema }: TypeDefinitionsProps) {
         <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
           {typeDefPropsList.map(({ name, typeDef }) => (
             <div key={name} class="flex flex-col gap-2">
-              <prose.h3>{name}</prose.h3>
+              <prose.h3>
+                <span>{name}</span>
+                <span class="text-slate-4 ml-2 text-base">
+                  {getTypeDefKind(typeDef)}
+                </span>
+              </prose.h3>
               <TypeDefDoc schema={schema} typeDef={typeDef} />
             </div>
           ))}
@@ -57,6 +63,44 @@ export interface TypeDefDocProps {
   typeDef: TypeDef;
 }
 export function TypeDefDoc({ schema, typeDef }: TypeDefDocProps) {
+  const kind = getTypeDefKind(typeDef);
+  switch (kind) {
+    case "object":
+      return <ObjectDoc schema={schema} typeDef={typeDef} />;
+    case "enum":
+      return <EnumDoc xPortoneCases={typeDef["x-portone-cases"]!} />;
+    case "union":
+      return null;
+  }
+}
+
+interface EnumDocProps {
+  xPortoneCases: NonNullable<TypeDef["x-portone-cases"]>;
+}
+function EnumDoc({ xPortoneCases }: EnumDocProps) {
+  return (
+    <div class="bg-slate-1 flex flex-col gap-4 rounded p-2">
+      {xPortoneCases.map((enumCase) => {
+        const label = enumCase["x-portone-name"] || "";
+        return (
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2 leading-none">
+              <code>{enumCase.case}</code>
+              <span class="text-slate-5 text-sm">{label}</span>
+            </div>
+            <DescriptionDoc typeDef={enumCase} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+interface ObjectDocProps {
+  schema: any;
+  typeDef: TypeDef;
+}
+function ObjectDoc({ schema, typeDef }: ObjectDocProps) {
   const properties = bakeProperties(schema, typeDef);
   return <PropertiesDoc properties={properties} />;
 }
@@ -88,13 +132,7 @@ interface PropertyDocProps {
   property: Property;
 }
 function PropertyDoc({ name, required, property }: PropertyDocProps) {
-  const showMoreSignal = useSignal(false);
   const label = property["x-portone-name"] || "";
-  const summary = property["x-portone-summary"] || property.summary || "";
-  const description =
-    property["x-portone-description"] || property.description || "";
-  const showMore = showMoreSignal.value;
-  const __html = showMore ? description : summary;
   return (
     <div class="flex flex-col gap-2">
       <div>
@@ -107,17 +145,32 @@ function PropertyDoc({ name, required, property }: PropertyDocProps) {
           <span class="text-slate-5">: {repr(property)}</span>
         </div>
       </div>
-      <div class="text-slate-5 flex flex-col gap-1 text-sm">
-        {__html && <div dangerouslySetInnerHTML={{ __html }} />}
-        {description && (
-          <button
-            class="bg-slate-2 self-end px-1 text-xs"
-            onClick={() => (showMoreSignal.value = !showMore)}
-          >
-            {showMore ? "간단히" : "자세히"}
-          </button>
-        )}
-      </div>
+      <DescriptionDoc typeDef={property} />
     </div>
   );
+}
+
+interface DescriptionDocProps {
+  typeDef: TypeDef | Property;
+}
+function DescriptionDoc({ typeDef }: DescriptionDocProps) {
+  const showMoreSignal = useSignal(false);
+  const summary = typeDef["x-portone-summary"] || typeDef.summary || "";
+  const description =
+    typeDef["x-portone-description"] || typeDef.description || "";
+  const showMore = showMoreSignal.value;
+  const __html = showMore ? description : summary;
+  return summary || description ? (
+    <div class="text-slate-5 flex flex-col gap-1 text-sm">
+      {__html && <div dangerouslySetInnerHTML={{ __html }} />}
+      {description && (
+        <button
+          class="bg-slate-2 self-end px-1 text-xs"
+          onClick={() => (showMoreSignal.value = !showMore)}
+        >
+          {showMore ? "간단히" : "자세히"}
+        </button>
+      )}
+    </div>
+  ) : null;
 }
