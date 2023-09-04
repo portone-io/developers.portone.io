@@ -1,6 +1,6 @@
 import * as prose from "~/components/prose";
 import RestApi, { Hr } from "~/layouts/rest-api";
-import schema from "../../schema/v1.openapi.json";
+import schema from "~/schema/v1.openapi.json";
 import { Tags } from "~/layouts/rest-api/tag";
 import { TypeDefinitions } from "~/layouts/rest-api/type-def";
 

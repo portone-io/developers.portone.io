@@ -1,5 +1,5 @@
 import RestApi, { Hr } from "~/layouts/rest-api";
-import schema from "../../schema/v2.openapi.json";
+import schema from "~/schema/v2.openapi.json";
 import { TypeDefinitions } from "~/layouts/rest-api/type-def";
 import { getEveryEndpoints } from "~/layouts/rest-api/schema-utils/endpoint";
 import EndpointDoc from "~/layouts/rest-api/EndpointDoc";
