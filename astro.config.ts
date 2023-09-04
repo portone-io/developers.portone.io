@@ -17,7 +17,7 @@ const prettyCodeOptions: Partial<PrettyCodeOptions> = {
     }
   },
   onVisitHighlightedLine(node) {
-    node.properties.className!.push("highlighted");
+    node.properties.className?.push("highlighted");
   },
   onVisitHighlightedChars(node) {
     node.properties.className = ["word"];
