@@ -14,10 +14,16 @@ import {
 import Expand from "./Expand";
 
 export interface TypeDefinitionsProps {
+  basepath: string; // e.g. "/api/rest-v1"
+  expand?: boolean;
   schema: any;
 }
-export function TypeDefinitions({ schema }: TypeDefinitionsProps) {
-  const expandSignal = useSignal(false);
+export function TypeDefinitions({
+  basepath,
+  expand = false,
+  schema,
+}: TypeDefinitionsProps) {
+  const expandSignal = useSignal(expand);
   const typeDefPropsList = crawlRefs(schema)
     .sort()
     .map((ref) => ({
@@ -32,7 +38,13 @@ export function TypeDefinitions({ schema }: TypeDefinitionsProps) {
       </div>
       <div class="border-slate-3 bg-slate-1 grid-flow-rows mt-4 grid gap-x-4 gap-y-1 rounded-lg border px-6 py-4 text-xs sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {typeDefPropsList.map(({ name }) => (
-          <span key={name}>{name}</span>
+          <a
+            class="hover:text-orange-5 underline-offset-4 transition-colors hover:underline"
+            href={`${basepath}/type-def#${name}`}
+            key={name}
+          >
+            {name}
+          </a>
         ))}
       </div>
       <Expand
@@ -43,13 +55,17 @@ export function TypeDefinitions({ schema }: TypeDefinitionsProps) {
         <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
           {typeDefPropsList.map(({ name, typeDef }) => (
             <div key={name} class="flex flex-col gap-2">
-              <prose.h3>
+              <prose.h3 id={name} class="target:text-orange-5 text-slate-6">
                 <span>{name}</span>
-                <span class="text-slate-4 ml-2 text-base">
+                <span class=" ml-2 text-base opacity-60">
                   {getTypeDefKind(typeDef)}
                 </span>
               </prose.h3>
-              <TypeDefDoc schema={schema} typeDef={typeDef} />
+              <TypeDefDoc
+                basepath={basepath}
+                schema={schema}
+                typeDef={typeDef}
+              />
             </div>
           ))}
         </div>
@@ -59,25 +75,29 @@ export function TypeDefinitions({ schema }: TypeDefinitionsProps) {
 }
 
 export interface TypeDefDocProps {
+  basepath: string;
   schema: any;
   typeDef?: TypeDef | undefined;
 }
-export function TypeDefDoc({ schema, typeDef }: TypeDefDocProps) {
+export function TypeDefDoc({ basepath, schema, typeDef }: TypeDefDocProps) {
   const kind = getTypeDefKind(typeDef);
   switch (kind) {
     case "object":
-      return <ObjectDoc schema={schema} typeDef={typeDef} />;
+      return (
+        <ObjectDoc basepath={basepath} schema={schema} typeDef={typeDef} />
+      );
     case "enum":
       return <EnumDoc xPortoneCases={typeDef!["x-portone-cases"]!} />;
     case "union":
-      return <UnionDoc typeDef={typeDef!} />;
+      return <UnionDoc basepath={basepath} typeDef={typeDef!} />;
   }
 }
 
 interface UnionDocProps {
+  basepath: string;
   typeDef: TypeDef;
 }
-function UnionDoc({ typeDef }: UnionDocProps) {
+function UnionDoc({ basepath, typeDef }: UnionDocProps) {
   const { propertyName, mapping } = typeDef.discriminator!;
   return (
     <div class=" bg-slate-1 flex flex-col rounded px-2 py-3 leading-none">
@@ -93,9 +113,7 @@ function UnionDoc({ typeDef }: UnionDocProps) {
                 <code>"{type}"</code>
                 <span>{" => "}</span>
               </span>
-              <span class="text-slate-5 font-bold">
-                {getTypenameByRef(ref)}
-              </span>
+              <TypeReprDoc basepath={basepath} def={ref} />
             </div>
           );
         })}
@@ -127,23 +145,26 @@ function EnumDoc({ xPortoneCases }: EnumDocProps) {
 }
 
 interface ObjectDocProps {
+  basepath: string;
   schema: any;
   typeDef?: TypeDef | undefined;
 }
-function ObjectDoc({ schema, typeDef }: ObjectDocProps) {
+function ObjectDoc({ basepath, schema, typeDef }: ObjectDocProps) {
   const properties = typeDef ? bakeProperties(schema, typeDef) : [];
-  return <PropertiesDoc properties={properties} />;
+  return <PropertiesDoc basepath={basepath} properties={properties} />;
 }
 
 export interface PropertiesDocProps {
+  basepath: string;
   properties: BakedProperty[];
 }
-export function PropertiesDoc({ properties }: PropertiesDocProps) {
+export function PropertiesDoc({ basepath, properties }: PropertiesDocProps) {
   return (
     <div class="bg-slate-1 flex flex-col gap-4 rounded p-2">
       {properties.length ? (
         properties.map((property) => (
           <PropertyDoc
+            basepath={basepath}
             name={property.name}
             required={property.required}
             property={property}
@@ -157,11 +178,12 @@ export function PropertiesDoc({ properties }: PropertiesDocProps) {
 }
 
 interface PropertyDocProps {
+  basepath: string;
   name: string;
   required?: boolean | undefined;
   property: Property;
 }
-function PropertyDoc({ name, required, property }: PropertyDocProps) {
+function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
   const label = property["x-portone-name"] || "";
   const deprecated = Boolean(property.deprecated);
   return (
@@ -174,11 +196,31 @@ function PropertyDoc({ name, required, property }: PropertyDocProps) {
         </div>
         <div class="font-mono font-bold leading-none">
           <span>{name}</span>
-          <span class="text-slate-5">: {repr(property)}</span>
+          <span>: </span>
+          <TypeReprDoc basepath={basepath} def={property} />
         </div>
       </div>
       <DescriptionDoc typeDef={property} />
     </div>
+  );
+}
+
+interface TypeReprDocProps {
+  basepath: string;
+  def: string | TypeDef | Property;
+}
+function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
+  const typeRepr = repr(def);
+  const isUserType = typeRepr[0]?.toUpperCase() === typeRepr[0];
+  return isUserType ? (
+    <a
+      class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
+      href={`${basepath}/type-def#${typeRepr.replace("[]", "")}`}
+    >
+      {typeRepr}
+    </a>
+  ) : (
+    <span class="text-slate-5 font-bold">{typeRepr}</span>
   );
 }
 

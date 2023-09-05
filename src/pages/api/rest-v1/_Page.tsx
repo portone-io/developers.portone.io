@@ -4,7 +4,10 @@ import schema from "~/schema/v1.openapi.json";
 import { Tags } from "~/layouts/rest-api/tag";
 import { TypeDefinitions } from "~/layouts/rest-api/type-def";
 
-export default function RestV1() {
+export interface RestV1Props {
+  group: string;
+}
+export default function RestV1({ group }: RestV1Props) {
   return (
     <RestApi title="PortOne REST API - V1">
       <prose.p>
@@ -18,9 +21,13 @@ export default function RestV1() {
         <code>api.iamport.kr</code>
       </prose.p>
       <Hr />
-      <Tags schema={schema} />
+      <Tags basepath="/api/rest-v1" group={group} schema={schema} />
       <Hr />
-      <TypeDefinitions schema={schema} />
+      <TypeDefinitions
+        basepath="/api/rest-v1"
+        expand={group === "type-def"}
+        schema={schema}
+      />
     </RestApi>
   );
 }

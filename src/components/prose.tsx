@@ -2,7 +2,9 @@ export function h1({ children, ...props }: any) {
   return (
     <h1
       {...props}
-      class="mt-5 text-3xl font-bold first:mt-0 last:mb-0 md:text-4xl"
+      class={`mt-5 text-3xl font-bold first:mt-0 last:mb-0 md:text-4xl ${
+        props.class || ""
+      }`.trim()}
     >
       {children}
     </h1>
@@ -13,7 +15,9 @@ export function h2({ children, ...props }: any) {
   return (
     <h2
       {...props}
-      class="mb-2 mt-5 text-xl font-bold first:mt-0 last:mb-0 md:text-2xl"
+      class={`mb-2 mt-5 text-xl font-bold first:mt-0 last:mb-0 md:text-2xl ${
+        props.class || ""
+      }`.trim()}
     >
       {children}
     </h2>
@@ -22,7 +26,12 @@ export function h2({ children, ...props }: any) {
 
 export function h3({ children, ...props }: any) {
   return (
-    <h3 {...props} class="mb-2 mt-5 font-bold first:mt-0 last:mb-0 md:text-xl">
+    <h3
+      {...props}
+      class={`mb-2 mt-5 font-bold first:mt-0 last:mb-0 md:text-xl ${
+        props.class || ""
+      }`.trim()}
+    >
       {children}
     </h3>
   );
@@ -30,7 +39,12 @@ export function h3({ children, ...props }: any) {
 
 export function h4({ children, ...props }: any) {
   return (
-    <h4 {...props} class="mb-2 mt-5 font-bold first:mt-0 last:mb-0">
+    <h4
+      {...props}
+      class={`mb-2 mt-5 font-bold first:mt-0 last:mb-0 ${
+        props.class || ""
+      }`.trim()}
+    >
       {children}
     </h4>
   );
