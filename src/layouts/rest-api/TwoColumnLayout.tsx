@@ -4,6 +4,7 @@ export interface TwoColumnLayoutProps {
   leftClassName?: string;
   right: any;
   rightClassName?: string;
+  smallRight?: boolean;
   stickyRight?: boolean;
   bp?: string;
   gap?: number;
@@ -14,6 +15,7 @@ export default function TwoColumnLayout({
   leftClassName = "",
   right,
   rightClassName = "",
+  smallRight = !right,
   stickyRight,
   bp = "lg",
   gap = 4,
@@ -21,7 +23,7 @@ export default function TwoColumnLayout({
   return (
     <div
       class={`relative grid gap-${gap} ${bp}:${
-        right ? "grid-cols-2" : "grid-cols-[2fr_1fr]"
+        smallRight ? "grid-cols-[2fr_1fr]" : "grid-cols-2"
       } ${className}`}
     >
       <div class={leftClassName}>{left}</div>

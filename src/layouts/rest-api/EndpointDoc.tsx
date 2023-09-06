@@ -17,11 +17,13 @@ export interface EndpointDocProps {
   basepath: string; // e.g. "/api/rest-v1"
   schema: any;
   endpoint: Endpoint;
+  renderRightFn?: RenderRightFn;
 }
 export default function EndpointDoc({
   basepath,
   schema,
   endpoint,
+  renderRightFn,
 }: EndpointDocProps) {
   const operation = getOperation(schema, endpoint);
   const { method, path, title, deprecated, unstable } = endpoint;
@@ -80,11 +82,18 @@ export default function EndpointDoc({
             />
           </>
         }
-        right={null}
+        smallRight
+        right={renderRightFn?.({ schema, operation })}
       />
     </div>
   );
 }
+
+export interface RenderRightConfig {
+  schema: any;
+  operation: Operation;
+}
+export type RenderRightFn = (config: RenderRightConfig) => any;
 
 interface RequestDocProps {
   basepath: string;

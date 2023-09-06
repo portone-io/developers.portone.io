@@ -101,6 +101,17 @@ export function Tag({
             basepath={basepath}
             schema={schema}
             endpoint={endpoint}
+            renderRightFn={({ operation }) => (
+              <div>
+                <a
+                  target="_blank"
+                  class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
+                  href={`https://api.iamport.kr/#!/${group}/${operation.operationId}`}
+                >
+                  Swagger Test Link
+                </a>
+              </div>
+            )}
           />
         ))}
       </Expand>
