@@ -82,7 +82,9 @@ export function Tag({
                 >
                   <div class="font-bold">{title}</div>
                   <div class="ml-2 flex font-mono opacity-60">
-                    <span class="font-bold uppercase">{method}&nbsp;</span>
+                    <span class="shrink-0 font-bold uppercase">
+                      {method}&nbsp;
+                    </span>
                     <span>{path}</span>
                   </div>
                 </a>
