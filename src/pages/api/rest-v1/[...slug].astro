@@ -2,6 +2,7 @@
 import LayoutBase from "~/layouts/LayoutBase.astro";
 import Component from "./_Page";
 import NavMenu from "~/layouts/rest-api/NavMenu.astro";
+import schema from "~/schema/v1.openapi.json";
 
 export const prerender = false;
 
@@ -10,7 +11,12 @@ const [_api, _rest, group = ""] = Astro.url.pathname.split("/").filter(Boolean);
 
 <LayoutBase lang="ko" title="PortOne REST API - V1">
   <div class="flex">
-    <NavMenu />
+    <NavMenu
+      items={schema.tags.map((tag) => ({
+        title: tag.name,
+        id: tag.name,
+      }))}
+    />
     <Component client:visible group={group} />
   </div>
 </LayoutBase>

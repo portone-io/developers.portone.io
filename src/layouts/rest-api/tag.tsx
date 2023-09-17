@@ -1,5 +1,8 @@
-import { useSignal } from "@preact/signals";
+import * as React from "react";
 import * as prose from "~/components/prose";
+import { doublePushAndBack } from "~/misc/history";
+import { wait } from "~/misc/async";
+import { expandTag, expanded, useExpand } from "~/state/rest-api/tag-expand";
 import {
   type Endpoint,
   groupEndpointsByTag,
@@ -26,7 +29,7 @@ export function Tags({ schema, basepath, group }: TagsProps) {
             <Tag
               basepath={basepath}
               group={tag.name}
-              expand={group === tag.name}
+              initialExpand={group === tag.name}
               schema={schema}
               title={tag.name}
               summary={tag.description}
@@ -42,7 +45,7 @@ export function Tags({ schema, basepath, group }: TagsProps) {
 
 export interface TagProps {
   basepath: string;
-  expand: boolean;
+  initialExpand: boolean;
   group: string;
   schema: any;
   title: string;
@@ -52,18 +55,22 @@ export interface TagProps {
 }
 export function Tag({
   basepath,
-  expand,
+  initialExpand,
   group,
   schema,
   title,
   summary,
   endpoints,
 }: TagProps) {
-  const expandSignal = useSignal(expand);
+  React.useEffect(expanded);
+  const { expand, onToggle } = useExpand(group, initialExpand);
+  const headingRef = React.useRef<HTMLHeadingElement>(null);
   return (
     <div class="flex flex-col">
       <div>
-        <prose.h2>{title}</prose.h2>
+        <prose.h2 id={group} ref={headingRef}>
+          {title}
+        </prose.h2>
       </div>
       <TwoColumnLayout
         left={<div class="mt-4">{summary}</div>}
@@ -72,13 +79,27 @@ export function Tag({
             {endpoints.map((endpoint) => {
               const { method, path, title, deprecated, unstable } = endpoint;
               const repr = getEndpointRepr(endpoint);
+              const href = `${basepath}/${group}#${encodeURIComponent(repr)}`;
               return (
                 <a
                   key={repr}
-                  href={`${basepath}/${group}#${encodeURIComponent(repr)}`}
+                  href={href}
                   class={`hover:text-orange-5 text-slate-6 flex flex-col text-sm leading-tight underline-offset-4 transition-colors hover:underline ${
                     deprecated || unstable ? "opacity-50" : ""
                   }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    expandTag(group, true, async () => {
+                      doublePushAndBack(href);
+                      // doublePushAndBack이 불리는 순간 스크롤이 방해받음
+                      // doublePushAndBack이 끝나는 시점을 특정하는 것도 불가
+                      await wait(100);
+                      document
+                        .getElementById(repr)
+                        ?.scrollIntoView({ behavior: "smooth" });
+                    });
+                  }}
+                  data-norefresh
                 >
                   <div class="font-bold">{title}</div>
                   <div class="ml-2 flex font-mono opacity-60">
@@ -95,8 +116,11 @@ export function Tag({
       />
       <Expand
         className="mt-10"
-        expand={expandSignal.value}
-        onExpand={(v) => (expandSignal.value = v)}
+        expand={expand}
+        onToggle={onToggle}
+        onCollapse={() => {
+          headingRef.current?.scrollIntoView({ behavior: "smooth" });
+        }}
       >
         {endpoints.map((endpoint) => (
           <EndpointDoc

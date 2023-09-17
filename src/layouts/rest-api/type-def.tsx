@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import {
@@ -23,6 +24,7 @@ export function TypeDefinitions({
   expand = false,
   schema,
 }: TypeDefinitionsProps) {
+  const headingRef = React.useRef<HTMLHeadingElement>(null);
   const expandSignal = useSignal(expand);
   const typeDefPropsList = crawlRefs(schema)
     .sort()
@@ -32,7 +34,7 @@ export function TypeDefinitions({
     }));
   return (
     <div class="flex flex-col">
-      <prose.h2>타입 정의</prose.h2>
+      <prose.h2 ref={headingRef}>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
@@ -50,7 +52,10 @@ export function TypeDefinitions({
       <Expand
         className="mt-10"
         expand={expandSignal.value}
-        onExpand={(v) => (expandSignal.value = v)}
+        onToggle={(v) => (expandSignal.value = v)}
+        onCollapse={() => {
+          headingRef.current?.scrollIntoView({ behavior: "smooth" });
+        }}
       >
         <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
           {typeDefPropsList.map(({ name, typeDef }) => (

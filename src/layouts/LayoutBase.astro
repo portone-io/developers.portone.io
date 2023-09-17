@@ -55,12 +55,17 @@ const { lang, title } = Astro.props;
             from: location.pathname,
             to: a.href,
           },
-          () => targetIsSelf && (location.href = a.href)
+          () => {
+            if (!targetIsSelf) return;
+            if ("norefresh" in a.dataset) return;
+            location.href = a.href;
+          }
         );
       });
     </script>
     <style is:global>
       :root {
+        word-break: break-all;
         overflow-wrap: break-word;
         scroll-behavior: smooth;
       }

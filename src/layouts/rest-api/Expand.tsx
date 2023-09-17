@@ -2,13 +2,15 @@ export interface ExpandProps {
   className?: string;
   children?: any;
   expand?: boolean;
-  onExpand?: (expand: boolean) => void;
+  onToggle?: (expand: boolean) => void;
+  onCollapse?: () => void;
 }
 export default function Expand({
   className = "",
   children,
   expand,
-  onExpand,
+  onToggle,
+  onCollapse,
 }: ExpandProps) {
   return (
     <div class={`flex flex-col gap-10 ${className}`}>
@@ -19,7 +21,10 @@ export default function Expand({
       )}
       <button
         class="bg-slate-1 border-slate-3 inline-flex gap-2 place-self-center rounded-full border py-2 pl-6 pr-4"
-        onClick={() => onExpand?.(!expand)}
+        onClick={() => {
+          onToggle?.(!expand);
+          if (expand) onCollapse?.();
+        }}
       >
         {expand ? (
           <>
