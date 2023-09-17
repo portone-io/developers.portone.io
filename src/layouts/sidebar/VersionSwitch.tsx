@@ -1,4 +1,4 @@
-import { systemVersionSignal } from "~/state/sidebar";
+import { systemVersionSignal } from "~/state/nav";
 import type { SystemVersion } from "~/type";
 
 export function VersionSwitch() {

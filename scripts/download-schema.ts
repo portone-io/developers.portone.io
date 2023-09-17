@@ -30,18 +30,35 @@ const schema = await Input.prompt({
   suggestions: schemas as unknown as Schema[],
 }) as Schema;
 
+const mdProperties = new Set([
+  "summary",
+  "description",
+  "x-portone-summary",
+  "x-portone-description",
+]);
+
 async function downloadV1Openapi() {
   console.log(`스키마 위치: ${downloadV1Openapi.src}`);
   console.log(`저장할 위치: ${downloadV1Openapi.dst}`);
   console.log("내려받는 중...");
   const res = await fetch(downloadV1Openapi.src);
   const schema = await res.json();
+  traverseEveryProperty(schema, (node, property, context) => {
+    if (property === "x-portone-per-pg") {
+      context.renderAll = true;
+      return;
+    }
+    if (typeof node[property] !== "string") return;
+    if (!mdProperties.has(property)) return;
+    if (!context.renderAll && !property.startsWith("x-")) return;
+    node[property] = renderGfm(node[property]);
+  });
   const json = JSON.stringify(schema, null, 2);
   await touchAndSaveText(downloadV1Openapi.dst, json);
   console.log("완료");
 }
 // downloadV1Openapi.src = "https://api.iamport.kr/api/docs";
-downloadV1Openapi.src = "https://core-api.dev.iamport.co/api/docs";
+downloadV1Openapi.src = "https://core-api.stg.iamport.co/api/docs";
 downloadV1Openapi.dst = import.meta.resolve("../src/schema/v1.openapi.json");
 
 async function downloadV2Openapi() {
@@ -51,12 +68,6 @@ async function downloadV2Openapi() {
   console.log("내려받는 중...");
   const yaml = await fetchTextFromGithub(downloadV2Openapi.src, token);
   const schema = parseYaml(yaml);
-  const mdProperties = new Set([
-    "summary",
-    "description",
-    "x-portone-summary",
-    "x-portone-description",
-  ]);
   traverseEveryProperty(schema, (node, property) => {
     if (property !== "x-portone-cases") return;
     for (const enumCase of node["x-portone-cases"]) {
@@ -149,16 +160,18 @@ async function ensureLoggedIn() {
 
 function traverseEveryProperty(
   object: any,
-  fn: (node: any, property: string) => void,
+  fn: (node: any, property: string, context: any) => void,
+  context: any = {},
 ) {
   if (!object) return;
   if (typeof object !== "object") return;
   if (Array.isArray(object)) {
-    for (const item of object) traverseEveryProperty(item, fn);
+    for (const item of object) traverseEveryProperty(item, fn, context);
   } else {
     for (const property in object) {
-      traverseEveryProperty(object[property], fn);
-      fn(object, property);
+      const subcontext = { ...context };
+      fn(object, property, subcontext);
+      traverseEveryProperty(object[property], fn, subcontext);
     }
   }
 }

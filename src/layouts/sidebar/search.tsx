@@ -2,7 +2,7 @@ import * as React from "react";
 import { computed, signal } from "@preact/signals";
 import Fuse from "fuse.js";
 import { lazy } from "~/misc/async";
-import { systemVersionSignal } from "~/state/sidebar";
+import { systemVersionSignal } from "~/state/nav";
 import type { NavMenuSystemVersions } from "~/state/server-only/nav";
 
 export interface SearchButtonProps {

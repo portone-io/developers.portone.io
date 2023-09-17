@@ -100,7 +100,7 @@ export function getTypenameByRef($ref: string): string {
 }
 
 export function repr(def: string | TypeDef | Property | Parameter): string {
-  if (typeof def === "string") return def;
+  if (typeof def === "string") return getTypenameByRef(def);
   if ("schema" in def) return repr(def.schema!);
   if (def.items) return `${repr(def.items)}[]`;
   if (def.$ref) return getTypenameByRef(def.$ref);

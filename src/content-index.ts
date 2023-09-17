@@ -20,25 +20,27 @@ const integration: AstroIntegration = {
     "astro:config:setup": async ({ config, updateConfig }) => {
       updateConfig({ vite: { plugins: [vitePlugin(config)] } });
     },
+    "astro:config:done": ({ config }) => {
+      const clientOut = config.build.client.pathname.replace(/^\/(\w:)/, "$1");
+      const contentIndexDir = path.resolve(clientOut, "content-index");
+      effect(() => {
+        const indexFiles = indexFilesSignal.value;
+        if (!indexFiles) return;
+        fs.mkdir(contentIndexDir, { recursive: true }).then(() => {
+          for (const [filename, indexFile] of Object.entries(indexFiles)) {
+            const indexFilePath = path.resolve(contentIndexDir, filename);
+            fs.writeFile(indexFilePath, indexFile);
+          }
+        });
+      });
+    },
   },
 };
 
 export default integration;
 
 function vitePlugin(config: AstroConfig) {
-  const outDir = config.outDir.pathname.replace(/^\/(\w:)/, "$1");
   const root = config.root.pathname.replace(/^\/(\w:)/, "$1");
-  const contentIndexDir = path.resolve(outDir, "content-index");
-  effect(() => {
-    const indexFiles = indexFilesSignal.value;
-    if (!indexFiles) return;
-    fs.mkdir(contentIndexDir, { recursive: true }).then(() => {
-      for (const [filename, indexFile] of Object.entries(indexFiles)) {
-        const indexFilePath = path.resolve(contentIndexDir, filename);
-        fs.writeFile(indexFilePath, indexFile);
-      }
-    });
-  });
   return {
     name: "developers.portone.io:content-index",
     async transform(_: any, id: string) {

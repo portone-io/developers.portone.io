@@ -2,6 +2,7 @@ import type { Endpoint } from "./endpoint";
 import { bakeProperties, type TypeDef, type Property } from "./type-def";
 
 export interface Operation {
+  operationId?: string | undefined;
   summary?: string | undefined;
   description?: string | undefined;
   requestBody?:

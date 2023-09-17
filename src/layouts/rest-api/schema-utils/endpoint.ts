@@ -33,6 +33,10 @@ export function groupEndpointsByTag(
   return result;
 }
 
+export function getEndpointRepr({ method, path }: Endpoint): string {
+  return `${method} ${path}`;
+}
+
 export function getEveryEndpoints(schema: any): Endpoint[] {
   return Object.entries(schema.paths).flatMap(([path, methods]) => {
     return Object.entries(methods as any).map(([method, _operation]) => {
