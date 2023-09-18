@@ -15,7 +15,9 @@ export function expanded() {
 }
 
 export function useExpand(id: string, initialState: boolean) {
-  React.useEffect(() => expandSection(id, initialState), []);
+  // SSR에서도 제대로 펼쳐서 그리려면 첫 render 전에 effect가 실행될 필요가 있음
+  // 첫 render 전에 effect가 불리도록 하기 위해서 useEffect 대신 useState 사용
+  React.useState(() => expandSection(id, initialState));
   const expandSignal = useComputed(() =>
     expandedSectionsSignal.value.includes(id)
   );

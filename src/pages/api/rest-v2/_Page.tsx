@@ -7,9 +7,9 @@ import EndpointDoc from "~/layouts/rest-api/EndpointDoc";
 const endpoints = getEveryEndpoints(schema);
 
 export interface RestV2Props {
-  group: string;
+  currentSection: string;
 }
-export default function RestV2({ group }: RestV2Props) {
+export default function RestV2({ currentSection }: RestV2Props) {
   return (
     <RestApi title="PortOne REST API - V2">
       <Hr />
@@ -26,7 +26,7 @@ export default function RestV2({ group }: RestV2Props) {
       <TypeDefinitions
         basepath="/api/rest-v2"
         schema={schema}
-        initialExpand={group === "type-def"}
+        initialExpand={currentSection === "type-def"}
       />
     </RestApi>
   );

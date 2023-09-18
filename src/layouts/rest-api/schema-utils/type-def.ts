@@ -6,6 +6,7 @@ export interface TypeDef {
   allOf?: TypeDef[] | undefined;
   oneOf?: TypeDef[] | undefined;
   discriminator?: { propertyName: string; mapping: Record<string, string> };
+  title?: string | undefined;
   summary?: string | undefined;
   description?: string | undefined;
   type?: string | undefined;
@@ -13,10 +14,14 @@ export interface TypeDef {
   items?: TypeDef | undefined;
   required?: string[] | undefined;
   properties?: Properties | undefined;
+  /**
+   * @deprecated use `x-portone-title`
+   */
   "x-portone-name"?: string | undefined;
+  "x-portone-title"?: string | undefined;
   "x-portone-summary"?: string | undefined;
   "x-portone-description"?: string | undefined;
-  "x-portone-cases"?: ({ case: string } & TypeDef)[];
+  "x-portone-enum"?: { [enumValue: string]: TypeDef };
 }
 
 export interface Properties {
@@ -25,12 +30,17 @@ export interface Properties {
 
 export interface Property {
   $ref?: string | undefined;
+  title?: string | undefined;
   summary?: string | undefined;
   description?: string | undefined;
   type?: string | undefined;
   items?: string | TypeDef | undefined;
   deprecated?: boolean | undefined;
+  /**
+   * @deprecated use `x-portone-title`
+   */
   "x-portone-name"?: string | undefined;
+  "x-portone-title"?: string | undefined;
   "x-portone-summary"?: string | undefined;
   "x-portone-description"?: string | undefined;
 }

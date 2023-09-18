@@ -39,7 +39,7 @@ export function TypeDefinitions({
       typeDef: getTypeDefByRef(schema, ref),
     }));
   return (
-    <div class="flex flex-col">
+    <section class="flex flex-col">
       <prose.h2 ref={headingRef}>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
@@ -89,7 +89,7 @@ export function TypeDefinitions({
           ))}
         </div>
       </Expand>
-    </div>
+    </section>
   );
 }
 
@@ -106,7 +106,7 @@ export function TypeDefDoc({ basepath, schema, typeDef }: TypeDefDocProps) {
         <ObjectDoc basepath={basepath} schema={schema} typeDef={typeDef} />
       );
     case "enum":
-      return <EnumDoc xPortoneCases={typeDef!["x-portone-cases"]!} />;
+      return <EnumDoc xPortoneEnum={typeDef!["x-portone-enum"]} />;
     case "union":
       return <UnionDoc basepath={basepath} typeDef={typeDef!} />;
   }
@@ -142,18 +142,18 @@ function UnionDoc({ basepath, typeDef }: UnionDocProps) {
 }
 
 interface EnumDocProps {
-  xPortoneCases: NonNullable<TypeDef["x-portone-cases"]>;
+  xPortoneEnum: TypeDef["x-portone-enum"];
 }
-function EnumDoc({ xPortoneCases }: EnumDocProps) {
+function EnumDoc({ xPortoneEnum }: EnumDocProps) {
   return (
     <div class="bg-slate-1 flex flex-col gap-4 rounded px-2 py-3">
-      {xPortoneCases.map((enumCase) => {
-        const label = enumCase["x-portone-name"] || "";
+      {Object.entries(xPortoneEnum || {}).map(([enumValue, enumCase]) => {
+        const title = enumCase["x-portone-title"] || enumCase.title || "";
         return (
           <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2 leading-none">
-              <code>{enumCase.case}</code>
-              <span class="text-slate-5 text-sm">{label}</span>
+              <code>{enumValue}</code>
+              <span class="text-slate-5 text-sm">{title}</span>
             </div>
             <DescriptionDoc typeDef={enumCase} />
           </div>
@@ -203,13 +203,17 @@ interface PropertyDocProps {
   property: Property;
 }
 function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
-  const label = property["x-portone-name"] || "";
+  const title =
+    property["x-portone-title"] ||
+    property.title ||
+    property["x-portone-name"] ||
+    "";
   const deprecated = Boolean(property.deprecated);
   return (
     <div class={`flex flex-col gap-2 ${deprecated ? "opacity-50" : ""}`}>
       <div>
         <div class="text-slate-5 flex gap-1 text-xs">
-          {label && <span>{label}</span>}
+          {title && <span>{title}</span>}
           <span>{required ? "(필수)" : "(선택)"}</span>
           {deprecated && "(Deprecated)"}
         </div>

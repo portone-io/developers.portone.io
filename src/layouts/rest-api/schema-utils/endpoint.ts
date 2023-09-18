@@ -44,7 +44,11 @@ export function getEveryEndpoints(schema: any): Endpoint[] {
       return {
         method,
         path,
-        title: operation.summary || "",
+        title:
+          operation["x-portone-title"] ||
+          operation.title ||
+          operation.summary ||
+          "",
         deprecated: Boolean(operation.deprecated),
         unstable: Boolean(operation["x-portone-unstable"]),
       } as Endpoint;

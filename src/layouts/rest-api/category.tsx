@@ -16,22 +16,26 @@ import Expand from "./Expand";
 import { Hr, interleave } from ".";
 import EndpointDoc from "./EndpointDoc";
 
-export interface TagsProps {
+export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
-  group: string;
+  currentSection: string;
   schema: any;
 }
-export function Tags({ schema, basepath, group }: TagsProps) {
+export function Categories({
+  schema,
+  basepath,
+  currentSection,
+}: CategoriesProps) {
   const everyEndpoints = getEveryEndpoints(schema);
   return (
     <>
       {interleave(
         groupEndpointsByTag(schema, everyEndpoints).map(
           ({ tag, endpoints }) => (
-            <Tag
+            <Category
               basepath={basepath}
-              group={tag.name}
-              initialExpand={group === tag.name}
+              section={tag.name}
+              initialExpand={currentSection === tag.name}
               schema={schema}
               title={tag.name}
               summary={tag.description}
@@ -45,32 +49,32 @@ export function Tags({ schema, basepath, group }: TagsProps) {
   );
 }
 
-export interface TagProps {
+export interface CategoryProps {
   basepath: string;
   initialExpand: boolean;
-  group: string;
+  section: string;
   schema: any;
   title: string;
   summary: any;
   description?: any;
   endpoints: Endpoint[];
 }
-export function Tag({
+export function Category({
   basepath,
   initialExpand,
-  group,
+  section,
   schema,
   title,
   summary,
   endpoints,
-}: TagProps) {
+}: CategoryProps) {
   React.useEffect(expanded);
-  const { expand, onToggle } = useExpand(group, initialExpand);
+  const { expand, onToggle } = useExpand(section, initialExpand);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
   return (
-    <div class="flex flex-col">
+    <section class="flex flex-col">
       <div>
-        <prose.h2 id={group} ref={headingRef}>
+        <prose.h2 id={section} ref={headingRef}>
           {title}
         </prose.h2>
       </div>
@@ -80,18 +84,18 @@ export function Tag({
           <div class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border p-4">
             {endpoints.map((endpoint) => {
               const { method, path, title, deprecated, unstable } = endpoint;
-              const repr = getEndpointRepr(endpoint);
-              const href = `${basepath}/${group}#${encodeURIComponent(repr)}`;
+              const id = getEndpointRepr(endpoint);
+              const href = `${basepath}/${section}#${encodeURIComponent(id)}`;
               return (
                 <a
-                  key={repr}
+                  key={id}
                   href={href}
                   class={`hover:text-orange-5 text-slate-6 flex flex-col text-sm leading-tight underline-offset-4 transition-colors hover:underline ${
                     deprecated || unstable ? "opacity-50" : ""
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    expandAndScrollTo({ section: group, href, id: repr });
+                    expandAndScrollTo({ section, href, id });
                   }}
                   data-norefresh
                 >
@@ -126,7 +130,7 @@ export function Tag({
                 <a
                   target="_blank"
                   class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
-                  href={`https://api.iamport.kr/#!/${group}/${operation.operationId}`}
+                  href={`https://api.iamport.kr/#!/${section}/${operation.operationId}`}
                 >
                   Swagger Test Link
                 </a>
@@ -135,6 +139,6 @@ export function Tag({
           />
         ))}
       </Expand>
-    </div>
+    </section>
   );
 }

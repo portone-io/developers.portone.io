@@ -69,19 +69,17 @@ async function downloadV2Openapi() {
   const yaml = await fetchTextFromGithub(downloadV2Openapi.src, token);
   const schema = parseYaml(yaml);
   traverseEveryProperty(schema, (node, property) => {
-    if (property !== "x-portone-cases") return;
-    for (const enumCase of node["x-portone-cases"]) {
-      if (!enumCase.description) continue;
-      enumCase["x-portone-name"] = enumCase.description;
-      delete enumCase.description;
-    }
+    if (!node[property]) return;
+    if (node[property]["x-portone-hidden"]) delete node[property];
   });
   traverseEveryProperty(schema, (node, property) => {
     if (property !== "x-portone-fields") return;
     node.properties ||= {};
-    for (const { field, ...property } of node["x-portone-fields"]) {
-      node.properties[field] ||= {};
-      Object.assign(node.properties[field] || {}, property);
+    for (const field in node["x-portone-fields"]) {
+      Object.assign(
+        node.properties[field] ||= {},
+        node["x-portone-fields"][field],
+      );
     }
     delete node["x-portone-fields"];
   });

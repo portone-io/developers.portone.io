@@ -1,13 +1,13 @@
 import * as prose from "~/components/prose";
 import RestApi, { Hr } from "~/layouts/rest-api";
 import schema from "~/schema/v1.openapi.json";
-import { Tags } from "~/layouts/rest-api/tag";
+import { Categories } from "~/layouts/rest-api/category";
 import { TypeDefinitions } from "~/layouts/rest-api/type-def";
 
 export interface RestV1Props {
-  group: string;
+  currentSection: string;
 }
-export default function RestV1({ group }: RestV1Props) {
+export default function RestV1({ currentSection }: RestV1Props) {
   return (
     <RestApi title="PortOne REST API - V1">
       <prose.p>
@@ -21,11 +21,15 @@ export default function RestV1({ group }: RestV1Props) {
         <code>api.iamport.kr</code>
       </prose.p>
       <Hr />
-      <Tags basepath="/api/rest-v1" group={group} schema={schema} />
+      <Categories
+        basepath="/api/rest-v1"
+        currentSection={currentSection}
+        schema={schema}
+      />
       <Hr />
       <TypeDefinitions
         basepath="/api/rest-v1"
-        initialExpand={group === "type-def"}
+        initialExpand={currentSection === "type-def"}
         schema={schema}
       />
     </RestApi>
