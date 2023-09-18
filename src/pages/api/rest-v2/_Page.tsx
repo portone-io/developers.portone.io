@@ -26,7 +26,7 @@ export default function RestV2({ group }: RestV2Props) {
       <TypeDefinitions
         basepath="/api/rest-v2"
         schema={schema}
-        expand={group === "type-def"}
+        initialExpand={group === "type-def"}
       />
     </RestApi>
   );

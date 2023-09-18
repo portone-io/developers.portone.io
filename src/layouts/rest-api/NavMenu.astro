@@ -14,11 +14,13 @@ const { items } = Astro.props;
 ---
 
 <script>
+  import { sidebarOpenSignal } from "~/state/sidebar";
   const navMenu = document.getElementById("nav-menu");
   const navMenuItems = Array.from(navMenu?.querySelectorAll("a") || []);
   for (const item of navMenuItems) {
     item.addEventListener("click", (e) => {
       e.preventDefault();
+      sidebarOpenSignal.value = false;
       document
         .getElementById(item.dataset.target || "")
         ?.scrollIntoView({ behavior: "smooth" });

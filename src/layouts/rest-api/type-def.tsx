@@ -2,6 +2,11 @@ import * as React from "react";
 import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import {
+  expandAndScrollTo,
+  expanded,
+  useExpand,
+} from "~/state/rest-api/expand-section";
+import {
   type BakedProperty,
   type Property,
   type TypeDef,
@@ -16,16 +21,17 @@ import Expand from "./Expand";
 
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
-  expand?: boolean;
+  initialExpand?: boolean;
   schema: any;
 }
 export function TypeDefinitions({
   basepath,
-  expand = false,
+  initialExpand = false,
   schema,
 }: TypeDefinitionsProps) {
+  React.useEffect(expanded);
+  const { expand, onToggle } = useExpand("type-def", initialExpand);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
-  const expandSignal = useSignal(expand);
   const typeDefPropsList = crawlRefs(schema)
     .sort()
     .map((ref) => ({
@@ -39,20 +45,28 @@ export function TypeDefinitions({
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
       <div class="border-slate-3 bg-slate-1 grid-flow-rows mt-4 grid gap-x-4 gap-y-1 rounded-lg border px-6 py-4 text-xs sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {typeDefPropsList.map(({ name }) => (
-          <a
-            class="hover:text-orange-5 underline-offset-4 transition-colors hover:underline"
-            href={`${basepath}/type-def#${name}`}
-            key={name}
-          >
-            {name}
-          </a>
-        ))}
+        {typeDefPropsList.map(({ name }) => {
+          const href = `${basepath}/type-def#${name}`;
+          return (
+            <a
+              key={name}
+              class="hover:text-orange-5 underline-offset-4 transition-colors hover:underline"
+              href={href}
+              onClick={(e) => {
+                e.preventDefault();
+                expandAndScrollTo({ section: "type-def", href, id: name });
+              }}
+              data-norefresh
+            >
+              {name}
+            </a>
+          );
+        })}
       </div>
       <Expand
         className="mt-10"
-        expand={expandSignal.value}
-        onToggle={(v) => (expandSignal.value = v)}
+        expand={expand}
+        onToggle={onToggle}
         onCollapse={() => {
           headingRef.current?.scrollIntoView({ behavior: "smooth" });
         }}
@@ -199,7 +213,7 @@ function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
           <span>{required ? "(필수)" : "(선택)"}</span>
           {deprecated && "(Deprecated)"}
         </div>
-        <div class="font-mono font-bold leading-none">
+        <div class="font-mono font-bold leading-tight">
           <span>{name}</span>
           <span>: </span>
           <TypeReprDoc basepath={basepath} def={property} />
@@ -217,15 +231,23 @@ interface TypeReprDocProps {
 function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
   const typeRepr = repr(def);
   const isUserType = typeRepr[0]?.toUpperCase() === typeRepr[0];
-  return isUserType ? (
+  if (!isUserType) {
+    return <span class="text-slate-5 font-bold">{typeRepr}</span>;
+  }
+  const typeName = typeRepr.replace("[]", "");
+  const href = `${basepath}/type-def#${typeName}`;
+  return (
     <a
-      class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
-      href={`${basepath}/type-def#${typeRepr.replace("[]", "")}`}
+      class="text-slate-5 hover:text-orange-5 inline-block font-bold underline-offset-4 transition-colors hover:underline"
+      href={href}
+      onClick={(e) => {
+        e.preventDefault();
+        expandAndScrollTo({ section: "type-def", href, id: typeName });
+      }}
+      data-norefresh
     >
       {typeRepr}
     </a>
-  ) : (
-    <span class="text-slate-5 font-bold">{typeRepr}</span>
   );
 }
 

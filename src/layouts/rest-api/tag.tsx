@@ -1,8 +1,10 @@
 import * as React from "react";
 import * as prose from "~/components/prose";
-import { doublePushAndBack } from "~/misc/history";
-import { wait } from "~/misc/async";
-import { expandTag, expanded, useExpand } from "~/state/rest-api/tag-expand";
+import {
+  expandAndScrollTo,
+  expanded,
+  useExpand,
+} from "~/state/rest-api/expand-section";
 import {
   type Endpoint,
   groupEndpointsByTag,
@@ -89,15 +91,7 @@ export function Tag({
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    expandTag(group, true, async () => {
-                      doublePushAndBack(href);
-                      // doublePushAndBack이 불리는 순간 스크롤이 방해받음
-                      // doublePushAndBack이 끝나는 시점을 특정하는 것도 불가
-                      await wait(100);
-                      document
-                        .getElementById(repr)
-                        ?.scrollIntoView({ behavior: "smooth" });
-                    });
+                    expandAndScrollTo({ section: group, href, id: repr });
                   }}
                   data-norefresh
                 >
