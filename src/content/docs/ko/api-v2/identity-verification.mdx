@@ -333,7 +333,7 @@ PG사 응답 데이터
 
 ## ⌨ 본인인증 요청 전송
 
-<Swagger method="post" path="/identity-verifications/send" baseUrl="https://api.portone.io" summary="본인인증 요청 전송">
+<Swagger method="post" path="/identity-verifications/{id}/send" baseUrl="https://api.portone.io" summary="본인인증 요청 전송">
 <SwaggerDescription>
 본인인증 요청을 전송합니다.
 
@@ -343,14 +343,16 @@ SMS 방식을 이용할 경우 입력한 전화번호로 문자 메시지가 발
 
 ### Parameters
 
+#### Path
+
+<SwaggerParameter name="id" type="string" required="true">
+  본인인증 아이디
+</SwaggerParameter>
+
 #### Body
 
 <SwaggerParameter name="storeId" type="string" required="false">
 상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴 상점 아이디를 사용)
-
-</SwaggerParameter>
-<SwaggerParameter name="id" type="string" required="true">
-본인인증 아이디
 
 </SwaggerParameter>
 <SwaggerParameter name="channelKey" type="string" required="true">
@@ -556,7 +558,7 @@ PG사 에러 메시지
 
 ## ⌨ 본인인증 확인
 
-<Swagger method="post" path="/identity-verifications/confirm" baseUrl="https://api.portone.io" summary="본인인증 확인">
+<Swagger method="post" path="/identity-verifications/{id}/confirm" baseUrl="https://api.portone.io" summary="본인인증 확인">
 <SwaggerDescription>
 요청된 본인인증에 대한 확인을 진행하여 성공한다면 인증을 완료합니다.
 
@@ -566,14 +568,16 @@ SMS 방식의 경우에는 입력된 OTP가 실제 발송되었던 OTP와 일치
 
 ### Parameters
 
+#### Path
+
+<SwaggerParameter name="id" type="string" required="true">
+  본인인증 아이디
+</SwaggerParameter>
+
 #### Body
 
 <SwaggerParameter name="storeId" type="string" required="false">
 상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴 상점 아이디를 사용)
-
-</SwaggerParameter>
-<SwaggerParameter name="id" type="string" required="true">
-본인인증 아이디
 
 </SwaggerParameter>
 <SwaggerParameter name="otp" type="string" required="false">
@@ -892,7 +896,7 @@ PG사 에러 메시지
 
 ## ⌨ 본인인증 요청 재전송 (SMS)
 
-<Swagger method="post" path="/identity-verifications/resend" baseUrl="https://api.portone.io" summary="본인인증 요청 재전송 (SMS)">
+<Swagger method="post" path="/identity-verifications/{id}/resend" baseUrl="https://api.portone.io" summary="본인인증 요청 재전송 (SMS)">
 <SwaggerDescription>
 본인인증 요청을 재전송합니다.
 
@@ -902,16 +906,18 @@ SMS 방식일 때에만 사용 가능하며, 기존 OTP가 만료되고 새로�
 
 ### Parameters
 
-#### Body
+#### Path
 
-<SwaggerParameter name="storeId" type="string" required="false">
-상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴 상점 아이디를 사용)
-
-</SwaggerParameter>
 <SwaggerParameter name="id" type="string" required="true">
-본인인증 아이디
-
+  본인인증 아이디
 </SwaggerParameter>
+#### Query
+
+<SwaggerParameter name="store_id" type="string" required="false">
+  상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴
+  상점 아이디를 사용)
+</SwaggerParameter>
+
 ### Responses
 
 <SwaggerResponse status="200" description="본인인증 요청 재전송 성공 응답">
