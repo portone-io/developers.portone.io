@@ -2,6 +2,7 @@
 import LayoutBase from "~/layouts/LayoutBase.astro";
 import Component from "./_Page";
 import NavMenu from "~/layouts/rest-api/NavMenu.astro";
+import { getCategories } from "~/layouts/rest-api/schema-utils/category";
 import schema from "~/schema/v1.openapi.json";
 
 export const prerender = false;
@@ -13,12 +14,7 @@ const [_api, _rest, section = ""] = Astro.url.pathname
 
 <LayoutBase lang="ko" title="PortOne REST API - V1">
   <div class="flex">
-    <NavMenu
-      items={schema.tags.map((tag) => ({
-        title: tag.name,
-        id: tag.name,
-      }))}
-    />
+    <NavMenu items={getCategories(schema)} />
     <Component client:visible currentSection={section} />
   </div>
 </LayoutBase>

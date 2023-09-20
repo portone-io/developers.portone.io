@@ -1,3 +1,4 @@
+import { getCategories, type Category, type Tag } from "./category";
 import { type Operation, getOperation } from "./operation";
 
 export interface Endpoint {
@@ -8,10 +9,6 @@ export interface Endpoint {
   unstable: boolean;
 }
 
-export interface Tag {
-  name: string;
-  description: string;
-}
 export interface TagEndpointsPair {
   tag: Tag;
   endpoints: Endpoint[];
@@ -31,6 +28,40 @@ export function groupEndpointsByTag(
     result.push({ tag, endpoints: map[tag.name]! });
   }
   return result;
+}
+
+export interface CategoryEndpointsPair {
+  category: Category;
+  endpoints: Endpoint[];
+}
+export function groupEndpointsByCategory(
+  schema: any,
+  endpoints: Endpoint[]
+): CategoryEndpointsPair[] {
+  const result: CategoryEndpointsPair[] = [];
+  const map: { [categoryId: string]: Endpoint[] } = {};
+  for (const endpoint of endpoints) {
+    const operation = getOperation(schema, endpoint);
+    const categoryId =
+      operation["x-portone-category"] || operation.tags?.[0] || "";
+    (map[categoryId] ||= []).push(endpoint);
+  }
+  const categories = flatCategories(getCategories(schema));
+  for (const category of categories) {
+    const endpoints = map[category.id] || [];
+    if (!endpoints.length) continue;
+    result.push({ category, endpoints });
+  }
+  return result;
+}
+
+export function flatCategories(categories: Category[]): Category[] {
+  return categories
+    .map((category) => {
+      if (category.children) return [category, ...category.children];
+      return category;
+    })
+    .flat();
 }
 
 export function getEndpointRepr({ method, path }: Endpoint): string {

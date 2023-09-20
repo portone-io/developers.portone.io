@@ -7,9 +7,9 @@ import {
 } from "~/state/rest-api/expand-section";
 import {
   type Endpoint,
-  groupEndpointsByTag,
   getEveryEndpoints,
   getEndpointRepr,
+  groupEndpointsByCategory,
 } from "./schema-utils/endpoint";
 import TwoColumnLayout from "./TwoColumnLayout";
 import Expand from "./Expand";
@@ -30,15 +30,15 @@ export function Categories({
   return (
     <>
       {interleave(
-        groupEndpointsByTag(schema, everyEndpoints).map(
-          ({ tag, endpoints }) => (
+        groupEndpointsByCategory(schema, everyEndpoints).map(
+          ({ category: { id, title, description }, endpoints }) => (
             <Category
               basepath={basepath}
-              section={tag.name}
-              initialExpand={currentSection === tag.name}
+              section={id}
+              initialExpand={currentSection === id}
               schema={schema}
-              title={tag.name}
-              summary={tag.description}
+              title={title}
+              description={description}
               endpoints={endpoints}
             />
           )
@@ -55,8 +55,7 @@ export interface CategoryProps {
   section: string;
   schema: any;
   title: string;
-  summary: any;
-  description?: any;
+  description: any;
   endpoints: Endpoint[];
 }
 export function Category({
@@ -65,7 +64,7 @@ export function Category({
   section,
   schema,
   title,
-  summary,
+  description,
   endpoints,
 }: CategoryProps) {
   React.useEffect(expanded);
@@ -79,7 +78,14 @@ export function Category({
         </prose.h2>
       </div>
       <TwoColumnLayout
-        left={<div class="mt-4">{summary}</div>}
+        left={
+          <div
+            class="mt-4"
+            dangerouslySetInnerHTML={{
+              __html: description,
+            }}
+          />
+        }
         right={
           <div class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border p-4">
             {endpoints.map((endpoint) => {

@@ -15,6 +15,7 @@ export interface Operation {
   deprecated?: boolean | undefined;
   "x-portone-title"?: string | undefined;
   "x-portone-unstable"?: boolean | undefined;
+  "x-portone-category"?: string | undefined;
 }
 
 export interface Parameter extends Property {
