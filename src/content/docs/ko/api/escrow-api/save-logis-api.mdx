@@ -32,6 +32,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 - (신) 나이스페이먼츠
 
+- 웰컴페이먼츠
 </Details>
 
 <Swagger method="post" path="/escrows/logis/{imp_uid}" baseUrl="https://api.iamport.kr" summary="에스크로 거래 배송등록">
@@ -82,15 +83,16 @@ sender, receiver의 각 세부 항목은 PG사마다 필수 여부가 모두 다
 </mark>
 
 </SwaggerParameter>
-<SwaggerParameter name="send_email" type="boolean" required="true">
-<mark style="color:red;">
+<SwaggerParameter name="send_email" type="boolean" required="false">
 
 **구매 확정 이메일 전송 여부**
 
-</mark>
+</SwaggerParameter>
+<SwaggerParameter name="products" type="Json" required="false">
+
+**배송 상품 정보**
 
 </SwaggerParameter>
-
 ### Responses
 
 <SwaggerResponse status="200: OK" description="성공">
@@ -205,11 +207,11 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`name (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
-**보내는분 성함(필수 : KG이니시스, 스마트로-신모듈)**
+**보내는분 성함(필수 : KG이니시스, 스마트로-신모듈, 웰컴페이먼츠)**
 
 **`tel (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
-**보내는분 전화번호(필수 : KG이니시스, 스마트로-신모듈)**
+**보내는분 전화번호(필수 : KG이니시스, 스마트로-신모듈, 웰컴페이먼츠)**
 
 **`addr (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
@@ -217,7 +219,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`postcode (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
-**보내는분 우편번호(필수 : KG이니시스, 스마트로-신모듈)**
+**보내는분 우편번호(필수 : KG이니시스, 스마트로-신모듈, 웰컴페이먼츠)**
 
 **`relationship (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
@@ -225,7 +227,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`formed_address (`** <mark style="color:green;">**`Json`**</mark>**`, optional)`**
 
-**보내는분 주소 (필수 : 스마트로-신모듈 // 스마트로-신모듈의 경우 기존 파라미터인 addr 가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다. )**
+**보내는분 주소 (필수 : 스마트로-신모듈, 웰컴페이먼츠 // 스마트로-신모듈, 웰컴페이먼츠의 경우 기존 파라미터인 addr 가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다. )**
 
 **`address_line_1 (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
@@ -262,11 +264,11 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`name (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
-**받는 분 성함(필수 : KG이니시스, 스마트로-신모듈)**
+**받는 분 성함(필수 : KG이니시스, 스마트로-신모듈, 웰컴페이먼츠)**
 
 **`tel (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
-**받는 분 전화번호(필수 : KG이니시스, 스마트로-신모듈)**
+**받는 분 전화번호(필수 : KG이니시스, 스마트로-신모듈, 웰컴페이먼츠)**
 
 **`addr (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
@@ -274,11 +276,11 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`postcode (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
-**받는 분 우편번호(필수 : KG이니시스, 스마트로-신모듈)**
+**받는 분 우편번호(필수 : KG이니시스, 스마트로-신모듈, 웰컴페이먼츠)**
 
 **`formed_address (`** <mark style="color:green;">**`Json`**</mark>**`, optional)`**
 
-**받는 분 주소 (필수 : 스마트로-신모듈 // 스마트로-신모듈의 경우 기존 파라미터인 addr 가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다. )**
+**받는 분 주소 (필수 : 스마트로-신모듈, 웰컴페이먼츠 // 스마트로-신모듈, 웰컴페이먼츠의 경우 기존 파라미터인 addr 가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다. )**
 
 **`address_line_1 (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
 
@@ -338,6 +340,55 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 > **구매 확정 이메일 전송 여부**
 
 에스크로 구매 확정시 결제 창에 입력했던 이메일로 해당 사실을 전송할지 여부((신) 나이스페이먼츠 전용. 기본값: true)
+
+> **`products`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**`json`**</mark>
+>
+> **배송 상품 정보**
+
+<Details>
+<p slot="summary">EscrowLogisProductsAnnotation</p>
+
+**`id (`** <mark style="color:green;">**`string`**</mark>**`, required)`**
+
+**상품 고유 아이디(필수 : 웰컴페이먼츠)**
+
+**`name (`** <mark style="color:green;">**`string`**</mark>**`, required)`**
+
+**상품 이름(필수 : 웰컴페이먼츠)**
+
+**`code (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
+
+**상품 코드**
+
+**`amount (`** <mark style="color:green;">**`integer`**</mark>**`, required)`**
+
+**상품 단위 가격(필수 : 웰컴페이먼츠)**
+
+**`currency (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
+
+**상품의 결제통화 구분코드 (기본값은 KRW입니다)**
+
+**`quantity (`** <mark style="color:green;">**`integer`**</mark>**`, optional)`**
+
+**상품의 수량 (기본값은 1입니다)**
+
+**`tag (`** <mark style="color:green;">**`string`**</mark>**`, optional)`**
+
+**상품의 카테고리**
+
+```json title="JSON" showLineNumbers
+{
+  "id": "string",
+  "name": "string",
+  "code": "string",
+  "amount": "double",
+  "currency": "currency",
+  "quantity": "integer",
+  "tag" : "string"
+}
+```
+
+</Details>
 
 ### 응답
 
