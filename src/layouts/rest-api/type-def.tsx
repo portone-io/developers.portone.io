@@ -212,10 +212,10 @@ function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
   return (
     <div class={`flex flex-col gap-2 ${deprecated ? "opacity-50" : ""}`}>
       <div>
-        <div class="text-slate-5 flex gap-1 text-xs">
-          {title && <span>{title}</span>}
-          <span>{required ? "(필수)" : "(선택)"}</span>
-          {deprecated && "(Deprecated)"}
+        <div class="text-slate-5 text-xs">
+          {title && <span>{title}</span>}{" "}
+          <span class="inline-block">{required ? "(필수)" : "(선택)"}</span>{" "}
+          {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>
         <div class="font-mono font-bold leading-tight">
           <span>{name}</span>

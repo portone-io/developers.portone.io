@@ -8,12 +8,134 @@
       "url": "https://admin.iamport.kr",
       "email": "cs@portone.io"
     },
-    "version": "1.0"
+    "version": "1.0",
+    "x-portone-categories": [
+      {
+        "id": "auth",
+        "title": "인증 관련 API",
+        "description": "API 인증에 관련된 기능을 제공합니다."
+      },
+      {
+        "id": "billingkey",
+        "title": "빌링키 관련 API",
+        "description": "빌링키 관리와 관련된 기능을 제공합니다."
+      },
+      {
+        "id": "certification",
+        "title": "본인인증 관련 API",
+        "description": "본인인증 요청 및 결과 조회와 관련된 기능을 제공합니다."
+      },
+      {
+        "id": "escrow",
+        "title": "에스크로 관련 API",
+        "description": "에스크로 결제 건의 배송 정보와 관련된 기능을 제공합니다."
+      },
+      {
+        "id": "etc",
+        "title": "기타 API",
+        "description": "부가적인 기능을 제공합니다.",
+        "children": [
+          {
+            "id": "etc.benepia",
+            "title": "베네피아 포인트 관련 API",
+            "description": "베네피아 포인트(복지 포인트)와 관련된 기능을 제공합니다."
+          },
+          {
+            "id": "etc.code",
+            "title": "결제기관 관련 API",
+            "description": "금융결제원 기준 카드사, 은행의 표준 코드와 기관정보 조회 기능을 제공합니다."
+          },
+          {
+            "id": "etc.cvs",
+            "title": "편의점 결제 관련 API",
+            "description": "편의점 결제를 위한 수납 번호(barcode)와 관련된 기능을 제공합니다."
+          }
+        ]
+      },
+      {
+        "id": "nonAuthPayment",
+        "title": "비인증 결제 관련 API",
+        "description": "별도 결제창 호출없이 결제를 진행할 수 있는 비인증 결제 기능을 제공합니다.",
+        "children": [
+          {
+            "id": "nonAuthPayment.subscribe",
+            "title": "정기 결제 관련 API",
+            "description": "비인증 결제 중 정기 결제를 관리하는 기능을 제공합니다."
+          }
+        ]
+      },
+      {
+        "id": "payment",
+        "title": "결제 관련 API",
+        "description": "결제 건과 관련된 기능을 제공합니다.",
+        "children": [
+          {
+            "id": "payment.validation",
+            "title": "결제 금액 사전 등록 관련 API",
+            "description": "사전 등록하는 결제금액과 관련된 기능을 제공합니다."
+          }
+        ]
+      },
+      {
+        "id": "pg",
+        "title": "PG사 관련 API",
+        "description": "PG사 별 추가로 지원하는 기능을 제공합니다.",
+        "children": [
+          {
+            "id": "pg.kakao",
+            "title": "카카오 관련 API",
+            "description": "카카오페이에서 지원하는 기능을 제공합니다."
+          },
+          {
+            "id": "pg.kcpquick",
+            "title": "KCP 퀵페이 관련 API",
+            "description": "KCP 퀵페이에서 지원하는 기능을 제공합니다."
+          },
+          {
+            "id": "pg.naver",
+            "title": "네이버페이 관련 API",
+            "description": "네이버페이에서 지원하는 기능을 제공합니다."
+          },
+          {
+            "id": "pg.payco",
+            "title": "페이코 관련 API",
+            "description": "페이코에서 지원하는 기능을 제공합니다."
+          },
+          {
+            "id": "pg.paymentwall",
+            "title": "페이먼트월 관련 API",
+            "description": "페이먼트월에서 지원하는 기능을 제공합니다."
+          }
+        ]
+      },
+      {
+        "id": "receipt",
+        "title": "현금영수증 관련 API",
+        "description": "포트원 결제건 및 외부 결제 건의 현금영수증 관리와 관련된 기능을 제공합니다."
+      },
+      {
+        "id": "user",
+        "title": "가맹점 정보 관련 API",
+        "description": "가맹점 정보를 관리하는 기능을 제공합니다.",
+        "children": [
+          {
+            "id": "user.tier",
+            "title": "가맹점의 하위가맹점 관련 API",
+            "description": "대표가맹점에 대한 하위가맹점 관리와 관련된 기능을 제공합니다."
+          }
+        ]
+      },
+      {
+        "id": "vbank",
+        "title": "가상계좌 관련 API",
+        "description": "가상계좌 결제와 관련된 기능을 제공합니다."
+      }
+    ]
   },
-  "host": "core-api.stg.iamport.co",
+  "host": "api.iamport.test:8001",
   "basePath": "/",
   "schemes": [
-    "https"
+    "http"
   ],
   "paths": {
     "/users/getToken": {
@@ -63,7 +185,8 @@
           "401": {
             "description": "imp_key, imp_secret 인증에 실패한 경우"
           }
-        }
+        },
+        "x-portone-category": "auth"
       }
     },
     "/benepia/point": {
@@ -129,7 +252,8 @@
         },
         "x-portone-supported-pgs": [
           "kcp"
-        ]
+        ],
+        "x-portone-category": "etc.benepia"
       }
     },
     "/benepia/payment": {
@@ -300,7 +424,8 @@
         },
         "x-portone-supported-pgs": [
           "kcp"
-        ]
+        ],
+        "x-portone-category": "etc.benepia"
       }
     },
     "/certifications/{imp_uid}": {
@@ -348,7 +473,8 @@
           "danal",
           "inicis_unified",
           "inicis"
-        ]
+        ],
+        "x-portone-category": "certification"
       },
       "delete": {
         "tags": [
@@ -397,7 +523,8 @@
           "danal",
           "inicis_unified",
           "inicis"
-        ]
+        ],
+        "x-portone-category": "certification"
       }
     },
     "/certifications/otp/request": {
@@ -532,7 +659,8 @@
         },
         "x-portone-supported-pgs": [
           "danal"
-        ]
+        ],
+        "x-portone-category": "certification"
       }
     },
     "/certifications/otp/confirm/{imp_uid}": {
@@ -594,7 +722,8 @@
         },
         "x-portone-supported-pgs": [
           "danal"
-        ]
+        ],
+        "x-portone-category": "certification"
       }
     },
     "/subscribe/customers": {
@@ -672,9 +801,9 @@
           "settle_firm",
           "smartro_v2",
           "tosspayments",
-          "paypal_v2",
-          "welcome"
+          "paypal_v2"
         ],
+        "x-portone-category": "billingkey",
         "x-portone-per-pg": {
           "paypal_v2": {
             "description": "<h2 id=\"연동-유의사항\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#연동-유의사항\"><svg class=\"octicon octicon-link\" viewbox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>연동 유의사항</h2><pre><code> 빌링키 발급 수단 및 정보를 알 수 없음&lt;br&gt;\n페이팔을 통해 다양한 수단으로 빌링키 발급이 가능하지만, 페이팔이 승인 된 빌링키 발급 수단 및 정보를 알려주지 않습니다.\n따라서 페이팔 빌링키 발급 건의 결제 수단(pay_method)은 모두 paypal로 일괄 저장되며 발급 된 빌링키 정보 조회시 카드 정보는 모두 null로 내려갑니다.\n```json\n\\\\ GET /subscribe/customers/{customer_uid}\n{\n...중략\npg_provider: 'paypal_v2',\ncustomer_uid: '{customer_uid}'\ncard_name: null,\ncard_code: null,\ncard_number: null,\ncard_type: null,\n}\n```</code></pre>"
@@ -748,9 +877,9 @@
           "smartro_v2",
           "tosspayments",
           "paypal_v2",
-          "nice_v2",
-          "welcome"
+          "nice_v2"
         ],
+        "x-portone-category": "billingkey",
         "x-portone-per-pg": {
           "paypal_v2": {
             "description": "<h2 id=\"연동-유의사항\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#연동-유의사항\"><svg class=\"octicon octicon-link\" viewbox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>연동 유의사항</h2><pre><code>빌링키 발급 수단 및 정보를 알 수 없음&lt;br&gt;\n페이팔을 통해 다양한 수단으로 빌링키 발급이 가능하지만, 페이팔이 승인 된 빌링키 발급 수단 및 정보를 알려주지 않습니다.\n따라서 페이팔 빌링키 발급 건의 결제 수단(pay_method)은 모두 paypal로 일괄 저장되며 발급 된 빌링키 정보 조회시 카드 정보는 모두 null로 내려갑니다.\n```json\n\\\\ GET /subscribe/customers/{customer_uid}\n\n{\n...중략\npg_provider: 'paypal_v2',\ncustomer_uid: '{customer_uid}'\ncard_name: null,\ncard_code: null,\ncard_number: null,\ncard_type: null,\n}\n```</code></pre>"
@@ -887,12 +1016,7 @@
             "maxLength": 20,
             "x-portone-name": "카드소유자명",
             "x-portone-summary": "<p>고객(카드소지자) 관리용 성함</p>\n",
-            "x-portone-description": "",
-            "x-portone-per-pg": {
-              "welcome": {
-                "required": true
-              }
-            }
+            "x-portone-description": ""
           },
           {
             "name": "customer_tel",
@@ -958,9 +1082,9 @@
           "html5_inicis",
           "tosspayments",
           "ksnet",
-          "nice_v2",
-          "welcome"
-        ]
+          "nice_v2"
+        ],
+        "x-portone-category": "billingkey"
       },
       "delete": {
         "tags": [
@@ -1051,9 +1175,9 @@
           "smartro_v2",
           "tosspayments",
           "paypal_v2",
-          "nice_v2",
-          "welcome"
-        ]
+          "nice_v2"
+        ],
+        "x-portone-category": "billingkey"
       }
     },
     "/subscribe/customers/{customer_uid}/payments": {
@@ -1133,9 +1257,9 @@
           "smartro_v2",
           "tosspayments",
           "paypal_v2",
-          "nice_v2",
-          "welcome"
-        ]
+          "nice_v2"
+        ],
+        "x-portone-category": "billingkey"
       }
     },
     "/subscribe/customers/{customer_uid}/schedules": {
@@ -1247,9 +1371,9 @@
           "smartro_v2",
           "tosspayments",
           "paypal_v2",
-          "nice_v2",
-          "welcome"
-        ]
+          "nice_v2"
+        ],
+        "x-portone-category": "billingkey"
       }
     },
     "/cvs": {
@@ -1426,7 +1550,8 @@
         },
         "x-portone-supported-pgs": [
           "galaxia"
-        ]
+        ],
+        "x-portone-category": "etc.cvs"
       }
     },
     "/cvs/{imp_uid}": {
@@ -1469,7 +1594,8 @@
         },
         "x-portone-supported-pgs": [
           "galaxia"
-        ]
+        ],
+        "x-portone-category": "etc.cvs"
       }
     },
     "/escrows/logis/{imp_uid}": {
@@ -1478,7 +1604,7 @@
           "escrow.logis"
         ],
         "summary": "배송정보 단건조회 API",
-        "description": "에스크로 결제 건에 대한 배송정보 조회<br>\n\t 입력한 배송정보를 획득합니다.<br><br>\n\t 택배사 코드표 : https://developers.portone.io/docs/ko/tip/code\n\t <h4>지원되는 PG사</h4>\n\t <ul> <li>KG이니시스</li> <li>NHN KCP</li> <li>키움페이(구 다우, 페이조아)(다우테이타)</li> <li>KSNET</li> <li>스마트로 - 신모듈(PG사와의 사전 계약이 반드시 필요합니다.)</li><li>(신) 나이스페이</li><li>웰컴페이먼츠</li></ul>",
+        "description": "에스크로 결제 건에 대한 배송정보 조회<br>\n\t 입력한 배송정보를 획득합니다.<br><br>\n\t 택배사 코드표 : https://developers.portone.io/docs/ko/tip/code\n\t <h4>지원되는 PG사</h4>\n\t <ul> <li>KG이니시스</li> <li>NHN KCP</li> <li>키움페이(구 다우, 페이조아)(다우테이타)</li> <li>KSNET</li> <li>스마트로 - 신모듈(PG사와의 사전 계약이 반드시 필요합니다.)</li><li>(신) 나이스페이</li></ul>",
         "operationId": "escrow_logis_get",
         "consumes": [
           "application/json",
@@ -1529,16 +1655,16 @@
           "daou",
           "ksnet",
           "smartro_v2",
-          "nice_v2",
-          "welcome"
-        ]
+          "nice_v2"
+        ],
+        "x-portone-category": "escrow"
       },
       "put": {
         "tags": [
           "escrow.logis"
         ],
         "summary": "배송정보 단건수정 API",
-        "description": "에스크로 결제 건에 대해서 PUT /escrows/logis/{imp_uid} 로 등록된 배송정보를 수정하는 API 입니다.(2-depth의 json으로 Request Body가 구성되어야 합니다)<br><br>\n     logis는 하위 필드가 모두 필수입니다.<br>sender, receiver의 각 세부 항목은 PG사마다 필수 여부가 모두 다릅니다.<br><br>\n     택배사 코드표 : https://developers.portone.io/docs/ko/tip/code <br>\n     <h4>지원되는 PG사</h4>\n     <ul> <li>KG이니시스</li> <li>키움페이(구 다우, 페이조아)(다우테이타)</li> <li>KSNET</li> <li>스마트로 - 신모듈 (PG사와의 사전 계약이 반드시 필요합니다.)</li> <li>웰컴페이먼츠</li></ul>",
+        "description": "에스크로 결제 건에 대해서 PUT /escrows/logis/{imp_uid} 로 등록된 배송정보를 수정하는 API 입니다.(2-depth의 json으로 Request Body가 구성되어야 합니다)<br><br>\n     logis는 하위 필드가 모두 필수입니다.<br>sender, receiver의 각 세부 항목은 PG사마다 필수 여부가 모두 다릅니다.<br><br>\n     택배사 코드표 : https://developers.portone.io/docs/ko/tip/code <br>\n     <h4>지원되는 PG사</h4>\n     <ul> <li>KG이니시스</li> <li>키움페이(구 다우, 페이조아)(다우테이타)</li> <li>KSNET</li> <li>스마트로 - 신모듈 (PG사와의 사전 계약이 반드시 필요합니다.)</li></ul>",
         "operationId": "escrow_logis_edit",
         "consumes": [
           "application/json",
@@ -1597,28 +1723,6 @@
             "x-portone-name": "배송정보",
             "x-portone-summary": "<p>택배사코드표는 <a href=\"https://developers.portone.io/docs/ko/tip/code\">매뉴얼</a> 참조</p>\n",
             "x-portone-description": ""
-          },
-          {
-            "name": "products",
-            "in": "formData",
-            "description": "배송 상품 정보 (필수 : 웰컴페이먼츠)",
-            "required": false,
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/EscrowLogisProductsAnnotation"
-            },
-            "collectionFormat": "multi",
-            "x-portone-name": "배송 상품 정보",
-            "x-portone-summary": "<p>배송 보내는 상품의 정보 <strong>(고유 아이디, 이름, 고유 코드, 통화코드, 수량, 카테고리)</strong></p>\n",
-            "x-portone-description": "",
-            "x-portone-supported-pgs": [
-              "welcome"
-            ],
-            "x-portone-per-pg": {
-              "welcome": {
-                "required": true
-              }
-            }
           }
         ],
         "responses": {
@@ -1652,16 +1756,16 @@
           "kcp",
           "daou",
           "ksnet",
-          "smartro_v2",
-          "welcome"
-        ]
+          "smartro_v2"
+        ],
+        "x-portone-category": "escrow"
       },
       "post": {
         "tags": [
           "escrow.logis"
         ],
         "summary": "배송정보 단건등록 API",
-        "description": "에스크로 결제 건에 대한 배송정보 등록(2-depth의 json으로 Request Body가 구성되어야 합니다)<br><br>\n     logis는 하위 필드가 모두 필수입니다.<br>sender, receiver의 각 세부 항목은 PG사마다 필수 여부가 모두 다릅니다.<br><br>\n     택배사 코드표 : https://developers.portone.io/docs/ko/tip/code\n     <h4>지원되는 PG사</h4><ul> <li>KG이니시스</li> <li>NHN KCP</li> <li>키움페이(구 다우, 페이조아)(다우테이타)</li> <li>KSNET</li>  <li>스마트로 - 신모듈(PG사와의 사전 계약이 반드시 필요합니다.)</li><li>(신) 나이스페이</li><li>웰컴페이먼츠</li></ul>",
+        "description": "에스크로 결제 건에 대한 배송정보 등록(2-depth의 json으로 Request Body가 구성되어야 합니다)<br><br>\n     logis는 하위 필드가 모두 필수입니다.<br>sender, receiver의 각 세부 항목은 PG사마다 필수 여부가 모두 다릅니다.<br><br>\n     택배사 코드표 : https://developers.portone.io/docs/ko/tip/code\n     <h4>지원되는 PG사</h4><ul> <li>KG이니시스</li> <li>NHN KCP</li> <li>키움페이(구 다우, 페이조아)(다우테이타)</li> <li>KSNET</li>  <li>스마트로 - 신모듈(PG사와의 사전 계약이 반드시 필요합니다.)</li><li>(신) 나이스페이</li></ul>",
         "operationId": "escrow_logis_save",
         "consumes": [
           "application/json",
@@ -1721,28 +1825,6 @@
             "x-portone-description": ""
           },
           {
-            "name": "products",
-            "in": "formData",
-            "description": "배송 상품 정보 (필수 : 웰컴페이먼츠)",
-            "required": false,
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/EscrowLogisProductsAnnotation"
-            },
-            "collectionFormat": "multi",
-            "x-portone-name": "배송 상품 정보",
-            "x-portone-summary": "<p>배송 보내는 상품의 정보(고유 아이디, 이름, 고유 코드, 통화코드, 수량, 카테고리)</p>\n",
-            "x-portone-description": "",
-            "x-portone-supported-pgs": [
-              "welcome"
-            ],
-            "x-portone-per-pg": {
-              "welcome": {
-                "required": true
-              }
-            }
-          },
-          {
             "name": "send_email",
             "in": "formData",
             "description": "에스크로 구매 확정시 결제 창에 입력했던 이메일로 해당 사실을 전송할지 여부(기본값: true)",
@@ -1794,9 +1876,9 @@
           "daou",
           "ksnet",
           "smartro_v2",
-          "nice_v2",
-          "welcome"
+          "nice_v2"
         ],
+        "x-portone-category": "escrow",
         "x-portone-per-pg": {
           "ksnet": {
             "description": "<p>KSNET에서 일반 에스크로, 배송 에스크로 두 가지 유형의 에스크로를 제공합니다. 포트원을 통해 KSNET 에스크로를 사용하려는 경우 반드시 배송 에스크로 설정이 되어 있어야 합니다. <br />\n     또한 에스크로 거래는 30분 ~ 1시간 뒤  <a href=\"https://ksta.ksnet.co.kr/ui/tsk/ath01/cob/athcob01m0.jsp\">ksta.ksnet.co.kr</a> -&gt; PG 거래내역 -&gt; 배송 에스크로 거래조회에서 확인이 가능합니다. 에스크로 정보 수정의 경우도 등록이 완료된 이후부터 가능합니다.</p>\n"
@@ -1934,7 +2016,8 @@
         },
         "x-portone-supported-pgs": [
           "kcp_quick"
-        ]
+        ],
+        "x-portone-category": "pg.kcpquick"
       }
     },
     "/payments/{imp_uid}/naver/cancel": {
@@ -2019,7 +2102,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/approve-cancel": {
@@ -2085,7 +2169,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/ship": {
@@ -2242,7 +2327,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/ship-exchanged": {
@@ -2389,7 +2475,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/collect-exchanged": {
@@ -2455,7 +2542,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/place": {
@@ -2521,7 +2609,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/request-return": {
@@ -2688,7 +2777,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/approve-return": {
@@ -2764,7 +2854,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/reject-return": {
@@ -2843,7 +2934,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/withhold-return": {
@@ -2949,7 +3041,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/resolve-return": {
@@ -3015,7 +3108,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/point": {
@@ -3064,7 +3158,8 @@
         },
         "x-portone-supported-pgs": [
           "naverpay"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/confirm": {
@@ -3123,7 +3218,8 @@
         },
         "x-portone-supported-pgs": [
           "naverpay"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/product-orders": {
@@ -3169,7 +3265,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/naver/product-orders/{product_order_id}": {
@@ -3218,7 +3315,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/naver/reviews": {
@@ -3290,7 +3388,8 @@
         },
         "x-portone-supported-pgs": [
           "naverco"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payments/{imp_uid}/naver/cash-amount": {
@@ -3339,7 +3438,8 @@
         },
         "x-portone-supported-pgs": [
           "naverpay"
-        ]
+        ],
+        "x-portone-category": "pg.naverpay"
       }
     },
     "/payco/orders/status/{imp_uid}": {
@@ -3396,7 +3496,8 @@
         },
         "x-portone-supported-pgs": [
           "payco"
-        ]
+        ],
+        "x-portone-category": "pg.payco"
       }
     },
     "/payments/{imp_uid}/balance": {
@@ -3446,7 +3547,8 @@
         },
         "x-portone-supported-pgs": [
           "payco"
-        ]
+        ],
+        "x-portone-category": "payment"
       }
     },
     "/payments/{imp_uid}": {
@@ -3491,6 +3593,7 @@
             "description": "유효하지 않은 imp_uid"
           }
         },
+        "x-portone-category": "payment",
         "x-portone-per-pg": {
           "daou": {
             "description": "<p>페이조아는 (발급된) 가상계좌에 입금 완료시, 송금자의 정보(은행명, 계좌번호, 송금인) 중 송금자 이름만 알려줍니다.\n     따라서 송금자의 은행코드(<code>bank_code</code>)과 은행명(<code>bank_name</code>)은 모두 NULL로 내려가며, 송금자 이름을 확인하기 위해서는 아래 예시와 같이 별도의 쿼리 파라미터(<code>extension</code>)를 <code>true</code>로 설정해주셔야 합니다.\n     <code>text      GET http://api.iamport.kr/payments/{포트원 거래고유번호}?**extension=true**      </code></p>\n<pre><code> ```json\n {\n // ... 중략호\n \"bank_code\": null, // 송금자 은행 코드 알 수 없음\n \"bank_name\": null, // 송금자 은행 이름 알 수 없음\n \"extension\": {\n // ... 중략\n \"REMITTER\": \"홍길동\" // 송금자 이름\n }\n }\n ```\n </code></pre>"
@@ -3567,7 +3670,8 @@
           "404": {
             "description": "해당되는 결제건을 찾지 못하였습니다."
           }
-        }
+        },
+        "x-portone-category": "payment"
       }
     },
     "/payments/find/{merchant_uid}/{payment_status}": {
@@ -3639,7 +3743,8 @@
           "404": {
             "description": "거래건이 존재하지 않는 경우"
           }
-        }
+        },
+        "x-portone-category": "payment"
       }
     },
     "/payments/findAll/{merchant_uid}/{payment_status}": {
@@ -3737,7 +3842,8 @@
           "404": {
             "description": "유효하지 않은 merchant_uid"
           }
-        }
+        },
+        "x-portone-category": "payment"
       }
     },
     "/payments/status/{payment_status}": {
@@ -3847,7 +3953,8 @@
           "401": {
             "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
           }
-        }
+        },
+        "x-portone-category": "payment"
       }
     },
     "/payments/cancel": {
@@ -3926,9 +4033,6 @@
               },
               "smartro_v2": {
                 "description": "<p>부분취소시 면세 금액이 포함된 경우 반드시 취소 면세금액(tax_free)을 필수 입력 바랍니다</p>\n"
-              },
-              "welcome": {
-                "description": "<p><strong><code>부가세업체정함</code> 설정 가맹점에 한해 결제 시 면세금액을 지정했던 경우 필수</strong> 입력 바랍니다.</p>\n"
               }
             }
           },
@@ -3940,11 +4044,10 @@
             "type": "number",
             "x-portone-name": "(부분)취소요청금액 중 부가세 금액",
             "x-portone-summary": "<p>(부분)취소요청금액 중 부가세 금액으로 기본값은 null입니다.</p>\n",
-            "x-portone-description": "<p>단, <b>결제 시 부가세를 지정했던 경우 필수</b> 입력 바랍니다.<br />\n    </p><h5>지원되는 PG사</h5>\n    <ul><li>나이스페이먼츠(nice)</li>\n    <li>이니시스(html5_inicis)</li>\n    <li>웰컴페이먼츠</li></ul><p></p>\n",
+            "x-portone-description": "<p>단, <b>결제 시 부가세를 지정했던 경우 필수</b> 입력 바랍니다.<br />\n    </p><h5>지원되는 PG사</h5>\n    <ul><li>나이스페이먼츠(nice)</li>\n    <li>이니시스(html5_inicis)</li></ul><p></p>\n",
             "x-portone-supported-pgs": [
               "nice",
-              "html5_inicis",
-              "welcome"
+              "html5_inicis"
             ],
             "x-portone-per-pg": {
               "nice": {
@@ -3952,9 +4055,6 @@
               },
               "html5_inicis": {
                 "description": "<p><b>결제 시 부가세를 지정했던 경우 필수</b> 입력 바랍니다.</p>\n"
-              },
-              "welcome": {
-                "description": "<p><strong><code>부가세업체정함</code> 설정 가맹점에 한해 결제 시 부가세를 지정했던 경우 필수</strong> 입력 바랍니다.</p>\n"
               }
             }
           },
@@ -4084,6 +4184,7 @@
             "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
           }
         },
+        "x-portone-category": "payment",
         "x-portone-per-pg": {
           "kcp": {
             "description": "<p>휴대폰소액결제 익월 환불의 경우는 환불받으실 계좌정보를 같이 전달해주시면 환불정보가 PG사에 등록되어 익영업일에 처리됩니다. (관련 특약계약 필요)</p>\n"
@@ -4111,9 +4212,6 @@
           },
           "tosspayments": {
             "description": "<p>결제수단이 상품권인 결제건은 부분취소가 불가능합니다</p>\n"
-          },
-          "welcome": {
-            "description": "<p>부분 취소는 지불수단 별로 <strong>부분 환불 사용 서비스 신청</strong> 가맹점에 한해 지원 가능합니다. 부분 환불 사용 서비스 사용 신청 및 사용 여부 문의는 웰컴페이먼츠 계약 담당자에게 확인해주시기를 바랍니다.</p>\n"
           }
         }
       }
@@ -4169,7 +4267,8 @@
           "404": {
             "description": "요청된 merchant_uid 로 등록된 결제사전정보를 찾을 수 없는 경우"
           }
-        }
+        },
+        "x-portone-category": "payment.validation"
       },
       "post": {
         "tags": [
@@ -4218,7 +4317,8 @@
           "401": {
             "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
           }
-        }
+        },
+        "x-portone-category": "payment.validation"
       }
     },
     "/payments/prepare/{merchant_uid}": {
@@ -4258,7 +4358,8 @@
           "401": {
             "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
           }
-        }
+        },
+        "x-portone-category": "payment.validation"
       }
     },
     "/paymentwall/delivery": {
@@ -4510,7 +4611,8 @@
         },
         "x-portone-supported-pgs": [
           "paymentwall"
-        ]
+        ],
+        "x-portone-category": "pg.paymentwall"
       }
     },
     "/receipts/{imp_uid}": {
@@ -4565,16 +4667,16 @@
           "tosspayments",
           "ksnet",
           "smartro_v2",
-          "nice_v2",
-          "welcome"
-        ]
+          "nice_v2"
+        ],
+        "x-portone-category": "receipt"
       },
       "post": {
         "tags": [
           "receipts"
         ],
         "summary": "현금영수증 단건발급 API",
-        "description": "포트원을 통해 발생된 현금성 거래<b>(가상계좌, 게좌이체)</b>의 포트원 거래고유번호(imp_uid)를 기준으로 현금영수증이 발급 됩니다.<br>\n     imp_uid 거래를 처리하는데 사용된 PG설정값을 그대로 활용합니다.<br>\n     (ex. KCP 거래건이면 KCP를 통해 현금영수증 발행 API처리)<br>\n     현금영수증 발급 금액은 현금성 거래의 금액으로 자동 적용됩니다. 부분취소된 거래인 경우 남은 잔액으로 발급됩니다.<br><br>\n     발행금액의 1/11 이 부가세로 자동 적용되므로, 부가세금액 조정을 위해서는 `tax_free` 파라메터를 활용해주세요.\n     <h4>지원되는 PG사</h4>\n     <ul> <li>KG 이니시스</li> <li>NHN KCP</li> <li>나이스페이먼츠</li> <li>KICC</li>\n     <li>헥토파이낸셜(구 세틀뱅크)</li> <li>키움페이(구 다우, 페이조아)</li>\n     <li>토스페이먼츠 - 신모듈</li> <li>KSNET</li> <li>스마트로 - 신모듈</li><li>(신) 나이스페이</li><li>웰컴페이먼츠</li></ul>",
+        "description": "포트원을 통해 발생된 현금성 거래<b>(가상계좌, 게좌이체)</b>의 포트원 거래고유번호(imp_uid)를 기준으로 현금영수증이 발급 됩니다.<br>\n     imp_uid 거래를 처리하는데 사용된 PG설정값을 그대로 활용합니다.<br>\n     (ex. KCP 거래건이면 KCP를 통해 현금영수증 발행 API처리)<br>\n     현금영수증 발급 금액은 현금성 거래의 금액으로 자동 적용됩니다. 부분취소된 거래인 경우 남은 잔액으로 발급됩니다.<br><br>\n     발행금액의 1/11 이 부가세로 자동 적용되므로, 부가세금액 조정을 위해서는 `tax_free` 파라메터를 활용해주세요.\n     <h4>지원되는 PG사</h4>\n     <ul> <li>KG 이니시스</li> <li>NHN KCP</li> <li>나이스페이먼츠</li> <li>KICC</li>\n     <li>헥토파이낸셜(구 세틀뱅크)</li> <li>키움페이(구 다우, 페이조아)</li>\n     <li>토스페이먼츠 - 신모듈</li> <li>KSNET</li> <li>스마트로 - 신모듈</li><li>(신) 나이스페이</li></ul>",
         "operationId": "issueReceipt",
         "consumes": [
           "application/json",
@@ -4637,13 +4739,19 @@
               },
               "daou": {
                 "description": "<p>identifier을 활용하여 자동으로 타입 처리가 이루어지므로, 별도의 identifier_type 파라미터 입력은 필요하지 않습니다.</p>\n"
+              },
+              "smartro_v2": {
+                "required": true
+              },
+              "nice_v2": {
+                "required": true
               }
             }
           },
           {
             "name": "identifier_type",
             "in": "formData",
-            "description": "현금영수증 식별정보 구분코드 <br>\n     (필수 : KICC, 헥토파이낸셜(구 세틀뱅크))<br>\n     KG이니시스/NHN KCP/나이스페이먼츠/키움페이(구 다우, 페이조아), 웰컴페이먼츠는 identifier 만으로 자동 처리<br><br>\n     <ul><li>person : 주민등록번호\n     </li><li> business : 사업자등록번호\n     </li><li> phone : 휴대폰번호\n     </li><li> taxcard : 국세청현금영수증카드</li></ul>",
+            "description": "현금영수증 식별정보 구분코드 <br>\n     (필수 : KICC, 헥토파이낸셜(구 세틀뱅크))<br>\n     KG이니시스/NHN KCP/나이스페이먼츠/키움페이(구 다우, 페이조아)는 identifier 만으로 자동 처리<br><br>\n     <ul><li>person : 주민등록번호\n     </li><li> business : 사업자등록번호\n     </li><li> phone : 휴대폰번호\n     </li><li> taxcard : 국세청현금영수증카드</li></ul>",
             "required": false,
             "type": "string",
             "enum": [
@@ -4690,9 +4798,6 @@
               },
               "nice_v2": {
                 "required": true
-              },
-              "welcome": {
-                "required": true
               }
             }
           },
@@ -4735,21 +4840,17 @@
           {
             "name": "corp_reg_no",
             "in": "formData",
-            "description": "상점 사업자 번호 <br> (필수 : 키움페이(구 다우, 페이조아), 웰컴페이먼츠)",
+            "description": "상점 사업자 번호 <br> (필수 : 키움페이(구 다우, 페이조아))",
             "required": false,
             "type": "string",
             "x-portone-name": "상점 사업자 번호",
             "x-portone-summary": "<p>현금영수증 발행 상점 사업자 번호</p>\n",
             "x-portone-description": "",
             "x-portone-supported-pgs": [
-              "daou",
-              "welcome"
+              "daou"
             ],
             "x-portone-per-pg": {
               "daou": {
-                "required": true
-              },
-              "welcome": {
                 "required": true
               }
             }
@@ -4785,7 +4886,7 @@
           {
             "name": "buyer_tel",
             "in": "formData",
-            "description": "구매자 전화번호 <br> (필수 : 스마트로 - 신모듈, 웰컴페이먼츠) <br> <b>(현금영수증 발행건 사후 추적을 위해 입력을 강력히 권장합니다.)</b>",
+            "description": "구매자 전화번호 <br> (필수 : 스마트로 - 신모듈) <br> <b>(현금영수증 발행건 사후 추적을 위해 입력을 강력히 권장합니다.)</b>",
             "required": false,
             "type": "string",
             "x-portone-name": "구매자 전화번호",
@@ -4794,9 +4895,6 @@
             "x-portone-per-pg": {
               "smartro_v2": {
                 "required": true
-              },
-              "welcome": {
-                "requiqred": true
               }
             }
           },
@@ -4860,9 +4958,9 @@
           "ksnet",
           "smartro",
           "smartro_v2",
-          "nice_v2",
-          "welcome"
+          "nice_v2"
         ],
+        "x-portone-category": "receipt",
         "x-portone-per-pg": {
           "tosspayments": {
             "description": "<p>현금영수증 발급 API 호출시 유효성 검사를 하지 않습니다.\n     예를 들어 현금영수증 발급 유형(type)을 소득공제(person)으로 보내고 현금영수증 발급 번호(identifier)를 사업자 등록번호로 보내면\n     실제로는 현금영수증 발급에 실패해야하지만 토스페이먼츠에서 유효성 검사를 하지 않아 그대로 성공 응답을 보내고 있습니다.\n     따라서 원활한 현금영수증 발급을 위해서는 현금영수증 발급 API 호출시 현금영수증 정보를 정확하게 입력하셔야 합니다.</p>\n"
@@ -4880,7 +4978,7 @@
           "receipts"
         ],
         "summary": "포트원 발급분 취소 API",
-        "description": "포트원을 통해 발급한 현금영수증 발급거래를 취소합니다<br>\n    포트원과 별개로 거래된 현금영수증 취소는 DELETE 외부 발급분 취소 API를 이용해주세요.\n<h4>지원되는 PG사</h4>\n<ul>\n    <li>KG 이니시스</li>\n    <li>NHN KCP</li>\n    <li>헥토파이낸셜(구 세틀뱅크)</li>\n    <li>나이스페이먼츠</li>\n    <li>키움페이(구 다우, 페이조아)</li>\n    <li>토스페이먼츠 - 신모듈</li>\n    <li>(신) 나이스페이</li>\n    <li>KSNET</li>\n    <li>스마트로 - 신모듈</li>\n    <li>웰컴페이먼츠</li>\n</ul>",
+        "description": "포트원을 통해 발급한 현금영수증 발급거래를 취소합니다<br>\n    포트원과 별개로 거래된 현금영수증 취소는 DELETE 외부 발급분 취소 API를 이용해주세요.\n<h4>지원되는 PG사</h4>\n<ul>\n    <li>KG 이니시스</li>\n    <li>NHN KCP</li>\n    <li>헥토파이낸셜(구 세틀뱅크)</li>\n    <li>나이스페이먼츠</li>\n    <li>키움페이(구 다우, 페이조아)</li>\n    <li>토스페이먼츠 - 신모듈</li>\n    <li>(신) 나이스페이</li>\n    <li>KSNET</li>\n    <li>스마트로 - 신모듈</li>\n</ul>",
         "operationId": "revokeReceipt",
         "consumes": [
           "application/json",
@@ -4930,9 +5028,9 @@
           "tosspayments",
           "nice_v2",
           "ksnet",
-          "smartro_v2",
-          "welcome"
-        ]
+          "smartro_v2"
+        ],
+        "x-portone-category": "receipt"
       }
     },
     "/receipts/external/{merchant_uid}": {
@@ -4985,16 +5083,16 @@
           "tosspayments",
           "nice_v2",
           "ksnet",
-          "smartro_v2",
-          "welcome"
-        ]
+          "smartro_v2"
+        ],
+        "x-portone-category": "receipt"
       },
       "post": {
         "tags": [
           "receipts"
         ],
         "summary": "현금영수증 발급(외부) API",
-        "description": "포트원과 별개로 거래된 일반 현금결제에 대해, 포트원 내에 설정된 PG사로 현금영수증 발행 요청하는 API입니다. <br>\n     단 주문번호는 현금거래 주문번호와 동일한 번호를 기재해야 추후 대사가 가능한점 유념하시기 바랍니다. <br>\n     pg 파라메터를 지정하지 않으면, 기본 PG설정값을 이용해 발행시도하게 됩니다.\n     <br>발행금액의 1/11 이 부가세로 자동 적용되므로, 부가세금액 조정을 위해서는 tax_free 파라메터를 활용해주세요.\n     <h4>지원되는 PG사</h4>\n     <ul> <li>KG이니시스\n     </li> <li>NHN KCP\n     </li> <li>나이스페이먼츠\n     </li> <li>KICC\n     </li> <li>헥토파이낸셜(구 세틀뱅크)\n     </li> <li>토스페이먼츠 - 신모듈\n     </li> <li>KSNET\n     </li> <li>스마트로 - 신모듈\n     </li><li>(신) 나이스페이\n     </li><li>웰컴페이먼츠</li></ul>",
+        "description": "포트원과 별개로 거래된 일반 현금결제에 대해, 포트원 내에 설정된 PG사로 현금영수증 발행 요청하는 API입니다. <br>\n     단 주문번호는 현금거래 주문번호와 동일한 번호를 기재해야 추후 대사가 가능한점 유념하시기 바랍니다. <br>\n     pg 파라메터를 지정하지 않으면, 기본 PG설정값을 이용해 발행시도하게 됩니다.\n     <br>발행금액의 1/11 이 부가세로 자동 적용되므로, 부가세금액 조정을 위해서는 tax_free 파라메터를 활용해주세요.\n     <h4>지원되는 PG사</h4>\n     <ul> <li>KG이니시스\n     </li> <li>NHN KCP\n     </li> <li>나이스페이먼츠\n     </li> <li>KICC\n     </li> <li>헥토파이낸셜(구 세틀뱅크)\n     </li> <li>토스페이먼츠 - 신모듈\n     </li> <li>KSNET\n     </li> <li>스마트로 - 신모듈\n     </li><li>(신) 나이스페이</li></ul>",
         "operationId": "issueExternalReceipt",
         "consumes": [
           "application/json",
@@ -5078,13 +5176,19 @@
               },
               "nice": {
                 "description": "<p>identifier을 활용하여 자동으로 타입 처리가 이루어지므로, 별도의 identifier_type 파라미터 입력은 필요하지 않습니다.</p>\n"
+              },
+              "smartro_v2": {
+                "required": true
+              },
+              "nice_v2": {
+                "required": true
               }
             }
           },
           {
             "name": "identifier_type",
             "in": "formData",
-            "description": "현금영수증 발행대상 식별정보 유형<br>\n     (필수 : KICC, 헥토파이낸셜(구 세틀뱅크)) <br>\n     KG이니시스/NHN KCP/나이스페이먼츠, 웰컴페이먼츠는 identifier 만으로 자동 처리<br><br>\n     <ul><li> person : 주민등록번호\n     </li><li> business : 사업자등록번호\n     </li><li> phone : 휴대폰번호\n     </li><li> taxcard : 국세청현금영수증카드</li></ul>",
+            "description": "현금영수증 발행대상 식별정보 유형<br>\n     (필수 : KICC, 헥토파이낸셜(구 세틀뱅크)) <br>\n     KG이니시스/NHN KCP/나이스페이먼츠는 identifier 만으로 자동 처리<br><br>\n     <ul><li> person : 주민등록번호\n     </li><li> business : 사업자등록번호\n     </li><li> phone : 휴대폰번호\n     </li><li> taxcard : 국세청현금영수증카드</li></ul>",
             "required": false,
             "type": "string",
             "enum": [
@@ -5131,9 +5235,6 @@
               },
               "nice_v2": {
                 "required": true
-              },
-              "welcome": {
-                "required": true
               }
             }
           },
@@ -5168,7 +5269,7 @@
           {
             "name": "buyer_tel",
             "in": "formData",
-            "description": "구매자 전화번호 <br>\n     (필수 : 스마트로 - 신모듈, 웰컴페이먼츠)\n     <br>(현금영수증 발행건 사후 추적을 위해 입력을 강력히 권장합니다.)",
+            "description": "구매자 전화번호 <br>\n     (필수 : 스마트로 - 신모듈)\n     <br>(현금영수증 발행건 사후 추적을 위해 입력을 강력히 권장합니다.)",
             "required": false,
             "type": "string",
             "x-portone-name": "구매자 전화번호",
@@ -5176,9 +5277,6 @@
             "x-portone-description": "<p>현금영수증 발행건 사후 추적을 위해 입력을 강력히 권장합니다.</p>\n",
             "x-portone-per-pg": {
               "smartro_v2": {
-                "required": true
-              },
-              "welcome": {
                 "required": true
               }
             }
@@ -5212,46 +5310,6 @@
             "x-portone-name": "부가세 지정 금액",
             "x-portone-summary": "<p>부가세 지정 가맹점에 한해 현금영수증 발행 금액 중 부가세 금액으로 부가세를 지정할 수 있습니다.</p>\n",
             "x-portone-description": ""
-          },
-          {
-            "name": "corp_reg_no",
-            "in": "formData",
-            "description": "상점 사업자 번호 <br> (필수 : 웰컴페이먼츠)",
-            "required": false,
-            "type": "string",
-            "x-portone-name": "상점 사업자 번호",
-            "x-portone-summary": "<p>현금영수증 발행 상점 사업자 번호</p>\n",
-            "x-portone-description": "",
-            "x-portone-supported-pgs": [
-              "welcome"
-            ],
-            "x-portone-per-pg": {
-              "welcome": {
-                "required": true
-              }
-            }
-          },
-          {
-            "name": "pay_method",
-            "in": "formData",
-            "description": "결제건의 결제수단<br> (필수 : 웰컴페이먼츠)\n     <ul><li>trans : 계좌이체\n     </li><li>vbank : 가상계좌</li></ul>",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "trans",
-              "vbank"
-            ],
-            "x-portone-name": "결제수단",
-            "x-portone-summary": "<p>현금영수증 발행 할 결제건의 결제수단</p>\n",
-            "x-portone-description": "",
-            "x-portone-supported-pgs": [
-              "welcome"
-            ],
-            "x-portone-per-pg": {
-              "welcome": {
-                "required": true
-              }
-            }
           }
         ],
         "responses": {
@@ -5284,9 +5342,9 @@
           "nice_v2",
           "ksnet",
           "smartro",
-          "smartro_v2",
-          "welcome"
+          "smartro_v2"
         ],
+        "x-portone-category": "receipt",
         "x-portone-per-pg": {
           "tosspayments": {
             "description": "<p>현금영수증 발급 API 호출시 유효성 검사를 하지 않습니다.\n     예를 들어 현금영수증 발급 유형(type)을 소득공제(person)으로 보내고 현금영수증 발급 번호(identifier)를 사업자 등록번호로 보내면\n     실제로는 현금영수증 발급에 실패해야하지만 토스페이먼츠에서 유효성 검사를 하지 않아 그대로 성공 응답을 보내고 있습니다.\n     따라서 원활한 현금영수증 발급을 위해서는 현금영수증 발급 API 호출시 현금영수증 정보를 정확하게 입력하셔야 합니다.</p>\n"
@@ -5304,7 +5362,7 @@
           "receipts"
         ],
         "summary": "외부 발급분 취소 API",
-        "description": "포트원과 별개로 거래된 일반 현금결제에 대해, 포트원 내에 설정된 PG사로 포트원 API를 이용해 현금영수증 발행취소하는 API입니다.\n     merchant_uid는 현금결제를 구분할 고유주문번호를 의미하며 발행에 사용된 값을 전달하면 됩니다.\n<h4>지원되는 PG사</h4>\n<ul>\n    <li>KG이니시스</li>\n    <li>NHN KCP</li>\n    <li>헥토파이낸셜(구 세틀뱅크)</li>\n    <li>나이스페이먼츠</li>\n    <li>토스페이먼츠 - 신모듈</li>\n    <li>KSNET</li>\n    <li>스마트로 - 신모듈</li>\n    <li>(신) 나이스페이</li>\n    <li>웰컴페이먼츠</li>\n</ul>",
+        "description": "포트원과 별개로 거래된 일반 현금결제에 대해, 포트원 내에 설정된 PG사로 포트원 API를 이용해 현금영수증 발행취소하는 API입니다.\n     merchant_uid는 현금결제를 구분할 고유주문번호를 의미하며 발행에 사용된 값을 전달하면 됩니다.\n<h4>지원되는 PG사</h4>\n<ul>\n    <li>KG이니시스</li>\n    <li>NHN KCP</li>\n    <li>헥토파이낸셜(구 세틀뱅크)</li>\n    <li>나이스페이먼츠</li>\n    <li>토스페이먼츠 - 신모듈</li>\n    <li>KSNET</li>\n    <li>스마트로 - 신모듈</li>\n    <li>(신) 나이스페이</li>\n</ul>",
         "operationId": "revokeExternalReceipt",
         "consumes": [
           "application/json",
@@ -5356,9 +5414,9 @@
           "tosspayments",
           "nice_v2",
           "ksnet",
-          "smartro_v2",
-          "welcome"
-        ]
+          "smartro_v2"
+        ],
+        "x-portone-category": "receipt"
       }
     },
     "/cards": {
@@ -5388,7 +5446,8 @@
           "404": {
             "description": "코드에 해당되는 카드사정보를 찾을 수 없음"
           }
-        }
+        },
+        "x-portone-category": "etc.code"
       }
     },
     "/cards/{card_standard_code}": {
@@ -5430,7 +5489,8 @@
           "404": {
             "description": "코드에 해당되는 카드사정보를 찾을 수 없음"
           }
-        }
+        },
+        "x-portone-category": "etc.code"
       }
     },
     "/banks": {
@@ -5460,7 +5520,8 @@
           "404": {
             "description": "코드에 해당되는 은행정보를 찾을 수 없음"
           }
-        }
+        },
+        "x-portone-category": "etc.code"
       }
     },
     "/banks/{bank_standard_code}": {
@@ -5502,7 +5563,8 @@
           "404": {
             "description": "코드에 해당되는 은행정보를 찾을 수 없음"
           }
-        }
+        },
+        "x-portone-category": "etc.code"
       }
     },
     "/subscribe/payments/onetime": {
@@ -5568,16 +5630,13 @@
             "x-portone-per-pg": {
               "ksnet": {
                 "description": "<p>면세 설정 상점아이디에서 면세처리를 위해 결제 금액과 동일한 면세 금액을 반드시 입력해야 합니다. 그렇지 않은 경우 매출전표에 전액 면세가 아닌 것으로 표시되고 실제 처리 내역이 다를 수 있습니다.<br />\n     과세 설정 상점아이디에서 면세 금액을 전달하지 않아야 합니다. 면세 금액을 전달하는 경우 매출전표에 면세 처리된 것으로 표시되지만 실제 처리 내역과 다를 수 있습니다.</p>\n"
-              },
-              "welcome": {
-                "description": "<p><code>부가세업체정함</code> 설정 가맹점에 한해 사용 가능합니다.</p>\n"
               }
             }
           },
           {
             "name": "vat_amount",
             "in": "formData",
-            "description": "amount 중 부가세 금액.<br/>부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)<br><h5>지원되는 PG사</h5><ul><li>나이스페이먼츠</li><li>이니시스</li><li>(신) 나이스페이</li><li>웰컴페이먼츠</li></ul>",
+            "description": "amount 중 부가세 금액.<br/>부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)<br><h5>지원되는 PG사</h5><ul><li>나이스페이먼츠</li><li>이니시스</li><li>(신) 나이스페이</li></ul>",
             "required": false,
             "type": "number",
             "x-portone-name": "부가세",
@@ -5586,14 +5645,8 @@
             "x-portone-supported-pgs": [
               "nice",
               "html5_inicis",
-              "nice_v2",
-              "welcome"
-            ],
-            "x-portone-per-pg": {
-              "welcome": {
-                "description": "<p><code>부가세업체정함</code> 설정 가맹점에 한해 사용 가능하며 전체금액의 10% 이하로 설정해야 합니다. vat_amount가 <span>총 상품가격의 10%를 초과할 경우는 결제가 거절됩니다.</span></p>\n"
-              }
-            }
+              "nice_v2"
+            ]
           },
           {
             "name": "vat",
@@ -5704,7 +5757,7 @@
           {
             "name": "buyer_name",
             "in": "formData",
-            "description": "주문자명 <br>(필수 : KSNET, 웰컴페이먼츠) <br> 페이먼트월 PG를 이용하는 경우 구매자명은 first name 과 last name이 한칸 띄어쓰기 형태로 구분되서 유입되어야 합니다. <br>예시) Michael Jackson",
+            "description": "주문자명 <br>(필수 : KSNET) <br> 페이먼트월 PG를 이용하는 경우 구매자명은 first name 과 last name이 한칸 띄어쓰기 형태로 구분되서 유입되어야 합니다. <br>예시) Michael Jackson",
             "required": false,
             "type": "string",
             "maxLength": 16,
@@ -5716,9 +5769,6 @@
                 "required": true
               },
               "ksnet": {
-                "required": true
-              },
-              "welcome": {
                 "required": true
               },
               "paymentwall": {
@@ -5925,9 +5975,9 @@
           "paymentwall",
           "settle",
           "tosspayments",
-          "ksnet",
-          "welcome"
+          "ksnet"
         ],
+        "x-portone-category": "nonAuthPayment",
         "x-portone-per-pg": {
           "ksnet": {
             "description": "<p>카드번호와 유효기간만으로 결제를 요청하는 비인증 승인 API만 연동되어 있어\n     birth(생년월일 6자리 혹은 사업자 등록번호 10자리)와 pwd_2digit(비밀번호 앞 2자리)는 검증하지 않습니다.</p>\n"
@@ -6017,16 +6067,13 @@
             "x-portone-per-pg": {
               "ksnet": {
                 "description": "<p>면세 설정 상점아이디에서 면세처리를 위해 결제 금액과 동일한 면세 금액을 반드시 입력해야 합니다. 그렇지 않은 경우 매출전표에 전액 면세가 아닌 것으로 표시되고 실제 처리 내역이 다를 수 있습니다.<br />\n     과세 설정 상점아이디에서 면세 금액을 전달하지 않아야 합니다. 면세 금액을 전달하는 경우 매출전표에 면세 처리된 것으로 표시되지만 실제 처리 내역과 다를 수 있습니다.</p>\n"
-              },
-              "welcome": {
-                "description": "<p><code>부가세업체정함</code> 설정 가맹점에 한해 사용 가능합니다.</p>\n"
               }
             }
           },
           {
             "name": "vat_amount",
             "in": "formData",
-            "description": "amount 중 부가세 금액.<br/>부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)<br><h5>지원되는 PG사</h5><ul><li>나이스페이먼츠</li><li>이니시스</li><li>(신) 나이스페이</li><li>웰컴페이먼츠</li></ul>",
+            "description": "amount 중 부가세 금액.<br/>부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)<br><h5>지원되는 PG사</h5><ul><li>나이스페이먼츠</li><li>이니시스</li><li>(신) 나이스페이</li></ul>",
             "required": false,
             "type": "number",
             "x-portone-name": "부가세",
@@ -6035,14 +6082,8 @@
             "x-portone-supported-pgs": [
               "nice",
               "html5_inicis",
-              "nice_v2",
-              "welcome"
-            ],
-            "x-portone-per-pg": {
-              "welcome": {
-                "description": "<p><code>부가세업체정함</code> 설정 가맹점에 한해 사용 가능하며 전체금액의 10% 이하로 설정해야 합니다. vat_amount가 <span>총 상품가격의 10%를 초과할 경우는 결제가 거절됩니다.</span></p>\n"
-              }
-            }
+              "nice_v2"
+            ]
           },
           {
             "name": "vat",
@@ -6074,7 +6115,7 @@
           {
             "name": "buyer_name",
             "in": "formData",
-            "description": "주문자명 <br>(필수 KSNET, 스마트로 - 신모듈, 웰컴페이먼츠) <br> 페이먼트월 PG사인 경우 first name, last name 한칸 띄어쓰기로 구분되어 유입되어야 합니다.",
+            "description": "주문자명 <br>(필수 KSNET, 스마트로 - 신모듈) <br> 페이먼트월 PG사인 경우 first name, last name 한칸 띄어쓰기로 구분되어 유입되어야 합니다.",
             "required": false,
             "type": "string",
             "maxLength": 16,
@@ -6086,9 +6127,6 @@
                 "required": true
               },
               "ksnet": {
-                "required": true
-              },
-              "welcome": {
                 "required": true
               },
               "paymentwall": {
@@ -6307,9 +6345,9 @@
           "settle_acc",
           "smartro_v2",
           "tosspayments",
-          "paypal_v2",
-          "welcome"
+          "paypal_v2"
         ],
+        "x-portone-category": "nonAuthPayment",
         "x-portone-per-pg": {
           "paypal_v2": {
             "desripction": "## Manges & Fraudnet 이상 거래 대응 필요 <br>\n     페이팔은 이상 거래를 줄이기 위해 Rist Data Aquisition 정책을 시행하고 있습니다. 일반 결제나 빌링키 발급은 페이팔 버튼을 통해 진행되기 때문에 페이팔이 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 있지만, 발급 된 빌링키로 재결제 (again API 호출) 할때는 가맹점 서버에서 포트원 API를 통해 페이팔 API가 호출되는 구조이기 때문에 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 없습니다.\n     따라서 발급 된 빌링키로 재결제를 할때는 구매자의 브라우저/디바이스 접속 정보를 페이팔에 전달할 수 있도록 <b>again API가 호출되는 가맹점 클라이언트 페이지에 반드시 페이팔 Fraudnet 스크립트/Manges SDK를 아래와 같이 추가해야 합니다.</b>\n     <b>페이팔 RT를 통한 again API 호출시에는 Manges & Fraudnet 조치가 필수적으로 요구됩니다.</b>\n     브라우저/앱에 페이팔 Fraudnet Script/Manges SDK를 추가한 후 again API를 호출할때 진행되는 플로우는 아래와 같습니다.\n     ![플로우](https://raw.githubusercontent.com/portone-io/developers.portone.io/e206047c43ed15bc364b58e0647dda4584964c9c/public/gitbook-assets/ko/paypal-rt/manges-fraudnet-flow.png)<br>\n     #### 브라우저\n    ```html\n    <!-- again API가 호출되는 가맹점 클라이언트 -->\n    <script\n    type=\"application/json\"\n    fncls=\"fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99\"\n    >\n    {\n    \"f\": \"RISK_SESSION_CORRELATION_ID\",\n    \"s\": \"SOURCE_IDENTIFIER\",\n    \"sandbox\": true\n    }\n    </script>\n    <script type=\"text/javascript\" src=\"https://c.paypal.com/da/r/fb.js\"></script>\n    <noscript>\n    <img\n    src=\"https://c.paypal.com/v1/r/d/b/ns?f=RISK_SESSION_CORRELATION_ID&s=SOURCE_IDENTIFIER&js=0&r=1\"\n    />\n    </noscript>\n    ```\n     <br>\n    | 파라미터 | 의미                                                      | 예시                                          |\n    | -------- | --------------------------------------------------------- | --------------------------------------------- |\n    | fncls    | fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99로 항상 고정 | fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99 |\n    | f        | 주문번호(merchant_uid) 전달                               | mid_1683690731602                             |\n    | s        | string                                                    | 7WBB3CKT63FRG_checkout-page                   |\n    | sandbox  | 페이팔 Account ID가 테스트 용인지 운영 용인지 여부        | true                                          |\n\n     <br>\n     #### 앱\n     <br>\n     #### 안드로이드\n     <br>\n    [**Android Integration of Magnes**](https://developer.paypal.com/limited-release/magnes/integrate/android/) 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 두번째 파라미터(paypalClientMetaDataId)로는 주문번호(merchant_uid)를 전달해주시면 됩니다.\n\n    ```java\n    MagnesResult magnesResult = MagnesSDK.getInstance()\n    .collectAndSubmit(Context context, String paypalClientMetaDataId,\n    HashMap<String, String>\n    additionalData)\n    ```\n     <br>\n    #### IOS Switft\n\n    [**iOS Swift SDK Integration**](https://developer.paypal.com/limited-release/magnes/integrate/ios-swift/) 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(withPayPalClientMetadataId)로는 주문번호(merchant_uid)를 전달해주시면 됩니다.\n\n    ```swift\n    let magnesResult:MagnesResult =\n    MagnesSDK.shared().collectAndSubmit(withPayPalClientMetadataId:\n    \"YOUR-PAYPAL-CLIENT-METADATA-ID\", withAdditionalData: [String: String])\n    ```\n\n    #### IOS Objective-C\n\n    [**iOS Objective-C SDK Integration of Magnes**](https://developer.paypal.com/limited-release/magnes/integrate/ios-objective-c/) 가이드 문서에 따라 아래와 같이 collectAndSubmitWithPayPalClientMetadataId 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(YOUR-PAYPAL-CLIENT-METADATA-ID)로는 주문번호(merchant_uid)를 전달해주시면 됩니다.\n\n    ```objective-c\n    //PPRMOCMagnesSDK *magnesSDK = [PPRMOCMagnesSDK shared];\n    PPRMOCMagnesSDKResult *magnesResult =\n    [magnesSDK\n    collectAndSubmitWithPayPalClientMetadataId:@\"YOUR-PAYPAL-CLIENT-METADATA-ID\"\n    withAdditionalData:@{}];\n    ```\n     <br><br>\n     ## 고위험 결제 처리 <br>\n     페이팔은 판매자 보호 정책을 통해 가맹점 거래에서 이상 거래나 사기 등이 발생 시, 판매자 보호 정책을 통해 가맹점이 손해 입을 수 있는 부분을 보존하는 판매자 보호 프로그램을 가지고 있습니다. 이 판매자 보호 정책을 적용하기 위해서는 페이팔 측에서 제공하는 STC 기능을 사용해야 합니다. <br>\n     RT 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다. <br><br>\n\n     1. 페이팔 Business 계정 가입시 산업 종류(Industry)를 결정하는데, 계정의 산업 종류를 확인해야 합니다. <br>\n     2. 계정의 산업 종류를 확인하신 뒤, loadUI 호출 해 빌링키를 발급 받을때 그리고 발급 된 빌링키로 재결제(again API 호출)할때 모두 bypass.paypal_v2 객체에 아래와 같은 형식으로 전달해주셔야 합니다.<br>\n\n     #### 발급 된 빌링키로 단건 결제(again API 호출)시 STC 적용하기\n     ``` javascript\n    await fetch(\n    \"https://api.iamport.kr/subscribe/payments/again\",\n    {\n    method: \"POST\",\n    headers: {\n    Authorization: `Basic ${ACCESS_TOKEN}`,\n    \"Content-Type\": \"application/json\",\n    },\n    body: JSON.stringify({\n    customer_uid, // [필수 입력] 빌링키 발급시 전달 한 빌링키와 1:1 매핑되는 UUID\n    merchant_uid, // [필수 입력] 주문 번호\n    currency, // [필수 입력] 결제 통화 (페이팔은 KRW 불가능)\n    amount, // [필수 입력] 결제 금액\n    name, // 주문명\n    bypass: JSON.stringify({\n    paypal_v2: {\n    additional_data: [{\n    key: \"sender_account_id\", // 가맹점 account ID(merchant-id)\n    value: \"A12345N343\"\n    }, {\n    key: \"sender_first_name\", // 가맹점의 account에 등록 된 구매자의 이름\n    value: \"John\"\n    }, {\n    key: \"sender_last_name\", // 가맹점의 account에 등록 된 구매자의 이름\n    value: \"Doe\"\n    }, {\n    key: \"sender_email\", // 가맹점의 account에 등록 된 구매자의 이메일 주소\n    value: \"example@example.com\"\n    }, {\n    key: \"sender_phone\", // 가맹점의 account에 등록 된 구매자의 연락처\n    value: \"(02)16705176\"\n    }, {\n    key: \"sender_country_code\", // 가맹점의 account에 등록 된 국가 코드\n    value: \"KR\" // ISO Alpha-2 형식 국가 코드\n    }, {\n    key: \"sender_create_date\", // 가맹점의 account에 등록 된 국가 코드\n    value: \"2023-10-10T23:59:59+09:00\" // IOS8601 형식\n    }]\n    }\n    }) // end of bypass string\n    }) // end of body\n    }\n    )\n     ```\n     "
@@ -6437,9 +6475,9 @@
           "settle_acc",
           "smartro_v2",
           "tosspayments",
-          "paypal_v2",
-          "welcome"
-        ]
+          "paypal_v2"
+        ],
+        "x-portone-category": "nonAuthPayment.subscribe"
       },
       "post": {
         "tags": [
@@ -6610,12 +6648,12 @@
           {
             "name": "schedules",
             "in": "formData",
-            "description": "결제예약 스케쥴<br>[ 필수항목 ]<br>merchant_uid : 가맹점 주문번호(동일한 주문번호로 중복결제 불가) (스마트로 - 신모듈의 경우, 특수문자 포함이 불가능합니다.)<br>schedule_at : 결제요청 예약시각 UNIX timestamp<br>currency : 통화 e.g.) KRW, USD 등(단, (신) 페이팔의 경우 KRW 결제가 불가능하므로 반드시 유효한 값을 필수로 입력해야합니다.)<br>amount : 결제금액<br>[ 선택항목 ]<br>tax_free : amount 중 면세공급가액(기본값 : 0)<br>vat_amount : amount 중 부가세 금액(기본값 : null, 현재 나이스페이먼츠, 이니시스, (신) 나이스페이, 웰컴페이먼츠 지원)<br>name : 주문명(누락되면 포트원 자체 기본값 사용)<br>buyer_name : 주문자명(필수 : KSENT, 스마트로-신모듈, 웰컴페이먼츠)<br>buyer_email : 주문자Email (필수 : 스마트로-신모듈)<br>buyer_tel : 주문자 전화번호 (필수 : 스마트로-신모듈)<br>buyer_addr : 주문자 주소<br>buyer_postcode : 주문자 우편번호<br>custom_data : 결제수행 시 사용될 custom_data 값<br>notice_url : 예약결제수행 후 통지될 Notification URL(지정되지 않으면 관리자페이지의 Notification URL로 발송)<br>product_type :\n                판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠) (필수 : KSNET)<br>card_quota : 카드할부개월수. 2 이상의 integer 할부개월수 적용(결제금액 50,000원 이상 한정, default = 0(일시불))<br>interest_free_by_merchant : 카드할부처리시, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 가맹점이 지불하고자 PG사와 계약된 경우(default : false) (현재, 나이스페이먼츠, KSNET만 지원됨)<br>use_card_point : 승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요(default : false) (현재, 나이스페이먼츠만 지원됨) <br>product_count : 결제 상품의 개수 (Default : 1) <br><br>extra.naverUseCfm : 이용완료일 YYYYMMDD (네이버페이 반복결제 계약 시 이용완료일 필수로 설정된 가맹점에 한함)",
+            "description": "결제예약 스케쥴<br>[ 필수항목 ]<br>merchant_uid : 가맹점 주문번호(동일한 주문번호로 중복결제 불가) (스마트로 - 신모듈의 경우, 특수문자 포함이 불가능합니다.)<br>schedule_at : 결제요청 예약시각(초) (UNIX timestamp in seconds)<br>currency : 통화 e.g.) KRW, USD 등(단, (신) 페이팔의 경우 KRW 결제가 불가능하므로 반드시 유효한 값을 필수로 입력해야합니다.)<br>amount : 결제금액<br>[ 선택항목 ]<br>tax_free : amount 중 면세공급가액(기본값 : 0)<br>vat_amount : amount 중 부가세 금액(기본값 : null, 현재 나이스페이먼츠, 이니시스, (신) 나이스페이 지원)<br>name : 주문명(누락되면 포트원 자체 기본값 사용)<br>buyer_name : 주문자명(필수 : KSENT, 스마트로-신모듈)<br>buyer_email : 주문자Email (필수 : 스마트로-신모듈)<br>buyer_tel : 주문자 전화번호 (필수 : 스마트로-신모듈)<br>buyer_addr : 주문자 주소<br>buyer_postcode : 주문자 우편번호<br>custom_data : 결제수행 시 사용될 custom_data 값<br>notice_url : 예약결제수행 후 통지될 Notification URL(지정되지 않으면 관리자페이지의 Notification URL로 발송)<br>product_type :\n                판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠) (필수 : KSNET)<br>card_quota : 카드할부개월수. 2 이상의 integer 할부개월수 적용(결제금액 50,000원 이상 한정, default = 0(일시불))<br>interest_free_by_merchant : 카드할부처리시, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 가맹점이 지불하고자 PG사와 계약된 경우(default : false) (현재, 나이스페이먼츠, KSNET만 지원됨)<br>use_card_point : 승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요(default : false) (현재, 나이스페이먼츠만 지원됨) <br>product_count : 결제 상품의 개수 (Default : 1) <br><br>extra.naverUseCfm : 이용완료일 YYYYMMDD (네이버페이 반복결제 계약 시 이용완료일 필수로 설정된 가맹점에 한함)",
             "required": true,
-            "type": "array",
-            "items": {
+            "schema": {
               "$ref": "#/definitions/ScheduleAnnotation"
             },
+            "type": "array",
             "default": "[&#13;&#09;{&#13;&#09;&#09;&quot;merchant_uid&quot;: &quot;your_merchant_uid1&quot;,&#13;&#09;&#09;&quot;schedule_at&quot;: 1478150985,&#13;&#09;&#09;&quot;currency&quot;: &quot;KRW&quot;,&#13;&#09;&#09;&quot;amount&quot;: 1004,&#13;&#09;&#09;&quot;name&quot;: &quot;주문명&quot;,&#13;&#09;&#09;&quot;buyer_name&quot;: &quot;주문자명&quot;,&#13;&#09;&#09;&quot;buyer_email&quot;: &quot;주문자 Email주소&quot;,&#13;&#09;&#09;&quot;buyer_tel&quot;: &quot;주문자 전화번호&quot;,&#13;&#09;&#09;&quot;buyer_addr&quot;: &quot;주문자 주소&quot;,&#13;&#09;&#09;&quot;buyer_postcode&quot;: &quot;주문자 우편번호&quot;&#13;},&#13;&#09;{&#13;&#09;&#09;&quot;merchant_uid&quot;: &quot;your_merchant_uid2&quot;,&#13;&#09;&#09;&quot;schedule_at&quot;: 1478150985,&#13;&#09;&#09;&quot;amount&quot;: 1004,&#13;&#09;&#09;&quot;name&quot;: &quot;주문명&quot;,&#13;&#09;&#09;&quot;buyer_name&quot;: &quot;주문자명&quot;,&#13;&#09;&#09;&quot;buyer_email&quot;: &quot;주문자 Email주소&quot;,&#13;&#09;&#09;&quot;buyer_tel&quot;: &quot;주문자 전화번호&quot;,&#13;&#09;&#09;&quot;buyer_addr&quot;: &quot;주문자 주소&quot;,&#13;&#09;&#09;&quot;buyer_postcode&quot;: &quot;주문자 우편번호&quot;}&#13;]",
             "x-portone-name": "결제예약 스케쥴",
             "x-portone-summary": "<p>결제예약 스케쥴에 대한 배열</p>\n"
@@ -6655,9 +6693,9 @@
           "settle_acc",
           "smartro_v2",
           "tosspayments",
-          "paypal_v2",
-          "welcome"
+          "paypal_v2"
         ],
+        "x-portone-category": "nonAuthPayment.subscribe",
         "x-portone-per-pg": {
           "chai": {
             "description": "<p>API 방식으로 빌링키 발급을 지원하지 않기 때문에, 예약결제시 새로운 빌링키 발급은 지원하지 않습니다.</p>\n"
@@ -6775,9 +6813,9 @@
           "settle_acc",
           "smartro_v2",
           "tosspayments",
-          "paypal_v2",
-          "welcome"
-        ]
+          "paypal_v2"
+        ],
+        "x-portone-category": "nonAuthPayment.subscribe"
       }
     },
     "/subscribe/payments/schedule/{merchant_uid}": {
@@ -6844,9 +6882,9 @@
           "settle_acc",
           "smartro_v2",
           "tosspayments",
-          "paypal_v2",
-          "welcome"
-        ]
+          "paypal_v2"
+        ],
+        "x-portone-category": "nonAuthPayment.subscribe"
       }
     },
     "/subscribe/payments/schedule/customers/{customer_uid}": {
@@ -6957,9 +6995,209 @@
           "settle_acc",
           "smartro_v2",
           "tosspayments",
-          "paypal_v2",
-          "welcome"
-        ]
+          "paypal_v2"
+        ],
+        "x-portone-category": "nonAuthPayment.subscribe"
+      }
+    },
+    "/tiers/{tier_code}": {
+      "get": {
+        "tags": [
+          "tiers"
+        ],
+        "summary": "하위 가맹점 정보 조회 API",
+        "description": "하위 가맹점(Tier)정보 조회. 등록된 하위 가맹점(Tier) 정보를 반환합니다.",
+        "operationId": "GetTier",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "tier_code",
+            "in": "path",
+            "description": "하위 가맹점(Tier) 고유코드. 알파벳 대문자 또는 숫자만 사용(반드시 3자리)",
+            "required": true,
+            "type": "string",
+            "default": "XYZ",
+            "x-portone-name": "Tier 코드",
+            "x-portone-summary": "<p>하위 가맹점의 고유 코드로 알파벳 대문자 또는 숫자만 사용 가능합니다.(반드시 3자리)</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "정상 등록",
+            "schema": {
+              "$ref": "#/definitions/TierResponse"
+            }
+          },
+          "401": {
+            "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
+          },
+          "404": {
+            "description": "등록되지 않았거나 이미 삭제된 tier_code를 사용한 경우"
+          }
+        },
+        "x-portone-category": "user.tier"
+      },
+      "put": {
+        "tags": [
+          "tiers"
+        ],
+        "summary": "하위 가맹점 정보 수정 API",
+        "description": "하위 가맹점(Tier)정보 수정. 수정된 하위 가맹점(Tier) 정보를 반환합니다.",
+        "operationId": "UpdateTier",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "tier_code",
+            "in": "path",
+            "description": "하위 가맹점(Tier) 고유코드. 알파벳 대문자 또는 숫자만 사용(반드시 3자리)",
+            "required": true,
+            "type": "string",
+            "default": "XYZ",
+            "x-portone-name": "Tier code",
+            "x-portone-summary": "<p>하위 가맹점의 고유 코드로 알파벳 대문자 또는 숫자만 사용 가능합니다.(반드시 3자리)</p>\n"
+          },
+          {
+            "name": "tier_name",
+            "in": "formData",
+            "description": "가맹점 명칭(내부 관리용)",
+            "required": true,
+            "type": "string",
+            "x-portone-name": "하위 가맹점 명칭",
+            "x-portone-summary": "<p>내부 관리용으로 사용되는 하위 가맹점의 명칭</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "정상 등록",
+            "schema": {
+              "$ref": "#/definitions/TierResponse"
+            }
+          },
+          "400": {
+            "description": "필수 파라메터(tier_name)가 누락된 경우"
+          },
+          "401": {
+            "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
+          },
+          "404": {
+            "description": "등록되지 않았거나 이미 삭제된 tier_code를 사용한 경우"
+          },
+          "500": {
+            "description": "저장에 실패한 경우"
+          }
+        },
+        "x-portone-category": "user.tier"
+      },
+      "post": {
+        "tags": [
+          "tiers"
+        ],
+        "summary": "하위 가맹점 정보 등록 API",
+        "description": "하위 가맹점(Tier)정보 등록. 등록된 하위 가맹점(Tier) 정보를 반환합니다.",
+        "operationId": "AddTier",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "tier_code",
+            "in": "path",
+            "description": "하위 가맹점(Tier) 고유코드. 알파벳 대문자 또는 숫자만 사용(반드시 3자리)",
+            "required": true,
+            "type": "string",
+            "default": "XYZ",
+            "x-portone-name": "Tier 코드",
+            "x-portone-summary": "<p>하위 가맹점의 고유 코드로 알파벳 대문자 또는 숫자만 사용 가능합니다.(반드시 3자리)</p>\n"
+          },
+          {
+            "name": "tier_name",
+            "in": "formData",
+            "description": "가맹점 명칭(내부 관리용)",
+            "required": true,
+            "type": "string",
+            "x-portone-name": "하위 가맹점 명칭",
+            "x-portone-summary": "<p>내부 관리용으로 사용되는 하위 가맹점의 명칭</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "정상 등록",
+            "schema": {
+              "$ref": "#/definitions/TierResponse"
+            }
+          },
+          "400": {
+            "description": "필수 파라메터(tier_name)가 누락된 경우, 이미 등록된 tier_code에 대해 시도하는 경우"
+          },
+          "401": {
+            "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
+          },
+          "500": {
+            "description": "저장에 실패한 경우"
+          }
+        },
+        "x-portone-category": "user.tier"
+      },
+      "delete": {
+        "tags": [
+          "tiers"
+        ],
+        "summary": "하위 가맹점 정보 삭제 API",
+        "description": "하위 가맹점(Tier)정보 삭제. 삭제된 하위 가맹점(Tier) 정보를 반환합니다.",
+        "operationId": "DeleteTier",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "tier_code",
+            "in": "path",
+            "description": "하위 가맹점(Tier) 고유코드. 알파벳 대문자 또는 숫자만 사용(반드시 3자리)",
+            "required": true,
+            "type": "string",
+            "default": "XYZ",
+            "x-portone-name": "Tier code",
+            "x-portone-summary": "<p>하위 가맹점의 고유 코드로 알파벳 대문자 또는 숫자만 사용 가능합니다.(반드시 3자리)</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "정상 등록",
+            "schema": {
+              "$ref": "#/definitions/TierResponse"
+            }
+          },
+          "401": {
+            "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
+          },
+          "404": {
+            "description": "등록되지 않았거나 이미 삭제된 tier_code를 사용한 경우"
+          },
+          "500": {
+            "description": "삭제에 실패한 경우"
+          }
+        },
+        "x-portone-category": "user.tier"
       }
     },
     "/users/pg": {
@@ -6984,7 +7222,8 @@
               "$ref": "#/definitions/MultiplePgSettingResponse"
             }
           }
-        }
+        },
+        "x-portone-category": "user"
       }
     },
     "/vbanks": {
@@ -6993,7 +7232,7 @@
           "vbanks"
         ],
         "summary": "가상계좌 발급 API",
-        "description": "가상계좌번호를 발급하여 고객이 입금할 수 있도록 합니다. <br>\n     희망하시는 은행, 예금주명으로 입금이 가능한 가상계좌를 생성할 수 있습니다.(별도로 PG계약 필요)<br>\n     은행구분코드는 페이지 가장 하단에 있는 은행코드표를 참조하시기 바랍니다.\n     <h4>지원되는 PG사</h4>\n     <ul> <li>헥토파이낸셜(구 세틀뱅크)\n     </li> <li>나이스페이먼츠\n     </li> <li>KG이니시스\n     </li> <li>토스페이먼츠 - 신모듈\n     </li> <li>KSNET\n     </li> <li>스마트로 - 신모듈\n     </li><li>(신) 나이스페이\n     </li><li> 웰컴페이먼츠 </li></ul>",
+        "description": "가상계좌번호를 발급하여 고객이 입금할 수 있도록 합니다. <br>\n     희망하시는 은행, 예금주명으로 입금이 가능한 가상계좌를 생성할 수 있습니다.(별도로 PG계약 필요)<br>\n     은행구분코드는 페이지 가장 하단에 있는 은행코드표를 참조하시기 바랍니다.\n     <h4>지원되는 PG사</h4>\n     <ul> <li>헥토파이낸셜(구 세틀뱅크)\n     </li> <li>나이스페이먼츠\n     </li> <li>KG이니시스\n     </li> <li>토스페이먼츠 - 신모듈\n     </li> <li>KSNET\n     </li> <li>스마트로 - 신모듈\n     </li><li>(신) 나이스페이</li> </ul>",
         "operationId": "createVbank",
         "consumes": [
           "application/json",
@@ -7091,7 +7330,7 @@
           {
             "name": "vbank_holder",
             "in": "formData",
-            "description": "가상계좌 예금주명 <br>\n     (필수 : 이니시스, 나이스, 헥토파이낸셜(구 세틀뱅크), 스마트로 - 신모듈) <br>\n     **토스페이먼츠 - 신모듈, KSNET, 웰컴페이먼츠의 경우 적용되지 않고 가맹점명이 사용됨**",
+            "description": "가상계좌 예금주명 <br>\n     (필수 : 이니시스, 나이스, 헥토파이낸셜(구 세틀뱅크), 스마트로 - 신모듈) <br>\n     **토스페이먼츠 - 신모듈, KSNET의 경우 적용되지 않고 가맹점명이 사용됨**",
             "required": false,
             "type": "string",
             "maxLength": 16,
@@ -7116,15 +7355,11 @@
               },
               "ksnet": {
                 "description": "<p>해당 파라미터를 입력하셔도 적용되지 않고, 가맹점명이 예금주명으로 사용됩니다.</p>\n"
-              },
-              "welcome": {
-                "description": "<p>해당 파라미터를 입력하셔도 적용되지 않고, 가맹점명이 <strong>예금주명</strong> 으로 사용됩니다.</p>\n"
               }
             },
             "x-portone-unsupported-pgs": [
               "tosspayments",
-              "ksnet",
-              "welcome"
+              "ksnet"
             ]
           },
           {
@@ -7160,7 +7395,7 @@
           {
             "name": "buyer_name",
             "in": "formData",
-            "description": "주문자명 <br>(필수 : 이니시스, 토스페이먼츠 - 신모듈, KSNET, 스마트로 - 신모듈, 웰컴페이먼츠)",
+            "description": "주문자명 <br>(필수 : 이니시스, 토스페이먼츠 - 신모듈, KSNET,스마트로 - 신모듈)",
             "required": false,
             "type": "string",
             "maxLength": 16,
@@ -7178,9 +7413,6 @@
                 "required": true
               },
               "smartro_v2": {
-                "required": true
-              },
-              "welcome": {
                 "required": true
               }
             }
@@ -7301,47 +7533,28 @@
           {
             "name": "tax_free",
             "in": "formData",
-            "description": "면세금액 <br>\n     <h5>지원되는 PG사</h5><ul><li>나이스페이먼츠</li><li>(신) 나이스페이</li><li>웰컴페이먼츠</li></ul>\n     **웰컴페이먼츠**의 경우, `현금영수증 부가세업체정함` 설정 가맹점에 한해 사용이 가능합니다.<br>\n     **나이스페이먼츠, (신) 나이스페이 **의 경우, 상점아이디의 과세설정이 **지정금액방식**(복합과세)으로 설정되어 있는 경우 **필수값** 입니다.\n     과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.",
+            "description": "면세금액 <br>\n     (**나이스페이먼츠, (신) 나이스페이 전용**, 상점아이디의 과세설정이 **지정금액방식**(복합과세)으로 설정되어 있는 경우 **필수값** 입니다.<br>\n     과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.)",
             "required": false,
             "type": "integer",
             "x-portone-name": "면세금액",
             "x-portone-summary": "<p>가상계좌 발급을 위한 결제건의 면세금액</p>\n",
-            "x-portone-description": "",
             "x-portone-supported-pgs": [
               "nice",
-              "nice_v2",
-              "welcome"
-            ],
-            "x-portone-per-pg": {
-              "nice": {
-                "description": "<p>상점아이디의 과세설정이 <strong>지정금액방식</strong>(복합과세)으로 설정되어 있는 경우 <strong>필수값</strong> 입니다.<br />\n     과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.</p>\n"
-              },
-              "nice_v2": {
-                "description": "<p>상점아이디의 과세설정이 <strong>지정금액방식</strong>(복합과세)으로 설정되어 있는 경우 <strong>필수값</strong> 입니다.<br />\n     과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.</p>\n"
-              },
-              "welcome": {
-                "description": "<p><code>현금영수증 부가세업체정함</code> 설정 가맹점에 한해 사용이 가능합니다</p>\n"
-              }
-            }
+              "nice_v2"
+            ]
           },
           {
             "name": "vat_amount",
             "in": "formData",
-            "description": "amount 중 부가세 금액.<br/>\n     부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)<br>\n     <h5>지원되는 PG사</h5><ul><li>나이스페이먼츠</li><li>(신) 나이스페이</li><li>웰컴페이먼츠</li></ul>",
+            "description": "amount 중 부가세 금액.<br/>\n     부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)<br>\n     <h5>지원되는 PG사</h5><ul><li>나이스페이먼츠</li><li>(신) 나이스페이</li></ul>",
             "required": false,
             "type": "number",
             "x-portone-name": "부가세",
             "x-portone-summary": "<p>가상계좌 발급을 위한 결제건의 부가세 금액</p>\n",
             "x-portone-supported-pgs": [
               "nice",
-              "nice_v2",
-              "welcome"
-            ],
-            "x-portone-per-pg": {
-              "welcome": {
-                "description": "<p><code>부가세업체정함</code> 설정 가맹점에 한해 사용 가능하며 전체금액의 10% 이하로 설정해야 합니다. vat_amount가 <span>총 상품가격의 10%를 초과할 경우는 결제가 거절됩니다.</span></p>\n"
-              }
-            }
+              "nice_v2"
+            ]
           },
           {
             "name": "pg_api_key",
@@ -7391,9 +7604,9 @@
           "html5_inicis",
           "ksnet",
           "smartro_v2",
-          "tosspayments",
-          "welcome"
-        ]
+          "tosspayments"
+        ],
+        "x-portone-category": "vbank"
       }
     },
     "/vbanks/{imp_uid}": {
@@ -7463,14 +7676,15 @@
         },
         "x-portone-supported-pgs": [
           "settle"
-        ]
+        ],
+        "x-portone-category": "vbank"
       },
       "delete": {
         "tags": [
           "vbanks"
         ],
         "summary": "가상계좌 발급취소 API",
-        "description": "발급된 가상계좌(입금이 되기 전)를 말소합니다. <br>\n      아직 입금이 되지 않은 가상계좌를 말소시킴으로써 구매자가 실수로 입금하는 경우를 방지하도록 합니다.<br>\n      imp_uid가 지정되어야 합니다.(포트원 기획 의도상 동일한 merchant_uid의 입금대기 중인 가상계좌가 N개 존재할 수 있으므로 imp_uid로만 가상계좌 말소가 가능합니다)\n      <h4>지원되는 PG사</h4>\n      <ul> <li>KG이니시스\n      </li> <li>NHN KCP\n      </li> <li>토스페이먼츠 - 구모듈\n      </li> <li>다날\n      </li> <li>나이스페이먼츠\n      </li> <li>KICC\n      </li> <li>헥토파이낸셜(구 세틀뱅크)\n      </li> <li>스마트로 - 구모듈\n      </li> <li>토스페이먼츠 - 신모듈\n      </li> <li>KSNET\n      </li> <li> 스마트로 - 신모듈\n      </li> <li>(신) 나이스페이\n      </li> <li>웰컴페이먼츠</li></ul>",
+        "description": "발급된 가상계좌(입금이 되기 전)를 말소합니다. <br>\n      아직 입금이 되지 않은 가상계좌를 말소시킴으로써 구매자가 실수로 입금하는 경우를 방지하도록 합니다.<br>\n      imp_uid가 지정되어야 합니다.(포트원 기획 의도상 동일한 merchant_uid의 입금대기 중인 가상계좌가 N개 존재할 수 있으므로 imp_uid로만 가상계좌 말소가 가능합니다)\n      <h4>지원되는 PG사</h4>\n      <ul> <li>KG이니시스\n      </li> <li>NHN KCP\n      </li> <li>토스페이먼츠 - 구모듈\n      </li> <li>다날\n      </li> <li>나이스페이먼츠\n      </li> <li>KICC\n      </li> <li>헥토파이낸셜(구 세틀뱅크)\n      </li> <li>스마트로 - 구모듈\n      </li> <li>토스페이먼츠 - 신모듈\n      </li> <li>KSNET\n      </li> <li> 스마트로 - 신모듈\n      </li> <li>(신) 나이스페이</li></ul>",
         "operationId": "revokeVbank",
         "consumes": [
           "application/json",
@@ -7539,65 +7753,9 @@
           "tosspayments",
           "ksnet",
           "smartro_v2",
-          "nice_v2",
-          "welcome"
-        ]
-      }
-    },
-    "/vbanks/holder": {
-      "get": {
-        "tags": [
-          "vbanks"
+          "nice_v2"
         ],
-        "summary": "예금주 조회 API",
-        "description": "가상계좌 환불 전, 확인차원에서 예금주를 조회하는 API <br>\n      은행코드, 계좌번호를 이용해 해당 계좌의 예금주 명을 조회합니다.<br>\n      <table><tbody><tr><td>KB국민은행</td><td>004\n      </td></tr><tr><td>SC제일은행</td><td>023\n      </td></tr><tr><td>경남은행</td><td>039\n      </td></tr><tr><td>광주은행</td><td>034\n      </td></tr><tr><td>기업은행</td><td>003\n      </td></tr><tr><td>농협</td><td>011\n      </td></tr><tr><td>대구은행</td><td>031\n      </td></tr><tr><td>부산은행</td><td>032\n      </td></tr><tr><td>산업은행</td><td>002\n      </td></tr><tr><td>수협</td><td>007\n      </td></tr><tr><td>신한은행</td><td>088\n      </td></tr><tr><td>신협</td><td>048\n      </td></tr><tr><td>외환은행</td><td>005\n      </td></tr><tr><td>우리은행</td><td>020\n      </td></tr><tr><td>우체국</td><td>071\n      </td></tr><tr><td>전북은행</td><td>037\n      </td></tr><tr><td>제주은행</td><td>035\n      </td></tr><tr><td>축협</td><td>012\n      </td></tr><tr><td>하나은행(서울은행)</td><td>081\n      </td></tr><tr><td>한국씨티은행(한미은행)</td><td>027\n      </td></tr><tr><td>K뱅크</td><td>089\n      </td></tr><tr><td>카카오뱅크</td><td>090\n      </td></tr><tr><td>유안타증권</td><td>209\n      </td></tr><tr><td>현대증권</td><td>218\n      </td></tr><tr><td>미래에셋증권</td><td>230\n      </td></tr><tr><td>대우증권</td><td>238\n      </td></tr><tr><td>삼성증권</td><td>240\n      </td></tr><tr><td>한국투자증권</td><td>243\n      </td></tr><tr><td>우리투자증권</td><td>247\n      </td></tr><tr><td>교보증권</td><td>261\n      </td></tr><tr><td>하이투자증권</td><td>262\n      </td></tr><tr><td>에이치엠씨투자증권</td><td>263\n      </td></tr><tr><td>키움증권</td><td>264\n      </td></tr><tr><td>이트레이드증권</td><td>265\n      </td></tr><tr><td>에스케이증권</td><td>266\n      </td></tr><tr><td>대신증권</td><td>267\n      </td></tr><tr><td>솔로몬투자증권</td><td>268\n      </td></tr><tr><td>한화증권</td><td>269\n      </td></tr><tr><td>하나대투증권</td><td>270\n      </td></tr><tr><td>굿모닝신한증권</td><td>278\n      </td></tr><tr><td>동부증권</td><td>279\n      </td></tr><tr><td>유진투자증권</td><td>280\n      </td></tr><tr><td>메리츠증권</td><td>287\n      </td></tr><tr><td>엔에이치투자증권</td><td>289\n      </td></tr><tr><td>부국증권</td><td>290</td></tr></tbody></table>",
-        "operationId": "queryBankHolder",
-        "consumes": [
-          "application/json",
-          "application/x-www-form-urlencoded"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "bank_code",
-            "in": "query",
-            "description": "은행코드(금융결제원 표준코드3자리)",
-            "required": true,
-            "type": "string",
-            "x-portone-name": "은행코드",
-            "x-portone-summary": "<p>조회할 은행코드(금융결제원 표준코드3자리)</p>\n",
-            "x-portone-description": ""
-          },
-          {
-            "name": "bank_num",
-            "in": "query",
-            "description": "계좌번호(숫자외 기호 포함 가능)",
-            "required": true,
-            "type": "string",
-            "x-portone-name": "계좌번호",
-            "x-portone-summary": "<p>조회할 계좌번호(숫자외 기호 포함 가능)</p>\n",
-            "x-portone-description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "예금주 조회 성공",
-            "schema": {
-              "$ref": "#/definitions/VbankHolderResponse"
-            }
-          },
-          "400": {
-            "description": "bank_code가 누락된 경우/ bank_num이 누락된 경우"
-          },
-          "401": {
-            "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
-          },
-          "404": {
-            "description": "계좌정보 조회 실패"
-          }
-        }
+        "x-portone-category": "vbank"
       }
     }
   },
@@ -8304,81 +8462,6 @@
           "type": "string",
           "x-portone-name": "발송 주소",
           "x-portone-summary": "<p>에스크로 결제건의 배송 발송 주소</p>\n",
-          "x-portone-description": ""
-        }
-      }
-    },
-    "EscrowLogisProductsAnnotation": {
-      "required": [
-        "id",
-        "name",
-        "amount"
-      ],
-      "properties": {
-        "id": {
-          "description": "상품 고유 아이디 (필수 : 웰컴페이먼츠)",
-          "type": "string",
-          "x-portone-name": "상품 고유 아이디",
-          "x-portone-summary": "",
-          "x-portone-description": "",
-          "x-portone-per-pg": {
-            "welcome": {
-              "required": true
-            }
-          }
-        },
-        "name": {
-          "description": "상품 이름 (필수 : 웰컴페이먼츠)",
-          "type": "string",
-          "x-portone-name": "상품 이름",
-          "x-portone-summary": "",
-          "x-portone-description": "",
-          "x-portone-per-pg": {
-            "welcome": {
-              "required": true
-            }
-          }
-        },
-        "code": {
-          "description": "상품 코드",
-          "type": "string",
-          "x-portone-name": "상품 코드",
-          "x-portone-summary": "<p>가맹점에서 사용하는 상품 관리 코드</p>\n",
-          "x-portone-description": ""
-        },
-        "amount": {
-          "description": "상품 단위 가격 (필수 : 웰컴페이먼츠)",
-          "type": "number",
-          "x-portone-name": "상품 단위 가격",
-          "x-portone-summary": "",
-          "x-portone-description": "",
-          "x-portone-per-pg": {
-            "welcome": {
-              "required": true
-            }
-          }
-        },
-        "currency": {
-          "description": "상품의 결제통화 구분코드으로 기본값은 KRW입니다.",
-          "type": "string",
-          "default": "KRW",
-          "x-portone-name": "상품의 결제통화 구분코드",
-          "x-portone-summary": "<p>통화 e.g.) KRW, USD, VND, ... Default: KRW</p>\n",
-          "x-portone-description": ""
-        },
-        "quantity": {
-          "description": "상품의 수량",
-          "type": "integer",
-          "default": 1,
-          "x-portone-name": "상품의 수량",
-          "x-portone-summary": "<p>상품의 수량으로 기본값은 1입니다.</p>\n",
-          "x-portone-description": ""
-        },
-        "tag": {
-          "description": "상품의 카테고리 e.g) 도서, 가전기기, 인테리어 용품 등",
-          "type": "string",
-          "x-portone-name": "상품의 카테고리",
-          "x-portone-summary": "<p>상품의 카테고리 e.g) 도서, 가전기기, 인테리어 용품 등</p>\n",
           "x-portone-description": ""
         }
       }
@@ -10048,8 +10131,9 @@
           }
         },
         "schedule_at": {
-          "description": "결제요청 예약시각 UNIX timestamp",
+          "description": "결제요청 예약시각 UNIX timestamp in seconds",
           "type": "integer",
+          "default": 0,
           "x-portone-name": "예약시각",
           "x-portone-summary": "<p>결제요청 예약시각 UNIX timestamp</p>\n",
           "x-portone-description": ""
@@ -10086,14 +10170,11 @@
           "x-portone-per-pg": {
             "ksnet": {
               "description": "<p>면세 설정 상점아이디에서 면세처리를 위해 결제 금액과 동일한 면세 금액을 반드시 입력해야 합니다. 그렇지 않은 경우 매출전표에 전액 면세가 아닌 것으로 표시되고 실제 처리 내역이 다를 수 있습니다.<br />\n     과세 설정 상점아이디에서 면세 금액을 전달하지 않아야 합니다. 면세 금액을 전달하는 경우 매출전표에 면세 처리된 것으로 표시되지만 실제 처리 내역과 다를 수 있습니다.</p>\n"
-            },
-            "welcome": {
-              "description": "<p><code>부가세업체정함</code> 설정 가맹점에 한해 사용 가능합니다.</p>\n"
             }
           }
         },
         "vat_amount": {
-          "description": "amount 중 부가세 금액(기본값 : null, 현재 나이스페이먼츠, 이니시스, (신) 나이스페이, 웰컴페이먼츠 지원)",
+          "description": "amount 중 부가세 금액(기본값 : null, 현재 나이스페이먼츠, 이니시스, (신) 나이스페이 지원)",
           "type": "number",
           "x-portone-name": "부가세",
           "x-portone-summary": "<p>결제 예약을 요청한 결제금액 중 부가세</p>\n",
@@ -10101,14 +10182,8 @@
           "x-portone-supported-pgs": [
             "nice",
             "html5_inicis",
-            "nice_v2",
-            "welcome"
-          ],
-          "x-portone-per-pg": {
-            "welcome": {
-              "description": "<p><code>부가세업체정함</code> 설정 가맹점에 한해 사용 가능하며 전체금액의 10% 이하로 설정해야 합니다. vat_amount가 <span>총 상품가격의 10%를 초과할 경우는 결제가 거절됩니다.</span></p>\n"
-            }
-          }
+            "nice_v2"
+          ]
         },
         "name": {
           "description": "주문명칭",
@@ -10127,7 +10202,7 @@
           }
         },
         "buyer_name": {
-          "description": "[스마트로 - 신모듈, 웰컴페이먼츠 필수 파라미터] 주문자명",
+          "description": "[스마트로 - 신모듈 필수 파라미터] 주문자명",
           "type": "string",
           "maxLength": 16,
           "x-portone-name": "주문자명",
@@ -10138,9 +10213,6 @@
               "required": true
             },
             "ksnet": {
-              "required": true
-            },
-            "welcome": {
               "required": true
             },
             "paymentwall": {
@@ -10316,9 +10388,9 @@
           "x-portone-description": ""
         },
         "schedule_at": {
-          "description": "예약결제 실행 예정 시각 UNIX timestamp",
+          "description": "예약결제 실행 예정 시각 UNIX timestamp in seconds",
           "type": "integer",
-          "default": "0",
+          "default": 0,
           "x-portone-name": "결제 예정 시각",
           "x-portone-summary": "<p>결제 예약시 요청한 결제 예정 시각 UNIX timestamp</p>\n",
           "x-portone-description": ""
@@ -10326,7 +10398,7 @@
         "executed_at": {
           "description": "예약결제가 실행된 시각 UNIX timestamp",
           "type": "integer",
-          "default": "0",
+          "default": 0,
           "x-portone-name": "결제 실행 시각",
           "x-portone-summary": "<p>실제 결제가 실행된 시각 UNIX timestamp</p>\n",
           "x-portone-description": ""
@@ -10334,7 +10406,7 @@
         "revoked_at": {
           "description": "예약결제 실행을 철회한 시각 UNIX timestamp",
           "type": "integer",
-          "default": "0",
+          "default": 0,
           "x-portone-name": "결제 실행 철회 시각",
           "x-portone-summary": "<p>예약 결제 실행을 철회한 시각 UNIX timestamp</p>\n",
           "x-portone-description": ""
@@ -10518,6 +10590,42 @@
         }
       ]
     },
+    "TierAnnotation": {
+      "required": [
+        "tier_code",
+        "tier_name"
+      ],
+      "properties": {
+        "tier_code": {
+          "description": "하위 가맹점(Tier) 고유코드(알파벳 대문자 또는 숫자 3자리)",
+          "type": "string",
+          "x-portone-name": "티어코드",
+          "x-portone-summary": "<p>하위가맹점(Tier)의 고유코드</p>\n",
+          "x-portone-description": "<p>알파벳 대문자 또는 숫자 3자리로 구성됩니다.</p>\n"
+        },
+        "tier_name": {
+          "description": "하위 가맹점(Tier) 관리명칭",
+          "type": "string",
+          "x-portone-name": "티어명",
+          "x-portone-summary": "<p>하위가맹점(Tier)의 관리명칭</p>\n"
+        }
+      }
+    },
+    "TierResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResponseAnnotation"
+        },
+        {
+          "description": "하위 가맹점(Tier) 정보",
+          "properties": {
+            "response": {
+              "$ref": "#/definitions/TierAnnotation"
+            }
+          }
+        }
+      ]
+    },
     "PgSettingAnnotation": {
       "required": [
         "pg_provider",
@@ -10692,6 +10800,10 @@
     {
       "name": "users",
       "description": "가맹점 설정 정보 전용 API"
+    },
+    {
+      "name": "tiers",
+      "description": "대표가맹점에 대한 하위가맹점 관리"
     }
   ]
 }

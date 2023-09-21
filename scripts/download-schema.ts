@@ -10,7 +10,7 @@ import {
 } from "https://deno.land/x/pbkit@v0.0.61/misc/github/auth.ts";
 import { getToken } from "https://deno.land/x/pbkit@v0.0.61/misc/github/index.ts";
 import { open } from "https://deno.land/x/pbkit@v0.0.61/misc/browser.ts";
-import { render as renderGfm } from "https://deno.land/x/gfm/mod.ts";
+import { render as renderGfm } from "https://deno.land/x/gfm@0.2.5/mod.ts";
 
 if (!import.meta.main) Deno.exit(1);
 

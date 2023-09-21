@@ -19,7 +19,11 @@ export function tagsToCategories(tags: Tag[]): Category[] {
 }
 
 export function getCategories(schema: any): Category[] {
-  return schema["x-portone-categories"] || tagsToCategories(schema.tags || []);
+  return (
+    schema["x-portone-categories"] ||
+    schema.info?.["x-portone-categories"] ||
+    tagsToCategories(schema.tags || [])
+  );
 }
 
 export function flatCategories(categories: Category[]): Category[] {

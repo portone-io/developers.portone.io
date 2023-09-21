@@ -1,5 +1,6 @@
 ---
 import LeftSidebar from "~/layouts/sidebar/LeftSidebar.astro";
+import NavMenuLink from "./NavMenuLink.astro";
 
 export interface NavMenuItem {
   title: string;
@@ -31,18 +32,22 @@ const { items } = Astro.props;
 <LeftSidebar>
   <nav
     id="nav-menu"
-    class="text-slate-7 flex h-full flex-col gap-2 overflow-y-scroll p-2 pt-8 text-lg"
+    class="text-slate-7 gap-12px flex h-full flex-col overflow-y-scroll p-2 pt-8 text-lg"
   >
     {
-      items.map(({ id, title }) => (
-        <a
-          class="hover:bg-slate-1 block rounded px-2 py-1"
-          href={`/api/rest-v1/${id}`}
-          data-target={id}
-          data-norefresh
-        >
-          {title}
-        </a>
+      items.map(({ id, title, children }) => (
+        <div>
+          <div>
+            <NavMenuLink id={id} title={title} />
+          </div>
+          {children && children.length && (
+            <div class="flex flex-col pl-2">
+              {children.map(({ id, title }) => (
+                <NavMenuLink id={id} title={title} />
+              ))}
+            </div>
+          )}
+        </div>
       ))
     }
   </nav>
