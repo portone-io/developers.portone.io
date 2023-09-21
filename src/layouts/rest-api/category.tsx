@@ -70,6 +70,14 @@ export function Category({
   React.useEffect(expanded);
   const { expand, onToggle } = useExpand(section, initialExpand);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
+  const descriptionElement = (
+    <div
+      class="mt-4"
+      dangerouslySetInnerHTML={{
+        __html: description,
+      }}
+    />
+  );
   return (
     <section class="flex flex-col">
       <div>
@@ -77,74 +85,76 @@ export function Category({
           {title}
         </prose.h2>
       </div>
-      <TwoColumnLayout
-        left={
-          <div
-            class="mt-4"
-            dangerouslySetInnerHTML={{
-              __html: description,
-            }}
-          />
-        }
-        right={
-          <div class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border p-4">
-            {endpoints.map((endpoint) => {
-              const { method, path, title, deprecated, unstable } = endpoint;
-              const id = getEndpointRepr(endpoint);
-              const href = `${basepath}/${section}#${encodeURIComponent(id)}`;
-              return (
-                <a
-                  key={id}
-                  href={href}
-                  class={`hover:text-orange-5 text-slate-6 flex flex-col text-sm leading-tight underline-offset-4 transition-colors hover:underline ${
-                    deprecated || unstable ? "opacity-50" : ""
-                  }`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    expandAndScrollTo({ section, href, id });
-                  }}
-                  data-norefresh
-                >
-                  <div class="font-bold">{title}</div>
-                  <div class="ml-2 flex font-mono opacity-60">
-                    <span class="shrink-0 font-bold uppercase">
-                      {method}&nbsp;
-                    </span>
-                    <span>{path}</span>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        }
-      />
-      <Expand
-        className="mt-10"
-        expand={expand}
-        onToggle={onToggle}
-        onCollapse={() => {
-          headingRef.current?.scrollIntoView({ behavior: "smooth" });
-        }}
-      >
-        {endpoints.map((endpoint) => (
-          <EndpointDoc
-            basepath={basepath}
-            schema={schema}
-            endpoint={endpoint}
-            renderRightFn={({ operation }) => (
-              <div>
-                <a
-                  target="_blank"
-                  class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
-                  href={`https://api.iamport.kr/#!/${section}/${operation.operationId}`}
-                >
-                  Swagger Test Link
-                </a>
+      {endpoints.length < 1 ? (
+        descriptionElement
+      ) : (
+        <>
+          <TwoColumnLayout
+            left={descriptionElement}
+            right={
+              <div class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border p-4">
+                {endpoints.map((endpoint) => {
+                  const { method, path, title, deprecated, unstable } =
+                    endpoint;
+                  const id = getEndpointRepr(endpoint);
+                  const href = `${basepath}/${section}#${encodeURIComponent(
+                    id
+                  )}`;
+                  return (
+                    <a
+                      key={id}
+                      href={href}
+                      class={`hover:text-orange-5 text-slate-6 flex flex-col text-sm leading-tight underline-offset-4 transition-colors hover:underline ${
+                        deprecated || unstable ? "opacity-50" : ""
+                      }`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        expandAndScrollTo({ section, href, id });
+                      }}
+                      data-norefresh
+                    >
+                      <div class="font-bold">{title}</div>
+                      <div class="ml-2 flex font-mono opacity-60">
+                        <span class="shrink-0 font-bold uppercase">
+                          {method}&nbsp;
+                        </span>
+                        <span>{path}</span>
+                      </div>
+                    </a>
+                  );
+                })}
               </div>
-            )}
+            }
           />
-        ))}
-      </Expand>
+          <Expand
+            className="mt-10"
+            expand={expand}
+            onToggle={onToggle}
+            onCollapse={() => {
+              headingRef.current?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            {endpoints.map((endpoint) => (
+              <EndpointDoc
+                basepath={basepath}
+                schema={schema}
+                endpoint={endpoint}
+                renderRightFn={({ operation }) => (
+                  <div>
+                    <a
+                      target="_blank"
+                      class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
+                      href={`https://api.iamport.kr/#!/${section}/${operation.operationId}`}
+                    >
+                      Swagger Test Link
+                    </a>
+                  </div>
+                )}
+              />
+            ))}
+          </Expand>
+        </>
+      )}
     </section>
   );
 }

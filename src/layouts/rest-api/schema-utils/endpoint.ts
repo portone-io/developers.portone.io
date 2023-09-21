@@ -1,4 +1,9 @@
-import { getCategories, type Category, type Tag } from "./category";
+import {
+  getCategories,
+  type Category,
+  type Tag,
+  flatCategories,
+} from "./category";
 import { type Operation, getOperation } from "./operation";
 
 export interface Endpoint {
@@ -49,19 +54,9 @@ export function groupEndpointsByCategory(
   const categories = flatCategories(getCategories(schema));
   for (const category of categories) {
     const endpoints = map[category.id] || [];
-    if (!endpoints.length) continue;
     result.push({ category, endpoints });
   }
   return result;
-}
-
-export function flatCategories(categories: Category[]): Category[] {
-  return categories
-    .map((category) => {
-      if (category.children) return [category, ...category.children];
-      return category;
-    })
-    .flat();
 }
 
 export function getEndpointRepr({ method, path }: Endpoint): string {

@@ -40,7 +40,9 @@ export function TypeDefinitions({
     }));
   return (
     <section class="flex flex-col">
-      <prose.h2 ref={headingRef}>타입 정의</prose.h2>
+      <prose.h2 id="type-def" ref={headingRef}>
+        타입 정의
+      </prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
