@@ -12,22 +12,94 @@ interface Props {
   items: NavMenuItem[];
 }
 const { items } = Astro.props;
+const _items = [
+  ...items,
+  // Any Hangul character included breaks the Astro Language Server
+  { title: "\ud0c0\uc785\u0020\uc815\uc758", id: "type-def" },
+];
 ---
 
 <script>
+  import { effect, signal } from "@preact/signals";
+  import {
+    currentSectionSignal,
+    navOpenStatesSignal,
+    toggleNav,
+    openNav,
+    closeNav,
+  } from "~/state/rest-api/nav";
   import { sidebarOpenSignal } from "~/state/sidebar";
   const navMenu = document.getElementById("nav-menu");
-  const navMenuItems = Array.from(navMenu?.querySelectorAll("a") || []);
+  const navMenuItems = Array.from(
+    navMenu?.querySelectorAll("[data-navitem]") || []
+  ) as HTMLDivElement[];
   for (const item of navMenuItems) {
-    item.addEventListener("click", (e) => {
+    const id = item.dataset.navitem || "";
+    const button = item.querySelector("button") as HTMLButtonElement;
+    if (!button) continue;
+    button.addEventListener("click", () => toggleNav(id));
+  }
+  const navMenuAnchors = Array.from(
+    navMenu?.querySelectorAll("a") || []
+  ) as HTMLAnchorElement[];
+  for (const anchor of navMenuAnchors) {
+    anchor.addEventListener("click", (e) => {
       e.preventDefault();
       sidebarOpenSignal.value = false;
       document
-        .getElementById(item.dataset.target || "")
+        .getElementById(anchor.dataset.target || "")
         ?.scrollIntoView({ behavior: "smooth" });
-      history.pushState({}, "", item.href);
+      history.pushState({}, "", anchor.href);
     });
   }
+  function getParentCategoryId(id: string): string {
+    return (
+      (
+        navMenu
+          ?.querySelector(`[data-navitem="${id}"]`)
+          ?.parentElement?.closest("[data-navitem]") as HTMLElement | undefined
+      )?.dataset.navitem || id
+    );
+  }
+  const previousSectionSignal = signal<string>("");
+  effect(() => {
+    const currentSection = getParentCategoryId(currentSectionSignal.value);
+    const previousSection = previousSectionSignal.peek();
+    if (currentSection === previousSection) return;
+    previousSectionSignal.value = currentSectionSignal.value;
+    openNav(currentSection);
+    closeNav(previousSection);
+  });
+  effect(() => {
+    const currentSection = currentSectionSignal.value;
+    const navOpenStates = navOpenStatesSignal.value;
+    for (const item of navMenuItems) {
+      const id = item.dataset.navitem || "";
+      item.dataset.active = String(currentSection === id);
+      item.dataset.open = String(Boolean(navOpenStates[id]));
+    }
+  });
+  const article = document.getElementById("overview")!.closest("article")!;
+  const sections = Array.from(article.children).filter(
+    (child) => child.tagName === "SECTION"
+  );
+  function observe() {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries.filter(({ isIntersecting }) => isIntersecting)[0];
+        if (!entry) return;
+        currentSectionSignal.value = entry.target.id;
+      },
+      { rootMargin: `0px 0px -${window.innerHeight - 100}px` }
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }
+  let unobserve = observe();
+  addEventListener("resize", () => {
+    unobserve();
+    unobserve = observe();
+  });
 </script>
 <LeftSidebar>
   <nav
@@ -35,20 +107,23 @@ const { items } = Astro.props;
     class="text-slate-6 gap-12px flex h-full flex-col overflow-y-scroll p-2 pt-8 text-lg"
   >
     {
-      items.map(({ id, title, children }) => (
-        <div>
-          <div class="hover:bg-slate-1 flex">
+      _items.map(({ id, title, children }) => (
+        <div data-navitem={id} class="group">
+          <div class="group-data-[active=true]:text-orange-5 hover:bg-slate-1 flex transition-colors">
             <NavMenuLink id={id} title={title} />
             {children && children.length && (
               <button class="flex h-full items-center p-2">
-                <i class="i-ic-baseline-keyboard-arrow-down inline-block" />
+                <i class="i-ic-baseline-keyboard-arrow-right group-data-[open=true]:i-ic-baseline-keyboard-arrow-down inline-block" />
               </button>
             )}
           </div>
           {children && children.length && (
-            <div class="flex flex-col pl-2 text-base">
+            <div class="hidden flex-col pl-2 text-base group-data-[open=true]:flex">
               {children.map(({ id, title }) => (
-                <div class="hover:bg-slate-1">
+                <div
+                  data-navitem={id}
+                  class="data-[active=true]:text-orange-5 hover:bg-slate-1 transition-colors"
+                >
                   <NavMenuLink id={id} title={title} />
                 </div>
               ))}
@@ -57,6 +132,5 @@ const { items } = Astro.props;
         </div>
       ))
     }
-    <NavMenuLink id="type-def" title="타입 정의" />
   </nav>
 </LeftSidebar>
