@@ -194,7 +194,7 @@ function ReqRes({ title, description, children }: ReqResProps) {
     <div>
       {title && (
         <div class="mb-1 inline-flex gap-2 text-xs">
-          <h4 class="font-bold uppercase">{title}</h4>
+          <h4 class="shrink-0 font-bold uppercase">{title}</h4>
           {description && (
             <div
               class="text-slate-5"

@@ -1,5 +1,11 @@
+import * as React from "react";
 import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
+import {
+  expandAndScrollTo,
+  expanded,
+  useExpand,
+} from "~/state/rest-api/expand-section";
 import {
   type BakedProperty,
   type Property,
@@ -15,15 +21,17 @@ import Expand from "./Expand";
 
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
-  expand?: boolean;
+  initialExpand?: boolean;
   schema: any;
 }
 export function TypeDefinitions({
   basepath,
-  expand = false,
+  initialExpand = false,
   schema,
 }: TypeDefinitionsProps) {
-  const expandSignal = useSignal(expand);
+  React.useEffect(expanded);
+  const { expand, onToggle } = useExpand("type-def", initialExpand);
+  const headingRef = React.useRef<HTMLHeadingElement>(null);
   const typeDefPropsList = crawlRefs(schema)
     .sort()
     .map((ref) => ({
@@ -31,26 +39,37 @@ export function TypeDefinitions({
       typeDef: getTypeDefByRef(schema, ref),
     }));
   return (
-    <div class="flex flex-col">
-      <prose.h2>타입 정의</prose.h2>
+    <section id="type-def" class="scroll-mt-5.5rem flex flex-col">
+      <prose.h2 ref={headingRef}>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
       <div class="border-slate-3 bg-slate-1 grid-flow-rows mt-4 grid gap-x-4 gap-y-1 rounded-lg border px-6 py-4 text-xs sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {typeDefPropsList.map(({ name }) => (
-          <a
-            class="hover:text-orange-5 underline-offset-4 transition-colors hover:underline"
-            href={`${basepath}/type-def#${name}`}
-            key={name}
-          >
-            {name}
-          </a>
-        ))}
+        {typeDefPropsList.map(({ name }) => {
+          const href = `${basepath}/type-def#${name}`;
+          return (
+            <a
+              key={name}
+              class="hover:text-orange-5 underline-offset-4 transition-colors hover:underline"
+              href={href}
+              onClick={(e) => {
+                e.preventDefault();
+                expandAndScrollTo({ section: "type-def", href, id: name });
+              }}
+              data-norefresh
+            >
+              {name}
+            </a>
+          );
+        })}
       </div>
       <Expand
         className="mt-10"
-        expand={expandSignal.value}
-        onExpand={(v) => (expandSignal.value = v)}
+        expand={expand}
+        onToggle={onToggle}
+        onCollapse={() => {
+          headingRef.current?.scrollIntoView({ behavior: "smooth" });
+        }}
       >
         <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
           {typeDefPropsList.map(({ name, typeDef }) => (
@@ -70,7 +89,7 @@ export function TypeDefinitions({
           ))}
         </div>
       </Expand>
-    </div>
+    </section>
   );
 }
 
@@ -87,7 +106,7 @@ export function TypeDefDoc({ basepath, schema, typeDef }: TypeDefDocProps) {
         <ObjectDoc basepath={basepath} schema={schema} typeDef={typeDef} />
       );
     case "enum":
-      return <EnumDoc xPortoneCases={typeDef!["x-portone-cases"]!} />;
+      return <EnumDoc xPortoneEnum={typeDef!["x-portone-enum"]} />;
     case "union":
       return <UnionDoc basepath={basepath} typeDef={typeDef!} />;
   }
@@ -123,18 +142,18 @@ function UnionDoc({ basepath, typeDef }: UnionDocProps) {
 }
 
 interface EnumDocProps {
-  xPortoneCases: NonNullable<TypeDef["x-portone-cases"]>;
+  xPortoneEnum: TypeDef["x-portone-enum"];
 }
-function EnumDoc({ xPortoneCases }: EnumDocProps) {
+function EnumDoc({ xPortoneEnum }: EnumDocProps) {
   return (
     <div class="bg-slate-1 flex flex-col gap-4 rounded px-2 py-3">
-      {xPortoneCases.map((enumCase) => {
-        const label = enumCase["x-portone-name"] || "";
+      {Object.entries(xPortoneEnum || {}).map(([enumValue, enumCase]) => {
+        const title = enumCase["x-portone-title"] || enumCase.title || "";
         return (
           <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2 leading-none">
-              <code>{enumCase.case}</code>
-              <span class="text-slate-5 text-sm">{label}</span>
+              <code>{enumValue}</code>
+              <span class="text-slate-5 text-sm">{title}</span>
             </div>
             <DescriptionDoc typeDef={enumCase} />
           </div>
@@ -184,17 +203,21 @@ interface PropertyDocProps {
   property: Property;
 }
 function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
-  const label = property["x-portone-name"] || "";
+  const title =
+    property["x-portone-title"] ||
+    property.title ||
+    property["x-portone-name"] ||
+    "";
   const deprecated = Boolean(property.deprecated);
   return (
     <div class={`flex flex-col gap-2 ${deprecated ? "opacity-50" : ""}`}>
       <div>
-        <div class="text-slate-5 flex gap-1 text-xs">
-          {label && <span>{label}</span>}
-          <span>{required ? "(필수)" : "(선택)"}</span>
-          {deprecated && "(Deprecated)"}
+        <div class="text-slate-5 text-xs">
+          {title && <span>{title}</span>}{" "}
+          <span class="inline-block">{required ? "(필수)" : "(선택)"}</span>{" "}
+          {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>
-        <div class="font-mono font-bold leading-none">
+        <div class="font-mono font-bold leading-tight">
           <span>{name}</span>
           <span>: </span>
           <TypeReprDoc basepath={basepath} def={property} />
@@ -212,15 +235,23 @@ interface TypeReprDocProps {
 function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
   const typeRepr = repr(def);
   const isUserType = typeRepr[0]?.toUpperCase() === typeRepr[0];
-  return isUserType ? (
+  if (!isUserType) {
+    return <span class="text-slate-5 font-bold">{typeRepr}</span>;
+  }
+  const typeName = typeRepr.replace("[]", "");
+  const href = `${basepath}/type-def#${typeName}`;
+  return (
     <a
-      class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
-      href={`${basepath}/type-def#${typeRepr.replace("[]", "")}`}
+      class="text-slate-5 hover:text-orange-5 inline-block font-bold underline-offset-4 transition-colors hover:underline"
+      href={href}
+      onClick={(e) => {
+        e.preventDefault();
+        expandAndScrollTo({ section: "type-def", href, id: typeName });
+      }}
+      data-norefresh
     >
       {typeRepr}
     </a>
-  ) : (
-    <span class="text-slate-5 font-bold">{typeRepr}</span>
   );
 }
 

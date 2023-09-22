@@ -3,6 +3,7 @@ import { bakeProperties, type TypeDef, type Property } from "./type-def";
 
 export interface Operation {
   operationId?: string | undefined;
+  title?: string | undefined;
   summary?: string | undefined;
   description?: string | undefined;
   requestBody?:
@@ -12,7 +13,9 @@ export interface Operation {
   responses: { [statusCode: number]: Response };
   tags?: string[] | undefined;
   deprecated?: boolean | undefined;
+  "x-portone-title"?: string | undefined;
   "x-portone-unstable"?: boolean | undefined;
+  "x-portone-category"?: string | undefined;
 }
 
 export interface Parameter extends Property {

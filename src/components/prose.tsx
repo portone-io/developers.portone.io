@@ -1,3 +1,5 @@
+import { forwardRef } from "preact/compat";
+
 export function h1({ children, ...props }: any) {
   return (
     <h1
@@ -11,9 +13,13 @@ export function h1({ children, ...props }: any) {
   );
 }
 
-export function h2({ children, ...props }: any) {
+export const h2 = forwardRef<HTMLHeadingElement, any>(function h2(
+  { children, ...props },
+  ref
+) {
   return (
     <h2
+      ref={ref}
       {...props}
       class={`mb-2 mt-5 text-xl font-bold first:mt-0 last:mb-0 md:text-2xl ${
         props.class || ""
@@ -22,7 +28,7 @@ export function h2({ children, ...props }: any) {
       {children}
     </h2>
   );
-}
+});
 
 export function h3({ children, ...props }: any) {
   return (
