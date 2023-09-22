@@ -7636,6 +7636,63 @@
         ],
         "x-portone-category": "vbank"
       }
+    },
+    "/vbanks/holder": {
+      "get": {
+        "tags": [
+          "vbanks"
+        ],
+        "summary": "예금주 조회 API",
+        "description": "가상계좌 환불 전, 확인차원에서 예금주를 조회하는 API <br>\n      은행코드, 계좌번호를 이용해 해당 계좌의 예금주 명을 조회합니다.<br>\n      <table><tbody><tr><td>KB국민은행</td><td>004\n      </td></tr><tr><td>SC제일은행</td><td>023\n      </td></tr><tr><td>경남은행</td><td>039\n      </td></tr><tr><td>광주은행</td><td>034\n      </td></tr><tr><td>기업은행</td><td>003\n      </td></tr><tr><td>농협</td><td>011\n      </td></tr><tr><td>대구은행</td><td>031\n      </td></tr><tr><td>부산은행</td><td>032\n      </td></tr><tr><td>산업은행</td><td>002\n      </td></tr><tr><td>수협</td><td>007\n      </td></tr><tr><td>신한은행</td><td>088\n      </td></tr><tr><td>신협</td><td>048\n      </td></tr><tr><td>외환은행</td><td>005\n      </td></tr><tr><td>우리은행</td><td>020\n      </td></tr><tr><td>우체국</td><td>071\n      </td></tr><tr><td>전북은행</td><td>037\n      </td></tr><tr><td>제주은행</td><td>035\n      </td></tr><tr><td>축협</td><td>012\n      </td></tr><tr><td>하나은행(서울은행)</td><td>081\n      </td></tr><tr><td>한국씨티은행(한미은행)</td><td>027\n      </td></tr><tr><td>K뱅크</td><td>089\n      </td></tr><tr><td>카카오뱅크</td><td>090\n      </td></tr><tr><td>유안타증권</td><td>209\n      </td></tr><tr><td>현대증권</td><td>218\n      </td></tr><tr><td>미래에셋증권</td><td>230\n      </td></tr><tr><td>대우증권</td><td>238\n      </td></tr><tr><td>삼성증권</td><td>240\n      </td></tr><tr><td>한국투자증권</td><td>243\n      </td></tr><tr><td>우리투자증권</td><td>247\n      </td></tr><tr><td>교보증권</td><td>261\n      </td></tr><tr><td>하이투자증권</td><td>262\n      </td></tr><tr><td>에이치엠씨투자증권</td><td>263\n      </td></tr><tr><td>키움증권</td><td>264\n      </td></tr><tr><td>이트레이드증권</td><td>265\n      </td></tr><tr><td>에스케이증권</td><td>266\n      </td></tr><tr><td>대신증권</td><td>267\n      </td></tr><tr><td>솔로몬투자증권</td><td>268\n      </td></tr><tr><td>한화증권</td><td>269\n      </td></tr><tr><td>하나대투증권</td><td>270\n      </td></tr><tr><td>굿모닝신한증권</td><td>278\n      </td></tr><tr><td>동부증권</td><td>279\n      </td></tr><tr><td>유진투자증권</td><td>280\n      </td></tr><tr><td>메리츠증권</td><td>287\n      </td></tr><tr><td>엔에이치투자증권</td><td>289\n      </td></tr><tr><td>부국증권</td><td>290</td></tr></tbody></table>",
+        "operationId": "queryBankHolder",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "bank_code",
+            "in": "query",
+            "description": "은행코드(금융결제원 표준코드3자리)",
+            "required": true,
+            "type": "string",
+            "x-portone-name": "은행코드",
+            "x-portone-summary": "<p>조회할 은행코드(금융결제원 표준코드3자리)</p>\n",
+            "x-portone-description": ""
+          },
+          {
+            "name": "bank_num",
+            "in": "query",
+            "description": "계좌번호(숫자외 기호 포함 가능)",
+            "required": true,
+            "type": "string",
+            "x-portone-name": "계좌번호",
+            "x-portone-summary": "<p>조회할 계좌번호(숫자외 기호 포함 가능)</p>\n",
+            "x-portone-description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "예금주 조회 성공",
+            "schema": {
+              "$ref": "#/definitions/VbankHolderResponse"
+            }
+          },
+          "400": {
+            "description": "bank_code가 누락된 경우/ bank_num이 누락된 경우"
+          },
+          "401": {
+            "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
+          },
+          "404": {
+            "description": "계좌정보 조회 실패"
+          }
+        },
+        "x-portone-category": "vbank"
+      }
     }
   },
   "definitions": {
