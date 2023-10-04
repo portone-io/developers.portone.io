@@ -15,6 +15,7 @@ import TwoColumnLayout from "./TwoColumnLayout";
 import Expand from "./Expand";
 import { Hr, interleave } from ".";
 import EndpointDoc from "./EndpointDoc";
+import JsonEditor from "./editor/JsonEditor";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -138,14 +139,17 @@ export function Category({
                 schema={schema}
                 endpoint={endpoint}
                 renderRightFn={({ operation }) => (
-                  <div>
-                    <a
-                      target="_blank"
-                      class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
-                      href={`https://api.iamport.kr/#!/${section}/${operation.operationId}`}
-                    >
-                      Swagger Test Link
-                    </a>
+                  <div class="top-4rem sticky flex h-[calc(100vh-10rem)] flex-col gap-1">
+                    <div class="text-sm font-bold uppercase">try</div>
+                    <div class="grid flex-1 grid-rows-[2fr_1fr] gap-1">
+                      <div class="flex flex-col gap-1">
+                        <div class="text-xs">Request Body</div>
+                        <JsonEditor />
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <div class="text-xs">Request Header</div>
+                      </div>
+                    </div>
                   </div>
                 )}
               />
