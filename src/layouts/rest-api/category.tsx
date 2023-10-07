@@ -15,7 +15,7 @@ import TwoColumnLayout from "./TwoColumnLayout";
 import Expand from "./Expand";
 import { Hr, interleave } from ".";
 import EndpointDoc from "./EndpointDoc";
-import JsonEditor from "./editor/JsonEditor";
+import RequestBodyEditor from "./editor/RequestBodyEditor";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -138,13 +138,16 @@ export function Category({
                 basepath={basepath}
                 schema={schema}
                 endpoint={endpoint}
-                renderRightFn={({ operation }) => (
+                renderRightFn={({ operation: { operationId } }) => (
                   <div class="top-4rem sticky flex h-[calc(100vh-10rem)] flex-col gap-1">
                     <div class="text-sm font-bold uppercase">try</div>
                     <div class="grid flex-1 grid-rows-[2fr_1fr] gap-1">
                       <div class="flex flex-col gap-1">
                         <div class="text-xs">Request Body</div>
-                        <JsonEditor />
+                        <RequestBodyEditor
+                          schema={schema}
+                          operationId={operationId}
+                        />
                       </div>
                       <div class="flex flex-col gap-1">
                         <div class="text-xs">Request Header</div>
