@@ -15,16 +15,19 @@ import TwoColumnLayout from "./TwoColumnLayout";
 import Expand from "./Expand";
 import { Hr, interleave } from ".";
 import EndpointDoc from "./EndpointDoc";
-import RequestBodyEditor from "./editor/RequestBodyEditor";
+import EndpointPlayground from "./playground/EndpointPlayground";
+import EndpointPlaygroundContainer from "./playground/EndpointPlaygroundContainer";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
+  apiHost: string; // e.g. "https://api.iamport.kr"
   currentSection: string;
   schema: any;
 }
 export function Categories({
   schema,
   basepath,
+  apiHost,
   currentSection,
 }: CategoriesProps) {
   const everyEndpoints = getEveryEndpoints(schema);
@@ -35,6 +38,7 @@ export function Categories({
           ({ category: { id, title, description }, endpoints }) => (
             <Category
               basepath={basepath}
+              apiHost={apiHost}
               section={id}
               initialExpand={currentSection === id}
               schema={schema}
@@ -52,6 +56,7 @@ export function Categories({
 
 export interface CategoryProps {
   basepath: string;
+  apiHost: string;
   initialExpand: boolean;
   section: string;
   schema: any;
@@ -61,6 +66,7 @@ export interface CategoryProps {
 }
 export function Category({
   basepath,
+  apiHost,
   initialExpand,
   section,
   schema,
@@ -139,21 +145,14 @@ export function Category({
                 schema={schema}
                 endpoint={endpoint}
                 renderRightFn={({ operation: { operationId } }) => (
-                  <div class="top-4rem sticky flex h-[calc(100vh-10rem)] flex-col gap-1">
-                    <div class="text-sm font-bold uppercase">try</div>
-                    <div class="grid flex-1 grid-rows-[2fr_1fr] gap-1">
-                      <div class="flex flex-col gap-1">
-                        <div class="text-xs">Request Body</div>
-                        <RequestBodyEditor
-                          schema={schema}
-                          operationId={operationId}
-                        />
-                      </div>
-                      <div class="flex flex-col gap-1">
-                        <div class="text-xs">Request Header</div>
-                      </div>
-                    </div>
-                  </div>
+                  <EndpointPlaygroundContainer>
+                    <EndpointPlayground
+                      apiHost={apiHost}
+                      schema={schema}
+                      endpoint={endpoint}
+                      operationId={operationId}
+                    />
+                  </EndpointPlaygroundContainer>
                 )}
               />
             ))}

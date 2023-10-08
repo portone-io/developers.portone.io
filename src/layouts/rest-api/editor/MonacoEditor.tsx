@@ -2,7 +2,8 @@ import { useEffect, useRef } from "preact/hooks";
 
 type monaco = typeof import("monaco-editor");
 type editor = monaco["editor"];
-type IStandaloneCodeEditor = ReturnType<editor["create"]>;
+export type ITextModel = ReturnType<editor["createModel"]>;
+export type IStandaloneCodeEditor = ReturnType<editor["create"]>;
 type IStandaloneEditorConstructionOptions = NonNullable<
   Parameters<editor["create"]>[1]
 >;
@@ -30,4 +31,5 @@ export const commonEditorConfig: IStandaloneEditorConstructionOptions = {
   lineNumbersMinChars: 3,
   folding: false,
   tabSize: 2,
+  minimap: { enabled: false },
 };
