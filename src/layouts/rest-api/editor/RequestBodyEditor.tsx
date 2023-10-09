@@ -1,4 +1,8 @@
-import type { Operation } from "../schema-utils/operation";
+import {
+  getBodyParameters,
+  type Parameter,
+  type Operation,
+} from "../schema-utils/operation";
 import MonacoEditor, {
   type IStandaloneCodeEditor,
   type ITextModel,
@@ -44,6 +48,25 @@ export default function RequestBodyEditor({
 
 const models = new Map<string, ITextModel>();
 
-function getInitialJsonText(schema: any, operation: Operation) {
-  return "{}\n"; // TODO
+function getInitialJsonText(schema: any, operation: Operation): string {
+  const params = getBodyParameters(schema, operation);
+  if (!params.length) return "{}\n";
+  return `{\n${params
+    .map((param) => {
+      const comment = param.required ? "" : "// ";
+      const key = JSON.stringify(param.name);
+      const value = JSON.stringify(getDefaultValue(schema, param));
+      return `  ${comment}${key}: ${value},\n`;
+    })
+    .join("")}}\n`;
+}
+
+function getDefaultValue(_schema: any, param: Parameter): any {
+  const type = param.type || "object";
+  if (type === "boolean") return false;
+  if (type === "number" || type === "integer") return 0;
+  if (type === "string") return "";
+  if (type === "object") return {};
+  if (type === "array") return [];
+  return null;
 }
