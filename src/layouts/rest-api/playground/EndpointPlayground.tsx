@@ -2,20 +2,22 @@ import { useRef } from "preact/hooks";
 import type { IStandaloneCodeEditor } from "../editor/MonacoEditor";
 import RequestBodyEditor from "../editor/RequestBodyEditor";
 import type { Endpoint } from "../schema-utils/endpoint";
+import type { Operation } from "../schema-utils/operation";
 
 export interface EndpointPlaygroundProps {
   apiHost: string;
   schema: any;
   endpoint: Endpoint;
-  operationId?: string | undefined;
+  operation: Operation;
 }
 export default function EndpointPlayground({
   apiHost,
   schema,
-  endpoint: { path, method },
-  operationId,
+  endpoint,
+  operation,
 }: EndpointPlaygroundProps) {
   const editorRef = useRef<IStandaloneCodeEditor>();
+  const { path, method } = endpoint;
   return (
     <div class="top-4rem sticky flex h-[calc(100vh-10rem)] flex-col gap-1">
       <div class="text-sm font-bold uppercase">try</div>
@@ -42,7 +44,7 @@ export default function EndpointPlayground({
           </div>
           <RequestBodyEditor
             schema={schema}
-            operationId={operationId}
+            operation={operation}
             onEditorInit={(editor) => (editorRef.current = editor)}
           />
         </div>

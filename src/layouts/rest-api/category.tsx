@@ -143,13 +143,8 @@ export function Category({
                 basepath={basepath}
                 schema={schema}
                 endpoint={endpoint}
-                renderRightFn={({ operation: { operationId } }) => (
-                  <EndpointPlayground
-                    apiHost={apiHost}
-                    schema={schema}
-                    endpoint={endpoint}
-                    operationId={operationId}
-                  />
+                renderRightFn={(props) => (
+                  <EndpointPlayground apiHost={apiHost} {...props} />
                 )}
               />
             ))}

@@ -1,3 +1,4 @@
+import type { Operation } from "../schema-utils/operation";
 import MonacoEditor, {
   type IStandaloneCodeEditor,
   type ITextModel,
@@ -6,18 +7,19 @@ import MonacoEditor, {
 
 export interface RequestBodyEditorProps {
   schema: any;
-  operationId?: string | undefined;
+  operation: Operation;
   onEditorInit: (editor: IStandaloneCodeEditor) => void;
 }
 export default function RequestBodyEditor({
   schema,
-  operationId,
+  operation,
   onEditorInit,
 }: RequestBodyEditorProps) {
+  const { operationId } = operation;
   return (
     <MonacoEditor
       init={(monaco, domElement) => {
-        const value = getInitialJsonText(schema, operationId);
+        const value = getInitialJsonText(schema, operation);
         const model = getModel(value, `inmemory://inmemory/${operationId}`);
         const editor = monaco.editor.create(domElement, {
           ...commonEditorConfig,
@@ -42,7 +44,6 @@ export default function RequestBodyEditor({
 
 const models = new Map<string, ITextModel>();
 
-function getInitialJsonText(schema: any, operationId?: string) {
-  if (!operationId) return "{}\n";
+function getInitialJsonText(schema: any, operation: Operation) {
   return "{}\n"; // TODO
 }

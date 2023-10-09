@@ -83,7 +83,7 @@ export default function EndpointDoc({
           </>
         }
         smallRight
-        right={renderRightFn?.({ schema, operation })}
+        right={renderRightFn?.({ schema, endpoint, operation })}
       />
     </div>
   );
@@ -91,6 +91,7 @@ export default function EndpointDoc({
 
 export interface RenderRightConfig {
   schema: any;
+  endpoint: Endpoint;
   operation: Operation;
 }
 export type RenderRightFn = (config: RenderRightConfig) => any;
