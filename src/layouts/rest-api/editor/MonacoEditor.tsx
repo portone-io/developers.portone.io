@@ -14,8 +14,13 @@ export interface MonacoEditorProps {
 export default function MonacoEditor({ init }: MonacoEditorProps) {
   const divRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const p = import("monaco-editor").then((monaco) =>
-      init(monaco, divRef.current!)
+    const p = Promise.all([
+      import("monaco-editor"),
+      import("./misc/scrollFinished"),
+    ]).then(([monaco, { default: scrollFinished }]) =>
+      // 브라우저의 smooth scrollTo 중에 dom 수정이 일어나면 스크롤이 도중 끊겨버리기 때문에
+      // 스크롤이 끝났다고 판단됐을 때 monaco editor를 초기화한다.
+      scrollFinished().then(() => init(monaco, divRef.current!))
     );
     return () => p.then((editor) => editor.dispose());
   }, []);

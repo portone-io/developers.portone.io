@@ -16,7 +16,6 @@ import Expand from "./Expand";
 import { Hr, interleave } from ".";
 import EndpointDoc from "./EndpointDoc";
 import EndpointPlayground from "./playground/EndpointPlayground";
-import EndpointPlaygroundContainer from "./playground/EndpointPlaygroundContainer";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -145,14 +144,12 @@ export function Category({
                 schema={schema}
                 endpoint={endpoint}
                 renderRightFn={({ operation: { operationId } }) => (
-                  <EndpointPlaygroundContainer>
-                    <EndpointPlayground
-                      apiHost={apiHost}
-                      schema={schema}
-                      endpoint={endpoint}
-                      operationId={operationId}
-                    />
-                  </EndpointPlaygroundContainer>
+                  <EndpointPlayground
+                    apiHost={apiHost}
+                    schema={schema}
+                    endpoint={endpoint}
+                    operationId={operationId}
+                  />
                 )}
               />
             ))}

@@ -17,7 +17,7 @@ export default function EndpointPlayground({
 }: EndpointPlaygroundProps) {
   const editorRef = useRef<IStandaloneCodeEditor>();
   return (
-    <>
+    <div class="top-4rem sticky flex h-[calc(100vh-10rem)] flex-col gap-1">
       <div class="text-sm font-bold uppercase">try</div>
       <div class="grid flex-1 grid-rows-2 gap-1">
         <div class="flex flex-col gap-2">
@@ -60,6 +60,6 @@ export default function EndpointPlayground({
           <span class="text-slate-4 text-xs font-bold">N/A</span>
         </div>
       </div>
-    </>
+    </div>
   );
 }
