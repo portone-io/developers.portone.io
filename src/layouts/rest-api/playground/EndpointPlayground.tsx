@@ -111,6 +111,10 @@ async function responseToRes(res: Response): Promise<Res> {
   return { status, headers, body };
 }
 
+function headersToJson(headers: Headers): string {
+  return JSON.stringify(Object.fromEntries(headers.entries()), null, 2) + "\n";
+}
+
 interface ResProps {
   resSignal: Signal<Res | undefined>;
 }
@@ -137,9 +141,9 @@ function Res({ resSignal }: ResProps) {
             {
               id: "header",
               label: "Header",
-              render() {
-                return null;
-              },
+              render: () => (
+                <JsonViewer jsonText={headersToJson(res.headers)} />
+              ),
             },
           ]}
         />
