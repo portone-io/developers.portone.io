@@ -1,7 +1,9 @@
 import {
-  getBodyParameters,
-  type Parameter,
   type Operation,
+  type Parameter,
+  getBodyParameters,
+  getPathParameters,
+  getQueryParameters,
 } from "../schema-utils/operation";
 import MonacoEditor, {
   type IStandaloneCodeEditor,
@@ -9,35 +11,41 @@ import MonacoEditor, {
   commonEditorConfig,
 } from "./MonacoEditor";
 
-export interface RequestBodyEditorProps {
+export type RequestPart = "path" | "query" | "body";
+export interface RequestJsonEditorProps {
+  part: RequestPart;
+  params: Parameter[];
   schema: any;
   operation: Operation;
-  onEditorInit: (editor: IStandaloneCodeEditor) => void;
+  onEditorInit?: (editor: IStandaloneCodeEditor) => void;
+  onChange?: (value: string) => void;
 }
-export default function RequestBodyEditor({
+export default function RequestJsonEditor({
+  part,
+  params,
   schema,
   operation,
   onEditorInit,
-}: RequestBodyEditorProps) {
+  onChange,
+}: RequestJsonEditorProps) {
   const { operationId } = operation;
   return (
     <MonacoEditor
       init={(monaco, domElement) => {
-        const value = getInitialJsonText(schema, operation);
-        const model = getModel(value, `inmemory://inmemory/${operationId}`);
+        const value = getInitialJsonText(schema, params);
+        onChange?.(value);
+        const uri = `inmemory://inmemory/${operationId}/${part}`;
+        const model = getModel(value, uri);
         const editor = monaco.editor.create(domElement, {
           ...commonEditorConfig,
           model,
         });
-        onEditorInit(editor);
+        onEditorInit?.(editor);
         return editor;
         function getModel(value: string, uri: string): ITextModel {
           if (models.has(uri)) return models.get(uri)!;
-          const model = monaco.editor.createModel(
-            value,
-            "json",
-            monaco.Uri.parse(`inmemory://inmemory/${operationId}`)
-          );
+          const uriObject = monaco.Uri.parse(uri);
+          const model = monaco.editor.createModel(value, "json", uriObject);
           models.set(uri, model);
           return model;
         }
@@ -48,8 +56,19 @@ export default function RequestBodyEditor({
 
 const models = new Map<string, ITextModel>();
 
-function getInitialJsonText(schema: any, operation: Operation): string {
-  const params = getBodyParameters(schema, operation);
+export function getReqParams(
+  schema: any,
+  operation: Operation,
+  part: RequestPart
+): Parameter[] {
+  return part === "path"
+    ? getPathParameters(operation)
+    : part === "query"
+    ? getQueryParameters(operation)
+    : getBodyParameters(schema, operation);
+}
+
+function getInitialJsonText(schema: any, params: Parameter[]): string {
   if (!params.length) return "{}\n";
   return `{\n${params
     .map((param) => {
