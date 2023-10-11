@@ -1,10 +1,14 @@
 import { encode as encodeQs } from "querystring";
 import json5 from "json5";
 import { type Signal, useSignal } from "@preact/signals";
-import JsonViewer from "../editor/JsonViewer";
-import RequestJsonEditor, { getReqParams } from "../editor/RequestJsonEditor";
 import type { Endpoint } from "../schema-utils/endpoint";
 import type { Operation } from "../schema-utils/operation";
+import JsonViewer from "../editor/JsonViewer";
+import RequestJsonEditor, { getReqParams } from "../editor/RequestJsonEditor";
+import RequestHeaderEditor, {
+  kvListToObject,
+  type KvList,
+} from "../editor/RequestHeaderEditor";
 
 export interface EndpointPlaygroundProps {
   apiHost: string;
@@ -22,6 +26,7 @@ export default function EndpointPlayground({
   const errSignal = useSignal("");
   const err = errSignal.value;
   const resSignal = useSignal<Res | undefined>(undefined);
+  const reqHeaderSignal = useSignal<KvList>([]);
   const reqPathJsonSignal = useSignal("{}");
   const reqQueryJsonSignal = useSignal("{}");
   const reqBodyJsonSignal = useSignal("{}");
@@ -40,6 +45,7 @@ export default function EndpointPlayground({
               onClick={async () => {
                 try {
                   errSignal.value = "";
+                  const headers = kvListToObject(reqHeaderSignal.value);
                   const reqPathJson = reqPathJsonSignal.value;
                   const reqQueryJson = reqQueryJsonSignal.value;
                   const reqBodyJson = reqBodyJsonSignal.value;
@@ -51,7 +57,7 @@ export default function EndpointPlayground({
                       ? null
                       : JSON.stringify(reqBody);
                   const reqUrl = createUrl(apiHost, path, reqPath, reqQuery);
-                  const res = await fetch(reqUrl, { method, body });
+                  const res = await fetch(reqUrl, { method, headers, body });
                   resSignal.value = await responseToRes(res);
                 } catch (err) {
                   errSignal.value = (err as Error).message;
@@ -108,9 +114,12 @@ export default function EndpointPlayground({
               {
                 id: "header",
                 label: "Header",
-                render() {
-                  return null;
-                },
+                render: (id) => (
+                  <RequestHeaderEditor
+                    key={id}
+                    reqHeaderSignal={reqHeaderSignal}
+                  />
+                ),
               },
             ]}
           />
