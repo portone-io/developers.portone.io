@@ -10,7 +10,7 @@ type IStandaloneEditorConstructionOptions = NonNullable<
 
 export interface MonacoEditorProps {
   init: (monaco: monaco, domElement: HTMLElement) => IStandaloneCodeEditor;
-  onChange?: (value: string) => void;
+  onChange?: ((value: string) => void) | undefined;
 }
 export default function MonacoEditor({ init, onChange }: MonacoEditorProps) {
   const divRef = useRef<HTMLDivElement>(null);
@@ -37,7 +37,7 @@ export default function MonacoEditor({ init, onChange }: MonacoEditorProps) {
     return () => p.then((dispose) => dispose());
   }, []);
   return (
-    <div class="relative flex-1">
+    <div class="relative h-full w-full">
       <div ref={divRef} class="absolute h-full w-full" />
     </div>
   );

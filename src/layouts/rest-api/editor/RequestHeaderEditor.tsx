@@ -26,8 +26,8 @@ export default function RequestHeaderEditor({
     reqHeaderSignal.value = newReqHeader;
   }
   return (
-    <div class="flex flex-1 flex-col gap-1 overflow-y-scroll">
-      <div class="grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
+    <div class="absolute flex h-full w-full flex-col gap-1 overflow-y-scroll">
+      <div class="sticky top-0 grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
         <div class="bg-slate-1 px-2 py-1">Key</div>
         <div class="bg-slate-1 px-2 py-1">Value</div>
         <div />
@@ -35,14 +35,14 @@ export default function RequestHeaderEditor({
       {reqHeader.map(({ key, value }, index) => (
         <div key={index} class="grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
           <input
-            class="border-slate-1 w-full border px-2 py-1"
+            class="border-slate-2 w-full border px-2 py-1"
             value={key}
             onInput={(e) =>
               updateReqHeader(index, { key: e.currentTarget.value })
             }
           />
           <input
-            class="border-slate-1 w-full border px-2 py-1"
+            class="border-slate-2 w-full border px-2 py-1"
             value={value}
             onInput={(e) =>
               updateReqHeader(index, { value: e.currentTarget.value })
@@ -57,7 +57,7 @@ export default function RequestHeaderEditor({
         </div>
       ))}
       <button
-        class="bg-slate-1 mr-1.75rem inline-flex items-center justify-center py-1 text-lg opacity-30 hover:opacity-100"
+        class="bg-slate-1 mr-1.75rem sticky bottom-0 inline-flex items-center justify-center py-1 text-lg opacity-50 hover:opacity-100"
         onClick={addReqHeader}
       >
         <i class="i-ic-baseline-plus" />
@@ -68,6 +68,10 @@ export default function RequestHeaderEditor({
 
 export function kvListToObject(kvList: KvList): Record<string, string> {
   const result: Record<string, string> = {};
-  for (const { key, value } of kvList) result[key] = value;
+  for (const { key, value } of kvList) {
+    const _key = key.trim();
+    if (!_key) continue;
+    result[_key] = value;
+  }
   return result;
 }

@@ -13,17 +13,15 @@ import MonacoEditor, {
 
 export type RequestPart = "path" | "query" | "body";
 export interface RequestJsonEditorProps {
+  initialValue: string;
   part: RequestPart;
-  params: Parameter[];
-  schema: any;
   operation: Operation;
   onEditorInit?: (editor: IStandaloneCodeEditor) => void;
-  onChange?: (value: string) => void;
+  onChange?: ((value: string) => void) | undefined;
 }
 export default function RequestJsonEditor({
+  initialValue,
   part,
-  params,
-  schema,
   operation,
   onEditorInit,
   onChange,
@@ -31,11 +29,11 @@ export default function RequestJsonEditor({
   const { operationId } = operation;
   return (
     <MonacoEditor
+      onChange={onChange}
       init={(monaco, domElement) => {
-        const value = getInitialJsonText(schema, params);
-        onChange?.(value);
+        onChange?.(initialValue);
         const uri = `inmemory://inmemory/${operationId}/${part}`;
-        const model = getModel(value, uri);
+        const model = getModel(initialValue, uri);
         const editor = monaco.editor.create(domElement, {
           ...commonEditorConfig,
           model,
@@ -68,7 +66,7 @@ export function getReqParams(
     : getBodyParameters(schema, operation);
 }
 
-function getInitialJsonText(schema: any, params: Parameter[]): string {
+export function getInitialJsonText(schema: any, params: Parameter[]): string {
   if (!params.length) return "{}\n";
   return `{\n${params
     .map((param) => {
