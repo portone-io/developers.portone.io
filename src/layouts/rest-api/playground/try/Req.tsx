@@ -21,16 +21,14 @@ export interface ReqProps {
   schema: any;
   endpoint: Endpoint;
   operation: Operation;
-  errSignal: Signal<string>;
-  resSignal: Signal<Res | undefined>;
+  execute: (fn: () => Promise<Res>) => void;
 }
 export default function Req({
   apiHost,
   schema,
   endpoint,
   operation,
-  errSignal,
-  resSignal,
+  execute,
 }: ReqProps) {
   const { path, method } = endpoint;
   const reqHeaderSignal = useSignal<KvList>([]);
@@ -43,9 +41,8 @@ export default function Req({
         <span class="font-bold">Request</span>
         <button
           class="bg-slate-1 rounded px-4 font-bold"
-          onClick={async () => {
-            try {
-              errSignal.value = "";
+          onClick={() =>
+            execute(async () => {
               const headers = kvListToObject(reqHeaderSignal.value);
               const reqPath = reqPathParams.parseJson();
               const reqQuery = reqQueryParams.parseJson();
@@ -56,11 +53,9 @@ export default function Req({
                   : JSON.stringify(reqBody);
               const reqUrl = createUrl(apiHost, path, reqPath, reqQuery);
               const res = await fetch(reqUrl, { method, headers, body });
-              resSignal.value = await responseToRes(res);
-            } catch (err) {
-              errSignal.value = (err as Error).message;
-            }
-          }}
+              return await responseToRes(res);
+            })
+          }
         >
           실행
         </button>

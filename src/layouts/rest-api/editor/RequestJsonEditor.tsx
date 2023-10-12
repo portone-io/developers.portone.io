@@ -31,7 +31,6 @@ export default function RequestJsonEditor({
     <MonacoEditor
       onChange={onChange}
       init={(monaco, domElement) => {
-        onChange?.(initialValue);
         const uri = `inmemory://inmemory/${operationId}/${part}`;
         const model = getModel(initialValue, uri);
         const editor = monaco.editor.create(domElement, {
