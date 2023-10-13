@@ -10,6 +10,7 @@ export default function RestV1({ currentSection }: RestV1Props) {
     <RestApi
       title="PortOne REST API - V1"
       basepath="/api/rest-v1"
+      apiHost="https://api.iamport.kr"
       currentSection={currentSection}
       schema={schema}
     >

@@ -32,6 +32,7 @@ export default defineConfig({
     resolve: {
       alias: {
         "~": path.resolve("./src/"),
+        querystring: "querystring-es3",
       },
     },
     plugins: [yaml()],

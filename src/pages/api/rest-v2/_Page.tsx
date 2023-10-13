@@ -9,6 +9,7 @@ export default function RestV2({ currentSection }: RestV2Props) {
     <RestApi
       title="PortOne REST API - V2"
       basepath="/api/rest-v2"
+      apiHost="https://api.portone.io"
       currentSection={currentSection}
       schema={schema}
     ></RestApi>

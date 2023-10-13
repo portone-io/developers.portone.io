@@ -15,15 +15,18 @@ import TwoColumnLayout from "./TwoColumnLayout";
 import Expand from "./Expand";
 import { Hr, interleave } from ".";
 import EndpointDoc from "./EndpointDoc";
+import EndpointPlayground from "./playground/EndpointPlayground";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
+  apiHost: string; // e.g. "https://api.iamport.kr"
   currentSection: string;
   schema: any;
 }
 export function Categories({
   schema,
   basepath,
+  apiHost,
   currentSection,
 }: CategoriesProps) {
   const everyEndpoints = getEveryEndpoints(schema);
@@ -34,6 +37,7 @@ export function Categories({
           ({ category: { id, title, description }, endpoints }) => (
             <Category
               basepath={basepath}
+              apiHost={apiHost}
               section={id}
               initialExpand={currentSection === id}
               schema={schema}
@@ -51,6 +55,7 @@ export function Categories({
 
 export interface CategoryProps {
   basepath: string;
+  apiHost: string;
   initialExpand: boolean;
   section: string;
   schema: any;
@@ -60,6 +65,7 @@ export interface CategoryProps {
 }
 export function Category({
   basepath,
+  apiHost,
   initialExpand,
   section,
   schema,
@@ -137,16 +143,8 @@ export function Category({
                 basepath={basepath}
                 schema={schema}
                 endpoint={endpoint}
-                renderRightFn={({ operation }) => (
-                  <div>
-                    <a
-                      target="_blank"
-                      class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
-                      href={`https://api.iamport.kr/#!/${section}/${operation.operationId}`}
-                    >
-                      Swagger Test Link
-                    </a>
-                  </div>
+                renderRightFn={(props) => (
+                  <EndpointPlayground apiHost={apiHost} {...props} />
                 )}
               />
             ))}

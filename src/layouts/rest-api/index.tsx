@@ -7,6 +7,7 @@ export interface RestApiProps {
   title: string;
   children?: any;
   basepath: string;
+  apiHost: string;
   currentSection: string;
   schema: any;
 }
@@ -14,6 +15,7 @@ export default function RestApi({
   title,
   children,
   basepath,
+  apiHost,
   currentSection,
   schema,
 }: RestApiProps) {
@@ -33,6 +35,7 @@ export default function RestApi({
         <Hr />
         <Categories
           basepath={basepath}
+          apiHost={apiHost}
           currentSection={currentSection}
           schema={schema}
         />
