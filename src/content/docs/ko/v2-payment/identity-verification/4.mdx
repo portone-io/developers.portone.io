@@ -33,14 +33,14 @@ app.use(bodyParser.json());
           apiKey: PORTONE_API_KEY, // 포트원 API Key
         },
       });
-      const { access_token } = signinResponse.data;
+      const { accessToken } = signinResponse.data;
 
       // 2. 포트원 본인인증 내역 단건조회 API 호출
       const verificationResponse = await axios({
-        url: `https://api.portone.io/identity-verifications/${identityVerificationId}?storeId=${storeId}`,
+        url: `https://api.portone.io/identity-verifications/${identityVerificationId}?store_id=${storeId}`,
         method: "get",
         // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-        headers: { "Authorization": "Bearer " + access_token },
+        headers: { "Authorization": "Bearer " + accessToken },
       });
       const identityVerification = verificationResponse.data;
       if (identityVerification.status !== "VERIFIED") {
