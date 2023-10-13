@@ -143,9 +143,26 @@ export function Category({
                 basepath={basepath}
                 schema={schema}
                 endpoint={endpoint}
-                renderRightFn={(props) => (
-                  <EndpointPlayground apiHost={apiHost} {...props} />
-                )}
+                renderRightFn={
+                  // context: https://chai-finance.slack.com/archives/C03N8773P1A/p1697180159729539
+                  apiHost === "https://api.iamport.kr"
+                    ? ({ operation: { operationId, tags } }) => (
+                        <div>
+                          <a
+                            target="_blank"
+                            class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
+                            href={`https://api.iamport.kr/#!/${
+                              tags?.[0] || section
+                            }/${operationId}`}
+                          >
+                            Swagger Test Link
+                          </a>
+                        </div>
+                      )
+                    : (props) => (
+                        <EndpointPlayground apiHost={apiHost} {...props} />
+                      )
+                }
               />
             ))}
           </Expand>
