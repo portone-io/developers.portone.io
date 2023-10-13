@@ -31,7 +31,9 @@ export default function Req({
   execute,
 }: ReqProps) {
   const { path, method } = endpoint;
-  const reqHeaderSignal = useSignal<KvList>([]);
+  const reqHeaderSignal = useSignal<KvList>([
+    { key: "Content-Type", value: "application/json" },
+  ]);
   const reqPathParams = useReqParams(schema, operation, "path");
   const reqQueryParams = useReqParams(schema, operation, "query");
   const reqBodyParams = useReqParams(schema, operation, "body");
