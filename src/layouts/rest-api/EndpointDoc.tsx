@@ -27,6 +27,8 @@ export default function EndpointDoc({
 }: EndpointDocProps) {
   const operation = getOperation(schema, endpoint);
   const { method, path, title, deprecated, unstable } = endpoint;
+  const description =
+    operation["x-portone-description"] || operation.description;
   return (
     <div class="flex flex-col">
       <prose.h3 id={getEndpointRepr(endpoint)} class="target:text-orange-5">
@@ -51,11 +53,11 @@ export default function EndpointDoc({
       <TwoColumnLayout
         left={
           <>
-            {operation.description && (
+            {description && (
               <article
                 class="bg-slate-1 rounded p-2 text-sm"
                 dangerouslySetInnerHTML={{
-                  __html: operation.description,
+                  __html: description,
                 }}
               />
             )}

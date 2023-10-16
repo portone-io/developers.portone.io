@@ -14,6 +14,8 @@ export interface Operation {
   tags?: string[] | undefined;
   deprecated?: boolean | undefined;
   "x-portone-title"?: string | undefined;
+  "x-portone-summary"?: string | undefined;
+  "x-portone-description"?: string | undefined;
   "x-portone-unstable"?: boolean | undefined;
   "x-portone-category"?: string | undefined;
 }
