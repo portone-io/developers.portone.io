@@ -47,10 +47,17 @@ export const defaultVisitor = {
   },
   visitResponseRef(_ref: string) {},
   visitTypeDef(typeDef: TypeDef) {
-    if (typeDef.properties) {
-      for (const name in typeDef.properties) {
-        this.visitProperty(name, typeDef.properties[name]!);
-      }
+    if (typeDef.oneOf) this.visitUnion(typeDef);
+    if (typeDef.properties) this.visitObject(typeDef);
+  },
+  visitUnion(typeDef: TypeDef) {
+    for (const item of typeDef.oneOf!) {
+      this.visitTypeDef(item);
+    }
+  },
+  visitObject(typeDef: TypeDef) {
+    for (const name in typeDef.properties) {
+      this.visitProperty(name, typeDef.properties[name]!);
     }
   },
   visitProperty(_name: string, _property: Property) {},

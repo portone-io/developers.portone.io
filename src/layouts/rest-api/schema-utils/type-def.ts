@@ -121,6 +121,10 @@ export function crawlRefs(schema: any): string[] {
   const result = new Set<string>();
   const rootPropertyRefsCrawler: Visitor = {
     ...defaultVisitor,
+    visitUnion(typeDef) {
+      for (const item of typeDef.oneOf!) item.$ref && result.add(item.$ref);
+      defaultVisitor.visitUnion.call(this, typeDef);
+    },
     visitProperty(_name, property) {
       if (property.$ref) result.add(property.$ref);
       if (typeof property.items !== "string" && property.items?.$ref) {
@@ -142,19 +146,24 @@ export function crawlRefs(schema: any): string[] {
       }
     },
     visitRequestRef(ref) {
-      rootPropertyRefsCrawler.visitTypeDef(
-        resolveTypeDef(schema, getTypeDefByRef(schema, ref))
-      );
+      const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, ref));
+      rootPropertyRefsCrawler.visitTypeDef(typeDef);
     },
     visitResponseRef(ref) {
-      rootPropertyRefsCrawler.visitTypeDef(
-        resolveTypeDef(schema, getTypeDefByRef(schema, ref))
-      );
+      const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, ref));
+      rootPropertyRefsCrawler.visitTypeDef(typeDef);
     },
   };
   rootRefsCrawler.visitSchemaPaths(schema.paths);
   const typeDefRefsCrawler: Visitor = {
     ...defaultVisitor,
+    visitUnion(typeDef) {
+      const refs = typeDef
+        .oneOf!.map((def) => def.$ref || def.items?.$ref)
+        .filter(Boolean) as string[];
+      for (const ref of refs) push(ref);
+      defaultVisitor.visitUnion.call(this, typeDef);
+    },
     visitProperty(_name, property) {
       push(property.$ref);
       if (typeof property.items !== "string") push(property.items?.$ref);
@@ -171,12 +180,6 @@ export function crawlRefs(schema: any): string[] {
   while ((currentRef = queue.shift()!)) {
     const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, currentRef));
     typeDefRefsCrawler.visitTypeDef(typeDef);
-    if (typeDef.oneOf) {
-      const refs = typeDef.oneOf
-        .map((def) => def.$ref || def.items?.$ref)
-        .filter(Boolean) as string[];
-      for (const ref of refs) push(ref);
-    }
   }
   return Array.from(result);
 }
