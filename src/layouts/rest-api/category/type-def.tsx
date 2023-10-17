@@ -16,7 +16,7 @@ import {
   getTypenameByRef,
   repr,
   getTypeDefKind,
-} from "./schema-utils/type-def";
+} from "../schema-utils/type-def";
 import Expand from "./Expand";
 
 export interface TypeDefinitionsProps {

@@ -1,6 +1,6 @@
 import * as prose from "~/components/prose";
-import TwoColumnLayout from "./TwoColumnLayout";
-import { getEndpointRepr, type Endpoint } from "./schema-utils/endpoint";
+import TwoColumnLayout from "../TwoColumnLayout";
+import { getEndpointRepr, type Endpoint } from "../schema-utils/endpoint";
 import {
   Parameter,
   getOperation,
@@ -9,9 +9,9 @@ import {
   getBodyParameters,
   Operation,
   getResponseSchemata,
-} from "./schema-utils/operation";
-import { PropertiesDoc, TypeDefDoc } from "./type-def";
-import { resolveTypeDef } from "./schema-utils/type-def";
+} from "../schema-utils/operation";
+import { PropertiesDoc, TypeDefDoc } from "../category/type-def";
+import { resolveTypeDef } from "../schema-utils/type-def";
 
 export interface EndpointDocProps {
   basepath: string; // e.g. "/api/rest-v1"

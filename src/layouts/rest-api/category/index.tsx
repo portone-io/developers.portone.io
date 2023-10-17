@@ -10,12 +10,12 @@ import {
   getEveryEndpoints,
   getEndpointRepr,
   groupEndpointsByCategory,
-} from "./schema-utils/endpoint";
-import TwoColumnLayout from "./TwoColumnLayout";
+} from "../schema-utils/endpoint";
+import TwoColumnLayout from "../TwoColumnLayout";
 import Expand from "./Expand";
-import { Hr, interleave } from ".";
-import EndpointDoc from "./EndpointDoc";
-import EndpointPlayground from "./playground/EndpointPlayground";
+import { Hr, interleave } from "..";
+import EndpointDoc from "../endpoint/EndpointDoc";
+import EndpointPlayground from "../endpoint/playground/EndpointPlayground";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
