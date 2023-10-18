@@ -12,6 +12,7 @@ import {
 } from "../schema-utils/operation";
 import { PropertiesDoc, TypeDefDoc } from "../category/type-def";
 import { resolveTypeDef } from "../schema-utils/type-def";
+import DescriptionArea from "../DescriptionArea";
 
 export interface EndpointDocProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -54,12 +55,16 @@ export default function EndpointDoc({
         left={
           <>
             {description && (
-              <article
-                class="bg-slate-1 rounded p-2 text-sm"
-                dangerouslySetInnerHTML={{
-                  __html: description,
-                }}
-              />
+              <article class="bg-slate-1 overflow-hidden rounded">
+                <DescriptionArea bgColor="rgb(241,245,249)">
+                  <div
+                    class="p-2 text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: description,
+                    }}
+                  />
+                </DescriptionArea>
+              </article>
             )}
             <TwoColumnLayout
               className="mt-2"
