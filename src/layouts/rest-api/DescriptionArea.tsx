@@ -28,17 +28,22 @@ export default function DescriptionArea({
     <div class="relative overflow-hidden" style={{ maxHeight }}>
       <div ref={childrenContainerRef}>{children}</div>
       {maxHeightIsSmall && !open && (
-        <button
-          class="h-2rem absolute bottom-0 flex w-full items-center justify-center text-sm font-bold"
-          onClick={() => setOpen(true)}
-          style={{
-            background: `linear-gradient(to bottom, transparent, ${bgColor})`,
-          }}
-        >
-          <div class="overflow-hidden rounded-full px-4 py-2 backdrop-blur-sm">
-            자세히...
-          </div>
-        </button>
+        <>
+          <div
+            class="pointer-events-none absolute left-0 top-0 h-full w-full"
+            style={{
+              background: `linear-gradient(to bottom, transparent 50%, ${bgColor})`,
+            }}
+          />
+          <button
+            class="h-2rem absolute bottom-0 flex w-full items-center justify-center text-sm font-bold"
+            onClick={() => setOpen(true)}
+          >
+            <div class="overflow-hidden rounded-full px-4 py-2 backdrop-blur-sm">
+              자세히...
+            </div>
+          </button>
+        </>
       )}
     </div>
   );
