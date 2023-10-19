@@ -151,7 +151,7 @@ interface ResponseDocProps {
   operation: Operation;
 }
 function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
-  const responseSchemata = getResponseSchemata(operation);
+  const responseSchemata = getResponseSchemata(schema, operation);
   return (
     <>
       {responseSchemata.map(
