@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import {
   expandAndScrollTo,
@@ -18,6 +17,7 @@ import {
   getTypeDefKind,
 } from "../schema-utils/type-def";
 import Expand from "./Expand";
+import DescriptionArea from "../DescriptionArea";
 
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -259,23 +259,17 @@ interface DescriptionDocProps {
   typeDef: TypeDef | Property;
 }
 function DescriptionDoc({ typeDef }: DescriptionDocProps) {
-  const showMoreSignal = useSignal(false);
-  const summary = (typeDef["x-portone-summary"] ?? typeDef.summary) || "";
-  const description =
-    (typeDef["x-portone-description"] ?? typeDef.description) || "";
-  const showMore = showMoreSignal.value;
-  const __html = showMore ? description : summary;
-  return summary || description ? (
-    <div class="text-slate-5 flex flex-col gap-1 text-sm">
-      {__html && <div dangerouslySetInnerHTML={{ __html }} />}
-      {description && (
-        <button
-          class="bg-slate-2 self-end px-1 text-xs"
-          onClick={() => (showMoreSignal.value = !showMore)}
-        >
-          {showMore ? "간단히" : "자세히"}
-        </button>
-      )}
-    </div>
+  const __html =
+    (typeDef["x-portone-description"] ??
+      typeDef["x-portone-summary"] ??
+      typeDef.description ??
+      typeDef.summary) ||
+    "";
+  return __html ? (
+    <DescriptionArea maxHeightPx={16 * 6} bgColor="rgb(241,245,249)">
+      <div class="text-slate-5 flex flex-col gap-1 text-sm">
+        <div dangerouslySetInnerHTML={{ __html }} />
+      </div>
+    </DescriptionArea>
   ) : null;
 }
