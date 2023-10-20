@@ -1,17 +1,17 @@
 import { encode as encodeQs } from "querystring";
 import json5 from "json5";
 import { type Signal, useSignal, signal } from "@preact/signals";
-import type { Endpoint } from "../../schema-utils/endpoint";
-import type { Operation, Parameter } from "../../schema-utils/operation";
+import type { Endpoint } from "../../../schema-utils/endpoint";
+import type { Operation, Parameter } from "../../../schema-utils/operation";
 import RequestJsonEditor, {
   type RequestPart,
   getInitialJsonText,
   getReqParams,
-} from "../../editor/RequestJsonEditor";
+} from "../../../editor/RequestJsonEditor";
 import RequestHeaderEditor, {
   kvListToObject,
   type KvList,
-} from "../../editor/RequestHeaderEditor";
+} from "../../../editor/RequestHeaderEditor";
 import { useMemo } from "preact/hooks";
 import type { Res } from "./Res";
 import { Tabs } from "./Tabs";

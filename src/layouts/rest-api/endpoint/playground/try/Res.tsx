@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals";
-import JsonViewer from "../../editor/JsonViewer";
+import JsonViewer from "../../../editor/JsonViewer";
 import { Tabs } from "./Tabs";
 
 export interface Res {

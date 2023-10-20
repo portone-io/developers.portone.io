@@ -22,6 +22,7 @@ export interface TypeDef {
   "x-portone-summary"?: string | undefined;
   "x-portone-description"?: string | undefined;
   "x-portone-enum"?: { [enumValue: string]: TypeDef };
+  "x-portone-status-code"?: number;
 }
 
 export interface Properties {

@@ -1,5 +1,5 @@
-import type { Endpoint } from "../schema-utils/endpoint";
-import type { Operation } from "../schema-utils/operation";
+import type { Endpoint } from "../../schema-utils/endpoint";
+import type { Operation } from "../../schema-utils/operation";
 import Try from "./try/Try";
 
 export interface EndpointPlaygroundProps {

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import {
   expandAndScrollTo,
@@ -16,8 +15,10 @@ import {
   getTypenameByRef,
   repr,
   getTypeDefKind,
-} from "./schema-utils/type-def";
+} from "../schema-utils/type-def";
 import Expand from "./Expand";
+import DescriptionArea from "../DescriptionArea";
+import { useSignal } from "@preact/signals";
 
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -80,17 +81,26 @@ export function TypeDefinitions({
                   {getTypeDefKind(typeDef)}
                 </span>
               </prose.h3>
-              <TypeDefDoc
-                basepath={basepath}
-                schema={schema}
-                typeDef={typeDef}
-              />
+              <TypeDefDocContainer>
+                <TypeDefDoc
+                  basepath={basepath}
+                  schema={schema}
+                  typeDef={typeDef}
+                />
+              </TypeDefDocContainer>
             </div>
           ))}
         </div>
       </Expand>
     </section>
   );
+}
+
+export interface TypeDefDocContainerProps {
+  children: any;
+}
+export function TypeDefDocContainer({ children }: TypeDefDocContainerProps) {
+  return <div class="bg-slate-1 rounded p-2">{children}</div>;
 }
 
 export interface TypeDefDocProps {
@@ -108,35 +118,46 @@ export function TypeDefDoc({ basepath, schema, typeDef }: TypeDefDocProps) {
     case "enum":
       return <EnumDoc xPortoneEnum={typeDef!["x-portone-enum"]} />;
     case "union":
-      return <UnionDoc basepath={basepath} typeDef={typeDef!} />;
+      return (
+        <UnionDoc basepath={basepath} schema={schema} typeDef={typeDef!} />
+      );
   }
 }
 
 interface UnionDocProps {
   basepath: string;
+  schema: any;
   typeDef: TypeDef;
 }
-function UnionDoc({ basepath, typeDef }: UnionDocProps) {
+function UnionDoc({ basepath, schema, typeDef }: UnionDocProps) {
   const { propertyName, mapping } = typeDef.discriminator!;
+  const types = Object.keys(mapping);
+  const typeSignal = useSignal(types[0]!);
+  const type = typeSignal.value;
   return (
-    <div class=" bg-slate-1 flex flex-col rounded px-2 py-3 leading-none">
-      <div class="text-xs">
-        <span>match </span>
-        <code>union.{propertyName}</code>
+    <div class=" flex flex-col gap-4 rounded leading-none">
+      <div class="flex items-center gap-1 text-xs">
+        <code>{propertyName}</code>
+        <span>값이</span>
+        <div class="relative flex-1 py-1">
+          &nbsp;
+          <select
+            class="border-slate-2 absolute left-0 top-0 w-full text-ellipsis whitespace-nowrap border px-2 py-1"
+            value={typeSignal.value}
+            onChange={(e) => (typeSignal.value = e.currentTarget.value)}
+          >
+            {types.map((type) => (
+              <option value={type}>{type}</option>
+            ))}
+          </select>
+        </div>
+        <span>인 경우</span>
       </div>
-      <div class="flex flex-col gap-2">
-        {Object.entries(mapping).map(([type, ref]) => {
-          return (
-            <div key={type} class="ml-2 font-mono">
-              <span class="text-xs">
-                <code>"{type}"</code>
-                <span>{" => "}</span>
-              </span>
-              <TypeReprDoc basepath={basepath} def={ref} />
-            </div>
-          );
-        })}
-      </div>
+      <TypeDefDoc
+        basepath={basepath}
+        schema={schema}
+        typeDef={getTypeDefByRef(schema, mapping[type]!)}
+      />
     </div>
   );
 }
@@ -146,7 +167,7 @@ interface EnumDocProps {
 }
 function EnumDoc({ xPortoneEnum }: EnumDocProps) {
   return (
-    <div class="bg-slate-1 flex flex-col gap-4 rounded px-2 py-3">
+    <div class="flex flex-col gap-4">
       {Object.entries(xPortoneEnum || {}).map(([enumValue, enumCase]) => {
         const title = enumCase["x-portone-title"] || enumCase.title || "";
         return (
@@ -179,7 +200,7 @@ export interface PropertiesDocProps {
 }
 export function PropertiesDoc({ basepath, properties }: PropertiesDocProps) {
   return (
-    <div class="bg-slate-1 flex flex-col gap-4 rounded p-2">
+    <div class="flex flex-col gap-4">
       {properties.length ? (
         properties.map((property) => (
           <PropertyDoc
@@ -259,23 +280,17 @@ interface DescriptionDocProps {
   typeDef: TypeDef | Property;
 }
 function DescriptionDoc({ typeDef }: DescriptionDocProps) {
-  const showMoreSignal = useSignal(false);
-  const summary = (typeDef["x-portone-summary"] ?? typeDef.summary) || "";
-  const description =
-    (typeDef["x-portone-description"] ?? typeDef.description) || "";
-  const showMore = showMoreSignal.value;
-  const __html = showMore ? description : summary;
-  return summary || description ? (
-    <div class="text-slate-5 flex flex-col gap-1 text-sm">
-      {__html && <div dangerouslySetInnerHTML={{ __html }} />}
-      {description && (
-        <button
-          class="bg-slate-2 self-end px-1 text-xs"
-          onClick={() => (showMoreSignal.value = !showMore)}
-        >
-          {showMore ? "간단히" : "자세히"}
-        </button>
-      )}
-    </div>
+  const __html =
+    (typeDef["x-portone-description"] ??
+      typeDef["x-portone-summary"] ??
+      typeDef.description ??
+      typeDef.summary) ||
+    "";
+  return __html ? (
+    <DescriptionArea maxHeightPx={16 * 6} bgColor="rgb(241,245,249)">
+      <div class="text-slate-5 flex flex-col gap-1 text-sm">
+        <div dangerouslySetInnerHTML={{ __html }} />
+      </div>
+    </DescriptionArea>
   ) : null;
 }
