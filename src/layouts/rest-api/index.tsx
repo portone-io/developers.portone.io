@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as prose from "~/components/prose";
 import { Categories } from "~/layouts/rest-api/category";
-import { TypeDefinitions } from "~/layouts/rest-api/type-def";
+import { TypeDefinitions } from "~/layouts/rest-api/category/type-def";
 
 export interface RestApiProps {
   title: string;

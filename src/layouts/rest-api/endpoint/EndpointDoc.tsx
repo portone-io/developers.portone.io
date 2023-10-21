@@ -1,6 +1,6 @@
 import * as prose from "~/components/prose";
-import TwoColumnLayout from "./TwoColumnLayout";
-import { getEndpointRepr, type Endpoint } from "./schema-utils/endpoint";
+import TwoColumnLayout from "../TwoColumnLayout";
+import { getEndpointRepr, type Endpoint } from "../schema-utils/endpoint";
 import {
   Parameter,
   getOperation,
@@ -9,9 +9,14 @@ import {
   getBodyParameters,
   Operation,
   getResponseSchemata,
-} from "./schema-utils/operation";
-import { PropertiesDoc, TypeDefDoc } from "./type-def";
-import { resolveTypeDef } from "./schema-utils/type-def";
+} from "../schema-utils/operation";
+import {
+  PropertiesDoc,
+  TypeDefDoc,
+  TypeDefDocContainer,
+} from "../category/type-def";
+import { resolveTypeDef } from "../schema-utils/type-def";
+import DescriptionArea from "../DescriptionArea";
 
 export interface EndpointDocProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -54,12 +59,16 @@ export default function EndpointDoc({
         left={
           <>
             {description && (
-              <article
-                class="bg-slate-1 rounded p-2 text-sm"
-                dangerouslySetInnerHTML={{
-                  __html: description,
-                }}
-              />
+              <article class="bg-slate-1 overflow-hidden rounded">
+                <DescriptionArea bgColor="rgb(241,245,249)">
+                  <div
+                    class="p-2 text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: description,
+                    }}
+                  />
+                </DescriptionArea>
+              </article>
             )}
             <TwoColumnLayout
               className="mt-2"
@@ -146,7 +155,7 @@ interface ResponseDocProps {
   operation: Operation;
 }
 function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
-  const responseSchemata = getResponseSchemata(operation);
+  const responseSchemata = getResponseSchemata(schema, operation);
   return (
     <>
       {responseSchemata.map(
@@ -156,11 +165,15 @@ function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
             title={statusCode}
             description={response.description}
           >
-            <TypeDefDoc
-              basepath={basepath}
-              schema={schema}
-              typeDef={responseSchema && resolveTypeDef(schema, responseSchema)}
-            />
+            <TypeDefDocContainer>
+              <TypeDefDoc
+                basepath={basepath}
+                schema={schema}
+                typeDef={
+                  responseSchema && resolveTypeDef(schema, responseSchema)
+                }
+              />
+            </TypeDefDocContainer>
           </ReqRes>
         )
       )}
@@ -182,7 +195,9 @@ function Parameters({
 }: ParametersProps) {
   return (
     <ReqRes title={title} description={description}>
-      <PropertiesDoc basepath={basepath} properties={parameters} />
+      <TypeDefDocContainer>
+        <PropertiesDoc basepath={basepath} properties={parameters} />
+      </TypeDefDocContainer>
     </ReqRes>
   );
 }

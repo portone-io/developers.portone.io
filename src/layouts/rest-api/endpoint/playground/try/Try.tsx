@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals";
-import type { Endpoint } from "../../schema-utils/endpoint";
-import type { Operation } from "../../schema-utils/operation";
+import type { Endpoint } from "../../../schema-utils/endpoint";
+import type { Operation } from "../../../schema-utils/operation";
 import ResComponent, { type Res } from "./Res";
 import Req from "./Req";
 import Err from "./Err";
