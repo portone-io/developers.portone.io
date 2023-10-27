@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "PortOne API",
-    "version": "1.4.0-RC2"
+    "version": "1.5.0-RC6"
   },
   "servers": [
     {
@@ -128,43 +128,7 @@
         }
       }
     },
-    "/merchant": {
-      "get": {
-        "description": "<p>가맹점 정보를 조회합니다.\n요청된 Authorization header 를 통해 자동으로 요청자의 가맹점을 특정합니다.</p>\n",
-        "operationId": "getMerchant",
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Merchant"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMerchantError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerJwt": []
-          }
-        ],
-        "x-portone-description": "<p>가맹점 정보를 조회합니다.\n요청된 Authorization header 를 통해 자동으로 요청자의 가맹점을 특정합니다.</p>\n",
-        "x-portone-error": {
-          "$ref": "#/components/schemas/GetMerchantError"
-        }
-      }
-    },
+    "/merchant": {},
     "/platform": {
       "get": {
         "description": "<p>가맹점의 플랫폼 정보를 조회합니다.\n요청된 Authorization header 를 통해 자동으로 요청자의 가맹점을 특정합니다.</p>\n",
@@ -3739,7 +3703,7 @@
     "/platform/payouts/{id}/sheet-file": {},
     "/identity-verifications/{id}": {
       "get": {
-        "description": "<p>주어진 아이디에 대응되는 본인인증 내역을 조회합니다.</p>\n",
+        "description": "<p>본인인증 단건 조회</p>\n<p>주어진 아이디에 대응되는 본인인증 내역을 조회합니다.</p>\n",
         "operationId": "getIdentityVerification",
         "parameters": [
           {
@@ -3755,12 +3719,13 @@
           {
             "name": "storeId",
             "in": "query",
-            "description": "<p>상점 아이디</p>\n",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "x-portone-title": "상점 아이디"
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
           }
         ],
         "responses": {
@@ -3822,6 +3787,7 @@
           }
         ],
         "x-portone-category": "identityVerification",
+        "x-portone-title": "본인인증 단건 조회",
         "x-portone-description": "<p>주어진 아이디에 대응되는 본인인증 내역을 조회합니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/GetIdentityVerificationError"
@@ -3830,7 +3796,7 @@
     },
     "/identity-verifications/{id}/send": {
       "post": {
-        "description": "<p>SMS 또는 APP 방식을 이용하여 본인인증 요청을 전송합니다.</p>\n",
+        "description": "<p>본인인증 요청 전송</p>\n<p>SMS 또는 APP 방식을 이용하여 본인인증 요청을 전송합니다.</p>\n",
         "operationId": "sendIdentityVerification",
         "parameters": [
           {
@@ -3916,7 +3882,7 @@
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
@@ -3933,6 +3899,7 @@
           }
         ],
         "x-portone-category": "identityVerification",
+        "x-portone-title": "본인인증 요청 전송",
         "x-portone-description": "<p>SMS 또는 APP 방식을 이용하여 본인인증 요청을 전송합니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/SendIdentityVerificationError"
@@ -3941,7 +3908,7 @@
     },
     "/identity-verifications/{id}/confirm": {
       "post": {
-        "description": "<p>요청된 본인인증에 대한 확인을 진행합니다.</p>\n",
+        "description": "<p>본인인증 확인</p>\n<p>요청된 본인인증에 대한 확인을 진행합니다.</p>\n",
         "operationId": "confirmIdentityVerification",
         "parameters": [
           {
@@ -4027,7 +3994,7 @@
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
@@ -4044,6 +4011,7 @@
           }
         ],
         "x-portone-category": "identityVerification",
+        "x-portone-title": "본인인증 확인",
         "x-portone-description": "<p>요청된 본인인증에 대한 확인을 진행합니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/ConfirmIdentityVerificationError"
@@ -4052,7 +4020,7 @@
     },
     "/identity-verifications/{id}/resend": {
       "post": {
-        "description": "<p>본인인증 요청을 재전송합니다.</p>\n",
+        "description": "<p>본인인증 요청 재전송</p>\n<p>본인인증 요청을 재전송합니다.</p>\n",
         "operationId": "resendIdentityVerification",
         "parameters": [
           {
@@ -4068,12 +4036,13 @@
           {
             "name": "storeId",
             "in": "query",
-            "description": "<p>상점 아이디</p>\n",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "x-portone-title": "상점 아이디"
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
           }
         ],
         "responses": {
@@ -4138,7 +4107,7 @@
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
@@ -4155,6 +4124,7 @@
           }
         ],
         "x-portone-category": "identityVerification",
+        "x-portone-title": "본인인증 요청 재전송",
         "x-portone-description": "<p>본인인증 요청을 재전송합니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/ResendIdentityVerificationError"
@@ -4162,6 +4132,303 @@
       }
     },
     "/payments/pre-register": {},
+    "/billing-keys/{id}": {
+      "get": {
+        "description": "<p>빌링키 단건 조회</p>\n<p>주어진 빌링키에 대응되는 빌링키 정보를 조회합니다.</p>\n",
+        "operationId": "getBillingKeyInfo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "<p>조회할 빌링키</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회할 빌링키"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답으로 빌링키 정보를 반환합니다.</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingKeyInfo"
+                }
+              }
+            },
+            "x-portone-description": "<p>성공 응답으로 빌링키 정보를 반환합니다.</p>\n"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfoError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfoError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfoError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>BillingKeyNotFoundError</code>: 빌링키가 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfoError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "billingKey",
+        "x-portone-title": "빌링키 단건 조회",
+        "x-portone-description": "<p>주어진 빌링키에 대응되는 빌링키 정보를 조회합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetBillingKeyInfoError"
+        }
+      },
+      "delete": {
+        "description": "<p>빌링키 삭제</p>\n<p>빌링키를 삭제합니다.</p>\n",
+        "operationId": "deleteBillingKey",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "<p>삭제할 빌링키</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "삭제할 빌링키"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>BillingKeyNotIssuedError</code></li>\n<li><code>BillingKeyNotFoundError</code>: 빌링키가 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "<ul>\n<li><code>BillingKeyAlreadyDeletedError</code>: 빌링키가 이미 삭제된 경우</li>\n<li><code>PaymentScheduleAlreadyExistsError</code>: 결제 예약건이 이미 존재하는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "billingKey",
+        "x-portone-title": "빌링키 삭제",
+        "x-portone-description": "<p>빌링키를 삭제합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DeleteBillingKeyError"
+        }
+      }
+    },
+    "/payments/{paymentId}/cash-receipt": {
+      "get": {
+        "description": "<p>현금 영수증 단건 조회</p>\n<p>주어진 결제 아이디에 대응되는 현금 영수증 내역을 조회합니다.</p>\n",
+        "operationId": "getCashReceiptByPaymentId",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "<p>결제건 아이디</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "결제건 아이디"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답으로 현금 영수증 객체를 반환합니다.</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashReceipt"
+                }
+              }
+            },
+            "x-portone-description": "<p>성공 응답으로 현금 영수증 객체를 반환합니다.</p>\n"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCashReceiptError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCashReceiptError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCashReceiptError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>CashReceiptNotFoundError</code>: 현금영수증이 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCashReceiptError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "cashReceipt",
+        "x-portone-title": "현금 영수증 단건 조회",
+        "x-portone-description": "<p>주어진 결제 아이디에 대응되는 현금 영수증 내역을 조회합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetCashReceiptError"
+        }
+      }
+    },
     "/payments/{paymentId}": {
       "get": {
         "description": "<p>결제 단건 조회</p>\n<p>주어진 아이디에 대응되는 결제 건을 조회합니다.</p>\n",
@@ -4231,7 +4498,7 @@
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>PaymentNotFoundError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotFoundError</code>: 결제건이 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4412,12 +4679,13 @@
           {
             "name": "storeId",
             "in": "query",
-            "description": "<p>상점 아이디</p>\n",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "x-portone-title": "상점 아이디"
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
           }
         ],
         "responses": {
@@ -4463,7 +4731,7 @@
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>PaymentScheduleNotFoundError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentScheduleNotFoundError</code>: 결제 예약건이 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4483,6 +4751,164 @@
         "x-portone-description": "<p>주어진 아이디에 대응되는 결제 예약 건을 조회합니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/GetPaymentScheduleError"
+        }
+      }
+    },
+    "/payment-schedules": {
+      "get": {
+        "description": "<p>결제 예약 다건 조회</p>\n<p>주어진 조건에 맞는 결제 예약 건들을 조회합니다.</p>\n",
+        "operationId": "getPaymentSchedules",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPaymentSchedulesBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답으로 조회된 예약 결제 건 리스트가 반환됩니다.</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesResponse"
+                }
+              }
+            },
+            "x-portone-description": "<p>성공 응답으로 조회된 예약 결제 건 리스트가 반환됩니다.</p>\n"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "paymentSchedule",
+        "x-portone-title": "결제 예약 다건 조회",
+        "x-portone-description": "<p>주어진 조건에 맞는 결제 예약 건들을 조회합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPaymentSchedulesError"
+        }
+      },
+      "delete": {
+        "description": "<p>결제 예약 취소</p>\n<p>결제 예약 건을 취소합니다.</p>\n",
+        "operationId": "cancelPaymentSchedule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelPaymentScheduleBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelPaymentScheduleResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>BillingKeyNotFoundError</code>: 빌링키가 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "<ul>\n<li><code>PaymentScheduleAlreadyProcessedError</code>: 결제 예약건이 이미 처리된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "paymentSchedule",
+        "x-portone-title": "결제 예약 취소",
+        "x-portone-description": "<p>결제 예약 건을 취소합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CancelPaymentScheduleError"
         }
       }
     },
@@ -4555,7 +4981,7 @@
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>BillingKeyNotFoundError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>BillingKeyNotFoundError</code>: 빌링키가 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4565,7 +4991,7 @@
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>AlreadyPaidOrWaitingError</code></li>\n<li><code>TaxFreeAmountExceedsTotalAmountError</code></li>\n<li><code>BillingKeyAlreadyDeletedError</code></li>\n<li><code>PaymentScheduleAlreadyExistsError</code></li>\n<li><code>PastPaymentScheduleError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>AlreadyPaidOrWaitingError</code>: 결제가 이미 완료되었거나 대기중인 경우</li>\n<li><code>TaxFreeAmountExceedsTotalAmountError</code>: 면세 금액이 전체 결제 금액을 초과한 경우</li>\n<li><code>BillingKeyAlreadyDeletedError</code>: 빌링키가 이미 삭제된 경우</li>\n<li><code>PaymentScheduleAlreadyExistsError</code>: 결제 예약건이 이미 존재하는 경우</li>\n<li><code>PastPaymentScheduleError</code>: 결제 예약 시점이 과거로 지정된 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4657,7 +5083,7 @@
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>PaymentNotFoundError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotFoundError</code>: 결제건이 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4667,7 +5093,7 @@
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>PaymentNotPaidError</code></li>\n<li><code>PaymentAlreadyCancelledError</code></li>\n<li><code>CancellableAmountConsistencyBrokenError</code></li>\n<li><code>CancelAmountExceedsCancellableAmountError</code></li>\n<li><code>CancelTaxFreeAmountExceedsCancelAmountError</code></li>\n<li><code>CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError</code></li>\n<li><code>CancelTaxAmountExceedsCancellableTaxAmountError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotPaidError</code>: 결제가 완료되지 않은 경우</li>\n<li><code>PaymentAlreadyCancelledError</code>: 결제가 이미 취소된 경우</li>\n<li><code>CancellableAmountConsistencyBrokenError</code>: 취소 가능 잔액 검증에 실패한 경우</li>\n<li><code>CancelAmountExceedsCancellableAmountError</code>: 결제 취소 금액이 취소 가능 금액을 초과한 경우</li>\n<li><code>CancelTaxFreeAmountExceedsCancelAmountError</code>: 취소 면세 금액이 전체 취소 금액을 초과한 경우</li>\n<li><code>CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError</code>: 취소 면세 금액이 취소 가능한 면세 금액을 초과한 경우</li>\n<li><code>CancelTaxAmountExceedsCancellableTaxAmountError</code>: 취소 과세 금액이 취소 가능한 과세 금액을 초과한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4676,7 +5102,7 @@
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
@@ -4703,7 +5129,7 @@
     "/payments/{paymentId}/billing-key": {
       "post": {
         "description": "<p>빌링키 결제</p>\n<p>빌링키로 결제를 진행합니다.</p>\n",
-        "operationId": "PayWithBillinKey",
+        "operationId": "PayWithBillingKey",
         "parameters": [
           {
             "name": "paymentId",
@@ -4732,7 +5158,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayWithBillinKeyResponse"
+                  "$ref": "#/components/schemas/PayWithBillingKeyResponse"
                 }
               }
             },
@@ -4743,7 +5169,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayWithBillinKeyError"
+                  "$ref": "#/components/schemas/PayWithBillingKeyError"
                 }
               }
             }
@@ -4753,7 +5179,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayWithBillinKeyError"
+                  "$ref": "#/components/schemas/PayWithBillingKeyError"
                 }
               }
             }
@@ -4763,37 +5189,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayWithBillinKeyError"
+                  "$ref": "#/components/schemas/PayWithBillingKeyError"
                 }
               }
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>BillingKeyNotFoundError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>BillingKeyNotFoundError</code>: 빌링키가 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayWithBillinKeyError"
+                  "$ref": "#/components/schemas/PayWithBillingKeyError"
                 }
               }
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>AlreadyPaidError</code></li>\n<li><code>TaxFreeAmountExceedsTotalAmountError</code></li>\n<li><code>BillingKeyAlreadyDeletedError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>AlreadyPaidError</code>: 결제가 이미 완료된 경우</li>\n<li><code>TaxFreeAmountExceedsTotalAmountError</code>: 면세 금액이 전체 결제 금액을 초과한 경우</li>\n<li><code>BillingKeyAlreadyDeletedError</code>: 빌링키가 이미 삭제된 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayWithBillinKeyError"
+                  "$ref": "#/components/schemas/PayWithBillingKeyError"
                 }
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PayWithBillinKeyError"
+                  "$ref": "#/components/schemas/PayWithBillingKeyError"
                 }
               }
             }
@@ -4808,7 +5234,7 @@
         "x-portone-title": "빌링키 결제",
         "x-portone-description": "<p>빌링키로 결제를 진행합니다.</p>\n",
         "x-portone-error": {
-          "$ref": "#/components/schemas/PayWithBillinKeyError"
+          "$ref": "#/components/schemas/PayWithBillingKeyError"
         }
       }
     },
@@ -4891,7 +5317,7 @@
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>AlreadyPaidError</code></li>\n<li><code>TaxFreeAmountExceedsTotalAmountError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>AlreadyPaidError</code>: 결제가 이미 완료된 경우</li>\n<li><code>TaxFreeAmountExceedsTotalAmountError</code>: 면세 금액이 전체 결제 금액을 초과한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4900,7 +5326,7 @@
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
@@ -4924,6 +5350,299 @@
         }
       }
     },
+    "/billing-keys": {
+      "post": {
+        "description": "<p>빌링키 발급</p>\n<p>빌링키 발급을 요청합니다.</p>\n",
+        "operationId": "issueBillingKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueBillingKeyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>ChannelNotFoundError</code>: 요청된 채널이 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "billingKey",
+        "x-portone-title": "빌링키 발급",
+        "x-portone-description": "<p>빌링키 발급을 요청합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/IssueBillingKeyError"
+        }
+      }
+    },
+    "/cash-receipts": {
+      "post": {
+        "description": "<p>현금 영수증 수동 발급</p>\n<p>현금 영수증 발급을 요청합니다.</p>\n",
+        "operationId": "issueCashReceipt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueCashReceiptBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>ChannelNotFoundError</code>: 요청된 채널이 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "<ul>\n<li><code>CashReceiptAlreadyIssuedError</code>: 현금영수증이 이미 발급된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "cashReceipt",
+        "x-portone-title": "현금 영수증 수동 발급",
+        "x-portone-description": "<p>현금 영수증 발급을 요청합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/IssueCashReceiptError"
+        }
+      }
+    },
+    "/payments/{paymentId}/cash-receipt/cancel": {
+      "post": {
+        "description": "<p>현금 영수증 취소</p>\n<p>현금 영수증 취소를 요청합니다.</p>\n",
+        "operationId": "cancelCashReceiptByPaymentId",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "<p>결제건 아이디</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "결제건 아이디"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>CashReceiptNotIssuedError</code>: 현금영수증이 발급되지 않은 경우</li>\n<li><code>CashReceiptNotFoundError</code>: 현금영수증이 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "cashReceipt",
+        "x-portone-title": "현금 영수증 취소",
+        "x-portone-description": "<p>현금 영수증 취소를 요청합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CancelCashReceiptError"
+        }
+      }
+    },
     "/payments/{paymentId}/virtual-account/close": {
       "post": {
         "description": "<p>가상계좌 말소</p>\n<p>발급된 가상계좌를 말소합니다.</p>\n",
@@ -4942,12 +5661,13 @@
           {
             "name": "storeId",
             "in": "query",
-            "description": "<p>상점 아이디</p>\n",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "x-portone-title": "상점 아이디"
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
           }
         ],
         "responses": {
@@ -4993,7 +5713,7 @@
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>PaymentNotFoundError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotFoundError</code>: 결제건이 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -5003,7 +5723,7 @@
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>PaymentNotWaitingForDepositError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotWaitingForDepositError</code>: 결제건이 입금 대기 상태가 아닌 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -5012,7 +5732,7 @@
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
@@ -5105,7 +5825,7 @@
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>PaymentNotFoundError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotFoundError</code>: 결제건이 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -5115,7 +5835,7 @@
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>PaymentNotPaidError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotPaidError</code>: 결제가 완료되지 않은 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -5124,7 +5844,7 @@
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
@@ -5217,7 +5937,7 @@
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>PaymentNotFoundError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotFoundError</code>: 결제건이 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -5227,7 +5947,7 @@
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>PaymentNotPaidError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentNotPaidError</code>: 결제가 완료되지 않은 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -5236,7 +5956,7 @@
               }
             }
           },
-          "503": {
+          "502": {
             "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류가 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
@@ -5257,6 +5977,171 @@
         "x-portone-description": "<p>에스크로 결제를 구매 확정 처리합니다</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/ConfirmEscrowError"
+        }
+      }
+    },
+    "/payments/{paymentId}/resend-webhook": {
+      "post": {
+        "description": "<p>웹훅 재발송</p>\n<p>웹훅을 재발송합니다.</p>\n",
+        "operationId": "resendWebhook",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "<p>결제건 아이디</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "결제건 아이디"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendWebhookBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendWebhookResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendWebhookError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendWebhookError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendWebhookError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>PaymentNotFoundError</code>: 결제건이 존재하지 않는 경우</li>\n<li><code>WebhookNotFoundError</code>: 웹훅 내역이 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendWebhookError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "payment",
+        "x-portone-title": "웹훅 재발송",
+        "x-portone-description": "<p>웹훅을 재발송합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ResendWebhookError"
+        }
+      }
+    },
+    "/channels": {
+      "get": {
+        "description": "<p>채널 리스트 조회</p>\n<p>상점에 존재하는 V2 채널 리스트를 조회합니다.</p>\n",
+        "operationId": "getChannels",
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답으로 채널 리스트를 반환합니다.</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetChannelsResponse"
+                }
+              }
+            },
+            "x-portone-description": "<p>성공 응답으로 채널 리스트를 반환합니다.</p>\n"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetChannelsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetChannelsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetChannelsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "channel",
+        "x-portone-title": "채널 리스트 조회",
+        "x-portone-description": "<p>상점에 존재하는 V2 채널 리스트를 조회합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetChannelsError"
         }
       }
     },
@@ -6126,6 +7011,8 @@
             "type": "string"
           }
         },
+        "description": "<p>결제가 이미 완료된 경우</p>\n",
+        "x-portone-title": "결제가 이미 완료된 경우",
         "x-portone-status-code": 409
       },
       "AlreadyPaidOrWaitingError": {
@@ -6141,6 +7028,8 @@
             "type": "string"
           }
         },
+        "description": "<p>결제가 이미 완료되었거나 대기중인 경우</p>\n",
+        "x-portone-title": "결제가 이미 완료되었거나 대기중인 경우",
         "x-portone-status-code": 409
       },
       "Analytics": {
@@ -6645,7 +7534,6 @@
       },
       "AnalyticsPaymentMethodChartStat": {
         "required": [
-          "paymentMethod",
           "amount",
           "count"
         ],
@@ -6690,7 +7578,6 @@
       "AnalyticsPaymentMethodTrendChartStat": {
         "required": [
           "timestamp",
-          "paymentMethod",
           "amount",
           "count"
         ],
@@ -7217,9 +8104,111 @@
             "type": "string"
           }
         },
+        "description": "<p>빌링키가 이미 삭제된 경우</p>\n",
+        "x-portone-title": "빌링키가 이미 삭제된 경우",
         "x-portone-status-code": 409
       },
+      "BillingKeyInfo": {
+        "required": [
+          "billingKey",
+          "merchantId",
+          "storeId",
+          "methods",
+          "channels",
+          "customer",
+          "issuedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingKeyPaymentMethod"
+            },
+            "title": "빌링키 결제수단 상세 정보",
+            "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 결제수단 정보가 담길 수 있습니다.</p>\n"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SelectedChannel"
+            },
+            "title": "빌링키 발급 시 사용된 채널",
+            "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 채널 정보가 담길 수 있습니다.</p>\n"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "고객 정보"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "issueId": {
+            "type": "string",
+            "title": "가맹점이 채번하는 빌링키 발급 건 고유 아이디"
+          },
+          "issueName": {
+            "type": "string",
+            "title": "빌링키 발급 건 이름"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "발급 시점"
+          }
+        },
+        "description": "<p>빌링키 정보</p>\n",
+        "x-portone-title": "빌링키 정보"
+      },
+      "BillingKeyInfoSummary": {
+        "required": [
+          "billingKey",
+          "issuedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "billingKey": {
+            "type": "string",
+            "title": "발급된 빌링키"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "빌링크 발급 완료 시점"
+          }
+        }
+      },
       "BillingKeyNotFoundError": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>빌링키가 존재하지 않는 경우</p>\n",
+        "x-portone-title": "빌링키가 존재하지 않는 경우",
+        "x-portone-status-code": 404
+      },
+      "BillingKeyNotIssuedError": {
         "required": [
           "type"
         ],
@@ -7238,8 +8227,6 @@
         "required": [
           "billingKey",
           "orderName",
-          "isCulturalExpense",
-          "isEscrow",
           "amount",
           "currency"
         ],
@@ -7258,22 +8245,13 @@
             "type": "string",
             "title": "주문명"
           },
-          "isCulturalExpense": {
-            "type": "boolean",
-            "title": "문화비 지출 여부",
-            "description": "<p>기본값은 false 입니다.</p>\n"
-          },
-          "isEscrow": {
-            "type": "boolean",
-            "title": "에스크로 여부"
-          },
           "customer": {
             "$ref": "#/components/schemas/CustomerInput",
             "title": "고객 정보"
           },
           "customData": {
             "type": "string",
-            "title": "가맹점에서 추가로 저장할 데이터"
+            "title": "사용자 지정 데이터"
           },
           "amount": {
             "$ref": "#/components/schemas/PaymentAmountInput",
@@ -7337,6 +8315,135 @@
         "description": "<p>빌링키 결제 요청 입력 정보</p>\n",
         "x-portone-title": "빌링키 결제 요청 입력 정보"
       },
+      "BillingKeyPaymentMethod": {
+        "description": "<p>빌링키 발급 수단 정보</p>\n",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodCard"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodEasyPay"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodMobile"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "BillingKeyPaymentMethodCard": "#/components/schemas/BillingKeyPaymentMethodCard",
+            "BillingKeyPaymentMethodEasyPay": "#/components/schemas/BillingKeyPaymentMethodEasyPay",
+            "BillingKeyPaymentMethodMobile": "#/components/schemas/BillingKeyPaymentMethodMobile"
+          }
+        },
+        "x-portone-title": "빌링키 발급 수단 정보",
+        "x-portone-discriminator": {
+          "BillingKeyPaymentMethodCard": {
+            "title": "카드 정보"
+          },
+          "BillingKeyPaymentMethodMobile": {
+            "title": "모바일 정보"
+          },
+          "BillingKeyPaymentMethodEasyPay": {
+            "title": "간편 결제 정보"
+          }
+        }
+      },
+      "BillingKeyPaymentMethodCard": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "card": {
+            "$ref": "#/components/schemas/Card",
+            "title": "카드 상세 정보"
+          }
+        },
+        "description": "<p>카드 정보</p>\n",
+        "x-portone-title": "카드 정보"
+      },
+      "BillingKeyPaymentMethodEasyPay": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/EasyPayProvider",
+            "title": "간편 결제 PG사"
+          },
+          "method": {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodEasyPayMethod",
+            "title": "간편 결제 수단"
+          }
+        },
+        "description": "<p>간편 결제 정보</p>\n",
+        "x-portone-title": "간편 결제 정보"
+      },
+      "BillingKeyPaymentMethodEasyPayCharge": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "description": "<p>충전식 포인트 결제 정보</p>\n",
+        "x-portone-title": "충전식 포인트 결제 정보"
+      },
+      "BillingKeyPaymentMethodEasyPayMethod": {
+        "description": "<p>간편 결제 수단</p>\n",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodCard"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodEasyPayCharge"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "BillingKeyPaymentMethodCard": "#/components/schemas/BillingKeyPaymentMethodCard",
+            "BillingKeyPaymentMethodEasyPayCharge": "#/components/schemas/BillingKeyPaymentMethodEasyPayCharge"
+          }
+        },
+        "x-portone-title": "간편 결제 수단",
+        "x-portone-discriminator": {
+          "BillingKeyPaymentMethodCard": {
+            "title": "카드 정보"
+          },
+          "BillingKeyPaymentMethodEasyPayCharge": {
+            "title": "충전식 포인트 결제 정보"
+          }
+        }
+      },
+      "BillingKeyPaymentMethodMobile": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "전화번호"
+          }
+        },
+        "description": "<p>모바일 정보</p>\n",
+        "x-portone-title": "모바일 정보"
+      },
       "BillingKeyPaymentSummary": {
         "required": [
           "pgTxId",
@@ -7370,7 +8477,63 @@
             "type": "string"
           }
         },
+        "description": "<p>결제 취소 금액이 취소 가능 금액을 초과한 경우</p>\n",
+        "x-portone-title": "결제 취소 금액이 취소 가능 금액을 초과한 경우",
         "x-portone-status-code": 409
+      },
+      "CancelCashReceiptError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CashReceiptNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/CashReceiptNotIssuedError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PgProviderError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "CASH_RECEIPT_NOT_FOUND": "#/components/schemas/CashReceiptNotFoundError",
+            "CASH_RECEIPT_NOT_ISSUED": "#/components/schemas/CashReceiptNotIssuedError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PG_PROVIDER": "#/components/schemas/PgProviderError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "CancelCashReceiptResponse": {
+        "required": [
+          "cancelledAmount",
+          "cancelledAt"
+        ],
+        "type": "object",
+        "properties": {
+          "cancelledAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "취소 금액"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "현금 영수증 취소 완료 시점"
+          }
+        },
+        "description": "<p>현금 영수증 취소 성공 응답</p>\n",
+        "x-portone-title": "현금 영수증 취소 성공 응답"
       },
       "CancelPaymentBody": {
         "required": [
@@ -7512,6 +8675,85 @@
         "description": "<p>결제 취소 성공 응답</p>\n",
         "x-portone-title": "결제 취소 성공 응답"
       },
+      "CancelPaymentScheduleBody": {
+        "required": [
+          "billingKey",
+          "scheduleIds"
+        ],
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "scheduleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "결제 예약 건 아이디 목록"
+          }
+        },
+        "description": "<p>결제 예약 건 취소 요청 입력 정보</p>\n",
+        "x-portone-title": "결제 예약 건 취소 요청 입력 정보"
+      },
+      "CancelPaymentScheduleError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BillingKeyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentScheduleAlreadyProcessedError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "BILLING_KEY_NOT_FOUND": "#/components/schemas/BillingKeyNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PAYMENT_SCHEDULE_ALREADY_PROCESSED": "#/components/schemas/PaymentScheduleAlreadyProcessedError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "CancelPaymentScheduleResponse": {
+        "required": [
+          "cancelledScheduleIds",
+          "cancelledAt"
+        ],
+        "type": "object",
+        "properties": {
+          "cancelledScheduleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "취소 완료된 결제 예약 건 아이디 목록"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예약 건 취소 완료 시점"
+          }
+        },
+        "description": "<p>결제 예약 건 취소 성공 응답</p>\n",
+        "x-portone-title": "결제 예약 건 취소 성공 응답"
+      },
       "CancelPlatformAdditionalFeePolicyScheduleError": {
         "oneOf": [
           {
@@ -7645,6 +8887,8 @@
             "type": "string"
           }
         },
+        "description": "<p>취소 과세 금액이 취소 가능한 과세 금액을 초과한 경우</p>\n",
+        "x-portone-title": "취소 과세 금액이 취소 가능한 과세 금액을 초과한 경우",
         "x-portone-status-code": 409
       },
       "CancelTaxFreeAmountExceedsCancelAmountError": {
@@ -7660,6 +8904,8 @@
             "type": "string"
           }
         },
+        "description": "<p>취소 면세 금액이 전체 취소 금액을 초과한 경우</p>\n",
+        "x-portone-title": "취소 면세 금액이 전체 취소 금액을 초과한 경우",
         "x-portone-status-code": 409
       },
       "CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError": {
@@ -7675,6 +8921,8 @@
             "type": "string"
           }
         },
+        "description": "<p>취소 면세 금액이 취소 가능한 면세 금액을 초과한 경우</p>\n",
+        "x-portone-title": "취소 면세 금액이 취소 가능한 면세 금액을 초과한 경우",
         "x-portone-status-code": 409
       },
       "CancellableAmountConsistencyBrokenError": {
@@ -7690,7 +8938,98 @@
             "type": "string"
           }
         },
+        "description": "<p>취소 가능 잔액 검증에 실패한 경우</p>\n",
+        "x-portone-title": "취소 가능 잔액 검증에 실패한 경우",
         "x-portone-status-code": 409
+      },
+      "CancelledCashReceipt": {
+        "required": [
+          "status",
+          "merchantId",
+          "storeId",
+          "paymentId",
+          "channel",
+          "amount",
+          "currency",
+          "orderName",
+          "isManual",
+          "issueNumber",
+          "issuedAt",
+          "cancelledAt"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "현금영수증 상태"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "현금영수증 발급에 사용된 채널"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 금액"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "면세액"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "isManual": {
+            "type": "boolean",
+            "title": "수동 발급 여부"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CashReceiptType",
+            "title": "현금영수증 유형"
+          },
+          "pgReceiptId": {
+            "type": "string",
+            "title": "PG사 현금영수증 아이디"
+          },
+          "issueNumber": {
+            "type": "string",
+            "title": "승인번호"
+          },
+          "url": {
+            "type": "string",
+            "title": "현금영수증 URL"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "발급 시점"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "취소 시점"
+          }
+        },
+        "description": "<p>발급 취소</p>\n",
+        "x-portone-title": "발급 취소"
       },
       "CancelledPayment": {
         "required": [
@@ -7707,7 +9046,6 @@
           "amount",
           "currency",
           "customer",
-          "paidAt",
           "cancellations",
           "cancelledAt"
         ],
@@ -7808,7 +9146,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점의 결제 데이터 추가 정보"
+            "title": "사용자 지정 데이터"
           },
           "country": {
             "$ref": "#/components/schemas/Country",
@@ -7929,8 +9267,8 @@
             "title": "배송등록 처리 일자"
           }
         },
-        "description": "<p>거래 취소 상태</p>\n",
-        "x-portone-title": "거래 취소 상태"
+        "description": "<p>거래 취소</p>\n",
+        "x-portone-title": "거래 취소"
       },
       "CancelledPaymentSchedule": {
         "required": [
@@ -7994,7 +9332,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점에서 추가로 저장할 데이터"
+            "title": "사용자 지정 데이터"
           },
           "totalAmount": {
             "type": "integer",
@@ -8278,6 +9616,113 @@
           }
         }
       },
+      "CashReceipt": {
+        "description": "<p>현금영수증 내역</p>\n",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CancelledCashReceipt"
+          },
+          {
+            "$ref": "#/components/schemas/IssueFailed"
+          },
+          {
+            "$ref": "#/components/schemas/IssuedCashReceipt"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "status",
+          "mapping": {
+            "CANCELLED": "#/components/schemas/CancelledCashReceipt",
+            "ISSUED": "#/components/schemas/IssuedCashReceipt",
+            "ISSUE_FAILED": "#/components/schemas/IssueFailed"
+          }
+        },
+        "x-portone-title": "현금영수증 내역",
+        "x-portone-discriminator": {
+          "ISSUE_FAILED": {},
+          "ISSUED": {
+            "title": "발급 완료"
+          },
+          "CANCELLED": {
+            "title": "발급 취소"
+          }
+        }
+      },
+      "CashReceiptAlreadyIssuedError": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>현금영수증이 이미 발급된 경우</p>\n",
+        "x-portone-title": "현금영수증이 이미 발급된 경우",
+        "x-portone-status-code": 409
+      },
+      "CashReceiptNotFoundError": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>현금영수증이 존재하지 않는 경우</p>\n",
+        "x-portone-title": "현금영수증이 존재하지 않는 경우",
+        "x-portone-status-code": 404
+      },
+      "CashReceiptNotIssuedError": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>현금영수증이 발급되지 않은 경우</p>\n",
+        "x-portone-title": "현금영수증이 발급되지 않은 경우",
+        "x-portone-status-code": 404
+      },
+      "CashReceiptSummary": {
+        "required": [
+          "issueNumber",
+          "url",
+          "pgReceiptId"
+        ],
+        "type": "object",
+        "properties": {
+          "issueNumber": {
+            "type": "string",
+            "title": "발행 번호"
+          },
+          "url": {
+            "type": "string",
+            "title": "현금 영수증 URL"
+          },
+          "pgReceiptId": {
+            "type": "string",
+            "title": "PG사 현금영수증 아이디"
+          }
+        },
+        "description": "<p>현금영수증 내역</p>\n",
+        "x-portone-title": "현금영수증 내역"
+      },
       "CashReceiptType": {
         "type": "string",
         "description": "<p>발급 유형</p>\n",
@@ -8299,6 +9744,116 @@
           }
         }
       },
+      "Channel": {
+        "required": [
+          "channelId",
+          "channelName",
+          "pgProvider",
+          "channelType",
+          "pgMerchantId",
+          "isForPayment",
+          "isForIdentityCertification",
+          "channelKey"
+        ],
+        "type": "object",
+        "properties": {
+          "channelId": {
+            "type": "string",
+            "title": "채널 아이디"
+          },
+          "channelName": {
+            "type": "string",
+            "title": "채널명"
+          },
+          "pgProvider": {
+            "$ref": "#/components/schemas/PgProvider",
+            "title": "V2 결제가 가능한 PG사"
+          },
+          "channelType": {
+            "$ref": "#/components/schemas/ChannelType",
+            "title": "채널 유형"
+          },
+          "pgMerchantId": {
+            "type": "string",
+            "title": "PG사 상점 아이디"
+          },
+          "isForPayment": {
+            "type": "boolean",
+            "title": "결제용 채널 여부"
+          },
+          "isForIdentityCertification": {
+            "type": "boolean",
+            "title": "본인인증용 채널 여부"
+          },
+          "channelKey": {
+            "type": "string",
+            "title": "채널키"
+          },
+          "pgCredential": {
+            "$ref": "#/components/schemas/ChannelPgCredential",
+            "title": "PG사 인증 정보"
+          }
+        },
+        "description": "<p>채널 정보</p>\n",
+        "x-portone-title": "채널 정보"
+      },
+      "ChannelDanalCredential": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "cppwd": {
+            "type": "string"
+          },
+          "itemCode": {
+            "type": "string"
+          }
+        },
+        "description": "<p>다날 인증 정보</p>\n",
+        "x-portone-title": "다날 인증 정보"
+      },
+      "ChannelKsnetCredential": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "apiKey": {
+            "type": "string"
+          }
+        },
+        "description": "<p>KSNET 인증 정보</p>\n",
+        "x-portone-title": "KSNET 인증 정보"
+      },
+      "ChannelNaverPayCredential": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "clientSecret": {
+            "type": "string"
+          },
+          "chainId": {
+            "type": "string"
+          }
+        },
+        "description": "<p>네이버페이 인증 정보</p>\n",
+        "x-portone-title": "네이버페이 인증 정보"
+      },
       "ChannelNotFoundError": {
         "required": [
           "type"
@@ -8316,11 +9871,118 @@
         "x-portone-title": "요청된 채널이 존재하지 않는 경우",
         "x-portone-status-code": 404
       },
-      "Circular": {
+      "ChannelPgCredential": {
+        "description": "<p>PG사 인증 정보</p>\n",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ChannelDanalCredential"
+          },
+          {
+            "$ref": "#/components/schemas/ChannelKsnetCredential"
+          },
+          {
+            "$ref": "#/components/schemas/ChannelNaverPayCredential"
+          },
+          {
+            "$ref": "#/components/schemas/ChannelSmartroV2Credential"
+          },
+          {
+            "$ref": "#/components/schemas/ChannelTossPaymentsCredential"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "DANAL": "#/components/schemas/ChannelDanalCredential",
+            "KSNET": "#/components/schemas/ChannelKsnetCredential",
+            "NAVER_PAY": "#/components/schemas/ChannelNaverPayCredential",
+            "SMARTRO_V2": "#/components/schemas/ChannelSmartroV2Credential",
+            "TOSS_PAYMENTS": "#/components/schemas/ChannelTossPaymentsCredential"
+          }
+        },
+        "x-portone-title": "PG사 인증 정보",
+        "x-portone-discriminator": {
+          "NAVER_PAY": {
+            "title": "네이버페이 인증 정보"
+          },
+          "SMARTRO_V2": {
+            "title": "스마트로V2 인증 정보"
+          },
+          "DANAL": {
+            "title": "다날 인증 정보"
+          },
+          "TOSS_PAYMENTS": {
+            "title": "토스페이먼츠 인증 정보"
+          },
+          "KSNET": {
+            "title": "KSNET 인증 정보"
+          }
+        }
+      },
+      "ChannelSmartroV2Credential": {
+        "required": [
+          "type"
+        ],
         "type": "object",
-        "description": "<p>회전식 가상계좌</p>\n<p>공용으로 사용되는 가상계좌번호중 하나를 PG사에서 내려주는 방식입니다.</p>\n",
-        "x-portone-title": "회전식 가상계좌",
-        "x-portone-description": "<p>공용으로 사용되는 가상계좌번호중 하나를 PG사에서 내려주는 방식입니다.</p>\n"
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "merchantKey": {
+            "type": "string"
+          },
+          "cancelPassword": {
+            "type": "string"
+          },
+          "sspMallId": {
+            "type": "string"
+          },
+          "apiKey": {
+            "type": "string"
+          }
+        },
+        "description": "<p>스마트로V2 인증 정보</p>\n",
+        "x-portone-title": "스마트로V2 인증 정보"
+      },
+      "ChannelTossPaymentsCredential": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "secretKey": {
+            "type": "string"
+          },
+          "clientKey": {
+            "type": "string"
+          }
+        },
+        "description": "<p>토스페이먼츠 인증 정보</p>\n",
+        "x-portone-title": "토스페이먼츠 인증 정보"
+      },
+      "ChannelType": {
+        "type": "string",
+        "description": "<p>채널 유형</p>\n",
+        "enum": [
+          "LIVE",
+          "MERCHANT_TEST",
+          "SHARED_TEST"
+        ],
+        "x-portone-title": "채널 유형",
+        "x-portone-enum": {
+          "LIVE": {
+            "title": "라이브 채널"
+          },
+          "MERCHANT_TEST": {
+            "title": "가맹점 전용 테스트 채널"
+          },
+          "SHARED_TEST": {
+            "title": "공용 테스트 채널"
+          }
+        }
       },
       "CloseVirtualAccountError": {
         "oneOf": [
@@ -8481,7 +10143,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점에서 추가로 저장할 데이터"
+            "title": "사용자 지정 데이터"
           },
           "totalAmount": {
             "type": "integer",
@@ -8704,8 +10366,8 @@
             "title": "자동 구매 확정 처리 여부"
           }
         },
-        "description": "<p>구매 확정 상태</p>\n",
-        "x-portone-title": "구매 확정 상태"
+        "description": "<p>구매 확정</p>\n",
+        "x-portone-title": "구매 확정"
       },
       "Country": {
         "type": "string",
@@ -9752,11 +11414,6 @@
         ],
         "type": "object",
         "properties": {
-          "storeId": {
-            "type": "string",
-            "title": "상점 아이디",
-            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
-          },
           "payment": {
             "$ref": "#/components/schemas/BillingKeyPaymentInput",
             "title": "빌링키 결제 입력 정보"
@@ -11669,6 +13326,62 @@
           "FRI": {}
         }
       },
+      "DeleteBillingKeyError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BillingKeyAlreadyDeletedError"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyNotIssuedError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentScheduleAlreadyExistsError"
+          },
+          {
+            "$ref": "#/components/schemas/PgProviderError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "BILLING_KEY_ALREADY_DELETED": "#/components/schemas/BillingKeyAlreadyDeletedError",
+            "BILLING_KEY_NOT_FOUND": "#/components/schemas/BillingKeyNotFoundError",
+            "BILLING_KEY_NOT_ISSUED": "#/components/schemas/BillingKeyNotIssuedError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PAYMENT_SCHEDULE_ALREADY_EXISTS": "#/components/schemas/PaymentScheduleAlreadyExistsError",
+            "PG_PROVIDER": "#/components/schemas/PgProviderError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "DeleteBillingKeyResponse": {
+        "required": [
+          "deletedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "빌링키 삭제 완료 시점"
+          }
+        },
+        "description": "<p>빌링키 삭제 성공 응답</p>\n",
+        "x-portone-title": "빌링키 삭제 성공 응답"
+      },
       "DeletePlatformPayoutError": {
         "oneOf": [
           {
@@ -11740,8 +13453,8 @@
             "title": "배송등록 처리 일자"
           }
         },
-        "description": "<p>배송 완료 상태</p>\n",
-        "x-portone-title": "배송 완료 상태"
+        "description": "<p>배송 완료</p>\n",
+        "x-portone-title": "배송 완료"
       },
       "DownloadPlatformPayoutSheetError": {
         "oneOf": [
@@ -12016,7 +13729,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점의 결제 데이터 추가 정보"
+            "title": "사용자 지정 데이터"
           },
           "country": {
             "$ref": "#/components/schemas/Country",
@@ -12087,33 +13800,23 @@
         "description": "<p>취소 실패 상태</p>\n",
         "x-portone-title": "취소 실패 상태"
       },
-      "FixedByAccountNumber": {
-        "required": [
-          "accountNumber"
-        ],
-        "type": "object",
-        "properties": {
-          "accountNumber": {
-            "type": "string"
-          }
-        },
-        "description": "<p>Account Number 고정식 가상계좌</p>\n<p>PG사가 일정 개수만큼의 가상계좌번호를 발급하여 가맹점에게 미리 전달하고 가맹점이 그 중 하나를 선택하여 사용하는 방식입니다.</p>\n",
-        "x-portone-title": "Account Number 고정식 가상계좌",
-        "x-portone-description": "<p>PG사가 일정 개수만큼의 가상계좌번호를 발급하여 가맹점에게 미리 전달하고 가맹점이 그 중 하나를 선택하여 사용하는 방식입니다.</p>\n"
-      },
-      "FixedByPgAccountId": {
-        "required": [
-          "pgAccountId"
-        ],
+      "Fixed": {
         "type": "object",
         "properties": {
           "pgAccountId": {
-            "type": "string"
+            "type": "string",
+            "title": "Account ID 고정식 가상계좌",
+            "description": "<p>가맹점이 가상계좌번호를 직접 관리하지 않고 PG사가 pgAccountId에 매핑되는 가상계좌번호를 내려주는 방식입니다.\n동일한 pgAccountId로 가상계좌 발급 요청시에는 항상 같은 가상계좌번호가 내려옵니다.</p>\n"
+          },
+          "accountNumber": {
+            "type": "string",
+            "title": "Account Number 고정식 가상계좌",
+            "description": "<p>PG사가 일정 개수만큼의 가상계좌번호를 발급하여 가맹점에게 미리 전달하고 가맹점이 그 중 하나를 선택하여 사용하는 방식입니다.</p>\n"
           }
         },
-        "description": "<p>Account ID 고정식 가상계좌</p>\n<p>가맹점이 가상계좌번호를 직접 관리하지 않고 PG사가 pgAccountId에 매핑되는 가상계좌번호를 내려주는 방식입니다.\n동일한 pgAccountId로 가상계좌 발급 요청시에는 항상 같은 가상계좌번호가 내려옵니다.</p>\n",
-        "x-portone-title": "Account ID 고정식 가상계좌",
-        "x-portone-description": "<p>가맹점이 가상계좌번호를 직접 관리하지 않고 PG사가 pgAccountId에 매핑되는 가상계좌번호를 내려주는 방식입니다.\n동일한 pgAccountId로 가상계좌 발급 요청시에는 항상 같은 가상계좌번호가 내려옵니다.</p>\n"
+        "description": "<p>고정식 가상계좌 발급 유형</p>\n<p>pgAccountId, accountNumber 유형 중 한 개의 필드만 입력합니다.</p>\n",
+        "x-portone-title": "고정식 가상계좌 발급 유형",
+        "x-portone-description": "<p>pgAccountId, accountNumber 유형 중 한 개의 필드만 입력합니다.</p>\n"
       },
       "ForbiddenError": {
         "required": [
@@ -12834,6 +14537,94 @@
           }
         }
       },
+      "GetBillingKeyInfoError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BillingKeyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "BILLING_KEY_NOT_FOUND": "#/components/schemas/BillingKeyNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetCashReceiptError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CashReceiptNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "CASH_RECEIPT_NOT_FOUND": "#/components/schemas/CashReceiptNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetChannelsError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetChannelsResponse": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Channel"
+            },
+            "title": "조회된 채널 리스트"
+          }
+        },
+        "description": "<p>채널 다건 조회 성공 응답 정보</p>\n",
+        "x-portone-title": "채널 다건 조회 성공 응답 정보"
+      },
       "GetIdentityVerificationError": {
         "oneOf": [
           {
@@ -12964,6 +14755,64 @@
           }
         }
       },
+      "GetPaymentSchedulesBody": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/PageInput",
+            "title": "요청할 페이지 정보"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/PaymentScheduleFilterInput",
+            "title": "조회할 결제 예약 건의 조건 필터"
+          }
+        },
+        "description": "<p>결제 예약 다건 조회를 위한 입력 정보</p>\n",
+        "x-portone-title": "결제 예약 다건 조회를 위한 입력 정보"
+      },
+      "GetPaymentSchedulesError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetPaymentSchedulesResponse": {
+        "required": [
+          "items",
+          "page"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentSchedule"
+            },
+            "title": "조회된 결제 예약 건 리스트"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInfo",
+            "title": "조회된 페이지 정보"
+          }
+        },
+        "description": "<p>결제 예약 다건 조회 성공 응답 정보</p>\n",
+        "x-portone-title": "결제 예약 다건 조회 성공 응답 정보"
+      },
       "GetPaymentsBody": {
         "type": "object",
         "properties": {
@@ -13002,12 +14851,12 @@
       },
       "GetPaymentsResponse": {
         "required": [
-          "payments",
+          "items",
           "page"
         ],
         "type": "object",
         "properties": {
-          "payments": {
+          "items": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Payment"
@@ -14261,13 +16110,37 @@
         "description": "<p>인증된 고객 정보</p>\n",
         "x-portone-title": "인증된 고객 정보"
       },
+      "InstantBillingKeyPaymentMethodInput": {
+        "type": "object",
+        "properties": {
+          "card": {
+            "$ref": "#/components/schemas/InstantBillingKeyPaymentMethodInputCard"
+          }
+        },
+        "description": "<p>빌링키 발급 시 결제 수단 입력 양식</p>\n",
+        "x-portone-title": "빌링키 발급 시 결제 수단 입력 양식"
+      },
+      "InstantBillingKeyPaymentMethodInputCard": {
+        "required": [
+          "cardCredential"
+        ],
+        "type": "object",
+        "properties": {
+          "cardCredential": {
+            "$ref": "#/components/schemas/CardCredential"
+          },
+          "cvc": {
+            "type": "string"
+          }
+        },
+        "description": "<p>카드 수단 정보 입력 양식</p>\n",
+        "x-portone-title": "카드 수단 정보 입력 양식"
+      },
       "InstantPaymentInput": {
         "required": [
           "channelKey",
           "method",
           "orderName",
-          "isCulturalExpense",
-          "isEscrow",
           "amount",
           "currency"
         ],
@@ -14297,7 +16170,8 @@
           },
           "isEscrow": {
             "type": "boolean",
-            "title": "에스크로 여부"
+            "title": "에스크로 여부",
+            "description": "<p>기본값은 false 입니다.</p>\n"
           },
           "customer": {
             "$ref": "#/components/schemas/CustomerInput",
@@ -14305,7 +16179,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점에서 추가로 저장할 데이터"
+            "title": "사용자 지정 데이터"
           },
           "amount": {
             "$ref": "#/components/schemas/PaymentAmountInput",
@@ -14450,10 +16324,6 @@
           "customerIdentityNumber": {
             "type": "string",
             "title": "사용자 식별 번호"
-          },
-          "businessRegistrationNumber": {
-            "type": "string",
-            "title": "사업자 등록 번호"
           }
         },
         "description": "<p>가상계좌 결제 시 현금영수증 정보</p>\n",
@@ -14463,11 +16333,14 @@
         "type": "object",
         "properties": {
           "validHours": {
-            "$ref": "#/components/schemas/InstantPaymentMethodInputVirtualAccountExpiry1",
-            "title": "유효 시간"
+            "type": "integer",
+            "format": "int32",
+            "title": "유효 시간",
+            "description": "<p>시간 단위로 입력합니다.</p>\n"
           },
           "dueDate": {
-            "$ref": "#/components/schemas/InstantPaymentMethodInputVirtualAccountExpiry2",
+            "type": "string",
+            "format": "date-time",
             "title": "만료 시점"
           }
         },
@@ -14475,56 +16348,24 @@
         "x-portone-title": "입금 만료 기한",
         "x-portone-description": "<p>validHours와 dueDate 둘 중 하나의 필드만 입력합니다.</p>\n"
       },
-      "InstantPaymentMethodInputVirtualAccountExpiry1": {
-        "required": [
-          "hours"
-        ],
-        "type": "object",
-        "properties": {
-          "hours": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "description": "<p>유효 시간</p>\n",
-        "x-portone-title": "유효 시간"
-      },
-      "InstantPaymentMethodInputVirtualAccountExpiry2": {
-        "required": [
-          "date"
-        ],
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "description": "<p>만료 시점</p>\n",
-        "x-portone-title": "만료 시점"
-      },
       "InstantPaymentMethodInputVirtualAccountOption": {
+        "required": [
+          "type"
+        ],
         "type": "object",
         "properties": {
-          "circular": {
-            "$ref": "#/components/schemas/Circular",
-            "title": "회전식 가상계좌",
-            "description": "<p>공용으로 사용되는 가상계좌번호중 하나를 PG사에서 내려주는 방식입니다.</p>\n"
+          "type": {
+            "$ref": "#/components/schemas/Type",
+            "title": "발급 유형"
           },
-          "fixedByPgAccountId": {
-            "$ref": "#/components/schemas/FixedByPgAccountId",
-            "title": "아이디 고정식 가상계좌",
-            "description": "<p>가맹점이 가상계좌번호를 직접 관리하지 않고 PG사가 pgAccountId에 매핑되는 가상계좌번호를 내려주는 방식입니다.\n동일한 pgAccountId로 가상계좌 발급 요청시에는 항상 같은 가상계좌번호가 내려옵니다.</p>\n"
-          },
-          "FixedByAccountNumber": {
-            "$ref": "#/components/schemas/FixedByAccountNumber",
-            "title": "번호 고정식 가상계좌",
-            "description": "<p>PG사가 일정 개수만큼의 가상계좌번호를 발급하여 가맹점에게 미리 전달하고 가맹점이 그 중 하나를 선택하여 사용하는 방식입니다.</p>\n"
+          "fixed": {
+            "$ref": "#/components/schemas/Fixed",
+            "title": "고정식 가상계좌 발급 방식",
+            "description": "<p>발급 유형을 FIXED 로 선택했을 시에만 입력합니다.</p>\n"
           }
         },
-        "description": "<p>가상계좌 발급 유형</p>\n<p>입금 만료 기한</p>\n",
-        "x-portone-title": "가상계좌 발급 유형",
-        "x-portone-description": "<p>입금 만료 기한</p>\n"
+        "description": "<p>가상계좌 발급 방식</p>\n",
+        "x-portone-title": "가상계좌 발급 방식"
       },
       "InstantPaymentSummary": {
         "required": [
@@ -14563,6 +16404,350 @@
         "x-portone-title": "요청된 입력 정보가 유효하지 않은 경우",
         "x-portone-description": "<p>허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.</p>\n",
         "x-portone-status-code": 400
+      },
+      "IssueBillingKeyBody": {
+        "required": [
+          "method",
+          "channelKey"
+        ],
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          },
+          "method": {
+            "$ref": "#/components/schemas/InstantBillingKeyPaymentMethodInput",
+            "title": "빌링키 결제 수단 정보"
+          },
+          "channelKey": {
+            "type": "string",
+            "title": "채널키"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerInput",
+            "title": "고객 정보"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "issueName": {
+            "type": "string",
+            "title": "빌링키 발급 건 이름"
+          },
+          "issueId": {
+            "type": "string",
+            "title": "가맹점이 채번하는 빌링키 발급 건 고유 ID"
+          },
+          "bypass": {
+            "type": "string",
+            "title": "PG사별 특수 파라미터"
+          }
+        },
+        "description": "<p>빌링키 발급 요청 양식</p>\n",
+        "x-portone-title": "빌링키 발급 요청 양식"
+      },
+      "IssueBillingKeyError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ChannelNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PgProviderError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "CHANNEL_NOT_FOUND": "#/components/schemas/ChannelNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PG_PROVIDER": "#/components/schemas/PgProviderError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "IssueBillingKeyResponse": {
+        "required": [
+          "billingKeyInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "billingKeyInfo": {
+            "$ref": "#/components/schemas/BillingKeyInfoSummary",
+            "title": "빌링키 정보"
+          }
+        },
+        "description": "<p>빌링키 발급 성공 응답</p>\n",
+        "x-portone-title": "빌링키 발급 성공 응답"
+      },
+      "IssueCashReceiptBody": {
+        "required": [
+          "paymentId",
+          "channelKey",
+          "type",
+          "orderName",
+          "currency",
+          "totalAmount",
+          "taxFreeAmount",
+          "customer"
+        ],
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제건 아이디",
+            "description": "<p>외부 결제건에 대한 수동 발급의 경우, 아이디를 직접 채번하여 입력합니다.</p>\n"
+          },
+          "channelKey": {
+            "type": "string",
+            "title": "채널키"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CashReceiptType",
+            "title": "현금 영수증 유형"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "화폐"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 금액"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "면세 금액"
+          },
+          "productType": {
+            "$ref": "#/components/schemas/PaymentProductType",
+            "title": "상품 유형"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/IssueCashReceiptCustomerInput",
+            "title": "고객 정보"
+          }
+        },
+        "description": "<p>현금영수증 발급 요청 양식</p>\n",
+        "x-portone-title": "현금영수증 발급 요청 양식"
+      },
+      "IssueCashReceiptCustomerInput": {
+        "required": [
+          "identityNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "identityNumber": {
+            "type": "string",
+            "title": "고객 식별값"
+          },
+          "name": {
+            "type": "string",
+            "title": "이름"
+          },
+          "email": {
+            "type": "string",
+            "title": "이메일"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "전화번호"
+          }
+        },
+        "description": "<p>빌링키 발급 시 고객 관련 입력 정보</p>\n",
+        "x-portone-title": "빌링키 발급 시 고객 관련 입력 정보"
+      },
+      "IssueCashReceiptError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CashReceiptAlreadyIssuedError"
+          },
+          {
+            "$ref": "#/components/schemas/ChannelNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PgProviderError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "CASH_RECEIPT_ALREADY_ISSUED": "#/components/schemas/CashReceiptAlreadyIssuedError",
+            "CHANNEL_NOT_FOUND": "#/components/schemas/ChannelNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PG_PROVIDER": "#/components/schemas/PgProviderError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "IssueCashReceiptResponse": {
+        "required": [
+          "cashReceipt"
+        ],
+        "type": "object",
+        "properties": {
+          "cashReceipt": {
+            "$ref": "#/components/schemas/CashReceiptSummary"
+          }
+        },
+        "description": "<p>현금 영수증 발급 성공 응답</p>\n",
+        "x-portone-title": "현금 영수증 발급 성공 응답"
+      },
+      "IssueFailed": {
+        "required": [
+          "status",
+          "merchantId",
+          "storeId",
+          "paymentId",
+          "orderName",
+          "isManual"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "현금영수증 상태"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "현금영수증 발급에 사용된 채널"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "isManual": {
+            "type": "boolean",
+            "title": "수동 발급 여부"
+          }
+        }
+      },
+      "IssuedCashReceipt": {
+        "required": [
+          "status",
+          "merchantId",
+          "storeId",
+          "paymentId",
+          "channel",
+          "amount",
+          "currency",
+          "orderName",
+          "isManual",
+          "issueNumber",
+          "issuedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "현금영수증 상태"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "현금영수증 발급에 사용된 채널"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 금액"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "면세액"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "isManual": {
+            "type": "boolean",
+            "title": "수동 발급 여부"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CashReceiptType",
+            "title": "현금영수증 유형"
+          },
+          "pgReceiptId": {
+            "type": "string",
+            "title": "PG사 현금영수증 아이디"
+          },
+          "issueNumber": {
+            "type": "string",
+            "title": "승인 번호"
+          },
+          "url": {
+            "type": "string",
+            "title": "현금영수증 URL"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "발급 시점"
+          }
+        },
+        "description": "<p>발급 완료</p>\n",
+        "x-portone-title": "발급 완료"
       },
       "IssuedPaymentCashReceipt": {
         "required": [
@@ -14888,7 +17073,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점의 결제 데이터 추가 정보"
+            "title": "사용자 지정 데이터"
           },
           "country": {
             "$ref": "#/components/schemas/Country",
@@ -15031,7 +17216,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점의 결제 데이터 추가 정보"
+            "title": "사용자 지정 데이터"
           },
           "country": {
             "$ref": "#/components/schemas/Country",
@@ -15075,6 +17260,8 @@
             "type": "string"
           }
         },
+        "description": "<p>결제 예약 시점이 과거로 지정된 경우</p>\n",
+        "x-portone-title": "결제 예약 시점이 과거로 지정된 경우",
         "x-portone-status-code": 409
       },
       "PayInstantlyError": {
@@ -15128,7 +17315,7 @@
         "description": "<p>수기 결제 성공 응답</p>\n",
         "x-portone-title": "수기 결제 성공 응답"
       },
-      "PayWithBillinKeyError": {
+      "PayWithBillingKeyError": {
         "oneOf": [
           {
             "$ref": "#/components/schemas/AlreadyPaidError"
@@ -15169,7 +17356,7 @@
           }
         }
       },
-      "PayWithBillinKeyResponse": {
+      "PayWithBillingKeyResponse": {
         "required": [
           "payment"
         ],
@@ -15251,6 +17438,8 @@
             "type": "string"
           }
         },
+        "description": "<p>결제가 이미 취소된 경우</p>\n",
+        "x-portone-title": "결제가 이미 취소된 경우",
         "x-portone-status-code": 409
       },
       "PaymentAmount": {
@@ -15311,8 +17500,7 @@
       },
       "PaymentAmountInput": {
         "required": [
-          "total",
-          "taxFree"
+          "total"
         ],
         "type": "object",
         "properties": {
@@ -15325,11 +17513,6 @@
             "type": "integer",
             "format": "int64",
             "title": "면세액"
-          },
-          "vat": {
-            "type": "integer",
-            "format": "int64",
-            "title": "부가세액"
           }
         },
         "description": "<p>결제 금액 세부 입력 정보</p>\n",
@@ -15432,22 +17615,22 @@
         "x-portone-title": "에스크로 정보",
         "x-portone-discriminator": {
           "CONFIRMED": {
-            "title": "구매 확정 상태"
+            "title": "구매 확정"
           },
           "REJECTED": {
-            "title": "구매 거절 상태"
+            "title": "구매 거절"
           },
           "CANCELLED": {
-            "title": "거래 취소 상태"
+            "title": "거래 취소"
           },
           "REJECT_CONFIRMED": {
-            "title": "구매 거절 확정 상태"
+            "title": "구매 거절 확정"
           },
           "DELIVERED": {
-            "title": "배송 완료 상태"
+            "title": "배송 완료"
           },
           "REGISTERED": {
-            "title": "배송 정보 등록 완료 상태"
+            "title": "배송 정보 등록 완료"
           }
         }
       },
@@ -16069,6 +18252,8 @@
             "type": "string"
           }
         },
+        "description": "<p>결제건이 존재하지 않는 경우</p>\n",
+        "x-portone-title": "결제건이 존재하지 않는 경우",
         "x-portone-status-code": 404
       },
       "PaymentNotPaidError": {
@@ -16084,6 +18269,8 @@
             "type": "string"
           }
         },
+        "description": "<p>결제가 완료되지 않은 경우</p>\n",
+        "x-portone-title": "결제가 완료되지 않은 경우",
         "x-portone-status-code": 409
       },
       "PaymentNotWaitingForDepositError": {
@@ -16099,37 +18286,9 @@
             "type": "string"
           }
         },
+        "description": "<p>결제건이 입금 대기 상태가 아닌 경우</p>\n",
+        "x-portone-title": "결제건이 입금 대기 상태가 아닌 경우",
         "x-portone-status-code": 409
-      },
-      "PaymentPreRegistrationAlreadyExistsError": {
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "x-portone-status-code": 409
-      },
-      "PaymentPreRegistrationNotFoundError": {
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "x-portone-status-code": 404
       },
       "PaymentProduct": {
         "required": [
@@ -16209,7 +18368,7 @@
         "discriminator": {
           "propertyName": "status",
           "mapping": {
-            "CANCELEED": "#/components/schemas/CancelledPaymentSchedule",
+            "CANCELLED": "#/components/schemas/CancelledPaymentSchedule",
             "COMPLETED": "#/components/schemas/CompletedPaymentSchedule",
             "SCHEDULED": "#/components/schemas/ScheduledPaymentSchedule",
             "STARTED": "#/components/schemas/StartedPaymentSchedule"
@@ -16226,7 +18385,7 @@
           "COMPLETED": {
             "title": "결제 완료 상태"
           },
-          "CANCELEED": {
+          "CANCELLED": {
             "title": "결제 예약 취소 상태"
           }
         }
@@ -16244,7 +18403,61 @@
             "type": "string"
           }
         },
+        "description": "<p>결제 예약건이 이미 존재하는 경우</p>\n",
+        "x-portone-title": "결제 예약건이 이미 존재하는 경우",
         "x-portone-status-code": 409
+      },
+      "PaymentScheduleAlreadyProcessedError": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>결제 예약건이 이미 처리된 경우</p>\n",
+        "x-portone-title": "결제 예약건이 이미 처리된 경우",
+        "x-portone-status-code": 409
+      },
+      "PaymentScheduleFilterInput": {
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예정 시점 조건 범위의 시작",
+            "description": "<p>값을 입력하지 않으면 파라미터 end의 90일 전으로 설정됩니다.</p>\n"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예정 시점 조건 범위의 끝",
+            "description": "<p>값을 입력하지 않으면 현재 시점으로 설정됩니다.</p>\n"
+          },
+          "status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentScheduleStatus"
+            },
+            "title": "결제 예약 건 상태 리스트"
+          }
+        },
+        "description": "<p>결제 예약 건 다건 조회를 위한 입력 정보</p>\n",
+        "x-portone-title": "결제 예약 건 다건 조회를 위한 입력 정보"
       },
       "PaymentScheduleNotFoundError": {
         "required": [
@@ -16259,7 +18472,34 @@
             "type": "string"
           }
         },
+        "description": "<p>결제 예약건이 존재하지 않는 경우</p>\n",
+        "x-portone-title": "결제 예약건이 존재하지 않는 경우",
         "x-portone-status-code": 404
+      },
+      "PaymentScheduleStatus": {
+        "type": "string",
+        "description": "<p>결제 예약 건 상태</p>\n",
+        "enum": [
+          "CANCELLED",
+          "COMPLETED",
+          "SCHEDULED",
+          "STARTED"
+        ],
+        "x-portone-title": "결제 예약 건 상태",
+        "x-portone-enum": {
+          "SCHEDULED": {
+            "title": "예약 완료"
+          },
+          "STARTED": {
+            "title": "결제 시작"
+          },
+          "COMPLETED": {
+            "title": "결제 완료"
+          },
+          "CANCELLED": {
+            "title": "취소된 결제 예약"
+          }
+        }
       },
       "PaymentScheduleSummary": {
         "required": [
@@ -16831,7 +19071,7 @@
         },
         "description": "<p>PG사에서 오류가 발생한 경우</p>\n",
         "x-portone-title": "PG사에서 오류가 발생한 경우",
-        "x-portone-status-code": 503
+        "x-portone-status-code": 502
       },
       "Platform": {
         "required": [
@@ -20948,16 +23188,13 @@
       "PreRegisterPaymentError": {
         "oneOf": [
           {
+            "$ref": "#/components/schemas/AlreadyPaidError"
+          },
+          {
             "$ref": "#/components/schemas/ForbiddenError"
           },
           {
             "$ref": "#/components/schemas/InvalidRequestError"
-          },
-          {
-            "$ref": "#/components/schemas/PaymentPreRegistrationAlreadyExistsError"
-          },
-          {
-            "$ref": "#/components/schemas/PaymentPreRegistrationNotFoundError"
           },
           {
             "$ref": "#/components/schemas/UnauthorizedError"
@@ -20966,10 +23203,9 @@
         "discriminator": {
           "propertyName": "type",
           "mapping": {
+            "ALREADY_PAID": "#/components/schemas/AlreadyPaidError",
             "FORBIDDEN": "#/components/schemas/ForbiddenError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
-            "PAYMENT_PRE_REGISTRATION_ALREADY_EXISTS": "#/components/schemas/PaymentPreRegistrationAlreadyExistsError",
-            "PAYMENT_PRE_REGISTRATION_NOT_FOUND": "#/components/schemas/PaymentPreRegistrationNotFoundError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }
         }
@@ -21000,7 +23236,7 @@
           },
           "channel": {
             "$ref": "#/components/schemas/SelectedChannel",
-            "title": "선택된 본인인증 채널"
+            "title": "사용된 본인인증 채널"
           },
           "requestedCustomer": {
             "$ref": "#/components/schemas/IdentityVerificationRequestedCustomer",
@@ -21141,7 +23377,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점의 결제 데이터 추가 정보"
+            "title": "사용자 지정 데이터"
           },
           "country": {
             "$ref": "#/components/schemas/Country",
@@ -21234,8 +23470,8 @@
             "title": "배송등록 처리 일자"
           }
         },
-        "description": "<p>배송 정보 등록 완료 상태</p>\n",
-        "x-portone-title": "배송 정보 등록 완료 상태"
+        "description": "<p>배송 정보 등록 완료</p>\n",
+        "x-portone-title": "배송 정보 등록 완료"
       },
       "RejectConfirmedPaymentEscrow": {
         "required": [
@@ -21268,8 +23504,8 @@
             "title": "배송등록 처리 일자"
           }
         },
-        "description": "<p>구매 거절 확정 상태</p>\n",
-        "x-portone-title": "구매 거절 확정 상태"
+        "description": "<p>구매 거절 확정</p>\n",
+        "x-portone-title": "구매 거절 확정"
       },
       "RejectPlatformPartnerBody": {
         "type": "object",
@@ -21352,8 +23588,8 @@
             "title": "배송등록 처리 일자"
           }
         },
-        "description": "<p>구매 거절 상태</p>\n",
-        "x-portone-title": "구매 거절 상태"
+        "description": "<p>구매 거절</p>\n",
+        "x-portone-title": "구매 거절"
       },
       "RequestedPaymentCancellation": {
         "required": [
@@ -21692,6 +23928,66 @@
         "type": "object",
         "description": "<p>본인인증 요청 재전송 성공 응답</p>\n",
         "x-portone-title": "본인인증 요청 재전송 성공 응답"
+      },
+      "ResendWebhookBody": {
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          },
+          "webhookId": {
+            "type": "string",
+            "title": "웹훅 아이디",
+            "description": "<p>입력하지 않으면 결제 건의 가장 최근 웹훅 아이디가 기본 적용됩니다</p>\n"
+          }
+        },
+        "description": "<p>웹훅 재발송을 위한 입력 정보</p>\n",
+        "x-portone-description": "<p>웹훅 재발송을 위한 입력 정보</p>\n"
+      },
+      "ResendWebhookError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          {
+            "$ref": "#/components/schemas/WebhookNotFoundError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PAYMENT_NOT_FOUND": "#/components/schemas/PaymentNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError",
+            "WEBHOOK_NOT_FOUND": "#/components/schemas/WebhookNotFoundError"
+          }
+        }
+      },
+      "ResendWebhookResponse": {
+        "required": [
+          "webhook"
+        ],
+        "type": "object",
+        "properties": {
+          "webhook": {
+            "$ref": "#/components/schemas/PaymentWebhook",
+            "title": "재발송 웹훅 정보"
+          }
+        },
+        "description": "<p>웹훅 재발송 응답 정보</p>\n",
+        "x-portone-title": "웹훅 재발송 응답 정보"
       },
       "ScheduleAdditionalFeePolicyError": {
         "oneOf": [
@@ -22122,7 +24418,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점에서 추가로 저장할 데이터"
+            "title": "사용자 지정 데이터"
           },
           "totalAmount": {
             "type": "integer",
@@ -22243,7 +24539,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "사용자 정의 데이터"
+            "title": "사용자 지정 데이터"
           },
           "bypass": {
             "type": "string",
@@ -22283,7 +24579,8 @@
           },
           "identityNumber": {
             "type": "string",
-            "title": "주민등록번호 앞 7자리 (SMS 방식의 경우 필수)"
+            "title": "주민등록번호 앞 7자리",
+            "description": "<p>SMS 방식의 경우 필수로 입력합니다.</p>\n"
           }
         },
         "description": "<p>본인인증 요청을 위한 고객 정보</p>\n",
@@ -22469,7 +24766,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점에서 추가로 저장할 데이터"
+            "title": "사용자 지정 데이터"
           },
           "totalAmount": {
             "type": "integer",
@@ -22587,7 +24884,27 @@
             "type": "string"
           }
         },
+        "description": "<p>면세 금액이 전체 결제 금액을 초과한 경우</p>\n",
+        "x-portone-title": "면세 금액이 전체 결제 금액을 초과한 경우",
         "x-portone-status-code": 409
+      },
+      "Type": {
+        "type": "string",
+        "description": "<p>가상계좌 발급 유형</p>\n",
+        "enum": [
+          "FIXED",
+          "NORMAL"
+        ],
+        "x-portone-title": "가상계좌 발급 유형",
+        "x-portone-enum": {
+          "NORMAL": {
+            "title": "회전식 가상계좌",
+            "description": "<p>공용으로 사용되는 가상계좌번호중 하나를 PG사에서 내려주는 방식입니다.</p>\n"
+          },
+          "FIXED": {
+            "title": "고정식 가상계좌"
+          }
+        }
       },
       "UnauthorizedError": {
         "required": [
@@ -23292,7 +25609,7 @@
           },
           "customData": {
             "type": "string",
-            "title": "가맹점의 결제 데이터 추가 정보"
+            "title": "사용자 지정 데이터"
           },
           "country": {
             "$ref": "#/components/schemas/Country",
@@ -23301,6 +25618,23 @@
         },
         "description": "<p>가상계좌 발급 완료 상태 건</p>\n",
         "x-portone-title": "가상계좌 발급 완료 상태 건"
+      },
+      "WebhookNotFoundError": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>웹훅 내역이 존재하지 않는 경우</p>\n",
+        "x-portone-title": "웹훅 내역이 존재하지 않는 경우",
+        "x-portone-status-code": 404
       }
     },
     "securitySchemes": {
@@ -23315,40 +25649,31 @@
     {
       "id": "auth",
       "title": "인증 관련 API",
-      "description": "<p>API 인증에 관련된 기능을 제공합니다.</p>\n"
+      "description": "<p>인증과 관련된 API 기능을 제공합니다.</p>\n"
     },
     {
       "id": "payment",
       "title": "결제 관련 API",
-      "description": "<p>API 결제와 관련된 기능을 제공합니다.</p>\n"
+      "description": "<p>결제와 관련된 API 기능을 제공합니다.</p>\n"
     },
     {
       "id": "paymentSchedule",
       "title": "결제 예약 관련 API",
-      "description": "<p>API 결제 예약과 관련된 기능을 제공합니다.</p>\n"
+      "description": "<p>결제 예약과 관련된 API 기능을 제공합니다.</p>\n"
+    },
+    {
+      "id": "billingKey",
+      "title": "빌링키 관련 API",
+      "description": "<p>빌링키와 관련된 API 기능을 제공합니다.</p>\n"
+    },
+    {
+      "id": "cashReceipt",
+      "title": "현금 영수증 관련 API",
+      "description": "<p>현금 영수증과 관련된 API 기능을 제공합니다.</p>\n"
     },
     {
       "id": "identityVerification",
       "title": "본인인증 관련 API"
-    },
-    {
-      "id": "analytics",
-      "title": "리포트"
-    },
-    {
-      "id": "platform",
-      "title": "파트너 정산",
-      "children": [
-        {
-          "id": "platform.policy",
-          "title": "정책 관련 API",
-          "description": "<p>파트너 정산에 적용할 정책에 관한 API 입니다.</p>\n"
-        },
-        {
-          "id": "platform.transfer",
-          "title": "정산 상세내역 관련 API"
-        }
-      ]
     }
   ]
 }
