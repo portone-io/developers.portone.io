@@ -11,7 +11,7 @@ import {
   getResponseSchemata,
 } from "../schema-utils/operation";
 import {
-  PropertiesDoc,
+  ReqPropertiesDoc,
   TypeDefDoc,
   TypeDefDocContainer,
 } from "../category/type-def";
@@ -56,11 +56,12 @@ export default function EndpointDoc({
         </div>
       </prose.h3>
       <TwoColumnLayout
+        gap={6}
         left={
           <>
             {description && (
-              <article class="bg-slate-1 overflow-hidden rounded">
-                <DescriptionArea bgColor="rgb(241,245,249)">
+              <article class="overflow-hidden rounded">
+                <DescriptionArea>
                   <div
                     class="p-2 text-sm"
                     dangerouslySetInnerHTML={{
@@ -72,6 +73,8 @@ export default function EndpointDoc({
             )}
             <TwoColumnLayout
               className="mt-2"
+              bp="md"
+              gap={6}
               leftClassName="flex flex-col gap-2"
               rightClassName="flex flex-col gap-2"
               left={
@@ -88,8 +91,6 @@ export default function EndpointDoc({
                   operation={operation}
                 />
               }
-              bp="md"
-              gap={2}
             />
           </>
         }
@@ -123,21 +124,21 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
     return (
       <>
         {showPath && (
-          <Parameters
+          <ReqParameters
             basepath={basepath}
             title="Path"
             parameters={pathParameters}
           />
         )}
         {showQuery && (
-          <Parameters
+          <ReqParameters
             basepath={basepath}
             title="Query"
             parameters={queryParameters}
           />
         )}
         {showBody && (
-          <Parameters
+          <ReqParameters
             basepath={basepath}
             title="Body"
             parameters={bodyParameters}
@@ -181,23 +182,21 @@ function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
   );
 }
 
-interface ParametersProps {
+interface ReqParametersProps {
   basepath: string;
   title?: string | undefined;
   description?: string | undefined;
   parameters: Parameter[];
 }
-function Parameters({
+function ReqParameters({
   basepath,
   title,
   description,
   parameters,
-}: ParametersProps) {
+}: ReqParametersProps) {
   return (
     <ReqRes title={title} description={description}>
-      <TypeDefDocContainer>
-        <PropertiesDoc basepath={basepath} properties={parameters} />
-      </TypeDefDocContainer>
+      <ReqPropertiesDoc basepath={basepath} properties={parameters} />
     </ReqRes>
   );
 }

@@ -19,6 +19,7 @@ import {
 import Expand from "./Expand";
 import DescriptionArea from "../DescriptionArea";
 import { useSignal } from "@preact/signals";
+import { interleave } from "..";
 
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -217,13 +218,50 @@ export function PropertiesDoc({ basepath, properties }: PropertiesDocProps) {
   );
 }
 
+export interface ReqPropertiesDocProps {
+  basepath: string;
+  properties: BakedProperty[];
+}
+export function ReqPropertiesDoc({
+  basepath,
+  properties,
+}: ReqPropertiesDocProps) {
+  return (
+    <div class="flex flex-col gap-4">
+      {properties.length ? (
+        interleave(
+          properties.map((property) => (
+            <PropertyDoc
+              basepath={basepath}
+              name={property.name}
+              required={property.required}
+              property={property}
+              bgColor="white"
+            />
+          )),
+          <hr />
+        )
+      ) : (
+        <div class="text-slate-5 text-xs">(내용 없음)</div>
+      )}
+    </div>
+  );
+}
+
 interface PropertyDocProps {
   basepath: string;
   name: string;
   required?: boolean | undefined;
   property: Property;
+  bgColor?: string | undefined;
 }
-function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
+function PropertyDoc({
+  basepath,
+  name,
+  required,
+  property,
+  bgColor,
+}: PropertyDocProps) {
   const title =
     property["x-portone-title"] ||
     property.title ||
@@ -231,7 +269,7 @@ function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
     "";
   const deprecated = Boolean(property.deprecated);
   return (
-    <div class={`flex flex-col gap-2 ${deprecated ? "opacity-50" : ""}`}>
+    <div class={`flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
       <div>
         <div class="text-slate-5 text-xs">
           {title && <span>{title}</span>}{" "}
@@ -244,7 +282,7 @@ function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
           <TypeReprDoc basepath={basepath} def={property} />
         </div>
       </div>
-      <DescriptionDoc typeDef={property} />
+      <DescriptionDoc typeDef={property} bgColor={bgColor} />
     </div>
   );
 }
@@ -278,8 +316,12 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
 
 interface DescriptionDocProps {
   typeDef: TypeDef | Property;
+  bgColor?: string | undefined;
 }
-function DescriptionDoc({ typeDef }: DescriptionDocProps) {
+function DescriptionDoc({
+  typeDef,
+  bgColor = "rgb(241,245,249)",
+}: DescriptionDocProps) {
   const __html =
     (typeDef["x-portone-description"] ??
       typeDef["x-portone-summary"] ??
@@ -287,7 +329,7 @@ function DescriptionDoc({ typeDef }: DescriptionDocProps) {
       typeDef.summary) ||
     "";
   return __html ? (
-    <DescriptionArea maxHeightPx={16 * 6} bgColor="rgb(241,245,249)">
+    <DescriptionArea maxHeightPx={16 * 6} bgColor={bgColor}>
       <div class="text-slate-5 flex flex-col gap-1 text-sm">
         <div dangerouslySetInnerHTML={{ __html }} />
       </div>
