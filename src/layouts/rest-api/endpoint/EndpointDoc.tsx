@@ -123,6 +123,7 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
   if (showPath || showQuery || showBody) {
     return (
       <>
+        <prose.h4>Request</prose.h4>
         {showPath && (
           <ReqParameters
             basepath={basepath}
@@ -159,6 +160,7 @@ function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
   const responseSchemata = getResponseSchemata(schema, operation);
   return (
     <>
+      <prose.h4>Response</prose.h4>
       {responseSchemata.map(
         ([statusCode, { response, schema: responseSchema }]) => (
           <ReqRes
