@@ -4,7 +4,7 @@ export function h1({ children, ...props }: any) {
   return (
     <h1
       {...props}
-      class={`text-22px mt-24px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
+      class={`text-22px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
         props.class || ""
       }`.trim()}
     >
@@ -21,7 +21,7 @@ export const h2 = forwardRef<HTMLHeadingElement, any>(function h2(
     <h2
       ref={ref}
       {...props}
-      class={`text-18px mt-24px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
+      class={`text-18px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
         props.class || ""
       }`.trim()}
     >
@@ -34,7 +34,7 @@ export function h3({ children, ...props }: any) {
   return (
     <h3
       {...props}
-      class={`text-16px mt-24px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
+      class={`text-16px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
         props.class || ""
       }`.trim()}
     >
@@ -47,7 +47,7 @@ export function h4({ children, ...props }: any) {
   return (
     <h4
       {...props}
-      class={`mt-16px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
+      class={`mt-8px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
         props.class || ""
       }`.trim()}
     >
@@ -60,7 +60,9 @@ export function p({ children, ...props }: any) {
   return (
     <p
       {...props}
-      class={`mt-16px leading-[1.6] first:mt-0 last:mb-0 ${props.class || ""}`}
+      class={`mt-8px mb-8px leading-[1.6] first:mt-0 last:mb-0 ${
+        props.class || ""
+      }`}
     >
       {children}
     </p>
