@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "PortOne API",
-    "version": "1.5.0-RC6"
+    "version": "1.5.0-RC13"
   },
   "servers": [
     {
@@ -4131,7 +4131,7 @@
         }
       }
     },
-    "/payments/pre-register": {},
+    "/payments/{paymentId}/pre-register": {},
     "/billing-keys/{id}": {
       "get": {
         "description": "<p>빌링키 단건 조회</p>\n<p>주어진 빌링키에 대응되는 빌링키 정보를 조회합니다.</p>\n",
@@ -4591,7 +4591,7 @@
         }
       }
     },
-    "/payments/cursor": {
+    "/payments-by-cursor": {
       "get": {
         "description": "<p>결제 대용량 다건 조회(커서 기반)</p>\n<p>기간 내 모든 결제 건을 커서 기반으로 조회합니다. 결제 건의 생성일시를 기준으로 주어진 기간 내 존재하는 모든 결제 건이 조회됩니다.</p>\n",
         "operationId": "getAllPaymentsByCursor",
@@ -4658,7 +4658,8 @@
         "x-portone-description": "<p>기간 내 모든 결제 건을 커서 기반으로 조회합니다. 결제 건의 생성일시를 기준으로 주어진 기간 내 존재하는 모든 결제 건이 조회됩니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/GetAllPaymentsError"
-        }
+        },
+        "x-portone-unstable": true
       }
     },
     "/payment-schedules/{id}": {
@@ -6072,79 +6073,7 @@
         }
       }
     },
-    "/channels": {
-      "get": {
-        "description": "<p>채널 리스트 조회</p>\n<p>상점에 존재하는 V2 채널 리스트를 조회합니다.</p>\n",
-        "operationId": "getChannels",
-        "parameters": [
-          {
-            "name": "storeId",
-            "in": "query",
-            "description": "<p>상점 아이디</p>\n<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "x-portone-title": "상점 아이디",
-            "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "<p>성공 응답으로 채널 리스트를 반환합니다.</p>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetChannelsResponse"
-                }
-              }
-            },
-            "x-portone-description": "<p>성공 응답으로 채널 리스트를 반환합니다.</p>\n"
-          },
-          "400": {
-            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetChannelsError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetChannelsError"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetChannelsError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerJwt": []
-          }
-        ],
-        "x-portone-category": "channel",
-        "x-portone-title": "채널 리스트 조회",
-        "x-portone-description": "<p>상점에 존재하는 V2 채널 리스트를 조회합니다.</p>\n",
-        "x-portone-error": {
-          "$ref": "#/components/schemas/GetChannelsError"
-        }
-      }
-    },
+    "/channels": {},
     "/analytics/charts/payment": {
       "get": {
         "description": "<p>가맹점의 결제 현황을 조회합니다.</p>\n",
@@ -9037,8 +8966,8 @@
           "id",
           "merchantId",
           "storeId",
-          "method",
           "channel",
+          "version",
           "requestedAt",
           "updatedAt",
           "statusChangedAt",
@@ -9074,6 +9003,10 @@
           "channel": {
             "$ref": "#/components/schemas/SelectedChannel",
             "title": "결제 채널"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           },
           "scheduleId": {
             "type": "string",
@@ -13622,7 +13555,7 @@
           "id",
           "merchantId",
           "storeId",
-          "channel",
+          "version",
           "requestedAt",
           "updatedAt",
           "statusChangedAt",
@@ -13657,6 +13590,10 @@
           "channel": {
             "$ref": "#/components/schemas/SelectedChannel",
             "title": "결제 채널"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           },
           "scheduleId": {
             "type": "string",
@@ -16500,7 +16437,6 @@
           "orderName",
           "currency",
           "totalAmount",
-          "taxFreeAmount",
           "customer"
         ],
         "type": "object",
@@ -16967,6 +16903,7 @@
           "storeId",
           "method",
           "channel",
+          "version",
           "requestedAt",
           "updatedAt",
           "statusChangedAt",
@@ -17001,6 +16938,10 @@
           "channel": {
             "$ref": "#/components/schemas/SelectedChannel",
             "title": "결제 채널"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           },
           "scheduleId": {
             "type": "string",
@@ -17106,8 +17047,8 @@
           "id",
           "merchantId",
           "storeId",
-          "method",
           "channel",
+          "version",
           "requestedAt",
           "updatedAt",
           "statusChangedAt",
@@ -17144,6 +17085,10 @@
           "channel": {
             "$ref": "#/components/schemas/SelectedChannel",
             "title": "결제 채널"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           },
           "scheduleId": {
             "type": "string",
@@ -23152,20 +23097,26 @@
         "x-portone-description": "<p>요청한 정산일에 이체되지 않은 주문 정산 건이 없을 때 발생합니다.</p>\n",
         "x-portone-status-code": 400
       },
-      "PreRegisterPaymentBody": {
-        "required": [
-          "paymentId"
+      "PortOneVersion": {
+        "type": "string",
+        "description": "<p>포트원 버전</p>\n",
+        "enum": [
+          "V1",
+          "V2"
         ],
+        "x-portone-title": "포트원 버전",
+        "x-portone-enum": {
+          "V1": {},
+          "V2": {}
+        }
+      },
+      "PreRegisterPaymentBody": {
         "type": "object",
         "properties": {
           "storeId": {
             "type": "string",
             "title": "상점 아이디",
             "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
-          },
-          "paymentId": {
-            "type": "string",
-            "title": "결제건 아이디"
           },
           "totalAmount": {
             "type": "integer",
@@ -23271,7 +23222,7 @@
           "id",
           "merchantId",
           "storeId",
-          "channel",
+          "version",
           "requestedAt",
           "updatedAt",
           "statusChangedAt",
@@ -23305,6 +23256,10 @@
           "channel": {
             "$ref": "#/components/schemas/SelectedChannel",
             "title": "결제 채널"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           },
           "scheduleId": {
             "type": "string",
@@ -25502,8 +25457,8 @@
           "id",
           "merchantId",
           "storeId",
-          "method",
           "channel",
+          "version",
           "requestedAt",
           "updatedAt",
           "statusChangedAt",
@@ -25537,6 +25492,10 @@
           "channel": {
             "$ref": "#/components/schemas/SelectedChannel",
             "title": "결제 채널"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           },
           "scheduleId": {
             "type": "string",
