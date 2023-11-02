@@ -111,11 +111,13 @@ function toNavMenuItems(
         type: "page",
         slug: item.slug,
         title: frontmatters[item.slug]?.["title"] || "",
-        items: toNavMenuItems(
-          item.items,
-          frontmatters,
-          _systemVersion
-        ) as NavMenuPage[],
+        items: item.items
+          ? (toNavMenuItems(
+              item.items,
+              frontmatters,
+              _systemVersion
+            ) as NavMenuPage[])
+          : [],
         systemVersion: _systemVersion,
       };
     } else {
