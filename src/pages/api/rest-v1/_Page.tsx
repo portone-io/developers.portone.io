@@ -1,5 +1,8 @@
 import * as prose from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
+import SchemaDownloadButton, {
+  PostmanGuide,
+} from "~/layouts/rest-api/misc/SchemaDownloadButton";
 import schema from "~/schema/v1.openapi.json";
 
 export interface RestV1Props {
@@ -23,6 +26,14 @@ export default function RestV1({ currentSection }: RestV1Props) {
       <prose.p>
         <strong>V1 API hostname: </strong>
         <code>api.iamport.kr</code>
+      </prose.p>
+      <prose.p>
+        <SchemaDownloadButton
+          label="Swagger JSON 내려받기"
+          href="https://raw.githubusercontent.com/portone-io/developers.portone.io/main/src/schema/v1.openapi.json"
+        >
+          <PostmanGuide href="https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-from-swagger/" />
+        </SchemaDownloadButton>
       </prose.p>
     </RestApi>
   );
