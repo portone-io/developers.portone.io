@@ -41,7 +41,10 @@ export default function Res({ resSignal }: ResProps) {
           ]}
         />
       ) : (
-        <span class="text-slate-4 text-xs font-bold">N/A</span>
+        <>
+          <span class="text-slate-4 text-xs font-bold">N/A</span>
+          <div class="bg-slate-1 rounded opacity-50" />
+        </>
       )}
     </div>
   );

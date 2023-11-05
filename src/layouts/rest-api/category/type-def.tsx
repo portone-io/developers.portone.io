@@ -271,15 +271,15 @@ function PropertyDoc({
   return (
     <div class={`flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
       <div>
-        <div class="text-slate-5 text-xs">
-          {title && <span>{title}</span>}{" "}
-          <span class="inline-block">{required ? "(필수)" : "(선택)"}</span>{" "}
-          {deprecated && <span class="inline-block">(Deprecated)</span>}
-        </div>
         <div class="font-mono font-bold leading-tight">
           <span>{name}</span>
           <span>: </span>
           <TypeReprDoc basepath={basepath} def={property} />
+        </div>
+        <div class="text-slate-5 text-xs">
+          {title && <span>{title}</span>}{" "}
+          <span class="inline-block">{required ? "(필수)" : "(선택)"}</span>{" "}
+          {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>
       </div>
       <DescriptionDoc typeDef={property} bgColor={bgColor} />
@@ -295,13 +295,13 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
   const typeRepr = repr(def);
   const isUserType = typeRepr[0]?.toUpperCase() === typeRepr[0];
   if (!isUserType) {
-    return <span class="text-slate-5 font-bold">{typeRepr}</span>;
+    return <span class="text-green-6 font-bold">{typeRepr}</span>;
   }
   const typeName = typeRepr.replace("[]", "");
   const href = `${basepath}/type-def#${typeName}`;
   return (
     <a
-      class="text-slate-5 hover:text-orange-5 inline-block font-bold underline-offset-4 transition-colors hover:underline"
+      class="text-green-6 hover:text-orange-5 inline-block font-bold underline-offset-4 transition-colors hover:underline"
       href={href}
       onClick={(e) => {
         e.preventDefault();

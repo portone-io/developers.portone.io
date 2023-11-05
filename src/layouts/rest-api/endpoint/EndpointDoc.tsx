@@ -36,25 +36,32 @@ export default function EndpointDoc({
     operation["x-portone-description"] || operation.description;
   return (
     <div class="flex flex-col">
-      <prose.h3 id={getEndpointRepr(endpoint)} class="target:text-orange-5">
-        <div class="flex items-end gap-1 rounded font-mono text-sm opacity-70">
-          <span class="text-base font-bold uppercase">{method}</span>
-          <span>{path}</span>
+      <div class="mb-4 grid lg:grid-cols-2">
+        <div class="flex items-center lg:order-last lg:justify-end">
+          <div class="bg-slate-1 inline-flex items-center gap-1 rounded-full pr-3 text-sm opacity-70">
+            <MethodBadge method={method} />
+            <span class="ml-1 font-mono text-xs font-normal">{path}</span>
+          </div>
         </div>
-        <div class="flex items-center gap-2">
-          <span>{title}</span>
-          {deprecated && (
-            <span class="bg-slate-1 px-2 text-sm uppercase opacity-70">
-              deprecated
-            </span>
-          )}
-          {unstable && (
-            <span class="bg-slate-1 px-2 text-sm uppercase opacity-70">
-              unstable
-            </span>
-          )}
-        </div>
-      </prose.h3>
+        <h3
+          id={getEndpointRepr(endpoint)}
+          class="target:text-orange-5 text-lg font-bold"
+        >
+          <div class="flex items-center gap-2">
+            <span>{title}</span>
+            {deprecated && (
+              <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+                deprecated
+              </span>
+            )}
+            {unstable && (
+              <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+                unstable
+              </span>
+            )}
+          </div>
+        </h3>
+      </div>
       <TwoColumnLayout
         gap={6}
         left={
@@ -72,7 +79,7 @@ export default function EndpointDoc({
               </article>
             )}
             <TwoColumnLayout
-              className="mt-2"
+              className="mt-6"
               bp="md"
               gap={6}
               leftClassName="flex flex-col gap-2"
@@ -98,6 +105,29 @@ export default function EndpointDoc({
         right={renderRightFn?.({ schema, endpoint, operation })}
       />
     </div>
+  );
+}
+
+interface MethodBadgeProps {
+  method: string;
+}
+function MethodBadge({ method }: MethodBadgeProps) {
+  const colorClass =
+    method === "get"
+      ? "bg-green-2 text-green-7"
+      : method === "post"
+      ? "bg-blue-2 text-blue-7"
+      : method === "put"
+      ? "bg-yellow-2 text-yellow-7"
+      : method === "delete"
+      ? "bg-red-2 text-red-7"
+      : "bg-slate-2 text-slate-7";
+  return (
+    <span
+      class={`${colorClass} shrink-0 rounded-full px-3 font-bold uppercase`}
+    >
+      {method}
+    </span>
   );
 }
 
