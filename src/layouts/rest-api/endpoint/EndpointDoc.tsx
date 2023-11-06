@@ -10,11 +10,7 @@ import {
   Operation,
   getResponseSchemata,
 } from "../schema-utils/operation";
-import {
-  ReqPropertiesDoc,
-  TypeDefDoc,
-  TypeDefDocContainer,
-} from "../category/type-def";
+import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";
 import { resolveTypeDef } from "../schema-utils/type-def";
 import DescriptionArea from "../DescriptionArea";
 
@@ -192,15 +188,11 @@ function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
             title={statusCode}
             description={response.description}
           >
-            <TypeDefDocContainer>
-              <TypeDefDoc
-                basepath={basepath}
-                schema={schema}
-                typeDef={
-                  responseSchema && resolveTypeDef(schema, responseSchema)
-                }
-              />
-            </TypeDefDocContainer>
+            <TypeDefDoc
+              basepath={basepath}
+              schema={schema}
+              typeDef={responseSchema && resolveTypeDef(schema, responseSchema)}
+            />
           </ReqRes>
         )
       )}

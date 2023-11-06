@@ -39,7 +39,7 @@ export default function Req({
   const reqBodyParams = useReqParams(schema, operation, "body");
   return (
     <div class="grid grid-rows-[auto_auto_minmax(0,1fr)] gap-1">
-      <div class="flex justify-between text-xs">
+      <div class="flex justify-between text-sm">
         <span class="font-bold">Request</span>
         <button
           class="bg-slate-1 rounded px-4 font-bold"

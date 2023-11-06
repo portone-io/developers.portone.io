@@ -82,26 +82,17 @@ export function TypeDefinitions({
                   {getTypeDefKind(typeDef)}
                 </span>
               </prose.h3>
-              <TypeDefDocContainer>
-                <TypeDefDoc
-                  basepath={basepath}
-                  schema={schema}
-                  typeDef={typeDef}
-                />
-              </TypeDefDocContainer>
+              <TypeDefDoc
+                basepath={basepath}
+                schema={schema}
+                typeDef={typeDef}
+              />
             </div>
           ))}
         </div>
       </Expand>
     </section>
   );
-}
-
-export interface TypeDefDocContainerProps {
-  children: any;
-}
-export function TypeDefDocContainer({ children }: TypeDefDocContainerProps) {
-  return <div class="bg-slate-1 rounded p-2">{children}</div>;
 }
 
 export interface TypeDefDocProps {
@@ -168,11 +159,11 @@ interface EnumDocProps {
 }
 function EnumDoc({ xPortoneEnum }: EnumDocProps) {
   return (
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
       {Object.entries(xPortoneEnum || {}).map(([enumValue, enumCase]) => {
         const title = enumCase["x-portone-title"] || enumCase.title || "";
         return (
-          <div class="flex flex-col gap-2">
+          <div class="bg-slate-1 flex flex-col gap-2 rounded p-2">
             <div class="flex items-center gap-2 leading-none">
               <code>{enumValue}</code>
               <span class="text-slate-5 text-sm">{title}</span>
@@ -201,19 +192,19 @@ export interface PropertiesDocProps {
 }
 export function PropertiesDoc({ basepath, properties }: PropertiesDocProps) {
   return (
-    <div class="flex flex-col gap-4">
-      {properties.length ? (
-        properties.map((property) => (
-          <PropertyDoc
-            basepath={basepath}
-            name={property.name}
-            required={property.required}
-            property={property}
-          />
-        ))
-      ) : (
-        <div class="text-slate-5 text-xs">(내용 없음)</div>
-      )}
+    <div class="flex flex-col gap-2">
+      {properties.length
+        ? properties.map((property) => (
+            <div class="bg-slate-1 rounded py-1">
+              <PropertyDoc
+                basepath={basepath}
+                name={property.name}
+                required={property.required}
+                property={property}
+              />
+            </div>
+          ))
+        : null}
     </div>
   );
 }
@@ -228,22 +219,20 @@ export function ReqPropertiesDoc({
 }: ReqPropertiesDocProps) {
   return (
     <div class="flex flex-col gap-1">
-      {properties.length ? (
-        interleave(
-          properties.map((property) => (
-            <PropertyDoc
-              basepath={basepath}
-              name={property.name}
-              required={property.required}
-              property={property}
-              bgColor="white"
-            />
-          )),
-          <hr />
-        )
-      ) : (
-        <div class="text-slate-5 text-xs">(내용 없음)</div>
-      )}
+      {properties.length
+        ? interleave(
+            properties.map((property) => (
+              <PropertyDoc
+                basepath={basepath}
+                name={property.name}
+                required={property.required}
+                property={property}
+                bgColor="white"
+              />
+            )),
+            <hr />
+          )
+        : null}
     </div>
   );
 }
