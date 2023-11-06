@@ -227,7 +227,7 @@ export function ReqPropertiesDoc({
   properties,
 }: ReqPropertiesDocProps) {
   return (
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-1">
       {properties.length ? (
         interleave(
           properties.map((property) => (
@@ -270,14 +270,18 @@ function PropertyDoc({
   const deprecated = Boolean(property.deprecated);
   return (
     <div class={`flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
-      <div>
-        <div class="font-mono font-bold leading-tight">
-          <span>{name}</span>
-          <span>: </span>
-          <TypeReprDoc basepath={basepath} def={property} />
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="mr-4 inline-block font-mono font-bold leading-tight">
+            <span>{name}</span>
+            <span class="-mr-[6px]">: </span>
+            <TypeReprDoc basepath={basepath} def={property} />
+          </div>
+          <div class="text-slate-5 inline-block text-xs">
+            {title && <span>{title}</span>}
+          </div>
         </div>
-        <div class="text-slate-5 text-xs">
-          {title && <span>{title}</span>}{" "}
+        <div class="text-slate-5 inline-block shrink-0 text-xs">
           <span class="inline-block">{required ? "(필수)" : "(선택)"}</span>{" "}
           {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>

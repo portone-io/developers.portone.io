@@ -43,9 +43,10 @@ export default function EndpointDoc({
             <span class="ml-1 font-mono text-xs font-normal">{path}</span>
           </div>
         </div>
-        <h3
+        <prose.h3
           id={getEndpointRepr(endpoint)}
-          class="target:text-orange-5 text-lg font-bold"
+          class="target:text-orange-5"
+          style={{ marginTop: 0 }}
         >
           <div class="flex items-center gap-2">
             <span>{title}</span>
@@ -60,12 +61,12 @@ export default function EndpointDoc({
               </span>
             )}
           </div>
-        </h3>
+        </prose.h3>
       </div>
       <TwoColumnLayout
         gap={6}
         left={
-          <>
+          <div class="flex flex-col gap-6">
             {description && (
               <article class="overflow-hidden rounded">
                 <DescriptionArea>
@@ -78,28 +79,17 @@ export default function EndpointDoc({
                 </DescriptionArea>
               </article>
             )}
-            <TwoColumnLayout
-              className="mt-6"
-              bp="md"
-              gap={6}
-              leftClassName="flex flex-col gap-2"
-              rightClassName="flex flex-col gap-2"
-              left={
-                <RequestDoc
-                  basepath={basepath}
-                  schema={schema}
-                  operation={operation}
-                />
-              }
-              right={
-                <ResponseDoc
-                  basepath={basepath}
-                  schema={schema}
-                  operation={operation}
-                />
-              }
+            <RequestDoc
+              basepath={basepath}
+              schema={schema}
+              operation={operation}
             />
-          </>
+            <ResponseDoc
+              basepath={basepath}
+              schema={schema}
+              operation={operation}
+            />
+          </div>
         }
         smallRight
         right={renderRightFn?.({ schema, endpoint, operation })}
@@ -152,8 +142,10 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
   const showBody = bodyParameters.length > 0;
   if (showPath || showQuery || showBody) {
     return (
-      <>
-        <prose.h4>Request</prose.h4>
+      <div class="flex flex-col gap-2">
+        <prose.h4 class="border-b pb-1" style={{ marginTop: 0 }}>
+          Request
+        </prose.h4>
         {showPath && (
           <ReqParameters
             basepath={basepath}
@@ -175,7 +167,7 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
             parameters={bodyParameters}
           />
         )}
-      </>
+      </div>
     );
   }
   return <div class="text-slate-5 text-xs font-bold">요청 인자 없음</div>;
@@ -189,8 +181,10 @@ interface ResponseDocProps {
 function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
   const responseSchemata = getResponseSchemata(schema, operation);
   return (
-    <>
-      <prose.h4>Response</prose.h4>
+    <div class="flex flex-col gap-2">
+      <prose.h4 class="border-b pb-1" style={{ marginTop: 0 }}>
+        Response
+      </prose.h4>
       {responseSchemata.map(
         ([statusCode, { response, schema: responseSchema }]) => (
           <ReqRes
@@ -210,7 +204,7 @@ function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
           </ReqRes>
         )
       )}
-    </>
+    </div>
   );
 }
 

@@ -23,7 +23,7 @@ export default function TwoColumnLayout({
   return (
     <div
       class={`relative grid gap-${gap} ${bp}:${
-        smallRight ? "grid-cols-[2fr_1fr]" : "grid-cols-2"
+        smallRight ? "grid-cols-[3fr_2fr]" : "grid-cols-2"
       } ${className}`}
     >
       <div class={leftClassName}>{left}</div>
@@ -41,4 +41,4 @@ export default function TwoColumnLayout({
 }
 
 // Ensure tailwind compilation
-("gap-2 gap-4 gap-6 md:grid-cols-2 md:grid-cols-[2fr_1fr] lg:grid-cols-2 lg:grid-cols-[2fr_1fr]");
+("gap-2 gap-4 gap-6 md:grid-cols-2 md:grid-cols-[3fr_2fr] lg:grid-cols-2 lg:grid-cols-[3fr_2fr]");

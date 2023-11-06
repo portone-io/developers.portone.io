@@ -4,7 +4,7 @@ export function h1({ children, ...props }: any) {
   return (
     <h1
       {...props}
-      class={`text-22px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
+      class={`text-22px md:text-30px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
         props.class || ""
       }`.trim()}
     >
@@ -21,7 +21,7 @@ export const h2 = forwardRef<HTMLHeadingElement, any>(function h2(
     <h2
       ref={ref}
       {...props}
-      class={`text-18px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
+      class={`text-18px md:text-24px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
         props.class || ""
       }`.trim()}
     >
@@ -34,7 +34,7 @@ export function h3({ children, ...props }: any) {
   return (
     <h3
       {...props}
-      class={`text-16px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
+      class={`text-16px md:text-22px mt-12px mb-12px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
         props.class || ""
       }`.trim()}
     >
@@ -47,7 +47,7 @@ export function h4({ children, ...props }: any) {
   return (
     <h4
       {...props}
-      class={`mt-8px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
+      class={`mt-8px mb-8px md:text-18px font-bold leading-[1.6] first:mt-0 last:mb-0 ${
         props.class || ""
       }`.trim()}
     >
