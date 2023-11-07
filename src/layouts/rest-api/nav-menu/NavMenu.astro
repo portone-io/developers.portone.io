@@ -10,8 +10,9 @@ export interface NavMenuItem {
 
 interface Props {
   items: NavMenuItem[];
+  basepath: string;
 }
-const { items } = Astro.props;
+const { items, basepath } = Astro.props;
 const _items = [
   // Any Hangul character included breaks the Astro Language Server
   { title: "\uac1c\uc694", id: "overview" },
@@ -111,7 +112,7 @@ const _items = [
       _items.map(({ id, title, children }) => (
         <div data-navitem={id} class="group">
           <div class="group-data-[active=true]:text-orange-5 hover:bg-slate-1 flex transition-colors">
-            <NavMenuLink id={id} title={title} />
+            <NavMenuLink id={id} title={title} basepath={basepath} />
             {children && children.length && (
               <button class="flex h-full items-center p-2">
                 <i class="i-ic-baseline-keyboard-arrow-right group-data-[open=true]:i-ic-baseline-keyboard-arrow-down inline-block" />
@@ -125,7 +126,7 @@ const _items = [
                   data-navitem={id}
                   class="data-[active=true]:text-orange-5 hover:bg-slate-1 transition-colors"
                 >
-                  <NavMenuLink id={id} title={title} />
+                  <NavMenuLink id={id} title={title} basepath={basepath} />
                 </div>
               ))}
             </div>
