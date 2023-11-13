@@ -66,7 +66,7 @@ export function TypeDefinitions({
         })}
       </div>
       <Expand
-        className="mt-10"
+        className="mt-20"
         expand={expand}
         onToggle={onToggle}
         onCollapse={() => {

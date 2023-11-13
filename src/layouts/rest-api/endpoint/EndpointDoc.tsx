@@ -34,10 +34,7 @@ export default function EndpointDoc({
     <div class="flex flex-col">
       <div class="mb-4 grid lg:grid-cols-2">
         <div class="flex items-center lg:order-last lg:justify-end">
-          <div class="bg-slate-1 inline-flex items-center gap-1 rounded-full pr-3 text-sm opacity-70">
-            <MethodBadge method={method} />
-            <span class="ml-1 font-mono text-xs font-normal">{path}</span>
-          </div>
+          <MethodLine method={method} path={path} />
         </div>
         <prose.h3
           id={getEndpointRepr(endpoint)}
@@ -94,6 +91,19 @@ export default function EndpointDoc({
   );
 }
 
+export interface MethodLineProps {
+  method: string;
+  path: string;
+}
+export function MethodLine({ method, path }: MethodLineProps) {
+  return (
+    <div class="bg-slate-1 inline-flex items-center gap-1 self-start rounded-full pr-3 text-xs opacity-70">
+      <MethodBadge method={method} />
+      <span class="ml-1 font-mono font-normal">{path}</span>
+    </div>
+  );
+}
+
 interface MethodBadgeProps {
   method: string;
 }
@@ -110,7 +120,7 @@ function MethodBadge({ method }: MethodBadgeProps) {
       : "bg-slate-2 text-slate-7";
   return (
     <span
-      class={`${colorClass} shrink-0 rounded-full px-3 font-bold uppercase`}
+      class={`${colorClass} shrink-0 rounded-full px-2 font-bold uppercase`}
     >
       {method}
     </span>
