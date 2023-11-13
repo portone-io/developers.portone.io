@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "PortOne API",
-    "version": "1.5.0-RC13"
+    "version": "1.5.0-RC23"
   },
   "servers": [
     {
@@ -4131,7 +4131,98 @@
         }
       }
     },
-    "/payments/{paymentId}/pre-register": {},
+    "/payments/{paymentId}/pre-register": {
+      "post": {
+        "description": "<p>결제 정보 사전 등록</p>\n<p>결제 정보를 사전 등록합니다.</p>\n",
+        "operationId": "preRegisterPayment",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "<p>결제건 아이디</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "결제건 아이디"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreRegisterPaymentBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreRegisterPaymentResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreRegisterPaymentError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreRegisterPaymentError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreRegisterPaymentError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "<ul>\n<li><code>AlreadyPaidError</code>: 결제가 이미 완료된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreRegisterPaymentError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "payment",
+        "x-portone-title": "결제 정보 사전 등록",
+        "x-portone-description": "<p>결제 정보를 사전 등록합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/PreRegisterPaymentError"
+        }
+      }
+    },
     "/billing-keys/{id}": {
       "get": {
         "description": "<p>빌링키 단건 조회</p>\n<p>주어진 빌링키에 대응되는 빌링키 정보를 조회합니다.</p>\n",
@@ -4880,7 +4971,7 @@
             }
           },
           "404": {
-            "description": "<ul>\n<li><code>BillingKeyNotFoundError</code>: 빌링키가 존재하지 않는 경우</li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentScheduleNotFoundError</code>: 결제 예약건이 존재하지 않는 경우</li>\n<li><code>BillingKeyNotFoundError</code>: 빌링키가 존재하지 않는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4890,7 +4981,7 @@
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>PaymentScheduleAlreadyProcessedError</code>: 결제 예약건이 이미 처리된 경우</li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentScheduleAlreadyProcessedError</code>: 결제 예약건이 이미 처리된 경우</li>\n<li><code>PaymentScheduleAlreadyDeletedError</code>: 결제 예약건이 이미 삭제된 경우</li>\n<li><code>BillingKeyAlreadyDeletedError</code>: 빌링키가 이미 삭제된 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -6144,6 +6235,76 @@
         "x-portone-unstable": true
       }
     },
+    "/analytics/charts/payment-insight": {
+      "get": {
+        "description": "<p>가맹점의 결제 현황 인사이트를 조회합니다.</p>\n",
+        "operationId": "getAnalyticsPaymentChartInsight",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAnalyticsPaymentChartInsightBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답으로 결제 현황 인사이트를 반환합니다.</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticsPaymentChartInsight"
+                }
+              }
+            },
+            "x-portone-description": "<p>성공 응답으로 결제 현황 인사이트를 반환합니다.</p>\n"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAnalyticsPaymentChartInsightError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAnalyticsPaymentChartInsightError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAnalyticsPaymentChartInsightError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          }
+        ],
+        "x-portone-category": "analytics",
+        "x-portone-description": "<p>가맹점의 결제 현황 인사이트를 조회합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetAnalyticsPaymentChartInsightError"
+        },
+        "x-portone-unstable": true
+      }
+    },
     "/analytics/charts/average-amount": {
       "get": {
         "description": "<p>가맹점의 평균 거래액 현황을 조회합니다.</p>\n",
@@ -7361,8 +7522,7 @@
       },
       "AnalyticsPaymentChart": {
         "required": [
-          "stats",
-          "summary"
+          "stats"
         ],
         "type": "object",
         "properties": {
@@ -7371,42 +7531,12 @@
             "items": {
               "$ref": "#/components/schemas/AnalyticsPaymentChartStat"
             }
-          },
-          "summary": {
-            "$ref": "#/components/schemas/AnalyticsPaymentChartSummary"
           }
         },
         "description": "<p>가맹점의 결제 현황 차트 정보</p>\n",
         "x-portone-title": "가맹점의 결제 현황 차트 정보"
       },
-      "AnalyticsPaymentChartStat": {
-        "required": [
-          "timestamp",
-          "amount",
-          "count"
-        ],
-        "type": "object",
-        "properties": {
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "title": "시점"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64",
-            "title": "거래액"
-          },
-          "count": {
-            "type": "integer",
-            "format": "int64",
-            "title": "거래 건수"
-          }
-        },
-        "description": "<p>특정 시점의 거래 건 수와 금액을 나타냅니다.</p>\n",
-        "x-portone-description": "<p>특정 시점의 거래 건 수와 금액을 나타냅니다.</p>\n"
-      },
-      "AnalyticsPaymentChartSummary": {
+      "AnalyticsPaymentChartInsight": {
         "required": [
           "highestHourInDay",
           "lowestHourInDay"
@@ -7442,8 +7572,35 @@
             "title": "일간 최저 거래액 발생 시간"
           }
         },
-        "description": "<p>월간, 주간, 일간 최고/최저 거래액 시점을 나타냅니다.</p>\n",
-        "x-portone-description": "<p>월간, 주간, 일간 최고/최저 거래액 시점을 나타냅니다.</p>\n"
+        "description": "<p>가맹점의 결제 현황 인사이트 정보</p>\n",
+        "x-portone-title": "가맹점의 결제 현황 인사이트 정보"
+      },
+      "AnalyticsPaymentChartStat": {
+        "required": [
+          "timestamp",
+          "amount",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "시점"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "거래액"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "title": "거래 건수"
+          }
+        },
+        "description": "<p>특정 시점의 거래 건 수와 금액을 나타냅니다.</p>\n",
+        "x-portone-description": "<p>특정 시점의 거래 건 수와 금액을 나타냅니다.</p>\n"
       },
       "AnalyticsPaymentMethodChart": {
         "required": [
@@ -7626,29 +7783,79 @@
         "x-portone-description": "<p>특정 시점의 결제대행사 별 결제금액, 결제 건수를 나타냅니다.</p>\n"
       },
       "AnalyticsTimeGranularity": {
-        "type": "string",
-        "description": "<p>조회 시간 단위</p>\n",
-        "enum": [
-          "DAY",
-          "HOUR",
-          "MONTH",
-          "WEEK"
-        ],
-        "x-portone-title": "조회 시간 단위",
-        "x-portone-enum": {
-          "HOUR": {
-            "title": "시간"
+        "type": "object",
+        "properties": {
+          "minute": {
+            "$ref": "#/components/schemas/AnalyticsTimeGranularityMinute"
           },
-          "DAY": {
-            "title": "일"
+          "hour": {
+            "$ref": "#/components/schemas/AnalyticsTimeGranularityHour"
           },
-          "WEEK": {
-            "title": "주"
+          "day": {
+            "$ref": "#/components/schemas/AnalyticsTimeGranularityDay"
           },
-          "MONTH": {
-            "title": "월"
+          "week": {
+            "$ref": "#/components/schemas/AnalyticsTimeGranularityWeek"
+          },
+          "month": {
+            "$ref": "#/components/schemas/AnalyticsTimeGranularityMonth"
           }
-        }
+        },
+        "description": "<p>조회 시간 단위</p>\n<p>하나의 단위 필드만 선택하여 입략합니다.</p>\n",
+        "x-portone-title": "조회 시간 단위",
+        "x-portone-description": "<p>하나의 단위 필드만 선택하여 입략합니다.</p>\n"
+      },
+      "AnalyticsTimeGranularityDay": {
+        "required": [
+          "timezoneHourOffset"
+        ],
+        "type": "object",
+        "properties": {
+          "timezoneHourOffset": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "<p>일</p>\n",
+        "x-portone-title": "일"
+      },
+      "AnalyticsTimeGranularityHour": {
+        "type": "object",
+        "description": "<p>시간</p>\n",
+        "x-portone-title": "시간"
+      },
+      "AnalyticsTimeGranularityMinute": {
+        "type": "object",
+        "description": "<p>분</p>\n",
+        "x-portone-title": "분"
+      },
+      "AnalyticsTimeGranularityMonth": {
+        "required": [
+          "timezoneHourOffset"
+        ],
+        "type": "object",
+        "properties": {
+          "timezoneHourOffset": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "<p>월</p>\n",
+        "x-portone-title": "월"
+      },
+      "AnalyticsTimeGranularityWeek": {
+        "required": [
+          "timezoneHourOffset"
+        ],
+        "type": "object",
+        "properties": {
+          "timezoneHourOffset": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "<p>주</p>\n",
+        "x-portone-title": "주"
       },
       "ApplyEscrowLogisticsError": {
         "oneOf": [
@@ -8042,7 +8249,6 @@
           "billingKey",
           "merchantId",
           "storeId",
-          "methods",
           "channels",
           "customer",
           "issuedAt"
@@ -8605,10 +8811,6 @@
         "x-portone-title": "결제 취소 성공 응답"
       },
       "CancelPaymentScheduleBody": {
-        "required": [
-          "billingKey",
-          "scheduleIds"
-        ],
         "type": "object",
         "properties": {
           "storeId": {
@@ -8628,11 +8830,15 @@
             "title": "결제 예약 건 아이디 목록"
           }
         },
-        "description": "<p>결제 예약 건 취소 요청 입력 정보</p>\n",
-        "x-portone-title": "결제 예약 건 취소 요청 입력 정보"
+        "description": "<p>결제 예약 건 취소 요청 입력 정보</p>\n<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n",
+        "x-portone-title": "결제 예약 건 취소 요청 입력 정보",
+        "x-portone-description": "<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n"
       },
       "CancelPaymentScheduleError": {
         "oneOf": [
+          {
+            "$ref": "#/components/schemas/BillingKeyAlreadyDeletedError"
+          },
           {
             "$ref": "#/components/schemas/BillingKeyNotFoundError"
           },
@@ -8643,7 +8849,13 @@
             "$ref": "#/components/schemas/InvalidRequestError"
           },
           {
+            "$ref": "#/components/schemas/PaymentScheduleAlreadyDeletedError"
+          },
+          {
             "$ref": "#/components/schemas/PaymentScheduleAlreadyProcessedError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentScheduleNotFoundError"
           },
           {
             "$ref": "#/components/schemas/UnauthorizedError"
@@ -8652,18 +8864,20 @@
         "discriminator": {
           "propertyName": "type",
           "mapping": {
+            "BILLING_KEY_ALREADY_DELETED": "#/components/schemas/BillingKeyAlreadyDeletedError",
             "BILLING_KEY_NOT_FOUND": "#/components/schemas/BillingKeyNotFoundError",
             "FORBIDDEN": "#/components/schemas/ForbiddenError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PAYMENT_SCHEDULE_ALREADY_DELETED": "#/components/schemas/PaymentScheduleAlreadyDeletedError",
             "PAYMENT_SCHEDULE_ALREADY_PROCESSED": "#/components/schemas/PaymentScheduleAlreadyProcessedError",
+            "PAYMENT_SCHEDULE_NOT_FOUND": "#/components/schemas/PaymentScheduleNotFoundError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }
         }
       },
       "CancelPaymentScheduleResponse": {
         "required": [
-          "cancelledScheduleIds",
-          "cancelledAt"
+          "cancelledScheduleIds"
         ],
         "type": "object",
         "properties": {
@@ -9203,117 +9417,6 @@
         "description": "<p>거래 취소</p>\n",
         "x-portone-title": "거래 취소"
       },
-      "CancelledPaymentSchedule": {
-        "required": [
-          "status",
-          "id",
-          "merchantId",
-          "storeId",
-          "paymentId",
-          "billingKey",
-          "orderName",
-          "isCulturalExpense",
-          "isEscrow",
-          "customer",
-          "customData",
-          "totalAmount",
-          "currency",
-          "timeToPay",
-          "cancelledAt"
-        ],
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "title": "결제 예약 건 상태"
-          },
-          "id": {
-            "type": "string",
-            "title": "결제 예약 건 아이디"
-          },
-          "merchantId": {
-            "type": "string",
-            "title": "가맹점 아이디"
-          },
-          "storeId": {
-            "type": "string",
-            "title": "상점 아이디"
-          },
-          "paymentId": {
-            "type": "string",
-            "title": "결제건 아이디"
-          },
-          "billingKey": {
-            "type": "string",
-            "title": "빌링키"
-          },
-          "orderName": {
-            "type": "string",
-            "title": "주문명"
-          },
-          "isCulturalExpense": {
-            "type": "boolean",
-            "title": "문화비 지출 여부"
-          },
-          "isEscrow": {
-            "type": "boolean",
-            "title": "에스크로 여부"
-          },
-          "customer": {
-            "$ref": "#/components/schemas/Customer",
-            "title": "고객 정보"
-          },
-          "customData": {
-            "type": "string",
-            "title": "사용자 지정 데이터"
-          },
-          "totalAmount": {
-            "type": "integer",
-            "format": "int64",
-            "title": "결제 총 금액"
-          },
-          "taxFreeAmount": {
-            "type": "integer",
-            "format": "int64",
-            "title": "면세액"
-          },
-          "currency": {
-            "$ref": "#/components/schemas/Currency",
-            "title": "통화"
-          },
-          "installmentMonth": {
-            "type": "integer",
-            "format": "int32",
-            "title": "할부 개월 수"
-          },
-          "noticeUrls": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "title": "웹훅 주소"
-          },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
-          },
-          "timeToPay": {
-            "type": "string",
-            "format": "date-time",
-            "title": "결제 예정 시점"
-          },
-          "cancelledAt": {
-            "type": "string",
-            "format": "date-time",
-            "title": "결제 취소 시점"
-          }
-        },
-        "description": "<p>결제 예약 취소 상태</p>\n",
-        "x-portone-title": "결제 예약 취소 상태"
-      },
       "Card": {
         "type": "object",
         "properties": {
@@ -9660,7 +9763,6 @@
         "type": "string",
         "description": "<p>발급 유형</p>\n",
         "enum": [
-          "ANONYMOUS",
           "CORPORATE",
           "PERSONAL"
         ],
@@ -9671,9 +9773,6 @@
           },
           "CORPORATE": {
             "title": "지출증빙용"
-          },
-          "ANONYMOUS": {
-            "title": "국세청번호 자동발급 케이스"
           }
         }
       },
@@ -10012,123 +10111,6 @@
             "$ref": "#/components/schemas/PlatformPayout"
           }
         }
-      },
-      "CompletedPaymentSchedule": {
-        "required": [
-          "status",
-          "id",
-          "merchantId",
-          "storeId",
-          "paymentId",
-          "billingKey",
-          "orderName",
-          "isCulturalExpense",
-          "isEscrow",
-          "customer",
-          "customData",
-          "totalAmount",
-          "currency",
-          "timeToPay",
-          "startedAt",
-          "completedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "title": "결제 예약 건 상태"
-          },
-          "id": {
-            "type": "string",
-            "title": "결제 예약건 아이디"
-          },
-          "merchantId": {
-            "type": "string",
-            "title": "가맹점 아이디"
-          },
-          "storeId": {
-            "type": "string",
-            "title": "상점 아이디"
-          },
-          "paymentId": {
-            "type": "string",
-            "title": "결제건 아이디"
-          },
-          "billingKey": {
-            "type": "string",
-            "title": "빌링키"
-          },
-          "orderName": {
-            "type": "string",
-            "title": "주문명"
-          },
-          "isCulturalExpense": {
-            "type": "boolean",
-            "title": "문화비 지출 여부"
-          },
-          "isEscrow": {
-            "type": "boolean",
-            "title": "에스크로 여부"
-          },
-          "customer": {
-            "$ref": "#/components/schemas/Customer",
-            "title": "고객 정보"
-          },
-          "customData": {
-            "type": "string",
-            "title": "사용자 지정 데이터"
-          },
-          "totalAmount": {
-            "type": "integer",
-            "format": "int64",
-            "title": "결제 총 금액"
-          },
-          "taxFreeAmount": {
-            "type": "integer",
-            "format": "int64",
-            "title": "면세액"
-          },
-          "currency": {
-            "$ref": "#/components/schemas/Currency",
-            "title": "통화"
-          },
-          "installmentMonth": {
-            "type": "integer",
-            "format": "int32",
-            "title": "할부 개월 수"
-          },
-          "noticeUrls": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "title": "웹훅 주소"
-          },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
-          },
-          "timeToPay": {
-            "type": "string",
-            "format": "date-time",
-            "title": "결제 예정 시점"
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time",
-            "title": "결제 시작 시점"
-          },
-          "completedAt": {
-            "type": "string",
-            "format": "date-time",
-            "title": "결제 완료 시점"
-          }
-        },
-        "description": "<p>결제 완료 상태</p>\n",
-        "x-portone-title": "결제 완료 상태"
       },
       "ConfirmEscrowBody": {
         "type": "object",
@@ -13474,6 +13456,8 @@
       },
       "EscrowLogisticsRegisterBody": {
         "required": [
+          "sender",
+          "receiver",
           "logistics"
         ],
         "type": "object",
@@ -13736,6 +13720,123 @@
         },
         "description": "<p>취소 실패 상태</p>\n",
         "x-portone-title": "취소 실패 상태"
+      },
+      "FailedPaymentSchedule": {
+        "required": [
+          "status",
+          "id",
+          "merchantId",
+          "storeId",
+          "paymentId",
+          "billingKey",
+          "orderName",
+          "isCulturalExpense",
+          "isEscrow",
+          "customer",
+          "customData",
+          "totalAmount",
+          "currency",
+          "timeToPay",
+          "startedAt",
+          "completedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 예약 건 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 예약건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제건 아이디"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "isEscrow": {
+            "type": "boolean",
+            "title": "에스크로 여부"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "고객 정보"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 총 금액"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "면세액"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "installmentMonth": {
+            "type": "integer",
+            "format": "int32",
+            "title": "할부 개월 수"
+          },
+          "noticeUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "웹훅 주소"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            },
+            "title": "상품 정보"
+          },
+          "timeToPay": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예정 시점"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 시작 시점"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 완료 시점"
+          }
+        },
+        "description": "<p>결제 실패 상태</p>\n",
+        "x-portone-title": "결제 실패 상태"
       },
       "Fixed": {
         "type": "object",
@@ -14301,6 +14402,66 @@
           }
         }
       },
+      "GetAnalyticsPaymentChartInsightBody": {
+        "required": [
+          "from",
+          "until",
+          "currency",
+          "timezoneHourOffset"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "조회할 결제 현황의 시작 시간"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "title": "조회할 결제 현황의 끝 시간"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "조회할 결제 통화",
+            "description": "<p>입력된 통화로 발생한 결제내역만 응답에 포함됩니다.</p>\n"
+          },
+          "excludeCancelled": {
+            "type": "boolean",
+            "title": "결제취소건 제외 여부",
+            "description": "<p>true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.</p>\n"
+          },
+          "timezoneHourOffset": {
+            "type": "integer",
+            "format": "int32",
+            "title": "타임존 시간 오프셋",
+            "description": "<p>입력된 시간 오프셋 기준으로 일, 주, 월이 집계 됩니다.</p>\n"
+          }
+        },
+        "description": "<p>가맹점의 결제 현황 인사이트 조회를 위한 입력 정보</p>\n",
+        "x-portone-title": "가맹점의 결제 현황 인사이트 조회를 위한 입력 정보"
+      },
+      "GetAnalyticsPaymentChartInsightError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
       "GetAnalyticsPaymentMethodChartBody": {
         "required": [
           "from",
@@ -14697,7 +14858,8 @@
         "properties": {
           "page": {
             "$ref": "#/components/schemas/PageInput",
-            "title": "요청할 페이지 정보"
+            "title": "요청할 페이지 정보",
+            "description": "<p>미 입력 시 number: 0, size: 10 으로 기본값이 적용됩니다.</p>\n"
           },
           "filter": {
             "$ref": "#/components/schemas/PaymentScheduleFilterInput",
@@ -14755,7 +14917,8 @@
         "properties": {
           "page": {
             "$ref": "#/components/schemas/PageInput",
-            "title": "요청할 페이지 정보"
+            "title": "요청할 페이지 정보",
+            "description": "<p>미 입력 시 number: 0, size: 10 으로 기본값이 적용됩니다.</p>\n"
           },
           "filter": {
             "$ref": "#/components/schemas/PaymentFilterInput",
@@ -16370,14 +16533,6 @@
             "type": "string",
             "title": "사용자 지정 데이터"
           },
-          "issueName": {
-            "type": "string",
-            "title": "빌링키 발급 건 이름"
-          },
-          "issueId": {
-            "type": "string",
-            "title": "가맹점이 채번하는 빌링키 발급 건 고유 ID"
-          },
           "bypass": {
             "type": "string",
             "title": "PG사별 특수 파라미터"
@@ -16436,7 +16591,7 @@
           "type",
           "orderName",
           "currency",
-          "totalAmount",
+          "amount",
           "customer"
         ],
         "type": "object",
@@ -16467,15 +16622,9 @@
             "$ref": "#/components/schemas/Currency",
             "title": "화폐"
           },
-          "totalAmount": {
-            "type": "integer",
-            "format": "int64",
-            "title": "결제 금액"
-          },
-          "taxFreeAmount": {
-            "type": "integer",
-            "format": "int64",
-            "title": "면세 금액"
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmountInput",
+            "title": "금액 세부 입력 정보"
           },
           "productType": {
             "$ref": "#/components/schemas/PaymentProductType",
@@ -16512,8 +16661,8 @@
             "title": "전화번호"
           }
         },
-        "description": "<p>빌링키 발급 시 고객 관련 입력 정보</p>\n",
-        "x-portone-title": "빌링키 발급 시 고객 관련 입력 정보"
+        "description": "<p>현금영수증 발급 시 고객 관련 입력 정보</p>\n",
+        "x-portone-title": "현금영수증 발급 시 고객 관련 입력 정보"
       },
       "IssueCashReceiptError": {
         "oneOf": [
@@ -17056,7 +17205,6 @@
           "amount",
           "currency",
           "customer",
-          "paidAt",
           "cancellations",
           "cancelledAt"
         ],
@@ -17452,7 +17600,7 @@
           "total": {
             "type": "integer",
             "format": "int64",
-            "title": "총 결제금액"
+            "title": "총 금액"
           },
           "taxFree": {
             "type": "integer",
@@ -17460,8 +17608,8 @@
             "title": "면세액"
           }
         },
-        "description": "<p>결제 금액 세부 입력 정보</p>\n",
-        "x-portone-title": "결제 금액 세부 입력 정보"
+        "description": "<p>금액 세부 입력 정보</p>\n",
+        "x-portone-title": "금액 세부 입력 정보"
       },
       "PaymentCancellation": {
         "description": "<p>결제 취소 내역</p>\n",
@@ -17580,6 +17728,9 @@
         }
       },
       "PaymentEscrowReceiverInput": {
+        "required": [
+          "address"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -17603,6 +17754,9 @@
         "x-portone-title": "에스크로 수취인 정보"
       },
       "PaymentEscrowSenderInput": {
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -18298,25 +18452,29 @@
         "description": "<p>결제 예약 건</p>\n",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/CancelledPaymentSchedule"
+            "$ref": "#/components/schemas/FailedPaymentSchedule"
           },
           {
-            "$ref": "#/components/schemas/CompletedPaymentSchedule"
+            "$ref": "#/components/schemas/RevokedPaymentSchedule"
           },
           {
             "$ref": "#/components/schemas/ScheduledPaymentSchedule"
           },
           {
             "$ref": "#/components/schemas/StartedPaymentSchedule"
+          },
+          {
+            "$ref": "#/components/schemas/SucceededPaymentSchedule"
           }
         ],
         "discriminator": {
           "propertyName": "status",
           "mapping": {
-            "CANCELLED": "#/components/schemas/CancelledPaymentSchedule",
-            "COMPLETED": "#/components/schemas/CompletedPaymentSchedule",
+            "FAILED": "#/components/schemas/FailedPaymentSchedule",
+            "REVOKED": "#/components/schemas/RevokedPaymentSchedule",
             "SCHEDULED": "#/components/schemas/ScheduledPaymentSchedule",
-            "STARTED": "#/components/schemas/StartedPaymentSchedule"
+            "STARTED": "#/components/schemas/StartedPaymentSchedule",
+            "SUCCEEDED": "#/components/schemas/SucceededPaymentSchedule"
           }
         },
         "x-portone-title": "결제 예약 건",
@@ -18327,13 +18485,33 @@
           "STARTED": {
             "title": "결제 시작 상태"
           },
-          "COMPLETED": {
-            "title": "결제 완료 상태"
+          "FAILED": {
+            "title": "결제 실패 상태"
           },
-          "CANCELLED": {
+          "REVOKED": {
             "title": "결제 예약 취소 상태"
+          },
+          "SUCCEEDED": {
+            "title": "결제 성공 상태"
           }
         }
+      },
+      "PaymentScheduleAlreadyDeletedError": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>결제 예약건이 이미 삭제된 경우</p>\n",
+        "x-portone-title": "결제 예약건이 이미 삭제된 경우",
+        "x-portone-status-code": 409
       },
       "PaymentScheduleAlreadyExistsError": {
         "required": [
@@ -18425,10 +18603,11 @@
         "type": "string",
         "description": "<p>결제 예약 건 상태</p>\n",
         "enum": [
-          "CANCELLED",
-          "COMPLETED",
+          "FAILED",
+          "REVOKED",
           "SCHEDULED",
-          "STARTED"
+          "STARTED",
+          "SUCCEEDED"
         ],
         "x-portone-title": "결제 예약 건 상태",
         "x-portone-enum": {
@@ -18438,11 +18617,14 @@
           "STARTED": {
             "title": "결제 시작"
           },
-          "COMPLETED": {
-            "title": "결제 완료"
+          "FAILED": {
+            "title": "결제 실패"
           },
-          "CANCELLED": {
+          "REVOKED": {
             "title": "취소된 결제 예약"
+          },
+          "SUCCEEDED": {
+            "title": "결제 성공"
           }
         }
       },
@@ -23944,6 +24126,117 @@
         "description": "<p>웹훅 재발송 응답 정보</p>\n",
         "x-portone-title": "웹훅 재발송 응답 정보"
       },
+      "RevokedPaymentSchedule": {
+        "required": [
+          "status",
+          "id",
+          "merchantId",
+          "storeId",
+          "paymentId",
+          "billingKey",
+          "orderName",
+          "isCulturalExpense",
+          "isEscrow",
+          "customer",
+          "customData",
+          "totalAmount",
+          "currency",
+          "timeToPay",
+          "cancelledAt"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 예약 건 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 예약 건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제건 아이디"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "isEscrow": {
+            "type": "boolean",
+            "title": "에스크로 여부"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "고객 정보"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 총 금액"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "면세액"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "installmentMonth": {
+            "type": "integer",
+            "format": "int32",
+            "title": "할부 개월 수"
+          },
+          "noticeUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "웹훅 주소"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            },
+            "title": "상품 정보"
+          },
+          "timeToPay": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예정 시점"
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 취소 시점"
+          }
+        },
+        "description": "<p>결제 예약 취소 상태</p>\n",
+        "x-portone-title": "결제 예약 취소 상태"
+      },
       "ScheduleAdditionalFeePolicyError": {
         "oneOf": [
           {
@@ -24825,6 +25118,123 @@
         },
         "description": "<p>취소 완료 상태</p>\n",
         "x-portone-title": "취소 완료 상태"
+      },
+      "SucceededPaymentSchedule": {
+        "required": [
+          "status",
+          "id",
+          "merchantId",
+          "storeId",
+          "paymentId",
+          "billingKey",
+          "orderName",
+          "isCulturalExpense",
+          "isEscrow",
+          "customer",
+          "customData",
+          "totalAmount",
+          "currency",
+          "timeToPay",
+          "startedAt",
+          "completedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 예약 건 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 예약건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제건 아이디"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "isEscrow": {
+            "type": "boolean",
+            "title": "에스크로 여부"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "고객 정보"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 총 금액"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "면세액"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "installmentMonth": {
+            "type": "integer",
+            "format": "int32",
+            "title": "할부 개월 수"
+          },
+          "noticeUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "웹훅 주소"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            },
+            "title": "상품 정보"
+          },
+          "timeToPay": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예정 시점"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 시작 시점"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 완료 시점"
+          }
+        },
+        "description": "<p>결제 성공 상태</p>\n",
+        "x-portone-title": "결제 성공 상태"
       },
       "TaxFreeAmountExceedsTotalAmountError": {
         "required": [

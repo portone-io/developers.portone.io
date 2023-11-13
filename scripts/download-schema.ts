@@ -93,7 +93,7 @@ async function downloadV2Openapi() {
   console.log("완료");
 }
 downloadV2Openapi.src =
-  "https://raw.githubusercontent.com/portone-io/public-api-service/feat/migration-phase2-qa/schema/openapi.yml";
+  "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/openapi.yml";
 downloadV2Openapi.dst = import.meta.resolve("../src/schema/v2.openapi.json");
 
 async function downloadV2Graphql() {
@@ -106,7 +106,7 @@ async function downloadV2Graphql() {
   console.log("완료");
 }
 downloadV2Graphql.src =
-  "https://raw.githubusercontent.com/portone-io/public-api-service/feat/migration-phase2-qa/schema/schema.graphql";
+  "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/schema.graphql";
 downloadV2Graphql.dst = import.meta.resolve("../src/schema/v2.graphql");
 
 if (schema in downloadFns) await downloadFns[schema]();
