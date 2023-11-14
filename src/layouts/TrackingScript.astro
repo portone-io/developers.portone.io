@@ -1,0 +1,42 @@
+<script type="text/javascript">
+  trackEvent("Developers_Page_View", {
+    title: document.title,
+    pathname: location.pathname,
+  });
+  [
+    { ms: 1000, time: "1s" },
+    { ms: 10000, time: "10s" },
+    { ms: 30000, time: "30s" },
+    { ms: 60000, time: "1m" },
+    { ms: 600000, time: "10m" },
+    { ms: 1800000, time: "30m" },
+  ].map(({ ms, time }) => {
+    setTimeout(() => {
+      trackEvent("Developers_Page_Stay", {
+        title: document.title,
+        pathname: location.pathname,
+        time,
+      });
+    }, ms);
+  });
+  // https://mixpanel.com/blog/link-tracking-in-mixpanel/
+  window.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (!a) return;
+    const targetIsSelf = !a.target || a.target === "_self";
+    if (targetIsSelf) e.preventDefault();
+    trackEvent(
+      "Developers_Link_Click",
+      {
+        label: a.textContent.trim(),
+        from: location.pathname,
+        to: a.href,
+      },
+      () => {
+        if (!targetIsSelf) return;
+        if ("norefresh" in a.dataset) return;
+        location.href = a.href;
+      }
+    );
+  });
+</script>
