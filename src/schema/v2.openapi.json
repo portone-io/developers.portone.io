@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "PortOne API",
-    "version": "1.5.0-RC23"
+    "version": "1.5.0-RC26"
   },
   "servers": [
     {
@@ -3701,13 +3701,13 @@
     "/platform/payout-partner-settlements/{id}": {},
     "/platform/payouts/{id}/sheets": {},
     "/platform/payouts/{id}/sheet-file": {},
-    "/identity-verifications/{id}": {
+    "/identity-verifications/{identityVerificationId}": {
       "get": {
         "description": "<p>본인인증 단건 조회</p>\n<p>주어진 아이디에 대응되는 본인인증 내역을 조회합니다.</p>\n",
         "operationId": "getIdentityVerification",
         "parameters": [
           {
-            "name": "id",
+            "name": "identityVerificationId",
             "in": "path",
             "description": "<p>조회할 본인인증 아이디</p>\n",
             "required": true,
@@ -3794,13 +3794,13 @@
         }
       }
     },
-    "/identity-verifications/{id}/send": {
+    "/identity-verifications/{identityVerificationId}/send": {
       "post": {
         "description": "<p>본인인증 요청 전송</p>\n<p>SMS 또는 APP 방식을 이용하여 본인인증 요청을 전송합니다.</p>\n",
         "operationId": "sendIdentityVerification",
         "parameters": [
           {
-            "name": "id",
+            "name": "identityVerificationId",
             "in": "path",
             "description": "<p>본인인증 아이디</p>\n",
             "required": true,
@@ -3906,13 +3906,13 @@
         }
       }
     },
-    "/identity-verifications/{id}/confirm": {
+    "/identity-verifications/{identityVerificationId}/confirm": {
       "post": {
         "description": "<p>본인인증 확인</p>\n<p>요청된 본인인증에 대한 확인을 진행합니다.</p>\n",
         "operationId": "confirmIdentityVerification",
         "parameters": [
           {
-            "name": "id",
+            "name": "identityVerificationId",
             "in": "path",
             "description": "<p>본인인증 아이디</p>\n",
             "required": true,
@@ -4018,13 +4018,13 @@
         }
       }
     },
-    "/identity-verifications/{id}/resend": {
+    "/identity-verifications/{identityVerificationId}/resend": {
       "post": {
         "description": "<p>본인인증 요청 재전송</p>\n<p>본인인증 요청을 재전송합니다.</p>\n",
         "operationId": "resendIdentityVerification",
         "parameters": [
           {
-            "name": "id",
+            "name": "identityVerificationId",
             "in": "path",
             "description": "<p>본인인증 아이디</p>\n",
             "required": true,
@@ -4223,13 +4223,13 @@
         }
       }
     },
-    "/billing-keys/{id}": {
+    "/billing-keys/{billingKey}": {
       "get": {
         "description": "<p>빌링키 단건 조회</p>\n<p>주어진 빌링키에 대응되는 빌링키 정보를 조회합니다.</p>\n",
         "operationId": "getBillingKeyInfo",
         "parameters": [
           {
-            "name": "id",
+            "name": "billingKey",
             "in": "path",
             "description": "<p>조회할 빌링키</p>\n",
             "required": true,
@@ -4320,7 +4320,7 @@
         "operationId": "deleteBillingKey",
         "parameters": [
           {
-            "name": "id",
+            "name": "billingKey",
             "in": "path",
             "description": "<p>삭제할 빌링키</p>\n",
             "required": true,
@@ -4753,13 +4753,13 @@
         "x-portone-unstable": true
       }
     },
-    "/payment-schedules/{id}": {
+    "/payment-schedules/{paymentScheduleId}": {
       "get": {
         "description": "<p>결제 예약 단건 조회</p>\n<p>주어진 아이디에 대응되는 결제 예약 건을 조회합니다.</p>\n",
         "operationId": "getPaymentSchedule",
         "parameters": [
           {
-            "name": "id",
+            "name": "paymentScheduleId",
             "in": "path",
             "description": "<p>조회할 결제 예약 건 아이디</p>\n",
             "required": true,
@@ -4917,12 +4917,12 @@
       },
       "delete": {
         "description": "<p>결제 예약 취소</p>\n<p>결제 예약 건을 취소합니다.</p>\n",
-        "operationId": "cancelPaymentSchedule",
+        "operationId": "revokePaymentSchedule",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CancelPaymentScheduleBody"
+                "$ref": "#/components/schemas/RevokePaymentScheduleBody"
               }
             }
           },
@@ -4934,7 +4934,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CancelPaymentScheduleResponse"
+                  "$ref": "#/components/schemas/RevokePaymentScheduleResponse"
                 }
               }
             },
@@ -4945,7 +4945,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                  "$ref": "#/components/schemas/RevokePaymentScheduleError"
                 }
               }
             }
@@ -4955,7 +4955,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                  "$ref": "#/components/schemas/RevokePaymentScheduleError"
                 }
               }
             }
@@ -4965,7 +4965,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                  "$ref": "#/components/schemas/RevokePaymentScheduleError"
                 }
               }
             }
@@ -4975,17 +4975,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                  "$ref": "#/components/schemas/RevokePaymentScheduleError"
                 }
               }
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>PaymentScheduleAlreadyProcessedError</code>: 결제 예약건이 이미 처리된 경우</li>\n<li><code>PaymentScheduleAlreadyDeletedError</code>: 결제 예약건이 이미 삭제된 경우</li>\n<li><code>BillingKeyAlreadyDeletedError</code>: 빌링키가 이미 삭제된 경우</li>\n</ul>\n",
+            "description": "<ul>\n<li><code>PaymentScheduleAlreadyProcessedError</code>: 결제 예약건이 이미 처리된 경우</li>\n<li><code>PaymentScheduleAlreadyRevokedError</code>: 결제 예약건이 이미 취소된 경우</li>\n<li><code>BillingKeyAlreadyDeletedError</code>: 빌링키가 이미 삭제된 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CancelPaymentScheduleError"
+                  "$ref": "#/components/schemas/RevokePaymentScheduleError"
                 }
               }
             }
@@ -5000,7 +5000,7 @@
         "x-portone-title": "결제 예약 취소",
         "x-portone-description": "<p>결제 예약 건을 취소합니다.</p>\n",
         "x-portone-error": {
-          "$ref": "#/components/schemas/CancelPaymentScheduleError"
+          "$ref": "#/components/schemas/RevokePaymentScheduleError"
         }
       }
     },
@@ -8809,93 +8809,6 @@
         },
         "description": "<p>결제 취소 성공 응답</p>\n",
         "x-portone-title": "결제 취소 성공 응답"
-      },
-      "CancelPaymentScheduleBody": {
-        "type": "object",
-        "properties": {
-          "storeId": {
-            "type": "string",
-            "title": "상점 아이디",
-            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
-          },
-          "billingKey": {
-            "type": "string",
-            "title": "빌링키"
-          },
-          "scheduleIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "title": "결제 예약 건 아이디 목록"
-          }
-        },
-        "description": "<p>결제 예약 건 취소 요청 입력 정보</p>\n<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n",
-        "x-portone-title": "결제 예약 건 취소 요청 입력 정보",
-        "x-portone-description": "<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n"
-      },
-      "CancelPaymentScheduleError": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/BillingKeyAlreadyDeletedError"
-          },
-          {
-            "$ref": "#/components/schemas/BillingKeyNotFoundError"
-          },
-          {
-            "$ref": "#/components/schemas/ForbiddenError"
-          },
-          {
-            "$ref": "#/components/schemas/InvalidRequestError"
-          },
-          {
-            "$ref": "#/components/schemas/PaymentScheduleAlreadyDeletedError"
-          },
-          {
-            "$ref": "#/components/schemas/PaymentScheduleAlreadyProcessedError"
-          },
-          {
-            "$ref": "#/components/schemas/PaymentScheduleNotFoundError"
-          },
-          {
-            "$ref": "#/components/schemas/UnauthorizedError"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "BILLING_KEY_ALREADY_DELETED": "#/components/schemas/BillingKeyAlreadyDeletedError",
-            "BILLING_KEY_NOT_FOUND": "#/components/schemas/BillingKeyNotFoundError",
-            "FORBIDDEN": "#/components/schemas/ForbiddenError",
-            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
-            "PAYMENT_SCHEDULE_ALREADY_DELETED": "#/components/schemas/PaymentScheduleAlreadyDeletedError",
-            "PAYMENT_SCHEDULE_ALREADY_PROCESSED": "#/components/schemas/PaymentScheduleAlreadyProcessedError",
-            "PAYMENT_SCHEDULE_NOT_FOUND": "#/components/schemas/PaymentScheduleNotFoundError",
-            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
-          }
-        }
-      },
-      "CancelPaymentScheduleResponse": {
-        "required": [
-          "cancelledScheduleIds"
-        ],
-        "type": "object",
-        "properties": {
-          "cancelledScheduleIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "title": "취소 완료된 결제 예약 건 아이디 목록"
-          },
-          "cancelledAt": {
-            "type": "string",
-            "format": "date-time",
-            "title": "결제 예약 건 취소 완료 시점"
-          }
-        },
-        "description": "<p>결제 예약 건 취소 성공 응답</p>\n",
-        "x-portone-title": "결제 예약 건 취소 성공 응답"
       },
       "CancelPlatformAdditionalFeePolicyScheduleError": {
         "oneOf": [
@@ -13456,8 +13369,6 @@
       },
       "EscrowLogisticsRegisterBody": {
         "required": [
-          "sender",
-          "receiver",
           "logistics"
         ],
         "type": "object",
@@ -13478,6 +13389,11 @@
           "logistics": {
             "$ref": "#/components/schemas/PaymentLogistics",
             "title": "에스크로 물류 정보"
+          },
+          "sendEmail": {
+            "type": "boolean",
+            "title": "이메일 알림 전송 여부",
+            "description": "<p>에스크로 구매 확정 시 이메일로 알림을 보낼지 여부입니다.</p>\n"
           }
         },
         "description": "<p>에스크로 배송 정보 등록 입력 정보</p>\n",
@@ -14866,8 +14782,9 @@
             "title": "조회할 결제 예약 건의 조건 필터"
           }
         },
-        "description": "<p>결제 예약 다건 조회를 위한 입력 정보</p>\n",
-        "x-portone-title": "결제 예약 다건 조회를 위한 입력 정보"
+        "description": "<p>결제 예약 다건 조회를 위한 입력 정보</p>\n<p>조회 결과는 결제 예정 시점(timeToPay) 기준 최신 순으로 정렬됩니다.</p>\n",
+        "x-portone-title": "결제 예약 다건 조회를 위한 입력 정보",
+        "x-portone-description": "<p>조회 결과는 결제 예정 시점(timeToPay) 기준 최신 순으로 정렬됩니다.</p>\n"
       },
       "GetPaymentSchedulesError": {
         "oneOf": [
@@ -17728,9 +17645,6 @@
         }
       },
       "PaymentEscrowReceiverInput": {
-        "required": [
-          "address"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -17754,9 +17668,6 @@
         "x-portone-title": "에스크로 수취인 정보"
       },
       "PaymentEscrowSenderInput": {
-        "required": [
-          "name"
-        ],
         "type": "object",
         "properties": {
           "name": {
@@ -18496,23 +18407,6 @@
           }
         }
       },
-      "PaymentScheduleAlreadyDeletedError": {
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "description": "<p>결제 예약건이 이미 삭제된 경우</p>\n",
-        "x-portone-title": "결제 예약건이 이미 삭제된 경우",
-        "x-portone-status-code": 409
-      },
       "PaymentScheduleAlreadyExistsError": {
         "required": [
           "type"
@@ -18545,6 +18439,23 @@
         },
         "description": "<p>결제 예약건이 이미 처리된 경우</p>\n",
         "x-portone-title": "결제 예약건이 이미 처리된 경우",
+        "x-portone-status-code": 409
+      },
+      "PaymentScheduleAlreadyRevokedError": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>결제 예약건이 이미 취소된 경우</p>\n",
+        "x-portone-title": "결제 예약건이 이미 취소된 경우",
         "x-portone-status-code": 409
       },
       "PaymentScheduleFilterInput": {
@@ -24126,6 +24037,93 @@
         "description": "<p>웹훅 재발송 응답 정보</p>\n",
         "x-portone-title": "웹훅 재발송 응답 정보"
       },
+      "RevokePaymentScheduleBody": {
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "scheduleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "결제 예약 건 아이디 목록"
+          }
+        },
+        "description": "<p>결제 예약 건 취소 요청 입력 정보</p>\n<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n",
+        "x-portone-title": "결제 예약 건 취소 요청 입력 정보",
+        "x-portone-description": "<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n"
+      },
+      "RevokePaymentScheduleError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BillingKeyAlreadyDeletedError"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentScheduleAlreadyProcessedError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentScheduleAlreadyRevokedError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentScheduleNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "BILLING_KEY_ALREADY_DELETED": "#/components/schemas/BillingKeyAlreadyDeletedError",
+            "BILLING_KEY_NOT_FOUND": "#/components/schemas/BillingKeyNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PAYMENT_SCHEDULE_ALREADY_PROCESSED": "#/components/schemas/PaymentScheduleAlreadyProcessedError",
+            "PAYMENT_SCHEDULE_ALREADY_REVOKED": "#/components/schemas/PaymentScheduleAlreadyRevokedError",
+            "PAYMENT_SCHEDULE_NOT_FOUND": "#/components/schemas/PaymentScheduleNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "RevokePaymentScheduleResponse": {
+        "required": [
+          "revokedScheduleIds"
+        ],
+        "type": "object",
+        "properties": {
+          "revokedScheduleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "취소 완료된 결제 예약 건 아이디 목록"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예약 건 취소 완료 시점"
+          }
+        },
+        "description": "<p>결제 예약 건 취소 성공 응답</p>\n",
+        "x-portone-title": "결제 예약 건 취소 성공 응답"
+      },
       "RevokedPaymentSchedule": {
         "required": [
           "status",
@@ -24142,7 +24140,7 @@
           "totalAmount",
           "currency",
           "timeToPay",
-          "cancelledAt"
+          "revokedAt"
         ],
         "type": "object",
         "properties": {
@@ -24228,7 +24226,7 @@
             "format": "date-time",
             "title": "결제 예정 시점"
           },
-          "cancelledAt": {
+          "revokedAt": {
             "type": "string",
             "format": "date-time",
             "title": "결제 취소 시점"
