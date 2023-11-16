@@ -271,7 +271,7 @@ function PropertyDoc({
           </div>
         </div>
         <div class="text-slate-5 inline-block shrink-0 text-xs">
-          {!required && <span class="inline-block">(Option)</span>}{" "}
+          {!required && <span class="inline-block">(Optional)</span>}{" "}
           {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>
       </div>
