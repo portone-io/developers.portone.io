@@ -27,7 +27,7 @@ export default function RestApi({
   }, []);
   return (
     <div class="flex flex-1 justify-center">
-      <article class="basis-300 shrink-1 mx-4 my-8 flex flex-col text-slate-700">
+      <article class="basis-300 shrink-1 mx-4 my-8 flex flex-col pb-10 text-slate-700">
         <section id="overview" class="scroll-mt-5.5rem flex flex-col">
           <prose.h1>{title}</prose.h1>
           {children}
@@ -39,7 +39,6 @@ export default function RestApi({
           currentSection={currentSection}
           schema={schema}
         />
-        <Hr />
         <TypeDefinitions
           basepath={basepath}
           initialExpand={currentSection === "type-def"}
@@ -51,7 +50,7 @@ export default function RestApi({
 }
 
 export function Hr() {
-  return <hr class="my-16" />;
+  return <hr class="my-20" />;
 }
 
 export function interleave<T, U>(items: T[], joiner: U): (T | U)[] {

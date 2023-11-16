@@ -10,11 +10,7 @@ import {
   Operation,
   getResponseSchemata,
 } from "../schema-utils/operation";
-import {
-  PropertiesDoc,
-  TypeDefDoc,
-  TypeDefDocContainer,
-} from "../category/type-def";
+import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";
 import { resolveTypeDef } from "../schema-utils/type-def";
 import DescriptionArea from "../DescriptionArea";
 
@@ -36,31 +32,37 @@ export default function EndpointDoc({
     operation["x-portone-description"] || operation.description;
   return (
     <div class="flex flex-col">
-      <prose.h3 id={getEndpointRepr(endpoint)} class="target:text-orange-5">
-        <div class="flex items-end gap-1 rounded font-mono text-sm opacity-70">
-          <span class="text-base font-bold uppercase">{method}</span>
-          <span>{path}</span>
+      <div class="mb-4 grid lg:grid-cols-2">
+        <div class="flex items-center lg:order-last lg:justify-end">
+          <MethodLine method={method} path={path} />
         </div>
-        <div class="flex items-center gap-2">
-          <span>{title}</span>
-          {deprecated && (
-            <span class="bg-slate-1 px-2 text-sm uppercase opacity-70">
-              deprecated
-            </span>
-          )}
-          {unstable && (
-            <span class="bg-slate-1 px-2 text-sm uppercase opacity-70">
-              unstable
-            </span>
-          )}
-        </div>
-      </prose.h3>
+        <prose.h3
+          id={getEndpointRepr(endpoint)}
+          class="target:text-orange-5"
+          style={{ marginTop: 0 }}
+        >
+          <div class="flex items-center gap-2">
+            <span>{title}</span>
+            {deprecated && (
+              <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+                deprecated
+              </span>
+            )}
+            {unstable && (
+              <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+                unstable
+              </span>
+            )}
+          </div>
+        </prose.h3>
+      </div>
       <TwoColumnLayout
+        gap={6}
         left={
-          <>
+          <div class="flex flex-col gap-6">
             {description && (
-              <article class="bg-slate-1 overflow-hidden rounded">
-                <DescriptionArea bgColor="rgb(241,245,249)">
+              <article class="overflow-hidden rounded">
+                <DescriptionArea>
                   <div
                     class="p-2 text-sm"
                     dangerouslySetInnerHTML={{
@@ -70,33 +72,58 @@ export default function EndpointDoc({
                 </DescriptionArea>
               </article>
             )}
-            <TwoColumnLayout
-              className="mt-2"
-              leftClassName="flex flex-col gap-2"
-              rightClassName="flex flex-col gap-2"
-              left={
-                <RequestDoc
-                  basepath={basepath}
-                  schema={schema}
-                  operation={operation}
-                />
-              }
-              right={
-                <ResponseDoc
-                  basepath={basepath}
-                  schema={schema}
-                  operation={operation}
-                />
-              }
-              bp="md"
-              gap={2}
+            <RequestDoc
+              basepath={basepath}
+              schema={schema}
+              operation={operation}
             />
-          </>
+            <ResponseDoc
+              basepath={basepath}
+              schema={schema}
+              operation={operation}
+            />
+          </div>
         }
         smallRight
         right={renderRightFn?.({ schema, endpoint, operation })}
       />
     </div>
+  );
+}
+
+export interface MethodLineProps {
+  method: string;
+  path: string;
+}
+export function MethodLine({ method, path }: MethodLineProps) {
+  return (
+    <div class="bg-slate-1 inline-flex items-center gap-1 self-start rounded-full pr-3 text-xs opacity-70">
+      <MethodBadge method={method} />
+      <span class="ml-1 font-mono font-normal">{path}</span>
+    </div>
+  );
+}
+
+interface MethodBadgeProps {
+  method: string;
+}
+function MethodBadge({ method }: MethodBadgeProps) {
+  const colorClass =
+    method === "get"
+      ? "bg-green-2 text-green-7"
+      : method === "post"
+      ? "bg-blue-2 text-blue-7"
+      : method === "put"
+      ? "bg-yellow-2 text-yellow-7"
+      : method === "delete"
+      ? "bg-red-2 text-red-7"
+      : "bg-slate-2 text-slate-7";
+  return (
+    <span
+      class={`${colorClass} shrink-0 rounded-full px-2 font-bold uppercase`}
+    >
+      {method}
+    </span>
   );
 }
 
@@ -121,29 +148,32 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
   const showBody = bodyParameters.length > 0;
   if (showPath || showQuery || showBody) {
     return (
-      <>
+      <div class="flex flex-col gap-2">
+        <prose.h4 class="border-b pb-1" style={{ marginTop: 0 }}>
+          Request
+        </prose.h4>
         {showPath && (
-          <Parameters
+          <ReqParameters
             basepath={basepath}
             title="Path"
             parameters={pathParameters}
           />
         )}
         {showQuery && (
-          <Parameters
+          <ReqParameters
             basepath={basepath}
             title="Query"
             parameters={queryParameters}
           />
         )}
         {showBody && (
-          <Parameters
+          <ReqParameters
             basepath={basepath}
             title="Body"
             parameters={bodyParameters}
           />
         )}
-      </>
+      </div>
     );
   }
   return <div class="text-slate-5 text-xs font-bold">요청 인자 없음</div>;
@@ -157,7 +187,10 @@ interface ResponseDocProps {
 function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
   const responseSchemata = getResponseSchemata(schema, operation);
   return (
-    <>
+    <div class="flex flex-col gap-2">
+      <prose.h4 class="border-b pb-1" style={{ marginTop: 0 }}>
+        Response
+      </prose.h4>
       {responseSchemata.map(
         ([statusCode, { response, schema: responseSchema }]) => (
           <ReqRes
@@ -165,39 +198,33 @@ function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
             title={statusCode}
             description={response.description}
           >
-            <TypeDefDocContainer>
-              <TypeDefDoc
-                basepath={basepath}
-                schema={schema}
-                typeDef={
-                  responseSchema && resolveTypeDef(schema, responseSchema)
-                }
-              />
-            </TypeDefDocContainer>
+            <TypeDefDoc
+              basepath={basepath}
+              schema={schema}
+              typeDef={responseSchema && resolveTypeDef(schema, responseSchema)}
+            />
           </ReqRes>
         )
       )}
-    </>
+    </div>
   );
 }
 
-interface ParametersProps {
+interface ReqParametersProps {
   basepath: string;
   title?: string | undefined;
   description?: string | undefined;
   parameters: Parameter[];
 }
-function Parameters({
+function ReqParameters({
   basepath,
   title,
   description,
   parameters,
-}: ParametersProps) {
+}: ReqParametersProps) {
   return (
     <ReqRes title={title} description={description}>
-      <TypeDefDocContainer>
-        <PropertiesDoc basepath={basepath} properties={parameters} />
-      </TypeDefDocContainer>
+      <ReqPropertiesDoc basepath={basepath} properties={parameters} />
     </ReqRes>
   );
 }

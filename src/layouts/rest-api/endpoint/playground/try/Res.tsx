@@ -15,7 +15,7 @@ export default function Res({ resSignal }: ResProps) {
   const res = resSignal.value;
   return (
     <div class="grid grid-rows-[auto_auto_minmax(0,1fr)] gap-1">
-      <span class="text-xs font-bold">
+      <span class="text-sm font-bold">
         <span>Response Status: </span>
         <span>{res ? res.status : "N/A"}</span>
       </span>
@@ -41,7 +41,10 @@ export default function Res({ resSignal }: ResProps) {
           ]}
         />
       ) : (
-        <span class="text-slate-4 text-xs font-bold">N/A</span>
+        <>
+          <span class="text-slate-4 text-xs font-bold">N/A</span>
+          <div class="bg-slate-1 rounded opacity-50" />
+        </>
       )}
     </div>
   );

@@ -19,6 +19,7 @@ import {
 import Expand from "./Expand";
 import DescriptionArea from "../DescriptionArea";
 import { useSignal } from "@preact/signals";
+import { interleave } from "..";
 
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -65,7 +66,7 @@ export function TypeDefinitions({
         })}
       </div>
       <Expand
-        className="mt-10"
+        className="mt-20"
         expand={expand}
         onToggle={onToggle}
         onCollapse={() => {
@@ -81,26 +82,17 @@ export function TypeDefinitions({
                   {getTypeDefKind(typeDef)}
                 </span>
               </prose.h3>
-              <TypeDefDocContainer>
-                <TypeDefDoc
-                  basepath={basepath}
-                  schema={schema}
-                  typeDef={typeDef}
-                />
-              </TypeDefDocContainer>
+              <TypeDefDoc
+                basepath={basepath}
+                schema={schema}
+                typeDef={typeDef}
+              />
             </div>
           ))}
         </div>
       </Expand>
     </section>
   );
-}
-
-export interface TypeDefDocContainerProps {
-  children: any;
-}
-export function TypeDefDocContainer({ children }: TypeDefDocContainerProps) {
-  return <div class="bg-slate-1 rounded p-2">{children}</div>;
 }
 
 export interface TypeDefDocProps {
@@ -167,11 +159,11 @@ interface EnumDocProps {
 }
 function EnumDoc({ xPortoneEnum }: EnumDocProps) {
   return (
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
       {Object.entries(xPortoneEnum || {}).map(([enumValue, enumCase]) => {
         const title = enumCase["x-portone-title"] || enumCase.title || "";
         return (
-          <div class="flex flex-col gap-2">
+          <div class="bg-slate-1 flex flex-col gap-2 rounded p-2">
             <div class="flex items-center gap-2 leading-none">
               <code>{enumValue}</code>
               <span class="text-slate-5 text-sm">{title}</span>
@@ -200,19 +192,47 @@ export interface PropertiesDocProps {
 }
 export function PropertiesDoc({ basepath, properties }: PropertiesDocProps) {
   return (
-    <div class="flex flex-col gap-4">
-      {properties.length ? (
-        properties.map((property) => (
-          <PropertyDoc
-            basepath={basepath}
-            name={property.name}
-            required={property.required}
-            property={property}
-          />
-        ))
-      ) : (
-        <div class="text-slate-5 text-xs">(내용 없음)</div>
-      )}
+    <div class="flex flex-col gap-2">
+      {properties.length
+        ? properties.map((property) => (
+            <div class="bg-slate-1 rounded py-1">
+              <PropertyDoc
+                basepath={basepath}
+                name={property.name}
+                required={property.required}
+                property={property}
+              />
+            </div>
+          ))
+        : null}
+    </div>
+  );
+}
+
+export interface ReqPropertiesDocProps {
+  basepath: string;
+  properties: BakedProperty[];
+}
+export function ReqPropertiesDoc({
+  basepath,
+  properties,
+}: ReqPropertiesDocProps) {
+  return (
+    <div class="flex flex-col gap-1">
+      {properties.length
+        ? interleave(
+            properties.map((property) => (
+              <PropertyDoc
+                basepath={basepath}
+                name={property.name}
+                required={property.required}
+                property={property}
+                bgColor="white"
+              />
+            )),
+            <hr />
+          )
+        : null}
     </div>
   );
 }
@@ -222,8 +242,15 @@ interface PropertyDocProps {
   name: string;
   required?: boolean | undefined;
   property: Property;
+  bgColor?: string | undefined;
 }
-function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
+function PropertyDoc({
+  basepath,
+  name,
+  required,
+  property,
+  bgColor,
+}: PropertyDocProps) {
   const title =
     property["x-portone-title"] ||
     property.title ||
@@ -231,20 +258,24 @@ function PropertyDoc({ basepath, name, required, property }: PropertyDocProps) {
     "";
   const deprecated = Boolean(property.deprecated);
   return (
-    <div class={`flex flex-col gap-2 ${deprecated ? "opacity-50" : ""}`}>
-      <div>
-        <div class="text-slate-5 text-xs">
-          {title && <span>{title}</span>}{" "}
+    <div class={`flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <div class="mr-4 inline-block font-mono font-bold leading-tight">
+            <span>{name}</span>
+            <span class="-mr-[6px]">: </span>
+            <TypeReprDoc basepath={basepath} def={property} />
+          </div>
+          <div class="text-slate-5 inline-block text-xs">
+            {title && <span>{title}</span>}
+          </div>
+        </div>
+        <div class="text-slate-5 inline-block shrink-0 text-xs">
           <span class="inline-block">{required ? "(필수)" : "(선택)"}</span>{" "}
           {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>
-        <div class="font-mono font-bold leading-tight">
-          <span>{name}</span>
-          <span>: </span>
-          <TypeReprDoc basepath={basepath} def={property} />
-        </div>
       </div>
-      <DescriptionDoc typeDef={property} />
+      <DescriptionDoc typeDef={property} bgColor={bgColor} />
     </div>
   );
 }
@@ -257,13 +288,13 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
   const typeRepr = repr(def);
   const isUserType = typeRepr[0]?.toUpperCase() === typeRepr[0];
   if (!isUserType) {
-    return <span class="text-slate-5 font-bold">{typeRepr}</span>;
+    return <span class="text-green-6 font-bold">{typeRepr}</span>;
   }
   const typeName = typeRepr.replace("[]", "");
   const href = `${basepath}/type-def#${typeName}`;
   return (
     <a
-      class="text-slate-5 hover:text-orange-5 inline-block font-bold underline-offset-4 transition-colors hover:underline"
+      class="text-green-6 hover:text-orange-5 inline-block font-bold underline-offset-4 transition-colors hover:underline"
       href={href}
       onClick={(e) => {
         e.preventDefault();
@@ -278,8 +309,12 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
 
 interface DescriptionDocProps {
   typeDef: TypeDef | Property;
+  bgColor?: string | undefined;
 }
-function DescriptionDoc({ typeDef }: DescriptionDocProps) {
+function DescriptionDoc({
+  typeDef,
+  bgColor = "rgb(241,245,249)",
+}: DescriptionDocProps) {
   const __html =
     (typeDef["x-portone-description"] ??
       typeDef["x-portone-summary"] ??
@@ -287,7 +322,7 @@ function DescriptionDoc({ typeDef }: DescriptionDocProps) {
       typeDef.summary) ||
     "";
   return __html ? (
-    <DescriptionArea maxHeightPx={16 * 6} bgColor="rgb(241,245,249)">
+    <DescriptionArea maxHeightPx={16 * 6} bgColor={bgColor}>
       <div class="text-slate-5 flex flex-col gap-1 text-sm">
         <div dangerouslySetInnerHTML={{ __html }} />
       </div>
