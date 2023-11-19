@@ -111,14 +111,54 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
     </Details>
 
   </Tab>
+
+  <Tab title="비인증 결제 API">
+    **빌링키로 결제 요청하기**
+
+    빌링키 발급 시 전달한 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
+    ```javascript
+    await fetch(
+      'https://api.iamport.kr/subscribe/payments/again',
+      {
+        method: 'POST',
+        headers: {
+        Authorization: `Basic ${ACCESS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        customer_uid: "customer_uid", // [필수 입력] 빌링키 발급시 전달 한 빌링키와 1:1 매핑되는 ID
+        merchant_uid: "merchant_uid", // [필수 입력] 주문 번호
+        amount: 1000, // [필수 입력] 결제 금액
+        name: "주문명", // 주문명
+        cash_recipt_type: "person", // 현금영수증 발급 타입
+        bypass: JSON.stringify({
+          tosspay_v2: {
+            cashReceiptTradeType: "GENERAL", // 현금영수증 발급 대상 타입
+            sendFailPush: false // 결제 실패 시 토스페이앱 푸시알람 발송 여부
+          }
+        })
+      })
+    )
+    ```
+
+    ### (신) 토스페이 빌링키 결제 전용 파라미터
+
+    <Hint style="info">
+    `bypass` 에 json string 형태로 설정되어야 합니다.
+    </Hint>
+
+    **`tosspay_v2.cashReceiptTradeOption`** <mark style="color:green;">**string**</mark>
+
+    **현금영수증 발급 대상 타입**
+    - `GENERAL`: 일반 (default)
+    - `CULTURE`: 문화비
+    - `PUBLIC_TP`: 교통비
+
+    **`tosspay_v2.cashReceiptTradeOption`** <mark style="color:green;">**boolean**</mark>
+
+    **결제실패 푸시알람 사용 여부**
+    - `false`: 미사용 (default)
+    - `true`: 사용
+
+  </Tab>
 </Tabs>
-
-<Details>
-  <p slot="summary">
-    <strong>가능한 결제 환경</strong>
-  </p>
-
-  - PC (POPUP)
-  - 모바일 (리디렉션)
-
-</Details>
