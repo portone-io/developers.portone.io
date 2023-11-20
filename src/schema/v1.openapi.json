@@ -3379,6 +3379,76 @@
         "x-portone-category": "pg.naverpay"
       }
     },
+    "/partners/receipts/{imp_uid}": {
+      "post": {
+        "tags": [
+          "partners"
+        ],
+        "summary": "영수증 내 하위 상점 거래 등록 API",
+        "description": "결제 내역 매출전표에 하위 상점의 거래를 등록할 수 있는 API입니다.\n     <h4>지원되는 PG사</h4>\n     <ul> <li>KG이니시스 (이용 전 콘솔 -> 결제연동 탭에서 INIApi Key 등록 필요)</li> </ul>",
+        "operationId": "partner",
+        "consumes": [
+          "application/json",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "imp_uid",
+            "in": "path",
+            "description": "포트원 거래고유번호",
+            "required": true,
+            "type": "string",
+            "x-portone-name": "포트원 거래고유번호",
+            "x-portone-summary": "<p>하위 상점 거래를 등록할 결제건의 포트원 거래고유번호</p>\n",
+            "x-portone-description": ""
+          },
+          {
+            "name": "data",
+            "in": "formData",
+            "description": "등록할 하위 상점 및 하위 상점 별 거래 금액 정보 배열<br>[ 필수항목 ]<br>business_registration_number : 하위 상점 사업자 등록 번호<br>company_name : 하위 상점 명<br>amount : 하위 상점 거래 금액<br>[ 선택항목 ]<br>tax_free : 하위 상점 거래 금액 중 면세 금액 (기본값 : 0)<br>vat_amount : 하위 상점 거래 금액 중 부가세 금액 (기본값 : amount / 11)",
+            "required": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/PartnerReceiptsAnnotation"
+            },
+            "default": "[&#13;&#09;{&#13;&#09;&#09;&quot;business_registration_number&quot;: &quot;하위 상점 사업자 등록 번호1&quot;,&#13;&#09;&#09;&quot;company_name&quot;: &quot;하위 상점 명1&quot;,&#13;&#09;&#09;&quot;amount&quot;: 1000&#13;},&#13;&#09;{&#13;&#09;&#09;&quot;business_registration_number&quot;: &quot;하위 상점 사업자 등록 번호2&quot;,&#13;&#09;&#09;&quot;company_name&quot;: &quot;하위 상점 명2&quot;,&#13;&#09;&#09;&quot;amount&quot;: 2000&#13;}&#13;]",
+            "x-portone-name": "등록할 하위 상점 및 하위 상점 별 거래 금액 정보",
+            "x-portone-summary": "<p>imp_uid에 매핑되는 거래 하위를 구성하는 하위 상점 및 하위 상점 별 거래 금액 정보의 배열</p>\n",
+            "x-portone-description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "정상적으로 하위 상점 거래 등록이 완료되었습니다.",
+            "schema": {
+              "$ref": "#/definitions/PartnerReceiptResponse"
+            }
+          },
+          "400": {
+            "description": "필수 파라미터 누락, 결제 미승인, PG사로부터 요청 실패 응답을 받은 경우"
+          },
+          "401": {
+            "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
+          },
+          "404": {
+            "description": "결제내역 검색 실패, 결제건에 등록되어있는 결제연동 내역이 확인 불가한 경우"
+          },
+          "500": {
+            "description": "포트원 내부 이슈로 인한 API 호출 실패"
+          },
+          "501": {
+            "description": "지원하지 않는 PG사"
+          }
+        },
+        "x-portone-supported-pgs": [
+          "html5_inicis"
+        ],
+        "x-portone-category": "partner"
+      }
+    },
     "/payco/orders/status/{imp_uid}": {
       "post": {
         "tags": [
@@ -9160,6 +9230,101 @@
         }
       ]
     },
+    "PartnerReceiptsAnnotation": {
+      "required": [
+        "business_registration_number",
+        "company_name",
+        "amount"
+      ],
+      "properties": {
+        "business_registration_number": {
+          "description": "하위 상점 사업자번호 (&quot;-&quot; 포함)",
+          "type": "string",
+          "x-portone-name": "하위 상점 사업자 등록 번호",
+          "x-portone-summary": "<p>거래를 구성하는 하위 상점의 사업자 등록 점번호 (\"-\" 포함)</p>\n",
+          "x-portone-description": "",
+          "x-portone-per-pg": {
+            "html5_inicis": {
+              "required": true
+            }
+          }
+        },
+        "company_name": {
+          "description": "하위 상점 명",
+          "type": "string",
+          "x-portone-name": "하위 상점 명",
+          "x-portone-summary": "<p>거래를 구성하는 하위 상점의 상점 명</p>\n",
+          "x-portone-description": "",
+          "x-portone-per-pg": {
+            "html5_inicis": {
+              "required": true
+            }
+          }
+        },
+        "amount": {
+          "description": "하위 상점 거래 금액",
+          "type": "number",
+          "x-portone-name": "하위 상점 거래 금액",
+          "x-portone-summary": "<p>거래를 구성하는 하위 상점의 해당 결제건 내 거래 금액</p>\n",
+          "x-portone-description": "",
+          "x-portone-per-pg": {
+            "html5_inicis": {
+              "required": true
+            }
+          }
+        },
+        "tax_free": {
+          "description": "하위 상점 거래 금액 중 면세 금액 (default = 0)",
+          "type": "number",
+          "x-portone-name": "하위 상점 거래 금액 중 면세 금액",
+          "x-portone-summary": "<p>거래를 구성하는 하위 상점의 해당 결제건 내 면세 금액</p>\n",
+          "x-portone-description": "",
+          "x-portone-per-pg": {
+            "html5_inicis": {
+              "required": false
+            }
+          }
+        },
+        "vat_amount": {
+          "description": "하위 상점 거래 금액 중 부가세 금액 (default = 거래 금액 / 11)",
+          "type": "number",
+          "x-portone-name": "하위 상점 거래 금액 중 부가세 금액",
+          "x-portone-summary": "<p>거래를 구성하는 하위 상점의 해당 결제건 내 부가세 금액</p>\n",
+          "x-portone-description": "",
+          "x-portone-per-pg": {
+            "html5_inicis": {
+              "required": false
+            }
+          }
+        }
+      }
+    },
+    "PartnerReceiptResultAnnotation": {
+      "properties": {
+        "receipt_url": {
+          "description": "매출전표 확인 URL",
+          "type": "string",
+          "x-portone-name": "매출전표 확인 URL",
+          "x-portone-summary": "<p>거래건에 대한 매출전표를 확인할 수 있는 URL</p>\n",
+          "x-portone-description": ""
+        }
+      }
+    },
+    "PartnerReceiptResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResponseAnnotation"
+        },
+        {
+          "description": "등록 성공한 매출전표 관련 정보.",
+          "properties": {
+            "response": {
+              "$ref": "#/definitions/PartnerReceiptResultAnnotation"
+            }
+          }
+        }
+      ]
+    },
     "PaycoStatusAnnotation": {
       "required": [
         "status"
@@ -11021,6 +11186,10 @@
     {
       "name": "tiers",
       "description": "대표가맹점에 대한 하위가맹점 관리"
+    },
+    {
+      "name": "partners",
+      "description": "하위 상점 전용 API"
     }
   ],
   "x-portone-categories": [
@@ -11121,6 +11290,11 @@
           "description": "대표가맹점에 대한 하위가맹점 관리와 관련된 기능을 제공합니다."
         }
       ]
+    },
+    {
+      "id": "partner",
+      "title": "하위 상점 관련 API",
+      "description": "하위 상점과 관련된 기능을 제공합니다."
     },
     {
       "id": "etc",
