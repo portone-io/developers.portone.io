@@ -19,7 +19,7 @@ export default function Try(props: TryProps) {
   const resSignal = useSignal<Res | undefined>(undefined);
   return (
     <div
-      class={`grid flex-1 grid-rows-2 gap-4 ${
+      class={`grid flex-1 grid-rows-2 gap-3 ${
         waiting ? "pointer-events-none opacity-50" : ""
       }`}
     >

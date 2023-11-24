@@ -263,7 +263,7 @@ function PropertyDoc({
         <div>
           <div class="mr-4 inline-block font-mono font-bold leading-tight">
             <span>{name}</span>
-            <span class="-mr-[6px]">: </span>
+            <span class="text-slate-4 -mr-[4px]">{!required && "?"}: </span>
             <TypeReprDoc basepath={basepath} def={property} />
           </div>
           <div class="text-slate-5 inline-block text-xs">
@@ -271,7 +271,7 @@ function PropertyDoc({
           </div>
         </div>
         <div class="text-slate-5 inline-block shrink-0 text-xs">
-          <span class="inline-block">{required ? "(필수)" : "(선택)"}</span>{" "}
+          {!required && <span class="inline-block">(Optional)</span>}{" "}
           {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>
       </div>
