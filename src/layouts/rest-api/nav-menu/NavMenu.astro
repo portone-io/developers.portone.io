@@ -108,9 +108,15 @@ const _items = [
           const { isIntersecting, intersectionRatio } = entry;
           Object.assign(item, { isIntersecting, intersectionRatio });
         }
+        // 지금 화면에 보이고있는 section들
         const intersectingIds = Object.keys(items).filter((id) =>
           Boolean(items[id]?.isIntersecting)
         );
+        // 화면에 보이는 section 중에서 사용자가 지금 관심있어할법한 section 순으로 정렬함.
+        // 우선 intersectionRatio가 큰 걸 찾는다.
+        // intersectionRatio가 0.5면 화면에 반쯤 보이고 있다는 뜻이고, 1이면 화면 안에 전부 들어와있다는 뜻이다.
+        // intersectionRatio가 둘 다 1이면 (두 section의 모든 내용이 전부 화면에 보이고 있다면) offsetTop이 작은 걸 찾는다.
+        // offsetTop이 작다는 것은 화면에서 위쪽에 보인다는 뜻이다.
         intersectingIds.sort((aId, bId) => {
           const a = items[aId]!;
           const b = items[bId]!;
