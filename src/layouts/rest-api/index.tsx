@@ -31,8 +31,8 @@ export default function RestApi({
         <section id="overview" class="scroll-mt-5.5rem flex flex-col">
           <prose.h1>{title}</prose.h1>
           {children}
+          <Hr />
         </section>
-        <Hr />
         <Categories
           basepath={basepath}
           apiHost={apiHost}

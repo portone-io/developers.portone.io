@@ -65,10 +65,11 @@ const _items = [
   }
   const previousSectionSignal = signal<string>("");
   effect(() => {
-    const currentSection = getParentCategoryId(currentSectionSignal.value);
+    const currentSectionId = currentSectionSignal.value;
+    const currentSection = getParentCategoryId(currentSectionId);
     const previousSection = previousSectionSignal.peek();
     if (currentSection === previousSection) return;
-    previousSectionSignal.value = currentSectionSignal.value;
+    previousSectionSignal.value = currentSection;
     openNav(currentSection);
     closeNav(previousSection);
   });
@@ -86,22 +87,61 @@ const _items = [
     (child) => child.tagName === "SECTION"
   );
   function observe() {
+    interface Item {
+      isIntersecting: boolean;
+      intersectionRatio: number;
+      offsetTop: number;
+    }
+    const items: Record<string, Item> = {};
+    for (const section of sections) {
+      const { offsetTop } = section as HTMLElement;
+      items[section.id] = {
+        isIntersecting: false,
+        intersectionRatio: 0,
+        offsetTop,
+      };
+    }
     const observer = new IntersectionObserver(
       (entries) => {
-        const entry = entries.filter(({ isIntersecting }) => isIntersecting)[0];
-        if (!entry) return;
-        currentSectionSignal.value = entry.target.id;
+        for (const entry of entries) {
+          const item = items[entry.target.id]!;
+          const { isIntersecting, intersectionRatio } = entry;
+          Object.assign(item, { isIntersecting, intersectionRatio });
+        }
+        const intersectingIds = Object.keys(items).filter((id) =>
+          Boolean(items[id]?.isIntersecting)
+        );
+        intersectingIds.sort((aId, bId) => {
+          const a = items[aId]!;
+          const b = items[bId]!;
+          const aRatio = a.intersectionRatio;
+          const bRatio = b.intersectionRatio;
+          if (aRatio !== bRatio) return bRatio - aRatio; // descending
+          const aTop = a.offsetTop;
+          const bTop = b.offsetTop;
+          return aTop - bTop; // ascending
+        });
+        currentSectionSignal.value = intersectingIds[0]!;
       },
-      { rootMargin: `0px 0px -${window.innerHeight - 100}px` }
+      {
+        rootMargin: "-56px 0px 0px 0px", // gnb height
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+      }
     );
     sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    function resizeHandler() {
+      for (const section of sections) {
+        const { id, offsetTop } = section as HTMLElement;
+        items[id]!.offsetTop = offsetTop;
+      }
+    }
+    addEventListener("resize", resizeHandler);
+    return function unobserve() {
+      removeEventListener("resize", resizeHandler);
+      observer.disconnect();
+    };
   }
-  let unobserve = observe();
-  addEventListener("resize", () => {
-    unobserve();
-    unobserve = observe();
-  });
+  observe(); // never unobserve
 </script>
 <LeftSidebar>
   <div class="px-4 pb-2 pt-10 text-lg font-bold">API & SDK</div>
@@ -113,7 +153,7 @@ const _items = [
     {
       _items.map(({ id, title, children }) => (
         <div data-navitem={id} class="group">
-          <div class="group-data-[active=true]:text-orange-5 group-data-[active=true]:bg-slate-1 hover-bg-slate-1 rounded-1.5 flex transition-colors group-data-[active=true]:font-bold group-data-[active=true]:tracking-tight">
+          <div class="group-data-[active=true]:text-orange-5 group-data-[active=true]:bg-slate-1 hover-bg-slate-1 rounded-1.5 flex tracking-tight group-data-[active=true]:font-bold">
             <NavMenuLink id={id} title={title} basepath={basepath} />
             {children && children.length && (
               <button class="flex h-full items-center p-2">
@@ -122,11 +162,11 @@ const _items = [
             )}
           </div>
           {children && children.length && (
-            <div class="hidden flex-col group-data-[open=true]:flex">
+            <div class="mt-2 hidden flex-col gap-2 border-l pl-2.5 group-data-[open=true]:flex">
               {children.map(({ id, title }) => (
                 <div
                   data-navitem={id}
-                  class="data-[active=true]:text-orange-5 data-[active=true]:bg-slate-1 hover-bg-slate-1 rounded-1.5 pl-2.5 transition-colors data-[active=true]:font-bold data-[active=true]:tracking-tight"
+                  class="data-[active=true]:text-orange-5 data-[active=true]:bg-slate-1 hover-bg-slate-1 rounded-1.5 tracking-tight data-[active=true]:font-bold"
                 >
                   <NavMenuLink id={id} title={title} basepath={basepath} />
                 </div>
