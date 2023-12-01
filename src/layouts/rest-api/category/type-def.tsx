@@ -41,7 +41,7 @@ export function TypeDefinitions({
       typeDef: getTypeDefByRef(schema, ref),
     }));
   return (
-    <section id="type-def" class="scroll-mt-5.5rem flex flex-col">
+    <section id="type-def" class="scroll-mt-5rem flex flex-col">
       <prose.h2 ref={headingRef}>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
