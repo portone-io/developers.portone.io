@@ -6,7 +6,7 @@ export interface DropdownProps {
   items: DropdownItem[];
 }
 export interface DropdownItem {
-  label: string;
+  label: any;
   link: string;
 }
 export default function Dropdown({ children, link, items }: DropdownProps) {
@@ -24,8 +24,15 @@ export default function Dropdown({ children, link, items }: DropdownProps) {
         {showItemsSignal.value && (
           <div class="absolute flex w-max flex-col border bg-white py-2 shadow-lg">
             {items.map(({ label, link }, i) => (
-              <a key={i} class="hover:bg-slate-1 px-4 py-2" href={link}>
+              <a
+                key={i}
+                class="hover:bg-slate-1 inline-flex items-center gap-2 px-4 py-2"
+                href={link}
+              >
                 {label}
+                {link.startsWith("https://") && (
+                  <i class="i-ic-baseline-launch opacity-40" />
+                )}
               </a>
             ))}
           </div>
