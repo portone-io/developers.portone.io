@@ -18,7 +18,7 @@ function RightSidebar({
 }: RightSidebarProps) {
   return (
     <div class="text-slate-7 hidden w-56 min-w-0 shrink-0 lg:block">
-      <nav class="w-inherit fixed my-4 h-[calc(100%-5.5rem)] overflow-y-auto px-2">
+      <nav class="w-inherit fixed h-[calc(100%-56px)] overflow-y-auto px-2 py-[28px]">
         <h2 class="mb-2 px-2 font-bold">{t(lang, "toc")}</h2>
         <ul>
           {toc.map((item) => (
