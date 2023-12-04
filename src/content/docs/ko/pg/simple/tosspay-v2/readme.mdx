@@ -37,6 +37,81 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 <Tabs>
   <Tab title="인증 결제창 요청">
+    ```javascript title="Javascript SDK"
+    IMP.request_pay({
+      pg: "tosspay_v2.{MID}",
+      pay_method: "tosspay", // 'tosspay_card', 'tosspay_money' 도 지원됩니다.
+      merchant_uid: "orderMonthly0001", // 상점에서 관리하는 주문 번호
+      name: "최초인증결제",
+      buyer_email: "test@portone.io",
+      buyer_name: "포트원",
+      buyer_tel: "02-1234-1234",
+      m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+      amount: 1004,
+      card: {
+        useInstallment: false,
+      }
+      bypass: {
+        expiredTime: "2023-12-02 11:00:00", //결제 만료시간
+        cashReceiptTradeOption: 'CULTURE' //현금영수증 발급타입
+        
+      }
+    }, function (rsp) {
+      // callback 로직
+    });
+    ```
+
+    <Details>
+      <p slot="summary"><strong>주요 파라미터 설명</strong></p>
+
+      **`pg` \***<mark style="color:green;">**string**</mark>
+
+      **PG사 구분코드**
+
+      `tosspay_v2` 로 지정하면 됩니다.
+
+      **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+      **결제수단 구분코드**
+        - `tosspay_money` : 계좌결제만 허용합니다.
+        - `tosspay_card` : 카드결제만 허용합니다.
+        - `tosspay` : 모든 결제수단을 허용합니다.
+
+      **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+      **주문번호**
+
+      매번 고유하게 채번되어야 합니다.
+
+      **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**integer**</mark>
+
+      **결제금액**
+
+      string 이 아닌점에 유의하세요
+
+      **`card.useInstallment`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+
+      **할부 사용 가능 여부**
+
+      **`bypass.expiredTime`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+      **결제 만료 기한**
+
+      `yyyy-MM-dd HH:mm:ss` 의 형식입니다.
+
+      입력하지 않을 경우, 기본값인 15분으로 설정됩니다. 최대 60분까지 설정할 수 있습니다.
+
+      **`bypass.cashReceiptTradeOption`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+      **현금영수증 발급 대상 타입**
+
+      전달하지 않을경우, 기본값은 `GENERAL` 입니다.
+
+      - `GENERAL`: 일반 (default)
+      - `CULTURE`: 문화비
+      - `PUBLIC_TP`: 교통비
+
+    </Details>
 
   </Tab>
 
