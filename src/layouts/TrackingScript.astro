@@ -24,7 +24,8 @@
     const a = e.target.closest("a");
     if (!a) return;
     const targetIsSelf = !a.target || a.target === "_self";
-    if (targetIsSelf) e.preventDefault();
+    const specialBehavior = e.ctrlKey || e.metaKey || e.button !== 0;
+    if (targetIsSelf && !specialBehavior) e.preventDefault();
     trackEvent(
       "Developers_Link_Click",
       {
@@ -35,6 +36,7 @@
       () => {
         if (!targetIsSelf) return;
         if ("norefresh" in a.dataset) return;
+        if (specialBehavior) return;
         location.href = a.href;
       }
     );
