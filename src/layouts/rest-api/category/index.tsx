@@ -16,6 +16,7 @@ import Expand from "./Expand";
 import { Hr } from "..";
 import EndpointDoc, { MethodLine } from "../endpoint/EndpointDoc";
 import EndpointPlayground from "../endpoint/playground/EndpointPlayground";
+import DescriptionArea from "../DescriptionArea";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -79,11 +80,13 @@ export function Category({
   const { expand, onToggle } = useExpand(section, initialExpand);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
   const descriptionElement = (
-    <SectionDescription
-      section={section}
-      sectionDescriptionProps={sectionDescriptionProps}
-      description={description}
-    />
+    <DescriptionArea>
+      <SectionDescription
+        section={section}
+        sectionDescriptionProps={sectionDescriptionProps}
+        description={description}
+      />
+    </DescriptionArea>
   );
   return (
     <section id={section} class="scroll-mt-5rem flex flex-col">

@@ -6,8 +6,6 @@ import SchemaDownloadButton, {
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
 import schema from "~/schema/v1.openapi.json";
 
-const basepath = "/api/rest-v1";
-
 export interface RestV1Props {
   currentSection: string;
   children: any;
@@ -18,7 +16,7 @@ export default function RestV1(props: RestV1Props) {
   return (
     <RestApi
       title="PortOne REST API - V1"
-      basepath={basepath}
+      basepath="/api/rest-v1"
       apiHost="https://api.iamport.kr"
       currentSection={currentSection}
       sectionDescriptionProps={sectionDescriptionProps}
