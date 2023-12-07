@@ -128,6 +128,7 @@ export function Category({
           />
           <Expand
             className="my-20"
+            title={title}
             expand={expand}
             onToggle={onToggle}
             onCollapse={() => {
