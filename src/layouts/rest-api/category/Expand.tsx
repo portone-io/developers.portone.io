@@ -1,4 +1,5 @@
 export interface ExpandProps {
+  title?: string;
   className?: string;
   children?: any;
   expand?: boolean;
@@ -6,6 +7,7 @@ export interface ExpandProps {
   onCollapse?: () => void;
 }
 export default function Expand({
+  title = "",
   className = "",
   children,
   expand,
@@ -14,6 +16,7 @@ export default function Expand({
 }: ExpandProps) {
   const expandButton = (
     <ExpandButton
+      title={title}
       expand={expand}
       onClick={() => {
         onToggle?.(!expand);
@@ -31,26 +34,27 @@ export default function Expand({
 }
 
 interface ExpandButtonProps {
+  title: string;
   expand?: boolean | undefined;
   onClick?: () => void;
 }
-function ExpandButton({ expand, onClick }: ExpandButtonProps) {
+function ExpandButton({ title, expand, onClick }: ExpandButtonProps) {
   return (
     <button class="relative w-full" onClick={onClick}>
       <hr class="absolute top-1/2 z-0 w-full" />
       <div
         class={`${
-          expand ? "bg-slate-1" : "bg-white"
+          expand ? "bg-slate-7 text-white" : "bg-white"
         } z-1 border-slate-3 relative inline-flex justify-center gap-2 rounded-full border py-2 pl-6 pr-4`}
       >
         {expand ? (
           <>
-            <span>접기</span>
+            <span>{title ? `${title} 접기` : "접기"}</span>
             <i class="i-ic-baseline-keyboard-arrow-up text-2xl" />
           </>
         ) : (
           <>
-            <span>펼치기</span>
+            <span>{title ? `${title} 펼치기` : "펼치기"}</span>
             <i class="i-ic-baseline-keyboard-arrow-down text-2xl" />
           </>
         )}

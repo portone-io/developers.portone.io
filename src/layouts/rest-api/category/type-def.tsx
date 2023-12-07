@@ -67,6 +67,7 @@ export function TypeDefinitions({
       </div>
       <Expand
         className="mt-20"
+        title="타입 정의"
         expand={expand}
         onToggle={onToggle}
         onCollapse={() => {
