@@ -59,7 +59,10 @@ export function groupEndpointsByCategory(
   return result;
 }
 
-export function getEndpointRepr({ method, path }: Endpoint): string {
+export function getEndpointRepr({
+  method,
+  path,
+}: Pick<Endpoint, "method" | "path">): string {
   return `${method} ${path}`;
 }
 

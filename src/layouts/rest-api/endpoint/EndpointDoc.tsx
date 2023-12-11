@@ -97,10 +97,10 @@ export interface MethodLineProps {
 }
 export function MethodLine({ method, path }: MethodLineProps) {
   return (
-    <div class="bg-slate-1 inline-flex items-center gap-1 self-start rounded-full pr-2 text-xs opacity-70">
+    <span class="bg-slate-1 inline-flex items-center gap-1 self-start rounded-full pr-2 text-xs opacity-70">
       <MethodBadge method={method} />
       <span class="ml-1 font-mono font-normal">{path}</span>
-    </div>
+    </span>
   );
 }
 

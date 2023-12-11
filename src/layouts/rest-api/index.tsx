@@ -9,6 +9,7 @@ export interface RestApiProps {
   basepath: string;
   apiHost: string;
   currentSection: string;
+  sectionDescriptionProps: Record<string, any>;
   schema: any;
 }
 export default function RestApi({
@@ -17,6 +18,7 @@ export default function RestApi({
   basepath,
   apiHost,
   currentSection,
+  sectionDescriptionProps,
   schema,
 }: RestApiProps) {
   React.useEffect(() => {
@@ -37,6 +39,7 @@ export default function RestApi({
           basepath={basepath}
           apiHost={apiHost}
           currentSection={currentSection}
+          sectionDescriptionProps={sectionDescriptionProps}
           schema={schema}
         />
         <TypeDefinitions

@@ -21,6 +21,7 @@ export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
   apiHost: string; // e.g. "https://api.iamport.kr"
   currentSection: string;
+  sectionDescriptionProps: Record<string, any>;
   schema: any;
 }
 export function Categories({
@@ -28,6 +29,7 @@ export function Categories({
   basepath,
   apiHost,
   currentSection,
+  sectionDescriptionProps,
 }: CategoriesProps) {
   const everyEndpoints = getEveryEndpoints(schema);
   return (
@@ -35,6 +37,7 @@ export function Categories({
       {groupEndpointsByCategory(schema, everyEndpoints).map(
         ({ category: { id, title, description }, endpoints }) => (
           <Category
+            sectionDescriptionProps={sectionDescriptionProps}
             basepath={basepath}
             apiHost={apiHost}
             section={id}
@@ -51,6 +54,7 @@ export function Categories({
 }
 
 export interface CategoryProps {
+  sectionDescriptionProps: Record<string, any>;
   basepath: string;
   apiHost: string;
   initialExpand: boolean;
@@ -61,6 +65,7 @@ export interface CategoryProps {
   endpoints: Endpoint[];
 }
 export function Category({
+  sectionDescriptionProps,
   basepath,
   apiHost,
   initialExpand,
@@ -74,11 +79,10 @@ export function Category({
   const { expand, onToggle } = useExpand(section, initialExpand);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
   const descriptionElement = (
-    <div
-      class="mt-4"
-      dangerouslySetInnerHTML={{
-        __html: description,
-      }}
+    <SectionDescription
+      section={section}
+      sectionDescriptionProps={sectionDescriptionProps}
+      description={description}
     />
   );
   return (
@@ -94,6 +98,7 @@ export function Category({
       ) : (
         <>
           <TwoColumnLayout
+            gap={6}
             left={descriptionElement}
             right={
               <div class="mt-4 flex flex-col gap-4">
@@ -149,5 +154,27 @@ export function Category({
         </>
       )}
     </section>
+  );
+}
+
+interface SectionDescriptionProps {
+  section: string;
+  sectionDescriptionProps: Record<string, any>;
+  description: any;
+}
+function SectionDescription({
+  section,
+  sectionDescriptionProps,
+  description,
+}: SectionDescriptionProps) {
+  const sectionDescription = sectionDescriptionProps[section];
+  if (sectionDescription) return <div class="mt-4">{sectionDescription}</div>;
+  return (
+    <div
+      class="mt-4"
+      dangerouslySetInnerHTML={{
+        __html: description,
+      }}
+    />
   );
 }
