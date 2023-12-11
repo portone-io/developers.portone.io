@@ -4,7 +4,6 @@ import type { GetStaticPathsItem } from "astro";
 import { getCollection } from "astro:content";
 
 import type { Lang } from "../../../type";
-import { frontmattersSignal } from "../../../state/server-only/frontmatters";
 import redirYaml from "~/content/docs/_redir.yaml";
 import Redir from "~/layouts/Redir.astro";
 import Docs from "~/layouts/Docs.astro";
@@ -16,10 +15,6 @@ export async function getStaticPaths() {
     const [lang, ...fragments] = entry.slug.split("/");
     const absSlug = path.posix.join("/", entry.slug);
     const slug = fragments.join("/");
-    frontmattersSignal.value = {
-      ...frontmattersSignal.value,
-      [absSlug]: entry.data,
-    };
     // 영어문서가 많이 outdated되어 당분간 내림
     // 영어문서 링크로 들어오면 한국어 문서로 리디렉션
     // AI 번역으로 전부 대체 예정
