@@ -1,14 +1,14 @@
 import * as path from "node:path";
 import { defineConfig } from "astro/config";
 import preact from "@astrojs/preact";
-import solid from "@astrojs/solid-js";
 import mdx from "@astrojs/mdx";
 import unocss from "unocss/astro";
 import yaml from "@rollup/plugin-yaml";
 import rehypePrettyCode, {
-  Options as PrettyCodeOptions,
+  type Options as PrettyCodeOptions,
 } from "rehype-pretty-code";
-
+import contentIndex from "./src/content-index";
+import vercel from "@astrojs/vercel/serverless";
 const prettyCodeOptions: Partial<PrettyCodeOptions> = {
   theme: "material-theme-lighter",
   onVisitLine(node) {
@@ -17,25 +17,22 @@ const prettyCodeOptions: Partial<PrettyCodeOptions> = {
     }
   },
   onVisitHighlightedLine(node) {
-    node.properties.className.push("highlighted");
+    (node.properties.className ??= []).push("highlighted");
   },
-  onVisitHighlightedWord(node) {
+  onVisitHighlightedChars(node) {
     node.properties.className = ["word"];
   },
   tokensMap: {},
 };
 
+// https://astro.build/config
 export default defineConfig({
-  integrations: [
-    preact({ compat: true }),
-    solid(),
-    mdx(),
-    unocss(),
-  ],
+  integrations: [preact({ compat: true }), mdx(), unocss(), contentIndex],
   vite: {
     resolve: {
       alias: {
         "~": path.resolve("./src/"),
+        querystring: "querystring-es3",
       },
     },
     plugins: [yaml()],
@@ -44,4 +41,6 @@ export default defineConfig({
     syntaxHighlight: false,
     rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
   },
+  output: "hybrid",
+  adapter: vercel(),
 });

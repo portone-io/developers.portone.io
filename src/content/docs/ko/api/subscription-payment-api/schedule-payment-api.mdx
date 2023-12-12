@@ -1,0 +1,359 @@
+---
+title: 결제 예약 API
+description: 원하는 시점에 결제를 예약하고 결제 결과를 Webhook으로 받을 수 있는 API입니다.
+---
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### customer\_uid 를 이용하여 비인증 결제 요청을 예약할수 있는 API 입니다.
+#### 결제 요청에 대한 결과는 **notice\_url** 에 설정한 EndPoint URL 로 웹훅을 통해 수신(POST request)받을 수 있습니다.
+
+<Swagger method="post" path="/subscribe/payments/schedule" baseUrl="https://api.iamport.kr" summary="결제 예약(Schedule) API">
+<SwaggerDescription>
+`customer_uid`와 연결된 빌링키로 결제가 예약됩니다. 기존에 발급한 `customer_uid`를 이용하지 않고 새로운 값을 지정하는 경우 카드정보를 반드시 기재하여야 하며 요청이 성공적으로 처리되면 빌링키 발급과 결제예약이 동시에 이루어 집니다.
+
+예약건 별로 고유의 merchant_uid를 전달해주셔야 합니다.
+</SwaggerDescription>
+
+### Parameters
+
+#### Body
+
+<SwaggerParameter name="customer_uid" type="String" required="true">
+<mark style="color:red;">
+
+**빌링키**
+
+</mark>
+
+</SwaggerParameter>
+<SwaggerParameter name="checking_amount" type="Integer" required="false">
+유효카드 체크 승인금액
+
+</SwaggerParameter>
+<SwaggerParameter name="card_number" type="String" required="false">
+카드번호(**dddd-dddd-dddd-dddd**)
+
+</SwaggerParameter>
+<SwaggerParameter name="expiry" type="String" required="false">
+카드 유효기간(**YYYY-MM**)
+
+</SwaggerParameter>
+<SwaggerParameter name="birth" type="String" required="false">
+생년월일 6자리(**YYMMDD**)
+
+(법인카드의 경우 사업자등록번호10자리)
+
+</SwaggerParameter>
+<SwaggerParameter name="pwd_2digit" type="String" required="false">
+카드비밀번호 앞 2자리
+
+</SwaggerParameter>
+<SwaggerParameter name="cvc" type="String" required="false">
+카드 인증번호
+
+</SwaggerParameter>
+<SwaggerParameter name="pg" type="String" required="false">
+pg 구분코드
+
+</SwaggerParameter>
+<SwaggerParameter name="schedules" type="array" required="true">
+<mark style="color:red;">
+
+**결제예약 스케쥴**
+
+</mark>
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="결제예약 성공">
+<Tabs>
+<Tab title="ScheduleResponse">
+**`code`** <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+**`message`** <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+**`response`** <mark style="color:red;">**(Array\[ScheduleResultAnnotation], optional)**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="ScheduleResultAnnotation">
+**`code`** <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+**`message`** <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+**`customer_uid`** <mark style="color:green;">**string**</mark>
+
+**빌링키**
+
+**`merchant_uid`** <mark style="color:green;">**string**</mark>
+
+**주문번호**
+
+**`imp_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**포트원 결제 고유 UID**
+
+**`schedule_at`** <mark style="color:green;">**UNIX timestamp**</mark>
+
+**예약결제 실행 예정 시각(초) (UNIX timestamp in seconds)**
+
+**`executed_at`** <mark style="color:green;">**UNIX timestamp**</mark>
+
+**예약결제가 실행된 시각(초) (UNIX timestamp in seconds)**
+
+**`revoked_at`** <mark style="color:green;">**UNIX timestamp**</mark>
+
+**예약결제 실행을 철회한 시각(초) (UNIX timestamp in seconds)**
+
+**`amount`** <mark style="color:purple;">**integer**</mark>
+
+**주문(결제)금액**
+
+**`name`** <mark style="color:green;">**string**</mark>
+
+**제품명**
+
+**`buyer_name`** <mark style="color:green;">**string**</mark>
+
+**주문자명**
+
+**`buyer_email`** <mark style="color:green;">**string**</mark>
+
+**주문자 Email주소**
+
+**`buyer_tel`** <mark style="color:green;">**string**</mark>
+
+**주문자 전화번호**
+
+**`buyer_addr`** <mark style="color:green;">**string**</mark>
+
+**주문자 주소**
+
+**`buyer_postcode`** <mark style="color:green;">**string**</mark>
+
+**주문자 우편번호**
+
+**`custom_data`** <mark style="color:green;">**string**</mark>
+
+**가맹점 custom 데이터** JSON string으로 전달
+
+**`schedule_status`** <mark style="color:green;">**string**</mark>
+
+**예약상태**
+
+* `scheduled`: 예약됨(실행되기 전)
+* `executed`: 예약된 결제실행완료
+* `revoked`: 예약철회
+
+**`payment_status`** <mark style="color:green;">**string**</mark>
+
+**실행된 결제의 승인 상태**
+
+* `null`: 아직 예약결제가 실행되지 않음(null 이라는 값의 문자열이 아닌 실제 null 입니다)
+* `paid`: 예약결제가 결제승인됨
+* `failed`: 예약결제가 승인실패됨
+* `cancelled`: 예약결제가 결제승인 후 환불됨
+
+**`fail_reason`** <mark style="color:green;">**string**</mark>
+
+**실패사유**
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+### **주요 요청 파라미터 상세 설명**
+
+> **`schedules`** <mark style="color:blue;">**array**</mark>
+>
+> **결제예약 스케쥴**
+>
+> ***
+>
+> <mark style="color:red;">**\[ 필수항목 ]**</mark>
+>
+> * `merchant_uid` : 가맹점 주문번호(동일한 주문번호로 중복결제 불가) (스마트로-신모듈의 경우, 특수문자 포함이 불가능합니다.)
+> * `schedule_at` : 결제요청 예약시각(초) (UNIX timestamp in seconds)
+> * `currency` : 결제통화 e.g.) KRW, USD, ... (단, (신) 페이팔의 경우 KRW 결제가 불가능하므로 반드시 유효한 값을 필수로 입력해야합니다.)
+> * `amount` : 결제금액
+>
+> <mark style="color:green;">**\[ 선택항목 ]**</mark>
+>
+> * `tax_free` : amount 중 면세공급가액(기본값 : 0)
+> * `vat_amount`: amount 중 부가세(기본값: null). ((구) 나이스페이먼츠, KG이니시스, (신) 나이스페이먼츠, 웰컴페이먼츠에서 사용가능 합니다.)
+> * `name` : 주문명(누락되면 포트원 자체 기본값 사용)
+> * `buyer_name` : 주문자명 (KSNET, (신) 스마트로, 웰컴페이먼츠 필수)
+> * `buyer_email` : 주문자 Email ((신) 스마트로 필수)
+> * `buyer_tel` : 주문자 전화번호 ((신) 스마트 필수)
+> * `buyer_addr` : 주문자 주소
+> * `buyer_postcode` : 주문자 우편번호
+> * `custom_data` : 결제수행 시 사용될 custom_data 값
+> * `notice_url` : 예약결제수행 후 통지될 Notification URL (지정되지 않으면 관리자페이지의 Notification URL로 발송)
+> * `product_type` : 판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠) (KSNET 필수)
+> * `card_quota` : 카드할부개월수. 2 이상의 integer 할부개월수 적용(결제금액 50,000원 이상 한정, default = 일시불)
+> * `interest_free_by_merchant` : 카드할부처리시, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 가맹점이 지불하고자 PG사와 계약된 경우(default : false) (현재 (구) 나이스페이먼츠, KSNET, (신) 나이스페이먼츠만 지원됨)
+> * `use_card_point` : 승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요(default : false) (현재 (구) 나이스페이먼츠, (신) 나이스페이먼츠만 지원됨)
+> * `product_count` : 결제 상품의 개수 (Default : 1)
+> * `extra.naverUseCfm` : 이용완료일 YYYYMMDD (네이버페이 반복결제 계약 시 이용완료일 필수로 설정된 가맹점에 한함)
+
+<Tabs>
+<Tab title="Schedules Model Schema">
+```json title="Sample"
+[
+    {
+        "merchant_uid": "your_merchant_uid1",
+        "schedule_at": 1478150985,
+        "currency": "KRW",
+        "amount": 1004,
+        "name": "주문명",
+        "buyer_name": "주문자명",
+        "buyer_email": "주문자 Email주소",
+        "buyer_tel": "주문자 전화번호",
+        "buyer_addr": "주문자 주소",
+        "buyer_postcode": "주문자 우편번호"
+    },
+    {
+        "merchant_uid": "your_merchant_uid2",
+        "schedule_at": 1478150985,
+        "amount": 1004,
+        "name": "주문명",
+        "buyer_name": "주문자명",
+        "buyer_email": "주문자 Email주소",
+        "buyer_tel": "주문자 전화번호",
+        "buyer_addr": "주문자 주소",
+        "buyer_postcode": "주문자 우편번호"
+    }
+]
+```
+
+
+</Tab>
+</Tabs>
+
+> **`pg`** <mark style="color:green;">**string**</mark>
+>
+> **pg 구분코드**
+>
+> 신규 customer_uid를 등록하는 경우에만 유효합니다.
+> 
+>(기존에 등록된 customer_uid로만 schedule 하는 경우에는 pg파라메터 적용되지 않습니다.)
+> 
+> 관리자콘솔 API 방식 비인증 PG설정이 2개 이상인 경우 필수적으로 기재해야 하는 항목입니다.
+>
+> 동일 PG사에 <mark style="color:red;">**두개의 MID**</mark> 를 설정한 경우 아래 양식으로 기재 합니다. >
+> **\{PG사}.\{PG상점아이디}**
+>
+> * (구) 나이스페이먼츠, JTNet 2가지 PG설정이 되어있다면, pg 파라미터로 **nice** 또는 **jtnet**로 구분 가능
+> * (구) 나이스페이먼츠로부터 2개 이상의 상점아이디를 발급받았다면, **nice.MID1** 또는 **nice.MID2**로 구분 가능
+
+<Hint style="info">
+schedules의 상세정보
+
+**buyer\_name, buyer\_email, buyer\_tel, buyer\_addr, buyer\_postcode** 누락시
+
+<mark style="color:red;">**customer\_uid**</mark> 에 해당되는 **customer\_name, customer\_email, customer\_tel, customer\_addr, customer\_postcode** 정보로 대체됩니다.
+
+(둘 다 입력시 buyer_* 정보를 우선합니다)
+
+</Hint>
+
+<Details>
+<p slot="summary">Request Sample Json</p>
+
+```json
+{
+  "customer_uid": "TEST0001",
+  "schedules": [
+    {
+      "merchant_uid": "order_id001",
+      "schedule_at": 1658480415,
+      "amount": 1004,
+      "name": "carrot",
+    }
+  ]
+}
+```
+
+</Details>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```json
+{
+  "code": 0,
+  "message": "string",
+  "response": [
+    {
+      "customer_uid": "string",
+      "merchant_uid": "string",
+      "imp_uid": "string",
+      "schedule_at": 0,
+      "executed_at": 0,
+      "revoked_at": 0,
+      "amount": 0,
+      "name": "string",
+      "buyer_name": "string",
+      "buyer_email": "string",
+      "buyer_tel": "string",
+      "buyer_addr": "string",
+      "buyer_postcode": "string",
+      "custom_data": "string",
+      "schedule_status": "scheduled",
+      "payment_status": "paid",
+      "fail_reason": "string"
+    }
+  ]
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/subscribe/schedule**](https://api.iamport.kr/#!/subscribe/schedule)
+
+</Hint>

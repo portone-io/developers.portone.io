@@ -1,0 +1,120 @@
+---
+title: 결제금액 사전등록 API
+description: 인증 결제시 결제금액을 사전등록 하여 금액 위변조로 인한 결제사고를 예방합니다.
+---
+
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/gitbook/Hint.astro";
+import Swagger from "~/components/gitbook/swagger/Swagger.astro";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+
+### 인증결제를 진행할 때 결제금액 위변조 시 결제진행자체를 block 하기 위해 결제예정금액을 사전등록하는 기능
+
+<Swagger method="post" path="/payments/prepare" baseUrl="https://api.iamport.kr" summary="결제 금액을 사전 등록합니다.">
+<SwaggerDescription>
+사전등록된 가맹점 주문번호(merchant_uid)에 대해, IMP.request_pay()에 전달된 merchant_uid가 일치하는 주문의 결제금액이 다른 경우 PG사 결제창 호출이 중단됩니다
+
+</SwaggerDescription>
+
+### Parameters
+
+#### Body
+
+<SwaggerParameter name="merchant_uid" type="String" required="true">
+<mark style="color:red;">
+
+**가맹점 주문번호**
+
+</mark>
+
+</SwaggerParameter>
+<SwaggerParameter name="amount" type="double" required="true">
+<mark style="color:red;">
+
+**결제 예정금액**
+
+</mark>
+
+ 
+
+</SwaggerParameter>
+
+
+### Responses
+
+<SwaggerResponse status="200: OK" description="성공">
+<Tabs>
+<Tab title="PaymentPrepareResponse">
+**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+**응답코드**
+
+0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+
+
+
+**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**응답메세지**
+
+code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+
+
+
+<mark style="color:red;">**`response (PaymentPrepareAnnotation, optional)`**</mark>
+
+</Tab>
+</Tabs>
+
+<Tabs>
+<Tab title="PaymentPrepareAnnotation">
+**merchant\_uid** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+**가맹점 주문번호**
+
+**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`number`**</mark>  
+
+**`결제 예정 금액`**
+
+</Tab>
+</Tabs>
+
+</SwaggerResponse>
+
+<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+```javascript
+{
+    // Response
+}
+```
+
+</SwaggerResponse>
+
+</Swagger>
+
+<Details>
+<p slot="summary">Response Model Schema</p>
+
+```json
+{
+  "code": 0,
+  "message": "string",
+  "response": {
+    "merchant_uid": "string",
+    "amount": 0
+  }
+}
+```
+
+</Details>
+
+<Hint style="success">
+**Swagger Test Link**
+
+[**https://api.iamport.kr/#!/payments.validation/preparePayment**](https://api.iamport.kr/#!/payments.validation/preparePayment)
+</Hint>

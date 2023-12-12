@@ -1,16 +1,21 @@
 ---
-emoji: ⌨
 title: 토스페이먼츠 설정
-description: 토스페이먼츠 설정방법을 안내합니다.
+description: 토스페이먼츠 PG설정 방법을 안내합니다.
 ---
-
-import * as prose from "~/components/prose";
-export const components = prose;
 
 import Figure from "~/components/gitbook/Figure.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+
+import image1 from "./_assets/tosspayments/tosspayments-channel-guide-1.png";
+import image2 from "./_assets/tosspayments/tosspayments-channel-guide-2.png";
+import image3 from "./_assets/tosspayments/tosspayments-channel-guide-3.png";
+import image4 from "./_assets/tosspayments/tosspayments-channel-guide-4.png";
+import image5 from "./_assets/tosspayments/tosspayments-channel-guide-5.png";
+import image6 from "./_assets/tosspayments/tosspayments-channel-guide-6.png";
+import image7 from "./_assets/tosspayments/tosspayments-channel-guide-7.png";
+import image8 from "./_assets/tosspayments/tosspayments-channel-guide-8.png";
 
 <Hint style="info">
 **토스페이먼츠 신 모듈 연동 안내**
@@ -20,11 +25,11 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </Hint>
 
-## 인증결제 (신 모듈)
+## 일반결제 및 정기결제 (신 모듈)
 
 <Tabs>
 <Tab title="토스페이먼츠 API 버전 설정">
-**토스페이먼츠 API 버전 설정**
+#### 토스페이먼츠 API 버전 설정
 
 - [토스페이먼츠 개발자센터](https://app.tosspayments.com/signin?redirectUrl=https%3A%2F%2Fdevelopers.tosspayments.com%2Fmy%2Fapi-keys) 로그인
 - 왼쪽 네비게이션 메뉴 API 키 선택 → API 버전을 **2022-07-27**로 선택
@@ -39,17 +44,20 @@ API 버전을 다르게 설정하면 결제 승인 / 실패 시 실제 응답과
 </Tab>
 
 <Tab title="테스트 결제">
-**테스트 환경 구성 방법**
+#### 테스트 환경 구성 방법
 
 1. [포트원 관리자 콘솔 로그인](https://admin.portone.io/integration)
 2. **결제 연동** → **테스트 연동 관리** 탭
 3. 결제 대행사 설정에서 토스페이먼츠 / 토스페이먼츠 선택 후 오른쪽 `+ 추가` 버튼 클릭
 
-   <Figure src="/gitbook-assets/ko/image (181) (2).png" />
+<Figure src={image1} />
 
 4. 테스트 연동 정보 확인 후 오른쪽 하단 `저장` 버튼 클릭
 
-<Figure src="/gitbook-assets/ko/image (1) (2) (1).png" />
+- **토스페이먼츠 일반결제** 테스트 `iamporttest_3`
+- **토스페이먼츠 정기결제** 테스트 `iamporttest_4`
+
+<Figure src={image2} caption="테스트 환경 상세 설정 예시" />
 
 5. 등록 완료 후, 결제 요청 SDK의 PG 파라미터에 `tosspayments.PG상점아이디`를 입력
    - 토스에서 직접 계약 후 발급받은 상점아이디의 테스트 API 키로 진행해주세요.\
@@ -58,46 +66,43 @@ API 버전을 다르게 설정하면 결제 승인 / 실패 시 실제 응답과
 </Tab>
 
 <Tab title="실 결제">
-**실 환경 구성 방법**
+#### 실 환경 구성 방법
 
 1. [포트원 관리자 콘솔 로그인](https://admin.portone.io/integration)
 2. **결제 연동** → **실 연동 관리** 탭
-3. 결제 대행사 설정에서 토스페이먼츠 / 토스페이먼츠 선택 후 오른쪽 `+ 추가` 버튼 클릭\
+3. 결제 대행사 설정에서 토스페이먼츠 / 토스페이먼츠 선택 후 오른쪽 `+ 추가` 버튼 클릭
 
-   <Figure src="/gitbook-assets/ko/image (177) (1).png" />
+   <Figure src={image7} />
 
-4. 테스트 연동 정보 확인 후 오른쪽 하단 `저장` 버튼 클릭\
+4. 실 연동 정보 입력 후 오른쪽 하단 `저장` 버튼 클릭
 
-   <Figure src="/gitbook-assets/ko/image (185) (2).png" />
+   <Figure src={image8} />
 
 5. 등록 완료 후, 결제 요청 SDK의 PG 파라미터에 `tosspayments.실연동상점아이디`를 입력
 
 </Tab>
 </Tabs>
 
-## 인증**결제 (구 모듈)**
+## 인증 결제 (구 모듈)
 
 <Tabs>
 <Tab title="테스트 결제">
-**테스트 환경 구성방법**
+#### 테스트 환경 구성 방법
 
-1. [포트원관리자콘솔](https://admin.portone.io) **-> 결제연동 -> 테스트 연동관리 -> 토스페이먼츠 -> (구)토스페이먼츠->추가**
+1. [포트원관리자콘솔](https://admin.portone.io) **-> 결제연동 -> 테스트 연동관리 -> 토스페이먼츠 -> (구)토스페이먼츠 -> 추가**
 2. **자동으로 설정된 테스트 MID 확인후 저장 선택**
 
 <Figure
-  src="/gitbook-assets/ko/image (40) (1).png"
-  caption="결제연동 -> 테스트 연동관리 -> 토스페이먼츠 -> (구)토스페이먼츠 ->추가"
+  src={image3}
+  caption="결제연동 -> 테스트 연동관리 -> 토스페이먼츠 -> (구)토스페이먼츠 -> 추가"
 />
 
-<Figure
-  src="/gitbook-assets/ko/image (47) (1).png"
-  caption="자동으로 설정된 테스트 MID 확인후 저장"
-/>
+<Figure src={image4} caption="자동으로 설정된 테스트 MID 확인후 저장" />
 
 </Tab>
 
 <Tab title="실 결제">
-**실 환경 구성방법**
+#### 실 환경 구성 방법
 
 1. **결제연동** -> **실 연동관리** 선택
 2. **토스페이먼츠** -> <mark style="color:red;">**(구) 토스페이먼츠**</mark> 선택 -> **추가**
@@ -110,18 +115,10 @@ API 버전을 다르게 설정하면 결제 승인 / 실패 시 실제 응답과
 
 </Hint>
 
-<Figure
-  src="/gitbook-assets/ko/image (1) (1) (1) (1).png"
-  caption="결제연동 -> 실 연동관리 선택"
-/>
+<Figure src={image5} caption="토스페이먼츠 -> (구) 토스페이먼츠 선택 -> 추가" />
 
 <Figure
-  src="/gitbook-assets/ko/image (275).png"
-  caption="토스페이먼츠 -> (구) 토스페이먼츠 선택 -> 추가"
-/>
-
-<Figure
-  src="/gitbook-assets/ko/image (82).png"
+  src={image6}
   caption="토스페이먼츠와 계약 후 발급된 연동상점정보(MID/ MertKey)를 기재"
 />
 

@@ -1,0 +1,108 @@
+---
+import type { Lang } from "~/type";
+import { calcNavMenuAncestors, navMenu } from "~/state/server-only/nav";
+import { navOpenStatesSignal, slugSignal } from "~/state/nav";
+
+import LeftSidebar from "./LeftSidebar.astro";
+import LeftSidebarItem from "./LeftSidebarItem";
+import { SearchButton } from "./search";
+import VersionSwitch from "./VersionSwitch";
+
+interface Props {
+  lang: Lang;
+  slug: string;
+}
+const { lang, slug } = Astro.props;
+
+const navMenuItems = navMenu[lang] || [];
+const navMenuAncestors = calcNavMenuAncestors(navMenuItems);
+const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
+  ...(navMenuAncestors[slug]?.map((ancestor) => [ancestor, true]) || []),
+  [slug, true],
+]));
+slugSignal.value = slug;
+---
+
+<script>
+  import { effect } from "@preact/signals";
+  import {
+    navOpenStatesSignal,
+    slugSignal,
+    systemVersionSignal,
+  } from "~/state/nav";
+  const navMenu = document.getElementById("nav-menu")!;
+  navOpenStatesSignal.value = {
+    ...navOpenStatesSignal.value,
+    ...JSON.parse(navMenu.dataset.navopenstates!),
+  };
+  slugSignal.value = navMenu.dataset.slug!;
+  const scrollArea: HTMLElement = navMenu;
+  const activeElement = scrollArea.querySelector("[data-active=active]");
+  if (activeElement) {
+    scrollArea.scrollTop =
+      activeElement.getBoundingClientRect().top -
+      scrollArea.getBoundingClientRect().top -
+      50;
+  }
+  effect(() => {
+    const systemVersion = systemVersionSignal.value;
+    navMenu.dataset.selectedSystemVersion = systemVersion;
+  });
+</script>
+<style is:global>
+  [data-selected-system-version="v1"] [data-system-version="v2"],
+  [data-selected-system-version="v2"] [data-system-version="v1"] {
+    display: none;
+  }
+</style>
+<LeftSidebar>
+  <div class="relative flex flex-col gap-2 px-2 pb-4 pt-[28px]">
+    <VersionSwitch client:visible />
+    <SearchButton lang={lang} client:visible />
+  </div>
+  <nav
+    id="nav-menu"
+    class="relative flex-1 overflow-y-scroll"
+    data-slug={slug}
+    data-navopenstates={JSON.stringify(navOpenStates)}
+    data-selected-system-version="v1"
+  >
+    <ul class="flex flex-col gap-1 px-2 pb-4">
+      {
+        navMenuItems.map((item) => {
+          if (item.type === "group") {
+            return (
+              <li
+                class="[&:not(:last-child)]:mb-4"
+                data-system-version={item.systemVersion}
+              >
+                <h4 class="p-2 text-lg font-bold first:mt-0">
+                  <span>{item.label}</span>
+                </h4>
+                <ul class="flex flex-col gap-1">
+                  {item.items.map((item) => (
+                    <li data-system-version={item.systemVersion}>
+                      <LeftSidebarItem client:visible {...item} />
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          }
+          if (item.slug === "===") {
+            return (
+              <li>
+                <hr class="mx-2 my-4" />
+              </li>
+            );
+          }
+          return (
+            <li data-system-version={item.systemVersion}>
+              <LeftSidebarItem client:visible {...item} />
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+</LeftSidebar>

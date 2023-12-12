@@ -2,7 +2,6 @@ import { defineCollection, z } from "astro:content";
 
 const docCollection = defineCollection({
   schema: z.object({
-    emoji: z.string().optional(),
     title: z.string(),
     description: z.string(),
   }),
@@ -25,8 +24,13 @@ const releaseNoteCollection = defineCollection({
   }),
 });
 
+const apiSectionDescriptionCollection = defineCollection({
+  schema: z.object({}),
+});
+
 export const collections = {
   docs: docCollection,
   blog: blogCollection,
   "release-notes": releaseNoteCollection,
+  "api-section-description": apiSectionDescriptionCollection,
 };

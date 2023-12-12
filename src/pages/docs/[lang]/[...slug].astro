@@ -1,47 +1,59 @@
 ---
 import * as path from "node:path";
+import type { GetStaticPathsItem } from "astro";
 import { getCollection } from "astro:content";
 
 import type { Lang } from "../../../type";
-import { frontmattersSignal } from "../../../state/server-only/frontmatters";
-import LayoutBase from "../../../layouts/LayoutBase.astro";
-import { h1 as H1 } from "../../../components/prose";
-import LeftSidebar from "~/layouts/sidebar/LeftSidebar.astro";
+import redirYaml from "~/content/docs/_redir.yaml";
+import Redir from "~/layouts/Redir.astro";
+import Docs from "~/layouts/Docs.astro";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
-  return docEntries.map((entry) => {
+  const staticPaths: Record<string, GetStaticPathsItem> = {};
+  for (const entry of docEntries) {
     const [lang, ...fragments] = entry.slug.split("/");
     const absSlug = path.posix.join("/", entry.slug);
     const slug = fragments.join("/");
-    frontmattersSignal.value = {
-      ...frontmattersSignal.value,
-      [absSlug]: entry.data,
-    };
-    return {
+    // 영어문서가 많이 outdated되어 당분간 내림
+    // 영어문서 링크로 들어오면 한국어 문서로 리디렉션
+    // AI 번역으로 전부 대체 예정
+    if (lang === "en") {
+      staticPaths[entry.slug] = {
+        params: { lang, slug },
+        props: { redirTarget: `/ko/${slug}` },
+      };
+    } else {
+      staticPaths[entry.slug] = {
+        params: { lang, slug },
+        props: { entry, slug: absSlug },
+      };
+    }
+  }
+  for (const redir of redirYaml) {
+    const entrySlug = redir.old.slice(1);
+    const [lang, ...fragments] = entrySlug.split("/");
+    const slug = fragments.join("/");
+    staticPaths[entrySlug] = {
       params: { lang, slug },
-      props: { entry, slug: absSlug },
+      props: { redirTarget: redir.new },
     };
-  });
+  }
+  return Object.values(staticPaths);
 }
 
 const lang = Astro.params.lang as Lang;
-const { entry, slug } = Astro.props;
-const { emoji, title, description } = entry.data;
-const { Content } = await entry.render();
+const { redirTarget, entry, slug } = Astro.props;
 ---
 
-<LayoutBase lang={lang} title={title}>
-  <div class="flex">
-    <LeftSidebar lang={lang} slug={slug} />
-    <div class="basis-200 mx-auto shrink">
-      <article class="m-4 flex flex-col text-slate-700">
-        <H1>
-          {emoji && <span class="mr-2 text-[1.2em]">{emoji}</span>}{title}
-        </H1>
-        {description && <p class="text-gray my-4 text-xl">{description}</p>}
-        <Content />
-      </article>
-    </div>
-  </div>
-</LayoutBase>
+{
+  redirTarget ? (
+    redirTarget.startsWith("https:") ? (
+      <Redir target={redirTarget} />
+    ) : (
+      <Redir target={`/docs${redirTarget}`} />
+    )
+  ) : (
+    <Docs lang={lang} slug={slug} entry={entry} />
+  )
+}

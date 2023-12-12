@@ -1,7 +1,8 @@
 ---
 import type { Lang } from "~/type";
-import { getCollection } from "astro:content";
 import Logo from "./Logo.astro";
+import MobileMenuButton from "./MobileMenuButton";
+import Dropdown from "./Dropdown";
 
 interface Props {
   lang: Lang;
@@ -11,13 +12,13 @@ const { lang } = Astro.props;
 const ko = {
   developers: "개발자센터",
   "sdk-playground": "SDK 놀이터",
-  console: "콘솔",
+  console: "관리자 콘솔",
   language: "언어",
 };
 const en: typeof ko = {
   developers: "Developers",
   "sdk-playground": "SDK Playground",
-  console: "Console",
+  console: "Admin Console",
   language: "Language",
 };
 const t = lang === "ko" ? ko : en;
@@ -27,39 +28,50 @@ const t = lang === "ko" ? ko : en;
   <header
     class="h-inherit fixed z-10 flex w-full items-center justify-between border-b bg-white pl-6"
   >
-    <div class="flex gap-20">
-      <a href={`/docs/${lang}`}>
+    <div class="flex h-full items-center gap-20">
+      <a class="inline-flex h-full items-center" href={`/docs/${lang}`}>
         <div class="flex items-center gap-2">
           <Logo class="w-22" />
           <span>{t["developers"]}</span>
         </div>
       </a>
-      {
-        lang === "ko" && (
-          <div class="hidden items-center gap-4 md:flex">
-            <a
-              href={`/release-notes/${(await getCollection("release-notes"))
-                .map((entry) => entry.slug)
-                .sort()
-                .pop()}`}
-            >
+      <div class="hidden h-full items-center gap-4 md:flex">
+        {
+          lang === "ko" && (
+            <a class="inline-flex h-full items-center" href="/release-notes">
               릴리즈 노트
             </a>
-          </div>
-        )
-      }
+          )
+        }
+        <Dropdown
+          client:visible
+          link="/api"
+          items={[
+            { label: "REST API - V1", link: "/api/rest-v1" },
+            // { label: "REST API - V2", link: "/api/rest-v2" },
+            // { label: "GraphQL API", link: "/api/graphql" },
+            {
+              label: t["sdk-playground"],
+              link: "https://sdk-playground.portone.io/",
+            },
+          ]}
+        >
+          API & SDK
+        </Dropdown>
+      </div>
     </div>
-    <div class="hidden items-center gap-4 pr-6 md:flex">
-      <a href="https://sdk-playground.portone.io/">{t["sdk-playground"]}</a>
-      <a href="https://admin.portone.io/">{t["console"]}</a>
-      <a href={`/docs/${lang === "ko" ? "en" : "ko"}`}>
-        {lang === "ko" ? "🇺🇸 English" : "🇰🇷 한국어"}
+    <div class="hidden h-full items-center gap-4 pr-6 md:flex">
+      <a
+        class="inline-flex items-center gap-1"
+        href="https://admin.portone.io/"
+      >
+        <span>{t["console"]}</span>
+        <i class="i-ic-baseline-launch"></i>
       </a>
+      <!-- <a href={`/docs/${lang === "ko" ? "en" : "ko"}`}>
+        {lang === "ko" ? "🇺🇸 English" : "🇰🇷 한국어"}
+      </a> -->
     </div>
-    <div class="flex h-full md:hidden">
-      <button class="px-4">
-        <i class="i-ic-baseline-menu block text-2xl"></i>
-      </button>
-    </div>
+    <MobileMenuButton client:visible />
   </header>
 </div>

@@ -1,27 +1,27 @@
 export interface MethodBadgeProps {
   method: "get" | "post" | "put" | "delete";
 }
-export const MethodBadge: React.FC<MethodBadgeProps> = ({ method }) => {
+export function MethodBadge({ method }: MethodBadgeProps) {
   return {
     get: (
-      <span class="px-2 py-1 text-xs font-bold tracking-widest rounded-full text-white bg-indigo-6">
+      <span class="bg-indigo-6 rounded-full px-2 py-1 text-xs font-bold tracking-widest text-white">
         GET
       </span>
     ),
     post: (
-      <span class="px-2 py-1 text-xs font-bold tracking-widest rounded-full text-white bg-green-6">
+      <span class="bg-green-6 rounded-full px-2 py-1 text-xs font-bold tracking-widest text-white">
         POST
       </span>
     ),
     put: (
-      <span class="px-2 py-1 text-xs font-bold tracking-widest rounded-full text-white bg-orange-7">
+      <span class="bg-orange-7 rounded-full px-2 py-1 text-xs font-bold tracking-widest text-white">
         PUT
       </span>
     ),
     delete: (
-      <span class="px-2 py-1 text-xs font-bold tracking-widest rounded-full text-white bg-red-6">
+      <span class="bg-red-6 rounded-full px-2 py-1 text-xs font-bold tracking-widest text-white">
         DELETE
       </span>
     ),
   }[method];
-};
+}

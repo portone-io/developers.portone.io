@@ -1,0 +1,76 @@
+---
+import { format } from "date-fns";
+
+import { JustLink } from "~/layouts/sidebar/LeftSidebarItem";
+import type { ReleaseNote } from "~/misc/releaseNote";
+
+interface Props {
+  consoleNotes: ReleaseNote[];
+  apiSdkNotes: ReleaseNote[];
+  activeSlug?: string;
+}
+
+const { consoleNotes, apiSdkNotes, activeSlug } = Astro.props;
+---
+
+<nav>
+  <ul class="flex flex-col gap-1 p-2 py-4">
+    <li>
+      <h4 class="p-2 text-lg font-bold first:mt-0">관리자콘솔</h4>
+      <ul class="flex flex-col gap-1">
+        {
+          consoleNotes.map((note) => {
+            const title = `${format(
+              note.entry.data.releasedAt,
+              "yyyy-MM-dd"
+            )} 업데이트`;
+            const isActive = note.slug === activeSlug;
+            const href = `/release-notes/${note.slug}`;
+            return (
+              <li>
+                <JustLink
+                  client:visible
+                  title={title}
+                  href={href}
+                  isActive={isActive}
+                  event={{
+                    name: "Developers_Releasenote_Menu_Click",
+                    props: { slug: note.slug },
+                  }}
+                />
+              </li>
+            );
+          })
+        }
+      </ul>
+    </li>
+    <li class="mb-4">
+      <h4 class="p-2 text-lg font-bold first:mt-0">API / SDK</h4>
+      <ul class="flex flex-col gap-1">
+        {
+          apiSdkNotes.map((note) => {
+            const title = `${format(
+              note.entry.data.releasedAt,
+              "yyyy-MM-dd"
+            )} 업데이트`;
+            const isActive = note.slug === activeSlug;
+            const href = `/release-notes/${note.slug}`;
+            return (
+              <li>
+                <JustLink
+                  title={title}
+                  href={href}
+                  isActive={isActive}
+                  event={{
+                    name: "Developers_Releasenote_Menu_Click",
+                    props: { slug: note.slug },
+                  }}
+                />
+              </li>
+            );
+          })
+        }
+      </ul>
+    </li>
+  </ul>
+</nav>

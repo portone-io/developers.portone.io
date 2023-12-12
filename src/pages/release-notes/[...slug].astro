@@ -1,44 +1,39 @@
 ---
-import { CollectionEntry, getCollection } from "astro:content";
 import { format } from "date-fns";
+import type { InferGetStaticParamsType, InferGetStaticPropsType } from "astro";
 
-import LayoutBase from "../../layouts/LayoutBase.astro";
-import { h1 as H1 } from "../../components/prose";
+import LayoutBase from "~/layouts/LayoutBase.astro";
+import * as prose from "~/components/prose";
 import Banner from "~/components/release-note/Banner.astro";
 import Footer from "~/components/release-note/Footer.astro";
-import { JustLink } from "~/layouts/sidebar/LeftSidebarItem";
+import { getReleaseNotes } from "~/misc/releaseNote";
+import Nav from "~/layouts/release-notes/Nav.astro";
 
 export async function getStaticPaths() {
-  const docEntries = await getCollection("release-notes");
-  const apiSdkNotes: string[] = [];
-  const consoleNotes: string[] = [];
-  interface Frontmatters {
-    [slug: string]: CollectionEntry<"release-notes">["data"];
-  }
-  const frontmatters: Frontmatters = {};
-  for (const entry of docEntries) {
-    const slug = entry.slug;
-    if (slug.startsWith("api-sdk")) apiSdkNotes.push(slug);
-    else if (slug.startsWith("console")) consoleNotes.push(slug);
-    frontmatters[slug] = entry.data;
-  }
-  apiSdkNotes.sort().reverse();
-  consoleNotes.sort().reverse();
-  return docEntries.map((entry) => {
-    const slug = entry.slug;
-    return {
+  const { apiSdkNotes, consoleNotes } = await getReleaseNotes();
+  return [
+    ...apiSdkNotes.map(({ slug, entry }) => ({
       params: { slug },
-      props: { entry, apiSdkNotes, consoleNotes, frontmatters },
-    };
-  });
+      props: { entry, apiSdkNotes, consoleNotes },
+    })),
+    ...consoleNotes.map(({ slug, entry }) => ({
+      params: { slug },
+      props: { entry, apiSdkNotes, consoleNotes },
+    })),
+  ];
 }
 
-const pageSlug = Astro.params.slug;
-const { entry, apiSdkNotes, consoleNotes, frontmatters } = Astro.props;
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { slug } = Astro.params as Params;
+const { entry, apiSdkNotes, consoleNotes } = Astro.props as Props;
 const { releasedAt, writtenAt } = entry.data;
 const { Content } = await entry.render();
 
-const label = apiSdkNotes.includes(pageSlug) ? "API/SDK" : "관리자콘솔";
+const label = apiSdkNotes.some((note) => note.slug === slug)
+  ? "API / SDK"
+  : "관리자콘솔";
 const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
 ---
 
@@ -51,77 +46,22 @@ const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
       <div
         class="w-inherit fixed h-[calc(100%-3.5rem)] overflow-y-scroll border-r bg-white"
       >
-        <nav>
-          <ul class="flex flex-col gap-1 p-2 py-4">
-            <li>
-              <h4
-                class="text-gray mt-4 p-2 text-xs font-bold tracking-widest first:mt-0"
-              >
-                관리자콘솔 릴리즈노트
-              </h4>
-              <ul class="flex flex-col gap-1">
-                {
-                  consoleNotes.map((slug: string) => {
-                    const title = `${format(
-                      frontmatters[slug].releasedAt,
-                      "yyyy-MM-dd"
-                    )} 업데이트`;
-                    const isActive = pageSlug === slug;
-                    const href = `/release-notes/${slug}`;
-                    return (
-                      <li>
-                        <JustLink
-                          title={title}
-                          href={href}
-                          isActive={isActive}
-                        />
-                      </li>
-                    );
-                  })
-                }
-              </ul>
-            </li>
-            <li>
-              <h4
-                class="text-gray mt-4 p-2 text-xs font-bold tracking-widest first:mt-0"
-              >
-                API/SDK 릴리즈노트
-              </h4>
-              <ul class="flex flex-col gap-1">
-                {
-                  apiSdkNotes.map((slug: string) => {
-                    const title = `${format(
-                      frontmatters[slug].releasedAt,
-                      "yyyy-MM-dd"
-                    )} 업데이트`;
-                    const isActive = pageSlug === slug;
-                    const href = `/release-notes/${slug}`;
-                    return (
-                      <li>
-                        <JustLink
-                          title={title}
-                          href={href}
-                          isActive={isActive}
-                        />
-                      </li>
-                    );
-                  })
-                }
-              </ul>
-            </li>
-          </ul>
-        </nav>
+        <Nav
+          consoleNotes={consoleNotes}
+          apiSdkNotes={apiSdkNotes}
+          activeSlug={slug}
+        />
       </div>
     </aside>
     <div class="basis-200 mx-auto shrink">
       <article class="m-4 flex flex-col text-slate-700">
-        <H1>{title}</H1>
+        <prose.h1>{title}</prose.h1>
         <p class="text-gray my-4 text-xl">
           {format(releasedAt, "yyyy년 M월 d일")}
           {label} 업데이트 소식을 안내드립니다.
         </p>
         <Banner />
-        <Content />
+        <Content components={prose} />
         <Footer date={format(writtenAt, "yyyy년 M월 d일")} />
       </article>
     </div>

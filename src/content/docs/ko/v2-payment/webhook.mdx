@@ -1,11 +1,7 @@
 ---
-emoji: 💸
 title: 웹훅 연동하기
 description: 웹훅 연동을 통해 정확한 결제 결과를 처리할 수 있습니다.
 ---
-
-import * as prose from "~/components/prose";
-export const components = prose;
 
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
@@ -31,8 +27,10 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 * **결제(예약 결제 포함)가 승인**되었을 때(모든 결제 수단) - (status : `paid`)
 * **가상계좌가 발급**되었을 때 - (status : `virtual_account_issued`)
 * **가상계좌에 결제 금액이 입금**되었을 때 - (status : `paid`)
-* **관리자 콘솔에서 결제 취소**되었을 때 - (status : `cancelled`)
-* 결제(예약 결제 포함)가 실패했을 때(status: `failed`)
+* **결제가 부분 취소**되었을 때 - (status : `partial_cancelled`)
+* **결제가 완전 취소**되었을 때 - (status : `cancelled`)
+* (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때 - (status: `cancel_pending`)
+* **결제(예약 결제 포함)가 실패**했을 때 - (status: `failed`)
 
 ## 웹훅 수신 설정
 
@@ -125,6 +123,13 @@ app.post("/portone-webhook", async (req, res) => {
 
 </Tab>
 </Tabs>
+
+### 3. 웹훅(Webhook) 요청 검증하기
+
+웹훅 수신주소는 공개된 URL이기 때문에 요청자 클라이언트(client IP)가 포트원(PortOne IP)인지 반드시 확인해야 합니다. 포트원 웹훅은 다음의 고정된 IP로부터 요청이 생성됩니다.
+
+> - <mark style="color:red;">**52.78.5.241**</mark>
+
 
 <Hint style="info">
 **서버가 결제 정보를 수신 하는 순서는 보장되지 않습니다**

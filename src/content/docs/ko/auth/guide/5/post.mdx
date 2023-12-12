@@ -1,11 +1,7 @@
 ---
-emoji: ➡
 title: 결제정보 사후 검증하기
 description: ""
 ---
-
-import * as prose from "~/components/prose";
-export const components = prose;
 
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
@@ -73,7 +69,7 @@ app.post("/payments/complete", async (req, res) => {
       // 인증 토큰 Authorization header에 추가
       headers: { "Authorization": access_token }
     });
-    const paymentData = getPaymentData.data; // 조회한 결제 정보
+    const paymentData = getPaymentData.data.response; // 조회한 결제 정보
     ...
   } catch (e) {
     res.status(400).send(e);
@@ -103,7 +99,7 @@ app.post("/payments/complete", async (req, res) => {
     // imp_uid로 포트원 서버에서 결제 정보 조회
     // 코드 생략
 
-    const paymentData = getPaymentData.data; // 조회한 결제 정보
+    const paymentData = getPaymentData.data.response; // 조회한 결제 정보
     // ...
     // DB에서 결제되어야 하는 금액 조회
     const order = await Orders.findById(paymentData.merchant_uid);

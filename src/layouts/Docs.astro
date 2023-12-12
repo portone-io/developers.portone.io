@@ -1,0 +1,50 @@
+---
+import type { Lang } from "~/type";
+import LayoutBase from "~/layouts/LayoutBase.astro";
+import * as prose from "~/components/prose";
+import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu.astro";
+import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
+import { SearchScreen } from "~/layouts/sidebar/search";
+import { calcNavMenuSystemVersions, navMenu } from "~/state/server-only/nav";
+
+interface Props {
+  lang: Lang;
+  slug: string;
+  entry: any;
+}
+const { lang, slug, entry } = Astro.props;
+const { title, description } = entry.data;
+const mdx = await entry.render();
+const Content = mdx.Content;
+
+const toc = headingsToToc(lang, mdx.headings);
+
+const navMenuItems = navMenu[lang] || [];
+const navMenuSystemVersions = calcNavMenuSystemVersions(navMenuItems);
+---
+
+<LayoutBase lang={lang} title={title}>
+  <div class="flex">
+    <DocsNavMenu lang={lang} slug={slug} />
+    <div class="flex flex-1 justify-center">
+      <article
+        class="basis-200 shrink-1 m-4 mb-40 flex flex-col text-slate-700"
+      >
+        <div class="mb-6">
+          <prose.h1 id="overview">
+            {title}
+          </prose.h1>
+          {description && <p class="text-gray">{description}</p>}
+        </div>
+        <Content components={prose} />
+      </article>
+      <div class="shrink-10 hidden basis-10 lg:block"></div>
+      <RightSidebar lang={lang} slug={slug} toc={toc} client:idle />
+    </div>
+  </div>
+  <SearchScreen
+    lang={lang}
+    navMenuSystemVersions={navMenuSystemVersions}
+    client:idle
+  />
+</LayoutBase>
