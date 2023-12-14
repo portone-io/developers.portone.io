@@ -22,13 +22,13 @@ const downloadFns: { [key in Schema]: () => Promise<void> } = {
   "V2 GraphQL": downloadV2Graphql,
 };
 
-const schema = (await Input.prompt({
+const schema = await Input.prompt({
   message: "내려받을 스키마를 선택해주세요.",
   default: schemas[0],
   list: true,
   info: true,
   suggestions: schemas as unknown as Schema[],
-})) as Schema;
+}) as Schema;
 
 const mdProperties = new Set([
   "summary",
@@ -77,8 +77,8 @@ async function downloadV2Openapi() {
     node.properties ||= {};
     for (const field in node["x-portone-fields"]) {
       Object.assign(
-        (node.properties[field] ||= {}),
-        node["x-portone-fields"][field]
+        node.properties[field] ||= {},
+        node["x-portone-fields"][field],
       );
     }
     delete node["x-portone-fields"];
@@ -139,13 +139,13 @@ async function ensureLoggedIn() {
     const code = await requestCode();
     console.log(`1. 우측의 OTP 코드를 복사해주세요: ${code.userCode}`);
     console.log(
-      "2. <Enter> 키를 입력하면 웹브라우저에서 OTP 인증 화면으로 이동합니다."
+      "2. <Enter> 키를 입력하면 웹브라우저에서 OTP 인증 화면으로 이동합니다.",
     );
     await Deno.stdin.read(new Uint8Array(1));
     const { success } = await open(code.verificationUri);
     if (!success) {
       console.log(
-        "브라우저를 실행하는데 실패했습니다. 아래 URL로 직접 이동해주세요."
+        "브라우저를 실행하는데 실패했습니다. 아래 URL로 직접 이동해주세요.",
       );
       console.log(code.verificationUri);
     }
@@ -159,7 +159,7 @@ async function ensureLoggedIn() {
 function traverseEveryProperty(
   object: any,
   fn: (node: any, property: string, context: any) => void,
-  context: any = {}
+  context: any = {},
 ) {
   if (!object) return;
   if (typeof object !== "object") return;
