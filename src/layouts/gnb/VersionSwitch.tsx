@@ -19,7 +19,10 @@ export default VersionSwitch;
 function getButtonProps(thisVersion: SystemVersion) {
   const systemVersion = systemVersionSignal.value;
   return {
-    onClick: () => (systemVersionSignal.value = thisVersion),
+    onClick: () => {
+      systemVersionSignal.value = thisVersion;
+      if (!location.pathname.startsWith("/docs/")) location.href = "/";
+    },
     class: `px-8px py-4px rounded-full ${
       systemVersion === thisVersion ? onClass : offClass
     }`,
