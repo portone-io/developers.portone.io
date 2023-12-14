@@ -3,9 +3,6 @@ title: KSNET
 description: KSNET 결제창 연동 가이드입니다.
 ---
 
-import * as prose from "~/components/prose";
-export const components = prose;
-
 import Figure from "~/components/gitbook/Figure.astro";
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Hint from "~/components/gitbook/Hint.astro";
@@ -210,25 +207,13 @@ curl -H "Content-Type: application/json" \
      https://api.iamport.kr/subscribe/customers/your-customer-unique-id
 ```
 
-### 빌링키 발급 및 최초 결제 요청하기
-
-REST [**API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호출하여 빌링키 발급과 최초 결제를 요청합니다.
-
-- **`customer_uid`** : 빌링키 등록을 위해서 지정해야 합니다.
-
-```sh
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
-
 ### 빌링키로 결제 요청하기
 
 빌링키 발급과 최초 결제가 성공하면 빌링키는 전달된 `customer_uid` 와 1:1 매칭되어 포트원에 저장됩니다. 보안상의 이유로 서버는 빌링키에 직접 접근할 수 없기 때문에 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
 
 ```sh
 curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+     -X POST -d '{"customer_uid": "your-customer-unique-id", "merchant_uid": "order_id_8237352", "amount": 3000, "product_type": "digital"}' \
      https://api.iamport.kr/subscribe/payments/again
 ```
 
@@ -247,7 +232,7 @@ REST [**API POST /payments/cancel**](../../../api/api-1/api)를 호출하여 승
 포트원을 통한 거래건이지만 결제창에서 현금영수증 등록을 하지 못한 경우 API를 통해 현금영수증을 등록할 수 있습니다.\
 REST [**API POST /receipts/\{imp_uid}**](../../../api/api-8/api-2)를 호출하여 현금영수증을 요청합니다.
 
-- `product_type`, `buyer_name` 파라미터는 KSNET 필수 입력 대상입니다.
+- `product_type`(디지털: `"digital"`, 실물: `"real"`), `buyer_name` 파라미터는 KSNET 필수 입력 대상입니다.
 
 ```sh
 curl -H "Content-Type: application/json" \

@@ -9,10 +9,11 @@ export interface NavMenuItem {
 }
 
 interface Props {
+  title: string;
   items: NavMenuItem[];
   basepath: string;
 }
-const { items, basepath } = Astro.props;
+const { title, items, basepath } = Astro.props;
 const _items = [
   // Any Hangul character included breaks the Astro Language Server
   { title: "\uac1c\uc694", id: "overview" },
@@ -65,10 +66,11 @@ const _items = [
   }
   const previousSectionSignal = signal<string>("");
   effect(() => {
-    const currentSection = getParentCategoryId(currentSectionSignal.value);
+    const currentSectionId = currentSectionSignal.value;
+    const currentSection = getParentCategoryId(currentSectionId);
     const previousSection = previousSectionSignal.peek();
     if (currentSection === previousSection) return;
-    previousSectionSignal.value = currentSectionSignal.value;
+    previousSectionSignal.value = currentSection;
     openNav(currentSection);
     closeNav(previousSection);
   });
@@ -86,32 +88,79 @@ const _items = [
     (child) => child.tagName === "SECTION"
   );
   function observe() {
+    interface Item {
+      isIntersecting: boolean;
+      intersectionRatio: number;
+      offsetTop: number;
+    }
+    const items: Record<string, Item> = {};
+    for (const section of sections) {
+      const { offsetTop } = section as HTMLElement;
+      items[section.id] = {
+        isIntersecting: false,
+        intersectionRatio: 0,
+        offsetTop,
+      };
+    }
     const observer = new IntersectionObserver(
       (entries) => {
-        const entry = entries.filter(({ isIntersecting }) => isIntersecting)[0];
-        if (!entry) return;
-        currentSectionSignal.value = entry.target.id;
+        for (const entry of entries) {
+          const item = items[entry.target.id]!;
+          const { isIntersecting, intersectionRatio } = entry;
+          Object.assign(item, { isIntersecting, intersectionRatio });
+        }
+        // 지금 화면에 보이고있는 section들
+        const intersectingIds = Object.keys(items).filter((id) =>
+          Boolean(items[id]?.isIntersecting)
+        );
+        // 화면에 보이는 section 중에서 사용자가 지금 관심있어할법한 section 순으로 정렬함.
+        // 우선 intersectionRatio가 큰 걸 찾는다.
+        // intersectionRatio가 0.5면 화면에 반쯤 보이고 있다는 뜻이고, 1이면 화면 안에 전부 들어와있다는 뜻이다.
+        // intersectionRatio가 둘 다 1이면 (두 section의 모든 내용이 전부 화면에 보이고 있다면) offsetTop이 작은 걸 찾는다.
+        // offsetTop이 작다는 것은 화면에서 위쪽에 보인다는 뜻이다.
+        intersectingIds.sort((aId, bId) => {
+          const a = items[aId]!;
+          const b = items[bId]!;
+          const aRatio = a.intersectionRatio;
+          const bRatio = b.intersectionRatio;
+          if (aRatio !== bRatio) return bRatio - aRatio; // descending
+          const aTop = a.offsetTop;
+          const bTop = b.offsetTop;
+          return aTop - bTop; // ascending
+        });
+        currentSectionSignal.value = intersectingIds[0]!;
       },
-      { rootMargin: `0px 0px -${window.innerHeight - 100}px` }
+      {
+        rootMargin: "-56px 0px 0px 0px", // gnb height
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+      }
     );
     sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    function resizeHandler() {
+      for (const section of sections) {
+        const { id, offsetTop } = section as HTMLElement;
+        items[id]!.offsetTop = offsetTop;
+      }
+    }
+    addEventListener("resize", resizeHandler);
+    return function unobserve() {
+      removeEventListener("resize", resizeHandler);
+      observer.disconnect();
+    };
   }
-  let unobserve = observe();
-  addEventListener("resize", () => {
-    unobserve();
-    unobserve = observe();
-  });
+  observe(); // never unobserve
 </script>
 <LeftSidebar>
+  <div class="px-4 pb-2 pt-[28px] text-lg font-bold">{title}</div>
+  <hr class="mx-4" />
   <nav
     id="nav-menu"
-    class="text-slate-6 gap-12px flex h-full flex-col overflow-y-scroll p-2 pt-8 text-lg"
+    class="text-slate-6 flex flex-1 flex-col gap-2 overflow-y-scroll p-4 text-sm"
   >
     {
       _items.map(({ id, title, children }) => (
         <div data-navitem={id} class="group">
-          <div class="group-data-[active=true]:text-orange-5 hover:bg-slate-1 flex transition-colors">
+          <div class="group-data-[active=true]:text-orange-5 group-data-[active=true]:bg-slate-1 hover-bg-slate-1 rounded-1.5 flex tracking-tight group-data-[active=true]:font-bold">
             <NavMenuLink id={id} title={title} basepath={basepath} />
             {children && children.length && (
               <button class="flex h-full items-center p-2">
@@ -120,11 +169,11 @@ const _items = [
             )}
           </div>
           {children && children.length && (
-            <div class="hidden flex-col pl-2 text-base group-data-[open=true]:flex">
+            <div class="mt-2 hidden flex-col gap-2 border-l pl-2.5 group-data-[open=true]:flex">
               {children.map(({ id, title }) => (
                 <div
                   data-navitem={id}
-                  class="data-[active=true]:text-orange-5 hover:bg-slate-1 transition-colors"
+                  class="data-[active=true]:text-orange-5 data-[active=true]:bg-slate-1 hover-bg-slate-1 rounded-1.5 tracking-tight data-[active=true]:font-bold"
                 >
                   <NavMenuLink id={id} title={title} basepath={basepath} />
                 </div>

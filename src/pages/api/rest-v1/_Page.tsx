@@ -1,5 +1,6 @@
 import * as prose from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
+import useSectionDescriptionProps from "~/layouts/rest-api/misc/useSectionDescriptionProps";
 import SchemaDownloadButton, {
   PostmanGuide,
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
@@ -7,14 +8,18 @@ import schema from "~/schema/v1.openapi.json";
 
 export interface RestV1Props {
   currentSection: string;
+  children: any;
 }
-export default function RestV1({ currentSection }: RestV1Props) {
+export default function RestV1(props: RestV1Props) {
+  const { currentSection } = props;
+  const sectionDescriptionProps = useSectionDescriptionProps(props);
   return (
     <RestApi
       title="PortOne REST API - V1"
       basepath="/api/rest-v1"
       apiHost="https://api.iamport.kr"
       currentSection={currentSection}
+      sectionDescriptionProps={sectionDescriptionProps}
       schema={schema}
     >
       <prose.p>

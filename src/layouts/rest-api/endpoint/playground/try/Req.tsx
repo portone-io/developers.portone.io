@@ -15,6 +15,7 @@ import RequestHeaderEditor, {
 import { useMemo } from "preact/hooks";
 import type { Res } from "./Res";
 import { Tabs } from "./Tabs";
+import Card from "../Card";
 
 export interface ReqProps {
   apiHost: string;
@@ -38,81 +39,89 @@ export default function Req({
   const reqQueryParams = useReqParams(schema, operation, "query");
   const reqBodyParams = useReqParams(schema, operation, "body");
   return (
-    <div class="grid grid-rows-[auto_auto_minmax(0,1fr)] gap-1">
-      <div class="flex justify-between text-xs">
-        <span class="font-bold">Request</span>
-        <button
-          class="bg-slate-1 rounded px-4 font-bold"
-          onClick={() =>
-            execute(async () => {
-              const headers = kvListToObject(reqHeaderSignal.value);
-              const reqPath = reqPathParams.parseJson();
-              const reqQuery = reqQueryParams.parseJson();
-              const reqBody = reqBodyParams.parseJson();
-              const body =
-                method === "get" || method === "head"
-                  ? null
-                  : JSON.stringify(reqBody);
-              const reqUrl = createUrl(apiHost, path, reqPath, reqQuery);
-              const res = await fetch(reqUrl, { method, headers, body });
-              return await responseToRes(res);
-            })
-          }
-        >
-          실행
-        </button>
+    <Card
+      title={
+        <>
+          <span>Request</span>
+          <button
+            class="border-slate-2 hover:bg-slate-2 bg-slate-1 rounded border px-4 font-bold active:bg-white"
+            onClick={() =>
+              execute(async () => {
+                const headers = kvListToObject(reqHeaderSignal.value);
+                const reqPath = reqPathParams.parseJson();
+                const reqQuery = reqQueryParams.parseJson();
+                const reqBody = reqBodyParams.parseJson();
+                const body =
+                  method === "get" || method === "head"
+                    ? null
+                    : JSON.stringify(reqBody);
+                const reqUrl = createUrl(apiHost, path, reqPath, reqQuery);
+                const res = await fetch(reqUrl, { method, headers, body });
+                return await responseToRes(res);
+              })
+            }
+          >
+            실행
+          </button>
+        </>
+      }
+    >
+      <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-1 p-4">
+        <Tabs
+          tabs={[
+            reqPathParams.params.length && {
+              id: "path",
+              label: "Path",
+              render: (id) => (
+                <RequestJsonEditor
+                  key={id}
+                  part="path"
+                  initialValue={reqPathParams.initialJsonText}
+                  operation={operation}
+                  onChange={reqPathParams.updateJsonText}
+                />
+              ),
+            },
+            reqQueryParams.params.length && {
+              id: "query",
+              label: "Query",
+              render: (id) => (
+                <RequestJsonEditor
+                  key={id}
+                  part="query"
+                  initialValue={reqQueryParams.initialJsonText}
+                  operation={operation}
+                  onChange={reqQueryParams.updateJsonText}
+                />
+              ),
+            },
+            reqBodyParams.params.length && {
+              id: "body",
+              label: "Body",
+              render: (id) => (
+                <RequestJsonEditor
+                  key={id}
+                  part="body"
+                  initialValue={reqBodyParams.initialJsonText}
+                  operation={operation}
+                  onChange={reqBodyParams.updateJsonText}
+                />
+              ),
+            },
+            {
+              id: "header",
+              label: "Header",
+              render: (id) => (
+                <RequestHeaderEditor
+                  key={id}
+                  reqHeaderSignal={reqHeaderSignal}
+                />
+              ),
+            },
+          ]}
+        />
       </div>
-      <Tabs
-        tabs={[
-          reqPathParams.params.length && {
-            id: "path",
-            label: "Path",
-            render: (id) => (
-              <RequestJsonEditor
-                key={id}
-                part="path"
-                initialValue={reqPathParams.initialJsonText}
-                operation={operation}
-                onChange={reqPathParams.updateJsonText}
-              />
-            ),
-          },
-          reqQueryParams.params.length && {
-            id: "query",
-            label: "Query",
-            render: (id) => (
-              <RequestJsonEditor
-                key={id}
-                part="query"
-                initialValue={reqQueryParams.initialJsonText}
-                operation={operation}
-                onChange={reqQueryParams.updateJsonText}
-              />
-            ),
-          },
-          reqBodyParams.params.length && {
-            id: "body",
-            label: "Body",
-            render: (id) => (
-              <RequestJsonEditor
-                key={id}
-                part="body"
-                initialValue={reqBodyParams.initialJsonText}
-                operation={operation}
-                onChange={reqBodyParams.updateJsonText}
-              />
-            ),
-          },
-          {
-            id: "header",
-            label: "Header",
-            render: (id) => (
-              <RequestHeaderEditor key={id} reqHeaderSignal={reqHeaderSignal} />
-            ),
-          },
-        ]}
-      />
-    </div>
+    </Card>
   );
 }
 

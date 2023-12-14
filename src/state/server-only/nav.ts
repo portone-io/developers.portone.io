@@ -1,9 +1,21 @@
-import { computed } from "@preact/signals";
+import * as path from "node:path";
+import { getCollection } from "astro:content";
 
 import navYamlEn from "~/content/docs/en/_nav.yaml";
 import navYamlKo from "~/content/docs/ko/_nav.yaml";
 import type { SystemVersion, YamlNavMenuToplevelItem } from "~/type";
-import { Frontmatters, frontmattersSignal } from "./frontmatters";
+
+type Frontmatters = Record<string, any>;
+const frontmatters: Frontmatters = (await getCollection("docs"))
+  .map((entry) => {
+    const absSlug = path.posix.join("/", entry.slug);
+    const frontmatter = entry.data || {};
+    return { absSlug, frontmatter };
+  })
+  .reduce((acc, { absSlug, frontmatter }) => {
+    acc[absSlug] = frontmatter;
+    return acc;
+  }, {} as Frontmatters);
 
 export interface NavMenu {
   [lang: string]: NavMenuItem[];
@@ -21,27 +33,10 @@ export interface NavMenuGroup {
   label: string;
   items: NavMenuPage[];
   systemVersion: SystemVersion;
-  side?:
-    | {
-        label: string;
-        link: string;
-        eventname?: string;
-      }
-    | undefined;
 }
-export const navMenuItemsEnSignal = computed<NavMenuItem[]>(() => {
-  const frontmatters = frontmattersSignal.value;
-  return toNavMenuItems(navYamlEn, frontmatters);
-});
-export const navMenuItemsKoSignal = computed<NavMenuItem[]>(() => {
-  const frontmatters = frontmattersSignal.value;
-  return toNavMenuItems(navYamlKo, frontmatters);
-});
-export const navMenuSignal = computed<NavMenu>(() => {
-  const navMenuItemsEn = navMenuItemsEnSignal.value;
-  const navMenuItemsKo = navMenuItemsKoSignal.value;
-  return { en: navMenuItemsEn, ko: navMenuItemsKo };
-});
+export const navMenuItemsEn = toNavMenuItems(navYamlEn, frontmatters);
+export const navMenuItemsKo = toNavMenuItems(navYamlKo, frontmatters);
+export const navMenu = { en: navMenuItemsEn, ko: navMenuItemsKo };
 
 export interface NavMenuSystemVersions {
   [slug: string]: SystemVersion;
@@ -131,7 +126,6 @@ function toNavMenuItems(
           _systemVersion
         ) as NavMenuPage[],
         systemVersion: _systemVersion,
-        side: item.side,
       };
     }
   });
