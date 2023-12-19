@@ -1,3 +1,4 @@
+import type { CategoryEndpointsPair } from "./endpoint";
 import type { Parameter } from "./operation";
 import { type Visitor, defaultVisitor } from "./visitor";
 
@@ -118,7 +119,10 @@ export function repr(def: string | TypeDef | Property | Parameter): string {
   return def.type || "";
 }
 
-export function crawlRefs(schema: any): string[] {
+export function crawlRefs(
+  schema: any,
+  endpointGroups: CategoryEndpointsPair[]
+): string[] {
   const result = new Set<string>();
   const rootPropertyRefsCrawler: Visitor = {
     ...defaultVisitor,
@@ -155,7 +159,13 @@ export function crawlRefs(schema: any): string[] {
       rootPropertyRefsCrawler.visitTypeDef(typeDef);
     },
   };
-  rootRefsCrawler.visitSchemaPaths(schema.paths);
+  for (const group of endpointGroups) {
+    for (const { path, method } of group.endpoints) {
+      const endpoint = schema.paths[path]!;
+      const operation = endpoint[method]!;
+      rootRefsCrawler.visitOperation(method, operation);
+    }
+  }
   const typeDefRefsCrawler: Visitor = {
     ...defaultVisitor,
     visitUnion(typeDef) {

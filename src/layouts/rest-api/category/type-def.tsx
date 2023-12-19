@@ -1,10 +1,14 @@
 import * as React from "react";
+import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import {
   expandAndScrollTo,
   expanded,
   useExpand,
 } from "~/state/rest-api/expand-section";
+import { interleave } from "..";
+import DescriptionArea from "../DescriptionArea";
+import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
 import {
   type BakedProperty,
   type Property,
@@ -17,24 +21,23 @@ import {
   getTypeDefKind,
 } from "../schema-utils/type-def";
 import Expand from "./Expand";
-import DescriptionArea from "../DescriptionArea";
-import { useSignal } from "@preact/signals";
-import { interleave } from "..";
 
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
   initialExpand?: boolean;
+  endpointGroups: CategoryEndpointsPair[];
   schema: any;
 }
 export function TypeDefinitions({
   basepath,
   initialExpand = false,
+  endpointGroups,
   schema,
 }: TypeDefinitionsProps) {
   React.useEffect(expanded);
   const { expand, onToggle } = useExpand("type-def", initialExpand);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
-  const typeDefPropsList = crawlRefs(schema)
+  const typeDefPropsList = crawlRefs(schema, endpointGroups)
     .sort()
     .map((ref) => ({
       name: getTypenameByRef(ref),
