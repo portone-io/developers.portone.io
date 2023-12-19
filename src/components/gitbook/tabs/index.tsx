@@ -1,28 +1,39 @@
 import * as React from "react";
+import { useServerFallback } from "~/misc/useServerFallback";
+
+export interface Tab {
+  title: string;
+  html: string;
+}
+
+export const processTabs = (html: string) => {
+  const matches = html.matchAll(
+    /<gitbook-tab[^>]*title="([^"]*)"[^>]*>([\s\S]+?)<\/gitbook-tab>/g
+  );
+  return [...matches]
+    .map(([, title, html]) => title && html && { title, html })
+    .filter(Boolean) as Tab[];
+};
 
 export interface TabsProps {
-  children: React.ReactNode; // <astro-slot>
+  tabs: Tab[];
 }
-export function Tabs({ children }: TabsProps) {
-  const tabsRef = React.useRef<HTMLDivElement>(null);
+
+export function Tabs({ tabs }: TabsProps) {
   const [currentTab, setCurrentTab] = React.useState(0);
-  const [titles, setTitles] = React.useState<string[]>([]);
-  React.useEffect(() => {
-    const tabs = getTabElements(tabsRef.current);
-    setTitles(tabs.map((tab) => tab.dataset.title!));
-  }, []);
-  React.useEffect(() => {
-    const tabs = getTabElements(tabsRef.current);
-    tabs.forEach((tab, index) => {
-      tab.style.display = index === currentTab ? "block" : "none";
-    });
-  }, [currentTab]);
+
+  // 최초로 보여지지 않을 탭은 클라이언트에서 렌더링
+  const tabsToRender = useServerFallback(
+    tabs,
+    tabs.map((tab, index) => (index === currentTab ? tab : null))
+  );
+
   return (
-    <div ref={tabsRef} class="my-4 flex flex-col">
+    <div class="my-4 flex flex-col">
       <div class="-mb-px flex">
-        {titles.map((title, index) => {
+        {tabs.map(({ title }, index) => {
           const isFirst = index === 0;
-          const isLast = index === titles.length - 1;
+          const isLast = index === tabs.length - 1;
           const selected = index === currentTab;
           const cornerStyle = isFirst
             ? isLast
@@ -45,26 +56,18 @@ export function Tabs({ children }: TabsProps) {
           );
         })}
       </div>
-      <div class="rounded rounded-tl-none border px-6 py-4">{children}</div>
-    </div>
-  );
-}
-
-function getTabElements(container?: Element | null) {
-  if (!container) return [];
-  return Array.from(
-    container.querySelectorAll("[data-gitbook-tab]")
-  ) as HTMLDivElement[];
-}
-
-export interface TabProps {
-  title: string;
-  children: React.ReactNode;
-}
-export function Tab({ children, title }: TabProps) {
-  return (
-    <div data-gitbook-tab data-title={title}>
-      {children}
+      <div class="rounded rounded-tl-none border px-6 py-4">
+        {tabsToRender.map(
+          (tab, index) =>
+            tab && (
+              <div
+                key={index}
+                class={index === currentTab ? "" : "hidden"}
+                dangerouslySetInnerHTML={{ __html: tab.html }}
+              />
+            )
+        )}
+      </div>
     </div>
   );
 }
