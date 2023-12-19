@@ -35,40 +35,38 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Tab title="Node.js">
 ```javascript
 async function requestInstantPayment() {
-  // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
-  const signinResponse = await axios({
-    url: "https://api.portone.io/v2/signin/api-key",
-    method: "post",
+  // 1. 포트원 API를 사용하기 위해 액세스 토큰을 발급받습니다.
+  const signinResponse = await fetch("https://api.portone.io/signin/api-key", {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
-    data: {
-      api_key: PORTONE_API_KEY, // 포트원 API Key
-    },
+    body: JSON.stringify({ apiKey: PORTONE_API_KEY }),
   });
-  const { access_token } = signinResponse.data;
-  
+  const { accessToken } = signinResponse.data;
+
   // 2. 포트원 키인(수기)결제 API 호출
-  await axios({
-    url: `https://api.portone.io/v2/payments/${UNIQUE_PAYMENT_ID}/instant/pay`,
-    method: "post",
-    headers: { "Authorization": "Bearer " + access_token },
-    data: {
-      order_name: "월간 이용권 정기결제"
-      is_cultural_expense: false,
-      is_escrow: false,
+  await fetch(`https://api.portone.io/payments/${encodeURIComponent(paymentId)}/instant`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      channelKey: CHANNEL_KEY,
+      orderName: "월간 이용권 정기결제",
       // 키인(수기)결제 API를 참고해 고객 정보를 채워주세요.
       customer: YOUR_CUSTOMER_INFO,
-      total_amount: 8900,
-      channel_name: CHANNEL_NAME_HERE,
+      amount: {
+        total: 8900,
+      },
+      currency: "KRW",
       // 키인(수기)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
       payment_method_option: PAYMENT_OPTION_HERE,
-      currency: "KRW",
-    }
+    })
   });
-  
+
   // 3. 인증결제 연동하기의 결제검증 API 구현하기를 따라 결제를 검증해주세요.
 }
 ```
 
 </Tab>
 </Tabs>
-
