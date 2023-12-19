@@ -1,3 +1,4 @@
+import { useServerFallback } from "~/misc/useServerFallback";
 import { systemVersionSignal } from "~/state/nav";
 import type { SystemVersion } from "~/type";
 
@@ -19,7 +20,7 @@ export function VersionSwitch() {
 export default VersionSwitch;
 
 function getVersionClass(thisVersion: SystemVersion) {
-  const systemVersion = systemVersionSignal.value;
+  const systemVersion = useServerFallback(systemVersionSignal.value, "all");
   return `py-4px rounded-full ${
     systemVersion === thisVersion
       ? "bg-orange-500 flex-1 text-white px-12px"
