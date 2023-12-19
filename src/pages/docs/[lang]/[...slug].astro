@@ -2,6 +2,7 @@
 import * as path from "node:path";
 import type { GetStaticPathsItem } from "astro";
 import { getCollection } from "astro:content";
+import { match, P } from "ts-pattern";
 
 import type { Lang } from "../../../type";
 import redirYaml from "~/content/docs/_redir.yaml";
@@ -42,18 +43,27 @@ export async function getStaticPaths() {
   return Object.values(staticPaths);
 }
 
+type Props =
+  | { redirTarget: string }
+  | {
+      entry: any;
+      slug: string;
+    };
+
 const lang = Astro.params.lang as Lang;
-const { redirTarget, entry, slug } = Astro.props;
 ---
 
 {
-  redirTarget ? (
-    redirTarget.startsWith("https:") ? (
-      <Redir target={redirTarget} />
-    ) : (
-      <Redir target={`/docs${redirTarget}`} />
-    )
-  ) : (
-    <Docs lang={lang} slug={slug} entry={entry} />
-  )
+  match(Astro.props)
+    .with({ redirTarget: P.string }, ({ redirTarget }) => {
+      redirTarget.startsWith("https:") ? (
+        <Redir target={redirTarget} />
+      ) : (
+        <Redir target={`/docs${redirTarget}`} />
+      );
+    })
+    .with({ slug: P.string, entry: P.any }, ({ slug, entry }) => (
+      <Docs lang={lang} slug={slug} entry={entry} />
+    ))
+    .exhaustive()
 }
