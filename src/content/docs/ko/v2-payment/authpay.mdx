@@ -187,6 +187,7 @@ app.post("/payment/complete", async (req, res) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ apiKey: PORTONE_API_KEY }),
     });
+    if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
     const { accessToken } = await signinResponse.json();
 
     // 2. 포트원 결제내역 단건조회 API 호출
@@ -198,6 +199,7 @@ app.post("/payment/complete", async (req, res) => {
         headers: { "Authorization": "Bearer " + accessToken },
       },
     );
+    if (!paymentResponse.ok) throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
     const payment = await paymentResponse.json();
 
     // 3. 가맹점 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
