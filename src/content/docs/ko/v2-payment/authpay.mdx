@@ -82,7 +82,9 @@ SDK의 `PortOne.requestPayment()` 함수를 호출하여 결제 수단에 따른
 
 ```javascript
 const response = await PortOne.requestPayment({
+  // Store ID 설정
   storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
+  // 채널 키 설정
   channelKey: "channel-key-893597d6-e62d-410f-83f9-119f530b4b11",
   paymentId: `payment-${crypto.randomUUID()}`,
   orderName: "나이키 와플 트레이너 2 SD",
@@ -182,10 +184,10 @@ app.post("/payment/complete", async (req, res) => {
     const { paymentId, order } = req.body;
 
     // 1. 포트원 API를 사용하기 위해 액세스 토큰을 발급받습니다.
-    const signinResponse = await fetch("https://api.portone.io/signin/api-key", {
+    const signinResponse = await fetch("https://api.portone.io/login/api-secret", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ apiKey: PORTONE_API_KEY }),
+      body: JSON.stringify({ apiSecret: PORTONE_API_SECRET }),
     });
     if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
     const { accessToken } = await signinResponse.json();

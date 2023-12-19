@@ -7,9 +7,9 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 
-고객 카드정보를 이용하여 포트원 빌링키 발급 API를 요청하면 포트원 서버가 PG사를 통해 빌링키를 발급받습니다.
+고객 카드 정보를 이용하여 포트원 빌링키 발급 API를 요청하면 포트원 서버가 PG사를 통해 빌링키를 발급받습니다.
 
-이 과정에서 카드정보는 포트원 서버에 기록되지 않습니다.
+이 과정에서 카드 정보는 포트원 서버에 기록되지 않습니다.
 
 ## 1. 빌링키 발급 API 구현하기 (서버)
 
@@ -20,58 +20,55 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Tabs>
 <Tab title="Express.js">
 ```javascript
-// bodyParser 등을 통해 body의 Content-Type에 맞게 데이터를 파싱할 수 있는지 확인해주세요.
-// 아래의 카드 정보 입력하기의 방법에 따라 요청으로 오는 Content-Type이 다를 수 있습니다.
 // POST 요청을 받는 /billing-keys
 app.post("/billing-keys", async (req, res) => {
   try {
     // 카드를 통한 빌링키 발급을 위한 정보들이 오기를 기대합니다.
-    // 자세한 필요한 정보는 빌링키 발급 API를 참고해주세요.
     const {
-      customer_id,
-      card_number,
-      expiry_month,
-      expiry_year,
-      birth_or_business_registration_number,
-      password_two_digits,
+      customerId,
+      number,
+      expiryYear,
+      expiryMonth,
+      birthOrBusinessRegistrationNumber,
+      passwordTwoDigits,
     } = req.body;
 
     // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
-    const signinResponse = await axios({
-      url: "https://api.portone.io/v2/signin/api-key",
-      method: "post",
+    const signinResponse = await fetch("https://api.portone.io/login/api-secret", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      data: {
-        api_key: PORTONE_API_KEY, // 포트원 API Key
-      },
+      body: JSON.stringify({ apiSecret: PORTONE_API_SECRET }),
     });
-    const { access_token } = signinResponse.data;
-    
+    if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
+    const { accessToken } = await signinResponse.json();
+
     // 2. 포트원 빌링키 발급 API 호출
-    const issueResponse = await axios({
-      url: "https://api.portone.io/v2/billing-keys",
-      method: "post",
+    const issueResponse = await fetch("https://api.portone.io/billing-keys", {
+      method: "POST",
       // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-      headers: { "Authorization": "Bearer " + access_token },
-      data: {
+      headers: { "Authorization": `Bearer ${accessToken}` },
+      body: JSON.stringify({
+        channelKey: CHANNEL_KEY,
         customer: {
-          customer_id,
+          id: customerId,
         },
-        payment_method_option: {
+        method: {
           card: {
-            card_credential: {
-              card_number,
-              expiry_month,
-              expiry_year,
-              birth_or_business_registration_number,
-              password_two_digits
+            cardCredential: {
+              number,
+              expiryYear,
+              expiryMonth,
+              birthOrBusinessRegistrationNumber,
+              passwordTwoDigits,
             },
           },
         },
-      }
+      }),
     });
+    if (!issueResponse.ok) throw new Error(`issueResponse: ${issueResponse.statusText}`);
+    const { billingKeyInfo } = await issueResponse.json();
+    const { billingKey } = billingKeyInfo;
 
-    const { customer_id, billing_key } = issueResponse.data;
     // 빌링키가 발급되었습니다! 빌링키를 저장하거나 결제하는 로직을 구성하세요.
   } catch (e) {
     // 빌링키 발급에 실패했습니다.

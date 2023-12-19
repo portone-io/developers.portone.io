@@ -23,45 +23,37 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
         const { billingKey } = req.body;
 
         // 1. 포트원 API를 사용하기 위해 액세스 토큰을 발급받습니다.
-        const signinResponse = await axios({
-          url: "https://api.portone.io/v2/signin/api-key",
-          method: "post",
+        const signinResponse = await fetch("https://api.portone.io/signin/api-secret", {
+          method: "POST",
           headers: { "Content-Type": "application/json" },
-          data: {
-            api_key: PORTONE_API_KEY, // 포트원 API Key
-          },
+          body: JSON.stringify({ apiSecret: PORTONE_API_SECRET }),
         });
-        const { access_token } = signinResponse.data;
+        if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
+        const { accessToken } = await signinResponse.json();
 
         // 가맹점에서 채번하는 새로운 결제 ID를 만들어주세요.
-        const paymentId = OrderService.getNewPaymentId();
+        const paymentId = OrderService.newPaymentId();
 
         // 2. 포트원 빌링키 결제 API 호출
-        const paymentResponse = await axios({
-          url: `https://api.portone.io/v2/payments/${paymentId}/billing-key/pay`,
-          method: "post",
-          // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-          headers: { "Authorization": "Bearer " + access_token },
-          data: {
-            billing_key: billingKey,
-            order_name: "월간 이용권 정기결제"
-            total_amount: 8900,
-            // 빌링키 결제 API를 참고해 고객 정보를 채워주세요.
-            customer: YOUR_CUSTOMER_INFO,
-            currency: "KRW"
-          }
-        });
-
-        const tx_id = paymentResponse.data;
-        // 3. 포트원 결제내역 단건조회 API를 호출하여 빌링키 결제 결과를 확인하세요.
-        const paymentResponse = await axios({
-          url: `https://api.portone.io/v2/payments/${paymentId}`,
-          method: "get",
-          // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-          headers: { "Authorization": "Bearer " + access_token },
-        });
-
-      // 인증결제 연동하기 - 3. 결제검증 API 구현하기를 참고하여 검증 로직을 작성해주세요.
+        const paymentResponse = await fetch(
+          `https://api.portone.io/payments/${encodeURIComponent(paymentId)}/billing-key/pay`,
+          {
+            method: "POST",
+            // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
+            headers: { "Authorization": `Bearer ${accessToken}` },
+            body: JSON.stringify({
+              billingKey,
+              orderName: "월간 이용권 정기결제",
+              amount: {
+                total: 8900,
+              },
+              // 빌링키 결제 API를 참고해 고객 정보를 채워주세요.
+              customer: YOUR_CUSTOMER_INFO,
+              currency: "KRW",
+            }),
+          },
+        );
+        if (!paymentResponse.ok) throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
       } catch (e) {
         // 빌링키 결제에 실패했습니다.
         res.status(400).send(e);
@@ -71,6 +63,3 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
   </Tab>
 </Tabs>
-
-
-

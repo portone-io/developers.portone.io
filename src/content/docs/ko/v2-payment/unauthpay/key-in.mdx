@@ -1,6 +1,6 @@
 ---
-title: 키인(수기) 결제
-description: 구매자 인증 없이 카드번호 입력만으로 결제가 가능합니다.
+title: 수기 결제
+description: 구매자 인증 없이 결제 수단 정보만으로 결제를 요청합니다.
 ---
 
 import Hint from "~/components/gitbook/Hint.astro";
@@ -9,62 +9,63 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 
 <Hint style="info">
-키인결제를 이용하기 위해서는 PG사와 별도 협의가 필요합니다.
+수기 결제를 이용하기 위해서는 PG사와 별도 협의가 필요합니다.
 
 </Hint>
 
-키인(수기)결제를 통해 카드정보를 이용하여 1회성 결제요청이 가능합니다.
+수기 결제(키인 결제) API를 이용해 1회성 결제 요청이 가능합니다.
 
-## 키인결제의 장점
+## 키인결제의 장단점
 
-아래의 예제처럼 가맹점에 따라 카드정보 입력란을 커스터마이징 할 수 있다는 장점이 있습니다.
+아래의 예제처럼 가맹점이 직접 만든 UI로 결제 정보를 입력받을 수 있습니다.
 
 <figure><img src="https://openapi-documentation-poc.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fv2-user-guide-chaiport-merchant.ec3dd18c.png&#x26;w=3840&#x26;q=100" alt=""/><figcaption><p>포트원 이용 가맹점 "링글 잉글리시 에듀케이션"</p></figcaption></figure>
 
-## 키인결제의 단점
+그러나 고객이 매번 정보를 기입해야 한다는 번거로움이 있습니다.
 
-간편결제 도입으로 인해 매번 카드정보를 기입해야 하는 번거로움이 있는 키인결제는 많이 사용되지 않습니다.
+## 키인 결제 구현하기 (서버)
 
-## 키인결제 구현하기 (서버)
-
-키인결제는 포트원 키인결제(1회성) API 또는 PG창을 이용하여 결제를 요청할 수 있습니다.
-
-아래 예제는 포트원 키인결제 API를 통해 서버에서 실행 가능한 코드입니다.
+고객으로부터 카드 정보 또는
 
 <Tabs>
 <Tab title="Node.js">
 ```javascript
 async function requestInstantPayment() {
   // 1. 포트원 API를 사용하기 위해 액세스 토큰을 발급받습니다.
-  const signinResponse = await fetch("https://api.portone.io/signin/api-key", {
+  const signinResponse = await fetch("https://api.portone.io/signin/api-secret", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ apiKey: PORTONE_API_KEY }),
+    body: JSON.stringify({ apiSecret: PORTONE_API_SECRET }),
   });
-  const { accessToken } = signinResponse.data;
+  if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
+  const { accessToken } = await signinResponse.json();
 
-  // 2. 포트원 키인(수기)결제 API 호출
-  await fetch(`https://api.portone.io/payments/${encodeURIComponent(paymentId)}/instant`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      channelKey: CHANNEL_KEY,
-      orderName: "월간 이용권 정기결제",
-      // 키인(수기)결제 API를 참고해 고객 정보를 채워주세요.
-      customer: YOUR_CUSTOMER_INFO,
-      amount: {
-        total: 8900,
+  // 2. 포트원 수기 결제 API 호출
+  const paymentResponse = await fetch(
+    `https://api.portone.io/payments/${encodeURIComponent(paymentId)}/instant`,
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
       },
-      currency: "KRW",
-      // 키인(수기)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
-      payment_method_option: PAYMENT_OPTION_HERE,
-    })
-  });
+      body: JSON.stringify({
+        channelKey: CHANNEL_KEY,
+        orderName: "월간 이용권 정기결제",
+        // 수기 결제 API를 참고해 고객 정보를 채워주세요.
+        customer: YOUR_CUSTOMER_INFO,
+        amount: {
+          total: 8900,
+        },
+        currency: "KRW",
+        // 수기 결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
+        method: PAYMENT_OPTION_HERE,
+      })
+    }
+  );
+  if (!paymentResponse.ok) throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
 
-  // 3. 인증결제 연동하기의 결제검증 API 구현하기를 따라 결제를 검증해주세요.
+  // 가상계좌 요청의 경우 아직 결제가 완료된 상태가 아닙니다.
 }
 ```
 

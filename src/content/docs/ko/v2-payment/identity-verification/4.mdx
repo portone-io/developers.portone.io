@@ -22,13 +22,10 @@ app.use(bodyParser.json());
     const { identityVerificationId } = request.body;
     try {
       // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
-      const signinResponse = await axios({
-        url: "https://api.portone.io/login/api-key",
-        method: "post",
+      const signinResponse = await fetch("https://api.portone.io/login/api-secret", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        data: {
-          apiKey: PORTONE_API_KEY, // 포트원 API Key
-        },
+        body: { apiSecret: PORTONE_API_SECRET },
       });
       const { accessToken } = signinResponse.data;
 
@@ -116,4 +113,3 @@ app.use(bodyParser.json());
   });
 ```
 </font>
-

@@ -67,45 +67,18 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
         if (response.code != null) {
           return alert(response.message);
         }
-        await axios({
-          url: MY_SEVER_URL + "/billings", // 빌링키 결제 or 저장 API
-          method: "post",
-          body: {
-            billingKey: response.billingKey,
+        await fetch(`${MY_SERVER_URL}/billings`, // 빌링키 결제 or 저장 API
+          {
+            method: "POST",
+            body: {
+              billingKey: response.billingKey,
+            }
           }
-        });
+        );
       } catch (error) {
         // 빌링키 발급 실패
       }
   }
     ```
-
-  </Tab>
-
-  <Tab title="ES5 (then)">
-    ```javascript
-    function issueAndSendBillingKey() {
-      PortOne.requestIssueBillingKey({
-        storeId: "store-9bf6076d-beef-4729-9521-ae66c14e0569",
-        pgProvider: "PG_PROVIDER_TOSSPAYMENTS",
-        billingKeyMethod: "CARD"
-      }).then(function (response) {
-        // 결제가 제대로 완료되지 않은 경우 에러 코드가 존재합니다
-        if (response.code != null) {
-          return alert(response.message);
-        }
-        axios({
-          url: MY_SEVER_URL + "/billings", // 빌링키 결제 or 저장 API
-          method: "post",
-          body: {
-            billingKey: response.billingKey,
-          },
-        }).then(/* 구현한 API 응답을 구성한 대로 처리하세요 */);
-      }).catch(function (error) {
-        // 빌링키 발급 실패
-      });
-    }
-    ```
-
   </Tab>
 </Tabs>
