@@ -33,6 +33,7 @@ if (isClient) {
     globalThis.sessionStorage.setItem("systemVersion", systemVersion);
     const searchParams = new URLSearchParams(location.search);
     searchParams.set("v", systemVersion);
-    history.replaceState(null, "", "?" + searchParams.toString());
+    const hash = location.hash;
+    history.replaceState(null, "", `?${searchParams.toString()}${hash}`);
   });
 }
