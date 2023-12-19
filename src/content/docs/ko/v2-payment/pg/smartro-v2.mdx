@@ -28,13 +28,13 @@ import Details from "~/components/gitbook/Details.astro";
 ### 결제 (`requestPayment`)
 
 - `paymentId`
-  - 가맹점 주문 고유 ID
+  - 고객사 주문 고유 ID
   - 스마트로의 경우 특수 문자를 사용할 수 없습니다.
 - `customer.customerId`
-  - 가맹점 고객의 고유 ID 입니다.
+  - 고객사 고객의 고유 ID 입니다.
   - 스마트로의 경우 간편결제, 빌링키 발급 시 필수로 입력합니다.
 - `customer.phoneNumber`
-  - 가맹점 고객의 휴대폰 번호입니다.
+  - 고객사 고객의 휴대폰 번호입니다.
   - 스마트로의 경우 결제창 호출 시 필수로 입력합니다.
 - `bypass.smartro_v2`
   - 포트원에서 정규화한 파라미터 이외에 스마트로에서만 특수하게 지원하는 파라미터들을 `bypass` 를 통해 넘겨줄 수 있습니다.
@@ -67,11 +67,11 @@ import Details from "~/components/gitbook/Details.astro";
   - `CARD`로 설정해야 합니다.
   - 스마트로는 카드 이외 발급 수단은 지원하지 않습니다.
 - `customer.customerId`
-  - 가맹점 고객의 고유 ID 입니다.
+  - 고객사 고객의 고유 ID 입니다.
   - 스마트로의 경우 간편결제, 빌링키 발급 시 필수로 입력합니다.
   - 20자 이하로만 입력 가능합니다.
 - `issueId`
-  - 가맹점에서 채번하는 빌링키 발급 건 고유 ID
+  - 고객사에서 채번하는 빌링키 발급 건 고유 ID
   - 스마트로의 경우 필수 입력입니다.
 - `bypass.smartro_v2`
   - 포트원에서 정규화한 파라미터 이외에 스마트로에서만 특수하게 지원하는 파라미터들을 `bypass` 를 통해 넘겨줄 수 있습니다.
@@ -194,12 +194,12 @@ import Details from "~/components/gitbook/Details.astro";
 - V2 에스크로 + 카드사 다이렉트 호출
   ```jsx
   PortOne.requestPayment({
-    pgProvider: "SMARTRO_V2",
-    payMethod: "CARD",
+    pgProvider: 'SMARTRO_V2',
+    payMethod: 'CARD',
     totalAmount: 50000,
     isEscrow: true, // 에스크로 결제
     card: {
-      cardCompany: "BC_CARD", // 카드사 다이렉트 호출
+      cardCompany: 'BC_CARD', // 카드사 다이렉트 호출
       installment: {
         monthOption: {
           fixedMonth: 5,
@@ -211,12 +211,12 @@ import Details from "~/components/gitbook/Details.astro";
 - V2 에스크로 + 가상계좌 다이렉트 호출
   ```jsx
   PortOne.requestPayment({
-    pgProvider: "SMARTRO_V2",
-    payMethod: "VIRTUAL_ACCOUNT",
+    pgProvider: 'SMARTRO_V2',
+    payMethod: 'VIRTUAL_ACCOUNT',
     totalAmount: 50000,
     isEscrow: true, // 에스크로 결제
     virtualAccount: {
-      bankCode: "SHINHAN_BANK", // 은행 다이렉트 호출
+      bankCode: 'SHINHAN_BANK', // 은행 다이렉트 호출
     },
   });
   ```
@@ -228,27 +228,27 @@ import Details from "~/components/gitbook/Details.astro";
 - V2 에스크로 + 계좌이체 + 현금영수증 정보 전달
   ```jsx
   PortOne.requestPayment({
-    pgProvider: "SMARTRO_V2",
+    pgProvider: 'SMARTRO_V2',
     totalAmount: 50000,
-    payMethod: "TRANSFER", // 계좌이체 결제
+    payMethod: 'TRANSFER', // 계좌이체 결제
     isEscrow: true, // 에스크로 결제
     transfer: {
       // 현금영수증 정보 전달
-      cashReceiptType: "company",
-      customerIdentiifer: "1178178260",
+      cashReceiptType: 'CORPORATE',
+      customerIdentifier: '1178178260',
     },
   });
   ```
 
 ## 기타 유의사항
 
-### 주문 번호에 특수문자 입력 불가능
+### 고객사 거래 번호에 특수문자 입력 불가능
 
-스마트로는 주문 번호(`paymentId`)에 특수문자를 허용하고 있지 않습니다. 따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 재결제를 하는 경우 숫자, 문자(알파벳 소문자와 대문자) 또는 그 조합으로 이루어진 주문 번호를 사용해주세요.
+스마트로는 고객사 거래 번호(`paymentId`)에 특수문자를 허용하고 있지 않습니다. 따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 재결제를 하는 경우 숫자, 문자(알파벳 소문자와 대문자) 또는 그 조합으로 이루어진 거래 번호를 사용해주세요.
 
-### 주문 번호 40자 길이 제한
+### 고객사 거래 번호 40자 길이 제한
 
-스마트로는 주문 번호(`paymentId`)가 최대 40자를 넘을 수 없습니다. 40자가 넘을 경우 40자까지 잘려서 저장되기 때문에 유의 바랍니다.
+스마트로는 고객사 거래 번호(`paymentId`)가 최대 40자를 넘을 수 없습니다. 40자가 넘을 경우 40자까지 잘려서 저장되기 때문에 유의 바랍니다.
 
 ### 결제 통화 파라미터 제어 불가능
 

@@ -12,9 +12,9 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기 [#링크](/api/rest-v2/auth "mention")
 2. 포트원 결제내역 단건조회 API 호출 [#링크](/api/rest-v2/payment "mention")
-3. 가맹점 내부 주문 데이터와 지불된 금액 비교
+3. 고객사 내부 주문 데이터와 지불된 금액 비교
 
-가맹점의 DB에 저장된 값과 포트원에 저장된 값을 비교합니다. 검증이 성공하면 결제정보를 데이터베이스에 저장한 뒤 결제 상태(`status`)에 따라 알맞은 응답을 반환하고 실패 시 에러 메세지를 출력합니다.
+고객사의 DB에 저장된 값과 포트원에 저장된 값을 비교합니다. 검증이 성공하면 결제정보를 데이터베이스에 저장한 뒤 결제 상태(`status`)에 따라 알맞은 응답을 반환하고 실패 시 에러 메세지를 출력합니다.
 
 <Tabs>
 <Tab title="Express.js">
@@ -47,7 +47,7 @@ app.post("/payments/complete", async (req, res) => {
     });
     const { id, status, amount, method } = paymentResponse.data;
 
-    // 3. 가맹점 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
+    // 3. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
     const order = await OrderService.findById(id);
     if (order.amount === amount.total) {
       switch (status) {
