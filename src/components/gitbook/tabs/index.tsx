@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useServerFallback } from "~/misc/useServerFallback";
 
 export interface Tab {
   title: string;
@@ -8,7 +7,7 @@ export interface Tab {
 
 export const processTabs = (html: string) => {
   const matches = html.matchAll(
-    /<gitbook-tab[^>]*title="([^"]*)"[^>]*>([\s\S]+?)<\/gitbook-tab>/g
+    /<gitbook-tab[^>]*title="([^"]*)"[^>]*>([\s\S]+?)<\/gitbook-tab>/g,
   );
   return [...matches]
     .map(([, title, html]) => title && html && { title, html })
@@ -16,20 +15,18 @@ export const processTabs = (html: string) => {
 };
 
 export interface TabsProps {
-  tabs: Tab[];
+  uniqueId: string;
+  /** JSON serializable하지 않기 때문에 서버에서만 존재함 */
+  getTabs?: () => Tab[];
 }
 
-export function Tabs({ tabs }: TabsProps) {
+export function Tabs({ uniqueId, getTabs }: TabsProps) {
   const [currentTab, setCurrentTab] = React.useState(0);
 
-  // 최초로 보여지지 않을 탭은 클라이언트에서 렌더링
-  const tabsToRender = useServerFallback(
-    tabs,
-    tabs.map((tab, index) => (index === currentTab ? tab : null))
-  );
+  const tabs = React.useMemo(() => getTabs?.() ?? hydrateTabs(uniqueId), []);
 
   return (
-    <div class="my-4 flex flex-col">
+    <div data-unique-id={uniqueId} class="my-4 flex flex-col">
       <div class="-mb-px flex">
         {tabs.map(({ title }, index) => {
           const isFirst = index === 0;
@@ -40,8 +37,8 @@ export function Tabs({ tabs }: TabsProps) {
               ? "rounded-t"
               : "rounded-tl"
             : isLast
-            ? "-ml-px rounded-tr"
-            : "-ml-px";
+              ? "-ml-px rounded-tr"
+              : "-ml-px";
           const selectedStyle = selected
             ? "shrink-0 border-b-white bg-white z-1"
             : "shrink text-ellipsis overflow-hidden whitespace-nowrap text-slate bg-slate-1";
@@ -57,17 +54,35 @@ export function Tabs({ tabs }: TabsProps) {
         })}
       </div>
       <div class="rounded rounded-tl-none border px-6 py-4">
-        {tabsToRender.map(
+        {tabs.map(
           (tab, index) =>
             tab && (
               <div
                 key={index}
                 class={index === currentTab ? "" : "hidden"}
+                data-gitbook-tab={index}
+                data-gitbook-tab-title={tab.title}
                 dangerouslySetInnerHTML={{ __html: tab.html }}
               />
-            )
+            ),
         )}
       </div>
     </div>
   );
+}
+
+function hydrateTabs(uniqueId: string) {
+  const wrapper = document.querySelector(`[data-unique-id="${uniqueId}"]`);
+  if (!wrapper) return [];
+  const tabs = [...wrapper.querySelectorAll("[data-gitbook-tab]")];
+  return tabs
+    .toSorted(
+      (a, b) =>
+        Number(a.getAttribute("data-gitbook-tab")) -
+        Number(b.getAttribute("data-gitbook-tab")),
+    )
+    .map((tab) => ({
+      title: tab.getAttribute("data-gitbook-tab-title") || "",
+      html: tab.innerHTML,
+    }));
 }
