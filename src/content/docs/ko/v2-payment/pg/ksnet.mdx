@@ -16,22 +16,22 @@ import Details from "~/components/gitbook/Details.astro";
 ### 가능한 결제수단
 
 - **SDK 결제**
-  - `payMethod`파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
+  - `payMethod` 파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
     - 신용카드 : `CARD`
     - 실시간 계좌이체 : `TRANSFER`
     - 가상계좌 : `VIRTUAL_ACCOUNT`
     - 휴대폰 소액결제 : `MOBILE`
     - 간편 결제 : `EASY_PAY`
 - **API 수기(키인) 결제**
-  - `payment_method_option`파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
+  - `method` 파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
     - 신용카드 : `card`
-    - 가상계좌 : `virtual_account`
+    - 가상계좌 : `virtualAccount`
 - **SDK 빌링키 발급**
   - `billingKeyMethod`(빌링키 발급) 파라미터를 `CARD`로 설정해야 합니다.
 - **API 빌링키 발급**
-  - `payment_method_option`파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
+  - `method` 파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
     - 신용카드 : `card`
-    - 휴대폰결제 : `mobile_phone`
+    - 휴대폰결제 : `mobile`
 
 ### SDK 결제 및 빌링키 발급 요청하기
 
@@ -47,7 +47,7 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
     function requestPayment() {
       PortOne.requestPayment({
         storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
-        paymentId: 'paymentId_{now()}',
+        paymentId: `payment-${crypto.randomUUID()}`,
         orderName: '나이키 와플 트레이너 2 SD',
         totalAmount: 1000,
         currency: 'CURRENCY_KRW',
@@ -70,30 +70,32 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
   ```javascript
   // ... 수기(키인) 결제
   const issueResponse = await axios({
-    url: `https://api.portone.io/v2/payments/${PAYMENT_ID_HERE}/instant/pay`,
+    url: `https://api.portone.io/payments/${encodeURIComponent(PAYMENT_ID_HERE)}/instant`,
     method: "post",
-    headers: { "Authorization": "Bearer " + access_token },
+    headers: { "Authorization": "Bearer " + accessToken },
     data: {
-      channel_key,
-      order_name,
-      total_amount,
-      product_type,
+      channelKey,
+      orderName,
+      productType,
       customer : {
-        customer_id,
-        customer_name : {
-          first_name,
-          last_name
-        },  
+        id: customerId,
+        name: {
+          first: firstName,
+          last: lastName
+        },
+      },
+      amount: {
+        total: totalAmount,
       },
       currency,
-      payment_method_option: {
+      method: {
         card: {
-          card_credential: {
-            card_number,
-            expiry_month,
-            expiry_year,
-            birth_or_business_registration_number,
-            password_two_digits
+          credential: {
+            number: cardNumber,
+            expiryYear,
+            expiryMonth,
+            birthOrBusinessRegistrationNumber,
+            passwordTwoDigits,
           },
         },
       },
@@ -106,22 +108,22 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
   ```javascript
   // ... 빌링키 발급
   const issueResponse = await axios({
-    url: "https://api.portone.io/v2/billing-keys",
+    url: "https://api.portone.io/billing-keys",
     method: "post",
-    headers: { "Authorization": "Bearer " + access_token },
+    headers: { "Authorization": "Bearer " + accessToken },
     data: {
-      channel_key,
+      channelKey,
       customer: {
-        customer_id,
+        id: customerId,
       },
-      payment_method_option: {
+      method: {
         card: {
-          card_credential: {
-            card_number,
-            expiry_month,
-            expiry_year,
-            birth_or_business_registration_number,
-            password_two_digits
+          credential: {
+            number: cardNumber,
+            expiryYear,
+            expiryMonth,
+            birthOrBusinessRegistrationNumber,
+            passwordTwoDigits,
           },
         },
       },
@@ -137,21 +139,24 @@ async function schedulePayment() {
   // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기를 진행해주세요.
   // 2. 포트원 결제 예약 API 호출
   const response = await axios({
-    url: `https://api.portone.io/v2/schedules`,
+    url: `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
     method: "post",
     // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-    headers: { Authorization: "Bearer " + access_token },
+    headers: { Authorization: "Bearer " + accessToken },
     data: {
-      payment_id: UNIQUE_PAYMENT_ID,
-      billing_key: BILLING_KEY_HERE,
-      order_name: "월간 이용권 정기결제",
-      customer: {
-        customer_id: CUSTOMER_ID_HERE,
-        // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
-      },
-      total_amount: 8900,
-      currency: "KRW",
-      scheduled_at: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
+      payment: {
+        billing_key: BILLING_KEY_HERE,
+        orderName: "월간 이용권 정기결제",
+        customer: {
+          id: CUSTOMER_ID_HERE,
+          // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+        },
+        amount: {
+          total: 8900,
+        },
+        currency: "KRW",
+      }
+      timeToPay: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
     },
   });
   // 결제 예약 이후 로직을 구성해주세요.
@@ -343,13 +348,13 @@ async function schedulePayment() {
 
 #### API 수기(키인) 결제
 
-- 가맹점 분담 무이자를 원하시는 경우 KSNET과 별도의 계약 후 `card.use_free_interest_from_mall` 파라미터를 true로 입력하여 사용 가능합니다.
+- 가맹점 분담 무이자를 원하시는 경우 KSNET과 별도의 계약 후 method.card.useFreeInterestFromMerchant 파라미터를 true로 입력하여 사용 가능합니다.
 
-- 포트원을 통한 KSNET API 수기(키인) 결제는 카드 번호와 유효기간만으로 결제를 요청하는 비인증 승인 API만 연동되어 있어 `birth_or_business_registration_number` 와 `password_two_digits` 는 검증하지 않습니다.
+- 포트원을 통한 KSNET API 수기(키인) 결제는 카드 번호와 유효기간만으로 결제를 요청하는 비인증 승인 API만 연동되어 있어 `birthOrBusinessRegistrationNumber` 와 `passwordTwoDigits` 는 검증하지 않습니다.
 
 #### API 빌링키 발급
 
-- `card_number`, `expiry_month`, `expiry_year`, `birth_or_business_registration_number`, `password_two_digits` 파라미터는 필수 입력해야 합니다.
+- method.card.credential의 `number`, `expiryYear`, `expiryMonth`, `birthOrBusinessRegistrationNumber`, `passwordTwoDigits` 파라미터는 필수 입력해야 합니다.
 
 #### 빌링키 결제
 

@@ -72,38 +72,35 @@ app.use(bodyParser.json());
 // POST 요청을 받는 /portone-webhook
 app.post("/portone-webhook", async (req, res) => {
   try {
-    const { tx_id, payment_id } = req.body;
-    
+    const { payment_id: paymentId } = req.body;
+
     // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
     const signinResponse = await axios({
-      url: "https://api.portone.io/v2/signin/api-key",
+      url: "https://api.portone.io/login/api-secret",
       method: "post",
       headers: { "Content-Type": "application/json" },
       data: {
-        api_key: PORTONE_API_KEY, // 포트원 API Key
+        apiSecret: PORTONE_API_SECRET, // 포트원 API Secret
       },
     });
-    const { access_token } = signinResponse.data;
-    
+    const { accessToken } = signinResponse.data;
+
     // 2. 포트원 결제내역 단건조회 API 호출
     const paymentResponse = await axios({
-      url: `https://api.portone.io/v2/payments/${payment_id}`,
+      url: `https://api.portone.io/payments/${encodeURIComponent(paymentId)}`,
       method: "get",
       // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-      headers: { "Authorization": "Bearer " + access_token },
+      headers: { "Authorization": "Bearer " + accessToken },
     });
-    const { payment: { id, transactions } } = paymentResponse.data;
-    // 대표 트랜잭션(승인된 트랜잭션)을 선택합니다.
-    const transaction = transactions.find(tx => tx.is_primary === true);
-    
+    const { id, status, amount, method } = paymentResponse.data;
+
     // 3. 가맹점 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
     const order = await OrderService.findById(id);
-    if (order.amount === transaction.amount.total) {
+    if (order.amount === amount.total) {
       switch (status) {
         case "VIRTUAL_ACCOUNT_ISSUED": {
-          const { virtual_account } = transaction.payment_method_detail;
           // 가상 계좌가 발급된 상태입니다.
-          // 계좌 정보(virtual_account)를 이용해 원하는 로직을 구성하세요.
+          // method에 들어 있는 계좌 정보를 이용해 원하는 로직을 구성하세요.
           break;
         }
         case "PAID": {

@@ -48,7 +48,7 @@ import Details from "~/components/gitbook/Details.astro";
     function requestPayment() {
       PortOne.requestPayment({
         storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
-        paymentId: 'paymentId_{now()}',
+        paymentId: `payment-{${crypto.randomUUID()}`,
         orderName: '나이키 와플 트레이너 2 SD',
         totalAmount: 1000,
         currency: 'CURRENCY_KRW',
@@ -84,22 +84,22 @@ import Details from "~/components/gitbook/Details.astro";
   ```javascript
   // ... 빌링키 발급
     const issueResponse = await axios({
-      url: `https://api.portone.io/v2/billing-keys`,
+      url: `https://api.portone.io/billing-keys`,
       method: "post",
-      headers: { "Authorization": "Bearer " + access_token },
+      headers: { "Authorization": "Bearer " + accessToken },
       data: {
+        channelKey,
         customer: {
-          customer_id,
+          id: customerId,
         },
-        channel_key: channel_key,
-        payment_method_option: {
+        method: {
           card: {
-            card_credential: {
-              card_number,
-              expiry_month,
-              expiry_year,
-              birth_or_business_registration_number,
-              password_two_digits
+            credential: {
+              number: cardNumber,
+              expiryYear,
+              expiryMonth,
+              birthOrBusinessRegistrationNumber,
+              passwordTwoDigits,
             },
           },
         },
@@ -114,21 +114,24 @@ import Details from "~/components/gitbook/Details.astro";
     // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기를 진행해주세요.
     // 2. 포트원 결제 예약 API 호출
     const response = await axios({
-      url: `https://api.portone.io/v2/payments/${PAYMENT_ID_HERE}/schedules`,
+      url: `https://api.portone.io/payments/${encodeURIComponent(PAYMENT_ID_HERE)}/schedules`,
       method: "post",
       // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-      headers: { Authorization: "Bearer " + access_token },
+      headers: { Authorization: "Bearer " + accessToken },
       data: {
-        payment_id: UNIQUE_PAYMENT_ID,
-        billing_key: BILLING_KEY_HERE,
-        order_name: "월간 이용권 정기결제",
-        customer: {
-          customer_id: CUSTOMER_ID_HERE,
-          // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+        payment: {
+          billingKey: BILLING_KEY_HERE,
+          orderName: "월간 이용권 정기결제",
+          customer: {
+            id: CUSTOMER_ID_HERE,
+            // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+          },
+          amount: {
+            total: 8900,
+          },
+          currency: "KRW",
         },
-        total_amount: 8900,
-        currency: "KRW",
-        scheduled_at: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
+        timeToPay: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
       },
     });
     // 결제 예약 이후 로직을 구성해주세요.
@@ -450,7 +453,7 @@ import Details from "~/components/gitbook/Details.astro";
 - 테스트 결제 건은 매출 전표 확인이 불가능합니다.
 - 간편결제를 통해 카드 외의 결제수단으로 결제한 경우 매출 전표 확인이 불가능합니다.
 - 토스페이먼츠를 통한 SSG페이 결제 시 토스페이먼츠 결제창에서 휴대폰 번호가 선택사항이어서 미입력시에도 다음단계로 진입이 가능합니다. 이 때, SSG페이의 경우 입력받은 휴대폰 전화번호로 앱푸시 알람이 가도록 로직이 구현되어있기 때문에 사용자가 앱푸시 알람을 받지 못할 수 있습니다. 휴대폰 번호 입력이 필수로 되어있지 않는 것은 토스페이먼츠의 정책으로 포트원과 무관합니다.
-- API를 통한 현금영수증 (POST `/payments/{payment_id}/cash-receipt`) 발급 시 현금영수증 유형(type) 과 현금영수증 발급 번호(identifier)의 유효성을 검증하지 않고 발급 요청한 값대로 승인되오니 API 이용 시 현금영수증 정보를 정확하게 입력해야 합니다.
+- API를 통한 현금영수증 (POST `/payments/cash-receipts`) 발급 시 현금영수증 유형(type) 과 현금영수증 발급 번호(identifier)의 유효성을 검증하지 않고 발급 요청한 값대로 승인되오니 API 이용 시 현금영수증 정보를 정확하게 입력해야 합니다.
   <Details>
     <p slot="summary"> 예시 </p>
     - 예1. 현금영수증 발급 유형이 지출 증빙일 때, 현금영수증 발급 번호에 휴대폰 번호를 입력하는 경우 정상 처리됩니다.
