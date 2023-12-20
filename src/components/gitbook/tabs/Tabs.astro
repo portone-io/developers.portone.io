@@ -1,15 +1,8 @@
 ---
-import { Tabs } from "./index";
+import { Tabs as TabsImpl, processTabs } from ".";
+
+const slotHtml = await Astro.slots.render("default");
+const tabs = processTabs(slotHtml);
 ---
 
-<Tabs client:visible>
-  <style is:global>
-    [data-gitbook-tab] {
-      display: none;
-    }
-    [data-gitbook-tab]:first-child {
-      display: block;
-    }
-  </style>
-  <slot />
-</Tabs>
+<TabsImpl client:visible uniqueId={crypto.randomUUID()} getTabs={() => tabs} />
