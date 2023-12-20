@@ -18,14 +18,14 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 import * as PortOne from '@portone/browser-sdk/v2';
 function requestPayment() {
   PortOne.requestPayment({
-    // 가맹점 storeId로 변경해주세요.
+    // 고객사 storeId로 변경해주세요.
     storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec',
-    paymentId: 'paymentId_{now()}',
+    paymentId: `payment-${crypto.randomUUID()}`,
     orderName: '나이키 와플 트레이너 2 SD',
     totalAmount: 1000,
     currency: 'CURRENCY_KRW',
     pgProvider: 'PG_PROVIDER_TOSSPAYMENTS',
-    payMethod: "CARD"
+    payMethod: 'CARD'
   });
 }
 ```
@@ -39,14 +39,14 @@ function requestPayment() {
 <script>
   function requestPayment() {
     PortOne.requestPayment({
-      // 가맹점 storeId로 변경해주세요.
+      // 고객사 storeId로 변경해주세요.
       storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec',
-      paymentId: 'paymentId_{now()}',
+      paymentId: `payment-${crypto.randomUUID()}`,
       orderName: '나이키 와플 트레이너 2 SD',
       totalAmount: 1000,
       currency: 'CURRENCY_KRW',
       pgProvider: 'PG_PROVIDER_TOSSPAYMENTS',
-      payMethod: "CARD"
+      payMethod: 'CARD'
     });
   }
 </script>
@@ -56,8 +56,8 @@ function requestPayment() {
 </Tabs>
 
 <Hint style="info">
-**주문번호(paymentId) 생성 시 유의사항**
+**고객사 거래번호(paymentId) 생성 시 유의사항**
 
-주문번호는 결제창 요청 시 항상 **고유 값**으로 채번 되어야 합니다. 결제 완료 이후 **결제 위변조** 대사 작업시 주문번호를 이용하여 검증이 필요하므로 주문번호는 가맹점 서버에서 고유하게(**unique**)채번하여 **DB에 저장**해주세요
+고객사 거래번호는 결제창 요청 시 항상 **고유 값**으로 채번 되어야 합니다. 결제 완료 이후 **결제 위변조** 대사 작업시 고객사 거래번호를 이용하여 검증이 필요하므로 고객사 거래번호는 고객사 서버에서 고유하게(**unique**)채번하여 **DB에 저장**해주세요
 
 </Hint>

@@ -3,17 +3,19 @@ import type { Lang } from "~/type";
 import Logo from "./Logo.astro";
 import MobileMenuButton from "./MobileMenuButton";
 import Dropdown from "./Dropdown";
+import VersionSwitch from "./VersionSwitch";
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 
+// To bypass the astro bug, all Korean characters were escaped.
 const ko = {
-  developers: "개발자센터",
-  "sdk-playground": "SDK 놀이터",
-  console: "관리자 콘솔",
-  language: "언어",
+  developers: "\uac1c\ubc1c\uc790\uc13c\ud130",
+  "sdk-playground": "SDK \ub180\uc774\ud130",
+  console: "\uad00\ub9ac\uc790 \ucf58\uc194",
+  language: "\uc5b8\uc5b4",
 };
 const en: typeof ko = {
   developers: "Developers",
@@ -24,18 +26,35 @@ const en: typeof ko = {
 const t = lang === "ko" ? ko : en;
 ---
 
+<script>
+  import { effect } from "@preact/signals";
+  import { systemVersionSignal } from "~/state/nav";
+  const navMenu = document.getElementById("gnb")!;
+  effect(() => {
+    const systemVersion = systemVersionSignal.value;
+    navMenu.dataset.selectedSystemVersion = systemVersion;
+  });
+</script>
+<style is:global>
+  [data-selected-system-version="v1"] [data-system-version="v2"],
+  [data-selected-system-version="v2"] [data-system-version="v1"] {
+    display: none;
+  }
+</style>
 <div class="h-14">
   <header
+    id="gnb"
     class="h-inherit fixed z-10 flex w-full items-center justify-between border-b bg-white pl-6"
   >
-    <div class="flex h-full items-center gap-20">
+    <div class="flex h-full items-center gap-5">
       <a class="inline-flex h-full items-center" href={`/docs/${lang}`}>
         <div class="flex items-center gap-2">
           <Logo class="w-22" />
-          <span>{t["developers"]}</span>
+          <span class="break-keep">{t["developers"]}</span>
         </div>
       </a>
-      <div class="hidden h-full items-center gap-4 md:flex">
+      <VersionSwitch client:visible />
+      <div class="ml-5 hidden h-full items-center gap-4 md:flex">
         {
           lang === "ko" && (
             <a class="inline-flex h-full items-center" href="/release-notes">
@@ -47,8 +66,8 @@ const t = lang === "ko" ? ko : en;
           client:visible
           link="/api"
           items={[
-            { label: "REST API - V1", link: "/api/rest-v1" },
-            // { label: "REST API - V2", link: "/api/rest-v2" },
+            { label: "REST API V1", link: "/api/rest-v1", systemVersion: "v1" },
+            { label: "REST API V2", link: "/api/rest-v2", systemVersion: "v2" },
             // { label: "GraphQL API", link: "/api/graphql" },
             {
               label: t["sdk-playground"],

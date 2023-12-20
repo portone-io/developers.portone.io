@@ -1,9 +1,10 @@
 ---
-title: 키인(수기) 결제
+title: 수기(키인) 결제
 description: 구매자 인증 없이 카드번호 입력만으로 결제가 가능합니다.
 ---
 
 import Hint from "~/components/gitbook/Hint.astro";
+import Figure from "~/components/gitbook/Figure.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
@@ -13,13 +14,16 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </Hint>
 
-키인(수기)결제를 통해 카드정보를 이용하여 1회성 결제요청이 가능합니다.
+수기(키인)결제를 통해 카드정보를 이용하여 1회성 결제요청이 가능합니다.
 
 ## 키인결제의 장점
 
-아래의 예제처럼 가맹점에 따라 카드정보 입력란을 커스터마이징 할 수 있다는 장점이 있습니다.
+아래의 예제처럼 고객사에 따라 카드정보 입력란을 커스터마이징 할 수 있다는 장점이 있습니다.
 
-<figure><img src="https://openapi-documentation-poc.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fv2-user-guide-chaiport-merchant.ec3dd18c.png&#x26;w=3840&#x26;q=100" alt=""/><figcaption><p>포트원 이용 가맹점 "링글 잉글리시 에듀케이션"</p></figcaption></figure>
+<Figure
+  src="https://openapi-documentation-poc.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fv2-user-guide-chaiport-merchant.ec3dd18c.png&#x26;w=3840&#x26;q=100"
+  caption='포트원 이용 고객사 "링글 잉글리시 에듀케이션"'
+/>
 
 ## 키인결제의 단점
 
@@ -37,38 +41,35 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 async function requestInstantPayment() {
   // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
   const signinResponse = await axios({
-    url: "https://api.portone.io/v2/signin/api-key",
+    url: "https://api.portone.io/login/api-secret",
     method: "post",
     headers: { "Content-Type": "application/json" },
     data: {
-      api_key: PORTONE_API_KEY, // 포트원 API Key
+      apiSecret: PORTONE_API_SECRET, // 포트원 API Secret
     },
   });
-  const { access_token } = signinResponse.data;
-  
-  // 2. 포트원 키인(수기)결제 API 호출
+  const { accessToken } = signinResponse.data;
+
+  // 2. 포트원 수기(키인)결제 API 호출
   await axios({
-    url: `https://api.portone.io/v2/payments/${UNIQUE_PAYMENT_ID}/instant/pay`,
+    url: `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
     method: "post",
-    headers: { "Authorization": "Bearer " + access_token },
+    headers: { "Authorization": "Bearer " + accessToken },
     data: {
-      order_name: "월간 이용권 정기결제"
-      is_cultural_expense: false,
-      is_escrow: false,
-      // 키인(수기)결제 API를 참고해 고객 정보를 채워주세요.
+      channelKey: CHANNEL_KEY_HERE,
+      orderName: "월간 이용권 정기결제",
+      // 수기(키인)결제 API를 참고해 고객 정보를 채워주세요.
       customer: YOUR_CUSTOMER_INFO,
-      total_amount: 8900,
-      channel_name: CHANNEL_NAME_HERE,
-      // 키인(수기)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
-      payment_method_option: PAYMENT_OPTION_HERE,
+      amount: {
+        total: 8900,
+      },
       currency: "KRW",
+      // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
+      method: PAYMENT_METHOD_HERE,
     }
   });
-  
-  // 3. 인증결제 연동하기의 결제검증 API 구현하기를 따라 결제를 검증해주세요.
 }
 ```
 
 </Tab>
 </Tabs>
-

@@ -6,10 +6,9 @@ import {
   useExpand,
 } from "~/state/rest-api/expand-section";
 import {
+  type CategoryEndpointsPair,
   type Endpoint,
-  getEveryEndpoints,
   getEndpointRepr,
-  groupEndpointsByCategory,
 } from "../schema-utils/endpoint";
 import TwoColumnLayout from "../TwoColumnLayout";
 import Expand from "./Expand";
@@ -22,6 +21,7 @@ export interface CategoriesProps {
   apiHost: string; // e.g. "https://api.iamport.kr"
   currentSection: string;
   sectionDescriptionProps: Record<string, any>;
+  endpointGroups: CategoryEndpointsPair[];
   schema: any;
 }
 export function Categories({
@@ -30,11 +30,11 @@ export function Categories({
   apiHost,
   currentSection,
   sectionDescriptionProps,
+  endpointGroups,
 }: CategoriesProps) {
-  const everyEndpoints = getEveryEndpoints(schema);
   return (
     <>
-      {groupEndpointsByCategory(schema, everyEndpoints).map(
+      {endpointGroups.map(
         ({ category: { id, title, description }, endpoints }) => (
           <Category
             sectionDescriptionProps={sectionDescriptionProps}
