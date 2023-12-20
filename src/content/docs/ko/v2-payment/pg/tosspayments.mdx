@@ -3,9 +3,6 @@ title: 토스페이먼츠
 description: 토스페이먼츠 결제창 연동가이드를 확인합니다. (W. 2023-06-27)
 ---
 
-import * as prose from "~/components/prose";
-export const components = prose;
-
 import Figure from "~/components/gitbook/Figure.astro";
 import image1 from "./_assets/tosspayments/tosspayments_1.webp";
 import image2 from "./_assets/tosspayments/tosspayments_2.png";
@@ -50,13 +47,13 @@ import Details from "~/components/gitbook/Details.astro";
     import * as PortOne from '@portone/browser-sdk/v2';
     function requestPayment() {
       PortOne.requestPayment({
-        storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
-        paymentId: 'paymentId_{now()}',
+        storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 고객사 storeId로 변경해주세요.
+        paymentId: `payment-{${crypto.randomUUID()}`,
         orderName: '나이키 와플 트레이너 2 SD',
         totalAmount: 1000,
         currency: 'CURRENCY_KRW',
         channelKey: 'channel-key-3b37819a-1c72-4deb-a245-8c810af5403d', // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
-        payMethod: "CARD"
+        payMethod: 'CARD'
       });
     }
     ```
@@ -68,7 +65,7 @@ import Details from "~/components/gitbook/Details.astro";
     import * as PortOne from '@portone/browser-sdk/v2';
     function requestIssueBillingKey() {
       PortOne.requestIssueBillingKey({
-        storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 가맹점 storeId로 변경해주세요.
+        storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 고객사 storeId로 변경해주세요.
         channelKey: 'channel-key-3b37819a-1c72-4deb-a245-8c810af5403d', // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
         billingKeyMethod : 'CARD'
       });
@@ -87,22 +84,22 @@ import Details from "~/components/gitbook/Details.astro";
   ```javascript
   // ... 빌링키 발급
     const issueResponse = await axios({
-      url: `https://api.portone.io/v2/billing-keys`,
+      url: `https://api.portone.io/billing-keys`,
       method: "post",
-      headers: { "Authorization": "Bearer " + access_token },
+      headers: { "Authorization": "Bearer " + accessToken },
       data: {
+        channelKey,
         customer: {
-          customer_id,
+          id: customerId,
         },
-        channel_key: channel_key,
-        payment_method_option: {
+        method: {
           card: {
-            card_credential: {
-              card_number,
-              expiry_month,
-              expiry_year,
-              birth_or_business_registration_number,
-              password_two_digits
+            credential: {
+              number: cardNumber,
+              expiryYear,
+              expiryMonth,
+              birthOrBusinessRegistrationNumber,
+              passwordTwoDigits,
             },
           },
         },
@@ -117,21 +114,24 @@ import Details from "~/components/gitbook/Details.astro";
     // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기를 진행해주세요.
     // 2. 포트원 결제 예약 API 호출
     const response = await axios({
-      url: `https://api.portone.io/v2/payments/${PAYMENT_ID_HERE}/schedules`,
+      url: `https://api.portone.io/payments/${encodeURIComponent(PAYMENT_ID_HERE)}/schedules`,
       method: "post",
       // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-      headers: { Authorization: "Bearer " + access_token },
+      headers: { Authorization: "Bearer " + accessToken },
       data: {
-        payment_id: UNIQUE_PAYMENT_ID,
-        billing_key: BILLING_KEY_HERE,
-        order_name: "월간 이용권 정기결제",
-        customer: {
-          customer_id: CUSTOMER_ID_HERE,
-          // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+        payment: {
+          billingKey: BILLING_KEY_HERE,
+          orderName: "월간 이용권 정기결제",
+          customer: {
+            id: CUSTOMER_ID_HERE,
+            // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+          },
+          amount: {
+            total: 8900,
+          },
+          currency: "KRW",
         },
-        total_amount: 8900,
-        currency: "KRW",
-        scheduled_at: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
+        timeToPay: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
       },
     });
     // 결제 예약 이후 로직을 구성해주세요.
@@ -143,11 +143,11 @@ import Details from "~/components/gitbook/Details.astro";
 ### 주요 파라미터
 
 - `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 가맹점의 상점을 식별하는 고유한 값입니다.
+  - 고객사의 상점을 식별하는 고유한 값입니다.
 - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 가맹점이 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다.
+  - 고객사가 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다.
 - `orderName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 주문명으로 가맹점에서 자유롭게 입력합니다.
+  - 주문명으로 고객사에서 자유롭게 입력합니다.
 - `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
   - 콘솔의 결제 연동 메뉴에 표시되는 채널 키를 입력해야 합니다.
 - `totalAmount` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
@@ -210,7 +210,7 @@ import Details from "~/components/gitbook/Details.astro";
 
     - `discountCode`
 
-      - 토스페이먼츠와 가맹점 간의 계약에 따라 프로모션을 적용할 수 있습니다.
+      - 토스페이먼츠와 고객사 간의 계약에 따라 프로모션을 적용할 수 있습니다.
 
       ```json
       {
@@ -353,7 +353,7 @@ import Details from "~/components/gitbook/Details.astro";
   </Details>
 
 - 무이자 할부가 적용 되어도 ISP 계열 카드로 결제시에는 `무이자` 표기가 되지 않습니다.
-  가맹점은 토스페이먼츠와 사전 계약 또는 카드사 정책에 따라 무이자 할부 기능을 사용할 수 있습니다. 이에 따라 결제창 내에서 각 카드사별 최대 무이자 할부 개우러수에 따라 할부 개월수 옆에 `무이자` 또는 `무`라고 표기됩니다.
+  고객사은 토스페이먼츠와 사전 계약 또는 카드사 정책에 따라 무이자 할부 기능을 사용할 수 있습니다. 이에 따라 결제창 내에서 각 카드사별 최대 무이자 할부 개우러수에 따라 할부 개월수 옆에 `무이자` 또는 `무`라고 표기됩니다.
 
   <Details>
 
@@ -444,7 +444,7 @@ import Details from "~/components/gitbook/Details.astro";
 
 #### 간편결제
 
-- 테스트MID로 간편결제 호출 시 테스트가 원활하지 않을 수 있습니다. 간편결제의 경우 사전에 토스페이먼츠와 사전계약이 필요하며, ` [PAY_PROCESS_ABORTED] Toss Payments와 계약된 결제수단(NAVERPAY)이 아닙니다.` 와 같은 에러 발생 시 가맹점의 실 상점아이디로 토스페이먼츠와 계약 후 사용이 가능합니다.
+- 테스트MID로 간편결제 호출 시 테스트가 원활하지 않을 수 있습니다. 간편결제의 경우 사전에 토스페이먼츠와 사전계약이 필요하며, ` [PAY_PROCESS_ABORTED] Toss Payments와 계약된 결제수단(NAVERPAY)이 아닙니다.` 와 같은 에러 발생 시 고객사의 실 상점아이디로 토스페이먼츠와 계약 후 사용이 가능합니다.
 - 일부 간편결제 사 (ex. 토스페이, L페이 등)의 경우 해당 간편결제사 정책에 따라 고정 할부 개월수 파라미터를 입력해도 해당 할부 개월 수와 일시불이 동시에 표기되는 경우가 있습니다.
 
 #### 기타
@@ -453,7 +453,7 @@ import Details from "~/components/gitbook/Details.astro";
 - 테스트 결제 건은 매출 전표 확인이 불가능합니다.
 - 간편결제를 통해 카드 외의 결제수단으로 결제한 경우 매출 전표 확인이 불가능합니다.
 - 토스페이먼츠를 통한 SSG페이 결제 시 토스페이먼츠 결제창에서 휴대폰 번호가 선택사항이어서 미입력시에도 다음단계로 진입이 가능합니다. 이 때, SSG페이의 경우 입력받은 휴대폰 전화번호로 앱푸시 알람이 가도록 로직이 구현되어있기 때문에 사용자가 앱푸시 알람을 받지 못할 수 있습니다. 휴대폰 번호 입력이 필수로 되어있지 않는 것은 토스페이먼츠의 정책으로 포트원과 무관합니다.
-- API를 통한 현금영수증 (POST `/payments/{payment_id}/cash-receipt`) 발급 시 현금영수증 유형(type) 과 현금영수증 발급 번호(identifier)의 유효성을 검증하지 않고 발급 요청한 값대로 승인되오니 API 이용 시 현금영수증 정보를 정확하게 입력해야 합니다.
+- API를 통한 현금영수증 (POST `/payments/cash-receipts`) 발급 시 현금영수증 유형(type) 과 현금영수증 발급 번호(identifier)의 유효성을 검증하지 않고 발급 요청한 값대로 승인되오니 API 이용 시 현금영수증 정보를 정확하게 입력해야 합니다.
   <Details>
     <p slot="summary"> 예시 </p>
     - 예1. 현금영수증 발급 유형이 지출 증빙일 때, 현금영수증 발급 번호에 휴대폰 번호를 입력하는 경우 정상 처리됩니다.

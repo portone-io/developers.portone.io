@@ -6,21 +6,22 @@ import {
   useExpand,
 } from "~/state/rest-api/expand-section";
 import {
+  type CategoryEndpointsPair,
   type Endpoint,
-  getEveryEndpoints,
   getEndpointRepr,
-  groupEndpointsByCategory,
 } from "../schema-utils/endpoint";
 import TwoColumnLayout from "../TwoColumnLayout";
 import Expand from "./Expand";
-import { Hr, interleave } from "..";
-import EndpointDoc from "../endpoint/EndpointDoc";
+import { Hr } from "..";
+import EndpointDoc, { MethodLine } from "../endpoint/EndpointDoc";
 import EndpointPlayground from "../endpoint/playground/EndpointPlayground";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
   apiHost: string; // e.g. "https://api.iamport.kr"
   currentSection: string;
+  sectionDescriptionProps: Record<string, any>;
+  endpointGroups: CategoryEndpointsPair[];
   schema: any;
 }
 export function Categories({
@@ -28,32 +29,32 @@ export function Categories({
   basepath,
   apiHost,
   currentSection,
+  sectionDescriptionProps,
+  endpointGroups,
 }: CategoriesProps) {
-  const everyEndpoints = getEveryEndpoints(schema);
   return (
     <>
-      {interleave(
-        groupEndpointsByCategory(schema, everyEndpoints).map(
-          ({ category: { id, title, description }, endpoints }) => (
-            <Category
-              basepath={basepath}
-              apiHost={apiHost}
-              section={id}
-              initialExpand={currentSection === id}
-              schema={schema}
-              title={title}
-              description={description}
-              endpoints={endpoints}
-            />
-          )
-        ),
-        <Hr />
+      {endpointGroups.map(
+        ({ category: { id, title, description }, endpoints }) => (
+          <Category
+            sectionDescriptionProps={sectionDescriptionProps}
+            basepath={basepath}
+            apiHost={apiHost}
+            section={id}
+            initialExpand={currentSection === id}
+            schema={schema}
+            title={title}
+            description={description}
+            endpoints={endpoints}
+          />
+        )
       )}
     </>
   );
 }
 
 export interface CategoryProps {
+  sectionDescriptionProps: Record<string, any>;
   basepath: string;
   apiHost: string;
   initialExpand: boolean;
@@ -64,6 +65,7 @@ export interface CategoryProps {
   endpoints: Endpoint[];
 }
 export function Category({
+  sectionDescriptionProps,
   basepath,
   apiHost,
   initialExpand,
@@ -77,26 +79,30 @@ export function Category({
   const { expand, onToggle } = useExpand(section, initialExpand);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
   const descriptionElement = (
-    <div
-      class="mt-4"
-      dangerouslySetInnerHTML={{
-        __html: description,
-      }}
+    <SectionDescription
+      section={section}
+      sectionDescriptionProps={sectionDescriptionProps}
+      description={description}
     />
   );
   return (
-    <section id={section} class="scroll-mt-5.5rem flex flex-col">
+    <section id={section} class="scroll-mt-5rem flex flex-col">
       <div>
         <prose.h2 ref={headingRef}>{title}</prose.h2>
       </div>
       {endpoints.length < 1 ? (
-        descriptionElement
+        <>
+          {descriptionElement}
+          <Hr />
+        </>
       ) : (
         <>
           <TwoColumnLayout
+            gap={6}
             left={descriptionElement}
             right={
-              <div class="border-slate-3 bg-slate-1 flex flex-col gap-4 rounded-lg border p-4">
+              <div class="mt-4 flex flex-col gap-4">
+                <h3 class="text-slate-4 font-bold">목차</h3>
                 {endpoints.map((endpoint) => {
                   const { method, path, title, deprecated, unstable } =
                     endpoint;
@@ -108,7 +114,7 @@ export function Category({
                     <a
                       key={id}
                       href={href}
-                      class={`hover:text-orange-5 text-slate-6 flex flex-col text-sm leading-tight underline-offset-4 transition-colors hover:underline ${
+                      class={`hover:text-orange-5 text-slate-6 flex flex-col gap-1 text-sm leading-tight underline-offset-4 transition-colors ${
                         deprecated || unstable ? "opacity-50" : ""
                       }`}
                       onClick={(e) => {
@@ -118,12 +124,7 @@ export function Category({
                       data-norefresh
                     >
                       <div class="font-bold">{title}</div>
-                      <div class="ml-2 flex font-mono opacity-60">
-                        <span class="shrink-0 font-bold uppercase">
-                          {method}&nbsp;
-                        </span>
-                        <span>{path}</span>
-                      </div>
+                      <MethodLine method={method} path={path} />
                     </a>
                   );
                 })}
@@ -131,7 +132,8 @@ export function Category({
             }
           />
           <Expand
-            className="mt-10"
+            className="my-20"
+            title={title}
             expand={expand}
             onToggle={onToggle}
             onCollapse={() => {
@@ -143,31 +145,36 @@ export function Category({
                 basepath={basepath}
                 schema={schema}
                 endpoint={endpoint}
-                renderRightFn={
-                  // context: https://chai-finance.slack.com/archives/C03N8773P1A/p1697180159729539
-                  apiHost === "https://api.iamport.kr"
-                    ? ({ operation: { operationId, tags } }) => (
-                        <div>
-                          <a
-                            target="_blank"
-                            class="text-slate-5 hover:text-orange-5 font-bold underline-offset-4 transition-colors hover:underline"
-                            href={`https://api.iamport.kr/#!/${
-                              tags?.[0] || section
-                            }/${operationId}`}
-                          >
-                            Swagger Test Link
-                          </a>
-                        </div>
-                      )
-                    : (props) => (
-                        <EndpointPlayground apiHost={apiHost} {...props} />
-                      )
-                }
+                renderRightFn={(props) => (
+                  <EndpointPlayground apiHost={apiHost} {...props} />
+                )}
               />
             ))}
           </Expand>
         </>
       )}
     </section>
+  );
+}
+
+interface SectionDescriptionProps {
+  section: string;
+  sectionDescriptionProps: Record<string, any>;
+  description: any;
+}
+function SectionDescription({
+  section,
+  sectionDescriptionProps,
+  description,
+}: SectionDescriptionProps) {
+  const sectionDescription = sectionDescriptionProps[section];
+  if (sectionDescription) return <div class="mt-4">{sectionDescription}</div>;
+  return (
+    <div
+      class="mt-4"
+      dangerouslySetInnerHTML={{
+        __html: description,
+      }}
+    />
   );
 }

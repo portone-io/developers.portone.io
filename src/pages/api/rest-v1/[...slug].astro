@@ -1,11 +1,15 @@
 ---
+import * as prose from "~/components/prose";
 import LayoutBase from "~/layouts/LayoutBase.astro";
 import Component from "./_Page";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu.astro";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
+import { getApiSectionDescriptions } from "~/misc/apiSectionDescription";
 import schema from "~/schema/v1.openapi.json";
 
 export const prerender = false;
+
+const { v1auth } = await getApiSectionDescriptions();
 
 const [_api, _rest, section = ""] = Astro.url.pathname
   .split("/")
@@ -14,7 +18,13 @@ const [_api, _rest, section = ""] = Astro.url.pathname
 
 <LayoutBase lang="ko" title="PortOne REST API - V1">
   <div class="flex">
-    <NavMenu items={getCategories(schema)} />
-    <Component client:visible currentSection={section} />
+    <NavMenu
+      title="REST API - V1"
+      basepath="/api/rest-v1"
+      items={getCategories(schema)}
+    />
+    <Component client:visible currentSection={section}>
+      <v1auth.Content slot="section:auth" components={prose} />
+    </Component>
   </div>
 </LayoutBase>

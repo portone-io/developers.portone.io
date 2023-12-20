@@ -2,6 +2,10 @@ import * as React from "react";
 import * as prose from "~/components/prose";
 import { Categories } from "~/layouts/rest-api/category";
 import { TypeDefinitions } from "~/layouts/rest-api/category/type-def";
+import {
+  getEveryEndpoints,
+  groupEndpointsByCategory,
+} from "./schema-utils/endpoint";
 
 export interface RestApiProps {
   title: string;
@@ -9,6 +13,7 @@ export interface RestApiProps {
   basepath: string;
   apiHost: string;
   currentSection: string;
+  sectionDescriptionProps: Record<string, any>;
   schema: any;
 }
 export default function RestApi({
@@ -17,6 +22,7 @@ export default function RestApi({
   basepath,
   apiHost,
   currentSection,
+  sectionDescriptionProps,
   schema,
 }: RestApiProps) {
   React.useEffect(() => {
@@ -25,24 +31,28 @@ export default function RestApi({
       .getElementById(currentSection)
       ?.scrollIntoView({ behavior: "smooth" });
   }, []);
+  const everyEndpoints = getEveryEndpoints(schema);
+  const endpointGroups = groupEndpointsByCategory(schema, everyEndpoints);
   return (
     <div class="flex flex-1 justify-center">
-      <article class="basis-300 shrink-1 mx-4 my-8 flex flex-col text-slate-700">
-        <section id="overview" class="scroll-mt-5.5rem flex flex-col">
+      <article class="basis-300 shrink-1 m-4 mb-16 flex flex-col pb-10 text-slate-700">
+        <section id="overview" class="scroll-mt-5rem flex flex-col">
           <prose.h1>{title}</prose.h1>
           {children}
+          <Hr />
         </section>
-        <Hr />
         <Categories
           basepath={basepath}
           apiHost={apiHost}
           currentSection={currentSection}
+          sectionDescriptionProps={sectionDescriptionProps}
+          endpointGroups={endpointGroups}
           schema={schema}
         />
-        <Hr />
         <TypeDefinitions
           basepath={basepath}
           initialExpand={currentSection === "type-def"}
+          endpointGroups={endpointGroups}
           schema={schema}
         />
       </article>
@@ -51,7 +61,7 @@ export default function RestApi({
 }
 
 export function Hr() {
-  return <hr class="my-16" />;
+  return <hr class="my-20" />;
 }
 
 export function interleave<T, U>(items: T[], joiner: U): (T | U)[] {

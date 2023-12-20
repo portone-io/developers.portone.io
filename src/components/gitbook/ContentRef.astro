@@ -1,21 +1,21 @@
 ---
 import * as path from "node:path";
-import { frontmattersSignal } from "~/state/server-only/frontmatters";
+import { getEntry } from "astro:content";
 
 interface Props {
   slug: string;
 }
 const { slug } = Astro.props;
-
-const frontmatters = frontmattersSignal.value;
-const fm = frontmatters[slug];
+const entry = await getEntry("docs", slug.slice(1));
+const frontmatter = entry?.data;
+const title = frontmatter?.title;
 ---
 
 {
-  fm && (
-    <a href={path.posix.join("/docs", slug)}>
-      <div class="hover:text-orange-5 m-4 flex justify-between items-center gap-4 rounded border bg-white p-4 transition-transform hover:translate-y-[-2px] hover:drop-shadow-[0_12px_13px_rgba(0,0,0,0.02)]">
-        <span>{fm.title}</span>
+  title && (
+    <a class="m-4" href={path.posix.join("/docs", slug)}>
+      <div class="hover:text-orange-5 flex items-center justify-between gap-4 rounded border bg-white p-4 transition-transform hover:translate-y-[-2px] hover:drop-shadow-[0_12px_13px_rgba(0,0,0,0.02)]">
+        <span>{title}</span>
         <i class="i-ic-baseline-chevron-right inline-block text-2xl" />
       </div>
     </a>

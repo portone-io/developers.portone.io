@@ -3,9 +3,6 @@ title: 네이버페이
 description: 네이버페이 간편결제 결제창 연동가이드를 확인 합니다.
 ---
 
-import * as prose from "~/components/prose";
-export const components = prose;
-
 import Details from "~/components/gitbook/Details.astro";
 
 ## 1. 네이버페이 (결제형) PG 설정하기
@@ -53,7 +50,7 @@ import Details from "~/components/gitbook/Details.astro";
     - `useCfmYmdt`
       - 이용완료일
       - `YYYYMMDD` 형식의 문자열로 넘겨야 합니다.
-      - 상품 유형에 따라 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다
+      - 상품 유형에 따라 네이버페이-고객사 간 필수값으로 계약되는 경우 입력합니다
     - `productItems`
 
       - 상품 정보
@@ -67,10 +64,10 @@ import Details from "~/components/gitbook/Details.astro";
 
         - **`categoryType`** (필수) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
         - **`categoryId`** (필수) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
-        - **`uid`** (필수) : 가맹점 내부의 상품 고유 ID를 활용하는 것이 일반적이지만, 네이버페이 가이드 참고가 필요합니다. [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
+        - **`uid`** (필수) : 고객사 내부의 상품 고유 ID를 활용하는 것이 일반적이지만, 네이버페이 가이드 참고가 필요합니다. [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
         - **`name`** (필수) : 주문상품의 명칭
         - **`count`** (필수) : 상품 주문 개수
-        - **`sellerId`** (선택) : 가맹점이 하위 판매자를 식별하기 위한 고유 ID(영문 대소문자 및 숫자 허용)가맹점의 업종이 통신판매중개업에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 대상 가맹점만 필수 입력합니다.비대상 가맹점은 입력하지 않습니다.
+        - **`sellerId`** (선택) : 고객사가 하위 판매자를 식별하기 위한 고유 ID(영문 대소문자 및 숫자 허용)고객사의 업종이 통신판매중개업에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 대상 고객사만 필수 입력합니다.비대상 고객사은 입력하지 않습니다.
         - **`payReferrer`** (선택) : 네이버 플랫폼의 타 서비스와 제휴계약 후 유입분석을 진행하는 경우에만 입력 [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product_ref)
         - `**startDate`** (선택) \*\***: 시작일(YYYYMMDD)
         - `**endDate`\*\* (선택) : 종료일(YYYYMMDD)
@@ -107,11 +104,11 @@ import Details from "~/components/gitbook/Details.astro";
   - 주문명
   - 네이버페이 내부적으로 **`외 2개`** 의 표현이 자동생성되므로 **"`xxxx 외 2개"`** 대신 `bypass.naverpay.productItems[0].name`(첫번째 상품명)으로 설정하길 권장합니다.
 - `customer.name`
-  - 가맹점 고객의 이름입니다.
-  - 결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 **대상 가맹점의 경우 필수 입력**합니다.
+  - 고객사 고객의 이름입니다.
+  - 결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 **대상 고객사의 경우 필수 입력**합니다.
 - `customer.birth{Year, Month, Day}`
-  - 각각 가맹점 고객의 출생 년도/월/일입니다.
-  - 결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 **대상 가맹점의 경우 세 필드 모두 필수 입력**합니다.
+  - 각각 고객사 고객의 출생 년도/월/일입니다.
+  - 결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 **대상 고객사의 경우 세 필드 모두 필수 입력**합니다.
 - `easyPay.installment`
   - 네이버페이는 지원하지 않습니다.
 - `easyPay.availableCards`
@@ -122,7 +119,7 @@ import Details from "~/components/gitbook/Details.astro";
 - `billingKeyMethod`
   - `EASY_PAY` 로 설정해야 합니다
 - `issueId`
-  - 가맹점에서 채번하는 빌링키 발급 건 고유 ID
+  - 고객사에서 채번하는 빌링키 발급 건 고유 ID
   - 네이버페이의 경우 필수 입력입니다.
   - 하나의 네이버 계정에 대해서 같은 issueId를 재사용할 수 없습니다.
 - `issueName`

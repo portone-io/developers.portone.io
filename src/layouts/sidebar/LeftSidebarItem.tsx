@@ -2,6 +2,7 @@ import { useComputed } from "@preact/signals";
 
 import type { NavMenuPage } from "~/state/server-only/nav";
 import { navOpenStatesSignal, slugSignal } from "~/state/nav";
+import type { SystemVersion } from "~/type";
 
 function LeftSidebarItem(props: NavMenuPage) {
   if (props.items.length > 0) return <FolderLink {...props} />;
@@ -13,13 +14,13 @@ function LeftSidebarItem(props: NavMenuPage) {
 }
 export default LeftSidebarItem;
 
-function FolderLink({ title, slug, items }: NavMenuPage) {
+function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
   const openSignal = useComputed(() => !!navOpenStatesSignal.value[slug]);
   const open = openSignal.value;
   const pageSlug = slugSignal.value;
   const isActive = pageSlug === slug;
   return (
-    <div>
+    <div data-system-version={systemVersion}>
       <div
         class={`flex ${getLinkStyle(isActive)} pr-0`}
         data-active={isActive && "active"} // true로 지정하면 SSR시에는 값 없이 attr key만 들어감
@@ -48,7 +49,7 @@ function FolderLink({ title, slug, items }: NavMenuPage) {
       <div class={`${open ? "block" : "hidden"} pl-2`}>
         <ul class="flex flex-col gap-1 border-l pl-2">
           {items.map((item) => (
-            <li key={item.slug}>
+            <li key={item.slug} data-system-version={item.systemVersion}>
               <LeftSidebarItem {...item} />
             </li>
           ))}
@@ -62,14 +63,22 @@ export interface JustLinkProps {
   title: string;
   href: string;
   isActive: boolean;
+  systemVersion?: SystemVersion;
   event?: {
     name: string;
     props: object;
   };
 }
-export function JustLink({ title, href, isActive, event }: JustLinkProps) {
+export function JustLink({
+  title,
+  href,
+  isActive,
+  systemVersion,
+  event,
+}: JustLinkProps) {
   return (
     <a
+      data-system-version={systemVersion}
       href={href}
       class={getLinkStyle(isActive)}
       data-active={isActive && "active"}

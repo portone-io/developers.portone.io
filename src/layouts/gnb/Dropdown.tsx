@@ -1,4 +1,5 @@
 import { useSignal } from "@preact/signals";
+import type { SystemVersion } from "~/type";
 
 export interface DropdownProps {
   children: any;
@@ -6,8 +7,9 @@ export interface DropdownProps {
   items: DropdownItem[];
 }
 export interface DropdownItem {
-  label: string;
+  label: any;
   link: string;
+  systemVersion?: SystemVersion;
 }
 export default function Dropdown({ children, link, items }: DropdownProps) {
   const showItemsSignal = useSignal(false);
@@ -23,9 +25,17 @@ export default function Dropdown({ children, link, items }: DropdownProps) {
       <div class="relative w-full">
         {showItemsSignal.value && (
           <div class="absolute flex w-max flex-col border bg-white py-2 shadow-lg">
-            {items.map(({ label, link }, i) => (
-              <a key={i} class="hover:bg-slate-1 px-4 py-2" href={link}>
+            {items.map(({ label, link, systemVersion }, i) => (
+              <a
+                key={i}
+                class="hover:bg-slate-1 inline-flex items-center gap-2 px-4 py-2"
+                data-system-version={systemVersion}
+                href={link}
+              >
                 {label}
+                {link.startsWith("https://") && (
+                  <i class="i-ic-baseline-launch opacity-40" />
+                )}
               </a>
             ))}
           </div>

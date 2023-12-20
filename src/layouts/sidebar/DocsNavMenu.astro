@@ -1,13 +1,11 @@
 ---
 import type { Lang } from "~/type";
-import { calcNavMenuAncestors, navMenuSignal } from "~/state/server-only/nav";
+import { calcNavMenuAncestors, navMenu } from "~/state/server-only/nav";
 import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 
 import LeftSidebar from "./LeftSidebar.astro";
 import LeftSidebarItem from "./LeftSidebarItem";
 import { SearchButton } from "./search";
-import VersionSwitch from "./VersionSwitch";
-import GroupSideLink from "./GroupSideLink";
 
 interface Props {
   lang: Lang;
@@ -15,7 +13,6 @@ interface Props {
 }
 const { lang, slug } = Astro.props;
 
-const navMenu = navMenuSignal.value;
 const navMenuItems = navMenu[lang] || [];
 const navMenuAncestors = calcNavMenuAncestors(navMenuItems);
 const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
@@ -51,15 +48,14 @@ slugSignal.value = slug;
     navMenu.dataset.selectedSystemVersion = systemVersion;
   });
 </script>
-<style>
+<style is:global>
   [data-selected-system-version="v1"] [data-system-version="v2"],
   [data-selected-system-version="v2"] [data-system-version="v1"] {
     display: none;
   }
 </style>
 <LeftSidebar>
-  <div class="relative flex flex-col gap-2 px-2 py-4">
-    <VersionSwitch client:visible />
+  <div class="relative flex flex-col gap-2 px-2 pb-4 pt-[28px]">
     <SearchButton lang={lang} client:visible />
   </div>
   <nav
@@ -80,11 +76,10 @@ slugSignal.value = slug;
               >
                 <h4 class="p-2 text-lg font-bold first:mt-0">
                   <span>{item.label}</span>
-                  {item.side && <GroupSideLink client:visible {...item.side} />}
                 </h4>
                 <ul class="flex flex-col gap-1">
                   {item.items.map((item) => (
-                    <li>
+                    <li data-system-version={item.systemVersion}>
                       <LeftSidebarItem client:visible {...item} />
                     </li>
                   ))}

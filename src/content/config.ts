@@ -23,8 +23,13 @@ const releaseNoteCollection = defineCollection({
   }),
 });
 
+const apiSectionDescriptionCollection = defineCollection({
+  schema: z.object({}),
+});
+
 export const collections = {
   docs: docCollection,
   blog: blogCollection,
   "release-notes": releaseNoteCollection,
+  "api-section-description": apiSectionDescriptionCollection,
 };

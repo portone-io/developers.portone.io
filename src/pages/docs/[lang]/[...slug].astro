@@ -1,45 +1,69 @@
 ---
 import * as path from "node:path";
+import type { GetStaticPathsItem } from "astro";
 import { getCollection } from "astro:content";
+import { match, P } from "ts-pattern";
 
 import type { Lang } from "../../../type";
-import { frontmattersSignal } from "../../../state/server-only/frontmatters";
 import redirYaml from "~/content/docs/_redir.yaml";
 import Redir from "~/layouts/Redir.astro";
 import Docs from "~/layouts/Docs.astro";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
-  const docs = docEntries.map((entry) => {
+  const staticPaths: Record<string, GetStaticPathsItem> = {};
+  for (const entry of docEntries) {
     const [lang, ...fragments] = entry.slug.split("/");
     const absSlug = path.posix.join("/", entry.slug);
     const slug = fragments.join("/");
-    frontmattersSignal.value = {
-      ...frontmattersSignal.value,
-      [absSlug]: entry.data,
-    };
-    return { params: { lang, slug }, props: { entry, slug: absSlug } };
-  });
-  const redirs = redirYaml.map((redir) => {
-    const [lang, ...fragments] = redir.old.slice(1).split("/");
+    // 영어문서가 많이 outdated되어 당분간 내림
+    // 영어문서 링크로 들어오면 한국어 문서로 리디렉션
+    // AI 번역으로 전부 대체 예정
+    if (lang === "en") {
+      staticPaths[entry.slug] = {
+        params: { lang, slug },
+        props: { redirTarget: `/ko/${slug}` },
+      };
+    } else {
+      staticPaths[entry.slug] = {
+        params: { lang, slug },
+        props: { entry, slug: absSlug },
+      };
+    }
+  }
+  for (const redir of redirYaml) {
+    const entrySlug = redir.old.slice(1);
+    const [lang, ...fragments] = entrySlug.split("/");
     const slug = fragments.join("/");
-    return { params: { lang, slug }, props: { redirTarget: redir.new } };
-  });
-  return [...docs, ...redirs];
+    staticPaths[entrySlug] = {
+      params: { lang, slug },
+      props: { redirTarget: redir.new },
+    };
+  }
+  return Object.values(staticPaths);
 }
 
+type Props =
+  | { redirTarget: string }
+  | {
+      entry: any;
+      slug: string;
+    };
+
 const lang = Astro.params.lang as Lang;
-const { redirTarget, entry, slug } = Astro.props;
 ---
 
 {
-  redirTarget ? (
-    redirTarget.startsWith("https:") ? (
-      <Redir target={redirTarget} />
-    ) : (
-      <Redir target={`/docs${redirTarget}`} />
-    )
-  ) : (
-    <Docs lang={lang} slug={slug} entry={entry} />
-  )
+  match(Astro.props)
+    .with({ redirTarget: P.string }, ({ redirTarget }) => {
+      redirTarget.startsWith("https:") ? (
+        <Redir target={redirTarget} />
+      ) : (
+        <Redir target={`/docs${redirTarget}`} />
+      );
+    })
+    .with({ slug: P.string, entry: P.any }, ({ slug, entry }) => (
+      <Docs lang={lang} slug={slug} entry={entry} />
+    ))
+    .exhaustive()
 }

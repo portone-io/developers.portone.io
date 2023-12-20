@@ -6,9 +6,6 @@ cover: >-
 coverY: -136
 ---
 
-import * as prose from "~/components/prose";
-export const components = prose;
-
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
@@ -51,7 +48,7 @@ import Details from "~/components/gitbook/Details.astro";
 <Tab title="관리자콘솔 설정">
 ![](</gitbook-assets/ko/image (331).png>)
 
-포트원 webhook이 호출될 때 결제 정보를 통보받을 URL을 설정하려면 포트원 관리자 콘솔 내 [**결제연동->실연동관** ](https://admin.portone.io/integration?tab=production)탭을 선택합니다. Endpoint URL 항목에 웹훅으로 전송될 데이타를 수신할 URL주소를 기재합니다.
+포트원 webhook이 호출될 때 결제 정보를 통보받을 URL을 설정하려면 포트원 관리자 콘솔 내 [**결제연동->실 연동** ](https://admin.portone.io/integration?tab=production)탭을 선택합니다. Endpoint URL 항목에 웹훅으로 전송될 데이타를 수신할 URL주소를 기재합니다.
 
 **Content-Type** 은 `application/json` 또는 `application/x-www-form-urlencoded`으로 지정할 수 있습니다. 또 **호출 테스트** 버튼을 누르면 해당 URL을 호출하여 테스트할 수 있습니다.
 
@@ -64,18 +61,22 @@ JavaScript SDK **request\_pay** 함수 요청시 <mark style="color:blue;">**not
 
 ```javascript title="client-side"
 function requestPay() {
-    // IMP.request_pay(param, callback) 결제창 호출
-    IMP.request_pay({
-        ...            //중
-        notice_url : 'https://웹훅수신 URL',   //웹훅수신 URL 설
-        ...            //중
-    }, function (rsp) { // callback
-        if (rsp.success) {
-            console.log(rsp);
-        } else {
-            console.log(rsp);
-        }
-    });
+  // IMP.request_pay(param, callback) 결제창 호출
+  IMP.request_pay(
+    {
+      // ...
+      notice_url: "https://웹훅수신 URL", //웹훅수신 URL 설정
+      // ...
+    },
+    function (rsp) {
+      // callback
+      if (rsp.success) {
+        console.log(rsp);
+      } else {
+        console.log(rsp);
+      }
+    }
+  );
 }
 ```
 
@@ -93,15 +94,14 @@ function requestPay() {
 
 ### 웹훅(Webhook) 요청 검증하기 <a href="#webhook" id="webhook"></a>
 
-
 웹훅(Webhook) 이벤트가 호출되면 설정한 URL endpoint에 대해 다음과 같은 `POST` 요청이 생성됩니다.
 
 웹훅 수신주소는 공개된 URL로 포트원이 아닌 서버에서 웹훅을 보낼 위험이 있기 때문에, 가맹점 서버는 **웹훅을 수신하고 반드시 [결제내역 단건조회 API](../api/payment-api/get-payment-by-impuid-api)를 통해 결제건을 조회하여 웹훅의 내용을 검증해야 합니다.**
 결제가 정상적으로 성공하였지만, 네트워크 문제 등의 이유로 웹훅을 수신받지 못하거나 늦게 수신받는 경우가 있을 수 있습니다. 웹훅이 오지 않거나 늦은 경우 결제건을 바로 취소 처리하시면
-네트워크 문제가 발생했을 때 정상적으로 결제된 결제건이 환불되어 금전 피해가 발생하실 수 있습니다. **웹훅이 안 오는 경우에도 결제취소를 하기 이전에 
+네트워크 문제가 발생했을 때 정상적으로 결제된 결제건이 환불되어 금전 피해가 발생하실 수 있습니다. **웹훅이 안 오는 경우에도 결제취소를 하기 이전에
 [결제내역 단건조회 API](../api/payment-api/get-payment-by-impuid-api)를 통해 결제건의 상태를 조회하여, 결제 상태가 정상적이라면 취소 처리를 하지 않도록 해주세요.**
 
-웹훅 수신 후 가맹점 서버에서 정상 응답을 한 경우에도, 네트워크 상의 문제로 웹훅의 response가 포트원 서버로 도달하지 않았다면 웹훅 재발송 기능을 설정한 가맹점에 한해 웹훅이 재발송 될 수 있습니다. 
+웹훅 수신 후 가맹점 서버에서 정상 응답을 한 경우에도, 네트워크 상의 문제로 웹훅의 response가 포트원 서버로 도달하지 않았다면 웹훅 재발송 기능을 설정한 가맹점에 한해 웹훅이 재발송 될 수 있습니다.
 만약 동일한 내용의 웹훅을 여러 번 수신받는 경우가 발생하더라도, 문제가 발생하지 않도록 처리해 주시길 권장드립니다.
 
 <Tabs>
@@ -114,6 +114,7 @@ curl -H "Content-Type: application/json" -X POST -d '{ "imp_uid": "imp_123456789
 </Tabs>
 
 > Webhook `POST` 요청의 본문은 다음의 정보를 포함합니다. 가맹점 서버는 해당 정보를 수신하고 포트원 서버에서 결제 정보를 조회하여 검증 및 저장할 수 있습니다.
+>
 > - <mark style="color:red;">**`imp_uid`**</mark>
 >   <mark style="color:red;">**: 결제번호**</mark>
 > - <mark style="color:red;">**`merchant_uid`**</mark>
@@ -129,48 +130,53 @@ Webhook 이벤트의 `POST` 요청을 처리할 endpoint를 다음과 같이 생
 
 ```javascript title="server-side"
 app.use(bodyParser.json());
-  ...
-  // "/portone-webhook"에 대한 POST 요청을 처리
-  app.post("/portone-webhook", async (req, res) => {
-    try {
-        // req의 body에서 imp_uid, merchant_uid 추출
-        const { imp_uid, merchant_uid } = req.body;
-        // 액세스 토큰(access token) 발급 받기
-        /* ...중략... */
-        // imp_uid로 포트원 서버에서 결제 정보 조회
-        /* ...중략... */
-        const paymentData = getPaymentData.data; // 조회한 결제 정보
-        ...
-        // DB에서 결제되어야 하는 금액 조회
-        const order = await Orders.findById(paymentData.merchant_uid);
-        const amountToBePaid = order.amount; // 결제 되어야 하는 금액
-        ...
-        // 결제 검증하기
-        const { amount, status } = paymentData;
-        // 결제금액 일치. 결제 된 금액 === 결제 되어야 하는 금액
-        if (amount === amountToBePaid) {
-          // DB에 결제 정보 저장
-          await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData });
-          switch (status) {
-            case "ready": // 가상계좌 발급
-              // DB에 가상계좌 발급 정보 저장
-              const { vbank_num, vbank_date, vbank_name } = paymentData;
-              await Users.findByIdAndUpdate("/* 고객 id */", { $set: { vbank_num, vbank_date, vbank_name }});
-              // 가상계좌 발급 안내 문자메시지 발송
-              SMS.send({ text: \`가상계좌 발급이 성공되었습니다. 계좌 정보 \${vbank_num} \${vbank_date} \${vbank_name}\`});
-              res.send({ status: "vbankIssued", message: "가상계좌 발급 성공" });
-              break;
-            case "paid": // 결제 완료
-              res.send({ status: "success", message: "일반 결제 성공" });
-              break;
-          }
-        } else { // 결제금액 불일치. 위/변조 된 결제
-          throw { status: "forgery", message: "위조된 결제시도" };
-        }
-    } catch (e) {
-      res.status(400).send(e);
+// ...
+// "/portone-webhook"에 대한 POST 요청을 처리
+app.post("/portone-webhook", async (req, res) => {
+  try {
+    // req의 body에서 imp_uid, merchant_uid 추출
+    const { imp_uid, merchant_uid } = req.body;
+    // 액세스 토큰(access token) 발급 받기
+    /* ...중략... */
+    // imp_uid로 포트원 서버에서 결제 정보 조회
+    /* ...중략... */
+    const paymentData = getPaymentData.data; // 조회한 결제 정보
+    // ...
+    // DB에서 결제되어야 하는 금액 조회
+    const order = await Orders.findById(paymentData.merchant_uid);
+    const amountToBePaid = order.amount; // 결제 되어야 하는 금액
+    // ...
+    // 결제 검증하기
+    const { amount, status } = paymentData;
+    // 결제금액 일치. 결제 된 금액 === 결제 되어야 하는 금액
+    if (amount === amountToBePaid) {
+      // DB에 결제 정보 저장
+      await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData });
+      switch (status) {
+        case "ready": // 가상계좌 발급
+          // DB에 가상계좌 발급 정보 저장
+          const { vbank_num, vbank_date, vbank_name } = paymentData;
+          await Users.findByIdAndUpdate("/* 고객 id */", {
+            $set: { vbank_num, vbank_date, vbank_name },
+          });
+          // 가상계좌 발급 안내 문자메시지 발송
+          SMS.send({
+            text: `가상계좌 발급이 성공되었습니다. 계좌 정보 ${vbank_num} ${vbank_date} ${vbank_name}`,
+          });
+          res.send({ status: "vbankIssued", message: "가상계좌 발급 성공" });
+          break;
+        case "paid": // 결제 완료
+          res.send({ status: "success", message: "일반 결제 성공" });
+          break;
+      }
+    } else {
+      // 결제금액 불일치. 위/변조 된 결제
+      throw { status: "forgery", message: "위조된 결제시도" };
     }
-  });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
 ```
 
 </Tab>
@@ -197,7 +203,7 @@ app.use(bodyParser.json());
 <Hint style="info">
 **웹훅 재 전송이 가능한가요?**
 
-웹훅은 1회 전송이 기본설정입니다. 단 재발송 설정을 희망하는 경우, 네트워크 에러 발생 혹은 가맹점 응답(HTTP STATUS)이 500번 대 코드로 응답 시 1분 간격으로 웹훅이 **최대 5회** 발송되며, 
+웹훅은 1회 전송이 기본설정입니다. 단 재발송 설정을 희망하는 경우, 네트워크 에러 발생 혹은 가맹점 응답(HTTP STATUS)이 500번 대 코드로 응답 시 1분 간격으로 웹훅이 **최대 5회** 발송되며,
 200번 대 혹은 400번 대 응답을 주시면 발송이 중단됩니다.
 
 </Hint>

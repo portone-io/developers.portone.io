@@ -1,10 +1,7 @@
 ---
 title: 3. 빌링키 결제 API 구현하기 (서버)
-description: 포트원 빌링키 결제 API를 사용해 가맹점의 빌링키 결제 요청 API를 구현합니다.
+description: 포트원 빌링키 결제 API를 사용해 고객사의 빌링키 결제 요청 API를 구현합니다.
 ---
-
-import * as prose from "~/components/prose";
-export const components = prose;
 
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
@@ -27,44 +24,43 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
         // 1. 포트원 API를 사용하기 위해 액세스 토큰을 발급받습니다.
         const signinResponse = await axios({
-          url: "https://api.portone.io/v2/signin/api-key",
+          url: "https://api.portone.io/login/api-secret",
           method: "post",
           headers: { "Content-Type": "application/json" },
           data: {
-            api_key: PORTONE_API_KEY, // 포트원 API Key
+            apiSecret: PORTONE_API_SECRET, // 포트원 API Secret
           },
         });
-        const { access_token } = signinResponse.data;
+        const { accessToken } = signinResponse.data;
 
-        // 가맹점에서 채번하는 새로운 결제 ID를 만들어주세요.
+        // 고객사에서 채번하는 새로운 결제 ID를 만들어주세요.
         const paymentId = OrderService.getNewPaymentId();
 
         // 2. 포트원 빌링키 결제 API 호출
         const paymentResponse = await axios({
-          url: `https://api.portone.io/v2/payments/${paymentId}/billing-key/pay`,
+          url: `https://api.portone.io/payments/${encodeURIComponent(paymentId)}/billing-key`,
           method: "post",
           // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-          headers: { "Authorization": "Bearer " + access_token },
+          headers: { "Authorization": "Bearer " + accessToken },
           data: {
-            billing_key: billingKey,
-            order_name: "월간 이용권 정기결제"
-            total_amount: 8900,
+            billingKey,
+            orderName: "월간 이용권 정기결제",
             // 빌링키 결제 API를 참고해 고객 정보를 채워주세요.
             customer: YOUR_CUSTOMER_INFO,
+            amount: {
+              total: 8900,
+            },
             currency: "KRW"
           }
         });
 
-        const tx_id = paymentResponse.data;
         // 3. 포트원 결제내역 단건조회 API를 호출하여 빌링키 결제 결과를 확인하세요.
         const paymentResponse = await axios({
-          url: `https://api.portone.io/v2/payments/${paymentId}`,
+          url: `https://api.portone.io/payments/${encodeURIComponent(paymentId)}`,
           method: "get",
           // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-          headers: { "Authorization": "Bearer " + access_token },
+          headers: { "Authorization": "Bearer " + accessToken },
         });
-
-      // 인증결제 연동하기 - 3. 결제검증 API 구현하기를 참고하여 검증 로직을 작성해주세요.
       } catch (e) {
         // 빌링키 결제에 실패했습니다.
         res.status(400).send(e);
@@ -74,6 +70,3 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
   </Tab>
 </Tabs>
-
-
-

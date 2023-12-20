@@ -17,11 +17,6 @@ interface YamlNavMenuGroup {
   label: string;
   items: YamlNavMenuItem[];
   systemVersion: SystemVersion;
-  side?: {
-    label: string;
-    link: string;
-    eventname?: string;
-  };
 }
 
 declare global {
