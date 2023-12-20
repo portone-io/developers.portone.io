@@ -16,21 +16,24 @@ async function schedulePayment() {
   // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기를 진행해주세요.
   // 2. 포트원 결제 예약 API 호출
   const response = await axios({
-    url: `https://api.portone.io/v2/schedules`,
+    url: `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
     method: "post",
     // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-    headers: { Authorization: "Bearer " + access_token },
+    headers: { Authorization: "Bearer " + accessToken },
     data: {
-      payment_id: UNIQUE_PAYMENT_ID,
-      billing_key: BILLING_KEY_HERE,
-      order_name: "월간 이용권 정기결제",
-      customer: {
-        customer_id: CUSTOMER_ID_HERE,
-        // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+      payment: {
+        billingKey: BILLING_KEY_HERE,
+        orderName: "월간 이용권 정기결제",
+        customer: {
+          id: CUSTOMER_ID_HERE,
+          // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+        },
+        amount: {
+          total: 8900,
+        },
+        currency: "KRW",
       },
-      total_amount: 8900,
-      currency: "KRW",
-      scheduled_at: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
+      timeToPay: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
     },
   });
   // 결제 예약 이후 로직을 구성해주세요.
@@ -39,12 +42,10 @@ async function schedulePayment() {
 
 ## 2. 결제 결과 수신받기
 
-예약한 시간에 결제가 시도되면 Webhook 이벤트가 발생하여 지정한 서버의 callback URL로 결제 번호(**`tx_id`**)와 주문 번호(**`payment_id`**)가 전달됩니다. 웹훅으로 예약결제에 대한 결과를 수신하면 결제결과 완료 로직 처리를 진행하시면 됩니다.
+예약한 시간에 결제가 시도되면 Webhook 이벤트가 발생하여 지정한 서버의 callback URL로 포트원 거래 번호(**`tx_id`**)와 고객사 거래 번호(**`payment_id`**)가 전달됩니다. 웹훅으로 예약결제에 대한 결과를 수신하면 결제결과 완료 로직 처리를 진행하시면 됩니다.
 
 결제 결과를 수신 받는 자세한 방법은 아래의 반복결제 구현하기나 [웹훅 연동하기](../../webhook)를 참고해주세요.
 
-## **3. 반복결제 구현하기**
+## 3. 반복 결제 구현하기
 
-미래의 특정 시점이 아닌 한 달, 혹은 1년 마다 등 특정 주기에 따라 결제를 시도하는 반복결제의 경우 웹훅을 이용해 구현할 수 있습니다.
-
-결제 예약 API를 이용하여, 첫 결제를 예약하고 예약한 시간에 결제가 끝나면 다음 결제를 예약하는 식을 반복하면 반복결제를 구현할 수 있습니다.
+미래의 특정 시점이 아닌 한 달, 혹은 1년 마다 등 특정 주기에 따라 결제를 시도하는 반복 결제의 경우 웹훅을 이용해 구현할 수 있습니다. 결제 예약 API를 이용하여, 첫 결제를 예약하고 예약한 시간에 결제가 끝나면 다음 결제를 예약하는 식을 반복하면 반복결제를 구현할 수 있습니다.
