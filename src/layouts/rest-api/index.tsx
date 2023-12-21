@@ -36,7 +36,7 @@ export default function RestApi({
   return (
     <div class="flex flex-1 justify-center">
       <article class="basis-300 shrink-1 m-4 mb-16 flex flex-col pb-10 text-slate-700">
-        <section id="overview" class="scroll-mt-5rem flex flex-col">
+        <section id="overview" class="scroll-mt-5.2rem flex flex-col">
           <prose.h1>{title}</prose.h1>
           {children}
           <Hr />
