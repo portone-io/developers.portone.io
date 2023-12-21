@@ -25,19 +25,19 @@ export default function MonacoEditor({ init, onChange }: MonacoEditorProps) {
       // 스크롤이 끝났다고 판단됐을 때 monaco editor를 초기화한다.
       scrollFinished().then(() => {
         const editor = init(monaco, divRef.current!);
-        const changeEventListener = editor.onDidChangeModelContent(() =>
-          onChangeRef.current?.(editor.getValue())
+        const changeEventListener = editor.onDidChangeModelContent(
+          () => onChangeRef.current?.(editor.getValue()),
         );
         return () => {
           changeEventListener.dispose();
           editor.dispose();
         };
-      })
+      }),
     );
     return () => p.then((dispose) => dispose());
   }, []);
   return (
-    <div class="relative h-full w-full">
+    <div class="bg-slate-1 relative h-full w-full">
       <div ref={divRef} class="absolute h-full w-full" />
     </div>
   );
