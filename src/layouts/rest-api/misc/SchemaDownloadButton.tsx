@@ -9,7 +9,7 @@ export default function SchemaDownloadButton({
   children,
 }: SchemaDownloadButtonProps) {
   return (
-    <div class="flex flex-col items-start gap-1">
+    <div class="text-14px flex flex-col items-start gap-1">
       <a
         download="portone-v1-swagger.json"
         target="_blank"

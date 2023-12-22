@@ -11,7 +11,7 @@ export interface SearchButtonProps {
 export function SearchButton({ lang }: SearchButtonProps) {
   return (
     <button
-      class="bg-slate-2 text-slate-4 mx-2 flex flex-1 gap-2 rounded p-2"
+      class="border-slate-3 bg-slate-1 text-slate-4 border-1 rounded-6px mx-2 flex flex-1 gap-2 p-2"
       onClick={openSearchScreen}
     >
       <i class="i-ic-baseline-search text-2xl"></i>
@@ -90,7 +90,7 @@ export function SearchScreen({
     inputRef.current?.focus();
     const searchIndexPromise = lang === "ko" ? searchIndexKo : searchIndexEn;
     searchIndexPromise.then(
-      (searchIndex) => (searchIndexSignal.value = searchIndex)
+      (searchIndex) => (searchIndexSignal.value = searchIndex),
     );
   }, [searchScreenOpen]);
   return (
