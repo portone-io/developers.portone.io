@@ -1,9 +1,11 @@
 import { useSignal } from "@preact/signals";
+import { useServerFallback } from "~/misc/useServerFallback";
+import { systemVersionSignal } from "~/state/nav";
 import type { SystemVersion } from "~/type";
 
 export interface DropdownProps {
   children: any;
-  link: string;
+  link: string | Record<SystemVersion, string>;
   items: DropdownItem[];
 }
 export interface DropdownItem {
@@ -13,13 +15,17 @@ export interface DropdownItem {
 }
 export default function Dropdown({ children, link, items }: DropdownProps) {
   const showItemsSignal = useSignal(false);
+  const systemVersion = useServerFallback(systemVersionSignal.value, "all");
   return (
     <div
       class="relative inline-flex h-full cursor-default flex-col items-center"
       onMouseEnter={() => (showItemsSignal.value = true)}
       onMouseLeave={() => (showItemsSignal.value = false)}
     >
-      <a class="inline-flex h-full items-center" href={link}>
+      <a
+        class="inline-flex h-full items-center"
+        href={typeof link === "string" ? link : link[systemVersion]}
+      >
         {children}
       </a>
       <div class="relative w-full">
