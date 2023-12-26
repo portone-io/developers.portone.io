@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import { format } from "date-fns";
 import LayoutKo from "~/layouts/LayoutKo.astro";
 import * as prose from "~/components/prose";
+import names from "~/content/blog/_names.yaml";
 
 interface Props {
   page: Page;
@@ -37,21 +38,32 @@ const { page } = Astro.props;
       {
         page.data.length > 0 ? (
           <dl class="mx-auto flex shrink flex-col text-left">
-            {page.data.map((entry) => (
-              <a
-                class="hover:bg-slate-1 flex flex-col items-start gap-2 p-4 md:px-6"
-                href={`/blog/${entry.slug}`}
-              >
-                <dt class="text-2xl font-medium">
-                  {entry.data.title}
-                  {entry.data.draft && (
-                    <span class="text-slate-4 font-normal">(Draft)</span>
-                  )}
-                </dt>
-                <dd>{entry.data.description}</dd>
-                <span>{format(entry.data.date, "yyyy. M. d.")}</span>
-              </a>
-            ))}
+            {page.data.map(({ slug, data }) => {
+              const { author } = data;
+              const name = names[author] || author;
+              return (
+                <a
+                  class="hover:bg-slate-1 grid grid-cols-1 items-start gap-2 gap-4 p-4 sm:grid-cols-[4rem_1fr] md:grid-cols-[6rem_1fr] md:gap-6 md:px-6"
+                  href={`/blog/${slug}`}
+                >
+                  <img
+                    src={`https://github.com/${author}.png?size=112`}
+                    alt={`Avatar image of ${name}`}
+                    class="bg-slate-2 h-4rem w-4rem md:h-6rem md:w-6rem hidden self-center rounded-full sm:block"
+                  />
+                  <div>
+                    <dt class="text-2xl font-medium">
+                      {data.title}
+                      {data.draft && (
+                        <span class="text-slate-4 font-normal">(Draft)</span>
+                      )}
+                    </dt>
+                    <dd>{data.description}</dd>
+                    <span>{format(data.date, "yyyy. M. d.")}</span>
+                  </div>
+                </a>
+              );
+            })}
           </dl>
         ) : (
           <div>게시글이 없습니다.</div>
