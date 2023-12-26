@@ -4,6 +4,7 @@ import presetWind from "@unocss/preset-wind";
 import tailwindConfig from "./tailwind.config.cjs";
 
 export default defineConfig({
-  presets: [presetIcons(), presetWind()],
+  // TODO: Upgrade unocss
+  presets: [presetIcons(), presetWind() as any],
   ...tailwindConfig,
 });

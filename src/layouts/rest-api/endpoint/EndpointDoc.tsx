@@ -2,12 +2,12 @@ import * as prose from "~/components/prose";
 import TwoColumnLayout from "../TwoColumnLayout";
 import { getEndpointRepr, type Endpoint } from "../schema-utils/endpoint";
 import {
-  Parameter,
+  type Parameter,
   getOperation,
   getPathParameters,
   getQueryParameters,
   getBodyParameters,
-  Operation,
+  type Operation,
   getResponseSchemata,
 } from "../schema-utils/operation";
 import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";

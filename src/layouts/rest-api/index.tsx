@@ -2,6 +2,10 @@ import * as React from "react";
 import * as prose from "~/components/prose";
 import { Categories } from "~/layouts/rest-api/category";
 import { TypeDefinitions } from "~/layouts/rest-api/category/type-def";
+import {
+  getEveryEndpoints,
+  groupEndpointsByCategory,
+} from "./schema-utils/endpoint";
 
 export interface RestApiProps {
   title: string;
@@ -27,10 +31,12 @@ export default function RestApi({
       .getElementById(currentSection)
       ?.scrollIntoView({ behavior: "smooth" });
   }, []);
+  const everyEndpoints = getEveryEndpoints(schema);
+  const endpointGroups = groupEndpointsByCategory(schema, everyEndpoints);
   return (
     <div class="flex flex-1 justify-center">
       <article class="basis-300 shrink-1 m-4 mb-16 flex flex-col pb-10 text-slate-700">
-        <section id="overview" class="scroll-mt-5rem flex flex-col">
+        <section id="overview" class="scroll-mt-5.2rem flex flex-col">
           <prose.h1>{title}</prose.h1>
           {children}
           <Hr />
@@ -40,11 +46,13 @@ export default function RestApi({
           apiHost={apiHost}
           currentSection={currentSection}
           sectionDescriptionProps={sectionDescriptionProps}
+          endpointGroups={endpointGroups}
           schema={schema}
         />
         <TypeDefinitions
           basepath={basepath}
           initialExpand={currentSection === "type-def"}
+          endpointGroups={endpointGroups}
           schema={schema}
         />
       </article>

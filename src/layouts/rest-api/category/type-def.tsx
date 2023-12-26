@@ -1,10 +1,14 @@
 import * as React from "react";
+import { useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import {
   expandAndScrollTo,
   expanded,
   useExpand,
 } from "~/state/rest-api/expand-section";
+import { interleave } from "..";
+import DescriptionArea from "../DescriptionArea";
+import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
 import {
   type BakedProperty,
   type Property,
@@ -17,31 +21,30 @@ import {
   getTypeDefKind,
 } from "../schema-utils/type-def";
 import Expand from "./Expand";
-import DescriptionArea from "../DescriptionArea";
-import { useSignal } from "@preact/signals";
-import { interleave } from "..";
 
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
   initialExpand?: boolean;
+  endpointGroups: CategoryEndpointsPair[];
   schema: any;
 }
 export function TypeDefinitions({
   basepath,
   initialExpand = false,
+  endpointGroups,
   schema,
 }: TypeDefinitionsProps) {
   React.useEffect(expanded);
   const { expand, onToggle } = useExpand("type-def", initialExpand);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
-  const typeDefPropsList = crawlRefs(schema)
+  const typeDefPropsList = crawlRefs(schema, endpointGroups)
     .sort()
     .map((ref) => ({
       name: getTypenameByRef(ref),
       typeDef: getTypeDefByRef(schema, ref),
     }));
   return (
-    <section id="type-def" class="scroll-mt-5rem flex flex-col">
+    <section id="type-def" class="scroll-mt-5.2rem flex flex-col">
       <prose.h2 ref={headingRef}>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
@@ -259,7 +262,7 @@ function PropertyDoc({
     "";
   const deprecated = Boolean(property.deprecated);
   return (
-    <div class={`flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
+    <div class={`text-14px flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
       <div class="flex items-center justify-between gap-4">
         <div>
           <div class="mr-4 inline-block font-mono font-bold leading-tight">
