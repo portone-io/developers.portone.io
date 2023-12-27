@@ -2,6 +2,7 @@
 import type { GetStaticPaths, Page } from "astro";
 import { getCollection } from "astro:content";
 import { format } from "date-fns";
+import locale from "date-fns/locale/ko";
 import LayoutKo from "~/layouts/LayoutKo.astro";
 import * as prose from "~/components/prose";
 import names from "~/content/blog/_names.yaml";
@@ -11,19 +12,15 @@ interface Props {
 }
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const blogEntries = await getCollection("blog");
-  blogEntries.map((entry) => {
-    const [date] = entry.slug.split("/");
-    entry.data.date = date ? new Date(`${date}Z+9`) : undefined;
-  });
-  blogEntries.sort((a, b) => b.data.date!.getTime() - a.data.date!.getTime());
   return paginate(
-    blogEntries.filter(
-      (entry) =>
-        !entry.data.draft ||
-        import.meta.env.DEV ||
-        import.meta.env.VERCEL_ENV === "preview",
-    ),
+    (await getCollection("blog"))
+      .filter(
+        (entry) =>
+          !entry.data.draft ||
+          import.meta.env.DEV ||
+          import.meta.env.VERCEL_ENV === "preview",
+      )
+      .sort((a, b) => +b.data.date - +a.data.date),
     { pageSize: 10 },
   );
 };
@@ -59,7 +56,7 @@ const { page } = Astro.props;
                       )}
                     </dt>
                     <dd>{data.description}</dd>
-                    <span>{format(data.date, "yyyy. M. d.")}</span>
+                    <span>{format(data.date, "yyyy. M. d.", { locale })}</span>
                   </div>
                 </a>
               );
