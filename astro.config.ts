@@ -37,6 +37,9 @@ export default defineConfig({
     },
     plugins: [yaml()],
   },
+  image: {
+    remotePatterns: [{ protocol: "https" }],
+  },
   markdown: {
     syntaxHighlight: false,
     rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
