@@ -1,10 +1,12 @@
 ---
 import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
 import { format } from "date-fns";
 import locale from "date-fns/locale/ko/index.js";
-import LayoutKo from "../../layouts/LayoutKo.astro";
+import LayoutKo from "~/layouts/LayoutKo.astro";
 import names from "~/content/blog/_names.yaml";
 import * as prose from "~/components/prose";
+import ProfileImage from "~/components/blog/ProfileImage.astro";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
@@ -34,11 +36,15 @@ const name = names[author] || author;
         <a href=`https://github.com/${author}`>
           <dl class="flex items-stretch gap-4">
             <div>
-              <img
-                src={`https://github.com/${author}.png?size=112`}
-                alt={`Avatar image of ${name}`}
-                class="bg-slate-2 h-14 w-14 rounded-full"
-              />
+              <ProfileImage>
+                <Image
+                  src={`https://github.com/${author}.png`}
+                  alt={`Avatar image of ${name}`}
+                  width={112}
+                  height={112}
+                  class="bg-slate-2 h-14 w-14 rounded-full"
+                />
+              </ProfileImage>
             </div>
             <div class="flex flex-col justify-evenly">
               <dt class="text-lg font-medium">{name}</dt>
