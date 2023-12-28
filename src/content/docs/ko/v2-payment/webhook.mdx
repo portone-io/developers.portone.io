@@ -15,7 +15,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ## **웹훅 연동이 꼭 필요한가요?**
 
-안정적인 결제 처리를 위해 웹훅 연동을 강력히 권장합니다. 인터넷 연결 끊김, 브라우저 자동 새로고침 등의 이유로 클라이언트에서 결제 완료 요청이 오지 않는 경우에 웹훅을 받으면 누락 없이 결제 정보를 동기화할 수 있습니다.
+안정적인 결제 처리를 위해 웹훅 연동을 강력히 권장합니다. 인터넷 연결 끊김, 브라우저 자동 새로고침 등의 이유로 브라우저에서 결제 완료 요청이 오지 않는 경우에 웹훅을 받으면 누락 없이 결제 정보를 동기화할 수 있습니다.
 
 ## 웹훅 발생 이벤트
 
@@ -60,9 +60,7 @@ PortOne.requestPayment({
 * `payment_id`**: 주문 ID
 * `status`: 결제 상태
 
-<Tabs>
-<Tab title="Express">
-```javascript
+```javascript title="Express"
 // Content-Type을 application/json으로 설정한 경우
 app.use(bodyParser.json());
 // POST 요청을 받는 /portone-webhook
@@ -113,20 +111,17 @@ app.post("/portone-webhook", async (req, res) => {
 });
 ```
 
-</Tab>
-</Tabs>
-
 ### 3. 웹훅(Webhook) 요청 검증하기
 
-웹훅 수신주소는 공개된 URL이기 때문에 요청자 클라이언트(client IP)가 포트원(PortOne IP)인지 반드시 확인해야 합니다. 포트원 웹훅은 다음의 고정된 IP로부터 요청이 생성됩니다.
+웹훅 수신주소는 공개된 URL이기 때문에 요청자 IP가 포트원의 IP인지 반드시 확인해야 합니다. 포트원 웹훅은 다음의 고정된 IP로부터 요청이 생성됩니다.
 
 > - <mark style="color:red;">**52.78.5.241**</mark>
 
 
 <Hint style="info">
-**웹훅 처리 전에 클라이언트 결제 완료 처리가 진행되는 경우**
+**웹훅 처리 전에 브라우저 결제 완료 처리가 진행되는 경우**
 
-기본적으로 포트원 서버에서 웹훅이 호출되면 고객사 응답을 기다리지 않고 클라이언트에 302 redirect 응답을 보내기 때문에 결과 도달에 대한 순서를 보장하지 않습니다. 다만 고객사 요청이 있을 경우 webhook 호출 이후에 클라이언트에 302 redirect 또는 callback 응답을 보내어 순서를 보장해 드리고 있습니다. 웹훅 우선순위 요청은 [support@portone.io](mailto:support@portone.io) 로 고객사 식별코드를 기재하여 요청해 주시면 됩니다.
+기본적으로 포트원 서버는 웹훅을 호출한 뒤 고객사 응답을 기다리지 않고 브라우저에 302 redirect 응답을 보내기 때문에 결과 도달에 대한 순서를 보장하지 않습니다. 다만 고객사 요청이 있을 경우 webhook 호출 이후에 브라우저에 302 redirect 또는 callback 응답을 보내어 순서를 보장해 드리고 있습니다. 웹훅 우선순위 요청은 [support@portone.io](mailto:support@portone.io) 로 고객사 식별코드를 기재하여 요청해 주시면 됩니다.
 
 </Hint>
 
@@ -135,6 +130,6 @@ app.post("/portone-webhook", async (req, res) => {
 
 네트워크 문제나 고객사 오류 등으로 웹훅이 실패할 경우 최대 5회까지 웹훅을 재전송합니다.
 
-재전송 시간은 exponential backoff를 적용하여 0 -> 1 → 4 -> 16 -> 256분을 기다립니다. 이에 더하여 무작위로 지연 시간을 변형하는 jittering 또한 적용됩니다.
+재전송 시간은 exponential backoff를 적용하여 0 -> 1 → 4 -> 16 -> 256분을 기다립니다. 이에 더하여 무작위로 지연 시간을 변형하는 jittering이 적용됩니다.
 
 </Hint>

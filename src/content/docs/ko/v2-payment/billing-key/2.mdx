@@ -1,0 +1,51 @@
+---
+title: 2. 결제 요청하기
+description: 포트원 빌링키 결제 API를 사용해 바로 결제를 요청합니다.
+---
+
+포트원의 빌링키 결제 API를 호출하여 결제를 진행합니다.
+
+바로 결제를 진행하고 싶은 것이 아니라 미래 특정 시점에 결제가 일어나게 하고 싶다면 [예약 결제 구현](3)을 참고하세요.
+
+```javascript title="server-side"
+// 1. 포트원 API를 사용하기 위해 액세스 토큰을 발급받습니다.
+const signinResponse = await fetch(
+  "https://api.portone.io/login/api-secret",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      apiSecret: PORTONE_API_SECRET, // 포트원 API Secret
+    }),
+  },
+);
+if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
+const { accessToken } = await signinResponse.json();
+
+// 고객사에서 채번하는 새로운 결제 ID를 만들어주세요.
+const paymentId = OrderService.getNewPaymentId();
+
+// 2. 포트원 빌링키 결제 API 호출
+const paymentResponse = await fetch(
+  `https://api.portone.io/payments/${encodeURIComponent(paymentId)}/billing-key`,
+  {
+    method: "POST",
+    // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      billingKey,
+      orderName: "월간 이용권 정기결제",
+      // 빌링키 결제 API를 참고해 고객 정보를 채워주세요.
+      customer: YOUR_CUSTOMER_INFO,
+      amount: {
+        total: 8900,
+      },
+      currency: "KRW"
+    }),
+  },
+);
+if (!paymentResponse.ok) throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
+```
