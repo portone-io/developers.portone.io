@@ -17,9 +17,17 @@ export async function generate({
   description,
 }: GenerateConfig): Promise<Buffer> {
   const svg = await satori(
-    <TitleAndDescription title="포트원" description="개발자센터" />,
+    profileImage ? (
+      <TitleAndDescription
+        title={title || ""}
+        description={description || ""}
+      />
+    ) : title ? (
+      <TitleAndDescription title={title} description={description || ""} />
+    ) : (
+      <Main />
+    ),
     {
-      debug: true,
       width: 1200,
       height: 1200,
       embedFont: true,
