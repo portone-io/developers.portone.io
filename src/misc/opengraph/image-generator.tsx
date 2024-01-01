@@ -5,20 +5,25 @@ import { readFile } from "node:fs/promises";
 import satori from "satori";
 import Main from "./components/Main";
 import TitleAndDescription from "./components/TitleAndDescription";
+import BlogPost from "./components/BlogPost";
 
 interface GenerateConfig {
+  name?: string;
   profileImage?: string;
   title?: string;
   description?: string;
 }
 export async function generate({
+  name,
   profileImage,
   title,
   description,
 }: GenerateConfig): Promise<Buffer> {
   const svg = await satori(
-    profileImage ? (
-      <TitleAndDescription
+    name && profileImage ? (
+      <BlogPost
+        name={name}
+        profileImage={profileImage}
         title={title || ""}
         description={description || ""}
       />
