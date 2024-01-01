@@ -29,8 +29,13 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 * **가상계좌에 결제 금액이 입금**되었을 때 - (status : `Paid`)
 * **결제가 부분 취소**되었을 때 - (status : `PartialCancelled`)
 * **결제가 완전 취소**되었을 때 - (status : `Cancelled`)
-* (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때 - (status: `CancelPending`)
-* **결제(예약 결제 포함)가 실패**했을 때 - (status: `Failed`)
+* (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때 - (status : `CancelPending`)
+* **결제(예약 결제 포함)가 실패**했을 때 - (status : `Failed`)
+* **빌링키 발급이 인증**되었을 때 - (billingKeyStatus : `Ready`)
+* **빌링키가 발급**되었을 때 - (billingKeyStatus : `Issued`)
+* **빌링키 발급이 실패**했을 때 - (billingKeyStatus : `Failed`)
+* **빌링키가 삭제**되었을 때 - (billingKeyStatus : `Deleted`)
+* **빌링키가 업데이트**되었을 때 - (billingKeyStatus : `Updated`)
 
 ## 웹훅 수신 설정
 
@@ -48,7 +53,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 ### 2. SDK 파라미터 설정
 
-포트원 SDK의 `PortOne.requestPayment()` 함수 파라미터 중 `noticeUrls`를 통해 관리자콘솔에서 설정한 웹훅 수신 URL을 덮어쓸 수 있습니다.
+포트원 SDK의 `PortOne.requestPayment()` 혹은 `PortOne.requestIssueBillingKey()` 함수 파라미터 중 `noticeUrls`를 통해 관리자콘솔에서 설정한 웹훅 수신 URL을 덮어쓸 수 있습니다.
 
 ```javascript
 PortOne.requestPayment({
@@ -57,11 +62,14 @@ PortOne.requestPayment({
 });
 ```
 
-웹훅 `POST` 요청의 본문은 다음의 정보를 포함합니다. 고객사 서버는 아래 정보를 수신하고 포트원 서버에서 결제 정보를 조회하여 검증 및 저장할 수 있습니다.
+웹훅 `POST` 요청의 본문은 다음의 정보를 포함합니다. 고객사 서버는 아래 정보를 수신하고 포트원 서버에서 결제 정보 혹은 빌링키 정보를 조회하여 검증 및 저장할 수 있습니다.
 
-* `tx_id`**: 결제 트랜잭션 ID**
-* `payment_id`**: 주문 ID**
-* **`status`: 결제 상태**
+* `webhook_entity_type`**: 웹훅 발생 이벤트 타입. 결제 웹훅인 경우 `transaction`, 빌링키 웹훅인 경우 `billingKey`가 전달됩니다.**
+* `tx_id`**: 결제 트랜잭션 ID. 결제 웹훅의 경우에만 전달됩니다.**
+* `payment_id`**: 주문 ID. 결제 웹훅의 경우에만 전달됩니다.**
+* `status`**: 결제 상태. 결제 웹훅의 경우에만 전달됩니다.**
+* `billing_key`**: 빌링키. 빌링키 웹훅의 경우에만 전달됩니다.**
+* `billing_key_status`**: 빌링키 상태. 빌링키 웹훅의 경우에만 전달됩니다.**
 
 <Tabs>
 <Tab title="Express.js">
