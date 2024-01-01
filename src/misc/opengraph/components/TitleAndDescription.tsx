@@ -18,6 +18,8 @@ export default function TitleAndDescription({
             fontSize: "96px",
             fontWeight: description ? "800" : "700",
             lineHeight: "120%",
+            wordBreak: "keep-all",
+            ["textWrap" as any]: "balance",
           }}
         >
           {title}
@@ -29,6 +31,8 @@ export default function TitleAndDescription({
             fontSize: "48px",
             fontWeight: "400",
             lineHeight: "120%",
+            wordBreak: "keep-all",
+            ["textWrap" as any]: "balance",
           }}
         >
           {description}
