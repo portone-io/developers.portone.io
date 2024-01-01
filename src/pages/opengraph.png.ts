@@ -4,7 +4,7 @@ import { generate } from "~/misc/opengraph/image-generator";
 export const prerender = false;
 
 export const GET: APIRoute = async () => {
-  const response = await generate();
+  const response = await generate({});
   return new Response(response, {
     status: 200,
     headers: {

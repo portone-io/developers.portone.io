@@ -1,67 +1,25 @@
+/** @jsxImportSource ./jsx */
+
 import sharp from "sharp";
 import { readFile } from "node:fs/promises";
 import satori from "satori";
+import Main from "./components/Main";
+import TitleAndDescription from "./components/TitleAndDescription";
 
-export async function generate(): Promise<Buffer> {
+interface GenerateConfig {
+  profileImage?: string;
+  title?: string;
+  description?: string;
+}
+export async function generate({
+  profileImage,
+  title,
+  description,
+}: GenerateConfig): Promise<Buffer> {
   const svg = await satori(
+    <TitleAndDescription title="포트원" description="개발자센터" />,
     {
-      key: null,
-      type: "div",
-      props: {
-        style: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
-          color: "white",
-          background: "black",
-          fontFamily: "Pretendard",
-          fontSize: 96,
-          fontWeight: 700,
-          lineHeight: 96,
-          letterSpacing: 0,
-          textAlign: "center",
-        },
-        children: [
-          {
-            type: "div",
-            props: {
-              style: {
-                position: "absolute",
-                width: "927.28px",
-                height: "519.42px",
-                top: "1580.88px",
-                left: "355.71px",
-                transformOrigin: "top left",
-                transform: "rotate(-135deg)",
-                background:
-                  "linear-gradient(90deg, #FC6B2D 0%, rgba(252, 107, 45, 0.48) 46.88%, rgba(252, 107, 45, 0) 100%)",
-              },
-            },
-          },
-          {
-            type: "div",
-            props: {
-              style: {
-                position: "absolute",
-                width: "583.99px",
-                height: "581.36px",
-                top: "267.35px",
-                left: "1475.23px",
-                transformOrigin: "top left",
-                transform: "rotate(135deg)",
-                background:
-                  "linear-gradient(90deg, #FC6B2D 0%, rgba(252, 107, 45, 0) 100%)",
-              },
-            },
-          },
-          "포트원 개발자 센터",
-        ],
-      },
-    },
-    {
+      debug: true,
       width: 1200,
       height: 1200,
       embedFont: true,
