@@ -2,8 +2,9 @@
 
 export interface TemplateProps {
   children: any;
+  style?: any;
 }
-export default function Template({ children }: TemplateProps) {
+export default function Template({ children, style }: TemplateProps) {
   return (
     <div
       style={{
@@ -40,7 +41,33 @@ export default function Template({ children }: TemplateProps) {
           height: "600px",
         }}
       >
-        {children}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            height: "98px",
+            background:
+              "linear-gradient(to left, rgba(252, 107, 45, 0.80) 0%, rgba(252, 107, 45, 0.00) 100%)",
+          }}
+        >
+          포트원 개발자 센터
+        </div>
+        <div
+          style={Object.assign(
+            {
+              display: "flex",
+              flexDirection: "column",
+              flexGrow: "1",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+            style,
+          )}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
