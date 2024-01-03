@@ -319,12 +319,9 @@ function DescriptionDoc({
   typeDef,
   bgColor = "rgb(241,245,249)",
 }: DescriptionDocProps) {
-  const __html =
-    (typeDef["x-portone-description"] ??
-      typeDef["x-portone-summary"] ??
-      typeDef.description ??
-      typeDef.summary) ||
-    "";
+  const description = typeDef["x-portone-description"] ?? typeDef.description;
+  const summary = typeDef["x-portone-summary"] ?? typeDef.summary;
+  const __html = description || summary || "";
   return __html ? (
     <DescriptionArea maxHeightPx={16 * 6} bgColor={bgColor}>
       <div class="text-slate-5 flex flex-col gap-1 text-sm">
