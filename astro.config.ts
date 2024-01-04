@@ -11,6 +11,7 @@ import contentIndex from "./src/content-index";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://developers.portone.io/",
   integrations: [
     preact({ compat: true }),
     mdx(),
