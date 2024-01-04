@@ -27,6 +27,7 @@ const prettyCodeOptions: Partial<PrettyCodeOptions> = {
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://developers.portone.io/",
   integrations: [preact({ compat: true }), mdx(), unocss(), contentIndex],
   vite: {
     resolve: {

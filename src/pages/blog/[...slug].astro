@@ -19,13 +19,19 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const { slug } = entry;
 const { title, description, author } = entry.data;
 const { Content } = await entry.render();
 
 const name = names[author] || author;
 ---
 
-<LayoutKo title={`${title} - PortOne 기술블로그`}>
+<LayoutKo
+  title={`${title} - PortOne 기술블로그`}
+  description={description}
+  slug={`blog/${slug}`}
+  ogType="article"
+>
   <article class="max-w-900px text-slate-7 mx-auto my-4 pb-40">
     <div class="flex flex-col gap-6 px-4 md:px-6">
       <div class="flex flex-col gap-4">
