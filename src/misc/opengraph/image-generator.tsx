@@ -1,11 +1,24 @@
 /** @jsxImportSource ./jsx */
 
 import sharp from "sharp";
-import { readFile } from "node:fs/promises";
 import satori from "satori";
 import Main from "./components/Main";
 import TitleAndDescription from "./components/TitleAndDescription";
 import BlogPost from "./components/BlogPost";
+
+const pretendardVariants = [
+  "Pretendard-Medium",
+  "Pretendard-Bold",
+  "Pretendard-ExtraBold",
+] as const;
+const pretendardPromises = Object.fromEntries(
+  pretendardVariants.map((variant) => [
+    variant,
+    fetch(
+      `https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/public/static/${variant}.otf`,
+    ).then((res) => res.arrayBuffer()),
+  ]),
+) as { [key in (typeof pretendardVariants)[number]]: Promise<ArrayBuffer> };
 
 interface GenerateConfig {
   name?: string;
@@ -39,19 +52,19 @@ export async function generate({
       fonts: [
         {
           name: "Pretendard",
-          data: await readFile("./src/misc/opengraph/Pretendard-Medium.otf"),
+          data: await pretendardPromises["Pretendard-Medium"],
           weight: 400,
           style: "normal",
         },
         {
           name: "Pretendard",
-          data: await readFile("./src/misc/opengraph/Pretendard-Bold.otf"),
+          data: await pretendardPromises["Pretendard-Bold"],
           weight: 700,
           style: "normal",
         },
         {
           name: "Pretendard",
-          data: await readFile("./src/misc/opengraph/Pretendard-ExtraBold.otf"),
+          data: await pretendardPromises["Pretendard-ExtraBold"],
           weight: 800,
           style: "normal",
         },

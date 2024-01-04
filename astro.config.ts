@@ -26,6 +26,7 @@ export default defineConfig({
       },
     },
     plugins: [yaml()],
+    optimizeDeps: { exclude: ["sharp"] },
   },
   image: {
     remotePatterns: [{ protocol: "https" }],
