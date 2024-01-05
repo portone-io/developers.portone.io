@@ -71,6 +71,9 @@ export async function downloadV1Openapi() {
 }
 
 export function processV2Openapi(schema: any): any {
+  schema.servers = (schema.servers as { url: string }[]).filter((server) =>
+    !server.url.endsWith(".iamport.co")
+  );
   traverseEveryProperty(schema, (node, property) => {
     if (!node[property]) return;
     if (node[property]["x-portone-hidden"]) delete node[property];
