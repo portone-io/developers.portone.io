@@ -11,8 +11,16 @@ interface Props {
   description?: string | undefined;
   slug?: string | undefined;
   ogType?: string | undefined;
+  ogImageSlug?: string | undefined;
 }
-const { lang, title, description, slug = "", ogType = "website" } = Astro.props;
+const {
+  lang,
+  title,
+  description,
+  slug = "",
+  ogType = "website",
+  ogImageSlug = "opengraph.png",
+} = Astro.props;
 ---
 
 <html lang={lang}>
@@ -27,7 +35,7 @@ const { lang, title, description, slug = "", ogType = "website" } = Astro.props;
       {description && <meta property="og:description" content={description} />}
       <meta property="og:type" content={ogType} />
       <meta property="og:url" content={`${Astro.site}${slug}`} />
-      <meta property="og:image" content={`${Astro.site}opengraph.png`} />
+      <meta property="og:image" content={`${Astro.site}${ogImageSlug}`} />
       <meta name="twitter:card" content="summary_large_image" />
     </slot>
     <Trackers />
