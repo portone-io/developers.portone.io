@@ -36,6 +36,7 @@ export interface Property {
   summary?: string | undefined;
   description?: string | undefined;
   type?: string | undefined;
+  format?: string | undefined;
   items?: string | TypeDef | undefined;
   deprecated?: boolean | undefined;
   /**
@@ -73,7 +74,7 @@ export function bakeProperties(schema: any, typeDef: TypeDef): BakedProperty[] {
 
 export function resolveTypeDef(
   schema: any,
-  typeDef: TypeDef | Property
+  typeDef: TypeDef | Property,
 ): TypeDef {
   return mergeAllOf(schema, followRef(schema, typeDef));
 }
@@ -121,7 +122,7 @@ export function repr(def: string | TypeDef | Property | Parameter): string {
 
 export function crawlRefs(
   schema: any,
-  endpointGroups: CategoryEndpointsPair[]
+  endpointGroups: CategoryEndpointsPair[],
 ): string[] {
   const result = new Set<string>();
   const rootPropertyRefsCrawler: Visitor = {

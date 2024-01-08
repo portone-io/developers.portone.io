@@ -234,7 +234,7 @@ export function ReqPropertiesDoc({
                 bgColor="white"
               />
             )),
-            <hr />
+            <hr />,
           )
         : null}
     </div>
@@ -262,7 +262,11 @@ function PropertyDoc({
     "";
   const deprecated = Boolean(property.deprecated);
   return (
-    <div class={`text-14px flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
+    <div
+      class={`text-14px flex flex-col gap-2 p-2 ${
+        deprecated ? "opacity-50" : ""
+      }`}
+    >
       <div class="flex items-center justify-between gap-4">
         <div>
           <div class="mr-4 inline-block font-mono font-bold leading-tight">
@@ -292,7 +296,34 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
   const typeRepr = repr(def);
   const isUserType = typeRepr[0]?.toUpperCase() === typeRepr[0];
   if (!isUserType) {
-    return <span class="text-green-6 font-bold">{typeRepr}</span>;
+    if (typeof def !== "string" && "format" in def) {
+      const format = (() => {
+        switch (def.format) {
+          case "int32":
+            return "(32 bit)";
+          case "int64":
+            return "(64 bit)";
+          case "date-time":
+            return (
+              <a
+                class="underline-offset-4 hover:underline"
+                target="_blank"
+                href="https://ko.wikipedia.org/wiki/ISO_8601"
+              >
+                (ISO 8601)
+              </a>
+            );
+          default:
+            return "";
+        }
+      })();
+      return (
+        <span class="inline-block text-green-6 font-bold">
+          {typeRepr} <span class="font-normal">{format}</span>
+        </span>
+      );
+    }
+    return <span class="inline-block text-green-6 font-bold">{typeRepr}</span>;
   }
   const typeName = typeRepr.replace("[]", "");
   const href = `${basepath}/type-def#${typeName}`;
