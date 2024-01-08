@@ -850,6 +850,64 @@ description: 결제요청 파라미터를 확인 할 수 있습니다.
 > > > **`deliveryFee`** <mark style="color:green;">**number**</mark>
 > > >
 > > > 배송비
+>
+> > **`nice_v2`** <mark style="color:blue;">**object**</mark>
+> >
+> > (신)나이스페이먼츠 bypass 파라미터
+> >
+> > > **`LogoImage`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 결제창 로고 이미지 URL
+> > >
+> > > **`NPDisableScroll`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 결제창 스크롤 미사용 여부 (PC Only, Y: 미사용 / N(default): 사용)
+> > >
+> > > **`SkinType`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 결제창 스킨 색상 설정
+> > >
+> > > `"red", "green", "purple", "gray", "dark"` 중 하나의 값으로 입력해주세요.
+> > >
+> > > **`UserCI`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 문화 상품권 결제시 결제 고객 사용자 인증 CI 정보. 아이디/비밀번호 외 추가로 CI 인증이 필요한 경우 사용.
+> > >
+> > > **`MallUserID`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 상점 사용자 아이디. 문화 상품권 결제시 경우 필수 입력
+> > >
+> > > **`DirectCouponYN`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 신용카드 쿠폰 자동 적용 여부 (Y: 사전 등록된 선 할인 쿠폰을 자동 적용 / N: 쿠폰 미적용(기본값))
+> > >
+> > > **`DirectShowOpt`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 다이렉트 호출 결제 수단 (BANK: 계좌이체/CELLPHONE: 휴대폰 소액결제)
+> > >
+> > > **`CardShowOpt`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 카드사 별 호출 방식
+> > >
+> > > 형식) 카드코드:노출유형|카드코드:노출유형
+> > >
+> > > - 노출 유형: 1(안심클릭), 2(간편결제), 3(앱 카드 직접 호출)
+> > > - 카드 코드: 02(국민), 04(삼성), 06(신한), 07(현대), 08(롯데), 12(NH), 15(우리)만 가능
+> > >
+> > > 예시) 08:3|02:3 → 롯데카드와 국민카드 선택시 앱 카드 직접 호출 방식으로 렌더링
+> > >
+> > > **`PaycoClientId`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 페이코 계정 자동 로그인 기능 사용하기 위해 페이코에서 가맹점에 발급한 ClientId
+> > >
+> > > **`PaycoAccessToken`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 페이코 계정 자동 로그인 기능 사용을 위한 접속 토큰
+> > >
+> > > **`SamsungPayType`** <mark style="color:green;">**string**</mark>
+> > >
+> > > 삼성페이 가맹점 유형 (01: 삼성페이 內 쇼핑 / 99: 기타 (기본값))
+
 
 ### **`country`** <mark style="color:green;">**string**</mark>
 
@@ -1200,7 +1258,7 @@ description: 결제요청 파라미터를 확인 할 수 있습니다.
 > >
 > > 일부 카드사만을 선택 가능하게 하고 싶은 경우 사용하는 옵션입니다. 상단의 카드사 식별 값 항목을 참고해주세요.
 >
-> > **`useFreeInterestFromMall`** <mark style="color:blue;">**object**</mark>
+> > **`useFreeInterestFromMall`** <mark style="color:orange;background-color:yellow;">**boolean**</mark>
 > >
 > > **상점분담 무이자 활성화 여부**
 >
@@ -1581,6 +1639,14 @@ description: 결제요청 파라미터를 확인 할 수 있습니다.
 > >
 > > </details>
 >
+> > **`useFreeInterestFromMall`** <mark style="color:orange;background-color:yellow;">**boolean**</mark>
+> >
+> > **상점분담 무이자 활성화 여부**
+>
+> > **`useCardPoint`** <mark style="color:orange;background-color:yellow;">**boolean**</mark>
+> >
+> > **카드사 포인트 사용 여부**
+>
 > > **`availableCards`** <mark style="color:blue;">**string\[]**</mark>
 > >
 > > **일부 카드사만 노출 설정**
@@ -1622,5 +1688,15 @@ description: 결제요청 파라미터를 확인 할 수 있습니다.
 > > > > 구매자가 할부 개월 수를 선택할 수 있도록 하려면 `availableMonthList`를 사용해주세요.
 > > > >
 > > > > **`availableMonthList`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number\[]**</mark>
+> > > >
+> > > > **구매자가 선택할 수 있는 할부 개월수 리스트**
 > >
-> > **구매자가 선택할 수 있는 할부 개월수 리스트**
+> > **`cashReceiptType`** <mark style="color:green;">**string**</mark>
+> >
+> > **결제창에서 발급 가능한 현금영수증 발급 유형**
+> >
+> > PERSONAL: 소득공제용, CORPORATE: 지출증빙용, ANONYMOUS: 미발행
+> >
+> > **`customerIdentifier`** <mark style="color:green;">**string**</mark>
+> >
+> > **현금영수증 발행 대상 식별 정보**
