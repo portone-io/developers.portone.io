@@ -66,7 +66,7 @@ export default function Req({
         </>
       }
     >
-      <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-1 p-4">
+      <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-3 p-4">
         <Tabs
           tabs={[
             reqPathParams.params.length && {
@@ -135,7 +135,7 @@ interface ReqParams {
 function useReqParams(
   schema: any,
   operation: Operation,
-  part: RequestPart
+  part: RequestPart,
 ): ReqParams {
   return useMemo(() => {
     const params = getReqParams(schema, operation, part);
@@ -157,7 +157,7 @@ function createUrl(
   base: string,
   path: string,
   pathObject?: any,
-  queryObject?: any
+  queryObject?: any,
 ): URL {
   const result = new URL(bakePath(path, pathObject), base);
   if (queryObject) result.search = `?${encodeQs(queryObject)}`;
@@ -167,7 +167,7 @@ function createUrl(
 function bakePath(path: string, pathObject?: any): string {
   if (!pathObject) return path;
   return path.replaceAll(/\{(.+?)\}/g, (_, key) =>
-    encodeURIComponent(pathObject[key])
+    encodeURIComponent(pathObject[key]),
   );
 }
 

@@ -1,3 +1,8 @@
+declare module "*/_names.yaml" {
+  const value: Record<string, string>;
+  export default value;
+}
+
 declare module "*/_nav.yaml" {
   import type { YamlNavMenuItem } from "./type";
   const value: YamlNavMenuItem[];

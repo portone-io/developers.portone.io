@@ -44,27 +44,20 @@ const t = lang === "ko" ? ko : en;
 <div class="h-14">
   <header
     id="gnb"
-    class="h-inherit fixed z-10 flex w-full items-center justify-between border-b bg-white pl-6"
+    class="h-inherit fixed z-10 flex w-full items-center justify-between border-b bg-white pl-4 md:pl-6"
   >
-    <div class="flex h-full items-center gap-5">
+    <div class="flex h-full items-center">
       <a class="inline-flex h-full items-center" href={`/docs/${lang}`}>
         <div class="flex items-center gap-2">
           <Logo class="w-22" />
           <span class="break-keep">{t["developers"]}</span>
         </div>
       </a>
-      <VersionSwitch client:load />
-      <div class="ml-5 hidden h-full items-center gap-4 md:flex">
-        {
-          lang === "ko" && (
-            <a class="inline-flex h-full items-center" href="/release-notes">
-              릴리즈 노트
-            </a>
-          )
-        }
+      <VersionSwitch className="mx-6 md:ml-[70px]" client:load />
+      <div class="hidden h-full items-center gap-6 md:flex">
         <Dropdown
           client:visible
-          link="/api"
+          link={{ all: "/api", v1: "/api/rest-v1", v2: "/api/rest-v2" }}
           items={[
             { label: "REST API V1", link: "/api/rest-v1", systemVersion: "v1" },
             { label: "REST API V2", link: "/api/rest-v2", systemVersion: "v2" },
@@ -77,6 +70,13 @@ const t = lang === "ko" ? ko : en;
         >
           API & SDK
         </Dropdown>
+        {
+          lang === "ko" && (
+            <a class="inline-flex h-full items-center" href="/release-notes">
+              릴리즈 노트
+            </a>
+          )
+        }
       </div>
     </div>
     <div class="hidden h-full items-center gap-4 pr-6 md:flex">

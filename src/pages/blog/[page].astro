@@ -1,28 +1,29 @@
 ---
 import type { GetStaticPaths, Page } from "astro";
 import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
 import { format } from "date-fns";
+import locale from "date-fns/locale/ko/index.js";
 import LayoutKo from "~/layouts/LayoutKo.astro";
+import * as prose from "~/components/prose";
+import names from "~/content/blog/_names.yaml";
+import ProfileImage from "~/components/blog/ProfileImage.astro";
 
 interface Props {
   page: Page;
 }
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const blogEntries = await getCollection("blog");
-  blogEntries.map((entry) => {
-    const [date] = entry.slug.split("/");
-    entry.data.date = date ? new Date(`${date}Z+9`) : undefined;
-  });
-  blogEntries.sort((a, b) => b.data.date!.getTime() - a.data.date!.getTime());
   return paginate(
-    blogEntries.filter(
-      (entry) =>
-        !entry.data.draft ||
-        import.meta.env.DEV ||
-        import.meta.env.VERCEL_ENV === "preview"
-    ),
-    { pageSize: 10 }
+    (await getCollection("blog"))
+      .filter(
+        (entry) =>
+          !entry.data.draft ||
+          import.meta.env.DEV ||
+          import.meta.env.VERCEL_ENV === "preview",
+      )
+      .sort((a, b) => +b.data.date - +a.data.date),
+    { pageSize: 10 },
   );
 };
 
@@ -30,26 +31,44 @@ const { page } = Astro.props;
 ---
 
 <LayoutKo>
-  <div class="flex min-h-full flex-col items-center text-center">
-    <div class="my-4 flex-1">
+  <div class="text-slate-7 max-w-900px mx-auto my-4 flex min-h-full flex-col">
+    <div class="pt-10px flex-1">
+      <prose.h1 class="px-4 pb-4 md:px-6 md:pb-6">PortOne 기술 블로그</prose.h1>
       {
         page.data.length > 0 ? (
-          <dl class="max-w-150 mx-auto flex w-screen shrink flex-col gap-8 p-6 text-left">
-            {page.data.map((entry) => (
-              <a
-                class="flex flex-col items-start gap-2"
-                href={`/blog/${entry.slug}`}
-              >
-                <dt class="text-2xl font-medium">
-                  {entry.data.title}
-                  {entry.data.draft && (
-                    <span class="text-slate-4 font-normal">(Draft)</span>
-                  )}
-                </dt>
-                <dd>{entry.data.description}</dd>
-                <span>{format(entry.data.date, "yyyy. M. d.")}</span>
-              </a>
-            ))}
+          <dl class="mx-auto flex shrink flex-col text-left">
+            {page.data.map(({ slug, data }) => {
+              const { author } = data;
+              const name = names[author] || author;
+              return (
+                <a
+                  class="hover:bg-slate-1 grid grid-cols-1 items-center gap-4 p-4 sm:grid-cols-[4rem_1fr] md:grid-cols-[6rem_1fr] md:gap-6 md:px-6"
+                  href={`/blog/${slug}`}
+                >
+                  <ProfileImage>
+                    <Image
+                      src={`https://github.com/${author}.png`}
+                      alt={`Avatar image of ${name}`}
+                      width={192}
+                      height={192}
+                      class="bg-slate-2 h-4rem w-4rem md:h-6rem md:w-6rem hidden rounded-full sm:block"
+                    />
+                  </ProfileImage>
+                  <div class="flex h-full flex-col justify-between gap-2">
+                    <div class="flex flex-col gap-1">
+                      <dt class="text-2xl font-medium">
+                        {data.title}
+                        {data.draft && (
+                          <span class="text-slate-4 font-normal">(Draft)</span>
+                        )}
+                      </dt>
+                      <dd>{data.description}</dd>
+                    </div>
+                    <span>{format(data.date, "yyyy. M. d.", { locale })}</span>
+                  </div>
+                </a>
+              );
+            })}
           </dl>
         ) : (
           <div>게시글이 없습니다.</div>

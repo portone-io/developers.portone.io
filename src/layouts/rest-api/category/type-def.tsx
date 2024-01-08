@@ -44,7 +44,7 @@ export function TypeDefinitions({
       typeDef: getTypeDefByRef(schema, ref),
     }));
   return (
-    <section id="type-def" class="scroll-mt-5rem flex flex-col">
+    <section id="type-def" class="scroll-mt-5.2rem flex flex-col">
       <prose.h2 ref={headingRef}>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
@@ -262,7 +262,7 @@ function PropertyDoc({
     "";
   const deprecated = Boolean(property.deprecated);
   return (
-    <div class={`flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
+    <div class={`text-14px flex flex-col gap-2 p-2 ${deprecated ? "opacity-50" : ""}`}>
       <div class="flex items-center justify-between gap-4">
         <div>
           <div class="mr-4 inline-block font-mono font-bold leading-tight">
@@ -319,12 +319,9 @@ function DescriptionDoc({
   typeDef,
   bgColor = "rgb(241,245,249)",
 }: DescriptionDocProps) {
-  const __html =
-    (typeDef["x-portone-description"] ??
-      typeDef["x-portone-summary"] ??
-      typeDef.description ??
-      typeDef.summary) ||
-    "";
+  const description = typeDef["x-portone-description"] ?? typeDef.description;
+  const summary = typeDef["x-portone-summary"] ?? typeDef.summary;
+  const __html = description || summary || "";
   return __html ? (
     <DescriptionArea maxHeightPx={16 * 6} bgColor={bgColor}>
       <div class="text-slate-5 flex flex-col gap-1 text-sm">

@@ -15,13 +15,18 @@ export function Tabs<Id extends string>({ tabs }: TabsProps<Id>) {
   const currTab = _tabs.find((tab) => tab.id === currTabId);
   return (
     <>
-      <div class="flex gap-1 text-xs">
+      <div class="text-14px flex gap-3">
         {_tabs.map((tab) => {
           const active = currTabId === tab.id;
-          const className = active ? "font-bold" : "";
+          const className = `text-xs uppercase ${
+            active
+              ? "font-bold underline underline-offset-3 decoration-1.5"
+              : ""
+          }`;
           return (
             <button
               key={tab.id}
+              style={{ "text-decoration-skip-ink": "none" }}
               class={className}
               onClick={() => (currTabIdSignal.value = tab.id)}
             >

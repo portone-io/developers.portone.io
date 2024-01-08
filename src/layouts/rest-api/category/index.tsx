@@ -86,7 +86,7 @@ export function Category({
     />
   );
   return (
-    <section id={section} class="scroll-mt-5rem flex flex-col">
+    <section id={section} class="scroll-mt-5.2rem flex flex-col">
       <div>
         <prose.h2 ref={headingRef}>{title}</prose.h2>
       </div>

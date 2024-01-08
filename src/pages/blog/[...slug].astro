@@ -1,0 +1,64 @@
+---
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { format } from "date-fns";
+import locale from "date-fns/locale/ko/index.js";
+import LayoutKo from "~/layouts/LayoutKo.astro";
+import names from "~/content/blog/_names.yaml";
+import * as prose from "~/components/prose";
+import ProfileImage from "~/components/blog/ProfileImage.astro";
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection("blog");
+  return blogEntries.map((entry) => {
+    return {
+      params: { slug: entry.slug },
+      props: { entry, slug: entry.slug },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const { title, description, author } = entry.data;
+const { Content } = await entry.render();
+
+const name = names[author] || author;
+---
+
+<LayoutKo title={`${title} - PortOne 기술블로그`}>
+  <article class="max-w-900px text-slate-7 mx-auto my-4 pb-40">
+    <div class="flex flex-col gap-6 px-4 md:px-6">
+      <div class="flex flex-col gap-4">
+        <h1 class="text-3xl font-bold">{title}</h1>
+        <h2 class="text-xl font-medium text-gray-400">{description}</h2>
+      </div>
+      <div class="flex items-end justify-between">
+        <a href=`https://github.com/${author}`>
+          <dl class="flex items-stretch gap-4">
+            <div>
+              <ProfileImage>
+                <Image
+                  src={`https://github.com/${author}.png`}
+                  alt={`Avatar image of ${name}`}
+                  width={112}
+                  height={112}
+                  class="bg-slate-2 h-14 w-14 rounded-full"
+                />
+              </ProfileImage>
+            </div>
+            <div class="flex flex-col justify-evenly">
+              <dt class="text-lg font-medium">{name}</dt>
+              <dd class="flex items-center gap-1.5 text-sm text-gray-400">
+                <i class="i-ic-baseline-calendar-month inline-block"></i>
+                {format(entry.data.date, "yyyy-MM-dd", { locale })}
+              </dd>
+            </div>
+          </dl>
+        </a>
+      </div>
+      <div>
+        <Content components={prose} />
+      </div>
+    </div>
+  </article>
+</LayoutKo>
