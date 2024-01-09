@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useSignal } from "@preact/signals";
+import { useComputed, useSignal } from "@preact/signals";
 import * as prose from "~/components/prose";
 import {
   expandAndScrollTo,
@@ -129,16 +129,35 @@ function UnionDoc({ basepath, schema, typeDef }: UnionDocProps) {
   const { propertyName, mapping } = typeDef.discriminator!;
   const types = Object.keys(mapping);
   const typeSignal = useSignal(types[0]!);
-  const type = typeSignal.value;
+  const selectedTypeDefSignal = useComputed(() => {
+    const type = typeSignal.value;
+    return getTypeDefByRef(schema, mapping[type]!);
+  });
+  const propertiesSignal = useComputed(() => {
+    const selectedTypeDef = selectedTypeDefSignal.value;
+    return typeDef ? bakeProperties(schema, selectedTypeDef) : [];
+  });
+  const discriminatorPropertySignal = useComputed(() => {
+    const properties = propertiesSignal.value;
+    return properties.find((property) => property.name === propertyName)!;
+  });
+  const otherPropertiesSignal = useComputed(() => {
+    const properties = propertiesSignal.value;
+    return properties.filter((property) => property.name !== propertyName);
+  });
+  const discriminatorProperty = discriminatorPropertySignal.value;
+  const otherProperties = otherPropertiesSignal.value;
   return (
-    <div class=" flex flex-col gap-4 rounded leading-none">
-      <div class="flex items-center gap-1 text-xs">
-        <code>{propertyName}</code>
-        <span>값이</span>
-        <div class="relative flex-1 py-1">
-          &nbsp;
+    <div class="flex flex-col gap-2">
+      <div class="bg-slate-1 rounded py-1">
+        <PropertyDoc
+          basepath={basepath}
+          name={discriminatorProperty.name}
+          required={true}
+          property={discriminatorProperty}
+        >
           <select
-            class="border-slate-2 absolute left-0 top-0 w-full text-ellipsis whitespace-nowrap border px-2 py-1"
+            class="border-slate-2 w-full text-ellipsis whitespace-nowrap border px-2 py-1"
             value={typeSignal.value}
             onChange={(e) => (typeSignal.value = e.currentTarget.value)}
           >
@@ -146,14 +165,18 @@ function UnionDoc({ basepath, schema, typeDef }: UnionDocProps) {
               <option value={type}>{type}</option>
             ))}
           </select>
-        </div>
-        <span>인 경우</span>
+        </PropertyDoc>
       </div>
-      <TypeDefDoc
-        basepath={basepath}
-        schema={schema}
-        typeDef={getTypeDefByRef(schema, mapping[type]!)}
-      />
+      {otherProperties.map((property) => (
+        <div class="bg-slate-1 rounded py-1" key={property.name}>
+          <PropertyDoc
+            basepath={basepath}
+            name={property.name}
+            required={property.required}
+            property={property}
+          />
+        </div>
+      ))}
     </div>
   );
 }
@@ -197,18 +220,16 @@ export interface PropertiesDocProps {
 export function PropertiesDoc({ basepath, properties }: PropertiesDocProps) {
   return (
     <div class="flex flex-col gap-2">
-      {properties.length
-        ? properties.map((property) => (
-            <div class="bg-slate-1 rounded py-1">
-              <PropertyDoc
-                basepath={basepath}
-                name={property.name}
-                required={property.required}
-                property={property}
-              />
-            </div>
-          ))
-        : null}
+      {properties.map((property) => (
+        <div class="bg-slate-1 rounded py-1" key={property.name}>
+          <PropertyDoc
+            basepath={basepath}
+            name={property.name}
+            required={property.required}
+            property={property}
+          />
+        </div>
+      ))}
     </div>
   );
 }
@@ -247,6 +268,7 @@ interface PropertyDocProps {
   required?: boolean | undefined;
   property: Property;
   bgColor?: string | undefined;
+  children?: any;
 }
 function PropertyDoc({
   basepath,
@@ -254,6 +276,7 @@ function PropertyDoc({
   required,
   property,
   bgColor,
+  children,
 }: PropertyDocProps) {
   const title =
     property["x-portone-title"] ||
@@ -283,6 +306,7 @@ function PropertyDoc({
           {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>
       </div>
+      {children}
       <DescriptionDoc typeDef={property} bgColor={bgColor} />
     </div>
   );
@@ -318,12 +342,12 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
         }
       })();
       return (
-        <span class="inline-block text-green-6 font-bold">
+        <span class="text-green-6 inline-block font-bold">
           {typeRepr} <span class="font-normal">{format}</span>
         </span>
       );
     }
-    return <span class="inline-block text-green-6 font-bold">{typeRepr}</span>;
+    return <span class="text-green-6 inline-block font-bold">{typeRepr}</span>;
   }
   const typeName = typeRepr.replace("[]", "");
   const href = `${basepath}/type-def#${typeName}`;
