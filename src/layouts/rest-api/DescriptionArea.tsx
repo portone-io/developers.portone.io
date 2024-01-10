@@ -26,7 +26,9 @@ export default function DescriptionArea({
   }, [maxHeightPx]);
   return (
     <div class="relative overflow-hidden" style={{ maxHeight }}>
-      <div ref={childrenContainerRef}>{children}</div>
+      <div class="flex flex-col gap-2" ref={childrenContainerRef}>
+        {children}
+      </div>
       {maxHeightIsSmall && !open && (
         <>
           <div

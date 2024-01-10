@@ -112,12 +112,12 @@ function MethodBadge({ method }: MethodBadgeProps) {
     method === "get"
       ? "bg-green-2 text-green-7"
       : method === "post"
-      ? "bg-blue-2 text-blue-7"
-      : method === "put"
-      ? "bg-yellow-2 text-yellow-7"
-      : method === "delete"
-      ? "bg-red-2 text-red-7"
-      : "bg-slate-2 text-slate-7";
+        ? "bg-blue-2 text-blue-7"
+        : method === "put"
+          ? "bg-yellow-2 text-yellow-7"
+          : method === "delete"
+            ? "bg-red-2 text-red-7"
+            : "bg-slate-2 text-slate-7";
   return (
     <span
       class={`${colorClass} shrink-0 rounded-full px-2 font-bold uppercase`}
@@ -157,6 +157,8 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
             basepath={basepath}
             title="Path"
             parameters={pathParameters}
+            schema={schema}
+            showNested
           />
         )}
         {showQuery && (
@@ -164,6 +166,8 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
             basepath={basepath}
             title="Query"
             parameters={queryParameters}
+            schema={schema}
+            showNested
           />
         )}
         {showBody && (
@@ -171,6 +175,8 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
             basepath={basepath}
             title="Body"
             parameters={bodyParameters}
+            schema={schema}
+            showNested
           />
         )}
       </div>
@@ -202,9 +208,10 @@ function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
               basepath={basepath}
               schema={schema}
               typeDef={responseSchema && resolveTypeDef(schema, responseSchema)}
+              showNested
             />
           </ReqRes>
-        )
+        ),
       )}
     </div>
   );
@@ -215,16 +222,25 @@ interface ReqParametersProps {
   title?: string | undefined;
   description?: string | undefined;
   parameters: Parameter[];
+  schema?: any;
+  showNested?: boolean | undefined;
 }
 function ReqParameters({
   basepath,
   title,
   description,
   parameters,
+  schema,
+  showNested,
 }: ReqParametersProps) {
   return (
     <ReqRes title={title} description={description}>
-      <ReqPropertiesDoc basepath={basepath} properties={parameters} />
+      <ReqPropertiesDoc
+        basepath={basepath}
+        properties={parameters}
+        schema={schema}
+        showNested={showNested}
+      />
     </ReqRes>
   );
 }
