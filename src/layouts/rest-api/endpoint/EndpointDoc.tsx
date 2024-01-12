@@ -208,6 +208,8 @@ function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
               basepath={basepath}
               schema={schema}
               typeDef={responseSchema && resolveTypeDef(schema, responseSchema)}
+              bgColor="#f1f5f9"
+              nestedBgColor="#fcfdfe"
               showNested
             />
           </ReqRes>
