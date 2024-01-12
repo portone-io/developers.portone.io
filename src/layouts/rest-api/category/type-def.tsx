@@ -19,6 +19,7 @@ import {
   getTypenameByRef,
   repr,
   getTypeDefKind,
+  resolveTypeDef,
 } from "../schema-utils/type-def";
 import Expand from "./Expand";
 
@@ -90,6 +91,8 @@ export function TypeDefinitions({
                 basepath={basepath}
                 schema={schema}
                 typeDef={typeDef}
+                bgColor="#f1f5f9"
+                nestedBgColor="#fcfdfe"
               />
             </div>
           ))}
@@ -103,19 +106,49 @@ export interface TypeDefDocProps {
   basepath: string;
   schema: any;
   typeDef?: TypeDef | undefined;
+  showNested?: boolean | undefined;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
 }
-export function TypeDefDoc({ basepath, schema, typeDef }: TypeDefDocProps) {
+export function TypeDefDoc({
+  basepath,
+  schema,
+  typeDef,
+  showNested,
+  bgColor,
+  nestedBgColor,
+}: TypeDefDocProps) {
   const kind = getTypeDefKind(typeDef);
   switch (kind) {
     case "object":
       return (
-        <ObjectDoc basepath={basepath} schema={schema} typeDef={typeDef} />
+        <ObjectDoc
+          basepath={basepath}
+          schema={schema}
+          typeDef={typeDef}
+          showNested={showNested}
+          bgColor={bgColor}
+          nestedBgColor={nestedBgColor}
+        />
       );
     case "enum":
-      return <EnumDoc xPortoneEnum={typeDef!["x-portone-enum"]} />;
+      return (
+        <EnumDoc
+          basepath={basepath}
+          xPortoneEnum={typeDef!["x-portone-enum"]}
+          bgColor={bgColor}
+        />
+      );
     case "union":
       return (
-        <UnionDoc basepath={basepath} schema={schema} typeDef={typeDef!} />
+        <UnionDoc
+          basepath={basepath}
+          schema={schema}
+          typeDef={typeDef!}
+          showNested={showNested}
+          bgColor={bgColor}
+          nestedBgColor={nestedBgColor}
+        />
       );
   }
 }
@@ -124,8 +157,18 @@ interface UnionDocProps {
   basepath: string;
   schema: any;
   typeDef: TypeDef;
+  showNested?: boolean | undefined;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
 }
-function UnionDoc({ basepath, schema, typeDef }: UnionDocProps) {
+function UnionDoc({
+  basepath,
+  schema,
+  typeDef,
+  showNested,
+  bgColor,
+  nestedBgColor,
+}: UnionDocProps) {
   const { propertyName, mapping } = typeDef.discriminator!;
   const types = Object.keys(mapping);
   const typeSignal = useSignal(types[0]!);
@@ -149,15 +192,17 @@ function UnionDoc({ basepath, schema, typeDef }: UnionDocProps) {
   const otherProperties = otherPropertiesSignal.value;
   return (
     <div class="flex flex-col gap-2">
-      <div class="bg-slate-1 rounded py-1">
+      <div class="rounded py-1" style={{ backgroundColor: bgColor }}>
         <PropertyDoc
           basepath={basepath}
           name={discriminatorProperty.name}
           required={true}
           property={discriminatorProperty}
+          bgColor={bgColor}
+          nestedBgColor={nestedBgColor}
         >
           <select
-            class="border-slate-2 w-full text-ellipsis whitespace-nowrap border px-2 py-1"
+            class="border-slate-2 w-full text-ellipsis whitespace-nowrap rounded border px-2 py-1"
             value={typeSignal.value}
             onChange={(e) => (typeSignal.value = e.currentTarget.value)}
           >
@@ -168,12 +213,20 @@ function UnionDoc({ basepath, schema, typeDef }: UnionDocProps) {
         </PropertyDoc>
       </div>
       {otherProperties.map((property) => (
-        <div class="bg-slate-1 rounded py-1" key={property.name}>
+        <div
+          class="rounded py-1"
+          key={property.name}
+          style={{ backgroundColor: bgColor }}
+        >
           <PropertyDoc
             basepath={basepath}
             name={property.name}
             required={property.required}
             property={property}
+            bgColor={bgColor}
+            nestedBgColor={nestedBgColor}
+            schema={schema}
+            showNested={showNested}
           />
         </div>
       ))}
@@ -182,20 +235,29 @@ function UnionDoc({ basepath, schema, typeDef }: UnionDocProps) {
 }
 
 interface EnumDocProps {
+  basepath: string;
   xPortoneEnum: TypeDef["x-portone-enum"];
+  bgColor: string;
 }
-function EnumDoc({ xPortoneEnum }: EnumDocProps) {
+function EnumDoc({ basepath, xPortoneEnum, bgColor }: EnumDocProps) {
   return (
     <div class="flex flex-col gap-2">
       {Object.entries(xPortoneEnum || {}).map(([enumValue, enumCase]) => {
         const title = enumCase["x-portone-title"] || enumCase.title || "";
         return (
-          <div class="bg-slate-1 flex flex-col gap-2 rounded p-2">
+          <div
+            class="flex flex-col gap-2 rounded p-2"
+            style={{ backgroundColor: bgColor }}
+          >
             <div class="flex items-center gap-2 leading-none">
               <code>{enumValue}</code>
               <span class="text-slate-5 text-sm">{title}</span>
             </div>
-            <DescriptionDoc typeDef={enumCase} />
+            <DescriptionDoc
+              basepath={basepath}
+              typeDef={enumCase}
+              bgColor={bgColor}
+            />
           </div>
         );
       })}
@@ -207,26 +269,64 @@ interface ObjectDocProps {
   basepath: string;
   schema: any;
   typeDef?: TypeDef | undefined;
+  showNested?: boolean | undefined;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
 }
-function ObjectDoc({ basepath, schema, typeDef }: ObjectDocProps) {
+function ObjectDoc({
+  basepath,
+  schema,
+  typeDef,
+  showNested,
+  bgColor,
+  nestedBgColor,
+}: ObjectDocProps) {
   const properties = typeDef ? bakeProperties(schema, typeDef) : [];
-  return <PropertiesDoc basepath={basepath} properties={properties} />;
+  return (
+    <PropertiesDoc
+      basepath={basepath}
+      bgColor={bgColor}
+      nestedBgColor={nestedBgColor}
+      schema={schema}
+      properties={properties}
+      showNested={showNested}
+    />
+  );
 }
 
 export interface PropertiesDocProps {
   basepath: string;
   properties: BakedProperty[];
+  bgColor: string;
+  nestedBgColor?: string | undefined;
+  schema?: any;
+  showNested?: boolean | undefined;
 }
-export function PropertiesDoc({ basepath, properties }: PropertiesDocProps) {
+export function PropertiesDoc({
+  basepath,
+  bgColor,
+  nestedBgColor,
+  schema,
+  properties,
+  showNested,
+}: PropertiesDocProps) {
   return (
     <div class="flex flex-col gap-2">
       {properties.map((property) => (
-        <div class="bg-slate-1 rounded py-1" key={property.name}>
+        <div
+          class="rounded py-1"
+          key={property.name}
+          style={{ backgroundColor: bgColor }}
+        >
           <PropertyDoc
             basepath={basepath}
             name={property.name}
             required={property.required}
             property={property}
+            bgColor={bgColor}
+            nestedBgColor={nestedBgColor}
+            schema={schema}
+            showNested={showNested}
           />
         </div>
       ))}
@@ -237,10 +337,14 @@ export function PropertiesDoc({ basepath, properties }: PropertiesDocProps) {
 export interface ReqPropertiesDocProps {
   basepath: string;
   properties: BakedProperty[];
+  schema?: any;
+  showNested?: boolean | undefined;
 }
 export function ReqPropertiesDoc({
   basepath,
   properties,
+  schema,
+  showNested,
 }: ReqPropertiesDocProps) {
   return (
     <div class="flex flex-col gap-1">
@@ -253,6 +357,9 @@ export function ReqPropertiesDoc({
                 required={property.required}
                 property={property}
                 bgColor="white"
+                nestedBgColor="#f4f8fa"
+                schema={schema}
+                showNested={showNested}
               />
             )),
             <hr />,
@@ -267,7 +374,10 @@ interface PropertyDocProps {
   name: string;
   required?: boolean | undefined;
   property: Property;
-  bgColor?: string | undefined;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
+  schema?: any;
+  showNested?: boolean | undefined;
   children?: any;
 }
 function PropertyDoc({
@@ -276,6 +386,9 @@ function PropertyDoc({
   required,
   property,
   bgColor,
+  nestedBgColor,
+  schema,
+  showNested,
   children,
 }: PropertyDocProps) {
   const title =
@@ -307,7 +420,14 @@ function PropertyDoc({
         </div>
       </div>
       {children}
-      <DescriptionDoc typeDef={property} bgColor={bgColor} />
+      <DescriptionDoc
+        basepath={basepath}
+        typeDef={property}
+        bgColor={bgColor}
+        nestedBgColor={nestedBgColor}
+        schema={schema}
+        showNested={showNested}
+      />
     </div>
   );
 }
@@ -367,21 +487,44 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
 }
 
 interface DescriptionDocProps {
+  basepath: string;
   typeDef: TypeDef | Property;
-  bgColor?: string | undefined;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
+  schema?: any;
+  showNested?: boolean | undefined;
 }
 function DescriptionDoc({
+  basepath,
   typeDef,
-  bgColor = "rgb(241,245,249)",
+  bgColor,
+  nestedBgColor,
+  schema,
+  showNested,
 }: DescriptionDocProps) {
   const description = typeDef["x-portone-description"] ?? typeDef.description;
   const summary = typeDef["x-portone-summary"] ?? typeDef.summary;
   const __html = description || summary || "";
-  return __html ? (
+  const unwrappedTypeDef = React.useMemo(() => {
+    if (!schema || !showNested || !typeDef) return;
+    return resolveTypeDef(schema, typeDef, true);
+  }, [typeDef, schema, showNested]);
+  return __html || unwrappedTypeDef ? (
     <DescriptionArea maxHeightPx={16 * 6} bgColor={bgColor}>
-      <div class="text-slate-5 flex flex-col gap-1 text-sm">
-        <div dangerouslySetInnerHTML={{ __html }} />
-      </div>
+      {__html && (
+        <div class="text-slate-5 flex flex-col gap-1 text-sm">
+          <div dangerouslySetInnerHTML={{ __html }} />
+        </div>
+      )}
+      {unwrappedTypeDef ? (
+        <TypeDefDoc
+          basepath={basepath}
+          schema={schema}
+          typeDef={unwrappedTypeDef}
+          bgColor={nestedBgColor || bgColor}
+          nestedBgColor={bgColor}
+        />
+      ) : null}
     </DescriptionArea>
   ) : null;
 }

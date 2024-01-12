@@ -61,7 +61,16 @@ export interface BakedProperty extends Property {
 }
 
 export function bakeProperties(schema: any, typeDef: TypeDef): BakedProperty[] {
-  const resolvedDef = resolveTypeDef(schema, typeDef);
+  filter: if (!typeDef.$ref && typeDef.type) {
+    switch (typeDef.type) {
+      case "object":
+      case "array":
+        break filter;
+      default:
+        return [];
+    }
+  }
+  const resolvedDef = resolveTypeDef(schema, typeDef, true);
   const properties = Object.entries(resolvedDef.properties || {});
   return properties.map(([name, property]) => {
     const $ref = property.$ref;
@@ -75,8 +84,9 @@ export function bakeProperties(schema: any, typeDef: TypeDef): BakedProperty[] {
 export function resolveTypeDef(
   schema: any,
   typeDef: TypeDef | Property,
+  unwrapArray = false,
 ): TypeDef {
-  return mergeAllOf(schema, followRef(schema, typeDef));
+  return mergeAllOf(schema, followRef(schema, typeDef, unwrapArray));
 }
 
 export function mergeAllOf(schema: any, typeDef: TypeDef): TypeDef {
@@ -94,9 +104,16 @@ export function mergeAllOf(schema: any, typeDef: TypeDef): TypeDef {
   return result;
 }
 
-export function followRef(schema: any, typeDef: TypeDef | Property): TypeDef {
+export function followRef(
+  schema: any,
+  typeDef: TypeDef | Property,
+  unwrapArray = false,
+): TypeDef {
   let curr = typeDef;
   while (curr.$ref) curr = getTypeDefByRef(schema, curr.$ref);
+  if (unwrapArray && curr.type === "array" && curr.items) {
+    return followRef(schema, curr.items as TypeDef);
+  }
   return curr as TypeDef;
 }
 
