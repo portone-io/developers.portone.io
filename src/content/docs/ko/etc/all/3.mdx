@@ -15,26 +15,29 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 <Tabs>
 <Tab title="Node.js(팝업방식)">
+
 ```javascript title="server-side"
 app.use(bodyParser.json());
-  ...
-  // "/certifications"에 대한 POST 요청을 처리하는 controller
-  app.post("/certifications", async (request, response) => {
-    // request의 body에서 imp_uid 추출
-    const { imp_uid } = request.body; 
-})
+
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  // request의 body에서 imp_uid 추출
+  const { imp_uid } = request.body;
+});
 ```
 
 </Tab>
 
 <Tab title="Node.js(리디렉션 방식)">
+
 ```javascript title="server-side"
 app.use(bodyParser.json());
-  ...
-  // "/certifications/redirect"에 대한 GET 요청을 처리하는 controller
-  app.get("/certifications/redirect", async (request, response) => {
-    const { imp_uid } = request.query; // request의 query에서 imp_uid 추출
-})
+
+// "/certifications/redirect"에 대한 GET 요청을 처리하는 controller
+app.get("/certifications/redirect", async (request, response) => {
+  // request의 query에서 imp_uid 추출
+  const { imp_uid } = request.query;
+});
 ```
 
 </Tab>
@@ -42,49 +45,55 @@ app.use(bodyParser.json());
 
 ### <mark style="color:blue;">**STEP 02.**</mark> 인증 정보 조회하기
 
-포트원 서버에서 인증 정보를 조회하기 위해서 먼저 [**REST API access token**](../../api/rest-api-access-token)을 발급받습니다. 발급받은 액세스 토큰(`access_token`)과 인증번호(`imp_uid`)로 <mark style="color:blue;">**본인인증 결과조회 REST API**</mark> 를 호출하여 인증 정보를 조회하는 예제입니다.
+포트원 서버에서 인증 정보를 조회하기 위해서 먼저 [**REST API access token**](../../api/rest-api-access-token)을 발급받습니다.
+발급받은 액세스 토큰(`access_token`)과 인증번호(`imp_uid`)로 <mark style="color:blue;">**본인인증 결과조회 REST API**</mark> 를 호출하여 인증 정보를 조회하는 예제입니다.
 
 ```javascript title="server-side(Node.js)"
 app.use(bodyParser.json());
-  ...
-  // "/certifications"에 대한 POST 요청을 처리하는 controller
-  app.post("/certifications", async (request, response) => {
-    const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
-    try {
-      // 인증 토큰 발급 받기
-      const getToken = await axios({
-        url: "https://api.iamport.kr/users/getToken",
-        // POST method
-        method: "post",
-        // "Content-Type": "application/json"
-        headers: { "Content-Type": "application/json" },
-        data: {
-          imp_key: "imp_apikey", // REST API키
-          imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
-        }
-      });
-      const { access_token } = getToken.data; // 인증 토큰
-      ...
-      // imp_uid로 인증 정보 조회
-      const getCertifications = await axios({
-        // imp_uid 전달
-        url: \`https://api.iamport.kr/certifications/\${imp_uid}\`,
-        // GET method
-        method: "get",
-        // 인증 토큰 Authorization header에 추가
-        headers: { "Authorization": access_token }
-      });
-      const certificationsInfo = getCertifications.data; // 조회한 인증 정보
-      ...
-    } catch(e) {
-      console.error(e);
-    }
-  });
+
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  // request의 body에서 imp_uid 추출
+  const { imp_uid } = request.body;
+  try {
+    // 인증 토큰 발급 받기
+    const getToken = await axios({
+      url: "https://api.iamport.kr/users/getToken",
+      // POST method
+      method: "post",
+      // "Content-Type": "application/json"
+      headers: { "Content-Type": "application/json" },
+      data: {
+        // REST API키
+        imp_key: "imp_apikey",
+        // REST API Secret
+        imp_secret:
+          "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f",
+      },
+    });
+    // 인증 토큰
+    const { access_token } = getToken.data;
+    // imp_uid로 인증 정보 조회
+    const getCertifications = await axios({
+      // imp_uid 전달
+      url: `https://api.iamport.kr/certifications/\${imp_uid}`,
+      // GET method
+      method: "get",
+      // 인증 토큰 Authorization header에 추가
+      headers: { Authorization: access_token },
+    });
+    // 조회한 인증 정보
+    const certificationsInfo = getCertifications.data;
+  } catch (e) {
+    console.error(e);
+  }
+});
 ```
 
 ### <mark style="color:blue;">**STEP 03.**</mark> 인증 정보 활용하기
 
-조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.
+조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.\
+필요 시, 예제와 같이 고객 정보를 사용하여 연령 제한을 검사할 수 있습니다.
 
 - `name`: 이름
 - `gender`: 성별(지원예정)
@@ -92,31 +101,35 @@ app.use(bodyParser.json());
 - `unique_key`: CI 값과 동일. 온라인 주민번호와 같은 개인고유식별키
 - `phone :`휴대폰 번호
 
+```javascript title="Node.js"
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
+  try {
+    // 인증 토큰 발급 받기
+    /* ...중략... */
+    // imp_uid로 인증 정보 조회
+    /* ...중략... */
+    const certificationsInfo = getCertifications.data; // 조회한 인증 정보
+    const { name, birth } = certificationsInfo;
+    // 연령 제한 로직
+    if (new Date(birth).getFullYear() <= 1999) {
+      // 연령 만족
+    } else {
+      // 연령 미달
+    }
+  } catch (e) {
+    console.error(e);
+  }
+});
+```
+
 <Hint style="info">
-위의 정보 외에 내국인/외국인 여부 등은 따로 제공되지 않습니다. 카카오 인증의 경우, (주)카카오 정책상 CI값 제공이 어렵습니다. 고객 정보를 추출하여 활용하는 예제입니다. 필요 시, 예제와 같이 고객 정보를 사용하여 연령 제한을 검사할 수 있습니다.
+**\<KG이니시스 통합본인인증_특징(중요)\>**
+
+- 이니시스 통합인증서비스는 **내국인/외국인 여부 등은 따로 제공되지 않습니다**.
+- 이니시스 통합인증서비스는 **성별(gender) 정보는 리턴되지 않습니다**. (2024년 1분기 지원 예정)
+- 이니시스 통합인증서비스는 **DI 정보는 제공되지 않습니다**.
+- 이니시스 통합인증서비스는 **카카오 인증의 경우, CI값 제공 가능하나 KG이니시스와 계약시 별도 서류 작성 절차가 필요합니다**.
 
 </Hint>
-
-```javascript title="Node.js"
- // "/certifications"에 대한 POST 요청을 처리하는 controller
-  app.post("/certifications", async (request, response) => {
-    const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
-    try {
-      // 인증 토큰 발급 받기
-      /* ...중략... */
-      // imp_uid로 인증 정보 조회
-      /* ...중략... */
-      const certificationsInfo = getCertifications.data; // 조회한 인증 정보
-      const { name, birth } = certificationsInfo;
-      ...
-      // 연령 제한 로직
-      if (new Date(birth).getFullYear() <= 1999) {
-        // 연령 만족
-      } else {
-        // 연령 미달
-      }
-    } catch(e) {
-      console.error(e);
-    }
-  });
-```
