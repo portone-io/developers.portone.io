@@ -10,6 +10,7 @@ import MonacoEditor, {
   type ITextModel,
   commonEditorConfig,
 } from "./MonacoEditor";
+import type * as monaco from "monaco-editor";
 
 export type RequestPart = "path" | "query" | "body";
 export interface RequestJsonEditorProps {
@@ -18,6 +19,8 @@ export interface RequestJsonEditorProps {
   operation: Operation;
   onEditorInit?: (editor: IStandaloneCodeEditor) => void;
   onChange?: ((value: string) => void) | undefined;
+  openapiSchema: any;
+  requestObjectSchema: any;
 }
 export default function RequestJsonEditor({
   initialValue,
@@ -25,14 +28,19 @@ export default function RequestJsonEditor({
   operation,
   onEditorInit,
   onChange,
+  openapiSchema,
+  requestObjectSchema,
 }: RequestJsonEditorProps) {
   const { operationId } = operation;
   return (
     <MonacoEditor
       onChange={onChange}
       init={(monaco, domElement) => {
-        const uri = `inmemory://inmemory/${operationId}/${part}`;
+        const uri = `inmemory://operation/${operationId}/${part}`;
+        const schemaUri = `inmemory://operation/${operationId}/${part}/schema`;
         const model = getModel(initialValue, uri);
+        const { jsonDefaults } = monaco.languages.json;
+        registerSchema();
         const editor = monaco.editor.create(domElement, {
           ...commonEditorConfig,
           model,
@@ -46,23 +54,55 @@ export default function RequestJsonEditor({
           models.set(uri, model);
           return model;
         }
+        function registerSchema() {
+          if (schemas.has(schemaUri)) return;
+          schemas.set(schemaUri, {
+            uri: schemaUri,
+            fileMatch: [uri],
+            schema: requestObjectSchema,
+          });
+          const schemasArray = Array.from(schemas.values());
+          schemasArray.push({
+            uri: "inmemory://schema",
+            schema: openapiSchema,
+          });
+          (diagnosticsOptions as any).schemas = schemasArray;
+          jsonDefaults.setDiagnosticsOptions(diagnosticsOptions);
+        }
       }}
     />
   );
 }
 
+const diagnosticsOptions: monaco.languages.json.DiagnosticsOptions = {
+  validate: true,
+  allowComments: true,
+  trailingCommas: "ignore",
+  comments: "ignore",
+  schemas: [],
+};
+
+interface Schema {
+  uri: string;
+  fileMatch?: string[];
+  schema: {
+    type: "object";
+    properties: any[];
+  };
+}
+const schemas = new Map<string, Schema>();
 const models = new Map<string, ITextModel>();
 
 export function getReqParams(
   schema: any,
   operation: Operation,
-  part: RequestPart
+  part: RequestPart,
 ): Parameter[] {
   return part === "path"
     ? getPathParameters(operation)
     : part === "query"
-    ? getQueryParameters(operation)
-    : getBodyParameters(schema, operation);
+      ? getQueryParameters(operation)
+      : getBodyParameters(schema, operation);
 }
 
 export function getInitialJsonText(schema: any, params: Parameter[]): string {

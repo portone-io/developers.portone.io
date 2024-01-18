@@ -79,6 +79,8 @@ export default function Req({
                   initialValue={reqPathParams.initialJsonText}
                   operation={operation}
                   onChange={reqPathParams.updateJsonText}
+                  openapiSchema={schema}
+                  requestObjectSchema={reqPathParams.reqSchema}
                 />
               ),
             },
@@ -92,6 +94,8 @@ export default function Req({
                   initialValue={reqQueryParams.initialJsonText}
                   operation={operation}
                   onChange={reqQueryParams.updateJsonText}
+                  openapiSchema={schema}
+                  requestObjectSchema={reqQueryParams.reqSchema}
                 />
               ),
             },
@@ -105,6 +109,8 @@ export default function Req({
                   initialValue={reqBodyParams.initialJsonText}
                   operation={operation}
                   onChange={reqBodyParams.updateJsonText}
+                  openapiSchema={schema}
+                  requestObjectSchema={reqBodyParams.reqSchema}
                 />
               ),
             },
@@ -127,6 +133,7 @@ export default function Req({
 
 interface ReqParams {
   params: Parameter[];
+  reqSchema: { type: "object"; properties: any[] };
   initialJsonText: string;
   jsonTextSignal: Signal<string>;
   updateJsonText: (value: string) => void;
@@ -139,12 +146,22 @@ function useReqParams(
 ): ReqParams {
   return useMemo(() => {
     const params = getReqParams(schema, operation, part);
+    const reqSchema = {
+      type: "object",
+      properties: Object.fromEntries(
+        params.map(({ $ref, ...param }) => {
+          if (!$ref) return [param.name, param];
+          return [param.name, { ...param, $ref: `inmemory://schema${$ref}` }];
+        }),
+      ),
+    } as any;
     const initialJsonText = getInitialJsonText(schema, params);
     const jsonTextSignal = signal(initialJsonText);
     const updateJsonText = (value: string) => (jsonTextSignal.value = value);
     const parseJson = () => parseReqJson(jsonTextSignal.value, part);
     return {
       params,
+      reqSchema,
       initialJsonText,
       jsonTextSignal,
       updateJsonText,
