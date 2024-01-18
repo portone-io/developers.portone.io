@@ -154,7 +154,7 @@ function useReqParams(
           return [param.name, { ...param, $ref: `inmemory://schema${$ref}` }];
         }),
       ),
-    } as const;
+    } as any;
     const initialJsonText = getInitialJsonText(schema, params);
     const jsonTextSignal = signal(initialJsonText);
     const updateJsonText = (value: string) => (jsonTextSignal.value = value);
