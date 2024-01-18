@@ -148,10 +148,12 @@ function useReqParams(
     const params = getReqParams(schema, operation, part);
     const reqSchema = {
       type: "object",
-      properties: params.map(({ $ref, ...param }) => {
-        if (!$ref) return param;
-        return { ...param, $ref: `inmemory://schema${$ref}` };
-      }),
+      properties: Object.fromEntries(
+        params.map(({ $ref, ...param }) => {
+          if (!$ref) return [param.name, param];
+          return [param.name, { ...param, $ref: `inmemory://schema${$ref}` }];
+        }),
+      ),
     } as const;
     const initialJsonText = getInitialJsonText(schema, params);
     const jsonTextSignal = signal(initialJsonText);

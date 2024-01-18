@@ -10,6 +10,7 @@ import MonacoEditor, {
   type ITextModel,
   commonEditorConfig,
 } from "./MonacoEditor";
+import type * as monaco from "monaco-editor";
 
 export type RequestPart = "path" | "query" | "body";
 export interface RequestJsonEditorProps {
@@ -65,7 +66,7 @@ export default function RequestJsonEditor({
             uri: "inmemory://schema",
             schema: openapiSchema,
           });
-          diagnosticsOptions.schemas = schemasArray;
+          (diagnosticsOptions as any).schemas = schemasArray;
           jsonDefaults.setDiagnosticsOptions(diagnosticsOptions);
           console.log(diagnosticsOptions);
         }
@@ -74,8 +75,11 @@ export default function RequestJsonEditor({
   );
 }
 
-const diagnosticsOptions: { validate: boolean; schemas: Schema[] } = {
+const diagnosticsOptions: monaco.languages.json.DiagnosticsOptions = {
   validate: true,
+  allowComments: true,
+  trailingCommas: "ignore",
+  comments: "ignore",
   schemas: [],
 };
 

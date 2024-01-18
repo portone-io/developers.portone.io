@@ -6,7 +6,7 @@ export default function Card({ title, titleClass, ...props }: CardProps) {
   return (
     <div
       {...props}
-      class={`border-slate-2 flex flex-col overflow-hidden rounded-lg border ${
+      class={`border-slate-2 flex flex-col rounded-lg border ${
         props.class || props.className || ""
       }`}
     >

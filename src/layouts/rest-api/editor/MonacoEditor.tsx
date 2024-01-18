@@ -9,6 +9,7 @@ type IStandaloneEditorConstructionOptions = NonNullable<
   Parameters<editor["create"]>[1]
 >;
 
+const installWorker = once();
 const doCreateTheme = once();
 
 export interface MonacoEditorProps {
@@ -24,6 +25,20 @@ export default function MonacoEditor({ init, onChange }: MonacoEditorProps) {
       import("monaco-editor"),
       import("./misc/scrollFinished"),
     ]).then(([monaco, { default: scrollFinished }]) => {
+      installWorker(async () => {
+        const { default: editorWorker } = await import(
+          "monaco-editor/esm/vs/editor/editor.worker?worker"
+        );
+        const { default: jsonWorker } = await import(
+          "monaco-editor/esm/vs/language/json/json.worker?worker"
+        );
+        (globalThis as any).MonacoEnvironment = {
+          getWorker(_: any, label: string) {
+            if (label === "json") return new jsonWorker();
+            return new editorWorker();
+          },
+        };
+      });
       doCreateTheme(() => {
         monaco.editor.defineTheme("portone", {
           base: "vs",
