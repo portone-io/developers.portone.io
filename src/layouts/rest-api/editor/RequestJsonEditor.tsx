@@ -68,7 +68,6 @@ export default function RequestJsonEditor({
           });
           (diagnosticsOptions as any).schemas = schemasArray;
           jsonDefaults.setDiagnosticsOptions(diagnosticsOptions);
-          console.log(diagnosticsOptions);
         }
       }}
     />
