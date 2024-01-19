@@ -452,9 +452,9 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
               <a
                 class="underline-offset-4 hover:underline"
                 target="_blank"
-                href="https://ko.wikipedia.org/wiki/ISO_8601"
+                href="https://datatracker.ietf.org/doc/html/rfc3339#section-5.6"
               >
-                (ISO 8601)
+                (RFC 3339 date-time)
               </a>
             );
           default:
