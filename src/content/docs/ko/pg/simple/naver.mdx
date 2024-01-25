@@ -72,82 +72,72 @@ IMP.request_pay({
 
 **PG사 구분코드**
 
-**`naverpay`** 로 지정하면 됩니다.
+`naverpay` 로 지정하면 됩니다.
 
+\
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **주문번호**
 
 매번 고유하게 채번되어야 합니다.
 
+\
 **`amount`** <mark style="color:purple;">**integer**</mark>
 
 **결제금액**
 
 <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
 
-**`naverUseCfm`** <mark style="color:green;">**`string`**</mark>
+\
+**`naverUseCfm`** <mark style="color:green;">**string**</mark>
 
-**`이용 완료일`** (`yyyyMMdd` 형식의 문자열로 **결제 당일 또는 미래의 일자**여야 함)
+**이용 완료일** (`yyyyMMdd` 형식의 문자열로 **결제 당일 또는 미래의 일자**여야 함)
 
 - 상품 유형에 따라 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다
 
-**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+\
+**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`제품명`**
+**제품명**
 
-네이버페이 내부적으로 <mark style="color:red;">**`외 2개`**</mark> 의 표현이 자동생성되므로 **"`xxxx 외 2개"`** 대신`naverProducts[0].name`(첫번째 상품명)으로 설정하길 권장합니다.
+네이버페이 내부적으로 <mark style="color:red;">`외 2개`</mark> 의 표현이 자동생성되므로 `xxxx 외 2개` 대신`naverProducts[0].name`(첫번째 상품명)으로 설정하길 권장합니다.
 
-**`naverPopupMode`** <mark style="color:orange;">**`boolen`**</mark>
+\
+**`naverPopupMode`** <mark style="color:orange;">**boolen**</mark>
 
-**`결제창 팝업여부`**
+**결제창 팝업여부**
 
 `false`인 경우 페이지 리디렉션 방식으로 진행되며 `m_redirect_url`을 설정해야 합니다
 
-**`m_redirect_url`** <mark style="color:green;">**`string`**</mark>
+\
+**`m_redirect_url`** <mark style="color:green;">**string**</mark>
 
-**`리다이렉트 URL`**
+**리다이렉트 URL**
 
-리디렉션 방식으로 진행(`naverPopupMode`: **false**)할 경우 결제 완료 후 리디렉션 될 URL
+리디렉션 방식으로 진행(`naverPopupMode: false`)할 경우 결제 완료 후 리디렉션 될 URL
 
-**`naverPurchaserName`** <mark style="color:green;">**`string`**</mark>
+\
+**`naverPurchaserName`** <mark style="color:green;">**string**</mark>
 
-**`구매자 이름`**
-
-결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 가맹점만 필수 입력**</mark>합니다.
-
-**`naverPurchaserBirthday`** <mark style="color:green;">**`string`**</mark>
-
-**`구매자 생년월일(yyyyMMdd)`**
+**구매자 이름**
 
 결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 가맹점만 필수 입력**</mark>합니다.
 
 \
-**`naverProducts`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**`array`**</mark>
+**`naverPurchaserBirthday`** <mark style="color:green;">**string**</mark>
 
-**`상품정보`**
+**구매자 생년월일(yyyyMMdd)**
+
+결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 가맹점만 필수 입력**</mark>합니다.
+
+\
+**`naverProducts`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**array**</mark>
+
+**상품정보**
 
 네이버페이 매뉴얼의 **`productItems`** 파라미터와 동일합니다.
 
 (해당 파라미터 누락시 네이버페이 검수를 통과할 수 없습니다.)
-
-**`naverChainId`** <mark style="color:green;">**`string`**</mark>
-
-**네이버페이 그룹형 가맹점용 chain id**
-
-- 같은 파트너 ID로 두개 이상의 서비스를 운영하는 그룹형 가맹점의 경우에만 네이버페이로부터 전달받은 값을 필수 입력합니다.
-- 비 대상 가맹점은 입력하지 않습니다.
-
-**`naverCultureBenefit`** <mark style="color:orange;">**`boolen`**</mark>
-**`네이버페이 도서/공연 소득공제`**
-도서/공연 소득공제가 필요한 경우 해당 파라미터를 설정합니다.
-
-**`naverMerchantUserKey`** <mark style="color:green;">**`string`**</mark>
-
-**`가맹점의 사용자 키`** (개인 아이디와 같은 개인정보 데이터는 제외하여 전달해야 합니다)
-
-- 네이버페이 기준 <mark style="color:red;">**고위험군 제품을 판매하는 가맹점의 경우 필수**</mark> 입력합니다.
-- 비 대상 가맹점은 입력하지 않습니다.
 
 > `naverProducts`는 다음 6개의 속성으로 하나의 상품 정보를 표현하는 객체의 배열입니다.
 >
@@ -160,6 +150,30 @@ IMP.request_pay({
 >   - 가맹점의 업종이 통신판매중개업에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 대상 가맹점만 필수 입력합니다.
 >   - 비대상 가맹점은 입력하지 않습니다.
 > - **`payReferrer`** (선택) : 네이버 플랫폼의 타 서비스와 제휴계약 후 유입분석을 진행하는 경우에만 입력 [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product_ref)
+
+\
+**`naverChainId`** <mark style="color:green;">**string**</mark>
+
+**네이버페이 그룹형 가맹점용 chain id**
+
+- 같은 파트너 ID로 두개 이상의 서비스를 운영하는 그룹형 가맹점의 경우에만 네이버페이로부터 전달받은 값을 필수 입력합니다.
+- 비 대상 가맹점은 입력하지 않습니다.
+
+\
+**`naverCultureBenefit`** <mark style="color:orange;">**boolen**</mark>
+
+**네이버페이 도서/공연 소득공제**
+
+도서/공연 소득공제가 필요한 경우 해당 파라미터를 설정합니다.
+
+\
+**`naverMerchantUserKey`** <mark style="color:green;">**string**</mark>
+
+**가맹점의 사용자 키** 
+
+- 개인 아이디와 같은 개인정보 데이터는 제외하여 전달해야 합니다.
+- 네이버페이 기준 <mark style="color:red;">**고위험군 제품을 판매하는 가맹점의 경우 필수**</mark> 입력합니다.
+- 비 대상 가맹점은 입력하지 않습니다.
 
 </Tab>
 
@@ -196,21 +210,24 @@ IMP.request_pay(
 
 **PG사 구분코드**
 
-**`naverpay`** 로 지정하면 됩니다.
+`naverpay` 로 지정하면 됩니다.
 
-**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+\
+**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`빌링키`**
+**빌링키**
 
 - 정기/반복 결제 등록을 위해서 지정해야 합니다. 미 지정 시, 일반결제로 진행됩니다.
 - 등록 후 해당 키를 사용해 반복결제 승인을 요청할 수 있습니다.
 
+\
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **주문번호**
 
 매번 고유하게 채번되어야 합니다.
 
+\
 **`amount`** <mark style="color:purple;">**integer**</mark>
 
 **결제금액**
@@ -219,28 +236,32 @@ IMP.request_pay(
 
 **정기/반복 결제 등록과정에서는 **<mark style="color:red;">**결제승인이 이뤄지지 않습니다**</mark>**.**
 
-**`naverProductCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+\
+**`naverProductCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`가맹점의 상품코드`**
+**가맹점의 상품코드**
 
 - 동일한 고객이 동일상품에 대해 중복으로 반복결제 등록하는 것을 방지하기 위한 파라미터입니다.
 - 기본값은 random으로 자동 생성되어 중복결제가 가능하므로 값을 지정해 주세요.
 
-**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+\
+**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`제품명`**
+**제품명**
 
 네이버페이 내부적으로 <mark style="color:red;">**`외 2개`**</mark> 의 표현이 자동생성되므로 **"`xxxx 외 2개"`** 대신`naverProducts[0].name`(첫번째 상품명)으로 설정하길 권장합니다.
 
-**`naverPopupMode`** <mark style="color:orange;">**`boolen`**</mark>
+\
+**`naverPopupMode`** <mark style="color:orange;">**boolen**</mark>
 
-**`결제창 팝업여부`**
+**결제창 팝업여부**
 
 `false`인 경우 페이지 리디렉션 방식으로 진행되며 `m_redirect_url`을 설정해야 합니다
 
-**`m_redirect_url`** <mark style="color:green;">**`string`**</mark>
+\
+**`m_redirect_url`** <mark style="color:green;">**string**</mark>
 
-**`리다이렉트 URL`**
+**리다이렉트 URL**
 
 리디렉션 방식으로 진행(`naverPopupMode`: **false**)할 경우 결제 완료 후 리디렉션 될 URL
 
