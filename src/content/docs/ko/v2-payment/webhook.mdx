@@ -1,52 +1,48 @@
 ---
 title: 웹훅 연동하기
-description: 웹훅 연동을 통해 정확한 결제 결과를 처리할 수 있습니다.
+description: 웹훅 알림을 받아 결제 정보를 동기화할 수 있습니다.
 ---
 
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
-포트원 서버에 저장된 결제 정보를 고객사 서버에 동기화하고 네트워크 불안정성을 보완하는 방법을 설명합니다.
-
 ## 웹훅(Webhook) 이란?
 
-특정 이벤트가 발생하였을 때 타 서비스나 응용프로그램으로 알림을 보내는 기능입니다.
+결제 완료 등 이벤트가 발생했을 때 고객사의 서버에 HTTP 요청으로 알려 드리는 시스템입니다.
 
-웹훅 제공자는 특정 이벤트가 발생하면 `HTTP POST` 요청을 생성하여 등록된 callback URL로 이벤트 정보을 보냅니다. 주기적으로 데이터를 폴링(polling)하지 않고 원하는 이벤트에 대한 정보만 수신할 수 있어 웹훅은 리소스나 통신측면에서 효율적입니다.
+이벤트가 발생하면 등록된 웹훅 URL로 포트원에서 HTTP POST 요청을 보냅니다. 이 요청을 받았을 때 결제 정보를 확인 후 동기화할 수 있도록 구현하시면 됩니다.
 
-## **웹훅 연동은 필수인가요?**
+## **웹훅 연동이 꼭 필요한가요?**
 
-웹훅 연동은 필수적입니다. Wi-Fi 연결 끊김, 브라우저 자동 새로고침 등의 이유로 클라이언트에서 결제 완료에 대한 응답을 받지 못하는 경우가 발생할 수 있습니다. 이런 경우를 대비해서 포트원 서버에서 고객사 서버로 웹훅 이벤트를 발송하여 누락없이 결제 정보를 동기화할 수 있도록 합니다.
+안정적인 결제 처리를 위해 웹훅 연동을 강력히 권장합니다. 인터넷 연결 끊김, 브라우저 자동 새로고침 등의 이유로 브라우저에서 결제 완료 요청이 오지 않는 경우에 웹훅을 받으면 누락 없이 결제 정보를 동기화할 수 있습니다.
 
 ## 웹훅 발생 이벤트
 
 포트원 웹훅은 다음과 같은 이벤트에 발생됩니다.
 
-* **결제(예약 결제 포함)가 승인**되었을 때(모든 결제 수단) - (status : `Paid`)
+* **결제(예약 결제 포함)가 승인**되었을 때 (모든 결제 수단) - (status : `Paid`)
 * **가상계좌가 발급**되었을 때 - (status : `VirtualAccountIssued`)
 * **가상계좌에 결제 금액이 입금**되었을 때 - (status : `Paid`)
 * **결제가 부분 취소**되었을 때 - (status : `PartialCancelled`)
 * **결제가 완전 취소**되었을 때 - (status : `Cancelled`)
-* (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때 - (status: `CancelPending`)
 * **결제(예약 결제 포함)가 실패**했을 때 - (status: `Failed`)
 
-## 웹훅 수신 설정
+## 웹훅 URL 설정
 
-웹훅수신을 위한 URL 설정은 두가지 형태로 지원됩니다.
+웹훅 URL을 설정하면 포트원에서 웹훅을 보냅니다. URL은 관리자 콘솔에서 일괄적으로 설정하거나, 결제시에 파라미터로 지정할 수 있습니다.
 
-### 1. 관리자콘솔 설정
+### 1. 관리자 콘솔 설정
 
 <figure><img src="https://openapi-documentation-poc.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fv2-user-guide-admin-console-webhook.fb35a882.png&#x26;w=3840&#x26;q=100" alt=""/><figcaption></figcaption></figure>
 
-웹훅을 통해 결제 정보를 통보받을 URL을 설정하려면 포트원 관리자 콘솔 내 [**결제연동->실연동관리**](https://admin.portone.io/integration?tab=production) 탭을 선택합니다. `Endpoint URL` 항목에 웹훅으로 전송될 데이터를 수신할 URL주소를 기재합니다.
+웹훅을 통해 결제 정보를 통보받을 URL을 설정하려면 포트원 관리자 콘솔 내 [**결제 연동->결제알림(Webhook) 관리**](https://admin.portone.io/integration?tab=webhook) 탭을 선택합니다. `Endpoint URL`에 웹훅으로 전송될 데이터를 수신할 URL을 기재합니다.
 
 **Content-Type** 은 `application/json` 또는 `application/x-www-form-urlencoded`으로 지정할 수 있습니다.
 
 **호출 테스트** 버튼을 통해 올바른 URL과 Content-Type을 지정했는지 테스트할 수 있습니다.
 
-### 2. SDK 파라미터 설정
+### 2. 결제 파라미터 설정
 
 포트원 SDK의 `PortOne.requestPayment()` 함수 파라미터 중 `noticeUrls`를 통해 관리자콘솔에서 설정한 웹훅 수신 URL을 덮어쓸 수 있습니다.
 
@@ -57,17 +53,15 @@ PortOne.requestPayment({
 });
 ```
 
-웹훅 `POST` 요청의 본문은 다음의 정보를 포함합니다. 고객사 서버는 아래 정보를 수신하고 포트원 서버에서 결제 정보를 조회하여 검증 및 저장할 수 있습니다.
+## 요청 처리
 
-* `tx_id`**: 결제 트랜잭션 ID**
-* `payment_id`**: 주문 ID**
-* **`status`: 결제 상태**
+웹훅 POST 요청의 본문은 다음의 정보를 포함합니다. 고객사 서버는 아래 정보를 수신하고 포트원 서버에서 결제 정보를 조회하여 검증 및 저장할 수 있습니다.
 
-<Tabs>
-<Tab title="Express.js">
-```javascript
-// bodyParser 등을 통해 body의 JSON 데이터를 파싱할 수 있는지 확인해주세요.
-// 관리자콘솔에서 설정한 Content-Type에 따라 다른 파서를 적용해야 할 수 있습니다.
+* `payment_id`**: 주문 ID
+* `status`: 결제 상태
+
+```javascript title="Express"
+// Content-Type을 application/json으로 설정한 경우
 app.use(bodyParser.json());
 // POST 요청을 받는 /portone-webhook
 app.post("/portone-webhook", async (req, res) => {
@@ -75,24 +69,23 @@ app.post("/portone-webhook", async (req, res) => {
     const { payment_id: paymentId } = req.body;
 
     // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
-    const signinResponse = await axios({
-      url: "https://api.portone.io/login/api-secret",
-      method: "post",
+    const signinResponse = await fetch("https://api.portone.io/login/api-secret", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       data: {
         apiSecret: PORTONE_API_SECRET, // 포트원 API Secret
       },
     });
-    const { accessToken } = signinResponse.data;
+    if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
+    const { accessToken } = await signinResponse.json();
 
     // 2. 포트원 결제내역 단건조회 API 호출
-    const paymentResponse = await axios({
-      url: `https://api.portone.io/payments/${encodeURIComponent(paymentId)}`,
-      method: "get",
+    const paymentResponse = await fetch(`https://api.portone.io/payments/${encodeURIComponent(paymentId)}`, {
       // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
       headers: { "Authorization": "Bearer " + accessToken },
     });
-    const { id, status, amount, method } = paymentResponse.data;
+    if (!paymentResponse.ok) throw new Error(`signinResponse: ${paymentResponse.statusText}`);
+    const { id, status, amount, method } = await paymentResponse.json();
 
     // 3. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
     const order = await OrderService.findById(id);
@@ -118,30 +111,25 @@ app.post("/portone-webhook", async (req, res) => {
 });
 ```
 
-</Tab>
-</Tabs>
-
 ### 3. 웹훅(Webhook) 요청 검증하기
 
-웹훅 수신주소는 공개된 URL이기 때문에 요청자 클라이언트(client IP)가 포트원(PortOne IP)인지 반드시 확인해야 합니다. 포트원 웹훅은 다음의 고정된 IP로부터 요청이 생성됩니다.
+웹훅 수신주소는 공개된 URL이기 때문에 요청자 IP가 포트원의 IP인지 반드시 확인해야 합니다. 포트원 웹훅은 다음의 고정된 IP로부터 요청이 생성됩니다.
 
 > - <mark style="color:red;">**52.78.5.241**</mark>
 
 
 <Hint style="info">
-**서버가 결제 정보를 수신 하는 순서는 보장되지 않습니다**
+**웹훅 처리 전에 브라우저 결제 완료 처리가 진행되는 경우**
 
-기본적으로 포트원 서버에서 웹훅이 호출되면 고객사 응답을 기다리지 않고 클라이언트에 302 redirect 응답을 보내기 때문에 결과 도달에 대한 순서를 보장하지 않습니다. 다만 고객사 요청이 있을 경우 webhook 호출 이후에 클라이언트에 302 redirect 또는 callback 응답을 보내어 순서를 보장 해드리고 있습니다. 웹훅 우선순위 요청은 [support@portone.io](mailto:support@portone.io) 로 고객사 식별코드를 기재하여 요청해 주시면 됩니다.
+기본적으로 포트원 서버는 웹훅을 호출한 뒤 고객사 응답을 기다리지 않고 브라우저에 302 redirect 응답을 보내기 때문에 결과 도달에 대한 순서를 보장하지 않습니다. 다만 고객사 요청이 있을 경우 webhook 호출 이후에 브라우저에 302 redirect 또는 callback 응답을 보내어 순서를 보장해 드리고 있습니다. 웹훅 우선순위 요청은 [support@portone.io](mailto:support@portone.io) 로 고객사 식별코드를 기재하여 요청해 주시면 됩니다.
 
 </Hint>
 
 <Hint style="info">
 **웹훅 재전송 정책**
 
-웹훅 재전송에는 exponential backoff를 적용하고 있습니다. 최대 5회까지 재전송되며, 0 -> 1 → 4 -> 16 -> 256분 간격으로 웹훅 발송을 재시도합니다.
+네트워크 문제나 고객사 오류 등으로 웹훅이 실패할 경우 최대 5회까지 웹훅을 재전송합니다.
 
-backoff를 적용하면 갑작스럽게 고객사 서버로 향하는 트래픽이 증가하는 것을 어느정도 막을 수 있지만 결제 요청이 한 번에 몰리게 된다면 웹훅 재시도 또한 같은 시간 간격으로 이루어질 것이기 때문에 트래픽을 효과적으로 분산하는 데에 한계가 있습니다.
-
-때문에 포트원의 웹훅은 backoff와 더불어 jittering을 적용하고 있습니다. jittering이란 랜덤하게 지연 시간을 변형시키는 방법으로, backoff만을 적용했을 때보다 더 균형있게 트래픽을 분산시킬 수 있습니다.
+재전송 시간은 exponential backoff를 적용하여 0 -> 1 → 4 -> 16 -> 256분을 기다립니다. 이에 더하여 무작위로 지연 시간을 변형하는 jittering이 적용됩니다.
 
 </Hint>
