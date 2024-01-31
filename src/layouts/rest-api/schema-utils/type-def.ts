@@ -23,6 +23,7 @@ export interface TypeDef {
   "x-portone-summary"?: string | undefined;
   "x-portone-description"?: string | undefined;
   "x-portone-enum"?: { [enumValue: string]: TypeDef };
+  "x-portone-discriminator"?: Record<string, TypeDef>;
   "x-portone-status-code"?: number;
 }
 
@@ -174,6 +175,7 @@ export function crawlRefs(
     },
     visitResponseRef(ref) {
       const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, ref));
+      result.add(ref);
       rootPropertyRefsCrawler.visitTypeDef(typeDef);
     },
   };

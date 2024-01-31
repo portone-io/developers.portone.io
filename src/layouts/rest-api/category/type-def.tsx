@@ -197,19 +197,32 @@ function UnionDoc({
           basepath={basepath}
           name={discriminatorProperty.name}
           required={true}
+          isDiscriminator
           property={discriminatorProperty}
           bgColor={bgColor}
           nestedBgColor={nestedBgColor}
         >
-          <select
-            class="border-slate-2 w-full text-ellipsis whitespace-nowrap rounded border px-2 py-1"
-            value={typeSignal.value}
-            onChange={(e) => (typeSignal.value = e.currentTarget.value)}
-          >
-            {types.map((type) => (
-              <option value={type}>{type}</option>
-            ))}
-          </select>
+          <div class="flex flex-wrap items-center gap-y-2 whitespace-pre-wrap">
+            필드의 값이{" "}
+            <select
+              class="border-slate-2 w-fit text-ellipsis whitespace-nowrap rounded border px-2 py-1"
+              value={typeSignal.value}
+              onChange={(e) => {
+                typeSignal.value = e.currentTarget.value;
+              }}
+            >
+              {types.map((type) => (
+                <option value={type}>
+                  {type}
+                  {typeDef["x-portone-discriminator"]?.[type]?.title &&
+                    ` (${typeDef["x-portone-discriminator"][type]?.title})`}
+                </option>
+              ))}
+            </select>{" "}
+            일 때 타입은{" "}
+            <TypeReprDoc basepath={basepath} def={mapping[typeSignal.value]!} />{" "}
+            입니다.
+          </div>
         </PropertyDoc>
       </div>
       {otherProperties.map((property) => (
@@ -373,6 +386,7 @@ interface PropertyDocProps {
   basepath: string;
   name: string;
   required?: boolean | undefined;
+  isDiscriminator?: boolean | undefined;
   property: Property;
   bgColor: string;
   nestedBgColor?: string | undefined;
@@ -384,6 +398,7 @@ function PropertyDoc({
   basepath,
   name,
   required,
+  isDiscriminator = false,
   property,
   bgColor,
   nestedBgColor,
@@ -408,7 +423,8 @@ function PropertyDoc({
           <div class="mr-4 inline-block font-mono font-bold leading-tight">
             <span>{name}</span>
             <span class="text-slate-4 -mr-[4px]">{!required && "?"}: </span>
-            <TypeReprDoc basepath={basepath} def={property} />
+            <TypeReprDoc basepath={basepath} def={property} />{" "}
+            {isDiscriminator && <span class="inline-block">(Union Tag)</span>}
           </div>
           <div class="text-slate-5 inline-block text-xs">
             {title && <span>{title}</span>}

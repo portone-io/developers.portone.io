@@ -32,7 +32,7 @@ export default function EndpointDoc({
     operation["x-portone-description"] || operation.description;
   return (
     <div class="flex flex-col">
-      <div class="mb-4 grid lg:grid-cols-2">
+      <div class="mb-4 grid items-center gap-y-4 lg:grid-cols-2">
         <div class="flex items-center lg:order-last lg:justify-end">
           <MethodLine method={method} path={path} />
         </div>
