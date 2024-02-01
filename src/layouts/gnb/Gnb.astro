@@ -9,6 +9,7 @@ interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
+const url = Astro.url;
 
 // To bypass the astro bug, all Korean characters were escaped.
 const ko = {
@@ -53,7 +54,9 @@ const t = lang === "ko" ? ko : en;
           <span class="break-keep">{t["developers"]}</span>
         </div>
       </a>
-      <VersionSwitch className="mx-6 md:ml-[70px]" client:load />
+      <div class="mx-6 md:ml-[70px]">
+        <VersionSwitch url={url.toString()} client:load />
+      </div>
       <div class="hidden h-full items-center gap-6 md:flex">
         <Dropdown
           client:visible
