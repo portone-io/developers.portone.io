@@ -12,6 +12,9 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
+import image1 from "./_assets/paypal/paypal-v2-spb-flow.png";
+import image2 from "./_assets/paypal/paypal-v2-rt-flow.png";
+
 ### 페이팔 PG 설정하기
 
 - [**페이팔 설정**](../../ready/2-pg/payment-gateway/paypal-spb) 페이지의 내용을 참고하여 PG 설정을 진행합니다. V2 결제 모듈을 사용하시려면 (신) 페이팔로 연동하셔야 합니다.
@@ -21,8 +24,12 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 - **일반 결제**
   - 페이팔은 카드나 계좌 등의 결제수단을 제공하지 않고, 오직 페이팔을 통해 결제가 가능합니다.
   - `uiType`파라미터를 `PAYPAL_SPB`로 설정해야 합니다.
+  - `channelKey` 파라미터가 필수 입니다.
+  - `payMethod`, `windowType` 파라미터가 필요하지 않습니다. 만일 `windowType` 파라미터 지정 시, PC, 모바일 모두 `UI`로 지정하셔야 합니다.
 - **결제창 빌링키 발급**
   - `uiType`파라미터를 `PAYPAL_RT`로 설정해야 합니다.
+  - `channelKey` 파라미터가 필수 입니다.
+  - `billingKeyMethod`, `windowType` 파라미터가 필요하지 않습니다. 만일 `windowType` 파라미터 지정 시, PC, 모바일 모두 `UI`로 지정하셔야 합니다.
 - **빌링키 정기 결제, 단건 결제**
 - **빌링키 삭제**
 
@@ -39,10 +46,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 따라서 다른 PG사와 결제 플로우가 상이하기 때문에 고객사는 **체크아웃 페이지가 렌더링 되는 시점에** `PortOne.requestPayment` 함수 대신 **`PortOne.loadPaymentUI`라는 별도의 함수를 호출해 페이팔 일반결제 버튼을 렌더링 해야**합니다.
 
-<Figure
-  src="/gitbook-assets/ko/paypal-v2-spb-flow.png"
-  caption="페이팔 정기결제 빌링키 발급 연동 플로우"
-/>
+<Figure src={image1} caption="페이팔 일반결제 연동 플로우" />
 
 ### 결제 요청 데이터 업데이트
 
@@ -106,10 +110,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 구매자 입력으로 인해 **빌링키 발급 요청 데이터가 변경될때 `PortOne.updateLoadIssueBillingKeyUIRequest`함수를 호출**하시면 구매자가 페이팔 정기결제 버튼을 누를때 최종적으로 변경 된 빌링키 발급 요청 데이터로 페이팔 빌링키 발급 창이 호출됩니다.
 
-<Figure
-  src="/gitbook-assets/ko/paypal-v2-rt-flow.png"
-  caption="페이팔 정기결제 빌링키 발급 연동 플로우"
-/>
+<Figure src={image2} caption="페이팔 정기결제 빌링키 발급 연동 플로우" />
 
 <Tabs>
   <Tab title="SDK 빌링키 발급 요청">
@@ -861,6 +862,13 @@ purchase_units\[]에 입력 된 배송 정보는 기본적으로 결제창에 �
 #### `bypass.paypal_v2.payer.tax_info`
 
 구매자의 세금 정보로 브라질(에서 접속한 또는 브라질 계정으로 로그인 한) 구매자에 한 해 필수 입력입니다.
+
+```tsx
+"tax_info": {
+  "tax_id": "examplestring",
+  "tax_id_type": "BR_CPF"
+}
+```
 
 #### `bypass.paypal_v2.payer.address`
 
