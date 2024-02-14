@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from "astro:content";
+import PostListItem from "./PostListItem.astro";
+
+interface Props {
+  entries: CollectionEntry<"blog">[];
+}
+
+const { entries } = Astro.props;
+---
+
+{
+  entries.length > 0 ? (
+    <ul class="mx-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-6 text-left">
+      {entries.map((entry) => (
+        <PostListItem entry={entry} />
+      ))}
+    </ul>
+  ) : (
+    <div>게시글이 없습니다.</div>
+  )
+}

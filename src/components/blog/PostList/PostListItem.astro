@@ -1,0 +1,86 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import { P, match } from "ts-pattern";
+import names from "~/content/blog/_names.yaml";
+import ProfileImage from "~/components/blog/ProfileImage.astro";
+
+interface Props {
+  entry: CollectionEntry<"blog">;
+}
+
+const {
+  entry: { slug, data },
+} = Astro.props;
+
+const { author } = data;
+const name = names[author] || author;
+const thumbnailProps = match(data.thumbnail)
+  .with(P.string, (thumbnail) => ({
+    src: thumbnail,
+    width: 600,
+    height: 400,
+  }))
+  .otherwise((thumbnail) => ({ src: thumbnail }));
+---
+
+<li class="flex h-fit flex-col gap-4">
+  <div class="aspect-6/4">
+    <div
+      class="grid h-full w-full grid-cols-1 grid-rows-1 overflow-hidden rounded-md"
+    >
+      <a
+        href={`/blog/posts/${slug}`}
+        class="col-start-1 col-end-2 row-start-1 row-end-2 h-full w-full"
+      >
+        <Image
+          {...thumbnailProps}
+          alt={`Thumbnail image of ${data.title}`}
+          class="bg-slate-2 h-full w-full object-cover text-transparent"
+        />
+      </a>
+      <div
+        class="col-start-1 col-end-2 row-start-1 row-end-2 m-2.5 flex self-end justify-self-start"
+      >
+        <ProfileImage>
+          <Image
+            src={`https://github.com/${author}.png`}
+            alt={`Avatar image of ${name}`}
+            width={48}
+            height={48}
+            class="bg-slate-2 rounded-full"
+          />
+        </ProfileImage>
+      </div>
+      <ul
+        class="col-start-1 col-end-2 row-start-1 row-end-2 m-2.5 flex gap-1.5 self-start justify-self-start"
+      >
+        {
+          data.tags.map((tag) => (
+            <a href={`/blog/tags/${encodeURIComponent(tag)}`}>
+              <li class="rounded-3px bg-#11182780 px-2 py-1 text-xs text-slate-50">
+                {tag}
+              </li>
+            </a>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+  <a
+    href={`/blog/posts/${slug}`}
+    class="flex h-full flex-col justify-between gap-2"
+  >
+    <span class="text-slate-7 text-2xl font-semibold">
+      {data.title}
+      {
+        data.draft && (
+          <span class="text-slate-5 text-lg font-normal leading-[1.4]">
+            (Draft)
+          </span>
+        )
+      }
+    </span>
+    <span>{data.description}</span>
+  </a>
+</li>
