@@ -23,6 +23,8 @@ const navMap = {
     ]),
   ),
 };
+
+const pathname = Astro.url.pathname.replace(/\/$/, "");
 ---
 
 <LayoutKo>
@@ -33,7 +35,7 @@ const navMap = {
       </h1>
       <NavigationMenu
         client:visible
-        activeTag={navMap[Astro.url.pathname as keyof typeof navMap]}
+        activeTag={navMap[pathname as keyof typeof navMap]}
         class="lt-lg:ml-auto"
       >
         <ul
@@ -43,17 +45,17 @@ const navMap = {
           )}
         >
           {
-            Object.entries(navMap).map(([pathname, tag]) => (
+            Object.entries(navMap).map(([path, tag]) => (
               <li
                 class={clsx(
                   "text-1.125rem hover:text-slate-9 transition-colors duration-200",
                   "lt-lg:(text-slate-5)",
-                  Astro.url.pathname === pathname
+                  pathname === path
                     ? "lg:(text-slate-9 font-semibold)"
                     : "lg:text-slate-4",
                 )}
               >
-                <a href={pathname} class="block w-full">
+                <a href={path} class="block w-full">
                   {tag}
                 </a>
               </li>
