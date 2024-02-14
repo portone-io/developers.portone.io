@@ -1,0 +1,217 @@
+---
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { format } from "date-fns";
+import LayoutKo from "~/layouts/LayoutKo.astro";
+import authors from "~/content/blog/_authors.yaml";
+import * as prose from "~/components/blog/prose";
+import ProfileImage from "~/components/blog/ProfileImage.astro";
+import TableOfContents, {
+  itemsFromHeadings,
+} from "~/components/TableOfContents";
+import PostList from "~/components/blog/PostList/PostList.astro";
+import TagList from "~/components/blog/TagList.astro";
+import { P, match } from "ts-pattern";
+// import NavigationMenu from "~/components/blog/NavigationMenu";
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection("blog");
+  return blogEntries.map((entry) => {
+    return {
+      params: { slug: entry.slug },
+      props: { entry, slug: entry.slug },
+    };
+  });
+}
+
+const entriesPromise = getCollection("blog").then((entries) =>
+  entries.sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
+);
+
+const { entry } = Astro.props;
+const { title, description, author: authorId } = entry.data;
+const { Content, headings } = await entry.render();
+
+const entries = await entriesPromise;
+
+const author = authors[authorId];
+---
+
+<LayoutKo title={`${title} - PortOne 기술블로그`} description={description}>
+  <div class="mx-auto max-w-[1150px]">
+    <!--
+    <div
+      class="<lg:max-w-[800px] mx-auto my-4 flex items-center justify-between px-4 md:px-6"
+    >
+      <a href="/blog" class="text-base font-medium text-portone md:text-sm">
+        <i class="i-ic-baseline-keyboard-backspace inline-block"></i>
+        Posts
+      </a>
+      <NavigationMenu client:visible activeTag="전체보기" class="md:hidden" />
+    </div>
+    -->
+    <article
+      class="text-slate-7 <lg:mx-auto flex w-full flex-col gap-6 md:my-4"
+    >
+      <div
+        class="mx-auto flex w-full max-w-[800px] flex-col gap-3 px-4 md:px-6 lg:max-w-none"
+      >
+        <h1 class="text-balance break-keep text-3xl font-bold leading-[1.4]">
+          {title}
+        </h1>
+        <div class="flex items-center gap-3">
+          {
+            author && (
+              <dl class="<md:py-2 flex shrink-0 items-center gap-4">
+                <div class="flex justify-evenly gap-3 whitespace-nowrap">
+                  <dt class="text-slate-8 text-lg font-semibold">
+                    {author.name}
+                  </dt>
+                  <dd class="text-slate-5 text-lg">{author.role}</dd>
+                </div>
+              </dl>
+            )
+          }
+          <div class="h-16px w-1px bg-slate-3"></div>
+          <div class="text-slate-4 text-lg">
+            {format(entry.data.date, "MMM d, yyyy")}
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-between gap-4">
+        <div
+          class="mx-auto flex min-w-0 max-w-[800px] flex-col gap-3 px-4 md:px-6"
+        >
+          <div class="body text-slate-7 break-keep">
+            <Content components={prose} />
+            <style>
+              article .body :global(:is(ol, ul)) {
+                margin-top: 32px;
+                margin-bottom: 32px;
+              }
+
+              article .body :global(ol) > :global(li:has(:is(ol, ul))) {
+                margin-top: 10px;
+                margin-bottom: 10px;
+              }
+
+              article .body :global(:is(ol, ul)) :global(:is(ol, ul)) {
+                margin-top: 10px;
+                margin-bottom: 10px;
+              }
+
+              article .body :global(:is(pre.shiki, figure)) {
+                margin: 40px 0;
+              }
+            </style>
+          </div>
+          <div class="my-6">
+            <TagList tags={entry.data.tags} />
+          </div>
+          <hr />
+          {
+            author && (
+              <div class="flex gap-5">
+                <div class="flex-shrink-0">
+                  <ProfileImage>
+                    <Image
+                      src={`https://github.com/${authorId}.png`}
+                      alt={`Avatar image of ${author.name}`}
+                      width={64}
+                      height={64}
+                      class="bg-slate-2 h-16 w-16 rounded-full"
+                    />
+                  </ProfileImage>
+                </div>
+                <div class="gap-4.5 flex flex-col">
+                  <div class="flex items-center gap-3">
+                    <div class="text-slate-7 text-lg font-medium">
+                      {author.name}
+                    </div>
+                    <div class="text-slate-4 text-base font-medium">
+                      {author.role}
+                    </div>
+                  </div>
+                  <p>{author.bio}</p>
+                  {(author.contacts?.length ?? 0) > 0 && (
+                    <ul class=" m-0 flex list-none flex-row gap-6 p-0 text-2xl">
+                      {author.contacts?.map((contact) => (
+                        <li class="text-slate-4 hover:text-slate-5 transition-colors">
+                          {match(contact)
+                            .with({ github: P.string }, ({ github }) => (
+                              <a
+                                href={github}
+                                aria-label={`GitHub account of ${author.name}`}
+                                class="i-simple-icons-github inline-block"
+                              />
+                            ))
+                            .with({ twitter: P.string }, ({ twitter }) => (
+                              <a
+                                href={twitter}
+                                aria-label={`Twitter account of ${author.name}`}
+                                class="i-simple-icons-x inline-block"
+                              />
+                            ))
+                            .with({ facebook: P.string }, ({ facebook }) => (
+                              <a
+                                href={facebook}
+                                aria-label={`Facebook page of ${author.name}`}
+                                class="i-simple-icons-facebook inline-block"
+                              />
+                            ))
+                            .with({ linkedin: P.string }, ({ linkedin }) => (
+                              <a
+                                href={linkedin}
+                                aria-label={`LinkedIn page of ${author.name}`}
+                                class="i-simple-icons-linkedin inline-block"
+                              />
+                            ))
+                            .with({ medium: P.string }, ({ medium }) => (
+                              <a
+                                href={medium}
+                                aria-label={`Medium blog of ${author.name}`}
+                                class="i-simple-icons-medium inline-block"
+                              />
+                            ))
+                            .with({ hashnode: P.string }, ({ hashnode }) => (
+                              <a
+                                href={hashnode}
+                                aria-label={`Hashnode blog of ${author.name}`}
+                                class="i-simple-icons-hashnode inline-block"
+                              />
+                            ))
+                            .with({ tistory: P.string }, ({ tistory }) => (
+                              <a
+                                href={tistory}
+                                aria-label={`Tistory blog of ${author.name}`}
+                                class="i-simple-icons-tistory inline-block"
+                              />
+                            ))
+                            .exhaustive()}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )
+          }
+          <hr />
+        </div>
+        <aside class="basis-300px mx-4 hidden lg:block">
+          <div class="sticky top-14 overflow-hidden py-4">
+            <TableOfContents
+              client:idle
+              theme="aside"
+              items={itemsFromHeadings(headings)}
+            />
+          </div>
+        </aside>
+      </div>
+    </article>
+    <div class="my-16 flex flex-col gap-6 px-4">
+      <h2 class="text-slate-5 text-1.375rem font-semibold">최신 글 보기</h2>
+      <PostList entries={entries} />
+    </div>
+  </div>
+</LayoutKo>

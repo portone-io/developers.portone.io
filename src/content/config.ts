@@ -8,13 +8,16 @@ const docCollection = defineCollection({
 });
 
 const blogCollection = defineCollection({
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    date: z.date(),
-    author: z.string(),
-    draft: z.boolean().optional(),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      date: z.date(),
+      author: z.string(),
+      tags: z.array(z.string()),
+      thumbnail: z.union([image(), z.string().url()]),
+      draft: z.boolean().optional(),
+    }),
 });
 
 const releaseNoteCollection = defineCollection({

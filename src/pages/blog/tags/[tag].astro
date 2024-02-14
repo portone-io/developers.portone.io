@@ -1,0 +1,29 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import PostListLayout from "~/components/blog/PostList/PostListLayout.astro";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const collection = await getCollection("blog");
+  const tags = new Set<string>();
+  for (const entry of collection) {
+    for (const tag of entry.data.tags) {
+      tags.add(tag);
+    }
+  }
+  return Array.from(tags).map((tag) => ({ params: { tag } }));
+};
+
+const tag = decodeURIComponent(Astro.params.tag?.toString() ?? "");
+
+const entries = await getCollection(
+  "blog",
+  (entry) =>
+    entry.data.tags.includes(tag) &&
+    (!entry.data.draft ||
+      import.meta.env.DEV ||
+      import.meta.env.VERCEL_ENV === "preview"),
+);
+---
+
+<PostListLayout listTitle={tag} entries={entries} activeTag={tag} />
