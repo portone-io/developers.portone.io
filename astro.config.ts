@@ -2,28 +2,15 @@ import * as path from "node:path";
 import { defineConfig } from "astro/config";
 import preact from "@astrojs/preact";
 import mdx from "@astrojs/mdx";
+import vercel from "@astrojs/vercel/serverless";
 import unocss from "unocss/astro";
 import yaml from "@rollup/plugin-yaml";
-import rehypePrettyCode, {
-  type Options as PrettyCodeOptions,
-} from "rehype-pretty-code";
+import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
+import {
+  transformerMetaHighlight,
+  transformerRemoveLineBreak,
+} from "@shikijs/transformers";
 import contentIndex from "./src/content-index";
-import vercel from "@astrojs/vercel/serverless";
-const prettyCodeOptions: Partial<PrettyCodeOptions> = {
-  theme: "github-light",
-  onVisitLine(node) {
-    if (node.children.length === 0) {
-      node.children = [{ type: "text", value: " " }];
-    }
-  },
-  onVisitHighlightedLine(node) {
-    (node.properties.className ??= []).push("highlighted");
-  },
-  onVisitHighlightedChars(node) {
-    node.properties.className = ["word"];
-  },
-  tokensMap: {},
-};
 
 // https://astro.build/config
 export default defineConfig({
@@ -42,7 +29,61 @@ export default defineConfig({
   },
   markdown: {
     syntaxHighlight: false,
-    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+    rehypePlugins: [
+      [
+        rehypeShiki,
+        {
+          theme: "github-light",
+          transformers: [
+            {
+              name: "remove-trailing-newline",
+              preprocess(code) {
+                if (code.endsWith("\n")) {
+                  return code.slice(0, -1);
+                }
+                return code;
+              },
+            },
+            transformerMetaHighlight(),
+            transformerRemoveLineBreak(),
+            {
+              name: "add-space-to-empty-line",
+              line(node) {
+                if (node.children.length === 0) {
+                  node.children.push({ type: "text", value: " " });
+                }
+              },
+            },
+            {
+              name: "line-number-meta",
+              code(node) {
+                if (this.options.meta?.__raw?.includes("showLineNumber")) {
+                  this.addClassToHast(node, "line-numbers");
+                }
+              },
+            },
+            {
+              name: "title",
+              pre(node) {
+                const matches = /title="([^"]+)"/.exec(
+                  this.options.meta?.__raw ?? "",
+                );
+                if (matches?.[1]) {
+                  node.children.unshift({
+                    type: "element",
+                    tagName: "div",
+                    properties: {
+                      className: ["title"],
+                    },
+                    children: [{ type: "text", value: matches[1] }],
+                  });
+                }
+              },
+            },
+          ],
+        } satisfies RehypeShikiOptions,
+      ],
+    ],
   },
   output: "hybrid",
   adapter: vercel(),
