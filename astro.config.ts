@@ -10,7 +10,7 @@ import rehypePrettyCode, {
 import contentIndex from "./src/content-index";
 import vercel from "@astrojs/vercel/serverless";
 const prettyCodeOptions: Partial<PrettyCodeOptions> = {
-  theme: "material-theme-lighter",
+  theme: "github-light",
   onVisitLine(node) {
     if (node.children.length === 0) {
       node.children = [{ type: "text", value: " " }];
