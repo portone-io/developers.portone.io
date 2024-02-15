@@ -1,0 +1,45 @@
+diff --git a/dist/core.mjs b/dist/core.mjs
+index a8911b364076e03b5ce1d4e81ff2390a67d55d6b..ee4b4351c01d6835f9e6fdb87257216bd3c4549e 100644
+--- a/dist/core.mjs
++++ b/dist/core.mjs
+@@ -19,10 +19,10 @@ const rehypeShikiFromHighlighter = function(highlighter, options) {
+       const classes = head.properties.className;
+       if (!Array.isArray(classes))
+         return;
+-      const language = classes.find(
++      let lang = classes.find(
+         (d) => typeof d === "string" && d.startsWith(prefix)
+-      );
+-      if (typeof language !== "string")
++      )?.slice(prefix.length);
++      if (typeof lang !== "string")
+         return;
+       const code = toString(head);
+       const cachedValue = cache?.get(code);
+@@ -30,11 +30,15 @@ const rehypeShikiFromHighlighter = function(highlighter, options) {
+         parent.children.splice(index, 1, ...cachedValue);
+         return;
+       }
+-      const metaString = head.data?.meta ?? head.properties.metastring ?? "";
++      let metaString = head.data?.meta ?? head.properties.metastring ?? "";
++      if (!highlighter.getLoadedLanguages().includes(lang)) {
++        metaString = `${lang} ${metaString}`;
++        lang = "text";
++      }
+       const meta = parseMetaString?.(metaString, node, tree) || {};
+       const codeOptions = {
+         ...rest,
+-        lang: language.slice(prefix.length),
++        lang,
+         meta: {
+           ...rest.meta,
+           ...meta,
+@@ -46,7 +50,7 @@ const rehypeShikiFromHighlighter = function(highlighter, options) {
+         codeOptions.transformers.push({
+           name: "rehype-shiki:code-language-class",
+           code(node2) {
+-            this.addClassToHast(node2, language);
++            this.addClassToHast(node2, prefix + lang);
+             return node2;
+           }
+         });
