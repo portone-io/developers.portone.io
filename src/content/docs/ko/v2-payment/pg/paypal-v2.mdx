@@ -15,6 +15,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 import image1 from "./_assets/paypal/paypal-v2-spb-flow.png";
 import image2 from "./_assets/paypal/paypal-v2-rt-flow.png";
 import image3 from "./_assets/paypal/screenshot1.png";
+import image4 from "./_assets/paypal/screenshot2.png";
 
 ### 페이팔 PG 설정하기
 
@@ -47,9 +48,9 @@ import image3 from "./_assets/paypal/screenshot1.png";
 #### 결제 요청 데이터 업데이트
 
 페이팔의 결제 플로우에 의하면 고객사의 결제 페이지가 렌더링될 때 결제 요청 데이터가 결정되어야 하고, 
-결제 페이지 내에서 구매자의 정보(ex. 구매자 이름, 구매자 주소 등)가 새로 입력 혹은 변경되거나 쿠폰 및 포인트 사용으로 인한 결제 금액에 대해 변경이 발생한 경우 최종적으로 결정된 구매 정보를 기준으로 페이팔 결제버튼을 새로 렌더링 시킨 후 사용하도록 권장하고 있습니다. 
+결제 페이지 내에서 구매자의 정보(ex. 구매자 이름, 구매자 주소 등)가 새로 입력되거나 혹은 변경되거나, 쿠폰 및 포인트 사용으로 인한 결제 금액에 대해 변경이 발생한 경우 최종적으로 결정된 구매 정보를 기준으로 페이팔 결제버튼을 새로 렌더링 시킨 후 사용하도록 권장하고 있습니다. 
 
-이런 방식으로 사용하는 것은 번거롭기에 포트원에서는 고객사의 편의를 위해 최초 페이팔 결제 버튼을 렌더링 시킨 후 주문 정보가 변경되었다면 추가로 결제 버튼 렌더링 단계없이 **결제 요청 데이터를 업데이트**할 수 있는 `PortOne.updateLoadPaymentUIRequest` 함수를 제공하고 있습니다.
+하지만 이런 방식으로 사용하는 것은 번거롭기에 포트원에서는 고객사의 편의를 위해 최초 페이팔 결제 버튼을 렌더링 시킨 후 주문 정보가 변경되었을 때, 추가로 결제 버튼 렌더링하지 않고 **결제 요청 데이터를 업데이트**할 수 있는 `PortOne.updateLoadPaymentUIRequest` 함수를 제공하고 있습니다.
 
 구매 정보 변경이 있을 경우 **`PortOne.updateLoadPaymentUIRequest`함수를 호출하여 결제 데이터를 업데이트**하시면 구매자가 페이팔 결제 버튼을 누를 때 최종적으로 변경된 결제 요청 데이터로 페이팔 결제창이 호출됩니다.
 
@@ -85,25 +86,22 @@ import image3 from "./_assets/paypal/screenshot1.png";
   </Tab>
 </Tabs>
 
-### 빌링키 발급(`loadIssueBillingKeyUI`)
+### 빌링키 발급(`loadIssueBillingKeyUI`) 호출하기
 
-### 페이팔 빌링키 발급 버튼 렌더링
+페이팔의 경우 고객사의 결제 화면에 페이팔 빌링키 발급 버튼을 렌더링 한 후 클릭해 페이팔의 결제창을 호출하는 방식입니다.
 
-페이팔 빌링키 발급은 고객사 체크아웃 페이지에 페이팔 빌링키 발급 버튼(아래 이미지 참고)을 렌더링 한 후, 이 빌링키 발급 버튼을 클릭해 페이팔 빌링키 발급 창을 호출하는 방식입니다.
+<Figure src={image4} />
 
-<Figure src="/gitbook-assets/ko/paypal-rt/btn-paypal-rt.png" />
+따라서 다른 PG사와 결제 플로우가 상이하기 때문에 고객사는 **결제(체크아웃) 페이지가 렌더링 되는 시점에** `PortOne.requestIssueBillingKey` 함수 대신 **`PortOne.loadIssueBillingKeyUI`함수를 별도로 호출해 페이팔 빌링키 발급 버튼을 렌더링**한 후 사용해야 합니다.
 
-따라서 다른 PG사와 빌링키 발급 플로우가 상이하기 때문에 고객사는 **체크아웃 페이지가 렌더링 되는 시점에** `PortOne.issueBillingKey` 함수 대신 **`PortOne.loadIssueBillingKeyUI`라는 별도의 함수를 호출해 페이팔 빌링키 발급 버튼을 렌더링 해야**합니다.
+### 빌링키 발급 요청 데이터 업데이트
 
-## 빌링키 발급 요청 데이터 업데이트
+페이팔의 결제 플로우에 의하면 고객사의 빌링키 발급 페이지가 렌더링될 때 빌링키 발급 요청 데이터가 결정되어야 하고, 
+해당 페이지 내에서 구매자의 정보(ex. 구매자 이름, 구매자 주소 등)가 새로 입력되거나 혹은 변경이 발생한 경우 최종적으로 결정된 빌링키 발급 정보를 기준으로 페이팔 빌링키 발급 버튼을 새로 렌더링 시킨 후 사용하도록 권장하고 있습니다. 
 
-페이팔 정기결제 동작의 특성상, 고객사 체크아웃 페이지가 렌더링 될 때 빌링키 발급 요청 데이터가 결정 되어야 합니다.
-때문에 고객사 체크아웃 페이지 등에서 구매자가 등록 할 결제 수단을 변경하는 등의 행위로 빌링키 발급 정보가 바뀌는 경우에는 그 다음 페이지로 이동해 최종적으로 결정 된 빌링키 발급 정보를 기준으로 페이팔 버튼을 렌더링 시켜야 합니다.
-페이팔 데모 페이지에서도 같은 방식으로 구현되어있습니다.
+하지만 이런 방식으로 사용하는 것은 번거롭기에 포트원에서는 고객사의 편의를 위해 최초 페이팔 빌링키 발급 버튼을 렌더링 시킨 후 주문 정보가 변경되었을 때, 추가로 빌링키 발급 버튼을 렌더링하지 않고 **빌링키 발급 요청 데이터를 업데이트**할 수 있는 `PortOne.updateLoadIssueBillingKeyUIRequest` 함수를 제공하고 있습니다.
 
-하지만 페이팔 정기결제 때문에 페이지를 하나 더 만드는 것은 고객사 입장에서 매우 번거로운 일이기 때문에 포트원에서는 처음 페이팔 버튼을 렌더링 시킨 후, 페이팔 버튼을 누르기 전 빌링키 발급 정보가 바뀌었을때 “빌링키 발급 요청 데이터”를 업데이트 할 수 있는 `IMP.updateLoadUIRequest` 함수를 제공하고 있습니다.
-
-구매자 입력으로 인해 **빌링키 발급 요청 데이터가 변경될때 `PortOne.updateLoadIssueBillingKeyUIRequest`함수를 호출**하시면 구매자가 페이팔 정기결제 버튼을 누를때 최종적으로 변경 된 빌링키 발급 요청 데이터로 페이팔 빌링키 발급 창이 호출됩니다.
+빌링키 발급 정보 변경이 있을 경우 **`PortOne.updateLoadIssueBillingKeyUIRequest`함수를 호출하여 데이터를 업데이트**하시면 구매자가 페이팔 빌링키 발급 버튼을 누를 때 최종적으로 변경된 데이터로 페이팔 빌링키 발급창이 호출됩니다.
 
 <Figure src={image2} caption="페이팔 정기결제 빌링키 발급 연동 플로우" />
 
@@ -139,77 +137,77 @@ import image3 from "./_assets/paypal/screenshot1.png";
   </Tab>
 </Tabs>
 
-## 비동기 처리
+### 비동기 프로세스 처리하기
 
-### 결제 처리
+#### 결제 후 승인대기 상태인 경우
 
-페이팔 결제 건은 승인 요청 시 바로 승인 되지 않고 일정 시간 후 처리되는 `승인 대기(pending)` 상태가 존재합니다.
-따라서 고객사는 트랜잭션 종료시 콜백 함수로 전달되는 결제 아이디(paymentId)로 결제 내역을 조회(([GET /payments/\{paymentId}](https://developers.portone.io/api/rest-v2/payment#get%20%2Fpayments%2F%7BpaymentId%7D))한 후 응답 되는 status를 보고 각 상황에 맞는 후 처리 로직을 작성해야 합니다.
+페이팔 결제 건은 승인 요청 시 바로 승인 되지 않고 일정 시간이후 처리되는 `승인 대기(pending)` 상태가 존재합니다.
+때문에 트랜잭션 종료 시 콜백 함수로 전달되는 결제 아이디(paymentId)로 결제 내역을 조회한 후 응답 되는 status에 따라 후처리 로직을 구현해야 합니다. [[→ 결제내역 단건조회 API 바로가기](https://developers.portone.io/api/rest-v2/payment#get%20%2Fpayments%2F%7BpaymentId%7D)]
 
-승인 대기 상태에서는 최종적으로 승인(paid)이 될 수도 있고 승인이 되지 않을 수도(failed) 있기 때문에 고객사은 반드시 (가상계좌나 정기결제와 같이 결제가 비동기로 승인되는 경우 포트원 → 고객사로 결제 결과를 통보해주는) **웹훅 기능을 연동해야** 합니다.
+승인 대기 상태에서는 최종적으로 승인(`status : paid`)이 될 수도 있고 승인이 되지 않을 수도(`status : failed`) 있기 때문에 고객사는 반드시 **웹훅을 연동해야** 합니다. [[→ 웹훅 연동하기 바로가기](../../v2-payment/webhook)]
 
-### 취소 처리
+#### 결제 취소 후 취소 완료되지 않은 경우
 
-페이팔 결제 취소 요청 시 취소 요청이 바로 승인 되지 않고 일정 시간 후 승인처리되는 경우가 존재합니다.
-고객사는 결제 취소 요청 응답 처리 시 취소가 승인되었는지 여부를 확인해야 합니다.
+결제 취소 시 취소 승인이 바로 되지 않고 일정 시간이후 취소 승인이 처리되는 경우가 존재합니다.
+때문에 결제 취소에 대한 응답을 처리할 때 취소 승인이 완료되었는지 확인해야 합니다.
 
-결제 취소 API를 통해 취소 요청을 한 경우 API 응답의 status와 cancel_history 값을 기준으로 취소 승인 여부를 판단해야 합니다.
+결제 취소 API를 통해 결제 취소한 경우 API 응답의 status와 cancel_history 값을 기준으로 취소 승인 여부를 판단해야 합니다.
 status가 cancelled 이고 cancel_history에 취소 요청 내역이 있는 경우 취소가 승인된 것이고 그렇지 않은 경우 취소 승인대기 상태입니다.
 
-콘솔을 통한 취소 요청이 승인대기인 경우 결제내역에서 결제상태는 결제취소로 변경되지 않고 진행중인 취소요청 내역이 있음이 표시되며 결제내역 상세 화면에서 취소요청내역이 조회됩니다.
-취소 요청이 승인대기 상태인 경우 최종적으로 승인되거나 승인되지 않을 수 있기 때문에 고객사는 최종 취소 처리 결과를 전달받기 위해 고객사 통보 웹훅 기능을 연동해야 합니다.
+콘솔을 통해 결제 취소 시 취소 승인이 바로 되지 않는 경우 결제 상태는 변경되지 않고, 콘솔 내 결제내역 상세에서 취소요청내역 탭에서 내역을 확인할 수 있습니다.
+취소 요청이 승인대기 상태인 경우 최종적으로 승인(`status : paid`)이 될 수도 있고 승인이 되지 않을 수도(`status : failed`) 있기 때문에 고객사는 최종 취소 처리 결과를 전달받기 위해 고객사는 반드시 **웹훅을 연동해야** 합니다. [[→ 웹훅 연동하기 바로가기](../../v2-payment/webhook)]
 
 <Details>
-  <p slot="summary">취소 요청이 승인대기 중인 결제상태</p>
+  <p slot="summary">결제 취소 후 취소 승인 대기상태 예시</p>
   <Figure src="/gitbook-assets/ko/image (3) (2).png" />
 </Details>
 
 <Details>
-  <p slot="summary">취소 요청이 승인대기 중인 결제내역 상세</p>
+  <p slot="summary">결제 취소 후 취소 승인 대기상태일 때 결제내역 상세 예시</p>
   <Figure src="/gitbook-assets/ko/image (1) (2).png" />
 </Details>
 
 ### 고위험 결제 처리
 
-페이팔은 판매자 보호 정책을 통해 고객사 거래에서 이상거래나 사기 등이 발생 시, 판매자 보호 정책을 통해 고객사가 손해 입을 수 있는 부분을 보존하는 판매자 보호 프로그램을 가지고 있습니다.
+페이팔은 판매자 보호 정책을 통해 고객사 거래에서 이상거래나 사기 등 위험 발생 시, 판매자 보호 정책을 통해 고객사의 손해를 보존하는 판매자 보호 프로그램을 가지고 있습니다.
 이 판매자 보호 정책을 적용하기 위해서는 페이팔 측에서 제공하는 STC 기능을 사용해야 합니다.
 
-STC 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다.
+STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
-1. 페이팔 Business 계정 가입시 산업 종류(Industry)를 결정하는데, 계정의 산업 종류를 확인해야 합니다.
-2. 계정의 산업 종류를 확인하신 뒤, 해당 산업에 맞는 파라미터를 아래와 같은 형식으로 loadUI 호출 시 bypass.paypal_v2 객체에 작성해 추가해 주시면 됩니다.
+1. 페이팔 Business 계정 가입 시 선택한 산업 종류(Industry)를 확인해야 합니다.
+2. 계정의 산업 종류를 확인한 후, 해당 산업에 맞는 파라미터를 아래와 같은 형식으로 loadUI 호출 시 bypass.paypal_v2 객체에 추가하여 호출해야 합니다.
 
 <Details>
   <p slot="summary">결제 요청시 STC 적용하기</p>
   ```jsx
-// 해당 파라미터들은 산업군 별로 추가가 필요하거나 제외해도 되는 파라미터들이 있습니다.
+// 해당 파라미터들은 예시로 산업군에 따라 추가 또는 제외 가능한 파라미터들이 있습니다.
 additional_data: [
   {
     key: "sender_account_id", // 고객사 account ID(merchant-id)
     value: "A12345N343",
   },
   {
-    key: "sender_first_name", // 고객사의 account에 등록 된 구매자의 이름
+    key: "sender_first_name", // 고객사의 account에 등록된 구매자의 이름
     value: "John",
   },
   {
-    key: "sender_last_name", // 고객사의 account에 등록 된 구매자의 이름
+    key: "sender_last_name", // 고객사의 account에 등록된 구매자의 이름
     value: "Doe",
   },
   {
-    key: "sender_email", // 고객사의 account에 등록 된 구매자의 이메일 주소
+    key: "sender_email", // 고객사의 account에 등록된 구매자의 이메일 주소
     value: "example@example.com",
   },
   {
-    key: "sender_phone", // 고객사의 account에 등록 된 구매자의 연락처
+    key: "sender_phone", // 고객사의 account에 등록된 구매자의 연락처
     value: "(02)16705176",
   },
   {
-    key: "sender_country_code", // 고객사의 account에 등록 된 국가 코드
+    key: "sender_country_code", // 고객사의 account에 등록된 국가 코드
     value: "KR", // ISO Alpha-2 형식 국가 코드
   },
   {
-    key: "sender_create_date", // 고객사의 account에 등록 된 국가 코드
+    key: "sender_create_date", // 고객사의 account에 등록된 국가 코드
     value: "2023-10-10T23:59:59+09:00", // IOS8601 형식
   },
 ];
@@ -218,11 +216,10 @@ additional_data: [
 
 <Hint style="warning">
 
-**고위험 산업(게임과 같은 디지털 상품, 중고거래)의 경우에는 STC API를 통해 판매자 보호 정책을 적용하는 것을 페이팔에서 필수로 요구하고 있습니다.**
+**고위험 산업군(게임과 같은 디지털 상품 또는 중고거래 등)의 경우 페이팔에서 STC API를 통해 판매자 보호 정책을 적용하도록 강력하게 요구하고 있습니다.**
+**또한, 고위험 산업군이 아닌 경우에도 STC API를 연동하는 것을 권장하고 있습니다.**
 
-**판매자 보호 정책에 관한 자세한 내용과 협의가 필요하시다면 페이팔 측에 직접 문의를 하셔야 합니다.**
-
-**고위험 산업이 아닌 경우에도 STC API를 연동하는 것을 권장하고 있습니다.**
+판매자 보호 정책에 관한 자세한 내용 및 협의가 필요한 경우 페이팔에 직접 문의해 주세요.
 
 <br />
 
@@ -232,7 +229,7 @@ additional_data: [
 
 고위험 산업에 해당하는 산업군들은 다음과 같습니다.
 
-각 산업별 STC에 필요한 요청 파라미터들이 달라, 고위험 산업에 해당하는 고객사 분들께는 페이팔 전자결제 신청 시 포트원 지원팀에서 안내가 될 예정입니다.
+각 산업별 STC에 필요한 요청 파라미터들이 달라 고위험 산업에 해당하는 경우 전자결제 신청 후 포트원 지원팀에서 안내 드릴 예정입니다.
 
 1. 이벤트/티켓 판매 산업
 2. 연료 산업
@@ -253,8 +250,12 @@ additional_data: [
 
 </Hint>
 
+### 사용 가능한 결제수단
+
+결제 수단에 따라 가능한 국가 및 통화가 제한적이오니 자세한 사항은 페이팔에 문의해 주세요.
+
 <Details>
-<p slot="summary">연동가능 결제수단</p>
+<p slot="summary">일반 결제수단</p>
 
 - card
 - credit(PayPal Credit (US, UK))
@@ -279,11 +280,7 @@ additional_data: [
 </Details>
 
 <Details>
-<p slot="summary">간편결제 </p>
-
-### Alternative Methods
-
-페이팔은 간편 결제를 Alternative Methods라고 부르고 있습니다. Alternative Methods도 Pay Later 처럼 결제가 가능한 국가와 통화는 매우 제한적입니다.
+<p slot="summary">간편결제수단 (Alternative Methods) </p>
 
 - Bancontact
   - 구매자: BE / EUR
@@ -320,39 +317,39 @@ additional_data: [
 ### 일반결제 유의사항
 
 <Details>
-<p slot="summary">결제수단을 알수 없음</p>
+<p slot="summary">모든 결제 건의 결제수단은 paypal로 저장됩니다.</p>
 
-페이팔을 통해 카드 결제 외 BanContact, BLIK, eps, giropay 등 다양한 결제 수단으로 결제가 가능하지만, <mark style="color:red;">**페이팔이 승인 된 결제 수단을 알려주지 않기 때문**</mark>에 페이팔의 모든 결제 건의 결제 수단은 paypal로 일괄 저장됩니다.
-
-</Details>
-
-<Details>
-<p slot="summary">할부 결제 여부와 할부 개월수를 알 수 없음</p>
-
-Pay Later를 이용하면 할부 결제가 가능합니다. 하지만 <mark style="color:red;">**페이팔이 승인 된 할부 정보를 알려주지 않기 때문**</mark>에 실제로 할부로 결제가 됐는지, 됐다면 몇 개월 할부로 결제 됐는지 알 수 없습니다.
+페이팔을 통해 카드 결제 외 BanContact, BLIK, eps, giropay 등 다양한 결제 수단으로 결제가 가능하지만 **결제 승인 이후 상세 결제 수단 정보**를 알 수 없기에 paypal로 일괄 저장됩니다.
 
 </Details>
 
 <Details>
-<p slot="summary">접속한 국가에 따라 렌더링 되는 결제 버튼이 다름</p>
+<p slot="summary">할부 결제 여부와 할부 개월수에 대한 정보를 제공하지 않습니다.</p>
 
-페이팔은 <mark style="color:red;">**구매자가 접속한 나라에 따라 이용 가능한 결제 수단이 달라지는 방식**</mark>입니다.
-따라서 구매자가 접속한 나라에 따라 렌더링 되는 버튼의 종류와 개수가 달라집니다.
+Pay Later를 통해 할부 결제가 가능하지만 **결제 승인 이후 상세 할부 정보**를 알 수 없기에 제공하지 않습니다.
+
+</Details>
+
+<Details>
+<p slot="summary">접속한 국가에 따라 렌더링 되는 결제 버튼이 다릅니다.</p>
+
+페이팔은 **구매자가 접속한 나라에 따라 이용 가능한 결제 수단**이 달라 접속 국가에 따라 렌더링되는 버튼의 종류와 개수가 달라집니다.
 
 <div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/image (3) (1).png" />
-  <Figure src="/gitbook-assets/ko/image (47).png" />
+  <Figure src="/gitbook-assets/ko/image (3) (1).png" width="480" height="360" caption="예시 1" />
+</div>
+<div class="items-center gap-2 md:flex">
+  <Figure src="/gitbook-assets/ko/image (47).png" width="480" height="360" caption="예시 2" />
 </div>
 
 </Details>
 
 <Details>
-<p slot="summary">회원 / 비회원 결제 플로우가 다름</p>
+<p slot="summary">페이팔 회원과 비회원에 따라 결제 플로우가 상이합니다.</p>
 
-페이팔은 네이버페이와 같이 구매자가 페이팔에 가입한 계정으로 로그인 한 후 등록 된 결제 수단(없다면 새로 등록 또는 카드 정보 직접 입력)으로 결제를 하는 방식입니다.
-
-페이팔에 가입되어있지 않은 구매자도 비회원으로 결제가 가능하지만, 회원으로 로그인 했을때와 사용 가능한 결제 수단과 렌더링 되는 결제창에 다소 차이가 있습니다.
-회원 / 비회원간 적용/사용 가능한 기능 차이를 간략하게 정리하면 아래와 같습니다.
+페이팔은 기본적으로 구매자가 페이팔에 가입 후 로그인하여 등록된 결제 수단(없다면 새로 등록 또는 카드 정보 직접 입력)으로 결제하는 방식입니다.
+다만, 비회원도 결제가 가능하도록 제공하고 있지만 사용 가능한 결제 수단과 렌더링 되는 결제창에 다소 차이가 있습니다.
+회원과 비회원간 기능 차이를 간략하게 정리하면 아래와 같습니다.
 
 <Figure src="/gitbook-assets/ko/image (38).png" />
 
