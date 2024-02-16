@@ -78,19 +78,28 @@ function requestPay() {
 </Tabs>
 
 <Hint style="info">
+**About webhooks**
+
 **You cannot set multiple webhook URLs.**
+
+Webhooks can be sent via initial or resend, each with different timeouts.
+
+1. For the initial webhook, the <mark style="color:red;">**Connection TimeOut is set to 10 seconds**</mark> and the <mark style="color:red;">**Read TimeOut waiting for the response is 30 seconds**</mark>.
+2. For the Resend Webhook, the <mark style="color:red;">**Overall TimeOut for the request is 15 seconds**</mark>.
 
 </Hint>
 
 ### Verify webhook request <a href="#webhook" id="webhook"></a>
 
-Since an i'mport webhook endpoint is a public URL, you must **verify that the request's client IP is an i'mport IP**. An i'mport webhook request must originate from one of the following static IPs.
+When a Webhook event is triggered, a `POST` request is generated to the configured URL endpoint as follows.
 
-> * <mark style="color:red;">**52.78.100.19**</mark>
-> * <mark style="color:red;">**52.78.48.223**</mark>
-> * <mark style="color:red;">**52.78.5.241**</mark>** (when invoked via Test Webhook button)**
+Since the webhook receiving address is a public URL and there's a risk of servers other than PortOne sending webhooks, **the merchant server receive the webhook and then must verify the webhook content by querying the payment transaction using the [Get Payment by ImpUid API](../api/payment-api/get-payment-api).**
+Even if the payment has been successfully processed, there might be cases where the webhook is not received or is delayed due to network issues.
+If a webhook is not received or is delayed, immediately cancelling the transaction could result in financial loss due to a refund of a payment that was successfully processed due to network issues.
+**Even if a webhook does not arrive, before cancelling a payment, query the status of the transaction using the [Get Payment by ImpUid API](../api/payment-api/get-payment-api) to ensure the payment status is normal and avoid cancelling.**
 
-When a webhook event is called, the following `POST` request is generated for the notification URL endpoint.
+Even if the merchant server responds correctly after receiving a webhook, if the webhook response does not reach the PortOne server due to network issues, the webhook may be resent for merchants who have set up the webhook retry feature.
+It is recommended to handle potential multiple receipts of the same webhook content without issues.
 
 <Tabs>
 <Tab title="cURL">
