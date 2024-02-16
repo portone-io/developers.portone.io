@@ -45,15 +45,6 @@ export default defineConfig({
               },
             },
             transformerMetaHighlight(),
-            transformerRemoveLineBreak(),
-            {
-              name: "add-space-to-empty-line",
-              line(node) {
-                if (node.children.length === 0) {
-                  node.children.push({ type: "text", value: " " });
-                }
-              },
-            },
             {
               name: "line-number-meta",
               code(node) {
