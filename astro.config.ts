@@ -6,10 +6,7 @@ import vercel from "@astrojs/vercel/serverless";
 import unocss from "unocss/astro";
 import yaml from "@rollup/plugin-yaml";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
-import {
-  transformerMetaHighlight,
-  transformerRemoveLineBreak,
-} from "@shikijs/transformers";
+import { transformerMetaHighlight } from "@shikijs/transformers";
 import contentIndex from "./src/content-index";
 
 // https://astro.build/config
