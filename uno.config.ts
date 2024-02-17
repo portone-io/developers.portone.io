@@ -8,4 +8,9 @@ export default defineConfig({
   presets: [presetIcons(), presetWind() as any],
   transformers: [transformerDirectives()],
   ...tailwindConfig,
+  theme: {
+    colors: {
+      portone: "#FC6B2D",
+    },
+  },
 });
