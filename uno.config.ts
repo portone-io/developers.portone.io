@@ -12,4 +12,9 @@ export default defineConfig({
   presets: [presetIcons(), presetWind() as any],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   ...tailwindConfig,
+  theme: {
+    colors: {
+      portone: "#FC6B2D",
+    },
+  },
 });
