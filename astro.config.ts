@@ -14,11 +14,11 @@ import contentIndex from "./src/content-index";
 // https://astro.build/config
 export default defineConfig({
   integrations: [
-    preact({ compat: true }),
+    preact({ compat: true, exclude: ["**/*.solid.tsx"] }),
+    solidJs({ include: ["**/*.solid.tsx"] }),
     mdx(),
     unocss({ injectReset: true }),
     contentIndex,
-    solidJs(),
   ],
   vite: {
     resolve: {
