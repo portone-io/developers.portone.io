@@ -1,3 +1,7 @@
+/* @jsxImportSource solid-js */
+
+import { For, Show, type JSX } from "solid-js";
+
 export interface RightSidebarProps {
   lang: string;
   slug: string;
@@ -10,41 +14,36 @@ export interface TocItem {
   text: string;
   children: TocItem[];
 }
-function RightSidebar({
-  lang,
-  slug,
-  toc,
-  editThisPagePrefix = "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
-}: RightSidebarProps) {
+function RightSidebar(props: RightSidebarProps) {
+  const editThisPagePrefix = () =>
+    props.editThisPagePrefix ??
+    "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs";
+
   return (
     <div class="text-slate-7 hidden w-56 min-w-0 shrink-0 lg:block">
       <nav class="w-inherit fixed h-[calc(100%-56px)] overflow-y-auto px-2 py-[28px]">
-        <h2 class="mb-2 px-2 font-bold">{t(lang, "toc")}</h2>
+        <h2 class="mb-2 px-2 font-bold">{t(props.lang, "toc")}</h2>
         <ul>
-          {toc.map((item) => (
-            <SidebarItem
-              key={item.slug}
-              href={`#${item.slug}`}
-              label={item.text}
-            >
-              <ul class="pl-2">
-                {item.children.map((item) => (
-                  <SidebarItem
-                    key={item.slug}
-                    href={`#${item.slug}`}
-                    label={item.text}
-                  />
-                ))}
-              </ul>
-            </SidebarItem>
-          ))}
+          <For each={props.toc}>
+            {(item) => (
+              <SidebarItem href={`#${item.slug}`} label={item.text}>
+                <ul class="pl-2">
+                  <For each={item.children}>
+                    {(item) => (
+                      <SidebarItem href={`#${item.slug}`} label={item.text} />
+                    )}
+                  </For>
+                </ul>
+              </SidebarItem>
+            )}
+          </For>
         </ul>
-        <h2 class="mb-2 mt-4 px-2 font-bold">{t(lang, "contribute")}</h2>
+        <h2 class="mb-2 mt-4 px-2 font-bold">{t(props.lang, "contribute")}</h2>
         <ul>
           <SidebarItem
-            href={`${editThisPagePrefix}${slug}.mdx`}
+            href={`${editThisPagePrefix()}${props.slug}.mdx`}
             icon="i-ic-baseline-edit"
-            label={t(lang, "edit-this-page")}
+            label={t(props.lang, "edit-this-page")}
           />
         </ul>
       </nav>
@@ -57,32 +56,32 @@ export default RightSidebar;
 interface LinkProps {
   href: string;
   icon?: string;
-  label: any;
-  children?: any;
+  label: JSX.Element;
+  children?: JSX.Element;
 }
-function SidebarItem({ href, icon, label, children }: LinkProps) {
+function SidebarItem(props: LinkProps) {
   return (
     <li>
       <a
-        href={href}
+        href={props.href}
         onClick={(e) => {
-          if (!href.startsWith("#")) return;
+          if (!props.href.startsWith("#")) return;
           e.preventDefault();
-          const slug = href.slice(1);
-          history.replaceState(null, "", href);
+          const slug = props.href.slice(1);
+          history.replaceState(null, "", props.href);
           document.getElementById(slug)?.scrollIntoView({ behavior: "smooth" });
         }}
       >
         <div class="hover:bg-slate-1 text-slate-5 overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-sm">
-          {icon && (
+          <Show when={props.icon}>
             <>
-              <i class={`${icon} inline-block align-top text-lg`}></i>{" "}
+              <i class={`${props.icon} inline-block align-top text-lg`} />{" "}
             </>
-          )}
-          {label}
+          </Show>
+          {props.label}
         </div>
       </a>
-      {children}
+      {props.children}
     </li>
   );
 }

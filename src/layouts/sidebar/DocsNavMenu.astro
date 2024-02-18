@@ -1,11 +1,11 @@
 ---
 import type { Lang } from "~/type";
 import { calcNavMenuAncestors, navMenu } from "~/state/server-only/nav";
-import { navOpenStatesSignal, slugSignal } from "~/state/nav";
+import { setNavOpenStates, setSlug } from "~/state/nav";
 
 import LeftSidebar from "./LeftSidebar.astro";
-import LeftSidebarItem from "./LeftSidebarItem";
-import { SearchButton } from "./search";
+import LeftSidebarItem from "./LeftSidebarItem.solid";
+import { SearchButton } from "./search.solid";
 
 interface Props {
   lang: Lang;
@@ -15,26 +15,23 @@ const { lang, slug } = Astro.props;
 
 const navMenuItems = navMenu[lang] || [];
 const navMenuAncestors = calcNavMenuAncestors(navMenuItems);
-const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
+const navOpenStates = Object.fromEntries([
   ...(navMenuAncestors[slug]?.map((ancestor) => [ancestor, true]) || []),
   [slug, true],
-]));
-slugSignal.value = slug;
+]);
+setNavOpenStates(navOpenStates);
+setSlug(slug);
 ---
 
 <script>
-  import { effect } from "@preact/signals";
-  import {
-    navOpenStatesSignal,
-    slugSignal,
-    systemVersionSignal,
-  } from "~/state/nav";
+  import { createEffect } from "solid-js";
+  import { setNavOpenStates, setSlug, systemVersion } from "~/state/nav";
   const navMenu = document.getElementById("nav-menu")!;
-  navOpenStatesSignal.value = {
-    ...navOpenStatesSignal.value,
+  setNavOpenStates((prev) => ({
+    ...prev,
     ...JSON.parse(navMenu.dataset.navopenstates!),
-  };
-  slugSignal.value = navMenu.dataset.slug!;
+  }));
+  setSlug(navMenu.dataset.slug!);
   const scrollArea: HTMLElement = navMenu;
   const activeElement = scrollArea.querySelector("[data-active=active]");
   if (activeElement) {
@@ -43,9 +40,8 @@ slugSignal.value = slug;
       scrollArea.getBoundingClientRect().top -
       50;
   }
-  effect(() => {
-    const systemVersion = systemVersionSignal.value;
-    navMenu.dataset.selectedSystemVersion = systemVersion;
+  createEffect(() => {
+    navMenu.dataset.selectedSystemVersion = systemVersion();
   });
 </script>
 <style is:global>

@@ -1,3 +1,3 @@
-import { signal } from "@preact/signals";
+import { createSignal } from "solid-js";
 
-export const sidebarOpenSignal = signal(false);
+export const [isSidebarOpen, setIsSidebarOpen] = createSignal(false);

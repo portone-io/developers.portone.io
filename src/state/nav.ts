@@ -1,4 +1,4 @@
-import { effect, signal } from "@preact/signals";
+import { createSignal, createEffect } from "solid-js";
 import type { SystemVersion } from "~/type";
 
 const isClient = Boolean(globalThis.sessionStorage);
@@ -7,20 +7,21 @@ const isServer = !isClient;
 export interface NavOpenStates {
   [slug: string]: boolean; // true: open, false: close
 }
-export const navOpenStatesSignal = signal<NavOpenStates>(
-  JSON.parse(globalThis.sessionStorage?.getItem("navOpenStates") || "{}")
+export const [navOpenStates, setNavOpenStates] = createSignal<NavOpenStates>(
+  JSON.parse(globalThis.sessionStorage?.getItem("navOpenStates") || "{}"),
 );
 if (isClient) {
-  effect(() => {
-    const navOpenStates = navOpenStatesSignal.value;
-    const navOpenStatesString = JSON.stringify(navOpenStates);
+  createEffect(() => {
+    const navOpenStatesString = JSON.stringify(navOpenStates());
     globalThis.sessionStorage.setItem("navOpenStates", navOpenStatesString);
   });
 }
 
-export const slugSignal = signal<string>("");
+export const [slug, setSlug] = createSignal<string>("");
 
-export const systemVersionSignal = signal(getInitialSystemVersion());
+export const [systemVersion, setSystemVersion] = createSignal(
+  getInitialSystemVersion(),
+);
 function getInitialSystemVersion() {
   if (isServer) return "all";
   const storageItem = globalThis.sessionStorage.getItem("systemVersion");
@@ -28,11 +29,10 @@ function getInitialSystemVersion() {
   return (searchParams.get("v") || storageItem || "v1") as SystemVersion;
 }
 if (isClient) {
-  effect(() => {
-    const systemVersion = systemVersionSignal.value;
-    globalThis.sessionStorage.setItem("systemVersion", systemVersion);
+  createEffect(() => {
+    globalThis.sessionStorage.setItem("systemVersion", systemVersion());
     const searchParams = new URLSearchParams(location.search);
-    searchParams.set("v", systemVersion);
+    searchParams.set("v", systemVersion());
     const hash = location.hash;
     history.replaceState(null, "", `?${searchParams.toString()}${hash}`);
   });

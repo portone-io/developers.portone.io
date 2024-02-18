@@ -1,28 +1,30 @@
-import { signal } from "@preact/signals";
+import { createSignal } from "solid-js";
 
-export const currentSectionSignal = signal<string>("");
+export const [currentSection, setCurrentSection] = createSignal("");
 
 export interface NavOpenStates {
   [sectionId: string]: boolean; // true: open, false: close
 }
 
-export const navOpenStatesSignal = signal<NavOpenStates>({});
+export const [navOpenStates, setNavOpenStates] = createSignal<NavOpenStates>(
+  {},
+);
 
 export function toggleNav(sectionId: string): void {
-  if (navOpenStatesSignal.value[sectionId]) closeNav(sectionId);
+  if (navOpenStates()[sectionId]) closeNav(sectionId);
   else openNav(sectionId);
 }
 
 export function openNav(sectionId: string): void {
-  navOpenStatesSignal.value = {
-    ...navOpenStatesSignal.peek(),
+  setNavOpenStates((prev) => ({
+    ...prev,
     [sectionId]: true,
-  };
+  }));
 }
 
 export function closeNav(sectionId: string): void {
-  navOpenStatesSignal.value = {
-    ...navOpenStatesSignal.peek(),
+  setNavOpenStates((prev) => ({
+    ...prev,
     [sectionId]: false,
-  };
+  }));
 }
