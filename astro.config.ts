@@ -1,6 +1,7 @@
 import * as path from "node:path";
 import { defineConfig } from "astro/config";
 import preact from "@astrojs/preact";
+import solidJs from "@astrojs/solid-js";
 import mdx from "@astrojs/mdx";
 import vercel from "@astrojs/vercel/serverless";
 import unocss from "unocss/astro";
@@ -16,6 +17,7 @@ export default defineConfig({
     mdx(),
     unocss({ injectReset: true }),
     contentIndex,
+    solidJs(),
   ],
   vite: {
     resolve: {
