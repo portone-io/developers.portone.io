@@ -6,6 +6,7 @@ import mdx from "@astrojs/mdx";
 import vercel from "@astrojs/vercel/serverless";
 import unocss from "unocss/astro";
 import yaml from "@rollup/plugin-yaml";
+import inspect from "vite-plugin-inspect";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import contentIndex from "./src/content-index";
@@ -26,7 +27,7 @@ export default defineConfig({
         querystring: "querystring-es3",
       },
     },
-    plugins: [yaml()],
+    plugins: [yaml(), inspect()],
   },
   image: {
     remotePatterns: [{ protocol: "https" }],
