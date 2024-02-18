@@ -11,7 +11,12 @@ import contentIndex from "./src/content-index";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [preact({ compat: true }), mdx(), unocss(), contentIndex],
+  integrations: [
+    preact({ compat: true }),
+    mdx(),
+    unocss({ injectReset: true }),
+    contentIndex,
+  ],
   vite: {
     resolve: {
       alias: {
