@@ -1,3 +1,5 @@
+/* @jsxImportSource solid-js */
+
 export default function EasyGuideLink() {
   return (
     <div>
