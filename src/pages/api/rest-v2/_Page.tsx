@@ -22,8 +22,7 @@ export default function RestV2(props: RestV2Props) {
       schema={schema}
     >
       <prose.p>
-        결제완료된 정보, 결제취소, 상태별 결제목록 조회 등의 기능을 하는 REST
-        API를 제공합니다.
+        API 결제, 결제 정보 조회, 결제 취소 등의 기능을 제공하는 REST API입니다. V2 API Secret을 발급받은 뒤 사용하실 수 있습니다.
       </prose.p>
       <prose.p>
         <strong>V2 API hostname: </strong>
@@ -36,6 +35,12 @@ export default function RestV2(props: RestV2Props) {
         >
           <PostmanGuide href="https://learning.postman.com/docs/integrations/available-integrations/working-with-openAPI/" />
         </SchemaDownloadButton>
+      </prose.p>
+      <prose.h3>
+        연동 안내
+      </prose.h3>
+      <prose.p>
+        요청과 응답의 본문은 JSON 형식입니다.<br/>API 응답에 포함된 필드는 별도 안내 없이 추가될 수 있으니, 알지 못하는 필드가 있는 경우에는 무시하도록 개발해 주세요.
       </prose.p>
     </RestApi>
   );
