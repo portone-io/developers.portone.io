@@ -1,3 +1,5 @@
+/* @jsxImportSource solid-js */
+
 function ContactLink() {
   return (
     <a
