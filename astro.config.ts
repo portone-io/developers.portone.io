@@ -82,5 +82,8 @@ export default defineConfig({
     ],
   },
   output: "hybrid",
-  adapter: vercel({ maxDuration: 30 }),
+  adapter: vercel({
+    maxDuration: 30,
+    isr: true,
+  }),
 });
