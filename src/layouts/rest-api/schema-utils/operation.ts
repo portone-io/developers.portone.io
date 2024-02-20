@@ -1,49 +1,12 @@
+import type { OpenApiSchema, Operation, Parameter, Response, TypeDef } from ".";
 import type { Endpoint } from "./endpoint";
-import {
-  bakeProperties,
-  type TypeDef,
-  type Property,
-  getTypeDefByRef,
-  followRef,
-} from "./type-def";
-
-export interface Operation {
-  operationId?: string | undefined;
-  title?: string | undefined;
-  summary?: string | undefined;
-  description?: string | undefined;
-  requestBody?:
-    | { content: { "application/json": { schema: TypeDef } } }
-    | undefined;
-  parameters?: Parameter[] | undefined;
-  responses: { [statusCode: number]: Response };
-  tags?: string[] | undefined;
-  deprecated?: boolean | undefined;
-  "x-portone-title"?: string | undefined;
-  "x-portone-summary"?: string | undefined;
-  "x-portone-description"?: string | undefined;
-  "x-portone-unstable"?: boolean | undefined;
-  "x-portone-category"?: string | undefined;
-}
-
-export interface Parameter extends Property {
-  name: string;
-  in?: string | undefined; // formData, path, query
-  required?: boolean | undefined;
-  schema?: TypeDef | undefined;
-}
-
-export interface Response {
-  description?: string | undefined;
-  schema?: TypeDef | undefined;
-  content?: { "application/json": { schema: TypeDef } };
-}
+import { bakeProperties, getTypeDefByRef, followRef } from "./type-def";
 
 export function getOperation(
-  schema: any,
-  { path, method }: Endpoint
-): Operation {
-  return schema.paths[path][method];
+  schema: OpenApiSchema,
+  { path, method }: Endpoint,
+): Operation | undefined {
+  return schema.paths[path]?.[method];
 }
 
 export function getPathParameters(operation: Operation): Parameter[] {
@@ -55,8 +18,8 @@ export function getQueryParameters(operation: Operation): Parameter[] {
 }
 
 export function getBodyParameters(
-  schema: any,
-  operation: Operation
+  schema: OpenApiSchema,
+  operation: Operation,
 ): Parameter[] {
   const requestSchema =
     operation.requestBody?.content["application/json"]?.schema;
@@ -73,11 +36,11 @@ export type ResponseSchema = [
   {
     response: Response;
     schema?: TypeDef | undefined;
-  }
+  },
 ];
 export function getResponseSchemata(
-  schema: any,
-  operation: Operation
+  schema: OpenApiSchema,
+  operation: Operation,
 ): ResponseSchemata {
   const result: ResponseSchemata = [];
   for (const [statusCode, response] of Object.entries(operation.responses)) {
@@ -90,8 +53,8 @@ export function getResponseSchemata(
 }
 
 function narrowResponseSchema(
-  schema: any,
-  responseSchema: ResponseSchema
+  schema: OpenApiSchema,
+  responseSchema: ResponseSchema,
 ): ResponseSchema {
   const [statusCode, pair] = responseSchema;
   if (!pair.schema) return responseSchema;
@@ -111,12 +74,12 @@ function narrowResponseSchema(
     return [statusCode, { ...pair, schema }];
   } else if (matches.length > 1) {
     const oneOf = responseTypeDef.oneOf?.filter(({ $ref }) =>
-      filteredRefs.includes($ref!)
+      filteredRefs.includes($ref!),
     );
     const mapping = Object.fromEntries(
       Object.entries(responseTypeDef.discriminator.mapping).filter(([, ref]) =>
-        filteredRefs.includes(ref)
-      )
+        filteredRefs.includes(ref),
+      ),
     );
     const discriminator = { ...responseTypeDef.discriminator, mapping };
     const schema: TypeDef = { ...responseTypeDef, oneOf, discriminator };

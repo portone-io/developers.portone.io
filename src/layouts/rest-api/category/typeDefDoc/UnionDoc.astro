@@ -1,0 +1,104 @@
+---
+import { clsx } from "clsx";
+import type { OpenApiSchema, TypeDef } from "../../schema-utils";
+import { bakeProperties, getTypeDefByRef } from "../../schema-utils/type-def";
+import PropertyDoc from "../PropertyDoc.astro";
+import TypeReprDoc from "../TypeReprDoc.astro";
+import UnionDocImpl from "./UnionDocImpl.solid";
+
+interface Props {
+  basepath: string;
+  schema: OpenApiSchema;
+  typeDef: TypeDef & { discriminator: NonNullable<TypeDef["discriminator"]> };
+  showNested?: boolean | undefined;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
+}
+
+const { basepath, schema, typeDef, showNested, bgColor, nestedBgColor } =
+  Astro.props;
+
+const { propertyName: discriminatorPropertyName, mapping } =
+  typeDef.discriminator;
+const typeDefs = Object.fromEntries(
+  Object.entries(mapping).map(([type, ref]) => [
+    type,
+    getTypeDefByRef(schema, ref),
+  ]),
+);
+const propertiesPerType = Object.fromEntries(
+  Object.entries(typeDefs).map(([type, typeDef]) => [
+    type,
+    bakeProperties(schema, typeDef),
+  ]),
+);
+const discriminatorProperty = Object.values(propertiesPerType)[0]?.find(
+  (property) => property.name === discriminatorPropertyName,
+);
+---
+
+<UnionDocImpl client:visible typeDef={typeDef} bgColor={bgColor}>
+  <Fragment slot="discriminator">
+    {
+      discriminatorProperty && (
+        <PropertyDoc
+          basepath={basepath}
+          name={discriminatorProperty.name}
+          required={true}
+          isDiscriminator
+          property={discriminatorProperty}
+          bgColor={bgColor}
+          nestedBgColor={nestedBgColor}
+        >
+          <div class="flex flex-wrap items-center gap-y-2 [&>*]:whitespace-pre">
+            <span>필드의 값이 </span>
+            <select class="border-slate-2 w-fit text-ellipsis whitespace-nowrap rounded border px-2 py-1">
+              {Object.keys(mapping).map((type) => (
+                <option value={type}>
+                  {type}
+                  {typeDef["x-portone-discriminator"]?.[type]?.title &&
+                    ` (${typeDef["x-portone-discriminator"][type]?.title})`}
+                </option>
+              ))}
+            </select>
+            <span> 일 때 타입은 </span>
+            {Object.entries(mapping).map(([type, ref], index) => (
+              <span
+                data-discriminator-type-repr={type}
+                class={clsx(index !== 0 && "hidden")}
+              >
+                <TypeReprDoc basepath={basepath} def={ref} />
+              </span>
+            ))}
+            <span>입니다.</span>
+          </div>
+        </PropertyDoc>
+      )
+    }
+  </Fragment>
+  {
+    Object.entries(propertiesPerType).map(([type, properties], index) =>
+      properties.map((property) => {
+        if (property.name === discriminatorPropertyName) return null;
+        return (
+          <div
+            data-union-parent-type={type}
+            class={clsx("rounded py-1", index !== 0 && "hidden")}
+            style={{ "background-color": bgColor }}
+          >
+            <PropertyDoc
+              basepath={basepath}
+              name={property.name}
+              required={property.required}
+              property={property}
+              bgColor={bgColor}
+              nestedBgColor={nestedBgColor}
+              schema={schema}
+              showNested={showNested}
+            />
+          </div>
+        );
+      }),
+    )
+  }
+</UnionDocImpl>

@@ -1,0 +1,36 @@
+---
+import { interleave } from "~/misc/interleave";
+import PropertyDoc from "../../category/PropertyDoc.astro";
+import type { OpenApiSchema } from "../../schema-utils";
+import type { BakedProperty } from "../../schema-utils/type-def";
+
+interface Props {
+  basepath: string;
+  properties: BakedProperty[];
+  schema?: OpenApiSchema | undefined;
+  showNested?: boolean | undefined;
+}
+
+const { basepath, properties, schema, showNested } = Astro.props;
+---
+
+<div class="flex flex-col gap-1">
+  {
+    properties.length > 0 &&
+      interleave(
+        properties.map((property) => (
+          <PropertyDoc
+            basepath={basepath}
+            name={property.name}
+            required={property.required}
+            property={property}
+            bgColor="white"
+            nestedBgColor="#f4f8fa"
+            schema={schema}
+            showNested={showNested}
+          />
+        )),
+        <hr />,
+      )
+  }
+</div>

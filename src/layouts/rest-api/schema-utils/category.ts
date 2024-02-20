@@ -1,3 +1,5 @@
+import type { OpenApiSchema } from ".";
+
 export interface Tag {
   name: string;
   description: string;
@@ -18,7 +20,7 @@ export function tagsToCategories(tags: Tag[]): Category[] {
   }));
 }
 
-export function getCategories(schema: any): Category[] {
+export function getCategories(schema: OpenApiSchema): Category[] {
   return (
     schema["x-portone-categories"] ||
     schema.info?.["x-portone-categories"] ||
@@ -27,10 +29,8 @@ export function getCategories(schema: any): Category[] {
 }
 
 export function flatCategories(categories: Category[]): Category[] {
-  return categories
-    .map((category) => {
-      if (category.children) return [category, ...category.children];
-      return category;
-    })
-    .flat();
+  return categories.flatMap((category) => {
+    if (category.children) return [category, ...category.children];
+    return category;
+  });
 }

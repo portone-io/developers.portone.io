@@ -1,0 +1,54 @@
+---
+import { match } from "ts-pattern";
+import type { OpenApiSchema, TypeDef } from "../../schema-utils";
+import { getTypeDefWithKind } from "../../schema-utils/type-def";
+import ObjectDoc from "./ObjectDoc.astro";
+import EnumDoc from "./EnumDoc.astro";
+import UnionDoc from "./UnionDoc.astro";
+
+export interface Props {
+  basepath: string;
+  schema: OpenApiSchema;
+  typeDef?: TypeDef | undefined;
+  showNested?: boolean | undefined;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
+}
+
+const { basepath, schema, typeDef, showNested, bgColor, nestedBgColor } =
+  Astro.props;
+
+const typeDefWithKind = getTypeDefWithKind(typeDef);
+---
+
+{
+  match(typeDefWithKind)
+    .with({ kind: "object" }, ({ typeDef }) => (
+      <ObjectDoc
+        basepath={basepath}
+        schema={schema}
+        typeDef={typeDef}
+        showNested={showNested}
+        bgColor={bgColor}
+        nestedBgColor={nestedBgColor}
+      />
+    ))
+    .with({ kind: "enum" }, ({ typeDef }) => (
+      <EnumDoc
+        basepath={basepath}
+        xPortoneEnum={typeDef["x-portone-enum"]}
+        bgColor={bgColor}
+      />
+    ))
+    .with({ kind: "union" }, ({ typeDef }) => (
+      <UnionDoc
+        basepath={basepath}
+        schema={schema}
+        typeDef={typeDef}
+        showNested={showNested}
+        bgColor={bgColor}
+        nestedBgColor={nestedBgColor}
+      />
+    ))
+    .exhaustive()
+}

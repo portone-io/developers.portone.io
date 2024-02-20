@@ -1,0 +1,66 @@
+---
+import * as prose from "~/components/prose.solid";
+import type { OpenApiSchema, Operation } from "../../schema-utils";
+import {
+  getBodyParameters,
+  getPathParameters,
+  getQueryParameters,
+} from "../../schema-utils/operation";
+import ReqParameters from "./ReqParameters.astro";
+
+interface Props {
+  basepath: string;
+  schema: OpenApiSchema;
+  operation: Operation;
+}
+
+const { basepath, schema, operation } = Astro.props;
+
+const pathParameters = getPathParameters(operation);
+const queryParameters = getQueryParameters(operation);
+const bodyParameters = getBodyParameters(schema, operation);
+const showPath = pathParameters.length > 0;
+const showQuery = queryParameters.length > 0;
+const showBody = bodyParameters.length > 0;
+
+const hasAnyParams = showPath || showQuery || showBody;
+---
+
+{
+  hasAnyParams ? (
+    <div class="flex flex-col gap-2">
+      <prose.h4 class="border-b pb-1" style={{ "margin-top": 0 }}>
+        Request
+      </prose.h4>
+      {showPath && (
+        <ReqParameters
+          basepath={basepath}
+          title="Path"
+          parameters={pathParameters}
+          schema={schema}
+          showNested
+        />
+      )}
+      {showQuery && (
+        <ReqParameters
+          basepath={basepath}
+          title="Query"
+          parameters={queryParameters}
+          schema={schema}
+          showNested
+        />
+      )}
+      {showBody && (
+        <ReqParameters
+          basepath={basepath}
+          title="Body"
+          parameters={bodyParameters}
+          schema={schema}
+          showNested
+        />
+      )}
+    </div>
+  ) : (
+    <div class="text-slate-5 text-xs font-bold">요청 인자 없음</div>
+  )
+}

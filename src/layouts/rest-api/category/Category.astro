@@ -1,0 +1,111 @@
+---
+import * as prose from "~/components/prose.solid";
+import { getEndpointRepr, type Endpoint } from "../schema-utils/endpoint";
+import Hr from "../Hr.astro";
+import SectionDescription from "./SectionDescription.astro";
+import TwoColumnLayout from "../TwoColumnLayout.astro";
+import MethodLine from "../endpoint/MethodLine.astro";
+import clsx from "clsx";
+import Expand from "./Expand.solid";
+import EndpointDoc from "../endpoint/EndpointDoc.astro";
+import EndpointPlayground from "../endpoint/playground/EndpointPlayground.solid";
+import type { OpenApiSchema, Operation } from "../schema-utils";
+import ExpandAndScrollToHelper from "../ExpandAndScrollToHelper.astro";
+
+interface Props {
+  basepath: string;
+  apiHost: string;
+  initialExpand: boolean;
+  section: string;
+  schema: OpenApiSchema;
+  title: string;
+  description: string | undefined;
+  endpoints: Endpoint[];
+}
+
+const {
+  basepath,
+  apiHost,
+  initialExpand,
+  section,
+  schema,
+  title,
+  description,
+  endpoints,
+} = Astro.props;
+---
+
+<section id={section} class="scroll-mt-5.2rem flex flex-col">
+  <div>
+    <prose.h2>{title}</prose.h2>
+  </div>
+  {
+    endpoints.length < 1 ? (
+      <Fragment>
+        <SectionDescription description={description}>
+          <slot />
+        </SectionDescription>
+        <Hr />
+      </Fragment>
+    ) : (
+      <Fragment>
+        <TwoColumnLayout>
+          <SectionDescription slot="left" description={description}>
+            <slot />
+          </SectionDescription>
+          <div slot="right" class="mt-4 flex flex-col gap-4">
+            <h3 class="text-slate-4 font-bold">목차</h3>
+            {endpoints.map((endpoint) => {
+              const { method, path, title, deprecated, unstable } = endpoint;
+              const id = getEndpointRepr(endpoint);
+              const href = `${basepath}/${section}#${encodeURIComponent(id)}`;
+              return (
+                <a
+                  href={href}
+                  class={clsx(
+                    "hover:text-orange-5 text-slate-6 flex flex-col gap-1 text-sm leading-tight underline-offset-4 transition-colors",
+                    (deprecated || unstable) && "opacity-50",
+                  )}
+                  data-expand-and-scroll-to={JSON.stringify({
+                    section,
+                    href,
+                    id,
+                  })}
+                  data-norefresh
+                >
+                  <div class="font-bold">{title}</div>
+                  <MethodLine method={method} path={path} />
+                </a>
+              );
+            })}
+          </div>
+        </TwoColumnLayout>
+        <Expand
+          client:visible
+          section={section}
+          class="my-20"
+          title={title}
+          initialExpand={initialExpand}
+        >
+          {endpoints.map((endpoint) => (
+            <EndpointDoc
+              basepath={basepath}
+              schema={schema}
+              endpoint={endpoint}
+            >
+              {(operation: Operation) => (
+                <EndpointPlayground
+                  client:visible
+                  apiHost={apiHost}
+                  endpoint={endpoint}
+                  operation={operation}
+                />
+              )}
+            </EndpointDoc>
+          ))}
+        </Expand>
+      </Fragment>
+    )
+  }
+  <ExpandAndScrollToHelper />
+</section>

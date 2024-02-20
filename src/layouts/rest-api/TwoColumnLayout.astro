@@ -1,0 +1,59 @@
+---
+import { clsx } from "clsx";
+
+interface Props {
+  class?: string;
+  leftClass?: string;
+  rightClass?: string;
+  smallRight?: boolean;
+  stickyRight?: boolean;
+  breakpoint?: "md" | "lg";
+  gap?: 2 | 4 | 6;
+}
+
+const {
+  class: className,
+  leftClass,
+  rightClass,
+  smallRight,
+  stickyRight,
+  breakpoint = "lg",
+  gap = 4,
+} = Astro.props;
+---
+
+<div
+  class={clsx(
+    "wrapper",
+    "relative grid",
+    {
+      2: "gap-2",
+      4: "gap-4",
+      6: "gap-6",
+    }[gap],
+    {
+      md: smallRight ? "md:grid-cols-[3fr_2fr]" : "md:grid-cols-2",
+      lg: smallRight ? "lg:grid-cols-[3fr_2fr]" : "lg:grid-cols-2",
+    }[breakpoint],
+    className,
+  )}
+>
+  <div class={leftClass}>
+    <slot name="left" />
+  </div>
+  <div
+    class={clsx(
+      stickyRight &&
+        clsx(
+          {
+            md: "md:sticky",
+            lg: "lg:sticky",
+          }[breakpoint],
+          "top-20 h-max",
+        ),
+      rightClass,
+    )}
+  >
+    <slot name="right" />
+  </div>
+</div>

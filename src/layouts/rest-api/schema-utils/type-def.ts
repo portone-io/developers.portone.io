@@ -1,59 +1,35 @@
+import { P, match } from "ts-pattern";
+import type {
+  TypeDef,
+  Property,
+  Properties,
+  OpenApiSchema,
+  Parameter,
+} from ".";
 import type { CategoryEndpointsPair } from "./endpoint";
-import type { Parameter } from "./operation";
 import { type Visitor, defaultVisitor } from "./visitor";
 
-export interface TypeDef {
-  $ref?: string | undefined;
-  allOf?: TypeDef[] | undefined;
-  oneOf?: TypeDef[] | undefined;
-  discriminator?: { propertyName: string; mapping: Record<string, string> };
-  title?: string | undefined;
-  summary?: string | undefined;
-  description?: string | undefined;
-  type?: string | undefined;
-  enum?: string[];
-  items?: TypeDef | undefined;
-  required?: string[] | undefined;
-  properties?: Properties | undefined;
-  /**
-   * @deprecated use `x-portone-title`
-   */
-  "x-portone-name"?: string | undefined;
-  "x-portone-title"?: string | undefined;
-  "x-portone-summary"?: string | undefined;
-  "x-portone-description"?: string | undefined;
-  "x-portone-enum"?: { [enumValue: string]: TypeDef };
-  "x-portone-discriminator"?: Record<string, TypeDef>;
-  "x-portone-status-code"?: number;
-}
-
-export interface Properties {
-  [name: string]: Property;
-}
-
-export interface Property {
-  $ref?: string | undefined;
-  title?: string | undefined;
-  summary?: string | undefined;
-  description?: string | undefined;
-  type?: string | undefined;
-  format?: string | undefined;
-  items?: string | TypeDef | undefined;
-  deprecated?: boolean | undefined;
-  /**
-   * @deprecated use `x-portone-title`
-   */
-  "x-portone-name"?: string | undefined;
-  "x-portone-title"?: string | undefined;
-  "x-portone-summary"?: string | undefined;
-  "x-portone-description"?: string | undefined;
-}
-
 export type TypeDefKind = "object" | "union" | "enum";
-export function getTypeDefKind(typeDef?: TypeDef | undefined): TypeDefKind {
-  if (typeDef?.discriminator) return "union";
-  if (typeDef?.enum) return "enum";
-  return "object";
+export type TypeDefWithKind =
+  | { kind: "object"; typeDef?: TypeDef | undefined }
+  | {
+      kind: "union";
+      typeDef: TypeDef & {
+        discriminator: NonNullable<TypeDef["discriminator"]>;
+      };
+    }
+  | { kind: "enum"; typeDef: TypeDef & { enum: NonNullable<TypeDef["enum"]> } };
+export function getTypeDefWithKind(
+  typeDef?: TypeDef | undefined,
+): TypeDefWithKind {
+  return match(typeDef)
+    .returnType<TypeDefWithKind>()
+    .with({ discriminator: P.not(P.nullish) }, (typeDef) => ({
+      kind: "union",
+      typeDef,
+    }))
+    .with({ enum: P.not(P.nullish) }, (typeDef) => ({ kind: "enum", typeDef }))
+    .otherwise(() => ({ kind: "object", typeDef }));
 }
 
 export interface BakedProperty extends Property {
@@ -61,12 +37,15 @@ export interface BakedProperty extends Property {
   required?: boolean | undefined;
 }
 
-export function bakeProperties(schema: any, typeDef: TypeDef): BakedProperty[] {
-  filter: if (!typeDef.$ref && typeDef.type) {
+export function bakeProperties(
+  schema: OpenApiSchema,
+  typeDef: TypeDef,
+): BakedProperty[] {
+  if (!typeDef.$ref && typeDef.type) {
     switch (typeDef.type) {
       case "object":
       case "array":
-        break filter;
+        break;
       default:
         return [];
     }
@@ -83,14 +62,14 @@ export function bakeProperties(schema: any, typeDef: TypeDef): BakedProperty[] {
 }
 
 export function resolveTypeDef(
-  schema: any,
+  schema: OpenApiSchema,
   typeDef: TypeDef | Property,
   unwrapArray = false,
 ): TypeDef {
   return mergeAllOf(schema, followRef(schema, typeDef, unwrapArray));
 }
 
-export function mergeAllOf(schema: any, typeDef: TypeDef): TypeDef {
+export function mergeAllOf(schema: OpenApiSchema, typeDef: TypeDef): TypeDef {
   if (!typeDef.allOf) return typeDef;
   const required: string[] = [];
   const properties: Properties = {};
@@ -106,7 +85,7 @@ export function mergeAllOf(schema: any, typeDef: TypeDef): TypeDef {
 }
 
 export function followRef(
-  schema: any,
+  schema: OpenApiSchema,
   typeDef: TypeDef | Property,
   unwrapArray = false,
 ): TypeDef {
@@ -118,11 +97,13 @@ export function followRef(
   return curr as TypeDef;
 }
 
-export function getTypeDefByRef(schema: any, $ref: string): TypeDef {
+export function getTypeDefByRef(schema: OpenApiSchema, $ref: string): TypeDef {
   const path = $ref.split("/"); // "#/foo/bar" => ["#", "foo", "bar"]
   path.shift();
-  let ref = schema;
-  for (const fragment of path) ref = ref[fragment];
+  let ref: Record<string, unknown> = schema;
+  for (const fragment of path) {
+    ref = ref[fragment as keyof typeof ref] as Record<string, unknown>;
+  }
   return ref;
 }
 
@@ -139,14 +120,14 @@ export function repr(def: string | TypeDef | Property | Parameter): string {
 }
 
 export function crawlRefs(
-  schema: any,
+  schema: OpenApiSchema,
   endpointGroups: CategoryEndpointsPair[],
 ): string[] {
   const result = new Set<string>();
   const rootPropertyRefsCrawler: Visitor = {
     ...defaultVisitor,
     visitUnion(typeDef) {
-      for (const item of typeDef.oneOf!) item.$ref && result.add(item.$ref);
+      for (const item of typeDef.oneOf) item.$ref && result.add(item.$ref);
       defaultVisitor.visitUnion.call(this, typeDef);
     },
     visitProperty(_name, property) {
@@ -181,17 +162,18 @@ export function crawlRefs(
   };
   for (const group of endpointGroups) {
     for (const { path, method } of group.endpoints) {
-      const endpoint = schema.paths[path]!;
-      const operation = endpoint[method]!;
+      const endpoint = schema.paths[path];
+      const operation = endpoint?.[method];
+      if (!operation) continue;
       rootRefsCrawler.visitOperation(method, operation);
     }
   }
   const typeDefRefsCrawler: Visitor = {
     ...defaultVisitor,
     visitUnion(typeDef) {
-      const refs = typeDef
-        .oneOf!.map((def) => def.$ref || def.items?.$ref)
-        .filter(Boolean) as string[];
+      const refs = (typeDef.oneOf
+        ?.map((def) => def.$ref || def.items?.$ref)
+        .filter(Boolean) ?? []) as string[];
       for (const ref of refs) push(ref);
       defaultVisitor.visitUnion.call(this, typeDef);
     },
@@ -207,8 +189,8 @@ export function crawlRefs(
     result.add(ref);
     queue.push(ref);
   }
-  let currentRef: string;
-  while ((currentRef = queue.shift()!)) {
+  let currentRef: string | undefined;
+  while ((currentRef = queue.shift())) {
     const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, currentRef));
     typeDefRefsCrawler.visitTypeDef(typeDef);
   }

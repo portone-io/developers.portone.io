@@ -1,11 +1,13 @@
 ---
 import * as prose from "~/components/prose.solid";
 import LayoutBase from "~/layouts/LayoutBase.astro";
-import Component from "./_Page";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu.astro";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
 import { getApiSectionDescriptions } from "~/misc/apiSectionDescription";
+import RestApi from "~/layouts/rest-api/RestApi.astro";
 import schema from "~/schema/v1.openapi.json";
+import SchemaDownloadButton from "~/layouts/rest-api/misc/SchemaDownloadButton.astro";
+import PostmanGuide from "~/layouts/rest-api/misc/PostmanGuide.astro";
 
 export const prerender = false;
 
@@ -23,8 +25,34 @@ const [_api, _rest, section = ""] = Astro.url.pathname
       basepath="/api/rest-v1"
       items={getCategories(schema)}
     />
-    <Component client:visible currentSection={section}>
-      <v1auth.Content slot="section:auth" components={prose} />
-    </Component>
+    <RestApi
+      title="PortOne REST API - V1"
+      basepath="/api/rest-v1"
+      apiHost="https://api.iamport.kr"
+      currentSection={section}
+      schema={schema}
+    >
+      <prose.p>
+        결제완료된 정보, 결제취소, 상태별 결제목록 조회 등의 기능을 하는 REST
+        API를 제공합니다.
+        <br />
+        비인증 결제, 정기 자동결제 등 부가기능을 위한 REST API도 제공합니다.
+      </prose.p>
+      <prose.p>
+        <strong>V1 API hostname: </strong>
+        <code>api.iamport.kr</code>
+      </prose.p>
+      <prose.p>
+        <SchemaDownloadButton
+          href="https://raw.githubusercontent.com/portone-io/developers.portone.io/main/src/schema/v1.openapi.json"
+        >
+          <Fragment slot="label">Swagger JSON 내려받기</Fragment>
+          <PostmanGuide
+            href="https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-from-swagger/"
+          />
+        </SchemaDownloadButton>
+      </prose.p>
+      <v1auth.Content slot="auth" components={prose} />
+    </RestApi>
   </div>
 </LayoutBase>
