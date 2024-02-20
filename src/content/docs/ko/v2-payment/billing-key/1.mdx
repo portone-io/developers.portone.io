@@ -65,26 +65,12 @@ if (!response.ok) throw new Error(`response: ${response.statusText}`);
 ```javascript title="server-side"
 // customerId, cardNumber, expiryYear, expiryMonth, birthOrBusinessRegistrationNumber, passwordTwoDigits 등 정보를 전달받습니다.
 
-// 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
-const signinResponse = await fetch(
-  "https://api.portone.io/login/api-secret",
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      apiSecret: PORTONE_API_SECRET, // 포트원 API Secret
-    }),
-  },
-);
-if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
-const { accessToken } = await signinResponse.json();
-
-// 2. 포트원 빌링키 발급 API 호출
+// 포트원 빌링키 발급 API 호출
 const issueResponse = await fetch("https://api.portone.io/billing-keys",
   {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${accessToken}`,
+      "Authorization": `PortOne ${PORTONE_API_SECRET}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

@@ -24,7 +24,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
     - 휴대폰 소액결제 : `MOBILE`
     - 상품권결제: `GIFT_CERTIFICATE`
     - 간편 결제 : `EASY_PAY`
-- **API 수기(키인) 결제** 
+- **API 수기(키인) 결제**
   - `method`파라미터를 `card`로 설정해야 합니다.
 - **API 빌링키 발급**
   - `method`파라미터를 `card`로 설정해야 합니다.
@@ -111,7 +111,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
     const issueResponse = await axios({
       url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/instant`,
       method: "post",
-      headers: { "Authorization": "Bearer " + access_token },
+      headers: { "Authorization": `PortOne ${PORTONE_API_SECRET}` },
       data: {
         channelKey: 'channel-key-9987cb87-****-****-****-********896d', // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
         orderName: '나이키 와플 트레이너 2 SD',
@@ -206,7 +206,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
     const issueResponse = await axios({
       url: "https://api.portone.io/billing-keys",
       method: "post",
-      headers: { "Authorization": "Bearer " + access_token },
+      headers: { "Authorization": `PortOne ${PORTONE_API_SECRET}` },
       data: {
         channelKey: 'channel-key-9987cb87-****-****-****-********896d', // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
         customer: {
@@ -234,7 +234,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
     const response = await axios({
       url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/schedule`,
       method: "post",
-      headers: { Authorization: "Bearer " + access_token },
+      headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
       data: {
         payment: {
           billingKey: 'billing-key-1', // 빌링키 발급 API를 통해 발급받은 빌링키
@@ -391,7 +391,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 - 네이버페이 포인트 결제 시 현금영수증 정보를 필수 입력해야합니다.
   - 네이버페이 포인트 결제 시 현금영수증 발급이 가능하며 **현금영수증 정보(`easyPay.cashReceiptType`, `easyPay.customerIdentifier`)를 필수로 입력**해야 합니다. 만약 입력하지 않을 경우 "나이스페이 V2 네이버페이 포인트 결제시 현금영수증 발급 유형은 필수 입력입니다."라는 에러 메시지가 리턴되며, 결제창이 호출되지 않으니 유의하시기 바랍니다. 단, **네이버페이 머니로 결제할 경우에만 현금영수증이 발급**됩니다. 결제 금액 모두 네이버페이 포인트로 결제하는 경우에는 결제창 호출 시 현금영수증 정보를 전달하더라도 발급되지 않습니다.
-  
+
 #### 페이코 일반결제 유의사항
 
 | 기능                                  | 사용 가능 여부 |

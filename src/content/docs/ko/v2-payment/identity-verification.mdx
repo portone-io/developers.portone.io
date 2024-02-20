@@ -121,25 +121,10 @@ app.post("/identity-verifications", async (req, res) => {
   // request의 body에서 identityVerificationId 추출
   const { identityVerificationId } = req.body;
   try {
-    // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기
-    const signinResponse = await fetch(
-      "https://api.portone.io/login/api-secret",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          apiSecret: PORTONE_API_SECRET, // 포트원 API Secret
-        }),
-      },
-    );
-    if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
-    const { accessToken } = await signinResponse.json();
-
-    // 2. 포트원 본인인증 내역 단건조회 API 호출
+    // 포트원 본인인증 내역 단건조회 API 호출
     const verificationResponse = await fetch({
       url: `https://api.portone.io/identity-verifications/${encodeURIComponent(identityVerificationId)}`,
-      // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-      headers: { "Authorization": `Bearer ${accessToken}` },
+      headers: { "Authorization": `PortOne ${PORTONE_API_SECRET}` },
     });
     if (!verificationResponse.ok) throw new Error(`verificationResponse: ${verificationResponse.statusText}`);
     const identityVerification = await verificationResponse.json();
