@@ -15,7 +15,7 @@ export default function NavigationMenu(props: Props) {
       <button
         type="button"
         class={clsx(
-          "text-1.125rem text-#09090B hover:bg-#F4F4F5 <sm:border flex w-full items-center justify-between gap-1 rounded-md px-4 py-2 font-semibold transition-colors duration-200 lg:hidden",
+          "text-1.125rem hover:bg-#F4F4F5 <sm:border flex w-full items-center justify-between gap-1 rounded-md px-4 py-2 font-medium text-slate-600 transition-colors duration-200 lg:hidden",
           open && "bg-#F4F4F580",
         )}
         onClick={() => setOpen((prev) => !prev)}
