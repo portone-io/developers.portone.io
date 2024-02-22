@@ -159,7 +159,7 @@ function Item(props: {
         href={`#${props.item.id}`}
         class={clsx(
           "block py-2 text-lg font-medium",
-          props.isActive ? "text-slate-8" : "text-slate-5",
+          props.isActive ? "text-slate-6" : "text-slate-4",
         )}
       >
         {props.item.title}
@@ -202,23 +202,23 @@ function SubItem(props: {
     <li
       class={clsx(
         "transition-colors duration-300",
-        props.isActive && "bg-slate-100",
+        // props.isActive && "bg-slate-100",
       )}
     >
       <a
         href={`#${props.item.id}`}
         class={clsx(
-          "block border-l transition-[padding-top,padding-bottom] duration-300",
+          "block py-1 transition-[padding-top,padding-bottom] duration-300",
           props.isActive
-            ? "border-l-portone  bg-slate-100 py-2 font-medium text-portone"
-            : " border-l-slate-5 text-slate-5 py-1",
+            ? "border-l-portone font-medium text-portone"
+            : " border-l-slate-5 text-slate-4",
         )}
-        style={{ paddingLeft: `${16 * props.depth}px` }}
+        style={{ paddingLeft: `${4 + 12 * (props.depth - 1)}px` }}
       >
         <div
           class={clsx(
             "pr-3.5 transition-transform duration-300",
-            props.isActive && "translate-x-2",
+            // props.isActive && "translate-x-2",
           )}
         >
           {props.item.title}
