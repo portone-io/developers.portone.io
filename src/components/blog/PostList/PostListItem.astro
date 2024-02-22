@@ -4,6 +4,7 @@ import { Image } from "astro:assets";
 import { P, match } from "ts-pattern";
 import authors from "~/content/blog/_authors.yaml";
 import ProfileImage from "~/components/blog/ProfileImage.astro";
+import TagList from "../TagList.astro";
 
 interface Props {
   entry: CollectionEntry<"blog">;
@@ -71,14 +72,6 @@ const thumbnailProps = match(data.thumbnail)
       </span>
       <span class="text-slate-5">{data.description}</span>
     </a>
-    <ul class="flex gap-3">
-      {
-        data.tags.map((tag) => (
-          <a href={`/blog/tags/${encodeURIComponent(tag)}`}>
-            <li class="text-portone">{tag}</li>
-          </a>
-        ))
-      }
-    </ul>
+    <TagList tags={data.tags} />
   </div>
 </li>
