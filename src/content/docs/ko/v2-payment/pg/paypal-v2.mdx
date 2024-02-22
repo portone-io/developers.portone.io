@@ -16,6 +16,13 @@ import image1 from "./_assets/paypal/paypal-v2-spb-flow.png";
 import image2 from "./_assets/paypal/paypal-v2-rt-flow.png";
 import image3 from "./_assets/paypal/screenshot1.png";
 import image4 from "./_assets/paypal/screenshot2.png";
+import image5 from "./_assets/paypal/screenshot3.png";
+import image6 from "./_assets/paypal/screenshot4.png";
+import image7 from "./_assets/paypal/screenshot5.png";
+import image8 from "./_assets/paypal/screenshot6.png";
+import image9 from "./_assets/paypal/screenshot7.png";
+import image10 from "./_assets/paypal/screenshot8.png";
+import image11 from "./_assets/paypal/screenshot9.png";
 
 ### 페이팔 PG 설정하기
 
@@ -139,32 +146,27 @@ import image4 from "./_assets/paypal/screenshot2.png";
 
 ### 비동기 프로세스 처리하기
 
-#### 결제 후 승인대기 상태인 경우
+결제 승인 및 취소 시 비동기 프로세스가 존재하는 경우 결제 상태를 최종적으로 반영하기 위해서 반드시 **웹훅 연동을 해야**합니다.  [[→ 웹훅 연동하기 바로가기](../../v2-payment/webhook)]
 
-페이팔 결제 건은 승인 요청 시 바로 승인 되지 않고 일정 시간이후 처리되는 `승인 대기(pending)` 상태가 존재합니다.
-때문에 트랜잭션 종료 시 콜백 함수로 전달되는 결제 아이디(paymentId)로 결제 내역을 조회한 후 응답 되는 status에 따라 후처리 로직을 구현해야 합니다. [[→ 결제내역 단건조회 API 바로가기](https://developers.portone.io/api/rest-v2/payment#get%20%2Fpayments%2F%7BpaymentId%7D)]
+#### 비동기 상태
 
-승인 대기 상태에서는 최종적으로 승인(`status : paid`)이 될 수도 있고 승인이 되지 않을 수도(`status : failed`) 있기 때문에 고객사는 반드시 **웹훅을 연동해야** 합니다. [[→ 웹훅 연동하기 바로가기](../../v2-payment/webhook)]
+1. 결제 요청 후 대기 상태
+페이팔 결제 건은 결제 승인 요청 시 바로 승인 되지 않고 일정 시간이후 처리되는 `승인 대기(pending)` 상태가 존재합니다.
+때문에 트랜잭션 종료 시 콜백 함수로 전달되는 결제 아이디(paymentId)로 결제 내역을 조회하여 status 응답에 따라 후처리 로직을 구현해야 합니다. [[→ 결제내역 단건조회 API 바로가기](https://developers.portone.io/api/rest-v2/payment#get%20%2Fpayments%2F%7BpaymentId%7D)]
 
-#### 결제 취소 후 취소 완료되지 않은 경우
-
+2. 결제 취소 후 대기 상태
 결제 취소 시 취소 승인이 바로 되지 않고 일정 시간이후 취소 승인이 처리되는 경우가 존재합니다.
-때문에 결제 취소에 대한 응답을 처리할 때 취소 승인이 완료되었는지 확인해야 합니다.
 
-결제 취소 API를 통해 결제 취소한 경우 API 응답의 status와 cancel_history 값을 기준으로 취소 승인 여부를 판단해야 합니다.
-status가 cancelled 이고 cancel_history에 취소 요청 내역이 있는 경우 취소가 승인된 것이고 그렇지 않은 경우 취소 승인대기 상태입니다.
+결제 취소 API를 통해 결제를 취소한 경우 API 응답의 status값을 기준으로 취소 승인 여부를 판단해야 합니다. 취소 승인 대기인 경우 `status : REQUESTED`로 응답되며 이후 취소 승인이 완료되면 웹훅이 발송됩니다.
 
-콘솔을 통해 결제 취소 시 취소 승인이 바로 되지 않는 경우 결제 상태는 변경되지 않고, 콘솔 내 결제내역 상세에서 취소요청내역 탭에서 내역을 확인할 수 있습니다.
-취소 요청이 승인대기 상태인 경우 최종적으로 승인(`status : paid`)이 될 수도 있고 승인이 되지 않을 수도(`status : failed`) 있기 때문에 고객사는 최종 취소 처리 결과를 전달받기 위해 고객사는 반드시 **웹훅을 연동해야** 합니다. [[→ 웹훅 연동하기 바로가기](../../v2-payment/webhook)]
+콘솔을 통해 결제를 취소한 경우 취소 승인이 바로 되지 않으면 결제 상태는 변경되지 않고, 콘솔 내 [결제내역 상세 > 취소요청내역] 탭에서 취소 요청 내역을 확인할 수 있습니다.
+이후 취소 승인이되면, 결제 취소로 상태가 변경됩니다.
 
 <Details>
-  <p slot="summary">결제 취소 후 취소 승인 대기상태 예시</p>
-  <Figure src="/gitbook-assets/ko/image (3) (2).png" />
-</Details>
+  <p slot="summary">콘솔 표시 예시</p>
+  <Figure src={image5} caption="결제 취소 후 취소 승인 대기상태"/>
 
-<Details>
-  <p slot="summary">결제 취소 후 취소 승인 대기상태일 때 결제내역 상세 예시</p>
-  <Figure src="/gitbook-assets/ko/image (1) (2).png" />
+  <Figure src={image6} caption="결제 취소 후 취소 승인 대기상태일 때 결제내역 상세"/>
 </Details>
 
 ### 고위험 결제 처리
@@ -317,276 +319,61 @@ additional_data: [
 ### 일반결제 유의사항
 
 <Details>
-<p slot="summary">모든 결제 건의 결제수단은 paypal로 저장됩니다.</p>
+<p slot="summary">파라미터 사용 시 유의사항</p>
 
-페이팔을 통해 카드 결제 외 BanContact, BLIK, eps, giropay 등 다양한 결제 수단으로 결제가 가능하지만 **결제 승인 이후 상세 결제 수단 정보**를 알 수 없기에 paypal로 일괄 저장됩니다.
+`orderName` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
-
-<Details>
-<p slot="summary">할부 결제 여부와 할부 개월수에 대한 정보를 제공하지 않습니다.</p>
-
-Pay Later를 통해 할부 결제가 가능하지만 **결제 승인 이후 상세 할부 정보**를 알 수 없기에 제공하지 않습니다.
-
-</Details>
-
-<Details>
-<p slot="summary">접속한 국가에 따라 렌더링 되는 결제 버튼이 다릅니다.</p>
-
-페이팔은 **구매자가 접속한 나라에 따라 이용 가능한 결제 수단**이 달라 접속 국가에 따라 렌더링되는 버튼의 종류와 개수가 달라집니다.
+주문명
+  - 결제 요청 시 입력한 주문명은 비회원 결제 시에만 결제창에 표기됩니다. 
 
 <div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/image (3) (1).png" width="480" height="360" caption="예시 1" />
-</div>
-<div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/image (47).png" width="480" height="360" caption="예시 2" />
+  <Figure src="/gitbook-assets/ko/image (62).png" caption="예시) 비회원 결제 화면 1" />
+  <Figure src="/gitbook-assets/ko/image (56).png" caption="예시) 비회원 결제 화면 2" />
 </div>
 
-</Details>
-
-<Details>
-<p slot="summary">페이팔 회원과 비회원에 따라 결제 플로우가 상이합니다.</p>
-
-페이팔은 기본적으로 구매자가 페이팔에 가입 후 로그인하여 등록된 결제 수단(없다면 새로 등록 또는 카드 정보 직접 입력)으로 결제하는 방식입니다.
-다만, 비회원도 결제가 가능하도록 제공하고 있지만 사용 가능한 결제 수단과 렌더링 되는 결제창에 다소 차이가 있습니다.
-회원과 비회원간 기능 차이를 간략하게 정리하면 아래와 같습니다.
-
-<Figure src="/gitbook-assets/ko/image (38).png" />
-
-</Details>
-
-<Details>
-<p slot="summary">Pay Later 버튼은 enable-funding 파라미터에 반드시 paylater를 넣어야 렌더링 됨</p>
-
-페이팔은 할부 결제를 Pay Later로 부르고 있습니다.
-포트원은 Pay Later를 버튼 형태로 제공하고 있으며, **해당 버튼을 렌더링 하기 위해서는 enable-funding 파라미터에 `paylater` 값을 반드시 넣어주셔야** 합니다.
-넣지 않으면 Pay Later를 지원하는 국가에서 접속한다고 하더라도 자동으로 렌더링 되지 않습니다. (단, 미국 제외)
-
-```jsx
-IMP.loadUI({
-  ...중략
-  bypass: {
-    paypal_v2: {
-      ...중략
-      "enable-funding": "paylater"
-    }
-  }
-});
-```
-
-Pay Later Button은 기본적으로 **구매자가 접속한 국가에 따라 해당 국가에 맞는 버튼이 렌더링** 되며, **Pay Later 기능을 제공하지 않는 국가에서 접속했을땐** enable-funding 파라미터에 `paylater` 값을 전달해도 **Pay Later 버튼이 렌더링되지 않**습니다.
-
-<Figure
-  src="/gitbook-assets/ko/image (23) (1).png"
-  caption="접속 국가: 벨기에 enable-funding: “paylater” → 아무 버튼도 렌더링 되지 않음"
-/>
-<Figure
-  src="/gitbook-assets/ko/image (12).png"
-  caption="접속 국가: 프랑스  enable-funding: “paylater” → 4X Paypal 버튼이 렌더링 됨"
-/>
-<Figure
-  src="/gitbook-assets/ko/image (15) (1).png"
-  caption="접속 국가: 이탈리아 enable-funding: “paylater” → Paga in 3 rate 버튼이 렌더링 됨"
-/>
-
-</Details>
-
-<Details>
-<p slot="summary">Pay Later를 지원하는 국가 별로 페이팔 계정을 별도로 만들어야 함</p>
-
-Pay Later로 결제가 가능한 국가와 통화는 매우 제한적이며 그 방식 또한 국가 별로 상이합니다. 자세한 내용은 아래 국가별 정책을 참고해주세요.
-
-- **US(미국) / USD(달러)**
-
-  - Pay in 4
-
-    Eligible US buyers can pay in four interest-free payments for purchases of $30 to $1,500.
-
-    30 \~ 1,500 달러 결제시에 4개월 무이자 할부
-
-    - 자세히 보기 (ex. 700달러 결제)
-
-      <Figure src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/acc5bc45-cafc-4e75-a524-e450957505ce/Untitled.png" />
-
-  - Pay Monthly
-
-    Eligible US buyers can pay in 6, 12, or 24 monthly installments for purchases of $199 to $10,000.
-
-    199 \~ 10,000 달러 결제시 6, 12, 24개월 (유이자) 할부 중 선택하는 방식
-
-    - 자세히 보기 (ex. 700달러 결제)
-
-      <Figure src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c7c3f372-0a34-41f0-a815-2d5c3b9d6308/Untitled.png" />
-
-- **AU(호주) / AUD(호주 달러)**
-
-  - Pay in 4\*\*\*\*
-
-    Pay Later in Australia includes Pay in 4, which eligible AU buyers can use to pay in four interest-free payments for purchases of $30 to $2,000 AUD. The first payment is due at the time of the transaction, and subsequent payments are due every two weeks.
-
-    30 \~ 2,000 호주 달러까지의 결제 건에 대해 2주마다 4번에 걸쳐 결제
-
-    - 자세히 보기 (ex. AUD 호주 달러 결제)
-
-      <Figure src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f4f4c7d2-cf5d-4866-b01b-8995bbf84b69/Untitled.png" />
-
-- **GE(독일) / EUR(유로화)**
-
-  - PayPal Ratenzahlung
-
-    Eligible German buyers can pay in 3, 6, 12, or 24 monthly installments for purchases of 99€ to 5,000€.
-
-    99 \~ 5,000 유로까지의 결제 건에 대해 3, 6, 12, 24개월 (유이자) 할부 중 선택하는 방식
-
-    - 자세히 보기 (ex. 700 유로 결제)
-
-      <Figure src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/31cf7e44-e640-438f-9622-96c75852d8c0/Untitled.png" />
-
-  - Pay in 30
-
-    Eligible German buyers can pay within 30 days for purchases of 1€ to 1,000€.
-
-    1 \~ 1,000 유로까지의 결제 건에 대해 30일 안에 결제하는 방식. 30일 안에 자동으로 결제 될 은행 계좌(IBAN, International Bank Account Number)를 등록해야 한다.
-
-- **ES(스페인) / EUR(유로화)**
-
-  - Pay in 3 installments
-
-    Pay Later in Spain includes Pay in 3 instalments, which eligible buyers in Spain can use to pay in three interest-free payments for purchases of 30€ – 2,000€. The first payment is due at the time of the transaction, and subsequent payments are due every month.
-
-    30 \~ 2,000 유료까지의 결제 건에 대해 3개월 무이자 할부
-
-    - 자세히 보기 (ex. 700 유로 결제)
-
-      <Figure src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2f9b28c1-8827-4379-8334-3556c29f864f/Untitled.png" />
-
-- **IT(이탈리아) / EUR(유로화)**
-
-  - Pay in 3 installments
-
-    Pay Later in Italy includes Pay in 3 installments, which eligible buyers in Italy can use to pay in three interest-free payments for purchases of 30€ – 2,000€. The first payment is due at the time of the transaction, and subsequent payments are due every month.
-
-    30 \~ 2,000 유료까지의 결제 건에 대해 3개월 무이자 할부
-
-    - 자세히 보기 (ex. 700 유로 결제)
-
-      <Figure src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/897a5e73-1301-4f45-af1a-a6638a946181/Untitled.png" />
-
-- **FR(프랑스) / EUR(유로화)**
-
-  - Pay in 4X
-
-    Pay Later in France includes Pay in 4X, which is an installment offer that allows consumers to spread the cost of a purchases across four equal payments for transactions between 30€ – 2,000€. The first payment is due at the time of the transaction. The subsequent payments spread across 90 days.
-
-    30 \~ 2,000유로까지의 결제 금액에 대해 90일에 걸쳐 4번 분할 무이자 결제
-
-    - 자세히 보기 (ex. 700유로 결제)
-
-      <Figure src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8b2f9dd7-8301-4435-b4f0-db4cfe9eb95f/Untitled.png" />
-
-- **GB(영국) / GBP(영국 파운드화)**
-
-  - Pay in 3
-
-    Eligible UK buyers can pay in three interest-free payments for purchases of £30 – £2,000.
-
-    30 \~ 2,000 파운드까지의 결제 금액에 대해 3개월 무이자 할부
-
-    - 자세히 보기(ex. 700 파운드 결제)
-
-      <Figure src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b570364a-807e-48df-89f5-a4b6e56aa8a4/Untitled.png" />
-
-  - PayPal Credit - Eligible UK buyers receive a revolving line of credit that they can use to pay over time. PayPal Credit offers either 0% interest for 4 months on purchases over £99 or a merchant-specific Installment offers. For the 0% interest for 4 months offer, any remaining balance due after the promotional period or any transactions under £99 are charged interest at the standard variable rate. Terms and conditions apply.
-
-    99 파운드 이상의 결제 금액에 대해 첫 4개월 간 무이자 할부. 4개월 이상 할부 결제 시 5개월째부터는 유이자 할부 적용
-
-즉, 예를 들어 고객사이 독일, 스페인, 이탈리아 이렇게 3개 나라에 대해 서비스를 제공하고 각 나라별 Pay Later 기능도 함께 제공한다고 가정합니다. 이 경우 고객사은 독일, 스페인, 이탈리아용 **페이팔 머천트 계정을 각각 따로 만들어야** 합니다.
-
-가입 후 부여 받은 페이팔 Account ID(IMP.loadUI 함수 호출시 pg 파라미터로 전달)가 각각 D, E, I라고 한다면, **고객사은 구매자가 접속한 국가에 따라 올바른 Account ID를 전달해야** 합니다. 즉, 구매자가 독일에서 접속 한 경우엔 pg: “paypal_v2.D”, 스페인에서 접속 한 경우에는 pg: “paypal_v2.E” 마지막으로 이탈리아에서 접속 한 경우에는 pg: “paypal_v2.I”로 입력해줘야합니다.
-
-</Details>
-
-<Details>
-<p slot="summary">Pay Later 버튼을 클릭했을때 렌더링 되는 화면은 구매자의 국가를 따라 감</p>
-
-페이팔은 머천트든 구매자든 가입시 국가를 설정하도록 되어있습니다. **Pay Later 버튼을 클릭했을때 렌더링 되는 화면은 구매자가 페이팔에 가입시 설정한 국가에 따라 달라집**니다.
-
-예를 들어 Pay Later 버튼이 프랑스 용 4X PayPal이라고 하더라도, 미국 구매자 계정으로 로그인을 하면 미국의 Pay Later 정책이 적용 된 (미국의 Pay Later 버튼을 클릭했을때 나오는 화면과 동일한) 화면이 렌더링 됩니다.
 
 <div class="items-center gap-2 md:flex">
-  <Figure
-    src="/gitbook-assets/ko/image (51).png"
-    caption="프랑스용 Pay Later 버튼을 누르고 미국으로 설정 된 페이팔 계정으로 로그인 한 경우, 미국의 Pay Later 정책(Pay in 4, Pay Monthly)이 적용 된 화면이 렌더링 됨 (언어도 영어)"
-  />
-  <Figure
-    src="/gitbook-assets/ko/image (58).png"
-    caption="프랑스용 Pay Later 버튼을 누르고 프랑스로 설정 된 페이팔 계정으로 로그인 한 경우, 정상적으로 프랑스의 Pay Later 정책이 적용 된 화면이 렌더링 됨 (언어도 프랑스어)"
-  />
+  <Figure src="/gitbook-assets/ko/image (66).png" caption="예시) 회원 결제 화면 1"/>
+  <Figure src="/gitbook-assets/ko/image (52).png" caption="예시) 회원 결제 화면 2"/>
 </div>
 
-단, 구매자 계정에 설정 된 국가가 Pay Later를 제공하지 않는 국가인 경우, 일반 카드 결제 화면이 렌더링됩니다. 예를 들어 위와 같이 프랑스 용 Pay Later 버튼을 클릭한 후 Pay Later 를 제공하지 않는 한국 계정으로 로그인하면 일반 카드 결제 화면이 렌더링 됩니다.
+`customer.phoneNumber` <mark style="color:green;">**string**</mark>
 
-</Details>
+구매자 연락처
+  - 페이팔의 경우 [E164 형식](https://www.itu.int/rec/T-REC-E.164-201011-I/en)으로 입력해야 하며, 입력 된 연락처 정보는 페이팔 비회원으로 결제 시 연락처 정보에 자동 입력됩니다.
+    - 예를 들어 한국 구매자의 연락처가 010-1234-5678인 경우 국가번호를 포함하여 821012345678로 입력해야 됩니다.
+  - 만약 접속 국가 형식과 맞지 않는 휴대폰 번호를 입력한 경우 자동완성되지 않고 무시되오니 결제창 호출 시 유의하시기 바랍니다.
 
-<Details>
-<p slot="summary">enable-funding 파라미터에 Alternative Method 식별자를 필수로 입력해야 하는 경우가 있음</p>
 
-IMP.loadUI 함수를 호출해 페이팔 결제 버튼을 렌더링하면 구매자가 접속한 국가에 따라 이용 가능한 버튼들이 자동으로 렌더링 됩니다. 하지만 **일부 버튼의 경우엔 자동으로 렌더링되지 않고 있으며 그 기준이 매우 불명확해 페이팔에 확인 요청을 드린 상태**입니다.
+<Figure src="/gitbook-assets/ko/image (6) (1).png" caption="예시) 결제창 내 구매자 연락처 입력 화면" />
 
-따라서 현재로서는 나라별로 지원 가능한 Alternative Method 식별자를 enable-funding 파라미터에 아래와 같이 comma(,)로 구분 된 string(문자열) 형식으로 넣어주셔야 정상적으로 렌더링 됩니다.
+`products` <mark style="color:blue;">**object\[]**</mark>
 
-💡 예) enable-funding: “paylater,bancontact”
+구매 상품 상세 정보
 
-렌더링 할 수 있는 버튼의 종류는 아래와 같습니다.
+  > `name` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
+  >
+  > 상품명
+  > 
+  >
+  > `amount` <mark style="color:red;">\*</mark> <mark style="color:purple;">**number**</mark>
+  >
+  > 상품 단위 가격
+  >
+  > - 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+  > - 1000 만큼 원화(KRW) 결제를 하는 경우, scale factor가 0이기 때문에 **1000 \* (10의 0승) = 1000**을 전달해야 합니다.
+  > - 1.50 만큼 달러(USD) 결제를 하는 경우, scale factor가 2이기 때문에 **1.50 \* (10의 2승) = 150**을 전달해야 합니다.
+  > - 이렇게 전달 된 값은 실제로 PG사에 결제를 요청할때 currency에 따라 올바른 값으로 변환되기 때문에 반드시 currency값을 필수로 입력해야 합니다.
+  >
+  > `quantity` <mark style="color:red;">\*</mark> <mark style="color:purple;">**number**</mark>
+  >
+  > 상품 수량
 
-<Figure src="/gitbook-assets/ko/image (53).png" />
-
-</Details>
-
-<Details>
-<p slot="summary">배송지 국가가 해당 Alternative Method 지원 국가와 일치해야 함</p>
-
-페이팔은 기본적으로 구매자가 페이팔에 가입할때 입력 한 배송 주소를 결제 창에 자동으로 입력해줍니다. 만약 이 배송 주소를 override하고 싶다면 purchase_units\[].shipping.address 파라미터에 override할 주소를 입력하면 됩니다.
-
-이때 국가 코드(purchase_units\[].shipping.address.country_code)는 필수 입력인데 **Alternative Method로 결제시에는 이 country_code가 해당 Alternative Method 결제가 불가능한 나라인 경우엔 결제가 불가능**하기 때문에 주의가 요구됩니다.
-
-예를 들어 벨기에(국가코드 BE)에서만 사용 가능한 BanContact로 결제시, purchase_units\[].shipping.address.country_code를 BE가 아닌 다른 값으로 입력하고 BanContact 버튼을 누르면 아래와 같은 일반 카드 결제 화면이 렌더링 됩니다.
-
-<Figure src="/gitbook-assets/ko/image (26).png" />
-
-</Details>
-
-<Details>
-<p slot="summary">파라미터 유의사항</p>
-
-#### `orderName`
-
-주문명은 비회원으로 결제시에만 결제창에 표기 됩니다.
-
-<div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/image (62).png" />
-  <Figure src="/gitbook-assets/ko/image (56).png" />
-</div>
-
-회원으로 결제시에는 결제창에 표기되지 않습니다.
-
-<div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/image (66).png" />
-  <Figure src="/gitbook-assets/ko/image (52).png" />
-</div>
-
-#### `customer.phoneNumber`
-
-구매자의 휴대폰 번호를 의미하며 [E164 형식](https://www.itu.int/rec/T-REC-E.164-201011-I/en)으로 입력해주셔야 합니다. 예를 들어 01012345678이라는 휴대폰 번호를 갖는 한국 사용자는 국가 번호 82와 앞에 0을 제외한 10123456778을 입력하셔야 합니다. 입력 된 휴대폰 번호는 페이팔 비회원으로 결제시 연락처 정보에 자동 입력됩니다.
-
-<Figure src="/gitbook-assets/ko/image (6) (1).png" />
-
-만약 접속 국가 형식과 맞지 않는 휴대폰 번호를 입력한 경우엔 무시(자동 완성 되지 않음)됩니다. 예를 들어 미국에서 접속했는데 한국식 번호인 “1012345678”을 입력하면 자동 완성되지 않으며 미국식 번호인 “8317578646”을 입력하면 자동 완성됩니다.
-
-#### `products`
-
-구매 상품 상세 정보를 의미하며 전달 한 값 중 name(상품 명), quantity(상품 수량), unitPrice(상품 단위 금액)만 결제창에 표기됩니다. **페이팔은 해당 파라미터 입력을 강력 권장**하고 있으니, 되도록 입력해주시기 바랍니다.
-
+  - `products.name`(상품명), `products.quantity`(상품 수량), `products.amount`(상품 단위 가격) 정보만 결제창에 표기됩니다. 
+  - 각 상품의 수량과 단위 가격을 계산했을 때, 총 주문 금액과 **반드시 일치해야**합니다. 일치하지 않는 경우 에러 메시지가 리턴되면서 결제창이 호출되지 않습니다. 
+    - 예를 들어 17달러인 상품 2개와 23달러인 상품 3개에 대한 구매 상품 정보를 기입한 경우 총 주문금액(`totalAmount`)을 `10300`로 입력해야 결제창이 정상적으로 호출됩니다.
+  - 페이팔의 경우 결제 요청 시 **해당 정보를 전달하는 것을 강력하게 권고**하고 있으니 가능한 입력하여 사용하시길 바랍니다.
+  - 예시 코드
 ```jsx
 {
   ...중략
@@ -595,7 +382,7 @@ IMP.loadUI 함수를 호출해 페이팔 결제 버튼을 렌더링하면 구매
       id: '1666779119262',
       name: '시그니처 핫 초콜릿',
       code: 'DRINK_SIGNITURE_HOT_CHOCOLATE',
-      unitPrice: 5700,
+      amount: 1700,
       quantity: 2,
       tag: "TAG-1"
     },
@@ -603,133 +390,187 @@ IMP.loadUI 함수를 호출해 페이팔 결제 버튼을 렌더링하면 구매
       id: '1666779134572',
       name: '아이스 아메리카노',
       code: 'DRINK_AMERICANO',
-      unitPrice: 4800,
+      amount: 2300,
       quantity: 3,
       tag: "TAG-2"
     },
   ]
+  totalAmount: 10300,
+  currency: 'USD'
 }
 ```
 
-<div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/image (31) (1).png" />
-  <Figure src="/gitbook-assets/ko/image (71).png" />
+<div>
+  <Figure src={image11} width="360" caption="예시) 결제창 내 구매 상품 상세 정보 화면" />
 </div>
 
-💡 **각 상품의 수량 \* 단위 가격의 총 합이 주문 총 금액과 반드시 일치해야**합니다. 일치하지 않는 경우 에러 메시지가 리턴되면서 결제창이 호출되지 않습니다. 예를 들어 위 예시의 경우 5,700달러 \* 2개 + 4,800달러 \* 3개 = 총 합 25,800달러이기 때문에 주문 총 금액(amount)를 25800으로 입력해야 합니다.
+`currency` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
 
-**`currency`**
+결제 통화
 
-결제 통화를 의미합니다. 페이팔의 경우 사용 가능한 통화는 아래와 같으며, 페이팔에서 사용 불가능한 통화로 결제 시도시 에러 메시지가 리턴되며 결제창이 호출되지 않습니다.
+  - 페이팔에서 지원하는 통화는 아래 스크린샷을 참고해주세요. 지원하지 않는 통화로 결제 시도시 에러 메시지가 리턴되며 결제창이 호출되지 않습니다. 또한 접속 국가나 결제 수단에 따라 지원하는 통화가 달라질 수 있고, 페이팔의 지원 여부에 따라 결제창 호출이 불가능할 수 있습니다.
 
-<Figure src="/gitbook-assets/ko/image (9).png" />
+<Figure src="/gitbook-assets/ko/image (9).png"  caption="사용 가능한 결제 통화"/>
 
-간혹, 접속 국가나 결제 수단에 따라 사용 가능한 통화가 정해져있는 경우가 있는데 이 경우 사용 불가능한 통화를 입력하면 에러 메시지가 리턴되면서 결제창이 호출되지 않습니다.
+`customer` <mark style="color:blue;">**object**</mark>
 
-**`customer.firstName, customer.lastName`**
+고객 정보
 
-`customer.firstName`과 `customer.lastName`은 페이팔 **비회원으로 결제시** 결제창 내 자동 입력 될 청구인(payer)의 이름 정보입니다. 회원으로 결제시에는 **회원 가입시 입력 한 이름 정보가 자동으로 입력**되기 때문에 customer.firstName, customer.LastName으로 override 되지 않습니다.
+  > `fullName` <mark style="color:green;">**string**</mark>
+  >
+  > 구매자 전체 이름
+  >
+  > - `fullName`과 `firstName` / `lastName`이 모두 입력된 경우 `fullName`으로 기록됩니다.
+  >
+  > `firstName` <mark style="color:green;">**string**</mark>
+  >
+  > 구매자 이름
+  >
+  > - `firstName`을 입력하는 경우 `lastName`도 필수로 입력해야 합니다. `fullName`이 없고, `firstName`과 `lastName`을 입력한 경우 `{firstName} {lastName}`으로 저장됩니다.
+  >
+  > `lastName` <mark style="color:green;">**string**</mark>
+  >
+  > 구매자 성
+  >
+  > - `lastName`을 입력하는 경우 `firstName`도 필수로 입력해야 합니다.
 
-페이팔은 해외 결제이기 때문에 이름 전체를 의미하는 기존 customer.fullName 파라미터 대신 customer.firstName(이름)과 customer.lastName(성)을 구분해 입력해 주셔야 결제창 내 정상적으로 자동 입력됩니다.
+  - 페이팔 결제창 내에서 비회원으로 결제 시 `customer.firstName`과 `customer.lastName`의 정보가 청구인의 이름과 성으로 자동 입력됩니다. `customer.fullName`으로 결제창을 호출하는 경우 자동입력되지 않으니 유의하시기 바랍니다. 
+  - 회원으로 결제시에는 **회원 가입시 입력한 이름 정보가 자동으로 입력**되며 결제창 호출 시 입력한 정보로 override 되지 않습니다.
 
 <Figure src="/gitbook-assets/ko/image (13).png" />
 
-**`bypass.paypal_v2.style`**
+`bypass` <mark style="color:blue;">**oneof object**</mark>
 
-페이팔 결제 버튼을 커스터마이징 하기 위한 파라미터입니다. 자세한 내용은 페이팔에서 제공하는 문서([https://developer.paypal.com/sdk/js/reference/#link-style](https://developer.paypal.com/sdk/js/reference/#link-style))를 참고하세요.
+PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음
 
-**hotizontal 스타일 적용시 버튼이 최대 2개까지 밖에 렌더링 되지 않음**
+  > `paypal_v2` <mark style="color:blue;">**object**</mark>
+  >
+  > 페이팔에서 제공하는 파라미터 모음
+  >
+  > > `style` <mark style="color:green;">**string**</mark>
+  > >
+  > > 페이팔 결제 버튼 커스텀마이징
+  > >
+  > > - 페이팔 결제 버튼을 커스텀마이징 할 경우 자세한 내용은 페이팔에서 제공하는 문서([https://developer.paypal.com/sdk/js/reference/#link-style](https://developer.paypal.com/sdk/js/reference/#link-style))를 참고하세요.
+  > > - hotizontal 스타일 적용 시 버튼이 최대 2개까지 밖에 렌더링 되지 않습니다. 때문에 페이팔에서는 layout을 horizontal이 아닌 vertical로 설정하도록 권고하고 있습니다.
+  > > - 페이팔 버튼은 기본적으로 vertical(수직)로 렌더링 되지만, 아래와 같이 bypass 파라미터를 사용하면 horizontal(수평)로 렌더링할 수 있습니다.
+  > > - 예시 코드
+  > >
+  > > ```jsx
+  > >  PortOne.loadPaymentUI({
+  > >    ...중략
+  > >    bypass: {
+  > >      paypal_v2: {
+  > >        style: {
+  > >          ...중략
+  > >          layout: 'horizontal'
+  > >        }
+  > >      }
+  > >    }
+  > >  }, 콜백 함수)
+  > >  ```
+  > >
+  > > <div class="items-end gap-2 md:flex">
+  > > <Figure src="/gitbook-assets/ko/image (34).png" caption="예시) vertical style 버튼 표시 화면" />
+  > > <Figure src="/gitbook-assets/ko/image (1) (1).png" caption="예시) horizontal style 버튼 표시 화면"  />
+  > > </div>
+  > >
+  > > `enable-funding` <mark style="color:green;">**string**</mark>
+  > >
+  > > 렌더링할 페이팔 결제 버튼 지정
+  > >
+  > > - 결제 버튼 종류를 comma(,) separated string으로 지정하여 결제창을 호출하는 경우 해당 버튼을 포함하여 렌더링됩니다.
+  > >  - 예시 코드
+  > >
+  > >  ```jsx
+  > >  PortOne.loadPaymentUI({
+  > >  ...중략
+  > >    bypass: {
+  > >      paypal_v2: {
+  > >        enable-funding: 'paylater,card'
+  > >    }
+  > >  }
+  > >  },   콜백 함수)
+  > >  ```
+  > >
+  > > <Figure src="/gitbook-assets/ko/image (55).png" caption="결제 버튼 종류"/>
+  > > 
+  > > <div class="items-end gap-2 md:flex">
+  > >   <Figure
+  > >     src="/gitbook-assets/ko/image (29).png"
+  > >     caption="예시) 접속 국가: 독일, enable-funding: “paylater” 설정 시 화면"
+  > >   />
+  > >   <Figure
+  > >     src="/gitbook-assets/ko/image (2) (2).png"
+  > >     caption="예시) 접속 국가: 이탈리아, enable-funding: “paylater” 설정 시 화면"
+  > >   />
+  > >    <Figure
+  > >     src="/gitbook-assets/ko/image (81).png"
+  > >     caption="예시) 접속 국가: 벨기에, enable-funding: “paylater” 설정 시 화면"
+  > >   />
+  > > </div>
+  > >
+  > >`disable-funding` <mark style="color:green;">**string**</mark>
+  > >
+  > > 렌더링에서 제외할 페이팔 결제 버튼 지정
+  > >
+  > >  - 결제 버튼 종류를 comma(,) separated string으로 지정하여 결제창을 호출하는 경우 해당 버튼을 제외하고 렌더링됩니다.
+  > >  - 사용 가능한 버튼 종류는 `enable-funding`에서 제공하는 버튼 종류와 동일합니다.
+  > >
+  > ><div class="items-end gap-2 md:flex">
+  > >  <Figure
+  > >    src="/gitbook-assets/ko/image (36).png"
+  > >    caption="예시) 접속 국가: 이탈리아, enable-funding: “paylater” 설정 시 화면"
+  > >  />
+  > >  <Figure
+  > >    src="/gitbook-assets/ko/image (25).png"
+  > >    caption="예시) 접속 국가: 이탈리아, enable-funding: “paylater” disable-funding: “mybank” 설정 시 화면"
+  > >  />
+  > ></div>
+  > >
+  > >`purchase_units` <mark style="color:blue;">**object\[]**</mark>
+  > >
+  > > 페이팔 주문 상세 정보
+  > >
+  > > - 각각의 element에 배송 정보를 담을 수 있습니다.
+  > > - 포트원을 통해 페이팔을 연동하는 고객사은 **purchase_units의 길이가 항상 0 또는 1이어야** 합니다.
+  > >
+  > > >`shipping` <mark style="color:blue;">**object**</mark>
+  > > > 
+  > > > 상품 배송지 정보
+  > > >
+  > > > >`address` <mark style="color:blue;">**object**</mark>
+  > > > >
+  > > > >상품 수령 주소
+  > > > >
+  > > > > - 결제창 호출 시 기본적으로 구매자가 페이팔에 가입할 때 입력 한 배송주소를 렌더링합니다.
+  > > > > - `purchase_units\[]`에 입력 된 배송 정보는 결제창에 호출 시 대체로 자동 완성되지만, 페이팔 회원으로 결제할 때와 비회원으로 결제할 때 각각 다른 정책이 적용됩니다.
+  > > > > - 주문할 때 입력한 주소로 override하고 싶을 때 `purchase_units\[].shipping.address`에 override할 주소를 입력한 후 결제 요청해야 합니다. 단, **주소가 유효하지 않거나 address_line_1을 입력하지 않은 경우엔 override가 되지 않을 수 있습니다.**
+  > > > >
+  > > > > >`admin_area_2` <mark style="color:green;">**string**</mark>
+  > > > > >
+  > > > > >도시명 ((예시) Los Angeles, New York)
+  > > > > >
+  > > > > > - 필수 입력해야 합니다.
+  > > > > >
+  > > > > >`country_code` <mark style="color:green;">**string**</mark>
+  > > > > >
+  > > > > >국가 코드 ((예시) US, KR)
+  > > > > >
+  > > > > > - 필수 입력해야 합니다.
 
-페이팔 버튼은 기본적으로 vertical(수직)로 렌더링 되지만, 아래와 같이 bypass 파라미터를 사용하면 horizontal(수평)로 렌더링 시킬 수 있습니다.
-
-```jsx
-IMP.loadUI({
-  ...중략
-  bypass: {
-    paypal_v2: {
-      style: {
-        ...중략
-        layout: "horizontal"
-      }
-    }
-  }
-}, 콜백 함수)
-```
-
-단, 이 경우 버튼이 최대 2개까지만 렌더링 되기 때문에, 페이팔에서도 layout을 horizontal이 아닌 vertical로 설정하도록 권고하고 있습니다.
-
-<div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/image (34).png" />
-  <Figure src="/gitbook-assets/ko/image (1) (1).png" />
-</div>
-
-#### `bypass.paypal_v2.enable-funding`
-
-렌더링을 허용할 페이팔 버튼 종류를 comma(,) separated string으로 표현한 값으로 가능한 모든 종류는 아래와 같습니다.
-
-<Figure src="/gitbook-assets/ko/image (55).png" />
-
-<div class="items-center gap-2 md:flex">
-  <Figure
-    src="/gitbook-assets/ko/image (29).png"
-    caption="접속 국가: 독일 enable-funding: “paylater”"
-  />
-  <Figure
-    src="/gitbook-assets/ko/image (81).png"
-    caption="접속 국가: 독일 enable-funding: “paylater”"
-  />
-</div>
-
-<div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/image (75).png" caption="접속 국가: 한국" />
-  <Figure
-    src="/gitbook-assets/ko/image (2) (2).png"
-    caption="접속 국가: 이탈리아 enable-funding: “paylater”"
-  />
-</div>
-
-#### `bypass.paypal_v2.disable-funding`
-
-렌더링을 허용 하지 않을 페이팔 버튼 종류를 comma(,) separated string으로 표현한 값으로 가능한 모든 종류는 enable-funding과 동일합니다.
-
-<div class="items-center gap-2 md:flex">
-  <Figure
-    src="/gitbook-assets/ko/image (36).png"
-    caption="접속 국가: 이탈리아 enable-funding: “paylater”"
-  />
-  <Figure
-    src="/gitbook-assets/ko/image (25).png"
-    caption="접속 국가: 이탈리아 enable-funding: “paylater” disable-funding: “mybank”"
-  />
-</div>
-
-**`bypass.paypal_v2.purchase_units`**
-
-페이팔 주문 상세 정보를 의미하는 배열로 각각의 element에 배송 정보를 담을 수 있습니다.
-
-💡 포트원을 통해 페이팔을 연동하는 고객사은 **purchase_units의 길이가 항상 0 또는 1이어야** 합니다.
-
-페이팔은 구매자가 페이팔에 가입할때 입력 한 배송주소를 결제창에 기본적으로 렌더링하지만, 이를 override하고 싶을때 purchase_units\[].shipping.address에 override할 주소를 입력할 수 있습니다. 단, **주소가 유효하지 않거나 address_line_1을 입력하지 않은 경우엔 override가 되지 않**습니다.
-
-💡 배송 정보 중 `admin_area_2`와 `country_code`는 필수 입력입니다.
-
-purchase_units\[]에 입력 된 배송 정보는 기본적으로 결제창에 자동 완성되지만, 페이팔 회원으로 결제할 때와 비회원으로 결제할 때 각각 다른 정책이 적용됩니다.
-
-- **페이팔 회원으로 결제시**
-
-  - **shipping.address 정보 미입력**
-
-    <Figure
-      src="/gitbook-assets/ko/image (16) (1).png"
-      caption="bypass.paypal\_v2.purchase\_units\[\].shipping 미입력 → 가입시 설정한 배송 주소로 자동 입력 됨"
-    />
-
-  - **shipping.address 정보 입력**
-
+  <Details>
+    <p slot="summary">예시 1\) 페이팔 회원으로 결제 시 `shipping.address` 정보를 입력하지 않은 경우 </p>
+    <Figure src="/gitbook-assets/ko/image (16) (1).png" caption="bypass.paypal\_v2.purchase\_units\[\].shipping 미입력 → 가입시 설정한 배송 주소로 자동 입력된 화면" />
+  </Details>
+    
+  <Details>
+    <p slot="summary">예시 2\) 페이팔 회원으로 결제 시 `shipping.address` 정보를 입력한 경우 </p>
+      
     ```tsx
     bypass: {
       paypal_v2: {
-        ...중략
+        // ...중략
         purchase_units: [{
           shipping: {
             address: { // 상품 수령 주소
@@ -749,192 +590,227 @@ purchase_units\[]에 입력 된 배송 정보는 기본적으로 결제창에 �
     } // end-of-bypass
     ```
 
-<Figure
-  src="/gitbook-assets/ko/image (21).png"
-  caption="bypass.paypal\_v2.purchase\_units\[\].shipping 입력 → 입력한 배송 주소로 override 됨"
-/>
+  <Figure src="/gitbook-assets/ko/image (21).png" caption="bypass.paypal\_v2.purchase\_units\[\].shipping 입력 → 입력한 배송 주소로 override 된 화면" />
 
-- **페이팔 비회원으로 결제시**
+  </Details>
 
-  - **payer.address 정보 미입력 && shipping.address 정보 입력**
+  <Details>
+  <p slot="summary">예시 3\) `shipping.address`의 국가 정보와 구매자의 접속 국가가 일치하지 않은 경우</p>
+    - 페이팔 결제창에 렌더링 되는 주소 형식은 구매자의 접속 국가에 따라 결정됩니다. 배송 주소의 국가와 구매자의 접속 국가를 다른 경우, 국가 간 주소 체계가 달라 정상적으로 자동입력 되지 않을 수 있습니다.
+  
+  <Figure
+    src="/gitbook-assets/ko/image (24) (1).png"
+    caption="접속 국가 : 미국, payer 및 shipping 정보를 한국 주소 체계로 전달한 화면"
+  />
+  </Details>
 
-    구매자의 청구 주소(bypass.paypal_v2.payer.address)를 입력하지 않고 배송 주소(bypass.paypal_v2.shipping.address)만 입력 한 경우엔, 청구 주소란에 배송 주소가 자동 완성됩니다.
+> >`payer` <mark style="color:blue;">**object**</mark>
+> >
+> > 구매자 상세정보
+> >
+> > >`tax_info` <mark style="color:blue;">**object**</mark>
+> > >
+> > > 구매자 세금 정보
+> > >
+> > > >`tax_id` <mark style="color:green;">**string**</mark>
+> > > >
+> > > > 구매자 세금 ID
+> > > >
+> > > >`tax_id_type` <mark style="color:green;">**string**</mark>
+> > > >
+> > > > 구매자 세금 유형
+> > > 
+> > > - 브라질(에서 접속한 또는 브라질 계정으로 로그인 한) 구매자인 경우 `bypass.paypal_v2.payer.tax_info` 정보를 필수로 입력해야 합니다.
+> > >
+> > > 예시코드
+> > >```tsx
+> > >"tax_info": {
+> > >  "tax_id": "examplestring",
+> > >  "tax_id_type": "BR_CPF"
+> > >}
+> > >```
+> > >
+> > >`address` <mark style="color:blue;">**object**</mark>
+> > >
+> > > 구매자의 결제 금액 청구지 주소 정보(billing address)
+> > >
+> > > >`address_line_1` <mark style="color:green;">**string**</mark>
+> > > >
+> > > > 도로명 주소 ex)200 N Spring St
+> > > >
+> > > >`address_line_2` <mark style="color:green;">**string**</mark>
+> > > >
+> > > > 번지 혹은 건물 호수 ex)Los Angeles City Hall 1
+> > > >
+> > > >`admin_area_1` <mark style="color:green;">**string**</mark>
+> > > >
+> > > > 주와 같은 큰 단위의 주소 ex)CA, NY
+> > > >   - country(UK)
+> > > >   - state(US)
+> > > >   - province(Canada)
+> > > >   - 특별시/광역시/도(Korea)
+> > > >
+> > > >`admin_area_2` <mark style="color:green;">**string**</mark>
+> > > >
+> > > > 도시, 마을 등 중간 단위의 주소 ex)LosAngeles
+> > > >
+> > > >`postal_code` <mark style="color:green;">**string**</mark>
+> > > >
+> > > > 우편 번호
+> > > >
+> > > >`country_code`  <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
+> > > >
+> > > > 국가 코드 ex) KR
+> > > >
+> > > - 페이팔 비회원 결제 시 페이팔 결제창 내 청구지 주소(billing address) 정보로 사용됩니다. 회원으로 결제하는 경우 회원 가입 시 입력한 billing address가 자동 입력되며 해당 파라미터의 정보는 무시됩니다.
 
-    ```tsx
-    bypass: {
-      paypal_v2: {
-        ...중략
-        purchase_units: [{
-          shipping: {
-            address: { // 상품 수령 주소
-              address_line_1: "세종대로 110", // 도로명 주소
-              address_line_2: "서울특별시청", // 아파트 동 호수
-              admin_area_1: "서울특별시", // 주(CA, NY)
-              admin_area_2: "중구", // 시(Los Angeles, New York)
-              postal_code: "04524", // 상품 수령지 우편번호
-              country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-            },
-            name: {
-              full_name: "홍길동" // 상품 수령인 이름
+<Details>
+  <p slot="summary">예시 1\) 페이팔 회원으로 결제 시 `payer.address` 정보를 입력한 경우</p>
+    - 입력된 정보는 무시되고 페이팔 가입시 기입한 구매자의 청구 주소가 자동 입력됩니다.
+    - 예시코드
+      ```tsx
+      bypass: {
+        paypal_v2: {
+          ...중략
+          payer: {
+            address: {
+              address_line_1: "200 N Spring St", // 도로명 주소
+              address_line_2: "Los Angeles City Hall", // 아파트 동 호수
+              admin_area_1: "CA", // 주(CA, NY)
+              admin_area_2: "Los Angeles", // 시(Los Angeles, New York)
+              postal_code: "90012", // 상품 수령지 우편번호
+              country_code: "US", // [필수 입력] 상품 수령지 국가 코드
             }
           }
-        }],
-      } // end-of paypal_v2
-    } // end-of-bypass
-    ```
+        } // end-of paypal_v2
+      } // end-of-bypass
+      ```
 
-<div class="items-center gap-2 md:flex">
-  <Figure
-    src="/gitbook-assets/ko/image (11) (1).png"
-    caption="[체크박스 선택 된 모습] payer 정보 없이 shipping 정보만 입력한 경우, 청구 주소에 shipping 정보가 자동 입력됩니다."
-  />
-  <Figure
-    src="/gitbook-assets/ko/image (5) (3).png"
-    caption="[체크박스 해제 된 모습] payer 정보 없이 shipping 정보만 입력한 경우, 청구 주소와 배송 주소에 모두 shipping 정보가 자동 입력됩니다."
-  />
-</div>
+    <Figure src="/gitbook-assets/ko/image (3) (3).png" caption="`payer.address`입력했음에도 페이팔 가입 시 기입한 정보로 자동 입력된 화면"/>
+</Details>
 
-- **payer.address 정보 입력 && shipping.address 정보 입력**
-
-  구매자의 청구 주소(bypass.paypal_v2.payer.address)와 배송 주소(bypass.paypal_v2.shipping.address)를 모두 입력한 경우엔, “청구 주소와 동일한 배송주소” 체크박스를 해제했을때 하단에 렌더링 되는 배송 정보란에 배송 주소가 자동 완성됩니다.
-
-  ```tsx
-  bypass: {
-    paypal_v2: {
-      ...중략
-      purchase_units: [{
-        shipping: {
-          address: { // 상품 수령 주소
-            address_line_1: "세종대로 110", // 도로명 주소
-            address_line_2: "서울특별시청", // 아파트 동 호수
-            admin_area_1: "서울특별시", // 주(CA, NY)
-            admin_area_2: "중구", // 시(Los Angeles, New York)
-            postal_code: "04524", // 상품 수령지 우편번호
-            country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-          },
-          name: {
-            full_name: "홍길동" // 상품 수령인 이름
+<Details>
+  <p slot="summary">예시 2\) 페이팔 비회원으로 결제 시 `payer.address` 정보를 입력한 경우</p>
+    - 입력된 정보가 구매자의 청구 주소지란에 자동 입력됩니다.
+    - 예시코드
+      ```tsx
+      bypass: {
+        paypal_v2: {
+          ...중략
+          payer: {
+            address: {
+              address_line_1: "200 N Spring St", // 도로명 주소
+              address_line_2: "Los Angeles City Hall", // 아파트 동 호수
+              admin_area_1: "CA", // 주(CA, NY)
+              admin_area_2: "Los Angeles", // 시(Los Angeles, New York)
+              postal_code: "90012", // 상품 수령지 우편번호
+              country_code: "US", // [필수 입력] 상품 수령지 국가 코드
+            }
           }
-        }
-      }],
-      payer: {
-        address: {
-            address_line_1: "고산자로 270", // 도로명 주소
-            address_line_2: "성동구청", // 아파트 동 호수
-            admin_area_1: "서울특별시", // 주(CA, NY)
-            admin_area_2: "성동구", // 시(Los Angeles, New York)
-            postal_code: "04750", // 상품 수령지 우편번호
-            country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-        }
-      }
-    } // end-of paypal_v2
-  } // end-of-bypass
-  ```
+        } // end-of paypal_v2
+      } // end-of-bypass
+      ```
 
-<div class="items-center gap-2 md:flex">
-  <Figure
-    src="/gitbook-assets/ko/image (45).png"
-    caption="[체크박스 선택 된 모습] payer 정보와 shipping 정보를 모두 입력한 경우, 청구 주소란에 payer 정보가 자동 입력됩니다."
-  />
-  <Figure
-    src="/gitbook-assets/ko/image (68).png"
-    caption="[체크박스 해제 된 모습] payer 정보와 shipping 정보를 모두 입력한 경우, payer 정보는 청구 주소란에 shipping 정보는 배송 주소란에 정상적으로 자동 입력됩니다."
-  />
-</div>
+   <Figure src="/gitbook-assets/ko/image (14).png" caption="`payer.address`에 입력한 정보로 자동 입력된 화면"/>
+  </Details>
 
-- shipping.address 국가가 접속 국가와 일치하지 않는 경우
+  <Details>
+    <p slot="summary">예시 3\) 페이팔 비회원으로 결제 시 `payer.address` 정보 미 입력 상태이면서 `shipping.address` 정보를 입력한 경우 </p>
+      - 구매자의 청구 주소(`bypass.paypal_v2.payer.address`)를 입력하지 않고 배송 주소(`bypass.paypal_v2.shipping.address`)만 입력 한 경우 청구 주소란에 배송 주소가 자동으로 입력됩니다.
+    
+      ```tsx
+      bypass: {
+        paypal_v2: {
+          ...중략
+          purchase_units: [{
+            shipping: {
+              address: { // 상품 수령 주소
+                address_line_1: "세종대로 110", // 도로명 주소
+                address_line_2: "서울특별시청", // 아파트 동 호수
+                admin_area_1: "서울특별시", // 주(CA, NY)
+                admin_area_2: "중구", // 시(Los Angeles, New York)
+                postal_code: "04524", // 상품 수령지 우편번호
+                country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+              },
+              name: {
+                full_name: "홍길동" // 상품 수령인 이름
+              }
+            }
+          }],
+        } // end-of paypal_v2
+      } // end-of-bypass
+      ```
+    
+    <div class="items-end gap-2 md:flex">
+    <Figure
+      src="/gitbook-assets/ko/image (11) (1).png"
+      caption="예시) 체크박스 선택 시 청구 주소에 shipping 정보가 자동 입력된 화면"
+    />
+    <Figure
+      src="/gitbook-assets/ko/image (5) (3).png"
+      caption="예시) 체크박스 선택 해제 시 청구 주소와 배송 주소에 모두 shipping 정보가 자동 입력된 화면"
+    />
+    </div>
+    </Details>
 
-  페이팔 결제창에 렌더링 되는 주소 형식은 구매자의 접속 국가에 따라 결정됩니다. 배송 주소의 국가와 구매자의 접속 국가를 다른 경우, 국가 간 주소 체계가 다르기 때문에 정상적으로 자동입력 되지 않으니, 이 점 유념해주시기 바랍니다.
+    <Details>
+      <p slot="summary">예시 4\) 페이팔 비회원으로 결제 시 `payer.address` 정보와 `shipping.address` 정보를 모두 입력한 경우 </p>
+        - 구매자의 청구 주소(`bypass.paypal_v2.payer.address`)와 배송 주소(`bypass.paypal_v2.shipping.address`)를 모두 입력한 경우엔, **청구 주소와 동일한 배송주소** 체크박스를 해제했을 때 하단에 렌더링 되는 배송 정보란에 배송 주소가 자동 입력됩니다.
 
-- <Figure
-    src="/gitbook-assets/ko/image (24) (1).png"
-    caption="미국에서 접속시, payer 정보와 shipping 정보를 모두 한국으로 입력한 경우 청구 주소는 일부만 자동 입력되고 배송 주소는 아예 자동 입력이 되지 않습니다."
-  />
-
-#### `bypass.paypal_v2.payer.tax_info`
-
-구매자의 세금 정보로 브라질(에서 접속한 또는 브라질 계정으로 로그인 한) 구매자에 한 해 필수 입력입니다.
-
-```tsx
-"tax_info": {
-  "tax_id": "examplestring",
-  "tax_id_type": "BR_CPF"
-}
-```
-
-#### `bypass.paypal_v2.payer.address`
-
-구매자의 결제 금액 청구지 주소를 의미하며, 전달한 파라미터는 페이팔 결제창 내 청구지 주소(billing address) 정보에 자동으로 입력됩니다.
-
-💡 <mark style="color:red;">**청구 주소 정보 중**</mark> <mark style="color:red;">**`country_code`**</mark><mark style="color:red;">**는 필수 입력입니다.**</mark>
-
-단, 페이팔 비 회원으로 결제시에만 해당되며, 회원으로 결제시에는 회원 가입시 입력한 billing address가 자동 입력되기 때문에 해당 파라미터는 무시됩니다.
-
-- **페이팔 회원으로 결제시**
-
-  - payer.address 정보 입력
-
-    입력 된 정보는 무시되고 페이팔 가입시 기입한 구매자의 청구 주소가 자동 입력됩니다.
-
-    ```tsx
-    bypass: {
-      paypal_v2: {
-        ...중략
-        payer: {
-          address: {
-            address_line_1: "200 N Spring St", // 도로명 주소
-            address_line_2: "Los Angeles City Hall", // 아파트 동 호수
-            admin_area_1: "CA", // 주(CA, NY)
-            admin_area_2: "Los Angeles", // 시(Los Angeles, New York)
-            postal_code: "90012", // 상품 수령지 우편번호
-            country_code: "US", // [필수 입력] 상품 수령지 국가 코드
+      ```tsx
+      bypass: {
+        paypal_v2: {
+          ...중략
+          purchase_units: [{
+            shipping: {
+              address: { // 상품 수령 주소
+                address_line_1: "세종대로 110", // 도로명 주소
+                address_line_2: "서울특별시청", // 아파트 동 호수
+                admin_area_1: "서울특별시", // 주(CA, NY)
+                admin_area_2: "중구", // 시(Los Angeles, New York)
+                postal_code: "04524", // 상품 수령지 우편번호
+                country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+              },
+              name: {
+                full_name: "홍길동" // 상품 수령인 이름
+              }
+            }
+          }],
+          payer: {
+            address: {
+                address_line_1: "고산자로 270", // 도로명 주소
+                address_line_2: "성동구청", // 아파트 동 호수
+                admin_area_1: "서울특별시", // 주(CA, NY)
+                admin_area_2: "성동구", // 시(Los Angeles, New York)
+                postal_code: "04750", // 상품 수령지 우편번호
+                country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+            }
           }
-        }
-      } // end-of paypal_v2
-    } // end-of-bypass
-    ```
+        } // end-of paypal_v2
+      } // end-of-bypass
+      ```
 
-    <Figure src="/gitbook-assets/ko/image (3) (3).png" />
+    <div class="items-end gap-2 md:flex">
+      <Figure
+        src="/gitbook-assets/ko/image (45).png"
+        caption="예시) 체크박스 선택 시 청구 주소란에 payer 정보가 자동 입력된 화면"
+      />
+      <Figure
+        src="/gitbook-assets/ko/image (68).png"
+        caption="예시) 체크박스 해제 시 payer 정보는 청구 주소란에 shipping 정보는 배송 주소란에 정상적으로 자동 입력된 경우"
+      />
+    </div>
+  </Details>
 
-    ![payer.address를 입력했으나 페이팔 가입시 기입한 정보로 자동 입력됩니다.](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/204c59fb-cb39-42fe-9920-d55f9e1f6291/Untitled.png)
+  <Details>
+   <p slot="summary">예시 5\) `payer.address`의 국가 정보와 구매자의 접속 국가가 일치하지 않은 경우 </p>
+    - 페이팔 결제창에 렌더링 되는 주소 형식은 구매자의 접속 국가에 따라 결정됩니다. 청구 주소의 국가와 구매자의 접속 국가를 다른 경우, 국가 간 주소 체계가 달라 정상적으로 자동입력 되지 않을 수 있습니다.
 
-  - payer.address를 입력했으나 페이팔 가입시 기입한 정보로 자동 입력됩니다.
-
-- **페이팔 비회원으로 결제시**
-
-  - payer.address 정보 입력
-
-    입력 된 정보가 구매자의 청구 주소지란에 자동 입력됩니다.
-
-    ```tsx
-    bypass: {
-      paypal_v2: {
-        ...중략
-        payer: {
-          address: {
-            address_line_1: "200 N Spring St", // 도로명 주소
-            address_line_2: "Los Angeles City Hall", // 아파트 동 호수
-            admin_area_1: "CA", // 주(CA, NY)
-            admin_area_2: "Los Angeles", // 시(Los Angeles, New York)
-            postal_code: "90012", // 상품 수령지 우편번호
-            country_code: "US", // [필수 입력] 상품 수령지 국가 코드
-          }
-        }
-      } // end-of paypal_v2
-    } // end-of-bypass
-    ```
-
-  <Figure src="/gitbook-assets/ko/image (14).png" />
-
-**payer.address 국가가 접속 국가와 일치하지 않는 경우**
-
-- 페이팔 결제창에 렌더링 되는 주소 형식은 구매자의 접속 국가에 따라 결정됩니다. 청구 주소의 국가와 구매자의 접속 국가가 다른 경우, 국가 간 주소 체계가 다르기 때문에 정상적으로 자동 입력 되지 않으니, 이 점 유념해주시기 바랍니다.
-
-<Figure
+  <Figure
   src="/gitbook-assets/ko/image (59).png"
-  caption="미국에서 접속시, payer.address 정보를 한국으로 입력한 경우 청구 주소는 일부만 자동 입력됩니다. state에 “서울특별시”가 없기 때문입니다."
+  caption="접속 국가 : 미국, `payer.address`정보를 한국 주소 체계로 전달한 화면"
 />
-
+  </Details>
 </Details>
 
 <Details>
@@ -1008,6 +884,194 @@ purchase_units\[]에 입력 된 배송 정보는 기본적으로 결제창에 �
 페이팔은 상점 세부 정보를 입력할 필요가 없기 때문에 해당 파라미터가 무시됩니다.
 
 </Details>
+
+### 일반결제 FAQ
+
+<Details>
+<p slot="summary">모든 결제 건의 결제수단은 paypal로 저장되나요?</p>
+
+페이팔을 통해 카드 결제 외 BanContact, BLIK, eps, giropay 등 다양한 결제 수단으로 결제가 가능하지만 **결제 승인 이후 상세 결제 수단 정보**를 알 수 없기에 paypal로 일괄 저장됩니다.
+
+</Details>
+
+<Details>
+<p slot="summary">할부 결제 여부와 할부 개월수에 대한 정보는 어디서 확인할 수 있나요?</p>
+
+페이팔에서 Pay Later를 통해 할부 결제가 가능하지만 **결제 승인 이후 상세 할부 정보**를 알 수 없기에 할부에 대한 정보는 제공하지 않습니다.
+
+</Details>
+
+<Details>
+<p slot="summary">접속한 국가에 따라 렌더링 되는 결제 버튼이 달라요.</p>
+
+페이팔은 **구매자가 접속한 나라에 따라 이용 가능한 결제 수단**이 달라 접속 국가에 따라 렌더링되는 버튼의 종류와 개수가 달라집니다.
+
+<div class="items-center gap-2 md:flex">
+  <Figure src="/gitbook-assets/ko/image (3) (1).png" width="480" height="360" caption="예시 1" />
+</div>
+<div class="items-center gap-2 md:flex">
+  <Figure src="/gitbook-assets/ko/image (47).png" width="480" height="360" caption="예시 2" />
+</div>
+
+</Details>
+
+<Details>
+<p slot="summary">페이팔 회원과 비회원에 따라 결제 플로우가 달라요.</p>
+
+페이팔은 기본적으로 구매자가 페이팔에 가입 후 로그인하여 등록된 결제 수단(없다면 새로 등록 또는 카드 정보 직접 입력)으로 결제하는 방식입니다.
+다만, 비회원도 결제가 가능하도록 제공하고 있지만 사용 가능한 결제 수단과 렌더링 되는 결제창에 다소 차이가 있습니다.
+회원과 비회원간 기능 차이를 간략하게 정리하면 아래와 같습니다.
+
+<Figure src="/gitbook-assets/ko/image (38).png" />
+
+</Details>
+
+<Details>
+<p slot="summary">Pay Later(할부) 기능을 사용하고 싶어요.</p>
+
+#### 1. Pay Later 버튼 활성화하기
+
+페이팔의 Pay Later(할부) 결제를 사용하려면 `enable-funding` 파라미터에 `paylater` 입력한 후 호출해야 합니다.
+포트원의 경우 Pay Later를 버튼 형태로 제공하고 있으며, 위의 파라미터를 입력하지 않는 시 Pay Later를 지원하는 국가에서 접속하더라도 Pay Later 버튼이 표시되지 않습니다. (단, 미국의 경우 자동으로 표시됩니다.)
+
+```jsx
+IMP.loadUI({
+  ...중략
+  bypass: {
+    paypal_v2: {
+      ...중략
+      "enable-funding": "paylater"
+    }
+  }
+});
+```
+
+Pay Later 버튼은 **구매자가 접속한 국가에 따라 다른 버튼이 렌더링** 되며, Pay Later 기능을 제공하지 않는 국가에서 접속한 경우 `enable-funding` 파라미터에 `paylater` 값을 전달하더라도 **Pay Later 버튼이 렌더링되지 않습니다.**
+
+<Figure
+  src={image7}
+  caption="예시) 벨기에에서 접속 시 버튼이 렌더링 되지 않음"
+/>
+<Figure
+  src={image8}
+  caption="예시) 프랑스에서 접속 시 '4X Paypal' 버튼이 렌더링 됨"
+/>
+<Figure
+  src={image9}
+  caption="예시) 이탈리아에서 접속 시 'Paga in 3 rate' 버튼이 렌더링 됨"
+/>
+
+Pay Later 기능을 지원하는 국가에서 접속하더라도 구매자 계정에 설정된 국가가 Pay Later를 제공하지 않는 국가인 경우, 일반 카드 결제 화면이 렌더링됩니다.
+
+<br />
+#### 2. Pay Later 사용 국가별 페이팔 계정 생성하기
+
+Pay Later(할부) 기능을 여러 국가에 제공하기 위해서는 **페이팔 머천트 계정을 국가별로 각각 따로 만들어야** 합니다.
+예를 들어 고객사이 [독일], [스페인], [이탈리아] 3개 국가에 대해 Pay Later 서비스를 제공하고자 하는 경우 고객사는 [독일], [스페인], [이탈리아]의 **페이팔 머천트 계정을 각각 따로 만들어야** 합니다.
+
+국가별로 생성한 페이팔 Account ID를 [결제 연동] > [채널 관리] 페이지에서 채널 등록 후 결제창 호출 시 지정해야 합니다. **고객사는 구매자가 접속한 국가에 따라 올바른 채널의 채널키를 전달해야** 합니다. 
+
+<br />
+#### 3. Pay Later 국가별 정책 알아보기
+
+- US(미국) / USD(달러)
+
+  - Pay in 4
+
+    - Eligible US buyers can pay in four interest-free payments for purchases of $30 to $1,500.
+
+    - USD 30 \~ USD 1,500 결제 시 4개월 무이자 할부 제공
+
+  - Pay Monthly
+
+    - Eligible US buyers can pay in 6, 12, or 24 monthly installments for purchases of $199 to $10,000.
+
+    - USD 199 \~ USD 10,000 결제 시 6, 12, 24개월 (유이자) 할부 중 선택하도록 제공
+
+- AU(호주) / AUD(호주 달러)
+
+  - Pay in 4\*\*\*\*
+
+    Pay Later in Australia includes Pay in 4, which eligible AU buyers can use to pay in four interest-free payments for purchases of $30 to $2,000 AUD. The first payment is due at the time of the transaction, and subsequent payments are due every two weeks.
+
+    AUD 30 \~ AUD 2,000 결제 시 2주마다 4번에 걸쳐 결제하도록 제공
+
+- GE(독일) / EUR(유로화)
+
+  - PayPal Ratenzahlung
+
+    - Eligible German buyers can pay in 3, 6, 12, or 24 monthly installments for purchases of 99€ to 5,000€.
+
+    - EUR 99 \~ EUR 5,000 결제 시 3, 6, 12, 24개월 (유이자) 할부 중 선택하도록 제공
+
+  - Pay in 30
+
+    - Eligible German buyers can pay within 30 days for purchases of 1€ to 1,000€.
+
+    - EUR 1 \~ EUR 1,000 결제 시 30일 안에 결제되며, 30일 안에 자동으로 결제될 은행 계좌(IBAN, International Bank Account Number) 등록하도록 제공
+
+- ES(스페인) / EUR(유로화)
+
+  - Pay in 3 installments
+
+    - Pay Later in Spain includes Pay in 3 instalments, which eligible buyers in Spain can use to pay in three interest-free payments for purchases of 30€ – 2,000€. The first payment is due at the time of the transaction, and subsequent payments are due every month.
+
+    - EUR 30 \~ EUR 2,000 결제 시 3개월 무이자 할부 제공
+
+- IT(이탈리아) / EUR(유로화)
+
+  - Pay in 3 installments
+
+    - Pay Later in Italy includes Pay in 3 installments, which eligible buyers in Italy can use to pay in three interest-free payments for purchases of 30€ – 2,000€. The first payment is due at the time of the transaction, and subsequent payments are due every month.
+
+    - EUR 30 \~ EUR 2,000 결제 시 3개월 무이자 할부 제공
+
+- FR(프랑스) / EUR(유로화)
+
+  - Pay in 4X
+
+    - Pay Later in France includes Pay in 4X, which is an installment offer that allows consumers to spread the cost of a purchases across four equal payments for transactions between 30€ – 2,000€. The first payment is due at the time of the transaction. The subsequent payments spread across 90 days.
+
+    - EUR 30 \~ EUR 2,000 결제 시 90일동안 4번에 걸쳐 결제하도록 제공 (무이자)
+
+- GB(영국) / GBP(영국 파운드화)
+
+  - Pay in 3
+
+    - Eligible UK buyers can pay in three interest-free payments for purchases of £30 – £2,000.
+
+    - GBP 30 \~ GBP 2,000 결제 시 3개월 무이자 할부 제공
+
+  - PayPal Credit - Eligible UK buyers receive a revolving line of credit that they can use to pay over time. PayPal Credit offers either 0% interest for 4 months on purchases over £99 or a merchant-specific Installment offers. For the 0% interest for 4 months offer, any remaining balance due after the promotional period or any transactions under £99 are charged interest at the standard variable rate. Terms and conditions apply.
+
+    - GBP 99 이상 결제 시 첫 4개월 간 무이자 할부 제공. 4개월 이상 할부 결제 시 5개월째부터는 유이자 할부 적용
+</Details>
+
+<Details>
+<p slot="summary">간편 결제 수단(Alternative Method) 버튼이 표시되지 않아요.</p>
+
+기본적으로 `loadPaymentUI` 함수를 호출해 페이팔 결제 버튼을 렌더링하는 경우 구매자가 접속한 국가에 따라 이용 가능한 간편 결제 수단 버튼들이 자동으로 렌더링 됩니다. 
+하지만 일부 버튼의 경우엔 자동으로 렌더링되지 않는 경우가 있습니다. 원하는 간편 결제 수단 버튼이 표시되지 않는 경우 나라별로 지원 가능한 간편 결제 수단(Alternative Method) 식별자를 `enable-funding` 파라미터에 아래와 같이 comma(,)로 구분하여 string(문자열) 형식으로 요청하면 정상적으로 렌더링됩니다.
+
+💡 예) enable-funding: “paylater,bancontact”
+
+렌더링 할 수 있는 버튼의 종류는 아래와 같습니다.
+
+<Figure src={image10} /> />
+
+</Details>
+
+<Details>
+<p slot="summary">간편 결제 수단(Alternative Method)을 클릭해도 결제가 되지 않아요.</p>
+
+ 페이팔은 기본적으로 결제창 호출 시 구매자가 페이팔에 가입할 때 입력한 배송 주소가 자동으로 입력됩니다. 배송 주소를 변경하고자 할 때, 국가 코드(purchase_units\[].shipping.address.country_code)가 변경하는 경우 변경된 국가 코드에 따라 기존에 선택한 **간편 결제 수단(Alternative Method)이 지원되지 않는 국가인 경우 결제가 불가능**할 수 있습니다. 
+
+예를 들어 벨기에(국가코드: BE)에서만 사용 가능한 BanContact로 결제 시, purchase_units\[].shipping.address.country_code를 BE가 아닌 다른 값으로 변경한 후 BanContact 결제 버튼을 클릭하면 아래와 첨부한 스크린샷과 같이 일반 카드 결제 화면이 렌더링됩니다.
+
+<Figure src="/gitbook-assets/ko/image (26).png" />
+</Details>
+
+
 
 ### 정기결제 유의사항
 
