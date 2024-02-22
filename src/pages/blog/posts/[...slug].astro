@@ -9,6 +9,8 @@ import ProfileImage from "~/components/blog/ProfileImage.astro";
 import TableOfContents, {
   itemsFromHeadings,
 } from "~/components/TableOfContents";
+import PostList from "~/components/blog/PostList/PostList.astro";
+import NavigationMenu from "~/components/blog/NavigationMenu";
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection("blog");
@@ -20,62 +22,81 @@ export async function getStaticPaths() {
   });
 }
 
+const entriesPromise = getCollection("blog").then((entries) =>
+  entries.sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
+);
+
 const { entry } = Astro.props;
 const { title, author: authorId } = entry.data;
 const { Content, headings } = await entry.render();
+
+const entries = await entriesPromise;
 
 const author = authors[authorId];
 ---
 
 <LayoutKo title={`${title} - PortOne 기술블로그`}>
-  <div class="mx-auto flex max-w-[1150px] justify-between gap-4">
-    <article class="text-slate-7 mx-auto my-4 min-w-0 max-w-[900px] pb-40">
-      <div class="flex flex-col gap-6 px-4 md:px-6">
-        {
-          entry.data.tags.length > 0 && (
-            <ul class="m-0 flex list-none flex-row flex-wrap gap-2 p-0">
-              {entry.data.tags.map((tag) => (
-                <li class="bg-#11182780 inline-block w-fit rounded-md px-2 py-1 text-sm font-medium text-slate-50">
-                  <a href={`/blog/tags/${encodeURIComponent(tag)}`}>{tag}</a>
-                </li>
-              ))}
-            </ul>
-          )
-        }
-        <div class="flex flex-col gap-4">
-          <div class="text-slate-4 text-base font-medium">
-            {format(entry.data.date, "MMM d, yyyy")}
+  <div class="mx-auto max-w-[1150px]">
+    <div
+      class="<lg:max-w-[900px] mx-auto my-4 flex items-center justify-between px-4 md:px-6"
+    >
+      <a href="/blog" class="text-base font-medium text-portone md:text-sm">
+        <i class="i-ic-baseline-keyboard-backspace inline-block"></i>
+        Posts
+      </a>
+      <NavigationMenu client:visible activeTag="전체보기" class="md:hidden" />
+    </div>
+    <div class="flex justify-between gap-4">
+      <article
+        class="text-slate-7 mx-auto flex min-w-0 max-w-[900px] flex-col gap-6 px-4 md:my-4 md:px-6"
+      >
+        <div class="grid grid-cols-[1fr_auto] gap-6">
+          <div class="<md:col-span-2 flex flex-col gap-3">
+            <div class="text-slate-4 text-base font-medium">
+              {format(entry.data.date, "MMM d, yyyy")}
+            </div>
+            <div class="<md:flex-col flex justify-between">
+              <h1
+                class="text-balance break-keep text-3xl font-bold leading-[1.4]"
+              >
+                {title}
+              </h1>
+            </div>
           </div>
-          <div class="flex justify-between">
-            <h1
-              class="text-balance break-keep text-3xl font-bold leading-[1.4]"
-            >
-              {title}
-            </h1>
-            {
-              author && (
-                <dl class="flex shrink-0 items-center gap-4">
-                  <div>
-                    <ProfileImage>
-                      <Image
-                        src={`https://github.com/${authorId}.png`}
-                        alt={`Avatar image of ${author.name}`}
-                        width={48}
-                        height={48}
-                        class="bg-slate-2 h-12 w-12 rounded-full"
-                      />
-                    </ProfileImage>
-                  </div>
-                  <div class="flex flex-col justify-evenly whitespace-nowrap">
-                    <dt class="text-slate-7 text-lg font-semibold">
-                      {author.name}
-                    </dt>
-                    <dd class="text-slate-4 text-lg">{author.position}</dd>
-                  </div>
-                </dl>
-              )
-            }
-          </div>
+          {
+            entry.data.tags.length > 0 && (
+              <ul class="col-span-2 m-0 flex list-none flex-row flex-wrap gap-2 p-0 md:row-[1]">
+                {entry.data.tags.map((tag) => (
+                  <li class="bg-#11182780 inline-block w-fit rounded-md px-2 py-1 text-sm font-medium text-slate-50">
+                    <a href={`/blog/tags/${encodeURIComponent(tag)}`}>{tag}</a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          {
+            author && (
+              <dl class="<md:py-2 flex shrink-0 items-center gap-4 md:justify-end md:self-end">
+                <div>
+                  <ProfileImage>
+                    <Image
+                      src={`https://github.com/${authorId}.png`}
+                      alt={`Avatar image of ${author.name}`}
+                      width={48}
+                      height={48}
+                      class="bg-slate-2 h-12 w-12 rounded-full"
+                    />
+                  </ProfileImage>
+                </div>
+                <div class="flex flex-col justify-evenly whitespace-nowrap">
+                  <dt class="text-slate-7 text-lg font-semibold">
+                    {author.name}
+                  </dt>
+                  <dd class="text-slate-4 text-lg">{author.position}</dd>
+                </div>
+              </dl>
+            )
+          }
         </div>
         <div class="body text-slate-7">
           <Content components={prose} />
@@ -100,19 +121,53 @@ const author = authors[authorId];
             }
           </style>
         </div>
-      </div>
-    </article>
-    <aside class="hidden lg:block">
-      <div class="sticky top-14 w-[270px] overflow-hidden break-keep">
-        <div class="flex flex-col gap-2 py-4">
-          <h3 class="text-slate-5 text-xl font-semibold">목차</h3>
-          <TableOfContents
-            client:idle
-            theme="aside"
-            items={itemsFromHeadings(headings)}
-          />
+        <hr />
+        {
+          author && (
+            <dl class="flex gap-5">
+              <div>
+                <ProfileImage>
+                  <Image
+                    src={`https://github.com/${authorId}.png`}
+                    alt={`Avatar image of ${author.name}`}
+                    width={64}
+                    height={64}
+                    class="bg-slate-2 h-16 w-16 rounded-full"
+                  />
+                </ProfileImage>
+              </div>
+              <div class="gap-4.5 flex flex-col">
+                <div class="flex items-center gap-3">
+                  <dt class="text-slate-7 text-lg font-medium">
+                    {author.name}
+                  </dt>
+                  <dd class="text-slate-4 text-base font-medium">
+                    {author.position}
+                  </dd>
+                </div>
+                <p>{author.bio}</p>
+              </div>
+            </dl>
+          )
+        }
+        <hr />
+      </article>
+      <aside class="hidden lg:block">
+        <div class="sticky top-14 w-[270px] overflow-hidden break-keep">
+          <div class="flex flex-col gap-2 py-4">
+            <h3 class="text-slate-5 text-xl font-semibold">목차</h3>
+            <TableOfContents
+              client:idle
+              theme="aside"
+              items={itemsFromHeadings(headings)}
+            />
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </div>
+    <div class="my-16 flex flex-col gap-6 px-4">
+      <h2 class="text-slate-5 text-1.375rem font-semibold">최신 글 보기</h2>
+      <PostList entries={entries} />
+    </div>
   </div>
 </LayoutKo>

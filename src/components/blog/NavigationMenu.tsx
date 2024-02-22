@@ -1,11 +1,20 @@
 import clsx from "clsx";
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 
 interface Props {
   class?: string;
   activeTag: string;
-  children: ReactNode;
 }
+
+export const navMap = {
+  "/blog": "전체보기",
+  ...Object.fromEntries(
+    ["Backend", "Frontend", "Infra", "Core V1", "Core V2"].map((tag) => [
+      `/blog/tags/${encodeURIComponent(tag)}`,
+      tag,
+    ]),
+  ),
+};
 
 export default function NavigationMenu(props: Props) {
   const [open, setOpen] = useState(false);
@@ -36,7 +45,36 @@ export default function NavigationMenu(props: Props) {
           !open && "<lg:opacity-0 <lg:scale-95 <lg:pointer-events-none",
         )}
       >
-        {props.children}
+        <ul
+          class={clsx(
+            "flex gap-x-5 overflow-x-auto whitespace-nowrap py-2",
+            "lt-lg:(absolute shadow-lg) right-0 top-full mt-1.5 flex-col rounded-md border bg-white px-4 py-2",
+            "<sm:left-0",
+          )}
+        >
+          {Object.entries(navMap).map(([path, tag]) => (
+            <li
+              class={clsx(
+                "text-1.125rem hover:text-slate-9 transition-colors duration-200",
+                "<lg:text-slate-9 <lg:hover:bg-slate-1 <lg:px-1 <lg:py-2 <lg:rounded-md <lg:flex <lg:items-center <lg:gap-3",
+                props.activeTag === tag
+                  ? "lg:(text-slate-9 font-semibold)"
+                  : "lg:text-slate-4",
+                path === "/blog" && "<lg:!hidden",
+              )}
+            >
+              <i
+                class={clsx(
+                  "i-ic-baseline-check inline-block lg:hidden",
+                  props.activeTag !== tag && "invisible",
+                )}
+              />
+              <a href={path} class="block w-full">
+                {tag}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
