@@ -48,7 +48,8 @@ export default function NavigationMenu(props: Props) {
         <ul
           class={clsx(
             "flex gap-x-5 overflow-x-auto whitespace-nowrap py-2",
-            "lt-lg:(absolute shadow-lg) right-0 top-full mt-1.5 flex-col rounded-md border bg-white px-4 py-2",
+            // prettier-ignore
+            "lt-lg:(absolute shadow-lg right-0 top-full mt-1.5 flex-col rounded-md border bg-white px-4 py-2)",
             "<sm:left-0",
           )}
         >
