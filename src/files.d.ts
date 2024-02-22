@@ -3,8 +3,17 @@ declare module "*/_authors.yaml" {
     string,
     {
       name: string;
-      position: string;
+      role: string;
       bio: string;
+      contacts?: (
+        | { github: string }
+        | { twitter: string }
+        | { facebook: string }
+        | { linkedin: string }
+        | { medium: string }
+        | { hashnode: string }
+        | { tistory: string }
+      )[];
     }
   >;
   export default value;

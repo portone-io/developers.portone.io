@@ -11,6 +11,7 @@ import TableOfContents, {
 } from "~/components/TableOfContents";
 import PostList from "~/components/blog/PostList/PostList.astro";
 import TagList from "~/components/blog/TagList.astro";
+import { P, match } from "ts-pattern";
 // import NavigationMenu from "~/components/blog/NavigationMenu";
 
 export async function getStaticPaths() {
@@ -65,7 +66,7 @@ const author = authors[authorId];
                     <dt class="text-slate-8 text-lg font-semibold">
                       {author.name}
                     </dt>
-                    <dd class="text-slate-5 text-lg">{author.position}</dd>
+                    <dd class="text-slate-5 text-lg">{author.role}</dd>
                   </div>
                 </dl>
               )
@@ -121,10 +122,62 @@ const author = authors[authorId];
                     {author.name}
                   </dt>
                   <dd class="text-slate-4 text-base font-medium">
-                    {author.position}
+                    {author.role}
                   </dd>
                 </div>
                 <p>{author.bio}</p>
+                {(author.contacts?.length ?? 0) > 0 && (
+                  <ul class=" m-0 flex list-none flex-row gap-6 p-0 text-2xl">
+                    {author.contacts?.map((contact) => (
+                      <li class="text-slate-4 hover:text-slate-5 transition-colors">
+                        {match(contact)
+                          .with({ github: P.string }, ({ github }) => (
+                            <a
+                              href={github}
+                              class="i-simple-icons-github inline-block"
+                            />
+                          ))
+                          .with({ twitter: P.string }, ({ twitter }) => (
+                            <a
+                              href={twitter}
+                              class="i-simple-icons-x inline-block"
+                            />
+                          ))
+                          .with({ facebook: P.string }, ({ facebook }) => (
+                            <a
+                              href={facebook}
+                              class="i-simple-icons-facebook inline-block"
+                            />
+                          ))
+                          .with({ linkedin: P.string }, ({ linkedin }) => (
+                            <a
+                              href={linkedin}
+                              class="i-simple-icons-linkedin inline-block"
+                            />
+                          ))
+                          .with({ medium: P.string }, ({ medium }) => (
+                            <a
+                              href={medium}
+                              class="i-simple-icons-medium inline-block"
+                            />
+                          ))
+                          .with({ hashnode: P.string }, ({ hashnode }) => (
+                            <a
+                              href={hashnode}
+                              class="i-simple-icons-hashnode inline-block"
+                            />
+                          ))
+                          .with({ tistory: P.string }, ({ tistory }) => (
+                            <a
+                              href={tistory}
+                              class="i-simple-icons-tistory inline-block"
+                            />
+                          ))
+                          .exhaustive()}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </dl>
           )
