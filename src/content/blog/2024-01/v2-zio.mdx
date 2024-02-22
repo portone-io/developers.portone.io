@@ -52,7 +52,7 @@ _'휴먼 에러를 가장 효과적으로 줄일 수 있는 방법은 무엇일�
 포트원 개발팀은 이러한 요구사항을 만족하는 언어로 스칼라(Scala)를 선택했습니다.
 Scala는 국내에서는 많이 쓰이지 않는 생소한 언어이지만 포트원의 결제 모듈을 만들기에 적합한 특징을 많이 가지고 있는데, 그 특징에 대해 하나씩 소개해보겠습니다.
 
-### 1. Multi-paradigm 지원 (OOP + FP)
+### Multi-paradigm 지원 (OOP + FP)
 
 #### OOP 지원
 
@@ -105,7 +105,7 @@ trait InstantPayGatewayService {
 ```scala
 for {
   // 1. 수기결제를 시작한다는 내용의 이벤트 저장
-  _ <- persist(Event.CommandReceived(id, form, store, customer, paymentMethodForm)
+  _ <- persist(Event.CommandReceived(id, form, store, customer, paymentMethodForm))
 
   // 2. 사용자가 넘긴 channel key를 이용해 channel 얻어오기
   channel <- channelService
@@ -176,7 +176,7 @@ val validated: Either[Error, (Store.Id, Payment.Id)] =
 (외부 리소스의 획득 및 해제, mutable 변수의 값 변경, I/O operation 등등…)
 이러한 모든 부수 효과를 타입으로 표현하고자 하는 시스템을 Effect System이라고 부르는데, 이에 대해서는 뒷부분에서 다시 자세하게 설명하겠습니다.
 
-### 2. 강력한 매크로 지원
+### 강력한 매크로 지원
 
 Scala는 소스의 AST(Abstract Syntax Tree)에 접근하고, 수정하고, 새로운 AST를 만들어낼 수 있는 강력한 매크로 기능을 지원합니다.
 매크로를 적절히 이용하면 여러 곳에서 기계적이고 반복적으로 작성해야만 하는 코드의 양을 획기적으로 줄일 수 있고, 이를 통해 개발 생산성의 향상을 도모할 수 있습니다.
