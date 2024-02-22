@@ -24,10 +24,10 @@ const thumbnailProps = match(data.thumbnail)
   .otherwise((thumbnail) => ({ src: thumbnail }));
 ---
 
-<li class="flex h-fit flex-col gap-4">
+<li class="text-17px flex h-fit flex-col gap-4">
   <div class="aspect-6/4">
     <div
-      class="grid h-full w-full grid-cols-1 grid-rows-1 overflow-hidden rounded-md"
+      class="rounded-12px grid h-full w-full grid-cols-1 grid-rows-1 overflow-hidden border"
     >
       <a
         href={`/blog/posts/${slug}`}
@@ -52,35 +52,33 @@ const thumbnailProps = match(data.thumbnail)
           />
         </ProfileImage>
       </div>
-      <ul
-        class="col-start-1 col-end-2 row-start-1 row-end-2 m-2.5 flex gap-1.5 self-start justify-self-start"
-      >
-        {
-          data.tags.map((tag) => (
-            <a href={`/blog/tags/${encodeURIComponent(tag)}`}>
-              <li class="rounded-3px bg-#11182780 px-2 py-1 text-xs text-slate-50">
-                {tag}
-              </li>
-            </a>
-          ))
-        }
-      </ul>
     </div>
   </div>
-  <a
-    href={`/blog/posts/${slug}`}
-    class="flex h-full flex-col justify-between gap-2"
-  >
-    <span class="text-slate-7 text-2xl font-semibold">
-      {data.title}
+  <div class="flex flex-col gap-3">
+    <a
+      href={`/blog/posts/${slug}`}
+      class="flex h-full flex-col justify-between gap-2"
+    >
+      <span class="text-slate-7 text-19px font-semibold">
+        {data.title}
+        {
+          !data.draft && (
+            <span class="text-slate-5 text-lg font-normal leading-[1.4]">
+              (Draft)
+            </span>
+          )
+        }
+      </span>
+      <span class="text-slate-5">{data.description}</span>
+    </a>
+    <ul class="flex gap-3">
       {
-        data.draft && (
-          <span class="text-slate-5 text-lg font-normal leading-[1.4]">
-            (Draft)
-          </span>
-        )
+        data.tags.map((tag) => (
+          <a href={`/blog/tags/${encodeURIComponent(tag)}`}>
+            <li class="text-portone">{tag}</li>
+          </a>
+        ))
       }
-    </span>
-    <span>{data.description}</span>
-  </a>
+    </ul>
+  </div>
 </li>
