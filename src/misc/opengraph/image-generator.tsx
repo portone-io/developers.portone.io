@@ -22,12 +22,14 @@ const pretendardPromises = Object.fromEntries(
 
 interface GenerateConfig {
   name?: string;
+  role?: string;
   profileImage?: string;
   title?: string;
   description?: string;
 }
 export async function generate({
   name,
+  role,
   profileImage,
   title,
   description,
@@ -36,6 +38,7 @@ export async function generate({
     name && profileImage ? (
       <BlogPost
         name={name}
+        role={role}
         profileImage={profileImage}
         title={title || ""}
         description={description || ""}
@@ -47,7 +50,7 @@ export async function generate({
     ),
     {
       width: 1200,
-      height: 1200,
+      height: 630,
       embedFont: true,
       fonts: [
         {
@@ -70,6 +73,6 @@ export async function generate({
         },
       ],
     },
-  );
+  ).catch((e) => (console.log(e), Promise.reject(e)));
   return await sharp(Buffer.from(svg)).toBuffer();
 }

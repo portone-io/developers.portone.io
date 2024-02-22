@@ -1,52 +1,35 @@
 /** @jsxImportSource ../jsx */
 
+import opengraphMainBg from "~/../public/opengraph-main-bg.png?base64";
+import portoneLogoText from "~/../public/portone-logo-text.png?base64";
+
 export default function Main() {
   return (
     <div
       style={{
+        width: "1200px",
+        height: "630px",
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        gap: "24px",
         justifyContent: "center",
-        width: "100%",
-        height: "100%",
+        alignItems: "center",
         color: "white",
-        background: "black",
-        fontFamily: "Pretendard",
-        fontSize: "96px",
-        fontWeight: "700",
-        lineHeight: "96px",
-        letterSpacing: "0",
-        textAlign: "center",
+        backgroundColor: "transparent",
+        backgroundImage: `url(data:image/png;base64,${opengraphMainBg})`,
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          width: "927.28px",
-          height: "519.42px",
-          top: "1580.88px",
-          left: "355.71px",
-          transformOrigin: "top left",
-          transform: "rotate(-135deg)",
-          background:
-            "linear-gradient(90deg, #FC6B2D 0%, rgba(252, 107, 45, 0.48) 46.88%, rgba(252, 107, 45, 0) 100%)",
-        }}
+      <img
+        src={`data:image/png;base64,${portoneLogoText}`}
+        style={{ width: "347px" }}
       />
       <div
         style={{
-          position: "absolute",
-          width: "583.99px",
-          height: "581.36px",
-          top: "267.35px",
-          left: "1475.23px",
-          transformOrigin: "top left",
-          transform: "rotate(135deg)",
-          background:
-            "linear-gradient(90deg, #FC6B2D 0%, rgba(252, 107, 45, 0) 100%)",
+          fontSize: "58px",
+          fontWeight: 500,
         }}
-      />
-      포트원 개발자 센터
+      >
+        개발자센터
+      </div>
     </div>
   );
 }

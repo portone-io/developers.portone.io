@@ -8,15 +8,17 @@ export const prerender = false;
 export const GET: APIRoute = async ({ params }) => {
   const { slug } = params;
   const entry = await getEntryBySlug("blog", slug!);
-  const generateConfig = entry
-    ? {
-        name: authors[entry.data.author]!.name,
-        profileImage: `https://github.com/${entry.data.author}.png`,
-        title: entry.data.title,
-        description: entry.data.description,
-      }
-    : {};
+  if (!entry) return new Response(null, { status: 404 });
+
+  const generateConfig = {
+    name: authors[entry.data.author]!.name,
+    role: authors[entry.data.author]!.role,
+    profileImage: `https://github.com/${entry.data.author}.png`,
+    title: entry.data.title,
+    description: entry.data.description,
+  };
   const response = await generate(generateConfig);
+
   return new Response(response, {
     status: 200,
     headers: {
