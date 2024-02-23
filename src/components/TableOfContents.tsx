@@ -124,7 +124,7 @@ export default function TableOfContents(props: Props) {
   const activeId = useActiveId(props.items, childActiveId);
 
   return (
-    <ul class="flex flex-col gap-3">
+    <ul class="gap-6px m-0 flex list-none flex-col p-0">
       {props.items.map((item) => (
         <Item
           key={item.id}
@@ -158,14 +158,14 @@ function Item(props: {
       <a
         href={`#${props.item.id}`}
         class={clsx(
-          "block py-2 text-lg font-medium",
+          "py-6px block break-keep text-base font-medium",
           props.isActive ? "text-slate-6" : "text-slate-4",
         )}
       >
         {props.item.title}
       </a>
       {props.item.children.length > 0 && (
-        <ul>
+        <ul class="m-0 block list-none p-0">
           {props.item.children.map((item) => (
             <SubItem
               key={item.id}
@@ -201,14 +201,14 @@ function SubItem(props: {
   return (
     <li
       class={clsx(
-        "transition-colors duration-300",
+        "text-sm transition-colors duration-300",
         // props.isActive && "bg-slate-100",
       )}
     >
       <a
         href={`#${props.item.id}`}
         class={clsx(
-          "block py-1 transition-[padding-top,padding-bottom] duration-300",
+          "py-2px block break-keep transition-[padding-top,padding-bottom] duration-300",
           props.isActive
             ? "border-l-portone font-medium text-portone"
             : " border-l-slate-5 text-slate-4",
@@ -225,7 +225,7 @@ function SubItem(props: {
         </div>
       </a>
       {props.item.children.length > 0 && (
-        <ul class="transition-[padding-left] duration-300">
+        <ul class="m-0 block list-none p-0 transition-[padding-left] duration-300">
           {props.item.children.map((item) => (
             <SubItem
               key={item.id}
