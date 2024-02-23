@@ -4,13 +4,15 @@ import Gnb from "./gnb/Gnb.astro";
 import Trackers from "./Trackers.astro";
 import ArticleStyle from "./ArticleStyle.astro";
 import TrackingScript from "./TrackingScript.astro";
+import SidebarBackground from "./sidebar/SidebarBackground";
 
 interface Props {
   lang: Lang;
   title: string;
   description?: string | undefined;
+  navAsMenu?: boolean | undefined;
 }
-const { lang, title, description } = Astro.props;
+const { lang, title, description, navAsMenu } = Astro.props;
 ---
 
 <html lang={lang}>
@@ -104,7 +106,8 @@ const { lang, title, description } = Astro.props;
     </style>
     <ArticleStyle />
     <div class="flex h-full flex-col">
-      <Gnb lang={lang} />
+      <Gnb lang={lang} navAsMenu={navAsMenu ?? false} />
+      <SidebarBackground client:visible />
       <main class="min-h-0 flex-1">
         <slot />
       </main>
