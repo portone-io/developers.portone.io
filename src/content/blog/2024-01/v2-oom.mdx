@@ -48,7 +48,7 @@ private def scrapAndPublish: UIO[Nothing] =
 
 그래프를 통해 계속적인 재귀 호출로 인해 메모리가 정리되지 않고 계속해서 쌓이고 있음을 짐작할 수 있었고, 이 이슈를 해결하기 위해 몇 가지 실험과 ZIO의 코드 분석을 진행했습니다.
 
-## 무한 재귀.. OOM이 아니라 StackOverflowError가 나야 하는것 아닐까?
+## 무한 재귀인데 OOM이 나는 이유
 
 그런데 무언가 이상했습니다.
 상황을 확인하고 가장 먼저 든 생각은 “무한 재귀 호출로 인해 문제가 생긴거라면 OutOfMemoryError가 아니라 StackOverflowError가 발생해야 하는 것 아닌가?”하는 것이었습니다.
@@ -82,6 +82,8 @@ def zioInfRec(n: Int): UIO[Nothing] =
 unsafeRun(zioInfRec(0))
 ```
 
+### ZIO의 Lazy Evaluation
+
 ZIO의 경우에만 `StackOverflowError` 가 발생하지 않는 이유는 우선 ZIO는 `flatMap`의 인자로 전달 받은 함수를 즉시 평가하지 않기 때문입니다.
 지난 글에서 ZIO는 동작을 기술하는 data type일 뿐이라고 소개했던 것을 기억하시나요?
 ZIO에서 제공하는 `flatMap`이라는 함수에서는 파라미터로 받은 `k` 함수를 평가하지 않고 `OnSuccess`라는 data type에 그대로 넣어주고 있습니다.
@@ -114,10 +116,14 @@ OnSuccess(
 
 실제로 `OnSuccess`가 계속해서 nested된 형태가 아니라, lambda 함수의 reference만 들어있는 것을 확인할 수 있습니다.
 
-## 그렇다면 ZIO가 실제로 실행될 때는 정말로 StackOverflowError가 나야 하는거 아닐까?
+## ZIO가 실제로 실행되는 원리
 
 여기까지 확인을 했다면, **“이건 단순히 평가 시점을 뒤로 미룬 것 뿐이고, 나중에 lambda가 실제로 평가될 때는 결국 문제가 발생하는거 아닌가?”** 하는 생각이 들 수 있습니다.
-이 부분에 대한 궁금증을 해소하기 위해서는 우선 단순한 데이터 타입에 불과한 ZIO가 어떻게 실제로 실행되는지에 대해 이해해야 하는데요, ZIO는 `Fiber`라는 객체 위에서 실행되고 그 실행 환경을 구체적으로 정의한 구현체를 `FiberRuntime`이라고 부릅니다.
+이 부분에 대한 궁금증을 해소하기 위해서는 우선 단순한 데이터 타입에 불과한 ZIO가 어떻게 실제로 실행되는지에 대해 이해해야 하는데요, 이 때 알아야 하는 개념이 Fiber와 FiberRuntime입니다.
+
+### Fiber와 FiberRuntime
+
+ZIO는 `Fiber`라는 객체 위에서 실행되고 그 실행 환경을 구체적으로 정의한 구현체를 `FiberRuntime`이라고 부릅니다.
 
 ```scala
 // 실행하고자 하는 zio 객체를 이용해 Fiber를 만듭니다.
@@ -149,6 +155,8 @@ private def runLoop(effect: ZIO[Any, Any, Any], currentDepth: Int): AnyRef = {
   }
 }
 ```
+
+### Stack Safety를 위한 Trampoline
 
 위 코드에서 하는 일은 첫번째 ZIO를 `runLoop` 함수를 재귀호출하여 먼저 평가하고, 그 결과를 가지고 `andThen` 함수를 호출해 이어서 평가할 ZIO 객체를 만드는 것입니다.
 어쨌거나 `runLoop` 함수를 재귀 호출하기 때문에 원래 가졌던 궁금증처럼 여기서도 결국 StackOverflowError가 발생할 가능성이 있어보입니다.
@@ -242,6 +250,9 @@ def withForComprehension2(n: Int): UIO[Nothing] =
 가장 마지막 부분에 `.map(nothing => nothing)` 이 붙는 것이 보이시나요?
 이 부분은 사실 없어도 되는 코드이지만, for-comprehension의 변환 규칙에 의해 어쩔 수 없이 붙게 되는 코드입니다.
 의미적으로는 사실상 같은 일을 하는 코드이지만, 만들어지는 ZIO의 구성 자체는 분명한 차이점을 가지고 있으며 이를 `FiberRuntime` 위에서 실행할 때도 동작 방식에서 큰 차이를 갖게 됩니다.
+
+### for-comprehension 사용 유무에 따른 구조적 차이
+
 마지막 부분에 `.map(nothing => nothing)` 이 추가된 경우와 그렇지 않은 경우를 각각 콘솔에 출력해보았습니다.
 (이해를 돕기 위해 단순화하여 편집한 출력입니다. 크게 신경쓰지 않아도 되는 파라미터는 생략하였으며, lambda 함수의 reference들은 단순하게 `lambda` 라고만 표기하였습니다.)
 
@@ -273,6 +284,8 @@ def map[B](f: A => B): ZIO[R, E, B] = flatMap(a => ZIO.succeed(f(a)))
 1번의 경우 `OnSuccess` 케이스를 `FiberRuntime` 에서 처리할 때 재귀호출 하는 `runLoop` 의 파라미터로 항상 `Sync` 를 넣어주기 때문에 해당 재귀 호출은 중첩된 재귀 호출을 하지 않고 곧바로 리턴될 것입니다.
 반면 2번의 경우 `OnSuccess` 가 두 번 겹쳐 있으므로, `runLoop` 재귀 호출의 파라미터로 `OnSuccess` 를 넣어주게 되고 이는 중첩된 `runLoop` 재귀 호출을 유발합니다.
 중첩된 재귀 호출은 Trampoline을 일으킬 것이고, 이 때 stack에 있던 중첩된 effect들이 heap (`reifiedStack`)으로 옮겨가면서 메모리를 차지하게 됩니다.
+
+### 문제 해결
 
 다시 맨 첫부분의 `scrapAndPublish` 예시로 돌아가서, 해당 함수를 아래와 같이 for-comprehension을 사용하지 않도록 바꿈으로써 문제를 해결할 수 있습니다.
 
