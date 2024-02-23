@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "PortOne API",
-    "version": "1.7.0"
+    "version": "1.12.0"
   },
   "servers": [
     {
@@ -14,6 +14,7 @@
     "/login/api-key": {},
     "/login/api-secret": {
       "post": {
+        "summary": "<p>API secret 를 사용한 토큰 발급</p>\n",
         "description": "<p>API secret 를 사용한 토큰 발급</p>\n<p>API secret 를 통해 API 인증에 사용할 토큰을 가져옵니다.</p>\n",
         "operationId": "loginViaApiSecret",
         "requestBody": {
@@ -69,6 +70,7 @@
     },
     "/token/refresh": {
       "post": {
+        "summary": "<p>토큰 갱신</p>\n",
         "description": "<p>토큰 갱신</p>\n<p>리프레시 토큰을 사용해 유효기간이 연장된 새로운 토큰을 재발급합니다.</p>\n",
         "operationId": "refreshToken",
         "requestBody": {
@@ -257,17 +259,6 @@
         "description": "<p>할인 분담 정책 다건 조회 시 필요한 필터 옵션을 조회합니다.</p>\n",
         "operationId": "getPlatformDiscountSharePolicyFilterOptions",
         "parameters": [
-          {
-            "name": "includeHidden",
-            "in": "query",
-            "description": "<p>숨김 조회 여부</p>\n<p>true 이면 숨김 처리된 할인 분담의 필터 옵션까지 조회하고, false 이면 숨김 처리되지 않은 할인 분담의 필터 옵션만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "x-portone-title": "숨김 조회 여부",
-            "x-portone-description": "<p>true 이면 숨김 처리된 할인 분담의 필터 옵션까지 조회하고, false 이면 숨김 처리되지 않은 할인 분담의 필터 옵션만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
-          },
           {
             "name": "isArchived",
             "in": "query",
@@ -1035,92 +1026,6 @@
     },
     "/platform/discount-share-policies/{id}/archive": {},
     "/platform/discount-share-policies/{id}/recover": {},
-    "/platform/additional-fee-policy-filter-options": {
-      "get": {
-        "description": "<p>추가 수수료 정책 다건 조회 시 필요한 필터 옵션을 조회합니다.</p>\n",
-        "operationId": "getPlatformAdditionalFeePolicyFilterOptions",
-        "parameters": [
-          {
-            "name": "includeHidden",
-            "in": "query",
-            "description": "<p>숨김 조회 여부</p>\n<p>true 이면 숨김 처리된 추가 수수료 정책의 필터 옵션까지 조회하고, false 이면 숨김 처리되지 않은 추가 수수료 정책의 필터 옵션만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "x-portone-title": "숨김 조회 여부",
-            "x-portone-description": "<p>true 이면 숨김 처리된 추가 수수료 정책의 필터 옵션까지 조회하고, false 이면 숨김 처리되지 않은 추가 수수료 정책의 필터 옵션만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
-          },
-          {
-            "name": "isArchived",
-            "in": "query",
-            "description": "<p>보관 조회 여부</p>\n<p>true 이면 보관된 추가 수수료 정책의 필터 옵션을 조회하고, false 이면 보관되지 않은 추가 수수료 정책의 필터 옵션을 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "x-portone-title": "보관 조회 여부",
-            "x-portone-description": "<p>true 이면 보관된 추가 수수료 정책의 필터 옵션을 조회하고, false 이면 보관되지 않은 추가 수수료 정책의 필터 옵션을 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "<p>성공 응답으로 조회된 추가 수수료 정책 필터 옵션을 반환합니다.</p>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PlatformAdditionalFeePolicyFilterOptions"
-                }
-              }
-            },
-            "x-portone-description": "<p>성공 응답으로 조회된 추가 수수료 정책 필터 옵션을 반환합니다.</p>\n"
-          },
-          "400": {
-            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyFilterOptionsError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyFilterOptionsError"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "<ul>\n<li><code>PlatformNotEnabledError</code>: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyFilterOptionsError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerJwt": []
-          },
-          {
-            "portOne": []
-          }
-        ],
-        "x-portone-description": "<p>추가 수수료 정책 다건 조회 시 필요한 필터 옵션을 조회합니다.</p>\n",
-        "x-portone-error": {
-          "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyFilterOptionsError"
-        },
-        "x-portone-unstable": true
-      }
-    },
     "/platform/additional-fee-policies": {
       "get": {
         "description": "<p>여러 추가 수수료 정책을 조회합니다.</p>\n",
@@ -2792,92 +2697,6 @@
     },
     "/platform/partners/{id}/archive": {},
     "/platform/partners/{id}/recover": {},
-    "/platform/contract-filter-options": {
-      "get": {
-        "description": "<p>계약 다건 조회 시 필요한 필터 옵션을 조회합니다.</p>\n",
-        "operationId": "getPlatformContractFilterOptions",
-        "parameters": [
-          {
-            "name": "includeHidden",
-            "in": "query",
-            "description": "<p>숨김 조회 여부</p>\n<p>true 이면 숨김 처리된 계약의 필터 옵션까지 조회하고, false 이면 숨김 처리되지 않은 계약의 필터 옵션만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "x-portone-title": "숨김 조회 여부",
-            "x-portone-description": "<p>true 이면 숨김 처리된 계약의 필터 옵션까지 조회하고, false 이면 숨김 처리되지 않은 계약의 필터 옵션만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
-          },
-          {
-            "name": "isArchived",
-            "in": "query",
-            "description": "<p>보관 조회 여부</p>\n<p>true 이면 보관된 계약의 필터 옵션을 조회하고, false 이면 보관되지 않은 계약의 필터 옵션을 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            },
-            "x-portone-title": "보관 조회 여부",
-            "x-portone-description": "<p>true 이면 보관된 계약의 필터 옵션을 조회하고, false 이면 보관되지 않은 계약의 필터 옵션을 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "<p>성공 응답으로 조회된 계약 필터 옵션을 반환합니다.</p>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PlatformContractFilterOptions"
-                }
-              }
-            },
-            "x-portone-description": "<p>성공 응답으로 조회된 계약 필터 옵션을 반환합니다.</p>\n"
-          },
-          "400": {
-            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPlatformContractFilterOptionsError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPlatformContractFilterOptionsError"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "<ul>\n<li><code>PlatformNotEnabledError</code>: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetPlatformContractFilterOptionsError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerJwt": []
-          },
-          {
-            "portOne": []
-          }
-        ],
-        "x-portone-description": "<p>계약 다건 조회 시 필요한 필터 옵션을 조회합니다.</p>\n",
-        "x-portone-error": {
-          "$ref": "#/components/schemas/GetPlatformContractFilterOptionsError"
-        },
-        "x-portone-unstable": true
-      }
-    },
     "/platform/contracts": {
       "get": {
         "description": "<p>여러 계약을 조회합니다.</p>\n",
@@ -3998,6 +3817,7 @@
     "/platform/payouts/{id}/sheet-file": {},
     "/identity-verifications/{identityVerificationId}": {
       "get": {
+        "summary": "<p>본인인증 단건 조회</p>\n",
         "description": "<p>본인인증 단건 조회</p>\n<p>주어진 아이디에 대응되는 본인인증 내역을 조회합니다.</p>\n",
         "operationId": "getIdentityVerification",
         "parameters": [
@@ -4094,6 +3914,7 @@
     },
     "/identity-verifications/{identityVerificationId}/send": {
       "post": {
+        "summary": "<p>본인인증 요청 전송</p>\n",
         "description": "<p>본인인증 요청 전송</p>\n<p>SMS 또는 APP 방식을 이용하여 본인인증 요청을 전송합니다.</p>\n",
         "operationId": "sendIdentityVerification",
         "parameters": [
@@ -4209,6 +4030,7 @@
     },
     "/identity-verifications/{identityVerificationId}/confirm": {
       "post": {
+        "summary": "<p>본인인증 확인</p>\n",
         "description": "<p>본인인증 확인</p>\n<p>요청된 본인인증에 대한 확인을 진행합니다.</p>\n",
         "operationId": "confirmIdentityVerification",
         "parameters": [
@@ -4324,6 +4146,7 @@
     },
     "/identity-verifications/{identityVerificationId}/resend": {
       "post": {
+        "summary": "<p>SMS 본인인증 요청 재전송</p>\n",
         "description": "<p>SMS 본인인증 요청 재전송</p>\n<p>SMS 본인인증 요청을 재전송합니다.</p>\n",
         "operationId": "resendIdentityVerification",
         "parameters": [
@@ -4440,6 +4263,7 @@
     },
     "/payments/{paymentId}/pre-register": {
       "post": {
+        "summary": "<p>결제 정보 사전 등록</p>\n",
         "description": "<p>결제 정보 사전 등록</p>\n<p>결제 정보를 사전 등록합니다.</p>\n",
         "operationId": "preRegisterPayment",
         "parameters": [
@@ -4535,6 +4359,7 @@
     },
     "/billing-keys/{billingKey}": {
       "get": {
+        "summary": "<p>빌링키 단건 조회</p>\n",
         "description": "<p>빌링키 단건 조회</p>\n<p>주어진 빌링키에 대응되는 빌링키 정보를 조회합니다.</p>\n",
         "operationId": "getBillingKeyInfo",
         "parameters": [
@@ -4629,6 +4454,7 @@
         }
       },
       "delete": {
+        "summary": "<p>빌링키 삭제</p>\n",
         "description": "<p>빌링키 삭제</p>\n<p>빌링키를 삭제합니다.</p>\n",
         "operationId": "deleteBillingKey",
         "parameters": [
@@ -4745,6 +4571,7 @@
     },
     "/payments/{paymentId}/cash-receipt": {
       "get": {
+        "summary": "<p>현금 영수증 단건 조회</p>\n",
         "description": "<p>현금 영수증 단건 조회</p>\n<p>주어진 결제 아이디에 대응되는 현금 영수증 내역을 조회합니다.</p>\n",
         "operationId": "getCashReceiptByPaymentId",
         "parameters": [
@@ -4841,6 +4668,7 @@
     },
     "/payments/{paymentId}": {
       "get": {
+        "summary": "<p>결제 단건 조회</p>\n",
         "description": "<p>결제 단건 조회</p>\n<p>주어진 아이디에 대응되는 결제 건을 조회합니다.</p>\n",
         "operationId": "getPayment",
         "parameters": [
@@ -4936,6 +4764,7 @@
     },
     "/payments": {
       "get": {
+        "summary": "<p>결제 다건 조회(페이지 기반)</p>\n",
         "description": "<p>결제 다건 조회(페이지 기반)</p>\n<p>주어진 조건에 맞는 결제 건들을 페이지 기반으로 조회합니다.</p>\n",
         "operationId": "getPayments",
         "requestBody": {
@@ -5009,6 +4838,7 @@
     },
     "/payments-by-cursor": {
       "get": {
+        "summary": "<p>결제 대용량 다건 조회(커서 기반)</p>\n",
         "description": "<p>결제 대용량 다건 조회(커서 기반)</p>\n<p>기간 내 모든 결제 건을 커서 기반으로 조회합니다. 결제 건의 생성일시를 기준으로 주어진 기간 내 존재하는 모든 결제 건이 조회됩니다.</p>\n",
         "operationId": "getAllPaymentsByCursor",
         "requestBody": {
@@ -5083,6 +4913,7 @@
     },
     "/payment-schedules/{paymentScheduleId}": {
       "get": {
+        "summary": "<p>결제 예약 단건 조회</p>\n",
         "description": "<p>결제 예약 단건 조회</p>\n<p>주어진 아이디에 대응되는 결제 예약 건을 조회합니다.</p>\n",
         "operationId": "getPaymentSchedule",
         "parameters": [
@@ -5179,6 +5010,7 @@
     },
     "/payment-schedules": {
       "get": {
+        "summary": "<p>결제 예약 다건 조회</p>\n",
         "description": "<p>결제 예약 다건 조회</p>\n<p>주어진 조건에 맞는 결제 예약 건들을 조회합니다.</p>\n",
         "operationId": "getPaymentSchedules",
         "requestBody": {
@@ -5250,6 +5082,7 @@
         }
       },
       "delete": {
+        "summary": "<p>결제 예약 취소</p>\n",
         "description": "<p>결제 예약 취소</p>\n<p>결제 예약 건을 취소합니다.</p>\n",
         "operationId": "revokePaymentSchedule",
         "requestBody": {
@@ -5343,6 +5176,7 @@
     },
     "/payments/{paymentId}/schedule": {
       "post": {
+        "summary": "<p>결제 예약</p>\n",
         "description": "<p>결제 예약</p>\n<p>결제를 예약합니다.</p>\n",
         "operationId": "createPaymentSchedule",
         "parameters": [
@@ -5448,6 +5282,7 @@
     },
     "/payments/{paymentId}/cancel": {
       "post": {
+        "summary": "<p>결제 취소</p>\n",
         "description": "<p>결제 취소</p>\n<p>결제 취소를 요청합니다.</p>\n",
         "operationId": "cancelPayment",
         "parameters": [
@@ -5563,6 +5398,7 @@
     },
     "/payments/{paymentId}/billing-key": {
       "post": {
+        "summary": "<p>빌링키 결제</p>\n",
         "description": "<p>빌링키 결제</p>\n<p>빌링키로 결제를 진행합니다.</p>\n",
         "operationId": "PayWithBillingKey",
         "parameters": [
@@ -5678,6 +5514,7 @@
     },
     "/payments/{paymentId}/instant": {
       "post": {
+        "summary": "<p>수기 결제</p>\n",
         "description": "<p>수기 결제</p>\n<p>수기 결제를 진행합니다.</p>\n",
         "operationId": "PayInstantly",
         "parameters": [
@@ -5793,6 +5630,7 @@
     },
     "/billing-keys": {
       "post": {
+        "summary": "<p>빌링키 발급</p>\n",
         "description": "<p>빌링키 발급</p>\n<p>빌링키 발급을 요청합니다.</p>\n",
         "operationId": "issueBillingKey",
         "requestBody": {
@@ -5886,6 +5724,7 @@
     },
     "/cash-receipts": {
       "post": {
+        "summary": "<p>현금 영수증 수동 발급</p>\n",
         "description": "<p>현금 영수증 수동 발급</p>\n<p>현금 영수증 발급을 요청합니다.</p>\n",
         "operationId": "issueCashReceipt",
         "requestBody": {
@@ -5989,6 +5828,7 @@
     },
     "/payments/{paymentId}/cash-receipt/cancel": {
       "post": {
+        "summary": "<p>현금 영수증 취소</p>\n",
         "description": "<p>현금 영수증 취소</p>\n<p>현금 영수증 취소를 요청합니다.</p>\n",
         "operationId": "cancelCashReceiptByPaymentId",
         "parameters": [
@@ -6095,6 +5935,7 @@
     },
     "/payments/{paymentId}/virtual-account/close": {
       "post": {
+        "summary": "<p>가상계좌 말소</p>\n",
         "description": "<p>가상계좌 말소</p>\n<p>발급된 가상계좌를 말소합니다.</p>\n",
         "operationId": "closeVirtualAccount",
         "parameters": [
@@ -6211,6 +6052,7 @@
     },
     "/payments/{paymentId}/escrow/logistics": {
       "post": {
+        "summary": "<p>에스크로 배송 정보 등록</p>\n",
         "description": "<p>에스크로 배송 정보 등록</p>\n<p>에스크로 배송 정보를 등록합니다.</p>\n",
         "operationId": "applyEscrowLogistics",
         "parameters": [
@@ -6326,6 +6168,7 @@
     },
     "/payments/{paymentId}/escrow/complete": {
       "post": {
+        "summary": "<p>에스크로 구매 확정</p>\n",
         "description": "<p>에스크로 구매 확정</p>\n<p>에스크로 결제를 구매 확정 처리합니다</p>\n",
         "operationId": "confirmEscrow",
         "parameters": [
@@ -6441,6 +6284,7 @@
     },
     "/payments/{paymentId}/resend-webhook": {
       "post": {
+        "summary": "<p>웹훅 재발송</p>\n",
         "description": "<p>웹훅 재발송</p>\n<p>웹훅을 재발송합니다.</p>\n",
         "operationId": "resendWebhook",
         "parameters": [
@@ -7758,6 +7602,7 @@
     },
     "/b2b-preview/member-companies/{brn}": {
       "get": {
+        "summary": "<p>연동 사업자 조회</p>\n",
         "description": "<p>연동 사업자 조회</p>\n<p>포트원 B2B 서비스에 연동된 사업자를 조회합니다.</p>\n",
         "operationId": "getB2bMemberCompany",
         "parameters": [
@@ -7865,6 +7710,7 @@
     },
     "/b2b-preview/member-companies": {
       "post": {
+        "summary": "<p>사업자 연동</p>\n",
         "description": "<p>사업자 연동</p>\n<p>포트원 B2B 서비스에 사업자를 연동합니다.</p>\n",
         "operationId": "registerB2bMemberCompany",
         "parameters": [
@@ -7962,6 +7808,7 @@
     },
     "/b2b-preview/member-companies/{brn}/contacts/{contactId}": {
       "get": {
+        "summary": "<p>담당자 조회</p>\n",
         "description": "<p>담당자 조회</p>\n<p>연동 사업자에 등록된 담당자를 조회합니다.</p>\n",
         "operationId": "getB2bMemberCompanyContact",
         "parameters": [
@@ -8079,6 +7926,7 @@
     },
     "/b2b-preview/member-companies/{brn}/certificate/registration-url": {
       "get": {
+        "summary": "<p>사업자 인증서 등록 URL 조회</p>\n",
         "description": "<p>사업자 인증서 등록 URL 조회</p>\n<p>연동 사업자의 인증서를 등록하기 위한 URL을 조회합니다.</p>\n",
         "operationId": "getB2bCertificateRegistrationUrl",
         "parameters": [
@@ -8186,6 +8034,7 @@
     },
     "/b2b-preview/member-companies/{brn}/certificate": {
       "get": {
+        "summary": "<p>인증서 조회</p>\n",
         "description": "<p>인증서 조회</p>\n<p>연동 사업자의 인증서를 조회합니다.</p>\n",
         "operationId": "getB2bCertificate",
         "parameters": [
@@ -8293,6 +8142,7 @@
     },
     "/b2b-preview/member-companies/contacts/id-existence": {
       "get": {
+        "summary": "<p>담당자 ID 존재 여부 확인</p>\n",
         "description": "<p>담당자 ID 존재 여부 확인</p>\n<p>담당자 ID가 이미 사용중인지 확인합니다.</p>\n",
         "operationId": "getB2bContactIdExistence",
         "parameters": [
@@ -8390,6 +8240,7 @@
     },
     "/b2b-preview/bank-accounts/{bank}/{accountNumber}/holder": {
       "get": {
+        "summary": "<p>예금주 조회</p>\n",
         "description": "<p>예금주 조회</p>\n<p>원하는 계좌의 예금주를 조회합니다.</p>\n",
         "operationId": "getB2bBankAccountHolder",
         "parameters": [
@@ -8517,6 +8368,7 @@
     },
     "/b2b-preview/company/{brn}/state": {
       "get": {
+        "summary": "<p>사업자 상태 조회</p>\n",
         "description": "<p>사업자 상태 조회</p>\n<p>원하는 사업자의 상태를 조회합니다. 포트원 B2B 서비스에 연동 및 등록되지 않은 사업자도 조회 가능합니다.</p>\n",
         "operationId": "getB2bCompanyState",
         "parameters": [
@@ -8624,6 +8476,7 @@
     },
     "/b2b-preview/tax-invoices/request-reverse-issuance": {
       "post": {
+        "summary": "<p>세금계산서 역발행 요청</p>\n",
         "description": "<p>세금계산서 역발행 요청</p>\n<p>공급자에게 세금계산서 역발행을 요청합니다.</p>\n",
         "operationId": "requestB2bTaxInvoiceReverseIssuance",
         "parameters": [
@@ -8731,6 +8584,7 @@
     },
     "/b2b-preview/tax-invoices/{documentKey}": {
       "get": {
+        "summary": "<p>세금 계산서 조회</p>\n",
         "description": "<p>세금 계산서 조회</p>\n<p>등록된 세금 계산서를 공급자 혹은 공급받는자 문서번호로 조회합니다.</p>\n",
         "operationId": "getB2bTaxInvoice",
         "parameters": [
@@ -8857,6 +8711,7 @@
         "x-portone-unstable": true
       },
       "delete": {
+        "summary": "<p>세금계산서 삭제</p>\n",
         "description": "<p>세금계산서 삭제</p>\n<p>세금계산서를 삭제합니다.</p>\n",
         "operationId": "deleteB2bTaxInvoice",
         "parameters": [
@@ -8977,6 +8832,7 @@
     },
     "/b2b-preview/tax-invoices/issue": {
       "post": {
+        "summary": "<p>세금계산서 발행</p>\n",
         "description": "<p>세금계산서 발행</p>\n<p>역발행의 경우 역발행요청(REQUESTED) 상태, 정발행의 경우 임시저장(REGISTERED) 상태의 세금계산서를 발행합니다.</p>\n",
         "operationId": "issueB2bTaxInvoice",
         "parameters": [
@@ -9084,6 +8940,7 @@
     },
     "/b2b-preview/tax-invoices/cancel-request": {
       "post": {
+        "summary": "<p>세금계산서 역발행 요청 취소</p>\n",
         "description": "<p>세금계산서 역발행 요청 취소</p>\n<p>공급받는자가 공급자에게 세금계산서 역발행 요청한 것을 취소합니다.</p>\n",
         "operationId": "cancelB2bTaxInvoiceRequest",
         "parameters": [
@@ -9191,6 +9048,7 @@
     },
     "/b2b-preview/tax-invoices/cancel-issuance": {
       "post": {
+        "summary": "<p>세금계산서 역발행 취소</p>\n",
         "description": "<p>세금계산서 역발행 취소</p>\n<p>공급자가 발행 완료한 세금계산서를 국세청 전송 전 취소합니다.</p>\n",
         "operationId": "cancelB2bTaxInvoiceIssuance",
         "parameters": [
@@ -9288,6 +9146,7 @@
     },
     "/b2b-preview/tax-invoices/refuse-request": {
       "post": {
+        "summary": "<p>세금계산서 역발행 요청 거부</p>\n",
         "description": "<p>세금계산서 역발행 요청 거부</p>\n<p>공급자가 공급받는자로부터 요청받은 세금계산서 역발행 건을 거부합니다.</p>\n",
         "operationId": "refuseB2bTaxInvoiceRequest",
         "parameters": [
@@ -9395,6 +9254,7 @@
     },
     "/b2b-preview/tax-invoices": {
       "get": {
+        "summary": "<p>세금 계산서 다건조회</p>\n",
         "description": "<p>세금 계산서 다건조회</p>\n<p>조회 기간 내 등록된 세금 계산서를 다건 조회합니다.</p>\n",
         "operationId": "getB2bTaxInvoices",
         "parameters": [
@@ -9560,6 +9420,7 @@
     },
     "/b2b-preview/tax-invoices/{documentKey}/popup-url": {
       "get": {
+        "summary": "<p>세금 계산서 팝업 URL 조회</p>\n",
         "description": "<p>세금 계산서 팝업 URL 조회</p>\n<p>등록된 세금 계산서 팝업 URL을 공급자 혹은 공급받는자 문서번호로 조회합니다.</p>\n",
         "operationId": "getB2bTaxInvoicePopupUrl",
         "parameters": [
@@ -9698,6 +9559,7 @@
     },
     "/b2b-preview/tax-invoices/{documentKey}/print-url": {
       "get": {
+        "summary": "<p>세금 계산서 프린트 URL 조회</p>\n",
         "description": "<p>세금 계산서 프린트 URL 조회</p>\n<p>등록된 세금 계산서 프린트 URL을 공급자 혹은 공급받는자 문서번호로 조회합니다.</p>\n",
         "operationId": "getB2bTaxInvoicePrintUrl",
         "parameters": [
@@ -9825,6 +9687,7 @@
     },
     "/b2b-preview/tax-invoices/{documentKey}/pdf-download-url": {
       "get": {
+        "summary": "<p>세금 계산서 PDF 다운로드 URL 조회</p>\n",
         "description": "<p>세금 계산서 PDF 다운로드 URL 조회</p>\n<p>등록된 세금 계산서 PDF 다운로드 URL을 공급자 혹은 공급받는자 문서번호로 조회합니다.</p>\n",
         "operationId": "getB2bTaxInvoicePdfDownloadUrl",
         "parameters": [
@@ -9949,11 +9812,88 @@
         },
         "x-portone-unstable": true
       }
+    },
+    "/kakaopay/payment/order": {
+      "get": {
+        "summary": "<p>카카오페이 주문 조회 API</p>\n",
+        "description": "<p>카카오페이 주문 조회 API</p>\n<p>주어진 아이디에 대응되는 카카오페이 주문 건을 조회합니다.\n해당 API 사용이 필요한 경우 포트원 기술지원팀으로 문의 주시길 바랍니다.</p>\n",
+        "operationId": "GetKakaopayPaymentOrder",
+        "parameters": [
+          {
+            "name": "pgTxId",
+            "in": "query",
+            "description": "<p>카카오페이 주문 번호 (tid)</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "카카오페이 주문 번호 (tid)"
+          },
+          {
+            "name": "channelKey",
+            "in": "query",
+            "description": "<p>채널키</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "채널키"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답으로 카카오페이 주문 조회 응답 객체를 반환합니다.</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetKakaopayPaymentOrderResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답으로 카카오페이 주문 조회 응답 객체를 반환합니다."
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetKakaopayPaymentOrderError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetKakaopayPaymentOrderError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "pgSpecific",
+        "x-portone-title": "카카오페이 주문 조회 API",
+        "x-portone-description": "<p>주어진 아이디에 대응되는 카카오페이 주문 건을 조회합니다.\n해당 API 사용이 필요한 경우 포트원 기술지원팀으로 문의 주시길 바랍니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetKakaopayPaymentOrderError"
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "Address": {
+        "title": "분리 형식 주소",
         "description": "<p>분리 형식 주소</p>\n<p>oneLine(한 줄 형식 주소) 필드는 항상 존재합니다.</p>\n",
         "oneOf": [
           {
@@ -9982,6 +9922,7 @@
         }
       },
       "AlreadyPaidError": {
+        "title": "결제가 이미 완료된 경우",
         "required": [
           "type"
         ],
@@ -9999,6 +9940,7 @@
         "x-portone-status-code": 409
       },
       "AlreadyPaidOrWaitingError": {
+        "title": "결제가 이미 완료되었거나 대기중인 경우",
         "required": [
           "type"
         ],
@@ -10019,6 +9961,7 @@
         "type": "object"
       },
       "AnalyticsAverageAmountChart": {
+        "title": "고객사의 평균 거래액 현황 조회 응답",
         "required": [
           "stats",
           "summary"
@@ -10087,6 +10030,7 @@
         "x-portone-description": "<p>전체 구간의 건별 평균 거래액, 고객 당 평균 거래액을 나타냅니다.</p>\n"
       },
       "AnalyticsCancellationRate": {
+        "title": "고객사의 환불율 정보",
         "required": [
           "cancellationRate"
         ],
@@ -10101,6 +10045,7 @@
         "x-portone-title": "고객사의 환불율 정보"
       },
       "AnalyticsCardChart": {
+        "title": "고객사의 카드결제 현황 차트 정보",
         "required": [
           "stats"
         ],
@@ -10144,6 +10089,7 @@
         "x-portone-description": "<p>특정 시점의 카드결제 거래 건 수와 금액을 나타냅니다.</p>\n"
       },
       "AnalyticsCardCompanyChart": {
+        "title": "고객사의 카드사별 결제 현황 조회 응답",
         "required": [
           "stats",
           "remainderStats",
@@ -10251,6 +10197,7 @@
         "x-portone-description": "<p>결제금액, 결제 건수의 총합을 나타냅니다.</p>\n"
       },
       "AnalyticsEasyPayChart": {
+        "title": "고객사의 간편결제 현황 차트 정보",
         "required": [
           "stats"
         ],
@@ -10294,6 +10241,7 @@
         "x-portone-description": "<p>특정 시점의 간편결제 거래 건수와 금액을 나타냅니다.</p>\n"
       },
       "AnalyticsEasyPayProviderChart": {
+        "title": "고객사의 간편결제사별 결제 현황 차트 정보",
         "required": [
           "stats",
           "remainderStats",
@@ -10401,6 +10349,7 @@
         "x-portone-description": "<p>결제금액, 결제 건수의 총합을 나타냅니다.</p>\n"
       },
       "AnalyticsOverseasPaymentUsage": {
+        "title": "고객사의 해외 결제 사용 여부",
         "required": [
           "isUsing"
         ],
@@ -10414,6 +10363,7 @@
         "x-portone-title": "고객사의 해외 결제 사용 여부"
       },
       "AnalyticsPaymentChart": {
+        "title": "고객사의 결제 현황 차트 정보",
         "required": [
           "stats"
         ],
@@ -10430,6 +10380,7 @@
         "x-portone-title": "고객사의 결제 현황 차트 정보"
       },
       "AnalyticsPaymentChartInsight": {
+        "title": "고객사의 결제 현황 인사이트 정보",
         "required": [
           "highestHourInDay",
           "lowestHourInDay"
@@ -10496,6 +10447,7 @@
         "x-portone-description": "<p>특정 시점의 거래 건 수와 금액을 나타냅니다.</p>\n"
       },
       "AnalyticsPaymentMethodChart": {
+        "title": "고객사의 결제수단 현황 차트 정보",
         "required": [
           "stats"
         ],
@@ -10537,6 +10489,7 @@
         "x-portone-description": "<p>결제수단별 결제금액, 결제 건수를 나타냅니다.</p>\n"
       },
       "AnalyticsPaymentMethodTrendChart": {
+        "title": "고객사의 결제수단 트렌드 차트 정보",
         "required": [
           "stats"
         ],
@@ -10586,6 +10539,7 @@
         "x-portone-description": "<p>특정 시점의 결제수단별 결제금액, 결제 건수를 나타냅니다.</p>\n"
       },
       "AnalyticsPaymentStatusByPaymentClientChart": {
+        "title": "고객사의 결제 환경 별 결제 상태 차트 정보",
         "required": [
           "stats"
         ],
@@ -10633,6 +10587,7 @@
         "x-portone-description": "<p>고객사의 결제 환경 별 결제 상태 차트 정보</p>\n"
       },
       "AnalyticsPaymentStatusByPaymentMethodChart": {
+        "title": "고객사의 결제 수단 별 결제 상태 차트 정보",
         "required": [
           "stats"
         ],
@@ -10679,6 +10634,7 @@
         "x-portone-description": "<p>각 결제수단, 상태 별 건수와 금액을 나타냅니다.</p>\n"
       },
       "AnalyticsPaymentStatusByPgCompanyChart": {
+        "title": "고객사의 PG사 별 결제 상태 차트 정보",
         "required": [
           "stats"
         ],
@@ -10726,6 +10682,7 @@
         "x-portone-description": "<p>각 상태의 건수와 금액, 사분위수를 나타냅니다.</p>\n"
       },
       "AnalyticsPaymentStatusChart": {
+        "title": "고객사의 결제 상태 차트 정보",
         "required": [
           "stats"
         ],
@@ -10792,6 +10749,7 @@
         "x-portone-description": "<p>각 상태의 건수와 금액, 사분위수를 나타냅니다.</p>\n"
       },
       "AnalyticsPgCompanyChart": {
+        "title": "가맹점의 결제대행사 현황 차트 정보",
         "required": [
           "stats"
         ],
@@ -10834,6 +10792,7 @@
         "x-portone-description": "<p>결제대행사별 결제금액, 결제 건수를 나타냅니다.</p>\n"
       },
       "AnalyticsPgCompanyTrendChart": {
+        "title": "가맹점의 결제대행사별 거래 추이 차트 정보",
         "required": [
           "stats"
         ],
@@ -10882,6 +10841,7 @@
         "x-portone-description": "<p>특정 시점의 결제대행사 별 결제금액, 결제 건수를 나타냅니다.</p>\n"
       },
       "AnalyticsTimeGranularity": {
+        "title": "조회 시간 단위",
         "type": "object",
         "properties": {
           "minute": {
@@ -10905,6 +10865,7 @@
         "x-portone-description": "<p>하나의 단위 필드만 선택하여 입력합니다.</p>\n"
       },
       "AnalyticsTimeGranularityDay": {
+        "title": "일",
         "required": [
           "timezoneHourOffset"
         ],
@@ -10919,16 +10880,19 @@
         "x-portone-title": "일"
       },
       "AnalyticsTimeGranularityHour": {
+        "title": "시간",
         "type": "object",
         "description": "<p>시간</p>\n",
         "x-portone-title": "시간"
       },
       "AnalyticsTimeGranularityMinute": {
+        "title": "분",
         "type": "object",
         "description": "<p>분</p>\n",
         "x-portone-title": "분"
       },
       "AnalyticsTimeGranularityMonth": {
+        "title": "월",
         "required": [
           "timezoneHourOffset"
         ],
@@ -10943,6 +10907,7 @@
         "x-portone-title": "월"
       },
       "AnalyticsTimeGranularityWeek": {
+        "title": "주",
         "required": [
           "timezoneHourOffset"
         ],
@@ -10990,6 +10955,7 @@
         }
       },
       "ApplyEscrowLogisticsResponse": {
+        "title": "에스크로 배송 정보 등록 성공 응답",
         "required": [
           "invoiceNumber",
           "sentAt",
@@ -11016,6 +10982,7 @@
         "x-portone-title": "에스크로 배송 정보 등록 성공 응답"
       },
       "ApprovePlatformPartnerBody": {
+        "title": "파트너 상태를 승인 완료로 변경하기 위한 입력 정보",
         "type": "object",
         "properties": {
           "memo": {
@@ -11056,6 +11023,7 @@
         }
       },
       "ApprovePlatformPartnerResponse": {
+        "title": "파트너 승인 성공 응답",
         "required": [
           "partner"
         ],
@@ -11099,6 +11067,7 @@
         }
       },
       "ArchivePlatformAdditionalFeePolicyResponse": {
+        "title": "추가 수수료 정책 보관 성공 응답",
         "required": [
           "additionalFeePolicy"
         ],
@@ -11142,6 +11111,7 @@
         }
       },
       "ArchivePlatformContractResponse": {
+        "title": "계약 보관 성공 응답",
         "required": [
           "contract"
         ],
@@ -11185,6 +11155,7 @@
         }
       },
       "ArchivePlatformDiscountSharePolicyResponse": {
+        "title": "할인 분담 보관 성공 응답",
         "required": [
           "discountSharePolicy"
         ],
@@ -11228,6 +11199,7 @@
         }
       },
       "ArchivePlatformPartnerResponse": {
+        "title": "파트너 보관 성공 응답",
         "required": [
           "partner"
         ],
@@ -11242,6 +11214,7 @@
         "x-portone-title": "파트너 보관 성공 응답"
       },
       "B2bBankAccountNotFoundError": {
+        "title": "계좌가 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -11308,6 +11281,7 @@
         }
       },
       "B2bCertificateType": {
+        "title": "인증서 타입",
         "type": "string",
         "description": "<p>인증서 타입</p>\n",
         "enum": [
@@ -11329,6 +11303,7 @@
         }
       },
       "B2bCertificateUnregisteredError": {
+        "title": "인증서가 등록되어 있지 않은 경우",
         "required": [
           "type"
         ],
@@ -11419,6 +11394,7 @@
         }
       },
       "B2bCompanyNotFoundError": {
+        "title": "사업자가 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -11436,6 +11412,7 @@
         "x-portone-status-code": 404
       },
       "B2bCompanyState": {
+        "title": "사업자 상태",
         "type": "object",
         "properties": {
           "taxationType": {
@@ -11463,6 +11440,7 @@
         "x-portone-title": "사업자 상태"
       },
       "B2bCompanyStateBusinessStatus": {
+        "title": "영업 상태",
         "type": "string",
         "description": "<p>영업 상태</p>\n",
         "enum": [
@@ -11484,6 +11462,7 @@
         }
       },
       "B2bCompanyStateTaxationType": {
+        "title": "사업자 과세 유형",
         "type": "string",
         "description": "<p>사업자 과세 유형</p>\n",
         "enum": [
@@ -11513,6 +11492,7 @@
         }
       },
       "B2bContactNotFoundError": {
+        "title": "담당자가 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -11530,6 +11510,7 @@
         "x-portone-status-code": 404
       },
       "B2bExternalServiceError": {
+        "title": "외부 서비스에서 에러가 발생한 경우",
         "required": [
           "type",
           "message"
@@ -11548,6 +11529,7 @@
         "x-portone-status-code": 502
       },
       "B2bFinancialSystemCommunicationError": {
+        "title": "금융기관과의 통신에 실패한 경우",
         "required": [
           "type"
         ],
@@ -11565,6 +11547,7 @@
         "x-portone-status-code": 503
       },
       "B2bFinancialSystemFailureError": {
+        "title": "금융기관 장애",
         "required": [
           "type"
         ],
@@ -11582,6 +11565,7 @@
         "x-portone-status-code": 503
       },
       "B2bFinancialSystemUnderMaintenanceError": {
+        "title": "금융기관 시스템이 점검 중인 경우",
         "required": [
           "type"
         ],
@@ -11599,6 +11583,7 @@
         "x-portone-status-code": 503
       },
       "B2bForeignExchangeAccountError": {
+        "title": "계좌 정보 조회가 불가능한 외화 계좌인 경우",
         "required": [
           "type"
         ],
@@ -11654,6 +11639,7 @@
         }
       },
       "B2bMemberCompanyNotFoundError": {
+        "title": "연동 사업자가 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -11671,6 +11657,7 @@
         "x-portone-status-code": 404
       },
       "B2bModification": {
+        "title": "세금 계산서 수정",
         "required": [
           "type",
           "originalNtsApproveNumber"
@@ -11690,6 +11677,7 @@
         "x-portone-title": "세금 계산서 수정"
       },
       "B2bNotEnabledError": {
+        "title": "B2B 기능이 활성화되지 않은 경우",
         "required": [
           "type"
         ],
@@ -11707,6 +11695,7 @@
         "x-portone-status-code": 403
       },
       "B2bRecipientNotFoundError": {
+        "title": "공급받는자가 존재하지 않은 경우",
         "required": [
           "type"
         ],
@@ -11724,6 +11713,7 @@
         "x-portone-status-code": 404
       },
       "B2bRegularMaintenanceTimeError": {
+        "title": "금융기관 시스템이 정기 점검 중인 경우",
         "required": [
           "type"
         ],
@@ -11741,6 +11731,7 @@
         "x-portone-status-code": 503
       },
       "B2bSearchDateType": {
+        "title": "조회 기준",
         "type": "string",
         "description": "<p>조회 기준</p>\n",
         "enum": [
@@ -11762,6 +11753,7 @@
         }
       },
       "B2bSupplierNotFoundError": {
+        "title": "공급자가 존재하지 않은 경우",
         "required": [
           "type"
         ],
@@ -11779,6 +11771,7 @@
         "x-portone-status-code": 404
       },
       "B2bSuspendedAccountError": {
+        "title": "정지 계좌인 경우",
         "required": [
           "type"
         ],
@@ -11884,6 +11877,7 @@
         }
       },
       "B2bTaxInvoiceAdditionalContact": {
+        "title": "추가 담당자",
         "required": [
           "email"
         ],
@@ -12027,19 +12021,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -12107,6 +12101,7 @@
         }
       },
       "B2bTaxInvoiceContact": {
+        "title": "세금계산서 담당자",
         "type": "object",
         "properties": {
           "name": {
@@ -12134,6 +12129,7 @@
         "x-portone-title": "세금계산서 담당자"
       },
       "B2bTaxInvoiceDocumentKeyType": {
+        "title": "문서번호 유형",
         "type": "string",
         "description": "<p>문서번호 유형</p>\n",
         "enum": [
@@ -12151,6 +12147,7 @@
         }
       },
       "B2bTaxInvoiceInput": {
+        "title": "세금계산서 생성 요청 정보",
         "required": [
           "taxType",
           "writeDate",
@@ -12262,19 +12259,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           }
         },
@@ -12406,19 +12403,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -12573,19 +12570,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -12606,6 +12603,7 @@
         }
       },
       "B2bTaxInvoiceItem": {
+        "title": "품목",
         "type": "object",
         "properties": {
           "purchaseDate": {
@@ -12667,6 +12665,7 @@
         "x-portone-title": "품목"
       },
       "B2bTaxInvoiceModificationType": {
+        "title": "수정 사유",
         "type": "string",
         "description": "<p>수정 사유</p>\n",
         "enum": [
@@ -12700,6 +12699,7 @@
         }
       },
       "B2bTaxInvoiceNonDeletableStatusError": {
+        "title": "세금계산서가 삭제 가능한 상태가 아닌 경우",
         "required": [
           "type"
         ],
@@ -12718,6 +12718,7 @@
         "x-portone-status-code": 400
       },
       "B2bTaxInvoiceNotFoundError": {
+        "title": "세금계산서가 존재하지 않은 경우",
         "required": [
           "type"
         ],
@@ -12735,6 +12736,7 @@
         "x-portone-status-code": 404
       },
       "B2bTaxInvoiceNotIssuedStatusError": {
+        "title": "세금계산서가 발행된(ISSUED) 상태가 아닌 경우",
         "required": [
           "type"
         ],
@@ -12752,6 +12754,7 @@
         "x-portone-status-code": 400
       },
       "B2bTaxInvoiceNotRequestedStatusError": {
+        "title": "세금계산서가 역발행 대기 상태가 아닌 경우",
         "required": [
           "type"
         ],
@@ -12769,6 +12772,7 @@
         "x-portone-status-code": 400
       },
       "B2bTaxInvoicePurposeType": {
+        "title": "영수/청구",
         "type": "string",
         "description": "<p>영수/청구</p>\n",
         "enum": [
@@ -12906,19 +12910,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -13051,19 +13055,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -13196,19 +13200,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -13341,19 +13345,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -13489,19 +13493,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -13653,19 +13657,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -13831,19 +13835,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -13934,6 +13938,7 @@
         }
       },
       "B2bTaxInvoiceSummary": {
+        "title": "세금계산서 요약",
         "required": [
           "taxType",
           "supplyCostTotalAmount",
@@ -14174,19 +14179,19 @@
             "title": "수정 사유 기재"
           },
           "items": {
+            "title": "품목",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceItem"
             },
-            "title": "품목",
             "description": "<p>최대 99개</p>\n"
           },
           "contacts": {
+            "title": "추가 담당자",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "title": "추가 담당자",
             "description": "<p>최대 3개</p>\n"
           },
           "statusUpdatedAt": {
@@ -14207,6 +14212,7 @@
         }
       },
       "B2bTaxType": {
+        "title": "과세 유형",
         "type": "string",
         "description": "<p>과세 유형</p>\n",
         "enum": [
@@ -14228,6 +14234,7 @@
         }
       },
       "Bank": {
+        "title": "은행",
         "type": "string",
         "description": "<p>은행</p>\n",
         "enum": [
@@ -14521,6 +14528,7 @@
         }
       },
       "BeforeRegisteredPaymentEscrow": {
+        "title": "배송 정보 등록 전",
         "required": [
           "status"
         ],
@@ -14535,6 +14543,7 @@
         "x-portone-title": "배송 정보 등록 전"
       },
       "BillingKeyAlreadyDeletedError": {
+        "title": "빌링키가 이미 삭제된 경우",
         "required": [
           "type"
         ],
@@ -14552,6 +14561,7 @@
         "x-portone-status-code": 409
       },
       "BillingKeyInfo": {
+        "title": "빌링키 정보",
         "required": [
           "billingKey",
           "merchantId",
@@ -14575,19 +14585,19 @@
             "title": "상점 아이디"
           },
           "methods": {
+            "title": "빌링키 결제수단 상세 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BillingKeyPaymentMethod"
             },
-            "title": "빌링키 결제수단 상세 정보",
             "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 결제수단 정보가 담길 수 있습니다.</p>\n"
           },
           "channels": {
+            "title": "빌링키 발급 시 사용된 채널",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SelectedChannel"
             },
-            "title": "빌링키 발급 시 사용된 채널",
             "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 채널 정보가 담길 수 있습니다.</p>\n"
           },
           "customer": {
@@ -14634,6 +14644,7 @@
         }
       },
       "BillingKeyNotFoundError": {
+        "title": "빌링키가 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -14666,6 +14677,7 @@
         "x-portone-status-code": 404
       },
       "BillingKeyPaymentInput": {
+        "title": "빌링키 결제 요청 입력 정보",
         "required": [
           "billingKey",
           "orderName",
@@ -14716,6 +14728,10 @@
             "type": "boolean",
             "title": "카드 포인트 사용 여부"
           },
+          "cashReceipt": {
+            "$ref": "#/components/schemas/CashReceiptInput",
+            "title": "현금영수증 정보"
+          },
           "country": {
             "$ref": "#/components/schemas/Country",
             "title": "결제 국가"
@@ -14729,11 +14745,11 @@
             "description": "<p>결제 승인/실패 시 요청을 받을 웹훅 주소입니다.\n상점에 설정되어 있는 값보다 우선적으로 적용됩니다.\n입력된 값이 없을 경우에는 빈 배열로 해석됩니다.</p>\n"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
             },
-            "title": "상품 정보",
             "description": "<p>입력된 값이 없을 경우에는 빈 배열로 해석됩니다.</p>\n"
           },
           "productCount": {
@@ -14758,6 +14774,7 @@
         "x-portone-title": "빌링키 결제 요청 입력 정보"
       },
       "BillingKeyPaymentMethod": {
+        "title": "빌링키 발급 수단 정보",
         "description": "<p>빌링키 발급 수단 정보</p>\n",
         "oneOf": [
           {
@@ -14768,6 +14785,12 @@
           },
           {
             "$ref": "#/components/schemas/BillingKeyPaymentMethodMobile"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodPaypal"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodTransfer"
           }
         ],
         "discriminator": {
@@ -14775,23 +14798,32 @@
           "mapping": {
             "BillingKeyPaymentMethodCard": "#/components/schemas/BillingKeyPaymentMethodCard",
             "BillingKeyPaymentMethodEasyPay": "#/components/schemas/BillingKeyPaymentMethodEasyPay",
-            "BillingKeyPaymentMethodMobile": "#/components/schemas/BillingKeyPaymentMethodMobile"
+            "BillingKeyPaymentMethodMobile": "#/components/schemas/BillingKeyPaymentMethodMobile",
+            "BillingKeyPaymentMethodPaypal": "#/components/schemas/BillingKeyPaymentMethodPaypal",
+            "BillingKeyPaymentMethodTransfer": "#/components/schemas/BillingKeyPaymentMethodTransfer"
           }
         },
         "x-portone-title": "빌링키 발급 수단 정보",
         "x-portone-discriminator": {
-          "BillingKeyPaymentMethodCard": {
-            "title": "카드 정보"
+          "BillingKeyPaymentMethodTransfer": {
+            "title": "계좌이체 정보"
           },
           "BillingKeyPaymentMethodMobile": {
             "title": "모바일 정보"
           },
           "BillingKeyPaymentMethodEasyPay": {
             "title": "간편 결제 정보"
+          },
+          "BillingKeyPaymentMethodCard": {
+            "title": "카드 정보"
+          },
+          "BillingKeyPaymentMethodPaypal": {
+            "title": "페이팔 정보"
           }
         }
       },
       "BillingKeyPaymentMethodCard": {
+        "title": "카드 정보",
         "required": [
           "type"
         ],
@@ -14809,6 +14841,7 @@
         "x-portone-title": "카드 정보"
       },
       "BillingKeyPaymentMethodEasyPay": {
+        "title": "간편 결제 정보",
         "required": [
           "type"
         ],
@@ -14830,6 +14863,7 @@
         "x-portone-title": "간편 결제 정보"
       },
       "BillingKeyPaymentMethodEasyPayCharge": {
+        "title": "충전식 포인트 결제 정보",
         "required": [
           "type"
         ],
@@ -14843,6 +14877,7 @@
         "x-portone-title": "충전식 포인트 결제 정보"
       },
       "BillingKeyPaymentMethodEasyPayMethod": {
+        "title": "간편 결제 수단",
         "description": "<p>간편 결제 수단</p>\n",
         "oneOf": [
           {
@@ -14850,13 +14885,17 @@
           },
           {
             "$ref": "#/components/schemas/BillingKeyPaymentMethodEasyPayCharge"
+          },
+          {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodTransfer"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
             "BillingKeyPaymentMethodCard": "#/components/schemas/BillingKeyPaymentMethodCard",
-            "BillingKeyPaymentMethodEasyPayCharge": "#/components/schemas/BillingKeyPaymentMethodEasyPayCharge"
+            "BillingKeyPaymentMethodEasyPayCharge": "#/components/schemas/BillingKeyPaymentMethodEasyPayCharge",
+            "BillingKeyPaymentMethodTransfer": "#/components/schemas/BillingKeyPaymentMethodTransfer"
           }
         },
         "x-portone-title": "간편 결제 수단",
@@ -14864,12 +14903,16 @@
           "BillingKeyPaymentMethodCard": {
             "title": "카드 정보"
           },
+          "BillingKeyPaymentMethodTransfer": {
+            "title": "계좌이체 정보"
+          },
           "BillingKeyPaymentMethodEasyPayCharge": {
             "title": "충전식 포인트 결제 정보"
           }
         }
       },
       "BillingKeyPaymentMethodMobile": {
+        "title": "모바일 정보",
         "required": [
           "type"
         ],
@@ -14886,7 +14929,44 @@
         "description": "<p>모바일 정보</p>\n",
         "x-portone-title": "모바일 정보"
       },
+      "BillingKeyPaymentMethodPaypal": {
+        "title": "페이팔 정보",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "description": "<p>페이팔 정보</p>\n",
+        "x-portone-title": "페이팔 정보"
+      },
+      "BillingKeyPaymentMethodTransfer": {
+        "title": "계좌이체 정보",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "bank": {
+            "type": "string",
+            "title": "표준 은행 코드"
+          },
+          "accountNumber": {
+            "type": "string",
+            "title": "계좌번호"
+          }
+        },
+        "description": "<p>계좌이체 정보</p>\n",
+        "x-portone-title": "계좌이체 정보"
+      },
       "BillingKeyPaymentSummary": {
+        "title": "빌링키 결제 완료된 결제 건 요약 정보",
         "required": [
           "pgTxId",
           "paidAt"
@@ -14907,6 +14987,7 @@
         "x-portone-title": "빌링키 결제 완료된 결제 건 요약 정보"
       },
       "CancelAmountExceedsCancellableAmountError": {
+        "title": "결제 취소 금액이 취소 가능 금액을 초과한 경우",
         "required": [
           "type"
         ],
@@ -14924,6 +15005,7 @@
         "x-portone-status-code": 409
       },
       "CancelB2bTaxInvoiceIssuanceBody": {
+        "title": "세금계산서 역발행 취소 정보",
         "required": [
           "brn",
           "documentKey"
@@ -14981,6 +15063,7 @@
         }
       },
       "CancelB2bTaxInvoiceRequestBody": {
+        "title": "세금계산서 역발행 요청 취소 정보",
         "required": [
           "brn",
           "documentKey"
@@ -15075,6 +15158,7 @@
         }
       },
       "CancelCashReceiptResponse": {
+        "title": "현금 영수증 취소 성공 응답",
         "required": [
           "cancelledAmount",
           "cancelledAt"
@@ -15096,6 +15180,7 @@
         "x-portone-title": "현금 영수증 취소 성공 응답"
       },
       "CancelPaymentBody": {
+        "title": "결제 취소 요청 입력 정보",
         "required": [
           "reason"
         ],
@@ -15143,6 +15228,7 @@
         "x-portone-title": "결제 취소 요청 입력 정보"
       },
       "CancelPaymentBodyRefundAccount": {
+        "title": "고객 정보 입력 형식",
         "required": [
           "bank",
           "number",
@@ -15228,6 +15314,7 @@
         }
       },
       "CancelPaymentResponse": {
+        "title": "결제 취소 성공 응답",
         "required": [
           "cancellation"
         ],
@@ -15267,6 +15354,7 @@
         }
       },
       "CancelPlatformAdditionalFeePolicyScheduleResponse": {
+        "title": "추가 수수료 정책 예약 업데이트 취소 성공 응답",
         "type": "object",
         "description": "<p>추가 수수료 정책 예약 업데이트 취소 성공 응답</p>\n",
         "x-portone-title": "추가 수수료 정책 예약 업데이트 취소 성공 응답"
@@ -15297,6 +15385,7 @@
         }
       },
       "CancelPlatformContractScheduleResponse": {
+        "title": "계약 예약 업데이트 취소 성공 응답",
         "type": "object",
         "description": "<p>계약 예약 업데이트 취소 성공 응답</p>\n",
         "x-portone-title": "계약 예약 업데이트 취소 성공 응답"
@@ -15327,6 +15416,7 @@
         }
       },
       "CancelPlatformDiscountSharePolicyScheduleResponse": {
+        "title": "할인 분담 정책 예약 업데이트 취소 성공 응답",
         "type": "object",
         "description": "<p>할인 분담 정책 예약 업데이트 취소 성공 응답</p>\n",
         "x-portone-title": "할인 분담 정책 예약 업데이트 취소 성공 응답"
@@ -15357,11 +15447,13 @@
         }
       },
       "CancelPlatformPartnerScheduleResponse": {
+        "title": "파트너 예약 업데이트 취소 성공 응답",
         "type": "object",
         "description": "<p>파트너 예약 업데이트 취소 성공 응답</p>\n",
         "x-portone-title": "파트너 예약 업데이트 취소 성공 응답"
       },
       "CancelTaxAmountExceedsCancellableTaxAmountError": {
+        "title": "취소 과세 금액이 취소 가능한 과세 금액을 초과한 경우",
         "required": [
           "type"
         ],
@@ -15379,6 +15471,7 @@
         "x-portone-status-code": 409
       },
       "CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError": {
+        "title": "취소 면세 금액이 취소 가능한 면세 금액을 초과한 경우",
         "required": [
           "type"
         ],
@@ -15396,6 +15489,7 @@
         "x-portone-status-code": 409
       },
       "CancellableAmountConsistencyBrokenError": {
+        "title": "취소 가능 잔액 검증에 실패한 경우",
         "required": [
           "type"
         ],
@@ -15413,6 +15507,7 @@
         "x-portone-status-code": 409
       },
       "CancelledCashReceipt": {
+        "title": "발급 취소",
         "required": [
           "status",
           "merchantId",
@@ -15507,6 +15602,7 @@
         "x-portone-title": "발급 취소"
       },
       "CancelledPayment": {
+        "title": "결제 취소 상태 건",
         "required": [
           "status",
           "id",
@@ -15571,11 +15667,11 @@
             "description": "<p>빌링키 결제인 경우에만 존재</p>\n"
           },
           "webhooks": {
+            "title": "웹훅 발송 내역",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentWebhook"
-            },
-            "title": "웹훅 발송 내역"
+            }
           },
           "requestedAt": {
             "type": "string",
@@ -15622,11 +15718,11 @@
             "description": "<p>에스크로 결제인 경우 존재합니다.</p>\n"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "productCount": {
             "type": "integer",
@@ -15655,11 +15751,11 @@
             "title": "거래 영수증 URL"
           },
           "cancellations": {
+            "title": "결제 취소 내역",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentCancellation"
-            },
-            "title": "결제 취소 내역"
+            }
           },
           "cancelledAt": {
             "type": "string",
@@ -15671,6 +15767,7 @@
         "x-portone-title": "결제 취소 상태 건"
       },
       "CancelledPaymentCashReceipt": {
+        "title": "취소된 현금영수증",
         "required": [
           "status",
           "issueNumber",
@@ -15730,6 +15827,7 @@
         "x-portone-title": "취소된 현금영수증"
       },
       "CancelledPaymentEscrow": {
+        "title": "거래 취소",
         "required": [
           "status",
           "company",
@@ -15764,6 +15862,7 @@
         "x-portone-title": "거래 취소"
       },
       "Card": {
+        "title": "카드 상세 정보",
         "type": "object",
         "properties": {
           "publisher": {
@@ -15803,6 +15902,7 @@
         "x-portone-title": "카드 상세 정보"
       },
       "CardBrand": {
+        "title": "카드 브랜드",
         "type": "string",
         "description": "<p>카드 브랜드</p>\n",
         "enum": [
@@ -15826,6 +15926,7 @@
         }
       },
       "CardCompany": {
+        "title": "카드사",
         "type": "string",
         "description": "<p>카드사</p>\n",
         "enum": [
@@ -15927,6 +16028,7 @@
         }
       },
       "CardCredential": {
+        "title": "카드 인증 관련 정보",
         "required": [
           "number",
           "expiryYear",
@@ -15959,6 +16061,7 @@
         "x-portone-title": "카드 인증 관련 정보"
       },
       "CardOwnerType": {
+        "title": "카드 소유주 유형",
         "type": "string",
         "description": "<p>카드 소유주 유형</p>\n",
         "enum": [
@@ -15976,6 +16079,7 @@
         }
       },
       "CardType": {
+        "title": "카드 유형",
         "type": "string",
         "description": "<p>카드 유형</p>\n",
         "enum": [
@@ -15997,6 +16101,7 @@
         }
       },
       "CashReceipt": {
+        "title": "현금영수증 내역",
         "description": "<p>현금영수증 내역</p>\n",
         "oneOf": [
           {
@@ -16031,6 +16136,7 @@
         }
       },
       "CashReceiptAlreadyIssuedError": {
+        "title": "현금영수증이 이미 발급된 경우",
         "required": [
           "type"
         ],
@@ -16047,7 +16153,51 @@
         "x-portone-title": "현금영수증이 이미 발급된 경우",
         "x-portone-status-code": 409
       },
+      "CashReceiptInput": {
+        "title": "현금영수증 입력 정보",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/CashReceiptInputType",
+            "title": "현금영수증 유형"
+          },
+          "customerIdentityNumber": {
+            "type": "string",
+            "title": "사용자 식별 번호",
+            "description": "<p>미발행 유형 선택 시 입력하지 않습니다.</p>\n"
+          }
+        },
+        "description": "<p>현금영수증 입력 정보</p>\n",
+        "x-portone-title": "현금영수증 입력 정보"
+      },
+      "CashReceiptInputType": {
+        "title": "입력 시 발급 유형",
+        "type": "string",
+        "description": "<p>입력 시 발급 유형</p>\n",
+        "enum": [
+          "CORPORATE",
+          "NO_RECEIPT",
+          "PERSONAL"
+        ],
+        "x-portone-title": "입력 시 발급 유형",
+        "x-portone-enum": {
+          "PERSONAL": {
+            "title": "소득공제용"
+          },
+          "CORPORATE": {
+            "title": "지출증빙용"
+          },
+          "NO_RECEIPT": {
+            "title": "미발행",
+            "description": "<p>PG사 설정에 따라 PG사가 자동으로 자진발급 처리할 수 있습니다.</p>\n"
+          }
+        }
+      },
       "CashReceiptNotFoundError": {
+        "title": "현금영수증이 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -16065,6 +16215,7 @@
         "x-portone-status-code": 404
       },
       "CashReceiptNotIssuedError": {
+        "title": "현금영수증이 발급되지 않은 경우",
         "required": [
           "type"
         ],
@@ -16082,6 +16233,7 @@
         "x-portone-status-code": 404
       },
       "CashReceiptSummary": {
+        "title": "현금영수증 내역",
         "required": [
           "issueNumber",
           "url",
@@ -16106,6 +16258,7 @@
         "x-portone-title": "현금영수증 내역"
       },
       "CashReceiptType": {
+        "title": "발급 유형",
         "type": "string",
         "description": "<p>발급 유형</p>\n",
         "enum": [
@@ -16123,6 +16276,7 @@
         }
       },
       "Channel": {
+        "title": "채널 정보",
         "required": [
           "channelId",
           "channelName",
@@ -16176,6 +16330,7 @@
         "x-portone-title": "채널 정보"
       },
       "ChannelDanalCredential": {
+        "title": "다날 인증 정보",
         "required": [
           "type"
         ],
@@ -16195,6 +16350,7 @@
         "x-portone-title": "다날 인증 정보"
       },
       "ChannelKsnetCredential": {
+        "title": "KSNET 인증 정보",
         "required": [
           "type"
         ],
@@ -16211,6 +16367,7 @@
         "x-portone-title": "KSNET 인증 정보"
       },
       "ChannelNaverPayCredential": {
+        "title": "네이버페이 인증 정보",
         "required": [
           "type"
         ],
@@ -16233,6 +16390,7 @@
         "x-portone-title": "네이버페이 인증 정보"
       },
       "ChannelNotFoundError": {
+        "title": "요청된 채널이 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -16250,6 +16408,7 @@
         "x-portone-status-code": 404
       },
       "ChannelPgCredential": {
+        "title": "PG사 인증 정보",
         "description": "<p>PG사 인증 정보</p>\n",
         "oneOf": [
           {
@@ -16298,6 +16457,7 @@
         }
       },
       "ChannelSmartroV2Credential": {
+        "title": "스마트로V2 인증 정보",
         "required": [
           "type"
         ],
@@ -16323,6 +16483,7 @@
         "x-portone-title": "스마트로V2 인증 정보"
       },
       "ChannelTossPaymentsCredential": {
+        "title": "토스페이먼츠 인증 정보",
         "required": [
           "type"
         ],
@@ -16342,6 +16503,7 @@
         "x-portone-title": "토스페이먼츠 인증 정보"
       },
       "ChannelType": {
+        "title": "채널 유형",
         "type": "string",
         "description": "<p>채널 유형</p>\n",
         "enum": [
@@ -16396,6 +16558,7 @@
         }
       },
       "CloseVirtualAccountResponse": {
+        "title": "가상계좌 말소 성공 응답",
         "required": [
           "closedAt"
         ],
@@ -16459,6 +16622,7 @@
         }
       },
       "ConfirmEscrowBody": {
+        "title": "에스크로 구매 확정 입력 정보",
         "type": "object",
         "properties": {
           "storeId": {
@@ -16509,6 +16673,7 @@
         }
       },
       "ConfirmEscrowResponse": {
+        "title": "에스크로 구매 확정 성공 응답",
         "required": [
           "completedAt"
         ],
@@ -16524,6 +16689,7 @@
         "x-portone-title": "에스크로 구매 확정 성공 응답"
       },
       "ConfirmIdentityVerificationBody": {
+        "title": "본인인증 확인을 위한 입력 정보",
         "type": "object",
         "properties": {
           "storeId": {
@@ -16578,6 +16744,7 @@
         }
       },
       "ConfirmIdentityVerificationResponse": {
+        "title": "본인인증 확인 성공 응답",
         "required": [
           "identityVerification"
         ],
@@ -16592,6 +16759,7 @@
         "x-portone-title": "본인인증 확인 성공 응답"
       },
       "ConfirmedPaymentEscrow": {
+        "title": "구매 확정",
         "required": [
           "status",
           "company",
@@ -16631,6 +16799,7 @@
         "x-portone-title": "구매 확정"
       },
       "Country": {
+        "title": "국가",
         "type": "string",
         "description": "<p>국가</p>\n",
         "enum": [
@@ -17669,6 +17838,7 @@
         }
       },
       "CreatePaymentScheduleBody": {
+        "title": "결제 예약 요청 입력 정보",
         "required": [
           "payment",
           "timeToPay"
@@ -17734,6 +17904,7 @@
         }
       },
       "CreatePaymentScheduleResponse": {
+        "title": "결제 예약 성공 응답",
         "required": [
           "schedule"
         ],
@@ -17748,6 +17919,7 @@
         "x-portone-title": "결제 예약 성공 응답"
       },
       "CreatePlatformAccountBody": {
+        "title": "플랫폼 계좌 생성을 위한 정보",
         "required": [
           "bank",
           "currency",
@@ -17777,6 +17949,7 @@
         "x-portone-title": "플랫폼 계좌 생성을 위한 정보"
       },
       "CreatePlatformAdditionalFeePolicyBody": {
+        "title": "추가 수수료 정책 생성을 위한 입력 정보",
         "required": [
           "name",
           "fee",
@@ -17835,6 +18008,7 @@
         }
       },
       "CreatePlatformAdditionalFeePolicyResponse": {
+        "title": "플랫폼 생성 성공 응답 정보",
         "required": [
           "additionalFeePolicy"
         ],
@@ -17849,11 +18023,13 @@
         "x-portone-title": "플랫폼 생성 성공 응답 정보"
       },
       "CreatePlatformContractBody": {
+        "title": "계약 객체 생성을 위한 입력 정보",
         "required": [
           "name",
           "platformFee",
           "settlementCycle",
-          "platformFeeVatPayer"
+          "platformFeeVatPayer",
+          "subtractPaymentVatAmount"
         ],
         "type": "object",
         "properties": {
@@ -17881,6 +18057,10 @@
           "platformFeeVatPayer": {
             "$ref": "#/components/schemas/PlatformPayer",
             "title": "중개수수료에 대한 부가세 부담 주체"
+          },
+          "subtractPaymentVatAmount": {
+            "type": "boolean",
+            "title": "정산 시 결제금액 부가세 감액 여부"
           }
         },
         "description": "<p>계약 객체 생성을 위한 입력 정보</p>\n",
@@ -17912,6 +18092,7 @@
         }
       },
       "CreatePlatformContractResponse": {
+        "title": "계약 객체 생성 성공 응답",
         "required": [
           "contract"
         ],
@@ -17926,6 +18107,7 @@
         "x-portone-title": "계약 객체 생성 성공 응답"
       },
       "CreatePlatformDiscountSharePolicyBody": {
+        "title": "할인 분담 정책 생성을 위한 입력 정보",
         "required": [
           "name",
           "partnerShareRate"
@@ -17980,6 +18162,7 @@
         }
       },
       "CreatePlatformDiscountSharePolicyResponse": {
+        "title": "할인 분담 정책 생성 성공 응답",
         "required": [
           "discountSharePolicy"
         ],
@@ -18478,6 +18661,7 @@
         }
       },
       "CreatePlatformPartnerBody": {
+        "title": "파트너 생성을 위한 입력 정보",
         "required": [
           "name",
           "email",
@@ -18561,6 +18745,7 @@
         }
       },
       "CreatePlatformPartnerResponse": {
+        "title": "파트너 생성 성공 응답",
         "required": [
           "partner"
         ],
@@ -18575,17 +18760,18 @@
         "x-portone-title": "파트너 생성 성공 응답"
       },
       "CreatePlatformPartnersBody": {
+        "title": "파트너 다건 생성을 위한 입력 정보",
         "required": [
           "partners"
         ],
         "type": "object",
         "properties": {
           "partners": {
+            "title": "생성할 파트너 리스트 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CreatePlatformPartnerBody"
-            },
-            "title": "생성할 파트너 리스트 정보"
+            }
           }
         },
         "description": "<p>파트너 다건 생성을 위한 입력 정보</p>\n",
@@ -18625,17 +18811,18 @@
         }
       },
       "CreatePlatformPartnersResponse": {
+        "title": "파트너 다건 생성 성공 응답",
         "required": [
           "partners"
         ],
         "type": "object",
         "properties": {
           "partners": {
+            "title": "생성된 파트너 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformPartner"
-            },
-            "title": "생성된 파트너 리스트"
+            }
           }
         },
         "description": "<p>파트너 다건 생성 성공 응답</p>\n",
@@ -18697,6 +18884,7 @@
         }
       },
       "Currency": {
+        "title": "통화 단위",
         "type": "string",
         "description": "<p>통화 단위</p>\n",
         "enum": [
@@ -19430,6 +19618,7 @@
         }
       },
       "Customer": {
+        "title": "고객 정보",
         "type": "object",
         "properties": {
           "id": {
@@ -19470,6 +19659,7 @@
         "x-portone-title": "고객 정보"
       },
       "CustomerInput": {
+        "title": "고객 정보 입력 정보",
         "type": "object",
         "properties": {
           "id": {
@@ -19526,6 +19716,7 @@
         "x-portone-title": "고객 정보 입력 정보"
       },
       "CustomerNameInput": {
+        "title": "고객 이름 입력 정보",
         "type": "object",
         "properties": {
           "full": {
@@ -19542,6 +19733,7 @@
         "x-portone-description": "<p>두 개의 이름 형식 중 한 가지만 선택하여 입력해주세요.</p>\n"
       },
       "CustomerSeparatedName": {
+        "title": "고객 분리형 이름",
         "required": [
           "first",
           "last"
@@ -19580,6 +19772,7 @@
         }
       },
       "DateTimeRange": {
+        "title": "시간 범위",
         "required": [
           "from",
           "until"
@@ -19599,6 +19792,7 @@
         "x-portone-title": "시간 범위"
       },
       "DayOfWeek": {
+        "title": "요일",
         "type": "string",
         "description": "<p>요일</p>\n",
         "enum": [
@@ -19696,6 +19890,7 @@
         }
       },
       "DeleteBillingKeyResponse": {
+        "title": "빌링키 삭제 성공 응답",
         "required": [
           "deletedAt"
         ],
@@ -19787,6 +19982,7 @@
         "type": "object"
       },
       "DeliveredPaymentEscrow": {
+        "title": "배송 완료",
         "required": [
           "status",
           "company",
@@ -19850,6 +20046,7 @@
         }
       },
       "EasyPayMethodType": {
+        "title": "간편 결제 수단",
         "type": "string",
         "description": "<p>간편 결제 수단</p>\n",
         "enum": [
@@ -19865,6 +20062,7 @@
         }
       },
       "EasyPayProvider": {
+        "title": "간편 결제사",
         "type": "string",
         "description": "<p>간편 결제사</p>\n",
         "enum": [
@@ -19904,6 +20102,7 @@
         }
       },
       "EscrowLogisticsRegisterBody": {
+        "title": "에스크로 배송 정보 등록 입력 정보",
         "required": [
           "logistics"
         ],
@@ -19936,6 +20135,7 @@
         "x-portone-title": "에스크로 배송 정보 등록 입력 정보"
       },
       "FailedIdentityVerification": {
+        "title": "실패한 본인인증 내역",
         "required": [
           "status",
           "id",
@@ -19986,6 +20186,7 @@
         "x-portone-title": "실패한 본인인증 내역"
       },
       "FailedPayment": {
+        "title": "결제 실패 상태 건",
         "required": [
           "status",
           "id",
@@ -20048,11 +20249,11 @@
             "description": "<p>빌링키 결제인 경우에만 존재</p>\n"
           },
           "webhooks": {
+            "title": "웹훅 발송 내역",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentWebhook"
-            },
-            "title": "웹훅 발송 내역"
+            }
           },
           "requestedAt": {
             "type": "string",
@@ -20099,11 +20300,11 @@
             "description": "<p>에스크로 결제인 경우 존재합니다.</p>\n"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "productCount": {
             "type": "integer",
@@ -20128,6 +20329,7 @@
         "x-portone-title": "결제 실패 상태 건"
       },
       "FailedPaymentCancellation": {
+        "title": "취소 실패 상태",
         "required": [
           "status",
           "id",
@@ -20190,6 +20392,7 @@
         "x-portone-title": "취소 실패 상태"
       },
       "FailedPaymentSchedule": {
+        "title": "결제 실패 상태",
         "required": [
           "status",
           "id",
@@ -20281,11 +20484,11 @@
             "title": "웹훅 주소"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "timeToPay": {
             "type": "string",
@@ -20307,6 +20510,7 @@
         "x-portone-title": "결제 실패 상태"
       },
       "ForbiddenError": {
+        "title": "요청이 거절된 경우",
         "required": [
           "type"
         ],
@@ -20324,6 +20528,7 @@
         "x-portone-status-code": 403
       },
       "Gender": {
+        "title": "성별",
         "type": "string",
         "description": "<p>성별</p>\n",
         "enum": [
@@ -20380,17 +20585,18 @@
         "x-portone-description": "<p>결제 건 커서 기반 대용량 다건 조회를 위한 입력 정보</p>\n"
       },
       "GetAllPaymentsByCursorResponse": {
+        "title": "결제 건 커서 기반 대용량 다건 조회 성공 응답 정보",
         "required": [
           "items"
         ],
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 결제 건 및 커서 정보 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentWithCursor"
-            },
-            "title": "조회된 결제 건 및 커서 정보 리스트"
+            }
           }
         },
         "description": "<p>결제 건 커서 기반 대용량 다건 조회 성공 응답 정보</p>\n",
@@ -20418,6 +20624,7 @@
         }
       },
       "GetAnalyticsAverageAmountChartBody": {
+        "title": "가맹점의 평균 거래액 현황 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20457,6 +20664,7 @@
         "x-portone-title": "가맹점의 평균 거래액 현황 조회를 위한 입력 정보"
       },
       "GetAnalyticsCancellationRateBody": {
+        "title": "가맹점의 환불율 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20505,6 +20713,7 @@
         }
       },
       "GetAnalyticsCardChartBody": {
+        "title": "가맹점의 카드결제 현황 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20565,6 +20774,7 @@
         }
       },
       "GetAnalyticsCardCompanyChartBody": {
+        "title": "가맹점의 카드사별 결제 현황 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20602,18 +20812,18 @@
             "description": "<p>시간별, 월별 단위만 지원됩니다.</p>\n"
           },
           "cardCompanies": {
+            "title": "조회할 카드사",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CardCompany"
-            },
-            "title": "조회할 카드사"
+            }
           },
           "excludesFromRemainders": {
+            "title": "나머지 집계에 포함되지 않을 카드사",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CardCompany"
-            },
-            "title": "나머지 집계에 포함되지 않을 카드사"
+            }
           }
         },
         "description": "<p>가맹점의 카드사별 결제 현황 조회를 위한 입력 정보</p>\n",
@@ -20641,6 +20851,7 @@
         }
       },
       "GetAnalyticsEasyPayChartBody": {
+        "title": "가맹점의 간편결제 현황 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20701,6 +20912,7 @@
         }
       },
       "GetAnalyticsEasyPayProviderChartBody": {
+        "title": "가맹점의 간편결제사별 결제 현황 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20738,18 +20950,18 @@
             "description": "<p>시간별, 월별 단위만 지원됩니다.</p>\n"
           },
           "easyPayProviders": {
+            "title": "조회할 간편결제사",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EasyPayProvider"
-            },
-            "title": "조회할 간편결제사"
+            }
           },
           "excludesFromRemainders": {
+            "title": "나머지 집계에 포함되지 않을 간편결제사",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EasyPayProvider"
-            },
-            "title": "나머지 집계에 포함되지 않을 간편결제사"
+            }
           }
         },
         "description": "<p>가맹점의 간편결제사별 결제 현황 조회를 위한 입력 정보</p>\n",
@@ -20794,6 +21006,7 @@
         }
       },
       "GetAnalyticsPaymentChartBody": {
+        "title": "가맹점의 결제 현황 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20853,6 +21066,7 @@
         }
       },
       "GetAnalyticsPaymentChartInsightBody": {
+        "title": "가맹점의 결제 현황 인사이트 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20913,6 +21127,7 @@
         }
       },
       "GetAnalyticsPaymentMethodChartBody": {
+        "title": "가맹점의 결제수단 현황 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20946,6 +21161,7 @@
         "x-portone-title": "가맹점의 결제수단 현황 조회를 위한 입력 정보"
       },
       "GetAnalyticsPaymentMethodTrendChartBody": {
+        "title": "가맹점의 결제수단 트렌드 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -20985,6 +21201,7 @@
         "x-portone-title": "가맹점의 결제수단 트렌드 조회를 위한 입력 정보"
       },
       "GetAnalyticsPaymentStatusByPaymentClientChartBody": {
+        "title": "가맹점의 결제환경별 결제전환율 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -21012,6 +21229,7 @@
         "x-portone-title": "가맹점의 결제환경별 결제전환율 조회를 위한 입력 정보"
       },
       "GetAnalyticsPaymentStatusByPaymentMethodChartBody": {
+        "title": "가맹점의 결제수단별 결제전환율 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -21039,6 +21257,7 @@
         "x-portone-title": "가맹점의 결제수단별 결제전환율 조회를 위한 입력 정보"
       },
       "GetAnalyticsPaymentStatusByPgCompanyChartBody": {
+        "title": "가맹점의 PG사별 결제전환율 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -21066,6 +21285,7 @@
         "x-portone-title": "가맹점의 PG사별 결제전환율 조회를 위한 입력 정보"
       },
       "GetAnalyticsPaymentStatusChartBody": {
+        "title": "가맹점의 결제상태 이력 집계 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -21093,6 +21313,7 @@
         "x-portone-title": "가맹점의 결제상태 이력 집계 조회를 위한 입력 정보"
       },
       "GetAnalyticsPgCompanyChartBody": {
+        "title": "가맹점의 결제대행사 현황 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -21126,6 +21347,7 @@
         "x-portone-title": "가맹점의 결제대행사 현황 조회를 위한 입력 정보"
       },
       "GetAnalyticsPgCompanyTrendChartBody": {
+        "title": "가맹점의 결제대행사별 거래 추이 조회를 위한 입력 정보",
         "required": [
           "from",
           "until",
@@ -21162,11 +21384,11 @@
             "description": "<p>시간별, 월별 단위만 지원됩니다.</p>\n"
           },
           "pgCompanies": {
+            "title": "조회할 결제대행사",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PgCompany"
-            },
-            "title": "조회할 결제대행사"
+            }
           }
         },
         "description": "<p>가맹점의 결제대행사별 거래 추이 조회를 위한 입력 정보</p>\n",
@@ -21194,6 +21416,7 @@
         }
       },
       "GetB2bBankAccountHolderResponse": {
+        "title": "예금주 조회 응답 정보",
         "required": [
           "accountHolder"
         ],
@@ -21270,6 +21493,7 @@
         }
       },
       "GetB2bCertificateRegistrationUrlResponse": {
+        "title": "인증서 등록 URL 조회 응답 정보",
         "required": [
           "url"
         ],
@@ -21313,6 +21537,7 @@
         }
       },
       "GetB2bContactIdExistenceResponse": {
+        "title": "담당자 ID 존재 여부 응답 정보",
         "required": [
           "exists"
         ],
@@ -21447,6 +21672,7 @@
         }
       },
       "GetB2bTaxInvoicePdfDownloadUrlResponse": {
+        "title": "세금계산서 PDF 다운로드 URL 성공 응답",
         "required": [
           "url"
         ],
@@ -21490,6 +21716,7 @@
         }
       },
       "GetB2bTaxInvoicePopupUrlResponse": {
+        "title": "세금계산서 팝업 URL 성공 응답",
         "required": [
           "url"
         ],
@@ -21533,6 +21760,7 @@
         }
       },
       "GetB2bTaxInvoicePrintUrlResponse": {
+        "title": "세금계산서 프린트 URL 성공 응답",
         "required": [
           "url"
         ],
@@ -21572,6 +21800,7 @@
         }
       },
       "GetB2bTaxInvoicesResponse": {
+        "title": "세금계산서 다건 조회 성공 응답",
         "required": [
           "items",
           "page"
@@ -21579,11 +21808,11 @@
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 세금계산서 목록",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceSummary"
-            },
-            "title": "조회된 세금계산서 목록"
+            }
           },
           "page": {
             "$ref": "#/components/schemas/PageInfo",
@@ -21665,17 +21894,18 @@
         }
       },
       "GetChannelsResponse": {
+        "title": "채널 다건 조회 성공 응답 정보",
         "required": [
           "items"
         ],
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 채널 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Channel"
-            },
-            "title": "조회된 채널 리스트"
+            }
           }
         },
         "description": "<p>채널 다건 조회 성공 응답 정보</p>\n",
@@ -21705,6 +21935,44 @@
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }
         }
+      },
+      "GetKakaopayPaymentOrderError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetKakaopayPaymentOrderResponse": {
+        "title": "카카오페이 주문 조회 응답",
+        "required": [
+          "statusCode",
+          "body"
+        ],
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "title": "HTTP 상태 코드"
+          },
+          "body": {
+            "type": "string",
+            "title": "HTTP 응답 본문 (JSON)"
+          }
+        },
+        "description": "<p>카카오페이 주문 조회 응답</p>\n",
+        "x-portone-title": "카카오페이 주문 조회 응답"
       },
       "GetMerchantError": {
         "oneOf": [
@@ -21812,6 +22080,7 @@
         }
       },
       "GetPaymentSchedulesBody": {
+        "title": "결제 예약 다건 조회를 위한 입력 정보",
         "type": "object",
         "properties": {
           "page": {
@@ -21850,6 +22119,7 @@
         }
       },
       "GetPaymentSchedulesResponse": {
+        "title": "결제 예약 다건 조회 성공 응답 정보",
         "required": [
           "items",
           "page"
@@ -21857,11 +22127,11 @@
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 결제 예약 건 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentSchedule"
-            },
-            "title": "조회된 결제 예약 건 리스트"
+            }
           },
           "page": {
             "$ref": "#/components/schemas/PageInfo",
@@ -21994,6 +22264,7 @@
         }
       },
       "GetPaymentsResponse": {
+        "title": "결제 건 다건 조회 성공 응답 정보",
         "required": [
           "items",
           "page"
@@ -22001,11 +22272,11 @@
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 결제 건 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Payment"
-            },
-            "title": "조회된 결제 건 리스트"
+            }
           },
           "page": {
             "$ref": "#/components/schemas/PageInfo",
@@ -22058,6 +22329,7 @@
         }
       },
       "GetPlatformAdditionalFeePoliciesBody": {
+        "title": "추가 수수료 정책 다건 조회를 위한 입력 정보",
         "required": [
           "page"
         ],
@@ -22097,6 +22369,7 @@
         }
       },
       "GetPlatformAdditionalFeePoliciesResponse": {
+        "title": "추가 수수료 정책 다건 조회 성공 응답 정보",
         "required": [
           "items",
           "page"
@@ -22104,11 +22377,11 @@
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 추가 수수료 정책 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformAdditionalFeePolicy"
-            },
-            "title": "조회된 추가 수수료 정책 리스트"
+            }
           },
           "page": {
             "$ref": "#/components/schemas/PageInfo",
@@ -22138,27 +22411,6 @@
           "mapping": {
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "PLATFORM_ADDITIONAL_FEE_POLICY_NOT_FOUND": "#/components/schemas/PlatformAdditionalFeePolicyNotFoundError",
-            "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
-            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
-          }
-        }
-      },
-      "GetPlatformAdditionalFeePolicyFilterOptionsError": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/InvalidRequestError"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformNotEnabledError"
-          },
-          {
-            "$ref": "#/components/schemas/UnauthorizedError"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }
@@ -22214,27 +22466,6 @@
           }
         }
       },
-      "GetPlatformContractFilterOptionsError": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/InvalidRequestError"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformNotEnabledError"
-          },
-          {
-            "$ref": "#/components/schemas/UnauthorizedError"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
-            "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
-            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
-          }
-        }
-      },
       "GetPlatformContractScheduleError": {
         "oneOf": [
           {
@@ -22261,6 +22492,7 @@
         }
       },
       "GetPlatformContractsBody": {
+        "title": "계약 다건 조회를 위한 입력 정보",
         "type": "object",
         "properties": {
           "page": {
@@ -22297,6 +22529,7 @@
         }
       },
       "GetPlatformContractsResponse": {
+        "title": "계약 다건 조회 성공 응답",
         "required": [
           "items",
           "page"
@@ -22304,11 +22537,11 @@
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 계약 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformContract"
-            },
-            "title": "조회된 계약 리스트"
+            }
           },
           "page": {
             "$ref": "#/components/schemas/PageInfo",
@@ -22319,6 +22552,7 @@
         "x-portone-title": "계약 다건 조회 성공 응답"
       },
       "GetPlatformDiscountSharePoliciesBody": {
+        "title": "할인 분담 정책 다건 조회를 위한 입력 정보",
         "type": "object",
         "properties": {
           "page": {
@@ -22355,6 +22589,7 @@
         }
       },
       "GetPlatformDiscountSharePoliciesResponse": {
+        "title": "할인 분담 정책 다건 조회 성공 응답 정보",
         "required": [
           "items",
           "page"
@@ -22362,11 +22597,11 @@
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 할인 분담 정책 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformDiscountSharePolicy"
-            },
-            "title": "조회된 할인 분담 정책 리스트"
+            }
           },
           "page": {
             "$ref": "#/components/schemas/PageInfo",
@@ -22469,6 +22704,7 @@
         }
       },
       "GetPlatformPartnerDashboardBody": {
+        "title": "파트너 현황 조회를 위한 입력 정보",
         "type": "object",
         "properties": {
           "includeHidden": {
@@ -22604,6 +22840,7 @@
         }
       },
       "GetPlatformPartnerSettlementsBody": {
+        "title": "정산내역 다건 조회를 위한 입력 정보",
         "required": [
           "filter"
         ],
@@ -22643,6 +22880,7 @@
         }
       },
       "GetPlatformPartnerSettlementsResponse": {
+        "title": "정산내역 다건 조회 성공 응답 정보",
         "required": [
           "items",
           "page"
@@ -22665,6 +22903,7 @@
         "x-portone-title": "정산내역 다건 조회 성공 응답 정보"
       },
       "GetPlatformPartnersBody": {
+        "title": "파트너 다건 조회를 위한 입력 정보",
         "type": "object",
         "properties": {
           "page": {
@@ -22701,6 +22940,7 @@
         }
       },
       "GetPlatformPartnersResponse": {
+        "title": "파트너 다건 조회 성공 응답 정보",
         "required": [
           "items",
           "page"
@@ -22708,11 +22948,11 @@
         "type": "object",
         "properties": {
           "items": {
+            "title": "조회된 파트너 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformPartner"
-            },
-            "title": "조회된 파트너 리스트"
+            }
           },
           "page": {
             "$ref": "#/components/schemas/PageInfo",
@@ -22744,6 +22984,7 @@
         }
       },
       "GetPlatformPayableSettlementDatesResponse": {
+        "title": "지급 가능한 정산일 리스트 조회 성공 응답 정보",
         "required": [
           "settlementDates"
         ],
@@ -23043,6 +23284,7 @@
         }
       },
       "IdentityVerification": {
+        "title": "본인인증 내역",
         "description": "<p>본인인증 내역</p>\n",
         "oneOf": [
           {
@@ -23077,6 +23319,7 @@
         }
       },
       "IdentityVerificationAlreadySentError": {
+        "title": "본인인증 건이 이미 API로 요청된 상태인 경우",
         "required": [
           "type"
         ],
@@ -23094,6 +23337,7 @@
         "x-portone-status-code": 409
       },
       "IdentityVerificationAlreadyVerifiedError": {
+        "title": "본인인증 건이 이미 인증 완료된 상태인 경우",
         "required": [
           "type"
         ],
@@ -23111,6 +23355,7 @@
         "x-portone-status-code": 409
       },
       "IdentityVerificationMethod": {
+        "title": "본인인증 방식",
         "type": "string",
         "description": "<p>본인인증 방식</p>\n",
         "enum": [
@@ -23124,6 +23369,7 @@
         }
       },
       "IdentityVerificationNotFoundError": {
+        "title": "요청된 본인인증 건이 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -23141,6 +23387,7 @@
         "x-portone-status-code": 404
       },
       "IdentityVerificationNotSentError": {
+        "title": "본인인증 건이 API로 요청된 상태가 아닌 경우",
         "required": [
           "type"
         ],
@@ -23158,6 +23405,7 @@
         "x-portone-status-code": 404
       },
       "IdentityVerificationOperator": {
+        "title": "본인인증 통신사",
         "type": "string",
         "description": "<p>본인인증 통신사</p>\n",
         "enum": [
@@ -23191,6 +23439,7 @@
         }
       },
       "IdentityVerificationRequestedCustomer": {
+        "title": "요청 시 고객 정보",
         "type": "object",
         "properties": {
           "id": {
@@ -23211,6 +23460,7 @@
         "x-portone-title": "요청 시 고객 정보"
       },
       "IdentityVerificationVerifiedCustomer": {
+        "title": "인증된 고객 정보",
         "required": [
           "name",
           "birthDate",
@@ -23260,6 +23510,7 @@
         "x-portone-title": "인증된 고객 정보"
       },
       "InstantBillingKeyPaymentMethodInput": {
+        "title": "빌링키 발급 시 결제 수단 입력 양식",
         "type": "object",
         "properties": {
           "card": {
@@ -23270,6 +23521,7 @@
         "x-portone-title": "빌링키 발급 시 결제 수단 입력 양식"
       },
       "InstantBillingKeyPaymentMethodInputCard": {
+        "title": "카드 수단 정보 입력 양식",
         "required": [
           "credential"
         ],
@@ -23283,6 +23535,7 @@
         "x-portone-title": "카드 수단 정보 입력 양식"
       },
       "InstantPaymentInput": {
+        "title": "수기 결제 요청 정보",
         "required": [
           "channelKey",
           "method",
@@ -23348,11 +23601,11 @@
             "description": "<p>결제 승인/실패 시 요청을 받을 웹훅 주소입니다.\n상점에 설정되어 있는 값보다 우선적으로 적용됩니다.\n입력된 값이 없을 경우에는 빈 배열로 해석됩니다.</p>\n"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
             },
-            "title": "상품 정보",
             "description": "<p>입력된 값이 없을 경우에는 빈 배열로 해석됩니다.</p>\n"
           },
           "productCount": {
@@ -23373,6 +23626,7 @@
         "x-portone-title": "수기 결제 요청 정보"
       },
       "InstantPaymentMethodInput": {
+        "title": "수기 결제 수단 입력 정보",
         "type": "object",
         "properties": {
           "card": {
@@ -23389,6 +23643,7 @@
         "x-portone-description": "<p>하나의 필드만 입력합니다.</p>\n"
       },
       "InstantPaymentMethodInputCard": {
+        "title": "카드 수단 정보 입력 정보",
         "required": [
           "credential"
         ],
@@ -23420,6 +23675,7 @@
         "x-portone-title": "카드 수단 정보 입력 정보"
       },
       "InstantPaymentMethodInputVirtualAccount": {
+        "title": "가상계좌 수단 정보 입력 정보",
         "required": [
           "bank",
           "expiry",
@@ -23453,6 +23709,7 @@
         "x-portone-title": "가상계좌 수단 정보 입력 정보"
       },
       "InstantPaymentMethodInputVirtualAccountCashReceiptInfo": {
+        "title": "가상계좌 결제 시 현금영수증 정보",
         "required": [
           "type",
           "customerIdentityNumber"
@@ -23460,7 +23717,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "$ref": "#/components/schemas/CashReceiptType",
+            "$ref": "#/components/schemas/CashReceiptInputType",
             "title": "현금영수증 유형"
           },
           "customerIdentityNumber": {
@@ -23472,6 +23729,7 @@
         "x-portone-title": "가상계좌 결제 시 현금영수증 정보"
       },
       "InstantPaymentMethodInputVirtualAccountExpiry": {
+        "title": "입금 만료 기한",
         "type": "object",
         "properties": {
           "validHours": {
@@ -23491,6 +23749,7 @@
         "x-portone-description": "<p>validHours와 dueDate 둘 중 하나의 필드만 입력합니다.</p>\n"
       },
       "InstantPaymentMethodInputVirtualAccountOption": {
+        "title": "가상계좌 발급 방식",
         "required": [
           "type"
         ],
@@ -23510,6 +23769,7 @@
         "x-portone-title": "가상계좌 발급 방식"
       },
       "InstantPaymentMethodInputVirtualAccountOptionFixed": {
+        "title": "고정식 가상계좌 발급 유형",
         "type": "object",
         "properties": {
           "pgAccountId": {
@@ -23528,6 +23788,7 @@
         "x-portone-description": "<p>pgAccountId, accountNumber 유형 중 한 개의 필드만 입력합니다.</p>\n"
       },
       "InstantPaymentMethodInputVirtualAccountOptionType": {
+        "title": "가상계좌 발급 유형",
         "type": "string",
         "description": "<p>가상계좌 발급 유형</p>\n",
         "enum": [
@@ -23546,6 +23807,7 @@
         }
       },
       "InstantPaymentSummary": {
+        "title": "수기 결제가 완료된 결제 건 요약 정보",
         "required": [
           "pgTxId",
           "paidAt"
@@ -23566,6 +23828,7 @@
         "x-portone-title": "수기 결제가 완료된 결제 건 요약 정보"
       },
       "InvalidRequestError": {
+        "title": "요청된 입력 정보가 유효하지 않은 경우",
         "required": [
           "type"
         ],
@@ -23617,6 +23880,7 @@
         }
       },
       "IssueB2bTaxInvoiceRequestBody": {
+        "title": "세금계산서 발행 정보",
         "required": [
           "brn",
           "documentKey"
@@ -23649,6 +23913,7 @@
         "x-portone-title": "세금계산서 발행 정보"
       },
       "IssueBillingKeyBody": {
+        "title": "빌링키 발급 요청 양식",
         "required": [
           "method",
           "channelKey"
@@ -23679,6 +23944,14 @@
           "bypass": {
             "type": "string",
             "title": "PG사별 특수 파라미터"
+          },
+          "noticeUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "웹훅 주소",
+            "description": "<p>빌링키 발급 시 요청을 받을 웹훅 주소입니다.\n상점에 설정되어 있는 값보다 우선적으로 적용됩니다.\n입력된 값이 없을 경우에는 빈 배열로 해석됩니다.</p>\n"
           }
         },
         "description": "<p>빌링키 발급 요청 양식</p>\n",
@@ -23714,6 +23987,7 @@
         }
       },
       "IssueBillingKeyResponse": {
+        "title": "빌링키 발급 성공 응답",
         "required": [
           "billingKeyInfo"
         ],
@@ -23728,6 +24002,7 @@
         "x-portone-title": "빌링키 발급 성공 응답"
       },
       "IssueCashReceiptBody": {
+        "title": "현금영수증 발급 요청 양식",
         "required": [
           "paymentId",
           "channelKey",
@@ -23782,6 +24057,7 @@
         "x-portone-title": "현금영수증 발급 요청 양식"
       },
       "IssueCashReceiptCustomerInput": {
+        "title": "현금영수증 발급 시 고객 관련 입력 정보",
         "required": [
           "identityNumber"
         ],
@@ -23841,6 +24117,7 @@
         }
       },
       "IssueCashReceiptResponse": {
+        "title": "현금 영수증 발급 성공 응답",
         "required": [
           "cashReceipt"
         ],
@@ -23854,6 +24131,7 @@
         "x-portone-title": "현금 영수증 발급 성공 응답"
       },
       "IssueFailedCashReceipt": {
+        "title": "발급 실패",
         "required": [
           "status",
           "merchantId",
@@ -23897,6 +24175,7 @@
         "x-portone-title": "발급 실패"
       },
       "IssuedCashReceipt": {
+        "title": "발급 완료",
         "required": [
           "status",
           "merchantId",
@@ -23985,6 +24264,7 @@
         "x-portone-title": "발급 완료"
       },
       "IssuedPaymentCashReceipt": {
+        "title": "발급 완료된 현금영수증",
         "required": [
           "status",
           "issueNumber",
@@ -24038,6 +24318,7 @@
         "x-portone-title": "발급 완료된 현금영수증"
       },
       "LoginViaApiKeyBody": {
+        "title": "API key 로그인을 위한 입력 정보",
         "required": [
           "apiKey"
         ],
@@ -24069,6 +24350,7 @@
         }
       },
       "LoginViaApiKeyResponse": {
+        "title": "API key 로그인 성공 응답",
         "required": [
           "accessToken",
           "refreshToken"
@@ -24090,6 +24372,7 @@
         "x-portone-title": "API key 로그인 성공 응답"
       },
       "LoginViaApiSecretBody": {
+        "title": "API Secret 로그인을 위한 입력 정보",
         "required": [
           "apiSecret"
         ],
@@ -24121,6 +24404,7 @@
         }
       },
       "LoginViaApiSecretResponse": {
+        "title": "API key 로그인 성공 응답",
         "required": [
           "accessToken",
           "refreshToken"
@@ -24142,6 +24426,7 @@
         "x-portone-title": "API key 로그인 성공 응답"
       },
       "Merchant": {
+        "title": "가맹점 정보",
         "required": [
           "id",
           "graphqlId",
@@ -24165,6 +24450,7 @@
         "x-portone-title": "가맹점 정보"
       },
       "MonthDay": {
+        "title": "월 및 일자 정보",
         "required": [
           "month",
           "day"
@@ -24184,6 +24470,7 @@
         "x-portone-title": "월 및 일자 정보"
       },
       "OneLineAddress": {
+        "title": "한 줄 형식 주소",
         "required": [
           "type",
           "oneLine"
@@ -24203,6 +24490,7 @@
         "x-portone-description": "<p>한 줄 형식 주소만 존재합니다.</p>\n"
       },
       "PageInfo": {
+        "title": "반환된 페이지 결과 정보",
         "required": [
           "number",
           "size",
@@ -24230,6 +24518,7 @@
         "x-portone-title": "반환된 페이지 결과 정보"
       },
       "PageInput": {
+        "title": "다건 조회 API 에 사용되는 페이지 입력 정보",
         "type": "object",
         "properties": {
           "number": {
@@ -24247,6 +24536,7 @@
         "x-portone-title": "다건 조회 API 에 사용되는 페이지 입력 정보"
       },
       "PaidPayment": {
+        "title": "결제 완료 상태 건",
         "required": [
           "status",
           "id",
@@ -24310,11 +24600,11 @@
             "description": "<p>빌링키 결제인 경우에만 존재</p>\n"
           },
           "webhooks": {
+            "title": "웹훅 발송 내역",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentWebhook"
-            },
-            "title": "웹훅 발송 내역"
+            }
           },
           "requestedAt": {
             "type": "string",
@@ -24361,11 +24651,11 @@
             "description": "<p>에스크로 결제인 경우 존재합니다.</p>\n"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "productCount": {
             "type": "integer",
@@ -24406,6 +24696,7 @@
         "x-portone-title": "결제 완료 상태 건"
       },
       "PartialCancelledPayment": {
+        "title": "결제 부분 취소 상태 건",
         "required": [
           "status",
           "id",
@@ -24470,11 +24761,11 @@
             "description": "<p>빌링키 결제인 경우에만 존재</p>\n"
           },
           "webhooks": {
+            "title": "웹훅 발송 내역",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentWebhook"
-            },
-            "title": "웹훅 발송 내역"
+            }
           },
           "requestedAt": {
             "type": "string",
@@ -24521,11 +24812,11 @@
             "description": "<p>에스크로 결제인 경우 존재합니다.</p>\n"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "productCount": {
             "type": "integer",
@@ -24554,11 +24845,11 @@
             "title": "거래 영수증 URL"
           },
           "cancellations": {
+            "title": "결제 취소 내역",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentCancellation"
-            },
-            "title": "결제 취소 내역"
+            }
           },
           "cancelledAt": {
             "type": "string",
@@ -24570,6 +24861,7 @@
         "x-portone-title": "결제 부분 취소 상태 건"
       },
       "PastPaymentScheduleError": {
+        "title": "결제 예약 시점이 과거로 지정된 경우",
         "required": [
           "type"
         ],
@@ -24624,6 +24916,7 @@
         }
       },
       "PayInstantlyResponse": {
+        "title": "수기 결제 성공 응답",
         "required": [
           "payment"
         ],
@@ -24636,6 +24929,142 @@
         },
         "description": "<p>수기 결제 성공 응답</p>\n",
         "x-portone-title": "수기 결제 성공 응답"
+      },
+      "PayPendingPayment": {
+        "title": "결제 완료 대기 상태 건",
+        "required": [
+          "status",
+          "id",
+          "merchantId",
+          "storeId",
+          "channel",
+          "version",
+          "requestedAt",
+          "updatedAt",
+          "statusChangedAt",
+          "orderName",
+          "amount",
+          "currency",
+          "customer"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 건 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "title": "결제수단 정보"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "결제 채널"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          },
+          "scheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디",
+            "description": "<p>결제 예약을 이용한 경우에만 존재</p>\n"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "결제 시 사용된 빌링키",
+            "description": "<p>빌링키 결제인 경우에만 존재</p>\n"
+          },
+          "webhooks": {
+            "title": "웹훅 발송 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentWebhook"
+            }
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 요청 시점"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "업데이트 시점"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 시점"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmount",
+            "title": "결제 금액 관련 세부 정보"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "구매자 정보"
+          },
+          "promotionId": {
+            "type": "string",
+            "title": "프로모션 아이디"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "escrow": {
+            "$ref": "#/components/schemas/PaymentEscrow",
+            "title": "에스크로 결제 정보",
+            "description": "<p>에스크로 결제인 경우 존재합니다.</p>\n"
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32",
+            "title": "상품 갯수"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country",
+            "title": "국가 코드"
+          },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
+          }
+        },
+        "description": "<p>결제 완료 대기 상태 건</p>\n",
+        "x-portone-title": "결제 완료 대기 상태 건"
       },
       "PayWithBillingKeyError": {
         "oneOf": [
@@ -24679,6 +25108,7 @@
         }
       },
       "PayWithBillingKeyResponse": {
+        "title": "빌링키 결제 성공 응답",
         "required": [
           "payment"
         ],
@@ -24693,6 +25123,7 @@
         "x-portone-title": "빌링키 결제 성공 응답"
       },
       "Payment": {
+        "title": "결제 건",
         "description": "<p>결제 건</p>\n",
         "oneOf": [
           {
@@ -24708,6 +25139,9 @@
             "$ref": "#/components/schemas/PartialCancelledPayment"
           },
           {
+            "$ref": "#/components/schemas/PayPendingPayment"
+          },
+          {
             "$ref": "#/components/schemas/ReadyPayment"
           },
           {
@@ -24721,6 +25155,7 @@
             "FAILED": "#/components/schemas/FailedPayment",
             "PAID": "#/components/schemas/PaidPayment",
             "PARTIAL_CANCELLED": "#/components/schemas/PartialCancelledPayment",
+            "PAY_PENDING": "#/components/schemas/PayPendingPayment",
             "READY": "#/components/schemas/ReadyPayment",
             "VIRTUAL_ACCOUNT_ISSUED": "#/components/schemas/VirtualAccountIssuedPayment"
           }
@@ -24739,6 +25174,9 @@
           "FAILED": {
             "title": "결제 실패"
           },
+          "PAY_PENDING": {
+            "title": "결제 완료 대기"
+          },
           "CANCELLED": {
             "title": "결제 취소"
           },
@@ -24748,6 +25186,7 @@
         }
       },
       "PaymentAlreadyCancelledError": {
+        "title": "결제가 이미 취소된 경우",
         "required": [
           "type"
         ],
@@ -24765,6 +25204,7 @@
         "x-portone-status-code": 409
       },
       "PaymentAmount": {
+        "title": "결제 금액 세부 정보",
         "required": [
           "total",
           "taxFree",
@@ -24821,6 +25261,7 @@
         "x-portone-title": "결제 금액 세부 정보"
       },
       "PaymentAmountInput": {
+        "title": "금액 세부 입력 정보",
         "required": [
           "total"
         ],
@@ -24847,6 +25288,7 @@
         "x-portone-title": "금액 세부 입력 정보"
       },
       "PaymentCancellation": {
+        "title": "결제 취소 내역",
         "description": "<p>결제 취소 내역</p>\n",
         "oneOf": [
           {
@@ -24881,6 +25323,7 @@
         }
       },
       "PaymentCashReceipt": {
+        "title": "결제 건 내 현금영수증 정보",
         "description": "<p>결제 건 내 현금영수증 정보</p>\n",
         "oneOf": [
           {
@@ -24908,6 +25351,7 @@
         }
       },
       "PaymentCashReceiptStatus": {
+        "title": "결제건 내 현금영수증 상태",
         "type": "string",
         "description": "<p>결제건 내 현금영수증 상태</p>\n",
         "enum": [
@@ -24921,6 +25365,7 @@
         }
       },
       "PaymentClientType": {
+        "title": "결제가 발생한 클라이언트 환경",
         "type": "string",
         "description": "<p>결제가 발생한 클라이언트 환경</p>\n",
         "enum": [
@@ -24936,6 +25381,7 @@
         }
       },
       "PaymentEscrow": {
+        "title": "에스크로 정보",
         "description": "<p>에스크로 정보</p>\n<p>V1 결제 건의 경우 타입이 REGISTERED 로 고정됩니다.</p>\n",
         "oneOf": [
           {
@@ -24999,6 +25445,7 @@
         }
       },
       "PaymentEscrowReceiverInput": {
+        "title": "에스크로 수취인 정보",
         "type": "object",
         "properties": {
           "name": {
@@ -25022,6 +25469,7 @@
         "x-portone-title": "에스크로 수취인 정보"
       },
       "PaymentEscrowSenderInput": {
+        "title": "에스크로 발송자 정보",
         "type": "object",
         "properties": {
           "name": {
@@ -25049,6 +25497,7 @@
         "x-portone-title": "에스크로 발송자 정보"
       },
       "PaymentFilterInput": {
+        "title": "결제 건 다건 조회를 위한 입력 정보",
         "type": "object",
         "properties": {
           "merchantId": {
@@ -25077,11 +25526,11 @@
             "description": "<p>값을 입력하지 않으면 현재 시점으로 설정됩니다.</p>\n"
           },
           "status": {
+            "title": "결제 상태 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentStatus"
             },
-            "title": "결제 상태 리스트",
             "description": "<p>값을 입력하지 않으면 결제상태 필터링이 적용되지 않습니다.</p>\n"
           },
           "methods": {
@@ -25093,11 +25542,11 @@
             "description": "<p>값을 입력하지 않으면 결제수단 필터링이 적용되지 않습니다.</p>\n"
           },
           "pgProvider": {
+            "title": "PG사 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PgProvider"
             },
-            "title": "PG사 리스트",
             "description": "<p>값을 입력하지 않으면 결제대행사 필터링이 적용되지 않습니다.</p>\n"
           },
           "isTest": {
@@ -25157,7 +25606,7 @@
             "title": "상품권 종류"
           },
           "cashReceiptType": {
-            "$ref": "#/components/schemas/CashReceiptType",
+            "$ref": "#/components/schemas/CashReceiptInputType",
             "title": "현금영수증 유형"
           },
           "cashReceiptStatus": {
@@ -25173,17 +25622,18 @@
             "title": "현금영수증 취소 시간 범위"
           },
           "textSearch": {
+            "title": "통합 검색 리스트 필터",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentTextSearch"
-            },
-            "title": "통합 검색 리스트 필터"
+            }
           }
         },
         "description": "<p>결제 건 다건 조회를 위한 입력 정보</p>\n",
         "x-portone-title": "결제 건 다건 조회를 위한 입력 정보"
       },
       "PaymentFilterInputEscrowStatus": {
+        "title": "에스크로 상태",
         "type": "string",
         "description": "<p>에스크로 상태</p>\n",
         "enum": [
@@ -25205,6 +25655,7 @@
         }
       },
       "PaymentInstallment": {
+        "title": "할부 정보",
         "required": [
           "month",
           "isInterestFree"
@@ -25225,6 +25676,7 @@
         "x-portone-title": "할부 정보"
       },
       "PaymentLogistics": {
+        "title": "배송정보",
         "required": [
           "company",
           "invoiceNumber",
@@ -25259,6 +25711,7 @@
         "x-portone-title": "배송정보"
       },
       "PaymentLogisticsCompany": {
+        "title": "물류 회사",
         "type": "string",
         "description": "<p>물류 회사</p>\n",
         "enum": [
@@ -25388,6 +25841,7 @@
         }
       },
       "PaymentMethod": {
+        "title": "결제수단 정보",
         "description": "<p>결제수단 정보</p>\n",
         "oneOf": [
           {
@@ -25443,6 +25897,7 @@
         }
       },
       "PaymentMethodCard": {
+        "title": "결제수단 카드 정보",
         "required": [
           "type"
         ],
@@ -25472,6 +25927,7 @@
         "x-portone-title": "결제수단 카드 정보"
       },
       "PaymentMethodEasyPay": {
+        "title": "간편 결제 상세 정보",
         "required": [
           "type"
         ],
@@ -25493,6 +25949,7 @@
         "x-portone-title": "간편 결제 상세 정보"
       },
       "PaymentMethodEasyPayMethod": {
+        "title": "간편 결제 수단",
         "description": "<p>간편 결제 수단</p>\n",
         "oneOf": [
           {
@@ -25527,6 +25984,7 @@
         }
       },
       "PaymentMethodEasyPayMethodCharge": {
+        "title": "충전식 포인트 결제 정보",
         "required": [
           "type"
         ],
@@ -25544,6 +26002,7 @@
         "x-portone-title": "충전식 포인트 결제 정보"
       },
       "PaymentMethodGiftCertificate": {
+        "title": "상품권 상세 정보",
         "required": [
           "type",
           "approvalNumber"
@@ -25566,6 +26025,7 @@
         "x-portone-title": "상품권 상세 정보"
       },
       "PaymentMethodGiftCertificateType": {
+        "title": "상품권 종류",
         "type": "string",
         "description": "<p>상품권 종류</p>\n",
         "enum": [
@@ -25585,6 +26045,7 @@
         }
       },
       "PaymentMethodMobile": {
+        "title": "모바일 상세 정보",
         "required": [
           "type"
         ],
@@ -25602,6 +26063,7 @@
         "x-portone-title": "모바일 상세 정보"
       },
       "PaymentMethodTransfer": {
+        "title": "계좌 이체 상세 정보",
         "required": [
           "type"
         ],
@@ -25638,6 +26100,7 @@
         }
       },
       "PaymentMethodVirtualAccount": {
+        "title": "가상계좌 상세 정보",
         "required": [
           "type",
           "accountNumber"
@@ -25686,6 +26149,7 @@
         "x-portone-title": "가상계좌 상세 정보"
       },
       "PaymentMethodVirtualAccountRefundStatus": {
+        "title": "가상계좌 환불 상태",
         "type": "string",
         "description": "<p>가상계좌 환불 상태</p>\n",
         "enum": [
@@ -25711,6 +26175,7 @@
         }
       },
       "PaymentMethodVirtualAccountType": {
+        "title": "가상계좌 유형",
         "type": "string",
         "description": "<p>가상계좌 유형</p>\n",
         "enum": [
@@ -25728,6 +26193,7 @@
         }
       },
       "PaymentNotFoundError": {
+        "title": "결제 건이 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -25745,6 +26211,7 @@
         "x-portone-status-code": 404
       },
       "PaymentNotPaidError": {
+        "title": "결제가 완료되지 않은 경우",
         "required": [
           "type"
         ],
@@ -25762,6 +26229,7 @@
         "x-portone-status-code": 409
       },
       "PaymentNotWaitingForDepositError": {
+        "title": "결제 건이 입금 대기 상태가 아닌 경우",
         "required": [
           "type"
         ],
@@ -25779,6 +26247,7 @@
         "x-portone-status-code": 409
       },
       "PaymentProduct": {
+        "title": "상품 정보",
         "required": [
           "id",
           "name",
@@ -25820,6 +26289,7 @@
         "x-portone-title": "상품 정보"
       },
       "PaymentProductType": {
+        "title": "상품 유형",
         "type": "string",
         "description": "<p>상품 유형</p>\n",
         "enum": [
@@ -25838,6 +26308,7 @@
         }
       },
       "PaymentSchedule": {
+        "title": "결제 예약 건",
         "description": "<p>결제 예약 건</p>\n",
         "oneOf": [
           {
@@ -25886,6 +26357,7 @@
         }
       },
       "PaymentScheduleAlreadyExistsError": {
+        "title": "결제 예약건이 이미 존재하는 경우",
         "required": [
           "type"
         ],
@@ -25903,6 +26375,7 @@
         "x-portone-status-code": 409
       },
       "PaymentScheduleAlreadyProcessedError": {
+        "title": "결제 예약건이 이미 처리된 경우",
         "required": [
           "type"
         ],
@@ -25920,6 +26393,7 @@
         "x-portone-status-code": 409
       },
       "PaymentScheduleAlreadyRevokedError": {
+        "title": "결제 예약건이 이미 취소된 경우",
         "required": [
           "type"
         ],
@@ -25937,6 +26411,7 @@
         "x-portone-status-code": 409
       },
       "PaymentScheduleFilterInput": {
+        "title": "결제 예약 건 다건 조회를 위한 입력 정보",
         "type": "object",
         "properties": {
           "storeId": {
@@ -25961,17 +26436,18 @@
             "description": "<p>값을 입력하지 않으면 현재 시점으로 설정됩니다.</p>\n"
           },
           "status": {
+            "title": "결제 예약 건 상태 리스트",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentScheduleStatus"
-            },
-            "title": "결제 예약 건 상태 리스트"
+            }
           }
         },
         "description": "<p>결제 예약 건 다건 조회를 위한 입력 정보</p>\n",
         "x-portone-title": "결제 예약 건 다건 조회를 위한 입력 정보"
       },
       "PaymentScheduleNotFoundError": {
+        "title": "결제 예약건이 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -25989,6 +26465,7 @@
         "x-portone-status-code": 404
       },
       "PaymentScheduleStatus": {
+        "title": "결제 예약 건 상태",
         "type": "string",
         "description": "<p>결제 예약 건 상태</p>\n",
         "enum": [
@@ -26018,6 +26495,7 @@
         }
       },
       "PaymentScheduleSummary": {
+        "title": "결제 예약 건",
         "required": [
           "id"
         ],
@@ -26032,6 +26510,7 @@
         "x-portone-title": "결제 예약 건"
       },
       "PaymentSortBy": {
+        "title": "결제 건 정렬 기준",
         "type": "string",
         "description": "<p>결제 건 정렬 기준</p>\n",
         "enum": [
@@ -26049,6 +26528,7 @@
         }
       },
       "PaymentSortOrder": {
+        "title": "결제 건 정렬 방식",
         "type": "string",
         "description": "<p>결제 건 정렬 방식</p>\n",
         "enum": [
@@ -26066,6 +26546,7 @@
         }
       },
       "PaymentStatus": {
+        "title": "결제 건 상태",
         "type": "string",
         "description": "<p>결제 건 상태</p>\n",
         "enum": [
@@ -26089,6 +26570,7 @@
         }
       },
       "PaymentTextSearch": {
+        "title": "통합검색 입력 정보",
         "required": [
           "field",
           "value"
@@ -26106,6 +26588,7 @@
         "x-portone-title": "통합검색 입력 정보"
       },
       "PaymentTextSearchField": {
+        "title": "통합검색 항목",
         "type": "string",
         "description": "<p>통합검색 항목</p>\n",
         "enum": [
@@ -26179,6 +26662,7 @@
         }
       },
       "PaymentTimestampType": {
+        "title": "조회 시점 기준",
         "type": "string",
         "description": "<p>조회 시점 기준</p>\n<p>어떤 시점을 기준으로 조회를 할 것인지 선택합니다.\nCREATED_AT: 결제 건 생성 시점을 기준으로 조회합니다.\nSTATUS_CHANGED_AT: 상태 승인 시점을 기준으로 조회합니다. 결제 건의 최종 상태에 따라 검색 기준이 다르게 적용됩니다.\nready -&gt; 결제 요청 시점 기준\npaid -&gt; 결제 완료 시점 기준\ncancelled -&gt; 결제 취소 시점 기준\nfailed -&gt; 결제 실패 시점 기준\n값을 입력하지 않으면 STATUS_CHANGED_AT 으로 자동 적용됩니다.</p>\n",
         "enum": [
@@ -26197,6 +26681,7 @@
         }
       },
       "PaymentWebhook": {
+        "title": "성공 웹훅 내역",
         "required": [
           "id",
           "url"
@@ -26258,6 +26743,7 @@
         "x-portone-title": "성공 웹훅 내역"
       },
       "PaymentWebhookPaymentStatus": {
+        "title": "웹훅 발송 시 결제 건 상태",
         "type": "string",
         "description": "<p>웹훅 발송 시 결제 건 상태</p>\n",
         "enum": [
@@ -26265,6 +26751,7 @@
           "FAILED",
           "PAID",
           "PARTIAL_CANCELLED",
+          "PAY_PENDING",
           "READY",
           "VIRTUAL_ACCOUNT_ISSUED"
         ],
@@ -26274,11 +26761,13 @@
           "PAID": {},
           "READY": {},
           "FAILED": {},
+          "PAY_PENDING": {},
           "CANCELLED": {},
           "PARTIAL_CANCELLED": {}
         }
       },
       "PaymentWebhookRequest": {
+        "title": "웹훅 요청 정보",
         "required": [
           "body"
         ],
@@ -26302,6 +26791,7 @@
         "x-portone-title": "웹훅 요청 정보"
       },
       "PaymentWebhookResponse": {
+        "title": "웹훅 응답 정보",
         "required": [
           "code",
           "header",
@@ -26332,6 +26822,7 @@
         "x-portone-title": "웹훅 응답 정보"
       },
       "PaymentWebhookStatus": {
+        "title": "웹훅 전송 상태",
         "type": "string",
         "description": "<p>웹훅 전송 상태</p>\n",
         "enum": [
@@ -26347,22 +26838,30 @@
         }
       },
       "PaymentWebhookTrigger": {
+        "title": "웹훅 실행 트리거",
         "type": "string",
         "description": "<p>웹훅 실행 트리거</p>\n<p>수동 웹훅 재발송, 가상계좌 입금, 비동기 취소 승인 시 발생한 웹훅일 때 필드의 값이 존재합니다.</p>\n",
         "enum": [
           "ASYNC_CANCEL_APPROVED",
+          "ASYNC_CANCEL_FAILED",
+          "ASYNC_PAY_APPROVED",
+          "ASYNC_PAY_FAILED",
           "MANUAL",
           "VIRTUAL_ACCOUNT_DEPOSIT"
         ],
         "x-portone-title": "웹훅 실행 트리거",
         "x-portone-description": "<p>수동 웹훅 재발송, 가상계좌 입금, 비동기 취소 승인 시 발생한 웹훅일 때 필드의 값이 존재합니다.</p>\n",
         "x-portone-enum": {
-          "MANUAL": {},
+          "ASYNC_CANCEL_APPROVED": {},
           "VIRTUAL_ACCOUNT_DEPOSIT": {},
-          "ASYNC_CANCEL_APPROVED": {}
+          "ASYNC_CANCEL_FAILED": {},
+          "MANUAL": {},
+          "ASYNC_PAY_FAILED": {},
+          "ASYNC_PAY_APPROVED": {}
         }
       },
       "PaymentWithCursor": {
+        "title": "결제 건 및 커서 정보",
         "required": [
           "payment",
           "cursor"
@@ -26426,6 +26925,7 @@
         }
       },
       "PgCompany": {
+        "title": "PG사",
         "type": "string",
         "description": "<p>PG사</p>\n",
         "enum": [
@@ -26489,6 +26989,7 @@
         }
       },
       "PgProvider": {
+        "title": "PG사 결제 모듈",
         "type": "string",
         "description": "<p>PG사 결제 모듈</p>\n",
         "enum": [
@@ -26586,6 +27087,7 @@
         }
       },
       "PgProviderError": {
+        "title": "PG사에서 오류가 발생한 경우",
         "required": [
           "type",
           "pgCode",
@@ -26611,6 +27113,7 @@
         "x-portone-status-code": 502
       },
       "Platform": {
+        "title": "가맹점의 플랫폼 기능 관련 정보",
         "required": [
           "merchantId",
           "graphqlId",
@@ -26639,6 +27142,7 @@
         "x-portone-title": "가맹점의 플랫폼 기능 관련 정보"
       },
       "PlatformAccount": {
+        "title": "플랫폼 정산 계좌",
         "required": [
           "bank",
           "currency",
@@ -26674,6 +27178,7 @@
         "x-portone-description": "<p><code>currency</code> 가 KRW 일 경우 예금주 조회 API 를 통해 올바른 계좌인지 검증합니다. 그 외의 화폐일 경우 따로 검증하지는 않습니다.</p>\n"
       },
       "PlatformAccountStatus": {
+        "title": "플랫폼 계좌 상태",
         "type": "string",
         "description": "<p>플랫폼 계좌 상태</p>\n",
         "enum": [
@@ -26732,13 +27237,13 @@
         "x-portone-status-code": 404
       },
       "PlatformAdditionalFeePolicy": {
+        "title": "추가 수수료 정책",
         "required": [
           "id",
           "graphqlId",
           "name",
           "fee",
           "vatPayer",
-          "isHidden",
           "isArchived",
           "appliedAt"
         ],
@@ -26765,10 +27270,6 @@
           "vatPayer": {
             "$ref": "#/components/schemas/PlatformPayer",
             "title": "부가세를 부담할 주체"
-          },
-          "isHidden": {
-            "type": "boolean",
-            "title": "숨김 여부"
           },
           "isArchived": {
             "type": "boolean",
@@ -26800,25 +27301,16 @@
         "x-portone-status-code": 409
       },
       "PlatformAdditionalFeePolicyFilterInput": {
+        "title": "추가 수수료 정책 다건 조회를 위한 필터 조건",
         "type": "object",
         "properties": {
-          "includeHidden": {
-            "type": "boolean",
-            "title": "숨김 조회 여부",
-            "description": "<p>true 이면 숨김 처리된 추가 수수료 정책까지 조회하고, false 이면 숨김 처리되지 않은 추가 수수료 정책만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
-          },
           "isArchived": {
             "type": "boolean",
             "title": "보관 조회 여부",
             "description": "<p>true 이면 보관된 추가 수수료 정책의 필터 옵션을 조회하고, false 이면 보관되지 않은 추가 수수료 정책의 필터 옵션을 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
           },
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "vatPayers": {
+            "title": "금액 부담 주체",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformPayer"
@@ -26834,6 +27326,7 @@
         "x-portone-title": "추가 수수료 정책 다건 조회를 위한 필터 조건"
       },
       "PlatformAdditionalFeePolicyFilterInputKeyword": {
+        "title": "검색 키워드 입력 정보",
         "type": "object",
         "properties": {
           "name": {
@@ -26852,23 +27345,6 @@
         "description": "<p>검색 키워드 입력 정보</p>\n<p>검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 추가 수수료 정책만 조회합니다. 하위 필드는 명시된 값 중 한 가지만 적용됩니다.</p>\n",
         "x-portone-title": "검색 키워드 입력 정보",
         "x-portone-description": "<p>검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 추가 수수료 정책만 조회합니다. 하위 필드는 명시된 값 중 한 가지만 적용됩니다.</p>\n"
-      },
-      "PlatformAdditionalFeePolicyFilterOptions": {
-        "required": [
-          "ids"
-        ],
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "title": "조회된 추가 수수료 정책 id 리스트"
-          }
-        },
-        "description": "<p>추가 수수료 정책 필터 옵션 정보</p>\n",
-        "x-portone-title": "추가 수수료 정책 필터 옵션 정보"
       },
       "PlatformAdditionalFeePolicyNotFoundError": {
         "required": [
@@ -26932,6 +27408,7 @@
         "x-portone-status-code": 400
       },
       "PlatformArchivedAdditionalFeePolicyError": {
+        "title": "보관된 추가 수수료 정책을 업데이트하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -26949,6 +27426,7 @@
         "x-portone-status-code": 409
       },
       "PlatformArchivedContractError": {
+        "title": "보관된 계약을 업데이트하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -26966,6 +27444,7 @@
         "x-portone-status-code": 409
       },
       "PlatformArchivedDiscountSharePolicyError": {
+        "title": "보관된 할인 분담 정책을 업데이트하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -26983,6 +27462,7 @@
         "x-portone-status-code": 409
       },
       "PlatformArchivedPartnerError": {
+        "title": "보관된 파트너를 업데이트하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -27000,6 +27480,7 @@
         "x-portone-status-code": 409
       },
       "PlatformArchivedPartnersCannotBeScheduledError": {
+        "title": "보관된 파트너들을 예약 업데이트하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -27137,6 +27618,7 @@
         "x-portone-status-code": 404
       },
       "PlatformCannotArchiveScheduledAdditionalFeePolicyError": {
+        "title": "예약된 업데이트가 있는 추가 수수료 정책을 보관하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -27154,6 +27636,7 @@
         "x-portone-status-code": 409
       },
       "PlatformCannotArchiveScheduledContractError": {
+        "title": "예약된 업데이트가 있는 계약을 보관하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -27171,6 +27654,7 @@
         "x-portone-status-code": 409
       },
       "PlatformCannotArchiveScheduledDiscountSharePolicyError": {
+        "title": "예약된 업데이트가 있는 할인 분담 정책을 보관하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -27188,6 +27672,7 @@
         "x-portone-status-code": 409
       },
       "PlatformCannotArchiveScheduledPartnerError": {
+        "title": "예약된 업데이트가 있는 파트너를 보관하려고 하는 경우",
         "required": [
           "type"
         ],
@@ -27252,6 +27737,7 @@
         }
       },
       "PlatformContract": {
+        "title": "계약",
         "required": [
           "id",
           "graphqlId",
@@ -27259,7 +27745,7 @@
           "platformFee",
           "settlementCycle",
           "platformFeeVatPayer",
-          "isHidden",
+          "subtractPaymentVatAmount",
           "isArchived",
           "appliedAt"
         ],
@@ -27292,9 +27778,10 @@
             "$ref": "#/components/schemas/PlatformPayer",
             "title": "중개수수료에 대한 부가세 부담 주체"
           },
-          "isHidden": {
+          "subtractPaymentVatAmount": {
             "type": "boolean",
-            "title": "숨김 여부"
+            "title": "정산 시 결제금액 부가세 감액 여부",
+            "description": "<p>false인 경우 정산금에서 결제 금액 부가세를 감액하지 않고, true인 경우 정산금에서 결제 금액 부가세를 감액합니다.</p>\n"
           },
           "isArchived": {
             "type": "boolean",
@@ -27326,16 +27813,11 @@
         "x-portone-status-code": 409
       },
       "PlatformContractFilterInput": {
+        "title": "계약 다건 조회를 위한 필터 조건",
         "type": "object",
         "properties": {
-          "platformFees": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlatformFeeInput"
-            },
-            "description": "<p>하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 중개 수수료를 가진 계약만 조회합니다.</p>\n"
-          },
           "platformFeePayers": {
+            "title": "금액 부담 주체",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformPayer"
@@ -27343,6 +27825,7 @@
             "description": "<p>하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 수수료 부담 주체를 가진 계약만 조회합니다.</p>\n"
           },
           "cycleTypes": {
+            "title": "플랫폼 정산 주기 계산 방식",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformSettlementCycleType"
@@ -27350,16 +27833,12 @@
             "description": "<p>하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 정산 주기 계산 방식을 가진 계약만 조회합니다.</p>\n"
           },
           "datePolicies": {
+            "title": "플랫폼 정산 기준일",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PlatformSettlementCycleDatePolicy"
             },
             "description": "<p>하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 정산 기준일을 가진 계약만 조회합니다.</p>\n"
-          },
-          "includeHidden": {
-            "type": "boolean",
-            "title": "숨김 조회 여부",
-            "description": "<p>true 이면 숨김 처리된 계약까지 조회하고, false 이면 숨김 처리되지 않은 계약만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
           },
           "isArchived": {
             "type": "boolean",
@@ -27375,19 +27854,12 @@
         "x-portone-title": "계약 다건 조회를 위한 필터 조건"
       },
       "PlatformContractFilterInputKeyword": {
+        "title": "검색 키워드 입력 정보",
         "type": "object",
         "properties": {
-          "all": {
-            "type": "string",
-            "description": "<p>해당 키워드가 포함된 정보를 가진 계약만 조회합니다.</p>\n"
-          },
           "id": {
             "type": "string",
             "description": "<p>해당 값이 포함된 id 를 가진 계약만 조회합니다.</p>\n"
-          },
-          "memo": {
-            "type": "string",
-            "description": "<p>해당 값이 포함된 메모를 가진 계약만 조회합니다.</p>\n"
           },
           "name": {
             "type": "string",
@@ -27397,23 +27869,6 @@
         "description": "<p>검색 키워드 입력 정보</p>\n<p>검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 계약만 조회합니다. 하나의 하위 필드에만 값을 명시하여 요청합니다.</p>\n",
         "x-portone-title": "검색 키워드 입력 정보",
         "x-portone-description": "<p>검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 계약만 조회합니다. 하나의 하위 필드에만 값을 명시하여 요청합니다.</p>\n"
-      },
-      "PlatformContractFilterOptions": {
-        "required": [
-          "platformFees"
-        ],
-        "type": "object",
-        "properties": {
-          "platformFees": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlatformFee"
-            },
-            "title": "조회된 중개 수수료 리스트"
-          }
-        },
-        "description": "<p>계약 필터 옵션 조회 성공 응답 정보</p>\n",
-        "x-portone-title": "계약 필터 옵션 조회 성공 응답 정보"
       },
       "PlatformContractNotFoundError": {
         "required": [
@@ -27565,12 +28020,12 @@
         "x-portone-status-code": 404
       },
       "PlatformDiscountSharePolicy": {
+        "title": "할인 분담 정책",
         "required": [
           "id",
           "graphqlId",
           "name",
           "partnerShareRate",
-          "isHidden",
           "isArchived",
           "appliedAt"
         ],
@@ -27595,10 +28050,6 @@
           "memo": {
             "type": "string",
             "title": "해당 할인 분담에 대한 메모"
-          },
-          "isHidden": {
-            "type": "boolean",
-            "title": "숨김 여부"
           },
           "isArchived": {
             "type": "boolean",
@@ -27630,13 +28081,9 @@
         "x-portone-status-code": 409
       },
       "PlatformDiscountSharePolicyFilterInput": {
+        "title": "할인 분담 정책 다건 조회를 위한 필터 조건",
         "type": "object",
         "properties": {
-          "includeHidden": {
-            "type": "boolean",
-            "title": "숨김 조회 여부",
-            "description": "<p>true 이면 숨김 처리된 할인 분담 정책까지 조회하고, false 이면 숨김 처리되지 않은 할인 분담 정책만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.</p>\n"
-          },
           "isArchived": {
             "type": "boolean",
             "title": "보관 조회 여부",
@@ -27650,13 +28097,6 @@
             },
             "description": "<p>하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 파트너 분담율을 가진 할인 분담 정책만 조회합니다.</p>\n"
           },
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "<p>하나 이상의 값이 존재하는 경우, 해당 리스트에 포함되는 아이디를 가진 할인 분담 정책만 조회합니다.</p>\n"
-          },
           "keyword": {
             "$ref": "#/components/schemas/PlatformDiscountSharePolicyFilterInputKeyword",
             "title": "검색 키워드"
@@ -27666,19 +28106,12 @@
         "x-portone-title": "할인 분담 정책 다건 조회를 위한 필터 조건"
       },
       "PlatformDiscountSharePolicyFilterInputKeyword": {
+        "title": "검색 키워드 입력 정보",
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "description": "<p>해당 값이 포함된 id 를 가진 할인 분담 정책만 조회합니다.</p>\n"
-          },
-          "memo": {
-            "type": "string",
-            "description": "<p>해당 값이 포함된 메모를 가진 할인 분담 정책만 조회합니다.</p>\n"
-          },
-          "all": {
-            "type": "string",
-            "description": "<p>해당 키워드가 포함된 정보를 가진 할인 분담 정책만 조회합니다.</p>\n"
           },
           "name": {
             "type": "string",
@@ -27690,9 +28123,9 @@
         "x-portone-description": "<p>검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 할인 분담 정책만 조회합니다. 하위 필드는 명시된 값 중 한 가지만 적용됩니다.</p>\n"
       },
       "PlatformDiscountSharePolicyFilterOptions": {
+        "title": "할인 분담 정책 필터 옵션 조회 성공 응답 정보",
         "required": [
-          "partnerShareRates",
-          "ids"
+          "partnerShareRates"
         ],
         "type": "object",
         "properties": {
@@ -27703,13 +28136,6 @@
               "format": "int32"
             },
             "title": "조회된 파트너 분담율 리스트"
-          },
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "title": "조회된 할인 분담 정책 아이디 리스트"
           }
         },
         "description": "<p>할인 분담 정책 필터 옵션 조회 성공 응답 정보</p>\n",
@@ -27798,6 +28224,7 @@
         }
       },
       "PlatformFee": {
+        "title": "플랫폼 중개수수료 정보",
         "description": "<p>플랫폼 중개수수료 정보</p>\n",
         "oneOf": [
           {
@@ -27825,6 +28252,7 @@
         }
       },
       "PlatformFeeInput": {
+        "title": "수수료 계산 방식을 특정하기 위한 입력 정보",
         "type": "object",
         "properties": {
           "fixedRate": {
@@ -27843,6 +28271,7 @@
         "x-portone-description": "<p>정률 수수료를 설정하고 싶은 경우 <code>fixedRate</code> 필드에, 정액 수수료를 설정하고 싶은 경우 <code>fixedAmount</code> 필드에 값을 명시해 요청합니다.\n두 필드 모두 값이 들어있지 않은 경우 요청이 거절됩니다.</p>\n"
       },
       "PlatformFixedAmountFee": {
+        "title": "정액 수수료",
         "required": [
           "type",
           "amount"
@@ -27863,6 +28292,7 @@
         "x-portone-description": "<p>총 금액에 무관하게 정해진 수수료 금액을 책정합니다.</p>\n"
       },
       "PlatformFixedRateFee": {
+        "title": "정률 수수료",
         "required": [
           "type",
           "rate"
@@ -28027,6 +28457,7 @@
         "x-portone-status-code": 400
       },
       "PlatformNotEnabledError": {
+        "title": "플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
         "required": [
           "type"
         ],
@@ -28274,6 +28705,8 @@
         "required": [
           "settlement",
           "payment",
+          "paymentVat",
+          "paymentVatBurden",
           "order",
           "platformFee",
           "platformFeeVat",
@@ -28286,39 +28719,59 @@
         "properties": {
           "settlement": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "정산 금액"
           },
           "payment": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "결제 금액"
+          },
+          "paymentVat": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 금액 부가세"
+          },
+          "paymentVatBurden": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 금액 부가세 부담금액",
+            "description": "<p>참조된 계약의 결제 금액 부가세 감액 여부에 따라 false인 경우 0원, true인 경우 결제 금액 부가세입니다.</p>\n"
           },
           "order": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "주문 금액"
           },
           "platformFee": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "중개 수수료"
           },
           "platformFeeVat": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "중개 수수료 부가세"
           },
           "additionalFee": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "추가 수수료"
           },
           "additionalFeeVat": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "추가 수수료 부가세"
           },
           "discount": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "할인 금액"
           },
           "discountShare": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "할인 분담 금액"
           }
         }
       },
@@ -28604,6 +29057,7 @@
         }
       },
       "PlatformPartner": {
+        "title": "파트너",
         "required": [
           "id",
           "graphqlId",
@@ -28679,6 +29133,7 @@
         "x-portone-description": "<p>파트너는 가맹점이 정산해주어야 할 대상입니다.\n기본 사업자 정보와 정산정보, 그리고 적용될 계약의 정보를 등록 및 관리할 수 있습니다.</p>\n"
       },
       "PlatformPartnerDashboard": {
+        "title": "파트너 현황 조회 성공 응답",
         "required": [
           "totalCount",
           "upcomingSettledCount"
@@ -28706,6 +29161,7 @@
         "x-portone-title": "파트너 현황 조회 성공 응답"
       },
       "PlatformPartnerFilterInput": {
+        "title": "파트너 필터 입력 정보",
         "type": "object",
         "properties": {
           "includeHidden": {
@@ -28726,6 +29182,7 @@
             "description": "<p>하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 태그를 하나 이상 가지는 파트너만 조회합니다.</p>\n"
           },
           "banks": {
+            "title": "은행",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Bank"
@@ -28733,6 +29190,7 @@
             "description": "<p>하나 이상의 값이 존재하는 경우,  해당 리스트에 포함되는 계좌 은행을 가진 파트너만 조회합니다.</p>\n"
           },
           "accountCurrencies": {
+            "title": "통화 단위",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Currency"
@@ -28755,6 +29213,7 @@
         "x-portone-title": "파트너 필터 입력 정보"
       },
       "PlatformPartnerFilterInputKeyword": {
+        "title": "파트너 검색 키워드 입력 정보",
         "type": "object",
         "properties": {
           "id": {
@@ -28795,6 +29254,7 @@
         "x-portone-description": "<p>검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 파트너만 조회합니다. 하나의 하위 필드에만 값을 명시하여 요청합니다.</p>\n"
       },
       "PlatformPartnerFilterOptions": {
+        "title": "파트너 필터 옵션 조회 성공 응답 정보",
         "required": [
           "tags"
         ],
@@ -29090,6 +29550,7 @@
             }
           },
           "banks": {
+            "title": "은행",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Bank"
@@ -29102,12 +29563,14 @@
             }
           },
           "settlementCurrencies": {
+            "title": "통화 단위",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Currency"
             }
           },
           "payoutCurrencies": {
+            "title": "통화 단위",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Currency"
@@ -29178,6 +29641,7 @@
             }
           },
           "banks": {
+            "title": "은행",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Bank"
@@ -29190,12 +29654,14 @@
             }
           },
           "settlementCurrencies": {
+            "title": "통화 단위",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Currency"
             }
           },
           "payoutCurrencies": {
+            "title": "통화 단위",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Currency"
@@ -29331,18 +29797,21 @@
             }
           },
           "banks": {
+            "title": "은행",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Bank"
             }
           },
           "settlementCurrencies": {
+            "title": "통화 단위",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Currency"
             }
           },
           "payoutCurrencies": {
+            "title": "통화 단위",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Currency"
@@ -29388,6 +29857,7 @@
         }
       },
       "PlatformPartnerStatus": {
+        "title": "플랫폼 파트너 상태",
         "type": "string",
         "description": "<p>플랫폼 파트너 상태</p>\n",
         "enum": [
@@ -29409,6 +29879,7 @@
         }
       },
       "PlatformPayer": {
+        "title": "금액 부담 주체",
         "type": "string",
         "description": "<p>금액 부담 주체</p>\n<p>플랫폼에서 발생한 결제 수수료, 부가세 등 금액을 부담하는 주체를 나타냅니다.</p>\n",
         "enum": [
@@ -29937,6 +30408,7 @@
         "x-portone-status-code": 404
       },
       "PlatformRoundType": {
+        "title": "금액에 대한 소수점 처리 방식",
         "type": "string",
         "description": "<p>금액에 대한 소수점 처리 방식</p>\n",
         "enum": [
@@ -29988,6 +30460,7 @@
         "x-portone-status-code": 400
       },
       "PlatformSettlementCycle": {
+        "title": "정산 주기",
         "required": [
           "lagDays",
           "datePolicy",
@@ -30015,6 +30488,7 @@
         "x-portone-description": "<p>지체일, 정산일, 기준일로 구성되며, 해당 요소들의 조합으로 실제 정산일을 계산합니다.</p>\n"
       },
       "PlatformSettlementCycleDatePolicy": {
+        "title": "플랫폼 정산 기준일",
         "type": "string",
         "description": "<p>플랫폼 정산 기준일</p>\n",
         "enum": [
@@ -30036,6 +30510,7 @@
         }
       },
       "PlatformSettlementCycleInput": {
+        "title": "플랫폼 정산 주기 입력 정보",
         "required": [
           "lagDays",
           "datePolicy",
@@ -30062,6 +30537,7 @@
         "x-portone-title": "플랫폼 정산 주기 입력 정보"
       },
       "PlatformSettlementCycleMethod": {
+        "title": "플랫폼 정산 주기 계산 방식",
         "description": "<p>플랫폼 정산 주기 계산 방식</p>\n",
         "oneOf": [
           {
@@ -30103,6 +30579,7 @@
         }
       },
       "PlatformSettlementCycleMethodDaily": {
+        "title": "매일 정산",
         "required": [
           "type"
         ],
@@ -30119,6 +30596,7 @@
         "type": "object"
       },
       "PlatformSettlementCycleMethodInput": {
+        "title": "플랫폼 정산 주기 계산 방식 입력 정보",
         "type": "object",
         "properties": {
           "daily": {
@@ -30143,6 +30621,7 @@
         "x-portone-description": "<p>하나의 하위 필드에만 값을 명시하여 요청합니다.</p>\n"
       },
       "PlatformSettlementCycleMethodManualDates": {
+        "title": "정해진 날짜(월, 일)에 정산",
         "required": [
           "type",
           "dates"
@@ -30153,6 +30632,7 @@
             "type": "string"
           },
           "dates": {
+            "title": "월 및 일자 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MonthDay"
@@ -30169,6 +30649,7 @@
         "type": "object",
         "properties": {
           "dates": {
+            "title": "월 및 일자 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MonthDay"
@@ -30177,6 +30658,7 @@
         }
       },
       "PlatformSettlementCycleMethodMonthly": {
+        "title": "매월 정해진 날(일)에 정산",
         "required": [
           "type",
           "daysOfMonth"
@@ -30213,6 +30695,7 @@
         }
       },
       "PlatformSettlementCycleMethodWeekly": {
+        "title": "매주 정해진 요일에 정산",
         "required": [
           "type",
           "daysOfWeek"
@@ -30223,6 +30706,7 @@
             "type": "string"
           },
           "daysOfWeek": {
+            "title": "요일",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DayOfWeek"
@@ -30239,6 +30723,7 @@
         "type": "object",
         "properties": {
           "daysOfWeek": {
+            "title": "요일",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DayOfWeek"
@@ -30247,6 +30732,7 @@
         }
       },
       "PlatformSettlementCycleType": {
+        "title": "플랫폼 정산 주기 계산 방식",
         "type": "string",
         "description": "<p>플랫폼 정산 주기 계산 방식</p>\n",
         "enum": [
@@ -30272,6 +30758,7 @@
         }
       },
       "PlatformSettlementFormula": {
+        "title": "플랫폼 내 발생하는 여러 수수료 및 할인 분담에 관한 계산식 정보",
         "required": [
           "platformFee",
           "discountShare",
@@ -30950,6 +31437,7 @@
         }
       },
       "PlatformUnavailableSettlementDateError": {
+        "title": "사용할 수 없는 정산일이 요청된 경우",
         "required": [
           "type",
           "settlementDate"
@@ -30974,6 +31462,7 @@
         "x-portone-status-code": 400
       },
       "PortOneVersion": {
+        "title": "포트원 버전",
         "type": "string",
         "description": "<p>포트원 버전</p>\n",
         "enum": [
@@ -30987,6 +31476,7 @@
         }
       },
       "PreRegisterPaymentBody": {
+        "title": "결제 정보 사전 등록 입력 정보",
         "type": "object",
         "properties": {
           "storeId": {
@@ -31038,11 +31528,13 @@
         }
       },
       "PreRegisterPaymentResponse": {
+        "title": "결제 사전 등록 성공 응답",
         "type": "object",
         "description": "<p>결제 사전 등록 성공 응답</p>\n",
         "x-portone-title": "결제 사전 등록 성공 응답"
       },
       "ReadyIdentityVerification": {
+        "title": "준비 상태의 본인인증 내역",
         "required": [
           "status",
           "id",
@@ -31093,6 +31585,7 @@
         "x-portone-title": "준비 상태의 본인인증 내역"
       },
       "ReadyPayment": {
+        "title": "준비 상태의 결제 건",
         "required": [
           "status",
           "id",
@@ -31154,11 +31647,11 @@
             "description": "<p>빌링키 결제인 경우에만 존재</p>\n"
           },
           "webhooks": {
+            "title": "웹훅 발송 내역",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentWebhook"
-            },
-            "title": "웹훅 발송 내역"
+            }
           },
           "requestedAt": {
             "type": "string",
@@ -31205,11 +31698,11 @@
             "description": "<p>에스크로 결제인 경우 존재합니다.</p>\n"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "productCount": {
             "type": "integer",
@@ -31254,6 +31747,7 @@
         }
       },
       "RecoverPlatformAdditionalFeePolicyResponse": {
+        "title": "추가 수수료 정책 복원 성공 응답",
         "required": [
           "additionalFeePolicy"
         ],
@@ -31293,6 +31787,7 @@
         }
       },
       "RecoverPlatformContractResponse": {
+        "title": "계약 복원 성공 응답",
         "required": [
           "contract"
         ],
@@ -31332,6 +31827,7 @@
         }
       },
       "RecoverPlatformDiscountSharePolicyResponse": {
+        "title": "할인 분담 복원 성공 응답",
         "required": [
           "discountSharePolicy"
         ],
@@ -31371,6 +31867,7 @@
         }
       },
       "RecoverPlatformPartnerResponse": {
+        "title": "파트너 복원 성공 응답",
         "required": [
           "partner"
         ],
@@ -31385,6 +31882,7 @@
         "x-portone-title": "파트너 복원 성공 응답"
       },
       "RefreshTokenBody": {
+        "title": "토큰 재발급을 위한 입력 정보",
         "required": [
           "refreshToken"
         ],
@@ -31416,6 +31914,7 @@
         }
       },
       "RefreshTokenResponse": {
+        "title": "토큰 재발급 성공 응답",
         "required": [
           "accessToken",
           "refreshToken"
@@ -31437,6 +31936,7 @@
         "x-portone-title": "토큰 재발급 성공 응답"
       },
       "RefuseB2bTaxInvoiceRequestBody": {
+        "title": "세금계산서 역발행 요청 거부 정보",
         "required": [
           "brn",
           "documentKey"
@@ -31498,6 +31998,7 @@
         }
       },
       "RegisterB2bMemberCompanyBody": {
+        "title": "사업자 연동 요청 정보",
         "required": [
           "company",
           "contact"
@@ -31542,6 +32043,7 @@
         }
       },
       "RegisterB2bMemberCompanyResponse": {
+        "title": "사업자 연동 응답 정보",
         "required": [
           "company",
           "contact"
@@ -31561,6 +32063,7 @@
         "x-portone-title": "사업자 연동 응답 정보"
       },
       "RegisteredPaymentEscrow": {
+        "title": "배송 정보 등록 완료",
         "required": [
           "status",
           "company",
@@ -31595,6 +32098,7 @@
         "x-portone-title": "배송 정보 등록 완료"
       },
       "RejectConfirmedPaymentEscrow": {
+        "title": "구매 거절 확정",
         "required": [
           "status",
           "company",
@@ -31629,6 +32133,7 @@
         "x-portone-title": "구매 거절 확정"
       },
       "RejectPlatformPartnerBody": {
+        "title": "파트너 상태를 승인 거절로 변경하기 위한 입력 정보",
         "type": "object",
         "properties": {
           "memo": {
@@ -31669,6 +32174,7 @@
         }
       },
       "RejectPlatformPartnerResponse": {
+        "title": "파트너 거절 성공 응답",
         "required": [
           "partner"
         ],
@@ -31683,6 +32189,7 @@
         "x-portone-title": "파트너 거절 성공 응답"
       },
       "RejectedPaymentEscrow": {
+        "title": "구매 거절",
         "required": [
           "status",
           "company",
@@ -31750,6 +32257,7 @@
         }
       },
       "RequestB2bTaxInvoiceReverseIssuanceRequestBody": {
+        "title": "세금계산서 역발행 요청 정보",
         "required": [
           "taxInvoice"
         ],
@@ -31768,6 +32276,7 @@
         "x-portone-title": "세금계산서 역발행 요청 정보"
       },
       "RequestedPaymentCancellation": {
+        "title": "취소 요청 상태",
         "required": [
           "status",
           "id",
@@ -31934,6 +32443,7 @@
         }
       },
       "ReschedulePlatformAdditionalFeePolicyBody": {
+        "title": "추가 수수료 정책 예약 업데이트 재설정을 위한 입력 정보",
         "required": [
           "update",
           "appliedAt"
@@ -31954,6 +32464,7 @@
         "x-portone-title": "추가 수수료 정책 예약 업데이트 재설정을 위한 입력 정보"
       },
       "ReschedulePlatformAdditionalFeePolicyResponse": {
+        "title": "추가 수수료 정책 예약 업데이트 재설정 성공 응답",
         "required": [
           "scheduledAdditionalFeePolicy"
         ],
@@ -31968,6 +32479,7 @@
         "x-portone-title": "추가 수수료 정책 예약 업데이트 재설정 성공 응답"
       },
       "ReschedulePlatformContractBody": {
+        "title": "계약 예약 업데이트 재설정을 위한 입력 정보",
         "required": [
           "update",
           "appliedAt"
@@ -31988,6 +32500,7 @@
         "x-portone-title": "계약 예약 업데이트 재설정을 위한 입력 정보"
       },
       "ReschedulePlatformContractResponse": {
+        "title": "계약 예약 업데이트 재설정 성공 응답",
         "required": [
           "scheduledContract"
         ],
@@ -32002,6 +32515,7 @@
         "x-portone-title": "계약 예약 업데이트 재설정 성공 응답"
       },
       "ReschedulePlatformDiscountSharePolicyBody": {
+        "title": "할인 분담 정책 예약 업데이트 재설정을 위한 입력 정보",
         "required": [
           "update",
           "appliedAt"
@@ -32022,6 +32536,7 @@
         "x-portone-title": "할인 분담 정책 예약 업데이트 재설정을 위한 입력 정보"
       },
       "ReschedulePlatformDiscountSharePolicyResponse": {
+        "title": "할인 분담 정책 예약 업데이트 재설정 성공 응답",
         "required": [
           "scheduledDiscountSharePolicy"
         ],
@@ -32036,6 +32551,7 @@
         "x-portone-title": "할인 분담 정책 예약 업데이트 재설정 성공 응답"
       },
       "ReschedulePlatformPartnerBody": {
+        "title": "파트너 예약 업데이트 재설정을 위한 입력 정보",
         "required": [
           "update",
           "appliedAt"
@@ -32056,6 +32572,7 @@
         "x-portone-title": "파트너 예약 업데이트 재설정을 위한 입력 정보"
       },
       "ReschedulePlatformPartnerResponse": {
+        "title": "파트너 예약 업데이트 재설정 성공 응답",
         "required": [
           "scheduledPartner"
         ],
@@ -32107,6 +32624,7 @@
         }
       },
       "ResendIdentityVerificationResponse": {
+        "title": "본인인증 요청 재전송 성공 응답",
         "type": "object",
         "description": "<p>본인인증 요청 재전송 성공 응답</p>\n",
         "x-portone-title": "본인인증 요청 재전송 성공 응답"
@@ -32158,6 +32676,7 @@
         }
       },
       "ResendWebhookResponse": {
+        "title": "웹훅 재발송 응답 정보",
         "required": [
           "webhook"
         ],
@@ -32172,6 +32691,7 @@
         "x-portone-title": "웹훅 재발송 응답 정보"
       },
       "RevokePaymentScheduleBody": {
+        "title": "결제 예약 건 취소 요청 입력 정보",
         "type": "object",
         "properties": {
           "storeId": {
@@ -32237,6 +32757,7 @@
         }
       },
       "RevokePaymentScheduleResponse": {
+        "title": "결제 예약 건 취소 성공 응답",
         "required": [
           "revokedScheduleIds"
         ],
@@ -32259,6 +32780,7 @@
         "x-portone-title": "결제 예약 건 취소 성공 응답"
       },
       "RevokedPaymentSchedule": {
+        "title": "결제 예약 취소 상태",
         "required": [
           "status",
           "id",
@@ -32349,11 +32871,11 @@
             "title": "웹훅 주소"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "timeToPay": {
             "type": "string",
@@ -32502,6 +33024,7 @@
         }
       },
       "SchedulePlatformAdditionalFeePolicyBody": {
+        "title": "추가 수수료 정책 업데이트 예약을 위한 입력 정보",
         "required": [
           "update",
           "appliedAt"
@@ -32522,6 +33045,7 @@
         "x-portone-title": "추가 수수료 정책 업데이트 예약을 위한 입력 정보"
       },
       "SchedulePlatformAdditionalFeePolicyResponse": {
+        "title": "추가 수수료 정책 업데이트 예약 성공 응답",
         "required": [
           "scheduledAdditionalFeePolicy"
         ],
@@ -32536,6 +33060,7 @@
         "x-portone-title": "추가 수수료 정책 업데이트 예약 성공 응답"
       },
       "SchedulePlatformContractBody": {
+        "title": "계약 업데이트 예약을 위한 입력 정보",
         "required": [
           "update",
           "appliedAt"
@@ -32556,6 +33081,7 @@
         "x-portone-title": "계약 업데이트 예약을 위한 입력 정보"
       },
       "SchedulePlatformContractResponse": {
+        "title": "계약 업데이트 예약 성공 응답",
         "required": [
           "scheduledContract"
         ],
@@ -32570,6 +33096,7 @@
         "x-portone-title": "계약 업데이트 예약 성공 응답"
       },
       "SchedulePlatformDiscountSharePolicyBody": {
+        "title": "할인 분담 정책 업데이트 예약을 위한 입력 정보",
         "required": [
           "update",
           "appliedAt"
@@ -32590,6 +33117,7 @@
         "x-portone-title": "할인 분담 정책 업데이트 예약을 위한 입력 정보"
       },
       "SchedulePlatformDiscountSharePolicyResponse": {
+        "title": "할인 분담 정책 업데이트 예약 성공 응답",
         "required": [
           "scheduledDiscountSharePolicy"
         ],
@@ -32604,6 +33132,7 @@
         "x-portone-title": "할인 분담 정책 업데이트 예약 성공 응답"
       },
       "SchedulePlatformPartnerBody": {
+        "title": "파트너 업데이트 예약을 위한 입력 정보",
         "required": [
           "update",
           "appliedAt"
@@ -32624,6 +33153,7 @@
         "x-portone-title": "파트너 업데이트 예약을 위한 입력 정보"
       },
       "SchedulePlatformPartnerBodyUpdateAccount": {
+        "title": "파트너 계좌 업데이트를 위한 입력 정보",
         "required": [
           "bank",
           "currency",
@@ -32653,6 +33183,7 @@
         "x-portone-title": "파트너 계좌 업데이트를 위한 입력 정보"
       },
       "SchedulePlatformPartnerResponse": {
+        "title": "파트너 업데이트 예약 성공 응답",
         "required": [
           "scheduledPartner"
         ],
@@ -32754,6 +33285,7 @@
         "type": "object"
       },
       "ScheduledPaymentSchedule": {
+        "title": "결제 예약 완료 상태",
         "required": [
           "status",
           "id",
@@ -32843,11 +33375,11 @@
             "title": "웹훅 주소"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "timeToPay": {
             "type": "string",
@@ -32859,6 +33391,7 @@
         "x-portone-title": "결제 예약 완료 상태"
       },
       "SelectedChannel": {
+        "title": "(결제, 본인인증 등에) 선택된 채널 정보",
         "required": [
           "type",
           "pgProvider",
@@ -32895,6 +33428,7 @@
         "x-portone-title": "(결제, 본인인증 등에) 선택된 채널 정보"
       },
       "SelectedChannelType": {
+        "title": "채널 타입",
         "type": "string",
         "description": "<p>채널 타입</p>\n",
         "enum": [
@@ -32912,6 +33446,7 @@
         }
       },
       "SendIdentityVerificationBody": {
+        "title": "본인인증 요청을 위한 입력 정보",
         "required": [
           "channelKey",
           "customer",
@@ -32954,6 +33489,7 @@
         "x-portone-title": "본인인증 요청을 위한 입력 정보"
       },
       "SendIdentityVerificationBodyCustomer": {
+        "title": "본인인증 요청을 위한 고객 정보",
         "required": [
           "name",
           "phoneNumber"
@@ -33024,11 +33560,13 @@
         }
       },
       "SendIdentityVerificationResponse": {
+        "title": "본인인증 요청 전송 성공 응답",
         "type": "object",
         "description": "<p>본인인증 요청 전송 성공 응답</p>\n",
         "x-portone-title": "본인인증 요청 전송 성공 응답"
       },
       "SeparatedAddress": {
+        "title": "분리 형식 주소",
         "required": [
           "type",
           "oneLine",
@@ -33070,6 +33608,7 @@
         "x-portone-description": "<p>한 줄 형식 주소와 분리 형식 주소 모두 존재합니다.\n한 줄 형식 주소는 분리 형식 주소를 이어 붙인 형태로 생성됩니다.</p>\n"
       },
       "SeparatedAddressInput": {
+        "title": "분리 형식 주소 입력 정보",
         "required": [
           "addressLine1",
           "addressLine2"
@@ -33101,6 +33640,7 @@
         "x-portone-title": "분리 형식 주소 입력 정보"
       },
       "StartedPaymentSchedule": {
+        "title": "결제 시작 상태",
         "required": [
           "status",
           "id",
@@ -33191,11 +33731,11 @@
             "title": "웹훅 주소"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "timeToPay": {
             "type": "string",
@@ -33212,6 +33752,7 @@
         "x-portone-title": "결제 시작 상태"
       },
       "SucceededPaymentCancellation": {
+        "title": "취소 완료 상태",
         "required": [
           "status",
           "id",
@@ -33278,6 +33819,7 @@
         "x-portone-title": "취소 완료 상태"
       },
       "SucceededPaymentSchedule": {
+        "title": "결제 성공 상태",
         "required": [
           "status",
           "id",
@@ -33369,11 +33911,11 @@
             "title": "웹훅 주소"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "timeToPay": {
             "type": "string",
@@ -33395,6 +33937,7 @@
         "x-portone-title": "결제 성공 상태"
       },
       "SumOfPartsExceedsCancelAmountError": {
+        "title": "면세 금액 등 하위 항목들의 합이 전체 취소 금액을 초과한 경우",
         "required": [
           "type"
         ],
@@ -33412,6 +33955,7 @@
         "x-portone-status-code": 409
       },
       "SumOfPartsExceedsTotalAmountError": {
+        "title": "면세 금액 등 하위 항목들의 합이 전체 결제 금액을 초과한 경우",
         "required": [
           "type"
         ],
@@ -33429,6 +33973,7 @@
         "x-portone-status-code": 409
       },
       "UnauthorizedError": {
+        "title": "인증 정보가 올바르지 않은 경우",
         "required": [
           "type"
         ],
@@ -33505,6 +34050,7 @@
         }
       },
       "UpdatePlatformAdditionalFeePolicyBody": {
+        "title": "추가 수수료 정책 업데이트를 위한 입력 정보",
         "type": "object",
         "properties": {
           "fee": {
@@ -33522,10 +34068,6 @@
           "vatPayer": {
             "$ref": "#/components/schemas/PlatformPayer",
             "title": "부가세를 부담할 주체"
-          },
-          "isHidden": {
-            "type": "boolean",
-            "title": "숨김 여부"
           }
         },
         "description": "<p>추가 수수료 정책 업데이트를 위한 입력 정보</p>\n<p>값이 명시하지 않은 필드는 업데이트되지 않습니다.</p>\n",
@@ -33562,6 +34104,7 @@
         }
       },
       "UpdatePlatformAdditionalFeePolicyResponse": {
+        "title": "추가 수수료 정책 업데이트 성공 응답",
         "required": [
           "additionalFeePolicy"
         ],
@@ -33576,6 +34119,7 @@
         "x-portone-title": "추가 수수료 정책 업데이트 성공 응답"
       },
       "UpdatePlatformBody": {
+        "title": "플랫폼 업데이트를 위한 입력 정보",
         "type": "object",
         "properties": {
           "roundType": {
@@ -33592,6 +34136,7 @@
         "x-portone-description": "<p>값이 명시되지 않은 필드는 업데이트하지 않습니다.</p>\n"
       },
       "UpdatePlatformBodySettlementFormula": {
+        "title": "플랫폼 업데이트 시 변경할 계산식 정보",
         "type": "object",
         "properties": {
           "platformFee": {
@@ -33612,6 +34157,7 @@
         "x-portone-description": "<p>값이 명시되지 않은 필드는 업데이트하지 않습니다.</p>\n"
       },
       "UpdatePlatformContractBody": {
+        "title": "계약 업데이트를 위한 입력 정보. 값이 명시되지 않은 필드는 업데이트되지 않습니다.",
         "type": "object",
         "properties": {
           "name": {
@@ -33634,9 +34180,9 @@
             "$ref": "#/components/schemas/PlatformPayer",
             "title": "중개수수료에 대한 부가세 부담 주체"
           },
-          "isHidden": {
+          "subtractPaymentVatAmount": {
             "type": "boolean",
-            "title": "숨김 여부"
+            "title": "정산 시 결제금액 부가세 감액 여부"
           }
         },
         "description": "<p>계약 업데이트를 위한 입력 정보. 값이 명시되지 않은 필드는 업데이트되지 않습니다.</p>\n<p>값이 명시되지 않은 필드는 업데이트되지 않습니다.</p>\n",
@@ -33673,6 +34219,7 @@
         }
       },
       "UpdatePlatformContractResponse": {
+        "title": "계약 객체 업데이트 성공 응답",
         "required": [
           "contract"
         ],
@@ -33687,6 +34234,7 @@
         "x-portone-title": "계약 객체 업데이트 성공 응답"
       },
       "UpdatePlatformDiscountSharePolicyBody": {
+        "title": "할인 분담 정책 업데이트를 위한 입력 정보",
         "type": "object",
         "properties": {
           "name": {
@@ -33702,10 +34250,6 @@
           "memo": {
             "type": "string",
             "title": "해당 할인 분담에 대한 메모"
-          },
-          "isHidden": {
-            "type": "boolean",
-            "title": "숨김 여부"
           }
         },
         "description": "<p>할인 분담 정책 업데이트를 위한 입력 정보</p>\n<p>값이 명시되지 않은 필드는 업데이트하지 않습니다.</p>\n",
@@ -33742,6 +34286,7 @@
         }
       },
       "UpdatePlatformDiscountSharePolicyResponse": {
+        "title": "할인 분담 정책 업데이트 성공 응답",
         "required": [
           "discountSharePolicy"
         ],
@@ -33781,6 +34326,7 @@
         }
       },
       "UpdatePlatformPartnerBody": {
+        "title": "파트너 업데이트를 위한 입력 정보",
         "type": "object",
         "properties": {
           "name": {
@@ -33824,6 +34370,7 @@
         "x-portone-description": "<p>값이 명시되지 않은 필드는 업데이트되지 않습니다.</p>\n"
       },
       "UpdatePlatformPartnerBodyAccount": {
+        "title": "파트너 계좌 업데이트를 위한 입력 정보",
         "required": [
           "bank",
           "currency",
@@ -33886,6 +34433,7 @@
         }
       },
       "UpdatePlatformPartnerResponse": {
+        "title": "파트너 업데이트 성공 응답",
         "required": [
           "partner"
         ],
@@ -33967,6 +34515,7 @@
         }
       },
       "UpdatePlatformResponse": {
+        "title": "플랫폼 업데이트 결과 정보",
         "required": [
           "platform"
         ],
@@ -33981,6 +34530,7 @@
         "x-portone-title": "플랫폼 업데이트 결과 정보"
       },
       "VerifiedIdentityVerification": {
+        "title": "완료된 본인인증 내역",
         "required": [
           "status",
           "id",
@@ -34047,6 +34597,7 @@
         "x-portone-title": "완료된 본인인증 내역"
       },
       "VirtualAccountIssuedPayment": {
+        "title": "가상계좌 발급 완료 상태 건",
         "required": [
           "status",
           "id",
@@ -34109,11 +34660,11 @@
             "description": "<p>빌링키 결제인 경우에만 존재</p>\n"
           },
           "webhooks": {
+            "title": "웹훅 발송 내역",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentWebhook"
-            },
-            "title": "웹훅 발송 내역"
+            }
           },
           "requestedAt": {
             "type": "string",
@@ -34160,11 +34711,11 @@
             "description": "<p>에스크로 결제인 경우 존재합니다.</p>\n"
           },
           "products": {
+            "title": "상품 정보",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
-            },
-            "title": "상품 정보"
+            }
           },
           "productCount": {
             "type": "integer",
@@ -34184,6 +34735,7 @@
         "x-portone-title": "가상계좌 발급 완료 상태 건"
       },
       "WebhookNotFoundError": {
+        "title": "웹훅 내역이 존재하지 않는 경우",
         "required": [
           "type"
         ],
@@ -34274,6 +34826,11 @@
       "id": "b2b",
       "title": "B2B 서비스 API",
       "description": "<p>B2B 관련 API 기능을 제공합니다. alpha 버전의 API 로서, 사용을 원하실 경우 관리자콘솔 및 홈페이지를 통해 문의해주세요.</p>\n"
+    },
+    {
+      "id": "pgSpecific",
+      "title": "특정 PG사 관련 API",
+      "description": "<p>특정 PG사에 국한된 API 기능을 제공합니다.</p>\n"
     }
   ]
 }
