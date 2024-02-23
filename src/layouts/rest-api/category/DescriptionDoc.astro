@@ -1,0 +1,47 @@
+---
+import DescriptionArea from "../DescriptionArea.solid";
+import type { TypeDef, Property, OpenApiSchema } from "../schema-utils";
+import { resolveTypeDef } from "../schema-utils/type-def";
+import TypeDefDoc from "./typeDefDoc/TypeDefDoc.astro";
+
+interface Props {
+  basepath: string;
+  typeDef: TypeDef | Property;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
+  schema?: OpenApiSchema | undefined;
+  showNested?: boolean | undefined;
+}
+
+const { basepath, typeDef, bgColor, nestedBgColor, schema, showNested } =
+  Astro.props;
+
+const description = typeDef["x-portone-description"] ?? typeDef.description;
+const summary = typeDef["x-portone-summary"] ?? typeDef.summary;
+const html = description || summary || "";
+const unwrappedTypeDef = (() => {
+  if (!schema || !showNested || !typeDef) return;
+  return resolveTypeDef(schema, typeDef, true);
+})();
+---
+
+{
+  (html || unwrappedTypeDef) && (
+    <DescriptionArea client:visible maxHeightPx={16 * 6} bgColor={bgColor}>
+      {html && (
+        <div class="text-slate-5 flex flex-col gap-1 text-sm">
+          <div set:html={html} />
+        </div>
+      )}
+      {unwrappedTypeDef && schema && (
+        <TypeDefDoc
+          basepath={basepath}
+          schema={schema}
+          typeDef={unwrappedTypeDef}
+          bgColor={nestedBgColor || bgColor}
+          nestedBgColor={bgColor}
+        />
+      )}
+    </DescriptionArea>
+  )
+}

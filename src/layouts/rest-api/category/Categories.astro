@@ -1,0 +1,40 @@
+---
+import type { OpenApiSchema } from "../schema-utils";
+import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
+import Category from "./Category.astro";
+
+interface Props {
+  basepath: string;
+  apiHost: string;
+  currentSection: string;
+  endpointGroups: CategoryEndpointsPair[];
+  schema: OpenApiSchema;
+  renderedSlots: Record<string, string>;
+}
+
+const {
+  basepath,
+  apiHost,
+  currentSection,
+  endpointGroups,
+  schema,
+  renderedSlots,
+} = Astro.props;
+---
+
+{
+  endpointGroups.map(({ category: { id, title, description }, endpoints }) => (
+    <Category
+      basepath={basepath}
+      apiHost={apiHost}
+      section={id}
+      initialExpand={currentSection === id}
+      schema={schema}
+      title={title}
+      description={description}
+      endpoints={endpoints}
+    >
+      <Fragment set:html={renderedSlots[id]} />
+    </Category>
+  ))
+}

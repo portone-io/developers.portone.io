@@ -1,9 +1,9 @@
 ---
 import type { Lang } from "~/type";
 import Logo from "./Logo.astro";
-import MobileMenuButton from "./MobileMenuButton";
-import Dropdown from "./Dropdown";
-import VersionSwitch from "./VersionSwitch";
+import MobileMenuButton from "./MobileMenuButton.solid";
+import Dropdown from "./Dropdown.solid";
+import VersionSwitch from "./VersionSwitch.solid";
 
 interface Props {
   lang: Lang;
@@ -28,12 +28,11 @@ const t = lang === "ko" ? ko : en;
 ---
 
 <script>
-  import { effect } from "@preact/signals";
-  import { systemVersionSignal } from "~/state/nav";
+  import { createEffect } from "solid-js";
+  import { systemVersion } from "~/state/nav";
   const navMenu = document.getElementById("gnb")!;
-  effect(() => {
-    const systemVersion = systemVersionSignal.value;
-    navMenu.dataset.selectedSystemVersion = systemVersion;
+  createEffect(() => {
+    navMenu.dataset.selectedSystemVersion = systemVersion();
   });
 </script>
 <style is:global>

@@ -1,0 +1,36 @@
+---
+import type { TypeDef } from "../../schema-utils";
+import DescriptionDoc from "../DescriptionDoc.astro";
+
+interface Props {
+  basepath: string;
+  xPortoneEnum: TypeDef["x-portone-enum"];
+  bgColor: string;
+}
+
+const { basepath, xPortoneEnum, bgColor } = Astro.props;
+---
+
+<div class="flex flex-col gap-2">
+  {
+    Object.entries(xPortoneEnum || {}).map(([enumValue, enumCase]) => {
+      const title = enumCase["x-portone-title"] || enumCase.title || "";
+      return (
+        <div
+          class="flex flex-col gap-2 rounded p-2"
+          style={{ backgroundColor: bgColor }}
+        >
+          <div class="flex items-center gap-2 leading-none">
+            <code>{enumValue}</code>
+            <span class="text-slate-5 text-sm">{title}</span>
+          </div>
+          <DescriptionDoc
+            basepath={basepath}
+            typeDef={enumCase}
+            bgColor={bgColor}
+          />
+        </div>
+      );
+    })
+  }
+</div>

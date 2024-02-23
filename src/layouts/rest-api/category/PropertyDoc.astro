@@ -1,0 +1,72 @@
+---
+import { clsx } from "clsx";
+import type { OpenApiSchema, Property } from "../schema-utils";
+import TypeReprDoc from "./TypeReprDoc.astro";
+import DescriptionDoc from "./DescriptionDoc.astro";
+
+interface Props {
+  basepath: string;
+  name: string;
+  required?: boolean | undefined;
+  isDiscriminator?: boolean | undefined;
+  property: Property;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
+  schema?: OpenApiSchema | undefined;
+  showNested?: boolean | undefined;
+}
+
+const {
+  basepath,
+  name,
+  required,
+  isDiscriminator = false,
+  property,
+  bgColor,
+  nestedBgColor,
+  schema,
+  showNested,
+} = Astro.props;
+
+const title =
+  property["x-portone-title"] ||
+  property.title ||
+  property["x-portone-name"] ||
+  "";
+const deprecated = Boolean(property.deprecated);
+---
+
+<div
+  class={clsx("text-14px flex flex-col gap-2 p-2", deprecated && "opacity-50")}
+>
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <div class="mr-4 inline-block font-mono font-bold leading-tight">
+        {
+          [
+            <span>{name}</span>,
+            <span class="text-slate-4 -mr-[4px]">{!required && "?"}: </span>,
+          ]
+        }
+        <TypeReprDoc basepath={basepath} def={property} />
+        {isDiscriminator && <span class="inline-block">(Union Tag)</span>}
+      </div>
+      <div class="text-slate-5 inline-block text-xs">
+        {title && <span>{title}</span>}
+      </div>
+    </div>
+    <div class="text-slate-5 inline-block shrink-0 text-xs">
+      {!required && <span class="inline-block">(Optional)</span>}
+      {deprecated && <span class="inline-block">(Deprecated)</span>}
+    </div>
+  </div>
+  <slot />
+  <DescriptionDoc
+    basepath={basepath}
+    typeDef={property}
+    bgColor={bgColor}
+    nestedBgColor={nestedBgColor}
+    schema={schema}
+    showNested={showNested}
+  />
+</div>

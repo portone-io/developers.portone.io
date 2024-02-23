@@ -1,10 +1,12 @@
 import * as path from "node:path";
 import { defineConfig } from "astro/config";
 import preact from "@astrojs/preact";
+import solidJs from "@astrojs/solid-js";
 import mdx from "@astrojs/mdx";
 import vercel from "@astrojs/vercel/serverless";
 import unocss from "unocss/astro";
 import yaml from "@rollup/plugin-yaml";
+import inspect from "vite-plugin-inspect";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import contentIndex from "./src/content-index";
@@ -12,7 +14,8 @@ import contentIndex from "./src/content-index";
 // https://astro.build/config
 export default defineConfig({
   integrations: [
-    preact({ compat: true }),
+    preact({ compat: true, exclude: ["**/*.solid.tsx"] }),
+    solidJs({ include: ["**/*.solid.tsx"] }),
     mdx(),
     unocss({ injectReset: true }),
     contentIndex,
@@ -24,7 +27,7 @@ export default defineConfig({
         querystring: "querystring-es3",
       },
     },
-    plugins: [yaml()],
+    plugins: [yaml(), inspect()],
   },
   image: {
     remotePatterns: [{ protocol: "https" }],
@@ -79,5 +82,8 @@ export default defineConfig({
     ],
   },
   output: "hybrid",
-  adapter: vercel(),
+  adapter: vercel({
+    maxDuration: 30,
+    isr: true,
+  }),
 });

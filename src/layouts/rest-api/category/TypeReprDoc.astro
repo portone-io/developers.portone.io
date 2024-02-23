@@ -1,0 +1,60 @@
+---
+import { match } from "ts-pattern";
+import mapNullable from "~/misc/mapNullable";
+import type { Property, TypeDef } from "../schema-utils";
+import { repr } from "../schema-utils/type-def";
+import ExpandAndScrollToHelper from "../ExpandAndScrollToHelper.astro";
+
+interface Props {
+  basepath: string;
+  def: string | TypeDef | Property;
+}
+
+const { basepath, def } = Astro.props;
+
+const typeRepr = repr(def);
+const isUserType = typeRepr[0]?.toUpperCase() === typeRepr[0];
+const typeName = typeRepr.replace("[]", "");
+const href = `${basepath}/type-def#${typeName}`;
+---
+
+{
+  isUserType ? (
+    <a
+      class="text-green-6 hover:text-orange-5 inline-block font-bold underline-offset-4 transition-colors hover:underline"
+      href={href}
+      data-expand-and-scroll-to={JSON.stringify({
+        section: "type-def",
+        href,
+        id: typeName,
+      })}
+      data-norefresh
+    >
+      {typeRepr}
+    </a>
+  ) : (
+    <span class="text-green-6 inline-block font-bold">
+      {typeRepr}
+      {mapNullable(
+        match(def)
+          .with({ format: "int32" }, () => "(32 bit)")
+          .with({ format: "int64" }, () => "(64 bit)")
+          .with({ format: "date-time" }, () => (
+            <a
+              class="underline-offset-4 hover:underline"
+              target="_blank"
+              rel="noreferrer"
+              href="https://datatracker.ietf.org/doc/html/rfc3339#section-5.6"
+            >
+              (RFC 3339 date-time)
+            </a>
+          ))
+          .otherwise(() => null),
+        (format) => (
+          <span class="font-normal">{format}</span>
+        ),
+      )}
+    </span>
+  )
+}
+<ExpandAndScrollToHelper />

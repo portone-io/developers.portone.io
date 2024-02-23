@@ -1,0 +1,69 @@
+---
+import * as prose from "~/components/prose.solid";
+import { setSchema } from "~/state/rest-api/schema";
+import SchemaHydrator from "./SchemaHydrator.solid";
+import type { OpenApiSchema } from "./schema-utils";
+import {
+  getEveryEndpoints,
+  groupEndpointsByCategory,
+} from "./schema-utils/endpoint";
+import Hr from "./Hr.astro";
+import Categories from "./category/Categories.astro";
+
+interface Props {
+  title: string;
+  basepath: string;
+  apiHost: string;
+  currentSection: string;
+  schema: OpenApiSchema;
+}
+
+const { title, basepath, apiHost, currentSection, schema } = Astro.props;
+
+setSchema(schema);
+
+const everyEndpoints = getEveryEndpoints(schema);
+const endpointGroups = groupEndpointsByCategory(schema, everyEndpoints);
+
+const renderedSlots = Object.fromEntries(
+  (
+    await Promise.all(
+      endpointGroups.map(async ({ category: { id } }) => {
+        if (Astro.slots.has(id))
+          return [id, await Astro.slots.render(id)] as const;
+        else return null;
+      }),
+    )
+  ).filter((v) => Boolean(v)) as [string, string][],
+);
+---
+
+<SchemaHydrator client:load>
+  <script type="application/json" set:html={JSON.stringify(schema)} />
+</SchemaHydrator>
+<div class="flex flex-1 justify-center">
+  <article
+    class="basis-300 shrink-1 m-4 mb-16 flex flex-col pb-10 text-slate-700"
+  >
+    <section id="overview" class="scroll-mt-5.2rem flex flex-col">
+      <prose.h1>{title}</prose.h1>
+      <slot />
+      <Hr />
+    </section>
+    <Categories
+      basepath={basepath}
+      apiHost={apiHost}
+      currentSection={currentSection}
+      endpointGroups={endpointGroups}
+      schema={schema}
+      renderedSlots={renderedSlots}
+    />
+  </article>
+  <script define:vars={{ currentSection }}>
+    if (!location.hash && currentSection) {
+      document
+        .getElementById(currentSection)
+        ?.scrollIntoView({ behavior: "smooth" });
+    }
+  </script>
+</div>

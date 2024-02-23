@@ -1,15 +1,14 @@
 ---
-import SidebarBackground from "./SidebarBackground";
+import SidebarBackground from "./SidebarBackground.solid";
 ---
 
 <script>
-  import { effect } from "@preact/signals";
-  import { sidebarOpenSignal } from "~/state/sidebar";
+  import { createEffect } from "solid-js";
+  import { isSidebarOpen } from "~/state/sidebar";
   const leftSidebar = document.getElementById("left-sidebar")!;
-  effect(() => {
-    const sidebarOpen = sidebarOpenSignal.value;
+  createEffect(() => {
     const div = leftSidebar.children[0] as HTMLDivElement;
-    div.style.transform = sidebarOpen ? "none" : "translateX(-100%)";
+    div.style.transform = isSidebarOpen() ? "none" : "translateX(-100%)";
   });
 </script>
 <SidebarBackground client:visible />

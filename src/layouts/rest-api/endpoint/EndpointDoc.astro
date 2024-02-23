@@ -1,0 +1,79 @@
+---
+import * as prose from "~/components/prose.solid";
+import { getEndpointRepr, type Endpoint } from "../schema-utils/endpoint";
+import { getOperation } from "../schema-utils/operation";
+import MethodLine from "./MethodLine.astro";
+import TwoColumnLayout from "../TwoColumnLayout.astro";
+import type { OpenApiSchema } from "../schema-utils";
+import DescriptionArea from "../DescriptionArea.solid";
+import RequestDoc from "./requestDoc/RequestDoc.astro";
+import ResponseDoc from "./ResponseDoc.astro";
+
+interface Props {
+  basepath: string;
+  schema: OpenApiSchema;
+  endpoint: Endpoint;
+}
+
+const { basepath, schema, endpoint } = Astro.props;
+
+const operation = getOperation(schema, endpoint);
+const { method, path, title, deprecated, unstable } = endpoint;
+const description =
+  operation?.["x-portone-description"] || operation?.description;
+---
+
+{
+  operation && description && (
+    <div class="flex flex-col">
+      <div class="mb-4 grid items-center gap-y-4 lg:grid-cols-2">
+        <div class="flex items-center lg:order-last lg:justify-end">
+          <MethodLine method={method} path={path} />
+        </div>
+        <prose.h3
+          id={getEndpointRepr(endpoint)}
+          class="target:text-orange-5 mt-0"
+        >
+          <div class="flex items-center gap-2">
+            <span>{title}</span>
+            {deprecated && (
+              <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+                deprecated
+              </span>
+            )}
+            {unstable && (
+              <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+                unstable
+              </span>
+            )}
+          </div>
+        </prose.h3>
+      </div>
+      <TwoColumnLayout gap={6} smallRight>
+        <div slot="left" class="flex flex-col gap-6">
+          {description && (
+            <article class="overflow-hidden rounded">
+              <DescriptionArea client:visible>
+                <div class="p-2 text-sm" set:html={description} />
+              </DescriptionArea>
+            </article>
+          )}
+          <RequestDoc
+            basepath={basepath}
+            schema={schema}
+            operation={operation}
+          />
+          <ResponseDoc
+            basepath={basepath}
+            schema={schema}
+            operation={operation}
+          />
+        </div>
+        <Fragment
+          slot="right"
+          set:html={Astro.slots.render("default", [operation])}
+        />
+      </TwoColumnLayout>
+    </div>
+  )
+}

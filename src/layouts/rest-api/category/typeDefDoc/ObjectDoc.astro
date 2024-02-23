@@ -1,0 +1,38 @@
+---
+import type { OpenApiSchema, TypeDef } from "../../schema-utils";
+import { bakeProperties } from "../../schema-utils/type-def";
+import PropertyDoc from "../PropertyDoc.astro";
+
+interface Props {
+  basepath: string;
+  schema: OpenApiSchema;
+  typeDef?: TypeDef | undefined;
+  showNested?: boolean | undefined;
+  bgColor: string;
+  nestedBgColor?: string | undefined;
+}
+
+const { basepath, schema, typeDef, showNested, bgColor, nestedBgColor } =
+  Astro.props;
+
+const properties = typeDef ? bakeProperties(schema, typeDef) : [];
+---
+
+<div class="flex flex-col gap-2">
+  {
+    properties.map((property) => (
+      <div class="rounded py-1" style={{ backgroundColor: bgColor }}>
+        <PropertyDoc
+          basepath={basepath}
+          name={property.name}
+          required={property.required}
+          property={property}
+          bgColor={bgColor}
+          nestedBgColor={nestedBgColor}
+          schema={schema}
+          showNested={showNested}
+        />
+      </div>
+    ))
+  }
+</div>

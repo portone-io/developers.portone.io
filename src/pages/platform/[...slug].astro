@@ -2,18 +2,20 @@
 import { getCollection } from "astro:content";
 
 import Logo from "~/layouts/gnb/Logo.astro";
-import * as prose from "~/components/prose";
+import * as prose from "~/components/prose.solid";
 import Trackers from "~/layouts/Trackers.astro";
 import ArticleStyle from "~/layouts/ArticleStyle.astro";
-import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
-import GnbLink from "~/layouts/platform/GnbLink";
-import ContactLink from "~/layouts/platform/ContactLink";
+import RightSidebar, {
+  headingsToToc,
+} from "~/layouts/sidebar/RightSidebar.solid";
+import GnbLink from "~/layouts/platform/GnbLink.solid";
+import ContactLink from "~/layouts/platform/ContactLink.solid";
 import TrackingScript from "~/layouts/TrackingScript.astro";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
   const platformEntries = docEntries.filter((entry) =>
-    entry.slug.startsWith("ko/platform/")
+    entry.slug.startsWith("ko/platform/"),
   );
   return platformEntries.map((entry) => {
     const [_ko, _platform, ...fragments] = entry.slug.split("/");

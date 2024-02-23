@@ -1,0 +1,38 @@
+---
+import * as prose from "~/components/prose.solid";
+import type { OpenApiSchema, Operation } from "../schema-utils";
+import { getResponseSchemata } from "../schema-utils/operation";
+import ReqRes from "./requestDoc/ReqRes.astro";
+import { resolveTypeDef } from "../schema-utils/type-def";
+import TypeDefDoc from "../category/typeDefDoc/TypeDefDoc.astro";
+
+interface Props {
+  basepath: string;
+  schema: OpenApiSchema;
+  operation: Operation;
+}
+
+const { basepath, schema, operation } = Astro.props;
+
+const responseSchemata = getResponseSchemata(schema, operation);
+---
+
+<div class="flex flex-col gap-2">
+  <prose.h4 class="mt-0 border-b pb-1">Response</prose.h4>
+  {
+    responseSchemata.map(
+      ([statusCode, { response, schema: responseSchema }]) => (
+        <ReqRes title={statusCode} description={response.description}>
+          <TypeDefDoc
+            basepath={basepath}
+            schema={schema}
+            typeDef={responseSchema && resolveTypeDef(schema, responseSchema)}
+            bgColor="#f1f5f9"
+            nestedBgColor="#fcfdfe"
+            showNested
+          />
+        </ReqRes>
+      ),
+    )
+  }
+</div>

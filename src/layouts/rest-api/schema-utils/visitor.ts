@@ -1,5 +1,4 @@
-import type { Property, TypeDef } from "./type-def";
-import type { Operation, Parameter, Response } from "./operation";
+import type { Operation, Parameter, TypeDef, Property, Response } from ".";
 
 export type Visitor = {
   -readonly [key in keyof typeof defaultVisitor]: (typeof defaultVisitor)[key];
@@ -9,12 +8,14 @@ export const defaultVisitor = {
     [pathname: string]: { [method: string]: Operation };
   }) {
     for (const path in schemaPaths) {
-      this.visitEndpoint(path, schemaPaths[path]!);
+      const endpoint = schemaPaths[path];
+      if (endpoint) this.visitEndpoint(path, endpoint);
     }
   },
   visitEndpoint(_path: string, endpoint: { [method: string]: Operation }) {
     for (const method in endpoint) {
-      this.visitOperation(method, endpoint[method]!);
+      const operation = endpoint[method];
+      if (operation) this.visitOperation(method, operation);
     }
   },
   visitOperation(_method: string, operation: Operation) {
@@ -25,12 +26,12 @@ export const defaultVisitor = {
     }
     if (operation.requestBody) {
       this.visitRequestRef(
-        operation.requestBody.content["application/json"].schema.$ref || ""
+        operation.requestBody.content["application/json"].schema.$ref || "",
       );
     }
     for (const statusCode in operation.responses) {
-      const response = operation.responses[statusCode]!;
-      this.visitResponse(statusCode, response);
+      const response = operation.responses[statusCode];
+      if (response) this.visitResponse(statusCode, response);
     }
   },
   visitParameter(_parameter: Parameter) {},
@@ -41,23 +42,30 @@ export const defaultVisitor = {
     } else if (response.content?.["application/json"]?.schema.$ref) {
       // TODO: handle others (e.g. "text/csv")
       this.visitResponseRef(
-        response.content["application/json"].schema.$ref || ""
+        response.content["application/json"].schema.$ref || "",
       );
     }
   },
   visitResponseRef(_ref: string) {},
   visitTypeDef(typeDef: TypeDef) {
-    if (typeDef.oneOf) this.visitUnion(typeDef);
-    if (typeDef.properties) this.visitObject(typeDef);
+    if (typeDef.oneOf) {
+      this.visitUnion(typeDef as Parameters<typeof this.visitUnion>[0]);
+    }
+    if (typeDef.properties) {
+      this.visitObject(typeDef as Parameters<typeof this.visitObject>[0]);
+    }
   },
-  visitUnion(typeDef: TypeDef) {
-    for (const item of typeDef.oneOf!) {
+  visitUnion(typeDef: TypeDef & { oneOf: NonNullable<TypeDef["oneOf"]> }) {
+    for (const item of typeDef.oneOf) {
       this.visitTypeDef(item);
     }
   },
-  visitObject(typeDef: TypeDef) {
+  visitObject(
+    typeDef: TypeDef & { properties: NonNullable<TypeDef["properties"]> },
+  ) {
     for (const name in typeDef.properties) {
-      this.visitProperty(name, typeDef.properties[name]!);
+      const property = typeDef.properties[name];
+      if (property) this.visitProperty(name, property);
     }
   },
   visitProperty(_name: string, _property: Property) {},

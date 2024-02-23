@@ -23,18 +23,19 @@ const _items = [
 ---
 
 <script>
-  import { effect, signal } from "@preact/signals";
+  import { createEffect, createSignal, untrack } from "solid-js";
+  import { navOpenStates } from "~/state/nav";
   import {
-    currentSectionSignal,
-    navOpenStatesSignal,
     toggleNav,
     openNav,
     closeNav,
+    currentSection,
+    setCurrentSection,
   } from "~/state/rest-api/nav";
-  import { sidebarOpenSignal } from "~/state/sidebar";
+  import { setIsSidebarOpen } from "~/state/sidebar";
   const navMenu = document.getElementById("nav-menu");
   const navMenuItems = Array.from(
-    navMenu?.querySelectorAll("[data-navitem]") || []
+    navMenu?.querySelectorAll("[data-navitem]") || [],
   ) as HTMLDivElement[];
   for (const item of navMenuItems) {
     const id = item.dataset.navitem || "";
@@ -43,12 +44,12 @@ const _items = [
     button.addEventListener("click", () => toggleNav(id));
   }
   const navMenuAnchors = Array.from(
-    navMenu?.querySelectorAll("a") || []
+    navMenu?.querySelectorAll("a") || [],
   ) as HTMLAnchorElement[];
   for (const anchor of navMenuAnchors) {
     anchor.addEventListener("click", (e) => {
       e.preventDefault();
-      sidebarOpenSignal.value = false;
+      setIsSidebarOpen(false);
       document
         .getElementById(anchor.dataset.target || "")
         ?.scrollIntoView({ behavior: "smooth" });
@@ -64,28 +65,25 @@ const _items = [
       )?.dataset.navitem || id
     );
   }
-  const previousSectionSignal = signal<string>("");
-  effect(() => {
-    const currentSectionId = currentSectionSignal.value;
-    const currentSection = getParentCategoryId(currentSectionId);
-    const previousSection = previousSectionSignal.peek();
-    if (currentSection === previousSection) return;
-    previousSectionSignal.value = currentSection;
-    openNav(currentSection);
-    closeNav(previousSection);
+  const [previousSection, setPreviousSection] = createSignal("");
+  createEffect(() => {
+    const currSection = getParentCategoryId(currentSection());
+    const prevSection = untrack(previousSection);
+    if (currSection === prevSection) return;
+    setPreviousSection(currSection);
+    openNav(currSection);
+    closeNav(prevSection);
   });
-  effect(() => {
-    const currentSection = currentSectionSignal.value;
-    const navOpenStates = navOpenStatesSignal.value;
+  createEffect(() => {
     for (const item of navMenuItems) {
       const id = item.dataset.navitem || "";
-      item.dataset.active = String(currentSection === id);
-      item.dataset.open = String(Boolean(navOpenStates[id]));
+      item.dataset.active = String(currentSection() === id);
+      item.dataset.open = String(Boolean(navOpenStates()[id]));
     }
   });
   const article = document.getElementById("overview")!.closest("article")!;
   const sections = Array.from(article.children).filter(
-    (child) => child.tagName === "SECTION"
+    (child) => child.tagName === "SECTION",
   );
   function observe() {
     interface Item {
@@ -111,7 +109,7 @@ const _items = [
         }
         // 지금 화면에 보이고있는 section들
         const intersectingIds = Object.keys(items).filter((id) =>
-          Boolean(items[id]?.isIntersecting)
+          Boolean(items[id]?.isIntersecting),
         );
         // 화면에 보이는 section 중에서 사용자가 지금 관심있어할법한 section 순으로 정렬함.
         // 우선 intersectionRatio가 큰 걸 찾는다.
@@ -128,12 +126,12 @@ const _items = [
           const bTop = b.offsetTop;
           return aTop - bTop; // ascending
         });
-        currentSectionSignal.value = intersectingIds[0]!;
+        setCurrentSection(intersectingIds[0]!);
       },
       {
         rootMargin: "-56px 0px 0px 0px", // gnb height
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-      }
+      },
     );
     sections.forEach((section) => observer.observe(section));
     function resizeHandler() {

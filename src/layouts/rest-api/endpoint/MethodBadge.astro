@@ -1,0 +1,23 @@
+---
+import { clsx } from "clsx";
+import { match } from "ts-pattern";
+
+interface Props {
+  method: string;
+}
+
+const { method } = Astro.props;
+
+const colorClass = match(method)
+  .with("get", () => "bg-green-2 text-green-7")
+  .with("post", () => "bg-blue-2 text-blue-7")
+  .with("put", () => "bg-yellow-2 text-yellow-7")
+  .with("delete", () => "bg-red-2 text-red-7")
+  .otherwise(() => "bg-slate-2 text-slate-7");
+---
+
+<span
+  class={clsx("shrink-0 rounded-full px-2 font-bold uppercase", colorClass)}
+>
+  {method}
+</span>
