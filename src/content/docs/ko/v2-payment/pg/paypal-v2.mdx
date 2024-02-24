@@ -354,16 +354,14 @@ additional_data: [
   > `name` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
   >
   > 상품명
-  > 
   >
   > `amount` <mark style="color:red;">\*</mark> <mark style="color:purple;">**number**</mark>
   >
   > 상품 단위 가격
-  >
-  > - 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-  > - 1000 만큼 원화(KRW) 결제를 하는 경우, scale factor가 0이기 때문에 **1000 \* (10의 0승) = 1000**을 전달해야 합니다.
-  > - 1.50 만큼 달러(USD) 결제를 하는 경우, scale factor가 2이기 때문에 **1.50 \* (10의 2승) = 150**을 전달해야 합니다.
-  > - 이렇게 전달 된 값은 실제로 PG사에 결제를 요청할때 currency에 따라 올바른 값으로 변환되기 때문에 반드시 currency값을 필수로 입력해야 합니다.
+  >   - 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+  >   - 1000 만큼 원화(KRW) 결제를 하는 경우, scale factor가 0이기 때문에 **1000 \* (10의 0승) = 1000**을 전달해야 합니다.
+  >   - 1.50 만큼 달러(USD) 결제를 하는 경우, scale factor가 2이기 때문에 **1.50 \* (10의 2승) = 150**을 전달해야 합니다.
+  >   - 이렇게 전달 된 값은 실제로 PG사에 결제를 요청할때 currency에 따라 올바른 값으로 변환되기 때문에 반드시 currency값을 필수로 입력해야 합니다.
   >
   > `quantity` <mark style="color:red;">\*</mark> <mark style="color:purple;">**number**</mark>
   >
@@ -407,7 +405,6 @@ additional_data: [
 `currency` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
 
 결제 통화
-
   - 페이팔에서 지원하는 통화는 아래 스크린샷을 참고해주세요. 지원하지 않는 통화로 결제 시도시 에러 메시지가 리턴되며 결제창이 호출되지 않습니다. 또한 접속 국가나 결제 수단에 따라 지원하는 통화가 달라질 수 있고, 페이팔의 지원 여부에 따라 결제창 호출이 불가능할 수 있습니다.
 
 <Figure src="/gitbook-assets/ko/image (9).png"  caption="사용 가능한 결제 통화"/>
@@ -419,20 +416,17 @@ additional_data: [
   > `fullName` <mark style="color:green;">**string**</mark>
   >
   > 구매자 전체 이름
-  >
-  > - `fullName`과 `firstName` / `lastName`이 모두 입력된 경우 `fullName`으로 기록됩니다.
+  >   - `fullName`과 `firstName` / `lastName`이 모두 입력된 경우 `fullName`으로 기록됩니다.
   >
   > `firstName` <mark style="color:green;">**string**</mark>
   >
   > 구매자 이름
-  >
-  > - `firstName`을 입력하는 경우 `lastName`도 필수로 입력해야 합니다. `fullName`이 없고, `firstName`과 `lastName`을 입력한 경우 `{firstName} {lastName}`으로 저장됩니다.
+  >   - `firstName`을 입력하는 경우 `lastName`도 필수로 입력해야 합니다. `fullName`이 없고, `firstName`과 `lastName`을 입력한 경우 `{firstName} {lastName}`으로 저장됩니다.
   >
   > `lastName` <mark style="color:green;">**string**</mark>
   >
   > 구매자 성
-  >
-  > - `lastName`을 입력하는 경우 `firstName`도 필수로 입력해야 합니다.
+  >   - `lastName`을 입력하는 경우 `firstName`도 필수로 입력해야 합니다.
 
   - 페이팔 결제창 내에서 비회원으로 결제 시 `customer.firstName`과 `customer.lastName`의 정보가 청구인의 이름과 성으로 자동 입력됩니다. `customer.fullName`으로 결제창을 호출하는 경우 자동입력되지 않으니 유의하시기 바랍니다. 
   - 회원으로 결제시에는 **회원 가입시 입력한 이름 정보가 자동으로 입력**되며 결제창 호출 시 입력한 정보로 override 되지 않습니다.
@@ -449,31 +443,69 @@ PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모�
   >
   > > `style` <mark style="color:green;">**string**</mark>
   > >
-  > > 페이팔 결제 버튼 커스텀마이징
+  > > 페이팔 버튼 커스텀마이징
+  > >   - 페이팔 결제 버튼을 커스텀마이징 할 경우 자세한 내용은 페이팔에서 제공하는 문서([https://developer.paypal.com/sdk/js/reference/#link-style](https://developer.paypal.com/sdk/js/reference/#link-style))를 참고하세요.
   > >
-  > > - 페이팔 결제 버튼을 커스텀마이징 할 경우 자세한 내용은 페이팔에서 제공하는 문서([https://developer.paypal.com/sdk/js/reference/#link-style](https://developer.paypal.com/sdk/js/reference/#link-style))를 참고하세요.
-  > > - hotizontal 스타일 적용 시 버튼이 최대 2개까지 밖에 렌더링 되지 않습니다. 때문에 페이팔에서는 layout을 horizontal이 아닌 vertical로 설정하도록 권고하고 있습니다.
-  > > - 페이팔 버튼은 기본적으로 vertical(수직)로 렌더링 되지만, 아래와 같이 bypass 파라미터를 사용하면 horizontal(수평)로 렌더링할 수 있습니다.
-  > > - 예시 코드
+  > > > `layout` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 페이팔 버튼 렌더링 방향
+  > > >   - `hotizontal` 적용 시 버튼이 최대 2개까지 밖에 렌더링 되지 않습니다. 때문에 페이팔에서는 `layout`을 `horizontal`이 아닌 `vertical`로 설정하도록 권고하고 있습니다.
+  > > >   - 페이팔 버튼은 기본적으로 vertical(수직)로 렌더링 됩니다.
+  > > >   - 예시 코드
   > >
-  > > ```jsx
-  > >  PortOne.loadPaymentUI({
-  > >    ...중략
-  > >    bypass: {
-  > >      paypal_v2: {
-  > >        style: {
-  > >          ...중략
-  > >          layout: 'horizontal'
-  > >        }
-  > >      }
-  > >    }
-  > >  }, 콜백 함수)
-  > >  ```
-  > >
-  > > <div class="items-end gap-2 md:flex">
-  > > <Figure src="/gitbook-assets/ko/image (34).png" caption="예시) vertical style 버튼 표시 화면" />
-  > > <Figure src="/gitbook-assets/ko/image (1) (1).png" caption="예시) horizontal style 버튼 표시 화면"  />
-  > > </div>
+  > > >   ```jsx
+  > > >   PortOne.loadPaymentUI({
+  > > >      //...중략
+  > > >     bypass: {
+  > > >       paypal_v2: {
+  > > >         style: {
+  > > >           //...중략
+  > > >           layout: 'horizontal'
+  > > >         }
+  > > >       }
+  > > >     }
+  > > >   }, //콜백 함수
+  > > >   )
+  > > >   ```
+  > > > 
+  > > > <div class="items-end gap-2 md:flex">
+  > > > <Figure src="/gitbook-assets/ko/image (34).png" caption="예시) vertical style 버튼 표시 화면" />
+  > > > <Figure src="/gitbook-assets/ko/image (1) (1).png" caption="예시) horizontal style 버튼 표시 화면"  />
+  > > > </div>
+  > > >
+  > > > `color` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 페이팔 버튼 색상
+  > > >   - `gold`, `blue`, `silver`, `white`, `black` 중 선택할 수 있습니다.
+  > > >   - 기본적으로는 `gold`로 표시됩니다.
+  > > > 
+  > > > `height` <mark style="color:purple;">**number**</mark>
+  > > >
+  > > > 페이팔 버튼 크기
+  > > >   - 크기 변경은 25~55 사이의 값으로만 지정할 수 있습니다.
+  > > >
+  > > > `shape` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 페이팔 버튼 모양
+  > > >   - `rect`(사각 모양)과 `pill`(둥근 모양) 중에 선택할 수 있으며, 기본적으로 `rect` 모양으로 표시됩니다.
+  > > >
+  > > > `label` <mark style="color:green;">**string**</mark>
+  > > > 
+  > > > 페이팔 버튼 라벨
+  > > >   - `paypal`, `checkout`, `buynow`, `pay`, `installment` 중 선택할 수 있습니다.
+  > > >   - 기본적으로 `paypal`로 표시됩니다.
+  > > >   - `installment`는 결제 국가가 `MX`혹은 `BR`인 경우에만 유효합니다.
+  > > >
+  > > > `period` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 페이팔 버튼에 할부 결제 표시
+  > > >   - `label:installment`인 경우 버튼에 표시됩니다.
+  > > >
+  > > > `tgline` <mark style="color:orange;">**boolean**</mark>
+  > > >
+  > > > 페이팔 버튼에 제공되는 추가 설명
+  > > >   - 해당 파라미터를 사용하시기 위해서는 `bypass.paypal_v2.style.layout`을 horizontal로 지정해야 사용하실 수 있습니다.
+  > > >
   > >
   > > `enable-funding` <mark style="color:green;">**string**</mark>
   > >
@@ -547,17 +579,34 @@ PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모�
   > > > > - `purchase_units\[]`에 입력 된 배송 정보는 결제창에 호출 시 대체로 자동 완성되지만, 페이팔 회원으로 결제할 때와 비회원으로 결제할 때 각각 다른 정책이 적용됩니다.
   > > > > - 주문할 때 입력한 주소로 override하고 싶을 때 `purchase_units\[].shipping.address`에 override할 주소를 입력한 후 결제 요청해야 합니다. 단, **주소가 유효하지 않거나 address_line_1을 입력하지 않은 경우엔 override가 되지 않을 수 있습니다.**
   > > > >
+  > > > > >`address_line_1` <mark style="color:red;">\*</mark><mark style="color:green;">**string**</mark>
+  > > > > >
+  > > > > > 도로명 주소 ex)200 N Spring St
+  > > > > >
+  > > > > >`address_line_2` <mark style="color:green;">**string**</mark>
+  > > > > >
+  > > > > > 번지 혹은 건물 호수 ex)Los Angeles City Hall 1
+  > > > > >
+  > > > > >`admin_area_1` <mark style="color:green;">**string**</mark>
+  > > > > >
+  > > > > > 주와 같은 큰 단위의 주소 ex)CA, NY
+  > > > > >   - country(UK)
+  > > > > >   - state(US)
+  > > > > >   - province(Canada)
+  > > > > >   - 특별시/광역시/도(Korea)
+  > > > > >
   > > > > >`admin_area_2` <mark style="color:green;">**string**</mark>
   > > > > >
-  > > > > >도시명 ((예시) Los Angeles, New York)
+  > > > > > 도시, 마을 등 중간 단위의 주소 ex)LosAngeles
   > > > > >
-  > > > > > - 필수 입력해야 합니다.
+  > > > > >`postal_code` <mark style="color:green;">**string**</mark>
   > > > > >
-  > > > > >`country_code` <mark style="color:green;">**string**</mark>
+  > > > > > 우편 번호
   > > > > >
-  > > > > >국가 코드 ((예시) US, KR)
+  > > > > >`country_code` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
   > > > > >
-  > > > > > - 필수 입력해야 합니다.
+  > > > > > 국가 코드 ex) KR
+  > > > > >
 
   <Details>
     <p slot="summary">예시 1\) 페이팔 회원으로 결제 시 `shipping.address` 정보를 입력하지 않은 경우 </p>
@@ -716,7 +765,7 @@ PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모�
 
   <Details>
     <p slot="summary">예시 3\) 페이팔 비회원으로 결제 시 `payer.address` 정보 미 입력 상태이면서 `shipping.address` 정보를 입력한 경우 </p>
-      - 구매자의 청구 주소(`bypass.paypal_v2.payer.address`)를 입력하지 않고 배송 주소(`bypass.paypal_v2.shipping.address`)만 입력 한 경우 청구 주소란에 배송 주소가 자동으로 입력됩니다.
+      - 구매자의 청구 주소(`bypass.paypal_v2.payer.address`)를 입력하지 않고 배송 주소(`bypass.paypal_v2.pusrchase_units\[].shipping.address`)만 입력 한 경우 청구 주소란에 배송 주소가 자동으로 입력됩니다.
     
       ```tsx
       bypass: {
@@ -814,74 +863,94 @@ PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모�
 </Details>
 
 <Details>
-<p slot="summary">사용 불가능한 파라미터</p>
+<p slot="summary">미지원 파라미터</p>
 
-#### `taxFreeAmount`
+`taxFreeAmount` <mark style="color:purple;">**number**</mark>
 
-페이팔은 면세/복합과세를 지원하지 않기 때문에 taxFreeAmount 입력한 경우 “taxFreeAmount must be 0 in Paypal!”이라는 에러 메시지가 리턴되면서 결제창이 호출되지 않습니다.
+면세 금액
+  - 페이팔은 면세/복합과세를 지원하지 않기 때문에 taxFreeAmount 입력한 경우 “taxFreeAmount must be 0 in Paypal!”이라는 에러 메시지가 리턴되면서 결제창이 호출되지 않습니다.
 
-#### `country`
+`country` <mark style="color:green;">**string**</mark>
 
-결제 국가를 의미하는 country 파라미터로 페이팔 sandbox 모드에서만 유의미하며 **운영 모드에서는 구매자가 접속한 환경에 따라 자동 적용되기 때문에 전달한 파라미터가 무시**됩니다.
+결제 국가
+  - 페이팔의 경우 실연동 결제 시 **구매자가 접속한 국가에 따라 국가 정보가 자동으로 적용**되어 해당 파라미터로 전달한 국가 정보는 무시됩니다.
+  - 예시) `country : US`를 입력하여 결제창을 호출했지만 구매자가 접속한 환경이 “KR(한국)”인 경우 한국에 지원되는 결제 버튼만 렌더링됩니다.
+  - 페이팔 sandbox 모드인 경우 입력한 국가 정보로 전달됩니다. 
 
-예를 들어, country를 “US”로 입력했으나 구매자가 접속한 환경이 “KR(한국)”이라면 한국 사용자가 사용 가능한 결제 버튼들만 렌더링되기 때문에 Pay Later 버튼은 렌더링되지 않습니다.
+`customer` <mark style="color:blue;">**object**</mark>
 
-#### `customer.address`
+고객 정보
 
-페이팔 결제창 내 표기되는 주소는 결제 금액 청구지(billing information address)와 상품 배송지(shipping address) 이렇게 2가지가 있습니다. 여기서 결제 금액 청구지의 경우 페이팔 회원으로 결제할때는 회원가입시 기입한 정보가 자동 입력되기 때문에 결제창에 노출되지 않으며, 비회원으로 결제할때만 전달 된 파라미터를 기준으로 결제창에 자동 입력됩니다.
+> `address` <mark style="color:blue;">**object**</mark>
+>
+> 구매자 주소
+>   - 페이팔의 경우 사용되는 주소 체계가 달라 구매자 주소 정보는 `customer.address`이 아닌 **`bypass.paypal_v2.payer.address` 혹은 `bypass.paypal_v2.purchase_units\[].shipping.address`를 사용**해야 합니다.
+>   - `bypass.paypal_v2.payer.address`, `bypass.paypal_v2.purchase_units\[].shipping.address` 파라미터에 대한 자세한 사항은 **파라미터 사용 시 유의사항** 을 참고하시기 바랍니다.
 
-단, 이때의 주소는 총 5개의 영역으로 나누어진 상세 주소로 기존에 포트원이 제공하던 customer.address 파라미터로는 커버가 불가능하므로 페이팔 전용 파라미터([bypass.paypal_v2.payer.address](https://www.notion.so/7dc573ea6c5e45de9c00d2bb7b732855))를 사용하셔야 합니다. 자세한 내용은 관련 문서를 참고해주세요.
+`redirectUrl` <mark style="color:green;">**string**</mark>
 
-<div class="items-center gap-2 md:flex">
-  <Figure
-    src="/gitbook-assets/ko/image (77).png"
-    caption="회원으로 결제시 청구 주소는 노출되지 않고 배송 주소만 노출되는 모습"
-  />
-  <Figure
-    src="/gitbook-assets/ko/image (40).png"
-    caption="비회원으로 결제시 전달한 파라미터대로 청구 주소가 자동 입력 된 화면"
-  />
-</div>
+리디력션 방식에서 결제 프로세스 완료 후 이동될 고객사 URL
+  - 페이팔의 경우 PC와 모바일 모두 팝업으로 결제창이 렌더링되기 때문에 결제 프로세스 종료시 콜백 함수가 호촐됩니다. 따라서 redirectUrl 파라미터는 무시됩니다.
 
-#### `redirectUrl`
+`appScheme` <mark style="color:green;">**string**</mark>
 
-페이팔의 경우 PC와 모바일 모두 팝업으로 결제창이 렌더링되기 때문에 결제 프로세스 종료시 모두 콜백 함수가 호촐됩니다. 따라서 redirectUrl 파라미터는 무시됩니다.
+모바일 결제 후 고객사 앱으로 복귀를 위한 URL scheme
+  - 페이팔의 경우 외부 앱으로 이동하지 않아 해당 파라미터는 무시됩니다.
 
-#### `appScheme`
+`isEscrow`
 
-페이팔의 경우 외부 앱으로 이동하는 경우가 없기 때문에 해당 파라미터는 무시됩니다.
+에스크로 결제 여부
+  - 페이팔의 경우 에스크로 결제를 지원하지 않기 때문에 해당 파라미터는 무시됩니다.
 
-#### `isEscrow`
+`locale`
 
-페이팔의 경우 에스크로 결제를 지원하지 않기 때문에 해당 파라미터는 무시됩니다.
+결제창 표시 언어
+  - 페이팔의 경우 구매자가 접속한 환경에 따라 자동 적용되기 때문에 해당 파라미터는 무시됩니다.
 
-#### `locale`
+`isCulturalExpense`
 
-결제창 언어 설정을 의미하는 locale 파라미터는 구매자가 접속한 환경에 따라 자동 적용되기 때문에 전달한 파라미터가 무시됩니다.
+문화비 지출 여부
+  - 페이팔의 경우 도서 문화비 항목을 지원하지 않아 해당 파라미터는 무시됩니다.
 
-#### `bypass.isCulturalExpense`
+`offerPeriod` <mark style="color:green;">**string**</mark>
 
-페이팔의 경우 문화비 결제가 불가능하기 때문에 해당 파라미터는 무시됩니다.
+서비스 제공 기간
+  - 페이팔은 결제창 내 제공 기간 정보 노출을 지원하지 않아 해당 파라미터가 무시됩니다.
 
-#### `bypass.cashReceiptType`
+`storeDetails` <mark style="color:blue;">**object**</mark>
 
-페이팔의 경우 현금영수증 발급이 불가능하기 때문에 해당 파라미터는 무시됩니다.
+상점 정보
+  - 페이팔은 상점 세부 정보를 지원하지 않아 해당 파라미터가 무시됩니다.
 
-#### `bypass.customerIdentifier`
+`card` <mark style="color:blue;">**object**</mark>
 
-페이팔의 경우 현금영수증 발급이 불가능하기 때문에 해당 파라미터는 무시됩니다.
+카드 결제에 대한 상세 옵션
+  - 페이팔의 경우 결제 요청 시 결제 수단은 항상 `paypal`로 지정되며, 카드 결제 시 사용되는 옵션 설정을 지원하지 않아 해당 파라미터를 사용할 수 없습니다.
 
-#### `bypass.useInternationalFreeFromMall`
+`virtualAccount` <mark style="color:blue;">**object**</mark>
 
-페이팔의 경우 상점 부담 무이자 할부가 불가능하기 때문에 해당 파라미터는 무시됩니다.
+가상계좌 발급에 대한 상세 옵션
+  - 페이팔의 경우 결제 요청 시 결제 수단은 항상 `paypal`로 지정되며, 가상계좌 발급 시 사용되는 옵션 설정을 지원하지 않아 해당 파라미터를 사용할 수 없습니다.
 
-#### `offerPeriod`
+`transfer` <mark style="color:blue;">**object**</mark>
 
-페이팔은 결제창 내 제공 기간 정보 노출을 지원하지 않아 해당 파라미터가 무시됩니다.
+계좌이체 결제에 대한 상세 옵션
+  - 페이팔의 경우 결제 요청 시 결제 수단은 항상 `paypal`로 지정되며, 계좌이체 결제 시 사용되는 옵션 설정을 지원하지 않아 해당 파라미터를 사용할 수 없습니다.
 
-#### `storeDetails`
+`mobile` <mark style="color:blue;">**object**</mark>
 
-페이팔은 상점 세부 정보를 입력할 필요가 없기 때문에 해당 파라미터가 무시됩니다.
+휴대폰 소액결제에 대한 상세 옵션
+  - 페이팔의 경우 결제 요청 시 결제 수단은 항상 `paypal`로 지정되며, 휴대폰 소액결제 시 사용되는 옵션 설정을 지원하지 않아 해당 파라미터를 사용할 수 없습니다.
+
+`giftCertificate` <mark style="color:blue;">**object**</mark>
+
+상품권 결제에 대한 상세 옵션
+  - 페이팔의 경우 결제 요청 시 결제 수단은 항상 `paypal`로 지정되며, 상품권 결제 시 사용되는 옵션 설정을 지원하지 않아 해당 파라미터를 사용할 수 없습니다.
+
+`easyPay` <mark style="color:blue;">**object**</mark>
+
+간편결제 결제에 대한 상세 옵션 
+  - 페이팔의 경우 결제 요청 시 결제 수단은 항상 `paypal`로 지정되며, 간편결제 결제 시 사용되는 옵션 설정을 지원하지 않아 해당 파라미터를 사용할 수 없습니다.
 
 </Details>
 
@@ -1076,253 +1145,340 @@ Pay Later(할부) 기능을 여러 국가에 제공하기 위해서는 **페이�
 ### 정기결제 유의사항
 
 <Details>
-<p slot="summary">빌링키 발급 수단 및 정보를 알 수 없음</p>
+<p slot="summary">파라미터 사용 시 유의사항</p>
 
-페이팔을 통해 다양한 수단으로 빌링키 발급이 가능하지만, 페이팔이 승인 된 빌링키 발급 수단 및 정보를 알려주지 않습니다. 따라서 페이팔 빌링키 발급 건의 결제 수단(pay_method)은 모두 paypal로 일괄 저장되며 [발급 된 빌링키 정보 조회](../../../api/api-2/api-2)시 카드 정보는 모두 null로 내려갑니다.
+`orderName` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
 
-```javascript
-GET /subscribe/customers/{customer_uid}
+주문명
+  - 빌링키 발급 창 내 “판매자가 보낸 메모” 내용으로 표기됩니다.
 
-{
-  ...중략
-  pg_provider: 'paypal_v2',
-  customer_uid: '{customer_uid}'
-  card_name: null,
-  card_code: null,
-  card_number: null,
-  card_type: null,
-}
-```
+<Figure src="/gitbook-assets/ko/paypal-rt/paypal-rt-name.png" caption="예시) 빌링키 발급 시 화면"/>
+
+`bypass` <mark style="color:blue;">**oneof object**</mark>
+
+PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음
+
+  > `paypal_v2` <mark style="color:blue;">**object**</mark>
+  >
+  > 페이팔에서 제공하는 파라미터 모음
+  >
+  > > `style` <mark style="color:green;">**string**</mark>
+  > >
+  > > 페이팔 버튼 커스텀마이징
+  > >   - 페이팔 버튼을 커스텀마이징 할 경우 자세한 내용은 페이팔에서 제공하는 문서([https://developer.paypal.com/sdk/js/reference/#link-style](https://developer.paypal.com/sdk/js/reference/#link-style))를 참고하세요.
+  > >
+  > > > `layout` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 페이팔 버튼 렌더링 방향
+  > > >   - `hotizontal` 적용 시 버튼이 최대 2개까지 밖에 렌더링 되지 않습니다. 때문에 페이팔에서는 `layout`을 `horizontal`이 아닌 `vertical`로 설정하도록 권고하고 있습니다.
+  > > >   - 페이팔 버튼은 기본적으로 vertical(수직)로 렌더링 됩니다.
+  > > >   - 예시 코드
+  > > >
+  > > >   ```jsx
+  > > >   PortOne.loadPaymentUI({
+  > > >      //...중략
+  > > >     bypass: {
+  > > >       paypal_v2: {
+  > > >         style: {
+  > > >           //...중략
+  > > >           layout: 'horizontal'
+  > > >         }
+  > > >       }
+  > > >     }
+  > > >   }, //콜백 함수
+  > > >   )
+  > > >   ```
+  > > > 
+  > > > <div class="items-end gap-2 md:flex">
+  > > > <Figure src="/gitbook-assets/ko/image (34).png" caption="예시) vertical style 버튼 표시 화면" />
+  > > > <Figure src="/gitbook-assets/ko/image (1) (1).png" caption="예시) horizontal style 버튼 표시 화면"  />
+  > > > </div>
+  > > >
+  > > > `color` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 페이팔 버튼 색상
+  > > >   - `gold`, `blue`, `silver`, `white`, `black` 중 선택할 수 있습니다.
+  > > >   - 기본적으로는 `gold`로 표시됩니다.
+  > > > 
+  > > > `height` <mark style="color:purple;">**number**</mark>
+  > > >
+  > > > 페이팔 버튼 크기
+  > > >   - 크기 변경은 25~55 사이의 값으로만 지정할 수 있습니다.
+  > > >
+  > > > `shape` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 페이팔 버튼 모양
+  > > >   - `rect`(사각 모양)과 `pill`(둥근 모양) 중에 선택할 수 있으며, 기본적으로 `rect` 모양으로 표시됩니다.
+  > > >
+  > > > `label` <mark style="color:green;">**string**</mark>
+  > > > 
+  > > > 페이팔 버튼 라벨
+  > > >   - `paypal`, `checkout`, `buynow`, `pay`, `installment` 중 선택할 수 있습니다.
+  > > >   - 기본적으로 `paypal`로 표시됩니다.
+  > > >   - `installment`는 결제 국가가 `MX`혹은 `BR`인 경우에만 유효합니다.
+  > > >
+  > > > `period` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 페이팔 버튼에 할부 결제 표시
+  > > >   - `label:installment`인 경우 버튼에 표시됩니다.
+  > > >
+  > > > `tgline` <mark style="color:orange;">**boolean**</mark>
+  > > >
+  > > > 페이팔 버튼에 제공되는 추가 설명
+  > > >   - 해당 파라미터를 사용하시기 위해서는 `bypass.paypal_v2.style.layout`을 horizontal로 지정해야 사용하실 수 있습니다.
+  > > >
+  > > `shipping_address` <mark style="color:blue;">**object**</mark>
+  > >
+  > > 주문 상품의 배송 주소
+  > >
+  > > > `recipient_name` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 수령인 이름
+  > > >
+  > > > `line1` <mark style="color:red;">\*</mark><mark style="color:green;">**string**</mark>
+  > > >
+  > > > 도로명 주소 ex)200 N Spring St
+  > > >
+  > > > `line2` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 번지 혹은 건물 호수 ex)Los Angeles City Hall 1
+  > > >
+  > > > `city` <mark style="color:red;">\*</mark><mark style="color:green;">**string**</mark>
+  > > > 
+  > > > 도시, 마을 등 중간 단위의 주소 ex)LosAngeles
+  > > >
+  > > > `state` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 주와 같은 큰 단위의 주소 ex)CA, NY
+  > > >   - country(UK)
+  > > >   - state(US)
+  > > >   - province(Canada)
+  > > >   - 특별시/광역시/도(Korea)
+  > > >
+  > > > `postal_code` <mark style="color:green;">**string**</mark>
+  > > >
+  > > > 우편 번호
+  > > >
+  > > > `country_code` <mark style="color:red;">\*</mark><mark style="color:green;">**string**</mark>
+  > > >
+  > > > 국가 코드 ex)KR
+  > > >
+  > >   - 페이팔의 경우 빌링키 발급창에 기본적으로 구매자가 페이팔에 가입할 때 입력한 배송 정보가 자동으로 입력됩니다. 만약 이 배송 정보를 override하고 싶다면 `shipping_address` 파라미터에 override할 주소를 입력하고 `shipping_address.recipient_name`에 override할 수령인 이름을 입력하신 후 호출하시면 됩니다.
+  > >   - 배송 정보 중 `line1`, `city` 그리고 `country_code`는 필수 입력해야 합니다. 전달하지
+않을 경우 에러가 리턴되며 빌링키 발급창이 호출되지 않습니다.
+  > > 예시코드
+  > >
+  > >```javascript
+  > >bypass: {
+  > >	paypal_v2: {
+  > >		...중략
+  > >		shipping_address: { // 상품 수령 주소
+  > >			recipient_name: "홍길동", // 수령인 이름
+  > >			line1: "세종대로 110", // 도로명 주소
+  > >			line2: "서울특별시청", // 아파트 동 호수
+  > >			city: "중구", // 시(Los Angeles, New York)
+  > >			state: "서울특별시", // 주(CA, NY)
+  > >			postal_code: "04524", // 상품 수령지 우편번호
+  > >			country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+  > >		}
+  > >	} // end-of paypal_v2
+  > >} // end-of-bypass
+  > >```
+  > >
+  > > <div class="items-center gap-2 md:flex">
+  > >   <Figure
+  > >     src="/gitbook-assets/ko/paypal-rt/paypal-rt-no-shipping-address.png"
+  > >     caption="shipping_address를 전달하지 않은 경우 구매자 정보로 설정된 화면"
+  > >   />
+  > >   <Figure
+  > >     src="/gitbook-assets/ko/paypal-rt/paypal-rt-shipping-address.png"
+  > >     caption="shipping_address에 수령인 이름과 배송 정보를 전달한 경우 수령인 이름과 배송 정보가 override된 화면"
+  > >   />
+  > > </div>
 
 </Details>
 
 <Details>
-<p slot="summary">Manges & Fraudnet 이상 거래 대응 필요</p>
+<p slot="summary">미지원 파라미터</p>
 
-페이팔은 이상 거래를 줄이기 위해 Rist Data Aquisition 정책을 시행하고 있습니다. 일반 결제나 빌링키 발급은 페이팔 버튼을 통해 진행되기 때문에 페이팔이 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 있지만, 발급 된 빌링키로 재결제 할때는 고객사 서버에서 포트원 API를 통해 페이팔 API가 호출되는 구조이기 때문에 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 없습니다.
+`totalAmount` <mark style="color:purple;">**number**</mark>
 
-따라서 발급 된 빌링키로 재결제를 할때는 구매자의 브라우저/디바이스 접속 정보를 페이팔에 전달할 수 있도록 **결제 예약, 빌링키 결제가 호출되는 고객사 클라이언트 페이지에 반드시 페이팔 Fraudnet 스크립트/Manges SDK를 아래와 같이 추가해야** 합니다.
+총 결제 금액
+  - 빌링키 발급 시 지원하지 않는 파라미터로 발급 시 무조건 0으로 저장됩니다.
 
-<mark style="color:red;">
-  **페이팔 RT를 통한 결제 예약, 빌링키 결제 호출시에는 Manges & Fraudnet 조치가
-  필수적으로 요구됩니다.**
-</mark>
+`taxFreeAmount` <mark style="color:purple;">**number**</mark>
 
-브라우저/앱에 페이팔 Fraudnet Script/Manges SDK를 추가한 후 결제 예약, 빌링키 결제 API를 호출할때 진행되는 플로우는 아래와 같습니다.
+면세 금액
+  - 페이팔은 면세/복합과세를 지원하지 않기 때문에 해당 파라미터는 지원하지 않습니다.
+
+`country` <mark style="color:green;">**string**</mark>
+
+결제 국가
+  - 페이팔의 경우 실연동 결제 시 **구매자가 접속한 국가에 따라 국가 정보가 자동으로 적용**되어 해당 파라미터로 전달한 국가 정보는 무시됩니다.
+  - 예시) `country : US`를 입력하여 결제창을 호출했지만 구매자가 접속한 환경이 “KR(한국)”인 경우 한국에 지원되는 결제 버튼만 렌더링됩니다.
+  - 페이팔 sandbox 모드인 경우 입력한 국가 정보로 전달됩니다. 
+
+`currency` <mark style="color:green;">**string**</mark>
+
+결제 통화
+  - 빌링키 발급 시 결제가 되지 않기 때문에 해당 파라미터는 무시됩니다.
+
+`customer` <mark style="color:blue;">**object**</mark>
+
+고객 정보
+
+> `address` <mark style="color:blue;">**object**</mark>
+>
+> 구매자 주소
+>   - 페이팔의 경우 사용되는 주소 체계가 달라 구매자 주소 정보는 `customer.address`이 아닌 **`bypass.paypal_v2.shipping_address`를 사용**해야 합니다.
+>   - `bypass.paypal_v2.shipping_address` 파라미터에 대한 자세한 사항은 **파라미터 사용 시 유의사항** 을 참고하시기 바랍니다.
+
+`redirectUrl` <mark style="color:green;">**string**</mark>
+
+리디력션 방식에서 결제 프로세스 완료 후 이동될 고객사 URL
+  - 페이팔의 경우 PC와 모바일 모두 팝업으로 빌링키 발급창이 렌더링되기 때문에 프로세스 종료시 콜백 함수가 호촐됩니다. 따라서 redirectUrl 파라미터는 무시됩니다.
+
+`appScheme` <mark style="color:green;">**string**</mark>
+
+모바일 결제 후 고객사 앱으로 복귀를 위한 URL scheme
+  - 페이팔의 경우 외부 앱으로 이동하지 않아 해당 파라미터는 무시됩니다.
+
+`isEscrow`
+
+에스크로 결제 여부
+  - 페이팔의 경우 에스크로 결제를 지원하지 않기 때문에 해당 파라미터는 무시됩니다.
+
+`locale`
+
+결제창 표시 언어
+  - 페이팔의 경우 구매자가 접속한 환경에 따라 자동 적용되기 때문에 해당 파라미터는 무시됩니다.
+
+`isCulturalExpense`
+
+문화비 지출 여부
+  - 페이팔의 경우 도서 문화비 항목을 지원하지 않아 해당 파라미터는 무시됩니다.
+
+`offerPeriod` <mark style="color:green;">**string**</mark>
+
+서비스 제공 기간
+  - 페이팔은 결제창 내 제공 기간 정보 노출을 지원하지 않아 해당 파라미터가 무시됩니다.
+
+`storeDetails` <mark style="color:blue;">**object**</mark>
+
+상점 정보
+  - 페이팔은 상점 세부 정보를 지원하지 않아 해당 파라미터가 무시됩니다.
+
+</Details>
+
+<Details>
+<p slot="summary">**(필독) Rist Data Aquisition 정책**</p>
+
+페이팔은 이상 거래를 줄이기 위해 Rist Data Aquisition 정책을 시행하고 있습니다.
+일반적으로 페이팔 창에서 진행되는 결제나 빌링키 발급은 페이팔이 구매자 접속 정보를 직접 확인하여 이상 거래를 판단합니다.
+하지만 발급된 빌링키로 재결제하는 경우 [고객사 서버]에서 [포트원 API]를 통해 [페이팔 API]가 호출되는 구조로 페이팔이 구매자 접속 정보를 직접 확인할 수 없어 이상거래를 판단하기 어렵습니다.
+따라서 구매자의 브라우저/디바이스 접속 정보를 페이팔에 전달해야 합니다.
+발급된 빌링키를 이용하여 결제를 호출하는 경우 **고객사 클라이언트 페이지에 페이팔 Fraudnet 스크립트/Manges SDK를 반드시 추가해야** 합니다.
+
+<Details>
+<p slot="summary">결제 플로우 알아보기</p>
+
+브라우저/앱에 페이팔 Fraudnet Script/Manges SDK를 추가한 후 빌링키 결제 관련 API를 호출했을 때의 플로우는 다음과 같습니다.
 
 <Figure src="/gitbook-assets/ko/paypal-rt/manges-fraudnet-flow.png" />
 
-#### 브라우저
+</Details>
 
-```html
-<!-- 결제 예약, 빌링키 결제 API가 호출되는 고객사 클라이언트 -->
-<script
-  type="application/json"
-  fncls="fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99"
->
-  {
-    "f": "RISK_SESSION_CORRELATION_ID",
-    "s": "SOURCE_IDENTIFIER",
-    "sandbox": true
-  }
-</script>
-<script type="text/javascript" src="https://c.paypal.com/da/r/fb.js"></script>
-<noscript>
-  <img
-    src="https://c.paypal.com/v1/r/d/b/ns?f=RISK_SESSION_CORRELATION_ID&s=SOURCE_IDENTIFIER&js=0&r=1"
-  />
-</noscript>
-```
+<Details>
+<p slot="summary">브라우저 내 스크립트 사용 예시</p>
+
+  - 코드예시
+
+  ```html
+  <!-- 고객사 클라이언트 -->
+  <script
+    type="application/json"
+    fncls="fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99"
+  >
+    {
+      "f": "RISK_SESSION_CORRELATION_ID",
+      "s": "SOURCE_IDENTIFIER",
+      "sandbox": true
+    }
+  </script>
+  <script type="text/javascript" src="https://c.paypal.com/da/r/fb.js"></script>
+  <noscript>
+    <img
+      src="https://c.paypal.com/v1/r/d/b/ns?f=RISK_SESSION_CORRELATION_ID&s=SOURCE_IDENTIFIER&js=0&r=1"
+    />
+  </noscript>
+  ```
+
+  - 파라미터 설명
 
 | 파라미터  | 설명                                                                            | 예시                                            |
 | --------- | ------------------------------------------------------------------------------- | ----------------------------------------------- |
 | `fncls`   | `fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99`로 항상 고정                     | `fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99` |
-| `f`       | 주문번호(`merchant_uid`) 전달                                                   | `mid_1683690731602`                             |
+| `f`       | 주문번호(`paymentId`) 전달                                                   | `paymentId_230980198`                             |
 | `s`       | string (`{페이팔 Account ID}_{페이지 유형}` 형식. 페이지 유형은 아래 목록 참고) | `7WBB3CKT63FRG_checkout-page`                   |
 | `sandbox` | 페이팔 Account ID가 테스트 용인지 운영 용인지 여부                              | `true`                                          |
 
-##### **\[페이지 유형\]**
 
-- `home-page`
-- `search-result-page`
-- `category-page`
-- `product-detail-page`
-- `cart-page`
-- `inline-cart-page`
-- `checkout-page`
+  - 페이지 유형
 
-#### 앱
-
-#### 안드로이드
-
-[**Android Integration of Magnes**](https://developer.paypal.com/limited-release/magnes/integrate/android/) 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 두번째 파라미터(paypalClientMetaDataId)로는 주문번호(payment_id)를 전달해주시면 됩니다.
-
-```java
-MagnesResult magnesResult = MagnesSDK.getInstance()
-   .collectAndSubmit(Context context, String paypalClientMetaDataId,
-     HashMap<String, String>
-     additionalData)
-```
-
-#### IOS Switft
-
-[**iOS Swift SDK Integration**](https://developer.paypal.com/limited-release/magnes/integrate/ios-swift/) 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(withPayPalClientMetadataId)로는 주문번호(payment_id)를 전달해주시면 됩니다.
-
-```swift
-let magnesResult:MagnesResult =
-MagnesSDK.shared().collectAndSubmit(withPayPalClientMetadataId:
-  "YOUR-PAYPAL-CLIENT-METADATA-ID", withAdditionalData: [String: String])
-```
-
-#### IOS Objective-C
-
-[**iOS Objective-C SDK Integration of Magnes**](https://developer.paypal.com/limited-release/magnes/integrate/ios-objective-c/) 가이드 문서에 따라 아래와 같이 collectAndSubmitWithPayPalClientMetadataId 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(YOUR-PAYPAL-CLIENT-METADATA-ID)로는 주문번호(payment_id)를 전달해주시면 됩니다.
-
-```objective-c
-//PPRMOCMagnesSDK *magnesSDK = [PPRMOCMagnesSDK shared];
-PPRMOCMagnesSDKResult *magnesResult =
-[magnesSDK
-collectAndSubmitWithPayPalClientMetadataId:@"YOUR-PAYPAL-CLIENT-METADATA-ID"
-withAdditionalData:@{}];
-```
+    - `home-page`
+    - `search-result-page`
+    - `category-page`
+    - `product-detail-page`
+    - `cart-page`
+    - `inline-cart-page`
+    - `checkout-page`
 
 </Details>
 
-<Details>
-<p slot="summary">파라미터 유의사항</p>
+  <Details>
+<p slot="summary">앱 내 스크립트 사용 예시</p>
 
-#### `orderName`
+**안드로이드**
+  - [**Android Integration of Magnes**](https://developer.paypal.com/limited-release/magnes/integrate/android/) 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 두번째 파라미터(paypalClientMetaDataId)로는 주문번호(paymentId)를 전달해야 합니다.
+  - 코드예시
 
-빌링키 발급 창 내 “판매자가 보낸 메모” 하단에 표기할 메시지를 name 파라미터로 전달할 수 있습니다.
-
-<Figure src="/gitbook-assets/ko/paypal-rt/paypal-rt-name.png" />
-
-#### `bypass.paypal_v2.style`
-
-페이팔 버튼을 커스터마이징 하기 위한 파라미터입니다. 자세한 내용은 [페이팔에서 제공하는 문서](https://developer.paypal.com/sdk/js/reference/#link-style)를 참고하세요.
-
-#### `bypass.paypal_v2.style.tagline`
-
-페이팔 버튼에 추가 설명을 제공하기 위한 파라미터입니다.
-
-해당 파라미터를 사용하시기 위해서는 `bypass.paypal_v2.style.layout`을 horizontal로 지정해야 사용하실 수 있습니다.
-
-자세한 내용은 [페이팔에서 제공하는 문서](https://developer.paypal.com/sdk/js/reference/#link-style)를 참고하세요.
-
-#### `bypass.paypal_v2.shipping_address`
-
-페이팔은 기본적으로 구매자가 페이팔에 가입할때 입력 한 배송 정보를 빌링키 발급 창에 자동으로 입력해줍니다. 만약 이 배송 정보를 override하고 싶다면 shipping_address 파라미터에 override할 주소를 입력하고 shipping_address.recipient_name에 override할 수령인 이름을 입력하면 됩니다.
-
-배송 정보 중 <mark style="color:red;">**`line1`, `city` 그리고 `country_code`는 필수 입력**</mark>입니다. 전달하지
-않을 경우 에러가 리턴되며 빌링키 발급 창이 호출되지 않습니다.
-
-```javascript
-bypass: {
-	paypal_v2: {
-		...중략
-		shipping_address: { // 상품 수령 주소
-			recipient_name: "홍길동", // 수령인 이름
-			line1: "세종대로 110", // 도로명 주소
-			line2: "서울특별시청", // 아파트 동 호수
-			city: "중구", // 시(Los Angeles, New York)
-			state: "서울특별시", // 주(CA, NY)
-			postal_code: "04524", // 상품 수령지 우편번호
-			country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-		}
-	} // end-of paypal_v2
-} // end-of-bypass
-```
-
-<div class="items-center gap-2 md:flex">
-  <Figure
-    src="/gitbook-assets/ko/paypal-rt/paypal-rt-no-shipping-address.png"
-    caption="shipping_address를 전달하지 않은 경우
-가입시 설정된 기본 정보(수령인 이름: John Doe / 배송 주소: 1 Main St, San Jose, CA 95131, UnitedStates)로 설정됩니다."
-  />
-  <Figure
-    src="/gitbook-assets/ko/paypal-rt/paypal-rt-shipping-address.png"
-    caption="shipping_address에 수령인 이름과 배송 정보를 전달한 경우
-수령인 이름과 배송 정보가 override 됩니다."
-  />
-</div>
-
-</Details>
-
-<Details>
-<p slot="summary">사용 불가능한 파라미터</p>
-
-#### `totalAmount/taxFreeAmount`
-
-결제/면세 금액 파라미터는 결제 시에만 제공되기 때문에 빌링키 발급 시에는 무조건 0으로 저장됩니다.
-
-#### `country`
-
-빌링키 발급 국가를 의미하는 country 파라미터로 페이팔 sandbox 모드에서만 유의미하며 **운영 모드에서는 구매자가 접속한 환경에 따라 자동 적용되기 때문에 전달한 파라미터가 무시**됩니다.
-
-#### `currency`
-
-결제 통화를 의미하는 currency 파라미터로 빌링키 발급시에는 결제가 되지 않기 때문에 해당 파라미터는 무시됩니다.
-
-#### `customer.address`
-
-페이팔 빌링키 발급 창 내에는 상품 배송지(shipping address)가 표기되는데, 이 상품 배송지는 페이팔 회원가입시 기입한 정보가 자동으로 입력됩니다.
-
-단, 이때의 주소는 총 5개의 영역으로 나누어진 상세 주소로 기존에 포트원이 제공하던 buyer_addr 파라미터로는 커버가 불가능하므로 페이팔 전용 파라미터(`bypass.paypal_v2.shipping_address`)를 사용하셔야 합니다. 자세한 내용은 하단의 예제 코드를 참고해주세요.
-  ```tsx
-  bypass: {
-	  paypal_v2: {
-		  ...중략
-		  shipping_address: { // 상품 수령 주소
-			  recipient_name: "홍길동", // 수령인 이름
-			  line1: "세종대로 110", // 도로명 주소
-			  line2: "서울특별시청", // 아파트 동 호수
-			  city: "중구", // 시(Los Angeles, New York)
-			  state: "서울특별시", // 주(CA, NY)
-			  postal_code: "04524", // 상품 수령지 우편번호
-			  country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-	  	}
-	  } // end-of paypal_v2
-  } // end-of-bypass
+  ```java
+  MagnesResult magnesResult = MagnesSDK.getInstance()
+    .collectAndSubmit(Context context, String paypalClientMetaDataId,
+      HashMap<String, String>
+      additionalData)
   ```
 
-#### `redirectUrl`
+**IOS Switft**
+  - [**iOS Swift SDK Integration**](https://developer.paypal.com/limited-release/magnes/integrate/ios-swift/) 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(withPayPalClientMetadataId)로는 주문번호(paymentId)를 전달해야 합니다.
+  - 코드예시
 
-페이팔의 경우 PC와 모바일 모두 팝업으로 빌링키 발급 창이 렌더링되기 때문에 빌링키 발급 프로세스 종료시 모두 콜백 함수가 호촐됩니다. 따라서 redirectUrl 파라미터는 무시됩니다.
+  ```swift
+  let magnesResult:MagnesResult =
+  MagnesSDK.shared().collectAndSubmit(withPayPalClientMetadataId:
+    "YOUR-PAYPAL-CLIENT-METADATA-ID", withAdditionalData: [String: String])
+  ```
 
-#### `appScheme`
+**IOS Objective-C**
+  - [**iOS Objective-C SDK Integration of Magnes**](https://developer.paypal.com/limited-release/magnes/integrate/ios-objective-c/) 가이드 문서에 따라 아래와 같이 collectAndSubmitWithPayPalClientMetadataId 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(YOUR-PAYPAL-CLIENT-METADATA-ID)로는 주문번호(paymentId)를 전달해주시면 됩니다.
+  - 코드예시
 
-페이팔의 경우 외부 앱으로 이동하는 경우가 없기 때문에 해당 파라미터는 무시됩니다.
+  ```objective-c
+  //PPRMOCMagnesSDK *magnesSDK = [PPRMOCMagnesSDK shared];
+  PPRMOCMagnesSDKResult *magnesResult =
+  [magnesSDK
+  collectAndSubmitWithPayPalClientMetadataId:@"YOUR-PAYPAL-CLIENT-METADATA-ID"
+  withAdditionalData:@{}];
+  ```
 
-#### `isEscrow`
+  </Details>
+</Details>
 
-페이팔의 경우 에스크로 결제를 지원하지 않기 때문에 해당 파라미터는 무시됩니다.
+### 정기결제 FAQ
 
-#### `locale`
+<Details>
+<p slot="summary">모든 빌링키 발급 건의 결제수단은 paypal로 저장되나요?</p>
 
-빌링키 발급 창 언어 설정을 의미하는 locale 파라미터는 구매자가 접속한 환경에 따라 자동 적용되기 때문에 전달한 파라미터가 무시됩니다.
-
-#### `bypass.isCulturalExpense`
-
-페이팔의 경우 문화비 결제가 불가능하기 때문에 해당 파라미터는 무시됩니다.
-
-#### `bypass.cashReceiptType`
-
-페이팔의 경우 현금영수증 발급이 불가능하기 때문에 해당 파라미터는 무시됩니다.
-
-#### `bypass.customerIdentifier`
-
-페이팔의 경우 현금영수증 발급이 불가능하기 때문에 해당 파라미터는 무시됩니다.
-
-#### `bypass.useInternationalFreeFromMall`
-
-페이팔의 경우 상점 부담 무이자 할부가 불가능하기 때문에 해당 파라미터는 무시됩니다.
-
-#### `offerPeriod`
-
-페이팔은 빌링키 발급 창 내 제공 기간 정보 노출을 지원하지 않아 해당 파라미터가 무시됩니다.
-
-#### `storeDetails`
-
-페이팔은 상점 세부 정보를 입력할 필요가 없기 때문에 해당 파라미터가 무시됩니다.
+페이팔을 통해 카드 결제 외 BanContact, BLIK, eps, giropay 등 다양한 결제 수단으로 결제가 가능하지만 **빌링키 발급 승인 이후 상세 결제 수단 정보**를 알 수 없기에 paypal로 일괄 저장되며 [빌링키 단건 조회 API](/api/rest-v2/billingKey#get%20%2Fbilling-keys%2F%7BbillingKey%7D)로 조회시 결제수단 상세 정보는 모두 null로 내려갑니다.
 
 </Details>
