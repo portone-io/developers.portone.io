@@ -39,12 +39,33 @@ import image11 from "./_assets/paypal/screenshot9.png";
 
 ### 주요 파라미터
   - 일반결제 시 `uiType`파라미터를 `PAYPAL_SPB`, 빌링키 발급 시 `PAYPAL_RT`로 설정해야 합니다.
-  - `payMethod`, `windowType` 파라미터를 입력할 필요가 없습니다. 만일 `windowType` 파라미터 지정 시 PC 및 모바일 환경 모두 `UI`로 지정하셔야 하며, 이 외의 값을 입력하는 경우 에러가 리턴됩니다. 
 
 ### 일반 결제(`loadPaymentUI`) 호출하기
 
-페이팔의 경우 고객사의 결제 화면에 페이팔 결제 버튼을 렌더링 한 후 클릭해 페이팔의 결제창을 호출하는 방식입니다.
+페이팔의 경우 고객사의 결제 화면에 페이팔 결제 버튼을 렌더링 한 후 클릭해 페이팔의 결제창을 호출하는 방식입니다. `PortOne.requestPayment`와 기본적으로 동일한 파라미터를 받지만, 아래의 사항들이 기존 `PortOne.requestPayment`와 상이합니다.
+- 일반결제 시 `uiType` 파라미터가 필수입니다.
+- `payMethod`, `windowType` 파라미터를 입력할 필요가 없습니다.
+- 결제 성공 시의 동작을 `onPaymentSuccess` 콜백 함수에, 결제 실패 시의 동작을 `onPaymentFail`에 작성하셔야 합니다.
 
+```javascript
+const requestData = {
+  uiType: 'PAYPAL_SPB',
+  storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceecl',
+  channelKey: 'channel-key-893597d6-e62d-410f-83f9-119f530b4b11',
+  paymentId: `payment-${crypto.randomUUID()}`,
+  orderName: '나이키 와플 트레이너 2 SD',
+  totalAmount: 1000,
+  currency: 'CURRENCY_KRW',
+}
+const response = await PortOne.loadPaymentUI(requestData, {
+  onPaymentSuccess: (response) => {
+    setResult(response)
+  },
+  onPaymentFail: (error) => {
+    alert(error)
+  }
+});
+```
 <Figure src={image3} />
 
 따라서 다른 PG사와 결제 플로우가 상이하기 때문에 고객사는 **결제(체크아웃) 페이지가 렌더링 되는 시점에** `PortOne.requestPayment` 함수 대신 **`PortOne.loadPaymentUI`함수를 별도로 호출해 페이팔 결제 버튼을 렌더링**한 후 사용해야 합니다.
@@ -95,7 +116,27 @@ import image11 from "./_assets/paypal/screenshot9.png";
 
 ### 빌링키 발급(`loadIssueBillingKeyUI`) 호출하기
 
-페이팔의 경우 고객사의 결제 화면에 페이팔 빌링키 발급 버튼을 렌더링 한 후 클릭해 페이팔의 결제창을 호출하는 방식입니다.
+페이팔의 경우 고객사의 결제 화면에 페이팔 빌링키 발급 버튼을 렌더링 한 후 클릭해 페이팔의 결제창을 호출하는 방식입니다. `PortOne.requestIssueBillingKey`와 기본적으로 동일한 파라미터를 받지만, 아래의 사항들이 기존 `PortOne.requestIssueBillingKey`와 상이합니다.
+- 빌링키 발급 시 `uiType` 파라미터가 필수입니다.
+- `billingKeyMethod`, `windowType` 파라미터를 입력할 필요가 없습니다.
+- 발급 성공 시의 동작을 `onIssueBillingKeySuccess` 콜백 함수에, 발급 실패 시의 동작을 `onIssueBillingKeyFail`에 작성하셔야 합니다.
+```javascript
+const requestData = {
+  uiType: 'PAYPAL_RT',
+  storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec',
+  channelKey: 'channel-key-893597d6-e62d-410f-83f9-119f530b4b11',
+  issueId: `issue-id-${crypto.randomUUID()}`,
+  billingKey: `billing-key-${crypto.randomUUID()}`,
+}
+const response = await PortOne.loadIssueBillingKeyUI(requestData, {
+  onIssueBillingKeySuccess: (response) => {
+    setResult(response)
+  },
+  onIssueBillingKeyFail: (error) => {
+    alert(error)
+  }
+});
+```
 
 <Figure src={image4} />
 
@@ -118,17 +159,17 @@ import image11 from "./_assets/paypal/screenshot9.png";
     import * as PortOne from '@portone/browser-sdk/v2';
     const requestData = {
         uiType: 'PAYPAL_RT',
-        orderName: '포트원 페이팔 테스트 빌링키 발급',
+        billingKey: `billing-key-${crypto.randomUUID()}`
         ...중략
       }
     function loadIssueBillingKeyUI() {
       // loadIssueBillingKeyUI 파라미터로 결제 요청 데이터, 결제 프로세스 성공, 실패 시 호출될 "콜백 함수"를 전달해야 합니다.
       PortOne.loadIssueBillingKeyUI(
         requestData,
-        onPaymentSuccess: (response) => {
+        onIssueBillingKeySuccess: (response) => {
           // 성공 시 호출되는 콜백 함수 내용
         },
-        onPaymentFail: (error) => {
+        onIssueBillingKeyFail: (error) => {
           // 실패 시 호출되는 콜백함수 내용
         }
       );
@@ -501,7 +542,7 @@ PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모�
   > > > 페이팔 버튼에 할부 결제 표시
   > > >   - `label:installment`인 경우 버튼에 표시됩니다.
   > > >
-  > > > `tgline` <mark style="color:orange;">**boolean**</mark>
+  > > > `tagline` <mark style="color:orange;">**boolean**</mark>
   > > >
   > > > 페이팔 버튼에 제공되는 추가 설명
   > > >   - 해당 파라미터를 사용하시기 위해서는 `bypass.paypal_v2.style.layout`을 horizontal로 지정해야 사용하실 수 있습니다.
@@ -1222,7 +1263,7 @@ PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모�
   > > > 페이팔 버튼에 할부 결제 표시
   > > >   - `label:installment`인 경우 버튼에 표시됩니다.
   > > >
-  > > > `tgline` <mark style="color:orange;">**boolean**</mark>
+  > > > `tagline` <mark style="color:orange;">**boolean**</mark>
   > > >
   > > > 페이팔 버튼에 제공되는 추가 설명
   > > >   - 해당 파라미터를 사용하시기 위해서는 `bypass.paypal_v2.style.layout`을 horizontal로 지정해야 사용하실 수 있습니다.
