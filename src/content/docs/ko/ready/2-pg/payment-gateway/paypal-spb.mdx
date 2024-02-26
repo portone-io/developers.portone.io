@@ -8,44 +8,29 @@ import ContentRef from "~/components/gitbook/ContentRef.astro";
 import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import image1 from "./_assets/paypal-v2/screenshot1.png";
+import image2 from "./_assets/paypal-v2/screenshot2.png";
 
 <Hint style="info">
-페이팔은 별도의 계약없이 [포트원](https://admin.portone.io/)을 통해 가입신청 후 바로 서비스 이용이 가능합니다.
+페이팔은 별도의 계약없이 [포트원](https://admin.portone.io/)을 통해 전자결제 신청 후 바로 서비스 이용이 가능합니다.
+전자결제 신청 후 발송된 안내 메일을 통하여 페이팔 홈페이지 가입을 진행하셔야 정상적으로 사용이 가능합니다. 
  
 **(신) 페이팔의 경우 일반결제의 경우 SPB(Smart Payment Button) 방식으로 지원하며, 정기결제의 경우 RT(Reference Transaction) 방식으로 지원합니다.**
 </Hint>
 
 
-1. [https://admin.portone.io/](https://admin.portone.io/) 이메일 계정으로 회원가입
-2. 로그인 후 **전자결제 신청** → **해외결제** 선택 → **페이팔** 선택 → 사업자정보 입력 및 사업자등록증 사본 업로드 → **신청하기**
-3. 페이팔 홈페이지를 통한 추가 가입 진행 필수 (접수 처리시 신청 경로가 자동메일로 안내 됩니다. 해당 절차를 진행하셔야만 실운영모드 이용이 가능합니다.)
-
 <Tabs>
 <Tab title="테스트 결제">
-## 판매자 계정 설정/조회 방법
+#### 판매자 계정 설정/조회 방법
 
 <Hint style="info">
 포트원에서 제공하는 페이팔 테스트용 공용계정(Sandbox Accounts)으로 이용 해 주셔야 합니다.
 
 </Hint>
 
-페이팔 테스트용 판매자 ID: 아래 이용하실 국가별 “판매자ID”를 직접 세팅 해 주세요
+페이팔 테스트용 계정으로 제공되는 국가는 아래와 같습니다. 추가로 테스트가 필요한 국가는 포트원 고객센터를 통해 별도 문의 주시기 바랍니다. ([[→ 고객센터 상담톡 바로가기](https://x06k7.channel.io/lounge)])
 
-테스트가 필요한 국가는 아래 `테스트용 판매자 ID 목록`을 참고 해 주시고, 추가로 테스트가 필요한 국가는 포트원 고객센터를 통해 별도 문의 주시기 바랍니다. (고객센터 상담톡 \[[바로가기](https://x06k7.channel.io/lounge)])
-
-## 구매자 계정 설정/조회 방법
-
-- 페이팔 테스트 결제용 구매자 계정 정보 생성하기 \[[바로가기](https://developer.paypal.com/dashboard/accounts)]
-- Sandbox Accounts의 Country가 "US"인 Personal(구매자) 계정으로 테스트해야 합니다.\
-  판매자와 구매자 계정 국가가 "한국"인 경우 페이팔 정책상 결제가 불가하며, 판매자는 한국이고 구매자가 미국인 경우는 가능합니다.
-- 페이팔 테스트 결제용 카드 정보 \[[바로가기](https://developer.paypal.com/api/rest/sandbox/card-testing/#link-creditcardgeneratorfortesting)]
-
-## 콘솔 설정 방법
-
-- [포트원 관리자 콘솔](https://admin.portone.io/) → 결제 연동→ 테스트/실 연동 관리 → 테스트 / 페이팔 V2 / 페이팔 V2 선택 → \[추가] 버튼 클릭 → ‘PayPal 판매자 ID’ 세팅 → \[저장] 클릭
-- 테스트용 판매자 ID 목록
-
-| 지원 국가          | 판매자 ID     |
+| 지원 국가          | 판매자 ID (Account ID)    |
 | ------------------ | ------------- |
 | US(미국)           | 7WBB3CKT63FRG |
 | JP(일본)           | PX5CTVZJTRXG4 |
@@ -56,33 +41,48 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 | UK(영국)           | PA4DULN9V66L6 |
 | DE(독일)           | NKSW9H8SBFNHS |
 
-<Hint style="info">
-참고: PG사를 여러개 이용중이신 경우, `{ PG사 코드값 }.{ PG사 상점아이디 }` 지정하여 호출되도록 구현 하시기 바랍니다. (참고 문서 \[[바로가기](../../../console/pg)])
+<br />
 
+#### 구매자 계정 설정/조회 방법
+
+- 페이팔 테스트용 구매자 계정 정보를 생성한 후 결제해야 합니다. [[→ 테스트용 계정생성 바로가기](https://developer.paypal.com/dashboard/accounts)]
+- Sandbox Accounts의 Country가 `US`인 Personal(구매자) 계정으로 테스트해야 합니다.\
+  판매자와 구매자 계정 국가가 `한국`인 경우 페이팔 정책상 결제가 불가하며, 판매자는 한국이고 구매자가 미국인 경우는 가능합니다.
+- 페이팔 테스트 결제용 카드 정보를 확인한 후 테스트해야 합니다. \[[→ 테스트용 카드정보 바로가기](https://developer.paypal.com/api/rest/sandbox/card-testing/#link-creditcardgeneratorfortesting)]
+
+#### 포트원 콘솔 내 채널 설정 방법
+
+1. [포트원 관리자 콘솔](https://admin.portone.io/) 로그인
+2. **결제 연동** 탭 클릭
+3. `결제대행사 설정 및 추가` 폼에서 `테스트` → `페이팔` → `(신)페이팔` 선택 후 `+ 추가` 버튼 클릭
+4. 원하는 판매자 국가 선택 후 자동으로 설정된 크레덴셜 확인 후 저장
+
+<Figure src={image1} />
+
+
+<Hint style="info">
+PG사를 여러개 이용중이신 경우, <br />
+포트원 V1 결제모듈 이용 시 `pg` 파라미터에 `{ PG 구분코드 }.{ PG 상점 아이디 }` 형식으로 지정하여 호출되도록 구현해야 합니다. (ex. `paypal_v2.7WBB3CKT63FRG`) (참고 문서 \[[바로가기](../../../console/pg)]) <br />
+포트원 V2 결제모듈 이용 시 `channelKey`를 지정하여 호출되도록 구현해야 합니다.
 </Hint>
 
-<Figure src="/gitbook-assets/ko/image (76).png" />
+
 
 </Tab>
 
 <Tab title="실 결제">
-## 콘솔 설정 방법
+#### 포트원 콘솔 내 채널 설정 방법
 
-- [포트원 관리자 콘솔](https://admin.portone.io/) → 결제 연동→ 테스트/실 연동 관리 → 실 연동 / 페이팔 V2 / 페이팔 V2 선택 → \[추가] 버튼 클릭 → ‘PayPal 판매자 ID’ 세팅 → \[저장] 클릭
+1. [포트원 관리자 콘솔](https://admin.portone.io/) 로그인
+2. **결제 연동** 탭 클릭
+3. `결제대행사 설정 및 추가` 폼에서 `실 연동` → `페이팔` → `(신)페이팔` 선택 후 `+ 추가` 버튼 클릭
+4. 페이팔 판매자 ID (Account ID)를 입력한 후 저장
 
 ## 판매자 계정 설정/조회 방법
 
 PayPal 판매자 ID 조회 경로: [페이팔 홈페이지](https://www.paypal.com/businessmanage/account/aboutBusiness) 로그인 > 계정 설정 > 비즈니스 정보 > PayPal 판매자 ID 확인이 가능합니다.
 
-<Figure src="/gitbook-assets/ko/image (1) (1) (1).png" />
+<Figure src={image2} />
 
 </Tab>
 </Tabs>
-
-## (신)페이팔 일반결제 연동 방법
-
-<ContentRef slug="/ko/pg/payment-gateway/spb" />
-
-## (신)페이팔 정기결제 연동 방법
-
-<ContentRef slug="/ko/pg/payment-gateway/rt" />

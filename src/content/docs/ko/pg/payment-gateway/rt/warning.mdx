@@ -200,8 +200,23 @@ bypass: {
 
 페이팔 빌링키 발급 창 내에는 상품 배송지(shipping address)가 표기되는데, 이 상품 배송지는 페이팔 회원가입시 기입한 정보가 자동으로 입력됩니다.
 
-단, 이때의 주소는 총 5개의 영역으로 나누어진 상세 주소로 기존에 포트원이 제공하던 buyer_addr 파라미터로는 커버가 불가능하므로 페이팔 전용 파라미터(bypass.paypal_v2.shipping_address)를 사용하셔야 합니다. 자세한 내용은 [관련 문서](https://www.notion.so/chaifinance/shipping_address-ed8273522f5d4c58a77828402d20c207)를 참고해주세요.
-
+단, 이때의 주소는 총 5개의 영역으로 나누어진 상세 주소로 기존에 포트원이 제공하던 buyer_addr 파라미터로는 커버가 불가능하므로 페이팔 전용 파라미터(`bypass.paypal_v2.shipping_address`)를 사용하셔야 합니다. 자세한 내용은 하단의 예제 코드를 참고해주세요.
+  ```tsx
+  bypass: {
+	  paypal_v2: {
+		  ...중략
+		  shipping_address: { // 상품 수령 주소
+			  recipient_name: "홍길동", // 수령인 이름
+			  line1: "세종대로 110", // 도로명 주소
+			  line2: "서울특별시청", // 아파트 동 호수
+			  city: "중구", // 시(Los Angeles, New York)
+			  state: "서울특별시", // 주(CA, NY)
+			  postal_code: "04524", // 상품 수령지 우편번호
+			  country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+	  	}
+	  } // end-of paypal_v2
+  } // end-of-bypass
+  ```
 #### `popup`
 
 페이팔의 경우 빌링키 발급 창이 무조건 팝업으로 렌더링되기 때문에 해당 파라미터는 무시 됩니다.
