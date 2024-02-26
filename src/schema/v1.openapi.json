@@ -3931,7 +3931,7 @@
           {
             "name": "vat_amount",
             "in": "formData",
-            "description": "(부분)취소요청금액 중 부가세 금액(기본값: null).<br>단, <b>결제 시 부가세를 지정했던 경우 필수</b> 입력 바랍니다.<br><h5>지원되는 PG사</h5><ul><li>나이스페이먼츠(nice)</li><li>이니시스(html5_inicis)</li><li>웰컴페이먼츠</li></ul>",
+            "description": "(부분)취소요청금액 중 부가세 금액(기본값: null).<br>단, <b>결제 시 부가세를 지정했던 경우 필수</b> 입력 바랍니다.<br><h5>지원되는 PG사</h5><ul><li>나이스페이먼츠(nice)</li><li>이니시스(html5_inicis)</li><li>웰컴페이먼츠</li><li>(신) 나이스페이먼츠(nice_v2)</li></ul>",
             "required": false,
             "type": "number",
             "x-portone-name": "(부분)취소요청금액 중 부가세 금액",
@@ -3940,7 +3940,8 @@
             "x-portone-supported-pgs": [
               "nice",
               "html5_inicis",
-              "welcome"
+              "welcome",
+              "nice_v2"
             ],
             "x-portone-per-pg": {
               "nice": {
@@ -6233,6 +6234,17 @@
             "x-portone-name": "bypass 데이터",
             "x-portone-summary": "<p>JSON string 형식의 PG사별로 특화된 파라미터</p>\n",
             "x-portone-description": "<p>전달 한 값은 가공 없이 그대로 PG사로 전달 됩니다. 각 PG사별 스펙은 PG사별 연동 문서 참고해주세요</p>\n"
+          },
+          {
+            "name": "extra",
+            "in": "formData",
+            "description": "추가 파라미터",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/SubscribePaymentExtra"
+            },
+            "x-portone-name": "추가 파라미터",
+            "x-portone-description": "<p>비인증 결제 요청 시 추가 파라미터</p>\n"
           }
         ],
         "responses": {
@@ -6408,7 +6420,7 @@
           "subscribe"
         ],
         "summary": "결제 예약 API",
-        "description": "customer__uid를 이용하여 비인증 결제 요청을 예약할 수 있는 API입니다.<br>비 인증 결제(빌링키) API를 포트원이 대신 수행하는 개념)<br>\n     결제 요청에 대한 결과는 notice_url에 설정한 EndPorint URL로 웹훅을 통해 수신(POST request)받을 수 있습니다.<br><br>\n     <ul> <li>기존에 빌링키가 등록된 customer_uid가 존재하는 경우 해당 customer_uid와 해당되는 빌링키로 schedule정보가 예약됩니다.(카드정보 선택사항)</li>\n     <li>등록된 customer_uid가 없는 경우 빌링키 신규 발급을 먼저 진행한 후 schedule정보를 예약합니다.(카드정보 필수사항)</li>\n     <li>예약건 별로 고유의 merchant_uid를 전달해주셔야 합니다.</li>\n     <li>schedules의 상세정보(선택정보) <b> buyer_name, buyer_email, buyer_tel, buyer_addr, buyer_postcode</b> 누락시,<br>\n     <b>customer_uid</b>에 해당되는 <b>customer_name, customer_email, customer_tel, customer_addr, customer_postcode</b> 정보로 대체됩니다.(둘 다 입력시 buyer_* 정보를 우선합니다)</li></ul>",
+        "description": "customer__uid를 이용하여 비인증 결제 요청을 예약할 수 있는 API입니다.<br>비 인증 결제(빌링키) API를 포트원이 대신 수행하는 개념)<br>\n     결제 요청에 대한 결과는 notice_url에 설정한 EndPoint URL로 웹훅을 통해 수신(POST request)받을 수 있습니다.<br><br>\n     <ul> <li>기존에 빌링키가 등록된 customer_uid가 존재하는 경우 해당 customer_uid와 해당되는 빌링키로 schedule정보가 예약됩니다.(카드정보 선택사항)</li>\n     <li>등록된 customer_uid가 없는 경우 빌링키 신규 발급을 먼저 진행한 후 schedule정보를 예약합니다.(카드정보 필수사항)</li>\n     <li>예약건 별로 고유의 merchant_uid를 전달해주셔야 합니다.</li>\n     <li>schedules의 상세정보(선택정보) <b> buyer_name, buyer_email, buyer_tel, buyer_addr, buyer_postcode</b> 누락시,<br>\n     <b>customer_uid</b>에 해당되는 <b>customer_name, customer_email, customer_tel, customer_addr, customer_postcode</b> 정보로 대체됩니다.(둘 다 입력시 buyer_* 정보를 우선합니다)</li></ul>",
         "operationId": "schedule",
         "consumes": [
           "application/json",
@@ -6896,7 +6908,7 @@
           "subscribe"
         ],
         "summary": "결제 실패 재예약 API",
-        "description": "결제 예약 실행 시 실패했던 건에 대해 다른 시각으로 다시 결제 예약을 할 수 있습니다.",
+        "description": "결제 예약 실행 시 실패했던 건, 혹은 예약 취소했던 건에 대해 다른 시각으로 다시 결제 예약을 할 수 있습니다.",
         "operationId": "rescheduleByMid",
         "consumes": [
           "application/json",
@@ -6933,7 +6945,7 @@
             }
           },
           "400": {
-            "description": "필수 파라미터 누락, 이미 취소된 결제예약, 아직 실행되지 않거나 승인된 결제예약, 예약시각이 현재 시각보다 과거인 경우"
+            "description": "필수 파라미터 누락, 아직 실행되지 않거나 이미 실행 중 혹은 승인된 결제예약, 예약시각이 현재 시각보다 과거인 경우"
           },
           "404": {
             "description": "존재하지 않는 결제예약"
@@ -6977,7 +6989,7 @@
           "subscribe"
         ],
         "summary": "결제 실패 재시도 API",
-        "description": "결제 예약 실행 시 실패했던 건에 즉시 결제 재시도 할 수 있습니다.",
+        "description": "결제 예약 실행 시 실패했던 건, 혹은 예약 취소했던 건을 즉시 결제 재시도 할 수 있습니다.",
         "operationId": "retryScheduleByMid",
         "consumes": [
           "application/json",
@@ -7005,7 +7017,7 @@
             }
           },
           "400": {
-            "description": "필수 파라미터 누락, 이미 취소된 결제예약, 아직 실행되지 않거나 승인된 결제예약"
+            "description": "필수 파라미터 누락, 아직 실행되지 않거나 이미 실행중 혹은 승인된 결제예약"
           },
           "404": {
             "description": "존재하지 않는 결제예약 혹은 빌링키"
@@ -10799,6 +10811,21 @@
           }
         }
       ]
+    },
+    "SubscribePaymentExtra": {
+      "properties": {
+        "naverUseCfm": {
+          "description": "이용 완료일",
+          "type": "string",
+          "x-portone-name": "이용 완료일(YYYYMMDD), 네이버페이 전용",
+          "x-portone-description": "<p>이용 완료일(YYYYMMDD), 네이버페이 정기결졔 계약 시 이용완료일을 필수로 설정한 고객사의 경우 필수로 전달해야합니다.</p>\n",
+          "x-portone-per-pg": {
+            "naverpay": {
+              "description": "<p>이용 완료일(YYYYMMDD), 네이버페이 정기결졔 계약 시 이용완료일을 필수로 설정한 고객사의 경우 필수로 전달해야합니다.</p>\n"
+            }
+          }
+        }
+      }
     },
     "TierAnnotation": {
       "required": [
