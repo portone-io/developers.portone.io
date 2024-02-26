@@ -196,27 +196,17 @@ app.post("/payment/complete", async (req, res) => {
     // 요청의 body로 paymentId가 오기를 기대합니다.
     const { paymentId, order } = req.body;
 
-    // 1. 포트원 API를 사용하기 위해 액세스 토큰을 발급받습니다.
-    const signinResponse = await fetch("https://api.portone.io/login/api-secret", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ apiSecret: PORTONE_API_SECRET }),
-    });
-    if (!signinResponse.ok) throw new Error(`signinResponse: ${signinResponse.statusText}`);
-    const { accessToken } = await signinResponse.json();
-
-    // 2. 포트원 결제내역 단건조회 API 호출
+    // 1. 포트원 결제내역 단건조회 API 호출
     const paymentResponse = await fetch(
       `https://api.portone.io/payments/${encodeURIComponent(paymentId)}`,
       {
-        // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-        headers: { "Authorization": "Bearer " + accessToken },
+        headers: { "Authorization": `PortOne ${PORTONE_API_SECRET}` },
       },
     );
     if (!paymentResponse.ok) throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
     const payment = await paymentResponse.json();
 
-    // 3. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
+    // 2. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
     const orderData = await OrderService.getOrderData(order);
     if (orderData.amount === payment.amount.total) {
       switch (payment.status) {

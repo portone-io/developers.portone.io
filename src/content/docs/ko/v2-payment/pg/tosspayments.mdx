@@ -86,7 +86,7 @@ import Details from "~/components/gitbook/Details.astro";
     const issueResponse = await axios({
       url: `https://api.portone.io/billing-keys`,
       method: "post",
-      headers: { "Authorization": "Bearer " + accessToken },
+      headers: { "Authorization": `PortOne ${PORTONE_API_SECRET}` },
       data: {
         channelKey,
         customer: {
@@ -111,13 +111,11 @@ import Details from "~/components/gitbook/Details.astro";
 <Tab title="API 예약/반복 결제">
  ```javascript
   async function schedulePayment() {
-    // 1. 포트원 API를 사용하기 위한 액세스 토큰 발급 받기를 진행해주세요.
-    // 2. 포트원 결제 예약 API 호출
+    // 포트원 결제 예약 API 호출
     const response = await axios({
       url: `https://api.portone.io/payments/${encodeURIComponent(PAYMENT_ID_HERE)}/schedules`,
       method: "post",
-      // 1번에서 발급받은 액세스 토큰을 Bearer 형식에 맞게 넣어주세요.
-      headers: { Authorization: "Bearer " + accessToken },
+      headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
       data: {
         payment: {
           billingKey: BILLING_KEY_HERE,
