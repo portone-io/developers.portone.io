@@ -1,6 +1,6 @@
 ---
 title: 결제 연동 준비하기
-description: 포트원을 사용하여 결제를 연동하기 위한 관리자페이지 회원가입과 설정 방법을 안내합니다.
+description: 포트원을 이용한 연동 개발이 처음이시라면 아래 안내 사항에 따라 진행하세요.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
@@ -9,88 +9,157 @@ import Hint from "~/components/gitbook/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 import getConsoleStoreIdImage from "./_assets/console_store_id.png";
+import image1 from "./_assets/login.png";
+import image2 from "./_assets/signup.png";
+import image3 from "./_assets/email_auth.png"
+import image4 from "./_assets/apply1.png"
 
 ## 1. 포트원 회원가입 하기
 
+포트원 관리자 콘솔은 **별도 계약 없이 무료로** 회원가입이 가능합니다.
+
+  - 포트원 콘솔 화면에서 [가입하기]를 클릭해 주세요. [→ 포트원 콘솔 바로 가기](https://admin.portone.io)
+  <Figure src={image1} width="480" caption="로그인 화면 예시"/>
+
+  - 포트원에서 사용할 이메일 주소 및 비밀번호를 입력한 후 [가입]을 눌러주세요.
+  <Figure src={image2} width="480" caption="회원가입 화면 예시"/>
+
+  - 가입 완료 후 입력하신 이메일로 인증 메일이 발송됩니다. 메일 인증 전까지 로그인이 불가능하오니 꼭 인증 후 로그인을 시도해 주세요.
+  <Figure src={image3} width="480" caption="인증 메일 내용 예시"/>
+
+  <Hint style="info">
+  메일을 받지 못하신 경우 스팸메일함을 확인해주세요.
+  </Hint>
+
+<br />
+## 2. 전자결제 신청하기
+
+비지니스 정보(사업자 정보) 등록 후 이용할 결제대행사 및 결제수단 신청합니다.
+
+  - 로그인 후 [홈]화면에서 왼쪽 상단에 [전자결제 신청]을 클릭해 주세요.
+  - 약관 동의 후 [시작하기!]를 클릭해 주세요.
+  <Figure src={image4} width="480" caption="약관동의 화면 예시"/>
+
+  - [비지니스 인증] 정보를 단계에 따라 입력합니다.
+  - [전자결제 신청] 정보를 단계에 따라 선택합니다.
+
+  **아직 전자결제 신청 전이라면 상세 가이드를 참고하여 전자결제를 신청해보세요!** [→ 전자결제 신청 상세 가이드 바로가기](https://help.portone.io/category/procedure/pg-application)
+
 <Hint style="info">
-결제창 연동을 진행하기 위해서는 포트원 관리자페이지 [**회원가입**](https://admin.portone.io)이 선행되어야 합니다.
-
-포트원 관리자 페이지는 **별도 계약 없이** **무료** 회원가입이 가능합니다.
-
+  전자결제 신청 전 테스트를 하고싶으신 분은 아래 결제대행사 채널 설정하기를 참고하신 후 테스트 환경으로 채널 추가하여 테스트를 진행하실 수 있습니다.
 </Hint>
 
-<Details>
-<p slot="summary"><strong>포트원 회원가입 바로 하러 가기</strong></p>
+## 3. 결제대행사 채널 설정하기
 
-- 포트원 회원가입은 "**이메일 주소**"만 준비하시면 됩니다.
-- 비밀번호는 쉽게 유추할 수 없도록 "**복잡하게 설정하는 것**" 잊지 마세요.
+결제 연동 시 사용할 결제대행사 채널을 추가합니다.
 
-</Details>
+  - 관리자 콘솔 화면에서 [결제 연동] → [연동 관리] → [채널 관리] 메뉴에서 연동하고자 하는 결제대행사 및 결제 모듈을 선택하여 채널을 추가합니다.
 
-아래와 같은 화면에서 **가입하기**를 클릭하여 진행해 주시면 됩니다.
+  <Tabs>
+    <Tab title="테스트 연동">
+    #### 테스트 환경 채널 연동 방법
+    
+    1. 연동 모드를 `테스트`로 변경해 주세요.
+    2. 사용할 `결제대행사`를 선택해 주세요.
+    3. 연동할 결제방식 및 결제수단에 따라 `결제 모듈`을 선택해 주세요.
+    4. `채널 추가`버튼을 클릭해 주세요.
+    5. `채널 이름`을 입력해주세요. 채널 이름은 채널 추가 후 채널 목록에 표시될 이름으로 구분할 수 있는 값으로 입력하여 사용하시길 바랍니다. ex) 정기결제용
+    6. `채널 속성`을 선택해 주세요. 기본적으로 `결제`가 선택됩니다. 본인인증 용도로 채널을 연동하시는 경우 `본인인증`을 선택해 주세요.
+    7. 테스트 용도로 발급 받은 `상점 아이디`를 직접 입력하시거나, 제공되는 공용 상점아이디를 선택합니다.
+    8. 추가로 입력해야 하는 정보는 결제대행사별로 상이하며, 직접 발급받은 테스트 상점아이디를 이용하시는 경우 필수 입력 항목을 확인하여 올바르게 입력해 주세요.
+    9. `저장`버튼을 눌러 채널을 추가를 완료합니다.
+    </Tab>
 
-<div class="items-center gap-2 md:flex">
-  <Figure src="/gitbook-assets/ko/screenshot 2023-02-09 12.17.08.png" />
-  <Figure src="/gitbook-assets/ko/screenshot 2023-02-09 12.17.15 (1).png" />
-</div>
+    <Tab title="실연동">
+    #### 운영 환경 채널 연동 방법
+    
+    1. 연동 모드를 `실연동`으로 변경해 주세요.
+    2. 사용할 `결제대행사`를 선택해 주세요.
+    3. 연동할 결제방식 및 결제수단에 따라 `결제 모듈`을 선택해 주세요.
+    4. `채널 추가`버튼을 클릭해 주세요.
+    5. `채널 이름`을 입력해주세요. 채널 이름은 채널 추가 후 채널 목록에 표시될 이름으로 구분할 수 있는 값으로 입력하여 사용하시길 바랍니다. ex) 정기결제용
+    6. `채널 속성`을 선택해 주세요. 기본적으로 `결제`가 선택됩니다. 본인인증 용도로 채널을 연동하시는 경우 `본인인증`을 선택해 주세요.
+    7. 결제대행사와 계약 후 발급 받은 `상점 아이디`와 추가 정보를 입력해 주세요.
+    8. `저장`버튼을 눌러 채널을 추가를 완료합니다.
+    
+    </Tab>
+  </Tabs>
 
-## 2. PG 정보 설정하기
+  ### 3-1. 결제대행사별 연동 정보 확인하기
 
-포트원 회원가입 이후 관리자 페이지 내 **결제 연동** **->** **테스트 연동 관리** 탭에서 연동하고자 하는 PG사를 선택합니다.
+    #### 결제대행사
+    
+    <Details>
+    <p slot="summary">나이스페이먼츠</p>
+    </Details>
 
-**테스트 연동 관리** 메뉴에서는 포트원에서 지원하는 각 PG사별 테스트 설정을 진행할 수 있습니다.
+    <Details>
+    <p slot="summary">스마트로</p>
+    </Details>
 
-<Figure
-  src="/gitbook-assets/ko/image (74) (1).png"
-  caption="결제연동 -> 테스트 연동 관리"
-/>
+    <Details>
+    <p slot="summary">토스페이먼츠</p>
+    </Details>
 
-<Hint style="info">
-각 PG사별 **테스트 설정 및 실 계정 설정 방법**이 **상이**합니다. 자세한 PG사별 설정 방법은 [**링크**](2-pg/readme)를 통해 확인하세요.
+    <Details>
+    <p slot="summary">KSNET</p>
+    </Details>
 
+    #### 간편결제 직연동
+
+    <Details>
+    <p slot="summary">네이버페이 결제형</p>
+    </Details>
+
+    <Details>
+    <p slot="summary">카카오페이</p>
+    </Details>
+
+    #### 해외 결제대행사
+
+    <Details>
+    <p slot="summary">페이팔</p>
+    </Details>
+
+## 4. 포트원 연동정보 확인하기
+
+포트원을 이용한 결제 연동 시 필요한 연동정보를 확인합니다.
+
+### 4-1. 스토어 아이디(Store ID) 복사하기
+
+포트원을 이용한 결제 연동 시 필요한 스토어 아이디(Store ID)를 복사할 수 있습니다.
+
+  - 관리자 콘솔 화면에서 [결제 연동] → [연동 관리] 화면에서 스토어 아이디를 복사할 수 있습니다.
+
+  <Hint style="info">
+  **스토어 아이디(Store ID)란?**
+    - 포트원 가입 시 [대표 상점]이 생성되며, 자동으로 생성되는 고유값 입니다.
+    - 추가로 하위 상점을 생성하는 경우 **상점마다 고유하게 부여**됩니다.
+    - 결제창 연동 시 사용되며, 결제 호출 시 `storeId` 파라미터에 해당 값을 넣어야 합니다.
+    - **기술 문의 시 해당 값을 공유**해 주시면 빠르게 문제 해결을 도와드릴 수 있습니다.
+  </Hint>
+
+### 4-2. V2 API Secret 발급하기
+
+  V2 API를 연동하기 위해서는 V2 API Secret을 별도로 발급한 후 사용이 가능합니다.
+  
+    - 관리자 콘솔 화면에서 [결제연동] → [연동 관리] → [식별코드·API Keys] 메뉴에서 [V2 API]를 선택합니다.
+    -  `새로운 API Secret 발급`을 클릭합니다.
+    - Secret 목록에 표시될 `Secret 이름`을 입력하고 `만료 기한`을 선택한 후 `생성`을 클릭합니다.
+    - 생성된 Secret을 복사합니다. `API Secret을 확인했습니다`를 누른 후엔 Secret 값을 확인할 수 없으니 주의해 주세요.
+
+<Hint style="danger">
+  API Secret 발급 직후에만 값을 확인할 수 있습니다. 페이지를 벗어나면 API Secret 확인이 불가하오니 복사한 후 임의의 장소에 저장하여 사용하세요. 
+  만약, API Secret 값을 잊어버리신 경우 새로 발급받아 사용해야 합니다. 
 </Hint>
 
-## 3. 연동 정보 확인하기
-
-### Store Id 확인하기
-
-결제창 연동 및 API 호출 시 필요한 Store Id 정보를 확인하실 수 있습니다.
-
-1. [**포트원 관리자콘솔**](https://admin.portone.io) 로그인 -> **결제 연동** 탭 진입
-2. **Store Id** 확인
-
-<Figure
-  src={getConsoleStoreIdImage}
-  caption="포트원 관리자콘솔 로그인 -> 결제 연동 탭 -> Store Id 확인"
-/>
-
 <Hint style="info">
-**Store Id 란?**
-
-* 고객사에서 포트원의 관리자 콘솔을 통해 생성한 **상점마다 고유하게 부여되는 값** 입니다.
-* 가장 처음 콘솔 계정을 만들게 되면 **대표 상점**이 생성되며, 추가로 여러 하위 상점을 생성할 수 있습니다.
-* 결제창 호출 시 `storeId` 파라미터에 해당 값을 넣어주셔야 합니다.
-* **기술 문의** 시 해당 값을 공유해 주시면 빠르게 문제 해결을 도와드릴 수 있습니다.
-
-</Hint>
-
-### V2 API Secret 발급 받기
-
-V2 API를 연동하기 위해서는 V2 API Secret을 별도로 발급해야 하며, 아래 이메일로 문의하시면 발급해드리고 있습니다.
-
-> V2 기술지원 이메일: tech.support@portone.io
-
-<Hint style="info">
-**API Secret 이란?**
-
-* API 호출에 필요한 **Access Token**을 발급하기 위해 필요한 필수 값입니다.
-* V2 API Secret을 발급받으신 후, 이를 이용해 [API Secret을 이용한 토큰 발급](/api/rest-v2/auth#post%20%2Flogin%2Fapi-secret) API를 호출하시면 <br /> **Access Token**을 발급받으실 수 있습니다.
+**API Secret이란?**
+  - API 호출 시 사용되는 Access Token을 발급할 때 사용되는 값입니다.
+  - V2 API Secret을 발급받으신 후, 이를 이용해 [API Secret을 이용한 토큰 발급](/api/rest-v2/auth#post%20%2Flogin%2Fapi-secret) API를 호출하시면 <br /> **Access Token**을 발급받으실 수 있습니다.
 
 </Hint>
 
 <Hint style="danger">
-API Secret은 **결제내역을 컨트롤**할 수 있는 **민감 정보**이기 때문에 외부로 유출되지 않도록
-
-유의하시기 바랍니다.
-
+API Secret은 **결제 거래 건을 컨트롤할 수 있는 민감 정보**로 외부로 유출되지 않도록 주의가 필요합니다.
 </Hint>
