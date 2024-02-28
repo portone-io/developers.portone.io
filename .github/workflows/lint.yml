@@ -1,0 +1,52 @@
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  changed_files:
+    runs-on: ubuntu-latest
+    name: Lint changed MDX files
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install
+
+      - name: Get all changed MDX files
+        id: changed-mdx-files
+        uses: tj-actions/changed-files@v42
+        with:
+          files: |
+             **.mdx
+
+      - name: Lint all changed MDX files
+        if: steps.changed-mdx-files.outputs.any_changed == 'true'
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-mdx-files.outputs.all_changed_files }}
+        run: |
+          pnpm eslint $ALL_CHANGED_FILES
+  code:
+    runs-on: ubuntu-latest
+    name: Lint code
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm typecheck
+      - run: pnpm eslint . --ignore-pattern '**/*.mdx'

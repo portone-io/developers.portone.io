@@ -1,12 +1,14 @@
 import * as path from "node:path";
-import { defineConfig } from "astro/config";
-import preact from "@astrojs/preact";
+
 import mdx from "@astrojs/mdx";
+import preact from "@astrojs/preact";
 import vercel from "@astrojs/vercel/serverless";
-import unocss from "unocss/astro";
 import yaml from "@rollup/plugin-yaml";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
+import { defineConfig } from "astro/config";
+import unocss from "unocss/astro";
+
 import contentIndex from "./src/content-index";
 import { readFile } from "node:fs/promises";
 
