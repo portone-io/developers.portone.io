@@ -11,14 +11,25 @@ interface Props {
   title: string;
   description?: string | undefined;
   navAsMenu?: boolean | undefined;
+  slug?: string | undefined;
+  ogType?: string | undefined;
+  ogImageSlug?: string | undefined;
 }
-const { lang, title, description, navAsMenu } = Astro.props;
+
+const {
+  lang,
+  title,
+  description,
+  navAsMenu,
+  slug = "",
+  ogType = "website",
+  ogImageSlug = "opengraph.png",
+} = Astro.props;
 ---
 
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
-    {description && <meta name="description" content={description} />}
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -26,6 +37,14 @@ const { lang, title, description, navAsMenu } = Astro.props;
     <script>
       import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
     </script>
+    <slot name="og">
+      <meta property="og:title" content={title} />
+      {description && <meta property="og:description" content={description} />}
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={`${Astro.site}${slug}`} />
+      <meta property="og:image" content={`${Astro.site}${ogImageSlug}`} />
+      <meta name="twitter:card" content="summary_large_image" />
+    </slot>
     <Trackers />
   </head>
   <body>
