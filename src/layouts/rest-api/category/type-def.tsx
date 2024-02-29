@@ -1,25 +1,27 @@
-import * as React from "react";
 import { useComputed, useSignal } from "@preact/signals";
+import * as React from "preact/compat";
+
 import * as prose from "~/components/prose";
 import {
   expandAndScrollTo,
   expanded,
   useExpand,
 } from "~/state/rest-api/expand-section";
+
 import { interleave } from "..";
 import DescriptionArea from "../DescriptionArea";
 import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
 import {
   type BakedProperty,
-  type Property,
-  type TypeDef,
   bakeProperties,
   crawlRefs,
   getTypeDefByRef,
-  getTypenameByRef,
-  repr,
   getTypeDefKind,
+  getTypenameByRef,
+  type Property,
+  repr,
   resolveTypeDef,
+  type TypeDef,
 } from "../schema-utils/type-def";
 import Expand from "./Expand";
 
@@ -27,7 +29,7 @@ export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
   initialExpand?: boolean;
   endpointGroups: CategoryEndpointsPair[];
-  schema: any;
+  schema: unknown;
 }
 export function TypeDefinitions({
   basepath,
@@ -45,18 +47,18 @@ export function TypeDefinitions({
       typeDef: getTypeDefByRef(schema, ref),
     }));
   return (
-    <section id="type-def" class="scroll-mt-5.2rem flex flex-col">
+    <section id="type-def" class="flex flex-col scroll-mt-5.2rem">
       <prose.h2 ref={headingRef}>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
-      <div class="border-slate-3 bg-slate-1 grid-flow-rows mt-4 grid gap-x-4 gap-y-1 rounded-lg border px-6 py-4 text-xs sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div class="grid-flow-rows grid mt-4 gap-x-4 gap-y-1 border border-slate-3 rounded-lg bg-slate-1 px-6 py-4 text-xs lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
         {typeDefPropsList.map(({ name }) => {
           const href = `${basepath}/type-def#${name}`;
           return (
             <a
               key={name}
-              class="hover:text-orange-5 underline-offset-4 transition-colors hover:underline"
+              class="underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
               href={href}
               onClick={(e) => {
                 e.preventDefault();
@@ -81,9 +83,9 @@ export function TypeDefinitions({
         <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
           {typeDefPropsList.map(({ name, typeDef }) => (
             <div key={name} class="flex flex-col gap-2">
-              <prose.h3 id={name} class="target:text-orange-5 text-slate-6">
+              <prose.h3 id={name} class="text-slate-6 target:text-orange-5">
                 <span>{name}</span>
-                <span class=" ml-2 text-base opacity-60">
+                <span class="ml-2 text-base opacity-60">
                   {getTypeDefKind(typeDef)}
                 </span>
               </prose.h3>
@@ -104,7 +106,7 @@ export function TypeDefinitions({
 
 export interface TypeDefDocProps {
   basepath: string;
-  schema: any;
+  schema: unknown;
   typeDef?: TypeDef | undefined;
   showNested?: boolean | undefined;
   bgColor: string;
@@ -155,7 +157,7 @@ export function TypeDefDoc({
 
 interface UnionDocProps {
   basepath: string;
-  schema: any;
+  schema: unknown;
   typeDef: TypeDef;
   showNested?: boolean | undefined;
   bgColor: string;
@@ -205,7 +207,7 @@ function UnionDoc({
           <div class="flex flex-wrap items-center gap-y-2 whitespace-pre-wrap">
             필드의 값이{" "}
             <select
-              class="border-slate-2 w-fit text-ellipsis whitespace-nowrap rounded border px-2 py-1"
+              class="w-fit text-ellipsis whitespace-nowrap border border-slate-2 rounded px-2 py-1"
               value={typeSignal.value}
               onChange={(e) => {
                 typeSignal.value = e.currentTarget.value;
@@ -264,7 +266,7 @@ function EnumDoc({ basepath, xPortoneEnum, bgColor }: EnumDocProps) {
           >
             <div class="flex items-center gap-2 leading-none">
               <code>{enumValue}</code>
-              <span class="text-slate-5 text-sm">{title}</span>
+              <span class="text-sm text-slate-5">{title}</span>
             </div>
             <DescriptionDoc
               basepath={basepath}
@@ -280,7 +282,7 @@ function EnumDoc({ basepath, xPortoneEnum, bgColor }: EnumDocProps) {
 
 interface ObjectDocProps {
   basepath: string;
-  schema: any;
+  schema: unknown;
   typeDef?: TypeDef | undefined;
   showNested?: boolean | undefined;
   bgColor: string;
@@ -312,7 +314,7 @@ export interface PropertiesDocProps {
   properties: BakedProperty[];
   bgColor: string;
   nestedBgColor?: string | undefined;
-  schema?: any;
+  schema?: unknown;
   showNested?: boolean | undefined;
 }
 export function PropertiesDoc({
@@ -350,7 +352,7 @@ export function PropertiesDoc({
 export interface ReqPropertiesDocProps {
   basepath: string;
   properties: BakedProperty[];
-  schema?: any;
+  schema?: unknown;
   showNested?: boolean | undefined;
 }
 export function ReqPropertiesDoc({
@@ -390,9 +392,9 @@ interface PropertyDocProps {
   property: Property;
   bgColor: string;
   nestedBgColor?: string | undefined;
-  schema?: any;
+  schema?: unknown;
   showNested?: boolean | undefined;
-  children?: any;
+  children?: React.ReactNode;
 }
 function PropertyDoc({
   basepath,
@@ -420,17 +422,17 @@ function PropertyDoc({
     >
       <div class="flex items-center justify-between gap-4">
         <div>
-          <div class="mr-4 inline-block font-mono font-bold leading-tight">
+          <div class="mr-4 inline-block font-bold leading-tight font-mono">
             <span>{name}</span>
             <span class="text-slate-4 -mr-[4px]">{!required && "?"}: </span>
             <TypeReprDoc basepath={basepath} def={property} />{" "}
             {isDiscriminator && <span class="inline-block">(Union Tag)</span>}
           </div>
-          <div class="text-slate-5 inline-block text-xs">
+          <div class="inline-block text-xs text-slate-5">
             {title && <span>{title}</span>}
           </div>
         </div>
-        <div class="text-slate-5 inline-block shrink-0 text-xs">
+        <div class="inline-block shrink-0 text-xs text-slate-5">
           {!required && <span class="inline-block">(Optional)</span>}{" "}
           {deprecated && <span class="inline-block">(Deprecated)</span>}
         </div>
@@ -478,18 +480,18 @@ function TypeReprDoc({ basepath, def }: TypeReprDocProps) {
         }
       })();
       return (
-        <span class="text-green-6 inline-block font-bold">
+        <span class="inline-block text-green-6 font-bold">
           {typeRepr} <span class="font-normal">{format}</span>
         </span>
       );
     }
-    return <span class="text-green-6 inline-block font-bold">{typeRepr}</span>;
+    return <span class="inline-block text-green-6 font-bold">{typeRepr}</span>;
   }
   const typeName = typeRepr.replace("[]", "");
   const href = `${basepath}/type-def#${typeName}`;
   return (
     <a
-      class="text-green-6 hover:text-orange-5 inline-block font-bold underline-offset-4 transition-colors hover:underline"
+      class="inline-block text-green-6 font-bold underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
       href={href}
       onClick={(e) => {
         e.preventDefault();
@@ -507,7 +509,7 @@ interface DescriptionDocProps {
   typeDef: TypeDef | Property;
   bgColor: string;
   nestedBgColor?: string | undefined;
-  schema?: any;
+  schema?: unknown;
   showNested?: boolean | undefined;
 }
 function DescriptionDoc({
@@ -528,7 +530,7 @@ function DescriptionDoc({
   return __html || unwrappedTypeDef ? (
     <DescriptionArea maxHeightPx={16 * 6} bgColor={bgColor}>
       {__html && (
-        <div class="text-slate-5 flex flex-col gap-1 text-sm">
+        <div class="flex flex-col gap-1 text-sm text-slate-5">
           <div dangerouslySetInnerHTML={{ __html }} />
         </div>
       )}

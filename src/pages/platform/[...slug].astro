@@ -1,19 +1,19 @@
 ---
 import { getCollection } from "astro:content";
 
-import Logo from "~/layouts/gnb/Logo.astro";
 import * as prose from "~/components/prose";
-import Trackers from "~/layouts/Trackers.astro";
 import ArticleStyle from "~/layouts/ArticleStyle.astro";
-import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
-import GnbLink from "~/layouts/platform/GnbLink";
+import Logo from "~/layouts/gnb/Logo.astro";
 import ContactLink from "~/layouts/platform/ContactLink";
+import GnbLink from "~/layouts/platform/GnbLink";
+import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
+import Trackers from "~/layouts/Trackers.astro";
 import TrackingScript from "~/layouts/TrackingScript.astro";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
   const platformEntries = docEntries.filter((entry) =>
-    entry.slug.startsWith("ko/platform/")
+    entry.slug.startsWith("ko/platform/"),
   );
   return platformEntries.map((entry) => {
     const [_ko, _platform, ...fragments] = entry.slug.split("/");
@@ -52,12 +52,12 @@ const toc = headingsToToc("ko", mdx.headings);
       }
     </style>
     <ArticleStyle />
-    <div class="flex h-full flex-col">
+    <div class="h-full flex flex-col">
       <div class="h-14">
         <header
-          class="h-inherit fixed z-10 flex w-full items-center justify-between border-b bg-white pl-6"
+          class="fixed z-10 h-inherit w-full flex items-center justify-between border-b bg-white pl-6"
         >
-          <div class="flex h-full items-center gap-20">
+          <div class="h-full flex items-center gap-20">
             <a href="/platform/guide">
               <div class="flex items-center gap-2">
                 <Logo class="w-22" />
@@ -88,15 +88,15 @@ const toc = headingsToToc("ko", mdx.headings);
         <div class="flex">
           <div class="flex flex-1 justify-center">
             <article
-              class="basis-200 shrink-1 m-4 flex flex-col text-slate-700"
+              class="m-4 flex shrink-1 basis-200 flex-col text-slate-700"
             >
               <prose.h1 id="overview">
                 {title}
               </prose.h1>
-              {description && <p class="text-gray mt-2">{description}</p>}
+              {description && <p class="mt-2 text-gray">{description}</p>}
               <Content components={prose} />
             </article>
-            <div class="shrink-10 hidden basis-10 lg:block"></div>
+            <div class="hidden shrink-10 basis-10 lg:block"></div>
             <RightSidebar
               lang="ko"
               slug={slug}

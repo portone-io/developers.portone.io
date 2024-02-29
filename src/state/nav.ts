@@ -1,4 +1,5 @@
 import { effect, signal } from "@preact/signals";
+
 import type { SystemVersion } from "~/type";
 
 const isClient = Boolean(globalThis.sessionStorage);
@@ -8,7 +9,9 @@ export interface NavOpenStates {
   [slug: string]: boolean; // true: open, false: close
 }
 export const navOpenStatesSignal = signal<NavOpenStates>(
-  JSON.parse(globalThis.sessionStorage?.getItem("navOpenStates") || "{}")
+  JSON.parse(
+    globalThis.sessionStorage?.getItem("navOpenStates") || "{}",
+  ) as NavOpenStates,
 );
 if (isClient) {
   effect(() => {

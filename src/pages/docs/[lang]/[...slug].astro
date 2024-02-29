@@ -1,13 +1,16 @@
 ---
 import * as path from "node:path";
+
 import type { GetStaticPathsItem } from "astro";
+import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import { match, P } from "ts-pattern";
 
-import type { Lang } from "../../../type";
 import redirYaml from "~/content/docs/_redir.yaml";
-import Redir from "~/layouts/Redir.astro";
 import Docs from "~/layouts/Docs.astro";
+import Redir from "~/layouts/Redir.astro";
+
+import type { Lang } from "../../../type";
 
 export async function getStaticPaths() {
   const docEntries = await getCollection("docs");
@@ -36,7 +39,7 @@ export async function getStaticPaths() {
 type Props =
   | { redirTarget: string }
   | {
-      entry: any;
+      entry: CollectionEntry<"docs">;
       slug: string;
     };
 

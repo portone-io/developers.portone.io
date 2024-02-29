@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "preact/hooks";
+
 import once from "./misc/once";
 
 type monaco = typeof import("monaco-editor");
@@ -40,8 +41,8 @@ export default function MonacoEditor({ init, onChange }: MonacoEditorProps) {
       // 스크롤이 끝났다고 판단됐을 때 monaco editor를 초기화한다.
       return scrollFinished().then(() => {
         const editor = init(monaco, divRef.current!);
-        const changeEventListener = editor.onDidChangeModelContent(
-          () => onChangeRef.current?.(editor.getValue()),
+        const changeEventListener = editor.onDidChangeModelContent(() =>
+          onChangeRef.current?.(editor.getValue()),
         );
         return () => {
           changeEventListener.dispose();
@@ -49,7 +50,7 @@ export default function MonacoEditor({ init, onChange }: MonacoEditorProps) {
         };
       });
     });
-    return () => p.then((dispose) => dispose());
+    return () => void p.then((dispose) => dispose());
   }, []);
   return (
     <div class="relative h-full w-full">

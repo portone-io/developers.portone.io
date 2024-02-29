@@ -1,10 +1,10 @@
 import type { Endpoint } from "./endpoint";
 import {
   bakeProperties,
-  type TypeDef,
-  type Property,
-  getTypeDefByRef,
   followRef,
+  getTypeDefByRef,
+  type Property,
+  type TypeDef,
 } from "./type-def";
 
 export interface Operation {
@@ -40,10 +40,13 @@ export interface Response {
 }
 
 export function getOperation(
-  schema: any,
-  { path, method }: Endpoint
+  schema: unknown,
+  { path, method }: Endpoint,
 ): Operation {
-  return schema.paths[path][method];
+  const s = schema as {
+    paths: { [path: string]: { [method: string]: Operation } };
+  };
+  return s.paths[path]?.[method] as Operation;
 }
 
 export function getPathParameters(operation: Operation): Parameter[] {
@@ -55,8 +58,8 @@ export function getQueryParameters(operation: Operation): Parameter[] {
 }
 
 export function getBodyParameters(
-  schema: any,
-  operation: Operation
+  schema: unknown,
+  operation: Operation,
 ): Parameter[] {
   const requestSchema =
     operation.requestBody?.content["application/json"]?.schema;
@@ -73,11 +76,11 @@ export type ResponseSchema = [
   {
     response: Response;
     schema?: TypeDef | undefined;
-  }
+  },
 ];
 export function getResponseSchemata(
-  schema: any,
-  operation: Operation
+  schema: unknown,
+  operation: Operation,
 ): ResponseSchemata {
   const result: ResponseSchemata = [];
   for (const [statusCode, response] of Object.entries(operation.responses)) {
@@ -90,8 +93,8 @@ export function getResponseSchemata(
 }
 
 function narrowResponseSchema(
-  schema: any,
-  responseSchema: ResponseSchema
+  schema: unknown,
+  responseSchema: ResponseSchema,
 ): ResponseSchema {
   const [statusCode, pair] = responseSchema;
   if (!pair.schema) return responseSchema;
@@ -111,12 +114,12 @@ function narrowResponseSchema(
     return [statusCode, { ...pair, schema }];
   } else if (matches.length > 1) {
     const oneOf = responseTypeDef.oneOf?.filter(({ $ref }) =>
-      filteredRefs.includes($ref!)
+      filteredRefs.includes($ref!),
     );
     const mapping = Object.fromEntries(
       Object.entries(responseTypeDef.discriminator.mapping).filter(([, ref]) =>
-        filteredRefs.includes(ref)
-      )
+        filteredRefs.includes(ref),
+      ),
     );
     const discriminator = { ...responseTypeDef.discriminator, mapping };
     const schema: TypeDef = { ...responseTypeDef, oneOf, discriminator };

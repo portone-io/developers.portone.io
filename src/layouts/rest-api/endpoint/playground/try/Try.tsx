@@ -1,13 +1,14 @@
 import { useSignal } from "@preact/signals";
+
 import type { Endpoint } from "../../../schema-utils/endpoint";
 import type { Operation } from "../../../schema-utils/operation";
-import ResComponent, { type Res } from "./Res";
-import Req from "./Req";
 import Err from "./Err";
+import Req from "./Req";
+import ResComponent, { type Res } from "./Res";
 
 export interface TryProps {
   apiHost: string;
-  schema: any;
+  schema: unknown;
   endpoint: Endpoint;
   operation: Operation;
 }
@@ -25,17 +26,19 @@ export default function Try(props: TryProps) {
     >
       <Req
         {...props}
-        execute={async (fn) => {
-          try {
-            waitingSignal.value = true;
-            resSignal.value = await fn();
-            errSignal.value = "";
-          } catch (err) {
-            errSignal.value = (err as Error).message;
-          } finally {
-            waitingSignal.value = false;
-          }
-        }}
+        execute={(fn) =>
+          void (async () => {
+            try {
+              waitingSignal.value = true;
+              resSignal.value = await fn();
+              errSignal.value = "";
+            } catch (err) {
+              errSignal.value = (err as Error).message;
+            } finally {
+              waitingSignal.value = false;
+            }
+          })()
+        }
       />
       {err ? <Err>{err}</Err> : <ResComponent resSignal={resSignal} />}
     </div>

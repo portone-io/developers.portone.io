@@ -18,11 +18,19 @@ export function tagsToCategories(tags: Tag[]): Category[] {
   }));
 }
 
-export function getCategories(schema: any): Category[] {
+export function getCategories(schema: unknown): Category[] {
+  const s = schema as {
+    "x-portone-categories"?: Category[];
+    info?: {
+      "x-portone-categories"?: Category[];
+    };
+    tags?: Tag[];
+  };
+
   return (
-    schema["x-portone-categories"] ||
-    schema.info?.["x-portone-categories"] ||
-    tagsToCategories(schema.tags || [])
+    s["x-portone-categories"] ||
+    s.info?.["x-portone-categories"] ||
+    tagsToCategories(s.tags || [])
   );
 }
 

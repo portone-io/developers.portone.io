@@ -1,7 +1,9 @@
+import type React from "preact/compat";
+
 export interface SchemaDownloadButtonProps {
   href: string;
-  label: any;
-  children: any;
+  label: React.ReactNode;
+  children: React.ReactNode;
 }
 export default function SchemaDownloadButton({
   href,
@@ -9,12 +11,12 @@ export default function SchemaDownloadButton({
   children,
 }: SchemaDownloadButtonProps) {
   return (
-    <div class="text-14px flex flex-col items-start gap-1">
+    <div class="flex flex-col items-start gap-1 text-14px">
       <a
         download="portone-v1-swagger.json"
         target="_blank"
         href={href}
-        class="hover:bg-slate-2 bg-slate-1 inline-flex items-center gap-2 rounded p-2 pr-3 font-bold"
+        class="inline-flex items-center gap-2 rounded bg-slate-1 p-2 pr-3 font-bold hover:bg-slate-2"
       >
         <i class="i-ic-baseline-download text-xl" />
         {label}
@@ -29,7 +31,7 @@ export interface PostmanGuideProps {
 }
 export function PostmanGuide({ href }: PostmanGuideProps) {
   return (
-    <span class="text-slate-5 text-sm">
+    <span class="text-sm text-slate-5">
       <a href={href} target="_blank" class="hover:underline">
         Postman 등에서 import하여 활용
       </a>

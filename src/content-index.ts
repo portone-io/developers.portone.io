@@ -1,10 +1,12 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as posixPath from "node:path/posix";
-import type { AstroConfig, AstroIntegration } from "astro";
+
 import { computed, effect, signal } from "@preact/signals";
-import { debounce } from "lodash-es";
+import type { AstroConfig, AstroIntegration } from "astro";
 import * as yaml from "js-yaml";
+import { debounce } from "lodash-es";
+
 import { toPlainText } from "./misc/mdx";
 
 const indexFilesMapping = {
@@ -17,7 +19,7 @@ const indexFilesMapping = {
 const integration: AstroIntegration = {
   name: "developers.portone.io:content-index",
   hooks: {
-    "astro:config:setup": async ({ config, updateConfig }) => {
+    "astro:config:setup": ({ config, updateConfig }) => {
       updateConfig({ vite: { plugins: [vitePlugin(config)] } });
     },
     "astro:config:done": ({ config }) => {
@@ -26,10 +28,10 @@ const integration: AstroIntegration = {
       effect(() => {
         const indexFiles = indexFilesSignal.value;
         if (!indexFiles) return;
-        fs.mkdir(contentIndexDir, { recursive: true }).then(() => {
+        void fs.mkdir(contentIndexDir, { recursive: true }).then(() => {
           for (const [filename, indexFile] of Object.entries(indexFiles)) {
             const indexFilePath = path.resolve(contentIndexDir, filename);
-            fs.writeFile(indexFilePath, indexFile);
+            void fs.writeFile(indexFilePath, indexFile);
           }
         });
       });
@@ -43,21 +45,26 @@ function vitePlugin(config: AstroConfig) {
   const root = config.root.pathname.replace(/^\/(\w:)/, "$1");
   return {
     name: "developers.portone.io:content-index",
-    async transform(_: any, id: string) {
+    async transform(_, id) {
       const path = posixPath.relative(root, id);
       const match = path.match(/^src\/content\/(.+)\.mdx$/);
       if (!match) return;
       const { frontmatter, md } = cutFrontmatter(
-        await fs.readFile(id, "utf-8")
+        await fs.readFile(id, "utf-8"),
       );
+      if (
+        !frontmatter ||
+        typeof frontmatter !== "object" ||
+        !("slug" in frontmatter)
+      )
+        return;
       const slug = String(frontmatter?.slug || match[1]);
       updateMdxTable(slug, { ...frontmatter, slug, md });
     },
-    configureServer(server: any) {
-      server.middlewares.use(async (req: any, res: any, next: any) => {
-        const url: string = req.url;
-        if (!url?.startsWith("/content-index/")) return next();
-        const filename = url.slice("/content-index/".length);
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (!req.url?.startsWith("/content-index/")) return next();
+        const filename = req.url.slice("/content-index/".length);
         const indexFiles = indexFilesSignal.value;
         if (!(filename in indexFiles)) return next();
         return res
@@ -65,16 +72,16 @@ function vitePlugin(config: AstroConfig) {
           .end(indexFiles[filename]);
       });
     },
-  };
+  } satisfies NonNullable<AstroConfig["vite"]["plugins"]>[number];
 }
 
 interface CutFrontmatterResult {
-  frontmatter: any;
+  frontmatter: unknown;
   md: string;
 }
 function cutFrontmatter(md: string): CutFrontmatterResult {
   const match = md.match(
-    /^---\r?\n((?:.|\r|\n)*?)\r?\n---\r?\n((?:.|\r|\n)*)$/
+    /^---\r?\n((?:.|\r|\n)*?)\r?\n---\r?\n((?:.|\r|\n)*)$/,
   );
   if (!match) return { frontmatter: {}, md };
   try {
@@ -97,14 +104,15 @@ interface MdxTable {
 const mdxTableSignal = signal<MdxTable>({});
 function updateMdxTable(slug: string, mdx: Mdx) {
   const mdxTable = mdxTableSignal.value;
-  if (mdxEq(mdxTable[slug]!, mdx)) return;
+  if (mdxEq(mdxTable[slug], mdx)) return;
   mdxTableSignal.value = { ...mdxTable, [slug]: mdx };
 }
 function mdxEq(a?: Mdx, b?: Mdx): boolean {
   if (a === b) return true;
   if (!a || !b) return false;
   if (a.slug !== b.slug) return false;
-  for (const key in a) if ((a as any)[key] !== (b as any)[key]) return false;
+  for (const key in a)
+    if (a[key as keyof Mdx] !== b[key as keyof Mdx]) return false;
   return true;
 }
 type Index = IndexItem[];
@@ -114,12 +122,10 @@ interface IndexItem {
 }
 const indexSignal = signal<Index>([]);
 const updateIndexSignal = debounce((mdxTable: MdxTable) => {
-  indexSignal.value = Object.values(mdxTable).map((mdx) => {
-    const result: any = { ...mdx };
-    delete result.md;
-    result.text = toPlainText(mdx.md);
-    return result;
-  });
+  indexSignal.value = Object.values(mdxTable).map((mdx) => ({
+    ...mdx,
+    text: toPlainText(mdx.md),
+  }));
 }, 500);
 const indexFilesSignal = computed(() => {
   const index = indexSignal.value;
@@ -136,7 +142,7 @@ const indexFilesSignal = computed(() => {
     Object.entries(result).map(([filename, index]) => [
       filename,
       JSON.stringify(index),
-    ])
+    ]),
   );
 });
 

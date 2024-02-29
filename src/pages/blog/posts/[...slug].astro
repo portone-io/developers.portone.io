@@ -1,17 +1,18 @@
 ---
-import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
 import { format } from "date-fns";
-import LayoutBase from "~/layouts/LayoutBase.astro";
-import authors from "~/content/blog/_authors.yaml";
-import * as prose from "~/components/blog/prose";
+import { match, P } from "ts-pattern";
+
+import PostList from "~/components/blog/PostList/PostList.astro";
 import ProfileImage from "~/components/blog/ProfileImage.astro";
+import * as prose from "~/components/blog/prose";
+import TagList from "~/components/blog/TagList.astro";
 import TableOfContents, {
   itemsFromHeadings,
 } from "~/components/TableOfContents";
-import PostList from "~/components/blog/PostList/PostList.astro";
-import TagList from "~/components/blog/TagList.astro";
-import { P, match } from "ts-pattern";
+import authors from "~/content/blog/_authors.yaml";
+import LayoutBase from "~/layouts/LayoutBase.astro";
 // import NavigationMenu from "~/components/blog/NavigationMenu";
 
 export async function getStaticPaths() {
@@ -59,38 +60,38 @@ const author = authors[authorId];
     </div>
     -->
     <article
-      class="text-slate-7 <lg:mx-auto flex w-full flex-col gap-6 md:my-4"
+      class="w-full flex flex-col gap-6 text-slate-7 <lg:mx-auto md:my-4"
     >
       <div
-        class="mx-auto flex w-full max-w-[800px] flex-col gap-3 px-4 md:px-6 lg:max-w-none"
+        class="mx-auto max-w-[800px] w-full flex flex-col gap-3 px-4 lg:max-w-none md:px-6"
       >
-        <h1 class="text-balance break-keep text-3xl font-bold leading-[1.4]">
+        <h1 class="break-keep text-balance text-3xl font-bold leading-[1.4]">
           {title}
         </h1>
         <div class="flex items-center gap-3">
           {
             author && (
-              <dl class="<md:py-2 flex shrink-0 items-center gap-4">
+              <dl class="flex shrink-0 items-center gap-4 <md:py-2">
                 <div class="flex justify-evenly gap-3 whitespace-nowrap">
-                  <dt class="text-slate-8 text-lg font-semibold">
+                  <dt class="text-lg text-slate-8 font-semibold">
                     {author.name}
                   </dt>
-                  <dd class="text-slate-5 text-lg">{author.role}</dd>
+                  <dd class="text-lg text-slate-5">{author.role}</dd>
                 </div>
               </dl>
             )
           }
           <div class="h-16px w-1px bg-slate-3"></div>
-          <div class="text-slate-4 text-lg">
+          <div class="text-lg text-slate-4">
             {format(entry.data.date, "MMM d, yyyy")}
           </div>
         </div>
       </div>
       <div class="flex justify-between gap-4">
         <div
-          class="mx-auto flex min-w-0 max-w-[800px] flex-col gap-3 px-4 md:px-6"
+          class="mx-auto max-w-[800px] min-w-0 flex flex-col gap-3 px-4 md:px-6"
         >
-          <div class="body text-slate-7 break-keep">
+          <div class="body break-keep text-slate-7">
             <Content components={prose} />
             <style>
               article .body :global(:is(ol, ul)) {
@@ -127,24 +128,24 @@ const author = authors[authorId];
                       alt={`Avatar image of ${author.name}`}
                       width={64}
                       height={64}
-                      class="bg-slate-2 h-16 w-16 rounded-full"
+                      class="h-16 w-16 rounded-full bg-slate-2"
                     />
                   </ProfileImage>
                 </div>
-                <div class="gap-4.5 flex flex-col">
+                <div class="flex flex-col gap-4.5">
                   <div class="flex items-center gap-3">
-                    <div class="text-slate-7 text-lg font-medium">
+                    <div class="text-lg text-slate-7 font-medium">
                       {author.name}
                     </div>
-                    <div class="text-slate-4 text-base font-medium">
+                    <div class="text-base text-slate-4 font-medium">
                       {author.role}
                     </div>
                   </div>
                   <p>{author.bio}</p>
                   {(author.contacts?.length ?? 0) > 0 && (
-                    <ul class=" m-0 flex list-none flex-row gap-6 p-0 text-2xl">
+                    <ul class="m-0 flex flex-row list-none gap-6 p-0 text-2xl">
                       {author.contacts?.map((contact) => (
-                        <li class="text-slate-4 hover:text-slate-5 transition-colors">
+                        <li class="text-slate-4 transition-colors hover:text-slate-5">
                           {match(contact)
                             .with({ github: P.string }, ({ github }) => (
                               <a
@@ -206,7 +207,7 @@ const author = authors[authorId];
           }
           <hr />
         </div>
-        <aside class="basis-300px mx-4 hidden lg:block">
+        <aside class="mx-4 hidden basis-300px lg:block">
           <div class="sticky top-14 overflow-hidden py-4">
             <TableOfContents
               client:idle
@@ -218,7 +219,7 @@ const author = authors[authorId];
       </div>
     </article>
     <div class="my-16 flex flex-col gap-6 px-4">
-      <h2 class="text-slate-5 text-1.375rem font-semibold">최신 글 보기</h2>
+      <h2 class="text-1.375rem text-slate-5 font-semibold">최신 글 보기</h2>
       <PostList entries={entries} />
     </div>
   </div>

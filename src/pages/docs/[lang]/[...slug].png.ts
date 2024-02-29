@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getEntryBySlug } from "astro:content";
+
 import { generate } from "~/misc/opengraph/image-generator";
 
 export const prerender = false;

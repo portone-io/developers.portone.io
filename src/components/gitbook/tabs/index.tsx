@@ -27,7 +27,7 @@ export function Tabs({ uniqueId, getTabs }: TabsProps) {
 
   return (
     <div data-unique-id={uniqueId} class="my-4 flex flex-col">
-      <div class="-mb-px flex">
+      <div class="flex -mb-px">
         {tabs.map(({ title }, index) => {
           const isFirst = index === 0;
           const isLast = index === tabs.length - 1;
@@ -53,7 +53,7 @@ export function Tabs({ uniqueId, getTabs }: TabsProps) {
           );
         })}
       </div>
-      <div class="rounded rounded-tl-none border px-6 py-4">
+      <div class="border rounded rounded-tl-none px-6 py-4">
         {tabs.map(
           (tab, index) =>
             tab && (
