@@ -68,7 +68,7 @@ const t = lang === "ko" ? ko : en;
           "flex gap-6 md:h-full items-center",
           navAsMenu
             ? // prettier-ignore
-              "nav-as-menu <md:(absolute inset-x-0 bottom-0 py-4 transition-transform transform duration-300 flex-col bg-white)"
+              "nav-as-menu <md:(absolute inset-x-0 bottom-0 py-4 transition-transform transform duration-300 flex-col bg-white data-[open]:(translate-y-full shadow-lg))>"
             : "<md:hidden",
         )}
       >
@@ -122,9 +122,8 @@ const t = lang === "ko" ? ko : en;
   if (nav) {
     effect(() => {
       const sidebarOpen = sidebarOpenSignal.value;
-      const classes = ["<md:translate-y-full", "<md:shadow-lg"];
-      if (sidebarOpen) nav.classList.add(...classes);
-      else nav.classList.remove(...classes);
+      if (sidebarOpen) nav.setAttribute("data-open", "true");
+      else nav.removeAttribute("data-open");
     });
   }
 </script>
