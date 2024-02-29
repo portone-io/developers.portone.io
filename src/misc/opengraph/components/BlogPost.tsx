@@ -64,7 +64,9 @@ export default function BlogPost({
             fontWeight: 600,
             fontSize: "64px",
             lineHeight: "76.8px",
-            ["textWrap" as any]: "balance",
+            wordBreak: "keep-all",
+            // https://github.com/vercel/satori/issues/595
+            // ["textWrap" as any]: "balance",
           }}
         >
           {title}
