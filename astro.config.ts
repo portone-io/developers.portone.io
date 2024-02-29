@@ -8,9 +8,11 @@ import yaml from "@rollup/plugin-yaml";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import contentIndex from "./src/content-index";
+import { readFile } from "node:fs/promises";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://developers.portone.io/",
   integrations: [
     preact({ compat: true }),
     mdx(),
@@ -24,7 +26,22 @@ export default defineConfig({
         querystring: "querystring-es3",
       },
     },
-    plugins: [yaml()],
+    plugins: [
+      yaml(),
+      {
+        name: "base64-loader",
+        async transform(_, id) {
+          const [path, query] = id.split("?");
+          if (query !== "base64") return null;
+
+          const data = await readFile(path!);
+          const base64 = data.toString("base64");
+
+          return `export default '${base64}';`;
+        },
+      },
+    ],
+    optimizeDeps: { exclude: ["sharp"] },
   },
   image: {
     remotePatterns: [{ protocol: "https" }],
