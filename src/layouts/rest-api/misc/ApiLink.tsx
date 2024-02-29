@@ -1,4 +1,5 @@
 import { expandAndScrollTo } from "~/state/rest-api/expand-section";
+
 import { MethodLine } from "../endpoint/EndpointDoc";
 import { getEndpointRepr } from "../schema-utils/endpoint";
 

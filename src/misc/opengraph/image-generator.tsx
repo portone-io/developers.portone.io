@@ -1,10 +1,11 @@
 /** @jsxImportSource ./jsx */
 
-import sharp from "sharp";
 import satori from "satori";
+import sharp from "sharp";
+
+import BlogPost from "./components/BlogPost";
 import Main from "./components/Main";
 import TitleAndDescription from "./components/TitleAndDescription";
-import BlogPost from "./components/BlogPost";
 
 const pretendardVariants = [
   "Pretendard-Medium",

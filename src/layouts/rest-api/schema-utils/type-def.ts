@@ -1,6 +1,6 @@
 import type { CategoryEndpointsPair } from "./endpoint";
-import type { Parameter } from "./operation";
-import { type Visitor, defaultVisitor } from "./visitor";
+import type { Operation, Parameter } from "./operation";
+import { defaultVisitor, type Visitor } from "./visitor";
 
 export interface TypeDef {
   $ref?: string | undefined;
@@ -61,7 +61,10 @@ export interface BakedProperty extends Property {
   required?: boolean | undefined;
 }
 
-export function bakeProperties(schema: any, typeDef: TypeDef): BakedProperty[] {
+export function bakeProperties(
+  schema: unknown,
+  typeDef: TypeDef,
+): BakedProperty[] {
   filter: if (!typeDef.$ref && typeDef.type) {
     switch (typeDef.type) {
       case "object":
@@ -83,14 +86,14 @@ export function bakeProperties(schema: any, typeDef: TypeDef): BakedProperty[] {
 }
 
 export function resolveTypeDef(
-  schema: any,
+  schema: unknown,
   typeDef: TypeDef | Property,
   unwrapArray = false,
 ): TypeDef {
   return mergeAllOf(schema, followRef(schema, typeDef, unwrapArray));
 }
 
-export function mergeAllOf(schema: any, typeDef: TypeDef): TypeDef {
+export function mergeAllOf(schema: unknown, typeDef: TypeDef): TypeDef {
   if (!typeDef.allOf) return typeDef;
   const required: string[] = [];
   const properties: Properties = {};
@@ -106,7 +109,7 @@ export function mergeAllOf(schema: any, typeDef: TypeDef): TypeDef {
 }
 
 export function followRef(
-  schema: any,
+  schema: unknown,
   typeDef: TypeDef | Property,
   unwrapArray = false,
 ): TypeDef {
@@ -118,12 +121,14 @@ export function followRef(
   return curr as TypeDef;
 }
 
-export function getTypeDefByRef(schema: any, $ref: string): TypeDef {
+export function getTypeDefByRef(schema: unknown, $ref: string): TypeDef {
   const path = $ref.split("/"); // "#/foo/bar" => ["#", "foo", "bar"]
   path.shift();
-  let ref = schema;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let ref: any = schema;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
   for (const fragment of path) ref = ref[fragment];
-  return ref;
+  return ref as TypeDef;
 }
 
 export function getTypenameByRef($ref: string): string {
@@ -139,9 +144,12 @@ export function repr(def: string | TypeDef | Property | Parameter): string {
 }
 
 export function crawlRefs(
-  schema: any,
+  schema: unknown,
   endpointGroups: CategoryEndpointsPair[],
 ): string[] {
+  const s = schema as {
+    paths: { [path: string]: { [method: string]: Operation } };
+  };
   const result = new Set<string>();
   const rootPropertyRefsCrawler: Visitor = {
     ...defaultVisitor,
@@ -181,7 +189,7 @@ export function crawlRefs(
   };
   for (const group of endpointGroups) {
     for (const { path, method } of group.endpoints) {
-      const endpoint = schema.paths[path]!;
+      const endpoint = s.paths[path]!;
       const operation = endpoint[method]!;
       rootRefsCrawler.visitOperation(method, operation);
     }

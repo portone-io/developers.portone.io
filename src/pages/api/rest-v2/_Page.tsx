@@ -1,14 +1,18 @@
+import type React from "preact/compat";
+
 import * as prose from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
-import useSectionDescriptionProps from "~/layouts/rest-api/misc/useSectionDescriptionProps";
 import SchemaDownloadButton, {
   PostmanGuide,
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
+import useSectionDescriptionProps from "~/layouts/rest-api/misc/useSectionDescriptionProps";
 import schema from "~/schema/v2.openapi.json";
 
-export interface RestV2Props {
+export type RestV2Props = {
   currentSection: string;
-}
+  [_: `section:${string}`]: React.ReactNode;
+};
+
 export default function RestV2(props: RestV2Props) {
   const { currentSection } = props;
   const sectionDescriptionProps = useSectionDescriptionProps(props);

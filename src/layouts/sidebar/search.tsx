@@ -1,6 +1,7 @@
-import * as React from "react";
 import { computed, signal } from "@preact/signals";
 import Fuse from "fuse.js";
+import * as React from "react";
+
 import { lazy } from "~/misc/async";
 import { systemVersionSignal } from "~/state/nav";
 import type { NavMenuSystemVersions } from "~/state/server-only/nav";
@@ -11,7 +12,7 @@ export interface SearchButtonProps {
 export function SearchButton({ lang }: SearchButtonProps) {
   return (
     <button
-      class="border-slate-3 bg-slate-1 text-slate-4 border-1 rounded-6px mx-2 flex flex-1 gap-2 p-2"
+      class="mx-2 flex flex-1 gap-2 border-1 border-slate-3 rounded-6px bg-slate-1 p-2 text-slate-4"
       onClick={openSearchScreen}
     >
       <i class="i-ic-baseline-search text-2xl"></i>
@@ -26,7 +27,7 @@ export const searchIndexKo = lazy(() => fetchSearchIndex("ko"));
 export const searchIndexEn = lazy(() => fetchSearchIndex("en"));
 async function fetchSearchIndex(lang: string): Promise<SearchIndex> {
   const res = await fetch(`/content-index/docs-${lang}.json`);
-  return JSON.parse(((await res.text()) as string).normalize("NFKD"));
+  return JSON.parse((await res.text()).normalize("NFKD")) as SearchIndex;
 }
 
 export type SearchIndex = SearchIndexItem[];
@@ -89,14 +90,14 @@ export function SearchScreen({
     if (!searchScreenOpen) return;
     inputRef.current?.focus();
     const searchIndexPromise = lang === "ko" ? searchIndexKo : searchIndexEn;
-    searchIndexPromise.then(
+    void searchIndexPromise.then(
       (searchIndex) => (searchIndexSignal.value = searchIndex),
     );
   }, [searchScreenOpen]);
   return (
     <div class={className} onClick={closeSearchScreen}>
       <div
-        class="sm:mt-18 sm:w-150 sm:min-h-80 sm:max-h-1/2 mx-auto flex h-full w-full flex-col border bg-white sm:rounded-lg"
+        class="mx-auto h-full w-full flex flex-col border bg-white sm:mt-18 sm:max-h-1/2 sm:min-h-80 sm:w-150 sm:rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div class="flex">
@@ -119,10 +120,10 @@ export function SearchScreen({
             <ul>
               {searchResult.map(({ item }) => (
                 <a href={`/${item.slug}`} tabIndex={0}>
-                  <li key={item.slug} class="hover:bg-slate-1 px-4 py-2">
+                  <li key={item.slug} class="px-4 py-2 hover:bg-slate-1">
                     <div class="text-sm">{item.title}</div>
                     {item.description && (
-                      <div class="text-slate-4 text-xs">{item.description}</div>
+                      <div class="text-xs text-slate-4">{item.description}</div>
                     )}
                   </li>
                 </a>
@@ -144,7 +145,7 @@ interface EmptyProps {
 }
 function Empty({ lang }: EmptyProps) {
   return (
-    <div class="text-slate-3 flex flex-1 flex-col items-center justify-center">
+    <div class="flex flex-1 flex-col items-center justify-center text-slate-3">
       <div>{t(lang, "empty")}</div>
     </div>
   );
@@ -152,7 +153,7 @@ function Empty({ lang }: EmptyProps) {
 
 function Waiting() {
   return (
-    <div class="text-slate-3 flex flex-1 items-center justify-center">
+    <div class="flex flex-1 items-center justify-center text-slate-3">
       <div class="scale-300">
         <svg
           class="waiting scale-150"

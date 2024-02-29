@@ -1,7 +1,9 @@
+import type React from "preact/compat";
+
 export interface GnbLinkProps {
   slug: string;
   active: boolean;
-  children?: any;
+  children?: React.ReactNode;
 }
 function GnbLink({ slug, active, children }: GnbLinkProps) {
   return (

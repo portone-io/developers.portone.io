@@ -1,12 +1,13 @@
 import type { Signal } from "@preact/signals";
+
 import JsonViewer from "../../../editor/JsonViewer";
-import { Tabs } from "./Tabs";
 import Card from "../Card";
+import { Tabs } from "./Tabs";
 
 export interface Res {
   status: number;
   headers: Headers;
-  body: any;
+  body: unknown;
 }
 
 export interface ResProps {
@@ -19,7 +20,7 @@ export default function Res({ resSignal }: ResProps) {
       titleClass="bg-slate-1"
       title={`Response Status: ${res ? res.status : "N/A"}`}
     >
-      <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-1 p-4">
+      <div class="grid grid-rows-[auto_minmax(0,1fr)] flex-1 gap-1 p-4">
         {res ? (
           <Tabs
             tabs={[
@@ -42,7 +43,7 @@ export default function Res({ resSignal }: ResProps) {
             ]}
           />
         ) : (
-          <span class="text-slate-4 text-xs font-bold">N/A</span>
+          <span class="text-xs text-slate-4 font-bold">N/A</span>
         )}
       </div>
     </Card>

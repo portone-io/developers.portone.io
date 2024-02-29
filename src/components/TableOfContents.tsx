@@ -1,6 +1,6 @@
+import { Signal, useSignal, useSignalEffect } from "@preact/signals";
 import type { MarkdownHeading } from "astro";
 import clsx from "clsx";
-import { Signal, useSignal, useSignalEffect } from "@preact/signals";
 
 interface Props {
   theme: "aside" | "island";
@@ -124,7 +124,7 @@ export default function TableOfContents(props: Props) {
   const activeId = useActiveId(props.items, childActiveId);
 
   return (
-    <ul class="gap-6px m-0 flex list-none flex-col p-0">
+    <ul class="m-0 flex flex-col list-none gap-6px p-0">
       {props.items.map((item) => (
         <Item
           key={item.id}
@@ -225,7 +225,7 @@ function SubItem(props: {
         </div>
       </a>
       {props.item.children.length > 0 && (
-        <ul class="m-0 block list-none p-0 transition-[padding-left] duration-300">
+        <ul class="transition-[padding-left] m-0 block list-none p-0 duration-300">
           {props.item.children.map((item) => (
             <SubItem
               key={item.id}

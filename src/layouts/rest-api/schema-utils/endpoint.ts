@@ -1,10 +1,10 @@
 import {
-  getCategories,
   type Category,
-  type Tag,
   flatCategories,
+  getCategories,
+  type Tag,
 } from "./category";
-import { type Operation, getOperation } from "./operation";
+import { getOperation, type Operation } from "./operation";
 
 export interface Endpoint {
   method: string; // get, post ...
@@ -19,9 +19,12 @@ export interface TagEndpointsPair {
   endpoints: Endpoint[];
 }
 export function groupEndpointsByTag(
-  schema: any,
-  endpoints: Endpoint[]
+  schema: unknown,
+  endpoints: Endpoint[],
 ): TagEndpointsPair[] {
+  const s = schema as {
+    tags: Tag[];
+  };
   const result: TagEndpointsPair[] = [];
   const map: { [tagName: string]: Endpoint[] } = {};
   for (const endpoint of endpoints) {
@@ -29,7 +32,7 @@ export function groupEndpointsByTag(
       (map[tagName] ||= []).push(endpoint);
     }
   }
-  for (const tag of schema.tags) {
+  for (const tag of s.tags) {
     result.push({ tag, endpoints: map[tag.name]! });
   }
   return result;
@@ -40,8 +43,8 @@ export interface CategoryEndpointsPair {
   endpoints: Endpoint[];
 }
 export function groupEndpointsByCategory(
-  schema: any,
-  endpoints: Endpoint[]
+  schema: unknown,
+  endpoints: Endpoint[],
 ): CategoryEndpointsPair[] {
   const result: CategoryEndpointsPair[] = [];
   const map: { [categoryId: string]: Endpoint[] } = {};
@@ -66,10 +69,12 @@ export function getEndpointRepr({
   return `${method} ${path}`;
 }
 
-export function getEveryEndpoints(schema: any): Endpoint[] {
-  return Object.entries(schema.paths).flatMap(([path, methods]) => {
-    return Object.entries(methods as any).map(([method, _operation]) => {
-      const operation = _operation as Operation;
+export function getEveryEndpoints(schema: unknown): Endpoint[] {
+  const s = schema as {
+    paths: Record<string, Record<string, Operation>>;
+  };
+  return Object.entries(s.paths).flatMap(([path, methods]) => {
+    return Object.entries(methods).map(([method, operation]) => {
       return {
         method,
         path,
@@ -80,7 +85,7 @@ export function getEveryEndpoints(schema: any): Endpoint[] {
           "",
         deprecated: Boolean(operation.deprecated),
         unstable: Boolean(operation["x-portone-unstable"]),
-      } as Endpoint;
+      };
     });
   });
 }

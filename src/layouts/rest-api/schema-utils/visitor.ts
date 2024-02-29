@@ -1,5 +1,5 @@
-import type { Property, TypeDef } from "./type-def";
 import type { Operation, Parameter, Response } from "./operation";
+import type { Property, TypeDef } from "./type-def";
 
 export type Visitor = {
   -readonly [key in keyof typeof defaultVisitor]: (typeof defaultVisitor)[key];
@@ -25,7 +25,7 @@ export const defaultVisitor = {
     }
     if (operation.requestBody) {
       this.visitRequestRef(
-        operation.requestBody.content["application/json"].schema.$ref || ""
+        operation.requestBody.content["application/json"].schema.$ref || "",
       );
     }
     for (const statusCode in operation.responses) {
@@ -41,7 +41,7 @@ export const defaultVisitor = {
     } else if (response.content?.["application/json"]?.schema.$ref) {
       // TODO: handle others (e.g. "text/csv")
       this.visitResponseRef(
-        response.content["application/json"].schema.$ref || ""
+        response.content["application/json"].schema.$ref || "",
       );
     }
   },

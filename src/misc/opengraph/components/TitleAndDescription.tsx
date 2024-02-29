@@ -36,6 +36,7 @@ export default function TitleAndDescription({
             fontWeight: "bold",
             lineHeight: "120%",
             wordBreak: "keep-all",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ["textWrap" as any]: "balance",
           }}
         >

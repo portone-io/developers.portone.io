@@ -1,7 +1,7 @@
 import { fromMarkdown } from "mdast-util-from-markdown";
-import { mdxjs } from "micromark-extension-mdxjs";
 import { mdxFromMarkdown } from "mdast-util-mdx";
 import { toString } from "mdast-util-to-string";
+import { mdxjs } from "micromark-extension-mdxjs";
 
 export function toPlainText(mdx: string): string {
   const ast = fromMarkdown(mdx, {

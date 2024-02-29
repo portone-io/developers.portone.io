@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import * as path from "node:path";
 
 import mdx from "@astrojs/mdx";
@@ -10,7 +11,6 @@ import { defineConfig } from "astro/config";
 import unocss from "unocss/astro";
 
 import contentIndex from "./src/content-index";
-import { readFile } from "node:fs/promises";
 
 // https://astro.build/config
 export default defineConfig({

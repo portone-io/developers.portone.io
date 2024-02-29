@@ -20,5 +20,5 @@ interface YamlNavMenuGroup {
 }
 
 declare global {
-  function trackEvent(event: string, props: object, cb?: Function): void;
+  function trackEvent(event: string, props: object, cb?: () => void): void;
 }

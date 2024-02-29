@@ -1,7 +1,7 @@
 function ContactLink() {
   return (
     <a
-      class="color-white bg-orange-6 ml-2 flex h-full items-center gap-4 px-6 font-bold"
+      class="ml-2 h-full flex items-center gap-4 bg-orange-6 px-6 color-white font-bold"
       href="http://platform.contact.portone.io/"
       onClick={() => trackEvent("Developers_Platform_Contact_Click", {})}
     >

@@ -1,5 +1,6 @@
 import { signal, useComputed } from "@preact/signals";
 import * as React from "react";
+
 import { wait } from "~/misc/async";
 import { doublePushAndBack } from "~/misc/history";
 
@@ -19,11 +20,11 @@ export function useExpand(id: string, initialState: boolean) {
   // 첫 render 전에 effect가 불리도록 하기 위해서 useEffect 대신 useState 사용
   React.useState(() => expandSection(id, initialState));
   const expandSignal = useComputed(() =>
-    expandedSectionsSignal.value.includes(id)
+    expandedSectionsSignal.value.includes(id),
   );
   return {
     expand: expandSignal.value,
-    onToggle(value: boolean) {
+    onToggle: (value: boolean) => {
       expandSection(id, value);
     },
   };
@@ -51,11 +52,16 @@ export function expandAndScrollTo({
   id,
   href,
 }: ExpandAndScrollToConfig) {
-  expandSection(section, true, async () => {
-    doublePushAndBack(href);
-    // doublePushAndBack이 불리는 순간 스크롤이 방해받음
-    // doublePushAndBack이 끝나는 시점을 특정하는 것도 불가
-    await wait(100);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  });
+  expandSection(
+    section,
+    true,
+    () =>
+      void (async () => {
+        doublePushAndBack(href);
+        // doublePushAndBack이 불리는 순간 스크롤이 방해받음
+        // doublePushAndBack이 끝나는 시점을 특정하는 것도 불가
+        await wait(100);
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      })(),
+  );
 }

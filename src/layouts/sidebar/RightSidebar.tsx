@@ -1,3 +1,5 @@
+import type React from "preact/compat";
+
 export interface RightSidebarProps {
   lang: string;
   slug: string;
@@ -17,8 +19,8 @@ function RightSidebar({
   editThisPagePrefix = "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
 }: RightSidebarProps) {
   return (
-    <div class="text-slate-7 hidden w-56 min-w-0 shrink-0 lg:block">
-      <nav class="w-inherit fixed h-[calc(100%-56px)] overflow-y-auto px-2 py-[28px]">
+    <div class="hidden min-w-0 w-56 shrink-0 text-slate-7 lg:block">
+      <nav class="fixed h-[calc(100%-56px)] w-inherit overflow-y-auto px-2 py-[28px]">
         <h2 class="mb-2 px-2 font-bold">{t(lang, "toc")}</h2>
         <ul>
           {toc.map((item) => (
@@ -57,8 +59,8 @@ export default RightSidebar;
 interface LinkProps {
   href: string;
   icon?: string;
-  label: any;
-  children?: any;
+  label: React.ReactNode;
+  children?: React.ReactNode;
 }
 function SidebarItem({ href, icon, label, children }: LinkProps) {
   return (
@@ -73,7 +75,7 @@ function SidebarItem({ href, icon, label, children }: LinkProps) {
           document.getElementById(slug)?.scrollIntoView({ behavior: "smooth" });
         }}
       >
-        <div class="hover:bg-slate-1 text-slate-5 overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-sm">
+        <div class="overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-sm text-slate-5 hover:bg-slate-1">
           {icon && (
             <>
               <i class={`${icon} inline-block align-top text-lg`}></i>{" "}

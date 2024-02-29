@@ -1,9 +1,10 @@
 import { useSignal } from "@preact/signals";
+import type React from "preact/compat";
 
 export interface Tab<Id extends string> {
   id: Id;
-  label: any;
-  render: (id: Id) => any;
+  label: React.ReactNode;
+  render: (id: Id) => React.ReactNode;
 }
 export interface TabsProps<Id extends string> {
   tabs: (Tab<Id> | false | 0)[];
@@ -15,7 +16,7 @@ export function Tabs<Id extends string>({ tabs }: TabsProps<Id>) {
   const currTab = _tabs.find((tab) => tab.id === currTabId);
   return (
     <>
-      <div class="text-14px flex gap-3">
+      <div class="flex gap-3 text-14px">
         {_tabs.map((tab) => {
           const active = currTabId === tab.id;
           const className = `text-xs uppercase ${

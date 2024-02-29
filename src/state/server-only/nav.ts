@@ -1,11 +1,16 @@
 import * as path from "node:path";
+
 import { getCollection } from "astro:content";
 
 import navYamlEn from "~/content/docs/en/_nav.yaml";
 import navYamlKo from "~/content/docs/ko/_nav.yaml";
 import type { SystemVersion, YamlNavMenuToplevelItem } from "~/type";
 
-type Frontmatters = Record<string, any>;
+type Frontmatter = {
+  title?: string;
+};
+type Frontmatters = Record<string, Frontmatter>;
+
 const frontmatters: Frontmatters = (await getCollection("docs"))
   .map((entry) => {
     const absSlug = path.posix.join("/", entry.slug);
@@ -34,15 +39,21 @@ export interface NavMenuGroup {
   items: NavMenuPage[];
   systemVersion: SystemVersion;
 }
-export const navMenuItemsEn = toNavMenuItems(navYamlEn, frontmatters);
-export const navMenuItemsKo = toNavMenuItems(navYamlKo, frontmatters);
+export const navMenuItemsEn = toNavMenuItems(
+  navYamlEn as YamlNavMenuToplevelItem[],
+  frontmatters,
+);
+export const navMenuItemsKo = toNavMenuItems(
+  navYamlKo as YamlNavMenuToplevelItem[],
+  frontmatters,
+);
 export const navMenu = { en: navMenuItemsEn, ko: navMenuItemsKo };
 
 export interface NavMenuSystemVersions {
   [slug: string]: SystemVersion;
 }
 export function calcNavMenuSystemVersions(
-  navMenuItems: NavMenuItem[]
+  navMenuItems: NavMenuItem[],
 ): NavMenuSystemVersions {
   const result: NavMenuSystemVersions = {};
   for (const item of iterNavMenuItems(navMenuItems)) {
@@ -56,7 +67,7 @@ export interface NavMenuAncestors {
   [slug: string]: string[];
 }
 export function calcNavMenuAncestors(
-  navMenuItems: NavMenuItem[]
+  navMenuItems: NavMenuItem[],
 ): NavMenuAncestors {
   const navMenuAncestors: NavMenuAncestors = {};
   for (const { slug, ancestors } of iterNavMenuAncestors(navMenuItems)) {
@@ -67,7 +78,7 @@ export function calcNavMenuAncestors(
 }
 function* iterNavMenuAncestors(
   navMenuItems: NavMenuItem[],
-  ancestors: string[] = []
+  ancestors: string[] = [],
 ): Generator<{ slug: string; ancestors: string[] }> {
   for (const item of navMenuItems) {
     if (item.type === "group") {
@@ -90,7 +101,7 @@ function* iterNavMenuItems(items: NavMenuItem[]): Generator<NavMenuItem> {
 function toNavMenuItems(
   yaml: YamlNavMenuToplevelItem[],
   frontmatters: Frontmatters,
-  systemVersion: SystemVersion = "all"
+  systemVersion: SystemVersion = "all",
 ): NavMenuItem[] {
   return yaml.map((item) => {
     if (typeof item === "string") {
@@ -111,7 +122,7 @@ function toNavMenuItems(
           ? (toNavMenuItems(
               item.items,
               frontmatters,
-              _systemVersion
+              _systemVersion,
             ) as NavMenuPage[])
           : [],
         systemVersion: _systemVersion,
@@ -124,7 +135,7 @@ function toNavMenuItems(
         items: toNavMenuItems(
           item.items,
           frontmatters,
-          _systemVersion
+          _systemVersion,
         ) as NavMenuPage[],
         systemVersion: _systemVersion,
       };

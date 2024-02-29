@@ -1,8 +1,10 @@
+import type React from "preact/compat";
+
 export interface TwoColumnLayoutProps {
   className?: string;
-  left: any;
+  left: React.ReactNode;
   leftClassName?: string;
-  right: any;
+  right: React.ReactNode;
   rightClassName?: string;
   smallRight?: boolean;
   stickyRight?: boolean;

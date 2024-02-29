@@ -1,7 +1,7 @@
 import { useComputed } from "@preact/signals";
 
-import type { NavMenuPage } from "~/state/server-only/nav";
 import { navOpenStatesSignal, slugSignal } from "~/state/nav";
+import type { NavMenuPage } from "~/state/server-only/nav";
 import type { SystemVersion } from "~/type";
 
 function LeftSidebarItem(props: NavMenuPage) {
@@ -29,7 +29,7 @@ function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
           <LinkTitle title={title} />
         </a>
         <button
-          class="flex h-full items-center p-2"
+          class="h-full flex items-center p-2"
           onClick={() => {
             navOpenStatesSignal.value = {
               ...navOpenStatesSignal.value,

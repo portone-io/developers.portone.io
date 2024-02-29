@@ -1,16 +1,17 @@
+import type * as monaco from "monaco-editor";
+
 import {
-  type Operation,
-  type Parameter,
   getBodyParameters,
   getPathParameters,
   getQueryParameters,
+  type Operation,
+  type Parameter,
 } from "../schema-utils/operation";
 import MonacoEditor, {
+  commonEditorConfig,
   type IStandaloneCodeEditor,
   type ITextModel,
-  commonEditorConfig,
 } from "./MonacoEditor";
-import type * as monaco from "monaco-editor";
 
 export type RequestPart = "path" | "query" | "body";
 export interface RequestJsonEditorProps {
@@ -19,8 +20,8 @@ export interface RequestJsonEditorProps {
   operation: Operation;
   onEditorInit?: (editor: IStandaloneCodeEditor) => void;
   onChange?: ((value: string) => void) | undefined;
-  openapiSchema: any;
-  requestObjectSchema: any;
+  openapiSchema: unknown;
+  requestObjectSchema: unknown;
 }
 export default function RequestJsonEditor({
   initialValue,
@@ -66,6 +67,7 @@ export default function RequestJsonEditor({
             uri: "inmemory://schema",
             schema: openapiSchema,
           });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
           (diagnosticsOptions as any).schemas = schemasArray;
           jsonDefaults.setDiagnosticsOptions(diagnosticsOptions);
         }
@@ -85,16 +87,13 @@ const diagnosticsOptions: monaco.languages.json.DiagnosticsOptions = {
 interface Schema {
   uri: string;
   fileMatch?: string[];
-  schema: {
-    type: "object";
-    properties: any[];
-  };
+  schema: unknown;
 }
 const schemas = new Map<string, Schema>();
 const models = new Map<string, ITextModel>();
 
 export function getReqParams(
-  schema: any,
+  schema: unknown,
   operation: Operation,
   part: RequestPart,
 ): Parameter[] {
@@ -105,7 +104,10 @@ export function getReqParams(
       : getBodyParameters(schema, operation);
 }
 
-export function getInitialJsonText(schema: any, params: Parameter[]): string {
+export function getInitialJsonText(
+  schema: unknown,
+  params: Parameter[],
+): string {
   if (!params.length) return "{}\n";
   return `{\n${params
     .map((param) => {
@@ -117,7 +119,7 @@ export function getInitialJsonText(schema: any, params: Parameter[]): string {
     .join("")}}\n`;
 }
 
-function getDefaultValue(_schema: any, param: Parameter): any {
+function getDefaultValue(_schema: unknown, param: Parameter): unknown {
   const type = param.type || "object";
   if (type === "boolean") return false;
   if (type === "number" || type === "integer") return 0;

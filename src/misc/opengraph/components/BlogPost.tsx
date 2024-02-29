@@ -77,6 +77,7 @@ export default function BlogPost({
             fontSize: "32px",
             lineHeight: "44.8px",
             color: "#D5D5D5",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ["textWrap" as any]: "balance",
           }}
         >

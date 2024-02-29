@@ -1,10 +1,15 @@
-import * as React from "react";
+import * as React from "preact/compat";
+
 import * as prose from "~/components/prose";
 import {
   expandAndScrollTo,
   expanded,
   useExpand,
 } from "~/state/rest-api/expand-section";
+
+import { Hr } from "..";
+import EndpointDoc, { MethodLine } from "../endpoint/EndpointDoc";
+import EndpointPlayground from "../endpoint/playground/EndpointPlayground";
 import {
   type CategoryEndpointsPair,
   type Endpoint,
@@ -12,17 +17,14 @@ import {
 } from "../schema-utils/endpoint";
 import TwoColumnLayout from "../TwoColumnLayout";
 import Expand from "./Expand";
-import { Hr } from "..";
-import EndpointDoc, { MethodLine } from "../endpoint/EndpointDoc";
-import EndpointPlayground from "../endpoint/playground/EndpointPlayground";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
   apiHost: string; // e.g. "https://api.iamport.kr"
   currentSection: string;
-  sectionDescriptionProps: Record<string, any>;
+  sectionDescriptionProps: Record<string, React.ReactNode>;
   endpointGroups: CategoryEndpointsPair[];
-  schema: any;
+  schema: unknown;
 }
 export function Categories({
   schema,
@@ -47,21 +49,21 @@ export function Categories({
             description={description}
             endpoints={endpoints}
           />
-        )
+        ),
       )}
     </>
   );
 }
 
 export interface CategoryProps {
-  sectionDescriptionProps: Record<string, any>;
+  sectionDescriptionProps: Record<string, React.ReactNode>;
   basepath: string;
   apiHost: string;
   initialExpand: boolean;
   section: string;
-  schema: any;
+  schema: unknown;
   title: string;
-  description: any;
+  description: string | undefined;
   endpoints: Endpoint[];
 }
 export function Category({
@@ -86,7 +88,7 @@ export function Category({
     />
   );
   return (
-    <section id={section} class="scroll-mt-5.2rem flex flex-col">
+    <section id={section} class="flex flex-col scroll-mt-5.2rem">
       <div>
         <prose.h2 ref={headingRef}>{title}</prose.h2>
       </div>
@@ -108,7 +110,7 @@ export function Category({
                     endpoint;
                   const id = getEndpointRepr(endpoint);
                   const href = `${basepath}/${section}#${encodeURIComponent(
-                    id
+                    id,
                   )}`;
                   return (
                     <a
@@ -159,8 +161,8 @@ export function Category({
 
 interface SectionDescriptionProps {
   section: string;
-  sectionDescriptionProps: Record<string, any>;
-  description: any;
+  sectionDescriptionProps: Record<string, React.ReactNode>;
+  description: string | undefined;
 }
 function SectionDescription({
   section,
@@ -173,7 +175,7 @@ function SectionDescription({
     <div
       class="mt-4"
       dangerouslySetInnerHTML={{
-        __html: description,
+        __html: description ?? "",
       }}
     />
   );

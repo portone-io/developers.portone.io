@@ -1,22 +1,25 @@
+import type React from "preact/compat";
+
 import * as prose from "~/components/prose";
-import TwoColumnLayout from "../TwoColumnLayout";
-import { getEndpointRepr, type Endpoint } from "../schema-utils/endpoint";
+
+import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";
+import DescriptionArea from "../DescriptionArea";
+import { type Endpoint, getEndpointRepr } from "../schema-utils/endpoint";
 import {
-  type Parameter,
+  getBodyParameters,
   getOperation,
   getPathParameters,
   getQueryParameters,
-  getBodyParameters,
-  type Operation,
   getResponseSchemata,
+  type Operation,
+  type Parameter,
 } from "../schema-utils/operation";
-import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";
 import { resolveTypeDef } from "../schema-utils/type-def";
-import DescriptionArea from "../DescriptionArea";
+import TwoColumnLayout from "../TwoColumnLayout";
 
 export interface EndpointDocProps {
   basepath: string; // e.g. "/api/rest-v1"
-  schema: any;
+  schema: unknown;
   endpoint: Endpoint;
   renderRightFn?: RenderRightFn;
 }
@@ -32,7 +35,7 @@ export default function EndpointDoc({
     operation["x-portone-description"] || operation.description;
   return (
     <div class="flex flex-col">
-      <div class="mb-4 grid items-center gap-y-4 lg:grid-cols-2">
+      <div class="grid mb-4 items-center gap-y-4 lg:grid-cols-2">
         <div class="flex items-center lg:order-last lg:justify-end">
           <MethodLine method={method} path={path} />
         </div>
@@ -44,12 +47,12 @@ export default function EndpointDoc({
           <div class="flex items-center gap-2">
             <span>{title}</span>
             {deprecated && (
-              <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+              <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
                 deprecated
               </span>
             )}
             {unstable && (
-              <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+              <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
                 unstable
               </span>
             )}
@@ -97,9 +100,9 @@ export interface MethodLineProps {
 }
 export function MethodLine({ method, path }: MethodLineProps) {
   return (
-    <span class="bg-slate-1 inline-flex items-center gap-1 self-start rounded-full pr-2 text-xs opacity-70">
+    <span class="inline-flex items-center self-start gap-1 rounded-full bg-slate-1 pr-2 text-xs opacity-70">
       <MethodBadge method={method} />
-      <span class="ml-1 font-mono font-normal">{path}</span>
+      <span class="ml-1 font-normal font-mono">{path}</span>
     </span>
   );
 }
@@ -128,15 +131,15 @@ function MethodBadge({ method }: MethodBadgeProps) {
 }
 
 export interface RenderRightConfig {
-  schema: any;
+  schema: unknown;
   endpoint: Endpoint;
   operation: Operation;
 }
-export type RenderRightFn = (config: RenderRightConfig) => any;
+export type RenderRightFn = (config: RenderRightConfig) => React.ReactNode;
 
 interface RequestDocProps {
   basepath: string;
-  schema: any;
+  schema: unknown;
   operation: Operation;
 }
 function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
@@ -182,12 +185,12 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
       </div>
     );
   }
-  return <div class="text-slate-5 text-xs font-bold">요청 인자 없음</div>;
+  return <div class="text-xs text-slate-5 font-bold">요청 인자 없음</div>;
 }
 
 interface ResponseDocProps {
   basepath: string;
-  schema: any;
+  schema: unknown;
   operation: Operation;
 }
 function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
@@ -224,7 +227,7 @@ interface ReqParametersProps {
   title?: string | undefined;
   description?: string | undefined;
   parameters: Parameter[];
-  schema?: any;
+  schema?: unknown;
   showNested?: boolean | undefined;
 }
 function ReqParameters({
@@ -250,7 +253,7 @@ function ReqParameters({
 interface ReqResProps {
   title?: string | undefined;
   description?: string | undefined;
-  children: any;
+  children: React.ReactNode;
 }
 function ReqRes({ title, description, children }: ReqResProps) {
   return (

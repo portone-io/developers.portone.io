@@ -1,7 +1,9 @@
-import * as React from "react";
+import * as React from "preact/compat";
+
 import * as prose from "~/components/prose";
 import { Categories } from "~/layouts/rest-api/category";
 import { TypeDefinitions } from "~/layouts/rest-api/category/type-def";
+
 import {
   getEveryEndpoints,
   groupEndpointsByCategory,
@@ -9,12 +11,12 @@ import {
 
 export interface RestApiProps {
   title: string;
-  children?: any;
+  children?: React.ReactNode;
   basepath: string;
   apiHost: string;
   currentSection: string;
-  sectionDescriptionProps: Record<string, any>;
-  schema: any;
+  sectionDescriptionProps: Record<string, React.ReactNode>;
+  schema: unknown;
 }
 export default function RestApi({
   title,
@@ -35,8 +37,8 @@ export default function RestApi({
   const endpointGroups = groupEndpointsByCategory(schema, everyEndpoints);
   return (
     <div class="flex flex-1 justify-center">
-      <article class="basis-300 shrink-1 m-4 mb-16 flex flex-col pb-10 text-slate-700">
-        <section id="overview" class="scroll-mt-5.2rem flex flex-col">
+      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-slate-700">
+        <section id="overview" class="flex flex-col scroll-mt-5.2rem">
           <prose.h1>{title}</prose.h1>
           {children}
           <Hr />

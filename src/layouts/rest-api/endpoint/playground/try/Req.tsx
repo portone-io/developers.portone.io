@@ -1,25 +1,26 @@
-import { encode as encodeQs } from "querystring";
+import { type Signal, signal, useSignal } from "@preact/signals";
 import json5 from "json5";
-import { type Signal, useSignal, signal } from "@preact/signals";
-import type { Endpoint } from "../../../schema-utils/endpoint";
-import type { Operation, Parameter } from "../../../schema-utils/operation";
+import { useMemo } from "preact/hooks";
+import { encode as encodeQs } from "querystring";
+
+import RequestHeaderEditor, {
+  type KvList,
+  kvListToObject,
+} from "../../../editor/RequestHeaderEditor";
 import RequestJsonEditor, {
-  type RequestPart,
   getInitialJsonText,
   getReqParams,
+  type RequestPart,
 } from "../../../editor/RequestJsonEditor";
-import RequestHeaderEditor, {
-  kvListToObject,
-  type KvList,
-} from "../../../editor/RequestHeaderEditor";
-import { useMemo } from "preact/hooks";
+import type { Endpoint } from "../../../schema-utils/endpoint";
+import type { Operation, Parameter } from "../../../schema-utils/operation";
+import Card from "../Card";
 import type { Res } from "./Res";
 import { Tabs } from "./Tabs";
-import Card from "../Card";
 
 export interface ReqProps {
   apiHost: string;
-  schema: any;
+  schema: unknown;
   endpoint: Endpoint;
   operation: Operation;
   execute: (fn: () => Promise<Res>) => void;
@@ -44,7 +45,7 @@ export default function Req({
         <>
           <span>Request</span>
           <button
-            class="border-slate-2 hover:bg-slate-2 bg-slate-1 rounded border px-4 font-bold active:bg-white"
+            class="border border-slate-2 rounded bg-slate-1 px-4 font-bold active:bg-white hover:bg-slate-2"
             onClick={() =>
               execute(async () => {
                 const headers = kvListToObject(reqHeaderSignal.value);
@@ -66,7 +67,7 @@ export default function Req({
         </>
       }
     >
-      <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-3 p-4">
+      <div class="grid grid-rows-[auto_minmax(0,1fr)] flex-1 gap-3 p-4">
         <Tabs
           tabs={[
             reqPathParams.params.length && {
@@ -133,14 +134,14 @@ export default function Req({
 
 interface ReqParams {
   params: Parameter[];
-  reqSchema: { type: "object"; properties: any[] };
+  reqSchema: unknown;
   initialJsonText: string;
   jsonTextSignal: Signal<string>;
   updateJsonText: (value: string) => void;
-  parseJson: () => any;
+  parseJson: () => unknown;
 }
 function useReqParams(
-  schema: any,
+  schema: unknown,
   operation: Operation,
   part: RequestPart,
 ): ReqParams {
@@ -154,7 +155,7 @@ function useReqParams(
           return [param.name, { ...param, $ref: `inmemory://schema${$ref}` }];
         }),
       ),
-    } as any;
+    };
     const initialJsonText = getInitialJsonText(schema, params);
     const jsonTextSignal = signal(initialJsonText);
     const updateJsonText = (value: string) => (jsonTextSignal.value = value);
@@ -173,22 +174,25 @@ function useReqParams(
 function createUrl(
   base: string,
   path: string,
-  pathObject?: any,
-  queryObject?: any,
+  pathObject?: unknown,
+  queryObject?: unknown,
 ): URL {
   const result = new URL(bakePath(path, pathObject), base);
-  if (queryObject) result.search = `?${encodeQs(queryObject)}`;
+  if (queryObject)
+    result.search = `?${encodeQs(queryObject as Parameters<typeof encodeQs>[0])}`;
   return result;
 }
 
-function bakePath(path: string, pathObject?: any): string {
+function bakePath(path: string, pathObject?: unknown): string {
   if (!pathObject) return path;
   return path.replaceAll(/\{(.+?)\}/g, (_, key) =>
-    encodeURIComponent(pathObject[key]),
+    encodeURIComponent(
+      (pathObject as Record<string, string>)[key as string] ?? "",
+    ),
   );
 }
 
-function parseReqJson(json: string, part: RequestPart): any {
+function parseReqJson(json: string, part: RequestPart): unknown {
   try {
     return json5.parse(json);
   } catch (err) {
@@ -199,6 +203,6 @@ function parseReqJson(json: string, part: RequestPart): any {
 
 async function responseToRes(res: Response): Promise<Res> {
   const { status, headers } = res;
-  const body = await res.json();
+  const body = (await res.json()) as unknown;
   return { status, headers, body };
 }

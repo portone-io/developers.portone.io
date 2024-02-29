@@ -1,9 +1,10 @@
+import type React from "preact/compat";
 import { useEffect, useRef, useState } from "preact/hooks";
 
 export interface DescriptionAreaProps {
   maxHeightPx?: number;
   bgColor?: string;
-  children: any;
+  children: React.ReactNode;
 }
 export default function DescriptionArea({
   maxHeightPx = 16 * 12, // 12rem
@@ -38,7 +39,7 @@ export default function DescriptionArea({
             }}
           />
           <button
-            class="h-2rem absolute bottom-0 flex w-full items-center justify-center text-sm font-bold"
+            class="absolute bottom-0 h-2rem w-full flex items-center justify-center text-sm font-bold"
             onClick={() => setOpen(true)}
           >
             <div class="overflow-hidden rounded-full px-4 py-2 backdrop-blur-sm">
