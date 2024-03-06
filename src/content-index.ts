@@ -52,13 +52,8 @@ function vitePlugin(config: AstroConfig) {
       const { frontmatter, md } = cutFrontmatter(
         await fs.readFile(id, "utf-8"),
       );
-      if (
-        !frontmatter ||
-        typeof frontmatter !== "object" ||
-        !("slug" in frontmatter)
-      )
-        return;
-      const slug = String(frontmatter?.slug || match[1]);
+      if (!frontmatter || typeof frontmatter !== "object") return;
+      const slug = String("slug" in frontmatter ? frontmatter.slug : match[1]);
       updateMdxTable(slug, { ...frontmatter, slug, md });
     },
     configureServer(server) {
