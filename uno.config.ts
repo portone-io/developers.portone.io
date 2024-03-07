@@ -10,10 +10,8 @@ export default defineConfig({
   presets: [presetIcons(), presetWind()],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {
-    extend: {
-      colors: {
-        portone: "#FC6B2D",
-      },
+    colors: {
+      portone: "#FC6B2D",
     },
   },
 });
