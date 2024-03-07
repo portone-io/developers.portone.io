@@ -4,33 +4,78 @@ description: 스마트로 결제창 연동가이드를 확인 합니다.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-# 1. 스마트로 PG 설정하기
+### 스마트로 PG 설정하기
 
 - PG사 연동 가이드의 스마트로 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
-# 2. 가능한 결제 수단
+### 가능한 결제 수단
 
-### 일반 결제
+- **결제창 일반결제**
+  - `payMethod`파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
+    - 신용카드 : `CARD`
+    - 실시간 계좌이체 : `TRANSFER`
+    - 가상계좌 : `VIRTUAL_ACCOUNT`
+    - 휴대폰 소액결제 : `MOBILE`
+    - 간편 결제 : `EASY_PAY`
+- **결제창 빌링키발급**
+  - `payMethod`파라미터를 `card`로 설정해야 합니다.
+- **API 수기(키인) 결제** 
+  - `method`파라미터를 `card`로 설정해야 합니다.
+- **API 빌링키 발급**
+  - `method`파라미터를 `card`로 설정해야 합니다.
 
-- `카드`
-- `가상계좌`
-- `계좌이체`
-- `모바일`
-- `간편 결제`
+### SDK 결제 요청하기
 
-### 빌링키 발급
+결제 요청 시에는 `requestPayment` 함수를 호출해야 합니다.
+`channelKey`파라미터에 결제 채널 연동 후 생성된 채널 키값을 지정하여 스마트로 채널 사용을 명시해주세요.
 
-- `카드`
+스마트로 기준으로 작성한 예시 코드는 아래와 같습니다.
 
-# 3. SDK - 유의할 파라미터
+<Tabs>
+  <Tab title="SDK 결제 요청">
+    ```javascript
+    import * as PortOne from '@portone/browser-sdk/v2';
+    function requestPayment() {
+      PortOne.requestPayment({
+        storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec', // 고객사 storeId로 변경해주세요.
+        paymentId: `payment-${crypto.randomUUID()}`,
+        orderName: '나이키 와플 트레이너 2 SD',
+        totalAmount: 1000,
+        currency: 'CURRENCY_KRW',
+        channelKey: 'channel-key-9987cb87-6458-4888-b94e-68d9a2da896d', // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
+        payMethod: 'CARD',
+        customer: {
+          phoneNumber: '010-0000-1234'
+        }
+      });
+    }
+    ```
+  </Tab>
+</Tabs>
 
-### 결제 (`requestPayment`)
+#### 주요 파라미터
 
-- `paymentId`
-  - 고객사 주문 고유 ID
-  - 스마트로의 경우 특수 문자를 사용할 수 없습니다.
-- `customer.customerId`
+`storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+스토어 아이디
+> 포트원 계정에 생성된 상점을 식별하는 고유한 값으로 관리자 콘솔에서 확인할 수 있습니다.
+- `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - 고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다.
+- `orderName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - 주문명으로 고객사에서 자유롭게 입력합니다.
+- `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키로 호출하고자 하는 채널을 지정합니다.
+- `totalAmount` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
+  - 결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+- `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - 결제통화로 원화 결제 시 `KRW`로 입력해야 합니다. 나이스페이먼츠의 경우 `KRW`와 `USD`를 지원합니다.
+- `payMethod` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - 결제수단으로 결제하고자 하는 결제수단의 값을 입력해야 합니다.
+- `customer` <mark style="color:blue;">**object**</mark>
+customerId`
   - 고객사 고객의 고유 ID 입니다.
   - 스마트로의 경우 간편결제, 빌링키 발급 시 필수로 입력합니다.
 - `customer.phoneNumber`
