@@ -158,8 +158,8 @@ function Item(props: {
       <a
         href={`#${props.item.id}`}
         class={clsx(
-          "py-6px block break-keep text-base font-medium",
-          props.isActive ? "text-slate-6" : "text-slate-4",
+          "py-6px block break-keep text-17px font-semibold",
+          props.isActive ? "text-slate-8" : "text-slate-4",
         )}
       >
         {props.item.title}
@@ -172,6 +172,7 @@ function Item(props: {
               item={item}
               depth={1}
               isActive={props.isActive && item.id === activeId.value}
+              isParentActive={props.isActive}
               onActiveIdChange={(id) => {
                 childActiveId.value = id;
               }}
@@ -187,6 +188,7 @@ function SubItem(props: {
   item: TOCItem;
   depth: number;
   isActive: boolean;
+  isParentActive: boolean;
   onActiveIdChange?: (id: string | null) => void;
 }) {
   const childActiveId = useSignal<string | null>(null);
@@ -208,12 +210,15 @@ function SubItem(props: {
       <a
         href={`#${props.item.id}`}
         class={clsx(
-          "py-2px block break-keep transition-[padding-top,padding-bottom] duration-300",
+          "py-6px block break-keep font-medium text-17px transition-[padding-top,padding-bottom] duration-300",
           props.isActive
-            ? "border-l-portone font-medium text-portone"
-            : " border-l-slate-5 text-slate-4",
+            ? "text-portone py-8px"
+            : props.isParentActive
+              ? "text-slate-4"
+              : "text-slate-3",
+          props.depth > 1 ? "font-normal" : "font-medium",
         )}
-        style={{ paddingLeft: `${4 + 12 * (props.depth - 1)}px` }}
+        style={{ paddingLeft: `${12 * props.depth}px` }}
       >
         <div
           class={clsx(
@@ -232,6 +237,7 @@ function SubItem(props: {
               item={item}
               depth={props.depth + 1}
               isActive={props.isActive && item.id === activeId.value}
+              isParentActive={props.isParentActive}
               onActiveIdChange={(id) => {
                 childActiveId.value = id;
               }}
