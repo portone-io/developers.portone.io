@@ -3,6 +3,7 @@ import * as path from "node:path";
 
 import mdx from "@astrojs/mdx";
 import preact from "@astrojs/preact";
+import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel/serverless";
 import yaml from "@rollup/plugin-yaml";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
@@ -20,6 +21,15 @@ export default defineConfig({
     mdx(),
     unocss({ injectReset: true }),
     contentIndex,
+    sitemap({
+      customPages: ["/api/rest-v1/", "/api/rest-v2/"].map(
+        (url) => `https://developers.portone.io${url}`,
+      ),
+      filter: (page) =>
+        ![/^\/test/, /^\/platform/, /^\/api\/rest-v2-legacy/].some((regex) =>
+          regex.test(page.replace("https://developers.portone.io", "")),
+        ),
+    }),
   ],
   vite: {
     resolve: {
@@ -35,10 +45,8 @@ export default defineConfig({
         async transform(_, id) {
           const [path, query] = id.split("?");
           if (query !== "base64") return null;
-
           const data = await readFile(path!);
           const base64 = data.toString("base64");
-
           return `export default '${base64}';`;
         },
       },
