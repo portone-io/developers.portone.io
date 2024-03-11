@@ -60,7 +60,7 @@ export default [
       "react/jsx-uses-vars": "error",
       "prettier/prettier": "off",
     },
-    processor: mdx.createRemarkProcessor({
+    processor: await mdx.createRemarkProcessor({
       lintCodeBlocks: true,
     }),
   },
