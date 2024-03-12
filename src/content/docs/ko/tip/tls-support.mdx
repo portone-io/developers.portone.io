@@ -205,14 +205,22 @@ Java 6은 기본적으로 TLS 1.2를 지원하지 않습니다.
 JDK 6u121 버전부터는 TLS 1.2를 지원하지만 default TLS 버전은 여전히 1.0일 뿐 더러 Java 6의 JCE(Java Cryptography Extension) Provider가 타원곡선 암호화 알고리즘을 지원하지 않기때문에 단순 JDK 버전 컨트롤만으로는 지원 중단되는 Cipher Suite 퇴역이 불가능합니다.
 이에 따라 Java 6에서 포트원 통신 규격을 만족하도록 만들 수 있는 방법 2가지를 설명합니다.
 
-#### 1. Java 8 이상으로 버전 업그레이드
+<Details>
+  <p slot="summary">
+    <strong>Java 8 이상으로 버전 업그레이드</strong>
+  </p>
 
 가장 바람직한 방법은 공식 지원기간이 이미 종료된 Java 6에서 상위 버전으로 업그레이드하는 것입니다.
 2023년 9월에 출시된 Java 21(LTS)로 업그레이드하는 것이 가장 바람직한 방법이지만 Java 6에서 한번에 높은 버전으로 점프하는 것은 체크해야할 side effect가 매우 많습니다.
 반대로 바로 윗 버전인 Java 7의 경우 TLS 1.2를 지원하긴 하나 default TLS 버전은 1.0이기에 system property 혹은 코드 수정이 동반되어야합니다. 또한 Java 7 역시 Java 6과 같이 지원이 중단되었기에 Java 7로의 업그레이드는 권장하지 않습니다.
 제일 side effect가 적으면서 합리적인 방법은 Java 8(LTS)로 업그레이드하는 것으로 Java 8의 경우 default TLS 버전이 1.2이며 JDK 8u261 이상부터는 TLS 1.3 톨신을 지원하기 때문에 조건에 충족합니다.
 
-#### 2. 외부 라이브러리를 이용한 구현체 강제 주입
+</Details>
+
+<Details>
+  <p slot="summary">
+    <strong>외부 라이브러리를 이용한 구현체 강제 주입</strong>
+  </p>
 
 TLS 1.2 통신 및 ECC(타원곡선 암호화) 알고리즘을 사용하는 Cipher Suite 지원에 필요한 JCE(Java Cryptography Extension) 및 JSSE(Java Secure Socket Extension) 구현체를 외부 라이브러리의 것으로 이용하는 방법입니다.
 본 가이드에서는 `Bouncy Castle`이라는 오픈소스 라이브러리를 이용한 예시를 설명합니다.
@@ -264,6 +272,7 @@ _추가되는 line을 제외한 나머지 기존 security provider들은 예시�
 - `US_export_policy.jar`
 - `local_policy.jar`
   두 파일을 `${JAVA_HOME}/jre/lib/security` directory 내에 덮어씌웁니다.
+</Details>
 
 ### Java 7
 
@@ -275,15 +284,22 @@ Java 7의 경우 TLS 1.2를 지원하기는 하나 default TLS 버전은 여전�
 />
 
 뿐만 아니라 JDK 버전에 따라 포트원에서 허용하는 Cipher Suite 조건인 1. Forward secrecy 지원 2. SHA-1 미사용 을 만족하는 Cipher Suite를 지원하지 않기도 합니다.
-본 가이드에서는 Java 7에서 포트원 보안 규격에 맞는 TLS 버전 및 Cipher suite 설정에 대한 방법 2가지를 제공합니다.
+본 가이드에서는 Java 7에서 포트원 보안 규격에 맞는 TLS 버전 및 Cipher suite 설정에 대한 방법 3가지를 제공합니다.
 
-#### 1. Java 8 이상으로 버전 업그레이드
+<Details>
+  <p slot="summary">
+    <strong>Java 8 이상으로 버전 업그레이드</strong>
+  </p>
 
 가장 바람직한 방법은 공식 지원기간이 이미 종료된 Java 7에서 상위 버전으로 업그레이드하는 것입니다.
 2023년 9월에 출시된 Java 21(LTS)로 업그레이드하는 것이 가장 바람직한 방법이지만 Java 7에서 한번에 높은 버전으로 점프하는 것은 체크해야할 side effect가 매우 많습니다.
 제일 side effect가 적으면서 합리적인 방법은 Java 8(LTS)로 업그레이드하는 것으로 Java 8의 경우 default TLS 버전이 1.2이며 JDK 8u261 이상부터는 TLS 1.3 톨신을 지원하기 때문에 조건에 충족합니다.
+</Details>
 
-#### 2. JDK 버전 업그레이드 및 1.2 사용 설정
+<Details>
+  <p slot="summary">
+    <strong>JDK 버전 업그레이드 및 1.2 사용 설정</strong>
+  </p>
 
 Java 7 최초 release 버전에서는 포트원에서 허용하는 Cipher suite를 지원하고 있지 않습니다.
 해당 Cipher suite는 JDK 7u191 버전부터 지원하기 시작하였으며 JDK 7u321 버전부터 default Cipher Suite에 대한 우선순위를 해당 기준(FS 지원, SHA-1 미사용)에 따라 적용하므로 별도의 설정 없이 Cipher Suite 조건 충족을 만족하기 위해서는 JDK 버전을 7u321 이상으로 업그레이드 해야합니다.
@@ -330,11 +346,16 @@ SSLContext ctx = SSLContext.getInstance("TLSv1.2");
 ```java
 sslParameters.setProtocols(new String[] {"TLSv1.2"});
 ```
+</Details>
 
-#### 3. 외부 라이브러리를 이용한 구현체 강제 주입
+<Details>
+  <p slot="summary">
+    <strong>외부 라이브러리를 이용한 구현체 강제 주입</strong>
+  </p>
 
 Java 6 가이드에서 소개한 외부 라이브러리를 이용한 구현체를 강제주입하여 TLS 버전 및 Cipher Suite를 설정할 수 있습니다.
 방법은 Java 6 가이드의 *3. 외부 라이브러리를 이용한 구현체 강제 주입*과 동일합니다.
+</Details>
 
 ### Java 8
 
