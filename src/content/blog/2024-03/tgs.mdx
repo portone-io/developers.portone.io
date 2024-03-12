@@ -215,11 +215,11 @@ Typed error를 적용함으로써 예시 코드의 `pay()` 함수에선 `AmountT
 interface Example {
     fun pay(): Effect<PayError, Unit>
     
-    interface AmountTooBig
-    interface InvalidCardInfo
-    interface TransactionAlreadyExists
-    
-    object PayError: AmountTooBig, InvalidCardInfo, TransactionAlreadyExists
+    sealed interface PayError {
+      data object AmountTooBig: PayError
+      data object InvalidCardInfo: PayError
+      data object TransactionAlreadyExists: PayError
+    }
 }
 ```
 
