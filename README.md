@@ -8,9 +8,7 @@ PortOne 개발자센터 저장소입니다.
 
 ## 문서 수정하기
 
-개발자센터의 문서는 [MDX](https://mdxjs.com/) 형식으로 작성되어 있습니다.\
-`src/content/docs/[lang]/[...slug].mdx` 경로의 파일을 열어서 수정해주시면 됩니다.\
-`src/content/docs/[lang]/_nav.yaml` 파일을 열어서 좌측 네비게이션 메뉴 항목을 수정할 수 있습니다.
+[별도의 문서](./DOCS_GUIDE.md)를 참고해 주세요.
 
 ## 개발환경 구성하기
 
