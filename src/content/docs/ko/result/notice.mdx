@@ -4,6 +4,7 @@ description: PG사별 입금통보 설정을 통해 가상계좌 결제를 사�
 ---
 
 import Figure from "~/components/Figure.astro";
+import VersionGate from "~/components/gitbook/VersionGate";
 import tosspayments_image1 from "./_assets/tosspayments/tosspayments-webhook-guide-1.png";
 import tosspayments_image2 from "./_assets/tosspayments/tosspayments-webhook-guide-2.png";
 import smartro_image1 from "./_assets/smartro/smartro-webhook-guide-1.png";
@@ -18,6 +19,7 @@ import welcome_image2 from "./_assets/welcome/welcome-webhook-guide-2.png";
 
 ## PG사별 가상계좌 입금통보 URL
 
+<VersionGate client:idle default="v1">
 | PG                  | 입금통보 주소                                                                                                                                                 |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | KG이니시스          | https://service.iamport.kr/inicis_payments/notice_vbank                                                                                                       |
@@ -26,26 +28,41 @@ import welcome_image2 from "./_assets/welcome/welcome-webhook-guide-2.png";
 | KICC                | https://service.iamport.kr/kicc_payments/notice_vbank                                                                                                         |
 | 헥토파이낸셜        | https://service.iamport.kr/settle_payments/notice_vbank                                                                                                       |
 | 키움페이            | <ul><li>발행 통지 URL: https://service.iamport.kr/daou_payments/result</li><li>결과 통지 URL: https://service.iamport.kr/daou_payments/notice_vbank</li></ul> |
-| (산) 토스페이먼츠   | https://tx-gateway-service.prod.iamport.co/virtual-account/webhook-event/tosspayments                                                                         |
+| (신) 토스페이먼츠   | https://tx-gateway-service.prod.iamport.co/virtual-account/webhook-event/tosspayments                                                                         |
 | KSNET               | https://tx-gateway-service.prod.iamport.co/ksnet                                                                                                              |
 | (신) 스마트로       | 입금 통보, 환불이체 URL 동일: https://tx-gateway-service.prod.iamport.co/smartro-v2                                                                           |
 | (신) 나이스페이먼츠 | https://tx-gateway-service.prod.iamport.co/nicepay-v2                                                                                                         |
 | 웰컴페이먼츠        | https://tx-gateway-service.prod.iamport.co/welcome                                                                                                            |
+</VersionGate>
+<VersionGate client:idle default="v2" exactMatch="true">
+| PG                  | 입금통보 주소                                                                                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (신) 토스페이먼츠   | https://tx-gateway-service.prod.iamport.co/virtual-account/webhook-event/tosspayments                                                                         |
+| KSNET               | https://tx-gateway-service.prod.iamport.co/ksnet                                                                                                              |
+| (신) 스마트로       | 입금 통보, 환불이체 URL 동일: https://tx-gateway-service.prod.iamport.co/smartro-v2                                                                           |
+| (신) 나이스페이먼츠 | https://tx-gateway-service.prod.iamport.co/nicepay-v2                                                                                                         |
+| 웰컴페이먼츠        | https://tx-gateway-service.prod.iamport.co/welcome                                                                                                            |
+</VersionGate>
 
+<VersionGate client:idle default="v1">
 ### KG 이니시스
 
 "KG이니시스" > "포트원 서버"로 이루어지는 통지는 **KG이니시스 상점관리자 페이지**에서 다음과 같은 추가 설정이 필요합니다.
 "상점정보" > "결제수단정보" 메뉴에서, "입금통보 URL(IP)"를 `https://service.iamport.kr/inicis_payments/notice_vbank` 로 설정해주세요.
 
 <img src="https://djqafk2qzyjhg.cloudfront.net/img/inicis_vbank.png" />
+</VersionGate>
 
+<VersionGate client:idle default="v1">
 ### KCP
 
 "KCP" > "포트원 서버"로 이루어지는 통지는 **KCP 상점관리자 페이지**에서 다음과 같은 추가 설정이 필요합니다.\
 "상점정보관리" > "정보변경" > "공통URL정보" 메뉴에서, "공통 URL" `https://service.iamport.kr/kcp_payments/notice_vbank` 로 설정해주세요.
 
 <Figure src="https://djqafk2qzyjhg.cloudfront.net/img/kcp_vbank.png" />
+</VersionGate>
 
+<VersionGate client:idle default="v1">
 ### (구) 나이스페이먼츠
 
 "나이스페이먼츠" > "포트원 서버"로 이루어지는 통지는 **나이스페이 상점관리자 페이지**에서 다음과 같은 추가 설정이 필요합니다.
@@ -53,12 +70,17 @@ import welcome_image2 from "./_assets/welcome/welcome-webhook-guide-2.png";
 (OK체크를 체크해주시고, 재전송 횟수는 1혹은 그 이상으로 해주세요.)
 
 <Figure src={nice_v1_image1} />
+</VersionGate>
 
+<VersionGate client:idle default="v1">
 ### KICC
 
 > "KICC서버" > "포트원 서버"로 이루어지는 통지는 MID 발급 시 자동으로 등록됩니다.
 > 만약, 입금통보가 수신되지 않는다면 KICC 영업담당자 혹은 대표 연락처(1644-2004, [easypay_cs@kicc.co.kr](mailto:easypay_cs@kicc.co.kr))로 연락하셔서 "가상계좌 입금통보 URL" 설정 확인을 요청주세요.
 
+</VersionGate>
+
+<VersionGate client:idle default="v1">
 ### 헥토파이낸셜
 
 "헥토파이낸셜 서버" > "포트원 서버"로 이루어지는 통지는 **헥토파이낸셜 담당자 및 기술팀**에 메일로 요청해주셔야 합니다.
@@ -72,6 +94,9 @@ settle_pgdev@settlebank.co.kr(개발팀) 에 발급받으신 MID와 함께 아�
 >
 > 설정이 완료되면 회신 부탁드립니다.
 
+</VersionGate>
+
+<VersionGate client:idle default="v1">
 ### 키움페이
 
 <Figure src="/gitbook-assets/ko/image (184) (1).png" />
@@ -82,6 +107,7 @@ settle_pgdev@settlebank.co.kr(개발팀) 에 발급받으신 MID와 함께 아�
 
 - 발행 통지 URL: https://service.iamport.kr/daou_payments/result
 - 결과 통지 URL: https://service.iamport.kr/daou_payments/notice_vbank
+</VersionGate>
 
 ### (신) 토스페이먼츠
 

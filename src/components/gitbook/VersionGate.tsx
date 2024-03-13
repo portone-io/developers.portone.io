@@ -7,6 +7,7 @@ interface Props {
   default: "v1" | "v2";
   v1?: React.ReactNode;
   v2?: React.ReactNode;
+  exactMatch?: boolean;
   children?: React.ReactNode;
 }
 
@@ -18,10 +19,14 @@ export default function VersionGate(props: Props) {
   const v2Content =
     props.default === "v2" ? props.v2 ?? props.children : props.v2;
 
+  const exactMatch = props.exactMatch ?? false;
+
   return (
     <>
-      {systemVersion !== "v1" && v2Content}
-      {systemVersion !== "v2" && v1Content}
+      {(exactMatch ? systemVersion === "v2" : systemVersion !== "v1") &&
+        v2Content}
+      {(exactMatch ? systemVersion === "v1" : systemVersion !== "v2") &&
+        v1Content}
     </>
   );
 }
