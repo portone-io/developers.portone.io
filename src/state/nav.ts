@@ -23,12 +23,18 @@ if (isClient) {
 
 export const slugSignal = signal<string>("");
 
+const parseSystemVersion = (value: unknown) => {
+  return ["v1", "v2"].includes(value as string)
+    ? (value as SystemVersion)
+    : "v1"; // default
+};
+
 export const systemVersionSignal = signal(getInitialSystemVersion());
 function getInitialSystemVersion() {
   if (isServer) return "all";
   const storageItem = globalThis.sessionStorage.getItem("systemVersion");
   const searchParams = new URLSearchParams(location.search);
-  return (searchParams.get("v") || storageItem || "v1") as SystemVersion;
+  return parseSystemVersion(searchParams.get("v") || storageItem);
 }
 if (isClient) {
   effect(() => {
