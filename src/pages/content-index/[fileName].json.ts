@@ -1,9 +1,7 @@
-import type { APIRoute, GetStaticPaths } from "astro";
+import type { APIRoute } from "astro";
 import * as yaml from "js-yaml";
 
 import { toPlainText } from "~/misc/mdx";
-
-export const prerender = true;
 
 const indexFilesMapping = {
   blog: "blog/",
@@ -14,11 +12,6 @@ const indexFilesMapping = {
 type IndexFileName = keyof typeof indexFilesMapping;
 const isIndexFileName = (value: string): value is IndexFileName =>
   value in indexFilesMapping;
-
-export const getStaticPaths: GetStaticPaths = () =>
-  Object.keys(indexFilesMapping).map((fileName) => ({
-    params: { fileName },
-  }));
 
 export const GET: APIRoute = async ({ params }) => {
   const { fileName } = params;

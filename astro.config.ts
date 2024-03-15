@@ -102,6 +102,10 @@ export default defineConfig({
       ],
     ],
   },
-  output: "hybrid",
-  adapter: vercel(),
+  output: "server",
+  adapter: vercel({
+    isr: {
+      expiration: 180,
+    },
+  }),
 });

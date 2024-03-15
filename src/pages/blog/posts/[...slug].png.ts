@@ -4,8 +4,6 @@ import { getEntryBySlug } from "astro:content";
 import authors from "~/content/blog/_authors.yaml";
 import { generate } from "~/misc/opengraph/image-generator";
 
-export const prerender = false;
-
 export const GET: APIRoute = async ({ params }) => {
   const { slug } = params;
   const entry = await getEntryBySlug("blog", slug!);

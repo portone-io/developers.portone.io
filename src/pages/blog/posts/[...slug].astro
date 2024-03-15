@@ -15,25 +15,15 @@ import authors from "~/content/blog/_authors.yaml";
 import LayoutBase from "~/layouts/LayoutBase.astro";
 // import NavigationMenu from "~/components/blog/NavigationMenu";
 
-export async function getStaticPaths() {
-  const blogEntries = await getCollection("blog");
-  return blogEntries.map((entry) => {
-    return {
-      params: { slug: entry.slug },
-      props: { entry, slug: entry.slug },
-    };
-  });
-}
-
-const entriesPromise = getCollection("blog").then((entries) =>
+const { slug } = Astro.params;
+const entries = await getCollection("blog").then((entries) =>
   entries.sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
 );
+const entry = entries.find((entry) => entry.slug === slug);
+if (!entry) return new Response(null, { status: 404 });
 
-const { entry } = Astro.props;
 const { title, description, author: authorId } = entry.data;
 const { Content, headings } = await entry.render();
-
-const entries = await entriesPromise;
 
 const author = authors[authorId];
 ---

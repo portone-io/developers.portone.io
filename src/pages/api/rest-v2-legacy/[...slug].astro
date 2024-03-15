@@ -12,20 +12,11 @@ import Trackers from "~/layouts/Trackers.astro";
 import TrackingScript from "~/layouts/TrackingScript.astro";
 import type { Lang } from "~/type";
 
-export async function getStaticPaths() {
-  const docEntries = await getCollection("docs");
-  const legacyV2ApiEntries = docEntries.filter((entry) =>
-    entry.slug.startsWith("ko/api-v2/"),
-  );
-  return legacyV2ApiEntries.map((entry) => {
-    const [_ko, _apiv2, ...fragments] = entry.slug.split("/");
-    const slug = fragments.join("/");
-    return { params: { slug }, props: { entry, slug } };
-  });
-}
-
 const lang: Lang = "ko";
-const { entry, slug } = Astro.props;
+const { slug } = Astro.props;
+const docEntries = await getCollection("docs");
+const entry = docEntries.find((entry) => entry.slug === `ko/api-v2/${slug}`);
+if (!entry) return new Response(null, { status: 404 });
 const { title, description } = entry.data;
 const mdx = await entry.render();
 const Content = mdx.Content;
