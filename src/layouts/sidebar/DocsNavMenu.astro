@@ -1,5 +1,9 @@
 ---
-import { navOpenStatesSignal, slugSignal } from "~/state/nav";
+import {
+  getServerSystemVersion,
+  navOpenStatesSignal,
+  slugSignal,
+} from "~/state/nav";
 import { calcNavMenuAncestors, navMenu } from "~/state/server-only/nav";
 import type { Lang } from "~/type";
 
@@ -20,6 +24,8 @@ const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
   [slug, true],
 ]));
 slugSignal.value = slug;
+
+const serverSystemVersion = getServerSystemVersion(Astro);
 ---
 
 <script>
@@ -65,7 +71,7 @@ slugSignal.value = slug;
     class="relative flex-1 overflow-y-scroll"
     data-slug={slug}
     data-navopenstates={JSON.stringify(navOpenStates)}
-    data-selected-system-version="v1"
+    data-selected-system-version={serverSystemVersion}
   >
     <ul class="flex flex-col gap-1 px-2 pb-4">
       {

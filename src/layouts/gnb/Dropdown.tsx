@@ -9,15 +9,24 @@ export interface DropdownProps {
   children: React.ReactNode;
   link: string | Record<SystemVersion, string>;
   items: DropdownItem[];
+  serverSystemVersion: SystemVersion;
 }
 export interface DropdownItem {
   label: React.ReactNode;
   link: string;
   systemVersion?: SystemVersion;
 }
-export default function Dropdown({ children, link, items }: DropdownProps) {
+export default function Dropdown({
+  children,
+  link,
+  items,
+  serverSystemVersion,
+}: DropdownProps) {
   const showItemsSignal = useSignal(false);
-  const systemVersion = useServerFallback(systemVersionSignal.value, "all");
+  const systemVersion = useServerFallback(
+    systemVersionSignal.value,
+    serverSystemVersion,
+  );
   return (
     <div
       class="relative h-full inline-flex flex-col cursor-default items-center"

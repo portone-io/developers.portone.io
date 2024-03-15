@@ -10,7 +10,14 @@ function LeftSidebarItem(props: NavMenuPage) {
   const pageSlug = slugSignal.value;
   const isActive = pageSlug === slug;
   const href = `/docs${slug}`;
-  return <JustLink title={title} href={href} isActive={isActive} />;
+  return (
+    <JustLink
+      title={title}
+      href={href}
+      isActive={isActive}
+      systemVersion={props.systemVersion}
+    />
+  );
 }
 export default LeftSidebarItem;
 
@@ -25,7 +32,7 @@ function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
         class={`flex ${getLinkStyle(isActive)} pr-0`}
         data-active={isActive && "active"} // true로 지정하면 SSR시에는 값 없이 attr key만 들어감
       >
-        <a href={`/docs${slug}`} class="grow">
+        <a href={`/docs${slug}?v=${systemVersion}`} class="grow">
           <LinkTitle title={title} />
         </a>
         <button
@@ -63,7 +70,7 @@ export interface JustLinkProps {
   title: string;
   href: string;
   isActive: boolean;
-  systemVersion?: SystemVersion;
+  systemVersion?: SystemVersion | undefined;
   event?: {
     name: string;
     props: object;
@@ -79,7 +86,7 @@ export function JustLink({
   return (
     <a
       data-system-version={systemVersion}
-      href={href}
+      href={systemVersion ? `${href}?v=${systemVersion}` : href}
       class={getLinkStyle(isActive)}
       data-active={isActive && "active"}
       onClick={() => event && trackEvent(event.name, event.props)}
