@@ -11,8 +11,6 @@ import { transformerMetaHighlight } from "@shikijs/transformers";
 import { defineConfig } from "astro/config";
 import unocss from "unocss/astro";
 
-import contentIndex from "./src/content-index";
-
 // https://astro.build/config
 export default defineConfig({
   site: "https://developers.portone.io/",
@@ -20,7 +18,6 @@ export default defineConfig({
     preact({ compat: true }),
     mdx(),
     unocss({ injectReset: true }),
-    contentIndex,
     sitemap({
       customPages: ["/api/rest-v1/", "/api/rest-v2/"].map(
         (url) => `https://developers.portone.io${url}`,
