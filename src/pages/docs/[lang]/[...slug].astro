@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 
-import redirYaml from "~/content/docs/_redir.yaml";
 import Docs from "~/layouts/Docs.astro";
+import { getRedirection } from "~/misc/redirection";
 import { isLang } from "~/type";
 
 const { lang, slug } = Astro.params;
@@ -11,13 +11,8 @@ if (!isLang(lang) || !slug) {
 }
 
 const absSlug = `/${lang}/${slug}`;
-const redir = redirYaml.find(({ old }) => old === absSlug);
-if (redir) {
-  return new Response(null, {
-    status: 301,
-    headers: { Location: redir.new },
-  });
-}
+const redirection = getRedirection(absSlug);
+if (redirection) return redirection;
 
 const entries = await getCollection("docs");
 const entry = entries.find((entry) => entry.slug === `${lang}/${slug}`);
