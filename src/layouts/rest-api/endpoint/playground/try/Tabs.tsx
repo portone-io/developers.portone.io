@@ -10,7 +10,7 @@ export interface TabsProps<Id extends string> {
   tabs: (Tab<Id> | false | 0)[];
 }
 export function Tabs<Id extends string>({ tabs }: TabsProps<Id>) {
-  const _tabs = tabs.filter(Boolean) as Tab<Id>[];
+  const _tabs = tabs.filter(Boolean);
   const currTabIdSignal = useSignal(_tabs[0]?.id || "");
   const currTabId = currTabIdSignal.value;
   const currTab = _tabs.find((tab) => tab.id === currTabId);
