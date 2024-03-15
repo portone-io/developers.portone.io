@@ -1,5 +1,9 @@
 export type Lang = "ko" | "en";
 
+export const isLang = (lang: unknown): lang is Lang => {
+  return ["ko", "en"].includes(String(lang));
+};
+
 export type SystemVersion = "all" | "v1" | "v2";
 
 export type YamlNavMenuToplevelItem =

@@ -1,5 +1,4 @@
 ---
-import type { InferGetStaticParamsType, InferGetStaticPropsType } from "astro";
 import { format } from "date-fns";
 
 import * as prose from "~/components/prose";
@@ -9,31 +8,20 @@ import LayoutBase from "~/layouts/LayoutBase.astro";
 import Nav from "~/layouts/release-notes/Nav.astro";
 import { getReleaseNotes } from "~/misc/releaseNote";
 
-export async function getStaticPaths() {
-  const { apiSdkNotes, consoleNotes } = await getReleaseNotes();
-  return [
-    ...apiSdkNotes.map(({ slug, entry }) => ({
-      params: { slug },
-      props: { entry, apiSdkNotes, consoleNotes },
-    })),
-    ...consoleNotes.map(({ slug, entry }) => ({
-      params: { slug },
-      props: { entry, apiSdkNotes, consoleNotes },
-    })),
-  ];
-}
+const { slug } = Astro.params;
+if (!slug) return new Response(null, { status: 404 });
+const { apiSdkNotes, consoleNotes } = await getReleaseNotes();
+const { entry } =
+  [...apiSdkNotes, ...consoleNotes].find((entry) => entry.slug === slug) ?? {};
+if (!entry) return new Response(null, { status: 404 });
 
-type Params = InferGetStaticParamsType<typeof getStaticPaths>;
-type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-
-const { slug } = Astro.params as Params;
-const { entry, apiSdkNotes, consoleNotes } = Astro.props as Props;
+const type = entry.slug.startsWith("api-sdk") ? "apiSdkNotes" : "consoleNotes";
 const { releasedAt, writtenAt } = entry.data;
 const { Content } = await entry.render();
-
-const label = apiSdkNotes.some((note) => note.slug === slug)
-  ? "API / SDK"
-  : "관리자콘솔";
+const label = {
+  apiSdkNotes: "API / SDK",
+  consoleNotes: "관리자콘솔",
+}[type];
 const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
 ---
 

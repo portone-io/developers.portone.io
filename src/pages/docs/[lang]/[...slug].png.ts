@@ -3,8 +3,6 @@ import { getEntryBySlug } from "astro:content";
 
 import { generate } from "~/misc/opengraph/image-generator";
 
-export const prerender = false;
-
 export const GET: APIRoute = async ({ params }) => {
   const { lang, slug } = params;
   const entry = await getEntryBySlug("docs", `${lang}/${slug}`);
