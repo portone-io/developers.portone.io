@@ -199,7 +199,7 @@ export function crawlRefs(
     visitUnion(typeDef) {
       const refs = typeDef
         .oneOf!.map((def) => def.$ref || def.items?.$ref)
-        .filter(Boolean) as string[];
+        .filter(Boolean);
       for (const ref of refs) push(ref);
       defaultVisitor.visitUnion.call(this, typeDef);
     },
