@@ -18,7 +18,7 @@ const isEmptyStaticHtml = (node: React.ReactNode) => {
     props &&
       typeof props === "object" &&
       "value" in props &&
-      JSON.stringify(props.value),
+      !JSON.parse(JSON.stringify(props.value)),
   );
 };
 
@@ -27,11 +27,10 @@ export default function VersionGate(props: Props) {
 
   const hasV1 = !isEmptyStaticHtml(props.v1);
   const hasV2 = !isEmptyStaticHtml(props.v2);
-
-  const v1Content =
-    props.default === "v1" ? (hasV1 ? props.v1 : props.children) : props.v1;
-  const v2Content =
-    props.default === "v2" ? (hasV2 ? props.v2 : props.children) : props.v2;
+  const v1 = hasV1 ? props.v1 : null;
+  const v2 = hasV2 ? props.v2 : null;
+  const v1Content = props.default === "v1" ? v1 ?? props.children : v1;
+  const v2Content = props.default === "v2" ? v2 ?? props.children : v2;
 
   return (
     <>
