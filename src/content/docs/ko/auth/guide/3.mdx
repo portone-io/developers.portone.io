@@ -3,10 +3,10 @@ title: 3. 결제 요청하기
 description: 파라미터값을 조합하여 결제창을 호출 할 수 있습니다.
 ---
 
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Youtube from "~/components/gitbook/Youtube.astro";
+import Hint from "~/components/Hint.astro";
 
 [**IMP 객체 초기화**](2)가 완료 되었으면 이제 결제창을 호출할 차례입니다.
 
@@ -15,24 +15,27 @@ import Youtube from "~/components/gitbook/Youtube.astro";
 <Tabs>
 <Tab title="JavaScript">
 ```javascript
-  function requestPay() {
-    IMP.request_pay({
+function requestPay() {
+  IMP.request_pay(
+    {
       pg: "kcp.{상점ID}",
       pay_method: "card",
-      merchant_uid: "ORD20180131-0000011",   // 주문번호
+      merchant_uid: "ORD20180131-0000011", // 주문번호
       name: "노르웨이 회전 의자",
-      amount: 64900,                         // 숫자 타입
+      amount: 64900, // 숫자 타입
       buyer_email: "gildong@gmail.com",
       buyer_name: "홍길동",
       buyer_tel: "010-4242-4242",
       buyer_addr: "서울특별시 강남구 신사동",
-      buyer_postcode: "01181"
-    }, function (rsp) { // callback
+      buyer_postcode: "01181",
+    },
+    function (rsp) {
+      // callback
       //rsp.imp_uid 값으로 결제 단건조회 API를 호출하여 결제결과를 판단합니다.
-    });
-  }
+    },
+  );
+}
 ```
-
 </Tab>
 
 <Tab title="React.js">
@@ -63,16 +66,17 @@ class RequestPay extends React.Component {
     });
   }
 ```
-
 </Tab>
 
 <Tab title="Vue.js">
 ```javascript
-<script>
-  export default {
-    methods: {
-      requestPay: function () {
-        IMP.request_pay({ // param
+export default {
+  methods: {
+    requestPay: function () {
+      // 아임포트의 결제 모듈을 사용하여 결제를 요청하는 함수
+      IMP.request_pay(
+        {
+          // 결제 요청 파라미터
           pg: "kcp.{상점ID}",
           pay_method: "card",
           merchant_uid: "ORD20180131-0000011",
@@ -82,32 +86,35 @@ class RequestPay extends React.Component {
           buyer_name: "홍길동",
           buyer_tel: "010-4242-4242",
           buyer_addr: "서울특별시 강남구 신사동",
-          buyer_postcode: "01181"
-        }, rsp => { // callback
+          buyer_postcode: "01181",
+        },
+        (rsp) => {
+          // 결제 결과 콜백 함수
           if (rsp.success) {
-            ...,
-            // 결제 성공 시 로직,
-            ...
+            // 결제 성공 시
+            // 추가적인 로직을 수행할 부분
+            console.log("결제가 성공하였습니다.");
+            console.log(rsp); // 결제 성공 응답 정보 확인
           } else {
-            ...,
-            // 결제 실패 시 로직,
-            ...
+            // 결제 실패 시
+            // 추가적인 로직을 수행할 부분
+            console.log("결제가 실패하였습니다.");
+            console.log(rsp); // 결제 실패 응답 정보 확인
           }
-        });
-      }
-    }
-  }
-</script>
+        },
+      );
+    },
+  },
+};
 ```
-
 </Tab>
 </Tabs>
 
 <Hint style="info">
 **주문번호(merchant\_uid) 생성 시 유의사항**
 
-- 주문번호는 결제창 요청 시 항상 **고유 값**으로 채번 되어야 합니다.
-- 결제 완료 이후 **결제 위변조** 대사 작업시 주문번호를 이용하여 검증이 필요하므로 주문번호는 가맹점 서버에서 **고유하게**(unique)채번하여 **DB 상에 저장**해주세요
+- 주문번호는 결제창 요청 시 항상 **고유 값**으로 채번하여 사용해야 합니다.
+- 결제 완료 후 **결제 위변조** 대사 작업시 주문번호를 이용하여 검증이 필요합니다. 따라서 주문번호는 고객사 서버에서 **고유하게**(unique)채번한 후 **DB에 저장**하는 것을 권고드립니다.
 
 </Hint>
 
