@@ -1,7 +1,15 @@
-import type { APIRoute } from "astro";
+import type { APIRoute, GetStaticPaths } from "astro";
 import * as yaml from "js-yaml";
 
 import { toPlainText } from "~/misc/mdx";
+
+export const prerender = true;
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return Object.keys(indexFilesMapping).map((fileName) => ({
+    params: { fileName },
+  }));
+};
 
 const indexFilesMapping = {
   blog: "blog/",
@@ -41,16 +49,15 @@ export const GET: APIRoute = async ({ params }) => {
           const entrySlug = String(
             "slug" in frontmatter ? frontmatter.slug : match[1],
           );
-          return [entrySlug, { ...frontmatter, slug, md }] as const;
+          return [
+            entrySlug,
+            { ...frontmatter, slug: entrySlug, text: toPlainText(md) },
+          ] as const;
         }),
       )
     ).filter(Boolean),
   );
-  const indexes = Object.values(mdxTable).map((mdx) => ({
-    ...mdx,
-    text: toPlainText(mdx.md),
-  }));
-  return new Response(JSON.stringify(indexes), {
+  return new Response(JSON.stringify(Object.values(mdxTable)), {
     headers: {
       "Content-Type": "application/json",
     },
