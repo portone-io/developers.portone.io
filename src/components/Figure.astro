@@ -1,11 +1,12 @@
 ---
-import { Image } from "astro:assets";
+import { type LocalImageProps, Picture } from "astro:assets";
 
 interface Props {
-  src: string | ImageMetadata;
+  src: LocalImageProps["src"];
   caption?: string;
-  width?: string;
+  width?: string | number;
 }
+
 const { src, caption, width } = Astro.props;
 ---
 
@@ -14,7 +15,12 @@ const { src, caption, width } = Astro.props;
     typeof src === "string" ? (
       <img class="border" src={src} alt={caption} width={width} />
     ) : (
-      <Image src={src} alt={caption ?? ""} />
+      <Picture
+        src={src}
+        alt={caption ?? ""}
+        width={typeof width === "number" ? width : Number(width)}
+        formats={["avif", "webp"]}
+      />
     )
   }
   {caption && <figcaption class="text-sm text-slate-5">{caption}</figcaption>}
