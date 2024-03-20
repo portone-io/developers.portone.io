@@ -15,7 +15,9 @@ import Hint from "~/components/Hint.astro";
 
 휴대폰 본인인증 서비스란 본인 명의로 개통한 휴대폰을 이용하여 최소한의 개인정보를 입력하는 인증 절차를 거쳐 본인 여부와 입력한 정보의 정확성을 확인하여 주는 서비스입니다.
 
-고객은 웹사이트에 가입, 결제, 또는 성인 인증 등을 위해 본인인증을 시행합니다. 본인인증은 모바일 기기에 설치된 본인인증 전용 앱을 이용하거나 사용자 본인 정보(이름, 생년월일, 휴대폰번호)를 인증요청 페이지에 입력한 후 문자로 온 인증번호를 기입하는 방식으로 이루어집니다.
+고객은 웹사이트에 가입, 결제, 또는 성인 인증 등을 위해 본인인증을 시행합니다. 본인인증은 모바일
+기기에 설치된 본인인증 전용 앱을 이용하거나 사용자 본인 정보(이름, 생년월일, 휴대폰번호)를 인증요청
+페이지에 입력한 후 문자로 온 인증번호를 기입하는 방식으로 이루어집니다.
 
 <Figure src="/gitbook-assets/ko/image (99).png" caption="휴대폰 본인인증 화면예" />
 
@@ -51,7 +53,9 @@ PortOne.requestIdentityVerification({
 });
 ```
 
-**identityVerificationId**는 본인인증 건을 구분하는 문자열로, 본인인증 요청 및 조회에 필요합니다. 같은 identityVerificationId에 대해 여러 번의 본인인증 시도가 가능하나, 최종적으로 인증에 성공하는 것은 단 한 번만 가능합니다.
+**identityVerificationId**는 본인인증 건을 구분하는 문자열로, 본인인증 요청 및 조회에 필요합니다.
+같은 identityVerificationId에 대해 여러 번의 본인인증 시도가 가능하나, 최종적으로 인증에 성공하는
+것은 단 한 번만 가능합니다.
 
 ## 3. 본인인증 완료 처리 (브라우저)
 
@@ -90,7 +94,10 @@ const verificationResult = await fetch(
 
 ### 3-1. redirect 방식의 경우
 
-모바일 환경에서의 본인인증은 대부분 redirect 방식으로 이루어집니다. redirect 방식에서는 브라우저가 본인인증창으로 리다이렉트되었다가, 인증창에서의 작업이 끝나면 지정한 `redirectUrl`로 다시 리다이렉트됩니다. 이 경우에는 함수 호출 결과를 이용할 수 없고, 인증 성공 여부 등은 [쿼리 문자열](https://en.wikipedia.org/wiki/Query_string)로 전달받게 됩니다.
+모바일 환경에서의 본인인증은 대부분 redirect 방식으로 이루어집니다. redirect 방식에서는 브라우저가
+본인인증창으로 리다이렉트되었다가, 인증창에서의 작업이 끝나면 지정한 `redirectUrl`로 다시
+리다이렉트됩니다. 이 경우에는 함수 호출 결과를 이용할 수 없고, 인증 성공 여부 등은 [쿼리
+문자열](https://en.wikipedia.org/wiki/Query_string)로 전달받게 됩니다.
 
 ```javascript
 PortOne.requestIdentityVerification({
@@ -107,7 +114,10 @@ PortOne.requestIdentityVerification({
 |code                  |오류 코드 |실패 시|
 |message               |오류 문구 |실패 시|
 
-예를 들어 identityVerificationId가 `identity-verification-39ecfa97`, redirectUrl이 `https://example.com/identity-verification-redirect`인 경우, 결제 성공 시에 `https://example.com/identity-verification-redirect?identityVerificationId=identity-verification-39ecfa97`로 리다이렉트됩니다.
+예를 들어 identityVerificationId가 `identity-verification-39ecfa97`, redirectUrl이
+`https://example.com/identity-verification-redirect`인 경우, 결제 성공 시에
+`https://example.com/identity-verification-redirect?identityVerificationId=identity-verification-39ecfa97`로
+리다이렉트됩니다.
 
 ## 4. 인증 완료 처리 (서버)
 

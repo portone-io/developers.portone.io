@@ -10,7 +10,12 @@ import Hint from "~/components/Hint.astro";
 
 ## 0. Definition
 
-Authenticated payment refers to a payment method that requests a credit card payment with the authentication key after receiving the authentication result for payment from the PG. It is the most popular payment method in Korea. When a payment is requested from the checkout page, the payment window of each PG is presented to the user. Once payment is authenticated in the the payment module of the credit card company selected by the user, payment request is processed based on the authentication result.
+Authenticated payment refers to a payment method that requests a credit card payment with the
+authentication key after receiving the authentication result for payment from the PG. It is the most
+popular payment method in Korea. When a payment is requested from the checkout page, the payment
+window of each PG is presented to the user. Once payment is authenticated in the the payment module
+of the credit card company selected by the user, payment request is processed based on the
+authentication result.
 
 <Figure src="/gitbook-assets/en/payment flow.png" caption="Basic authenticated payment flow" />
 
@@ -23,7 +28,8 @@ Authenticated payment refers to a payment method that requests a credit card pay
 - ISP: authenticates pre-registered card information through a public key-based digital certificate
 - MPI: authenticates card information by entering the card number, CVC, and secure click password.
 
-Recently, most credit card companies support their own **simple payment** service that allows users to pre-register a credit card and use the **6-digit payment password** to easily make a payment.
+Recently, most credit card companies support their own **simple payment** service that allows users
+to pre-register a credit card and use the **6-digit payment password** to easily make a payment.
 
 <Figure src="/gitbook-assets/en/image (138).png" caption="NHN KCP authenticated payment - Shinhan Card simple pay window" />
 
@@ -78,7 +84,8 @@ Add the JS library to your checkout page.
 
 Once [**IMP object initialization**](2.) is complete, you can open the payment window.
 
-You can pass the [**parameters**](../../sdk/javascript-sdk/) required to call the payment window in the first argument of the **request\_pay** function.
+You can pass the [**parameters**](../../sdk/javascript-sdk/) required to call the payment window in
+the first argument of the **request\_pay** function.
 
 <Tabs>
   <Tab title="JavaScript">
@@ -242,7 +249,8 @@ You can pass the [**parameters**](../../sdk/javascript-sdk/) required to call th
 
 ## 4-a. Process payment result (iframe)
 
-When the payment process is completed successfully, you can receive the payment result depending on the payment window type as follows:
+When the payment process is completed successfully, you can receive the payment result depending on
+the payment window type as follows:
 
 |        iframe       |        Popup       |
 |:-------------------:|:------------------:|
@@ -261,7 +269,8 @@ When the payment process is completed successfully, you can receive the payment 
   For **PayPal** payments, the payment window is loaded as a **pop-up (new window)** in a PC environment and you can also receive the payment result through **m\_redirect\_url**.
 </Hint>
 
-> The following sample code processes the response to a payment request in **a typical PC environment** where the payment window is **loaded as iframe**.
+> The following sample code processes the response to a payment request in **a typical PC
+> environment** where the payment window is **loaded as iframe**.
 
 <Tabs>
   <Tab title="JavaScript">
@@ -315,7 +324,11 @@ When the payment process is completed successfully, you can receive the payment 
   </Tab>
 </Tabs>
 
-Based on the the payment result (sucess/fail) in the response object ([**rsp**](../../sdk/javascript-sdk/)) returned after the payment process is complete, add the post-payment processing logic in the **callback** function. When the payment is successful, add the logic to **send the payment ID (imp\_uid) and order ID (merchant\_uid) to the server** as shown above.
+Based on the the payment result (sucess/fail) in the response object
+([**rsp**](../../sdk/javascript-sdk/)) returned after the payment process is complete, add the
+post-payment processing logic in the **callback** function. When the payment is successful, add the
+logic to **send the payment ID (imp\_uid) and order ID (merchant\_uid) to the server** as shown
+above.
 
 > For information about the response parameter passed to the **callback** function, refer to [<mark style="color:red;">**rsp**</mark>](../../sdk/javascript-sdk/undefined-1).
 
@@ -325,7 +338,9 @@ Based on the the payment result (sucess/fail) in the response object ([**rsp**](
 
 ## 4-b. Process payment result (redirect)
 
-> The following sample code processes the response to a payment request in a typical **mobile environment** where the payment window is **redirected to a new page** to process the payment result.
+> The following sample code processes the response to a payment request in a typical **mobile
+> environment** where the payment window is **redirected to a new page** to process the payment
+> result.
 
 <Tabs>
   <Tab title="JavaScript">
@@ -347,7 +362,8 @@ Based on the the payment result (sucess/fail) in the response object ([**rsp**](
   </Tab>
 </Tabs>
 
-If **m\_redirect\_url** is specified as the **request\_pay** function parameter as above, the payment result is sent to the URL address in the form of a query string after payment is completed.
+If **m\_redirect\_url** is specified as the **request\_pay** function parameter as above, the
+payment result is sent to the URL address in the form of a query string after payment is completed.
 
 The following is an example of redirecting URL based on the query string.
 
@@ -397,8 +413,10 @@ The following is an example of redirecting URL based on the query string.
 Based on the payment information from the client, the server verifies the <mark style="color:red;">**payment amount for fraud**</mark> and saves the payment information in the database if needed. The following are the steps for verifying the payment information.
 
 - Server receives the i'mport payment ID (**imp\_uid**) and order ID (**merchant\_uid**)
-- Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the payment details.
-- Based on the response, compare the actual payment amount with the payment request amount (from merchant's database).
+- Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the
+  payment details.
+- Based on the response, compare the actual payment amount with the payment request amount (from
+  merchant's database).
 
 ### <mark style="color:green;">**STEP 01**</mark> Server receives payment result
 
@@ -470,11 +488,15 @@ Based on the payment information from the client, the server verifies the <mark 
 
 > **Why fraud detection is necessary**
 >
-> Since the payment request is made on the client side, **a payment request can be forged or falsified by manipulating the client script**. Therefore, you must compare the original requested amount with the actual processed amount after the payment process is complete.
+> Since the payment request is made on the client side, **a payment request can be forged or
+> falsified by manipulating the client script**. Therefore, you must compare the original requested
+> amount with the actual processed amount after the payment process is complete.
 >
-> For example, when paying for a product that costs 100,000 won, an attacker can manipulate the client script to change the `amount` property to a value lower than the actual amount.
+> For example, when paying for a product that costs 100,000 won, an attacker can manipulate the
+> client script to change the `amount` property to a value lower than the actual amount.
 >
-> Since you cannot prevent script manipulation on the client, **you must check for fraud on the server after the payment is processed**.
+> Since you cannot prevent script manipulation on the client, **you must check for fraud on the
+> server after the payment is processed**.
 
 <Tabs>
   <Tab title="Node.js">
@@ -527,7 +549,11 @@ Based on the payment information from the client, the server verifies the <mark 
   </Tab>
 </Tabs>
 
-The original requested amount is queried from the database with the **`merchant_uid`**, and the actual processed amount is retrieved from the i'mport server with the **`imp_uid`**. The **two values ​​are compared** to verify that they match. **If the verification is successful, the payment information is saved in the database** and a response is returned based on the payment status (**`status`**). Otherwise, an error message is returned.
+The original requested amount is queried from the database with the **`merchant_uid`**, and the
+actual processed amount is retrieved from the i'mport server with the **`imp_uid`**. The **two
+values ​​are compared** to verify that they match. **If the verification is successful,
+the payment information is saved in the database** and a response is returned based on the payment
+status (**`status`**). Otherwise, an error message is returned.
 
 <Hint style="danger">
   The payment result must be processed on the database based on the data received through a [**webhook**](../../result/webhook) for stable processing without any missing result data.
@@ -535,7 +561,10 @@ The original requested amount is queried from the database with the **`merchant_
 
 ## 6. Complete payment
 
-In a typical **PC-environment** payment processed using an i**frame**, the payment response can be received via a **callback** function. When the result processing is completed on the merchant server, the result message based on the success of the payment is returned as shown in the following example.
+In a typical **PC-environment** payment processed using an i**frame**, the payment response can be
+received via a **callback** function. When the result processing is completed on the merchant
+server, the result message based on the success of the payment is returned as shown in the following
+example.
 
 <Tabs>
   <Tab title="JavaScript">
@@ -594,7 +623,8 @@ In a typical **PC-environment** payment processed using an i**frame**, the payme
   </Tab>
 </Tabs>
 
-In a typical **mobile environment** payment processed by redirecting to a new page, **process the payment complete message from the merchant endpoint URL** set in the **m\_redirect\_url** parameter.
+In a typical **mobile environment** payment processed by redirecting to a new page, **process the
+payment complete message from the merchant endpoint URL** set in the **m\_redirect\_url** parameter.
 
 <Hint style="info">
   **error\_msg and error\_code definitions**

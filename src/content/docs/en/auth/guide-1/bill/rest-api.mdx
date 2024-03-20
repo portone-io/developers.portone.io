@@ -8,16 +8,25 @@ import Hint from "~/components/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-You can use the i'mport REST API to request for a billing key to make a payment request. When you request for a billing key with the customer's credit card information, the i'mport server calls the PG's API to get a billing key. The card information is not saved during this process. This method has the following pros/cons:
+You can use the i'mport REST API to request for a billing key to make a payment request. When you
+request for a billing key with the customer's credit card information, the i'mport server calls the
+PG's API to get a billing key. The card information is not saved during this process. This method
+has the following pros/cons:
 
 - **Pros**: can **customize card registration form**.
-- **Cons**: must specify the **Terms of Use and Privacy Policy,** PG and credit card companies' requirements are strict for this service, and must take precautions to protect personal information.
+- **Cons**: must specify the **Terms of Use and Privacy Policy,** PG and credit card companies'
+  requirements are strict for this service, and must take precautions to protect personal
+  information.
 
 #### If you are planning to develop a merchant UI/UX-friendly payment environment, API integration is the right choice.
 
 ### <mark style="color:blue;">**STEP 01.**</mark> Accept credit card information
 
-Add input fields for card information as shown below. Create a hidden field to store the **customer_uid** to send to the server upon form submission. For corporate cards (excluding cards issued under an employee's name), enter a _10-digit business registration number_ for the `birth` parameter. The following example calls a `POST` request for `/subscription/issue-billing` with input values and **customer_uid** when you click the **Pay** button.
+Add input fields for card information as shown below. Create a hidden field to store the
+**customer_uid** to send to the server upon form submission. For corporate cards (excluding cards
+issued under an employee's name), enter a _10-digit business registration number_ for the `birth`
+parameter. The following example calls a `POST` request for `/subscription/issue-billing` with input
+values and **customer_uid** when you click the **Pay** button.
 
 <Hint style="info">
 **What is a customer\_uid?**
@@ -146,7 +155,8 @@ If you reuse the customer\_uid used to get the existing billing key, the existin
 
 ### <mark style="color:blue;">**STEP 02.**</mark> Extract card information
 
-Create an API endpoint to extract the card information from the request body. The following is a sample **API endpoint** that processes a `POST` request to `/subscription/issue-billing`.\
+Create an API endpoint to extract the card information from the request body. The following is a
+sample **API endpoint** that processes a `POST` request to `/subscription/issue-billing`.\
 
 <Tabs>
 <Tab title="Node.js">
@@ -173,7 +183,8 @@ Create an API endpoint to extract the card information from the request body. Th
 
 ### <mark style="color:blue;">**STEP 03.**</mark> Request billing key and handle response
 
-Request for a billing key by using the i'mport [**Get billing key REST API**](../../../api/api/) and return a response based on the result code.
+Request for a billing key by using the i'mport [**Get billing key REST API**](../../../api/api/) and
+return a response based on the result code.
 
 <Tabs>
 <Tab title="Node.js">
