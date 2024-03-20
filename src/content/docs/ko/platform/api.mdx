@@ -11,7 +11,8 @@ import Details from "~/components/gitbook/Details.astro";
 
 파트너 정산 Public API의 스펙을 소개합니다.
 
-포트원이 제공하는 관리자 콘솔을 통해 정산 업무를 확인하고자 한다면, **정산** 부분을 참고해주시고, 귀사의 자체 백오피스에 통합하길 원하신다면 전체 API 스펙을 검토해주시기 바랍니다.
+포트원이 제공하는 관리자 콘솔을 통해 정산 업무를 확인하고자 한다면, **정산** 부분을 참고해주시고,
+귀사의 자체 백오피스에 통합하길 원하신다면 전체 API 스펙을 검토해주시기 바랍니다.
 
 간단하게 api 사용방법을 원하신다면 [예제 페이지](https://developers.portone.io/platform/examples)를 참고해주세요.
 
@@ -59,11 +60,11 @@ GET /platform/transfer-filter-options
 **type** enum
 정산 타입
 
-| Enum Value   | Description    |
-| ------------ | -------------- |
-| ORDER        | 주문 정산      |
-| ORDER_CANCEL | 주문 취소 정산 |
-| MANUAL       | 수동 정산      |
+|Enum Value  |Description   |
+|------------|--------------|
+|ORDER       |주문 정산     |
+|ORDER_CANCEL|주문 취소 정산|
+|MANUAL      |수동 정산     |
 
 ---
 
@@ -88,13 +89,14 @@ GET /platform/transfer-filter-options
 **status** enum
 
 정산의 상태값
-|Enum Value|Description|
-| --- | --- |
-| SCHEDULED | 정산 시작일(settlementStartDate)이 현시점 이후일때 예약 상태 |
-| IN_PROCESS | 현시점이 정산 시작일 이후 정산일(settlementDate) 이전일때 진행중 상태 |
-| SETTLED | 현시점이 정산일 이후일때 완료 상태 |
-| IN_PAYOUT| 이체 중. 관리자 콘솔 내에서 대량이체 엑셀 파일을 받은 후 아직 이체완료 상태값 업데이트를 하지 않았을때|
-| PAID_OUT | 이체 완료 상태 |
+
+|Enum Value|Description                                                                                           |
+|----------|------------------------------------------------------------------------------------------------------|
+|SCHEDULED |정산 시작일(settlementStartDate)이 현시점 이후일때 예약 상태                                          |
+|IN_PROCESS|현시점이 정산 시작일 이후 정산일(settlementDate) 이전일때 진행중 상태                                 |
+|SETTLED   |현시점이 정산일 이후일때 완료 상태                                                                    |
+|IN_PAYOUT |이체 중. 관리자 콘솔 내에서 대량이체 엑셀 파일을 받은 후 아직 이체완료 상태값 업데이트를 하지 않았을때|
+|PAID_OUT  |이체 완료 상태                                                                                        |
 
 ---
 
@@ -222,6 +224,7 @@ payoutId의 내부 graphql 아이디
     </td>
   </tr>
 </table>
+
 ---
 
 **payment** dictionary
@@ -1189,6 +1192,7 @@ additionalFees.**policyId** string required
 <div>
 **Request body**
 one of 까지 다 표현되어 모든 파라미터가 나옵니다. 
+
 ```json
 {
   "partnerId": "string",
@@ -1412,20 +1416,20 @@ one of 까지 다 표현되어 모든 파라미터가 나옵니다.
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 400  | PlatformDiscountAmountOverflowError                                                                                           |
-| 400  | PlatformProductIdDuplicatedError                                                                                              |
-| 400  | PlatformSettlementExceededPaymentAmountError                                                                                  |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
-| 404  | PlatformPartnerNotFoundError                                                                                                  |
-| 404  | PlatformContractNotFoundError                                                                                                 |
-| 404  | PlatformAdditionalFeePoliciesNotFoundError                                                                                    |
-| 404  | PlatformDiscountSharePoliciesNotFoundError                                                                                    |
-| 404  | PlatformPaymentNotFoundError                                                                                                  |
-| 409  | PlatformTransferAlreadyExistsError                                                                                            |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|400 |PlatformDiscountAmountOverflowError                                                                                          |
+|400 |PlatformProductIdDuplicatedError                                                                                             |
+|400 |PlatformSettlementExceededPaymentAmountError                                                                                 |
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
+|404 |PlatformPartnerNotFoundError                                                                                                 |
+|404 |PlatformContractNotFoundError                                                                                                |
+|404 |PlatformAdditionalFeePoliciesNotFoundError                                                                                   |
+|404 |PlatformDiscountSharePoliciesNotFoundError                                                                                   |
+|404 |PlatformPaymentNotFoundError                                                                                                 |
+|409 |PlatformTransferAlreadyExistsError                                                                                           |
 
 </div>
 </div>
@@ -1733,25 +1737,25 @@ one of 로직에 해당되는 parameter가 다 표기되었습니다.
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 400  | PlatformCancelOrderDetailMismatchedError                                                                                      |
-| 400  | PlatformCancelProductQuantityExceededError                                                                                    |
-| 400  | PlatformCancellableAmountExceededError                                                                                        |
-| 400  | PlatformCancellableDiscountAmountExceededError                                                                                |
-| 400  | PlatformProductIdDuplicatedError                                                                                              |
-| 400  | PlatformDiscountSharePolicyIdDuplicatedError                                                                                  |
-| 400  | PlatformDiscountAmountOverflowError                                                                                           |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
-| 404  | PlatformTransferNotFoundError                                                                                                 |
-| 404  | PlatformCancellationNotFoundError                                                                                             |
-| 404  | PlatformProductIdNotFoundError                                                                                                |
-| 404  | PlatformPaymentNotFoundError                                                                                                  |
-| 404  | PlatformTransferDiscountSharePolicyNotFoundError                                                                              |
-| 409  | PlatformTransferAlreadyExistsError                                                                                            |
-| 409  | PlatformOrderTransferAlreadyCancelledError                                                                                    |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|400 |PlatformCancelOrderDetailMismatchedError                                                                                     |
+|400 |PlatformCancelProductQuantityExceededError                                                                                   |
+|400 |PlatformCancellableAmountExceededError                                                                                       |
+|400 |PlatformCancellableDiscountAmountExceededError                                                                               |
+|400 |PlatformProductIdDuplicatedError                                                                                             |
+|400 |PlatformDiscountSharePolicyIdDuplicatedError                                                                                 |
+|400 |PlatformDiscountAmountOverflowError                                                                                          |
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
+|404 |PlatformTransferNotFoundError                                                                                                |
+|404 |PlatformCancellationNotFoundError                                                                                            |
+|404 |PlatformProductIdNotFoundError                                                                                               |
+|404 |PlatformPaymentNotFoundError                                                                                                 |
+|404 |PlatformTransferDiscountSharePolicyNotFoundError                                                                             |
+|409 |PlatformTransferAlreadyExistsError                                                                                           |
+|409 |PlatformOrderTransferAlreadyCancelledError                                                                                   |
 
 </div>
 </div>
@@ -1855,13 +1859,13 @@ Schema
 
 **Error Code**
 
-| Code | Description                                                                                                                                   |
-| :--- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.                 |
-| 400  | PlatformUnavailableSettlementDateError: 사용할 수 없는 정산일이 요청된 경우. 요청한 정산일에 이체되지 않은 주문 정산 건이 없을 때 발생합니다. |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                                             |
-| 404  | PlatformPartnerNotFoundError                                                                                                                  |
+|Code|Description                                                                                                                                  |
+|:---|:--------------------------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.                |
+|400 |PlatformUnavailableSettlementDateError: 사용할 수 없는 정산일이 요청된 경우. 요청한 정산일에 이체되지 않은 주문 정산 건이 없을 때 발생합니다.|
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                                            |
+|404 |PlatformPartnerNotFoundError                                                                                                                 |
 
 </div>
 </div>
@@ -2041,7 +2045,9 @@ curl -X GET https://api.portone.com/v2/platform/transfers/{id} \
 
 </div>
 </div>
+
 ---
+
 ## 계약
 
 <div class="gap-4 md:grid grid-cols-2">
@@ -2191,12 +2197,12 @@ one of logic 으로 정액, 정률 중 하나만 사용할 수 있다.
 
             정산 주기의 종류를 나타냅니다. 값으론 daily, weekly, monthly, manualDates 가 있습니다.
 
-            | 값 | 설명 |
-            | --- | --- |
-            | **DAILY** | 매일 |
-            | **WEEKLY** | 주 n회. 최대 2회까지 가능 |
-            | **MONTHLY** | 달 n회. 최대 3회까지 가능  |
-            | **MANUALDATES** | 지정된 날짜 |
+           |값             |설명                     |
+           |---------------|-------------------------|
+           |**DAILY**      |매일                     |
+           |**WEEKLY**     |주 n회. 최대 2회까지 가능|
+           |**MONTHLY**    |달 n회. 최대 3회까지 가능|
+           |**MANUALDATES**|지정된 날짜              |
         </td>
       </tr>
       <tr>
@@ -3325,6 +3331,7 @@ MERCHANT: 부가세 파트너 미부담
 
   </tr>
 </table>
+
 ---
 
 **filter** dictionary
@@ -4087,6 +4094,7 @@ GET /platform/partners-dashbaord
 
 </div>
 </div>
+
 ---
 
 ### 파트너 다건 조회
@@ -4118,6 +4126,7 @@ GET /platform/partners-dashbaord
     <td>page.**number** integer required 페이지 번호. 0 부터 시작합니다.</td>
   </tr>
 </table>
+
 ---
 
 **filter** dictionary
@@ -4538,49 +4547,49 @@ id 를 제외한 모든 값을 수정할 수 있습니다.
 
 ### 은행 Enum Values
 
-| enum           | values                            |
-| -------------- | --------------------------------- |
-| BOK            | 한국은행                          |
-| KDB            | 산업은행                          |
-| IBK            | 기업은행                          |
-| KB             | 국민은행                          |
-| SUHYUP         | 수협은행                          |
-| EIB            | 수출입은행                        |
-| NH             | NH농협은행                        |
-| REGIONAL_NH    | 지역농축협                        |
-| WOORI          | 우리은행                          |
-| SCB            | SC제일은행                        |
-| CITI           | 한국씨티은행                      |
-| DAEGU          | 대구은행                          |
-| BUSAN          | 부산은행                          |
-| GWANGJU        | 광주은행                          |
-| JEJU           | 제주은행                          |
-| JEONBUK        | 전북은행                          |
-| GYEONGNAM      | 경남은행                          |
-| KFCC           | 새마을금고                        |
-| CREDIT_UNION   | 신협                              |
-| FSB            | 저축은행                          |
-| MISC           | 기타 외국계은행(중국 농업은행 등) |
-| MORGAN_STANLEY | 모간스탠리은행                    |
-| HSBC           | HSBC은행                          |
-| DEUTSCHE       | 도이치은행                        |
-| JPMC           | 제이피모간체이스은행              |
-| MIZUHO         | 미즈호은행                        |
-| MUFG           | 엠유에프지은행                    |
-| BOA            | BOA은행                           |
-| BNP            | 비엔피파리바은행                  |
-| NFCF           | 산림조합중앙회                    |
-| EPOST          | 우체국                            |
-| HANA           | 하나은행                          |
-| SHINHAN        | 신한은행                          |
-| KBANK          | 케이뱅크                          |
-| KAKAO          | 카카오뱅크                        |
-| TOSS_BANK      | 토스뱅크                          |
-| DAISHIN_SB     | 대신저축은행                      |
-| SBI_SB         | 에스비아이저축은행                |
-| HK_SB          | 에이치케이저축은행                |
-| WELCOME_SB     | 웰컴저축은행                      |
-| SHINHAN_SB     | 신한저축은행                      |
+|enum          |values                           |
+|--------------|---------------------------------|
+|BOK           |한국은행                         |
+|KDB           |산업은행                         |
+|IBK           |기업은행                         |
+|KB            |국민은행                         |
+|SUHYUP        |수협은행                         |
+|EIB           |수출입은행                       |
+|NH            |NH농협은행                       |
+|REGIONAL_NH   |지역농축협                       |
+|WOORI         |우리은행                         |
+|SCB           |SC제일은행                       |
+|CITI          |한국씨티은행                     |
+|DAEGU         |대구은행                         |
+|BUSAN         |부산은행                         |
+|GWANGJU       |광주은행                         |
+|JEJU          |제주은행                         |
+|JEONBUK       |전북은행                         |
+|GYEONGNAM     |경남은행                         |
+|KFCC          |새마을금고                       |
+|CREDIT_UNION  |신협                             |
+|FSB           |저축은행                         |
+|MISC          |기타 외국계은행(중국 농업은행 등)|
+|MORGAN_STANLEY|모간스탠리은행                   |
+|HSBC          |HSBC은행                         |
+|DEUTSCHE      |도이치은행                       |
+|JPMC          |제이피모간체이스은행             |
+|MIZUHO        |미즈호은행                       |
+|MUFG          |엠유에프지은행                   |
+|BOA           |BOA은행                          |
+|BNP           |비엔피파리바은행                 |
+|NFCF          |산림조합중앙회                   |
+|EPOST         |우체국                           |
+|HANA          |하나은행                         |
+|SHINHAN       |신한은행                         |
+|KBANK         |케이뱅크                         |
+|KAKAO         |카카오뱅크                       |
+|TOSS_BANK     |토스뱅크                         |
+|DAISHIN_SB    |대신저축은행                     |
+|SBI_SB        |에스비아이저축은행               |
+|HK_SB         |에이치케이저축은행               |
+|WELCOME_SB    |웰컴저축은행                     |
+|SHINHAN_SB    |신한저축은행                     |
 
 ## 할인 정책
 
@@ -4708,12 +4717,12 @@ GET /platform/discount-share-policy-filter-options (To Be Documented)
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
-| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
+|404 |PlatformDiscountSharePolicyNotFoundError                                                                                     |
 
 </div>
 </div>
@@ -4857,11 +4866,11 @@ filter attributes
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
 
 </div>
 </div>
@@ -4929,12 +4938,12 @@ Parameters
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
-| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
+|404 |PlatformDiscountSharePolicyNotFoundError                                                                                     |
 
 </div>
 </div>
@@ -4995,6 +5004,7 @@ Parameters
 </div>
 <div>
 **Request**
+
 ```json
 {
   "update": {
@@ -5023,13 +5033,13 @@ Parameters
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
-| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
-| 409  | PlatformDiscountSharePolicyScheduleAlreadyExistsError                                                                         |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
+|404 |PlatformDiscountSharePolicyNotFoundError                                                                                     |
+|409 |PlatformDiscountSharePolicyScheduleAlreadyExistsError                                                                        |
 
 </div>
 </div>
@@ -5068,6 +5078,7 @@ Parameters
 </div>
 <div>
 **Request**
+
 ```json
 {
   "update": {
@@ -5096,15 +5107,16 @@ Parameters
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
-| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
+|404 |PlatformDiscountSharePolicyNotFoundError                                                                                     |
 
 </div>
 </div>
+
 ### 할인 정책 예약 업데이트 조회
 
 `PUT https://api.portone.io/platform/discount-share-policies/{id}/schedule`
@@ -5136,12 +5148,12 @@ Parameters
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
-| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
+|404 |PlatformDiscountSharePolicyNotFoundError                                                                                     |
 
 </div>
 </div>
@@ -5168,12 +5180,12 @@ Parameters
 
 **Error Code**
 
-| Code | Description                                                                                                                   |
-| :--- | :---------------------------------------------------------------------------------------------------------------------------- |
-| 400  | InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다. |
-| 401  | UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                             |
-| 403  | PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                             |
-| 404  | PlatformDiscountSharePolicyNotFoundError                                                                                      |
+|Code|Description                                                                                                                  |
+|:---|:----------------------------------------------------------------------------------------------------------------------------|
+|400 |InvalidRequestError: 요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.|
+|401 |UnauthorizedError: 인증 정보가 올바르지 않은 경우                                                                            |
+|403 |PlatformNotEnabledError: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우                                            |
+|404 |PlatformDiscountSharePolicyNotFoundError                                                                                     |
 
 </div>
 </div>
@@ -5395,6 +5407,7 @@ MERCHANT: 부가세 파트너 미부담
 
 </div>
 </div>
+
 ---
 
 ### 추가 수수료 조회

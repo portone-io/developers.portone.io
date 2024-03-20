@@ -10,8 +10,10 @@ import Hint from "~/components/Hint.astro";
 Based on the payment information from the client, the server verifies the <mark style="color:red;">**payment amount for fraud**</mark> and saves the payment information in the database if needed. The following are the steps for verifying the payment information.
 
 - Server receives the i'mport payment ID (**imp\_uid**) and order ID (**merchant\_uid**)
-- Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the payment details.
-- Based on the response, compare the actual payment amount with the payment request amount (from merchant's database).
+- Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the
+  payment details.
+- Based on the response, compare the actual payment amount with the payment request amount (from
+  merchant's database).
 
 ### <mark style="color:green;">**STEP 01**</mark> Server receives payment result
 
@@ -83,11 +85,15 @@ Based on the payment information from the client, the server verifies the <mark 
 
 > **Why fraud detection is necessary**
 >
-> Since the payment request is made on the client side, **a payment request can be forged or falsified by manipulating the client script**. Therefore, you must compare the original requested amount with the actual processed amount after the payment process is complete.
+> Since the payment request is made on the client side, **a payment request can be forged or
+> falsified by manipulating the client script**. Therefore, you must compare the original requested
+> amount with the actual processed amount after the payment process is complete.
 >
-> For example, when paying for a product that costs 100,000 won, an attacker can manipulate the client script to change the `amount` property to a value lower than the actual amount.
+> For example, when paying for a product that costs 100,000 won, an attacker can manipulate the
+> client script to change the `amount` property to a value lower than the actual amount.
 >
-> Since you cannot prevent script manipulation on the client, **you must check for fraud on the server after the payment is processed**.
+> Since you cannot prevent script manipulation on the client, **you must check for fraud on the
+> server after the payment is processed**.
 
 <Tabs>
   <Tab title="Node.js">
@@ -140,7 +146,11 @@ Based on the payment information from the client, the server verifies the <mark 
   </Tab>
 </Tabs>
 
-The original requested amount is queried from the database with the **`merchant_uid`**, and the actual processed amount is retrieved from the i'mport server with the **`imp_uid`**. The **two values ​​are compared** to verify that they match. **If the verification is successful, the payment information is saved in the database** and a response is returned based on the payment status (**`status`**). Otherwise, an error message is returned.\\
+The original requested amount is queried from the database with the **`merchant_uid`**, and the
+actual processed amount is retrieved from the i'mport server with the **`imp_uid`**. The **two
+values are compared** to verify that they match. **If the verification is successful,
+the payment information is saved in the database** and a response is returned based on the payment
+status (**`status`**). Otherwise, an error message is returned.\\
 
 <Hint style="danger">
   The payment result must be processed on the database based on the data received through a [**webhook**](../../result/webhook) for stable processing without any missing result data.
