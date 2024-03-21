@@ -43,7 +43,7 @@ SDK의 `PortOne.requestIdentityVerification()` 함수를 호출하여 본인인�
 
 그리고 아래와 같이 파라미터들을 설정하여 호출합니다.
 
-```javascript
+```ts
 PortOne.requestIdentityVerification({
   // 고객사 storeId로 변경해주세요.
   storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec',
@@ -65,7 +65,7 @@ PortOne.requestIdentityVerification({
 
 본인인증이 성공한 경우 identityVerificationId를 서버에 전달하여 서버측 본인인증 완료 처리를 하도록 합니다.
 
-```javascript
+```ts
 const response = await PortOne.requestIdentityVerification({ /* 객체 생략 */ });
 // 프로세스가 제대로 완료되지 않은 경우 에러 코드가 존재합니다
 if (response.code != null) {
@@ -99,7 +99,7 @@ const verificationResult = await fetch(
 리다이렉트됩니다. 이 경우에는 함수 호출 결과를 이용할 수 없고, 인증 성공 여부 등은
 [쿼리 문자열](https://en.wikipedia.org/wiki/Query_string)로 전달받게 됩니다.
 
-```javascript
+```ts
 PortOne.requestIdentityVerification({
   /* 파라미터 생략 */
   redirectUrl: `${BASE_URL}/identity-verification-redirect`,
@@ -123,7 +123,7 @@ PortOne.requestIdentityVerification({
 
 본인인증 완료 이후 획득한 `identityVerificationId`를 이용하여 고객 인증정보를 조회할 수 있습니다.
 
-```javascript title="server-side"
+```ts title="server-side"
 app.use(bodyParser.json());
   ...
 // "/identity-verifications"에 대한 POST 요청을 처리하는 controller
@@ -180,7 +180,7 @@ app.post("/identity-verifications", async (req, res) => {
 
 </Hint>
 
-```javascript title="Express"
+```ts title="Express"
   // "/identity-verifications"에 대한 POST 요청을 처리하는 controller
   app.post("/identity-verifications", async (req, res) => {
     // request의 body에서 identity_verification_id 추출

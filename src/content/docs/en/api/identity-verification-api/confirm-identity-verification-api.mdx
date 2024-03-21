@@ -4,239 +4,223 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Confirms the identity verification based on the submitted verification ID and OTP number.
+## Confirms the identity verification based on the submitted verification ID and OTP number.
 
 <Swagger method="post" path="/certifications/otp/confirm/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Confirms the identity verification based on the submitted verification ID and OTP number. ">
-<SwaggerDescription>
-If verification is successful, this return a response with the user's name, phone number, carrier, gender, foreigner status, date of birth, CI, and DI values.
+  <SwaggerDescription>
+    If verification is successful, this return a response with the user's name, phone number, carrier, gender, foreigner status, date of birth, CI, and DI values.
+  </SwaggerDescription>
 
-\
+  ### Parameters
 
-</SwaggerDescription>
+  #### Path
 
-### Parameters
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport verification ID**
+    </mark>
+  </SwaggerParameter>
 
-#### Path
+  #### Body
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="otp" type="String" required="true">
+    <mark style="color:red;">
+      **OTP number received via SMS**
+    </mark>
+  </SwaggerParameter>
 
-**i'mport verification ID**
+  ### Responses
 
-</mark>
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="CertificationResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</SwaggerParameter>
+        **Response code**
 
-#### Body
+        0: success, Not 0: check the message
 
-<SwaggerParameter name="otp" type="String" required="true">
-<mark style="color:red;">
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**OTP number received via SMS**
+        **Response message**
 
-</mark>
+        A non-zero code includes a message like 'Invalid payment info'.
 
-</SwaggerParameter>
+        **response** <mark style="color:red;">**(CertificationAnnotation, optional)**</mark>
+      </Tab>
+    </Tabs>
 
-### Responses
+    <Tabs>
+      <Tab title="CertificationAnnotation">
+        **`imp_uid`**  <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="CertificationResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **`verification ID`**
 
-**Response code**
+        **`merchant_uid`**  <mark style="color:green;">**string**</mark>
 
-0: success, Not 0: check the message
+        **`Order ID`**
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+        **`pg_tid`**  <mark style="color:green;">**string**</mark>
 
-**Response message**
+        **`PG verification ID`**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**response** <mark style="color:red;">**(CertificationAnnotation, optional)**</mark>
+        **`PG provider`**
 
-</Tab>
-</Tabs>
+        **`name`**   <mark style="color:green;">**string**</mark>
 
-<Tabs>
-<Tab title="CertificationAnnotation">
-**`imp_uid`**  <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
+        **`Name`**
 
-**`verification ID`**
+        **`gender`**  <mark style="color:green;">**string**</mark>
 
-**`merchant_uid`**  <mark style="color:green;">**string**</mark>
+        **`Gender`**
 
-**`Order ID`**
+        - male
+        - female
 
-**`pg_tid`**  <mark style="color:green;">**string**</mark>
+        **`birthday`** <mark style="color:green;">**string**</mark>
 
-**`PG verification ID`**
+        **`DOB`**
 
-**`pg_provider`** <mark style="color:red;">**\***</mark>**  **<mark style="color:green;">**string**</mark>
+        ISO8601 date in string format. <mark style="color:red;">YYYY-MM-DD (10-digit)</mark>
 
-**`PG provider`**
+        **`foreigner`**  <mark style="color:red;">**\***</mark>  <mark style="color:orange;">**boolean**</mark>
 
-**`name`**   <mark style="color:green;">**string**</mark>
+        **`Foreigner status`**
 
-**`Name`**
+        <mark style="color:red;">When signing a Danal identity verification service contract</mark>,
+        you must request to use foreigner identification service.
 
-**`gender`**  <mark style="color:green;">**string**</mark>
+        - true : foreigner
+        - false : not foreigner
 
-**`Gender`**
+        **`phone`**  <mark style="color:green;">**string**</mark>
 
-- male
-- female
+        **`Mobile phone number`**
 
-**`birthday`   **<mark style="color:green;">**string**</mark>
+        Returns mobile phone number with only numbers without special symbols.
+        This attribute is omitted unless pre-approved by the carrier.
+        For pre-approval from the carrier, send a request with your Danal CPID to **[cs@iamport.kr](mailto:cs@iamport.kr)**.
 
-**`DOB`**
+        **`carrier`**  <mark style="color:green;">**string**</mark>
 
-ISO8601 date in string format. <mark style="color:red;">YYYY-MM-DD (10-digit)</mark>
+        **`Mobile carrier`**
 
-**`foreigner`**  <mark style="color:red;">**\***</mark>  <mark style="color:orange;">**boolean**</mark>
+        Requires pre-approval from the carrier (send a request with your Danal CPID to **[cs@iamport.kr](mailto:cs@iamport.kr)**).
 
-**`Foreigner status`**
+        - SKT
+        - KT
+        - LGT
+        - SKT\_MVNO
+        - KT\_MVNO
+        - LGT\_MVNO
 
-<mark style="color:red;">When signing a Danal identity verification service contract</mark>, you must request to use foreigner identification service.
+        **`certified`**   <mark style="color:red;">**\***</mark>  <mark style="color:orange;">**boolean**</mark>
 
-- true : foreigner
-- false : not foreigner
+        **`Whether verification is successful`**
 
-**`phone`**  <mark style="color:green;">**string**</mark>
+        **`certified_at`**    <mark style="color:green;">**string**</mark>
 
-**`Mobile phone number`**
+        **`Verified at`** (UNIX timestamp)
 
-Returns mobile phone number with only numbers without special symbols. This attribute is omitted unless pre-approved by the carrier. For pre-approval from the carrier, send a request with your Danal CPID to **cs@iamport.kr**.
+        **`unique_key`** <mark style="color:green;">**string**</mark>
 
-**`carrier`**  <mark style="color:green;">**string**</mark>
+        **`Personal Identification Key (CI)`**
 
-**`Mobile carrier`**
+        **`unique_in_site`**   <mark style="color:green;">**string**</mark>
 
-Requires pre-approval from the carrier (send a request with your Danal CPID to **cs@iamport.kr**).
+        **`Merchant Personal Identification Key (DI)`**
 
-- SKT
-- KT
-- LGT
-- SKT\_MVNO
-- KT\_MVNO
-- LGT\_MVNO
+        **`origin`**  <mark style="color:green;">**string**</mark>
 
-**`certified`**   <mark style="color:red;">**\***</mark>  <mark style="color:orange;">**boolean**</mark>
+        **URL of the web page where the identity verification process is processed**
 
-**`Whether verification is successful`**
+        **`foreigner_v2`**   <mark style="color:orange;">**boolean**</mark>
 
-**`certified_at`**    <mark style="color:green;">**string**</mark>
+        **`Foreigner status (nullable)`**
 
-**`Verified at`** (UNIX timestamp)
+        - true : foreigner
+        - false : not foreigner
 
-**`unique_key`  **<mark style="color:green;">**string**</mark>
+        Requires a separate request to use Danal identity verification service
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`Personal Identification Key (CI)`**
+  <SwaggerResponse status="400: Bad Request" description="Missing or invalid parameter error">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`unique_in_site`**   <mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`Merchant Personal Identification Key (DI)`**
+  <SwaggerResponse status="404: Not Found" description="Result not found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`origin`**  <mark style="color:green;">**string**</mark>
-
-**URL of the web page where the identity verification process is processed**
-
-**`foreigner_v2`**   <mark style="color:orange;">**boolean**</mark>
-
-**`Foreigner status (nullable)`**
-
-- true : foreigner
-- false : not foreigner
-
-Requires a separate request to use Danal identity verification service
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Missing or invalid parameter error">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Result not found">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Danal server error">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Danal server error">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "imp_uid": "string",
-    "merchant_uid": "string",
-    "pg_tid": "string",
-    "pg_provider": "string",
-    "name": "string",
-    "gender": "string",
-    "birth": 0,
-    "birthday": "string",
-    "foreigner": true,
-    "phone": "string",
-    "carrier": "SKT",
-    "certified": true,
-    "certified_at": 0,
-    "unique_key": "string",
-    "unique_in_site": "string",
-    "origin": "string",
-    "foreigner_v2": true
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "imp_uid": "string",
+      "merchant_uid": "string",
+      "pg_tid": "string",
+      "pg_provider": "string",
+      "name": "string",
+      "gender": "string",
+      "birth": 0,
+      "birthday": "string",
+      "foreigner": true,
+      "phone": "string",
+      "carrier": "SKT",
+      "certified": true,
+      "certified_at": 0,
+      "unique_key": "string",
+      "unique_in_site": "string",
+      "origin": "string",
+      "foreigner_v2": true
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/certifications/confirmOTP**](https://api.iamport.kr/#!/certifications/confirmOTP)
-
+  [**https://api.iamport.kr/#!/certifications/confirmOTP**](https://api.iamport.kr/#!/certifications/confirmOTP)
 </Hint>

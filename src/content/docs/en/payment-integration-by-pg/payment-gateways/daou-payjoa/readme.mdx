@@ -5,232 +5,232 @@ description: Daou payment window integration guide
 
 import ContentRef from "~/components/gitbook/ContentRef.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure Daou PG settings
+## 1. Configure Daou PG settings
 
 Refer to the [**Daou settings**](../../../ready/2.-pg/payment-gateway-settings/daou) page to
 configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-05 11.53.10.png>)
 
-### 2. Request payment
+## 2. Request payment
 
 To open the payment window, call [JavaScript SDK](../../../sdk/javascript-sdk/)
-IMP.**request_pay**(param, callback).
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Hint style="warning">
-**PAYJOA payment window integration requires **<mark style="color:red;">**JS SDK 1.2.0**</mark>** or later version.**
-
+  **PAYJOA payment window integration requires **<mark style="color:red;">**JS SDK 1.2.0**</mark>** or later version.**
 </Hint>
 
 <Tabs>
-<Tab title="Authenticated payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'daou',
-    pay_method : 'card',
-    merchant_uid: 'mid_1234567890',
-    escrow: false,
-    amount: 1004,
-    name: 'NF long padding jacket M',
-    buyer_name: 'John Doe',
-    buyer_email: 'hello@world.com',
-    buyer_tel: '01012345678',
-    digital : false, // Set to true if contracted as digital
-    m_redirect_url: 'https://allerts.com/payments/complete', 
-    bypass: {
-	// PAYJOA (DaouData) specific parameters
-        daou: {
-	    PRODUCTCODE: 'iamport',
-	    CASHRECEIPTFLAG: 2,
-	},
-    },
-    app_scheme: 'iamportappscheme',
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "daou",
+        pay_method: "card",
+        merchant_uid: "mid_1234567890",
+        escrow: false,
+        amount: 1004,
+        name: "NF long padding jacket M",
+        buyer_name: "John Doe",
+        buyer_email: "hello@world.com",
+        buyer_tel: "01012345678",
+        digital: false, // Set to true if contracted as digital
+        m_redirect_url: "https://allerts.com/payments/complete",
+        bypass: {
+          // PAYJOA (DaouData) specific parameters
+          daou: {
+            PRODUCTCODE: "iamport",
+            CASHRECEIPTFLAG: 2,
+          },
+        },
+        app_scheme: "iamportappscheme",
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-###
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-**`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`daou`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`daou`**.
+    **`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-**`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    **Payment method code**
 
-**Payment method code**
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+    </Details>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
+    **`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-</Details>
+    **Order ID**
 
-**`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    Must be unique for each request.
 
-**Order ID**
+    **`digital`** <mark style="color:red;"> **`*`** </mark><mark style="color:green;"> **`string`** </mark>
 
-Must be unique for each request.
+    **Digital contents option**
 
-**`digital`** <mark style="color:red;"> **`*`** </mark><mark style="color:green;"> **`string`** </mark>
+    Must specify the value based on the contract between merchant and PAYJOA. Otherwise, request will fail.
 
-**Digital contents option**
+    **`bypass.daou.PRODUCTCODE`** <mark style="color:green;"> **`string`** </mark>
 
-Must specify the value based on the contract between merchant and PAYJOA. Otherwise, request will fail.
+    **Product code**
 
-**`bypass.daou.PRODUCTCODE`** <mark style="color:green;"> **`string`** </mark>
+    If there is no specification for the value and the value is not specified, i'mport sets it to the default value (iamport) and sends it to PAYJOA.
 
-**Product code**
+    **`bypass.daou.CASHRECEIPTFLAG`** <mark style="color:green;"> **\`\`** </mark><mark style="color:purple;"> **`integer`** </mark>
 
-If there is no specification for the value and the value is not specified, i'mport sets it to the default value (iamport) and sends it to PAYJOA.
+    **Cash receipt issuance code**
 
-**`bypass.daou.CASHRECEIPTFLAG`** <mark style="color:green;"> **``** </mark><mark style="color:purple;"> **`integer`** </mark>
+    Auto cash receipt issuance code for cash payments (account transfer, virtual account)
 
-**Cash receipt issuance code**
+    **`1: Allow`**
 
-Auto cash receipt issuance code for cash payments (account transfer, virtual account)
+    **`2: Block`**
 
-**`1: Allow`**
+    **`app_scheme`** <mark style="color:green;"> **`string`** </mark>
 
-**`2: Block`**
+    **Mobile app URL scheme**
 
-**`app_scheme`** <mark style="color:green;"> **`string`** </mark>
+    Required in mobile app
 
-**Mobile app URL scheme**
+    **`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
-Required in mobile app
+    **Payment amount**
 
-**`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+    Must be an integer (not string)
 
-**Payment amount**
+    **`escrow`** <mark style="color:orange;"> **`boolean`** </mark>
 
-Must be an integer (not string)
+    **Escrow option**
 
-**`escrow`** <mark style="color:orange;"> **`boolean`** </mark>
+    Only supports account transfer and virtual account payment.
+  </Tab>
 
-**Escrow option**
+  <Tab title="Non-authenticated API  request">
+    **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
 
-Only supports account transfer and virtual account payment.
+    ### Request one-time payment
 
-</Tab>
+    To request a one-time payment, use the key-in REST[**API POST /subscribe/payments/onetime**](../../../api/api/request-non-authenticated-payment-one-time-api).
+    The card information is not saved during this process.
 
-<Tab title="Non-authenticated API  request">
-#### **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-### Request one-time payment
+    ### Request billing key
 
-To request a one-time payment, use the key-in REST[ **API POST /subscribe/payments/onetime**](../../../api/api/request-non-authenticated-payment-one-time-api). The card information is not saved during this process.
+    To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer\_uid}**](../../../api/billing-key-api/api-1).
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
+         https://api.iamport.kr/subscribe/customers/your-customer-unique-id
+    ```
 
-###
+    ### Request billing key + initial payment
 
-### Request billing key
+    To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../../api/api/request-non-authenticated-payment-one-time-api).
 
-To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer_uid}**](../../../api/billing-key-api/api-1).
+    - **`customer_uid`** : required for saving the billing key.
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
-     https://api.iamport.kr/subscribe/customers/your-customer-unique-id
-```
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-### Request billing key + initial payment
+    ### Request payment with billing key
 
-To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../../api/api/request-non-authenticated-payment-one-time-api).
+    After successfully getting the billing key and making the initial payment, the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the repeat pay REST API ([**POST /subscribe/payments/again**](../../../api/api/api)) with the `customer_uid` as follows:
 
-- **`customer_uid`** : required for saving the billing key.
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    **For detailed information, refer to:**
 
-### Request payment with billing key
-
-After successfully getting the billing key and making the initial payment, the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the repeat pay REST API ([**POST /subscribe/payments/again**](../../../api/api/api)) with the `customer_uid` as follows:
-
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-**For detailed information, refer to:**
-
-<ContentRef slug="/en////auth/guide-1/readme" />
-
-</Tab>
+    <ContentRef slug="/en////auth/guide-1/readme" />
+  </Tab>
 </Tabs>
 
-### 3. Additional functions
+## 3. Additional functions
 
 <Tabs>
-<Tab title="Installment setting">
-```javascript title="javascript"
-display: {
-    card_quota: [6]  // Display up to 6 months installment plans
-}
-```
+  <Tab title="Installment setting">
+    ```json title="javascript"
+    {
+      "display": {
+        "card_quota": [6], // Display up to 6 months installment plans
+      }
+    }
+    ```
 
-**Parameters**
+    **Parameters**
 
-- **card_quota :**
-  - `[]`: Only immediate pay
-  - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans\
+    - **card\_quota :**
+      - `[]`: Only immediate pay
+      - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans\\
 
-<Hint style="info">
-Installment plan option is available only for **KRW 50,000 or more**.
+    <Hint style="info">
+      Installment plan option is available only for **KRW 50,000 or more**.
+    </Hint>
+  </Tab>
 
-</Hint>
+  <Tab title="Escrow payment">
+    For escrow payment, the **`escrow`** parameter must be set to <mark style="color:red;"> **true** </mark>.
+    When the escrow payment is completed, the merchant must register the shipping information for **settlement**.
+    You can manage shipping information by using the [**Add delivery info**](../../../api/escrow-api/add-delivery-info-api)
+    and [**Update delivery info**](../../../api/escrow-api/update-delivery-info-api) APIs.
 
-</Tab>
-
-<Tab title="Escrow payment">
-For escrow payment, the **`escrow`** parameter must be set to <mark style="color:red;"> **true** </mark>. When the escrow payment is completed, the merchant must register the shipping information for **settlement**. You can manage shipping information by using the [**Add delivery info**](../../../api/escrow-api/add-delivery-info-api) and [**Update delivery info**](../../../api/escrow-api/update-delivery-info-api) APIs.
-
-```javascript title="API Body Example"
-{
-    "logis": {
+    ```json title="API Body Example"
+    {
+      "logis": {
         "invoice": "1728384716123",
         "company": "CJGLS",
         "receiving_at": "20220215",
         "address": "16, Seongsui-ro 20-gil"
-    },
-    "receiver": {
+      },
+      "receiver": {
         "name": "John DOe"
-    },
-    "sender": {
+      },
+      "sender": {
         "relationship": "self"
+      }
     }
-}
-```
+    ```
 
-<Hint style="danger">
-**Precaution**
+    <Hint style="danger">
+      **Precaution**
 
-- When adding/updating the escrow delivery information, PAYJOA does not validate the delivery information (tracking number, courier name, etc.) received from the merchant.
-
-</Hint>
-
-</Tab>
+      - When adding/updating the escrow delivery information, PAYJOA does not validate the delivery information
+        (tracking number, courier name, etc.) received from the merchant.
+    </Hint>
+  </Tab>
 </Tabs>

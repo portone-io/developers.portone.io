@@ -4,56 +4,58 @@ description: Learn how to set up and use multiple PGs.
 ---
 
 import Figure from "~/components/Figure.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Set up multiple PGs in the i'mport **Admin console** and open a payment window for the desired payment method.
+Set up multiple PGs in the i'mport **Admin console**
+and open a payment window for the desired payment method.
 
-### 1. Configure authenticated payment (general)
+## 1. Configure authenticated payment (general)
 
-Go to [**i'mport Admin Console > System Settings > PG Settings tab > Default PG tab**](https://admin.iamport.kr/settings#tab_pg) to set the `default PG` that is used as the default `param.pg` value when you call [`IMP.request_pay`](https://docs.iamport.kr/en-US/sdk/javascript-sdk#request_pay) to open the payment window. The default value is used when the `pg` value is missing or invalid.
+Go to [**i'mport Admin Console > System Settings > PG Settings tab > Default PG tab**](https://admin.iamport.kr/settings#tab_pg)
+to set the `default PG` that is used as the default `param.pg` value
+when you call [`IMP.request_pay`](https://docs.iamport.kr/en-US/sdk/javascript-sdk#request_pay)
+to open the payment window. The default value is used when the `pg` value is missing or invalid.
 
-<Figure
-  src="/gitbook-assets/en/image (131).png"
-  caption="Configure authenticated payment (general)"
-/>
+<Figure src="/gitbook-assets/en/image (131).png" caption="Configure authenticated payment (general)" />
 
-### 2. Add PG for subscription payment (for non-authenticated/**PG payment window)**
+## 2. Add PG for subscription payment (for non-authenticated/**PG payment window)**
 
-After acquiring a separate Merchant ID (MID) for subscription (non-authenticated) payment from the PG, use it to add the PG from the [**i'mport Admin Console > System Settings > PG Settings (general/subscription) tab**](https://admin.iamport.kr/settings#tab_pg).
+After acquiring a separate Merchant ID (MID) for subscription (non-authenticated) payment
+from the PG, use it to add the PG from the [**i'mport Admin Console > System Settings > PG Settings (general/subscription) tab**](https://admin.iamport.kr/settings#tab_pg).
 
 <Figure src="/gitbook-assets/en/image (14).png" caption="Add new PG page" />
 
-### 3. **Add PG for simple payment (Kakao Pay)**
+## 3. **Add PG for simple payment (Kakao Pay)**
 
 Repeat step 2 to add PG setting for Kakao Pay.
 
-<Figure
-  src="/gitbook-assets/en/image (76).png"
-  caption="Add simple payment Kakao Pay"
-/>
+<Figure src="/gitbook-assets/en/image (76).png" caption="Add simple payment Kakao Pay" />
 
-## Open PG's payment window <a href="#pg" id="pg"></a>
+## Open PG's payment window <a href="#pg" id="pg" />
 
-To open a PG's payment window, call [**JavaScript SDK**](../sdk/javascript-sdk/) `IMP.request_pay` by specifying the PG that is already configured in **Admin console** in the `param.pg` property.
+To open a PG's payment window, call [**JavaScript SDK**](../sdk/javascript-sdk/) `IMP.request_pay`
+by specifying the PG that is already configured in **Admin console** in the `param.pg` property.
 
-The [`pg` value](https://docs.iamport.kr/en-US/sdk/javascript-sdk#request_pay) can have the following format:
+The [`pg` value](https://docs.iamport.kr/en-US/sdk/javascript-sdk#request_pay)
+can have the following format:
 
 - **`{ PG code }`**
 - **`{ PG code }.{ PG Merchant ID }`**
 
 Assume that we have added **3 PG settings** as follows:
 
-| PG              | Merchant ID       | Pay Type         | Default PG |
-| --------------- | ----------------- | ---------------- | ---------- |
-| **`KG INICIS`** | `MID-a` (example) | **General**      | O          |
-| **`KG INICIS`** | `MID-b` (example) | **Subscription** | X          |
-| `Kakao Pay`     | `MID-c` (example) | Simple           | X          |
+|PG             |Merchant ID      |Pay Type        |Default PG|
+|---------------|-----------------|----------------|----------|
+|**`KG INICIS`**|`MID-a` (example)|**General**     |O         |
+|**`KG INICIS`**|`MID-b` (example)|**Subscription**|X         |
+|`Kakao Pay`    |`MID-c` (example)|Simple          |X         |
 
-Of the previously added PG settings, `Kakao Pay` can be identified just with the `PG service code`. Set **`kakaopay`** in the `pg` property for the Kakao Pay payment request as follows:
+Of the previously added PG settings, `Kakao Pay` can be identified just with the `PG service code`.
+Set **`kakaopay`** in the `pg` property for the Kakao Pay payment request as follows:
 
-```javascript title="client-side"
+```ts title="client-side"
 IMP.request_pay({
   pg: "kakaopay", //Open Kakao Pay payment page
   amount: 1000,
@@ -63,39 +65,39 @@ IMP.request_pay({
 });
 ```
 
-Of the previously added PG settings, **`KG INICIS (general)`** and **`KG INICIS (subscription)`** have the <mark style="color:red;">**same PG service code**</mark>. Hence, you need to set `pg` to a value that combines the service code with the Merchant ID, **`{ PG Code }.{ PG Merchant ID }`**.
+Of the previously added PG settings, **`KG INICIS (general)`** and **`KG INICIS (subscription)`**
+have the <mark style="color:red;">**same PG service code**</mark>.
+Hence, you need to set `pg` to a value that combines the service code with the Merchant ID, **`{ PG Code }.{ PG Merchant ID }`**.
 
 <Tabs>
-<Tab title="KG Inicis general payment window call">
-```javascript title="JavaScript"
-IMP.request_pay({
-    pg : "html5_inicis.MID-a",  // Call KG INICIS general payment window (merchant ID: MID-a)
-    amount : 1000,
-    name : "Sample order",
-    buyer_name : "Buyer",
-    buyer_email : "buyer@iamport.kr"
-  });
-```
+  <Tab title="KG Inicis general payment window call">
+    ```ts title="JavaScript"
+    IMP.request_pay({
+      pg: "html5_inicis.MID-a", // Call KG INICIS general payment window (merchant ID: MID-a)
+      amount: 1000,
+      name: "Sample order",
+      buyer_name: "Buyer",
+      buyer_email: "buyer@iamport.kr",
+    });
+    ```
+  </Tab>
 
-</Tab>
-
-<Tab title="KG Inicis subscription payment window call">
-```javascript title="JavaScript"
-IMP.request_pay({
-    pg : "html5_inicis.MID-b",  // Call KG INICIS subscription payment window (merchant ID: MID-b)
-    amount : 1000,
-    name : "Sample order",
-    buyer_name : "Buyer",
-    buyer_email : "buyer@iamport.kr"
-  });
-```
-
-</Tab>
+  <Tab title="KG Inicis subscription payment window call">
+    ```ts title="JavaScript"
+    IMP.request_pay({
+      pg: "html5_inicis.MID-b", // Call KG INICIS subscription payment window (merchant ID: MID-b)
+      amount: 1000,
+      name: "Sample order",
+      buyer_name: "Buyer",
+      buyer_email: "buyer@iamport.kr",
+    });
+    ```
+  </Tab>
 </Tabs>
 
 <Hint style="info">
-**Matching priority for PG**
+  **Matching priority for PG**
 
-[`IMP.request_pay`](https://docs.iamport.kr/en-US/sdk/javascript-sdk#request_pay) finds the setting that matches the `pg` value in the order the PG settings are shown in the **Admin console**. It opens the payment window for the first matching PG setting.
-
+  [`IMP.request_pay`](https://docs.iamport.kr/en-US/sdk/javascript-sdk#request_pay) finds the setting that matches the `pg` value
+  in the order the PG settings are shown in the **Admin console**. It opens the payment window for the first matching PG setting.
 </Hint>

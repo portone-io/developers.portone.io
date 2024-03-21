@@ -6,84 +6,91 @@ description: Request a refund for a virtual account payment.
 import Figure from "~/components/Figure.astro";
 import Hint from "~/components/Hint.astro";
 
-### For a virtual account refund, you must sign up for the v**irtual account special service** provided by each PG.
+For a virtual account refund, you must sign up for the **virtual account special service**
+provided by each PG.
 
 <Hint style="info">
-**Why do you need to sign up for a virtual account special service?**
+  **Why do you need to sign up for a virtual account special service?**
 
-Unlike credit cards, fees for payment/refund are not subject to refund for virtual account refund. For example, for a 10,000 won payment, the merchant:
+  Unlike credit cards, fees for payment/refund are not subject to refund for virtual account refund. For example, for a 10,000 won payment, the merchant:
 
-- receives 9700 won (10,000 won - virtual account issuance fee of 300 won) from the PG at the time of payment.
-- pays 10,300 won (10,000 won to be refunded + 300 won remittance fee for the refund account) to the PG company when the payment is refunded.
+  - receives 9700 won (10,000 won - virtual account issuance fee of 300 won) from the PG at the time of payment.
+  - pays 10,300 won (10,000 won to be refunded + 300 won remittance fee for the refund account) to the PG company when the payment is refunded.
 
-To prevent confusion that may arise regarding fees for virtual account refund, PGs provide **virtual account refunds only to merchants who are signed up for the virtual account special service**.
-
+  To prevent confusion that may arise regarding fees for virtual account refund, PGs provide **virtual account refunds only to merchants who are signed up for the virtual account special service**.
 </Hint>
 
-Since a virtual account transaction involves a one-way payment method, the target account for refund is unknown. Hence, you must specify the following refund account information in addition to the refund amount.
+Since a virtual account transaction involves a one-way payment method,
+the target account for refund is unknown.
+Hence, you must specify the following refund account information in addition to the refund amount.
 
 - `refund_holder`: Refund account holder's name
 - `refund_account`: Refund account number
 - `refund_bank`: Refund account bank code
 
 <Hint style="info">
-**Note - Virtual account bank codes by PG**
+  **Note - Virtual account bank codes by PG**
 
-Since the **virtual account bank code** varies by PG even for the same bank, be sure to check the [**Bank codes by PG**](../../tips/bank-codes-by-pg) list.
-
+  Since the **virtual account bank code** varies by PG even for the same bank, be sure to check the [**Bank codes by PG**](../../tips/bank-codes-by-pg) list.
 </Hint>
 
-#### The following example requests for a virtual account refund.
+The following example requests for a virtual account refund.
 
-```javascript title="Node.js"
-  /* ... Omitted ... */
-  app.post('/payments/cancel', async (req, res, next) => {
-    try {
-      /* Get access token */
+```ts title="Node.js"
+/* ... Omitted ... */
+app.post("/payments/cancel", async (req, res, next) => {
+  try {
+    /* Get access token */
+    /* ... Omitted ... */
+    /* Get payment information */
+    const { body } = req;
+    const {
+      merchant_uid,
+      reason,
+      cancel_request_amount,
+      refund_holder,
+      refund_bank,
+      refund_account,
+    } = body; // Order ID from the client, reason for refund, refund amount, virtual accoun info (account holder, account number, bank code
+    Payments.find({ merchant_uid }, async function (err, payment) {
       /* ... Omitted ... */
-      /* Get payment information */
-      const { body } = req;
-      const { merchant_uid, reason, cancel_request_amount, refund_holder, refund_bank, refund_account } = body; // Order ID from the client, reason for refund, refund amount, virtual accoun info (account holder, account number, bank code
-      Payments.find({ merchant_uid }, async function(err, payment) {
-        /* ... Omitted ... */
-        const paymentData = payment[0]; // Save payment information
-        const { imp_uid, amount, cancel_amount } = paymentData; // Get imp_uid, amount(paid amount), cancel_amount(total refund amount) from payment information
-        const cancelableAmount = amount - cancel_amount; // Refundable amount (= paid amount - total refund amount)
-        if (cancelableAmount <= 0) { // If refundable amount is 0
-          return res.status(400).json({ message: "This order has already been fully refunded." });
-        }
-        ...
-        /* Call i'mport REST API to request refund */
-        const getCancelData = await axios({
-          url: "https://api.iamport.kr/payments/cancel",
-          method: "post",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": access_token // Access token from i'mport server
-          },
-          data: {
-            reason, // Reason for refund from client
-            imp_uid, // Unique key for refund
-            amount: cancel_request_amount, // Requested refund amount
-            checksum: cancelableAmount, // [Recommended] refundable amount
-            refund_holder, // [required when refunding virtual account payment] refund account holder's name
-            refund_bank, // [required for virtual account refund] refund account bank code (e.g. Shinhan Bank is 88 for KG Inicis)
-            refund_account // [required for virtual account refund] refund account number
-          }
-        });
-        const { response } = getCancelData.data; // Refund result
-        /* Save refund result */
-        ...
+      const paymentData = payment[0]; // Save payment information
+      const { imp_uid, amount, cancel_amount } = paymentData; // Get imp_uid, amount(paid amount), cancel_amount(total refund amount) from payment information
+      const cancelableAmount = amount - cancel_amount; // Refundable amount (= paid amount - total refund amount)
+      if (cancelableAmount <= 0) {
+        // If refundable amount is 0
+        return res
+          .status(400)
+          .json({ message: "This order has already been fully refunded." });
+      }
+      /* Call i'mport REST API to request refund */
+      const getCancelData = await axios({
+        url: "https://api.iamport.kr/payments/cancel",
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: access_token, // Access token from i'mport server
+        },
+        data: {
+          reason, // Reason for refund from client
+          imp_uid, // Unique key for refund
+          amount: cancel_request_amount, // Requested refund amount
+          checksum: cancelableAmount, // [Recommended] refundable amount
+          refund_holder, // [required when refunding virtual account payment] refund account holder's name
+          refund_bank, // [required for virtual account refund] refund account bank code (e.g. Shinhan Bank is 88 for KG Inicis)
+          refund_account, // [required for virtual account refund] refund account number
+        },
       });
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  });
+      const { response } = getCancelData.data; // Refund result
+      /* Save refund result */
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
 ```
 
-If the virtual account refund request is successful, the refund amount will be deposited (from PG) into the specified refund account normally in about one working day.
+If the virtual account refund request is successful, the refund amount will be deposited (from PG)
+into the specified refund account normally in about one working day.
 
-<Figure
-  src="/gitbook-assets/en/vbank-refund-process.png"
-  caption="Virtual account refund flow"
-/>
+<Figure src="/gitbook-assets/en/vbank-refund-process.png" caption="Virtual account refund flow" />

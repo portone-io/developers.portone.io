@@ -3,14 +3,14 @@ title: 스마트로(신모듈)
 description: 스마트로 연동 방법을 안내합니다.
 ---
 
-import * as prose from "~/components/prose";
 import Details from "~/components/gitbook/Details.astro";
 import Hint from "~/components/Hint.astro";
+import * as prose from "~/components/prose";
 export const components = prose;
 
 import Figure from "~/components/Figure.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 ## 1. 스마트로 채널 설정하기
 
@@ -37,193 +37,194 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 [JavaScript SDK](../../../sdk/javascript-sdk/readme) `IMP.request_pay(param, callback)`을 호출하여
 스마트로 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 `IMP.request_pay(param, callback)`
 호출 후 <mark style="color:red;">**callback**</mark>으로 수신되고
-모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+모바일의 경우 <mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
-<Tab title="인증결제창 요청">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-  pg: 'smartro_v2.{상점 ID}',
-  pay_method: 'card',
-  merchant_uid: "orderNo0001", // 상점에서 생성한 고유 주문번호 주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
-  name: '주문명:결제테스트',
-  amount: 1004,
-  buyer_email: 'test@portone.io',
-  buyer_name: '구매자이름',
-  buyer_tel: '010-1234-5678',
-  buyer_addr: '서울특별시 강남구 삼성동',
-  buyer_postcode: '123-456',
-  m_redirect_url: '{모바일에서 결제 완료 후 리디렉션 될 URL}',
-  period: {
-    from: "20230512", //YYYYMMDD
-    to: "20230515", //YYYYMMDD
-  },
-}, function(rsp) { // callback 로직
-  /* ...중략... */
-});
-```
+  <Tab title="인증결제창 요청">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "smartro_v2.{상점 ID}",
+        pay_method: "card",
+        merchant_uid: "orderNo0001", // 상점에서 생성한 고유 주문번호 주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
+        name: "주문명:결제테스트",
+        amount: 1004,
+        buyer_email: "test@portone.io",
+        buyer_name: "구매자이름",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "서울특별시 강남구 삼성동",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+        period: {
+          from: "20230512", //YYYYMMDD
+          to: "20230515", //YYYYMMDD
+        },
+      },
+      function (rsp) {
+        // callback 로직
+        /* ...중략... */
+      },
+    );
+    ```
 
-<Details>
-<p slot="summary"><strong>주요 파라미터 설명</strong></p>
+    <Details>
+      <p slot="summary"><strong>주요 파라미터 설명</strong></p>
 
-**`pg` \***<mark style="color:green;">**string**</mark>
+      **`pg` \***<mark style="color:green;">**string**</mark>
 
-**PG사 구분코드**
+      **PG사 구분코드**
 
-`smartro_v2` 로 지정하면 됩니다.
+      `smartro_v2` 로 지정하면 됩니다.
 
-**`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**결제수단 구분코드**
+      **결제수단 구분코드**
 
-- card (신용카드)
-- trans (실시간 계좌이체)
-- vbank(가상계좌)
-- phone (휴대폰소액결제)
-- lpay (LPAY)
-- kakaopay (카카오페이)
-- naverpay (네이버페이)
-- payco (페이코)
-- pinpay (핀페이)
+      - card (신용카드)
+      - trans (실시간 계좌이체)
+      - vbank(가상계좌)
+      - phone (휴대폰소액결제)
+      - lpay (LPAY)
+      - kakaopay (카카오페이)
+      - naverpay (네이버페이)
+      - payco (페이코)
+      - pinpay (핀페이)
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**주문번호**
+      **주문번호**
 
-매번 고유하게 채번되어야 합니다.
-주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
+      매번 고유하게 채번되어야 합니다.
+      주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
 
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
+      **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
 
-**결제금액**
+      **결제금액**
 
-<mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
+      <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
 
-소수점 두번째 자리까지 허용합니다.
+      소수점 두번째 자리까지 허용합니다.
 
-**`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**구매자 전화번호**
+      **구매자 전화번호**
 
-주의: 스마트로 일반 결제시 필수 입력
+      주의: 스마트로 일반 결제시 필수 입력
 
-**`vbank_due`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      **`vbank_due`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**가상계좌 입금기한 (YYYY-MM-DD)**
+      **가상계좌 입금기한 (YYYY-MM-DD)**
 
-스마트로의 경우 필수 입력이며 날짜는 무조건 23:59:59로 설정 됨
+      스마트로의 경우 필수 입력이며 날짜는 무조건 23:59:59로 설정 됨
 
-**`escrow`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+      **`escrow`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
 
-**에스크로 결제 여부**
+      **에스크로 결제 여부**
 
-**`period`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**array**</mark>
+      **`period`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**array**</mark>
 
-**서비스 제공 기간**
+      **서비스 제공 기간**
 
-날짜만 입력이 가능하며(시간은 무시) 시작 날짜와 종료 날짜를 모두 입력해야 합니다.
+      날짜만 입력이 가능하며(시간은 무시) 시작 날짜와 종료 날짜를 모두 입력해야 합니다.
 
-**`from`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+      **`from`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
 
-**`to`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+      **`to`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+    </Details>
 
-</Details>
+    <Details>
+      <p slot="summary">
+        <strong>결제 가능 결제수단</strong>
+      </p>
 
-<Details>
-  <p slot="summary">
-    <strong>결제 가능 결제수단</strong>
-  </p>
+      - card + 에스크로, 다이렉트
+      - vbank + 에스크로
+      - trans + 에스크로
+      - phone
+      - lpay
+      - naverpay
+      - kakaopay
+      - pinpay
+      - payco
+    </Details>
+  </Tab>
 
-- card + 에스크로, 다이렉트
-- vbank + 에스크로
-- trans + 에스크로
-- phone
-- lpay
-- naverpay
-- kakaopay
-- pinpay
-- payco
+  <Tab title="비인증 결제창 요청">
+    인증결제창 호출 파라미터에서 **customer\_uid**, **customer\_id**값을 추가하면 비 인증 결제창을 호출할 수 있습니다.
+    비 인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
 
-</Details>
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "smartro_v2.{MID}",
+        pay_method: "card", // 'card'만 지원됩니다.
+        merchant_uid: "orderMonthly0001", // 상점에서 관리하는 주문 번호 주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
+        name: "최초인증결제",
+        amount: 1000, // 실제 승인은 발생되지 않고 오직 빌링키만 발급됩니다.
+        customer_uid: "your-customer-unique-id", // 필수 입력.
+        buyer_email: "test@portone.io",
+        buyer_name: "포트원",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+        customer_id: "matthew", //고객사가 회원에게 부여한 고유 ID로 필수 입력.
+      },
+      function (rsp) {
+        // callback 로직
+      },
+    );
+    ```
 
-</Tab>
+    <Details>
+      <p slot="summary"><strong>주요 파라미터 설명</strong></p>
 
-<Tab title="비인증 결제창 요청">
-  인증결제창 호출 파라미터에서 **customer\_uid**, **customer\_id**값을 추가하면 비 인증 결제창을 호출할 수 있습니다.
-  비 인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
-  ```javascript title="Javascript SDK"
-  IMP.request_pay({
-    pg: "smartro_v2.{MID}",
-    pay_method: "card", // 'card'만 지원됩니다.
-    merchant_uid: "orderMonthly0001", // 상점에서 관리하는 주문 번호 주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
-    name: "최초인증결제",
-    amount: 1000, // 실제 승인은 발생되지 않고 오직 빌링키만 발급됩니다.
-    customer_uid: "your-customer-unique-id", // 필수 입력.
-    buyer_email: "test@portone.io",
-    buyer_name: "포트원",
-    buyer_tel: "02-1234-1234",
-    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
-    customer_id: "matthew", //고객사가 회원에게 부여한 고유 ID로 필수 입력.
-  }, function (rsp) {
-    // callback 로직
-  });
-  ```
+      **`pg` \***<mark style="color:green;">**string**</mark>
 
-<Details>
-<p slot="summary"><strong>주요 파라미터 설명</strong></p>
+      **PG사 구분코드**
 
-**`pg` \***<mark style="color:green;">**string**</mark>
+      `smartro_v2` 로 지정하면 됩니다.
 
-**PG사 구분코드**
+      **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-`smartro_v2` 로 지정하면 됩니다.
+      **결제수단 구분코드**
 
-**`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - card (신용카드)
 
-**결제수단 구분코드**
+      **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-- card (신용카드)
+      **주문번호**
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      매번 고유하게 채번되어야 합니다.
 
-**주문번호**
+      주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
 
-매번 고유하게 채번되어야 합니다.
+      **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
+      **`빌링키 발급을 위한 결제 수단을 특정하는 고유 번호`**
 
-**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      빌링키 발급시 필수 입력
 
-**`빌링키 발급을 위한 결제 수단을 특정하는 고유 번호`**
+      **`customer_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-빌링키 발급시 필수 입력
+      **`구매자 식별자`**
 
-**`customer_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      주의: 스마트로 빌링키 발급시 필수 입력으로 입력 길이는 **20자**로 제한됩니다.
 
-**`구매자 식별자`**
+      **`m_redirect_url`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-주의: 스마트로 빌링키 발급시 필수 입력으로 입력 길이는 **20자**로 제한됩니다.
+      **`리다이렉트 URL`**
 
-**`m_redirect_url`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      리디렉션 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 고객사 URL
 
-**`리다이렉트 URL`**
-
-리디렉션 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 고객사 URL
-
-스마트로의 경우 모바일 환경에서 **리디렉션 방식으로 빌링키 발급창이 렌더링 되기 때문에 필수입력입니다.**
-
-</Details>
-
-</Tab>
-
+      스마트로의 경우 모바일 환경에서 **리디렉션 방식으로 빌링키 발급창이 렌더링 되기 때문에 필수입력입니다.**
+    </Details>
+  </Tab>
 </Tabs>
 
 <Details>
-<p slot="summary">
-  <strong>가능한 결제 환경</strong>
-</p>
+  <p slot="summary">
+    <strong>가능한 결제 환경</strong>
+  </p>
 
-- PC (iframe)
-- 모바일 (리디렉션)
-
+  - PC (iframe)
+  - 모바일 (리디렉션)
 </Details>

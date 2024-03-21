@@ -7,37 +7,38 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Hint from "~/components/Hint.astro";
 
-#### subscriptionsubscriptionYou can use the customer\_uid obtained through the [Get billing key](../../api/billing-key-api/api-1) or [Non-authenticated payment (one-time)](../../api/api/request-non-authenticated-payment-one-time-api) API to request a subscription or scheduled payment.
+You can use the customer\_uid obtained through the [Get billing key](../../api/billing-key-api/api-1)
+or [Non-authenticated payment (one-time)](../../api/api/request-non-authenticated-payment-one-time-api) API
+to request a subscription or scheduled payment.
 
-### <mark style="color:blue;">**STEP 01.**</mark> Request payment
+## <mark style="color:blue;">**STEP 01.**</mark> Request payment
 
 You can schedule a payment for a desired time in the future by using the ChaiPort <mark style="color:blue;">**Schedule payment API**</mark>.
 
 <Tabs>
   <Tab title="server-side">
-    ```javascript title="Node.js"
+    ```ts title="Node.js"
     // Schedule payment
-      axios({
-        url: \`https://api.iamport.kr/subscribe/payments/schedule\`,
-        method: "post",
-        headers: { "Authorization": access_token }, // Add access token to authorization header
-        data: {
-          customer_uid: "gildong_0001_1234", // Unique ID for each card (billing key)
-          schedules: [
-            {
-              merchant_uid: "order_monthly_0001", // Order ID
-              schedule_at: 1519862400, // Schedule time in UNIX timestamp.
-              amount: 8900,
-              name: "Recurring payment for monthly subscription",
-              buyer_name: "Hong Gildong",
-              buyer_tel: "01012345678",
-              buyer_email: "gildong@gmail.com"
-            }
-          ]
-        }
-      });
-
-    ```
+    axios({
+      url: `https://api.iamport.kr/subscribe/payments/schedule`,
+      method: "post",
+      headers: { Authorization: access_token }, // Add access token to authorization header
+      data: {
+        customer_uid: "gildong_0001_1234", // Unique ID for each card (billing key)
+        schedules: [
+          {
+            merchant_uid: "order_monthly_0001", // Order ID
+            schedule_at: 1519862400, // Schedule time in UNIX timestamp.
+            amount: 8900,
+            name: "Recurring payment for monthly subscription",
+            buyer_name: "Hong Gildong",
+            buyer_tel: "01012345678",
+            buyer_email: "gildong@gmail.com",
+          },
+        ],
+      },
+    });
+```
   </Tab>
 </Tabs>
 
@@ -56,41 +57,42 @@ result.
 
 <Tabs>
   <Tab title="Node.js">
-    ```javascript title="server-side"
+    ```ts title="server-side"
     // Process POST request to "/iamport-callback/schedule"
-        app.post("/iamport-callback/schedule", async (req, res) => {
-          try {
-            const { imp_uid, merchant_uid } = req.body;
-            // Get access token
-            const getToken = await axios({
-              url: "https://api.iamport.kr/users/getToken",
-              method: "post", // POST method
-              headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
-              data: {
-                imp_key: "imp_apikey", // REST API key
-                imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
-              }
-            });
-            const { access_token } = getToken.data.response; // Access token
-            // Get payment info from i'mport server using imp_uid
-            const getPaymentData = await axios({
-              url: \`https://api.iamport.kr/payments/\${imp_uid}\`, // Pass imp_uid
-              method: "get", // GET method
-              headers: { "Authorization": access_token } // Add access token to authorization header
-            });
-            const paymentData = getPaymentData.data.response; // Save payment info
-            const { status } = paymentData;
-            if (status === "paid") { // If payment is successful
-              // Save payment info in DB
-              await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Mongoose
-              ...
-            } else {
-              // Retry payment
-            }
-          } catch (e) {
-            res.status(400).send(e);
-          }
+    app.post("/iamport-callback/schedule", async (req, res) => {
+      try {
+        const { imp_uid, merchant_uid } = req.body;
+        // Get access token
+        const getToken = await axios({
+          url: "https://api.iamport.kr/users/getToken",
+          method: "post", // POST method
+          headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
+          data: {
+            imp_key: "imp_apikey", // REST API key
+            imp_secret:
+              "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+          },
         });
+        const { access_token } = getToken.data.response; // Access token
+        // Get payment info from i'mport server using imp_uid
+        const getPaymentData = await axios({
+          url: `https://api.iamport.kr/payments/${imp_uid}`, // Pass imp_uid
+          method: "get", // GET method
+          headers: { Authorization: access_token }, // Add access token to authorization header
+        });
+        const paymentData = getPaymentData.data.response; // Save payment info
+        const { status } = paymentData;
+        if (status === "paid") {
+          // If payment is successful
+          // Save payment info in DB
+          await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Mongoose
+        } else {
+          // Retry payment
+        }
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
     ```
   </Tab>
 </Tabs>
@@ -105,48 +107,49 @@ URL.
 
 <Tabs>
   <Tab title="Node.js">
-    ```javascript title="server-side"
-        // Process POST request to "/iamport-callback/schedule"
-        app.post("/iamport-callback/schedule", async (req, res) => {
-          try {
-            const { imp_uid, merchant_uid } = req.body;
-            // Get access token
-            /* ...Omitted ... */
-            // Get payment info from i'mport server using imp_uid
-            /* ...Omitted ... */
-            const paymentData = getPaymentData.data.response; // Save payment info
-            const { status } = paymentData;
-            if (status === "paid") { // If payment is successful
-              // Save payment info in DB
-              await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Mongoose
-              ...
-              // Schedule next payment
-              axios({
-                url: "{URL to receive payment schedule}", // Example: https://api.iamport.kr/subscribe/payments/schedule
-                method: "post",
-                headers: { "Authorization": access_token }, // Add access token to authorization header
-                data: {
-                  customer_uid: "gildong_0001_1234", // Unique ID for each card (billing key)
-                  schedules: [
-                    {
-                      merchant_uid: "order_monthly_0001", // Order ID
-                      schedule_at: 1519516800, // Schedule time in UNIX timestamp.
-                      amount: 8900,
-                      name: "Recurring payment for monthly subscription",
-                      ...
-                    }
-                  ]
-                }
-              });
-            } else {
-              // Retry payment
-            }
-          } catch (e) {
-            res.status(400).send(e);
-          }
-        });
+    ```ts title="server-side"
+    // Process POST request to "/iamport-callback/schedule"
+    app.post("/iamport-callback/schedule", async (req, res) => {
+      try {
+        const { imp_uid, merchant_uid } = req.body;
+        // Get access token
+        /* ...Omitted ... */
+        // Get payment info from i'mport server using imp_uid
+        /* ...Omitted ... */
+        const paymentData = getPaymentData.data.response; // Save payment info
+        const { status } = paymentData;
+        if (status === "paid") {
+          // If payment is successful
+          // Save payment info in DB
+          await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Mongoose
+          // Schedule next payment
+          axios({
+            url: "{URL to receive payment schedule}", // Example: https://api.iamport.kr/subscribe/payments/schedule
+            method: "post",
+            headers: { Authorization: access_token }, // Add access token to authorization header
+            data: {
+              customer_uid: "gildong_0001_1234", // Unique ID for each card (billing key)
+              schedules: [
+                {
+                  merchant_uid: "order_monthly_0001", // Order ID
+                  schedule_at: 1519516800, // Schedule time in UNIX timestamp.
+                  amount: 8900,
+                  name: "Recurring payment for monthly subscription",
+                },
+              ],
+            },
+          });
+        } else {
+          // Retry payment
+        }
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
     ```
 
-    The above example processes the webhook event that occurs when a scheduled payment is attempted. If the scheduled payment is completed successfully, the payment information is saved in the database and the next payment is scheduled.
+    The above example processes the webhook event that occurs when a scheduled payment is attempted.
+    If the scheduled payment is completed successfully, the payment information is saved
+    in the database and the next payment is scheduled.
   </Tab>
 </Tabs>

@@ -4,353 +4,376 @@ description: "\bNaver Pay simple payment integration guide"
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure Naver Pay simple payment PG settings
+## 1. Configure Naver Pay simple payment PG settings
 
 Refer to the [**Naver Pay settings**](../../ready/2.-pg/pg/undefined-2) page to configure the PG
 settings.
 
 ![](</gitbook-assets/en/screenshot 2022-05-30 2.00.33.png>)
 
-### 2. Request payment
+## 2. Request payment
 
 To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
-IMP.**request_pay**(param, callback).
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="General payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'naverpay',
-    merchant_uid: '{Merchant created Order ID}', //Example: order_no_0001
-    name : 'Order name: Test payment',
-    amount : 14000,
-    buyer_email : 'iamport@siot.do',
-    buyer_name : 'Customer name',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : 'Samseong-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    naverUseCfm : '20201001', //Expiration date
-    naverPopupMode : true, //Enable popup mode
-    m_redirect_url : "{URL to redirect to after payment approval}", //Example: http://yourservice.com/payments/complete
-    naverPurchaserName: "Purchaser name",
-    naverPurchaserBirthday: "20151201",
-    naverProducts : [{
-      			"categoryType": "BOOK",
-			"categoryId": "GENERAL",
-			"uid": "107922211",
-			"name": "History of the World",
-			"payReferrer": "NAVER_BOOK",
-			"count": 10
-		},
-		{
-			"categoryType": "MUSIC",
-			"categoryId": "CD",
-			"uid": "299911002",
-			"name": "BTS",
-			"payReferrer": "NAVER_BOOK",
-			"count": 1
-		}]
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="General payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "naverpay",
+        merchant_uid: "{Merchant created Order ID}", //Example: order_no_0001
+        name: "Order name: Test payment",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "Customer name",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        naverUseCfm: "20201001", //Expiration date
+        naverPopupMode: true, //Enable popup mode
+        m_redirect_url: "{URL to redirect to after payment approval}", //Example: http://yourservice.com/payments/complete
+        naverPurchaserName: "Purchaser name",
+        naverPurchaserBirthday: "20151201",
+        naverProducts: [
+          {
+            categoryType: "BOOK",
+            categoryId: "GENERAL",
+            uid: "107922211",
+            name: "History of the World",
+            payReferrer: "NAVER_BOOK",
+            count: 10,
+          },
+          {
+            categoryType: "MUSIC",
+            categoryId: "CD",
+            uid: "299911002",
+            name: "BTS",
+            payReferrer: "NAVER_BOOK",
+            count: 1,
+          },
+        ],
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
+
+    ### Key parameter description
+
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **PG code**
+
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`naverpay`**.
+
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **Order ID**
+
+    Must be unique for each request.
+
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+    **Payment amount**
+
+    Must be an integer (not string)
+
+    **`naverUseCfm`` `**<mark style="color:green;">**`string`**</mark>
+
+    **Expiration date** (string in yyyyMMdd format, **must be on or after the date of payment**).
 
-####
-
-### Key parameter description
-
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
-
-**PG code**
-
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`naverpay`**.
-
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
-
-**Order ID**
-
-Must be unique for each request.
-
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
-
-**Payment amount**
-
-Must be an integer (not string)
-
-**` naverUseCfm``  `**<mark style="color:green;">**`string`**</mark>
-
-**Expiration date** (string in yyyyMMdd format, **must be on or after the date of payment**).
-
-- Specify if contract between Naver Pay and merchant requires this value for the specified product type (such as music or performance tickets).
-
-**`name`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**`Product name`**
-
-If multiple products are defined in the `naverProducts` parameter, Naver Pay automatically appends `and 2 others`. Hence, set this to the name of the first product (`naverProducts[0].name`) in the array.
-
-**` naverPopupMode``  `**<mark style="color:orange;">**`boolean`**</mark>
-
-**Option to proceed via popup window**
-
-- If `false`, payment process will proceed via page redirection and you must specify `m_redirect_url`.
-
-**`m_redirect_url`**<mark style="color:green;">**`string`**</mark>
-
-**`Redirect URL`**
-
-- URL to redirect to after payment approval when using redirection method (`naverPopupMode`: **false**).
-
-**`naverPurchaserName`**<mark style="color:green;">**`string`**</mark>
-
-**`Name of the purchaser`**
-
-<mark style="color:red;">**Only required for merchants**</mark> who have been instructed
-to enter this information at the time of the Naver Pay contract because the product
-falls under a high-risk industry.
-
-**` naverPurchaserBirthday``  `**<mark style="color:green;">**`string`**</mark>
-
-**`Purchaser's DOB (yyyyMMdd)`**
-
-<mark style="color:red;">**Only required for merchants**</mark> who have been instructed
-to enter this information at the time of the Naver Pay contract because the product
-falls under a high-risk industry.
-
-**`naverChainId`** <mark style="color:green;">**`string`**</mark>
-
-Enter the value received from Naver Pay only for group-type merchants that operate two or more services with the same partner ID.
-
-Non-target merchants are not entered.
-
-\
-**`naverProducts`**<mark style="color:red;">**`*`**</mark><mark style="color:blue;">**`array`**</mark>
-
-**`Product information`**
-
-Same as the **`productItems`** parameter defined in Naver Pay manual.
-
-(If omitted, request will fail Naver Pay's inspection.)
-
-> **`naverProducts`** is an array of objects consisting of the following 6 properties:
->
-> - **`categoryType`** (<mark style="color:red;">Required</mark>): Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
-> - **`categoryId`** (<mark style="color:red;">Required</mark>): Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
-> - **`uid`** (<mark style="color:red;">Required</mark>) : Merchant created product ID in general. Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
-> - **`name`** (<mark style="color:red;">Required</mark>) : Product name
-> - **`count`** (<mark style="color:red;">Required</mark>) : Selected quantity
-> - **`sellerId`** (Optional) : Unique ID used by merchants to identify sub-merchants (uppercase and lowercase letters and numbers allowed)
->   - Only required for mail order brokerage merchants who have been instructed to enter this information at the time of the Naver Pay contract.
->   - Not required for other merchants.
-> - **`payReferrer`** (Optional) : Funnel path to Naver Pay. Enter only when in partnership agreement with other services on the Naver platform. Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product_ref).
-
-</Tab>
-
-<Tab title="Subscription payment request">
-## Request billing key
-
-```javascript title="JavaScript SDK"
-IMP.request_pay(
-  {
-    pg: "naverpay",
-    customer_uid: "gildong_0001_1234", //billing, required.
-    merchant_uid: "{Merchant created Order ID}", //Example: order_monthly_0001
-    name: "Slim plan (montly)",
-    amount: 14000, // For display only, no payment approval
-    buyer_email: "iamport@siot.do",
-    buyer_name: "Customer name",
-    buyer_tel: "010-1234-5678", //Required
-    buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
-    buyer_postcode: "123-456",
-    naverProductCode: "Recurring payment product code",
-    naverPopupMode: true, //Enable popup mode
-    m_redirect_url: "{URL to redirect to after registration}", //Example: http://yourservice.com/payments/complete
-  },
-  function (rsp) {
-    // callback logic
-    //* ...Omitted... *//
-  }
-);
-```
-
-###
-
-### Key parameter description
-
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
-
-**PG code**
-
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`naverpay`**.
-
-**`customer_uid`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**`Billing key`**
-
-- Must be specified for subscription/recurring payment registration. If omitted, processed as general payment.
-- After registration, you can use the key to request recurring payment approval.
-
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
-
-**Order ID**
-
-Must be unique for each request.
-
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
-
-**Payment amount**
-
-Must be an integer (not string)
-
-<mark style="color:red;">**Payment approval is not processed**</mark>** during
-subscription/recurring payment registration**.
-
-**`naverProductCode`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**Product code managed by the merchant**
-
-- Used to prevent the same customer from registering duplicate payments for the same product.
-- The default value is a randomly generated value allowing for duplicate payment registration. To avoid this, specify a value.
-
-**`name`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**`Product name`**
-
-If multiple products are defined in the `naverProducts` parameter, Naver Pay automatically appends `and 2 others`. Hence, set this to the name of the first product (`naverProducts[0].name`) in the array.
-
-**` naverPopupMode``  `**<mark style="color:orange;">**`boolean`**</mark>
-
-**Option to proceed via popup window**
-
-- If `false`, payment process will proceed via page redirection and you must specify `m_redirect_url`.
-
-**`m_redirect_url`**<mark style="color:green;">**`string`**</mark>
-
-**`Redirect URL`**
-
-- URL to redirect to after payment approval when using redirection method (`naverPopupMode`: **false**).
-
-## **Request payment**
-
-After getting a billing key, you can request the initial payment or schedule future payment by calling the payment approval API using the registered **`customer_uid`**.
-
-### **How to request payment**
-
-To request a payment approval, call the REST API [**/subscribe/payments/again**](../../api/api/api).
-
-- `customer_uid` : `customer_uid` specified for subscription/recurring payment registration.
-- `merchant_uid` : Merchant managed order number.
-- `amount` : Payment amount (can be different from the amount specified for subscription/recurring payment registration).
-- `tax_free` : Tax-free amount (out of total `amount`). Default value is 0.
-- `name` : Order name.
-- `extra.naverUseCfm` : Expiration date (string in yyyyMMdd format, must be same as the date of payment or later).
-  - Specify if contract between Naver Pay and merchant requires this value for the specified product type (such as music or performance tickets).
-
-```json title="sample json"
-{
-  "customer_uid": "gildong_0001_1234",
-  "merchant_uid": "order_monthly_0002", // Cannot be reused
-  "amount": 10000,
-  "name": "Slim plan (initial payment)",
-  "extra": {
-    "naverUseCfm": "20201001"
-  }
-}
-```
-
-```title="form-urlencoded"
-customer_uid={Unique key to identify the customer}&merchant_uid={Order number}&amount=10000&name=Slim plan (initial payment)&extra[naverUseCfm]=20201001
-```
-
-###
-
-### Schedule payments
-
-To schedule payments, call the REST API[ **/subscribe/payments/schedule**](../../api/subscription-payment-api/schedule-payment-api).
-
-- `customer_uid` : `customer_uid` specified for subscription/recurring payment registration.
-- `schedules` : Payment schedule object array (one or more schedules).
-  - `merchant_uid` : Merchant managed order number.
-  - `schedule_at` : Scheduled time of payment (UNIX timestamp)
-  - `amount` : Payment amount (can be different from the amount specified for subscription/recurring payment registration).
-  - `extra.naverUseCfm` : Expiration date (string in yyyyMMdd format, must be same as the date of payment or later).
     - Specify if contract between Naver Pay and merchant requires this value for the specified product type (such as music or performance tickets).
 
-```json title="sample json"
-{
-  "customer_uid": "gildong_0001_1234",
-  "schedules": [
+    **`name`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+    **`Product name`**
+
+    If multiple products are defined in the `naverProducts` parameter, Naver Pay automatically appends `and 2 others`. Hence, set this to the name of the first product (`naverProducts[0].name`) in the array.
+
+    **`naverPopupMode`` `**<mark style="color:orange;">**`boolean`**</mark>
+
+    **Option to proceed via popup window**
+
+    - If `false`, payment process will proceed via page redirection and you must specify `m_redirect_url`.
+
+    **`m_redirect_url`**<mark style="color:green;">**`string`**</mark>
+
+    **`Redirect URL`**
+
+    - URL to redirect to after payment approval when using redirection method (`naverPopupMode`: **false**).
+
+    **`naverPurchaserName`**<mark style="color:green;">**`string`**</mark>
+
+    **`Name of the purchaser`**
+
+    <mark style="color:red;">**Only required for merchants**</mark> who have been instructed
+    to enter this information at the time of the Naver Pay contract because the product
+    falls under a high-risk industry.
+
+    **`naverPurchaserBirthday`` `**<mark style="color:green;">**`string`**</mark>
+
+    **`Purchaser's DOB (yyyyMMdd)`**
+
+    <mark style="color:red;">**Only required for merchants**</mark> who have been instructed
+    to enter this information at the time of the Naver Pay contract because the product
+    falls under a high-risk industry.
+
+    **`naverChainId`** <mark style="color:green;">**`string`**</mark>
+
+    Enter the value received from Naver Pay only for group-type merchants that operate two or more services with the same partner ID.
+
+    Non-target merchants are not entered.
+
+    **`naverProducts`**<mark style="color:red;">**`*`**</mark><mark style="color:blue;">**`array`**</mark>
+
+    **`Product information`**
+
+    Same as the **`productItems`** parameter defined in Naver Pay manual.
+
+    (If omitted, request will fail Naver Pay's inspection.)
+
+    **`naverProducts`** is an array of objects consisting of the following 6 properties:
+
+    - **`categoryType`** (<mark style="color:red;">Required</mark>): Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
+
+    - **`categoryId`** (<mark style="color:red;">Required</mark>): Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
+
+    - **`uid`** (<mark style="color:red;">Required</mark>) : Merchant created product ID in general. Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
+
+    - **`name`** (<mark style="color:red;">Required</mark>) : Product name
+
+    - **`count`** (<mark style="color:red;">Required</mark>) : Selected quantity
+
+    - **`sellerId`** (Optional) : Unique ID used by merchants to identify sub-merchants (uppercase and lowercase letters and numbers allowed)
+      - Only required for mail order brokerage merchants who have been instructed to enter this information at the time of the Naver Pay contract.
+      - Not required for other merchants.
+
+    - **`payReferrer`** (Optional) : Funnel path to Naver Pay. Enter only when in partnership agreement with other services on the Naver platform.
+      Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product_ref).
+  </Tab>
+
+  <Tab title="Subscription payment request">
+    ## Request billing key
+
+    ```ts title="JavaScript SDK"
+    IMP.request_pay(
+      {
+        pg: "naverpay",
+        customer_uid: "gildong_0001_1234", //billing, required.
+        merchant_uid: "{Merchant created Order ID}", //Example: order_monthly_0001
+        name: "Slim plan (montly)",
+        amount: 14000, // For display only, no payment approval
+        buyer_email: "iamport@siot.do",
+        buyer_name: "Customer name",
+        buyer_tel: "010-1234-5678", //Required
+        buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        naverProductCode: "Recurring payment product code",
+        naverPopupMode: true, //Enable popup mode
+        m_redirect_url: "{URL to redirect to after registration}", //Example: http://yourservice.com/payments/complete
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
+
+    ### Key parameter description
+
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **PG code**
+
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`naverpay`**.
+
+    **`customer_uid`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+    **`Billing key`**
+
+    - Must be specified for subscription/recurring payment registration. If omitted, processed as general payment.
+    - After registration, you can use the key to request recurring payment approval.
+
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **Order ID**
+
+    Must be unique for each request.
+
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+    **Payment amount**
+
+    Must be an integer (not string)
+
+    <mark style="color:red;">**Payment approval is not processed**</mark> **during
+    subscription/recurring payment registration**.
+
+    **`naverProductCode`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+    **Product code managed by the merchant**
+
+    - Used to prevent the same customer from registering duplicate payments for the same product.
+    - The default value is a randomly generated value allowing for duplicate payment registration. To avoid this, specify a value.
+
+    **`name`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+    **`Product name`**
+
+    If multiple products are defined in the `naverProducts` parameter, Naver Pay automatically appends `and 2 others`.
+    Hence, set this to the name of the first product (`naverProducts[0].name`) in the array.
+
+    **`naverPopupMode`` `**<mark style="color:orange;">**`boolean`**</mark>
+
+    **Option to proceed via popup window**
+
+    - If `false`, payment process will proceed via page redirection and you must specify `m_redirect_url`.
+
+    **`m_redirect_url`**<mark style="color:green;">**`string`**</mark>
+
+    **`Redirect URL`**
+
+    - URL to redirect to after payment approval when using redirection method (`naverPopupMode`: **false**).
+
+    ## **Request payment**
+
+    After getting a billing key, you can request the initial payment or schedule future payment
+    by calling the payment approval API using the registered **`customer_uid`**.
+
+    ### **How to request payment**
+
+    To request a payment approval, call the REST API [**/subscribe/payments/again**](../../api/api/api).
+
+    - `customer_uid` : `customer_uid` specified for subscription/recurring payment registration.
+
+    - `merchant_uid` : Merchant managed order number.
+
+    - `amount` : Payment amount (can be different from the amount specified for subscription/recurring payment registration).
+
+    - `tax_free` : Tax-free amount (out of total `amount`). Default value is 0.
+
+    - `name` : Order name.
+
+    - `extra.naverUseCfm` : Expiration date (string in yyyyMMdd format, must be same as the date of payment or later).
+      - Specify if contract between Naver Pay and merchant requires this value for the specified product type (such as music or performance tickets).
+
+    ```json title="sample json"
     {
-      "merchant_uid": "order_monthly_0003", // Cannot be reused
-      "schedule_at": 1519862400,
+      "customer_uid": "gildong_0001_1234",
+      "merchant_uid": "order_monthly_0002", // Cannot be reused
       "amount": 10000,
+      "name": "Slim plan (initial payment)",
       "extra": {
         "naverUseCfm": "20201001"
       }
     }
-  ]
-}
-```
+    ```
 
-```title="form-urlencoded"
-customer_uid={Unique key to identify the customer}&schedules[0][merchant_uid]={Oder number}&schedules[0][schedule_at]={Scheduled time of payment UNIX timestamp}&schedules[0][amount]=10000&schedules[0][extra][naverUseCfm]=20201001
-```
+    ```txt title="form-urlencoded"
+    customer_uid={Unique key to identify the customer}&merchant_uid={Order number}&amount=10000&name=Slim plan (initial payment)&extra[naverUseCfm]=20201001
+    ```
 
-</Tab>
+    ### Schedule payments
+
+    To schedule payments, call the REST API [**/subscribe/payments/schedule**](../../api/subscription-payment-api/schedule-payment-api).
+
+    - `customer_uid` : `customer_uid` specified for subscription/recurring payment registration.
+
+    - `schedules` : Payment schedule object array (one or more schedules).
+      - `merchant_uid` : Merchant managed order number.
+
+      - `schedule_at` : Scheduled time of payment (UNIX timestamp)
+
+      - `amount` : Payment amount (can be different from the amount specified for subscription/recurring payment registration).
+
+      - `extra.naverUseCfm` : Expiration date (string in yyyyMMdd format, must be same as the date of payment or later).
+        - Specify if contract between Naver Pay and merchant requires this value for the specified product type (such as music or performance tickets).
+
+    ```json title="sample json"
+    {
+      "customer_uid": "gildong_0001_1234",
+      "schedules": [
+        {
+          "merchant_uid": "order_monthly_0003", // Cannot be reused
+          "schedule_at": 1519862400,
+          "amount": 10000,
+          "extra": {
+            "naverUseCfm": "20201001"
+          }
+        }
+      ]
+    }
+    ```
+
+    ```txt title="form-urlencoded"
+    customer_uid={Unique key to identify the customer}&schedules[0][merchant_uid]={Oder number}&schedules[0][schedule_at]={Scheduled time of payment UNIX timestamp}&schedules[0][amount]=10000&schedules[0][extra][naverUseCfm]=20201001
+    ```
+  </Tab>
 </Tabs>
 
 <Hint style="warning">
-### Note
+  ### Note
 
-#### Must return error message as-is
+  #### Must return error message as-is
 
-After calling the payment window (IMP.request_pay), if the payment process is interrupted by clicking the “Cancel” button at the bottom of the payment window, or if payment fails due to reasons such as insufficient balance, exceeding the limit, or less than 100 won, the reason for failure (error_msg) is included in the payment result (response object/query parameter) returned via callback (popup mode) or m_redirect_url (redirect mode). This error message must be returned to the user as it is without processing. If you do not comply with this rule, Naver Pay will request for correction during inspection.
+  After calling the payment window (IMP.request\_pay),
+  if the payment process is interrupted by clicking the “Cancel” button at the bottom of the payment window,
+  or if payment fails due to reasons such as insufficient balance, exceeding the limit,
+  or less than 100 won, the reason for failure (error\_msg) is included in the payment result (response object/query parameter)
+  returned via callback (popup mode) or m\_redirect\_url (redirect mode).
+  This error message must be returned to the user as it is without processing.
+  If you do not comply with this rule, Naver Pay will request for correction during inspection.
 
-Example: Assuming that error_msg is “Insufficient balance”, it should not be returned to the user as “Payment failed. Reason for failure:" + "Insufficient balance".
+  Example: Assuming that error\_msg is “Insufficient balance”,
+  it should not be returned to the user as “Payment failed. Reason for failure:" + "Insufficient balance".
 
-**Must implement exception handling for payment amount under 100 won**
+  **Must implement exception handling for payment amount under 100 won**
 
-You must implement exception handling for payment amount less than 100 won, the minimum amount for Naver Pay.
+  You must implement exception handling for payment amount less than 100 won,
+  the minimum amount for Naver Pay.
 
-Example: Must return a 'less than minimum amount (100 won)' error message to the user.
-
+  Example: Must return a 'less than minimum amount (100 won)' error message to the user.
 </Hint>
 
 <Details>
-<p slot="summary">Payment cancellation</p>
+  <p slot="summary">Payment cancellation</p>
 
-To call the i'mport cancel payment API `POST` [**`/payments/cancel`**](../../api/payment-api/cancel-payment-api) , you must specify the following parameters. (**If omitted, Naver Pay's inspection will fail**)
+  To call the i'mport cancel payment API `POST` [**`/payments/cancel`**](../../api/payment-api/cancel-payment-api) , you must specify the following parameters. (**If omitted, Naver Pay's inspection will fail**)
 
-- **`extra.requester`** : API requestor
-  - **`customer`**
-  - **`admin`**(default)
-- **`reason`**: reason for cancellation
+  - **`extra.requester`** : API requestor
+    - **`customer`**
+    - **`admin`**(default)
 
-**Example (json)**
+  - **`reason`**: reason for cancellation
 
-```javascript
-{
-  "imp_uid" : "imp_123412341234", // i'mport transaction ID
-  "amount" : 3000, // Refund amount
-  "reason": "Reson for cancellation", // Must be the actual reason
-  "extra" : {
-    "requester" : "customer"
+  **Example (json)**
+
+  ```json
+  {
+    "imp_uid": "imp_123412341234", // i'mport transaction ID
+    "amount": 3000, // Refund amount
+    "reason": "Reson for cancellation", // Must be the actual reason
+    "extra": {
+      "requester": "customer"
+    }
   }
-}
-```
+  ```
 
-**Example (form-urlencoded)**
+  **Example (form-urlencoded)**
 
-```
-imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
-```
-
+  ```txt
+  imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
+  ```
 </Details>

@@ -4,110 +4,97 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets the credit card name for a credit card code.
+## Gets the credit card name for a credit card code.
 
 <Swagger method="get" path="/cards/{card_standard_code}" baseUrl="https://api.iamport.kr" summary="Gets the credit card name for a credit card code (based on KFTC).">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="card_standard_code" type="String" required="true">
+    <mark style="color:red;">
+      **Credit card code**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="card_standard_code" type="String" required="true">
-<mark style="color:red;">
+  ### Responses
 
-**Credit card code**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="StandardCodeListResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="StandardCodeListResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **`response`**<mark style="color:red;">**`(Array[StandardCodeAnnotation], optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+    <Tabs>
+      <Tab title="StandardCodeAnnotation">
+        **`code`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**Response message**
+        **`Institution code (from KFTC)`**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`name`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`response`**<mark style="color:red;">**`(Array[StandardCodeAnnotation], optional)`**</mark>
+        **`Institution name (from KFTC)`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-</Tab>
-</Tabs>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-<Tabs>
-<Tab title="StandardCodeAnnotation">
-**`code`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**`Institution code (from KFTC)`**
-
-**`name`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**`Institution name (from KFTC)`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Result not found">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="Result not found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "code": "string",
-    "name": "string"
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "code": "string",
+      "name": "string"
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/codes/cardCodes**](https://api.iamport.kr/#!/codes/cardCodes)
-
+  [**https://api.iamport.kr/#!/codes/cardCodes**](https://api.iamport.kr/#!/codes/cardCodes)
 </Hint>

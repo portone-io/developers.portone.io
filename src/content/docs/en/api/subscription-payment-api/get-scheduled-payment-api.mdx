@@ -4,210 +4,197 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets scheduled payment data by order ID (merchant\_uid).
+## Gets scheduled payment data by order ID (merchant\_uid).
 
 <Swagger method="get" path="/subscribe/payments/schedule/{merchant_uid}" baseUrl="https://api.iamport.kr" summary="Gets scheduled payment data by order ID (merchant_uid).">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="merchant_uid" type="String" required="true">
+    Merchant
 
-<SwaggerParameter name="merchant_uid" type="String" required="true">
-Merchant 
+    <mark style="color:red;">
+      **Order ID**
+    </mark>
+  </SwaggerParameter>
 
-<mark style="color:red;">
+  ### Responses
 
-**Order ID**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="SingleScheduleResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="SingleScheduleResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **`response`** <mark style="color:red;">**(Array\[ScheduleResultAnnotation], optional**</mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+    <Tabs>
+      <Tab title="ScheduleResultAnnotation">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**Response message**
+        **Response code**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        0: success, Not 0: check the message
 
-**`response`** <mark style="color:red;">**(Array\[ScheduleResultAnnotation], optional**</mark>
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
+        **Response message**
 
-<Tabs>
-<Tab title="ScheduleResultAnnotation">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+        A non-zero code includes a message like 'Invalid payment info'.
 
-**Response code**
+        **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-0: success, Not 0: check the message
+        **Billing key**
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+        **`merchant_uid`\*** <mark style="color:green;">**string**</mark>
 
-**Response message**
+        **Order ID**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`imp_uid`** <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
 
-**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **i'mport transaction UID**
 
-**Billing key**
+        **`schedule_at`**  <mark style="color:red;">**\***</mark>  <mark style="color:blue;">**UNIX timestamp**</mark>
 
-**`merchant_uid`  \*  **<mark style="color:green;">**string**</mark>
+        **Payment scheduled at**
 
-**Order ID**
+        **`executed_at`** <mark style="color:red;">**\***</mark>  <mark style="color:blue;">**UNIX timestamp**</mark>
 
-**`imp_uid`** <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
+        **Payment started at**
 
-**i'mport transaction UID**
+        **`revoked_at`** <mark style="color:red;">**\***</mark>  <mark style="color:blue;">**UNIX timestamp**</mark>
 
-**`schedule_at`**  <mark style="color:red;">**\***</mark>  <mark style="color:blue;">**UNIX timestamp**</mark>
+        **Payment cancelled at**
 
-**Payment scheduled at**
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`executed_at`** <mark style="color:red;">**\***</mark>  <mark style="color:blue;">**UNIX timestamp**</mark>
+        **Payment amount**
 
-**Payment started at**
+        **`name`**  <mark style="color:green;">**string**</mark>
 
-**`revoked_at`** <mark style="color:red;">**\***</mark>  <mark style="color:blue;">**UNIX timestamp**</mark>
+        **Product name**
 
-**Payment cancelled at**
+        **`buyer_name`**  <mark style="color:green;">**string**</mark>
 
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+        **Customer name**
 
-**Payment amount**
+        **`buyer_email`**  <mark style="color:green;">**string**</mark>
 
-**`name`**  <mark style="color:green;">**string**</mark>
+        **Customer email**
 
-**Product name**
+        **`buyer_tel`**  <mark style="color:green;">**string**</mark>
 
-**`buyer_name`**  <mark style="color:green;">**string**</mark>
+        **Customer phone number**
 
-**Customer name**
+        **`buyer_addr`**  <mark style="color:green;">**string**</mark>
 
-**`buyer_email`**  <mark style="color:green;">**string**</mark>
+        **Customer address**
 
-**Customer email**\
+        **`buyer_postcode`**  <mark style="color:green;">**string**</mark>
 
-**`buyer_tel`**  <mark style="color:green;">**string**</mark>
+        **Customer zip code**
 
-**Customer phone number**
+        **`custom_data`**  <mark style="color:green;">**string**</mark>
 
-**`buyer_addr`**  <mark style="color:green;">**string**</mark>
+        **Echo data as JSON string**
 
-**Customer address**
+        **`schedule_status`**  <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
 
-**`buyer_postcode`**  <mark style="color:green;">**string**</mark>
+        **Status of scheduled payment**
 
-**Customer zip code**
+        - `scheduled` (payment is scheduled for execution)
+        - `executed` (payment is completed)
+        - `revoked` (payment is cancelled)
 
-**`custom_data`**  <mark style="color:green;">**string**</mark>
+        **`payment_status`** <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
 
-**Echo data as JSON string**
+        **Payment approval state**
 
-**`schedule_status`**  <mark style="color:red;">**\***</mark>** ** <mark style="color:green;">**string**</mark>
+        - `null`: Scheduled payment has not executed yet (actual null value, not string)
+        - `paid`: Scheduled payment is approved
+        - `failed`: Scheduled payment approval failed
+        - `cancelled`: Scheduled payment is refunded (cancelled) after approval
 
-**Status of scheduled payment**
+        **`fail_reason`**  <mark style="color:green;">**string**</mark>
 
-- `scheduled` (payment is scheduled for execution)
-- `executed` (payment is completed)
-- `revoked` (payment is cancelled)
+        **Reason for failure**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`payment_status`** <mark style="color:red;">**\***</mark>** ** <mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**Payment approval state**
-
-- `null`: Scheduled payment has not executed yet (actual null value, not string)
-- `paid`: Scheduled payment is approved
-- `failed`: Scheduled payment approval failed
-- `cancelled`: Scheduled payment is refunded (cancelled) after approval
-
-**`fail_reason`**  <mark style="color:green;">**string**</mark>
-
-**Reason for failure**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Result not found">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="Result not found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": [
-    {
-      "customer_uid": "string",
-      "merchant_uid": "string",
-      "imp_uid": "string",
-      "schedule_at": "0",
-      "executed_at": "0",
-      "revoked_at": "0",
-      "amount": 0,
-      "name": "string",
-      "buyer_name": "string",
-      "buyer_email": "string",
-      "buyer_tel": "string",
-      "buyer_addr": "string",
-      "buyer_postcode": "string",
-      "custom_data": "string",
-      "schedule_status": "scheduled",
-      "payment_status": "paid",
-      "fail_reason": "string"
-    }
-  ]
-}
-```
-
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": [
+      {
+        "customer_uid": "string",
+        "merchant_uid": "string",
+        "imp_uid": "string",
+        "schedule_at": "0",
+        "executed_at": "0",
+        "revoked_at": "0",
+        "amount": 0,
+        "name": "string",
+        "buyer_name": "string",
+        "buyer_email": "string",
+        "buyer_tel": "string",
+        "buyer_addr": "string",
+        "buyer_postcode": "string",
+        "custom_data": "string",
+        "schedule_status": "scheduled",
+        "payment_status": "paid",
+        "fail_reason": "string"
+      }
+    ]
+  }
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/subscribe/getScheduleByMid**](https://api.iamport.kr/#!/subscribe/getScheduleByMid)
-
+  [**https://api.iamport.kr/#!/subscribe/getScheduleByMid**](https://api.iamport.kr/#!/subscribe/getScheduleByMid)
 </Hint>

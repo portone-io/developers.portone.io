@@ -4,19 +4,20 @@ description: Learn about the payment URL generation API.
 ---
 
 import Figure from "~/components/Figure.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Overview
+## 1. Overview
 
-This document describes i'mport payment URL generation API specification. i'mport Merchants can use the service without any restrictions.
+This document describes i'mport payment URL generation API specification.
+i'mport Merchants can use the service without any restrictions.
 
-### 2. API URI
+## 2. API URI
 
 Payment API is exposed as REST web service.
 
@@ -25,230 +26,203 @@ Payment API is exposed as REST web service.
 > **Content-Type : application/json;charset=UTF-8**
 
 <Tabs>
-<Tab title="Development">
+  <Tab title="Development">
+    ```http title="URI"
+    POST https://api.iamport-dev.co/api/supplements/v1/link/payment
+    ```
+  </Tab>
 
-```url title="URI"
-https://api.iamport-dev.co/api/supplements/v1/link/payment
-```
-
-</Tab>
-
-<Tab title="Prod">
-
-```title="URI"
-https://api.iamport.co/api/supplements/v1/link/payment
-```
-
-</Tab>
+  <Tab title="Prod">
+    ```http title="URI"
+    POST https://api.iamport.co/api/supplements/v1/link/payment
+    ```
+  </Tab>
 </Tabs>
 
-### 3. Description
+## 3. Description
 
-Customers can access the generated payment URL to make a payment. It supports all payment methods supported by the PG. When the link expires, payment is no longer available.
+Customers can access the generated payment URL to make a payment.
+It supports all payment methods supported by the PG.
+When the link expires, payment is no longer available.
 
-### 4. Request message specification
+## 4. Request message specification
 
 <Swagger method="post" path="/payment" baseUrl="https://api.iamport.co/api/supplements/v1/link" summary="Creates a payment URL.">
-<SwaggerDescription>
-HTTP Method : POST
+  <SwaggerDescription>
+    HTTP Method : POST
 
-Content-Type : Application.<mark style="color:red;">json</mark>;charset=UTF-8
+    Content-Type : Application.<mark style="color:red;">json</mark>;charset=UTF-8
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Body
 
-#### Body
+  <SwaggerParameter name="title" type="String" required="true">
+    <mark style="color:red;">
+      Title of the bridge page
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="title" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="user_code" type="String" required="true">
+    <mark style="color:red;">
+      Merchant ID
+    </mark>
+  </SwaggerParameter>
 
-Title of the bridge page
+  <SwaggerParameter name="amount" type="integer" required="true">
+    <mark style="color:red;">
+      Amount
+    </mark>
+  </SwaggerParameter>
 
-</mark>
+  <SwaggerParameter name="merchant_uid" type="String" required="true">
+    <mark style="color:red;">
+      Order ID
+    </mark>
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="user_code" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="name" type="String" required="true">
+    <mark style="color:red;">
+      Product name
+    </mark>
+  </SwaggerParameter>
 
-Merchant ID
+  <SwaggerParameter name="tax_free" type="integer" required="false">
+    Tax free amount
+  </SwaggerParameter>
 
-</mark>
+  <SwaggerParameter name="currency" type="String" required="true">
+    <mark style="color:red;">
+      Currency code
+    </mark>
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="amount" type="integer" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="language" type="String" required="false">
+    Payment window language
 
-Amount
+    -ko
 
-</mark>
+    -en
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="merchant_uid" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="buyer_name" type="String" required="false">
+    Customer name
+  </SwaggerParameter>
 
-Order ID
+  <SwaggerParameter name="buyer_tel" type="String" required="true">
+    <mark style="color:red;">
+      Customer phone
+    </mark>
+  </SwaggerParameter>
 
-</mark>
+  <SwaggerParameter name="buyer_addr" type="String" required="false">
+    Customer address
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="name" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="buyer_email" type="String" required="false">
+    Customer email
+  </SwaggerParameter>
 
-Product name
+  <SwaggerParameter name="buyer_postcode" type="String" required="false">
+    Customer zip
+  </SwaggerParameter>
 
-</mark>
+  <SwaggerParameter name="custom_data" type="Object" required="false">
+    Custom data
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="tax_free" type="integer" required="false">
-Tax free amount
+  <SwaggerParameter name="notice_url" type="String" required="false">
+    Notification URL to receive payment result
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="currency" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="expired_at" type="String" required="true">
+    <mark style="color:red;">
+      Page expiration
+    </mark>
+  </SwaggerParameter>
 
-Currency code
+  <SwaggerParameter name="display_language" type="String" required="false">
+    Bridge page language
 
-</mark>
+    -ko : Korean
 
-</SwaggerParameter>
-<SwaggerParameter name="language" type="String" required="false">
-Payment window language
+    -en : English
+  </SwaggerParameter>
 
-\-ko
+  <SwaggerParameter name="pay_methods" type="Object" required="true">
+    **pg** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-\-en
+    PG code
 
-</SwaggerParameter>
-<SwaggerParameter name="buyer_name" type="String" required="false">
-Customer name
+    [#undefined](../sdk/javascript-sdk/rps#undefined "mention")
 
-</SwaggerParameter>
-<SwaggerParameter name="buyer_tel" type="String" required="true">
-<mark style="color:red;">
+    ---
 
-Customer phone
+    **pay\_method** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-</mark>
+    Payment method code
 
-</SwaggerParameter>
-<SwaggerParameter name="buyer_addr" type="String" required="false">
-Customer address
+    [#undefined](../sdk/javascript-sdk/rps#undefined "mention")
 
-</SwaggerParameter>
-<SwaggerParameter name="buyer_email" type="String" required="false">
-Customer email
+    ---
 
-</SwaggerParameter>
-<SwaggerParameter name="buyer_postcode" type="String" required="false">
-Customer zip
+    **label** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="custom_data" type="Object" required="false">
-Custom data
+    Payment method shown on bridge page
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="notice_url" type="String" required="false">
-Notification URL to receive payment result
+  ### Responses
 
-</SwaggerParameter>
-<SwaggerParameter name="expired_at" type="String" required="true">
-<mark style="color:red;">
-
-Page expiration
-
-</mark>
-
-</SwaggerParameter>
-<SwaggerParameter name="display_language" type="String" required="false">
-Bridge page language
-
-\-ko : Korean
-
-\-en : English
-
-</SwaggerParameter>
-<SwaggerParameter name="pay_methods" type="Object" required="true">
-**pg** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
-
-PG code
-
-[#undefined](../sdk/javascript-sdk/rps#undefined "mention")
-
----
-
-**pay_method** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
-
-Payment method code
-
-[#undefined](../sdk/javascript-sdk/rps#undefined "mention")
-
----
-
-**label** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
-
-Payment method shown on bridge page
-
-</SwaggerParameter>
-
-### Responses
-
-<SwaggerResponse status="200: OK" description="Success">
-```json title="json"
-{
-    "shortenedUrl": "https://dev.impay.link/4bdf239e"  //Create payment link 
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="200: OK" description="Success">
+    ```json title="json"
+    {
+      "shortenedUrl": "https://dev.impay.link/4bdf239e"  //Create payment link
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 **#Sample JSON request message**
 
-```title="json"
+```json title="json"
 {
-    "payment_info": "{\"title\":\"Test merchant\",\"user_code\":\"imp68124833\",\"amount\":10000,\"merchant_uid\":\"merchant_1630665784552\",\"name\":\"payment link test\",\"tax_free\":\"tax free amount\",\"currency\":\"KRW\",\"language\":\"ko\",\"buyer_name\":\"\",\"buyer_tel\":\"\",\"buyer_addr\":\"\",\"buyer_email\":\"\",\"buyer_postcode\":\"\",\"custom_data\":\"json_object\",\"notice_url\":\"notification url\",\"pay_methods\":[{\"pg\":\"INIpayTest\",\"pay_method\":\"card\",\"label\":\"credit/check card\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"naverpay\",\"label\":\"Naver Pay\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"kakaopay\",\"label\":\"Kakao Pay\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"phone\",\"label\":\"mobile micropayment\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"trans\",\"label\":\"account transfer\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"vbank\",\"label\":\"virtual account\"}]}",
-    "expired_at": 1634324016
+  "payment_info": "{\"title\":\"Test merchant\",\"user_code\":\"imp68124833\",\"amount\":10000,\"merchant_uid\":\"merchant_1630665784552\",\"name\":\"payment link test\",\"tax_free\":\"tax free amount\",\"currency\":\"KRW\",\"language\":\"ko\",\"buyer_name\":\"\",\"buyer_tel\":\"\",\"buyer_addr\":\"\",\"buyer_email\":\"\",\"buyer_postcode\":\"\",\"custom_data\":\"json_object\",\"notice_url\":\"notification url\",\"pay_methods\":[{\"pg\":\"INIpayTest\",\"pay_method\":\"card\",\"label\":\"credit/check card\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"naverpay\",\"label\":\"Naver Pay\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"kakaopay\",\"label\":\"Kakao Pay\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"phone\",\"label\":\"mobile micropayment\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"trans\",\"label\":\"account transfer\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"vbank\",\"label\":\"virtual account\"}]}",
+  "expired_at": 1634324016
 }
 ```
 
 **#Sample payment (bridge) page**
 
 <Tabs>
-<Tab title="Payment (bridge) page">
-**Sample response URL page displayed when payment URL API request is successful.**
+  <Tab title="Payment (bridge) page">
+    **Sample response URL page displayed when payment URL API request is successful.**
 
-<Figure src="/gitbook-assets/en/image (135).png" caption="Payment URL page" />
+    <Figure src="/gitbook-assets/en/image (135).png" caption="Payment URL page" />
+  </Tab>
 
-</Tab>
+  <Tab title=" Expired (bridge) page">
+    **Sample page displayed for an expired payment URL page (expire\_at exceeded).**
 
-<Tab title=" Expired (bridge) page">
-**Sample page displayed for an expired payment URL page (expire\_at exceeded).**
-
-<Figure
-  src="/gitbook-assets/en/image (137).png"
-  caption="Payment URL expired page"
-/>
-
-</Tab>
+    <Figure src="/gitbook-assets/en/image (137).png" caption="Payment URL expired page" />
+  </Tab>
 </Tabs>
 
-### 5. Disabling payment URL
+## 5. Disabling payment URL
 
-**Append the last part of the response** (**shortenedUrl**) **URL to the payment URI API address and call it.**
+**Append the last part of the response** (**shortenedUrl**)
+**URL to the payment URI API address and call it.**
 
 > **HTTP Method :** <mark style="color:red;"> **PUT** </mark>
 
 <Hint style="success">
-**For the following API response**
+  **For the following API response**
 
-```json
-{ "shortenedUrl": "https://dev.impay.link/4bdf239e" }
-```
+  ```json
+  { "shortenedUrl": "https://dev.impay.link/4bdf239e" }
+  ```
 
-[https://api.iamport.co/api/supplements/v1/link/payment/](https://api.iamport.co/api/supplements/v1/link/payment/%7BGUID%7D) <mark style="color:red;"> **4bdf239e** </mark>
+  [https://api.iamport.co/api/supplements/v1/link/payment/](https://api.iamport.co/api/supplements/v1/link/payment/%7BGUID%7D) <mark style="color:red;"> **4bdf239e** </mark>
 
-Call the above payment URL to disable it.
-
+  Call the above payment URL to disable it.
 </Hint>

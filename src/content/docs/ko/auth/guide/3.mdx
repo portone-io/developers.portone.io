@@ -3,10 +3,10 @@ title: 3. 결제 요청하기
 description: 파라미터값을 조합하여 결제창을 호출 할 수 있습니다.
 ---
 
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Youtube from "~/components/gitbook/Youtube.astro";
+import Hint from "~/components/Hint.astro";
 
 [**IMP 객체 초기화**](2)가 완료 되었으면 이제 결제창을 호출할 차례입니다.
 
@@ -14,29 +14,33 @@ import Youtube from "~/components/gitbook/Youtube.astro";
 
 <Tabs>
 <Tab title="JavaScript">
-```javascript
-  function requestPay() {
-    IMP.request_pay({
+```ts
+function requestPay() {
+  IMP.request_pay(
+    {
       pg: "kcp.{상점ID}",
       pay_method: "card",
-      merchant_uid: "ORD20180131-0000011",   // 주문번호
+      merchant_uid: "ORD20180131-0000011", // 주문번호
       name: "노르웨이 회전 의자",
-      amount: 64900,                         // 숫자 타입
+      amount: 64900, // 숫자 타입
       buyer_email: "gildong@gmail.com",
       buyer_name: "홍길동",
       buyer_tel: "010-4242-4242",
       buyer_addr: "서울특별시 강남구 신사동",
-      buyer_postcode: "01181"
-    }, function (rsp) { // callback
+      buyer_postcode: "01181",
+    },
+    function (rsp) {
+      // callback
       //rsp.imp_uid 값으로 결제 단건조회 API를 호출하여 결제결과를 판단합니다.
-    });
-  }
+    },
+  );
+}
 ```
 
 </Tab>
 
 <Tab title="React.js">
-```jsx
+```tsx
 class RequestPay extends React.Component {
   requestPay = () => {
     IMP.request_pay({ // param
@@ -67,7 +71,7 @@ class RequestPay extends React.Component {
 </Tab>
 
 <Tab title="Vue.js">
-```javascript
+```ts
 <script>
   export default {
     methods: {

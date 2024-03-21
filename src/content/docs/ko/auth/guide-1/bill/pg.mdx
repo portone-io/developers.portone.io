@@ -13,10 +13,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 - **장점**: 카드정보가 서버 또는 포트원의 서버를 거치지 않고 직접 PG사로 전달되기 때문에 데이터 및 통신구간 암호화 등의 **추가 보안 프로세스가 없다**.
 - **단점**: PG사의 일반결제창을 통해 카드정보를 입력받기 때문에 웹브라우저를 통해서만 빌링키 발급이 이루어지며, **카드정보 입력란을 커스터마이징 할 수 없다.**(고객사 사이트 친화적인 UI/UX 구성불가)
 
-<Figure
-  src="/gitbook-assets/ko/image (269).png"
-  caption="PG사 카드정보 획득 결제창 예제"
-/>
+<Figure src="/gitbook-assets/ko/image (269).png" caption="PG사 카드정보 획득 결제창 예제" />
 
 ### <mark style="color:blue;">**STEP 01.**</mark> 발급 요청하기
 
@@ -26,7 +23,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 <Tabs>
 <Tab title="JavaScript">
-```javascript title="client-side"
+```ts title="client-side"
   IMP.request_pay({ 
     customer_uid: "gildong_0001_1234", // 카드(빌링키)와 1:1로 대응하는 값
     /* ...생략... */
@@ -59,7 +56,7 @@ PG사가 발급한 빌링키와 1:1로 맵핑되는 고객사가 지정한 고�
 
 <Tabs>
 <Tab title="JavaScript">
-```javascript title="client-side"
+```ts title="client-side"
   IMP.request_pay({ 
     /* ...중략... */
   }, function (rsp) { // callback
@@ -82,7 +79,7 @@ PG사가 발급한 빌링키와 1:1로 맵핑되는 고객사가 지정한 고�
 
 빌링키가 성공적으로 발급되면 고객사 서버로 **customer_uid** 를 전달합니다. 서버에서는 클라이언트로부터 **customer_uid**를 전달받는 API endpoint를 생성합니다. 서버에서 해당 **customer_uid** 를 사용하여 차후에 결제를 요청할 수 있습니다.
 
-```javascript title="server-side"
+```ts title="server-side"
   app.post("/billings", async (req, res) => {
     try {
       const { customer_uid } = req.body; // req body에서 customer_uid 추출
@@ -109,7 +106,7 @@ PG사가 발급한 빌링키와 1:1로 맵핑되는 고객사가 지정한 고�
 
 <Tabs>
 <Tab title="Node.js">
-```javascript title="server-side"
+```ts title="server-side"
 app.post("/billings", async (req, res) => {
     try {
       const { customer_uid } = req.body; // req의 body에서 customer_uid 추출

@@ -4,22 +4,24 @@ description: Learn how to get an access token.
 ---
 
 import Figure from "~/components/Figure.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Access token is required to make an i'mport REST API request.
+## Access token is required to make an i'mport REST API request.
 
 To get access to private resources, such as payment information, you must obtain an access token and
 include it in the i'mport REST API request.
 
-### Get an access token <a href="#undefined" id="undefined"></a>
+### Get an access token <a href="#undefined" id="undefined" />
 
 <Hint style="danger">
-Request access token from server-side
+  Request access token from server-side
 
-If you **request for access token from the client-side**, the <mark style="color:red;">**`REST API Key`**</mark>**` ``and`** <mark style="color:red;">**`REST API Secret`**</mark> are **exposed to public creating a potential security vulnerability**. Therefore, you **must request for access token from the server-side.**
-
+  If you **request for access token from the client-side**,
+  the <mark style="color:red;">**`REST API Key`**</mark> **and** <mark style="color:red;">**`REST API Secret`**</mark>
+  are **exposed to public creating a potential security vulnerability**.
+  Therefore, you **must request for access token from the server-side.**
 </Hint>
 
 ### <mark style="color:blue;">**STEP 01.**</mark>  Request access code
@@ -31,60 +33,58 @@ to get an access token as follows:
 <Figure src="/gitbook-assets/en/image (99).png" caption="Admin Console > REST API Key & REST API Secret" />
 
 <Tabs>
-<Tab title="curl">
-```python title="server-side"
-  curl -H "Content-Type: application/json" POST -d '{"imp_key": "REST API key", "imp_secret":"REST API Secret"}' https://api.iamport.kr/users/getToken
-```
+  <Tab title="curl">
+    ```sh title="server-side"
+    curl -H "Content-Type: application/json" POST -d '{"imp_key": "REST API key", "imp_secret":"REST API Secret"}' https://api.iamport.kr/users/getToken
+    ```
+  </Tab>
 
-</Tab>
+  <Tab title="Node.js">
+    ```ts title="server-side"
+    // Request access token
+    axios({
+      url: "https://api.iamport.kr/users/getToken",
+      // POST method
+      method: "post",
+      // "Content-Type": "application/json"
+      headers: { "Content-Type": "application/json" },
+      data: {
+        // REST API key
+        imp_key: "imp_apikey",
+        // REST API Secret
+        imp_secret:
+          "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f",
+      },
+    });
+    ```
+  </Tab>
 
-<Tab title="Node.js">
-```javascript title="server-side"
-// Request access token
-  axios({
-    url: "https://api.iamport.kr/users/getToken",
-    // POST method
-    method: "post", 
-    // "Content-Type": "application/json"
-    headers: { "Content-Type": "application/json" }, 
-    data: {
-      // REST API key
-      imp_key: "imp_apikey", 
-      // REST API Secret
-      imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" 
-    }
-  });
-```
+  <Tab title="Python">
+    ```python
+    import requests
+    import json
 
-</Tab>
+    def getTokenApi(path):
+        API_HOST = "https://api.iamport.kr"
+        url = API_HOST + path
 
-<Tab title="Python">
-```python
-import requests
-import json
+        headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
+        body = {
+            "imp_key": "", # REST API Key
+            "imp_secret": "" # REST API Secret
+        }
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(body, ensure_ascii=False, indent="\t"))
+            return response
+        except Exception as ex:
 
-def getTokenApi(path):
-    API_HOST = "https://api.iamport.kr"
-    url = API_HOST + path
+    res=getTokenApi("/users/getToken")  # API call
+    json_object=json.loads(res.text)    # Convert to JSON object
+    TokenVal = json_object['response']['access_token'] # Parse the token
 
-    headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
-    body = {
-        "imp_key": "", # REST API Key
-        "imp_secret": "" # REST API Secret
-    }
-    try:
-        response = requests.post(url, headers=headers, data=json.dumps(body, ensure_ascii=False, indent="\t"))
-        return response
-    except Exception as ex:
-
-res=getTokenApi("/users/getToken")  # API call
-json_object=json.loads(res.text)    # Convert to JSON object
-TokenVal = json_object['response']['access_token'] # Parse the token
-
-print(TokenVal)
-```
-
-</Tab>
+    print(TokenVal)
+    ```
+  </Tab>
 </Tabs>
 
 ### <mark style="color:blue;">**STEP 02.**</mark> Get access token
@@ -93,21 +93,20 @@ Get the access token from the response as follows:
 
 ```json title="Response"
 {
-    "code": 0,
-    "message": null,
-    "response":{
-      "access_token": "a9ace025c90c0da2161075da6ddd3492a2fca776", // access token
-      "now": 1512446940, // i'mport REST API server's timestamp
-      "expired_at": 1512448740, // token's expiration (UNIX timestamp, KST)
-    },
+  "code": 0,
+  "message": null,
+  "response":{
+    "access_token": "a9ace025c90c0da2161075da6ddd3492a2fca776", // access token
+    "now": 1512446940, // i'mport REST API server's timestamp
+    "expired_at": 1512448740 // token's expiration (UNIX timestamp, KST)
   }
+}
 ```
 
 <Hint style="info">
-**Standard NTP Server**
+  **Standard NTP Server**
 
-The i'mport REST API server synchronizes with the standard time using <mark style="color:red;">**Google Public NTP**</mark>.
-
+  The i'mport REST API server synchronizes with the standard time using <mark style="color:red;">**Google Public NTP**</mark>.
 </Hint>
 
 ### <mark style="color:blue;">**STEP 03.**</mark>  Using access token
@@ -119,36 +118,35 @@ format:
 > Authorization: **Bearer** a9ace025c90c0da2161075da6ddd3492a2fca776
 
 <Tabs>
-<Tab title="curl">
-Call the REST API to get the payment details by **including the access token in the request header** as follows:
+  <Tab title="curl">
+    Call the REST API to get the payment details by **including the access token in the request header** as follows:
 
-``` title="server-side"
-curl -H "Content-Type: application/json" -H "Authorization: Bearer a9ace025c90c0da2161075da6ddd3492a2fca776" https://api.iamport.kr/payments/imp_448280090638
-```
+    ```sh title="server-side"
+    curl -H "Content-Type: application/json" -H "Authorization: Bearer a9ace025c90c0da2161075da6ddd3492a2fca776" https://api.iamport.kr/payments/imp_448280090638
+    ```
+  </Tab>
 
-</Tab>
-
-<Tab title="Node.js">
-```json title="server-side"
-axios({
-    url: "https://api.iamport.kr/payments/imp_448280090638",
-    method: "get", // GET method
-    headers: {
-      // "Content-Type": "application/json"
-      "Content-Type": "application/json", 
-      // Reissuing and Reusing Access Token
-ssued access token
-      "Authorization": "Bearer a9ace025c90c0da2161075da6ddd3492a2fca776" 
-    }
-  });
-```
-
-</Tab>
+  <Tab title="Node.js">
+    ```ts title="server-side"
+    axios({
+      url: "https://api.iamport.kr/payments/imp_448280090638",
+      method: "get", // GET method
+      headers: {
+        // "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        // Use issued access token
+        Authorization: "Bearer a9ace025c90c0da2161075da6ddd3492a2fca776",
+      },
+    });
+    ```
+  </Tab>
 </Tabs>
 
-### Reissuing and Reusing Access Token <a href="#access-token" id="access-token"></a>
+### Reissuing and Reusing Access Token <a href="#access-token" id="access-token" />
 
-The expiration of the access token is **30 minutes** from the time of issuance. A token **cannot be used after its expiration**. An API call request with an expired token returns a <mark style="color:red;">**`401 Unauthorized`**</mark> response.
+The expiration of the access token is **30 minutes** from the time of issuance.
+A token **cannot be used after its expiration**.
+An API call request with an expired token returns a <mark style="color:red;">**`401 Unauthorized`**</mark> response.
 
 > - Reissuance (after expiration): A new access token is issued.
 >   (Expiration: 30 minutes after issuance)
@@ -156,14 +154,13 @@ The expiration of the access token is **30 minutes** from the time of issuance. 
 > - Reuse (before expiration): Existing access token is reused. (Expiration: same as before,
 >   but extended by 5 minutes if requested within 1 minute from the original expiration)
 
-![](</gitbook-assets/en/access\_token\_reuse.png>)
+![](/gitbook-assets/en/access_token_reuse.png)
 
 <Hint style="info">
-**5 minute extension of expiration**
+  **5 minute extension of expiration**
 
-The reuse and 5 minute lifetime extension of access token are provided for the following situations:
+  The reuse and 5 minute lifetime extension of access token are provided for the following situations:
 
-- Multiple web servers of a single merchant are competing to call the REST API (`/users/getToken`) at the same time.
-- Multiple web servers of a single merchant are not synchronized in time.
-
+  - Multiple web servers of a single merchant are competing to call the REST API (`/users/getToken`) at the same time.
+  - Multiple web servers of a single merchant are not synchronized in time.
 </Hint>

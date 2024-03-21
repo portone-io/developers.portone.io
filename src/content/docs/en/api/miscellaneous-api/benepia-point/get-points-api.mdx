@@ -4,120 +4,106 @@ description: 베네피아 포인트를 단건 조회 합니다.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets Benepia points using user's Benepia account ID and password through KCP.
+## Gets Benepia points using user's Benepia account ID and password through KCP.
 
 <Swagger method="post" path="/benepia/point" baseUrl="https://api.iamport.kr" summary="Gets Benepia points using user's Benepia account ID and password through KCP.">
-<SwaggerDescription>
-Requires KCP site code.
+  <SwaggerDescription>
+    Requires KCP site code.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Body
 
-#### Body
+  <SwaggerParameter name="benepia_user" type="String" required="true">
+    <mark style="color:red;">
+      **Benepia account ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="benepia_user" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="benepia_password" type="String" required="true">
+    <mark style="color:red;">
+      **Benepia account password**
+    </mark>
+  </SwaggerParameter>
 
-**Benepia account ID**
+  <SwaggerParameter name="pg" type="String">
+    **PG code**
 
-</mark>
+    If there are multiple KCP PG settings, specify as **kcp.\{KCP site code}**. If omitted, the KCP pg setting in Admin console is used.
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="benepia_password" type="String" required="true">
-<mark style="color:red;">
+  ### Responses
 
-**Benepia account password**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="BenepiaPointResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
-<SwaggerParameter name="pg" type="String">
-**PG code**
+        0: success, Not 0: check the message
 
-If there are multiple KCP PG settings, specify as **kcp.\{KCP site code}**. If omitted, the KCP pg setting in Admin console is used.
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerParameter>
+        **Response message**
 
-### Responses
+        A non-zero code includes a message like 'Invalid payment info'.
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="BenepiaPointResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **`response`` `**<mark style="color:red;">**`(BenepiaPointAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-**Response code**
+    <Tabs>
+      <Tab title="BenepiaPointAnnotation">
+        **`point`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-0: success, Not 0: check the message
+        **`Benepia points`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**Response message**
-
-A non-zero code includes a message like 'Invalid payment info'.
-
-**`response`` `**<mark style="color:red;">**`(BenepiaPointAnnotation, optional)`**</mark>
-
-</Tab>
-</Tabs>
-
-<Tabs>
-<Tab title="BenepiaPointAnnotation">
-**`point`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
-
-**`Benepia points`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Request failed">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Request failed">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "point": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "point": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/benepia/queryBenepiaPoint**](https://api.iamport.kr/#!/benepia/queryBenepiaPoint)
-
+  [**https://api.iamport.kr/#!/benepia/queryBenepiaPoint**](https://api.iamport.kr/#!/benepia/queryBenepiaPoint)
 </Hint>
