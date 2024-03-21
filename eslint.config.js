@@ -34,7 +34,7 @@ export default [
   },
   {
     files: ["**/*.{ts,tsx}"],
-    ignores: ["scripts/**/*.ts", "**/*.astro/*.ts"],
+    ignores: ["scripts/**/*.ts", "**/*.astro/*.ts", "**/*.mdx/*"],
     languageOptions: {
       parser: tsEslintParser,
       parserOptions: {
@@ -67,6 +67,22 @@ export default [
   {
     files: ["**/*.mdx/*"],
     rules: { "prettier/prettier": "error" },
+  },
+  {
+    files: ["**/*.mdx/*.{ts,tsx}"],
+    languageOptions: {
+      parser: tsEslintParser,
+      parserOptions: {
+        sourceType: "module",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsEslintPlugin,
+    },
+    rules: {
+      ...tsRules,
+      "@typescript-eslint/no-unused-vars": "off",
+    },
   },
   {
     plugins: { unocss },
