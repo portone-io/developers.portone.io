@@ -33,7 +33,6 @@ export default {
     "remark-lint-list-item-content-indent",
     ["remark-lint-list-item-indent", "space"],
     "remark-lint-list-item-spacing",
-    "remark-lint-maximum-heading-length",
     ["remark-lint-maximum-line-length", 100],
     "remark-lint-no-blockquote-without-marker",
     "remark-lint-no-consecutive-blank-lines",
