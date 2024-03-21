@@ -7,31 +7,35 @@ description: 발급한 빌링키로 예약/반복결제를 구현하는 방법�
 
 미래의 특정 시점에 결제가 진행되도록 할 때는 **포트원 결제 예약 API**를 이용합니다.
 
-```javascript title="server-side"
+```ts title="server-side"
 // 포트원 결제 예약 API 호출
-const scheduleResponse = await fetch(`https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`, {
-  method: "POST",
-  headers: {
-    "Authorization": `PortOne ${PORTONE_API_SECRET}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    payment: {
-      billingKey: BILLING_KEY_HERE,
-      orderName: "월간 이용권 정기결제",
-      customer: {
-        id: CUSTOMER_ID_HERE,
-        // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
-      },
-      amount: {
-        total: 8900,
-      },
-      currency: "KRW",
+const scheduleResponse = await fetch(
+  `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
+  {
+    method: "POST",
+    headers: {
+      Authorization: `PortOne ${PORTONE_API_SECRET}`,
+      "Content-Type": "application/json",
     },
-    timeToPay: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
-  }),
-});
-if (!scheduleResponse.ok) throw new Error(`scheduleResponse: ${scheduleResponse.statusText}`);
+    body: JSON.stringify({
+      payment: {
+        billingKey: BILLING_KEY_HERE,
+        orderName: "월간 이용권 정기결제",
+        customer: {
+          id: CUSTOMER_ID_HERE,
+          // 고객 정보가 필요한 경우 API 명세에 따라 추가해주세요.
+        },
+        amount: {
+          total: 8900,
+        },
+        currency: "KRW",
+      },
+      timeToPay: "2023-08-24T14:15:22Z", // 결제를 시도할 시각
+    }),
+  },
+);
+if (!scheduleResponse.ok)
+  throw new Error(`scheduleResponse: ${scheduleResponse.statusText}`);
 ```
 
 ## 2. 결제 결과 수신하기

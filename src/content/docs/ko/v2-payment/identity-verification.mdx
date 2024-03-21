@@ -11,7 +11,7 @@ import Hint from "~/components/Hint.astro";
 - 다날 휴대폰 본인인증 (V2 모듈에서 지원중)
 - KG 이니시스 통합인증 (V2 모듈에서 미지원, 추후 지원 예정)
 
-### 휴대폰 본인인증
+## 휴대폰 본인인증
 
 휴대폰 본인인증 서비스란 본인 명의로 개통한 휴대폰을 이용하여 최소한의 개인정보를 입력하는 인증 절차를 거쳐 본인 여부와 입력한 정보의 정확성을 확인하여 주는 서비스입니다.
 
@@ -19,14 +19,14 @@ import Hint from "~/components/Hint.astro";
 기기에 설치된 본인인증 전용 앱을 이용하거나 사용자 본인 정보(이름, 생년월일, 휴대폰번호)를 인증요청
 페이지에 입력한 후 문자로 온 인증번호를 기입하는 방식으로 이루어집니다.
 
-<Figure src="/gitbook-assets/ko/image (99).png" caption="휴대폰 본인인증 화면예" />
+<Figure src="/gitbook-assets/ko/image (99).png" caption="휴대폰 본인인증 화면 예시" />
 
 포트원을 이용한 휴대폰 본인인증의 Flow는 JavaScript SDK를 이용하여 휴대폰 본인인증을 완료하고 고객사 서버에서 포트원 REST API를 이용하여 <mark style="color:blue;">**인증완료정보를 획득**</mark>하는 방법으로 진행됩니다.
 
 <Hint style="info">
-**API를 이용한 본인인증**
+  **API를 이용한 본인인증**
 
-수기결제처럼 API 호출만으로 진행하는 본인인증도 지원하고 있습니다. REST API 문서의 해당 부분 설명을 참고해 주세요.
+  수기결제처럼 API 호출만으로 진행하는 본인인증도 지원하고 있습니다. REST API 문서의 해당 부분 설명을 참고해 주세요.
 </Hint>
 
 ## 1. 포트원 SDK 설치
@@ -43,13 +43,13 @@ SDK의 `PortOne.requestIdentityVerification()` 함수를 호출하여 본인인�
 
 그리고 아래와 같이 파라미터들을 설정하여 호출합니다.
 
-```javascript
+```ts
 PortOne.requestIdentityVerification({
   // 고객사 storeId로 변경해주세요.
-  storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec',
+  storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
   identityVerificationId: `identity-verification-${crypto.randomUUID()}`,
   // 콘솔에서 추가한 채널의 키 값으로 변경해주세요.
-  channelKey: 'my-channel-key',
+  channelKey: "my-channel-key",
 });
 ```
 
@@ -65,23 +65,22 @@ PortOne.requestIdentityVerification({
 
 본인인증이 성공한 경우 identityVerificationId를 서버에 전달하여 서버측 본인인증 완료 처리를 하도록 합니다.
 
-```javascript
-const response = await PortOne.requestIdentityVerification({ /* 객체 생략 */ });
+```ts
+const response = await PortOne.requestIdentityVerification({
+  /* 객체 생략 */
+});
 // 프로세스가 제대로 완료되지 않은 경우 에러 코드가 존재합니다
 if (response.code != null) {
   return alert(response.message);
 }
 
-const verificationResult = await fetch(
-  "{서버의 인증 정보를 받는 endpoint}",
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      identityVerificationId,
-    }),
-  }
-);
+const verificationResult = await fetch("{서버의 인증 정보를 받는 endpoint}", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    identityVerificationId,
+  }),
+});
 ```
 
 결과값에 들어 있는 필드는 다음과 같습니다.
@@ -99,7 +98,7 @@ const verificationResult = await fetch(
 리다이렉트됩니다. 이 경우에는 함수 호출 결과를 이용할 수 없고, 인증 성공 여부 등은
 [쿼리 문자열](https://en.wikipedia.org/wiki/Query_string)로 전달받게 됩니다.
 
-```javascript
+```ts
 PortOne.requestIdentityVerification({
   /* 파라미터 생략 */
   redirectUrl: `${BASE_URL}/identity-verification-redirect`,
@@ -123,9 +122,9 @@ PortOne.requestIdentityVerification({
 
 본인인증 완료 이후 획득한 `identityVerificationId`를 이용하여 고객 인증정보를 조회할 수 있습니다.
 
-```javascript title="server-side"
+```ts title="server-side"
 app.use(bodyParser.json());
-  ...
+
 // "/identity-verifications"에 대한 POST 요청을 처리하는 controller
 app.post("/identity-verifications", async (req, res) => {
   // request의 body에서 identityVerificationId 추출
@@ -134,16 +133,17 @@ app.post("/identity-verifications", async (req, res) => {
     // 포트원 본인인증 내역 단건조회 API 호출
     const verificationResponse = await fetch({
       url: `https://api.portone.io/identity-verifications/${encodeURIComponent(identityVerificationId)}`,
-      headers: { "Authorization": `PortOne ${PORTONE_API_SECRET}` },
+      headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
     });
-    if (!verificationResponse.ok) throw new Error(`verificationResponse: ${verificationResponse.statusText}`);
+    if (!verificationResponse.ok)
+      throw new Error(
+        `verificationResponse: ${verificationResponse.statusText}`,
+      );
     const identityVerification = await verificationResponse.json();
     if (identityVerification.status !== "VERIFIED") {
       // 인증 실패
-      ...
     }
-    ...
-  } catch(e) {
+  } catch (e) {
     console.error(e);
   }
 });
@@ -161,53 +161,51 @@ app.post("/identity-verifications", async (req, res) => {
 - `birthDate`: 생년월일 (YYYY-MM-DD)
 
 <Hint style="info">
-  위의 정보 외에 외국인(**`isForeigner`**) 여부는 **API 방식** 본인인증에 한하여 **개인정보 제공동의 약관을 사이트에 게재**한 후 <mark style="color:red;">**cs@portone.io**</mark>**로 신청**하여 취득할 수 있습니다. 해당 부분은 당사 계약 이후 다날PG사로 요청 후 승인이 완료되면 이용 가능한 점 참고해 주시기 바랍니다.
+  위의 정보 외에 외국인(**`isForeigner`**) 여부는 **API 방식** 본인인증에 한하여 **개인정보 제공동의 약관을 사이트에 게재**한 후 <mark style="color:red;">**[cs@portone.io](mailto:cs@portone.io)**</mark>**로 신청**하여 취득할 수 있습니다. 해당 부분은 당사 계약 이후 다날PG사로 요청 후 승인이 완료되면 이용 가능한 점 참고해 주시기 바랍니다.
 
-**메일 요청 신청 양식**
+  **메일 요청 신청 양식**
 
-- 상호명 :
-- 사업자번호 :
-- 본인인증용 다날 상점ID(CPID) :
-- 업종 :
-- 필요사유 :
-- 개인정보취급방침 url : 앱서비스로 URL형태로 전달이 어려우신 경우 '개인정보취급방침' 경로를 캡쳐하여 전달주시기 바랍니다.
+  - 상호명 :
+  - 사업자번호 :
+  - 본인인증용 다날 상점ID(CPID) :
+  - 업종 :
+  - 필요사유 :
+  - 개인정보취급방침 url : 앱서비스로 URL형태로 전달이 어려우신 경우 '개인정보취급방침' 경로를 캡쳐하여 전달주시기 바랍니다.
 
-**참고 - 포트원 이용 고객사의 개인정보처리방침 적용 예시**
+  **참고 - 포트원 이용 고객사의 개인정보처리방침 적용 예시**
 
-- `(주)마플 : https://marpple.shop/kr/@/privacy`
-- `(주)브레이브모바일 / 숨고 : https://soomgo.com/terms/privacy`
-- `(주)마켓잇 : https://static.marketit.asia/static/privacy-terms.pdf`
-
+  - `(주)마플 : https://marpple.shop/kr/@/privacy`
+  - `(주)브레이브모바일 / 숨고 : https://soomgo.com/terms/privacy`
+  - `(주)마켓잇 : https://static.marketit.asia/static/privacy-terms.pdf`
 </Hint>
 
-```javascript title="Express"
-  // "/identity-verifications"에 대한 POST 요청을 처리하는 controller
-  app.post("/identity-verifications", async (req, res) => {
-    // request의 body에서 identity_verification_id 추출
-    const { identityVerificationId } = req.body;
-    try {
-      // 인증 토큰 발급 받기
-      // identityVerificationId로 인증 정보 조회
+```ts title="Express"
+// "/identity-verifications"에 대한 POST 요청을 처리하는 controller
+app.post("/identity-verifications", async (req, res) => {
+  // request의 body에서 identity_verification_id 추출
+  const { identityVerificationId } = req.body;
+  try {
+    // 인증 토큰 발급 받기
+    // identityVerificationId로 인증 정보 조회
 
-      const { ci, di, name, gender, birthDate } = identityVerification.verifiedCustomer;
-      ...
-      // 연령 제한 로직 예시
-      if (new Date(birthDate).getFullYear() <= 1999) {
-        // 연령 만족
-      } else {
-        // 연령 미달
-      }
-      ...
-      // 1인 1계정 허용 로직 예시
-      // DB에서 di 조회 후 가입여부 검사
-      const user = await Users.find({ di });
-      if (user == null) {
-        // 신규 고객
-      } else {
-        // 이미 가입된 고객
-      }
-    } catch(e) {
-      console.error(e);
+    const { ci, di, name, gender, birthDate } =
+      identityVerification.verifiedCustomer;
+    // 연령 제한 로직 예시
+    if (new Date(birthDate).getFullYear() <= 1999) {
+      // 연령 만족
+    } else {
+      // 연령 미달
     }
-  });
+    // 1인 1계정 허용 로직 예시
+    // DB에서 di 조회 후 가입여부 검사
+    const user = await Users.find({ di });
+    if (user == null) {
+      // 신규 고객
+    } else {
+      // 이미 가입된 고객
+    }
+  } catch (e) {
+    console.error(e);
+  }
+});
 ```

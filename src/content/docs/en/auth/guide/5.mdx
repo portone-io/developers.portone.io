@@ -10,24 +10,27 @@ import Hint from "~/components/Hint.astro";
 Based on the payment information from the client, the server verifies the <mark style="color:red;">**payment amount for fraud**</mark> and saves the payment information in the database if needed. The following are the steps for verifying the payment information.
 
 - Server receives the i'mport payment ID (**imp\_uid**) and order ID (**merchant\_uid**)
+
 - Call the [**Get payment API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) to get the
   payment details.
+
 - Based on the response, compare the actual payment amount with the payment request amount (from
   merchant's database).
 
-### <mark style="color:green;">**STEP 01**</mark> Server receives payment result
+## <mark style="color:green;">**STEP 01**</mark> Server receives payment result
 
 <Tabs>
   <Tab title="Node.js">
     Example of receiving a POST request to the merchant endpoint URL that receives the payment information
 
-    ```javascript title="server-side"
+    ```ts title="server-side"
     app.use(bodyParser.json());
     // "{Merchant endpoint that receives server's payment info}" POST request receiver
     app.post("/payments/complete", async (req, res) => {
       try {
         // Get imp_uid, merchant_uid from req.body
         const { imp_uid, merchant_uid } = req.body;
+        console.log(imp_uid, merchant_uid);
       } catch (e) {
         res.status(400).send(e);
       }
@@ -42,41 +45,40 @@ Based on the payment information from the client, the server verifies the <mark 
   <Tab title="Node.js">
     Example of calling the [**Get payment**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) **API** with the i'mport **payment ID (imp\_uid)** to retrieve the payment info.
 
-    ```javascript title="server-side"
+    ```ts title="server-side"
     app.use(bodyParser.json());
-        ...
-        app.post("/payments/complete", async (req, res) => {
-          try {
-            // Get imp_uid, merchant_uid from req.body
-            const { imp_uid, merchant_uid } = req.body;
-            ...
-            // Get access token
-            const getToken = await axios({
-              url: "https://api.iamport.kr/users/getToken",
-              method: "post", // POST method
-              headers: { "Content-Type": "application/json" },
-              data: {
-                imp_key: "imp_apikey", // REST API key
-                imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
-              }
-            });
-            const { access_token } = getToken.data.response; // access token
-            ...
-            // Get payment info from i'mport server using imp_uid
-            const getPaymentData = await axios({
-              // Pass imp_uid
-              url: \`https://api.iamport.kr/payments/\${imp_uid}\`,
-              // GET method
-              method: "get",
-              // Add access toke to Authorization header
-              headers: { "Authorization": access_token }
-            });
-            const paymentData = getPaymentData.data.response; // Payment info
-            ...
-          } catch (e) {
-            res.status(400).send(e);
-          }
+    app.post("/payments/complete", async (req, res) => {
+      try {
+        // Get imp_uid, merchant_uid from req.body
+        const { imp_uid, merchant_uid } = req.body;
+        console.log(imp_uid, merchant_uid);
+        // Get access token
+        const getToken = await axios({
+          url: "https://api.iamport.kr/users/getToken",
+          method: "post", // POST method
+          headers: { "Content-Type": "application/json" },
+          data: {
+            imp_key: "imp_apikey", // REST API key
+            imp_secret:
+              "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+          },
         });
+        const { access_token } = getToken.data.response; // access token
+        // Get payment info from i'mport server using imp_uid
+        const getPaymentData = await axios({
+          // Pass imp_uid
+          url: `https://api.iamport.kr/payments/${imp_uid}`,
+          // GET method
+          method: "get",
+          // Add access toke to Authorization header
+          headers: { Authorization: access_token },
+        });
+        const paymentData = getPaymentData.data.response; // Payment info
+        console.log(paymentData);
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
     ```
   </Tab>
 </Tabs>
@@ -99,49 +101,60 @@ Based on the payment information from the client, the server verifies the <mark 
   <Tab title="Node.js">
     Example of comparing the actual payment amount with the payment request amount, performing fraud check on the payment amount, and saving the data in the DB.
 
-    ```javascript title="server-side"
+    ```ts title="server-side"
     app.use(bodyParser.json());
-      ...
-      app.post("/payments/complete", async (req, res) => {
-        try {
-          // Get imp_uid, merchant_uid from req.body
-          const { imp_uid, merchant_uid } = req.body;
-          // Get access token
-          /* ...Omitted... */
-          // Get payment info from iamport server using imp_uid
-          /* ...Omitted... */
-          const paymentData = getPaymentData.data.response; // Payment info
-          ...
-          // Get the requested payment amount from the DB
-          const order = await Orders.findById(paymentData.merchant_uid);
-          const amountToBePaid = order.amount; // Requested payment amount
-          ...
-          // Verify payment
-          const { amount, status } = paymentData;
-          // If amount matches. Processed amount === Requested amount
-          if (amount === amountToBePaid) {
-            await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Save payment info to DB
-            ...
-            switch (status) {
-              case "ready": // Issue virtual account
-                // Save virtual account info in DB
-                const { vbank_num, vbank_date, vbank_name } = paymentData;
-                await Users.findByIdAndUpdate("/* customer id */", { $set: { vbank_num, vbank_date, vbank_name }});
-                // Send virtual account issuance text message
-                SMS.send({ text: \`Virtual account issued successfully. Account info \${vbank_num} \${vbank_date} \${vbank_name}\`});
-                res.send({ status: "vbankIssued", message: "Virtual account issued successfully" });
-                break;
-              case "paid": // Payment complete
-                res.send({ status: "success", message: "General payment successful" });
-                break;
-            }
-          } else { // Amount mismatch. Forged/falsified payment.
-            throw { status: "forgery", message: "Forged/falsified payment attempted" };
+    app.post("/payments/complete", async (req, res) => {
+      try {
+        // Get imp_uid, merchant_uid from req.body
+        const { imp_uid, merchant_uid } = req.body;
+        console.log(imp_uid, merchant_uid);
+        // Get access token
+        /* ...Omitted... */
+        // Get payment info from iamport server using imp_uid
+        /* ...Omitted... */
+        const paymentData = getPaymentData.data.response; // Payment info
+        // Get the requested payment amount from the DB
+        const order = await Orders.findById(paymentData.merchant_uid);
+        const amountToBePaid = order.amount; // Requested payment amount
+        // Verify payment
+        const { amount, status } = paymentData;
+        // If amount matches. Processed amount === Requested amount
+        if (amount === amountToBePaid) {
+          await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Save payment info to DB
+          switch (status) {
+            case "ready": // Issue virtual account
+              // Save virtual account info in DB
+              const { vbank_num, vbank_date, vbank_name } = paymentData;
+              await Users.findByIdAndUpdate("/* customer id */", {
+                $set: { vbank_num, vbank_date, vbank_name },
+              });
+              // Send virtual account issuance text message
+              SMS.send({
+                text: `Virtual account issued successfully. Account info ${vbank_num} ${vbank_date} ${vbank_name}`,
+              });
+              res.send({
+                status: "vbankIssued",
+                message: "Virtual account issued successfully",
+              });
+              break;
+            case "paid": // Payment complete
+              res.send({
+                status: "success",
+                message: "General payment successful",
+              });
+              break;
           }
-        } catch (e) {
-          res.status(400).send(e);
+        } else {
+          // Amount mismatch. Forged/falsified payment.
+          throw {
+            status: "forgery",
+            message: "Forged/falsified payment attempted",
+          };
         }
-      });
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
     ```
   </Tab>
 </Tabs>

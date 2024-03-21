@@ -5,88 +5,86 @@ description: Blue Walnut payment window integration guide
 
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
-### 1. Configure Blue Walnut PG settings
+## 1. Configure Blue Walnut PG settings
 
-Refer to the [**Blue Walnut settings**](../../ready/2.-pg/payment-gateway-settings/undefined-7) page to configure the PG settings.
+Refer to the [**Blue Walnut settings**](../../ready/2.-pg/payment-gateway-settings/undefined-7)
+page to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-03 6.13.31.png>)
 
-### 2. Request payment
+## 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'bluewalnut',
-    pay_method : 'card',
-    merchant_uid : '{Merchant created Order ID}', // Example: order_no_0001
-    name : 'Order name: Test payment request',
-    amount : 14000,
-    buyer_email : 'iamport@siot.do',  // required 
-    buyer_name : 'Jack Son',   // Must include a space between Firstname Lastname
-    buyer_tel : '010-1234-5678',
-    buyer_addr : 'Shinsa-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    m_redirect_url : '{Mobile only - URL to redirect to after payment approval}' // Example: https://www.my-service.com/payments/complete/mobile
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "bluewalnut",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do", // required
+        buyer_name: "Jack Son", // Must include a space between Firstname Lastname
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-###
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`bluewalnut`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`bluewalnut`**.
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Payment method code**
 
-**Payment method code**
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+      - `phone`(mobile micropayment)
+    </Details>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
-- `phone`(mobile micropayment)
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
+    **Order ID**
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    Must be unique for each request.
 
-**Order ID**
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-Must be unique for each request.
+    **Payment amount**
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    Must be an integer (not string)
 
-**Payment amount**
+    <Codepen user="chaiport" slug="wvyXrbp" caption="Blue Walnut payment window example" />
+  </Tab>
 
-Must be an integer (not string)
-
-<Codepen
-  user="chaiport"
-  slug="wvyXrbp"
-  caption="Blue Walnut payment window example"
-/>
-
-</Tab>
-
-<Tab title="Non-authenticated payment request">
-#### Not supported
-
-</Tab>
+  <Tab title="Non-authenticated payment request">
+    Not supported
+  </Tab>
 </Tabs>

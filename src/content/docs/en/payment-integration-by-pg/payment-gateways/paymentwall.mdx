@@ -3,106 +3,107 @@ title: Paymentwall
 description: Paymentwall payment window integration guide
 ---
 
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
-### 1. Configure Paymentwall PG settings
+## 1. Configure Paymentwall PG settings
 
 Refer to the [**Paymentwall settings**](../../ready/2.-pg/payment-gateway-settings/undefined-1) page
 to configure the PG settings.
 
 ![](/gitbook-assets/en/Paymentwall_logo_dark_latest.jpeg)
 
-### 2. Request payment
+## 2. Request payment
 
 To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
-IMP.**request_pay**(param, callback).
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'paymentwall',
-    pay_method : 'card', // In Paymentwall, the payment method is activated based on the country IP. (Can be omitted)
-    merchant_uid : '{Merchant created Order ID}', // Example: order_no_0001
-    name : 'Order name: Test payment request',
-    amount : 14000,
-    currency : 'KRW'  // required
-    buyer_email : 'iamport@siot.do',  // required 
-    buyer_name : 'Jack Son',   // Must include a space between Firstname Lastname
-    buyer_tel : '010-1234-5678',
-    buyer_addr : 'Shinsa-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    m_redirect_url : '{Mobile only - URL to redirect to after payment approval}', // Example: https://www.my-service.com/payments/complete/mobile
-    bypass: {
-      // Set this for Terminal 3 only, Defualt: general payment window opens
-      widget_code: "t3_1",  
-      // Set to enable specific payment method, set to 'all'(default) to enable all methods supported by your country
-      ps : "all",
-      country_code:"DE"  // Set this to enable all payment methods supported by the country
-    },
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "paymentwall",
+        pay_method: "card", // In Paymentwall, the payment method is activated based on the country IP. (Can be omitted)
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        currency: "KRW", // required
+        buyer_email: "iamport@siot.do", // required
+        buyer_name: "Jack Son", // Must include a space between Firstname Lastname
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+        bypass: {
+          // Set this for Terminal 3 only, Defualt: general payment window opens
+          widget_code: "t3_1",
+          // Set to enable specific payment method, set to 'all'(default) to enable all methods supported by your country
+          ps: "all",
+          country_code: "DE", // Set this to enable all payment methods supported by the country
+        },
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-###
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`paymentwall`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`paymentwall`**.
+    **`pay_method`** <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+    **Payment method code (Can be omitted)**
 
-**Payment method code (Can be omitted)**
+    You can manage your payment methods by enabling Project from the [Paymentwall website](https://api.paymentwall.com/).
 
-You can manage your payment methods by enabling Project from the [Paymentwall website](https://api.paymentwall.com/).
+    (Payment methods are enabled based on your country IP by default)
 
-(Payment methods are enabled based on your country IP by default)
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Order ID**
 
-**Order ID**
+    Must be unique for each request.
 
-Must be unique for each request.
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    **Payment amount**
 
-**Payment amount**
+    Must be an integer (not string)
 
-Must be an integer (not string)
+    **`buyer_name`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`buyer_name`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+    **`Customer name`**
 
-**`Customer name`**
+    **`buyer_email`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`buyer_email`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+    **`Customer email address`**
 
-**`Customer email address`**
+    **`currency`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`currency`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+    **`Currency`**
 
-**`Currency`**
+    **`bypass`**
 
-**`bypass`**
+    **`Paymentwall specific parameter`**
 
-**`Paymentwall specific parameter`**
+    - **`widget_code` :** Set this to <mark style="color:red;">**t3\_1**</mark> for Terminal 3 only, Defualt: general payment window
+    - **`ps` :** Set to enable specific payment method. For available codes, refer to [**Payment system short codes**](https://docs.paymentwall.com/reference/payment-system-shortcodes). Example: `kakaopaykr` = Kakao Pay
+    - **country\_code** : Payment methods are shown based on this code. ([**Country codes**](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2))
+  </Tab>
 
-- **`widget_code` :** Set this to <mark style="color:red;">**t3_1**</mark> for Terminal 3 only, Defualt: general payment window
-- **`ps` :** Set to enable specific payment method. For available codes, refer to [**Payment system short codes**](https://docs.paymentwall.com/reference/payment-system-shortcodes). Example: `kakaopaykr` = Kakao Pay
-- **country_code** : Payment methods are shown based on this code. ([**Country codes**](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2))
-
-</Tab>
-
-<Tab title="Non-authenticated payment request">
-**Preparing for service**
-
-</Tab>
+  <Tab title="Non-authenticated payment request">
+    **Preparing for service**
+  </Tab>
 </Tabs>

@@ -5,243 +5,228 @@ description: NICE Payments payment window integration guideNICE
 
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure NICE Payments PG settings
+## 1. Configure NICE Payments PG settings
 
-Refer to the [**NICE Payments settings**](../../ready/2.-pg/payment-gateway-settings/nice-payments) page to configure the PG settings.
+Refer to the [**NICE Payments settings**](../../ready/2.-pg/payment-gateway-settings/nice-payments)
+page to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-05-29 7.44.33.png>)
 
-### 2. Request payment
+## 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;"> **callback** </mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;"> **m_redirect_url** </mark>.
+In PC browsers, <mark style="color:red;"> **callback** </mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_redirect\_url** </mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "nice",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+        niceMobileV2: true, // Set to 'true' to enable new mobile version
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "nice",
-    pay_method: "card",
-    merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
-    name: "Order name: Test payment request",
-    amount: 14000,
-    buyer_email: "iamport@siot.do",
-    buyer_name: "John Doe",
-    buyer_tel: "010-1234-5678",
-    buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
-    buyer_postcode: "123-456",
-    m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
-    niceMobileV2: true, // Set to 'true' to enable new mobile version
-  },
-  function (rsp) {
-    // callback logic
-    //* ...Omitted... *//
-  }
-);
-```
+    ### Key parameter description
 
-####
+    **`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-### Key parameter description
+    **PG code**
 
-**`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`nice`**.
 
-**PG code**
+    **`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`nice`**.
+    **Payment method code**
 
-**`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-**Payment method code**
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+      - `samsung`(Samsung Pay)
+      - `phone`(mobile micropayment)
+      - `kakaopay`(Kakao Pay)
+      - `payco` ( PAYCO hub-type)
+      - `naverpay` (Naver Pay)
+    </Details>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+    **`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
-- `samsung`(Samsung Pay)
-- `phone`(mobile micropayment)
-- `kakaopay`(Kakao Pay)
-- `payco` ( PAYCO hub-type)
-- `naverpay` (Naver Pay)
+    **Order ID**
 
-</Details>
+    Must be unique for each request.
 
-**`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    **`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
-**Order ID**
+    **Payment amount**
 
-Must be unique for each request.
+    Must be an integer (not string).
 
-**`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+    **`niceMobileV2`** <mark style="color:orange;"> **`boolean`** </mark>
 
-**Payment amount**
+    Option to enable new NICE mobile version (default: false)
 
-Must be an integer (not string).
+    **`escrow`** <mark style="color:orange;"> **`boolean`** </mark>
 
-**`niceMobileV2`** <mark style="color:orange;"> **`boolean`** </mark>
+    **Ecrow option**
 
-Option to enable new NICE mobile version (default: false)
+    <Codepen user="chaiport" slug="qBxbGXy" caption="NICE Payments payment window" />
+  </Tab>
 
-**`escrow`** <mark style="color:orange;"> **`boolean`** </mark>
+  <Tab title="Non-authenticated API  request">
+    **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
 
-**Ecrow option**
+    ### Request one-time payment
 
-<Codepen
-  user="chaiport"
-  slug="qBxbGXy"
-  caption="NICE Payments payment window"
-/>
+    To request a one-time payment, use the key-in [**REST API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
+    The card information is not saved during this process.
 
-</Tab>
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-<Tab title="Non-authenticated API  request">
-#### **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
+    ### Request billing key
 
-### Request one-time payment
+    To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer\_uid}**](../../api/billing-key-api/api-1).
 
-To request a one-time payment, use the key-in REST[ **API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api). The card information is not saved during this process.
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
+         https://api.iamport.kr/subscribe/customers/your-customer-unique-id
+    ```
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    ### Request billing key + initial payment
 
-###
+    To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
 
-### Request billing key
+    - **`customer_uid`** : required for saving the billing key.
 
-To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer_uid}**](../../api/billing-key-api/api-1).
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
-     https://api.iamport.kr/subscribe/customers/your-customer-unique-id
-```
+    ### Request payment with billing key
 
-### Request billing key + initial payment
+    After successfully getting the billing key and making the initial payment,
+    the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api))
+    with the `customer_uid` as follows:
 
-To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
 
-- **`customer_uid`** : required for saving the billing key.
+    <Hint style="info">
+      **NICE Payments supports non-authenticated payments only through the API method.**
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
-
-### Request payment with billing key
-
-After successfully getting the billing key and making the initial payment, the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api)) with the `customer_uid` as follows:
-
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-<Hint style="info">
-**NICE Payments supports non-authenticated payments only through the API method.**
-
-To integrate non-authenticated payments, you need to provide a UI for accepting user's card information. For more information, refer to the [**REST API**](../../auth/guide-1/bill/rest-api) page.
-
-</Hint>
-
-</Tab>
+      To integrate non-authenticated payments, you need to provide a UI for accepting user's card information.
+      For more information, refer to the [**REST API**](../../auth/guide-1/bill/rest-api) page.
+    </Hint>
+  </Tab>
 </Tabs>
 
-### 3. Additional functions
+## 3. Additional functions
 
 <Tabs>
-<Tab title="Installment setting">
-
-```javascript title="javascript"
-display: {
-  card_quota: [6]; // Display up to 6 months installment plans
-}
-```
-
-**Parameters**
-
-- **card_quota :**
-  - `[]`: Only immediate pay
-  - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans
-
-<Hint style="info">
-Installment plan option is available only for **KRW 50,000 or more**.
-
-</Hint>
-
-<Codepen
-  user="chaiport"
-  slug="poagmae"
-  caption="Example of enabling up to 3 month installment plans"
-/>
-
-</Tab>
-
-<Tab title="Direct credit card module call">
-
-```javascript title="javascript"
-card: {
-     direct: {
-        code: "367",
-        quota: 3
+  <Tab title="Installment setting">
+    ```json title="javascript"
+    {
+      "display": {
+        "card_quota": [6] // Display up to 6 months installment plans
+      }
     }
-}
-```
+    ```
 
-**Parameters**
+    **Parameters**
 
-- **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
-- **quota**: Installment plan. For immediate, set to 0. (**integer**)
+    - **card\_quota :**
+      - `[]`: Only immediate pay
+      - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans
 
-<Hint style="danger">
-**Precautions**
+    <Hint style="info">
+      Installment plan option is available only for **KRW 50,000 or more**.
+    </Hint>
 
-- Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs. You must check your Merchant ID with each PG for direct call support.
+    <Codepen user="chaiport" slug="poagmae" caption="Example of enabling up to 3 month installment plans" />
+  </Tab>
 
-</Hint>
+  <Tab title="Direct credit card module call">
+    ```json title="javascript"
+    {
+      "card": {
+        "direct": {
+          "code": "367",
+          "quota": 3
+        }
+      }
+    }
+    ```
 
-<Codepen
-  user="chaiport"
-  slug="Yzewbeg"
-  caption="Example of direct call to Hyundai Card module"
-/>
+    **Parameters**
 
-</Tab>
+    - **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
+    - **quota**: Installment plan. For immediate, set to 0. (**integer**)
 
-<Tab title="Enable specific credit cards">
-```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     // Disable all credit cards
-        {card_code:'366', enabled:true}     // Enable specific credit card
-    ]
-}
-```
+    <Hint style="danger">
+      **Precautions**
 
-**Parameters**
+      - Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs.
+        You must check your Merchant ID with each PG for direct call support.
+    </Hint>
 
-- **card_code:** [<mark style="color:red;"> **Credit card code** </mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) <mark style="color:green;"> (**string**) </mark>
-- **enabled:** Option to enable the credit card <mark style="color:orange;"> (**boolean**) </mark>
+    <Codepen user="chaiport" slug="Yzewbeg" caption="Example of direct call to Hyundai Card module" />
+  </Tab>
 
-<Codepen
-  user="chaiport"
-  slug="MWQKdVo"
-  caption="Example of showing only Shinhan Card in the payment window"
-/>
+  <Tab title="Enable specific credit cards">
+    ```json title="javascript"
+    {
+      "card": {
+        "detail": [
+          { "card_code": "*", "enabled": false }, // Disable all credit cards
+          { "card_code": "366", "enabled": true }, // Enable specific credit card
+        ]
+      }
+    }
+    ```
 
-</Tab>
+    **Parameters**
+
+    - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) <mark style="color:green;"> (**string**) </mark>
+    - **enabled:** Option to enable the credit card <mark style="color:orange;"> (**boolean**) </mark>
+
+    <Codepen user="chaiport" slug="MWQKdVo" caption="Example of showing only Shinhan Card in the payment window" />
+  </Tab>
 </Tabs>

@@ -6,486 +6,519 @@ description: NHN KCP payment window integration guide
 import Codepen from "~/components/gitbook/Codepen.astro";
 import ContentRef from "~/components/gitbook/ContentRef.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure NHH KCP PG settings
+## 1. Configure NHH KCP PG settings
 
-Refer to the [**NHN KCP settings**](../../ready/2.-pg/payment-gateway-settings/nhn-kcp) page to configure the PG settings.
+Refer to the [**NHN KCP settings**](../../ready/2.-pg/payment-gateway-settings/nhn-kcp) page
+to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-05-29 7.53.40.png>)
 
-### 2. Request payment
+## 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'kcp',
-    pay_method : 'card',
-    merchant_uid : '{Merchant created Order ID}', // Example: order_no_0001
-    name : 'Order name: Test payment request',
-    amount : 14000,
-    buyer_email : 'iamport@siot.do',
-    buyer_name : 'John Doe',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : 'Shinsa-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    language : 'ko', // default: ko (Korean)    
-    m_redirect_url : '{Mobile only - URL to redirect to after payment approval}' // Example: https://www.my-service.com/payments/complete/mobile
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "kcp",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        language: "ko", // default: ko (Korean)
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-####
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to `kcp`.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to `kcp`.
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Payment method code**
 
-**Payment method code**
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+      - `phone`(mobile micropayment)
+      - `samsung`(Samsung Pay)
+      - `kakaopay`(Kakao Pay)
+      - `payco` ( PAYCO hub-type)
+      - `lpay` (LPAY hub-type)
+      - `naverpay` (Naver Pay)
+      - `cultureland`(Cultureland)
+      - `smartculture`(Smart Culture)
+      - `happymoney`(Happy Money)
+      - `booknlife`(Book culture gift certificate)
+      - `point`(Benepia)
+    </Details>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
-- `phone`(mobile micropayment)
-- `samsung`(Samsung Pay)
-- `kakaopay`(Kakao Pay)
-- `payco` ( PAYCO hub-type)
-- `lpay` (LPAY hub-type)
-- `naverpay` (Naver Pay)
-- `cultureland`(Cultureland)
-- `smartculture`(Smart Culture)
-- `happymoney`(Happy Money)
-- `booknlife`(Book culture gift certificate)
-- `point`(Benepia)
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
+    **Order ID**
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    Must be unique for each request.
 
-**Order ID**
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-Must be unique for each request.
+    **Payment amount**
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    Must be an integer (not string).
 
-**Payment amount**
+    <Hint style="info">
+      **For Payco hub-type**, you must apply through KCP Admin page and configure the settings.
 
-Must be an integer (not string).
+      How to apply: [https://sir.kr/main/service/p\_payco\_hub.php](https://sir.kr/main/service/p_payco_hub.php)
+    </Hint>
 
-<Hint style="info">
-**For Payco hub-type**, you must apply through KCP Admin page and configure the settings.
+    <Codepen user="chaiport" slug="NWXrGvQ" />
+  </Tab>
 
-How to apply: [https://sir.kr/main/service/p_payco_hub.php](https://sir.kr/main/service/p_payco_hub.php)
+  <Tab title="Non-authenticated payment request">
+    To open non-authenticated payment window, specify the **customer\_uid** parameter.
+    After getting a billing key from this window, you can request payment using the billing key.
 
-</Hint>
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "kcp_billing",
+        pay_method: "card", // only 'card' supported.
+        merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+        name: "Initial billing key request",
+        amount: 0, // For display purpose only (no payment approval).
+        customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
+        buyer_email: "johndoe@gmail.com",
+        buyer_name: "John Doe",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
+      },
+      function (rsp) {
+        if (rsp.success) {
+          alert("Success");
+        } else {
+          alert("Failed");
+        }
+      },
+    );
+    ```
 
-<Codepen user="chaiport" slug="NWXrGvQ" />
-</Tab>
+    <Hint style="info">
+      - To request non-authenticated payment, you must set the **site code issued by KCP** in the Admin console.
 
-<Tab title="Non-authenticated payment request">
-To open non-authenticated payment window, specify the **customer\_uid** parameter. After getting a billing key from this window, you can request payment using the billing key.
+      - KCP <mark style="color:red;">**does not process the payment**</mark>
+        when issuing the billing key even if you specify an amount.
+    </Hint>
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "kcp_billing",
-    pay_method: "card", // only 'card' supported.
-    merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
-    name: "Initial billing key request",
-    amount: 0, // For display purpose only (no payment approval).
-    customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
-    buyer_email: "johndoe@gmail.com",
-    buyer_name: "John Doe",
-    buyer_tel: "02-1234-1234",
-    m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
-  },
-  function (rsp) {
-    if (rsp.success) {
-      alert("Success");
-    } else {
-      alert("Failed");
-    }
-  }
-);
-```
+    ### Key parameter description
 
-<Hint style="info">
-* To request non-authenticated payment, you must set the **site code issued by KCP** in the Admin console.
-* KCP <mark style="color:red;">**does not process the payment**</mark> when issuing the billing key even if you specify an amount.
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Hint>
+    **PG code**
 
-### Key parameter description
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to `kcp_billing`.
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**PG code**
+    **Credit card billing key**
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to `kcp_billing`.
+    Billing key to be mapped 1:1 with the user-entered credit card information.
 
-**`customer_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
 
-**Credit card billing key**
+    **Payment amount**
 
-Billing key to be mapped 1:1 with the user-entered credit card information.
+    Amount to display in the payment window, but <mark style="color:red;">actual payment approval is not processed.</mark>
+    (To request payment, use the **REST API with the customer\_uid**.)\\
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**Integer\*\*</mark>
+    ### Request payment with billing key (customer\_uid)
 
-**Payment amount**
+    After successfully getting the billing key, the billing key is **stored on the i'mport server**
+    mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api)
+    with the `customer_uid` as follows:
 
-Amount to display in the payment window, but <mark style="color:red;">actual payment approval is not processed.</mark> (To request payment, use the **REST API with the customer_uid**.)\
+    ```sh title="sever-side"
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+  </Tab>
 
-### Request payment with billing key (customer_uid)
+  <Tab title="Non-authenticated API  request">
+    **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
 
-After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api) with the `customer_uid` as follows:
+    ### Request one-time payment
 
-```title="sever-side"
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
+    To request a one-time payment, use the key-in [**REST API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
+    The card information is not saved during this process.
 
-</Tab>
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-<Tab title="Non-authenticated API  request">
-#### **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
+    ### Request billing key
 
-### Request one-time payment
+    To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer\_uid}**](../../api/billing-key-api/api-1).
 
-To request a one-time payment, use the key-in REST[ **API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api). The card information is not saved during this process.
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
+         https://api.iamport.kr/subscribe/customers/your-customer-unique-id
+    ```
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    ### Request billing key + initial payment
 
-###
+    To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
 
-### Request billing key
+    - **`customer_uid`** : required for saving the billing key.
 
-To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer_uid}**](../../api/billing-key-api/api-1).
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
-     https://api.iamport.kr/subscribe/customers/your-customer-unique-id
-```
+    ### Request payment with billing key
 
-### Request billing key + initial payment
+    After successfully getting the billing key and making the initial payment,
+    the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api))
+    with the `customer_uid` as follows:
 
-To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
 
-- **`customer_uid`** : required for saving the billing key.
+    **For detailed information, refer to:**
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
-
-### Request payment with billing key
-
-After successfully getting the billing key and making the initial payment, the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api)) with the `customer_uid` as follows:
-
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-**For detailed information, refer to:**
-
-<ContentRef slug="/en///auth/guide-1/readme" />
-
-</Tab>
+    <ContentRef slug="/en///auth/guide-1/readme" />
+  </Tab>
 </Tabs>
 
-### 3. Additional functions
+## 3. Additional functions
 
 <Tabs>
-<Tab title="Installment setting">
-```javascript title="javascript"
-display: {
-    card_quota: [6]  // Display up to 6 months installment plans
-}
-```
-
-**Parameters**
-
-- **card_quota :**
-  - `[]`: Only immediate pay
-  - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans\
-
-<Hint style="info">
-Installment plan option is available only for **KRW 50,000 or more**.
-
-</Hint>
-
-<Codepen user="chaiport" slug="yLpMvYJ" />
-Example of allowing up to <mark style="color:red;">**3 months**</mark>**
-installment plans**" />
-
-</Tab>
-
-<Tab title="Direct credit card module call">
-```javascript title="javascript"
-card: {
-     direct: {
-        code: "367",
-        quota: 3
-        // When want to use points of credit card
-        // quota: 80 = 80(Hyundai Card Point installment) + 0(pay all at once)
-        // quota: 93 = 80(Hyundai Card Point installment) + 13(number of installments)
-        // quota: 60 = 60(Other Card Point installment) + 0(pay all at once)
-        // quota: 63 = 60(Other Card Point installment) + 3(number of installments)
+  <Tab title="Installment setting">
+    ```json title="javascript"
+    {
+      "display": {
+        "card_quota": [6] // Display up to 6 months installment plans
+      }
     }
-}
-```
+    ```
 
-**Parameters**
+    **Parameters**
 
-- **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
-- **quota**: Installment plan. For immediate, set to 0. If you want to use points of credit card, you need to add the point installment per credit card<sup style="cursor: pointer; color: red;">[1]</sup> to number of installments (**integer**)
-  <details>
-    <summary><sup style="color:red;">[1]</sup> point installment per credit card</summary>
+    - **card\_quota :**
+      - `[]`: Only immediate pay
+      - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans\\
 
-    <table border="0" cellspacing="0" cellpadding="0" width="330">
-      <tbody>
-      <tr style="height:27.0pt">
-        <td style="background:#f2f5f9;">
-          <p align="center"><b><span>Point of Credit Card<span></span></span></b></p>
-        </td>
-        <td style="background:#f2f5f9;">
-          <p align="center"><b><span>Point Installment<span></span></span></b></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>Hyundai <span>M</span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+80</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>Kookmin<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>BC<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>Samsung<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>Hana<span>/</span>KEB<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>Lotte<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>Shinhan<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>NongHyup<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>Citi<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      <tr style="height:13.5pt">
-        <td>
-          <p align="center"><span>Woori<span></span></span></p>
-        </td>
-        <td>
-          <p align="center"><span>+60</span></p>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </details>
+    <Hint style="info">
+      Installment plan option is available only for **KRW 50,000 or more**.
+    </Hint>
 
-<Hint style="danger">
-**Precautions**
+    <Codepen user="chaiport" slug="yLpMvYJ" />
 
-- Currently, direct call to the credit card company's payment window is only supported by 6 PGs: **KG Inicis, KCP, Toss Payments, Nice Payments, KICC, and Danal**.
-- Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs. You must check your Merchant ID with each PG for direct call support.
+    Example of allowing up to <mark style="color:red;">**3 months**</mark>
+    **installment plans**
+  </Tab>
 
-</Hint>
+  <Tab title="Direct credit card module call">
+    ```json title="javascript"
+    {
+      "card": {
+        "direct": {
+          "code": "367",
+          "quota": 3
+          // When want to use points of credit card
+          // quota: 80 = 80(Hyundai Card Point installment) + 0(pay all at once)
+          // quota: 93 = 80(Hyundai Card Point installment) + 13(number of installments)
+          // quota: 60 = 60(Other Card Point installment) + 0(pay all at once)
+          // quota: 63 = 60(Other Card Point installment) + 3(number of installments)
+        }
+      }
+    }
+    ```
 
-<Codepen
-  user="chaiport"
-  slug="oNpZEvq"
-  caption="Example of direct call to Hyundai Card module"
-/>
+    **Parameters**
 
-</Tab>
+    - **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
 
-<Tab title="Enable specific credit cards">
-```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     // Disable all credit cards
-        {card_code:'366', enabled:true}     // Enable specific credit card
-    ]
-}
-```
+    - **quota**: Installment plan. For immediate, set to 0. If you want to use points of credit card, you need to add the point installment per credit card<sup style="cursor: pointer; color: red;">\[1]</sup> to number of installments (**integer**)
 
-**Parameters**
+      <details>
+        <summary><sup style="color:red;">\[1]</sup> point installment per credit card</summary>
 
-- **card_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
-- **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+        <table border="0" cellspacing="0" cellpadding="0" width="330">
+          <tbody>
+            <tr style="height:27.0pt">
+              <td style="background:#f2f5f9;">
+                <p align="center"><b><span>Point of Credit Card<span /></span></b></p>
+              </td>
 
-<Codepen
-  user="chaiport"
-  slug="RwxpQNq"
-  caption="Example of enabling only Shinhan Card payment window"
-/>
+              <td style="background:#f2f5f9;">
+                <p align="center"><b><span>Point Installment<span /></span></b></p>
+              </td>
+            </tr>
 
-</Tab>
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>Hyundai <span>M</span></span></p>
+              </td>
 
-<Tab title="App cards only">
-Set the following parameter to only expose app cards for authenticated payments.
+              <td>
+                <p align="center"><span>+80</span></p>
+              </td>
+            </tr>
 
-```javascript title="request_pay()"
-...
-appCard : true .  // Set to true to only expose app cards.
-...
-```
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>Kookmin<span /></span></p>
+              </td>
 
-</Tab>
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>BC<span /></span></p>
+              </td>
+
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>Samsung<span /></span></p>
+              </td>
+
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>Hana<span>/</span>KEB<span /></span></p>
+              </td>
+
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>Lotte<span /></span></p>
+              </td>
+
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>Shinhan<span /></span></p>
+              </td>
+
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>NongHyup<span /></span></p>
+              </td>
+
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>Citi<span /></span></p>
+              </td>
+
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+
+            <tr style="height:13.5pt">
+              <td>
+                <p align="center"><span>Woori<span /></span></p>
+              </td>
+
+              <td>
+                <p align="center"><span>+60</span></p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </details>
+
+    <Hint style="danger">
+      **Precautions**
+
+      - Currently, direct call to the credit card company's payment window is only supported by 6 PGs:
+        **KG Inicis, KCP, Toss Payments, Nice Payments, KICC, and Danal**.
+
+      - Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs.
+        You must check your Merchant ID with each PG for direct call support.
+    </Hint>
+
+    <Codepen user="chaiport" slug="oNpZEvq" caption="Example of direct call to Hyundai Card module" />
+  </Tab>
+
+  <Tab title="Enable specific credit cards">
+    ```json title="javascript"
+    {
+      "card": {
+        "detail": [
+          { "card_code": "*", "enabled": false }, // Disable all credit cards
+          { "card_code": "366", "enabled": true }, // Enable specific credit card
+        ]
+      }
+    }
+    ```
+
+    **Parameters**
+
+    - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
+    - **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+
+    <Codepen user="chaiport" slug="RwxpQNq" caption="Example of enabling only Shinhan Card payment window" />
+  </Tab>
+
+  <Tab title="App cards only">
+    Set the following parameter to only expose app cards for authenticated payments.
+
+    ```json title="request_pay()"
+    {
+      "appCard": true // Set to true to only expose app cards.
+    }
+    ```
+  </Tab>
 </Tabs>
 
-### 4. Additional parameters
+## 4. Additional parameters
 
 <Tabs>
-<Tab title="Gift certificate payment">
-To use the **gift certificate payment method**, set the merchant assigned user ID as follows:
+  <Tab title="Gift certificate payment">
+    To use the **gift certificate payment method**, set the merchant assigned user ID as follows:
 
-```javascript title="javascript SDK "
-bypass : {
-    shop_user_id : ‘ABCD123’   // Merchant user ID (20 bytes)
-}
-```
-
-<Hint style="success">
-**This parameter is required for gift certificate providers' RM action.**
-
-</Hint>
-
-**Example of paying with Cultureland gift certificate**
-
-```javascript
-MP.request_pay({
-    pg : 'kcp.{Site code for gift certificate use}',
-    pay_method : 'cultureland',    //Gift certificate
-    merchant_uid: "A00021-TEST",
-    name : 'Carrots 10kg',
-    amount : 1004,
-    buyer_email : 'iamport@chai.finance',
-    buyer_name : 'iamport tech support',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : 'Shinsa-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    bypass : {
-        shop_user_id : 'abaddd'  // Merchant user ID
+    ```json title="javascript SDK"
+    {
+      "bypass": {
+        "shop_user_id": "ABCD123" // Merchant user ID (20 bytes)
+      }
     }
-}
-```
+    ```
 
-</Tab>
+    <Hint style="success">
+      **This parameter is required for gift certificate providers' RM action.**
+    </Hint>
 
-<Tab title="Escrow payment">
-For escrow payment, set the **`escrow`** parameter to **true**. To bundle products in the shopping cart when making an escrow payment request, pass the item-related information as an additional parameter (**`kcpProducts`**).
+    **Example of paying with Cultureland gift certificate**
 
-**`kcpProducts`** is an object array consisting of the following four required properties:
+    ```ts
+    IMP.request_pay({
+      pg: "kcp.{Site code for gift certificate use}",
+      pay_method: "cultureland", //Gift certificate
+      merchant_uid: "A00021-TEST",
+      name: "Carrots 10kg",
+      amount: 1004,
+      buyer_email: "iamport@chai.finance",
+      buyer_name: "iamport tech support",
+      buyer_tel: "010-1234-5678",
+      buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+      buyer_postcode: "123-456",
+      bypass: {
+        shop_user_id: "abaddd", // Merchant user ID
+      },
+    });
+    ```
+  </Tab>
 
-**`amount`** is not related or compared with the payment amount (`param.amount`).
+  <Tab title="Escrow payment">
+    For escrow payment, set the **`escrow`** parameter to **true**.
+    To bundle products in the shopping cart when making an escrow payment request,
+    pass the item-related information as an additional parameter (**`kcpProducts`**).
 
-- orderNumber : Order ID
-- name : Product name
-- quantity : Product quantity
-- amount : Product price
+    **`kcpProducts`** is an object array consisting of the following four required properties:
 
-```javascript title="JavaScript SDK"
-IMP.request_pay({
-  pg: "kcp",
-  escrow: true, // For escrow payment
-  kcpProducts: [
-    {
-      orderNumber: "xxxx",
-      name: "Product A",
-      quantity: 3,
-      amount: 1000,
-    },
-    {
-      orderNumber: "yyyy",
-      name: "Product B",
-      quantity: 2,
-      amount: 3000,
-    },
-  ],
-  //* ...Omitted... *//
-});
-```
+    **`amount`** is not related or compared with the payment amount (`param.amount`).
 
-</Tab>
+    - orderNumber : Order ID
+    - name : Product name
+    - quantity : Product quantity
+    - amount : Product price
+
+    ```ts title="JavaScript SDK"
+    IMP.request_pay({
+      pg: "kcp",
+      escrow: true, // For escrow payment
+      kcpProducts: [
+        {
+          orderNumber: "xxxx",
+          name: "Product A",
+          quantity: 3,
+          amount: 1000,
+        },
+        {
+          orderNumber: "yyyy",
+          name: "Product B",
+          quantity: 2,
+          amount: 3000,
+        },
+      ],
+      //* ...Omitted... *//
+    });
+    ```
+  </Tab>
 </Tabs>

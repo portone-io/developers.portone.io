@@ -4,180 +4,164 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Cancels cash receipt transaction processed through i'mport.
+## Cancels cash receipt transaction processed through i'mport.
 
 <Details>
-<p slot="summary"><strong>Supported PGs</strong></p>
+  <p slot="summary"><strong>Supported PGs</strong></p>
 
-- **KG INICIS**
-- **NHN KCP**
-- **Settle Bank**
-- **NICE Payments**
-- **PAYJOA (Daou)**
-- **KICC**
-
+  - **KG INICIS**
+  - **NHN KCP**
+  - **Settle Bank**
+  - **NICE Payments**
+  - **PAYJOA (Daou)**
+  - **KICC**
 </Details>
 
 <Swagger method="delete" path="/receipts/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Cancels cash receipt transaction processed through i'mport.">
-<SwaggerDescription>
-(To cancel cash receipt transactions not related to i'mport, refer to 
+  <SwaggerDescription>
+    (To cancel cash receipt transactions not related to i'mport, refer to
 
-[<mark style="color:blue;">**link**</mark>](http://localhost:5000/s/wWX2hlvRZLZrXeH1aacF/api/api-8/api-3)
+    [<mark style="color:blue;">**link**</mark>](http://localhost:5000/s/wWX2hlvRZLZrXeH1aacF/api/api-8/api-3)
 
-<mark style="color:blue;">
+    <mark style="color:blue;">
+      **.**
+    </mark>
 
-**.**
+    )
+  </SwaggerDescription>
 
-</mark>
+  ### Parameters
 
-)
+  #### Path
 
-</SwaggerDescription>
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-### Parameters
+  ### Responses
 
-#### Path
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="ReceiptResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">
+        **Response code**
 
-**i'mport transaction ID**
+        0: success, Not 0: check the message
 
-</mark>
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerParameter>
+        **Response message**
 
-### Responses
+        A non-zero code includes a message like 'Invalid payment info'.
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="ReceiptResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **`response`` `**<mark style="color:red;">**`(ReceiptAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-**Response code**
+    <Tabs>
+      <Tab title="ReceiptAnnotation">
+        **`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-0: success, Not 0: check the message
+        **`i'mport transaction ID`**
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+        **`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
 
-**Response message**
+        **`Cash receipt ID issued by PG`**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`response`` `**<mark style="color:red;">**`(ReceiptAnnotation, optional)`**</mark>
+        **`Cash receipt ID issued by National Tax Service`**
 
-</Tab>
-</Tabs>
+        **`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-<Tabs>
-<Tab title="ReceiptAnnotation">
-**`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`Recipient type`**
 
-**`i'mport transaction ID`**
+        - Personal use: `person`
+        - Business use: `company`
 
-**`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
+        **`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`Cash receipt ID issued by PG`**
+        **`Cash receipt Amount`**
 
-**`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`Cash receipt ID issued by National Tax Service`**
+        **`VAT`**
 
-**`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
 
-**`Recipient type`**
+        **`Cash receipt URL`**
 
-- Personal use: `person`
-- Business use: `company`
+        **`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+        **Issued at** `UNIX TIMESTAMP`
 
-**`Cash receipt Amount`**
+        **`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
 
-**`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+        **`Cancelled at`** `UNIX TIMESTAMP`
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`VAT`**
+  <SwaggerResponse status="400: Bad Request" description="Invalid transaction">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`Cash receipt URL`**
-
-**`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
-
-**Issued at** `UNIX TIMESTAMP`
-
-**`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
-
-**`Cancelled at`** `UNIX TIMESTAMP`
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Invalid transaction">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Request failed">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Request failed">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "imp_uid": "string",
-    "receipt_tid": "string",
-    "apply_num": "string",
-    "type": "person",
-    "amount": 0,
-    "vat": 0,
-    "receipt_url": "string",
-    "applied_at": 0,
-    "cancelled_at": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "imp_uid": "string",
+      "receipt_tid": "string",
+      "apply_num": "string",
+      "type": "person",
+      "amount": 0,
+      "vat": 0,
+      "receipt_url": "string",
+      "applied_at": 0,
+      "cancelled_at": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/receipts/revokeReceipt**](https://api.iamport.kr/#!/receipts/revokeReceipt)
-
+  [**https://api.iamport.kr/#!/receipts/revokeReceipt**](https://api.iamport.kr/#!/receipts/revokeReceipt)
 </Hint>

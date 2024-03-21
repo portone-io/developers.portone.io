@@ -4,101 +4,89 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Confirms a Naver Pay escrow order.
+## Confirms a Naver Pay escrow order.
 
 <Swagger method="post" path="/payments/{imp_uid}/naver/confirm" baseUrl="https://api.iamport.kr" summary="Confirms a Naver Pay escrow order.">
-<SwaggerDescription>
-Naver Pay - Pay method at checkout
+  <SwaggerDescription>
+    Naver Pay - Pay method at checkout
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="imp_uid	" type="String" required="true">
-<mark style="color:red;">
+  ### Responses
 
-**i'mport transaction ID**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="ResponseAnnotation">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="ResponseAnnotation">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-0: success, Not 0: check the message
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="404: Not Found" description="Invalid imp_uid or no access permission">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**Response message**
-
-A non-zero code includes a message like 'Invalid payment info'.
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Invalid imp_uid or no access permission">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Request failed. Check the response body message.">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Request failed. Check the response body message.">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string"
-}
-```
-
+  ```json
+  {
+    "code": 0,
+    "message": "string"
+  }
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/naver/naverConfirmPayment**](https://api.iamport.kr/#!/naver/naverConfirmPayment)
-
+  [**https://api.iamport.kr/#!/naver/naverConfirmPayment**](https://api.iamport.kr/#!/naver/naverConfirmPayment)
 </Hint>

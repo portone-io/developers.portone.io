@@ -5,82 +5,80 @@ description: >-
   purposes.
 ---
 
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
 Use the **`imp_uid`** obtained through integrated identity verification to get the customer's
 verification information.
 
-### <mark style="color:blue;">**STEP 01.**</mark> Get verification ID (imp_uid) on the server-side
+## <mark style="color:blue;">**STEP 01.**</mark> Get verification ID (imp\_uid) on the server-side
 
 The following server-side code fetches the data returned from identity verification.
 
 <Tabs>
-<Tab title="Node.js (popup)">
-```javascript title="server-side"
-app.use(bodyParser.json());
-  ...
-  // controller that handles POST request to "/certifications"
-  app.post("/certifications", async (request, response) => {
-    // Get imp_uid from req.body
-    const { imp_uid } = request.body;   
-})
-```
+  <Tab title="Node.js (popup)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+    // controller that handles POST request to "/certifications"
+    app.post("/certifications", async (request, response) => {
+      // Get imp_uid from req.body
+      const { imp_uid } = request.body;
+    });
+    ```
+  </Tab>
 
-</Tab>
-
-<Tab title="Node.js (redirection)">
-```javascript title="server-side"
-app.use(bodyParser.json());
-  ...
-  // controller that handles GET request to "/certifications/redirect"
-  app.get("/certifications/redirect", async (request, response) => {
-    const { imp_uid } = request.query; // Get imp_uid from req.query
-})
-```
-
-</Tab>
+  <Tab title="Node.js (redirection)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+    // controller that handles GET request to "/certifications/redirect"
+    app.get("/certifications/redirect", async (request, response) => {
+      const { imp_uid } = request.query; // Get imp_uid from req.query
+    });
+    ```
+  </Tab>
 </Tabs>
 
-### <mark style="color:blue;">**STEP 02.**</mark> Get verification information
+## <mark style="color:blue;">**STEP 02.**</mark> Get verification information
 
-To get verification information from the i'mport server, you must first get a [**REST API access token**](../../api/rest-api-access-token). Use the `access token` and `imp_uid` (verification ID) to call the <mark style="color:blue;">**Get identity verification info REST API**</mark> that returns the verification information as follows:
+To get verification information from the i'mport server,
+you must first get a [**REST API access token**](../../api/rest-api-access-token).
+Use the `access token` and `imp_uid` (verification ID)
+to call the <mark style="color:blue;">**Get identity verification info REST API**</mark>
+that returns the verification information as follows:
 
-```javascript title="sever-side(Node.js)"
-  app.use(bodyParser.json());
-  ...
-  // controller that handles POST request to "/certifications"
-  app.post("/certifications", async (request, response) => {
-    const { imp_uid } = request.body; // Get imp_uid from request.body
-    try {
-      // Get access token
-      const getToken = await axios({
-        url: "https://api.iamport.kr/users/getToken",
-        method: "post", // POST method
-        headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
-        data: {
-          imp_key: "imp_apikey", // REST API Key
-          imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
-        }
-      });
-      const { access_token } = getToken.data.response; // Access token
-      ...
-      // Get verification info from i'mport server using imp_uid
-      const getCertifications = await axios({
-        url: \`https://api.iamport.kr/certifications/\${imp_uid}\`, // Pass imp_uid
-        method: "get", // GET method
-        headers: { "Authorization": access_token } // Add access token to Authorization header
-      });
-      const certificationsInfo = getCertifications.data.response; // Save verification info
-      ...
-    } catch(e) {
-      console.error(e);
-    }
-  });
+```ts title="sever-side(Node.js)"
+app.use(bodyParser.json());
+// controller that handles POST request to "/certifications"
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // Get imp_uid from request.body
+  try {
+    // Get access token
+    const getToken = await axios({
+      url: "https://api.iamport.kr/users/getToken",
+      method: "post", // POST method
+      headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
+      data: {
+        imp_key: "imp_apikey", // REST API Key
+        imp_secret:
+          "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+      },
+    });
+    const { access_token } = getToken.data.response; // Access token
+    // Get verification info from i'mport server using imp_uid
+    const getCertifications = await axios({
+      url: `https://api.iamport.kr/certifications/${imp_uid}`, // Pass imp_uid
+      method: "get", // GET method
+      headers: { Authorization: access_token }, // Add access token to Authorization header
+    });
+    const certificationsInfo = getCertifications.data.response; // Save verification info
+  } catch (e) {
+    console.error(e);
+  }
+});
 ```
 
-### <mark style="color:blue;">**STEP 03.**</mark> Using verification information
+## <mark style="color:blue;">**STEP 03.**</mark> Using verification information
 
 Retrieve the following user information from the verification information and add the necessary
 service logic.
@@ -95,33 +93,32 @@ service logic.
   such as online social security number.
 
 <Hint style="info">
-Besides what is listed above, other user information, such as foreigner status, is not provided. Kakao's policy prohibits the provision of the CI value when using the Kakao Certificate.
-
+  Besides what is listed above, other user information, such as foreigner status, is not provided.
+  Kakao's policy prohibits the provision of the CI value when using the Kakao Certificate.
 </Hint>
 
 Get the user information and use it as needed. For example, you can use it to check age restrictions
 as follows:
 
-```javascript title="Node.js"
-  // controller that handles POST request to "/certifications"
-  app.post("/certifications", async (request, response) => {
-    const { imp_uid } = request.body; // Get imp_uid from request.body
-    try {
-      // Get access token
-      /* ...Omitted... */
-      // Get verification info using imp_uid
-      /* ...Omitted... */
-      const certificationsInfo = getCertifications.data.response; // Save verification info
-      const { name, birth } = certificationsInfo;
-      ...
-      // Check age restrictions
-      if (new Date(birth).getFullYear() <= 1999) {
-        // Check successful
-      } else {
-        // Check failed
-      }
-    } catch(e) {
-      console.error(e);
+```ts title="Node.js"
+// controller that handles POST request to "/certifications"
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // Get imp_uid from request.body
+  try {
+    // Get access token
+    /* ...Omitted... */
+    // Get verification info using imp_uid
+    /* ...Omitted... */
+    const certificationsInfo = getCertifications.data.response; // Save verification info
+    const { name, birth } = certificationsInfo;
+    // Check age restrictions
+    if (new Date(birth).getFullYear() <= 1999) {
+      // Check successful
+    } else {
+      // Check failed
     }
-  });
+  } catch (e) {
+    console.error(e);
+  }
+});
 ```

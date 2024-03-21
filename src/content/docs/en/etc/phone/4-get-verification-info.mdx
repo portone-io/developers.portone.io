@@ -5,83 +5,75 @@ description: >-
   purposes.
 ---
 
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
 Use the **`imp_uid`** obtained from mobile identity verification to get the customer's verification
 information.
 
-### <mark style="color:blue;"> **STEP 01.** </mark> Get verification ID (imp_uid) on the server-side
+## <mark style="color:blue;"> **STEP 01.** </mark> Get verification ID (imp\_uid) on the server-side
 
 The following server-side code fetches the data returned from mobile identity verification.
 
 <Tabs>
-<Tab title="Node.js (popup)">
+  <Tab title="Node.js (popup)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+    // controller that handles POST request to "/certifications"
+    app.post("/certifications", async (request, response) => {
+      const { imp_uid } = request.body; // Get imp_uid from req.body
+    });
+    ```
+  </Tab>
 
-```javascript title="server-side"
-app.use(bodyParser.json());
-  ...
-  // controller that handles POST request to "/certifications"
-  app.post("/certifications", async (request, response) => {
-    const { imp_uid } = request.body; // Get imp_uid from req.body
-})
-
-```
-
-</Tab>
-
-<Tab title="Node.js (redirection)">
-```javascript
-app.use(bodyParser.json());
-  ...
-  // controller that handles GET request to "/certifications/redirect"
-  app.get("/certifications/redirect", async (request, response) => {
-    const { imp_uid } = request.query; // Get imp_uid from req.query
-})
-```
-
-</Tab>
+  <Tab title="Node.js (redirection)">
+    ```ts
+    app.use(bodyParser.json());
+    // controller that handles GET request to "/certifications/redirect"
+    app.get("/certifications/redirect", async (request, response) => {
+      const { imp_uid } = request.query; // Get imp_uid from req.query
+    });
+    ```
+  </Tab>
 </Tabs>
 
-### <mark style="color:blue;"> **STEP 02.** </mark> Get verification information
+## <mark style="color:blue;"> **STEP 02.** </mark> Get verification information
 
 To get verification information from the i'mport server, you must first get a [**REST API access token**](../../api/rest-api-access-token). Use the `access token` and `imp_uid` (verification ID) to call the <mark style="color:blue;"> **Get identity verification info REST API** </mark> that returns the verification information as follows:
 
-```javascript title="sever-side"
+```ts title="sever-side"
 app.use(bodyParser.json());
-  ...
-  // controller that handles POST request to "/certifications"
-  app.post("/certifications", async (request, response) => {
-    const { imp_uid } = request.body; // Get imp_uid from request.body
-    try {
-      // Get access token
-      const getToken = await axios({
-        url: "https://api.iamport.kr/users/getToken",
-        method: "post", // POST method
-        headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
-        data: {
-          imp_key: "imp_apikey", // REST API Key
-          imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
-        }
-      });
-      const { access_token } = getToken.data.response; // Access token
-      ...
-      // Get verification info from i'mport server using imp_uid
-      const getCertifications = await axios({
-        url: `https://api.iamport.kr/certifications/\${imp_uid}\`, // Pass imp_uid
-        method: "get", // GET method
-        headers: { "Authorization": access_token } // Add access token to Authorization header
-      });
-      const certificationsInfo = getCertifications.data.response; // Save verification info
-      ...
-    } catch(e) {
-      console.error(e);
-    }
-  });
+// controller that handles POST request to "/certifications"
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // Get imp_uid from request.body
+  try {
+    // Get access token
+    const getToken = await axios({
+      url: "https://api.iamport.kr/users/getToken",
+      method: "post", // POST method
+      headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
+      data: {
+        imp_key: "imp_apikey", // REST API Key
+        imp_secret:
+          "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+      },
+    });
+    const { access_token } = getToken.data.response; // Access token
+    // Get verification info from i'mport server using imp_uid
+    const getCertifications = await axios({
+      url: `https://api.iamport.kr/certifications/${imp_uid}`, // Pass imp_uid
+      method: "get", // GET method
+      headers: { Authorization: access_token }, // Add access token to Authorization header
+    });
+    const certificationsInfo = getCertifications.data.response; // Save verification info
+  } catch (e) {
+    console.error(e);
+  }
+});
 ```
 
-### <mark style="color:blue;"> **STEP 03.** </mark> Using verification information
+## <mark style="color:blue;"> **STEP 03.** </mark> Using verification information
 
 Retrieve the following user information from the verification information and add the necessary
 service logic.
@@ -98,55 +90,52 @@ service logic.
 - `unique_in_site`: same as DI value - unique key to identify the user per Merchant ID (website).
 
 <Hint style="info">
-In addition to the above information, if you need access to a user's mobile phone number (**`phone`**) and carrier (**`carrier`**) or foreigner status (**`foreigner`**), you must post a **Consent to Provision of Personal Information on your website** and send a **request to **<mark style="color:red;">**cs@iamport.kr**</mark>. Note that this service is available once it is requested to Danal PG and approved after contracting with i'mport.\
+  In addition to the above information, if you need access to a user's mobile phone number (**`phone`**) and carrier (**`carrier`**) or foreigner status (**`foreigner`**), you must post a **Consent to Provision of Personal Information on your website** and send a **request to** <mark style="color:red;">**[cs@iamport.kr](mailto:cs@iamport.kr)**</mark>. Note that this service is available once it is requested to Danal PG and approved after contracting with i'mport.\\
 
-**\<Email request format >**
+  **\<Email request format >**
 
-- Business name:
-- Business registration number:
-- Danal Merchant ID (CPID) for identity verification:
-- Privacy Policy URL: If unable to provide the URL when using an app service, capture and send the 'Privacy Policy' path.
+  - Business name:
+  - Business registration number:
+  - Danal Merchant ID (CPID) for identity verification:
+  - Privacy Policy URL: If unable to provide the URL when using an app service, capture and send the 'Privacy Policy' path.
 
-**\<Sample Privacy Policies of i'mport merchants>**
+  **\<Sample Privacy Policies of i'mport merchants>**
 
-- `Marpple Co., Ltd.: https://marpple.shop/kr/@/privacy`
-- `Brave Mobile Co., Ltd./Soomgo: https://soomgo.com/terms/privacy`
-- `Marketit Co., Ltd.: https://static.marketit.asia/static/privacy-terms.pdf`
-
+  - `Marpple Co., Ltd.: https://marpple.shop/kr/@/privacy`
+  - `Brave Mobile Co., Ltd./Soomgo: https://soomgo.com/terms/privacy`
+  - `Marketit Co., Ltd.: https://static.marketit.asia/static/privacy-terms.pdf`
 </Hint>
 
-```javascript title="Node.js"
-  // controller that handles POST request to "/certifications"
-  app.post("/certifications", async (request, response) => {
-    const { imp_uid } = request.body; // Get imp_uid from request.body
-    try {
-      // Get access token
-      /* ...Omitted... */
-      // Get verification info using imp_uid
-      /* ...Omitted... */
-      const certificationsInfo = getCertifications.data.response; // Save verification info
-      // unique_key: Unique key for user, unique_in_site: Unique key for user per site
-      const { unique_key, unique_in_site, name, gender, birth } = certificationsInfo;
-      ...
-      // Check age restrictions
-      if (new Date(birth).getFullYear() <= 1999) {
-        // Check successful
-      } else {
-        // Check failed
-      }
-      ...
-      // one account per person check
-      // Query database with unique_key to check for existing account
-      Users.find({ certificationKey: unique_key })
-      .then((user) => {
-        if (!user) {
-          // New user
-        } else {
-          // Existing user
-        }
-      });
-    } catch(e) {
-      console.error(e);
+```ts title="Node.js"
+// controller that handles POST request to "/certifications"
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // Get imp_uid from request.body
+  try {
+    // Get access token
+    /* ...Omitted... */
+    // Get verification info using imp_uid
+    /* ...Omitted... */
+    const certificationsInfo = getCertifications.data.response; // Save verification info
+    // unique_key: Unique key for user, unique_in_site: Unique key for user per site
+    const { unique_key, unique_in_site, name, gender, birth } =
+      certificationsInfo;
+    // Check age restrictions
+    if (new Date(birth).getFullYear() <= 1999) {
+      // Check successful
+    } else {
+      // Check failed
     }
-  });
+    // one account per person check
+    // Query database with unique_key to check for existing account
+    Users.find({ certificationKey: unique_key }).then((user) => {
+      if (!user) {
+        // New user
+      } else {
+        // Existing user
+      }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
 ```

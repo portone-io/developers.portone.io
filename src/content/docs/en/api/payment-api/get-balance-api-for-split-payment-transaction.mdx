@@ -4,225 +4,211 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets the balance of a transaction paid for using multiple payment methods.
+## Gets the balance of a transaction paid for using multiple payment methods.
 
 <Swagger method="get" path="/payments/{imp_uid}/balance" baseUrl="https://api.iamport.kr" summary="Gets the balance of a transaction paid for using multiple payment methods.">
-<SwaggerDescription>
-This is currently supported only by PAYCO.
+  <SwaggerDescription>
+    This is currently supported only by PAYCO.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport order ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">
+  ### Responses
 
-**i'mport order ID**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="PaymentBalanceResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="PaymentBalanceResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **`response`` `**<mark style="color:red;">**`(PaymentBalanceResponseAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+    <Tabs>
+      <Tab title="PaymentBalanceResponseAnnotation">
+        **`amount`` `**<mark style="color:purple;">**`Integer`**</mark>
 
-**Response message**
+        **`Total amount`**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`cash_receipt`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
 
-**`response`` `**<mark style="color:red;">**`(PaymentBalanceResponseAnnotation, optional)`**</mark>
+        **`Cash receipt amount`**
 
-</Tab>
-</Tabs>
+        **`primary`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
 
-<Tabs>
-<Tab title="PaymentBalanceResponseAnnotation">
-**`amount`` `**<mark style="color:purple;">**`Integer`**</mark>
+        **`Payment method 1`**(credit card, account transfer, virtual account, mobile micropayment) amount
 
-**`Total amount`**
+        **`secondary`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
 
-**`cash_receipt`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
+        **`Payment method 2`** PG/credit card points amount
 
-**`Cash receipt amount`**
+        **`discount`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
 
-**`primary`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
+        **`PG/credit card discount amount`**
 
-**`Payment method 1`**(credit card, account transfer, virtual account, mobile micropayment) amount
+        **`histories`` `**<mark style="color:red;">**`(Array[PaymentBalanceBaseAnnotation], optional)`**</mark>
 
-**`secondary`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
+        **`PaymentBalance history`**
+      </Tab>
+    </Tabs>
 
-**`Payment method 2`** PG/credit card points amount
+    <Tabs>
+      <Tab title="PaymentBalanceAnnotation">
+        **`tax_free`` `**<mark style="color:purple;">**`Integer`**</mark>
 
-**`discount`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
+        **`Tax free amount`** (excludes any refunded amount)
 
-**`PG/credit card discount amount`**
+        **`supply`` `**<mark style="color:purple;">**`Integer`**</mark>
 
-**`histories`` `**<mark style="color:red;">**`(Array[PaymentBalanceBaseAnnotation], optional)`**</mark>
+        **`Taxed amount`** (excludes any refunded amount)
 
-**`PaymentBalance history`**
+        **`vat`** <mark style="color:purple;">**`Integer`**</mark>
 
-</Tab>
-</Tabs>
+        **`Tax`** (excludes any refunded amount)
 
-<Tabs>
-<Tab title="PaymentBalanceAnnotation">
-**`tax_free`` `**<mark style="color:purple;">**`Integer`**</mark>
+        **`service`` `**<mark style="color:purple;">**`Integer`**</mark>
 
-**`Tax free amount`** (excludes any refunded amount)
+        **`Fee`** (excludes any refunded amount)
+      </Tab>
+    </Tabs>
 
-**`supply`` `**<mark style="color:purple;">**`Integer`**</mark>
+    <Tabs>
+      <Tab title="PaymentBalanceBaseAnnotation">
+        **`cash_receipt`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
 
-**`Taxed amount`** (excludes any refunded amount)
+        **`Cash receipt amount`**
 
-**`vat`** <mark style="color:purple;">**`Integer`**</mark>
+        **`primary`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
 
-**`Tax`** (excludes any refunded amount)
+        **`Payment method 1`**(credit card, account transfer, virtual account, mobile micropayment) amount
 
-**`service`` `**<mark style="color:purple;">**`Integer`**</mark>
+        **`secondary`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
 
-**`Fee`** (excludes any refunded amount)
+        **`Payment method 2`** PG/credit card points amount
 
-</Tab>
-</Tabs>
+        **`discount`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
 
-<Tabs>
-<Tab title="PaymentBalanceBaseAnnotation">
-**`cash_receipt`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
+        **`PG/credit card discount amount`**
 
-**`Cash receipt amount`**
+        **`created  *`` `**<mark style="color:purple;">**`integer`**</mark>
 
-**`primary`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
+        **`Balance created at (UNIX timestamp)`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`Payment method 1`**(credit card, account transfer, virtual account, mobile micropayment) amount
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`secondary`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
-
-**`Payment method 2`** PG/credit card points amount
-
-**`discount`` `**<mark style="color:red;">**`(PaymentBalanceAnnotation):`**</mark>
-
-**`PG/credit card discount amount`**
-
-**`created  *`` `**<mark style="color:purple;">**`integer`**</mark>
-
-**`Balance created at (UNIX timestamp)`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Invalid imp_uid">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="Invalid imp_uid">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "amount": 0,
-    "cash_receipt": {
-      "tax_free": 0,
-      "supply": 0,
-      "vat": 0,
-      "service": 0
-    },
-    "primary": {
-      "tax_free": 0,
-      "supply": 0,
-      "vat": 0,
-      "service": 0
-    },
-    "secondary": {
-      "tax_free": 0,
-      "supply": 0,
-      "vat": 0,
-      "service": 0
-    },
-    "discount": {
-      "tax_free": 0,
-      "supply": 0,
-      "vat": 0,
-      "service": 0
-    },
-    "histories": [
-      {
-        "cash_receipt": {
-          "tax_free": 0,
-          "supply": 0,
-          "vat": 0,
-          "service": 0
-        },
-        "primary": {
-          "tax_free": 0,
-          "supply": 0,
-          "vat": 0,
-          "service": 0
-        },
-        "secondary": {
-          "tax_free": 0,
-          "supply": 0,
-          "vat": 0,
-          "service": 0
-        },
-        "discount": {
-          "tax_free": 0,
-          "supply": 0,
-          "vat": 0,
-          "service": 0
-        },
-        "created": 0
-      }
-    ]
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "amount": 0,
+      "cash_receipt": {
+        "tax_free": 0,
+        "supply": 0,
+        "vat": 0,
+        "service": 0
+      },
+      "primary": {
+        "tax_free": 0,
+        "supply": 0,
+        "vat": 0,
+        "service": 0
+      },
+      "secondary": {
+        "tax_free": 0,
+        "supply": 0,
+        "vat": 0,
+        "service": 0
+      },
+      "discount": {
+        "tax_free": 0,
+        "supply": 0,
+        "vat": 0,
+        "service": 0
+      },
+      "histories": [
+        {
+          "cash_receipt": {
+            "tax_free": 0,
+            "supply": 0,
+            "vat": 0,
+            "service": 0
+          },
+          "primary": {
+            "tax_free": 0,
+            "supply": 0,
+            "vat": 0,
+            "service": 0
+          },
+          "secondary": {
+            "tax_free": 0,
+            "supply": 0,
+            "vat": 0,
+            "service": 0
+          },
+          "discount": {
+            "tax_free": 0,
+            "supply": 0,
+            "vat": 0,
+            "service": 0
+          },
+          "created": 0
+        }
+      ]
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/payments/balanceByImpUid**](https://api.iamport.kr/#!/payments/balanceByImpUid)
-
+  [**https://api.iamport.kr/#!/payments/balanceByImpUid**](https://api.iamport.kr/#!/payments/balanceByImpUid)
 </Hint>
