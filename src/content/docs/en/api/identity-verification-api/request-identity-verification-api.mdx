@@ -4,145 +4,134 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Sends OTP number via SMS confirming the user's identity based on the submitted personal information.
+## Sends OTP number via SMS confirming the user's identity based on the submitted personal information.
 
 <Swagger method="post" path="/certifications/otp/request" baseUrl="https://api.iamport.kr" summary="Sends OTP number confirming user's identity via SMS.">
-<SwaggerDescription>
-If the user's personal information is passed to the API and verified by the carrier, an OTP (6-digit verification number) is sent to the user via SMS. This is only supported by some merchants who have been pre-approved by the carrier, and is currently only being serviced through **Danal**.
+  <SwaggerDescription>
+    If the user's personal information is passed to the API and verified by the carrier, an OTP (6-digit verification number) is sent to the user via SMS. This is only supported by some merchants who have been pre-approved by the carrier, and is currently only being serviced through **Danal**.
 
-You can call the API by directly entering the name, date of birth + 7th digit of social security number, mobile phone number, and carrier information from the merchant. If the transmitted personal information is correct, a verification code SMS is sent to the mobile phone.
+    You can call the API by directly entering the name, date of birth + 7th digit of social security number, mobile phone number, and carrier information from the merchant. If the transmitted personal information is correct, a verification code SMS is sent to the mobile phone.
 
-When you receive an HTTP Status 200 response, it contains the verification ID (`imp_uid`) in the response body. To complete the verification process, call the /certifications/otp/confirm/\{imp\_uid} API with the OTP number.
+    When you receive an HTTP Status 200 response, it contains the verification ID (`imp_uid`) in the response body. To complete the verification process, call the /certifications/otp/confirm/\{imp\_uid} API with the OTP number.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Body
 
-#### Body
+  <SwaggerParameter required="true" name="name" type="String">
+    <mark style="color:red;">
+      **User name**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter required="true" name="name" type="String">
-<mark style="color:red;">
+  <SwaggerParameter name="phone" type="String" required="true">
+    <mark style="color:red;"> **Mobile number** </mark>
 
-**User name**
+    May contain special characters.
+  </SwaggerParameter>
 
-</mark>
+  <SwaggerParameter name="birth" type="String" required="true">
+    <mark style="color:red;">**DOB**</mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="phone" type="String" required="true">
-<mark style="color:red;"> **Mobile number** </mark>
+    **`YYYYMMDD (6-digit)`**
 
-May contain special characters.
+    May contain special characters.
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="birth" type="String" required="true">
-<mark style="color:red;">**DOB**</mark>
+  <SwaggerParameter name="gender_digit" type="String" required="true">
+    <mark style="color:red;">**Gender code**</mark>
 
-**`YYYYMMDD (6-digit)`**
+    7th digit of 13-digit social security number
+  </SwaggerParameter>
 
-May contain special characters.
+  <SwaggerParameter name="carrier" type="String" required="true">
+    <mark style="color:red;">**Carrier code**</mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="gender_digit" type="String" required="true">
-<mark style="color:red;">**Gender code**</mark>
+    **`SKT`**
 
-7th digit of 13-digit social security number
+    **`KT`**
 
-</SwaggerParameter>
-<SwaggerParameter name="carrier" type="String" required="true">
-<mark style="color:red;">**Carrier code**</mark>
+    **`LGT`**
+  </SwaggerParameter>
 
-**`SKT`**
+  <SwaggerParameter name="is_mvno" type="Boolean">
+    **Budget phone?**
+  </SwaggerParameter>
 
-**`KT`**
+  <SwaggerParameter name="company" type="String">
+    **Merchant service name**
+  </SwaggerParameter>
 
-**`LGT`**
+  <SwaggerParameter name="merchant_uid" type="String">
+    **Order ID**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="is_mvno" type="Boolean">
-**Budget phone?**
+  <SwaggerParameter name="pg" type="String">
+    **PG code**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="company" type="String">
-**Merchant service name**
+  ### Responses
 
-</SwaggerParameter>
-<SwaggerParameter name="merchant_uid" type="String">
-**Order ID**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="CertificationOTPResponse">
+        **`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="pg" type="String">
-**PG code**
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="CertificationOTPResponse">
-**`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **response** <mark style="color:red;"> **(CertificationOTPAnnotation, optional)** </mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
+    <Tabs>
+      <Tab title="CertificationOTPAnnotation">
+        **`imp_uid *`` `** <mark style="color:green;"> **`String`** </mark>
 
-**Response message**
+        **`i'mport verification ID`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-A non-zero code includes a message like 'Invalid payment info'.
+  <SwaggerResponse status="400: Bad Request" description="Missing or invalid parameter error">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**response ** <mark style="color:red;"> **(CertificationOTPAnnotation, optional)** </mark>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-</Tab>
-</Tabs>
-
-<Tabs>
-<Tab title="CertificationOTPAnnotation">
-**`imp_uid *`` `** <mark style="color:green;"> **`String`** </mark>
-
-**`i'mport verification ID`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Missing or invalid parameter error">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Danal server error">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Danal server error">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 ### **Key request parameter description**
@@ -178,23 +167,21 @@ A non-zero code includes a message like 'Invalid payment info'.
 > **danal.\{Merchant ID}**
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "imp_uid": "string"
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "imp_uid": "string"
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/certifications/requestOTP**](https://api.iamport.kr/#!/certifications/requestOTP)
-
+  [**https://api.iamport.kr/#!/certifications/requestOTP**](https://api.iamport.kr/#!/certifications/requestOTP)
 </Hint>

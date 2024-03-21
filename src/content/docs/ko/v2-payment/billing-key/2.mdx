@@ -7,7 +7,7 @@ description: 포트원 빌링키 결제 API를 사용해 바로 결제를 요청
 
 바로 결제를 진행하고 싶은 것이 아니라 미래 특정 시점에 결제가 일어나게 하고 싶다면 [예약 결제 구현](3)을 참고하세요.
 
-```javascript title="server-side"
+```ts title="server-side"
 // 고객사에서 채번하는 새로운 결제 ID를 만들어주세요.
 const paymentId = OrderService.getNewPaymentId();
 
@@ -17,7 +17,7 @@ const paymentResponse = await fetch(
   {
     method: "POST",
     headers: {
-      "Authorization": `PortOne ${PORTONE_API_SECRET}`,
+      Authorization: `PortOne ${PORTONE_API_SECRET}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -28,9 +28,10 @@ const paymentResponse = await fetch(
       amount: {
         total: 8900,
       },
-      currency: "KRW"
+      currency: "KRW",
     }),
   },
 );
-if (!paymentResponse.ok) throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
+if (!paymentResponse.ok)
+  throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
 ```

@@ -4,150 +4,152 @@ description: Kakao Pay simple payment integration guide
 ---
 
 import Codepen from "~/components/gitbook/Codepen.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure Kakao Pay simple payment PG settings
+## 1. Configure Kakao Pay simple payment PG settings
 
-Refer to the [**Kakao Pay settings**](../../ready/2.-pg/pg/undefined) page to configure the PG settings.
+Refer to the [**Kakao Pay settings**](../../ready/2.-pg/pg/undefined) page
+to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-05-29 8.08.40.png>)
 
-### 2. Request payment
+## 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="General payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'kakaopay',
-    pay_method : 'card',  // Can be omitted
-    merchant_uid: '{Merchant created Order ID}', //Example: order_no_0001
-    name : 'Order name: Test payment',
-    amount : 14000,
-    buyer_email : 'iamport@siot.do',
-    buyer_name : 'Customer name',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : 'Samseong-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    m_redirect_url : "{URL to redirect to after payment approval}" //Example: http://yourservice.com/payments/complete
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="General payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "kakaopay",
+        pay_method: "card", // Can be omitted
+        merchant_uid: "{Merchant created Order ID}", //Example: order_no_0001
+        name: "Order name: Test payment",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "Customer name",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{URL to redirect to after payment approval}", //Example: http://yourservice.com/payments/complete
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-####
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`kakaopay`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`kakaopay`**.
+    **`pay_method`** <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+    **Payment method code**
 
-**Payment method code**
+    Can be omitted
 
-Can be omitted
+    (Overwritten by the option(credit card or Kakao money) selected in Kakao Pay app)
 
-(Overwritten by the option(credit card or Kakao money) selected in Kakao Pay app)
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Order ID**
 
-**Order ID**
+    Must be unique for each request.
 
-Must be unique for each request.
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    **Payment amount**
 
-**Payment amount**
+    Must be an integer (not string)
 
-Must be an integer (not string)
+    <Codepen user="chaiport" slug="XWZZZgJ" caption="Kakao Pay payment window example" />
+  </Tab>
 
-<Codepen
-  user="chaiport"
-  slug="XWZZZgJ"
-  caption="Kakao Pay payment window example"
-/>
+  <Tab title="Subscription payment request">
+    To open subscription payment window, specify the **customer\_uid** parameter.
 
-</Tab>
+    <Hint style="warning">
+      **amount**
 
-<Tab title="Subscription payment request">
-To open subscription payment window, specify the **customer\_uid** parameter.
+      - If requesting **both billing key and initial payment**, specify the payment amount.
+      - If only requesting for billing key, set to <mark style="color:red;">**0**</mark>.
+    </Hint>
 
-<Hint style="warning">
-**amount**
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "kakaopay",
+        merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+        name: "Order name: Billing key request test",
+        amount: 0, // For display purpose only (set actual amount to also request payment approval).
+        customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
+        buyer_email: "johndoe@gmail.com",
+        buyer_name: "John Doe",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        if (rsp.success) {
+          alert("Success");
+        } else {
+          alert("Failed");
+        }
+      },
+    );
+    ```
 
-- If requesting **both billing key and initial payment**, specify the payment amount.
-- If only requesting for billing key, set to <mark style="color:red;">**0**</mark>.
+    ### Key parameter description
 
-</Hint>
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "kakaopay",
-    merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
-    name: "Order name: Billing key request test",
-    amount: 0, // For display purpose only (set actual amount to also request payment approval).
-    customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
-    buyer_email: "johndoe@gmail.com",
-    buyer_name: "John Doe",
-    buyer_tel: "02-1234-1234",
-    m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
-  },
-  function (rsp) {
-    if (rsp.success) {
-      alert("Success");
-    } else {
-      alert("Failed");
-    }
-  }
-);
-```
+    **PG code**
 
-### Key parameter description
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`kakaopay`**.
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**PG code**
+    **Credit card billing key**
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`kakaopay`**.
+    Billing key to be mapped 1:1 with the user-entered credit card information.
 
-**`customer_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
 
-**Credit card billing key**
+    **Payment amount**
 
-Billing key to be mapped 1:1 with the user-entered credit card information.
+    0: only billing key, **> 0: billing key + initial payment**\\
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**Integer\*\*</mark>
+    ### Request payment with billing key (customer\_uid)
 
-**Payment amount**
+    After successfully getting the billing key, the billing key is **stored on the i'mport server**
+    mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api)
+    with the `customer_uid` as follows:
 
-0: only billing key, **> 0: billing key + initial payment**\
-
-### Request payment with billing key (customer_uid)
-
-After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api) with the `customer_uid` as follows:
-
-```title="sever-side"
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-</Tab>
+    ```sh title="sever-side"
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+  </Tab>
 </Tabs>
 
 <Hint style="info">
-**Kakao Pay simple payment is processed in mobile Kakao App.**
-
+  **Kakao Pay simple payment is processed in mobile Kakao App.**
 </Hint>

@@ -4,27 +4,25 @@ description: 대부분의 PC환경에서 적용되는 iframe 방식 결제창 �
 ---
 
 import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 <Hint style="info">
-#### **iframe** 이란?
+  **iframe이란?**
 
-**다른 HTML 페이지를 현재 페이지에 포함**시킬 수 있는 요소입니다.\
-자세한 내용은 [MDN iframe 문서](https://developer.mozilla.org/ko/docs/Web/HTML/Element/iframe)를 참고해주세요.
-
+  **다른 HTML 페이지를 현재 페이지에 포함**시킬 수 있는 요소입니다.\
+  자세한 내용은 [MDN iframe 문서](https://developer.mozilla.org/ko/docs/Web/HTML/Element/iframe)를 참고해주세요.
 </Hint>
 
 **PC 환경**에서 일어나는 대부분의 결제는 **`request_pay()`** 함수의 두번째 인자인 **callback** 함수를 통해 결제 결과 수신이 가능합니다.
 
 아래 예제 코드는 결제창 형태가 **iframe 으로 활성화**되는 **대부분의 PC 환경**에서의 결제요청에 대한 응답을 처리하는 부분입니다.
 
-<Tabs>
-<Tab title="JavaScript">
-```javascript
-IMP.request_pay({ /** 요청 객체를 추가해주세요 */ },
-  rsp => {
-    if (rsp.success) {   
+```ts
+IMP.request_pay(
+  {
+    /** 요청 객체를 추가해주세요 */
+  },
+  (rsp) => {
+    if (rsp.success) {
       // axios로 HTTP 요청
       axios({
         url: "{서버의 결제 정보를 받는 endpoint}",
@@ -32,65 +30,34 @@ IMP.request_pay({ /** 요청 객체를 추가해주세요 */ },
         headers: { "Content-Type": "application/json" },
         data: {
           imp_uid: rsp.imp_uid,
-          merchant_uid: rsp.merchant_uid
-        }
+          merchant_uid: rsp.merchant_uid,
+        },
       }).then((data) => {
         // 서버 결제 API 성공시 로직
-      })
+      });
     } else {
       alert(`결제에 실패하였습니다. 에러 내용: ${rsp.error_msg}`);
     }
-  });
+  },
+);
 ```
-
-</Tab>
-
-<Tab title="JavaScript (ES5)">
-```javascript
-IMP.request_pay({ /** 요청 객체를 추가해주세요 */ },
-  function (rsp) {
-    if (rsp.success) {
-      // 결제 성공 시: 결제 승인 또는 가상계좌 발급에 성공한 경우
-      // jQuery로 HTTP 요청
-      jQuery.ajax({
-        url: "{서버의 결제 정보를 받는 고객사 endpoint}", 
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        data: {
-          imp_uid: rsp.imp_uid,            // 결제 고유번호
-          merchant_uid: rsp.merchant_uid   // 주문번호
-        }
-      }).done(function (data) {
-        // 고객사 서버 결제 API 성공시 로직
-      })
-    } else {
-      alert("결제에 실패하였습니다. 에러 내용: " + rsp.error_msg);
-    }
-  });
-```
-
-</Tab>
-</Tabs>
 
 결제가 완료되면 반환되는 응답 객체([**rsp**](../../../sdk/javascript-sdk-old/readme))의 결제 성공
-여부에 따라 처리 로직을 **callback** 함수에 작성합니다. 요청이 성공했을 경우에 **결제번호(imp_uid)와
-주문번호(merchant_uid)를 서버에 전달**하는 로직을 위와 같이 작성합니다.
+여부에 따라 처리 로직을 **callback** 함수에 작성합니다. 요청이 성공했을 경우에 **결제번호(imp\_uid)와
+주문번호(merchant\_uid)를 서버에 전달**하는 로직을 위와 같이 작성합니다.
 
 <Hint style="info">
-[payrt](../../../sdk/javascript-sdk/payrt "mention")에서 callback 함수로 전달되는 응답 파라미터를 확인할 수 있습니다.
-
+  [payrt](../../../sdk/javascript-sdk/payrt "mention")에서 callback 함수로 전달되는 응답 파라미터를 확인할 수 있습니다.
 </Hint>
 
 <Hint style="danger">
-최종 결제결과 로직처리는 반드시 [<mark style="color:red;">**웹훅**</mark>](../../../result/webhook)을 이용하여 안정적으로 처리해 주셔야 합니다.
+  최종 결제결과 로직처리는 반드시 [<mark style="color:red;">**웹훅**</mark>](../../../result/webhook)을 이용하여 안정적으로 처리해 주셔야 합니다.
 
-웹훅 연동을 생략하시는 경우 결제결과를 정상적으로 수신받지 못하는 상황이 발생합니다.
-
+  웹훅 연동을 생략하시는 경우 결제결과를 정상적으로 수신받지 못하는 상황이 발생합니다.
 </Hint>
 
 <Hint style="success">
-**(구) 페이팔(Paypal)** 결제는 PC 환경 결제 시 **팝업형태(새 창)**로 결제창이 활성화 되며
+  **(구) 페이팔(Paypal)** 결제는 PC 환경 결제 시 \*\*팝업형태(새 창)\*\*로 결제창이 활성화 되며
 
-이에 따라 결제 결과도 **m_redirect_url** 로 받아보실 수 있습니다.
-
+  이에 따라 결제 결과도 **m\_redirect\_url** 로 받아보실 수 있습니다.
 </Hint>

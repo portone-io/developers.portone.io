@@ -4,86 +4,85 @@ description: Toss simple payment integration guide
 ---
 
 import Codepen from "~/components/gitbook/Codepen.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure Toss simple payment PG settings
+## 1. Configure Toss simple payment PG settings
 
-Refer to the [**Toss simple pay settings**](../../ready/2.-pg/pg/undefined-1) page to configure the PG settings.
+Refer to the [**Toss simple pay settings**](../../ready/2.-pg/pg/undefined-1) page
+to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-05 1.29.25.png>)
 
-### 2. Request payment
+## 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="General payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'tosspay',
-    pay_method : 'card',
-    merchant_uid: '{Merchant created Order ID}', //Example: order_no_0001
-    name : 'Order name: Test payment',
-    amount : 14000,
-    buyer_email : 'iamport@siot.do',
-    buyer_name : 'Customer name',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : 'Samseong-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    m_redirect_url : "{URL to redirect to after payment approval}" //Example: http://yourservice.com/payments/complete
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="General payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "tosspay",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", //Example: order_no_0001
+        name: "Order name: Test payment",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "Customer name",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{URL to redirect to after payment approval}", //Example: http://yourservice.com/payments/complete
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-####
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`tosspay`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`tosspay`**.
+    **`pay_method`** <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:green;">**s**</mark><mark style="color:green;">**tring**</mark>
+    **Payment method code**
 
-**Payment method code**
+    - `card` (credit card)
+    - `trans` (instant account transfer)
 
-- `card` (credit card)
-- `trans` (instant account transfer)
+    **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`name`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Product name**
 
-**Product name**
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Order ID**
 
-**Order ID**
+    Must be unique for each request.
 
-Must be unique for each request.
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    **Payment amount**
 
-**Payment amount**
+    Must be an integer (not string)
 
-Must be an integer (not string)
-
-<Codepen
-  user="chaiport"
-  slug="wvyxzYv"
-  caption="**Toss simple payment window example**"
-/>
-
-</Tab>
+    <Codepen user="chaiport" slug="wvyxzYv" caption="**Toss simple payment window example**" />
+  </Tab>
 </Tabs>
 
 <Hint style="info">
-**Toss simple payment is processed in mobile Toss App.**
-
+  **Toss simple payment is processed in mobile Toss App.**
 </Hint>

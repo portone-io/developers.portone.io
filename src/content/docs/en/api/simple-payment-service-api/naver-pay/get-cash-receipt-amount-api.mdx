@@ -4,134 +4,120 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets Naver Pay amount subject to issuance of a cash receipt.
+## Gets Naver Pay amount subject to issuance of a cash receipt.
 
 <Swagger method="get" path="/payments/{imp_uid}/naver/cash-amount" baseUrl="https://api.iamport.kr" summary="Gets Naver Pay amount subject to issuance of a cash receipt.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">
+  ### Responses
 
-**i'mport transaction ID**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="NaverCashAmountResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="NaverCashAmountResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **`response`` `**<mark style="color:red;">**`(NaverCashAmountAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+    <Tabs>
+      <Tab title="NaverCashAmountAnnotation">
+        **`amount_total`` `**<mark style="color:purple;">**`integer`**</mark>
 
-**Response message**
+        **`Total amount subject to cash receipt issuance`**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`amount_by_npoint`** <mark style="color:purple;">**`integer`**</mark>
 
-**`response`` `**<mark style="color:red;">**`(NaverCashAmountAnnotation, optional)`**</mark>
+        **`Npoint amount out of the amount_total`**
 
-</Tab>
-</Tabs>
+        **`amount_by_primary`** <mark style="color:purple;">**`integer`**</mark>
 
-<Tabs>
-<Tab title="NaverCashAmountAnnotation">
-**`amount_total`` `**<mark style="color:purple;">**`integer`**</mark>
+        **`Amount charged with the main payment method (credit card, account transfer etc.) out of the amount_total`**
 
-**`Total amount subject to cash receipt issuance`**
+        **`amount_supply`** <mark style="color:purple;">**`integer`**</mark>
 
-**`amount_by_npoint`** <mark style="color:purple;">**`integer`**</mark>
+        **`List price amount out of the amount_total`**
 
-**`Npoint amount out of the amount_total`**
+        **`amount_vat`** <mark style="color:purple;">**`integer`**</mark>
 
-**`amount_by_primary`** <mark style="color:purple;">**`integer`**</mark>
+        **`VAT out of the amount_total`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`Amount charged with the main payment method (credit card, account transfer etc.) out of the amount_total`**
+  <SwaggerResponse status="400: Bad Request" description="Invalid request - non-Naver Pay transaction specified">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`amount_supply`** <mark style="color:purple;">**`integer`**</mark>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access ">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`List price amount out of the amount_total`**
-
-**`amount_vat`** <mark style="color:purple;">**`integer`**</mark>
-
-**`VAT out of the amount_total`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Invalid request - non-Naver Pay transaction specified">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access ">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Invalid response">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Invalid response">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "amount_total": 0,
-    "amount_by_npoint": 0,
-    "amount_by_primary": 0,
-    "amount_supply": 0,
-    "amount_vat": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "amount_total": 0,
+      "amount_by_npoint": 0,
+      "amount_by_primary": 0,
+      "amount_supply": 0,
+      "amount_vat": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/naver/queryCashAmount**](https://api.iamport.kr/#!/naver/queryCashAmount)
-
+  [**https://api.iamport.kr/#!/naver/queryCashAmount**](https://api.iamport.kr/#!/naver/queryCashAmount)
 </Hint>

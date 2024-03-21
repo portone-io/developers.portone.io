@@ -18,7 +18,7 @@ import Details from "~/components/gitbook/Details.astro";
 
 ## 빌링키 발급
 
-(신) 나이스페이먼츠 빌링키 발급은 API 방식(POST /subscrie/customers/"customer\_uid")만 지원합니다.
+(신) 나이스페이먼츠 빌링키 발급은 API 방식(`POST /subscribe/customers/{customer_uid}`)만 지원합니다.
 
 ## 비인증 결제
 
@@ -62,7 +62,8 @@ import Details from "~/components/gitbook/Details.astro";
 
 ### 배송 정보 수정 불가
 
-(신) 나이스페이먼츠는 `POST /escrow/logis/{imp_uid}` API로 에스크로 배송 정보 등록은 가능하지만 `PUT /escrow/logis/{imp_uid}` API로 **수정은 불가능**합니다.
+(신) 나이스페이먼츠는 `POST /escrow/logis/{imp_uid}` API로 에스크로 배송 정보 등록은 가능하지만
+`PUT /escrow/logis/{imp_uid}` API로 **수정은 불가능**합니다.
 
 ## 현금영수증
 
@@ -70,7 +71,7 @@ import Details from "~/components/gitbook/Details.astro";
 
 (신) 나이스페이먼츠의 경우 현금성 결제(가상계좌, 계좌이체, 네이버페이 포인트 결제 등)시 승인 단계에서
 현금영수증을 발급 요청할 수 있습니다. 이때 결제 승인 단계에서 현금영수증을 발급 요청하지 못한 경우,
-현금영수증 발급 API(`POST /receipts/"imp_uid"`)를 사용한다고 하더라도 발급이 되지 않으니 참고 부탁드립니다.
+현금영수증 발급 API(`POST /receipts/{imp_uid}`)를 사용한다고 하더라도 발급이 되지 않으니 참고 부탁드립니다.
 
 ### API로 현금영수증 발급 시, 현금영수증 카드 사용 불가능
 
@@ -81,14 +82,14 @@ API로 현금영수증 발급(`POST /receipts/{imp_uid}`)시 발급 받을 현�
 <Details>
   <p slot="summary">\[가능] 사업자 등록번호로 지출증빙용 현금영수증 발급</p>
 
-  ```json
-  // POST /receipts/{imp_uid}
+  ```http
+  POST /receipts/{imp_uid}
 
   {
     // ...중략
-    type: "company", // 현금영수증 발급 유형: 지출증빙
-    identifier: "1178178260", // 현금영수증 발행 식별 정보: 사업자 등록번호
-    identifier_type: "business" // 현금영수증 발행 식별 정보 유형: 사업자 등록번호
+    "type": "company", // 현금영수증 발급 유형: 지출증빙
+    "identifier": "1178178260", // 현금영수증 발행 식별 정보: 사업자 등록번호
+    "identifier_type": "business" // 현금영수증 발행 식별 정보 유형: 사업자 등록번호
   }
   ```
 </Details>
@@ -96,14 +97,14 @@ API로 현금영수증 발급(`POST /receipts/{imp_uid}`)시 발급 받을 현�
 <Details>
   <p slot="summary">\[가능] 휴대폰 번호로 소득공제용 현금영수증 발급</p>
 
-  ```json
-  // POST /receipts/{imp_uid}
+  ```http
+  POST /receipts/{imp_uid}
 
   {
     // ...중략
-    type: "personal", // 현금영수증 발급 유형: 소득공제
-    identifier: "01012345678", // 현금영수증 발행 식별 정보: 휴대폰 번호
-    identifier_type: "phone" // 현금영수증 발행 식별 정보 유형: 휴대폰 번호
+    "type": "personal", // 현금영수증 발급 유형: 소득공제
+    "identifier": "01012345678", // 현금영수증 발행 식별 정보: 휴대폰 번호
+    "wdentifier_type": "phone" // 현금영수증 발행 식별 정보 유형: 휴대폰 번호
   }
   ```
 </Details>
@@ -111,14 +112,14 @@ API로 현금영수증 발급(`POST /receipts/{imp_uid}`)시 발급 받을 현�
 <Details>
   <p slot="summary">\[가능] 주민등록번호로 소득공제용 현금영수증 발급</p>
 
-  ```json
-  // POST /receipts/{imp_uid}
+  ```http
+  POST /receipts/{imp_uid}
 
   {
     // ...중략
-    type: "personal", // 현금영수증 발급 유형: 소득공제
-    identifier: "9010102012345", // 현금영수증 발행 식별 정보: 주민등록번호
-    identifier_type: "person" // 현금영수증 발행 식별 정보 유형: 주민등록번호
+    "type": "personal", // 현금영수증 발급 유형: 소득공제
+    "identifier": "9010102012345", // 현금영수증 발행 식별 정보: 주민등록번호
+    "identifier_type": "person" // 현금영수증 발행 식별 정보 유형: 주민등록번호
   }
   ```
 </Details>
@@ -126,14 +127,14 @@ API로 현금영수증 발급(`POST /receipts/{imp_uid}`)시 발급 받을 현�
 <Details>
   <p slot="summary">\[불가능] 현금영수증 카드번호로 소득공제용 현금영수증 발급</p>
 
-  ```json
-  // POST /receipts/{imp_uid}
+  ```http
+  POST /receipts/{imp_uid}
 
   {
     // ...중략
-    type: "personal", // 현금영수증 발급 유형: 소득공제
-    identifier: "123456789012", // 현금영수증 발행 식별 정보: 현금영수증 카드번호
-    identifier_type: "taxcard" // 현금영수증 발행 식별 정보 유형: 현금영수증 카드번호
+    "type": "personal", // 현금영수증 발급 유형: 소득공제
+    "identifier": "123456789012", // 현금영수증 발행 식별 정보: 현금영수증 카드번호
+    "identifier_type": "taxcard" // 현금영수증 발행 식별 정보 유형: 현금영수증 카드번호
   }
   ```
 </Details>

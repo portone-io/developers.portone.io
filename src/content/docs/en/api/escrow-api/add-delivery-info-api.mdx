@@ -4,172 +4,150 @@ description: ""
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Adds delivery info for an escrow transaction.
+## Adds delivery info for an escrow transaction.
 
 <Details>
-<p slot="summary"><strong>Supported PGs</strong></p>
+  <p slot="summary"><strong>Supported PGs</strong></p>
 
-- KG INICIS
-- NHN KCP
-- PAYJOA (Daou)
-
+  - KG INICIS
+  - NHN KCP
+  - PAYJOA (Daou)
 </Details>
 
 <Swagger method="post" path="/escrows/logis/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Adds delivery info for an escrow transaction.">
-<SwaggerDescription>
-The request body must be **2-depth JSON**.
+  <SwaggerDescription>
+    The request body must be **2-depth JSON**.
 
-[**Courier codes**](../../tips/code)
+    [**Courier codes**](../../tips/code)
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">
+  #### Body
 
-**i'mport transaction ID**
+  <SwaggerParameter name="sender" type="Json" required="true">
+    <mark style="color:red;">
+      **Sender info**
+    </mark>
+  </SwaggerParameter>
 
-</mark>
+  <SwaggerParameter name="receiver" type="Json" required="true">
+    <mark style="color:red;">
+      **Receiver info**
+    </mark>
+  </SwaggerParameter>
 
-</SwaggerParameter>
+  <SwaggerParameter name="logis" type="Json" required="true">
+    <mark style="color:red;">
+      **Delivery info**
+    </mark>
+  </SwaggerParameter>
 
-#### Body
+  ### Responses
 
-<SwaggerParameter name="sender" type="Json" required="true">
-<mark style="color:red;">
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="EscrowLogisResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**Sender info**
+        **Response code**
 
-</mark>
+        0: success, Not 0: check the message
 
-</SwaggerParameter>
-<SwaggerParameter name="receiver" type="Json" required="true">
-<mark style="color:red;">
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**Receiver info**
+        **Response message**
 
-</mark>
+        A non-zero code includes a message like 'Invalid payment info'.
 
-</SwaggerParameter>
-<SwaggerParameter name="logis" type="Json" required="true">
-<mark style="color:red;">
+        **`response`**<mark style="color:red;">**`(EscrowLogisAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-**Delivery info**
+    <Tabs>
+      <Tab title="EscrowLogisAnnotation">
+        **`company`** <mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-</mark>
+        **`Courier code`**
 
-</SwaggerParameter>
+        **`invoice`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-### Responses
+        **`Tracking number`**
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="EscrowLogisResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **`sent_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**Response code**
+        **`Sent at`** _**UNIX TIMESTAMP**_
 
-0: success, Not 0: check the message
+        **`applied_at`**_<mark style="color:red;">**`*`**</mark>_<mark style="color:orange;">**`integer`**</mark>
 
-**`message`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Delivery info created at`** _**UNIX TIMESTAMP**_
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**Response message**
+  <SwaggerResponse status="400: Bad Request" description="Missing parameter (varies by PG) or request not supported by specified PG">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-A non-zero code includes a message like 'Invalid payment info'.
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`response`**<mark style="color:red;">**`(EscrowLogisAnnotation, optional)`**</mark>
+  <SwaggerResponse status="404: Not Found" description="No result found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-</Tab>
-</Tabs>
+  <SwaggerResponse status="405: Method Not Allowed" description="Not a POST request">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-<Tabs>
-<Tab title="EscrowLogisAnnotation">
-**`company`** <mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+  <SwaggerResponse status="409: Conflict" description="Delivery info already exists or request cannot be completed">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`Courier code`**
-
-**`invoice`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**`Tracking number`**
-
-**`sent_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
-
-**`Sent at`** _**UNIX TIMESTAMP**_
-
-**`applied_at`**_<mark style="color:red;">**`*`**</mark>_<mark style="color:orange;">**`integer`**</mark>
-
-**`Delivery info created at`** _**UNIX TIMESTAMP**_
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Missing parameter (varies by PG) or request not supported by specified PG">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="No result found">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="405: Method Not Allowed" description="Not a POST request">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="409: Conflict" description="Delivery info already exists or request cannot be completed">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Server error">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Server error">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 ### **Key request parameter description**
@@ -179,28 +157,27 @@ A non-zero code includes a message like 'Invalid payment info'.
 > **`Sender info`**
 
 <Details>
-<p slot="summary">EscrowLogisSenderAnnotation</p>
+  <p slot="summary">EscrowLogisSenderAnnotation</p>
 
-**`name (string, optional)`**
+  **`name (string, optional)`**
 
-**`Sender's name (Required for: KG INICIS)`**
+  **`Sender's name (Required for: KG INICIS)`**
 
-**`tel (string, optional)`**
+  **`tel (string, optional)`**
 
-**`Sender's phone (Required for: KG INICIS)`**
+  **`Sender's phone (Required for: KG INICIS)`**
 
-**`addr (string, optional)`**
+  **`addr (string, optional)`**
 
-**`Sender's address (Required for: KG INICIS)`**
+  **`Sender's address (Required for: KG INICIS)`**
 
-**`postcode (string, optional)`**
+  **`postcode (string, optional)`**
 
-**`Sender's zip code (Required for: KG INICIS)`**
+  **`Sender's zip code (Required for: KG INICIS)`**
 
-**`relationship (string, optional)`**
+  **`relationship (string, optional)`**
 
-**`Relationship with sender (Required for: PAYJOA, Example: Self)`**
-
+  **`Relationship with sender (Required for: PAYJOA, Example: Self)`**
 </Details>
 
 > **`receiver`**<mark style="color:red;">**`*`**</mark><mark style="color:blue;">**`Json`**</mark>
@@ -208,24 +185,23 @@ A non-zero code includes a message like 'Invalid payment info'.
 > **`Receiver info`**
 
 <Details>
-<p slot="summary">EscrowLogisReceiverAnnotation</p>
+  <p slot="summary">EscrowLogisReceiverAnnotation</p>
 
-**`name (string, optional)`**
+  **`name (string, optional)`**
 
-**`Receiver's name (Required for: KG INICIS)`**
+  **`Receiver's name (Required for: KG INICIS)`**
 
-**`tel (string, optional)`**
+  **`tel (string, optional)`**
 
-**`Receiver's phone (Required for: KG INICIS)`**
+  **`Receiver's phone (Required for: KG INICIS)`**
 
-**`addr (string, optional)`**
+  **`addr (string, optional)`**
 
-**`Receiver's address (Required for: KG INICIS)`**
+  **`Receiver's address (Required for: KG INICIS)`**
 
-**`postcode (string, optional)`**
+  **`postcode (string, optional)`**
 
-**`Receiver's zip code (Required for: KG INICIS)`**
-
+  **`Receiver's zip code (Required for: KG INICIS)`**
 </Details>
 
 > **`logis`**<mark style="color:red;">**`*`**</mark><mark style="color:blue;">**`Json`**</mark>
@@ -233,53 +209,50 @@ A non-zero code includes a message like 'Invalid payment info'.
 > **`Delivery info`**
 
 <Details>
-<p slot="summary">EscrowLogisInfoAnnotation</p>
+  <p slot="summary">EscrowLogisInfoAnnotation</p>
 
-**`company (string)`**
+  **`company (string)`**
 
-**`Courier code`**
+  **`Courier code`**
 
-**`invoice (string)`**
+  **`invoice (string)`**
 
-**`Tracking number`**
+  **`Tracking number`**
 
-**`sent_at (integer)`**
+  **`sent_at (integer)`**
 
-**`Sent at UNIX TIMESTAMP`**
+  **`Sent at UNIX TIMESTAMP`**
 
-**`receiving_at (string, optional)`**
+  **`receiving_at (string, optional)`**
 
-**`Received at (Required for: PAYJOA / Example: YYYYMMDD)`**
+  **`Received at (Required for: PAYJOA / Example: YYYYMMDD)`**
 
-**`address (string, optional)`**
+  **`address (string, optional)`**
 
-**`Shipping address (Required for: PAYJOA)`**
-
+  **`Shipping address (Required for: PAYJOA)`**
 </Details>
 
 ### Response
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "company": "string",
-    "invoice": "string",
-    "sent_at": 0,
-    "applied_at": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "company": "string",
+      "invoice": "string",
+      "sent_at": 0,
+      "applied_at": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/escrow.logis/escrow_logis_save**](https://api.iamport.kr/#!/escrow.logis/escrow_logis_save)
-
+  [**https://api.iamport.kr/#!/escrow.logis/escrow\_logis\_save**](https://api.iamport.kr/#!/escrow.logis/escrow_logis_save)
 </Hint>

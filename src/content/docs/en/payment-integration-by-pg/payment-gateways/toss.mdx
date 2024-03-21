@@ -6,285 +6,294 @@ description: Toss Payments payment window integration guide
 import Codepen from "~/components/gitbook/Codepen.astro";
 import ContentRef from "~/components/gitbook/ContentRef.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure Toss Payments PG settings
+## 1. Configure Toss Payments PG settings
 
-Refer to the [**Toss Payments settings**](../../ready/2.-pg/payment-gateway-settings/undefined) page to configure the PG settings.
+Refer to the [**Toss Payments settings**](../../ready/2.-pg/payment-gateway-settings/undefined) page
+to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-05-29 7.38.40.png>)
 
 ### 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'uplus',
-    pay_method : 'card',
-    merchant_uid : '{Merchant created Order ID}', // Example: order_no_0001
-    name : 'Order name: Test payment request',
-    amount : 14000,
-    buyer_email : 'iamport@siot.do',
-    buyer_name : 'John Doe',
-    buyer_tel : '010-1234-5678',
-    buyer_addr : 'Shinsa-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    m_redirect_url : '{Mobile only - URL to redirect to after payment approval}' // Example: https://www.my-service.com/payments/complete/mobile
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "uplus",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-####
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`uplus`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`uplus`**.
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Payment method code**
 
-**Payment method code**
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+      - `phone`(mobile micropayment)
+    </Details>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
-- `phone`(mobile micropayment)
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
+    **Order ID**
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    Must be unique for each request.
 
-**Order ID**
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-Must be unique for each request.
+    **Payment amount**
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    Must be an integer (not string).
 
-**Payment amount**
+    **`escrow`` `**<mark style="color:orange;">**`boolean`**</mark>
 
-Must be an integer (not string).
+    **Ecrow option**
 
-**` escrow``  `**<mark style="color:orange;">**`boolean`**</mark>
+    <Codepen user="chaiport" slug="qBxbGXy" caption="Toss Payments payment window" />
+  </Tab>
 
-**Ecrow option**
+  <Tab title="Non-authenticated payment request">
+    To open non-authenticated payment window, specify the **customer\_uid** parameter.
+    After getting a billing key from this window, you can request payment using the billing key.
 
-<Codepen
-  user="chaiport"
-  slug="qBxbGXy"
-  caption="Toss Payments payment window"
-/>
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "tosspayments",
+        pay_method: "card", // only 'card' supported.
+        merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+        name: "Initial billing key request",
+        amount: 0, // For display purpose only (no payment approval).
+        customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
+        buyer_email: "johndoe@gmail.com",
+        buyer_name: "John Doe",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
+        customer_id: "matthew", // Merchant user ID
+      },
+      function (rsp) {
+        // callback
+      },
+    );
+    ```
 
-</Tab>
+    <Hint style="info">
+      - To request non-authenticated payment, you must set the **MID issued by Toss Payments** in the Admin console.
 
-<Tab title="Non-authenticated payment request">
-To open non-authenticated payment window, specify the **customer\_uid** parameter. After getting a billing key from this window, you can request payment using the billing key.
+      - Toss Payments <mark style="color:red;">**does not process the payment**</mark>
+        when issuing the billing key even if you specify an amount.
+    </Hint>
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "tosspayments",
-    pay_method: "card", // only 'card' supported.
-    merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
-    name: "Initial billing key request",
-    amount: 0, // For display purpose only (no payment approval).
-    customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
-    buyer_email: "johndoe@gmail.com",
-    buyer_name: "John Doe",
-    buyer_tel: "02-1234-1234",
-    m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
-    customer_id: "matthew", // Merchant user ID
-  },
-  function (rsp) {
-    // callback
-  }
-);
-```
+    ### Key parameter description
 
-<Hint style="info">
-* To request non-authenticated payment, you must set the **MID issued by Toss Payments** in the Admin console.
-* Toss Payments <mark style="color:red;">**does not process the payment**</mark> when issuing the billing key even if you specify an amount.
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Hint>
+    **PG code**
 
-### Key parameter description
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`tosspayments`**.
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**PG code**
+    **Credit card billing key**
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`tosspayments`**.
+    Billing key to be mapped 1:1 with the user-entered credit card information.
 
-**`customer_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
 
-**Credit card billing key**
+    **Payment amount**
 
-Billing key to be mapped 1:1 with the user-entered credit card information.
+    Amount to display in the payment window, but <mark style="color:red;">actual payment approval is not processed.</mark> (To request payment, use the **REST API with the customer\_uid**.)
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**Integer\*\*</mark>
+    **`customer_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**Payment amount**
+    **Customer ID**
 
-Amount to display in the payment window, but <mark style="color:red;">actual payment approval is not processed.</mark> (To request payment, use the **REST API with the customer_uid**.)
+    Customer user ID that maps to billing key. If not specified, this is generated by i'mport.\\
 
-**`customer_id`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+    ### Request payment with billing key (customer\_uid)
 
-**Customer ID**
+    After successfully getting the billing key, the billing key is **stored on the i'mport server**
+    mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api)
+    with the `customer_uid` as follows:
 
-Customer user ID that maps to billing key. If not specified, this is generated by i'mport.\
+    ```sh title="sever-side"
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+  </Tab>
 
-### Request payment with billing key (customer_uid)
+  <Tab title="Non-authenticated API  request">
+    #### **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
 
-After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api) with the `customer_uid` as follows:
+    <Hint style="danger">
+      **MID Issuance**
 
-```title="sever-side"
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
+      When you get an MID from Toss Payments, the <mark style="color:red;">**API version**</mark> must be <mark style="color:red;">**1.4**</mark>.
+    </Hint>
 
-</Tab>
+    ### Request one-time payment
 
-<Tab title="Non-authenticated API  request">
-#### **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
+    To request a one-time payment, use the key-in [**REST API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
+    The card information is not saved during this process.
 
-<Hint style="danger">
-**MID Issuance**
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-When you get an MID from Toss Payments, the <mark style="color:red;">**API version**</mark> must be <mark style="color:red;">**1.4**</mark>.
+    ### Request billing key
 
-</Hint>
+    To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer\_uid}**](../../api/billing-key-api/api-1).
 
-### Request one-time payment
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
+         https://api.iamport.kr/subscribe/customers/your-customer-unique-id
+    ```
 
-To request a one-time payment, use the key-in REST[ **API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api). The card information is not saved during this process.
+    ### Request billing key + initial payment
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
 
-###
+    - **`customer_uid`** : required for saving the billing key.
 
-### Request billing key
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer_uid}**](../../api/billing-key-api/api-1).
+    ### Request payment with billing key
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
-     https://api.iamport.kr/subscribe/customers/your-customer-unique-id
-```
+    After successfully getting the billing key and making the initial payment,
+    the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api))
+    with the `customer_uid` as follows:
 
-### Request billing key + initial payment
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
 
-To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
+    **For detailed information, refer to:**
 
-- **`customer_uid`** : required for saving the billing key.
-
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
-
-### Request payment with billing key
-
-After successfully getting the billing key and making the initial payment, the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api)) with the `customer_uid` as follows:
-
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-**For detailed information, refer to:**
-
-<ContentRef slug="/en///auth/guide-1/readme" />
-
-</Tab>
+    <ContentRef slug="/en///auth/guide-1/readme" />
+  </Tab>
 </Tabs>
 
 ### 3. Additional functions
 
 <Tabs>
-<Tab title="Installment setting">
-```javascript title="javascript"
-display: {
-    card_quota: [6],  // Display up to 6 months installment plans
-    only_installment: true  // Disable immediate pay option
-}
-```
-
-**Parameters**
-
-- **card_quota :**
-  - Enable only specified installment months
-  - `[]`: Only immediate pay
-  - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans
-- If **only_installment: `true`**, only shows specified months in **`card_quota`**.\
-
-<Hint style="info">
-Installment plan option is available only for **KRW 50,000 or more**.
-
-</Hint>
-
-</Tab>
-
-<Tab title="Direct credit card module call">
-```javascript title="javascript"
-card: {
-     direct: {
-        code: "367",
-        quota: 3
+  <Tab title="Installment setting">
+    ```json title="javascript"
+    {
+      "display": {
+        "card_quota": [6],  // Display up to 6 months installment plans
+        "only_installment": true  // Disable immediate pay option
+      }
     }
-}
-```
+    ```
 
-**Parameters**
+    **Parameters**
 
-- **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
-- **quota**: Installment plan. For immediate, set to 0. (**integer**)
+    - **card\_quota :**
+      - Enable only specified installment months
+      - `[]`: Only immediate pay
+      - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans
 
-</Tab>
+    - If **only\_installment: `true`**, only shows specified months in **`card_quota`**.\\
 
-<Tab title="Enable specific credit cards">
-```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     // Disable all credit cards
-        {card_code:'366', enabled:true}     // Enable specific credit card
-    ]
-}
-```
+    <Hint style="info">
+      Installment plan option is available only for **KRW 50,000 or more**.
+    </Hint>
+  </Tab>
 
-**Parameters**
+  <Tab title="Direct credit card module call">
+    ```json title="javascript"
+    {
+      "card": {
+        "direct": {
+          "code": "367",
+          "quota": 3
+        }
+      }
+    }
+    ```
 
-- **card_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
-- **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+    **Parameters**
 
-</Tab>
+    - **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
+    - **quota**: Installment plan. For immediate, set to 0. (**integer**)
+  </Tab>
+
+  <Tab title="Enable specific credit cards">
+    ```json title="javascript"
+    {
+      "card": {
+        "detail": [
+          { "card_code": "*", "enabled": false }, // Disable all credit cards
+          { "card_code": "366", "enabled": true }, // Enable specific credit card
+        ]
+      }
+    }
+    ```
+
+    **Parameters**
+
+    - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) <mark style="color:green;">**(string)**</mark>
+    - **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+  </Tab>
 </Tabs>
 
 <Hint style="info">
-**Hub-type simple payment**
+  **Hub-type simple payment**
 
-Simple payments (Kakao Pay, Naver Pay, etc.) are not supported in Toss Payments payment window.
-
+  Simple payments (Kakao Pay, Naver Pay, etc.) are not supported in Toss Payments payment window.
 </Hint>

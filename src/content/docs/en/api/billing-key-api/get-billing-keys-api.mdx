@@ -4,195 +4,183 @@ description: ""
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets details of multiple billing keys.
+## Gets details of multiple billing keys.
 
 <Swagger method="get" path="/subscribe/customers" baseUrl="https://api.iamport.kr" summary="Get details of multiple billing keys.">
-<SwaggerDescription>
-Gets details (card info) of billing keys for the specified array of customer_uid
+  <SwaggerDescription>
+    Gets details (card info) of billing keys for the specified array of customer\_uid
 
-_s._
+    _s._
 
-Each card is mapped to a unique
+    Each card is mapped to a unique
 
-**customer_uid**
+    **customer\_uid**
 
-.
+    .
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Query
 
-#### Query
+  <SwaggerParameter name="customer_uid[]" type="Array" required="true">
+    <mark style="color:red;">
+      **Billing key**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="customer_uid[]" type="Array" required="true">
-<mark style="color:red;">
+  ### Responses
 
-**Billing key**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="CustomerResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="CustomerResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **`response`** <mark style="color:red;">**(CustomerAnnotation, optional)**</mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+    <Tabs>
+      <Tab title="CustomerAnnotation">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**Response message**
+        **Response code**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        0: success, Not 0: check the message
 
-**`response`** <mark style="color:red;">**(CustomerAnnotation, optional)**</mark>
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
+        **Response message**
 
-<Tabs>
-<Tab title="CustomerAnnotation">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+        A non-zero code includes a message like 'Invalid payment info'.
 
-**Response code**
+        **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-0: success, Not 0: check the message
+        **`Customer ID`**
 
-**`message`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**Response message**
+        **PG code for billing key**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`pg_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **PG merchant ID (MID) for billing key**
 
-**`Customer ID`**\
+        **`card_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg_provider`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Credit card name`**
 
-**PG code for billing key**
+        **`card_code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg_id`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Credit card code`**
 
-**PG merchant ID (MID) for billing key**
+        **`card_number`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`card_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`Masked card number`**
 
-**`Credit card name`**
+        **`card_type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`card_code`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Credit card type`**
 
-**`Credit card code`**
+        **Not supported in some PGs (returns null)**
 
-**`card_number`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`customer_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`Masked card number`**
+        **`Customer name`**
 
-**`card_type`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`customer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`Credit card type`**
+        **`Customer phone`**
 
-**Not supported in some PGs (returns null)**
+        **`customer_email`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`customer_name`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Customer email`**
 
-**`Customer name`**
+        **`customer_addr`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`customer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`Customer address`**
 
-**`Customer phone`**
+        **`customer_postcode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`customer_email`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Customer zip code`**
 
-**`Customer email`**
+        **`inserted`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`customer_addr`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Billing key issued at`** (UNIX timestamp)
 
-**`Customer address`**
+        **`updated`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`customer_postcode`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Billing key updated at`** (UNIX timestamp)
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`Customer zip code`**
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`inserted`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
-
-**`Billing key issued at`** (UNIX timestamp)
-
-**`updated`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
-
-**`Billing key updated at`** (UNIX timestamp)
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Invalid customer_uid">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="Invalid customer_uid">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": [
-    {
-      "customer_uid": "string",
-      "pg_provider": "string",
-      "pg_id": "string",
-      "card_name": "string",
-      "card_code": "string",
-      "card_number": "string",
-      "card_type": "null",
-      "customer_name": "string",
-      "customer_tel": "string",
-      "customer_email": "string",
-      "customer_addr": "string",
-      "customer_postcode": "string",
-      "inserted": 0,
-      "updated": 0
-    }
-  ]
-}
-```
-
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": [
+      {
+        "customer_uid": "string",
+        "pg_provider": "string",
+        "pg_id": "string",
+        "card_name": "string",
+        "card_code": "string",
+        "card_number": "string",
+        "card_type": "null",
+        "customer_name": "string",
+        "customer_tel": "string",
+        "customer_email": "string",
+        "customer_addr": "string",
+        "customer_postcode": "string",
+        "inserted": 0,
+        "updated": 0
+      }
+    ]
+  }
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/subscribe.customer/customer_view_multiple**](https://api.iamport.kr/#!/subscribe.customer/customer_view_multiple)
-
+  [**https://api.iamport.kr/#!/subscribe.customer/customer\_view\_multiple**](https://api.iamport.kr/#!/subscribe.customer/customer_view_multiple)
 </Hint>

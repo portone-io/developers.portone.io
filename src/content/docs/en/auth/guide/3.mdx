@@ -16,41 +16,39 @@ the first argument of the **request\_pay** function.
 
 <Tabs>
   <Tab title="JavaScript">
-    ```javascript
-    <script>
-        function requestPay() {
-          IMP.request_pay({ 
-              pg: "kcp",
-              pay_method: "card",
-              merchant_uid: "ORD20180131-0000011",   // Order ID
-              name: "Norway swivel chair",
-              amount: 64900,                         // Number
-              buyer_email: "gildong@gmail.com",
-              buyer_name: "Hong Gildong",
-              buyer_tel: "010-4242-4242",
-              buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
-              buyer_postcode: "01181"
-          }, function (rsp) { // callback
-              if (rsp.success) {
-                  ...,
-                  // Payment is successful
-                  ...
-              } else {
-                  ...,
-                  // Payment failed
-                  ...
-              }
-          });
+    ```ts
+    IMP.request_pay(
+      {
+        pg: "kcp",
+        pay_method: "card",
+        merchant_uid: "ORD20180131-0000011", // Order ID
+        name: "Norway swivel chair",
+        amount: 64900, // Number
+        buyer_email: "gildong@gmail.com",
+        buyer_name: "Hong Gildong",
+        buyer_tel: "010-4242-4242",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "01181",
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // Payment is successful
+        } else {
+          // Payment failed
         }
-      </script>
+      },
+    );
     ```
   </Tab>
 
   <Tab title="React.js">
-    ```jsx
-    class RequestPay extends React.Component {
-        requestPay = () => {
-          IMP.request_pay({ // param
+    ```tsx
+    export class RequestPay extends React.Component {
+      requestPay = () => {
+        IMP.request_pay(
+          {
+            // param
             pg: "kcp",
             pay_method: "card",
             merchant_uid: "ORD20180131-0000011",
@@ -60,54 +58,53 @@ the first argument of the **request\_pay** function.
             buyer_name: "Hong Gildong",
             buyer_tel: "010-4242-4242",
             buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
-            buyer_postcode: "01181"
-          }, rsp => { // callback
+            buyer_postcode: "01181",
+          },
+          (rsp) => {
+            // callback
             if (rsp.success) {
-              ...,
               // Payment is successful
-              ...
             } else {
-              ...,
               // Payment failed
-              ...
             }
-          });
-        }
+          },
+        );
+      };
+    }
     ```
   </Tab>
 
   <Tab title="Vue.js">
-    ```javascript
-    <script>
-        export default {
-          methods: {
-            requestPay: function () {
-              IMP.request_pay({ // param
-                pg: "kcp",
-                pay_method: "card",
-                merchant_uid: "ORD20180131-0000011",
-                name: "Norway swivel chair",
-                amount: 64900,
-                buyer_email: "gildong@gmail.com",
-                buyer_name: "Hong Gildong",
-                buyer_tel: "010-4242-4242",
-                buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
-                buyer_postcode: "01181"
-              }, rsp => { // callback
-                if (rsp.success) {
-                  ...,
-                  // Payment is successful
-                  ...
-                } else {
-                  ...,
-                  // Payment failed
-                  ...
-                }
-              });
-            }
-          }
-        }
-      </script>
+    ```ts
+    export default {
+      methods: {
+        requestPay: function () {
+          IMP.request_pay(
+            {
+              // param
+              pg: "kcp",
+              pay_method: "card",
+              merchant_uid: "ORD20180131-0000011",
+              name: "Norway swivel chair",
+              amount: 64900,
+              buyer_email: "gildong@gmail.com",
+              buyer_name: "Hong Gildong",
+              buyer_tel: "010-4242-4242",
+              buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+              buyer_postcode: "01181",
+            },
+            (rsp) => {
+              // callback
+              if (rsp.success) {
+                // Payment is successful
+              } else {
+                // Payment failed
+              }
+            },
+          );
+        },
+      },
+    };
     ```
   </Tab>
 </Tabs>
@@ -115,11 +112,11 @@ the first argument of the **request\_pay** function.
 <Hint style="info">
   **Note -  Creating an order ID (merchant\_uid)**
 
-  - The order number must always be assigned a **unique** **value** when the payment window is requested.
+  - The order number must always be assigned a **unique value** when the payment window is requested.
   - After the payment process is complete, the server uses the order ID to retrieve the order information for **payment fraud check**. Be sure to create a **unique ID** on the merchant server and **store it in the DB**.
 </Hint>
 
-#### The following is the above sample code with the <mark style="color:red;">Pay button</mark> added.
+The following is the above sample code with the <mark style="color:red;">Pay button</mark> added.
 
 ```html title="sample.html"
 <!DOCTYPE html>
