@@ -16,7 +16,8 @@ A = 10% 중개 수수료, 정산주기 d+2, 매월 31일, 전 영업일 기준
 
 B = 20% 중개 수수료, 정산주기 d+2, 매월 31일, 전 영업일 기준
 
-- [계약생성](#계약-생성하기) 및 [파트너 생성 및 대표계약 설정](#파트너-생성하기) 는 관리자 콘솔에서 하실수 있으며 api로 하길 원하실경우 api 예시를 확인할 수 있습니다
+- [계약생성](#계약-생성하기) 및 [파트너 생성 및 대표계약 설정](#파트너-생성하기) 는 관리자 콘솔에서
+  하실수 있으며 api로 하길 원하실경우 api 예시를 확인할 수 있습니다
 
 ## 주문 정산 예시
 
@@ -490,9 +491,10 @@ axios
 
 파트너 A 할당 주문금액 5,000원, 파트너 B 할당 주문금액 5,000원
 
-정산 API는 현재 1명의 파트너에 대해 1개의 정산건 만 지원하고 있습니다. 따라서 단일 주문에 여러 파트너가 정산을 해야한다면 파트너의 주문금액 기준으로 정산건을 분리하여 별도의 정산건을 생성하셔야 합니다.
-이는 `orderLines` 를 통한 정산API에도 동일하게 적용됩니다.
-(추후 상품관리 기능을 통해 각 상품별 정산 파트너를 지정할 수 있도록 개선할 예정입니다.)
+정산 API는 현재 1명의 파트너에 대해 1개의 정산건 만 지원하고 있습니다. 따라서 단일 주문에 여러
+파트너가 정산을 해야한다면 파트너의 주문금액 기준으로 정산건을 분리하여 별도의 정산건을 생성하셔야
+합니다. 이는 `orderLines` 를 통한 정산API에도 동일하게 적용됩니다. (추후 상품관리 기능을 통해 각
+상품별 정산 파트너를 지정할 수 있도록 개선할 예정입니다.)
 
 <Tabs>
 <Tab title = "python">
@@ -531,7 +533,6 @@ orderTransferData_B ={
 orderTransferResponse_B =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData_B)
 
 ````
-
 
 </Tab>
 <Tab title = 'Node'>
@@ -587,6 +588,7 @@ async function sendOrderTransfer(data) {
 })();
 
 ```
+
 ```
 ```
 </Tab>
@@ -597,7 +599,7 @@ async function sendOrderTransfer(data) {
 주문금액 : 10,000원, 할인금액 2000, 결제금액 : 8,000원 , 판매 파트너 : A, 정산시작일 (결제완료 시점): 2023-08-11
 할인 정책: 파트너 분담율 50%
 
-* [할인 정책 생성](#할인-생성하기) 은 쿠폰과 포인트와 같은 할인 유형에 대해서 분담율 설정하신뒤 생성 하실 수 있습니다. 관리자 콘솔이나 api를 통해서 하실 수 있습니다.
+- [할인 정책 생성](#할인-생성하기) 은 쿠폰과 포인트와 같은 할인 유형에 대해서 분담율 설정하신뒤 생성 하실 수 있습니다. 관리자 콘솔이나 api를 통해서 하실 수 있습니다.
 
 `discounts` 파라미터에 `sharePolicyId` 와 `amount` (할인금액) 을 전달하시면 됩니다을
 
@@ -725,7 +727,9 @@ async function post_platform_api(token, endpoint, payload) {
 }
 
 ```
+
 ### 주문 정산 상품 할인 반영
+
 주문 전체가 아닌 특정 상품에대해서 할인 정책을 적용하고 싶으시면 `orderLines` 의 각 상품 항목의 `discounts` 파라미터에 전달하시면 됩니다.
 
 ### 주문 정산 추가 수수료 반영
@@ -733,10 +737,9 @@ async function post_platform_api(token, endpoint, payload) {
 주문금액 : 10,000원, 추가수수료(로켓배송) 2000, 결제금액 : 8,000원 , 판매 파트너 : A, 정산시작일 (결제완료 시점): 2023-08-11
 추가 수수료 정책: 수수료율 5%, 부가세 파트너 부담
 
-* [추가수수료 정책 생성](#추가수수료-생성하기) 은 로켓배송, 마케팅채널 수수료 등 특정 주문건에 적용되는 수수료 입니다. 관리자 콘솔이나 api를 통해서 하실 수 있습니다.
+- [추가수수료 정책 생성](#추가수수료-생성하기) 은 로켓배송, 마케팅채널 수수료 등 특정 주문건에 적용되는 수수료 입니다. 관리자 콘솔이나 api를 통해서 하실 수 있습니다.
 
 `additionalFees` 파라미터에 `policyId` 를 전달하시면 됩니다.
-
 
 <Tabs>
 <Tab title = 'python'>
@@ -805,6 +808,7 @@ const orderTransferPayload = {
 </Tabs>
 
 **Response(snippet)**
+
 ```json
 {
     "transfer": {
@@ -864,10 +868,10 @@ const orderTransferPayload = {
 }
 
 ```
+
 ### 주문 정산 상품별 추가 수수료 반영
 
 주문 전체가 아닌 특정 상품에대해서 할인 정책영 적용하고 싶으시면 `orderLines` 의 각 상품 항목의 `additionalFees` 파라미터에 전달하시면 됩니다.
-
 
 ### 포트원 결제가 아닌 주문 정산
 
@@ -955,6 +959,7 @@ const orderTransferA = postPlatformApi(token, 'platform/transfers/order', orderT
 </Tabs>
 
 **Response(snippet)**
+
 ```json
 {
   "transfer": {
@@ -1004,7 +1009,9 @@ const orderTransferA = postPlatformApi(token, 'platform/transfers/order', orderT
 ```
 
 ### 정산 시작일을 지정해서 보내는 경우
-정산고려를 배달완료, 수강오픈, 이용완료 등의 시점부터 하고 싶으시면 `settlementStartDate` 파라미터에 해당시점을 `'YYYY-MM-DD'`형식으로 전달하시면 됩니다.
+
+정산고려를 배달완료, 수강오픈, 이용완료 등의 시점부터 하고 싶으시면 `settlementStartDate` 파라미터에
+해당시점을 `'YYYY-MM-DD'`형식으로 전달하시면 됩니다.
 
 해당 시점이 정해졌을때 정산 api를 호출하시면 됩니다.
 
@@ -1108,8 +1115,11 @@ console.log(orderTransfer_A);
 }
 
 ```
+
 ## 계약 예시
+
 ### 계약 생성하기
+
 계약 1 : 10% 중개 수수료, 정산주기 d+2, 매월 31일, 전 영업일 기준
 
 <Tabs>
@@ -1130,7 +1140,6 @@ contract_payload = {
       }
       }}
   }
-
 
 contract_A = post_platform_api(token, 'platform/contracts/', contract_payload)
 
@@ -1323,6 +1332,7 @@ const partnerA = postPlatformApi(token, url, partnerPayload);
 ## 할인 예시
 
 ### 할인 생성하기
+
 할인 정책 1 : 할인 금액 50% 파트너 분담
 
 <Tabs>
@@ -1382,6 +1392,7 @@ post_platform_api(token, 'platform/discount-share-policies', discount_payload)
 </Tabs>
 
 **Response(snippet)**
+
 ```json
 {
   "discountSharePolicy":{
@@ -1394,9 +1405,11 @@ post_platform_api(token, 'platform/discount-share-policies', discount_payload)
   }
 }
 ```
+
 ## 추가수수료 예시
 
 ### 추가수수료 생성하기
+
 추가수수료 정책 1 : 추가수수료 5% 파트너 분담
 
 <Tabs>
@@ -1422,6 +1435,7 @@ additionalfees_1 = post_platform_api(token, 'platform/additional-fee-policies', 
 </Tabs>
 
 **Response(snippet)**
+
 ```json
 {"additionalFeePolicy":
   {
@@ -1436,5 +1450,6 @@ additionalfees_1 = post_platform_api(token, 'platform/additional-fee-policies', 
 }
 }
 ```
+
 ```
 ````

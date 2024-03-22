@@ -8,10 +8,10 @@ import Hint from "~/components/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-
 ### Access token is required to make an i'mport REST API request.
 
-To get access to private resources, such as payment information, you must obtain an access token and include it in the i'mport REST API request.
+To get access to private resources, such as payment information, you must obtain an access token and
+include it in the i'mport REST API request.
 
 ### Get an access token <a href="#undefined" id="undefined"></a>
 
@@ -24,7 +24,9 @@ If you **request for access token from the client-side**, the <mark style="color
 
 ### <mark style="color:blue;">**STEP 01.**</mark>  Request access code
 
-Use the**`REST API Key`** and **`REST API Secret`** obtained from the Admin console and call the REST API ([POST https://api.iamport.kr/users/getToken](https://api.iamport.kr/#!/authenticate/getToken)) to get an access token as follows:
+Use the**`REST API Key`** and **`REST API Secret`** obtained from the Admin console and call the
+REST API ([POST https://api.iamport.kr/users/getToken](https://api.iamport.kr/#!/authenticate/getToken))
+to get an access token as follows:
 
 <Figure src="/gitbook-assets/en/image (99).png" caption="Admin Console > REST API Key & REST API Secret" />
 
@@ -33,7 +35,6 @@ Use the**`REST API Key`** and **`REST API Secret`** obtained from the Admin cons
 ```python title="server-side"
   curl -H "Content-Type: application/json" POST -d '{"imp_key": "REST API key", "imp_secret":"REST API Secret"}' https://api.iamport.kr/users/getToken
 ```
-
 
 </Tab>
 
@@ -54,7 +55,6 @@ Use the**`REST API Key`** and **`REST API Secret`** obtained from the Admin cons
     }
   });
 ```
-
 
 </Tab>
 
@@ -103,7 +103,6 @@ Get the access token from the response as follows:
   }
 ```
 
-
 <Hint style="info">
 **Standard NTP Server**
 
@@ -113,7 +112,9 @@ The i'mport REST API server synchronizes with the standard time using <mark styl
 
 ### <mark style="color:blue;">**STEP 03.**</mark>  Using access token
 
-You can use the access token to make an i'mport REST API call. Since i'mport REST APIs use the **Bearer** authentication method, the HTTP request header includes the access token in the following format:
+You can use the access token to make an i'mport REST API call. Since i'mport REST APIs use the
+**Bearer** authentication method, the HTTP request header includes the access token in the following
+format:
 
 > Authorization: **Bearer** a9ace025c90c0da2161075da6ddd3492a2fca776
 
@@ -124,7 +125,6 @@ Call the REST API to get the payment details by **including the access token in 
 ``` title="server-side"
 curl -H "Content-Type: application/json" -H "Authorization: Bearer a9ace025c90c0da2161075da6ddd3492a2fca776" https://api.iamport.kr/payments/imp_448280090638
 ```
-
 
 </Tab>
 
@@ -143,7 +143,6 @@ ssued access token
   });
 ```
 
-
 </Tab>
 </Tabs>
 
@@ -151,8 +150,11 @@ ssued access token
 
 The expiration of the access token is **30 minutes** from the time of issuance. A token **cannot be used after its expiration**. An API call request with an expired token returns a <mark style="color:red;">**`401 Unauthorized`**</mark> response.
 
-> * Reissuance (after expiration): A new access token is issued. (Expiration: 30 minutes after issuance)
-> * Reuse (before expiration): Existing access token is reused. (Expiration: same as before, but extended by 5 minutes if requested within 1 minute from the original expiration)
+> - Reissuance (after expiration): A new access token is issued.
+>   (Expiration: 30 minutes after issuance)
+>
+> - Reuse (before expiration): Existing access token is reused. (Expiration: same as before,
+>   but extended by 5 minutes if requested within 1 minute from the original expiration)
 
 ![](</gitbook-assets/en/access\_token\_reuse.png>)
 
@@ -161,7 +163,7 @@ The expiration of the access token is **30 minutes** from the time of issuance. 
 
 The reuse and 5 minute lifetime extension of access token are provided for the following situations:
 
-* Multiple web servers of a single merchant are competing to call the REST API (`/users/getToken`) at the same time.
-* Multiple web servers of a single merchant are not synchronized in time.
+- Multiple web servers of a single merchant are competing to call the REST API (`/users/getToken`) at the same time.
+- Multiple web servers of a single merchant are not synchronized in time.
 
 </Hint>
