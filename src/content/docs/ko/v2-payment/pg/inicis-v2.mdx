@@ -371,6 +371,16 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 </Details>
 
 <Details>
+    <p slot="summary">`paymentId` 에는 ASCII 문자만 허용됩니다.</p>
+
+    `paymentId` 에는 ASCII 문자만으로 이루어진 문자열만 입력할 수 있습니다.
+
+    ASCII 문자에 포함되지 않는 한글이나 `♤`, `♡`, `♧` 등의 특수 문자는 허용되지 않습니다.
+
+    입력 가능한 ASCII 문자의 종류는 [링크](https://www.ascii-code.com/) -> `ASCII printable characters` 섹션을 참고하세요.
+</Details>
+
+<Details>
     <p slot="summary">지원되는 결제창 언어</p>
 
     SDK를 통한 결제 요청 파라미터에는 결제창 언어를 지정할 수 있는 `locale` 파라미터가 존재합니다.
@@ -681,6 +691,27 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 </Details>
 
 <Details>
+    <p slot="summary">`issueId` 에는 ASCII 문자만 허용됩니다.</p>
+
+    `issueId` 에는 ASCII 문자만으로 이루어진 문자열만 입력할 수 있습니다.
+
+    ASCII 문자에 포함되지 않는 한글이나 `♤`, `♡`, `♧` 등의 특수 문자는 허용되지 않습니다.
+
+    입력 가능한 ASCII 문자의 종류는 [링크](https://www.ascii-code.com/) -> `ASCII printable characters` 섹션을 참고하세요.
+</Details>
+
+<Details>
+    <p slot="summary">`offerPeriod` 파라미터 제약 사항</p>
+
+    SDK를 통한 빌링키 발급 요청 파라미터에는 제공 기간을 나타내는 `offerPeriod` 파라미터가 존재합니다.
+    날짜 범위를 입력하는 방식(`range`)과 간격을 입력하는 방식(`interval`) 중 하나를 선택하여 입력할 수 있습니다.
+
+    - `range` 방식으로 입력할 경우 `from`과 `to` 모두를 입력하셔야 하, `from`은 `to`보다 과거 시간이어야 합니다.
+
+    - `interval` 방식으로 입력할 경우는 `1m` 또는 `1y`만 허용됩니다. `1m`를 입력할 경우 `월 정기결제`, `1y`를 입력할 경우 `연 정기결제` 로 빌링키 발급 창에 노출됩니다.
+</Details>
+
+<Details>
     <p slot="summary">지원되는 결제창 언어</p>
 
     SDK를 통한 빌링키 발급 요청 파라미터에는 결제창 언어를 지정할 수 있는 `locale` 파라미터가 존재합니다.
@@ -701,204 +732,330 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
     `card.cardCompany` 필드에 값을 채워도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.
 </Details>
 
-### SDK 빌링키 발급과 동시에 결제
 
-빌링키 발급과 동시에 최초 결제 요청 시에는 `requestIssueBillingKeyAndPay` 함수를 호출해야 합니다.
-channelKey 파라미터에 결제 채널 연동 후 생성된 채널 키값을 지정하여 이니시스 채널 사용을 명시해주세요.
+[//]: # (이니시스 휴대폰 정기결제는 포트원과 아직 제휴되어 있지 않으므로 이에 대한 가이드도 주석 처리해둠.)
 
-이니시스 기준으로 작성한 예시 코드는 아래와 같습니다.
+[//]: # (### SDK 빌링키 발급과 동시에 결제)
 
-<Tabs>
-    <Tab title="SDK 빌링키 발급 및 결제 요청">
-        ```javascript
-        import * as PortOne from "@portone/browser-sdk/v2";
-        function requestIssueBillingKeyAndPay() {
-            PortOne.requestIssueBillingKeyAndPay({
-                storeId: "store-772b1379-44af-4f18-ac77-61c9f973f3c0",
-                channelKey: "channel-key-55fce891-9bdc-4ed8-9d6c-dc5c49a50fa3",
-                paymentId: `payment${crypto.randomUUID()}`,
-                orderName: "나이키 와플 트레이너 2 SD",
-                totalAmount: 1000,
-                currency: "CURRENCY_KRW",
-                billingKeyAndPayMethod: "MOBILE",
-                customer: {
-                    fullName: "포트원",
-                    phoneNumber: "010-0000-1234",
-                    email: "test@portone.kr"
-                },
-                productType: "REAL"
-            });
-        }
-        ```
-    </Tab>
-</Tabs>
+[//]: # ()
+[//]: # (빌링키 발급과 동시에 최초 결제 요청 시에는 `requestIssueBillingKeyAndPay` 함수를 호출해야 합니다.)
 
-#### **주요 파라미터**
+[//]: # (channelKey 파라미터에 결제 채널 연동 후 생성된 채널 키값을 지정하여 이니시스 채널 사용을 명시해주세요.)
 
-<br/>
+[//]: # ()
+[//]: # (이니시스 기준으로 작성한 예시 코드는 아래와 같습니다.)
 
-<ParamTree>
+[//]: # ()
+[//]: # (<Tabs>)
 
-- `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+[//]: # (    <Tab title="SDK 빌링키 발급 및 결제 요청">)
 
-    **스토어 아이디**
+[//]: # (        ```javascript)
 
-    포트원 계정에 생성된 상점을 식별하는 고유한 값으로 관리자 콘솔에서 확인할 수 있습니다.
+[//]: # (        import * as PortOne from "@portone/browser-sdk/v2";)
 
-- `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+[//]: # (        function requestIssueBillingKeyAndPay&#40;&#41; {)
 
-    **고객사 주문 고유 번호**
+[//]: # (            PortOne.requestIssueBillingKeyAndPay&#40;{)
 
-    고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다. 이미 승인 완료된 `paymentId`로 결제를 시도하는 경우 에러가 발생합니다.
+[//]: # (                storeId: "store-772b1379-44af-4f18-ac77-61c9f973f3c0",)
 
-- `orderName` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
+[//]: # (                channelKey: "channel-key-55fce891-9bdc-4ed8-9d6c-dc5c49a50fa3",)
 
-    **주문명**
+[//]: # (                paymentId: `payment${crypto.randomUUID&#40;&#41;}`,)
 
-    주문명으로 고객사에서 자유롭게 입력합니다.
+[//]: # (                orderName: "나이키 와플 트레이너 2 SD",)
 
-- `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+[//]: # (                totalAmount: 1000,)
 
-    **채널 키**
+[//]: # (                currency: "CURRENCY_KRW",)
 
-    포트원 콘솔 내 \[결제연동] > \[채널관리] 화면에서 채널 추가 시 생성되는 값입니다. 결제 호출 시 채널을 지정할 때 사용됩니다.
+[//]: # (                billingKeyAndPayMethod: "MOBILE",)
 
-- `totalAmount` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
+[//]: # (                customer: {)
 
-    **결제 금액**
+[//]: # (                    fullName: "포트원",)
 
-    결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+[//]: # (                    phoneNumber: "010-0000-1234",)
 
-- `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+[//]: # (                    email: "test@portone.kr")
 
-    **결제 통화**
+[//]: # (                },)
 
-    결제통화로 원화 결제 시 `KRW`로 입력해야 합니다.
+[//]: # (                productType: "REAL")
 
-- `billingKeyAndPayMethod` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+[//]: # (            }&#41;;)
 
-    **빌링키 발급 및 결제 수단**
+[//]: # (        })
 
-    이니시스는 빌링키 발급 및 결제 수단으로 휴대폰 소액 결제만을 지원하므로 해당 파라미터는 `MOBILE`로 고정해야 합니다.
+[//]: # (        ```)
 
-- `customer` <mark style="color:blue;">**object**</mark>
+[//]: # (    </Tab>)
 
-    **고객 정보**
+[//]: # (</Tabs>)
 
-    <ParamTree>
+[//]: # ()
+[//]: # (#### **주요 파라미터**)
 
-        - `fullName` <mark style="color:green;">**string**</mark>
+[//]: # ()
+[//]: # (<br/>)
 
-        **구매자 전체 이름**
+[//]: # ()
+[//]: # (<ParamTree>)
 
-        - 이니시스의 경우 fullName 혹은 (firstName + lastName)을 필수로 입력해야 합니다.
+[//]: # ()
+[//]: # (- `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>)
 
-        - `firstName` <mark style="color:green;">**string**</mark>
+[//]: # ()
+[//]: # (    **스토어 아이디**)
 
-        **구매자 이름**
+[//]: # ()
+[//]: # (    포트원 계정에 생성된 상점을 식별하는 고유한 값으로 관리자 콘솔에서 확인할 수 있습니다.)
 
-        - 이니시스의 경우 fullName 혹은 (firstName + lastName)을 필수로 입력해야 합니다.
+[//]: # ()
+[//]: # (- `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>)
 
-        - `lastName` <mark style="color:green;">**string**</mark>
+[//]: # ()
+[//]: # (    **고객사 주문 고유 번호**)
 
-        **구매자 성**
+[//]: # ()
+[//]: # (    고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다. 이미 승인 완료된 `paymentId`로 결제를 시도하는 경우 에러가 발생합니다.)
 
-        - 이니시스의 경우 fullName 혹은 (firstName + lastName)을 필수로 입력해야 합니다.
+[//]: # ()
+[//]: # (- `orderName` <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>)
 
-        - `phoneNumber` <mark style="color:green;">**string**</mark>
+[//]: # ()
+[//]: # (    **주문명**)
 
-        **구매자 연락처**
+[//]: # ()
+[//]: # (    주문명으로 고객사에서 자유롭게 입력합니다.)
 
-        - 이니시스의 PC 빌링키 발급 및 결제의 경우 필수로 입력해야 합니다. (모바일인 경우에는 optional)
+[//]: # ()
+[//]: # (- `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>)
 
-        - `email` <mark style="color:green;">**string**</mark>
+[//]: # ()
+[//]: # (    **채널 키**)
 
-        **구매자 이메일**
+[//]: # ()
+[//]: # (    포트원 콘솔 내 \[결제연동] > \[채널관리] 화면에서 채널 추가 시 생성되는 값입니다. 결제 호출 시 채널을 지정할 때 사용됩니다.)
 
-        - 이니시스의 PC 빌링키 발급 및 결제의 경우 필수로 입력해야 합니다. (모바일인 경우에는 optional)
+[//]: # ()
+[//]: # (- `totalAmount` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>)
 
-    </ParamTree>
+[//]: # ()
+[//]: # (    **결제 금액**)
 
-- `offerPeriod` <mark style="color:blue;">**object**</mark>
+[//]: # ()
+[//]: # (    결제 금액으로 결제를 원하는 통화&#40;currency&#41;별 scale factor&#40;소수점 몇번째 자리까지 유효한지&#41;를 고려한 number 형식만 허용됩니다.)
 
-    **제공 기간**
+[//]: # ()
+[//]: # (- `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>)
 
-    - 이니시스 모바일 빌링키 발급 및 결제의 경우 필수로 입력해야 합니다. (PC인 경우에는 optional)
+[//]: # ()
+[//]: # (    **결제 통화**)
 
-- `productType` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**string**</mark>
+[//]: # ()
+[//]: # (    결제통화로 원화 결제 시 `KRW`로 입력해야 합니다.)
 
-    **상품 유형**
+[//]: # ()
+[//]: # (- `billingKeyAndPayMethod` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>)
 
-    - 이니시스 빌링키 발급 및 결제의 경우 필수로 입력해야 합니다.
+[//]: # ()
+[//]: # (    **빌링키 발급 및 결제 수단**)
 
-</ParamTree>
+[//]: # ()
+[//]: # (    이니시스는 빌링키 발급 및 결제 수단으로 휴대폰 소액 결제만을 지원하므로 해당 파라미터는 `MOBILE`로 고정해야 합니다.)
 
-<br/>
+[//]: # ()
+[//]: # (- `customer` <mark style="color:blue;">**object**</mark>)
 
-### SDK 빌링키 발급과 동시에 결제 - 유의사항
+[//]: # ()
+[//]: # (    **고객 정보**)
 
-<Details>
-    <p slot="summary">빌링키 발급과 동시에 결제란?</p>
+[//]: # ()
+[//]: # (    <ParamTree>)
 
-    일부 PG사 및 일부 결제 수단의 경우 빌링키 발급을 할 경우 **항상 해당 빌링키를 이용한 최초 결제가 함께 발생**합니다.
-    이니시스에서 휴대폰을 이용해 빌링키를 발급하는 경우가 이에 해당하며, 이는 통신사 정책에 의해 강제되는 부분입니다.
+[//]: # ()
+[//]: # (        - `fullName` <mark style="color:green;">**string**</mark>)
 
-    포트원에서는 혼란을 방지하기 위해 빌링키 발급과 동시에 최초 결제가 발생하는 경우를 **별도 함수로 분리하여 제공**하고 있습니다.
-    따라서 **이니시스를 이용하여 휴대폰 빌링키 발급을 원하실 경우 해당 함수를 사용**하셔야 하며, 해당 함수를 통해 빌링키 발급을 진행한 후 결제 내역을 조회해보시면 자동으로 최초 결제가 발생했음을 확인하실 수 있습니다.
+[//]: # ()
+[//]: # (        **구매자 전체 이름**)
 
-</Details>
+[//]: # ()
+[//]: # (        - 이니시스의 경우 fullName 혹은 &#40;firstName + lastName&#41;을 필수로 입력해야 합니다.)
 
-<Details>
-    <p slot="summary">PC와 모바일에서 파라미터 필수 여부가 상이합니다.</p>
+[//]: # ()
+[//]: # (        - `firstName` <mark style="color:green;">**string**</mark>)
 
-    위의 주요 파라미터 설명에도 안내되어 있듯이, PC 빌링키 발급과 모바일 빌링키 발급에서 필수 여부가 상이한 파라미터가 존재합니다.
+[//]: # ()
+[//]: # (        **구매자 이름**)
 
-    아래 필드들은 PC에서는 필수이지만, 모바일에서는 선택입니다.
+[//]: # ()
+[//]: # (        - 이니시스의 경우 fullName 혹은 &#40;firstName + lastName&#41;을 필수로 입력해야 합니다.)
 
-    - `customer.fullName` 혹은 `customer.firstName + customer.lastName`
-    - `customer.phoneNumber`
-    - `customer.email`
+[//]: # ()
+[//]: # (        - `lastName` <mark style="color:green;">**string**</mark>)
 
-    아래 필드들은 모바일에서는 필수이지만, PC에서는 선택입니다.
+[//]: # ()
+[//]: # (        **구매자 성**)
 
-    - `offerPeriod`
-</Details>
+[//]: # ()
+[//]: # (        - 이니시스의 경우 fullName 혹은 &#40;firstName + lastName&#41;을 필수로 입력해야 합니다.)
 
-<Details>
-    <p slot="summary">지원되는 결제창 언어</p>
+[//]: # ()
+[//]: # (        - `phoneNumber` <mark style="color:green;">**string**</mark>)
 
-    SDK를 통한 빌링키 발급 및 결제 요청 파라미터에는 결제창 언어를 지정할 수 있는 `locale` 파라미터가 존재합니다.
-    PC 빌링키 발급 및 결제의 경우 `KO_KR`, `EN_US`, `ZH_CN`을 지원하며, 모바일 빌링키 발급 및 결제의 경우 해당 파라미터를 지원하지 않고 항상 한국어로 노출됩니다.
-</Details>
+[//]: # ()
+[//]: # (        **구매자 연락처**)
 
-<Details>
-    <p slot="summary">지원되는 결제 통화</p>
+[//]: # ()
+[//]: # (        - 이니시스의 PC 빌링키 발급 및 결제의 경우 필수로 입력해야 합니다. &#40;모바일인 경우에는 optional&#41;)
 
-    SDK를 통한 빌링키 발급 및 결제 요청 파라미터에는 displayAmount에 대한 통화를 지정할 수 있는 `currency` 파라미터가 존재합니다.
-    빌링키 발급 및 결제의 경우 PC/모바일에 관계없이 항상 `KRW`만 지원합니다.
-</Details>
+[//]: # ()
+[//]: # (        - `email` <mark style="color:green;">**string**</mark>)
 
-<Details>
-    <p slot="summary">부가세, 면세금액 직접 지정을 위해서는 별도 계약이 필요합니다.</p>
+[//]: # ()
+[//]: # (        **구매자 이메일**)
 
-    SDK를 통한 빌링키 발급 및 결제 요청 파라미터에는 부가세를 지정할 수 있는 `vat` 파라미터와 면세 금액을 지정할 수 있는 `taxFreeAmount` 파라미터가 존재합니다.
-    이니시스의 경우 부가세 및 면세금액을 직접 지정하기 위해서는 별도 계약이 필요합니다. 별도 계약이 되지 않은 상태에서 `vat`와 `taxFreeAmount`에 값을 지정해 결제를 요청하면
-    요청한 내용과 다른 금액으로 실결제가 발생할 수 있습니다.
-</Details>
+[//]: # ()
+[//]: # (        - 이니시스의 PC 빌링키 발급 및 결제의 경우 필수로 입력해야 합니다. &#40;모바일인 경우에는 optional&#41;)
 
-<Details>
-    <p slot="summary">`productType` 파라미터는 필수 입력해야 합니다.</p>
+[//]: # ()
+[//]: # (    </ParamTree>)
 
-    - 이니시스의 경우 **휴대폰 소액결제시 상품 유형을 구분 짓는 `productType` 파라미터가 필수**로 요구됩니다.
-    - `productType`의 값은 `PRODUCT_TYPE_REAL` 또는 `PRODUCT_TYPE_DIGITAL`를 입력해야 합니다.
-</Details>
+[//]: # ()
+[//]: # (- `offerPeriod` <mark style="color:blue;">**object**</mark>)
 
-<Details>
-    <p slot="summary">통신사 바로 호출을 지원하지 않습니다.</p>
+[//]: # ()
+[//]: # (    **제공 기간**)
 
-    이니시스 경우 통신사 바로 호출을 통한 빌링키 발급 및 결제를 지원하지 않습니다.
-    `mobile.carrier` 필드에 값을 채워도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.
-</Details>
+[//]: # ()
+[//]: # (    - 이니시스 모바일 빌링키 발급 및 결제의 경우 필수로 입력해야 합니다. &#40;PC인 경우에는 optional&#41;)
+
+[//]: # ()
+[//]: # (- `productType` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**string**</mark>)
+
+[//]: # ()
+[//]: # (    **상품 유형**)
+
+[//]: # ()
+[//]: # (    - 이니시스 빌링키 발급 및 결제의 경우 필수로 입력해야 합니다.)
+
+[//]: # ()
+[//]: # (</ParamTree>)
+
+[//]: # ()
+[//]: # (<br/>)
+
+[//]: # ()
+[//]: # (### SDK 빌링키 발급과 동시에 결제 - 유의사항)
+
+[//]: # ()
+[//]: # (<Details>)
+
+[//]: # (    <p slot="summary">빌링키 발급과 동시에 결제란?</p>)
+
+[//]: # ()
+[//]: # (    일부 PG사 및 일부 결제 수단의 경우 빌링키 발급을 할 경우 **항상 해당 빌링키를 이용한 최초 결제가 함께 발생**합니다.)
+
+[//]: # (    이니시스에서 휴대폰을 이용해 빌링키를 발급하는 경우가 이에 해당하며, 이는 통신사 정책에 의해 강제되는 부분입니다.)
+
+[//]: # ()
+[//]: # (    포트원에서는 혼란을 방지하기 위해 빌링키 발급과 동시에 최초 결제가 발생하는 경우를 **별도 함수로 분리하여 제공**하고 있습니다.)
+
+[//]: # (    따라서 **이니시스를 이용하여 휴대폰 빌링키 발급을 원하실 경우 해당 함수를 사용**하셔야 하며, 해당 함수를 통해 빌링키 발급을 진행한 후 결제 내역을 조회해보시면 자동으로 최초 결제가 발생했음을 확인하실 수 있습니다.)
+
+[//]: # ()
+[//]: # (</Details>)
+
+[//]: # ()
+[//]: # (<Details>)
+
+[//]: # (    <p slot="summary">PC와 모바일에서 파라미터 필수 여부가 상이합니다.</p>)
+
+[//]: # ()
+[//]: # (    위의 주요 파라미터 설명에도 안내되어 있듯이, PC 빌링키 발급과 모바일 빌링키 발급에서 필수 여부가 상이한 파라미터가 존재합니다.)
+
+[//]: # ()
+[//]: # (    아래 필드들은 PC에서는 필수이지만, 모바일에서는 선택입니다.)
+
+[//]: # ()
+[//]: # (    - `customer.fullName` 혹은 `customer.firstName + customer.lastName`)
+
+[//]: # (    - `customer.phoneNumber`)
+
+[//]: # (    - `customer.email`)
+
+[//]: # ()
+[//]: # (    아래 필드들은 모바일에서는 필수이지만, PC에서는 선택입니다.)
+
+[//]: # ()
+[//]: # (    - `offerPeriod`)
+
+[//]: # (</Details>)
+
+[//]: # ()
+[//]: # (<Details>)
+
+[//]: # (    <p slot="summary">지원되는 결제창 언어</p>)
+
+[//]: # ()
+[//]: # (    SDK를 통한 빌링키 발급 및 결제 요청 파라미터에는 결제창 언어를 지정할 수 있는 `locale` 파라미터가 존재합니다.)
+
+[//]: # (    PC 빌링키 발급 및 결제의 경우 `KO_KR`, `EN_US`, `ZH_CN`을 지원하며, 모바일 빌링키 발급 및 결제의 경우 해당 파라미터를 지원하지 않고 항상 한국어로 노출됩니다.)
+
+[//]: # (</Details>)
+
+[//]: # ()
+[//]: # (<Details>)
+
+[//]: # (    <p slot="summary">지원되는 결제 통화</p>)
+
+[//]: # ()
+[//]: # (    SDK를 통한 빌링키 발급 및 결제 요청 파라미터에는 displayAmount에 대한 통화를 지정할 수 있는 `currency` 파라미터가 존재합니다.)
+
+[//]: # (    빌링키 발급 및 결제의 경우 PC/모바일에 관계없이 항상 `KRW`만 지원합니다.)
+
+[//]: # (</Details>)
+
+[//]: # ()
+[//]: # (<Details>)
+
+[//]: # (    <p slot="summary">부가세, 면세금액 직접 지정을 위해서는 별도 계약이 필요합니다.</p>)
+
+[//]: # ()
+[//]: # (    SDK를 통한 빌링키 발급 및 결제 요청 파라미터에는 부가세를 지정할 수 있는 `vat` 파라미터와 면세 금액을 지정할 수 있는 `taxFreeAmount` 파라미터가 존재합니다.)
+
+[//]: # (    이니시스의 경우 부가세 및 면세금액을 직접 지정하기 위해서는 별도 계약이 필요합니다. 별도 계약이 되지 않은 상태에서 `vat`와 `taxFreeAmount`에 값을 지정해 결제를 요청하면)
+
+[//]: # (    요청한 내용과 다른 금액으로 실결제가 발생할 수 있습니다.)
+
+[//]: # (</Details>)
+
+[//]: # ()
+[//]: # (<Details>)
+
+[//]: # (    <p slot="summary">`productType` 파라미터는 필수 입력해야 합니다.</p>)
+
+[//]: # ()
+[//]: # (    - 이니시스의 경우 **휴대폰 소액결제시 상품 유형을 구분 짓는 `productType` 파라미터가 필수**로 요구됩니다.)
+
+[//]: # (    - `productType`의 값은 `PRODUCT_TYPE_REAL` 또는 `PRODUCT_TYPE_DIGITAL`를 입력해야 합니다.)
+
+[//]: # (</Details>)
+
+[//]: # ()
+[//]: # (<Details>)
+
+[//]: # (    <p slot="summary">통신사 바로 호출을 지원하지 않습니다.</p>)
+
+[//]: # ()
+[//]: # (    이니시스 경우 통신사 바로 호출을 통한 빌링키 발급 및 결제를 지원하지 않습니다.)
+
+[//]: # (    `mobile.carrier` 필드에 값을 채워도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.)
+
+[//]: # (</Details>)
+
 ### API 결제 - 유의사항
 
 #### 수기(키인) 결제, 빌링키 발급, 빌링키 단건 결제, 현금영수증 발급
