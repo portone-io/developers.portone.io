@@ -1,6 +1,6 @@
 ---
-title: (신) 토스페이
-description: (신) 토스페이 결제창 연동 방법을 안내합니다.
+title: 토스페이(tosspay_v2)
+description: 토스페이 연동 방법을 안내합니다.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
@@ -8,20 +8,26 @@ import Hint from "~/components/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-### 1. (신) 토스페이 PG 설정하기
+<Hint style="info">
+  토스페이(tosspay_v2)에서는 일반결제 및 정기결제 모두 지원하고 있습니다. 신규 연동하시는 고객사께서는 해당 가이드를 참고하여 진행해주세요.
+</Hint>
 
-[**(신) 토스페이 설정**](../../../ready/2-pg/pg/tosspay-v2) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+### 1. 토스페이 채널 설정하기
+
+[결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
+
+<Figure src="/gitbook-assets/ko/screenshot 2022-06-05 1.29.25.png" />
 
 ### 2. 최신 JavaScript SDK로 업데이트하기 <a href="#2." id="2."></a>
 
-(신) 토스페이 결제는 최신 SDK에서만 지원되는 기능입니다.
+토스페이 결제는 최신 SDK에서만 지원되는 기능입니다.
 
 ```javascript title="JS SDK"
 <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 ```
 
 <Hint style="info">
-  **(신) 토스페이를 연동하기 위해서는 위에 안내된 JS SDK를 이용하셔야 합니다.**
+  **토스페이를 연동하기 위해서는 위에 안내된 JS SDK를 이용하셔야 합니다.**
 
 [JavaScript SDK](../../../sdk/javascript-sdk/readme)문서를 통해 최신 SDK를 설치해주세요.
 
@@ -53,7 +59,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
       bypass: {
         expiredTime: "2023-12-02 11:00:00", //결제 만료시간
         cashReceiptTradeOption: 'CULTURE' //현금영수증 발급타입
-        
+
       }
     }, function (rsp) {
       // callback 로직
@@ -123,7 +129,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
       pay_method: "tosspay", // 'tosspay'만 지원됩니다.
       merchant_uid: "orderMonthly0001", // 상점에서 관리하는 주문 번호
       name: "최초인증결제",
-      customer_id: "matthew", //가맹점이 회원에게 부여한 고유 ID로 필수 입력.
+      customer_id: "matthew", //고객사가 회원에게 부여한 고유 ID로 필수 입력.
       customer_uid: "your-customer-unique-id", // 필수 입력.
       buyer_email: "test@portone.io",
       buyer_name: "포트원",
@@ -172,7 +178,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
       **`리다이렉트 URL`**
 
-      리디렉션 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 가맹점 URL
+      리디렉션 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 고객사 URL
 
       (신) 토스페이의 경우 모바일 환경에서 **리디렉션 방식으로 빌링키 발급창이 렌더링 되기 때문에 필수입력입니다.**
 

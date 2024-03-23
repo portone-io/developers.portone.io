@@ -10,9 +10,9 @@ import Hint from "~/components/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-### 1. NHN KCP PG 설정하기
+### 1. NHN KCP 채널 설정하기
 
-[**NHN KCP 설정**](/docs/ko/ready/2-pg/payment-gateway/nhn-kcp) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 
 <Figure src="/gitbook-assets/ko/screenshot 2022-05-29 7.53.40.png" />
 
@@ -158,7 +158,7 @@ IMP.request_pay(
 
 ### 빌링키(customer_uid)로 결제 요청하기
 
-빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
+빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 고객사 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
 
 ```sh title="server-side"
 curl -H "Content-Type: application/json" \
@@ -267,7 +267,7 @@ display: {
       // quota: 63 = 60(기타카드 포인트 할부개월) + 3개월 할부
     }
   },
-  company: "가맹점", // 해당 파라미터를 설정하지 않으면  카드사 모듈 창에 import 로 표기
+  company: "고객사", // 해당 파라미터를 설정하지 않으면  카드사 모듈 창에 import 로 표기
 }
 ````
 
@@ -425,12 +425,12 @@ display: {
 
 <Tabs>
 <Tab title="상품권 결제수단">
-**상품권 결제수단**을 사용하기 위해서는 가맹점에서 관리하는 회원ID를 아래와 같은 방법으로 파라미터 설정이 필요합니다.
+**상품권 결제수단**을 사용하기 위해서는 고객사에서 관리하는 회원ID를 아래와 같은 방법으로 파라미터 설정이 필요합니다.
 
 ```javascript title="javascript SDK"
 {
   bypass: {
-    shop_user_id: "ABCD123"; // 가맹점 회원ID (20byte)
+    shop_user_id: "ABCD123"; // 고객사 회원ID (20byte)
   }
 }
 ```
@@ -455,7 +455,7 @@ IMP.request_pay({
   buyer_addr: "서울특별시 강남구 삼성동",
   buyer_postcode: "123-456",
   bypass: {
-    shop_user_id: "abaddd", // 가맹점 회원 id기재
+    shop_user_id: "abaddd", // 고객사 회원 id기재
   },
 });
 ```

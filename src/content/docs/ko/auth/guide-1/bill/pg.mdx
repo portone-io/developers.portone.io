@@ -11,7 +11,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 #### PG사가 제공하는 일반 결제창에 고객이 카드정보를 입력하여 빌링키를 발급 받을수 있습니다.
 
 - **장점**: 카드정보가 서버 또는 포트원의 서버를 거치지 않고 직접 PG사로 전달되기 때문에 데이터 및 통신구간 암호화 등의 **추가 보안 프로세스가 없다**.
-- **단점**: PG사의 일반결제창을 통해 카드정보를 입력받기 때문에 웹브라우저를 통해서만 빌링키 발급이 이루어지며, **카드정보 입력란을 커스터마이징 할 수 없다.**(가맹점 사이트 친화적인 UI/UX 구성불가)
+- **단점**: PG사의 일반결제창을 통해 카드정보를 입력받기 때문에 웹브라우저를 통해서만 빌링키 발급이 이루어지며, **카드정보 입력란을 커스터마이징 할 수 없다.**(고객사 사이트 친화적인 UI/UX 구성불가)
 
 <Figure
   src="/gitbook-assets/ko/image (269).png"
@@ -27,7 +27,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Tabs>
 <Tab title="JavaScript">
 ```javascript title="client-side"
-  IMP.request_pay({ 
+  IMP.request_pay({
     customer_uid: "gildong_0001_1234", // 카드(빌링키)와 1:1로 대응하는 값
     /* ...생략... */
   }, function (rsp) { // callback
@@ -42,7 +42,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Hint style="info">
 **customer\_uid 란?**
 
-PG사가 발급한 빌링키와 1:1로 맵핑되는 가맹점이 지정한 고유값입니다. customer_uid 는 카드번호 단위로 구분되서 저장되어야 합니다.
+PG사가 발급한 빌링키와 1:1로 맵핑되는 고객사가 지정한 고유값입니다. customer_uid 는 카드번호 단위로 구분되서 저장되어야 합니다.
 
 예) **홍길동** 고객이 **A카드** 빌링키를 요청하는 경우 customer_uid는 **회원 별 카드번호 단위**로 고유하게 발급되어야 합니다.
 
@@ -80,7 +80,7 @@ PG사가 발급한 빌링키와 1:1로 맵핑되는 가맹점이 지정한 고�
   });
 ```
 
-빌링키가 성공적으로 발급되면 가맹점 서버로 **customer_uid** 를 전달합니다. 서버에서는 클라이언트로부터 **customer_uid**를 전달받는 API endpoint를 생성합니다. 서버에서 해당 **customer_uid** 를 사용하여 차후에 결제를 요청할 수 있습니다.
+빌링키가 성공적으로 발급되면 고객사 서버로 **customer_uid** 를 전달합니다. 서버에서는 클라이언트로부터 **customer_uid**를 전달받는 API endpoint를 생성합니다. 서버에서 해당 **customer_uid** 를 사용하여 차후에 결제를 요청할 수 있습니다.
 
 ```javascript title="server-side"
   app.post("/billings", async (req, res) => {
@@ -93,7 +93,7 @@ PG사가 발급한 빌링키와 1:1로 맵핑되는 가맹점이 지정한 고�
   });
 ```
 
-전달받은 customer_uid 를 가맹점 내부서버 DB에 저장 후 추후 해당 정보를 이용하여 결제를 요청 합니다.
+전달받은 customer_uid 를 고객사 내부서버 DB에 저장 후 추후 해당 정보를 이용하여 결제를 요청 합니다.
 
 </Tab>
 </Tabs>

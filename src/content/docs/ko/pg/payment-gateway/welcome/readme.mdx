@@ -1,6 +1,6 @@
 ---
 title: 웰컴페이먼츠
-description: 웰컴페이먼츠 결제창 연동 방법을 안내합니다.
+description: 웰컴페이먼츠 연동 방법을 안내합니다.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
@@ -10,9 +10,9 @@ import Figure from "~/components/Figure.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-### 1. 웰컴페이먼츠 PG 설정하기
+### 1. 웰컴페이먼츠 채널 설정하기
 
-[**웰컴페이먼츠 설정**](../../../ready/2-pg/payment-gateway/welcome) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 
 ### 2. 최신 JavaScript SDK로 업데이트하기 <a href="#2." id="2."></a>
 
@@ -42,7 +42,7 @@ PC의 경우 <mark style="color:red;">**callback**</mark> 함수로 전달되고
 IMP.request_pay({
   pg: 'welcome.{상점 ID}',
   pay_method: 'card',
-  merchant_uid: "orderNo0001", // 가맹점에서 채번한 주문 고유 번호입니다.
+  merchant_uid: "orderNo0001", // 고객사에서 채번한 주문 고유 번호입니다.
   name: '주문명:결제테스트',
   amount: 1004,
   buyer_email: 'test@portone.io',
@@ -51,7 +51,7 @@ IMP.request_pay({
   m_redirect_url: '{모바일에서 결제 완료 후 리디렉션 될 URL}',
 }, function(rsp) { // callback 로직
     const { imp_uid, merchant_uid } = rsp;
-    
+
     // 콜백 함수로 전달 받은 imp_uid로 포트원 결제 내역 조회 API를 통해 결제 상태를 판단합니다.
 });
 ```
@@ -125,19 +125,19 @@ IMP.request_pay({
 
 **`notice_url`** <mark style="color:green;">**string** 또는 **string[]**</mark>
 
-**트랜잭션 종료 후 웹훅이 발송 될 가맹점 서버 URL**
+**트랜잭션 종료 후 웹훅이 발송 될 고객사 서버 URL**
 
 주의: notice_url 파라미터 설정시, 콘솔에 설정 된 웹훅 URL은 override 되며 notice_url에 전달 한 주소로만 웹훅이 발송됩니다.
 
 **`confirm_url`** <mark style="color:green;">**string**</mark>
 
-**트랜잭션 승인 직전 최종 승인 여부를 질의 할 가맹점 서버 URL**
+**트랜잭션 승인 직전 최종 승인 여부를 질의 할 고객사 서버 URL**
 
 트랜잭션 승인 직전, 포트원 서버에서 confirm_url로 트랜잭션 최종 승인 여부를 질의하게 되며 200 외의 응답을 받은 경우 트랜잭션은 중단됩니다.
 
 **`app_scheme`** <mark style="color:green;">**string**</mark>
 
-**IOS 앱에서 결제시 카드/은행 앱에서 인증 후 복귀 될 가맹점 커스텀 앱 URL Scheme**
+**IOS 앱에서 결제시 카드/은행 앱에서 인증 후 복귀 될 고객사 커스텀 앱 URL Scheme**
 
 - 예: portone://
 - 주의: <mark style="color:red;">**IOS 앱 결제시 필수**</mark> 입력이며 <mark style="color:red;">**앱이 아닌 모바일 웹 결제시에는 입력하지 마세요.**</mark>
@@ -351,18 +351,18 @@ bypass: {
   IMP.request_pay({
     pg: "welcome.{MID}",
     pay_method: "card", // 빌링키 발급 수단입니다. 웰컴페이먼츠의 경우 'card'만 지원됩니다.
-    merchant_uid: "orderMonthly0001", // 가맹점에서 채번한 주문 고유 번호입니다.
+    merchant_uid: "orderMonthly0001", // 고객사에서 채번한 주문 고유 번호입니다.
     name: "빌링키 발급",
     amount: 1000, // 전달한 결제 금액 만큼 실제로 승인되지는 않으며, 단순히 빌링키 발급 창에 표기 용도입니다.
-    customer_uid: "your-customer-unique-id", // 가맹점이 구매자의 결제 수단을 특정하기 위해 채번한 고유 ID로 빌링키 발급시 필수 입력입니다.
-    customer_id: "matthew", // 가맹점이 회원에게 부여한 고유 ID입니다.
+    customer_uid: "your-customer-unique-id", // 고객사가 구매자의 결제 수단을 특정하기 위해 채번한 고유 ID로 빌링키 발급시 필수 입력입니다.
+    customer_id: "matthew", // 고객사가 회원에게 부여한 고유 ID입니다.
     buyer_email: "test@portone.io",
     buyer_name: "포트원",
     buyer_tel: "02-1234-1234",
     m_redirect_url: "{모바일에서 빌링키 발급 완료 후 리디렉션 될 URL}",
   }, function (rsp) {
     const { imp_uid, merchant_uid } = rsp;
-    
+
     // 콜백 함수로 전달 받은 imp_uid로 포트원 결제 내역 조회 API를 통해 빌링키 발급 상태를 판단합니다.
   });
   ```
@@ -398,13 +398,13 @@ bypass: {
 
 **빌링키 발급 수단 고유 ID**
 
-가맹점이 구매자의 빌링키 발급 수단을 특정하기 위해 채번한 고유 번호로 빌링키 발급시 필수 입력입니다.
+고객사가 구매자의 빌링키 발급 수단을 특정하기 위해 채번한 고유 번호로 빌링키 발급시 필수 입력입니다.
 
 **`customer_id`** <mark style="color:green;">**string**</mark>
 
 **구매자 고유 ID**
 
-가맹점이 구매자를 특정하기 위해 채번한 고유 번호입니다.
+고객사가 구매자를 특정하기 위해 채번한 고유 번호입니다.
 
 **`buyer_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -430,7 +430,7 @@ bypass: {
 
 **`notice_url`** <mark style="color:green;">**string** 또는 **string[]**</mark>
 
-**트랜잭션 종료 후 웹훅이 발송 될 가맹점 서버 URL**
+**트랜잭션 종료 후 웹훅이 발송 될 고객사 서버 URL**
 
 주의: notice_url 파라미터 설정시, 콘솔에 설정 된 웹훅 URL은 override 되며 notice_url에 전달 한 주소로만 웹훅이 발송됩니다.
 
@@ -483,18 +483,18 @@ bypass: {
 IMP.request_pay({
   pg: 'welcome.{상점 ID}',
   pay_method: 'phone', // 빌링키 발급 및 결제 수단입니다. 웰컴페이먼츠의 경우 'phone'만 지원합니다.
-  merchant_uid: "orderNo0001", // 가맹점에서 채번한 주문 고유 번호입니다.
+  merchant_uid: "orderNo0001", // 고객사에서 채번한 주문 고유 번호입니다.
   name: '주문명:결제테스트',
   amount: 1000, // 전달한 금액 만큼 실제로 승인이 됩니다.
-  customer_uid: "your-customer-unique-id", // 가맹점이 구매자의 결제 수단을 특정하기 위해 채번한 고유 ID로 빌링키 발급시 필수 입력입니다.
-  customer_id: "matthew", // 가맹점이 회원에게 부여한 고유 ID입니다.
+  customer_uid: "your-customer-unique-id", // 고객사가 구매자의 결제 수단을 특정하기 위해 채번한 고유 ID로 빌링키 발급시 필수 입력입니다.
+  customer_id: "matthew", // 고객사가 회원에게 부여한 고유 ID입니다.
   buyer_email: 'test@portone.io',
   buyer_name: '구매자이름',
   buyer_tel: '010-1234-5678',
   m_redirect_url: '{모바일에서 결제 완료 후 리디렉션 될 URL}',
 }, function(rsp) { // callback 로직
     const { imp_uid, merchant_uid } = rsp;
-    
+
     // 콜백 함수로 전달 받은 imp_uid로 포트원 결제 내역 조회 API를 통해 결제 상태를 판단합니다.
 });
 ```
@@ -528,13 +528,13 @@ IMP.request_pay({
 
 **빌링키 발급 수단 고유 ID**
 
-가맹점이 구매자의 빌링키 발급 수단을 특정하기 위해 채번한 고유 번호로 빌링키 발급시 필수 입력입니다.
+고객사가 구매자의 빌링키 발급 수단을 특정하기 위해 채번한 고유 번호로 빌링키 발급시 필수 입력입니다.
 
 **`customer_id`** <mark style="color:green;">**string**</mark>
 
 **구매자 고유 ID**
 
-가맹점이 구매자를 특정하기 위해 채번한 고유 번호입니다.
+고객사가 구매자를 특정하기 위해 채번한 고유 번호입니다.
 
 **`buyer_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -560,13 +560,13 @@ IMP.request_pay({
 
 **`notice_url`** <mark style="color:green;">**string** 또는 **string[]**</mark>
 
-**트랜잭션 종료 후 웹훅이 발송 될 가맹점 서버 URL**
+**트랜잭션 종료 후 웹훅이 발송 될 고객사 서버 URL**
 
 주의: notice_url 파라미터 설정시, 콘솔에 설정 된 웹훅 URL은 override 되며 notice_url에 전달 한 주소로만 웹훅이 발송됩니다.
 
 **`confirm_url`** <mark style="color:green;">**string**</mark>
 
-**트랜잭션 승인 직전 최종 승인 여부를 질의 할 가맹점 서버 URL**
+**트랜잭션 승인 직전 최종 승인 여부를 질의 할 고객사 서버 URL**
 
 트랜잭션 승인 직전, 포트원 서버에서 confirm_url로 트랜잭션 최종 승인 여부를 질의하게 되며 200 외의 응답을 받은 경우 트랜잭션은 중단됩니다.
 

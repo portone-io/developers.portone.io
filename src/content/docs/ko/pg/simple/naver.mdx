@@ -1,6 +1,6 @@
 ---
 title: 네이버페이(결제형)
-description: 네이버페이 간편결제 연동가이드를 확인합니다.
+description: 네이버페이 결제형 연동 방법을 안내합니다.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
@@ -9,9 +9,9 @@ import Hint from "~/components/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-### 1. 네이버페이(결제형) PG 설정하기
+### 1. 네이버페이 채널 설정하기
 
-[**네이버페이(결제형) 설정**](../../ready/2-pg/pg/undefined) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
 <Figure src="/gitbook-assets/ko/screenshot 2022-05-30 2.00.33.png" />
 
@@ -37,11 +37,11 @@ IMP.request_pay({
   buyer_postcode: "123-456",
   naverUseCfm: "20221231", // 이용완료일자(필요시 설정합니다)
   naverPopupMode: true, // 팝업모드 활성화
-  m_redirect_url: "{결제 완료 후 리디렉션 될 URL}", 
+  m_redirect_url: "{결제 완료 후 리디렉션 될 URL}",
   naverPurchaserName: "구매자이름",
   naverPurchaserBirthday: "20151201",
   naverChainId: "sAMplEChAINid",
-  naverMerchantUserKey: "가맹점의 사용자 키",
+  naverMerchantUserKey: "고객사의 사용자 키",
   naverCultureBenefit:true // 문화비 소득공제 적용여부
   naverProducts: [
     {
@@ -95,7 +95,7 @@ IMP.request_pay({
 
 **이용 완료일** (`yyyyMMdd` 형식의 문자열로 **결제 당일 또는 미래의 일자**여야 함)
 
-- 상품 유형에 따라 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다
+- 상품 유형에 따라 네이버페이-고객사 간 필수값으로 계약되는 경우 입력합니다
 
 \
 **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -123,14 +123,14 @@ IMP.request_pay({
 
 **구매자 이름**
 
-결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 가맹점만 필수 입력**</mark>합니다.
+결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 고객사만 필수 입력**</mark>합니다.
 
 \
 **`naverPurchaserBirthday`** <mark style="color:green;">**string**</mark>
 
 **구매자 생년월일(yyyyMMdd)**
 
-결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 가맹점만 필수 입력**</mark>합니다.
+결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 고객사만 필수 입력**</mark>합니다.
 
 \
 **`naverProducts`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**array**</mark>
@@ -145,12 +145,12 @@ IMP.request_pay({
 >
 > - **`categoryType`** (<mark style="color:red;">필수</mark>) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
 > - **`categoryId`** (<mark style="color:red;">필수</mark>) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
-> - **`uid`** (<mark style="color:red;">필수</mark>) : 가맹점 내부의 상품 고유 ID를 활용하는 것이 일반적이지만, 네이버페이 가이드 참고가 필요합니다. [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
+> - **`uid`** (<mark style="color:red;">필수</mark>) : 고객사 내부의 상품 고유 ID를 활용하는 것이 일반적이지만, 네이버페이 가이드 참고가 필요합니다. [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
 > - **`name`** (<mark style="color:red;">필수</mark>) : 주문상품의 명칭
 > - **`count`** (<mark style="color:red;">필수</mark>) : 상품 주문 개수
-> - **`sellerId`** (선택) : 가맹점이 하위 판매자를 식별하기 위한 고유 ID(영문 대소문자 및 숫자 허용)
->   - 가맹점의 업종이 통신판매중개업에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 대상 가맹점만 필수 입력합니다.
->   - 비대상 가맹점은 입력하지 않습니다.
+> - **`sellerId`** (선택) : 고객사가 하위 판매자를 식별하기 위한 고유 ID(영문 대소문자 및 숫자 허용)
+>   - 고객사의 업종이 통신판매중개업에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 대상 고객사만 필수 입력합니다.
+>   - 비대상 고객사는 입력하지 않습니다.
 > - **`payReferrer`** (선택) : 네이버 플랫폼의 타 서비스와 제휴계약 후 유입분석을 진행하는 경우에만 입력 [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product_ref)
 
 \
@@ -159,7 +159,7 @@ IMP.request_pay({
 **네이버페이 그룹형 가맹점용 chain id**
 
 - 같은 파트너 ID로 두개 이상의 서비스를 운영하는 그룹형 가맹점의 경우에만 네이버페이로부터 전달받은 값을 필수 입력합니다.
-- 비 대상 가맹점은 입력하지 않습니다.
+- 비 대상 고객사는 입력하지 않습니다.
 
 \
 **`naverCultureBenefit`** <mark style="color:orange;">**boolean**</mark>
@@ -171,11 +171,11 @@ IMP.request_pay({
 \
 **`naverMerchantUserKey`** <mark style="color:green;">**string**</mark>
 
-**가맹점의 사용자 키**
+**고객사의 사용자 키**
 
 - 개인 아이디와 같은 개인정보 데이터는 제외하여 전달해야 합니다.
-- 네이버페이 기준 <mark style="color:red;">**고위험군 제품을 판매하는 가맹점의 경우 필수**</mark> 입력합니다.
-- 비 대상 가맹점은 입력하지 않습니다.
+- 네이버페이 기준 <mark style="color:red;">**고위험군 제품을 판매하는 고객사의 경우 필수**</mark> 입력합니다.
+- 비 대상 고객사는 입력하지 않습니다.
 
 </Tab>
 
@@ -242,7 +242,7 @@ IMP.request_pay(
 \
 **`naverProductCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**가맹점의 상품코드**
+**고객사의 상품코드**
 
 - 동일한 고객이 동일상품에 대해 중복으로 반복결제 등록하는 것을 방지하기 위한 파라미터입니다.
 - 기본값은 random으로 자동 생성되어 중복결제가 가능하므로 값을 지정해 주세요.
@@ -294,11 +294,11 @@ IMP.request_pay(
 REST API [**/subscribe/payments/again**](../../api/api-4/api) 를 호출하여 결제를 요청할 수 있습니다.
 
 - `customer_uid`: 정기/반복결제 등록 시 사용된 해당 고객의 `customer_uid`
-- `merchant_uid`: 가맹점 주문번호
+- `merchant_uid`: 고객사 주문번호
 - `amount`: 결제승인 요청금액 (결제고객 등록 시 지정된 금액과 달라도 무방함)
 - `tax_free`: `amount` 중 면세공급가액 (기본값: 0)
 - `name`: 주문의 명칭
-- `extra.naverUseCfm`: 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다.
+- `extra.naverUseCfm`: 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-고객사 간 필수값으로 계약되는 경우 입력합니다.
 
 ```json title="sample json"
 {
@@ -313,7 +313,7 @@ REST API [**/subscribe/payments/again**](../../api/api-4/api) 를 호출하여 �
 ```
 
 ```title="form-urlencoded"
-customer_uid={가맹점의 결제 고객을 특정하는 Unique Key}&merchant_uid={가맹점 주문번호}&amount=10000&name=Slim 요금제(최초과금)&extra[naverUseCfm]=20201001
+customer_uid={고객사의 결제 고객을 특정하는 Unique Key}&merchant_uid={고객사 주문번호}&amount=10000&name=Slim 요금제(최초과금)&extra[naverUseCfm]=20201001
 ```
 
 **결제 예약방법**
@@ -322,10 +322,10 @@ REST API[ **/subscribe/payments/schedule**](../../api/api-3/api)를 호출하여
 
 - `customer_uid` : 정기/반복결제 등록 시 사용된 해당 고객의 `customer_uid`
 - `schedules` : 결제 예약 정보 객체 배열(1개 이상 설정 가능)
-  - `merchant_uid` : 가맹점 주문번호
+  - `merchant_uid` : 고객사 주문번호
   - `schedule_at` : 결제요청 예약시각 (UNIX timestamp)
   - `amount` : 결제승인 요청금액 (결제고객 등록 시 지정된 금액과 달라도 무방함)
-  - `extra.naverUseCfm` : 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다.
+  - `extra.naverUseCfm` : 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-고객사 간 필수값으로 계약되는 경우 입력합니다.
 
 ```json title="sample json"
 {
@@ -344,7 +344,7 @@ REST API[ **/subscribe/payments/schedule**](../../api/api-3/api)를 호출하여
 ```
 
 ```title="form-urlencoded"
-customer_uid={가맹점의 결제 고객을 특정하는 Unique Key}&schedules[0][merchant_uid]={가맹점 주문번호}&schedules[0][schedule_at]={결제요청 예약시각 UNIX timestamp}&schedules[0][amount]=10000&schedules[0][extra][naverUseCfm]=20201001\
+customer_uid={고객사의 결제 고객을 특정하는 Unique Key}&schedules[0][merchant_uid]={고객사 주문번호}&schedules[0][schedule_at]={결제요청 예약시각 UNIX timestamp}&schedules[0][amount]=10000&schedules[0][extra][naverUseCfm]=20201001\
 ```
 
 </Tab>
