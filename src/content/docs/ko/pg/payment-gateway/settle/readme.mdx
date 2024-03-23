@@ -3,20 +3,20 @@ title: 핵토파이낸셜
 description: 핵토파이낸셜 결제 연동 방법을 안내합니다.
 ---
 
+import Figure from "~/components/Figure.astro";
 import Codepen from "~/components/gitbook/Codepen.astro";
 import ContentRef from "~/components/gitbook/ContentRef.astro";
-import Figure from "~/components/Figure.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. 핵토파이낸셜 채널 설정하기
+## 1. 핵토파이낸셜 채널 설정하기
 
 [결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 
 <Figure src="/gitbook-assets/ko/screenshot 2022-06-01 4.32.44.png" />
 
-### 2.결제 요청하기
+## 2.결제 요청하기
 
 [JavaScript SDK](../../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을
 호출하여 핵토파이낸셜 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 `IMP.request_pay(param,
@@ -24,129 +24,129 @@ callback)` 호출 후 <mark style="color:red;">**`callback`**</mark>으로 수�
 모바일의 경우 <mark style="color:red;">**`m_redirect_url`**</mark>로 리디렉션됩니다.
 
 <Tabs>
-<Tab title="인증결제창 요청">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-  pg: "settle.{상점 ID}",
-  pay_method: "card",
-  merchant_uid: "order_no_0001", // 상점에서 생성한 고유 주문번호
-  name: "주문명:결제테스트",
-  amount: 1004,
-  buyer_email: "test@portone.io",
-  buyer_name: "구매자이름",
-  buyer_tel: "010-1234-5678", // 누락시 오류 발생 
-  buyer_addr: "서울특별시 강남구 삼성동",
-  company: "포트원", // 가상계좌 발급시 권고사항
-  buyer_postcode: "123-456"
-  m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
-}, function (rsp) { // callback 로직
-  /* ...중략... */
-});
-```
+  <Tab title="인증결제창 요청">
+    ```javascript title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "settle.{상점 ID}",
+        pay_method: "card",
+        merchant_uid: "order_no_0001", // 상점에서 생성한 고유 주문번호
+        name: "주문명:결제테스트",
+        amount: 1004,
+        buyer_email: "test@portone.io",
+        buyer_name: "구매자이름",
+        buyer_tel: "010-1234-5678", // 누락시 오류 발생
+        buyer_addr: "서울특별시 강남구 삼성동",
+        company: "포트원", // 가상계좌 발급시 권고사항
+        buyer_postcode: "123-456",
+        m_redirect_url: "http://", // 모바일에서 결제 완료 후 리디렉션 될 URL
+      },
+      function (rsp) {
+        // callback 로직
+        /* ...중략... */
+      },
+    );
+    ```
 
-**주요 파라미터 설명**
+    **주요 파라미터 설명**
 
-**`pg` \***<mark style="color:green;">**string**</mark>
+    **`pg` \***<mark style="color:green;">**string**</mark>
 
-**PG사 구분코드**
+    **PG사 구분코드**
 
-**`settle`** 로 지정하면 됩니다.
+    **`settle`** 로 지정하면 됩니다.
 
-**`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**결제수단 구분코드**
+    **결제수단 구분코드**
 
-- card (신용카드)
-- trans (실시간 계좌이체)
-- vbank(가상계좌)
-- phone (휴대폰소액결제)
+    - card (신용카드)
+    - trans (실시간 계좌이체)
+    - vbank(가상계좌)
+    - phone (휴대폰소액결제)
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`고객사 주문번호`**
+    **`고객사 주문번호`**
 
-매번 고유하게 채번되어야 합니다.
+    매번 고유하게 채번되어야 합니다.
 
-**`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+    **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
-**구매자 연락처**
+    **구매자 연락처**
 
-필수 파라미터 입니다.
+    필수 파라미터 입니다.
 
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
 
-**결제금액**
+    **결제금액**
 
-<mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
+    <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
 
-**`company`** <mark style="color:green;">**`string`**</mark>
+    **`company`** <mark style="color:green;">**`string`**</mark>
 
-**`회사명`**
+    **`회사명`**
 
-<mark style="color:red;">**가상계좌**</mark> 결제 요청인 경우 필수 파라미터
+    <mark style="color:red;">**가상계좌**</mark> 결제 요청인 경우 필수 파라미터
 
-<Codepen user="chaiport" slug="GRQdjpa" caption="세틀뱅크 카드인증결제 예제" />
+    <Codepen user="chaiport" slug="GRQdjpa" caption="세틀뱅크 카드인증결제 예제" />
+  </Tab>
 
-</Tab>
+  <Tab title="비인증 결제창 요청">
+    **세틀뱅크는 비 인증 결제창을 지원하지 않습니다.**
+  </Tab>
 
-<Tab title="비인증 결제창 요청">
-**세틀뱅크는 비 인증 결제창을 지원하지 않습니다.**
+  <Tab title="비인증 API  결제요청">
+    **API 방식으로 결제요청,예약결제를 구현할수 있습니다.**
 
-</Tab>
+    **일회성 결제 요청하기**
 
-<Tab title="비인증 API  결제요청">
-**API 방식으로 결제요청,예약결제를 구현할수 있습니다.**
+    REST[**API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호출하여 일회성 결제를 요청합니다. 요청 시 전달된 카드는 포트원에 등록되지 않습니다.
 
-**일회성 결제 요청하기**
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-REST[ **API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호출하여 일회성 결제를 요청합니다. 요청 시 전달된 카드는 포트원에 등록되지 않습니다.
+    **빌링키 발급 요청하기**
 
-```sh
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    REST [**API POST /subscribe/customers/\{customer\_uid}**](../../../api/api-2/api-1)를 호출하여 빌링키 발급을 요청합니다.
 
-**빌링키 발급 요청하기**
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
+         https://api.iamport.kr/subscribe/customers/your-customer-unique-id
+    ```
 
-REST [**API POST /subscribe/customers/\{customer_uid}**](../../../api/api-2/api-1)를 호출하여 빌링키 발급을 요청합니다.
+    <Hint style="info">
+      **세틀뱅크** [**빌링키 단독 발급 API**](../../../api/api-2/api-1)**는 별도 계약 후 사용가능합니다..**
+    </Hint>
 
-```sh
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
-     https://api.iamport.kr/subscribe/customers/your-customer-unique-id
-```
+    **빌링키 발급 및 최초 결제 요청하기**
 
-<Hint style="info">
-**세틀뱅크** [**빌링키 단독 발급 API**](../../../api/api-2/api-1)**는 별도 계약 후 사용가능합니다..**
+    REST [**API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호출하여 빌링키 발급과 최초 결제를 요청합니다.
 
-</Hint>
+    - **`customer_uid`** : 빌링키 등록을 위해서 지정해야 합니다.
 
-**빌링키 발급 및 최초 결제 요청하기**
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-REST [**API POST /subscribe/payments/onetime**](../../../api/api-4/api-1)을 호출하여 빌링키 발급과 최초 결제를 요청합니다.
+    **빌링키로 결제 요청하기**
 
-- **`customer_uid`** : 빌링키 등록을 위해서 지정해야 합니다.
+    빌링키 발급과 최초 결제가 성공하면 빌링키는 전달된 `customer_uid` 와 1:1 매칭되어 포트원에 저장됩니다. 보안상의 이유로 서버는 빌링키에 직접 접근할 수 없기 때문에 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
 
-```sh
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
 
-**빌링키로 결제 요청하기**
+    **자세한 비 인증 결제 가이드는 아래 링크를 참조하세요**
 
-빌링키 발급과 최초 결제가 성공하면 빌링키는 전달된 `customer_uid` 와 1:1 매칭되어 포트원에 저장됩니다. 보안상의 이유로 서버는 빌링키에 직접 접근할 수 없기 때문에 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
-
-```sh
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-**자세한 비 인증 결제 가이드는 아래 링크를 참조하세요**
-
-<ContentRef slug="/ko/auth/guide-1/readme" />
-
-</Tab>
+    <ContentRef slug="/ko/auth/guide-1/readme" />
+  </Tab>
 </Tabs>

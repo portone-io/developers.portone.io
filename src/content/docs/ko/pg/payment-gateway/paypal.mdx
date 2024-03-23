@@ -5,9 +5,9 @@ description: 페이팔(Express Checkout) 결제연동 방법을 안내합니다.
 
 import Figure from "~/components/Figure.astro";
 import File from "~/components/gitbook/File.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
 <Hint style="danger">
 페이팔 Express checkout 방식으로 신규 가입 및 연동이 불가합니다.
@@ -15,13 +15,13 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </Hint>
 
-### 1. 페이팔 채널 설정하기
+## 1. 페이팔 채널 설정하기
 
 [결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 
 <Figure src="/gitbook-assets/ko/screenshot 2022-06-03 1.01.05.png" />
 
-### 2.결제 요청하기
+## 2.결제 요청하기
 
 [JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여
 페이팔 결제창을 호출할 수 있습니다. **결제결과**는 **PC / 모바일** 모두
@@ -30,22 +30,26 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Tabs>
 <Tab title="인증결제창 요청">
 ```javascript title="Javascript SDK"
-IMP.request_pay({
-  pg: "paypal.{API 사용자 이름}",
-  pay_method: "card",
-  merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
-  name: "주문명:결제테스트",
-  amount: 14.20,
-  currency: "USD", // 기본값: USD(원화 KRW는 페이팔 정책으로 인해 지원하지 않음)
-  buyer_email: "test@portone.io",
-  buyer_name: "구매자이름",
-  buyer_tel: "010-1234-5678",
-  buyer_addr: "서울특별시 강남구 삼성동",
-  buyer_postcode: "123-456",
-  m_redirect_url: "{결제 완료 후 리디렉션 될 URL}" 
-}, function(rsp) { // callback 로직
-  /* ...중략... */
-});
+IMP.request_pay(
+  {
+    pg: "paypal.{API 사용자 이름}",
+    pay_method: "card",
+    merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
+    name: "주문명:결제테스트",
+    amount: 14.2,
+    currency: "USD", // 기본값: USD(원화 KRW는 페이팔 정책으로 인해 지원하지 않음)
+    buyer_email: "test@portone.io",
+    buyer_name: "구매자이름",
+    buyer_tel: "010-1234-5678",
+    buyer_addr: "서울특별시 강남구 삼성동",
+    buyer_postcode: "123-456",
+    m_redirect_url: "{결제 완료 후 리디렉션 될 URL}",
+  },
+  function (rsp) {
+    // callback 로직
+    /* ...중략... */
+  },
+);
 ```
 
 **주요 파라미터 설명**
@@ -89,7 +93,7 @@ PC환경 모바일 환경 모두 해당 값을 필수로 설정해야 결과를 
 </Tab>
 </Tabs>
 
-### 추가 기능 <a href="#additional-features" id="additional-features"></a>
+## 추가 기능 <a href="#additional-features" id="additional-features"></a>
 
 Paypal에서는 고위험업종(게임, 디지털 콘텐츠) 고객사의 경우 판매자 보호 및 더 높은 수준의 위험관리를
 위해 STC API(SetTransactionContext API)를 제공합니다.

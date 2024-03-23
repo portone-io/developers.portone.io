@@ -3,19 +3,19 @@ title: 다날
 description: 다날 결제연동 방법을 안내합니다.
 ---
 
-import Codepen from "~/components/gitbook/Codepen.astro";
 import Figure from "~/components/Figure.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Codepen from "~/components/gitbook/Codepen.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. 다날 채널 설정하기
+## 1. 다날 채널 설정하기
 
 [결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 
 <Figure src="/gitbook-assets/ko/screenshot 2022-05-30 5.30.00.png" />
 
-### 2.결제 요청하기
+## 2.결제 요청하기
 
 <Tabs>
 <Tab title="인증결제창 호출">
@@ -39,11 +39,11 @@ IMP.request_pay(
   function (rsp) {
     // callback 로직
     //* ...중략... *//
-  }
+  },
 );
 ```
 
-#### 주요 파라미터 설명
+### 주요 파라미터 설명
 
 **`pg` \***<mark style="color:green;">**string**</mark>
 
@@ -129,11 +129,11 @@ IMP.request_pay(
     } else {
       alert("빌링키 발급 실패");
     }
-  }
+  },
 );
 ```
 
-#### 주요 파라미터 설명
+### 주요 파라미터 설명
 
 **`pg` \***<mark style="color:green;">**string**</mark>
 
@@ -161,7 +161,7 @@ IMP.request_pay(
 
 **`to`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
 
-#### 빌링키(customer_uid)로 결제 요청하기
+### 빌링키(customer_uid)로 결제 요청하기
 
 빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 고객사 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
 
@@ -174,7 +174,7 @@ curl -H "Content-Type: application/json" \
 </Tab>
 </Tabs>
 
-### 3. 부가기능
+## 3. 부가기능
 
 <Tabs>
 <Tab title="통신사 노출 제어">
@@ -184,13 +184,13 @@ curl -H "Content-Type: application/json" \
     detail: [
       {
         carrier: "*", // 모두 활성화
-        enabled: false
+        enabled: false,
       },
       {
         carrier: "SKT", // SKT만 활성화
-        enabled: true
+        enabled: true,
       },
-    ]
+    ];
   }
 }
 ```
@@ -201,24 +201,24 @@ curl -H "Content-Type: application/json" \
     detail: [
       {
         carrier: "SKT",
-        enabled: false
+        enabled: false,
       },
       {
         carrier: "KTF",
-        enabled: false
+        enabled: false,
       },
       {
         carrier: "LGT",
-        enabled: false
+        enabled: false,
       },
       {
         carrier: "CJH",
-        enabled: false
-      }
-    ]
+        enabled: false,
+      },
+    ];
   }
 }
-KCT, SKL 을 제외한 나머지 통신사는 비활성화 됩니다.
+// KCT, SKL을 제외한 나머지 통신사는 비활성화 됩니다.
 ```
 
 ```js title="특정 통신사만 비노출"
@@ -242,7 +242,7 @@ phone: {
 <Tab title="휴대폰 번호 고정">
 ```javascript title="javascript"
 prefill: {
-  phoneNumber: "휴대폰번호" // 휴대폰번호 입력(하이픈 제거)
+  phoneNumber: "휴대폰번호"; // 휴대폰번호 입력(하이픈 제거)
 }
 ```
 <Hint style="info">
@@ -254,7 +254,7 @@ prefill: {
 <Tab title="카드결제 할부개월수">
 ```javascript title="javascript"
 display: {
-  card_quota: [6] // 할부개월 6개월까지만 활성화
+  card_quota: [6]; // 할부개월 6개월까지만 활성화
 }
 ```
 
@@ -276,7 +276,7 @@ display: {
 </Tab>
 
 <Tab title="카드사 모듈 호출">
-```javascript title="javascript"
+```json title="javascript"
 card: {
   direct: {
     code: "367",
