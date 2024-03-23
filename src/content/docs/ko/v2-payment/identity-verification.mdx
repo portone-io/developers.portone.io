@@ -11,7 +11,7 @@ import Hint from "~/components/Hint.astro";
 - 다날 휴대폰 본인인증 (V2 모듈에서 지원중)
 - KG 이니시스 통합인증 (V2 모듈에서 미지원, 추후 지원 예정)
 
-### 휴대폰 본인인증
+## 휴대폰 본인인증
 
 휴대폰 본인인증 서비스란 본인 명의로 개통한 휴대폰을 이용하여 최소한의 개인정보를 입력하는 인증 절차를 거쳐 본인 여부와 입력한 정보의 정확성을 확인하여 주는 서비스입니다.
 
@@ -46,10 +46,10 @@ SDK의 `PortOne.requestIdentityVerification()` 함수를 호출하여 본인인�
 ```javascript
 PortOne.requestIdentityVerification({
   // 고객사 storeId로 변경해주세요.
-  storeId: 'store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec',
+  storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
   identityVerificationId: `identity-verification-${crypto.randomUUID()}`,
   // 콘솔에서 추가한 채널의 키 값으로 변경해주세요.
-  channelKey: 'my-channel-key',
+  channelKey: "my-channel-key",
 });
 ```
 
@@ -66,22 +66,21 @@ PortOne.requestIdentityVerification({
 본인인증이 성공한 경우 identityVerificationId를 서버에 전달하여 서버측 본인인증 완료 처리를 하도록 합니다.
 
 ```javascript
-const response = await PortOne.requestIdentityVerification({ /* 객체 생략 */ });
+const response = await PortOne.requestIdentityVerification({
+  /* 객체 생략 */
+});
 // 프로세스가 제대로 완료되지 않은 경우 에러 코드가 존재합니다
 if (response.code != null) {
-  return alert(response.message);
+  alert(response.message);
 }
 
-const verificationResult = await fetch(
-  "{서버의 인증 정보를 받는 endpoint}",
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      identityVerificationId,
-    }),
-  }
-);
+const verificationResult = await fetch("{서버의 인증 정보를 받는 endpoint}", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    identityVerificationId,
+  }),
+});
 ```
 
 결과값에 들어 있는 필드는 다음과 같습니다.
@@ -125,7 +124,7 @@ PortOne.requestIdentityVerification({
 
 ```javascript title="server-side"
 app.use(bodyParser.json());
-  ...
+//...중략...
 // "/identity-verifications"에 대한 POST 요청을 처리하는 controller
 app.post("/identity-verifications", async (req, res) => {
   // request의 body에서 identityVerificationId 추출
@@ -134,16 +133,19 @@ app.post("/identity-verifications", async (req, res) => {
     // 포트원 본인인증 내역 단건조회 API 호출
     const verificationResponse = await fetch({
       url: `https://api.portone.io/identity-verifications/${encodeURIComponent(identityVerificationId)}`,
-      headers: { "Authorization": `PortOne ${PORTONE_API_SECRET}` },
+      headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
     });
-    if (!verificationResponse.ok) throw new Error(`verificationResponse: ${verificationResponse.statusText}`);
+    if (!verificationResponse.ok)
+      throw new Error(
+        `verificationResponse: ${verificationResponse.statusText}`,
+      );
     const identityVerification = await verificationResponse.json();
     if (identityVerification.status !== "VERIFIED") {
       // 인증 실패
-      ...
+      //...중략...
     }
-    ...
-  } catch(e) {
+    //...중략...
+  } catch (e) {
     console.error(e);
   }
 });
@@ -181,33 +183,33 @@ app.post("/identity-verifications", async (req, res) => {
 </Hint>
 
 ```javascript title="Express"
-  // "/identity-verifications"에 대한 POST 요청을 처리하는 controller
-  app.post("/identity-verifications", async (req, res) => {
-    // request의 body에서 identity_verification_id 추출
-    const { identityVerificationId } = req.body;
-    try {
-      // 인증 토큰 발급 받기
-      // identityVerificationId로 인증 정보 조회
+// "/identity-verifications"에 대한 POST 요청을 처리하는 controller
+app.post("/identity-verifications", async (req, res) => {
+  // request의 body에서 identity_verification_id 추출
+  const { identityVerificationId } = req.body;
+  try {
+    // 인증 토큰 발급 받기
+    // identityVerificationId로 인증 정보 조회
 
-      const { ci, di, name, gender, birthDate } = identityVerification.verifiedCustomer;
-      ...
-      // 연령 제한 로직 예시
-      if (new Date(birthDate).getFullYear() <= 1999) {
-        // 연령 만족
-      } else {
-        // 연령 미달
-      }
-      ...
-      // 1인 1계정 허용 로직 예시
-      // DB에서 di 조회 후 가입여부 검사
-      const user = await Users.find({ di });
-      if (user == null) {
-        // 신규 고객
-      } else {
-        // 이미 가입된 고객
-      }
-    } catch(e) {
-      console.error(e);
+    const { ci, di, name, gender, birthDate } =
+      identityVerification.verifiedCustomer;
+    //...중략...
+    // 연령 제한 로직 예시
+    if (new Date(birthDate).getFullYear() <= 1999) {
+      // 연령 만족
+    } else {
+      // 연령 미달
     }
-  });
+    // 1인 1계정 허용 로직 예시
+    // DB에서 di 조회 후 가입여부 검사
+    const user = await Users.find({ di });
+    if (user == null) {
+      // 신규 고객
+    } else {
+      // 이미 가입된 고객
+    }
+  } catch (e) {
+    console.error(e);
+  }
+});
 ```

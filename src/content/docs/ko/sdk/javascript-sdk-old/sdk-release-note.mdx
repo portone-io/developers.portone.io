@@ -5,255 +5,254 @@ description: Javascript SDK 수정 사항 및 최신 반영 내용을 확인할 
 
 import Details from "~/components/gitbook/Details.astro";
 
-### Version 1.2.0
+## Version 1.2.0
 
 <Details>
-<p slot="summary">내용 확인하기</p>
+  <p slot="summary">내용 확인하기</p>
 
-#### New
+  ### New
 
-- 신규 PG 스마트로(`smartro`) 신용카드, 실시간계좌이체, 가상계좌 지원 추가
-- 신규 PG 토스간편결제(`tosspay`) 지원 추가
-- 신규 PG KCP 퀵페이(`kcp_quick`) 지원 추가
-- 신규 PG 키움페이(구 페이조아, `daou`) 신용카드, 가상계좌 결제 지원 추가
+  - 신규 PG 스마트로(`smartro`) 신용카드, 실시간계좌이체, 가상계좌 지원 추가
+  - 신규 PG 토스간편결제(`tosspay`) 지원 추가
+  - 신규 PG KCP 퀵페이(`kcp_quick`) 지원 추가
+  - 신규 PG 키움페이(구 페이조아, `daou`) 신용카드, 가상계좌 결제 지원 추가
 
-#### Feature
+  ### Feature
 
--   차이페이(`chai`) 팝업 결제모드 지원 추가
+  - 차이페이(`chai`) 팝업 결제모드 지원 추가
+    -기존에는 무조건 redirect 방식으로 지원해왔으나 redirect와 팝업을 선택할 수 있도록 동작 지원
 
-    \-기존에는 무조건 redirect 방식으로 지원해왔으나 redirect와 팝업을 선택할 수 있도록 동작 지원
-- 토스페이먼츠 - 신모듈(`tosspayments`) 인증창으로 빌링키 발급 지원
+  - 토스페이먼츠 - 신모듈(`tosspayments`) 인증창으로 빌링키 발급 지원
 
-#### Fixed
+  ### Fixed
 
-- 토스페이먼츠 JS 스크립트 inject 방식 변경
-
+  - 토스페이먼츠 JS 스크립트 inject 방식 변경
 </Details>
 
-### Version 1.1.8
+## Version 1.1.8
 
 <Details>
-<p slot="summary">내용 확인하기</p>
+  <p slot="summary">내용 확인하기</p>
 
-**카카오페이 모바일 결제 리디렉션 방식으로 변경**
+  **카카오페이 모바일 결제 리디렉션 방식으로 변경**
 
-카카오페이 SDK의 iframe 방식 미지원 정책에 따라 카카오페이 모바일 결제를 iframe 대신 페이지 리디렉션 방식으로 변경하였습니다.기존 버전에서는 카카오페이 모바일 결제 프로세스가 완료되면 PC에서와 동일하게 `IMP.request_pay`에 지정된 콜백함수가 실행되어 결제가 이루어젔습니다. 안드로이드 내장 브라우저 및 특정 버전의 안드로이드 크롬에서 카카오페이 앱결제가 원활하지 않을 수 있는 이슈로 인해 모바일 환경에서는 리디렉션 방식으로 결제 연동을 하는 방식으로 변경되었습니다.
+  카카오페이 SDK의 iframe 방식 미지원 정책에 따라 카카오페이 모바일 결제를 iframe 대신 페이지 리디렉션 방식으로 변경하였습니다.기존 버전에서는 카카오페이 모바일 결제 프로세스가 완료되면 PC에서와 동일하게 `IMP.request_pay`에 지정된 콜백함수가 실행되어 결제가 이루어젔습니다. 안드로이드 내장 브라우저 및 특정 버전의 안드로이드 크롬에서 카카오페이 앱결제가 원활하지 않을 수 있는 이슈로 인해 모바일 환경에서는 리디렉션 방식으로 결제 연동을 하는 방식으로 변경되었습니다.
 
-**(주문형) 네이버페이 팝업 모드 추가 및 기본값 변경**
+  **(주문형) 네이버페이 팝업 모드 추가 및 기본값 변경**
 
-결제창 요청 시 `popup : true` 옵션을 명시적으로 지정했을 때에만 팝업창(새탭)을 통해 (주문형)네이버페이 결제가 진행되며, 기본적으로는 페이지 리디렉션 방식으로 결제가 진행됩니다.브라우저 팝업차단 등의 이슈를 최대한 피하기 위해서 네이버페이에서는 PC 및 모바일 환경에서 페이지 리디렉션 방식을 권장하여 기본값으로 설정하였습니다.
+  결제창 요청 시 `popup : true` 옵션을 명시적으로 지정했을 때에만 팝업창(새탭)을 통해 (주문형)네이버페이 결제가 진행되며, 기본적으로는 페이지 리디렉션 방식으로 결제가 진행됩니다.브라우저 팝업차단 등의 이슈를 최대한 피하기 위해서 네이버페이에서는 PC 및 모바일 환경에서 페이지 리디렉션 방식을 권장하여 기본값으로 설정하였습니다.
 
-- **version >= 1.1.8**
-  - PC/모바일 환경 : 현재 페이지 리디렉션 방식으로 진행되는 것을 기본값으로 하며, `popup : true` 옵션을 선언한 경우에만 팝업창(새탭)으로 결제가 진행됩니다.
-- **version < 1.1.8**
-  - PC환경 : 팝업창(새탭) 방식으로 진행 (`popup` 파라미터 무관)
-  - 모바일환경 : 현재 페이지 리디렉션 방식으로 진행 (`popup` 파라미터 무관)
+  - **version >= 1.1.8**
+    - PC/모바일 환경 : 현재 페이지 리디렉션 방식으로 진행되는 것을 기본값으로 하며, `popup : true` 옵션을 선언한 경우에만 팝업창(새탭)으로 결제가 진행됩니다.
 
-**Eximbay 리디렉션 방식 추가**
+  - **version \< 1.1.8**
+    - PC환경 : 팝업창(새탭) 방식으로 진행 (`popup` 파라미터 무관)
+    - 모바일환경 : 현재 페이지 리디렉션 방식으로 진행 (`popup` 파라미터 무관)
 
-결제창 요청 시 `popup : false` 옵션을 명시적으로 지정하면 리디렉션 방식으로 Eximbay 결제가 진행됩니다.모바일 앱 내 WebView로 결제를 진행할때 일반적으로 팝업이 차단되므로, 원할한 결제를 위해서 리디렉션 방식을 추가하였습니다.
+  **Eximbay 리디렉션 방식 추가**
 
-- **version >= 1.1.8**
-  - PC/모바일 환경 : 팝업창 방식으로 진행되는 것을 기본값으로 하며, `popup : false` 옵션을 선언한 경우에만 리디렉션 방식으로 결제가 진행됩니다.
-- **version < 1.1.8**
-  - PC/모바일 환경 : `popup`파라미터 무관하게 팝업창 방식으로 진행
+  결제창 요청 시 `popup : false` 옵션을 명시적으로 지정하면 리디렉션 방식으로 Eximbay 결제가 진행됩니다.모바일 앱 내 WebView로 결제를 진행할때 일반적으로 팝업이 차단되므로, 원할한 결제를 위해서 리디렉션 방식을 추가하였습니다.
 
-**본인인증 복수PG 설정 지원**
+  - **version >= 1.1.8**
+    - PC/모바일 환경 : 팝업창 방식으로 진행되는 것을 기본값으로 하며, `popup : false` 옵션을 선언한 경우에만 리디렉션 방식으로 결제가 진행됩니다.
 
-기존 `다날-휴대폰 본인인증` 외 `이니시스-신용카드 본인인증` 수단이 추가됨에 따라, 휴대폰 본인인증도 복수PG 설정을 지원합니다.\
-또한, `다날-휴대폰 본인인증` 을 2개 이상의 CPID를 발급받아 사이트별로 사용하려는 경우에도 `pg : danal.{다날 CPID}` 복수PG 호출 방식을 지원합니다.
+  - **version \< 1.1.8**
+    - PC/모바일 환경 : `popup`파라미터 무관하게 팝업창 방식으로 진행
 
-```javascript title="다날-휴대폰 본인인증"
+  **본인인증 복수PG 설정 지원**
+
+  기존 `다날-휴대폰 본인인증` 외 `이니시스-신용카드 본인인증` 수단이 추가됨에 따라, 휴대폰 본인인증도 복수PG 설정을 지원합니다.\
+  또한, `다날-휴대폰 본인인증` 을 2개 이상의 CPID를 발급받아 사이트별로 사용하려는 경우에도 `pg : danal.{다날 CPID}` 복수PG 호출 방식을 지원합니다.
+
+  ```javascript title="다날-휴대폰 본인인증"
+  IMP.certification(
+    {
+      pg: "danal", //danal 또는 danal.{다날 CPID}, 이하 다른 파라미터는 생략
+    },
+    function (rsp) {
+      if (rsp.success) {
+        //본인인증 성공 및 해당되는 imp_uid, merchant_uid 전달 (rsp.imp_uid, rsp.merchant_uid)
+      } else {
+        //본인인증 실패 및 중단
+      }
+    },
+  );
+  ```
+
+  ```javascript title="이니시스-신용카드 본인인증"
+  // PC/모바일 환경 모두 popup : true가 기본값
+  // PC환경 : popup 파라미터 무관하게 팝업창 방식으로 진행(이니시스 정책)
+  // 모바일환경 : popup : false 선언된 경우 m_redirect_url 파라미터 필요
   IMP.certification({
-    pg: "danal", //danal 또는 danal.{다날 CPID}, 이하 다른 파라미터는 생략
-    ...
-    ...
-  }, function(rsp) {
-    if ( rsp.success ) {
-      //본인인증 성공 및 해당되는 imp_uid, merchant_uid 전달 (rsp.imp_uid, rsp.merchant_uid)
-    } else {
-      //본인인증 실패 및 중단
-    }
-  });
-```
-
-```javascript title="이니시스-신용카드 본인인증"
-// PC/모바일 환경 모두 popup : true가 기본값
-// PC환경 : popup 파라미터 무관하게 팝업창 방식으로 진행(이니시스 정책)
-// 모바일환경 : popup : false 선언된 경우 m_redirect_url 파라미터 필요
-IMP.certification({
     pg: "inicis", //inicis 또는 inicis.{이니시스 MID}, 이하 파라멤터는 생략
     m_redirect_url: "https://shop.yourservice.com/user-certificates/complete",
-    ...
-    ...
-});
-```
+  });
+  ```
 
-#### 버그 수정 <a href="#undefined" id="undefined"></a>
+  ### 버그 수정 <a href="#undefined" id="undefined" />
 
-**아이폰 Safari에서 리디렉션 방식으로 결제 중 브라우저의 Back 버튼 클릭 시 White Screen이 나타나는 현상**
+  **아이폰 Safari에서 리디렉션 방식으로 결제 중 브라우저의 Back 버튼 클릭 시 White Screen이 나타나는 현상**
 
-Safari 브라우저의 Back 버튼으로 이전 페이지로 돌아가면, 리디렉션되기 직전 상태의 DOM을 복원하여 출력하는 특성때문에 발생되는 버그로 확인되어서 수정하였습니다. (리디렉션 방식으로 진행되는 모든 PG사에 해당됨)
-
+  Safari 브라우저의 Back 버튼으로 이전 페이지로 돌아가면, 리디렉션되기 직전 상태의 DOM을 복원하여 출력하는 특성때문에 발생되는 버그로 확인되어서 수정하였습니다. (리디렉션 방식으로 진행되는 모든 PG사에 해당됨)
 </Details>
 
-### Version 1.1.7
+## Version 1.1.7
 
 <Details>
-<p slot="summary">내용 확인하기</p>
+  <p slot="summary">내용 확인하기</p>
 
-**페이팔 팝업 방식 추가**
+  **페이팔 팝업 방식 추가**
 
-결제 요청 시 호출하는 `IMP.request_pay(param, callback)`함수의 `popup : true` 옵션을 지정하면, 결제창이 팝업창으로 열리며 결제 프로세스 완료 후 `callback` 함수가 호출됩니다. 이전 버전에서는 페이지 리디렉션 방식만 지원됩니다.
+  결제 요청 시 호출하는 `IMP.request_pay(param, callback)`함수의 `popup : true` 옵션을 지정하면, 결제창이 팝업창으로 열리며 결제 프로세스 완료 후 `callback` 함수가 호출됩니다. 이전 버전에서는 페이지 리디렉션 방식만 지원됩니다.
 
-```javascript title="javascript 팝업 방식"
+  ```javascript title="javascript 팝업 방식"
   // popup : true 옵션과 콜백 함수 등록부분 참고 (그 외 파라미터 생략)
-  IMP.request_pay({
-    pg: "paypal",
-    popup: true,
-    ...
-    ...
-  }, function(rsp) {
-    if ( rsp.success ) {
-      //Paypal 결제 완료 및 결제검증로직 시작
-    } else {
-      //Paypal 결제 중단 혹은 실패
-    }
-  });
-```
+  IMP.request_pay(
+    {
+      pg: "paypal",
+      popup: true,
+    },
+    function (rsp) {
+      if (rsp.success) {
+        //Paypal 결제 완료 및 결제검증로직 시작
+      } else {
+        //Paypal 결제 중단 혹은 실패
+      }
+    },
+  );
+  ```
 
-```javascript title="javascript redirect 방식"
- // m_redirect_url 지정 필요 (popup : false가 기본값이므로 생략됨)
+  ```javascript title="javascript redirect 방식"
+  // m_redirect_url 지정 필요 (popup : false가 기본값이므로 생략됨)
   IMP.request_pay({
     pg: "paypal",
     m_redirect_url: "https://shop.yourservice.com/payments/complete",
-    ...
-    ...
   });
-```
+  ```
 
-**본인인증(다날) 리디렉션 방식 추가**
+  **본인인증(다날) 리디렉션 방식 추가**
 
-본인인증(다날) 요청 시, 본인인증 후 이동될 URL을 `m_redirect_url` 파라미터에 지정하면 리디렉션 방식으로 진행됩니다. 이전 버전에서는 팝업 방식만 지원됩니다.리디렉션 설정하는 방법은 휴대폰 본인인증 연동하기를 참고하세요.
+  본인인증(다날) 요청 시, 본인인증 후 이동될 URL을 `m_redirect_url` 파라미터에 지정하면 리디렉션 방식으로 진행됩니다. 이전 버전에서는 팝업 방식만 지원됩니다.리디렉션 설정하는 방법은 휴대폰 본인인증 연동하기를 참고하세요.
 
-```javascript title="javascript (팝업 방식)"
+  ```javascript title="javascript (팝업 방식)"
   // popup : true 옵션
-  IMP.certification({
-    merchant_uid : "본인인증 건 트랜잭션 ID",
-    popup: true
-  }, function(rsp) {
-    if ( rsp.success ) {
-      //본인인증 성공
-    } else {
-      //본인인증 실패 혹은 중단(팝업창이 닫히거나 화면내 X버튼/취소버튼 클릭 시)
-    }
-  });
-```
+  IMP.certification(
+    {
+      merchant_uid: "본인인증 건 트랜잭션 ID",
+      popup: true,
+    },
+    function (rsp) {
+      if (rsp.success) {
+        //본인인증 성공
+      } else {
+        //본인인증 실패 혹은 중단(팝업창이 닫히거나 화면내 X버튼/취소버튼 클릭 시)
+      }
+    },
+  );
+  ```
 
-```javascript title="javascript (리디렉션 방식)"
-// m_redirect_url 지정 필요 (popup : false가 기본값이므로 생략됨)
+  ```javascript title="javascript (리디렉션 방식)"
+  // m_redirect_url 지정 필요 (popup : false가 기본값이므로 생략됨)
   IMP.certification({
-    merchant_uid : "본인인증 건 트랜잭션 ID"
+    merchant_uid: "본인인증 건 트랜잭션 ID",
     m_redirect_url: "https://shop.yourservice.com/payments/complete",
   });
-```
+  ```
 
-#### 버그 수정 <a href="#undefined" id="undefined"></a>
+  ### 버그 수정 <a href="#undefined" id="undefined" />
 
-**본인인증(다날) 팝업 내 닫힘 버튼 (X 버튼) 클릭 시 콜백 함수가 호출되지 않는 현상**
+  **본인인증(다날) 팝업 내 닫힘 버튼 (X 버튼) 클릭 시 콜백 함수가 호출되지 않는 현상**
 
-본인인증(다날) 요청 시, 팝업방식에서 팝업창이 닫히거나 화면 내 취소 버튼이 클릭된 경우에는 `IMP.certification(param, handler)` 의 콜백함수(handler)가 호출되었지만, 아래 화면과 같이 화면 내 X 버튼을 클릭했을 때는 콜백함수(handler)가 호출되지 않는 버그가 있어서 수정되었습니다. X 버튼 클릭했을 때에도 콜백함수가 호출됩니다.
+  본인인증(다날) 요청 시, 팝업방식에서 팝업창이 닫히거나 화면 내 취소 버튼이 클릭된 경우에는 `IMP.certification(param, handler)` 의 콜백함수(handler)가 호출되었지만, 아래 화면과 같이 화면 내 X 버튼을 클릭했을 때는 콜백함수(handler)가 호출되지 않는 버그가 있어서 수정되었습니다. X 버튼 클릭했을 때에도 콜백함수가 호출됩니다.
 
-<img src="https://docs.iamport.kr/static/images/javascript/danal-certi.png" alt="" data-size="original"/>
-
+  <img src="https://docs.iamport.kr/static/images/javascript/danal-certi.png" alt="" data-size="original" />
 </Details>
 
-### Version 1.1.5 및 이전 버전
+## Version 1.1.5 및 이전 버전
 
 <Details>
-<p slot="summary">내용 확인하기</p>
+  <p slot="summary">내용 확인하기</p>
 
-**iamport.payment-1.1.5.js**
+  **iamport.payment-1.1.5.js**
 
-```html
-<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
-```
+  ```html
+  <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
+  ```
 
-**2017-04-03 배포**\
-\- 모바일 결제에서 `IMP.request_pay(param)`와 같이 callback function 이 누락된 채 호출되었으나, 결제프로세스 시작 전 사전 필터링 단계에서 실패사유가 발생한 경우에도 `m_redirect_url`로 이동하게 됩니다.\
-\_(결제프로세스가 시작된 후 성공/실패에 대한 경우에는 이전 버전에서도 ,\[object Object],로 이동이 이루어지고 있습니다.)\_
+  **2017-04-03 배포**\
+  \- 모바일 결제에서 `IMP.request_pay(param)`와 같이 callback function 이 누락된 채 호출되었으나, 결제프로세스 시작 전 사전 필터링 단계에서 실패사유가 발생한 경우에도 `m_redirect_url`로 이동하게 됩니다.\
+  \_(결제프로세스가 시작된 후 성공/실패에 대한 경우에는 이전 버전에서도 ,\[object Object],로 이동이 이루어지고 있습니다.)\_
 
-**결제프로세스 시작 전에 발생할 수 있는 실패 사유**
+  **결제프로세스 시작 전에 발생할 수 있는 실패 사유**
 
-- 이미 결제된 merchant\_uid를 재시도하는 경우
-- 결제요청 파라미터가 올바르지 않은 경우
+  - 이미 결제된 merchant\_uid를 재시도하는 경우
+  - 결제요청 파라미터가 올바르지 않은 경우
 
-**결제프로세스 시작 후 발생할 수 있는 실패 사유**
+  **결제프로세스 시작 후 발생할 수 있는 실패 사유**
 
-- 카드 사용 정지, 한도초과
-- 비밀번호 오류 횟수 초과
+  - 카드 사용 정지, 한도초과
+  - 비밀번호 오류 횟수 초과
 
-**iamport.payment-1.1.4.js**
+  **iamport.payment-1.1.4.js**
 
-```html
-<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.4.js" type="text/javascript"></script>
-```
+  ```html
+  <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.4.js" type="text/javascript"></script>
+  ```
 
-**2016-11-14 배포**\
-\- Agency-Tier기능 제공, IMP.agency(고객사식별코드, Tier코드)함수 추가\
-\- SMS휴대폰본인인증 기능 제공, IMP.certification()함수 추가
+  **2016-11-14 배포**\
+  \- Agency-Tier기능 제공, IMP.agency(고객사식별코드, Tier코드)함수 추가\
+  \- SMS휴대폰본인인증 기능 제공, IMP.certification()함수 추가
 
-**iamport.payment-1.1.3.js**
+  **iamport.payment-1.1.3.js**
 
-```html
-<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.3.js" type="text/javascript"></script>
-```
+  ```html
+  <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.3.js" type="text/javascript"></script>
+  ```
 
-**2016-07-13 배포**\
-\- 1.1.2버전 소스리팩토링, 성능개선된 버전
+  **2016-07-13 배포**\
+  \- 1.1.2버전 소스리팩토링, 성능개선된 버전
 
-**iamport.payment-1.1.2.js**
+  **iamport.payment-1.1.2.js**
 
-```html
-<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.2.js" type="text/javascript"></script>
-```
+  ```html
+  <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.2.js" type="text/javascript"></script>
+  ```
 
-**2016-03-09 배포**\
-\- 복수의 PG설정정보를 호출하는 방법을 보다 개선한 버전
+  **2016-03-09 배포**\
+  \- 복수의 PG설정정보를 호출하는 방법을 보다 개선한 버전
 
-**iamport.payment-1.1.1.js**
+  **iamport.payment-1.1.1.js**
 
-```html
-<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.1.js" type="text/javascript"></script>
-```
+  ```html
+  <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.1.js" type="text/javascript"></script>
+  ```
 
-**2016-02-19 배포**\
-\- 동일한 PG의 MID를 여러개 사용할 수 있도록 pg파라미터 설정 규칙 확장. pg : '\{PG사}.\{MID}'
+  **2016-02-19 배포**\
+  \- 동일한 PG의 MID를 여러개 사용할 수 있도록 pg파라미터 설정 규칙 확장. pg : '\{PG사}.\{MID}'
 
-**iamport.payment-1.1.0.js**
+  **iamport.payment-1.1.0.js**
 
-```html
-<script src="https://cdn.iamport.kr/js/iamport.payment-1.1.0.js" type="text/javascript"></script>
-```
+  ```html
+  <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.0.js" type="text/javascript"></script>
+  ```
 
-**2016-01-19 배포**\
-\- 하나의 계정으로 복수의 PG설정을 사용할 수 있도록 pg 파라미터를 추가. pg : '\{PG사}'
+  **2016-01-19 배포**\
+  \- 하나의 계정으로 복수의 PG설정을 사용할 수 있도록 pg 파라미터를 추가. pg : '\{PG사}'
 
-**iamport.payment-1.0.0.js**
+  **iamport.payment-1.0.0.js**
 
-```html
-<script src="https://cdn.iamport.kr/js/iamport.payment-1.0.0.js" type="text/javascript"></script>
-```
+  ```html
+  <script src="https://cdn.iamport.kr/js/iamport.payment-1.0.0.js" type="text/javascript"></script>
+  ```
 
-**2014-10-24 배포**\
-\- 최초 배포된 후 안정화된 버전
+  **2014-10-24 배포**\
+  \- 최초 배포된 후 안정화된 버전
 
-**iamport.payment.js**
+  **iamport.payment.js**
 
-```html
-<script src="https://cdn.iamport.kr/js/iamport.payment.js" type="text/javascript"></script>
-```
+  ```html
+  <script src="https://cdn.iamport.kr/js/iamport.payment.js" type="text/javascript"></script>
+  ```
 
-versioning되기 전 사용된 버전. iamport.payment-1.0.0.js와 동일하며 이후 내용 변경 없음
-
+  versioning되기 전 사용된 버전. iamport.payment-1.0.0.js와 동일하며 이후 내용 변경 없음
 </Details>

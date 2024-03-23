@@ -3,9 +3,8 @@ title: 파트너정산 사용예제
 description: 파트너정산 API의 사용방법을 확인할 수 있습니다
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 ## 고객사 예시
 
@@ -26,81 +25,78 @@ B = 20% 중개 수수료, 정산주기 d+2, 매월 31일, 전 영업일 기준
 주문금액 : 10,000원, 결제금액 : 10,000원 , 판매 파트너 : A, 정산시작일 (결제완료 시점): 2023-08-11
 
 <Tabs>
-<Tab title = "python">
+  <Tab title="python">
+    ```python
+    import requests
+    # v2 api 인증 토큰 발급 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
+    headers = {
+            'Content-Type': 'application/json'
+        }
+    # 발급받으신 API key를 입력해주세요
+    payload = {
+            'apiKey': '[API_KEY]'
+        }
 
-```python
-import requests
-# v2 api 인증 토큰 발급 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
-headers = {
-        'Content-Type': 'application/json'
-    }
-# 발급받으신 API key를 입력해주세요
-payload = {
-        'apiKey': '[API_KEY]'
-    }
+    response = requests.post('https://api.portone.io/login/api-key', headers=headers, json=payload)
+    token = response.json()['token']
 
-response = requests.post('https://api.portone.io/login/api-key', headers=headers, json=payload)
-token = response.json()['token']
+    # ... 결제 요청 및 결제 완료 로직 생략. 포트원 결제일경우 (참고: https://developers.portone.io/docs/ko/auth/guide/readme)
 
-# ... 결제 요청 및 결제 완료 로직 생략. 포트원 결제일경우 (참고: https://developers.portone.io/docs/ko/auth/guide/readme)
+    # 주문 정산 요청
 
-# 주문 정산 요청
-
-orderTransferData ={
-"partnerId": "partner_A", # 파트너 A 파트너 아이디 등록 가정
-"paymentId": "payment_1", # 포트원 결제시 고객사 주문번호 (merchant_uid)
-"orderDetail": {
-"orderAmount": 10000,
-},
-"settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-"isForTest": False # 테스트 정산 여부
-}
-
-headers = {
-"Authorization": f"Bearer {token}",
-'Content-Type': 'application/json'
-}
-
-orderTransferResponse =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData)
-
-```
-
-</Tab>
-<Tab title = "node">
-
-```javascript
-const axios = require("axios");
-
-// v2 api 인증 토큰 발급 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
-const token = "YOUR_TOKEN"; // Replace with your token
-
-// 주문 정산 요청
-const orderTransferData = {
-  partnerId: "partner_A", // 파트너 A 파트너 아이디 등록 가정
-  paymentId: "payment_1", // 포트원 결제시 고객사 주문번호 (merchant_uid)입력
-  orderDetail: {
-    orderAmount: 10000,
-  },
-  settlementStartDate: null, // 결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-  isForTest: false, // 테스트 정산 여부
-};
-
-axios
-  .post("https://api.portone.io/platform/transfer/order", orderTransferData, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+    orderTransferData ={
+    "partnerId": "partner_A", # 파트너 A 파트너 아이디 등록 가정
+    "paymentId": "payment_1", # 포트원 결제시 고객사 주문번호 (merchant_uid)
+    "orderDetail": {
+    "orderAmount": 10000,
     },
-  })
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.error("Error:", error.response.data);
-  });
-```
+    "settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+    "isForTest": False # 테스트 정산 여부
+    }
 
-</Tab>
+    headers = {
+    "Authorization": f"Bearer {token}",
+    'Content-Type': 'application/json'
+    }
+
+    orderTransferResponse =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData)
+
+    ```
+  </Tab>
+
+  <Tab title="node">
+    ```javascript
+    const axios = require("axios");
+
+    // v2 api 인증 토큰 발급 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
+    const token = "YOUR_TOKEN"; // Replace with your token
+
+    // 주문 정산 요청
+    const orderTransferData = {
+      partnerId: "partner_A", // 파트너 A 파트너 아이디 등록 가정
+      paymentId: "payment_1", // 포트원 결제시 고객사 주문번호 (merchant_uid)입력
+      orderDetail: {
+        orderAmount: 10000,
+      },
+      settlementStartDate: null, // 결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+      isForTest: false, // 테스트 정산 여부
+    };
+
+    axios
+      .post("https://api.portone.io/platform/transfer/order", orderTransferData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error.response.data);
+      });
+    ```
+  </Tab>
 </Tabs>
 
 **Response (snippet)**
@@ -158,82 +154,79 @@ axios
 취소금액 : 5,000원, 결제 취소금액 : 5,000원 , 판매 파트너 : A, 정산시작일 (결제 취소 완료 시점): 2023-08-12
 
 <Tabs>
-<Tab title = "python">
+  <Tab title="python">
+    ```python
+    # 결제 취소 후 취소아이디를 받아옵니다.
+    # 결제취소 아이디 (cancellation_id) 는 v2 api를 통해 발급 가능하며 #결제-취소(POST https://api.portone.io/v2/payments/{payment_id}/cancel),
+    # #결제내역-단건조회 (GET https://api.portone.io/v2/payments) api를 통해 받으실 수 있습니다.
+    # (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
+    # 구현 생략.
 
-```python
-# 결제 취소 후 취소아이디를 받아옵니다.
-# 결제취소 아이디 (cancellation_id) 는 v2 api를 통해 발급 가능하며 #결제-취소(POST https://api.portone.io/v2/payments/{payment_id}/cancel),
-# #결제내역-단건조회 (GET https://api.portone.io/v2/payments) api를 통해 받으실 수 있습니다.
-# (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
-# 구현 생략.
-
-# 주문취소 정산 요청
-orderCancelTransferData ={
-"partnerId": "partner_A",
-"paymentId": "payment_1", # 기존 결제의 고객사 주문번호 (merchant_uid)
-"cancellationId": "cancellation_1", # 포트원 결제시 결제 취소 아이디 (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
-"orderDetail": {
-"orderAmount": 5000,
-},
-"settlementStartDate": None, #결제취소 완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-"isForTest": False # 테스트 정산 여부
-}
-
-headers = {
-"Authorization": f"Bearer {token}",
-'Content-Type': 'application/json'
-}
-
-orderCancelTransferResponse =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderCancelTransferData)
-```
-
-</Tab>
-<Tab title = "node">
-
-```javascript
-const axios = require("axios");
-
-// 결제 취소 후 취소아이디를 받아옵니다.
-// 결제취소 아이디 (cancellation_id) 는 v2 api를 통해 발급 가능하며
-// 결제-취소(POST https://api.portone.io/v2/payments/{payment_id}/cancel),
-// 결제내역-단건조회 (GET https://api.portone.io/v2/payments) api를 통해 받으실 수 있습니다.
-// (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
-// 구현 생략.
-
-const token = "YOUR_TOKEN"; // Replace with your token
-
-// 주문취소 정산 요청
-const orderCancelTransferData = {
-  partnerId: "partner_A",
-  paymentId: "payment_1", // 기존 결제의 고객사 주문번호 (merchant_uid)
-  cancellationId: "cancellation_1", // 포트원 결제시 결제 취소 아이디 (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
-  orderDetail: {
-    orderAmount: 5000,
-  },
-  settlementStartDate: null, // 결제취소 완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-  isForTest: false, // 테스트 정산 여부
-};
-
-axios
-  .post(
-    "https://api.portone.io/platform/transfer/order",
-    orderCancelTransferData,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    # 주문취소 정산 요청
+    orderCancelTransferData ={
+    "partnerId": "partner_A",
+    "paymentId": "payment_1", # 기존 결제의 고객사 주문번호 (merchant_uid)
+    "cancellationId": "cancellation_1", # 포트원 결제시 결제 취소 아이디 (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
+    "orderDetail": {
+    "orderAmount": 5000,
+    },
+    "settlementStartDate": None, #결제취소 완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+    "isForTest": False # 테스트 정산 여부
     }
-  )
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.error("Error:", error.response.data);
-  });
-```
 
-</Tab>
+    headers = {
+    "Authorization": f"Bearer {token}",
+    'Content-Type': 'application/json'
+    }
+
+    orderCancelTransferResponse =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderCancelTransferData)
+    ```
+  </Tab>
+
+  <Tab title="node">
+    ```javascript
+    const axios = require("axios");
+
+    // 결제 취소 후 취소아이디를 받아옵니다.
+    // 결제취소 아이디 (cancellation_id) 는 v2 api를 통해 발급 가능하며
+    // 결제-취소(POST https://api.portone.io/v2/payments/{payment_id}/cancel),
+    // 결제내역-단건조회 (GET https://api.portone.io/v2/payments) api를 통해 받으실 수 있습니다.
+    // (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
+    // 구현 생략.
+
+    const token = "YOUR_TOKEN"; // Replace with your token
+
+    // 주문취소 정산 요청
+    const orderCancelTransferData = {
+      partnerId: "partner_A",
+      paymentId: "payment_1", // 기존 결제의 고객사 주문번호 (merchant_uid)
+      cancellationId: "cancellation_1", // 포트원 결제시 결제 취소 아이디 (참고: https://developers.portone.io/docs/ko/api-v2/payment/)
+      orderDetail: {
+        orderAmount: 5000,
+      },
+      settlementStartDate: null, // 결제취소 완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+      isForTest: false, // 테스트 정산 여부
+    };
+
+    axios
+      .post(
+        "https://api.portone.io/platform/transfer/order",
+        orderCancelTransferData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error.response.data);
+      });
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -290,101 +283,98 @@ axios
 판매 파트너 : A, 정산시작일 (결제완료 시점): 2023-08-11
 
 <Tabs>
-<Tab title = "python">
-
-```python
-# 위 주문정산 1과 차이나는 부분만 기재하였습니다.
-orderTransferData ={
-  ## 생략 ...
-  "orderDetail":{
-    "orderLines":[
-      {
-        "product": {
-          "id": "product_A", # 상품 아이디
-          "name": "상품 A", # 상품 명
-          "amount": 2000, # 상품 가격
-          "tag": "과일", # 상품 태그 에시
-        },
-        "quantity": 5,
-        "discounts": [], # 해당 상품에만 적용되는 할인정보
-        "additionalFees": [], # 해당 상품에만 적용되는 추가 수수료 정보
-      },
-      {
-        "product": {
-          "id": "product_B", # 상품 아이시
-          "name": "상품 B", # 상품 명
-          "amount": 4000, # 상품 가격
-          "tag": "과일", # 상품 태그 예시
-        },
-        "quantity": 1,
-        "discounts": [], # 해당 상품에만 적용되는 할인정보
-        "additionalFees": [], # 해당 상품에만 적용되는 추가 수수료 정보
+  <Tab title="python">
+    ```python
+    # 위 주문정산 1과 차이나는 부분만 기재하였습니다.
+    orderTransferData ={
+      ## 생략 ...
+      "orderDetail":{
+        "orderLines":[
+          {
+            "product": {
+              "id": "product_A", # 상품 아이디
+              "name": "상품 A", # 상품 명
+              "amount": 2000, # 상품 가격
+              "tag": "과일", # 상품 태그 에시
+            },
+            "quantity": 5,
+            "discounts": [], # 해당 상품에만 적용되는 할인정보
+            "additionalFees": [], # 해당 상품에만 적용되는 추가 수수료 정보
+          },
+          {
+            "product": {
+              "id": "product_B", # 상품 아이시
+              "name": "상품 B", # 상품 명
+              "amount": 4000, # 상품 가격
+              "tag": "과일", # 상품 태그 예시
+            },
+            "quantity": 1,
+            "discounts": [], # 해당 상품에만 적용되는 할인정보
+            "additionalFees": [], # 해당 상품에만 적용되는 추가 수수료 정보
+          }
+        ]
       }
-    ]
-  }
-  ## 생략 ...
-  }
+      ## 생략 ...
+      }
 
-orderTransferResponse =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData)
+    orderTransferResponse =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData)
 
-```
+    ```
+  </Tab>
 
-</Tab>
-<Tab title = "node">
+  <Tab title="node">
+    ```javascript
+    const axios = require("axios");
 
-```javascript
-const axios = require("axios");
-
-// 위 주문정산 1과 차이나는 부분만 기재하였습니다.
-const orderTransferData = {
-  // ... 생략 ...
-  orderDetail: {
-    orderLines: [
-      {
-        product: {
-          id: "product_A", // 상품 아이디
-          name: "상품 A", // 상품 명
-          amount: 2000, // 상품 가격
-          tag: "과일", // 상품 태그 에시
-        },
-        quantity: 5,
-        discounts: [], // 해당 상품에만 적용되는 할인정보
-        additionalFees: [], // 해당 상품에만 적용되는 추가 수수료 정보
+    // 위 주문정산 1과 차이나는 부분만 기재하였습니다.
+    const orderTransferData = {
+      // ... 생략 ...
+      orderDetail: {
+        orderLines: [
+          {
+            product: {
+              id: "product_A", // 상품 아이디
+              name: "상품 A", // 상품 명
+              amount: 2000, // 상품 가격
+              tag: "과일", // 상품 태그 에시
+            },
+            quantity: 5,
+            discounts: [], // 해당 상품에만 적용되는 할인정보
+            additionalFees: [], // 해당 상품에만 적용되는 추가 수수료 정보
+          },
+          {
+            product: {
+              id: "product_B", // 상품 아이시
+              name: "상품 B", // 상품 명
+              amount: 4000, // 상품 가격
+              tag: "과일", // 상품 태그 예시
+            },
+            quantity: 1,
+            discounts: [], // 해당 상품에만 적용되는 할인정보
+            additionalFees: [], // 해당 상품에만 적용되는 추가 수수료 정보
+          },
+        ],
       },
-      {
-        product: {
-          id: "product_B", // 상품 아이시
-          name: "상품 B", // 상품 명
-          amount: 4000, // 상품 가격
-          tag: "과일", // 상품 태그 예시
-        },
-        quantity: 1,
-        discounts: [], // 해당 상품에만 적용되는 할인정보
-        additionalFees: [], // 해당 상품에만 적용되는 추가 수수료 정보
-      },
-    ],
-  },
-  // ... 생략 ...
-};
+      // ... 생략 ...
+    };
 
-const headers = {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${token}`, // Replace with your token
-};
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // Replace with your token
+    };
 
-axios
-  .post("https://api.portone.io/platform/transfer/order", orderTransferData, {
-    headers: headers,
-  })
-  .then((response) => {
-    console.log(response.data);
-  })
-  .catch((error) => {
-    console.error("Error:", error.response.data);
-  });
-```
-
-</Tab>
+    axios
+      .post("https://api.portone.io/platform/transfer/order", orderTransferData, {
+        headers: headers,
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error.response.data);
+      });
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -497,101 +487,101 @@ axios
 상품별 정산 파트너를 지정할 수 있도록 개선할 예정입니다.)
 
 <Tabs>
-<Tab title = "python">
-```python
-# ... 결제 요청 및 결제 완료 로직 생략. 포트원 결제일경우 (참고: https://developers.portone.io/docs/ko/auth/guide/readme)
+  <Tab title="python">
+    ```python
+    # ... 결제 요청 및 결제 완료 로직 생략. 포트원 결제일경우 (참고: https://developers.portone.io/docs/ko/auth/guide/readme)
 
-# 주문건에 대해서 주문금액 기준으로 직접 파트너별로 분리하여 정산건을 생성합니다.
+    # 주문건에 대해서 주문금액 기준으로 직접 파트너별로 분리하여 정산건을 생성합니다.
 
-orderTransferData_A ={
-"partnerId": "partner_A", # 파트너 A 파트너 아이디 등록 가정
-"paymentId": "payment_3", # 포트원 결제시 고객사 주문번호 (merchant_uid)
-"orderDetail": {
-"orderAmount": 5000,
-},
-"settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-"isForTest": False # 테스트 정산 여부
-}
+    orderTransferData_A ={
+    "partnerId": "partner_A", # 파트너 A 파트너 아이디 등록 가정
+    "paymentId": "payment_3", # 포트원 결제시 고객사 주문번호 (merchant_uid)
+    "orderDetail": {
+    "orderAmount": 5000,
+    },
+    "settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+    "isForTest": False # 테스트 정산 여부
+    }
 
-headers = {
-"Authorization": f"Bearer {token}",
-'Content-Type': 'application/json'
-}
+    headers = {
+    "Authorization": f"Bearer {token}",
+    'Content-Type': 'application/json'
+    }
 
-orderTransferResponse_A =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData_A)
+    orderTransferResponse_A =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData_A)
 
-orderTransferData_B ={
-"partnerId": "partner_B", # 파트너 B 파트너 아이디 등록 가정
-"paymentId": "payment_3", # 포트원 결제시 고객사 주문번호 (merchant_uid)
-"orderDetail": {
-"orderAmount": 5000,
-},
-"settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-"isForTest": False # 테스트 정산 여부
-}
+    orderTransferData_B ={
+    "partnerId": "partner_B", # 파트너 B 파트너 아이디 등록 가정
+    "paymentId": "payment_3", # 포트원 결제시 고객사 주문번호 (merchant_uid)
+    "orderDetail": {
+    "orderAmount": 5000,
+    },
+    "settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+    "isForTest": False # 테스트 정산 여부
+    }
 
-orderTransferResponse_B =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData_B)
+    orderTransferResponse_B =requests.post('https://api.portone.io/platform/transfer/order', headers=headers, json=orderTransferData_B)
 
-````
+    ```
+  </Tab>
 
-</Tab>
-<Tab title = 'Node'>
-```javascript
-const axios = require('axios');
+  <Tab title="Node">
+    ```javascript
+    const axios = require("axios");
 
-// ... 결제 요청 및 결제 완료 로직 생략. 포트원 결제일경우 (참고: https://developers.portone.io/docs/ko/auth/guide/readme)
+    // ... 결제 요청 및 결제 완료 로직 생략. 포트원 결제일경우 (참고: https://developers.portone.io/docs/ko/auth/guide/readme)
 
-// 주문건에 대해서 주문금액 기준으로 직접 파트너별로 분리하여 정산건을 생성합니다.
+    // 주문건에 대해서 주문금액 기준으로 직접 파트너별로 분리하여 정산건을 생성합니다.
 
-const orderTransferData_A = {
-  partnerId: "partner_A", // 파트너 A 파트너 아이디 등록 가정
-  paymentId: "payment_3", // 포트원 결제시 고객사 주문번호 (merchant_uid)
-  orderDetail: {
-    orderAmount: 5000
-  },
-  settlementStartDate: null, //결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-  isForTest: false // 테스트 정산 여부
-};
+    const orderTransferData_A = {
+      partnerId: "partner_A", // 파트너 A 파트너 아이디 등록 가정
+      paymentId: "payment_3", // 포트원 결제시 고객사 주문번호 (merchant_uid)
+      orderDetail: {
+        orderAmount: 5000,
+      },
+      settlementStartDate: null, //결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+      isForTest: false, // 테스트 정산 여부
+    };
 
-const orderTransferData_B = {
-  partnerId: "partner_B", // 파트너 B 파트너 아이디 등록 가정
-  paymentId: "payment_3", // 포트원 결제시 고객사 주문번호 (merchant_uid)
-  orderDetail: {
-    orderAmount: 5000
-  },
-  settlementStartDate: null, //결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-  isForTest: false // 테스트 정산 여부
-};
+    const orderTransferData_B = {
+      partnerId: "partner_B", // 파트너 B 파트너 아이디 등록 가정
+      paymentId: "payment_3", // 포트원 결제시 고객사 주문번호 (merchant_uid)
+      orderDetail: {
+        orderAmount: 5000,
+      },
+      settlementStartDate: null, //결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+      isForTest: false, // 테스트 정산 여부
+    };
 
-const headers = {
-  Authorization: `Bearer ${token}`,
-  'Content-Type': 'application/json'
-};
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
 
-async function sendOrderTransfer(data) {
-  try {
-    const response = await axios.post('https://api.portone.io/platform/transfer/order', data, {
-      headers: headers
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error sending order transfer:', error);
-  }
-}
+    async function sendOrderTransfer(data) {
+      try {
+        const response = await axios.post(
+          "https://api.portone.io/platform/transfer/order",
+          data,
+          {
+            headers: headers,
+          },
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error sending order transfer:", error);
+      }
+    }
 
-(async () => {
-  const orderTransferResponse_A = await sendOrderTransfer(orderTransferData_A);
-  console.log(orderTransferResponse_A);
+    (async () => {
+      const orderTransferResponse_A = await sendOrderTransfer(orderTransferData_A);
+      console.log(orderTransferResponse_A);
 
-  const orderTransferResponse_B = await sendOrderTransfer(orderTransferData_B);
-  console.log(orderTransferResponse_B);
-})();
-
-```
-
-```
-```
-</Tab>
+      const orderTransferResponse_B = await sendOrderTransfer(orderTransferData_B);
+      console.log(orderTransferResponse_B);
+    })();
+    ```
+  </Tab>
 </Tabs>
 
 ### 주문 정산 할인 반영
@@ -604,70 +594,80 @@ async function sendOrderTransfer(data) {
 `discounts` 파라미터에 `sharePolicyId` 와 `amount` (할인금액) 을 전달하시면 됩니다을
 
 <Tabs>
-<Tab title = "python">
-```python
+  <Tab title="python">
+    ```python
 
-orderTransfer_payload = {
-"partnerId": "partnerA", # 파트너 A 파트너 아이디 등록 가정
-"paymentId": "payment_4", # 포트원 결제시 고객사 주문번호 (merchant_uid)
-"orderDetail": {
-    "orderAmount": 10000, # 주문금액
-  },
-"settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-"isForTest": False, # 테스트 정산 여부
-"discounts": [ # 주문에 적용될 할인 정책. 리스트로써 할인 유형별 여러개를 전달하실 수 있습니다.
-  {
-    "sharePolicyId": "discount_2", # 할인 정책 아이디
-    "amount": 2000 # 할인 금액
-  }
-]
-}
-
-orderTransfer_A = post_platform_api(token, 'platform/transfers/order', orderTransfer_payload)
-```
-</Tab>
-<Tab title = 'node'>
-```javascript
-const axios = require('axios');
-
-const orderTransfer_payload = {
-  partnerId: "partnerA", // 파트너 A 파트너 아이디 등록 가정
-  paymentId: "payment_4", // 포트원 결제시 고객사 주문번호 (merchant_uid)
-  orderDetail: {
-    orderAmount: 10000, // 주문금액
-  },
-  settlementStartDate: null, //결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-  isForTest: false, // 테스트 정산 여부
-  discounts: [ // 주문에 적용될 할인 정책. 리스트로써 할인 유형별 여러개를 전달하실 수 있습니다.
-    {
-      sharePolicyId: "discount_2", // 할인 정책 아이디
-      amount: 2000 // 할인 금액
+    orderTransfer_payload = {
+    "partnerId": "partnerA", # 파트너 A 파트너 아이디 등록 가정
+    "paymentId": "payment_4", # 포트원 결제시 고객사 주문번호 (merchant_uid)
+    "orderDetail": {
+        "orderAmount": 10000, # 주문금액
+      },
+    "settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+    "isForTest": False, # 테스트 정산 여부
+    "discounts": [ # 주문에 적용될 할인 정책. 리스트로써 할인 유형별 여러개를 전달하실 수 있습니다.
+      {
+        "sharePolicyId": "discount_2", # 할인 정책 아이디
+        "amount": 2000 # 할인 금액
+      }
+    ]
     }
-  ]
-};
 
-const headers = {
-  Authorization: `Bearer ${token}`,
-  'Content-Type': 'application/json'
-};
+    orderTransfer_A = post_platform_api(token, 'platform/transfers/order', orderTransfer_payload)
+    ```
+  </Tab>
 
-async function post_platform_api(token, endpoint, payload) {
-  try {
-    const response = await axios.post(`https://api.portone.io/${endpoint}`, payload, {
-      headers: headers
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error posting to platform API:', error);
-  }
-}
+  <Tab title="node">
+    ```javascript
+    const axios = require("axios");
 
-(async () => {
-  const orderTransfer_A = await post_platform_api(token, 'platform/transfers/order', orderTransfer_payload);
-  console.log(orderTransfer_A);
-})();
-```
-</Tab>
+    const orderTransfer_payload = {
+      partnerId: "partnerA", // 파트너 A 파트너 아이디 등록 가정
+      paymentId: "payment_4", // 포트원 결제시 고객사 주문번호 (merchant_uid)
+      orderDetail: {
+        orderAmount: 10000, // 주문금액
+      },
+      settlementStartDate: null, //결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+      isForTest: false, // 테스트 정산 여부
+      discounts: [
+        // 주문에 적용될 할인 정책. 리스트로써 할인 유형별 여러개를 전달하실 수 있습니다.
+        {
+          sharePolicyId: "discount_2", // 할인 정책 아이디
+          amount: 2000, // 할인 금액
+        },
+      ],
+    };
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+
+    async function post_platform_api(token, endpoint, payload) {
+      try {
+        const response = await axios.post(
+          `https://api.portone.io/${endpoint}`,
+          payload,
+          {
+            headers: headers,
+          },
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error posting to platform API:", error);
+      }
+    }
+
+    (async () => {
+      const orderTransfer_A = await post_platform_api(
+        token,
+        "platform/transfers/order",
+        orderTransfer_payload,
+      );
+      console.log(orderTransfer_A);
+    })();
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -742,69 +742,77 @@ async function post_platform_api(token, endpoint, payload) {
 `additionalFees` 파라미터에 `policyId` 를 전달하시면 됩니다.
 
 <Tabs>
-<Tab title = 'python'>
-```python
-orderTransfer_payload = {
-"partnerId": "partnerA", # 파트너 A 파트너 아이디 등록 가정
-"paymentId": "payment_5", # 포트원 결제시 고객사 주문번호 (merchant_uid)
-"orderDetail": {
-    "orderAmount": 10000, # 주문금액
-  },
-"settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-"isForTest": False, # 테스트 정산 여부
-"additionalFees": [ # 주문에 추가수수료 정책들. 리스트로써 여러개를 전달하실 수 있습니다.
-  {
-    "policyId": "addtional_fee_3", # 추가수수료 정책 아이디
-  }
-]
-}
+  <Tab title="python">
+    ```python
+    orderTransfer_payload = {
+    "partnerId": "partnerA", # 파트너 A 파트너 아이디 등록 가정
+    "paymentId": "payment_5", # 포트원 결제시 고객사 주문번호 (merchant_uid)
+    "orderDetail": {
+        "orderAmount": 10000, # 주문금액
+      },
+    "settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+    "isForTest": False, # 테스트 정산 여부
+    "additionalFees": [ # 주문에 추가수수료 정책들. 리스트로써 여러개를 전달하실 수 있습니다.
+      {
+        "policyId": "addtional_fee_3", # 추가수수료 정책 아이디
+      }
+    ]
+    }
 
-orderTransfer_A = post_platform_api(token, 'platform/transfers/order', orderTransfer_payload)
-```
-</Tab>
-<Tab title = 'node'>
-```javascript
-const axios = require('axios');
+    orderTransfer_A = post_platform_api(token, 'platform/transfers/order', orderTransfer_payload)
+    ```
+  </Tab>
 
-async function postPlatformApi(token, endpoint, payload) {
-    const baseURL = 'https://api.portone.io/';
-    const headers = {
-        "Authorization": `Bearer ${token}`,
-        'Content-Type': 'application/json'
+  <Tab title="node">
+    ```javascript
+    const axios = require("axios");
+
+    async function postPlatformApi(token, endpoint, payload) {
+      const baseURL = "https://api.portone.io/";
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+
+      try {
+        const response = await axios.post(baseURL + endpoint, payload, {
+          headers: headers,
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Error posting data:", error);
+      }
+    }
+
+    const token = "YOUR_TOKEN_HERE";
+
+    const orderTransferPayload = {
+      partnerId: "partnerA", // 파트너 A 파트너 아이디 등록 가정
+      paymentId: "payment_5", // 포트원 결제시 고객사 주문번호 (merchant_uid)
+      orderDetail: {
+        orderAmount: 10000, // 주문금액
+      },
+      settlementStartDate: null, //결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+      isForTest: false, // 테스트 정산 여부
+      additionalFees: [
+        // 주문에 추가수수료 정책들. 리스트로써 여러개를 전달하실 수 있습니다.
+        {
+          policyId: "addtional_fee_3", // 추가수수료 정책 아이디
+        },
+      ],
     };
 
-    try {
-        const response = await axios.post(baseURL + endpoint, payload, { headers: headers });
-        return response.data;
-    } catch (error) {
-        console.error("Error posting data:", error);
-    }
-}
-
-const token = 'YOUR_TOKEN_HERE';
-
-const orderTransferPayload = {
-    "partnerId": "partnerA", // 파트너 A 파트너 아이디 등록 가정
-    "paymentId": "payment_5", // 포트원 결제시 고객사 주문번호 (merchant_uid)
-    "orderDetail": {
-        "orderAmount": 10000, // 주문금액
-    },
-    "settlementStartDate": null, //결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-    "isForTest": false, // 테스트 정산 여부
-    "additionalFees": [ // 주문에 추가수수료 정책들. 리스트로써 여러개를 전달하실 수 있습니다.
-        {
-            "policyId": "addtional_fee_3", // 추가수수료 정책 아이디
-        }
-    ]
-};
-
-// Using the function
-(async () => {
-    const orderTransferA = await postPlatformApi(token, 'platform/transfers/order', orderTransferPayload);
-    console.log(orderTransferA);
-})();
-```
-</Tab>
+    // Using the function
+    (async () => {
+      const orderTransferA = await postPlatformApi(
+        token,
+        "platform/transfers/order",
+        orderTransferPayload,
+      );
+      console.log(orderTransferA);
+    })();
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -878,84 +886,90 @@ const orderTransferPayload = {
 `externalPaymentDetail` 에 결제정보를 전달주시면 됩니다! `payment_id` 는 고객사 고유 주문번호로 전달해주시면 됩니다.
 
 <Tabs>
-<Tab title = 'python'>
-```python
-orderTransfer_payload = {
-"partnerId": "partnerA", # 파트너 A 파트너 아이디 등록 가정
-"paymentId": "payment_5", # 포트원 결제시 고객사 주문번호 (merchant_uid)
-"orderDetail": {
-    "orderAmount": 10000, # 주문금액
-  },
-"settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-"isForTest": False, # 테스트 정산 여부
-"externalPaymentDetail": { # 포트원 결제가 아닌 주문 정산시 전달하시면 됩니다.
-    "currency": "KRW", # 결제 통화 정보
-    "orderName": "테스트 주문",
-    "paidAt": "2023-08-11T08:21:01.241Z", # 결제 완료 시점. settlementStartDate을 전달하지 않으실경우 꼭 전달하셔야 됩니다.
-    "method": {
-      "card": {},
+  <Tab title="python">
+    ```python
+    orderTransfer_payload = {
+    "partnerId": "partnerA", # 파트너 A 파트너 아이디 등록 가정
+    "paymentId": "payment_5", # 포트원 결제시 고객사 주문번호 (merchant_uid)
+    "orderDetail": {
+        "orderAmount": 10000, # 주문금액
+      },
+    "settlementStartDate": None, #결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+    "isForTest": False, # 테스트 정산 여부
+    "externalPaymentDetail": { # 포트원 결제가 아닌 주문 정산시 전달하시면 됩니다.
+        "currency": "KRW", # 결제 통화 정보
+        "orderName": "테스트 주문",
+        "paidAt": "2023-08-11T08:21:01.241Z", # 결제 완료 시점. settlementStartDate을 전달하지 않으실경우 꼭 전달하셔야 됩니다.
+        "method": {
+          "card": {},
+        }
+      },
+    "additionalFees": [ # 주문에 추가수수료 정책들. 리스트로써 여러개를 전달하실 수 있습니다.
+      {
+        "policyId": "addtional_fee_3", # 추가수수료 정책 아이디
+      }
+    ]
     }
-  },
-"additionalFees": [ # 주문에 추가수수료 정책들. 리스트로써 여러개를 전달하실 수 있습니다.
-  {
-    "policyId": "addtional_fee_3", # 추가수수료 정책 아이디
-  }
-]
-}
 
-orderTransfer_A = post_platform_api(token, 'platform/transfers/order', orderTransfer_payload)
+    orderTransfer_A = post_platform_api(token, 'platform/transfers/order', orderTransfer_payload)
 
-```
-</Tab>
-<Tab title = 'node'>
-```javascript
-// Assuming you're using Axios for HTTP requests in Node.js. If not, you can replace it with your preferred HTTP client.
-const axios = require('axios');
+    ```
+  </Tab>
 
-const orderTransferPayload = {
-    partnerId: "partnerA", // 파트너 A 파트너 아이디 등록 가정
-    paymentId: "payment_5", // 포트원 결제시 고객사 주문번호 (merchant_uid)
-    orderDetail: {
+  <Tab title="node">
+    ```javascript
+    // Assuming you're using Axios for HTTP requests in Node.js. If not, you can replace it with your preferred HTTP client.
+    const axios = require("axios");
+
+    const orderTransferPayload = {
+      partnerId: "partnerA", // 파트너 A 파트너 아이디 등록 가정
+      paymentId: "payment_5", // 포트원 결제시 고객사 주문번호 (merchant_uid)
+      orderDetail: {
         orderAmount: 10000, // 주문금액
-    },
-    // 결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
-    settlementStartDate: null,
-    isForTest: false, // 테스트 정산 여부
-    externalPaymentDetail: { // 포트원 아닌 결제건 정보
+      },
+      // 결제완료 시점으로 등록을 원하실 경우 전달하지 않으셔도 됩니다.
+      settlementStartDate: null,
+      isForTest: false, // 테스트 정산 여부
+      externalPaymentDetail: {
+        // 포트원 아닌 결제건 정보
         currency: "KRW",
         orderName: "테스트 주문",
         paidAt: "2023-08-11T08:21:01.241Z",
         method: {
-            card: {}
-        }
-    },
-    additionalFees: [ // 주문에 추가수수료 정책들. 리스트로써 여러개를 전달하실 수 있습니다.
+          card: {},
+        },
+      },
+      additionalFees: [
+        // 주문에 추가수수료 정책들. 리스트로써 여러개를 전달하실 수 있습니다.
         {
-            policyId: "addtional_fee_3", // 추가수수료 정책 아이디
-        }
-    ]
-};
+          policyId: "addtional_fee_3", // 추가수수료 정책 아이디
+        },
+      ],
+    };
 
-// Define the `postPlatformApi` function if you haven't already.
-async function postPlatformApi(token, endpoint, data) {
-    try {
+    // Define the `postPlatformApi` function if you haven't already.
+    async function postPlatformApi(token, endpoint, data) {
+      try {
         const response = await axios.post(endpoint, data, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         return response.data;
-    } catch (error) {
+      } catch (error) {
         console.error("Error posting to API:", error);
         return null;
+      }
     }
-}
 
-const token = "YOUR_TOKEN_HERE"; // Replace with your token
-const orderTransferA = postPlatformApi(token, 'platform/transfers/order', orderTransferPayload);
-
-```
-</Tab>
+    const token = "YOUR_TOKEN_HERE"; // Replace with your token
+    const orderTransferA = postPlatformApi(
+      token,
+      "platform/transfers/order",
+      orderTransferPayload,
+    );
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -1016,59 +1030,62 @@ const orderTransferA = postPlatformApi(token, 'platform/transfers/order', orderT
 해당 시점이 정해졌을때 정산 api를 호출하시면 됩니다.
 
 <Tabs>
-<Tab title = 'python'>
-```python
-orderTransfer_payload = {
-"partnerId": "partnerA", # 파트너 A 파트너 아이디 등록 가정
-"paymentId": "payment_6", # 포트원 결제시 고객사 주문번호 (merchant_uid)
-"orderDetail": {
-    "orderAmount": 10000, # 주문금액
-  },
-"settlementStartDate": '2023-09-01', # 배송완료 시점 (예시)
-"isForTest": False, # 테스트 정산 여부
-}
+  <Tab title="python">
+    ```python
+    orderTransfer_payload = {
+    "partnerId": "partnerA", # 파트너 A 파트너 아이디 등록 가정
+    "paymentId": "payment_6", # 포트원 결제시 고객사 주문번호 (merchant_uid)
+    "orderDetail": {
+        "orderAmount": 10000, # 주문금액
+      },
+    "settlementStartDate": '2023-09-01', # 배송완료 시점 (예시)
+    "isForTest": False, # 테스트 정산 여부
+    }
 
-orderTransfer_A = post_platform_api(token, 'platform/transfers/order', orderTransfer_payload)
-```
+    orderTransfer_A = post_platform_api(token, 'platform/transfers/order', orderTransfer_payload)
+    ```
+  </Tab>
 
-</Tab>
-<Tab title = 'node'>
-```javascript
-const axios = require('axios');
+  <Tab title="node">
+    ```javascript
+    const axios = require("axios");
 
-// Define payload
-const orderTransfer_payload = {
-  partnerId: "partnerA",  // 파트너 A 파트너 아이디 등록 가정
-  paymentId: "payment_6",  // 포트원 결제시 고객사 주문번호 (merchant_uid)
-  orderDetail: {
-    orderAmount: 10000  // 주문금액
-  },
-  settlementStartDate: '2023-09-01',  // 배송완료 시점 (예시)
-  isForTest: false,  // 테스트 정산 여부
-};
+    // Define payload
+    const orderTransfer_payload = {
+      partnerId: "partnerA", // 파트너 A 파트너 아이디 등록 가정
+      paymentId: "payment_6", // 포트원 결제시 고객사 주문번호 (merchant_uid)
+      orderDetail: {
+        orderAmount: 10000, // 주문금액
+      },
+      settlementStartDate: "2023-09-01", // 배송완료 시점 (예시)
+      isForTest: false, // 테스트 정산 여부
+    };
 
-// Define function for making the API request
-async function post_platform_api(token, endpoint, data) {
-  try {
-    const response = await axios.post(endpoint, data, {
-      headers: {
-        Authorization: `Bearer ${token}`
+    // Define function for making the API request
+    async function post_platform_api(token, endpoint, data) {
+      try {
+        const response = await axios.post(endpoint, data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Error making API request:", error);
       }
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error making API request:", error);
-  }
-}
+    }
 
-// Make the request
-const token = "YOUR_TOKEN_HERE";
-const endpoint = 'https://api.example.com/platform/transfers/order';  // Replace with your actual endpoint
-const orderTransfer_A = await post_platform_api(token, endpoint, orderTransfer_payload);
-console.log(orderTransfer_A);
-
-```
-</Tab>
+    // Make the request
+    const token = "YOUR_TOKEN_HERE";
+    const endpoint = "https://api.example.com/platform/transfers/order"; // Replace with your actual endpoint
+    const orderTransfer_A = await post_platform_api(
+      token,
+      endpoint,
+      orderTransfer_payload,
+    );
+    console.log(orderTransfer_A);
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -1123,77 +1140,79 @@ console.log(orderTransfer_A);
 계약 1 : 10% 중개 수수료, 정산주기 d+2, 매월 31일, 전 영업일 기준
 
 <Tabs>
-<Tab title = 'python'>
-```python
-# v2 api 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
+  <Tab title="python">
+    ```python
+    # v2 api 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
 
-contract_payload = {
-  "platformFee": {"fixedRate": 10000}, # 10% 수수료. 료율 표시 기준은 1/100000 입니다. 따라서 소수점 5자리까지 표시 가능합니다.
-  "platformFeeVatPayer": "PARTNER", # 부가세 부담 여부. 파트너 부담("PARTNER"), 파트너 미부담("MERCHANT") 가 있습니다.
-  "id": "contractA",
-  "memo": "contract A",
-  "settlementCycle": { #정산주기
-    "lagDays": 2, #정산 지연일 (d+n)일
-    "datePolicy": "HOLIDAY_BEFORE", # 전 영업일 기준
-    "method": { #'daily','weekly','monthly' 'manualDates' 중 하나를 선택하셔야 합니다.
-      'monthly':{"daysOfMonth":[31] # 매월 31일. 31일은 월말 기준으로 합니다.
+    contract_payload = {
+      "platformFee": {"fixedRate": 10000}, # 10% 수수료. 료율 표시 기준은 1/100000 입니다. 따라서 소수점 5자리까지 표시 가능합니다.
+      "platformFeeVatPayer": "PARTNER", # 부가세 부담 여부. 파트너 부담("PARTNER"), 파트너 미부담("MERCHANT") 가 있습니다.
+      "id": "contractA",
+      "memo": "contract A",
+      "settlementCycle": { #정산주기
+        "lagDays": 2, #정산 지연일 (d+n)일
+        "datePolicy": "HOLIDAY_BEFORE", # 전 영업일 기준
+        "method": { #'daily','weekly','monthly' 'manualDates' 중 하나를 선택하셔야 합니다.
+          'monthly':{"daysOfMonth":[31] # 매월 31일. 31일은 월말 기준으로 합니다.
+          }
+          }}
       }
-      }}
-  }
 
-contract_A = post_platform_api(token, 'platform/contracts/', contract_payload)
+    contract_A = post_platform_api(token, 'platform/contracts/', contract_payload)
 
-```
-</Tab>
-<Tab title = 'node'>
-```javascript
-const axios = require('axios');
+    ```
+  </Tab>
 
-// 10% 수수료. 료율 표시 기준은 1/100000 입니다. 따라서 소수점 5자리까지 표시 가능합니다.
-const contract_payload = {
-  platformFee: { fixedRate: 10000 },
-  // 부가세 부담 여부. 파트너 부담("PARTNER"), 파트너 미부담("MERCHANT") 가 있습니다.
-  platformFeeVatPayer: "PARTNER",
-  id: "contractA",
-  memo: "contract A",
-  //정산주기
-  settlementCycle: {
-    //정산 지연일 (d+n)일
-    lagDays: 2,
-    // 전 영업일 기준
-    datePolicy: "HOLIDAY_BEFORE",
-    // 'daily','weekly','monthly' 'manualDates' 중 하나를 선택하셔야 합니다.
-    method: {
-      // 매월 31일. 31일은 월말 기준으로 합니다.
-      monthly: { daysOfMonth: [31] }
+  <Tab title="node">
+    ```javascript
+    const axios = require("axios");
+
+    // 10% 수수료. 료율 표시 기준은 1/100000 입니다. 따라서 소수점 5자리까지 표시 가능합니다.
+    const contract_payload = {
+      platformFee: { fixedRate: 10000 },
+      // 부가세 부담 여부. 파트너 부담("PARTNER"), 파트너 미부담("MERCHANT") 가 있습니다.
+      platformFeeVatPayer: "PARTNER",
+      id: "contractA",
+      memo: "contract A",
+      //정산주기
+      settlementCycle: {
+        //정산 지연일 (d+n)일
+        lagDays: 2,
+        // 전 영업일 기준
+        datePolicy: "HOLIDAY_BEFORE",
+        // 'daily','weekly','monthly' 'manualDates' 중 하나를 선택하셔야 합니다.
+        method: {
+          // 매월 31일. 31일은 월말 기준으로 합니다.
+          monthly: { daysOfMonth: [31] },
+        },
+      },
+    };
+
+    async function post_platform_api(token, endpoint, payload) {
+      const baseURL = "YOUR_API_BASE_URL"; // replace with your actual API base URL
+
+      try {
+        const response = await axios.post(`${baseURL}/${endpoint}`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`, // assuming a Bearer token for authentication
+          },
+        });
+
+        return response.data;
+      } catch (error) {
+        console.error("Error posting data:", error);
+      }
     }
-  }
-};
 
-async function post_platform_api(token, endpoint, payload) {
-  const baseURL = "YOUR_API_BASE_URL";  // replace with your actual API base URL
-
-  try {
-    const response = await axios.post(`${baseURL}/${endpoint}`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`  // assuming a Bearer token for authentication
-      }
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error('Error posting data:', error);
-  }
-}
-
-const token = "YOUR_ACCESS_TOKEN";  // replace with your actual token
-post_platform_api(token, 'platform/contracts/', contract_payload).then(response => {
-  const contract_A = response;
-  console.log(contract_A);
-});
-
-```
-</Tab>
+    const token = "YOUR_ACCESS_TOKEN"; // replace with your actual token
+    post_platform_api(token, "platform/contracts/", contract_payload).then(
+      (response) => {
+        const contract_A = response;
+        console.log(contract_A);
+      },
+    );
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -1228,76 +1247,75 @@ post_platform_api(token, 'platform/contracts/', contract_payload).then(response 
 ### 파트너 생성하기
 
 <Tabs>
-<Tab title = 'python'>
-```python
-# v2 api 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
+  <Tab title="python">
+    ```python
+    # v2 api 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
 
-# 파트너 생성 예시
-partner_payload = {
-  "id": "partnerA", # 파트너 아이디
-  "name": "파이썬 강사", # 파트너 이름 및 사업자명
-  "email": "kjnkyj12@gmail.com",
-  "businessRegistrationNumber": "1178178260", #파트너 사업자 등록번호. 필수는 아닙니다
-  "account": {
-    "bank": "SHINHAN", # 파트너 계좌 은행. 국내 은행일경우 영문 대문자로 보내줘야 하며 이에대한 enum 값을 api문서에서 확인 가능합니다.
-    "currency": "KRW", # 계좌 입금 통화
-    "number": "10358907249", # 계좌 번호
-    "holder": "김준일" # 예금주
-  },
-  "defaultContractId": "contractA", # 해당 파트너에게 적용하길 원하는 대표계약
-  "memo": "잭슨 테스트 예시문",
-  "tags": [
-    "파이썬"
-  ]
-}
+    # 파트너 생성 예시
+    partner_payload = {
+      "id": "partnerA", # 파트너 아이디
+      "name": "파이썬 강사", # 파트너 이름 및 사업자명
+      "email": "kjnkyj12@gmail.com",
+      "businessRegistrationNumber": "1178178260", #파트너 사업자 등록번호. 필수는 아닙니다
+      "account": {
+        "bank": "SHINHAN", # 파트너 계좌 은행. 국내 은행일경우 영문 대문자로 보내줘야 하며 이에대한 enum 값을 api문서에서 확인 가능합니다.
+        "currency": "KRW", # 계좌 입금 통화
+        "number": "10358907249", # 계좌 번호
+        "holder": "김준일" # 예금주
+      },
+      "defaultContractId": "contractA", # 해당 파트너에게 적용하길 원하는 대표계약
+      "memo": "잭슨 테스트 예시문",
+      "tags": [
+        "파이썬"
+      ]
+    }
 
-partner_A = post_platform_api(token, 'platform/partners', partner_payload)
-```
+    partner_A = post_platform_api(token, 'platform/partners', partner_payload)
+    ```
+  </Tab>
 
-</Tab>
-<Tab title = 'node'>
-```javascript
-const axios = require('axios');
+  <Tab title="node">
+    ```javascript
+    const axios = require("axios");
 
-// Define the payload
-const partnerPayload = {
-  "id": "partnerA", // 파트너 아이디
-  "name": "파이썬 강사", // 파트너 이름 및 사업자명
-  "email": "kjnkyj12@gmail.com",
-  "businessRegistrationNumber": "1178178260", // 파트너 사업자 등록번호. 필수는 아닙니다
-  "account": {
-    "bank": "SHINHAN", // 파트너 계좌 은행. 국내 은행일경우 영문 대문자로 보내줘야 하며 이에 대한 enum 값을 api문서에서 확인 가능합니다.
-    "currency": "KRW", // 계좌 입금 통화
-    "number": "10358907249", // 계좌 번호
-    "holder": "김준일" // 예금주
-  },
-  "defaultContractId": "contractA", // 해당 파트너에게 적용하길 원하는 대표계약
-  "memo": "잭슨 테스트 예시문",
-  "tags": ["파이썬"]
-};
-
-// Make a POST request
-const postPlatformApi = async (token, url, payload) => {
-  try {
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+    // Define the payload
+    const partnerPayload = {
+      id: "partnerA", // 파트너 아이디
+      name: "파이썬 강사", // 파트너 이름 및 사업자명
+      email: "kjnkyj12@gmail.com",
+      businessRegistrationNumber: "1178178260", // 파트너 사업자 등록번호. 필수는 아닙니다
+      account: {
+        bank: "SHINHAN", // 파트너 계좌 은행. 국내 은행일경우 영문 대문자로 보내줘야 하며 이에 대한 enum 값을 api문서에서 확인 가능합니다.
+        currency: "KRW", // 계좌 입금 통화
+        number: "10358907249", // 계좌 번호
+        holder: "김준일", // 예금주
+      },
+      defaultContractId: "contractA", // 해당 파트너에게 적용하길 원하는 대표계약
+      memo: "잭슨 테스트 예시문",
+      tags: ["파이썬"],
     };
 
-    const response = await axios.post(url, payload, { headers: headers });
-    console.log('Response:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error posting data:', error);
-  }
-};
+    // Make a POST request
+    const postPlatformApi = async (token, url, payload) => {
+      try {
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
 
-const token = 'YOUR_TOKEN'; // Replace with your actual token
-const url = 'YOUR_API_ENDPOINT/platform/partners'; // Replace with your actual API endpoint
-const partnerA = postPlatformApi(token, url, partnerPayload);
+        const response = await axios.post(url, payload, { headers: headers });
+        console.log("Response:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error posting data:", error);
+      }
+    };
 
-```
-</Tab>
+    const token = "YOUR_TOKEN"; // Replace with your actual token
+    const url = "YOUR_API_ENDPOINT/platform/partners"; // Replace with your actual API endpoint
+    const partnerA = postPlatformApi(token, url, partnerPayload);
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -1336,59 +1354,62 @@ const partnerA = postPlatformApi(token, url, partnerPayload);
 할인 정책 1 : 할인 금액 50% 파트너 분담
 
 <Tabs>
-<Tab title = 'python'>
-```python
-# v2 api 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
+  <Tab title="python">
+    ```python
+    # v2 api 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
 
-# 할인 정책 생성 예시
+    # 할인 정책 생성 예시
 
-discount_payload = {
-  "id": "discount_2", #할인 아이디
-  "partnerShareRate": 50000, # 10^5기준, 50% 분담
-  "memo": "테스트 할인"
-}
+    discount_payload = {
+      "id": "discount_2", #할인 아이디
+      "partnerShareRate": 50000, # 10^5기준, 50% 분담
+      "memo": "테스트 할인"
+    }
 
-discount_2 = post_platform_api(token, 'platform/discount-share-policies', discount_payload)
+    discount_2 = post_platform_api(token, 'platform/discount-share-policies', discount_payload)
 
-```
-</Tab>
-<Tab title = 'javascript'>
-```javascript
-const axios = require('axios');
+    ```
+  </Tab>
 
-// v2 API 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
+  <Tab title="javascript">
+    ```javascript
+    const axios = require("axios");
 
-// 할인 정책 생성 예시
+    // v2 API 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
 
-const discount_payload = {
-  id: "discount_2", //할인 아이디
-  partnerShareRate: 50000, // 10^5기준, 50% 분담
-  memo: "테스트 할인"
-};
+    // 할인 정책 생성 예시
 
-async function post_platform_api(token, endpoint, data) {
-  const baseURL = 'https://api.baseurl.com/'; // Replace with the correct base URL
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  };
+    const discount_payload = {
+      id: "discount_2", //할인 아이디
+      partnerShareRate: 50000, // 10^5기준, 50% 분담
+      memo: "테스트 할인",
+    };
 
-  try {
-    const response = await axios.post(baseURL + endpoint, data, { headers });
-    return response.data;
-  } catch (error) {
-    console.error('Error posting data:', error);
-  }
-}
+    async function post_platform_api(token, endpoint, data) {
+      const baseURL = "https://api.baseurl.com/"; // Replace with the correct base URL
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
 
-const token = 'YOUR_TOKEN_HERE'; // Replace with your actual token
-post_platform_api(token, 'platform/discount-share-policies', discount_payload)
-  .then(data => {
-    console.log('Discount created:', data);
-  });
+      try {
+        const response = await axios.post(baseURL + endpoint, data, { headers });
+        return response.data;
+      } catch (error) {
+        console.error("Error posting data:", error);
+      }
+    }
 
-```
-</Tab>
+    const token = "YOUR_TOKEN_HERE"; // Replace with your actual token
+    post_platform_api(
+      token,
+      "platform/discount-share-policies",
+      discount_payload,
+    ).then((data) => {
+      console.log("Discount created:", data);
+    });
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -1413,25 +1434,25 @@ post_platform_api(token, 'platform/discount-share-policies', discount_payload)
 추가수수료 정책 1 : 추가수수료 5% 파트너 분담
 
 <Tabs>
-<Tab title = 'python'>
-```python
+  <Tab title="python">
+    ```python
 
-# v2 api 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
+    # v2 api 인증 토큰 발급 생략 (참고: https://developers.portone.io/docs/ko/api-v2/authorization)
 
-# 추가수수료 정책 생성 예시
-additionalfees_payload = {
-  "id": "addtional_fee_3",
-  "fee": {
-    "fixedRate": 5000,
-  },
-  "memo": "테스트 추가수수료",
-  "vatPayer": "PARTNER"
-}
+    # 추가수수료 정책 생성 예시
+    additionalfees_payload = {
+      "id": "addtional_fee_3",
+      "fee": {
+        "fixedRate": 5000,
+      },
+      "memo": "테스트 추가수수료",
+      "vatPayer": "PARTNER"
+    }
 
-additionalfees_1 = post_platform_api(token, 'platform/additional-fee-policies', additionalfees_payload)
+    additionalfees_1 = post_platform_api(token, 'platform/additional-fee-policies', additionalfees_payload)
 
-```
-</Tab>
+    ```
+  </Tab>
 </Tabs>
 
 **Response(snippet)**
@@ -1450,6 +1471,3 @@ additionalfees_1 = post_platform_api(token, 'platform/additional-fee-policies', 
 }
 }
 ```
-
-```
-````
