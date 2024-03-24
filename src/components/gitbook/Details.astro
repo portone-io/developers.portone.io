@@ -1,4 +1,12 @@
-<details class="group/details my-4 border rounded hover:border-orange">
+---
+interface Props {
+  id?: string;
+}
+
+const { id } = Astro.props;
+---
+
+<details id={id} class="group/details my-4 border rounded hover:border-orange">
   <style>
     summary > .chevron {
       width: 1.25em;
@@ -29,3 +37,13 @@
     </div>
   </div>
 </details>
+<script>
+  const hash = window.location.hash;
+  if (hash) {
+    const el = document.querySelector(hash);
+    if (el && el.tagName === "DETAILS") {
+      el.setAttribute("open", "");
+      el.scrollIntoView({ block: "start" });
+    }
+  }
+</script>

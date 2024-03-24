@@ -1,5 +1,5 @@
 ---
-title: 내통장 결제
+title: 내통장결제
 description: 핵토파이낸셜에서 제공하는 오픈뱅킹 기반 계좌간편결제 연동 방법을 안내합니다.
 ---
 
@@ -8,13 +8,13 @@ import Hint from "~/components/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
-### 1. 내통장 결제 설정하기
+## 1. 내통장결제 채널 설정하기
 
-[**내통장 결제설정** ](../../../ready/2.-pg/payment-gateway/settle/undefined)페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 
 <Figure src="/gitbook-assets/ko/image (111).png" />
 
-### 2.결제 요청하기
+## 2.결제 요청하기
 
 [JavaScript SDK](../../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을
 호출하여 내통장 결제 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param,
@@ -25,7 +25,7 @@ callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신�
 <Tab title="인증결제창 요청">
 ```javascript title="Javascript SDK"
 IMP.request_pay({ // param
-  pg: "settle_acc.MID", // 발급받은 가맹점아이디  
+  pg: "settle_acc.MID", // 발급받은 고객사아이디  
   pay_method: "trans",
   merchant_uid: "ORD20180131-0000011",
   name: "노르웨이 회전 의자",
@@ -39,7 +39,7 @@ IMP.request_pay({ // param
     settle: {
       addDeductionYn: "N", // 추가공제구분 (대중교통:Y, 도서,공연비:C, 추가공제없음:N)
       criPsblYn: "N", // 현금영수증 발행가능 여부 ( Y or N or ""빈문자열은 Y로인식)
-      custCi: "<회원 연계정보(Connecting Information)>" // 가맹점이 보유한 회원 CI를 설정하면 내통장 결제에 등록한 CI와 비교하여 동일인인지 자동검증되며 일치하지 않은 경우 결제가 중단됩니다.
+      custCi: "<회원 연계정보(Connecting Information)>" // 고객사가 보유한 회원 CI를 설정하면 내통장 결제에 등록한 CI와 비교하여 동일인인지 자동검증되며 일치하지 않은 경우 결제가 중단됩니다.
     }
   }
 }, function (rsp) { // callback
@@ -63,7 +63,7 @@ IMP.request_pay({ // param
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`가맹점 고유주문번호`**
+**`고객사 고유주문번호`**
 
 매번 고유하게 채번되어야 합니다.
 
@@ -103,7 +103,7 @@ criPsblYn: "N", // 현금영수증 발행가능 여부 ( Y or N or ""빈문자�
 ```javascript title="Javascript SDK"
 IMP.request_pay(
   {
-    pg: "settle_acc.MID", //발급받은 가맹점아이디
+    pg: "settle_acc.MID", //발급받은 고객사아이디
     pay_method: "trans",
     merchant_uid: "ORD20180131-0000011",
     name: "노르웨이 회전 의자",
@@ -159,7 +159,7 @@ IMP.request_pay(
 
 #### 빌링키(customer_uid)로 결제 요청하기
 
-빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
+빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 고객사 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
 
 ```sh title="server-side"
 curl -H "Content-Type: application/json" \

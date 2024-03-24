@@ -1,6 +1,6 @@
 ---
-title: (신) 토스페이먼츠
-description: 토스페이먼츠 (신 모듈 / 2022-07-27 버전) 연동 방법을 확인합니다.
+title: 토스페이먼츠(신모듈)
+description: 토스페이먼츠 (신모듈 / 2022-07-27 버전) 연동 방법을 확인합니다.
 ---
 
 import Figure from "~/components/Figure.astro";
@@ -13,10 +13,9 @@ import image2 from "../_assets/tosspayments/tosspayments2.png";
 import image3 from "../_assets/tosspayments/tosspayments3.png";
 import image4 from "../_assets/tosspayments/tosspayments4.png";
 
-## 1. 토스페이먼츠 PG 설정하기
+## 1. 토스페이먼츠 채널 설정하기
 
-[**토스페이먼츠 설정**](../../../ready/2-pg/payment-gateway/tosspayments) 페이지의 **신 모듈 연동
-내용**을 참고하여 PG 설정을 진행합니다.
+[결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 
 <Figure src={image1} />
 
@@ -24,8 +23,8 @@ import image4 from "../_assets/tosspayments/tosspayments4.png";
 
 토스페이먼츠 신모듈 결제는 최신 SDK에서만 지원되는 기능입니다.
 
-```javascript title="JS SDK"
-<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+```html title="JS SDK"
+  <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 ```
 
 <Hint style="info">
@@ -47,8 +46,8 @@ import image4 from "../_assets/tosspayments/tosspayments4.png";
 <Tab title="인증결제창 요청">
 
 ```javascript showLineNumbers
-const userCode = "가맹점 식별코드";
-IMP.init(userCode); // 가맹점 식별 코드를 넣어 모듈을 초기화해주세요.
+const userCode = "고객사 식별코드";
+IMP.init(userCode); // 고객사 식별 코드를 넣어 모듈을 초기화해주세요.
 
 IMP.request_pay(
   {
@@ -197,7 +196,7 @@ IMP.request_pay(
     buyer_name: "포트원",
     buyer_tel: "02-1234-1234",
     m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
-    customer_id: "matthew", //가맹점이 회원에게 부여한 고유 ID
+    customer_id: "matthew", //고객사가 회원에게 부여한 고유 ID
   },
   function (rsp) {
     // callback 로직
@@ -239,7 +238,7 @@ IMP.request_pay(
 
 **빌링키(customer_uid)로 결제 요청하기**
 
-빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 가맹점 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
+빌링키 발급이 성공하면 실 빌링키는 customer_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer_uid를 고객사 내부서버에 저장하시고 [<mark style="color:blue;">**비 인증 결제요청 REST API**</mark>](../../../api/api-4/api)를 호출하시면 결제를 발생시킬 수 있습니다.
 
 ```sh title="server-side"
 curl -H "Content-Type: application/json" \
@@ -304,7 +303,7 @@ curl -H "Content-Type: application/json" \
 </Tab>
 </Tabs>
 
-### 3. 부가기능
+## 4. 부가기능
 
 <Tabs>
 <Tab title="할부개월수 설정">
@@ -367,7 +366,7 @@ card: {
 
 <Figure src={image2} />
 
-API 방식 또한 `vbank_key` 파라미터가 고유식별번호에 대응되는 값으로 API방식은 가맹점에서 직접 해당 값을 기재해서 호출할수 있기 때문에 고객 편의차원에서 훨씬 간편한 고정식 가상계좌 서비스를 제공할수 있습니다.
+API 방식 또한 `vbank_key` 파라미터가 고유식별번호에 대응되는 값으로 API방식은 고객사에서 직접 해당 값을 기재해서 호출할수 있기 때문에 고객 편의차원에서 훨씬 간편한 고정식 가상계좌 서비스를 제공할수 있습니다.
 
 고정식 가상계좌 발급이 정상적으로 이루어지면 아래와 같이 고객휴대폰 번호로 SMS가 발송되며 고객은 해당 정보를 보고 입금을 할수 있습니다.(비용: 무료)
 
@@ -376,7 +375,7 @@ API 방식 또한 `vbank_key` 파라미터가 고유식별번호에 대응되는
 </Tab>
 </Tabs>
 
-## 4. 사용가능 기능
+## 5. 사용가능 기능
 
 토스페이먼츠 신모듈을 통해서 사용가능한 추가 기능들은 다음과 같습니다. 자세한 내용은 API 문서를 참고해주세요.
 
