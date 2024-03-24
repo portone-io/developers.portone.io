@@ -4,153 +4,140 @@ description: API를 이용하여 본인인증 프로세스를 시작합니다.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 사용자 개인정보를 입력하여 SMS OTP번호 발송 API 입니다.
+## 사용자 개인정보를 입력하여 SMS OTP번호 발송 API 입니다.
 
 <Swagger method="post" path="/certifications/otp/request" baseUrl="https://api.iamport.kr" summary="본인인증을 위한 SMS OTP 번호를 발송합니다.">
-<SwaggerDescription>
-사용자 개인정보를 API로 전달하여 통신사로부터 확인되는 경우 OTP(6자리 인증번호)를 사용자에게 SMS로 전달합니다. 통신사 승인을 받은 일부 가맹점에 한해 사용하실 수 있으며 현재 **다날**을 통해서만 서비스되고 있습니다.
+  <SwaggerDescription>
+    사용자 개인정보를 API로 전달하여 통신사로부터 확인되는 경우 OTP(6자리 인증번호)를 사용자에게 SMS로 전달합니다. 통신사 승인을 받은 일부 고객사에 한해 사용하실 수 있으며 현재 **다날**을 통해서만 서비스되고 있습니다.
 
-본인인증 대상자의 성명, 생년월일 + 주민등록 뒷부분 첫 자리, 휴대폰번호, 통신사 정보를 가맹점에서 직접 입력받아 API를 요청하면 됩니다. 전달된 개인정보가 올바른 경우 해당 휴대폰으로 인증번호 SMS가 전송됩니다.
+    본인인증 대상자의 성명, 생년월일 + 주민등록 뒷부분 첫 자리, 휴대폰번호, 통신사 정보를 고객사에서 직접 입력받아 API를 요청하면 됩니다. 전달된 개인정보가 올바른 경우 해당 휴대폰으로 인증번호 SMS가 전송됩니다.
 
-HTTP Status 200응답 시 imp_uid 가 응답데이터로 전달되며 SMS전송된 인증번호를 본인인증 완료 API로 요청주시면 최종 본인인증 프로세스가 완료됩니다.
+    HTTP Status 200응답 시 imp\_uid 가 응답데이터로 전달되며 SMS전송된 인증번호를 본인인증 완료 API로 요청주시면 최종 본인인증 프로세스가 완료됩니다.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Body
 
-#### Body
+  <SwaggerParameter required="true" name="name" type="String">
+    <mark style="color:red;">
+      **본인인증 대상자 성명**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter required="true" name="name" type="String">
-<mark style="color:red;">
+  <SwaggerParameter name="phone" type="String" required="true">
+    <mark style="color:red;"> **휴대폰번호** </mark>
 
-**본인인증 대상자 성명**
+    특수기호가 삽입되어도 무방합니다.
 
-</mark>
+    (포트원 내에서 숫자 외에는 정규식으로 모두 제거처리)
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="phone" type="String" required="true">
-<mark style="color:red;"> **휴대폰번호** </mark>
+  <SwaggerParameter name="birth" type="String" required="true">
+    <mark style="color:red;">**생년월일**</mark>
 
-특수기호가 삽입되어도 무방합니다.
+    **`YYMMDD 6자리`**
 
-(포트원 내에서 숫자 외에는 정규식으로 모두 제거처리)
+    특수기호가 삽입되어도 무방합니다.
 
-</SwaggerParameter>
-<SwaggerParameter name="birth" type="String" required="true">
-<mark style="color:red;">**생년월일**</mark>
+    (포트원 내에서 숫자 외에는 정규식으로 모두 제거처리)
+  </SwaggerParameter>
 
-**`YYMMDD 6자리`**
+  <SwaggerParameter name="gender_digit" type="String" required="true">
+    <mark style="color:red;">**성별구분코드**</mark>
 
-특수기호가 삽입되어도 무방합니다.
+    주민번호 뒷부분 첫자리
 
-(포트원 내에서 숫자 외에는 정규식으로 모두 제거처리)
+    (주민등록번호 13자리 중 7번째 자리. 2000년 이전 출생자는 1 또는 2, 2000년 이후 출생자는 3 또는 4)
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="gender_digit" type="String" required="true">
-<mark style="color:red;">**성별구분코드**</mark>
+  <SwaggerParameter name="carrier" type="String" required="true">
+    <mark style="color:red;">**통신사구분코드**</mark>
 
-주민번호 뒷부분 첫자리
+    **`SKT`**
 
-(주민등록번호 13자리 중 7번째 자리. 2000년 이전 출생자는 1 또는 2, 2000년 이후 출생자는 3 또는 4)
+    **`KT`**
 
-</SwaggerParameter>
-<SwaggerParameter name="carrier" type="String" required="true">
-<mark style="color:red;">**통신사구분코드**</mark>
+    **`LGT`**
+  </SwaggerParameter>
 
-**`SKT`**
+  <SwaggerParameter name="is_mvno" type="Boolean">
+    **알뜰폰 사용 여부**
+  </SwaggerParameter>
 
-**`KT`**
+  <SwaggerParameter name="company" type="String">
+    **고객사 서비스명칭**
+  </SwaggerParameter>
 
-**`LGT`**
+  <SwaggerParameter name="merchant_uid" type="String">
+    **고객사 주문번호**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="is_mvno" type="Boolean">
-**알뜰폰 사용 여부**
+  <SwaggerParameter name="pg" type="String">
+    **PG사 구분코드**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="company" type="String">
-**가맹점 서비스명칭**
+  ### Responses
 
- 
+  <SwaggerResponse status="200: OK" description="본인인증을 위한 대상자 정보 검증 완료(인증번호 SMS전송요청 중)">
+    <Tabs>
+      <Tab title="CertificationOTPResponse">
+        **`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="merchant_uid" type="String">
-**가맹점 주문번호**
+        **응답코드**
 
-</SwaggerParameter>
-<SwaggerParameter name="pg" type="String">
-**PG사 구분코드**
+        0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
 
-</SwaggerParameter>
+        **`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-### Responses
+        **응답메세지**
 
-<SwaggerResponse status="200: OK" description="본인인증을 위한 대상자 정보 검증 완료(인증번호 SMS전송요청 중)">
-<Tabs>
-<Tab title="CertificationOTPResponse">
-**`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+        code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
 
-**응답코드**
+        \*\*response \*\* <mark style="color:red;"> **(CertificationOTPAnnotation, optional)** </mark>
+      </Tab>
+    </Tabs>
 
-0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+    <Tabs>
+      <Tab title="CertificationOTPAnnotation">
+        **`imp_uid *`** <mark style="color:green;">**`string`**</mark>
 
-**`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
+        **`포트원 인증고유번호`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**응답메세지**
+  <SwaggerResponse status="400: Bad Request" description="대상자 개인정보 중 일부가 누락되었거나 올바르지 않은 경우">
+    ```javascript
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+  <SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+    ```javascript
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**response ** <mark style="color:red;"> **(CertificationOTPAnnotation, optional)** </mark>
-
-</Tab>
-</Tabs>
-
-<Tabs>
-<Tab title="CertificationOTPAnnotation">
-**`imp_uid *`** <mark style="color:green;">**`string`**</mark>
-
-**`포트원 인증고유번호`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="대상자 개인정보 중 일부가 누락되었거나 올바르지 않은 경우">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="처리 중 다날서버 응답오류 등 오류가 발생한 경우">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="처리 중 다날서버 응답오류 등 오류가 발생한 경우">
+    ```javascript
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 ### **주요 요청 파라미터 상세 설명**
@@ -173,7 +160,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 > **`company`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 >
-> **`가맹점 서비스명칭`**
+> **`고객사 서비스명칭`**
 >
 > KISA에서 대상자에게 발송하는 SMS에 안내될 서비스 명칭
 
@@ -186,22 +173,21 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 > **danal.\{상점아이디}** 형태로 지정
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "imp_uid": "string"
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "imp_uid": "string"
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/certifications/requestOTP**](https://api.iamport.kr/#!/certifications/requestOTP)
+  [**https://api.iamport.kr/#!/certifications/requestOTP**](https://api.iamport.kr/#!/certifications/requestOTP)
 </Hint>

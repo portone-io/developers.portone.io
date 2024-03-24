@@ -1,438 +1,446 @@
 ---
 title: 네이버페이(결제형)
-description: 네이버페이 간편결제 연동가이드를 확인합니다.
+description: 네이버페이 결제형 연동 방법을 안내합니다.
 ---
 
-import Details from "~/components/gitbook/Details.astro";
 import Figure from "~/components/Figure.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Details from "~/components/gitbook/Details.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. 네이버페이(결제형) PG 설정하기
+## 1. 네이버페이 채널 설정하기
 
-[**네이버페이(결제형) 설정**](../../ready/2-pg/pg/undefined) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
+[결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 PG 설정을 진행합니다.
 
 <Figure src="/gitbook-assets/ko/screenshot 2022-05-30 2.00.33.png" />
 
-### 2.결제 요청하기
+## 2.결제 요청하기
 
 [JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여
-네이버페이 결제형 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request_pay(param,
+네이버페이 결제형 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 IMP.request\_pay(param,
 callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 되며
-모바일의 경우 <mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+모바일의 경우 <mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
-<Tab title="일반결제창 요청">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-  pg: "naverpay.{파트너 ID}",
-  merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
-  name: "주문명:결제테스트",
-  amount: 1004,
-  buyer_email: "test@portone.io",
-  buyer_name: "구매자이름",
-  buyer_tel: "010-1234-5678",
-  buyer_addr: "서울특별시 강남구 삼성동",
-  buyer_postcode: "123-456",
-  naverUseCfm: "20221231", // 이용완료일자(필요시 설정합니다)
-  naverPopupMode: true, // 팝업모드 활성화
-  m_redirect_url: "{결제 완료 후 리디렉션 될 URL}", 
-  naverPurchaserName: "구매자이름",
-  naverPurchaserBirthday: "20151201",
-  naverChainId: "sAMplEChAINid",
-  naverMerchantUserKey: "가맹점의 사용자 키",
-  naverCultureBenefit:true // 문화비 소득공제 적용여부
-  naverProducts: [
+  <Tab title="일반결제창 요청">
+    ```javascript title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "naverpay.{파트너 ID}",
+        merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
+        name: "주문명:결제테스트",
+        amount: 1004,
+        buyer_email: "test@portone.io",
+        buyer_name: "구매자이름",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "서울특별시 강남구 삼성동",
+        buyer_postcode: "123-456",
+        naverUseCfm: "20221231", // 이용완료일자(필요시 설정합니다)
+        naverPopupMode: true, // 팝업모드 활성화
+        m_redirect_url: "{결제 완료 후 리디렉션 될 URL}",
+        naverPurchaserName: "구매자이름",
+        naverPurchaserBirthday: "20151201",
+        naverChainId: "sAMplEChAINid",
+        naverMerchantUserKey: "고객사의 사용자 키",
+        naverCultureBenefit: true, // 문화비 소득공제 적용여부
+        naverProducts: [
+          {
+            categoryType: "BOOK",
+            categoryId: "GENERAL",
+            uid: "107922211",
+            name: "한국사",
+            payReferrer: "NAVER_BOOK",
+            sellerId: "sellerA",
+            count: 10,
+          },
+          {
+            categoryType: "MUSIC",
+            categoryId: "CD",
+            uid: "299911002",
+            name: "러블리즈",
+            payReferrer: "NAVER_BOOK",
+            sellerId: "sellerB",
+            count: 1,
+          },
+        ],
+      },
+      function (rsp) {
+        // callback 로직
+        /* ...중략... */
+      },
+    );
+    ```
+
+    **주요 파라미터 설명**
+
+    **`pg`** <mark style="color:green;">**string**</mark>
+
+    **PG사 구분코드**
+
+    `naverpay` 로 지정하면 됩니다.
+
+    \
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **주문번호**
+
+    매번 고유하게 채번되어야 합니다.
+
+    \
+    **`amount`** <mark style="color:purple;">**integer**</mark>
+
+    **결제금액**
+
+    <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
+
+    \
+    **`naverUseCfm`** <mark style="color:green;">**string**</mark>
+
+    **이용 완료일** (`yyyyMMdd` 형식의 문자열로 **결제 당일 또는 미래의 일자**여야 함)
+
+    - 상품 유형에 따라 네이버페이-고객사 간 필수값으로 계약되는 경우 입력합니다
+
+    \
+    **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **제품명**
+
+    네이버페이 내부적으로 <mark style="color:red;">`외 2개`</mark> 의 표현이 자동생성되므로 `xxxx 외 2개` 대신`naverProducts[0].name`(첫번째 상품명)으로 설정하길 권장합니다.
+
+    \
+    **`naverPopupMode`** <mark style="color:orange;">**boolean**</mark>
+
+    **결제창 팝업여부**
+
+    `false`인 경우 페이지 리디렉션 방식으로 진행되며 `m_redirect_url`을 설정해야 합니다
+
+    \
+    **`m_redirect_url`** <mark style="color:green;">**string**</mark>
+
+    **리다이렉트 URL**
+
+    리디렉션 방식으로 진행(`naverPopupMode: false`)할 경우 결제 완료 후 리디렉션 될 URL
+
+    \
+    **`naverPurchaserName`** <mark style="color:green;">**string**</mark>
+
+    **구매자 이름**
+
+    결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 고객사만 필수 입력**</mark>합니다.
+
+    \
+    **`naverPurchaserBirthday`** <mark style="color:green;">**string**</mark>
+
+    **구매자 생년월일(yyyyMMdd)**
+
+    결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 고객사만 필수 입력**</mark>합니다.
+
+    \
+    **`naverProducts`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**array**</mark>
+
+    **상품정보**
+
+    네이버페이 매뉴얼의 **`productItems`** 파라미터와 동일합니다.
+
+    (해당 파라미터 누락시 네이버페이 검수를 통과할 수 없습니다.)
+
+    > `naverProducts`는 다음 6개의 속성으로 하나의 상품 정보를 표현하는 객체의 배열입니다.
+    >
+    > - **`categoryType`** (<mark style="color:red;">필수</mark>) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
+    >
+    > - **`categoryId`** (<mark style="color:red;">필수</mark>) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
+    >
+    > - **`uid`** (<mark style="color:red;">필수</mark>) : 고객사 내부의 상품 고유 ID를 활용하는 것이 일반적이지만, 네이버페이 가이드 참고가 필요합니다. [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
+    >
+    > - **`name`** (<mark style="color:red;">필수</mark>) : 주문상품의 명칭
+    >
+    > - **`count`** (<mark style="color:red;">필수</mark>) : 상품 주문 개수
+    >
+    > - **`sellerId`** (선택) : 고객사가 하위 판매자를 식별하기 위한 고유 ID(영문 대소문자 및 숫자 허용)
+    > 고객사의 업종이 통신판매중개업에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 대상 고객사만 필수 입력합니다. 비대상 고객사는 입력하지 않습니다.
+    >
+    > - **`payReferrer`** (선택) : 네이버 플랫폼의 타 서비스와 제휴계약 후 유입분석을 진행하는 경우에만 입력 [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product_ref)
+    >
+
+    \
+    **`naverChainId`** <mark style="color:green;">**string**</mark>
+
+    **네이버페이 그룹형 가맹점용 chain id**
+
+    - 같은 파트너 ID로 두개 이상의 서비스를 운영하는 그룹형 가맹점의 경우에만 네이버페이로부터 전달받은 값을 필수 입력합니다.
+    - 비 대상 고객사는 입력하지 않습니다.
+
+    \
+    **`naverCultureBenefit`** <mark style="color:orange;">**boolean**</mark>
+
+    **네이버페이 도서/공연 소득공제**
+
+    도서/공연 소득공제가 필요한 경우 해당 파라미터를 설정합니다.
+
+    \
+    **`naverMerchantUserKey`** <mark style="color:green;">**string**</mark>
+
+    **고객사의 사용자 키**
+
+    - 개인 아이디와 같은 개인정보 데이터는 제외하여 전달해야 합니다.
+    - 네이버페이 기준 <mark style="color:red;">**고위험군 제품을 판매하는 고객사의 경우 필수**</mark> 입력합니다.
+    - 비 대상 고객사는 입력하지 않습니다.
+  </Tab>
+
+  <Tab title="정기결제창 요청">
+    **빌링키 발급받기**
+
+    ```javascript title="JavaScript SDK"
+    IMP.request_pay(
+      {
+        pg: "naverpay.{파트너 ID}",
+        customer_uid: "gildong_0001_1234", // 빌링, 필수 입력.
+        merchant_uid: "order_monthly_0001", // 상점에서 생성한 고유 주문번호
+        name: "Slim 요금제(1개월 단위)",
+        amount: 1004, // 실 결제는 발생되지 않습니다.
+        buyer_email: "test@portone.io",
+        buyer_name: "구매자이름",
+        buyer_tel: "010-1234-5678", // 필수 입력.
+        buyer_addr: "서울특별시 강남구 삼성동",
+        buyer_postcode: "123-456",
+        naverProductCode: "반복결제 상품코드",
+        naverProductCount: 5,
+        naverPopupMode: true, // 팝업모드 활성화
+        m_redirect_url: "{등록 완료 후 리디렉션 될 URL}",
+      },
+      function (rsp) {
+        // callback 로직
+        /* ...중략... */
+      },
+    );
+    ```
+
+    **주요 파라미터 설명**
+
+    **`pg`** <mark style="color:green;">**string**</mark>
+
+    **PG사 구분코드**
+
+    `naverpay` 로 지정하면 됩니다.
+
+    \
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **빌링키**
+
+    - 정기/반복 결제 등록을 위해서 지정해야 합니다. 미 지정 시, 일반결제로 진행됩니다.
+    - 등록 후 해당 키를 사용해 반복결제 승인을 요청할 수 있습니다.
+
+    \
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **주문번호**
+
+    매번 고유하게 채번되어야 합니다.
+
+    \
+    **`amount`** <mark style="color:purple;">**integer**</mark>
+
+    **결제금액**
+
+    <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
+
+    **정기/반복 결제 등록과정에서는 **<mark style="color:red;">**결제승인이 이뤄지지 않습니다**</mark>**.**
+
+    \
+    **`naverProductCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **고객사의 상품코드**
+
+    - 동일한 고객이 동일상품에 대해 중복으로 반복결제 등록하는 것을 방지하기 위한 파라미터입니다.
+    - 기본값은 random으로 자동 생성되어 중복결제가 가능하므로 값을 지정해 주세요.
+
+    \
+    **`naverProductCount`** <mark style="color:purple;">**integer**</mark>
+
+    **결제대상 상품 수**
+
+    \
+    **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **제품명**
+
+    네이버페이 내부적으로 <mark style="color:red;">**`외 2개`**</mark> 의 표현이 자동생성되므로 **"`xxxx 외 2개"`** 대신`naverProducts[0].name`(첫번째 상품명)으로 설정하길 권장합니다.
+
+    \
+    **`naverPopupMode`** <mark style="color:orange;">**boolean**</mark>
+
+    **결제창 팝업여부**
+
+    `false`인 경우 페이지 리디렉션 방식으로 진행되며 `m_redirect_url`을 설정해야 합니다
+
+    \
+    **`m_redirect_url`** <mark style="color:green;">**string**</mark>
+
+    **리다이렉트 URL**
+
+    리디렉션 방식으로 진행(`naverPopupMode`: **false**)할 경우 결제 완료 후 리디렉션 될 URL
+
+    \
+    **`naverActionType`** <mark style="color:green;">**string**</mark>
+
+    **신규 등록/수단 변경 여부**
+
+    네이버페이를 통해 발급한 빌링키의 결제 수단을 변경하고자 하는 경우 포트원 빌링키인 `customer_uid`를 동일하게 입력하고, `naverActionType` 파라미터를 `CHANGE`로 입력하여 빌링키를 재발급해야 합니다.
+
+    `naverActionType` 파라미터를 이용하지 않고 동일한 고객의 정보로 추가 빌링키를 발급 시도하면 이전의 결제 수단 정보가 구매자의 네이버페이 계정에 그대로 남아있어 문제가 발생할 수 있습니다.
+
+    - `NEW`(default) : 신규 등록
+    - `CHANGE` 결제 수단 변경
+
+    **결제요청하기**
+
+    빌링키 발급이 완료되면 설정한 **`customer_uid`** 를 이용하여 결제승인 API를 호출하여 결제를 요청하거나 결제를 예약할 수 있습니다
+
+    **결제 요청방법**
+
+    REST API [**/subscribe/payments/again**](../../api/api-4/api) 를 호출하여 결제를 요청할 수 있습니다.
+
+    - `customer_uid`: 정기/반복결제 등록 시 사용된 해당 고객의 `customer_uid`
+    - `merchant_uid`: 고객사 주문번호
+    - `amount`: 결제승인 요청금액 (결제고객 등록 시 지정된 금액과 달라도 무방함)
+    - `tax_free`: `amount` 중 면세공급가액 (기본값: 0)
+    - `name`: 주문의 명칭
+    - `extra.naverUseCfm`: 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-고객사 간 필수값으로 계약되는 경우 입력합니다.
+
+    ```json title="sample json"
     {
-      "categoryType": "BOOK",
-      "categoryId": "GENERAL",
-      "uid": "107922211",
-      "name": "한국사",
-      "payReferrer": "NAVER_BOOK",
-      "sellerId": "sellerA",
-      "count": 10
-    },
-    {
-      "categoryType": "MUSIC",
-      "categoryId": "CD",
-      "uid": "299911002",
-      "name": "러블리즈",
-      "payReferrer": "NAVER_BOOK",
-      "sellerId": "sellerB",
-      "count": 1
-    }
-  ]
-}, function (rsp) { // callback 로직
-  /* ...중략... */
-});
-```
-
-**주요 파라미터 설명**
-
-**`pg`** <mark style="color:green;">**string**</mark>
-
-**PG사 구분코드**
-
-`naverpay` 로 지정하면 됩니다.
-
-\
-**`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-**주문번호**
-
-매번 고유하게 채번되어야 합니다.
-
-\
-**`amount`** <mark style="color:purple;">**integer**</mark>
-
-**결제금액**
-
-<mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
-
-\
-**`naverUseCfm`** <mark style="color:green;">**string**</mark>
-
-**이용 완료일** (`yyyyMMdd` 형식의 문자열로 **결제 당일 또는 미래의 일자**여야 함)
-
-- 상품 유형에 따라 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다
-
-\
-**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-**제품명**
-
-네이버페이 내부적으로 <mark style="color:red;">`외 2개`</mark> 의 표현이 자동생성되므로 `xxxx 외 2개` 대신`naverProducts[0].name`(첫번째 상품명)으로 설정하길 권장합니다.
-
-\
-**`naverPopupMode`** <mark style="color:orange;">**boolean**</mark>
-
-**결제창 팝업여부**
-
-`false`인 경우 페이지 리디렉션 방식으로 진행되며 `m_redirect_url`을 설정해야 합니다
-
-\
-**`m_redirect_url`** <mark style="color:green;">**string**</mark>
-
-**리다이렉트 URL**
-
-리디렉션 방식으로 진행(`naverPopupMode: false`)할 경우 결제 완료 후 리디렉션 될 URL
-
-\
-**`naverPurchaserName`** <mark style="color:green;">**string**</mark>
-
-**구매자 이름**
-
-결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 가맹점만 필수 입력**</mark>합니다.
-
-\
-**`naverPurchaserBirthday`** <mark style="color:green;">**string**</mark>
-
-**구매자 생년월일(yyyyMMdd)**
-
-결제 상품이 고위험 업종에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 <mark style="color:red;">**대상 가맹점만 필수 입력**</mark>합니다.
-
-\
-**`naverProducts`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**array**</mark>
-
-**상품정보**
-
-네이버페이 매뉴얼의 **`productItems`** 파라미터와 동일합니다.
-
-(해당 파라미터 누락시 네이버페이 검수를 통과할 수 없습니다.)
-
-> `naverProducts`는 다음 6개의 속성으로 하나의 상품 정보를 표현하는 객체의 배열입니다.
->
-> - **`categoryType`** (<mark style="color:red;">필수</mark>) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
-> - **`categoryId`** (<mark style="color:red;">필수</mark>) : [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product) 참고
-> - **`uid`** (<mark style="color:red;">필수</mark>) : 가맹점 내부의 상품 고유 ID를 활용하는 것이 일반적이지만, 네이버페이 가이드 참고가 필요합니다. [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product)
-> - **`name`** (<mark style="color:red;">필수</mark>) : 주문상품의 명칭
-> - **`count`** (<mark style="color:red;">필수</mark>) : 상품 주문 개수
-> - **`sellerId`** (선택) : 가맹점이 하위 판매자를 식별하기 위한 고유 ID(영문 대소문자 및 숫자 허용)
->   - 가맹점의 업종이 통신판매중개업에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 대상 가맹점만 필수 입력합니다.
->   - 비대상 가맹점은 입력하지 않습니다.
-> - **`payReferrer`** (선택) : 네이버 플랫폼의 타 서비스와 제휴계약 후 유입분석을 진행하는 경우에만 입력 [공식 매뉴얼](https://developer.pay.naver.com/docs/v2/api#etc-etc_product_ref)
-
-\
-**`naverChainId`** <mark style="color:green;">**string**</mark>
-
-**네이버페이 그룹형 가맹점용 chain id**
-
-- 같은 파트너 ID로 두개 이상의 서비스를 운영하는 그룹형 가맹점의 경우에만 네이버페이로부터 전달받은 값을 필수 입력합니다.
-- 비 대상 가맹점은 입력하지 않습니다.
-
-\
-**`naverCultureBenefit`** <mark style="color:orange;">**boolean**</mark>
-
-**네이버페이 도서/공연 소득공제**
-
-도서/공연 소득공제가 필요한 경우 해당 파라미터를 설정합니다.
-
-\
-**`naverMerchantUserKey`** <mark style="color:green;">**string**</mark>
-
-**가맹점의 사용자 키**
-
-- 개인 아이디와 같은 개인정보 데이터는 제외하여 전달해야 합니다.
-- 네이버페이 기준 <mark style="color:red;">**고위험군 제품을 판매하는 가맹점의 경우 필수**</mark> 입력합니다.
-- 비 대상 가맹점은 입력하지 않습니다.
-
-</Tab>
-
-<Tab title="정기결제창 요청">
-**빌링키 발급받기**
-
-```javascript title="JavaScript SDK"
-IMP.request_pay(
-  {
-    pg: "naverpay.{파트너 ID}",
-    customer_uid: "gildong_0001_1234", // 빌링, 필수 입력.
-    merchant_uid: "order_monthly_0001", // 상점에서 생성한 고유 주문번호
-    name: "Slim 요금제(1개월 단위)",
-    amount: 1004, // 실 결제는 발생되지 않습니다.
-    buyer_email: "test@portone.io",
-    buyer_name: "구매자이름",
-    buyer_tel: "010-1234-5678", // 필수 입력.
-    buyer_addr: "서울특별시 강남구 삼성동",
-    buyer_postcode: "123-456",
-    naverProductCode: "반복결제 상품코드",
-    naverProductCount: 5,
-    naverPopupMode: true, // 팝업모드 활성화
-    m_redirect_url: "{등록 완료 후 리디렉션 될 URL}",
-  },
-  function (rsp) {
-    // callback 로직
-    /* ...중략... */
-  }
-);
-```
-
-**주요 파라미터 설명**
-
-**`pg`** <mark style="color:green;">**string**</mark>
-
-**PG사 구분코드**
-
-`naverpay` 로 지정하면 됩니다.
-
-\
-**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-**빌링키**
-
-- 정기/반복 결제 등록을 위해서 지정해야 합니다. 미 지정 시, 일반결제로 진행됩니다.
-- 등록 후 해당 키를 사용해 반복결제 승인을 요청할 수 있습니다.
-
-\
-**`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-**주문번호**
-
-매번 고유하게 채번되어야 합니다.
-
-\
-**`amount`** <mark style="color:purple;">**integer**</mark>
-
-**결제금액**
-
-<mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
-
-**정기/반복 결제 등록과정에서는 **<mark style="color:red;">**결제승인이 이뤄지지 않습니다**</mark>**.**
-
-\
-**`naverProductCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-**가맹점의 상품코드**
-
-- 동일한 고객이 동일상품에 대해 중복으로 반복결제 등록하는 것을 방지하기 위한 파라미터입니다.
-- 기본값은 random으로 자동 생성되어 중복결제가 가능하므로 값을 지정해 주세요.
-
-\
-**`naverProductCount`** <mark style="color:purple;">**integer**</mark>
-
-**결제대상 상품 수**
-
-\
-**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-**제품명**
-
-네이버페이 내부적으로 <mark style="color:red;">**`외 2개`**</mark> 의 표현이 자동생성되므로 **"`xxxx 외 2개"`** 대신`naverProducts[0].name`(첫번째 상품명)으로 설정하길 권장합니다.
-
-\
-**`naverPopupMode`** <mark style="color:orange;">**boolean**</mark>
-
-**결제창 팝업여부**
-
-`false`인 경우 페이지 리디렉션 방식으로 진행되며 `m_redirect_url`을 설정해야 합니다
-
-\
-**`m_redirect_url`** <mark style="color:green;">**string**</mark>
-
-**리다이렉트 URL**
-
-리디렉션 방식으로 진행(`naverPopupMode`: **false**)할 경우 결제 완료 후 리디렉션 될 URL
-
-\
-**`naverActionType`** <mark style="color:green;">**string**</mark>
-
-**신규 등록/수단 변경 여부**
-
-네이버페이를 통해 발급한 빌링키의 결제 수단을 변경하고자 하는 경우 포트원 빌링키인 `customer_uid`를 동일하게 입력하고, `naverActionType` 파라미터를 `CHANGE`로 입력하여 빌링키를 재발급해야 합니다.
-
-`naverActionType` 파라미터를 이용하지 않고 동일한 고객의 정보로 추가 빌링키를 발급 시도하면 이전의 결제 수단 정보가 구매자의 네이버페이 계정에 그대로 남아있어 문제가 발생할 수 있습니다. 
-
-- `NEW`(default) : 신규 등록
-- `CHANGE` 결제 수단 변경
-
-**결제요청하기**
-
-빌링키 발급이 완료되면 설정한 **`customer_uid`** 를 이용하여 결제승인 API를 호출하여 결제를 요청하거나 결제를 예약할 수 있습니다
-
-**결제 요청방법**
-
-REST API [**/subscribe/payments/again**](../../api/api-4/api) 를 호출하여 결제를 요청할 수 있습니다.
-
-- `customer_uid`: 정기/반복결제 등록 시 사용된 해당 고객의 `customer_uid`
-- `merchant_uid`: 가맹점 주문번호
-- `amount`: 결제승인 요청금액 (결제고객 등록 시 지정된 금액과 달라도 무방함)
-- `tax_free`: `amount` 중 면세공급가액 (기본값: 0)
-- `name`: 주문의 명칭
-- `extra.naverUseCfm`: 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다.
-
-```json title="sample json"
-{
-  "customer_uid": "gildong_0001_1234",
-  "merchant_uid": "order_monthly_0002", //재사용 불가
-  "amount": 10000,
-  "name": "Slim 요금제(최초과금)",
-  "extra": {
-    "naverUseCfm": "20201001"
-  }
-}
-```
-
-```title="form-urlencoded"
-customer_uid={가맹점의 결제 고객을 특정하는 Unique Key}&merchant_uid={가맹점 주문번호}&amount=10000&name=Slim 요금제(최초과금)&extra[naverUseCfm]=20201001
-```
-
-**결제 예약방법**
-
-REST API[ **/subscribe/payments/schedule**](../../api/api-3/api)를 호출하여 결제예약을 할 수 있습니다.
-
-- `customer_uid` : 정기/반복결제 등록 시 사용된 해당 고객의 `customer_uid`
-- `schedules` : 결제 예약 정보 객체 배열(1개 이상 설정 가능)
-  - `merchant_uid` : 가맹점 주문번호
-  - `schedule_at` : 결제요청 예약시각 (UNIX timestamp)
-  - `amount` : 결제승인 요청금액 (결제고객 등록 시 지정된 금액과 달라도 무방함)
-  - `extra.naverUseCfm` : 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-가맹점 간 필수값으로 계약되는 경우 입력합니다.
-
-```json title="sample json"
-{
-  "customer_uid": "gildong_0001_1234",
-  "schedules": [
-    {
-      "merchant_uid": "order_monthly_0003", //재사용 불가
-      "schedule_at": 1519862400,
+      "customer_uid": "gildong_0001_1234",
+      "merchant_uid": "order_monthly_0002", //재사용 불가
       "amount": 10000,
+      "name": "Slim 요금제(최초과금)",
       "extra": {
         "naverUseCfm": "20201001"
       }
     }
-  ]
-}
-```
+    ```
 
-```title="form-urlencoded"
-customer_uid={가맹점의 결제 고객을 특정하는 Unique Key}&schedules[0][merchant_uid]={가맹점 주문번호}&schedules[0][schedule_at]={결제요청 예약시각 UNIX timestamp}&schedules[0][amount]=10000&schedules[0][extra][naverUseCfm]=20201001\
-```
+    ```title="form-urlencoded"
+    customer_uid={고객사의 결제 고객을 특정하는 Unique Key}&merchant_uid={고객사 주문번호}&amount=10000&name=Slim 요금제(최초과금)&extra[naverUseCfm]=20201001
+    ```
 
-</Tab>
+    **결제 예약방법**
+
+    REST API[**/subscribe/payments/schedule**](../../api/api-3/api)를 호출하여 결제예약을 할 수 있습니다.
+
+    - `customer_uid` : 정기/반복결제 등록 시 사용된 해당 고객의 `customer_uid`
+
+    - `schedules` : 결제 예약 정보 객체 배열(1개 이상 설정 가능)
+      - `merchant_uid` : 고객사 주문번호
+      - `schedule_at` : 결제요청 예약시각 (UNIX timestamp)
+      - `amount` : 결제승인 요청금액 (결제고객 등록 시 지정된 금액과 달라도 무방함)
+      - `extra.naverUseCfm` : 이용 완료일(yyyyMMdd 형식의 문자열로 결제 당일 또는 미래의 일자여야 함) 상품 유형에 따라, 네이버페이-고객사 간 필수값으로 계약되는 경우 입력합니다.
+
+    ```json title="sample json"
+    {
+      "customer_uid": "gildong_0001_1234",
+      "schedules": [
+        {
+          "merchant_uid": "order_monthly_0003", //재사용 불가
+          "schedule_at": 1519862400,
+          "amount": 10000,
+          "extra": {
+            "naverUseCfm": "20201001"
+          }
+        }
+      ]
+    }
+    ```
+
+    ```title="form-urlencoded"
+    customer_uid={고객사의 결제 고객을 특정하는 Unique Key}&schedules[0][merchant_uid]={고객사 주문번호}&schedules[0][schedule_at]={결제요청 예약시각 UNIX timestamp}&schedules[0][amount]=10000&schedules[0][extra][naverUseCfm]=20201001\
+    ```
+  </Tab>
 </Tabs>
 
 <Hint style="warning">
-**연동 주의사항**
+  ## 연동 주의사항
 
-#### 에레 메세지를 가공하지 않은 상태로 노출해야합니다.
+  ### 에레 메세지를 가공하지 않은 상태로 노출해야합니다.
 
-결제창 호출(IMP.request_pay 함수)후 결제창 하단의 "취소" 버튼 클릭 등으로 결제 프로세스가 중단되거나 잔액 부족, 한도 초과, 10원 미만 결제 등의 사유로 결제에 실패하면 콜백 함수(popup 방식)/m_redirect_url(리디렉션 방식)로 전달되는 결제 결과(response 객체/쿼리 파라미터)에 실패 사유(error_msg)가 전달됩니다.
-이 에러 메시지는 사용자에게 가공 없이 그대로 노출되어야 합니다. 해당 내용을 준수하지 않는 경우 네이버페이 검수 진행시 수정 요청이 있을 수 있습니다.
+  결제창 호출(IMP.request\_pay 함수)후 결제창 하단의 "취소" 버튼 클릭 등으로 결제 프로세스가 중단되거나 잔액 부족, 한도 초과, 10원 미만 결제 등의 사유로 결제에 실패하면 콜백 함수(popup 방식)/m\_redirect\_url(리디렉션 방식)로 전달되는 결제 결과(response 객체/쿼리 파라미터)에 실패 사유(error\_msg)가 전달됩니다.
+  이 에러 메시지는 사용자에게 가공 없이 그대로 노출되어야 합니다. 해당 내용을 준수하지 않는 경우 네이버페이 검수 진행시 수정 요청이 있을 수 있습니다.
 
-예) error_msg가 "잔액 부족"이라고 가정할때, "결제에 실패하였습니다. 실패 사유:" + "잔액 부족"과 같은 형태로 가공되면 안됨
+  예) error\_msg가 "잔액 부족"이라고 가정할때, "결제에 실패하였습니다. 실패 사유:" + "잔액 부족"과 같은 형태로 가공되면 안됨
 
-#### 최소 결제 금액에 대해 예외 처리해야 합니다.
+  ### 최소 결제 금액에 대해 예외 처리해야 합니다.
 
-네이버페이 결제형의 경우 10원 이상부터 결제가 가능합니다. 10원 미만의 경우 결제 요청에 대해 예외 처리가 필요합니다.
+  네이버페이 결제형의 경우 10원 이상부터 결제가 가능합니다. 10원 미만의 경우 결제 요청에 대해 예외 처리가 필요합니다.
 
-예) 사용자에게 최소 결제 금액이 10원이라 결제를 할 수 없다는 의미를 담는 에러 메시지가 노출되어야 함
+  예) 사용자에게 최소 결제 금액이 10원이라 결제를 할 수 없다는 의미를 담는 에러 메시지가 노출되어야 함
 
-#### 환불 API 요청 시 추가 속성
+  ### 환불 API 요청 시 추가 속성
 
-아임포트 환불 API인 `POST /payments/cancel` 호출 시 다음 추가 속성를 설정해야 합니다.
+  아임포트 환불 API인 `POST /payments/cancel` 호출 시 다음 추가 속성를 설정해야 합니다.
 
-- `extra.requester` : API를 호출하는 출처. 다음 중 선택 :
-  - customer : 구매자에 의한 요청
-  - admin(기본값) : 어드민에 의한 요청
-- `reason`: 결제 취소 사유.
+  - `extra.requester` : API를 호출하는 출처. 다음 중 선택 :
+    - customer : 구매자에 의한 요청
+    - admin(기본값) : 어드민에 의한 요청
 
-**예시(json)**
+  - `reason`: 결제 취소 사유.
 
-```
-{
-  "imp_uid" : "imp_123412341234", //환불처리할 아임포트 거래번호
-  "amount" : 3000, //환불할 금액
-  "reason": "결제 취소 사유", //실제 사유와 같아야 함
-  "extra" : {
-    "requester" : "customer"
+  **예시 코드**
+
+  ```json
+  {
+    "imp_uid" : "imp_123412341234", //환불처리할 아임포트 거래번호
+    "amount" : 3000, //환불할 금액
+    "reason": "결제 취소 사유", //실제 사유와 같아야 함
+    "extra" : {
+      "requester" : "customer"
+    }
   }
-}
-```
+  ```
 
-**예시(form-urlencoded)**
+  **예시 코드**
 
-```
-imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
-```
-
+  ```form-urlencoded
+  imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
+  ```
 </Hint>
 
 <Hint style="info">
-**"API 호출 권한이 없습니다"**
+  **"API 호출 권한이 없습니다"**
 
-네이버페이 결제형 연동은 <mark style="color:red;">**네이버페이 검수진행이 시작되기 전까지는 운영환경에서 결제창 호출시**</mark>
+  네이버페이 결제형 연동은 <mark style="color:red;">**네이버페이 검수진행이 시작되기 전까지는 운영환경에서 결제창 호출시**</mark>
 
-<mark style="color:red;">**위와 같은 오류가 도출**</mark>됩니다. 해당 부분은
-검수가 진행되면 해결되는 부분이기 때문에 무시해주시면 됩니다.
-
+  <mark style="color:red;">**위와 같은 오류가 도출**</mark>됩니다. 해당 부분은
+  검수가 진행되면 해결되는 부분이기 때문에 무시해주시면 됩니다.
 </Hint>
 
 <Details>
-<p slot="summary">거래 취소 시 유의사항</p>
+  <p slot="summary">거래 취소 시 유의사항</p>
 
-포트원 환불 API인 `POST` [**`/payments/cancel`**](../../api/api-1/api) 호출시 아래 파라미터를 반드시 설정해 주셔야 합니다. (**해당 파라미터 누락시 네이버페이 실 검수를 통과할 수 없습니다.**)
+  포트원 환불 API인 `POST` [**`/payments/cancel`**](../../api/api-1/api) 호출시 아래 파라미터를 반드시 설정해 주셔야 합니다. (**해당 파라미터 누락시 네이버페이 실 검수를 통과할 수 없습니다.**)
 
-- **`extra.requester`**: API를 호출하는 출처
-  - **`customer`**: 구매자에 의한 요청
-  - **`admin`**(기본값): 어드민에 의한 요청
-- **`reason`**: 결제 취소 사유.
+  - **`extra.requester`**: API를 호출하는 출처
+    - **`customer`**: 구매자에 의한 요청
+    - **`admin`**(기본값): 어드민에 의한 요청
 
-**예시(json)**
+  - **`reason`**: 결제 취소 사유.
 
-```javascript
-{
-  "imp_uid" : "imp_123412341234", //환불처리할 포트원 거래고유번호
-  "amount" : 3000, //환불할 금액
-  "reason": "결제 취소 사유", //실제 사유와 같아야 함
-  "extra" : {
-    "requester" : "customer"
+  **예시 코드**
+
+  ```json
+  {
+    "imp_uid" : "imp_123412341234", //환불처리할 포트원 거래고유번호
+    "amount" : 3000, //환불할 금액
+    "reason": "결제 취소 사유", //실제 사유와 같아야 함
+    "extra" : {
+      "requester" : "customer"
+    }
   }
-}
-```
+  ```
 
-**예시(form-urlencoded)**
+  **예시 코드**
 
-```
-imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
-```
-
+  ```form-urlencoded
+  imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
+  ```
 </Details>

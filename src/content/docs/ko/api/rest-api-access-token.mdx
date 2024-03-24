@@ -4,13 +4,13 @@ description: Access Token 을 발급하는 방법을 설명합니다.
 ---
 
 import Figure from "~/components/Figure.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 포트원의 모든 REST API 이용을 위해서는 토큰 발급 및 설정이 필수입니다.
+## 포트원의 모든 REST API 이용을 위해서는 토큰 발급 및 설정이 필수입니다.
 
-결제 정보와 같은 사적 리소스(private resource)에 대한 접근 권한을 얻으려면 가맹점은 access token을
+결제 정보와 같은 사적 리소스(private resource)에 대한 접근 권한을 얻으려면 고객사는 access token을
 발급 받아서 포트원 REST API 요청에 포함해야 합니다.
 
 ### 토큰 발급받기 <a href="#undefined" id="undefined"></a>
@@ -41,19 +41,20 @@ REST API([POST https://api.iamport.kr/users/getToken](https://api.iamport.kr/#!/
 <Tab title="Node.js">
 ```javascript title="server-side"
 // 인증 토큰 발급 받기
-  axios({
-    url: "https://api.iamport.kr/users/getToken",
-    // POST method
-    method: "post", 
-    // "Content-Type": "application/json"
-    headers: { "Content-Type": "application/json" }, 
-    data: {
-      // REST API키
-      imp_key: "imp_apikey", 
-      // REST API Secret
-      imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" 
-    }
-  });
+axios({
+  url: "https://api.iamport.kr/users/getToken",
+  // POST method
+  method: "post",
+  // "Content-Type": "application/json"
+  headers: { "Content-Type": "application/json" },
+  data: {
+    // REST API키
+    imp_key: "imp_apikey",
+    // REST API Secret
+    imp_secret:
+      "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f",
+  },
+});
 ```
 
 </Tab>
@@ -158,7 +159,7 @@ Access token의 만료기한은 발행 시간부터 **30분**입니다. 토큰�
 
 Access token의 재사용과 만료기한 5분 연장 동작방식은 다음과 같은 상황을 고려해서 설계되었습니다.
 
-- 한 가맹점에서 여러 대의 웹서버가 동시에 경쟁적으로 REST API(`/users/getToken`)를 호출하는 상황
-- 한 가맹점에서 여러 대의 웹서버가 시간 동기화 되어있지 않은 상황
+- 한 고객사에서 여러 대의 웹서버가 동시에 경쟁적으로 REST API(`/users/getToken`)를 호출하는 상황
+- 한 고객사에서 여러 대의 웹서버가 시간 동기화 되어있지 않은 상황
 
 </Hint>

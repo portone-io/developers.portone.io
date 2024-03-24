@@ -4,19 +4,19 @@ description: 카드정보를 기입하여 1회성 결제를 요청할 수 있습
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 카드정보만으로 결제를 요청할 수 있습니다.
+## 카드정보만으로 결제를 요청할 수 있습니다.
 
 <Swagger method="post" path="/subscribe/payments/onetime" baseUrl="https://api.iamport.kr" summary="구매자로부터 별도의 인증과정을 거치지 않고 카드정보만으로 결제를 진행하는 API 입니다.">
 <SwaggerDescription>
-**customer_uid** 를 전달해주시면 결제 후 다음 번 결제를 위해 성공된 결제에 사용된 빌링키를 저장해두게되고 customer_uid가 없는 경우 저장되지 않습니다. 
+**customer_uid** 를 전달해주시면 결제 후 다음 번 결제를 위해 성공된 결제에 사용된 빌링키를 저장해두게되고 customer_uid가 없는 경우 저장되지 않습니다.
 
 동일한 **merchant_uid는 재사용이 불가** 능하며 고유한 값을 전달해주셔야 합니다.
 
@@ -31,7 +31,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="merchant_uid" type="String" required="true">
 <mark style="color:red;">
 
-**가맹점 주문번호**
+**고객사 주문번호**
 
 </mark>
 
@@ -59,11 +59,9 @@ KRW, USD, VND ...
 
 지원 PG사
 
-\-(구) 나이스페이먼츠
+\-나이스페이먼츠(구모듈/신모듈)
 
 \-KG이니시스
-
-\-(신) 나이스페이먼츠
 
 \-웰컴페이먼츠
 
@@ -142,11 +140,11 @@ KRW, USD, VND ...
 (결제금액 50,000원 이상 한정, default = 일시불)
 </SwaggerParameter>
 <SwaggerParameter name="interest_free_by_merchant" type="boolen">
-가맹점부담 무이자 할부여부
+고객사 분담 무이자 할부여부
 
-카드할부처리할 때, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 고객대신 가맹점이 지불하고자 PG사와 계약된 경우
+카드할부처리할 때, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 고객대신 고객사가 지불하고자 PG사와 계약된 경우
 
-(현재 (구) 나이스페이먼츠, (신) 나이스페이먼츠만 지원됨)
+(현재 나이스페이먼츠(구모듈/신모듈)만 지원됨)
 
 </SwaggerParameter>
 <SwaggerParameter name="use_card_point" type="boolean" required="false">
@@ -154,7 +152,7 @@ KRW, USD, VND ...
 
 승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요
 
-(현재 (신) 나이스페이먼츠만 지원됨)
+(현재 나이스페이먼츠(신모듈)만 지원됨)
 
 </SwaggerParameter>
 <SwaggerParameter name="custom_data" type="String">
@@ -227,7 +225,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`가맹점 고유주문번호`**
+**`고객사 주문번호`**
 
 **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -460,7 +458,7 @@ JSON string으로 전달
 <SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 

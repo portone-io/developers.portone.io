@@ -3,142 +3,137 @@ title: 결제정보 사후 검증하기
 description: ""
 ---
 
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
 결제 정보를 사후 검증하는 과정은 크게 세 단계로 이루어집니다.
 
-- 응답받은 내용을 바탕으로 실 결제 금액과 결제요청금액(가맹점 자체 데이터베이스)을 비교
-- 결제 상세내역 조회를 위해 포트원 [**결제 단건 조회 API** ](https://developers.portone.io/api/rest-v1/payment#get%20%2Fpayments%2F%7Bimp_uid%7D)요청
-- 포트원 결제고유번호(**imp_uid**), 가맹점 주문번호(**merchant_uid**)를 프론트엔드로부터 수신
+- 응답받은 내용을 바탕으로 실 결제 금액과 결제요청금액(고객사 자체 데이터베이스)을 비교
+- 결제 상세내역 조회를 위해 포트원 [**결제 단건 조회 API**](https://developers.portone.io/api/rest-v1/payment#get%20%2Fpayments%2F%7Bimp_uid%7D)요청
+- 포트원 결제고유번호(**imp\_uid**), 고객사 주문번호(**merchant\_uid**)를 프론트엔드로부터 수신
 
-### <mark style="color:green;">**STEP 01**</mark> 결제결과 서버 수신
+## <mark style="color:green;">**STEP 01**</mark> 결제결과 서버 수신
 
 <Tabs>
-<Tab title="Node.js">
-결제정보를 받은 가맹점 endpoint URL 에 대한 POST 요청을 수신하는 예제
+  <Tab title="Node.js">
+    결제정보를 받은 고객사 endpoint URL 에 대한 POST 요청을 수신하는 예제
 
-```javascript
-app.use(bodyParser.json());
-// "{서버의 결제 정보를 받는 가맹점 endpoint}" POST 요청 수신부
-app.post("/payments/complete", async (req, res) => {
-  try {
-    // req의 body에서 imp_uid, merchant_uid 추출
-    const { imp_uid, merchant_uid } = req.body;
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
-```
-
-</Tab>
+    ```javascript
+    app.use(bodyParser.json());
+    // "{서버의 결제 정보를 받는 고객사 endpoint}" POST 요청 수신부
+    app.post("/payments/complete", async (req, res) => {
+      try {
+        // req의 body에서 imp_uid, merchant_uid 추출
+        const { imp_uid, merchant_uid } = req.body;
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
+    ```
+  </Tab>
 </Tabs>
 
 ### <mark style="color:green;">**STEP 02**</mark> 결제내역 단건 조회
 
 <Tabs>
-<Tab title="Node.js">
-수신받은 포트원 **결제고유번호**(imp\_uid)로 [**결제단건조회**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) **API** 를 호출하여 결제정보 획득 예제
+  <Tab title="Node.js">
+    수신받은 포트원 **결제고유번호**(imp\_uid)로 [**결제단건조회**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) **API** 를 호출하여 결제정보 획득 예제
 
-```javascript
-app.use(bodyParser.json());
-app.post("/payments/complete", async (req, res) => {
-  try {
-    // req의 body에서 imp_uid, merchant_uid 추출
-    const { imp_uid, merchant_uid } = req.body;
-    ...
-    // 액세스 토큰(access token) 발급 받기
-    const getToken = await axios({
-      url: "https://api.iamport.kr/users/getToken",
-      method: "post", // POST method
-      headers: { "Content-Type": "application/json" },
-      data: {
-        imp_key: "imp_apikey", // REST API 키
-        imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
+    ```javascript
+    app.use(bodyParser.json());
+    app.post("/payments/complete", async (req, res) => {
+      try {
+        // req의 body에서 imp_uid, merchant_uid 추출
+        const { imp_uid, merchant_uid } = req.body;
+        // 액세스 토큰(access token) 발급 받기
+        const getToken = await axios({
+          url: "https://api.iamport.kr/users/getToken",
+          method: "post", // POST method
+          headers: { "Content-Type": "application/json" },
+          data: {
+            imp_key: "imp_apikey", // REST API 키
+            imp_secret:
+              "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+          },
+        });
+        const { access_token } = getToken.data; // 인증 토큰
+        // imp_uid로 포트원 서버에서 결제 정보 조회
+        const getPaymentData = await axios({
+          // imp_uid 전달
+          url: `https://api.iamport.kr/payments/${imp_uid}`,
+          // GET method
+          method: "get",
+          // 인증 토큰 Authorization header에 추가
+          headers: { Authorization: access_token },
+        });
+        const paymentData = getPaymentData.data.response; // 조회한 결제 정보
+      } catch (e) {
+        res.status(400).send(e);
       }
     });
-    const { access_token } = getToken.data; // 인증 토큰
-    ...
-    // imp_uid로 포트원 서버에서 결제 정보 조회
-    const getPaymentData = await axios({
-      // imp_uid 전달
-      url: `https://api.iamport.kr/payments/${imp_uid}`,
-      // GET method
-      method: "get",
-      // 인증 토큰 Authorization header에 추가
-      headers: { "Authorization": access_token }
-    });
-    const paymentData = getPaymentData.data.response; // 조회한 결제 정보
-    ...
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
-```
-
-</Tab>
+    ```
+  </Tab>
 </Tabs>
 
 ### <mark style="color:green;">**STEP 03**</mark> 결제정보 검증
 
 <Tabs>
-<Tab title="Node.js">
-결제된 실 금액과 요청 금액을 비교하여 **결제금액 위변조여부 검증** 및 DB저장 예시
+  <Tab title="Node.js">
+    결제된 실 금액과 요청 금액을 비교하여 **결제금액 위변조여부 검증** 및 DB저장 예시
 
-```javascript
-app.use(bodyParser.json());
-app.post("/payments/complete", async (req, res) => {
-  try {
-    // req의 body에서 imp_uid, merchant_uid 추출
-    const { imp_uid, merchant_uid } = req.body;
+    ```javascript
+    app.use(bodyParser.json());
+    app.post("/payments/complete", async (req, res) => {
+      try {
+        // req의 body에서 imp_uid, merchant_uid 추출
+        const { imp_uid, merchant_uid } = req.body;
 
-    // 액세스 토큰(access token) 발급 받기
-    // 코드 생략
+        // 액세스 토큰(access token) 발급 받기
+        // 코드 생략
 
-    // imp_uid로 포트원 서버에서 결제 정보 조회
-    // 코드 생략
+        // imp_uid로 포트원 서버에서 결제 정보 조회
+        // 코드 생략
 
-    const paymentData = getPaymentData.data.response; // 조회한 결제 정보
-    // ...
-    // DB에서 결제되어야 하는 금액 조회
-    const order = await Orders.findById(paymentData.merchant_uid);
-    const amountToBePaid = order.amount; // 결제 되어야 하는 금액
-    // ...
-    // 결제 검증하기
-    const { amount, status } = paymentData;
-    // 결제금액 일치. 결제 된 금액 === 결제 되어야 하는 금액
-    if (amount === amountToBePaid) {
-      await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // DB에 결제 정보 저장
-      // ...
-      switch (status) {
-        case "ready": // 가상계좌 발급
-          // DB에 가상계좌 발급 정보 저장
-          const { vbank_num, vbank_date, vbank_name } = paymentData;
-          await Users.findByIdAndUpdate("/* 고객 id */", {
-            $set: { vbank_num, vbank_date, vbank_name },
-          });
-          // 가상계좌 발급 안내 문자메시지 발송
-          SMS.send({
-            text: `가상계좌 발급이 성공되었습니다. 계좌 정보 ${vbank_num} ${vbank_date} ${vbank_name}`,
-          });
-          res.send({ status: "vbankIssued", message: "가상계좌 발급 성공" });
-          break;
-        case "paid": // 결제 완료
-          res.send({ status: "success", message: "일반 결제 성공" });
-          break;
+        const paymentData = getPaymentData.data.response; // 조회한 결제 정보
+        // ...
+        // DB에서 결제되어야 하는 금액 조회
+        const order = await Orders.findById(paymentData.merchant_uid);
+        const amountToBePaid = order.amount; // 결제 되어야 하는 금액
+        // ...
+        // 결제 검증하기
+        const { amount, status } = paymentData;
+        // 결제금액 일치. 결제 된 금액 === 결제 되어야 하는 금액
+        if (amount === amountToBePaid) {
+          await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // DB에 결제 정보 저장
+          // ...
+          switch (status) {
+            case "ready": // 가상계좌 발급
+              // DB에 가상계좌 발급 정보 저장
+              const { vbank_num, vbank_date, vbank_name } = paymentData;
+              await Users.findByIdAndUpdate("/* 고객 id */", {
+                $set: { vbank_num, vbank_date, vbank_name },
+              });
+              // 가상계좌 발급 안내 문자메시지 발송
+              SMS.send({
+                text: `가상계좌 발급이 성공되었습니다. 계좌 정보 ${vbank_num} ${vbank_date} ${vbank_name}`,
+              });
+              res.send({ status: "vbankIssued", message: "가상계좌 발급 성공" });
+              break;
+            case "paid": // 결제 완료
+              res.send({ status: "success", message: "일반 결제 성공" });
+              break;
+          }
+        } else {
+          // 결제금액 불일치. 위/변조 된 결제
+          throw { status: "forgery", message: "위조된 결제시도" };
+        }
+      } catch (e) {
+        res.status(400).send(e);
       }
-    } else {
-      // 결제금액 불일치. 위/변조 된 결제
-      throw { status: "forgery", message: "위조된 결제시도" };
-    }
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
-```
-
-</Tab>
+    });
+    ```
+  </Tab>
 </Tabs>
 
 처음 요청한 금액은 **`merchant_uid`** 로 데이터베이스에서 조회하고 실제 결제금액은 **`imp_uid`로
@@ -146,11 +141,9 @@ app.post("/payments/complete", async (req, res) => {
 결제 상태(`status`**)에 따라 알맞은 응답을 반환하고 실패 시 에러 메세지를 출력합니다.
 
 <Hint style="danger">
-결제결과 DB 처리는 [**웹훅(Webhook)을 연동**](../../../result/webhook)하여 수신되는 데이터를 기준으로 처리하셔야 결제결과 누락없이 안정적인 결과처리를 완료하실 수 있습니다.
-
+  결제결과 DB 처리는 [**웹훅(Webhook)을 연동**](../../../result/webhook)하여 수신되는 데이터를 기준으로 처리하셔야 결제결과 누락없이 안정적인 결과처리를 완료하실 수 있습니다.
 </Hint>
 
 <Hint style="info">
-[**Confirm Process**](../../../tip/confirm-process) 기능을 사용하여서도 결제금액 검증을 할 수 있습니다.
-
+  [**Confirm Process**](../../../tip/confirm-process) 기능을 사용하여서도 결제금액 검증을 할 수 있습니다.
 </Hint>
