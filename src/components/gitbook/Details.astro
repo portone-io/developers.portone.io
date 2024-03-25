@@ -1,4 +1,12 @@
-<details class="group/details hover:border-orange my-4 rounded border">
+---
+interface Props {
+  id?: string;
+}
+
+const { id } = Astro.props;
+---
+
+<details id={id} class="group/details my-4 border rounded hover:border-orange">
   <style>
     summary > .chevron {
       width: 1.25em;
@@ -11,21 +19,31 @@
     }
   </style>
   <summary
-    class="flex items-center gap-3 border-l-4 border-l-transparent px-4 py-2 cursor-pointer"
+    class="flex cursor-pointer items-center gap-3 border-l-4 border-l-transparent px-4 py-2"
   >
     <div class="chevron" role="img">
       <i
-        class="group-hover/details:text-orange i-ic-sharp-chevron-right inline-block"
+        class="i-ic-sharp-chevron-right inline-block group-hover/details:text-orange"
       ></i>
     </div>
     <div class="my-2">
       <slot name="summary" />
     </div>
   </summary>
-  <div class="-mt-2 flex gap-3 border-l-4 border-l-transparent px-4 pb-2">
+  <div class="flex gap-3 border-l-4 border-l-transparent px-4 pb-2 -mt-2">
     <div class="h-5 w-5 shrink-0"></div>
     <div class="w-full">
       <slot />
     </div>
   </div>
 </details>
+<script>
+  const hash = window.location.hash;
+  if (hash) {
+    const el = document.querySelector(hash);
+    if (el && el.tagName === "DETAILS") {
+      el.setAttribute("open", "");
+      el.scrollIntoView({ block: "start" });
+    }
+  }
+</script>

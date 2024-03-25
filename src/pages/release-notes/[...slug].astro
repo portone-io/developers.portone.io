@@ -1,50 +1,45 @@
 ---
 import { format } from "date-fns";
-import type { InferGetStaticParamsType, InferGetStaticPropsType } from "astro";
 
-import LayoutBase from "~/layouts/LayoutBase.astro";
 import * as prose from "~/components/prose";
 import Banner from "~/components/release-note/Banner.astro";
 import Footer from "~/components/release-note/Footer.astro";
-import { getReleaseNotes } from "~/misc/releaseNote";
+import LayoutBase from "~/layouts/LayoutBase.astro";
 import Nav from "~/layouts/release-notes/Nav.astro";
+import { getReleaseNotes } from "~/misc/releaseNote";
 
-export async function getStaticPaths() {
-  const { apiSdkNotes, consoleNotes } = await getReleaseNotes();
-  return [
-    ...apiSdkNotes.map(({ slug, entry }) => ({
-      params: { slug },
-      props: { entry, apiSdkNotes, consoleNotes },
-    })),
-    ...consoleNotes.map(({ slug, entry }) => ({
-      params: { slug },
-      props: { entry, apiSdkNotes, consoleNotes },
-    })),
-  ];
-}
+const { slug } = Astro.params;
+if (!slug) return new Response(null, { status: 404 });
+const { apiSdkNotes, consoleNotes } = await getReleaseNotes();
+const { entry } =
+  [...apiSdkNotes, ...consoleNotes].find((entry) => entry.slug === slug) ?? {};
+if (!entry) return new Response(null, { status: 404 });
 
-type Params = InferGetStaticParamsType<typeof getStaticPaths>;
-type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-
-const { slug } = Astro.params as Params;
-const { entry, apiSdkNotes, consoleNotes } = Astro.props as Props;
+const type = entry.slug.startsWith("api-sdk") ? "apiSdkNotes" : "consoleNotes";
 const { releasedAt, writtenAt } = entry.data;
 const { Content } = await entry.render();
-
-const label = apiSdkNotes.some((note) => note.slug === slug)
-  ? "API / SDK"
-  : "관리자콘솔";
+const label = {
+  apiSdkNotes: "API / SDK",
+  consoleNotes: "관리자콘솔",
+}[type];
 const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
 ---
 
-<LayoutBase lang="ko" title={title}>
+<LayoutBase
+  lang="ko"
+  title={title}
+  slug={`release-notes/${slug}`}
+  ogType="article"
+  ogImageSlug={`release-notes/${slug}.png`}
+  navAsMenu
+>
   <div class="flex">
     <aside
       id="left-sidebar"
-      class="w-65 relative hidden shrink-0 text-slate-700 md:block"
+      class="relative hidden w-65 shrink-0 text-slate-700 md:block"
     >
       <div
-        class="w-inherit fixed h-[calc(100%-3.5rem)] overflow-y-scroll border-r bg-white"
+        class="fixed h-[calc(100%-3.5rem)] w-inherit overflow-y-scroll border-r bg-white"
       >
         <Nav
           consoleNotes={consoleNotes}
@@ -53,10 +48,10 @@ const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
         />
       </div>
     </aside>
-    <div class="basis-200 mx-auto shrink">
+    <div class="mx-auto shrink basis-200">
       <article class="m-4 flex flex-col text-slate-700">
         <prose.h1>{title}</prose.h1>
-        <p class="text-gray my-4 text-xl">
+        <p class="my-4 text-xl text-gray">
           {format(releasedAt, "yyyy년 M월 d일")}
           {label} 업데이트 소식을 안내드립니다.
         </p>

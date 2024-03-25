@@ -4,120 +4,105 @@ description: POST /payments/prepare 로 이미 등록된 결제사전정보에 �
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/gitbook/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### [**결제금액 사전등록 API**](api-5) 로 등록된 금액을 수정합니다.
+## [**결제금액 사전등록 API**](api-5) 로 등록된 금액을 수정합니다.
 
 <Swagger method="put" path="/payments/prepare" baseUrl="https://api.iamport.kr" summary="사전등록한 결제 금액을 단건 수정 합니다.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Body
 
-#### Body
+  <SwaggerParameter name="merchant_uid" type="String" required="true">
+    <mark style="color:red;">
+      **고객사 주문번호**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="merchant_uid" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="amount" type="double" required="true">
+    <mark style="color:red;">
+      **결제 예정금액**
+    </mark>
+  </SwaggerParameter>
 
-**가맹점 주문번호**
+  ### Responses
 
-</mark>
+  <SwaggerResponse status="200: OK" description="성공">
+    <Tabs>
+      <Tab title="PaymentPrepareResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="amount" type="double" required="true">
-<mark style="color:red;">
+        **응답코드**
 
-**결제 예정금액**
+        0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
 
-</mark>
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerParameter>
+        **응답메세지**
 
-### Responses
+        code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
 
-<SwaggerResponse status="200: OK" description="성공">
-<Tabs>
-<Tab title="PaymentPrepareResponse">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+        <mark style="color:red;">
+          **`response (PaymentPrepareAnnotation, optional)`**
+        </mark>
+      </Tab>
+    </Tabs>
 
-**응답코드**
+    <Tabs>
+      <Tab title="PaymentPrepareAnnotation">
+        **merchant\_uid** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
-0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+        **고객사 주문번호**
 
-**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`number`**</mark>
 
-**응답메세지**
+        **결제 예정 금액**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+  <SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+    ```javascript
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-<mark style="color:red;">
-  **`response (PaymentPrepareAnnotation, optional)`**
-</mark>
-
-</Tab>
-</Tabs>
-
-<Tabs>
-<Tab title="PaymentPrepareAnnotation">
-**merchant\_uid** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
-
-**가맹점 주문번호**
-
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`number`**</mark>
-
-**결제 예정 금액**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="요청된 merchant_uid 로 등록된 결제사전정보를 찾을 수 없는 경우">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="요청된 merchant_uid 로 등록된 결제사전정보를 찾을 수 없는 경우">
+    ```javascript
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "merchant_uid": "string",
-    "amount": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "merchant_uid": "string",
+      "amount": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/payments.validation/editPreparePayment**](https://api.iamport.kr/#!/payments.validation/editPreparePayment)
-
+  [**https://api.iamport.kr/#!/payments.validation/editPreparePayment**](https://api.iamport.kr/#!/payments.validation/editPreparePayment)
 </Hint>

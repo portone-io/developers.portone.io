@@ -3,60 +3,64 @@ title: 6. 결제완료 처리하기
 description: 결제가 완료되면 사용자에게 결제 실패 유무 메세지를 작성하는 예제입니다.
 ---
 
-import Hint from "~/components/gitbook/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-
-**Iframe** 방식으로 진행되는 대부분의 PC환경 결제인 경우 결제응답은 **callback** 함수로 받아볼 수 있으며 가맹점 서버에서 결제결과 처리가 최종적으로 완료되면 아래 예제처럼 결제 성공유무에 따른 분기를 통해 결과 메세지 처리를 진행 하실 수 있습니다.
+**Iframe** 방식으로 진행되는 대부분의 PC환경 결제인 경우 결제응답은 **callback** 함수로 받아볼 수
+있으며 고객사 서버에서 결제결과 처리가 최종적으로 완료되면 아래 예제처럼 결제 성공유무에 따른 분기를
+통해 결과 메세지 처리를 진행 하실 수 있습니다.
 
 <Tabs>
-<Tab title="JavaScript">
-```javascript
-IMP.request_pay(
-  {/* 결제 요청 객체 */},
-  async requestPayResponse => {
-    const { success, error_msg } = requestPayResponse;
-    if (!success) {
-      alert(`결제에 실패하였습니다. 에러 내용: ${error_msg}`);
-      return;
-    }
-    // 이전 단계에서 구현한 결제정보 사후 검증 API 호출
-    const res = await axios({
-      url: "/payments/complete",
-      method: "post",
-      headers: { "Content-Type": "application/json" }, 
-      data: { imp_uid: "...", merchant_uid: "..." },
-    });
-    switch (res.status) {
-      case: "vbankIssued":
-        // 가상계좌 발급 시 로직
-        break;
-      case: "success":
-        // 결제 성공 시 로직
-        break;
-    }
-  }
-);
-```
-
-</Tab>
+  <Tab title="JavaScript">
+    ```javascript
+    IMP.request_pay(
+      {
+        /* 결제 요청 객체 */
+      },
+      async (requestPayResponse) => {
+        const { success, error_msg } = requestPayResponse;
+        if (!success) {
+          alert(`결제에 실패하였습니다. 에러 내용: ${error_msg}`);
+          return;
+        }
+        // 이전 단계에서 구현한 결제정보 사후 검증 API 호출
+        const res = await axios({
+          url: "/payments/complete",
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          data: { imp_uid: "...", merchant_uid: "..." },
+        });
+        switch (res.data.status) {
+          case "vbankIssued":
+            // 가상계좌 발급 시 로직
+            break;
+          case "success":
+            // 결제 성공 시 로직
+            break;
+        }
+      },
+    );
+    ```
+  </Tab>
 </Tabs>
 
-새로운 페이지로 리디렉션되어 결제가 진행되는 대부분의 **모바일환경**에서의 결제는 **m\_redirect\_url** 파라미터로 설정하신 가맹점 **EndPoint URL 에서 최종 결제완료 메세지 처리**를 진행해 주시면 됩니다.
+새로운 페이지로 리디렉션되어 결제가 진행되는 대부분의 **모바일환경**에서의 결제는
+**m\_redirect\_url** 파라미터로 설정하신 고객사 **EndPoint URL 에서 최종 결제완료 메세지 처리**를
+진행해 주시면 됩니다.
 
 <Hint style="info">
-**error\_msg, error\_code 정의**
+  **error\_msg, error\_code 정의**
 
-결제 실패 시 응답으로 내려가는 해당 파라미터는 PG사에서 내려준 오류코드와 메세지를 2차 가공없이 그대로 내려드리고 있습니다.
-
+  결제 실패 시 응답으로 내려가는 해당 파라미터는 PG사에서 내려준 오류코드와 메세지를 2차 가공없이 그대로 내려드리고 있습니다.
 </Hint>
 
 <Hint style="danger">
-인증결제 과정에서 다음과 같은 사용자 동작이 일어날 경우 [<mark style="color:red;">**비정상 접근입니다.**</mark>]와 같은 오류가 발생할 수 있습니다.
-1. PG사 결제창 페이지 내 새로고침하는 경우
-2. 결제 진행 중 뒤로가기 버튼으로 카드사 ACS창으로 이동한 후 추가로 뒤로가기 버튼 클릭하여 PG사 결제창으로 돌아오는 경우
-3. 카드사 ACS 창 내 새로고침하는 경우 (카드사별로 상이)
+  인증결제 과정에서 다음과 같은 사용자 동작이 일어날 경우 \[<mark style="color:red;">**비정상 접근입니다.**</mark>]와 같은 오류가 발생할 수 있습니다.
 
-결제페이지에서 뒤로가기 또는 새로고침 등의 동작을 방지하면 위 오류를 줄일 수 있습니다.
+  1. PG사 결제창 페이지 내 새로고침하는 경우
+  2. 결제 진행 중 뒤로가기 버튼으로 카드사 ACS창으로 이동한 후 추가로 뒤로가기 버튼 클릭하여 PG사 결제창으로 돌아오는 경우
+  3. 카드사 ACS 창 내 새로고침하는 경우 (카드사별로 상이)
+
+  결제페이지에서 뒤로가기 또는 새로고침 등의 동작을 방지하면 위 오류를 줄일 수 있습니다.
 </Hint>

@@ -1,0 +1,15 @@
+---
+import Impl from "./VersionGate";
+
+interface Props {
+  default: "v1" | "v2";
+}
+
+const { default: version } = Astro.props;
+---
+
+<Impl client:idle default={version}>
+  {Astro.slots.has("v1") ? <slot name="v1" slot="v1" /> : null}
+  {Astro.slots.has("v2") ? <slot name="v2" slot="v2" /> : null}
+  <slot />
+</Impl>

@@ -3,44 +3,71 @@ title: 웹훅 연동하기
 description: 웹훅 알림을 받아 결제 정보를 동기화할 수 있습니다.
 ---
 
-import Hint from "~/components/gitbook/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Figure from "~/components/Figure.astro";
+import Hint from "~/components/Hint.astro";
+
+import image1 from "../result/_assets/webhook_intro.png";
+import image0 from "./_assets/v2/webhook-setting.png";
+
+<Figure src={image1} />
 
 ## 웹훅(Webhook) 이란?
 
-결제 완료 등 이벤트가 발생했을 때 고객사의 서버에 HTTP 요청으로 알려 드리는 시스템입니다.
+특정 이벤트가 발생하였을 때 타 서비스나 응용프로그램으로 알림을 보내는 기능입니다.
+Webhook 프로바이더는 해당 이벤트가 발행하면 `HTTP POST` 요청을 생성하여 callback URL(endpoint)로 이벤트 정보을 보냅니다.
+주기적으로 데이터를 폴링(polling)하지 않고 원하는 이벤트에 대한 정보만 수신할 수 있어서 webhook은 리소스나 통신 측면에서 훨씬 더 효율적입니다.
+Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연동하여 기능을 확장할 수 있습니다.
 
-이벤트가 발생하면 등록된 웹훅 URL로 포트원에서 HTTP POST 요청을 보냅니다. 이 요청을 받았을 때 결제 정보를 확인 후 동기화할 수 있도록 구현하시면 됩니다.
+포트원에서는 결제 완료 등 이벤트가 발생했을 때 고객사의 서버에 전송하고 있습니다.
+이벤트가 발생하면 포트원 콘솔에 등록된 웹훅 URL로 HTTP POST 요청을 보냅니다. 고객사에서는 이 요청을 받아 최신 결제 정보로 동기화하도록 구현해야 합니다.
 
-## **웹훅 연동이 꼭 필요한가요?**
+## 웹훅 연동이 꼭 필요한가요?
 
-안정적인 결제 처리를 위해 웹훅 연동을 강력히 권장합니다. 인터넷 연결 끊김, 브라우저 자동 새로고침 등의 이유로 브라우저에서 결제 완료 요청이 오지 않는 경우에 웹훅을 받으면 누락 없이 결제 정보를 동기화할 수 있습니다.
+안정적인 결제 처리를 위해 웹훅 연동을 강력히 권장합니다.
+인터넷 연결 끊김, 브라우저 자동 새로고침 등의 이유로 클라이언트에서 결제 완료에 대한 응답을 받지 못하는 경우가 간헐적으로 발생합니다.
+이런 경우 연동한 웹훅을 통해 누락 없이 결제 정보를 동기화할 수 있습니다.
 
 ## 웹훅 발생 이벤트
 
 포트원 웹훅은 다음과 같은 이벤트에 발생됩니다.
 
-* **결제(예약 결제 포함)가 승인**되었을 때 (모든 결제 수단) - (status : `Paid`)
-* **가상계좌가 발급**되었을 때 - (status : `VirtualAccountIssued`)
-* **가상계좌에 결제 금액이 입금**되었을 때 - (status : `Paid`)
-* **결제가 부분 취소**되었을 때 - (status : `PartialCancelled`)
-* **결제가 완전 취소**되었을 때 - (status : `Cancelled`)
-* **결제(예약 결제 포함)가 실패**했을 때 - (status: `Failed`)
+- **결제창이 열렸을 때** - (status: `Ready`)
+- **결제(예약 결제 포함)가 승인**되었을 때 (모든 결제 수단) - (status : `Paid`)
+- **가상계좌가 발급**되었을 때 - (status : `VirtualAccountIssued`)
+- **가상계좌에 결제 금액이 입금**되었을 때 - (status : `Paid`)
+- **결제가 부분 취소**되었을 때 - (status : `PartialCancelled`)
+- **결제가 완전 취소**되었을 때 - (status : `Cancelled`)
+- **결제(예약 결제 포함)가 실패**했을 때 - (status: `Failed`)
+- **결제 승인 대기** 상태가 되었을 때 (페이팔 연동 시 발생) - (status: `PayPending`)
 
 ## 웹훅 URL 설정
 
-웹훅 URL을 설정하면 포트원에서 웹훅을 보냅니다. URL은 관리자 콘솔에서 일괄적으로 설정하거나, 결제시에 파라미터로 지정할 수 있습니다.
+웹훅 URL을 설정하면 포트원에서 이벤트 발생 시 해당 URL로 웹훅을 전송합니다. URL은 관리자 콘솔에서 두 가지 형태로 지원하고 있습니다.
+콘솔에서 설정했더라도 결제 시에 `noticeUrls`파라미터로 지정하여 호출하는 경우 해당 URL로 전송됩니다.
 
 ### 1. 관리자 콘솔 설정
 
-<figure><img src="https://openapi-documentation-poc.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fv2-user-guide-admin-console-webhook.fb35a882.png&#x26;w=3840&#x26;q=100" alt=""/><figcaption></figcaption></figure>
+웹훅을 통해 결제 정보를 통보받을 URL을 설정하는 과정은 다음과 같습니다.
 
-웹훅을 통해 결제 정보를 통보받을 URL을 설정하려면 포트원 관리자 콘솔 내 [**결제 연동->결제알림(Webhook) 관리**](https://admin.portone.io/integration?tab=webhook) 탭을 선택합니다. `Endpoint URL`에 웹훅으로 전송될 데이터를 수신할 URL을 기재합니다.
+<Figure src={image0} />
 
-**Content-Type** 은 `application/json` 또는 `application/x-www-form-urlencoded`으로 지정할 수 있습니다.
+- 포트원 관리자 콘솔 내 \[결제 연동] → \[연동 관리] →**\[결제알림(Webhook) 관리]** 탭을 선택합니다.
 
-**호출 테스트** 버튼을 통해 올바른 URL과 Content-Type을 지정했는지 테스트할 수 있습니다.
+- \[웹훅 버전] 항목에서 **\[결제모듈 V2]** 를 선택합니다.
+
+- \[설정 모드] 항목에서 \[실연동] 또는 \[테스트]를 선택합니다. (연동 환경에 따라 웹훅 URL을 각각 다르게 설정할 수 있습니다.)
+
+- **Endpoint URL**에 웹훅 데이터를 수신할 URL을 입력합니다.
+
+- **Content Type**을 설정합니다. `Content Type`은 `application/json` 또는
+  `application/x-www-form-urlencoded` 중 하나로 설정할 수 있습니다.
+
+- `저장` 버튼을 클릭합니다.
+
+<Hint style="info">
+  `호출 테스트` 버튼을 클릭하면 저장된 URL로 테스트 웹훅이 발송됩니다. 이를 통해 올바른 URL과 Content-Type을 지정했는지 테스트할 수 있습니다.
+  콘솔 내 화면에서 Endpoint URL 변경 후 저장하지 않은 채 호출테스트를 시도하시면 이전에 저장된 주소로 발송되오니 주의하시길 바랍니다.
+</Hint>
 
 ### 2. 결제 파라미터 설정
 
@@ -55,10 +82,11 @@ PortOne.requestPayment({
 
 ## 요청 처리
 
-웹훅 POST 요청의 본문은 다음의 정보를 포함합니다. 고객사 서버는 아래 정보를 수신하고 포트원 서버에서 결제 정보를 조회하여 검증 및 저장할 수 있습니다. (필드는 별도 안내 없이 추가될 수 있습니다.)
+웹훅 POST 요청의 본문은 다음의 정보를 포함합니다. 고객사 서버는 아래 정보를 수신하고
+포트원 서버에서 결제 정보를 조회하여 검증 및 저장할 수 있습니다. (필드는 별도 안내 없이 추가될 수 있습니다.)
 
-* `payment_id`: 주문 ID
-* `status`: 결제 상태
+- `payment_id`: 주문 ID
+- `status`: 결제 상태
 
 ```javascript title="Express"
 // Content-Type을 application/json으로 설정한 경우
@@ -69,10 +97,16 @@ app.post("/portone-webhook", async (req, res) => {
     const { payment_id: paymentId } = req.body;
 
     // 1. 포트원 결제내역 단건조회 API 호출
-    const paymentResponse = await fetch(`https://api.portone.io/payments/${encodeURIComponent(paymentId)}`, {
-      headers: { "Authorization": `PortOne ${PORTONE_API_SECRET}` },
-    });
-    if (!paymentResponse.ok) throw new Error(`signinResponse: ${paymentResponse.statusText}`);
+    const paymentResponse = await fetch(
+      `https://api.portone.io/payments/${encodeURIComponent(paymentId)}`,
+      {
+        headers: {
+          Authorization: `PortOne ${PORTONE_API_SECRET}`,
+        },
+      },
+    );
+    if (!paymentResponse.ok)
+      throw new Error(`signinResponse: ${paymentResponse.statusText}`);
     const { id, status, amount, method } = await paymentResponse.json();
 
     // 2. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
@@ -99,12 +133,17 @@ app.post("/portone-webhook", async (req, res) => {
 });
 ```
 
-### 3. 웹훅(Webhook) 요청 검증하기
+<Hint style="info">
+  **웹훅 관련 정보**
+
+  Connection Timeout 및 Read Timeout 모두 30초 입니다.
+</Hint>
+
+### 3. 웹훅 요청 검증하기
 
 웹훅 수신주소는 공개된 URL이기 때문에 요청자 IP가 포트원의 IP인지 반드시 확인해야 합니다. 포트원 웹훅은 다음의 고정된 IP로부터 요청이 생성됩니다.
 
-> - <mark style="color:red;">**52.78.5.241**</mark>
-
+- <mark style="color:red;">**52.78.5.241**</mark>
 
 <Hint style="info">
 **웹훅 처리 전에 브라우저 결제 완료 처리가 진행되는 경우**
@@ -114,10 +153,9 @@ app.post("/portone-webhook", async (req, res) => {
 </Hint>
 
 <Hint style="info">
-**웹훅 재전송 정책**
+  **웹훅 재전송 정책**
 
-네트워크 문제나 고객사 오류 등으로 웹훅이 실패할 경우 최대 5회까지 웹훅을 재전송합니다.
+  네트워크 문제나 고객사 오류 등으로 웹훅이 실패할 경우 최대 5회까지 웹훅을 재전송합니다.
 
-재전송 시간은 exponential backoff를 적용하여 0 -> 1 → 4 -> 16 -> 256분을 기다립니다. 이에 더하여 무작위로 지연 시간을 변형하는 jittering이 적용됩니다.
-
+  재전송 시간은 exponential backoff를 적용하여 0 → 1 → 4 → 16 → 64 → 256분을 기다립니다. 이에 더하여 무작위로 지연 시간을 변형하는 jittering이 적용됩니다.
 </Hint>

@@ -1,14 +1,18 @@
 ---
+import { clsx } from "clsx";
+
 import type { Lang } from "~/type";
+
+import Dropdown from "./Dropdown";
 import Logo from "./Logo.astro";
 import MobileMenuButton from "./MobileMenuButton";
-import Dropdown from "./Dropdown";
 import VersionSwitch from "./VersionSwitch";
 
 interface Props {
   lang: Lang;
+  navAsMenu: boolean;
 }
-const { lang } = Astro.props;
+const { lang, navAsMenu } = Astro.props;
 const url = Astro.url;
 
 // To bypass the astro bug, all Korean characters were escaped.
@@ -29,7 +33,9 @@ const t = lang === "ko" ? ko : en;
 
 <script>
   import { effect } from "@preact/signals";
+
   import { systemVersionSignal } from "~/state/nav";
+
   const navMenu = document.getElementById("gnb")!;
   effect(() => {
     const systemVersion = systemVersionSignal.value;
@@ -42,22 +48,34 @@ const t = lang === "ko" ? ko : en;
     display: none;
   }
 </style>
-<div class="h-14">
+<div class="z-50 h-14">
   <header
     id="gnb"
-    class="h-inherit fixed z-10 flex w-full items-center justify-between border-b bg-white pl-4 md:pl-6"
+    class="fixed z-10 h-inherit w-full flex items-center justify-between border-b bg-white"
   >
-    <div class="flex h-full items-center">
-      <a class="inline-flex h-full items-center" href={`/docs/${lang}`}>
-        <div class="flex items-center gap-2">
-          <Logo class="w-22" />
-          <span class="break-keep">{t["developers"]}</span>
+    <div class="h-full flex flex-grow items-center pl-4 md:pl-6">
+      <div
+        class="z-10 h-full flex flex-grow items-center bg-white md:flex-grow-0"
+      >
+        <a class="h-full inline-flex items-center" href={`/docs/${lang}`}>
+          <div class="flex items-center gap-2">
+            <Logo class="w-22" />
+            <span class="break-keep">{t["developers"]}</span>
+          </div>
+        </a>
+        <div class="mx-6 md:ml-[70px]">
+          <VersionSwitch url={url.toString()} client:load />
         </div>
-      </a>
-      <div class="mx-6 md:ml-[70px]">
-        <VersionSwitch url={url.toString()} client:load />
       </div>
-      <div class="hidden h-full items-center gap-6 md:flex">
+      <div
+        class={clsx(
+          "flex gap-6 md:h-full items-center",
+          navAsMenu
+            ? // prettier-ignore
+              "nav-as-menu <md:(absolute inset-x-0 bottom-0 py-4 transition-transform transform duration-300 flex-col bg-white data-[open]:(translate-y-full shadow-lg))>"
+            : "<md:hidden",
+        )}
+      >
         <Dropdown
           client:visible
           link={{ all: "/api", v1: "/api/rest-v1", v2: "/api/rest-v2" }}
@@ -74,11 +92,14 @@ const t = lang === "ko" ? ko : en;
           API & SDK
         </Dropdown>
         {
-          lang === "ko" && (
-            <a class="inline-flex h-full items-center" href="/release-notes">
+          lang === "ko" && [
+            <a class="h-full inline-flex items-center" href="/release-notes">
               릴리즈 노트
-            </a>
-          )
+            </a>,
+            <a class="h-full inline-flex items-center" href="/blog">
+              기술 블로그
+            </a>,
+          ]
         }
       </div>
     </div>
@@ -97,3 +118,17 @@ const t = lang === "ko" ? ko : en;
     <MobileMenuButton client:visible />
   </header>
 </div>
+<script>
+  import { effect } from "@preact/signals";
+
+  import { sidebarOpenSignal } from "~/state/sidebar";
+
+  const nav = document.querySelector(".nav-as-menu") as HTMLElement | null;
+  if (nav) {
+    effect(() => {
+      const sidebarOpen = sidebarOpenSignal.value;
+      if (sidebarOpen) nav.setAttribute("data-open", "true");
+      else nav.removeAttribute("data-open");
+    });
+  }
+</script>

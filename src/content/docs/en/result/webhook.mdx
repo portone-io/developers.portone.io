@@ -3,10 +3,9 @@ title: Set up a webhook
 description: Set up a webhook to handle the payment result in a reliable way.
 ---
 
-import Hint from "~/components/gitbook/Hint.astro";
+import Hint from "~/components/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
-
 
 #### Use the i'mport webhook to synchronize payment information on the i'mport server with the merchant server to compensate for data loss due to device or network instability.
 
@@ -15,24 +14,30 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Hint style="info">
 **What is a webhook?**
 
-A webhook is a mechanism for sending notifications to other services or applications when a specific event occurs. The webhook provider sends event information to the callback URL (endpoint) by creating an `HTTP POST` request when the event occurs. Webhooks are much more efficient in terms of resources and communication as they can only receive information related to desired events without polling data periodically. Using webhooks, you can extend functionality by integrating with custom functions or other applications.
+A webhook is a mechanism for sending notifications to other services or applications when a specific event occurs.
+The webhook provider sends event information to the callback URL (endpoint) by creating an `HTTP POST` request
+when the event occurs. Webhooks are much more efficient in terms of resources and communication
+as they can only receive information related to desired events without polling data periodically.
+Using webhooks, you can extend functionality by integrating with custom functions or other applications.
 
 </Hint>
 
 <Hint style="success">
 **Is webhook integration required?**
 
-When the i'mport server sends a response to the client, the client may not receive the response after the payment process is complete for reasons, such as Wi-Fi disconnection or automatic browser reload. In this case, the i'mport server sends a webhook event to the server so that the payment information can be synchronized.
+When the i'mport server sends a response to the client, the client may not receive the response
+after the payment process is complete for reasons, such as Wi-Fi disconnection or automatic browser reload.
+In this case, the i'mport server sends a webhook event to the server so that the payment information can be synchronized.
 
 </Hint>
 
 i'mport webhook is called when:
 
-> * **Payment is approved (all payment methods)** (status : `paid`)
-> * **Virtual account is issued** (status : `ready`)
-> * **Payment is deposited into virtual account** (status : `paid`)
-> * **Scheduled payment is attempted** (status : `paid` or `failed`)
-> * **Refund is processed from Admin console** (status : `cancelled`)
+> - **Payment is approved (all payment methods)** (status : `paid`)
+> - **Virtual account is issued** (status : `ready`)
+> - **Payment is deposited into virtual account** (status : `paid`)
+> - **Scheduled payment is attempted** (status : `paid` or `failed`)
+> - **Refund is processed from Admin console** (status : `cancelled`)
 
 <Hint style="danger">
 **A webhook is not invoked when payment fails!**
@@ -73,7 +78,6 @@ function requestPay() {
 }
 ```
 
-
 </Tab>
 </Tabs>
 
@@ -91,15 +95,24 @@ Webhooks can be sent via initial or resend, each with different timeouts.
 
 ### Verify webhook request <a href="#webhook" id="webhook"></a>
 
-When a Webhook event is triggered, a `POST` request is generated to the configured URL endpoint as follows.
+When a Webhook event is triggered, a `POST` request is generated to the configured URL endpoint as
+follows.
 
-Since the webhook receiving address is a public URL and there's a risk of servers other than PortOne sending webhooks, **the merchant server receive the webhook and then must verify the webhook content by querying the payment transaction using the [Get Payment by ImpUid API](../api/payment-api/get-payment-api).**
-Even if the payment has been successfully processed, there might be cases where the webhook is not received or is delayed due to network issues.
-If a webhook is not received or is delayed, immediately cancelling the transaction could result in financial loss due to a refund of a payment that was successfully processed due to network issues.
-**Even if a webhook does not arrive, before cancelling a payment, query the status of the transaction using the [Get Payment by ImpUid API](../api/payment-api/get-payment-api) to ensure the payment status is normal and avoid cancelling.**
+Since the webhook receiving address is a public URL and there's a risk of servers other than PortOne
+sending webhooks, **the merchant server receive the webhook and then must verify the webhook content
+by querying the payment transaction using the [Get Payment by ImpUid API](../api/payment-api/get-payment-api).**
+Even if the payment has been successfully processed,
+there might be cases where the webhook is not received or is delayed due to network issues. If a
+webhook is not received or is delayed, immediately cancelling the transaction could result in
+financial loss due to a refund of a payment that was successfully processed due to network issues.
+**Even if a webhook does not arrive, before cancelling a payment, query the status of the
+transaction using the [Get Payment by ImpUid API](../api/payment-api/get-payment-api) to ensure the
+payment status is normal and avoid cancelling.**
 
-Even if the merchant server responds correctly after receiving a webhook, if the webhook response does not reach the PortOne server due to network issues, the webhook may be resent for merchants who have set up the webhook retry feature.
-It is recommended to handle potential multiple receipts of the same webhook content without issues.
+Even if the merchant server responds correctly after receiving a webhook, if the webhook response
+does not reach the PortOne server due to network issues, the webhook may be resent for merchants who
+have set up the webhook retry feature. It is recommended to handle potential multiple receipts of
+the same webhook content without issues.
 
 <Tabs>
 <Tab title="cURL">
@@ -110,11 +123,13 @@ curl -H "Content-Type: application/json" -X POST -d '{ "imp_uid": "imp_123456789
 </Tab>
 </Tabs>
 
-> The body of the webhook `POST` request contains the following information. The server can get the information and use it to query the payment information from the i'mport server and verify and store the payment information.
+> The body of the webhook `POST` request contains the following information. The server can get the
+> information and use it to query the payment information from the i'mport server and verify and
+> store the payment information.
 >
-> * <mark style="color:red;">**`imp_uid`**</mark><mark style="color:red;">**: payment ID**</mark>
-> * <mark style="color:red;">**`merchant_uid`**</mark><mark style="color:red;">**: order ID**</mark>
-> * <mark style="color:red;">**`status`**</mark><mark style="color:red;">**: payment result**</mark>
+> - <mark style="color:red;">**`imp_uid`**</mark><mark style="color:red;">**: payment ID**</mark>
+> - <mark style="color:red;">**`merchant_uid`**</mark><mark style="color:red;">**: order ID**</mark>
+> - <mark style="color:red;">**`status`**</mark><mark style="color:red;">**: payment result**</mark>
 
 Sample code of receiving a POST request to webhook endpoint URL
 
@@ -164,7 +179,6 @@ app.use(bodyParser.json());
     }
   });
 ```
-
 
 </Tab>
 </Tabs>

@@ -1,0 +1,55 @@
+---
+import type { Root } from "mdast";
+import rehypeStringify from "rehype-stringify";
+import remarkGfm from "remark-gfm";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import type { Plugin } from "unified";
+import { unified } from "unified";
+import { visit } from "unist-util-visit";
+
+import Prose from "~/components/Prose.astro";
+
+const response = await fetch(
+  "https://api.github.com/repos/portone-io/browser-sdk/contents/packages/browser-sdk/CHANGELOG.md",
+  {
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${import.meta.env.GITHUB_JS_SDK_CHANGELOG_TOKEN}`,
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  },
+);
+const json = await response.json();
+const content = Buffer.from(json.content, "base64").toString("utf-8");
+const html = await unified()
+  .use(remarkGfm)
+  .use(remarkParse)
+  .use(function () {
+    return (tree) => {
+      visit(tree, "heading", (node, index, parent) => {
+        if (index == null || parent == null || node.depth !== 1) return;
+        if (
+          node.children.every(
+            (child) =>
+              child.type === "text" &&
+              child.value.includes("@portone/browser-sdk"),
+          )
+        ) {
+          parent.children.splice(index, 1);
+          visit(parent, "text", (node) => {
+            node.value = node.value.replaceAll(/[0-9a-f]+: (.+)/g, "$1");
+          });
+        } else {
+          console.warn("Unexpected CHANGELOG.md structure");
+        }
+      });
+    };
+  } satisfies Plugin<[], Root>)
+  .use(remarkRehype)
+  .use(rehypeStringify)
+  .process(content);
+---
+
+<Fragment set:html={html} />
+<Prose />

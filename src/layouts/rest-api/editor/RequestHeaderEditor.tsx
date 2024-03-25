@@ -26,7 +26,7 @@ export default function RequestHeaderEditor({
     reqHeaderSignal.value = newReqHeader;
   }
   return (
-    <div class="absolute flex h-full w-full flex-col gap-1 overflow-y-scroll">
+    <div class="absolute h-full w-full flex flex-col gap-1 overflow-y-scroll">
       <div class="sticky top-0 grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
         <div class="bg-slate-1 px-2 py-1">Key</div>
         <div class="bg-slate-1 px-2 py-1">Value</div>
@@ -35,21 +35,21 @@ export default function RequestHeaderEditor({
       {reqHeader.map(({ key, value }, index) => (
         <div key={index} class="grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
           <input
-            class="border-slate-2 w-full border px-2 py-1"
+            class="w-full border border-slate-2 px-2 py-1"
             value={key}
             onInput={(e) =>
               updateReqHeader(index, { key: e.currentTarget.value })
             }
           />
           <input
-            class="border-slate-2 w-full border px-2 py-1"
+            class="w-full border border-slate-2 px-2 py-1"
             value={value}
             onInput={(e) =>
               updateReqHeader(index, { value: e.currentTarget.value })
             }
           />
           <button
-            class="text-slate-3 hover:text-slate-7 inline-flex items-center text-lg"
+            class="inline-flex items-center text-lg text-slate-3 hover:text-slate-7"
             onClick={() => delReqHeader(index)}
           >
             <i class="i-ic-twotone-delete-forever" />
@@ -57,7 +57,7 @@ export default function RequestHeaderEditor({
         </div>
       ))}
       <button
-        class="bg-slate-1 mr-1.75rem sticky bottom-0 inline-flex items-center justify-center py-1 text-lg opacity-50 hover:opacity-100"
+        class="sticky bottom-0 mr-1.75rem inline-flex items-center justify-center bg-slate-1 py-1 text-lg opacity-50 hover:opacity-100"
         onClick={addReqHeader}
       >
         <i class="i-ic-baseline-plus" />

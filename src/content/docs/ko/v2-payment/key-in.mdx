@@ -3,11 +3,7 @@ title: 수기(키인) 결제 연동하기
 description: 구매자 인증 없이 결제 수단 정보만으로 결제를 요청합니다.
 ---
 
-import Hint from "~/components/gitbook/Hint.astro";
-import Figure from "~/components/gitbook/Figure.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-
+import Hint from "~/components/Hint.astro";
 
 <Hint style="info">
 수기 결제를 이용하기 위해서는 PG사와 별도 협의가 필요합니다.
@@ -19,11 +15,6 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 ## 수기 결제의 장단점
 
 아래의 예제처럼 고객사가 직접 만든 UI로 결제 정보를 입력받을 수 있습니다.
-
-<Figure
-  src="https://openapi-documentation-poc.vercel.app/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fv2-user-guide-chaiport-merchant.ec3dd18c.png&#x26;w=3840&#x26;q=100"
-  caption='포트원 이용 고객사 "링글 잉글리시 에듀케이션"'
-/>
 
 그러나 간편 결제와 다르게 고객이 매번 정보를 기입해야 한다는 번거로움이 있습니다.
 
@@ -38,7 +29,7 @@ const paymentResponse = await fetch(
   {
     method: "POST",
     headers: {
-      "Authorization": `PortOne ${PORTONE_API_SECRET}`,
+      Authorization: `PortOne ${PORTONE_API_SECRET}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -55,5 +46,6 @@ const paymentResponse = await fetch(
     }),
   },
 );
-if (!paymentResponse.ok) throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
+if (!paymentResponse.ok)
+  throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
 ```

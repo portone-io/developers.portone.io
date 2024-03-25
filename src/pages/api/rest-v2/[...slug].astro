@@ -1,18 +1,22 @@
 ---
 import LayoutBase from "~/layouts/LayoutBase.astro";
-import Component from "./_Page";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu.astro";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
 import schema from "~/schema/v2.openapi.json";
 
-export const prerender = false;
+import Component from "./_Page";
 
+const { slug } = Astro.params;
 const [_api, _rest, section = ""] = Astro.url.pathname
   .split("/")
   .filter(Boolean);
 ---
 
-<LayoutBase lang="ko" title="PortOne REST API - V2">
+<LayoutBase
+  lang="ko"
+  title="PortOne REST API - V2"
+  slug={`api/rest-v2${slug ? `/${slug}` : ""}`}
+>
   <div class="flex">
     <NavMenu
       title="REST API - V2"

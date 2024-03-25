@@ -4,24 +4,21 @@ description: 본인인증을 완료하는 API 입니다.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/gitbook/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-
-### 포트원 거래고유번호(imp_uid)와 SMS 인증번호를 이용하여 본인인증을 완료합니다.
+## 포트원 거래고유번호(imp_uid)와 SMS 인증번호를 이용하여 본인인증을 완료합니다.
 
 <Swagger method="post" path="/certifications/otp/confirm/{imp_uid}" baseUrl="https://api.iamport.kr" summary="본인인증을 완료합니다.">
 <SwaggerDescription>
 본인인증 요청 API를 통해 SMS로 전송된 인증번호를 전달하여 본인인증을 완료합니다.
 
 본인인증이 완료되면 대상자의 이름, 전화번호, 통신사, 성별, 외국인여부, 생년월일, CI, DI 값을 응답받을 수 있습니다.
-
-
 
 </SwaggerDescription>
 
@@ -39,6 +36,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 </mark>
 
 </SwaggerParameter>
+
 #### Body
 
 <SwaggerParameter name="otp" type="String" required="true">
@@ -49,7 +47,6 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 </mark>
 
 </SwaggerParameter>
-
 
 ### Responses
 
@@ -81,7 +78,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`merchant_uid`** <mark style="color:green;">**string**</mark>
 
-**`가맹점 고유주문번호`**
+**`고객사 주문번호`**
 
 **`pg_tid`** <mark style="color:green;">**string**</mark>
 
@@ -99,8 +96,8 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 
 **`성별`**
 
-* male:남성
-* female:여성
+- male:남성
+- female:여성
 
 **`birthday`** <mark style="color:green;">**string**</mark>
 
@@ -114,10 +111,8 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 
 <mark style="color:red;">다날 본인인증서비스 계약시</mark> 외국인 구분기능을 추가 요청하지 않은 경우 항상 **false**를 응답합니다.
 
-* true : 외국인
-* false : 내국인
-
-
+- true : 외국인
+- false : 내국인
 
 **`phone`** <mark style="color:green;">**string**</mark>
 
@@ -134,23 +129,20 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 (신용카드 본인인증의 경우 해당사항없음)
 통신사 사전승인이 이뤄지지 않으면 carrier 속성은 존재하지 않습니다. 통신사 사전승인이 필요하므로 **cs@portone.io ** 로 다날 CPID 와 함께 사용승인 요청이 필요합니다.
 
-* SKT
-* KT
-* LGT
-* SKT_MVNO
-* KT_MVNO
-* LGT_MVNO
+- SKT
+- KT
+- LGT
+- SKT_MVNO
+- KT_MVNO
+- LGT_MVNO
 
 **`certified`** <mark style="color:orange;">**boolean**</mark>
 
 **`인증성공여부`**
 
-
 **`certified_at`** <mark style="color:green;">**string**</mark>
 
 **`인증처리시각`** (UNIX timestamp)
-
-
 
 **`unique_key`** <mark style="color:green;">**string**</mark>
 
@@ -158,7 +150,7 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 
 **`unique_in_site`**  **<mark style="color:green;">**string**</mark>
 
-**가맹점 내 개인 고유구분 식별키 (`DI`)**
+**고객사 내 개인 고유구분 식별키 (`DI`)**
 
 본인인증 PG MID별로 할당되는 개인 식별키
 
@@ -170,8 +162,8 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 
 **`외국인 여부(nullable)`**
 
-* true : 외국인
-* false : 내국인
+- true : 외국인
+- false : 내국인
 
 **다날 본인인증서비스 계약시** 외국인 구분기능 추가 요청을 해주셔야 사용이 가능합니다.
 요청을 하지 않은 경우 **null**을 응답합니다.
@@ -184,7 +176,7 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 <SwaggerResponse status="400: Bad Request" description="인증번호를 누락하였거나 이미 인증처리가 완료된 건에 대해 재요청하는 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 
@@ -193,7 +185,7 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 <SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 
@@ -202,7 +194,7 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 <SwaggerResponse status="404: Not Found" description="imp_uid 에 해당되는 요청건이 없는 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 
@@ -211,7 +203,7 @@ ISO8601 형식의 문자열. <mark style="color:red;">YYYY-MM-DD</mark> 10자리
 <SwaggerResponse status="500: Internal Server Error" description="처리 중 다날서버 응답오류 등 오류가 발생한 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 

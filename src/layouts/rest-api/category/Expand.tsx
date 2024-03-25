@@ -1,7 +1,9 @@
+import type React from "preact/compat";
+
 export interface ExpandProps {
   title?: string;
   className?: string;
-  children?: any;
+  children?: React.ReactNode;
   expand?: boolean;
   onToggle?: (expand: boolean) => void;
   onCollapse?: () => void;

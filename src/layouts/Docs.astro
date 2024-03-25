@@ -1,16 +1,18 @@
 ---
-import type { Lang } from "~/type";
-import LayoutBase from "~/layouts/LayoutBase.astro";
+import type { CollectionEntry } from "astro:content";
+
 import * as prose from "~/components/prose";
+import LayoutBase from "~/layouts/LayoutBase.astro";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu.astro";
 import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
 import { SearchScreen } from "~/layouts/sidebar/search";
 import { calcNavMenuSystemVersions, navMenu } from "~/state/server-only/nav";
+import type { Lang } from "~/type";
 
 interface Props {
   lang: Lang;
   slug: string;
-  entry: any;
+  entry: CollectionEntry<"docs">;
 }
 const { lang, slug, entry } = Astro.props;
 const { title, description } = entry.data;
@@ -23,12 +25,19 @@ const navMenuItems = navMenu[lang] || [];
 const navMenuSystemVersions = calcNavMenuSystemVersions(navMenuItems);
 ---
 
-<LayoutBase lang={lang} title={title}>
+<LayoutBase
+  lang={lang}
+  title={title}
+  description={description}
+  slug={`docs${slug}`}
+  ogType="article"
+  ogImageSlug={`docs${slug}.png`}
+>
   <div class="flex">
     <DocsNavMenu lang={lang} slug={slug} />
-    <div class="flex min-w-0 flex-1 justify-center">
+    <div class="min-w-0 flex flex-1 justify-center">
       <article
-        class="basis-200 shrink-1 m-4 mb-40 flex min-w-0 flex-col text-slate-700"
+        class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700"
       >
         <div class="mb-6">
           <prose.h1 id="overview">
@@ -38,7 +47,7 @@ const navMenuSystemVersions = calcNavMenuSystemVersions(navMenuItems);
         </div>
         <Content components={prose} />
       </article>
-      <div class="shrink-10 hidden basis-10 lg:block"></div>
+      <div class="hidden shrink-10 basis-10 lg:block"></div>
       <RightSidebar lang={lang} slug={slug} toc={toc} client:idle />
     </div>
   </div>

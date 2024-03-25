@@ -4,5 +4,5 @@ export default function once() {
     if (fired) return;
     fired = true;
     fn();
-  }
+  };
 }

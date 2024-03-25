@@ -1,11 +1,26 @@
-declare module "*/_names.yaml" {
-  const value: Record<string, string>;
+declare module "*/_authors.yaml" {
+  const value: Record<
+    string,
+    {
+      name: string;
+      role: string;
+      bio: string;
+      contacts?: (
+        | { github: string }
+        | { twitter: string }
+        | { facebook: string }
+        | { linkedin: string }
+        | { medium: string }
+        | { hashnode: string }
+        | { tistory: string }
+      )[];
+    }
+  >;
   export default value;
 }
 
 declare module "*/_nav.yaml" {
-  import type { YamlNavMenuItem } from "./type";
-  const value: YamlNavMenuItem[];
+  const value: unknown;
   export default value;
 }
 
@@ -16,4 +31,9 @@ declare module "*/_redir.yaml" {
   }
   const value: Redir[];
   export default value;
+}
+
+declare module "*?base64" {
+  const base64: string;
+  export default base64;
 }

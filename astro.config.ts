@@ -1,21 +1,32 @@
+import { readFile } from "node:fs/promises";
 import * as path from "node:path";
-import { defineConfig } from "astro/config";
-import preact from "@astrojs/preact";
+
 import mdx from "@astrojs/mdx";
+import preact from "@astrojs/preact";
+import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel/serverless";
-import unocss from "unocss/astro";
 import yaml from "@rollup/plugin-yaml";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
-import contentIndex from "./src/content-index";
+import { defineConfig } from "astro/config";
+import unocss from "unocss/astro";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://developers.portone.io/",
   integrations: [
     preact({ compat: true }),
     mdx(),
     unocss({ injectReset: true }),
-    contentIndex,
+    sitemap({
+      customPages: ["/api/rest-v1/", "/api/rest-v2/"].map(
+        (url) => `https://developers.portone.io${url}`,
+      ),
+      filter: (page) =>
+        ![/^\/test/, /^\/platform/, /^\/api\/rest-v2-legacy/].some((regex) =>
+          regex.test(page.replace("https://developers.portone.io", "")),
+        ),
+    }),
   ],
   vite: {
     resolve: {
@@ -24,7 +35,20 @@ export default defineConfig({
         querystring: "querystring-es3",
       },
     },
-    plugins: [yaml()],
+    plugins: [
+      yaml(),
+      {
+        name: "base64-loader",
+        async transform(_, id) {
+          const [path, query] = id.split("?");
+          if (query !== "base64") return null;
+          const data = await readFile(path!);
+          const base64 = data.toString("base64");
+          return `export default '${base64}';`;
+        },
+      },
+    ],
+    optimizeDeps: { exclude: ["sharp"] },
   },
   image: {
     remotePatterns: [{ protocol: "https" }],
@@ -78,6 +102,10 @@ export default defineConfig({
       ],
     ],
   },
-  output: "hybrid",
-  adapter: vercel(),
+  output: "server",
+  adapter: vercel({
+    isr: {
+      expiration: 180,
+    },
+  }),
 });

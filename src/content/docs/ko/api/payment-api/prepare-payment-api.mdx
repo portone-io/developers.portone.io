@@ -4,20 +4,19 @@ description: 인증 결제시 결제금액을 사전등록 하여 금액 위변�
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/gitbook/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-
-### 인증결제를 진행할 때 결제금액 위변조 시 결제진행자체를 block 하기 위해 결제예정금액을 사전등록하는 기능
+## 인증결제를 진행할 때 결제금액 위변조 시 결제진행자체를 block 하기 위해 결제예정금액을 사전등록하는 기능
 
 <Swagger method="post" path="/payments/prepare" baseUrl="https://api.iamport.kr" summary="결제 금액을 사전 등록합니다.">
 <SwaggerDescription>
-사전등록된 가맹점 주문번호(merchant_uid)에 대해, IMP.request_pay()에 전달된 merchant_uid가 일치하는 주문의 결제금액이 다른 경우 PG사 결제창 호출이 중단됩니다
+사전등록된 고객사 주문번호(merchant_uid)에 대해, IMP.request_pay()에 전달된 merchant_uid가 일치하는 주문의 결제금액이 다른 경우 PG사 결제창 호출이 중단됩니다
 
 </SwaggerDescription>
 
@@ -28,7 +27,7 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <SwaggerParameter name="merchant_uid" type="String" required="true">
 <mark style="color:red;">
 
-**가맹점 주문번호**
+**고객사 주문번호**
 
 </mark>
 
@@ -40,10 +39,8 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 </mark>
 
- 
 
 </SwaggerParameter>
-
 
 ### Responses
 
@@ -56,15 +53,11 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 
 0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
 
-
-
 **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
 **응답메세지**
 
 code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
-
-
 
 <mark style="color:red;">**`response (PaymentPrepareAnnotation, optional)`**</mark>
 
@@ -75,9 +68,9 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <Tab title="PaymentPrepareAnnotation">
 **merchant\_uid** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
 
-**가맹점 주문번호**
+**고객사 주문번호**
 
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`number`**</mark>  
+**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**`number`**</mark>
 
 **`결제 예정 금액`**
 
@@ -89,7 +82,7 @@ code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같�
 <SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
 ```javascript
 {
-    // Response
+  // Response
 }
 ```
 

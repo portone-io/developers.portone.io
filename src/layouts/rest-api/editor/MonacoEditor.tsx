@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "preact/hooks";
+
 import once from "./misc/once";
 
 type monaco = typeof import("monaco-editor");
@@ -24,7 +25,7 @@ export default function MonacoEditor({ init, onChange }: MonacoEditorProps) {
       import("monaco-editor"),
       import("./misc/scrollFinished"),
       import("./misc/install-monaco-worker"),
-    ]).then(([monaco, { default: scrollFinished }]) => {
+    ]).then(async ([monaco, { default: scrollFinished }]) => {
       doCreateTheme(() => {
         monaco.editor.defineTheme("portone", {
           base: "vs",
@@ -38,18 +39,17 @@ export default function MonacoEditor({ init, onChange }: MonacoEditorProps) {
       });
       // 브라우저의 smooth scrollTo 중에 dom 수정이 일어나면 스크롤이 도중 끊겨버리기 때문에
       // 스크롤이 끝났다고 판단됐을 때 monaco editor를 초기화한다.
-      return scrollFinished().then(() => {
-        const editor = init(monaco, divRef.current!);
-        const changeEventListener = editor.onDidChangeModelContent(
-          () => onChangeRef.current?.(editor.getValue()),
-        );
-        return () => {
-          changeEventListener.dispose();
-          editor.dispose();
-        };
-      });
+      await scrollFinished();
+      const editor = init(monaco, divRef.current!);
+      const changeEventListener = editor.onDidChangeModelContent(() =>
+        onChangeRef.current?.(editor.getValue()),
+      );
+      return () => {
+        changeEventListener.dispose();
+        editor.dispose();
+      };
     });
-    return () => p.then((dispose) => dispose());
+    return () => void p.then((dispose) => dispose());
   }, []);
   return (
     <div class="relative h-full w-full">

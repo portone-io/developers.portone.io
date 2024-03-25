@@ -1,5 +1,6 @@
 ---
 import LeftSidebar from "~/layouts/sidebar/LeftSidebar.astro";
+
 import NavMenuLink from "./NavMenuLink.astro";
 
 export interface NavMenuItem {
@@ -24,17 +25,19 @@ const _items = [
 
 <script>
   import { effect, signal } from "@preact/signals";
+
   import {
+    closeNav,
     currentSectionSignal,
     navOpenStatesSignal,
-    toggleNav,
     openNav,
-    closeNav,
+    toggleNav,
   } from "~/state/rest-api/nav";
   import { sidebarOpenSignal } from "~/state/sidebar";
+
   const navMenu = document.getElementById("nav-menu");
   const navMenuItems = Array.from(
-    navMenu?.querySelectorAll("[data-navitem]") || []
+    navMenu?.querySelectorAll("[data-navitem]") || [],
   ) as HTMLDivElement[];
   for (const item of navMenuItems) {
     const id = item.dataset.navitem || "";
@@ -43,7 +46,7 @@ const _items = [
     button.addEventListener("click", () => toggleNav(id));
   }
   const navMenuAnchors = Array.from(
-    navMenu?.querySelectorAll("a") || []
+    navMenu?.querySelectorAll("a") || [],
   ) as HTMLAnchorElement[];
   for (const anchor of navMenuAnchors) {
     anchor.addEventListener("click", (e) => {
@@ -85,7 +88,7 @@ const _items = [
   });
   const article = document.getElementById("overview")!.closest("article")!;
   const sections = Array.from(article.children).filter(
-    (child) => child.tagName === "SECTION"
+    (child) => child.tagName === "SECTION",
   );
   function observe() {
     interface Item {
@@ -111,7 +114,7 @@ const _items = [
         }
         // 지금 화면에 보이고있는 section들
         const intersectingIds = Object.keys(items).filter((id) =>
-          Boolean(items[id]?.isIntersecting)
+          Boolean(items[id]?.isIntersecting),
         );
         // 화면에 보이는 section 중에서 사용자가 지금 관심있어할법한 section 순으로 정렬함.
         // 우선 intersectionRatio가 큰 걸 찾는다.
@@ -133,7 +136,7 @@ const _items = [
       {
         rootMargin: "-56px 0px 0px 0px", // gnb height
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-      }
+      },
     );
     sections.forEach((section) => observer.observe(section));
     function resizeHandler() {
@@ -155,15 +158,15 @@ const _items = [
   <hr class="mx-4" />
   <nav
     id="nav-menu"
-    class="text-slate-6 flex flex-1 flex-col gap-2 overflow-y-scroll p-4 text-sm"
+    class="flex flex-1 flex-col gap-2 overflow-y-scroll p-4 text-sm text-slate-6"
   >
     {
       _items.map(({ id, title, children }) => (
         <div data-navitem={id} class="group">
-          <div class="group-data-[active=true]:text-orange-5 group-data-[active=true]:bg-slate-1 hover-bg-slate-1 rounded-1.5 flex tracking-tight group-data-[active=true]:font-bold">
+          <div class="flex rounded-1.5 tracking-tight hover-bg-slate-1 group-data-[active=true]:bg-slate-1 group-data-[active=true]:text-orange-5 group-data-[active=true]:font-bold">
             <NavMenuLink id={id} title={title} basepath={basepath} />
             {children && children.length && (
-              <button class="flex h-full items-center p-2">
+              <button class="h-full flex items-center p-2">
                 <i class="i-ic-baseline-keyboard-arrow-right group-data-[open=true]:i-ic-baseline-keyboard-arrow-down inline-block" />
               </button>
             )}
@@ -173,7 +176,7 @@ const _items = [
               {children.map(({ id, title }) => (
                 <div
                   data-navitem={id}
-                  class="data-[active=true]:text-orange-5 data-[active=true]:bg-slate-1 hover-bg-slate-1 rounded-1.5 tracking-tight data-[active=true]:font-bold"
+                  class="rounded-1.5 tracking-tight data-[active=true]:bg-slate-1 hover-bg-slate-1 data-[active=true]:text-orange-5 data-[active=true]:font-bold"
                 >
                   <NavMenuLink id={id} title={title} basepath={basepath} />
                 </div>

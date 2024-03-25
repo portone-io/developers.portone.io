@@ -1,15 +1,31 @@
 ---
 import type { Lang } from "~/type";
-import Gnb from "./gnb/Gnb.astro";
-import Trackers from "./Trackers.astro";
+
 import ArticleStyle from "./ArticleStyle.astro";
+import Gnb from "./gnb/Gnb.astro";
+import SidebarBackground from "./sidebar/SidebarBackground";
+import Trackers from "./Trackers.astro";
 import TrackingScript from "./TrackingScript.astro";
 
 interface Props {
   lang: Lang;
   title: string;
+  description?: string | undefined;
+  navAsMenu?: boolean | undefined;
+  slug?: string | undefined;
+  ogType?: string | undefined;
+  ogImageSlug?: string | undefined;
 }
-const { lang, title } = Astro.props;
+
+const {
+  lang,
+  title,
+  description,
+  navAsMenu,
+  slug = "",
+  ogType = "website",
+  ogImageSlug = "opengraph.png",
+} = Astro.props;
 ---
 
 <html lang={lang}>
@@ -18,7 +34,20 @@ const { lang, title } = Astro.props;
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <title>{title}</title>
+    <script>
+      import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+    </script>
+    <slot name="og">
+      <meta property="og:title" content={title} />
+      {description && <meta property="og:description" content={description} />}
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={`${Astro.site}${slug}`} />
+      <meta property="og:image" content={`${Astro.site}${ogImageSlug}`} />
+      <meta name="twitter:card" content="summary_large_image" />
+    </slot>
+    <slot name="head" />
     <Trackers />
   </head>
   <body>
@@ -28,10 +57,22 @@ const { lang, title } = Astro.props;
         word-break: break-all;
         overflow-wrap: break-word;
         scroll-behavior: smooth;
-        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", "Malgun Gothic", "맑은 고딕", "Noto Sans", sans-serif,
-          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-          "Noto Color Emoji";
+        font-family:
+          "Pretendard Variable",
+          Pretendard,
+          -apple-system,
+          BlinkMacSystemFont,
+          system-ui,
+          Roboto,
+          "Helvetica Neue",
+          "Segoe UI",
+          "Apple SD Gothic Neo",
+          "Noto Sans KR",
+          "Malgun Gothic",
+          "Apple Color Emoji",
+          "Segoe UI Emoji",
+          "Segoe UI Symbol",
+          sans-serif;
       }
 
       html,
@@ -86,8 +127,9 @@ const { lang, title } = Astro.props;
       }
     </style>
     <ArticleStyle />
-    <div class="flex h-full flex-col">
-      <Gnb lang={lang} />
+    <div class="h-full flex flex-col">
+      <Gnb lang={lang} navAsMenu={navAsMenu ?? false} />
+      <SidebarBackground client:visible />
       <main class="min-h-0 flex-1">
         <slot />
       </main>

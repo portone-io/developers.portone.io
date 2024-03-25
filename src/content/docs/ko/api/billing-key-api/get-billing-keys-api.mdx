@@ -4,203 +4,185 @@ description: 복수개의 빌링키를 이용하여 빌링키 정보를 조회�
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/gitbook/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 복수개의 빌링키 정보를 입력하여 각각의 빌링키 정보를 조회할 수 있습니다.
+## 복수개의 빌링키 정보를 입력하여 각각의 빌링키 정보를 조회할 수 있습니다.
 
 <Swagger method="get" path="/subscribe/customers" baseUrl="https://api.iamport.kr" summary="빌링정보 복수조회 API">
-<SwaggerDescription>
-등록된 카드마다 1개의 **customer_uid** 가 매핑되므로 가맹점 시스템 내에 1명의 고객이 여러 장의 카드를 등록할 수 있는 경우 여러 개의 customer_uid를 가지게 됩니다. 
+  <SwaggerDescription>
+    등록된 카드마다 1개의 **customer\_uid** 가 매핑되므로 고객사 시스템 내에 1명의 고객이 여러 장의 카드를 등록할 수 있는 경우 여러 개의 customer\_uid를 가지게 됩니다.
 
-해당 고객이 등록한 카드정보 목록을 한 번에 조회하는데 사용하면 편리합니다.
+    해당 고객이 등록한 카드정보 목록을 한 번에 조회하는데 사용하면 편리합니다.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ## Parameters
 
-### Parameters
+  ### Query
 
-#### Query
+  <SwaggerParameter name="customer_uid[]" type="Array" required="true">
+    <mark style="color:red;">
+      **빌링키**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="customer_uid[]" type="Array" required="true">
-<mark style="color:red;">
+  ## Responses
 
-**빌링키**
+  <SwaggerResponse status="200: OK" description="성공">
+    <Tabs>
+      <Tab title="CustomerResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **응답코드**
 
-</SwaggerParameter>
+        0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="성공">
-<Tabs>
-<Tab title="CustomerResponse">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+        **응답메세지**
 
-**응답코드**
+        code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
 
-0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+        **`response`** <mark style="color:red;">**(CustomerAnnotation, optional)**</mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+    <Tabs>
+      <Tab title="CustomerAnnotation">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**응답메세지**
+        **`응답코드`**
 
-code 값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+        0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
 
-**`response`** <mark style="color:red;">**(CustomerAnnotation, optional)**</mark>
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
+        **`응답메세지`**
 
-<Tabs>
-<Tab title="CustomerAnnotation">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+        code값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
 
-**`응답코드`**
+        **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-0이면 정상적인 조회, 0 이 아닌 값이면 message를 확인해봐야 합니다
+        **`빌링키`**
 
-**`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`응답메세지`**
+        **빌링키가 등록된 PG사 구분코드**
 
-code값이 0이 아닐 때, '존재하지 않는 결제정보입니다'와 같은 오류 메세지를 포함합니다
+        **`pg_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **빌링키가 등록된 PG사 상점아이디(MID)**
 
-**`빌링키`**
+        **`customer_id`** <mark style="color:green;">**string**</mark>
 
-**`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **구매자 ID**
 
-**빌링키가 등록된 PG사 구분코드**
+        **`card_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`카드사명`**
 
-**빌링키가 등록된 PG사 상점아이디(MID)**
+        **`card_code`** <mark style="color:green;">**string**</mark>
 
-**`customer_id`** <mark style="color:green;">**string**</mark>
+        **`카드사 코드`**[**`(링크보기)`**](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630)
 
-**구매자 ID**
+        **`card_number`** <mark style="color:green;">**string**</mark>
 
-**`card_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`마스킹 카드번호`**
 
-**`카드사명`**
+        **`card_type`** <mark style="color:green;">**string**</mark>
 
+        **`카드유형`**
 
-**`card_code`** <mark style="color:green;">**string**</mark>
+        **(주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨**
+        (ex. JTNet, 이니시스 -빌링)
 
-**`카드사 코드`**[**`(링크보기)`**](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630)
+        - 0 : 신용카드
+        - 1 : 체크카드
 
-**`card_number`** <mark style="color:green;">**string**</mark>
+        **`customer_name`** <mark style="color:green;">**string**</mark>
 
-**`마스킹 카드번호`**
+        **`고객성함`**
 
+        **`customer_tel`** <mark style="color:green;">**string**</mark>
 
-**`card_type`** <mark style="color:green;">**string**</mark>
+        **`고객(카드소지자) 전화번호`**
 
-**`카드유형`**
+        **`customer_email`** <mark style="color:green;">**string**</mark>
 
-**(주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨**
-(ex. JTNet, 이니시스 -빌링)
-* 0 : 신용카드
-* 1 : 체크카드
+        **`고객(카드소지자) Email 주소`**
 
-**`customer_name`** <mark style="color:green;">**string**</mark>
+        **`customer_addr`** <mark style="color:green;">**string**</mark>
 
-**`고객성함`**
+        **`고객(카드소지자) 주소`**
 
+        **`customer_postcode`** <mark style="color:green;">**string**</mark>
 
-**`customer_tel`** <mark style="color:green;">**string**</mark>
+        **`고객(카드소지자) 우편번호`**
 
-**`고객(카드소지자) 전화번호`**
+        **`inserted`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
+        **`빌링키가 등록된 시각`** UNIX timestamp
 
-**`customer_email`** <mark style="color:green;">**string**</mark>
+        **`updated`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**`고객(카드소지자) Email 주소`**
+        **`빌링키가 업데이트된 시각`** UNIX timestamp
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
+  <SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
+    ```javascript
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`customer_addr`** <mark style="color:green;">**string**</mark>
-
-**`고객(카드소지자) 주소`**
-
-
-
-**`customer_postcode`** <mark style="color:green;">**string**</mark>
-
-**`고객(카드소지자) 우편번호`**
-
-**`inserted`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
-
-**`빌링키가 등록된 시각`** UNIX timestamp
-
-**`updated`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
-
-**`빌링키가 업데이트된 시각`** UNIX timestamp
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="인증 Token이 전달되지 않았거나 유효하지 않은 경우">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="유효하지 않은 customer_uid">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="유효하지 않은 customer_uid">
+    ```javascript
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": [
-    {
-      "customer_uid": "string",
-      "pg_provider": "string",
-      "pg_id": "string",
-      "card_name": "string",
-      "card_code": "string",
-      "card_number": "string",
-      "card_type": "null",
-      "customer_name": "string",
-      "customer_tel": "string",
-      "customer_email": "string",
-      "customer_addr": "string",
-      "customer_postcode": "string",
-      "inserted": 0,
-      "updated": 0
-    }
-  ]
-}
-```
-
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": [
+      {
+        "customer_uid": "string",
+        "pg_provider": "string",
+        "pg_id": "string",
+        "card_name": "string",
+        "card_code": "string",
+        "card_number": "string",
+        "card_type": "null",
+        "customer_name": "string",
+        "customer_tel": "string",
+        "customer_email": "string",
+        "customer_addr": "string",
+        "customer_postcode": "string",
+        "inserted": 0,
+        "updated": 0
+      }
+    ]
+  }
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/subscribe.customer/customer_view_multiple**](https://api.iamport.kr/#!/subscribe.customer/customer_view_multiple)
-
+  [**https://api.iamport.kr/#!/subscribe.customer/customer\_view\_multiple**](https://api.iamport.kr/#!/subscribe.customer/customer_view_multiple)
 </Hint>

@@ -3,8 +3,8 @@ title: 복수 PG설정 및 사용하기
 description: 복수 PG를 사용하는 경우 설정방법을 확인할 수 있습니다.
 ---
 
-import Figure from "~/components/gitbook/Figure.astro";
-import Hint from "~/components/gitbook/Hint.astro";
+import Figure from "~/components/Figure.astro";
+import Hint from "~/components/Hint.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 
@@ -14,28 +14,34 @@ import image2 from "./_assets/multi-pg-guide-2.png";
 ### 이 문서는 포트원 관리자 콘솔에서 복수의 PG사를 설정하여 원하는 결제 수단으로 결제창을 호출하는 방법을 설명합니다.
 
 ### PG 설정하기
+
 추가 설정이 필요한 PG설정정보를 아래와 같이 설정해 주세요.
 
-[포트원 관리자 콘솔](https://admin.portone.io/) > 결제 연동 > 테스트/실 연동 > 실 연동 또는 테스트 연동 선택 > PG사 / PG 모듈 선택 > [+추가] 클릭
+[포트원 관리자 콘솔](https://admin.portone.io/) > 결제 연동 > 테스트/실 연동 > 실 연동 또는 테스트
+연동 선택 > PG사 / PG 모듈 선택 > [+추가] 클릭
 
 <Figure src={image1} />
 
 ## 특정 PG사의 결제창 열기 <a href="#pg" id="pg"></a>
 
-결제창을 호출하기 위한 [**JavaScript SDK**](../sdk/javascript-sdk-old/readme) `IMP.request_pay`를 호출할 때 `param.pg` 속성에 미리 등록한 PG사를 지정하여 해당 PG사의 결제창을 호출할 수 있습니다. `pg` 속성에는 다음과 같은 형태로 [PG 값](https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-pg)을 지정할 수 있습니다.
+결제창을 호출하기 위한 [**JavaScript SDK**](../sdk/javascript-sdk-old/readme) `IMP.request_pay`를
+호출할 때 `param.pg` 속성에 미리 등록한 PG사를 지정하여 해당 PG사의 결제창을 호출할 수 있습니다.
+`pg` 속성에는 다음과 같은 형태로 [PG 값](https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-pg)을
+지정할 수 있습니다.
 
 - **\{ PG사 코드값 \}**
 - **\{ PG사 코드값 \}.\{ PG사 상점아이디 \}**
 
 만약 포트원 관리자 콘솔 PG사 등록 현황이 아래와 같이 **3개의 PG설정**을 등록했다고 가정해 보면,
 
-|       PG사       |  상점아이디 (예시)  |      용도       |
-| :--------------: | :-----------: | :-------------: |
-| **(신) 나이스페이먼츠** | MID-a | **인증 결제용** |
-| **(신) 나이스페이먼츠** | MID-b | **비인증 결제용** |
-|   카카오페이   | MID-c |   인증 결제용   |
+|PG사                   |상점아이디 (예시)|용도             |
+|:---------------------:|:---------------:|:---------------:|
+|**(신) 나이스페이먼츠**|MID-a            |**인증 결제용**  |
+|**(신) 나이스페이먼츠**|MID-b            |**비인증 결제용**|
+|카카오페이             |MID-c            |인증 결제용      |
 
-위에서 등록한 PG 설정 중 **\{ PG사 코드값 \}** 으로만 구분할 수 있는 PG사는 **카카오페이**입니다. 다음과 같이 `pg` 속성에 `kakaopay`를 지정하면 등록한 카카오페이 설정으로 결제창이 호출됩니다
+위에서 등록한 PG 설정 중 **\{ PG사 코드값 \}** 으로만 구분할 수 있는 PG사는 **카카오페이**입니다.
+다음과 같이 `pg` 속성에 `kakaopay`를 지정하면 등록한 카카오페이 설정으로 결제창이 호출됩니다
 
 <Tabs>
 <Tab title="카카오페이 호출">

@@ -1,0 +1,18 @@
+---
+import { getCollection } from "astro:content";
+
+import PostListLayout from "~/components/blog/PostList/PostListLayout.astro";
+
+const tag = decodeURIComponent(Astro.params.tag?.toString() ?? "");
+const entries = await getCollection(
+  "blog",
+  (entry) =>
+    entry.data.tags.includes(tag) &&
+    (!entry.data.draft ||
+      import.meta.env.DEV ||
+      import.meta.env.VERCEL_ENV === "preview"),
+);
+if (entries.length === 0) return new Response(null, { status: 404 });
+---
+
+<PostListLayout listTitle={tag} entries={entries} activeTag={tag} />

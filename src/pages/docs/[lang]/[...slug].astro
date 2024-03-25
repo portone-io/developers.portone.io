@@ -1,59 +1,22 @@
 ---
-import * as path from "node:path";
-import type { GetStaticPathsItem } from "astro";
 import { getCollection } from "astro:content";
-import { match, P } from "ts-pattern";
 
-import type { Lang } from "../../../type";
-import redirYaml from "~/content/docs/_redir.yaml";
-import Redir from "~/layouts/Redir.astro";
 import Docs from "~/layouts/Docs.astro";
+import { getRedirection } from "~/misc/redirection";
+import { isLang } from "~/type";
 
-export async function getStaticPaths() {
-  const docEntries = await getCollection("docs");
-  const staticPaths: Record<string, GetStaticPathsItem> = {};
-  for (const entry of docEntries) {
-    const [lang, ...fragments] = entry.slug.split("/");
-    const absSlug = path.posix.join("/", entry.slug);
-    const slug = fragments.join("/");
-    staticPaths[entry.slug] = {
-      params: { lang, slug },
-      props: { entry, slug: absSlug },
-    };
-  }
-  for (const redir of redirYaml) {
-    const entrySlug = redir.old.slice(1);
-    const [lang, ...fragments] = entrySlug.split("/");
-    const slug = fragments.join("/");
-    staticPaths[entrySlug] = {
-      params: { lang, slug },
-      props: { redirTarget: redir.new },
-    };
-  }
-  return Object.values(staticPaths);
+const { lang, slug } = Astro.params;
+if (!isLang(lang) || !slug) {
+  return new Response(null, { status: 404 });
 }
 
-type Props =
-  | { redirTarget: string }
-  | {
-      entry: any;
-      slug: string;
-    };
+const absSlug = `/${lang}/${slug}`;
+const redirection = getRedirection(absSlug);
+if (redirection) return redirection;
 
-const lang = Astro.params.lang as Lang;
+const entries = await getCollection("docs");
+const entry = entries.find((entry) => entry.slug === `${lang}/${slug}`);
+if (!entry) return new Response(null, { status: 404 });
 ---
 
-{
-  match(Astro.props)
-    .with({ redirTarget: P.string }, ({ redirTarget }) =>
-      redirTarget.startsWith("https:") ? (
-        <Redir target={redirTarget} />
-      ) : (
-        <Redir target={`/docs${redirTarget}`} />
-      ),
-    )
-    .with({ slug: P.string, entry: P.any }, ({ slug, entry }) => (
-      <Docs lang={lang} slug={slug} entry={entry} />
-    ))
-    .exhaustive()
-}
+<Docs lang={lang} slug={absSlug} entry={entry} />

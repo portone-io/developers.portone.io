@@ -1,5 +1,9 @@
 export type Lang = "ko" | "en";
 
+export const isLang = (lang: unknown): lang is Lang => {
+  return ["ko", "en"].includes(String(lang));
+};
+
 export type SystemVersion = "all" | "v1" | "v2";
 
 export type YamlNavMenuToplevelItem =
@@ -20,5 +24,5 @@ interface YamlNavMenuGroup {
 }
 
 declare global {
-  function trackEvent(event: string, props: object, cb?: Function): void;
+  function trackEvent(event: string, props: object, cb?: () => void): void;
 }

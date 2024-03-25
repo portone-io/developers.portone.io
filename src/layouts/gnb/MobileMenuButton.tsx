@@ -3,7 +3,7 @@ import { sidebarOpenSignal } from "~/state/sidebar";
 const MobileMenuButton = () => {
   const sidebarOpen = sidebarOpenSignal.value;
   return (
-    <div class="flex h-full md:hidden">
+    <div class="h-full flex md:hidden">
       <button
         class="px-4"
         onClick={() => (sidebarOpenSignal.value = !sidebarOpenSignal.value)}

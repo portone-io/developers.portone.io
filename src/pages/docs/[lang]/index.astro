@@ -1,11 +1,10 @@
 ---
-import Redir from "~/layouts/Redir.astro";
-import type { Lang } from "../../../type";
+import { isLang } from "~/type";
 
-export async function getStaticPaths() {
-  return ["ko", "en"].map((lang) => ({ params: { lang } }));
-}
-const lang = Astro.params.lang as Lang;
+const { lang } = Astro.params;
+if (!isLang(lang)) return new Response(null, { status: 404 });
+return new Response(null, {
+  status: 301,
+  headers: { Location: `/docs/${lang}/readme` },
+});
 ---
-
-<Redir target={`/docs/${lang}/readme`} />
