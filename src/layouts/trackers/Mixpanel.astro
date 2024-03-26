@@ -1,30 +1,15 @@
 ---
-const isProd = import.meta.env.VERCEL_ENV === "production";
+interface Props {
+  isProd: boolean;
+}
+
+const { isProd } = Astro.props;
+
 const mixpanelId = isProd
   ? "e9baf66771bda3ae43b7c75727c2c55e"
   : "a0e1ac1b614052880e6e10977fe7da4e";
 ---
 
-<!-- Google tag (gtag.js) -->{
-  isProd && (
-    <script
-      is:inline
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=GTM-PSHZN9XB"
-    />
-  )
-}
-<script is:inline type="text/javascript">
-  window.dataLayer = window.dataLayer || [];
-  function gtag(...args) {
-    dataLayer.push(args);
-  }
-  gtag("js", new Date());
-  gtag("config", "GTM-PSHZN9XB");
-</script>
-<!-- End Google tag (gtag.js) -->
-
-<!-- Mixpanel -->
 <script is:inline type="text/javascript">
   /* eslint-disable */
   // prettier-ignore
@@ -37,18 +22,4 @@ const mixpanelId = isProd
     track_pageview: true,
     persistence: "localStorage",
   });
-</script>
-<!-- End Mixpanel -->
-
-<script is:inline type="text/javascript">
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function trackEvent(event, props, callback) {
-    gtag("event", event, props);
-    if (mixpanel.get_config) {
-      mixpanel.track(event, props, callback);
-    } else {
-      // blocked by adblocker
-      callback?.();
-    }
-  }
 </script>

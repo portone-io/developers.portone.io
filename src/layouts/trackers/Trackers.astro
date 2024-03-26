@@ -1,0 +1,24 @@
+---
+import GoogleTagManager from "./GoogleTagManager.astro";
+import Mixpanel from "./Mixpanel.astro";
+import NaverAdvertiseAnalytics from "./NaverAdvertiseAnalytics.astro";
+
+const isProd = import.meta.env.VERCEL_ENV === "production";
+---
+
+{isProd && <GoogleTagManager />}
+{isProd && <NaverAdvertiseAnalytics />}
+<Mixpanel isProd={isProd} />
+
+<script is:inline type="text/javascript">
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function trackEvent(event, props, callback) {
+    gtag("event", event, props);
+    if (mixpanel.get_config) {
+      mixpanel.track(event, props, callback);
+    } else {
+      // blocked by adblocker
+      callback?.();
+    }
+  }
+</script>
