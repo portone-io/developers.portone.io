@@ -5,9 +5,9 @@ description: 토스페이 연동 방법을 안내합니다.
 
 import Figure from "~/components/Figure.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
 <Hint style="info">
   토스페이(tosspay\_v2)에서는 일반결제 및 정기결제 모두 지원하고 있습니다. 신규 연동하시는 고객사께서는 해당 가이드를 참고하여 진행해주세요.
@@ -43,27 +43,29 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 <Tabs>
   <Tab title="인증 결제창 요청">
     ```javascript title="Javascript SDK"
-    IMP.request_pay({
-      pg: "tosspay_v2.{MID}",
-      pay_method: "tosspay", // 'tosspay_card', 'tosspay_money' 도 지원됩니다.
-      merchant_uid: "orderMonthly0001", // 상점에서 관리하는 주문 번호
-      name: "최초인증결제",
-      buyer_email: "test@portone.io",
-      buyer_name: "포트원",
-      buyer_tel: "02-1234-1234",
-      m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
-      amount: 1004,
-      card: {
-        useInstallment: false,
-      }
-      bypass: {
-        expiredTime: "2023-12-02 11:00:00", //결제 만료시간
-        cashReceiptTradeOption: 'CULTURE' //현금영수증 발급타입
-        
-      }
-    }, function (rsp) {
-      // callback 로직
-    });
+    IMP.request_pay(
+      {
+        pg: "tosspay_v2.{MID}",
+        pay_method: "tosspay", // 'tosspay_card', 'tosspay_money' 도 지원됩니다.
+        merchant_uid: "orderMonthly0001", // 상점에서 관리하는 주문 번호
+        name: "최초인증결제",
+        buyer_email: "test@portone.io",
+        buyer_name: "포트원",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+        amount: 1004,
+        card: {
+          useInstallment: false,
+        },
+        bypass: {
+          expiredTime: "2023-12-02 11:00:00", //결제 만료시간
+          cashReceiptTradeOption: "CULTURE", //현금영수증 발급타입
+        },
+      },
+      function (rsp) {
+        // callback 로직
+      },
+    );
     ```
 
     <Details>
@@ -78,9 +80,10 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
       **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
       **결제수단 구분코드**
-        - `tosspay_money` : 계좌결제만 허용합니다.
-        - `tosspay_card` : 카드결제만 허용합니다.
-        - `tosspay` : 모든 결제수단을 허용합니다.
+
+      - `tosspay_money` : 계좌결제만 허용합니다.
+      - `tosspay_card` : 카드결제만 허용합니다.
+      - `tosspay` : 모든 결제수단을 허용합니다.
 
       **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -115,30 +118,32 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
       - `GENERAL`: 일반 (default)
       - `CULTURE`: 문화비
       - `PUBLIC_TP`: 교통비
-
     </Details>
-
   </Tab>
 
   <Tab title="비인증 결제창 요청">
     인증결제창 호출 파라미터에서 **customer\_uid**, **customer\_id**값을 추가하면 비인증 결제창을 호출할 수 있습니다.
     비인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
+
     ```javascript title="Javascript SDK"
-    IMP.request_pay({
-      pg: "tosspay_v2.{MID}",
-      pay_method: "tosspay", // 'tosspay'만 지원됩니다.
-      merchant_uid: "orderMonthly0001", // 상점에서 관리하는 주문 번호
-      name: "최초인증결제",
-      customer_id: "matthew", //고객사가 회원에게 부여한 고유 ID로 필수 입력.
-      customer_uid: "your-customer-unique-id", // 필수 입력.
-      buyer_email: "test@portone.io",
-      buyer_name: "포트원",
-      buyer_tel: "02-1234-1234",
-      m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
-      notice_url: "{빌링키 발급 결과를 받을 URL}",
-    }, function (rsp) {
-      // callback 로직
-    });
+    IMP.request_pay(
+      {
+        pg: "tosspay_v2.{MID}",
+        pay_method: "tosspay", // 'tosspay'만 지원됩니다.
+        merchant_uid: "orderMonthly0001", // 상점에서 관리하는 주문 번호
+        name: "최초인증결제",
+        customer_id: "matthew", //고객사가 회원에게 부여한 고유 ID로 필수 입력.
+        customer_uid: "your-customer-unique-id", // 필수 입력.
+        buyer_email: "test@portone.io",
+        buyer_name: "포트원",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+        notice_url: "{빌링키 발급 결과를 받을 URL}",
+      },
+      function (rsp) {
+        // callback 로직
+      },
+    );
     ```
 
     <Details>
@@ -194,14 +199,13 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
     **빌링키로 결제 요청하기**
 
     빌링키 발급 시 전달한 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
+
     ```javascript
-    await fetch(
-      'https://api.iamport.kr/subscribe/payments/again',
-      {
-        method: 'POST',
-        headers: {
+    await fetch("https://api.iamport.kr/subscribe/payments/again", {
+      method: "POST",
+      headers: {
         Authorization: `Basic ${ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         customer_uid: "customer_uid", // [필수 입력] 빌링키 발급시 전달 한 빌링키와 1:1 매핑되는 ID
@@ -212,22 +216,23 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
         bypass: JSON.stringify({
           tosspay_v2: {
             cashReceiptTradeType: "GENERAL", // 현금영수증 발급 대상 타입
-            sendFailPush: false // 결제 실패 시 토스페이앱 푸시알람 발송 여부
-          }
-        })
-      })
-    )
+            sendFailPush: false, // 결제 실패 시 토스페이앱 푸시알람 발송 여부
+          },
+        }),
+      }),
+    });
     ```
 
     ### (신) 토스페이 빌링키 결제 전용 파라미터
 
     <Hint style="info">
-    `bypass` 에 json string 형태로 설정되어야 합니다.
+      `bypass` 에 json string 형태로 설정되어야 합니다.
     </Hint>
 
     **`tosspay_v2.cashReceiptTradeOption`** <mark style="color:green;">**string**</mark>
 
     **현금영수증 발급 대상 타입**
+
     - `GENERAL`: 일반 (default)
     - `CULTURE`: 문화비
     - `PUBLIC_TP`: 교통비
@@ -235,8 +240,8 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
     **`tosspay_v2.cashReceiptTradeOption`** <mark style="color:green;">**boolean**</mark>
 
     **결제실패 푸시알람 사용 여부**
+
     - `false`: 미사용 (default)
     - `true`: 사용
-
   </Tab>
 </Tabs>
