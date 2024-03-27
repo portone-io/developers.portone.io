@@ -46,12 +46,28 @@ import image11 from "./_assets/paypal/screenshot9.png";
 
   - 단, `windowType` 파라미터 지정 시 PC 및 모바일 환경 모두 `UI`로 지정하셔야 하며, 이 외의 값을 입력하는 경우 에러가 리턴됩니다.
 
+## 일반 결제/빌링키 발급 공통 준비 사항
+
+페이팔의 경우 고객사의 화면에 페이팔 결제/빌링키 발급 버튼을 렌더링 한 후, 페이팔의 버튼을 클릭하여 페이팔의 결제/빌링키 발급 창을 호출하는 방식입니다.
+
+페이팔의 버튼을 렌더링 하기 위해, 버튼을 렌더링 할 곳에 클래스명이 `portone-ui-container`인 DOM element를 선언하셔야 합니다.
+
+```html
+<!--
+  페이팔 버튼을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 DOM element를 넣습니다.
+  포트원 SDK는 해당 id를 가지는 element를 찾아 버튼을 렌더링합니다.
+-->
+<div class="portone-ui-container">
+  <!-- 여기에 페이팔 버튼이 생성됩니다. -->
+</div>
+
+```
+
 ## 일반 결제(`loadPaymentUI`) 호출하기
 
-페이팔의 경우 고객사의 결제 화면에 페이팔 결제 버튼을 렌더링 한 후 클릭해 페이팔의 결제창을 호출하는 방식입니다.
-결제 성공 시의 동작을 `onPaymentSuccess` 콜백 함수에, 결제 실패 시의 동작을 `onPaymentFail`에 작성해야 합니다.
+일반 결제의 경우, 고객사의 결제 화면에 페이팔 결제 버튼을 렌더링 하기위해 `loadPaymentUI` 함수를 사용해야 합니다.
 
-페이팔의 결제 버튼을 렌더링 하기 위해, 버튼을 렌더링 할 곳에 className이 `portone-ui-container`인 DOM element를 선언하셔야 합니다.
+결제 성공 시의 동작을 `onPaymentSuccess` 콜백 함수에, 결제 실패 시의 동작을 `onPaymentFail`에 작성해야 합니다.
 
 ```javascript
 const requestData = {
@@ -71,17 +87,6 @@ const response = await PortOne.loadPaymentUI(requestData, {
     alert(error);
   },
 });
-```
-
-```html
-<!--
-  페이팔 버튼을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 DOM element를 넣습니다.
-  포트원 SDK는 해당 id를 가지는 element를 찾아 버튼을 렌더링합니다.
--->
-<div class="portone-ui-container">
-  <!-- 3. 여기에 페이팔 결제 버튼이 생성됩니다. -->
-</div>
-
 ```
 
 <Figure src={image3} />
@@ -132,10 +137,9 @@ function updateLoadPaymentUIRequest() {
 
 ## 빌링키 발급(`loadIssueBillingKeyUI`) 호출하기
 
-페이팔의 경우 고객사의 결제 화면에 페이팔 빌링키 발급 버튼을 렌더링 한 후 클릭해 페이팔의 결제창을 호출하는 방식입니다.
-발급 성공 시의 동작을 `onIssueBillingKeySuccess` 콜백 함수에, 발급 실패 시의 동작을 `onIssueBillingKeyFail`에 작성하셔야 합니다.
+빌링키 발급의 경우, 고객사의 빌링키 발급 화면에 페이팔 빌링키 발급 버튼을 렌더링 하기위해 `loadIssueBillingKeyUI` 함수를 사용해야 합니다.
 
-페이팔의 빌링키 발급 버튼을 렌더링 하기 위해, 버튼을 렌더링 할 곳에 className이 `portone-ui-container`인 DOM element를 선언하셔야 합니다.
+발급 성공 시의 동작을 `onIssueBillingKeySuccess` 콜백 함수에, 발급 실패 시의 동작을 `onIssueBillingKeyFail`에 작성하셔야 합니다.
 
 ```javascript
 const requestData = {
@@ -152,17 +156,6 @@ const response = await PortOne.loadIssueBillingKeyUI(requestData, {
     alert(error);
   },
 });
-```
-
-```html
-<!--
-  페이팔 버튼을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 DOM element를 넣습니다.
-  포트원 SDK는 해당 id를 가지는 element를 찾아 버튼을 렌더링합니다.
--->
-<div class="portone-ui-container">
-  <!-- 3. 여기에 페이팔 빌링키 발급 버튼이 생성됩니다. -->
-</div>
-
 ```
 
 <Figure src={image4} />
@@ -1606,12 +1599,12 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
     - 파라미터 설명
 
-    |파라미터 |설명                                                                           |예시                                           |
-    |---------|-------------------------------------------------------------------------------|-----------------------------------------------|
-    |`fncls`  |`fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99`로 항상 고정                    |`fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99`|
-    |`f`      |주문번호(`paymentId`) 전달                                                     |`paymentId_230980198`                          |
-    |`s`      |string (`{페이팔 Account ID}_{페이지 유형}` 형식. 페이지 유형은 아래 목록 참고)|`7WBB3CKT63FRG_checkout-page`                  |
-    |`sandbox`|페이팔 Account ID가 테스트 용인지 운영 용인지 여부                             |`true`                                         |
+      |파라미터 |설명                                                                           |예시                                           |
+      |---------|-------------------------------------------------------------------------------|-----------------------------------------------|
+      |`fncls`  |`fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99`로 항상 고정                    |`fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99`|
+      |`f`      |주문번호(`paymentId`) 전달                                                     |`paymentId_230980198`                          |
+      |`s`      |string (`{페이팔 Account ID}_{페이지 유형}` 형식. 페이지 유형은 아래 목록 참고)|`7WBB3CKT63FRG_checkout-page`                  |
+      |`sandbox`|페이팔 Account ID가 테스트 용인지 운영 용인지 여부                             |`true`                                         |
 
     - 페이지 유형
 
