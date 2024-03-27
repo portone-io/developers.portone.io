@@ -12,12 +12,21 @@ const hiddenPaths = ["/release-notes", "/blog"];
 export interface VersionSwitchProps {
   url: string;
   className?: string;
+  serverSystemVersion: SystemVersion;
 }
-export function VersionSwitch({ url, className }: VersionSwitchProps) {
+export function VersionSwitch({
+  url,
+  className,
+  serverSystemVersion,
+}: VersionSwitchProps) {
   if (hiddenPaths.some((path) => new URL(url).pathname.startsWith(path)))
     return null;
 
-  const systemVersion = systemVersionSignal.value;
+  const systemVersion = useServerFallback(
+    systemVersionSignal.value,
+    serverSystemVersion,
+  );
+
   return (
     <div
       style={{ transition: "margin 0.1s" }}
@@ -33,15 +42,17 @@ export function VersionSwitch({ url, className }: VersionSwitchProps) {
         className || ""
       }`}
     >
-      <div class={getVersionClass("v1")}>V1</div>
-      <div class={getVersionClass("v2")}>V2</div>
+      <div class={getVersionClass("v1", systemVersion)}>V1</div>
+      <div class={getVersionClass("v2", systemVersion)}>V2</div>
     </div>
   );
 }
 export default VersionSwitch;
 
-function getVersionClass(thisVersion: SystemVersion) {
-  const systemVersion = useServerFallback(systemVersionSignal.value, "all");
+function getVersionClass(
+  thisVersion: SystemVersion,
+  systemVersion: SystemVersion,
+) {
   return `py-4px rounded-[4px] ${
     systemVersion === thisVersion
       ? "bg-orange-500 flex-1 text-white px-12px"

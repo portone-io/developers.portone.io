@@ -1,6 +1,7 @@
 ---
 import { clsx } from "clsx";
 
+import { getServerSystemVersion } from "~/state/nav";
 import type { Lang } from "~/type";
 
 import Dropdown from "./Dropdown";
@@ -29,6 +30,7 @@ const en: typeof ko = {
   language: "Language",
 };
 const t = lang === "ko" ? ko : en;
+const serverSystemVersion = getServerSystemVersion(Astro);
 ---
 
 <script>
@@ -51,6 +53,7 @@ const t = lang === "ko" ? ko : en;
 <div class="z-50 h-14">
   <header
     id="gnb"
+    data-selected-system-version={serverSystemVersion}
     class="fixed z-10 h-inherit w-full flex items-center justify-between border-b bg-white"
   >
     <div class="h-full flex flex-grow items-center pl-4 md:pl-6">
@@ -64,7 +67,11 @@ const t = lang === "ko" ? ko : en;
           </div>
         </a>
         <div class="mx-6 md:ml-[70px]">
-          <VersionSwitch url={url.toString()} client:load />
+          <VersionSwitch
+            serverSystemVersion={serverSystemVersion}
+            url={url.toString()}
+            client:load
+          />
         </div>
       </div>
       <div
@@ -78,7 +85,8 @@ const t = lang === "ko" ? ko : en;
       >
         <Dropdown
           client:visible
-          link={{ all: "/api", v1: "/api/rest-v1", v2: "/api/rest-v2" }}
+          serverSystemVersion={serverSystemVersion}
+          link={{ v1: "/api/rest-v1", v2: "/api/rest-v2" }}
           items={[
             { label: "REST API V1", link: "/api/rest-v1", systemVersion: "v1" },
             { label: "REST API V2", link: "/api/rest-v2", systemVersion: "v2" },

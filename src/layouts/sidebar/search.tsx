@@ -46,7 +46,7 @@ export const fuseSignal = computed(() => {
   const filteredIndex = searchIndex.filter((item) => {
     const navMenuSystemVersion =
       navMenuSystemVersions[item.slug.replace(/^docs/, "")];
-    if (!navMenuSystemVersion || navMenuSystemVersion === "all") return true;
+    if (!navMenuSystemVersion) return true;
     return navMenuSystemVersion === systemVersion;
   });
   return new Fuse(filteredIndex, { keys: ["title", "description", "text"] });
