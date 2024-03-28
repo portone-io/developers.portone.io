@@ -80,7 +80,7 @@ export function SearchScreen({
   const fuse = fuseSignal.value;
   const searchResult = searchResultSignal.value;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const className = `fixed left-0 top-0 z-10 h-full w-full transition bg-[rgba(0,0,0,0.6)] ${
+  const className = `fixed left-0 top-0 z-search h-full w-full transition bg-[rgba(0,0,0,0.6)] ${
     searchScreenOpen ? "backdrop-blur-sm" : "pointer-events-none opacity-0"
   }`;
   React.useEffect(() => {
