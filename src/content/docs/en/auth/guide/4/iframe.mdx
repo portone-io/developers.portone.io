@@ -15,7 +15,8 @@ import Hint from "~/components/Hint.astro";
 
 <Figure src="/gitbook-assets/en/spaces\_hTv8JEzyM5h4cYcL5StH\_uploads\_tTzTD0S6IF5zvCag4EKG\_image.png" caption="iframe example" />
 
-#### Most payments that are processed in the PC environment can receive payment results through the callback function, which is the second argument of the request\_pay() function.
+Most payments that are processed in the PC environment can receive payment results
+through the callback function, which is the second argument of the request\_pay() function.
 
 <Hint style="success">
   For **PayPal** payments, the payment window is loaded as a **pop-up (new window)** in a PC environment and you can also receive the payment result through **m\_redirect\_url**.
@@ -26,36 +27,47 @@ import Hint from "~/components/Hint.astro";
 
 <Tabs>
   <Tab title="JavaScript">
-    ```javascript title="client-side"
-    IMP.request_pay({
-          /* ...Omitted... */
-        }, function (rsp) {             // callback
-          if (rsp.success) {            // payment successful: payment accepted or virtual account issued
-            // HTTP request with jQuery
-            jQuery.ajax({
-                url: "{Merchant endpoint that receives server's payment info}", 
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                data: {
-                    imp_uid: rsp.imp_uid,            // Payment ID     
-                    merchant_uid: rsp.merchant_uid   // Order ID
-                }
-            }).done(function (data) {
-              // Merchant server payment API call is successful
+    ```ts title="client-side"
+    IMP.request_pay(
+      {
+        /* ...Omitted... */
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // payment successful: payment accepted or virtual account issued
+          // HTTP request with jQuery
+          jQuery
+            .ajax({
+              url: "{Merchant endpoint that receives server's payment info}",
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              data: {
+                imp_uid: rsp.imp_uid, // Payment ID
+                merchant_uid: rsp.merchant_uid, // Order ID
+              },
             })
-          } else {
-            alert("Payment failed. Error: " +  rsp.error_msg);
-          }
-        });
+            .done(function (data) {
+              // Merchant server payment API call is successful
+              console.log(data);
+            });
+        } else {
+          alert("Payment failed. Error: " + rsp.error_msg);
+        }
+      },
+    );
     ```
   </Tab>
 
   <Tab title="JavaScript (ES Next)">
-    ```javascript title="client-side"
-    IMP.request_pay({
+    ```ts title="client-side"
+    IMP.request_pay(
+      {
         /* ...Omitted... */
-      }, rsp => {                      // callback
-        if (rsp.success) {   
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
           // HTTP request with axios
           axios({
             url: "{Endpoint that receives server's payment info}",
@@ -63,15 +75,17 @@ import Hint from "~/components/Hint.astro";
             headers: { "Content-Type": "application/json" },
             data: {
               imp_uid: rsp.imp_uid,
-              merchant_uid: rsp.merchant_uid
-            }
+              merchant_uid: rsp.merchant_uid,
+            },
           }).then((data) => {
             // Server payment API call is successful
-          })
+            console.log(data);
+          });
         } else {
-          alert(\`Payment failed. Error: \${rsp.error_msg}\`);
+          alert(`Payment failed. Error: ${rsp.error_msg}`);
         }
-      });
+      },
+    );
     ```
   </Tab>
 </Tabs>
@@ -85,5 +99,6 @@ above.
 > For information about the response parameter passed to the **callback** function, refer to [<mark style="color:red;">**rsp**</mark>](../../../sdk/javascript-sdk/undefined-1).
 
 <Hint style="danger">
-  The final payment result logic processing must be handled stably by using a [<mark style="color:red;">**webhook**</mark>](../../../result/webhook). If you don't set up a webhook, you may fail to receive the payment result.
+  The final payment result logic processing must be handled stably by using a [<mark style="color:red;">**webhook**</mark>](../../../result/webhook).
+  If you don't set up a webhook, you may fail to receive the payment result.
 </Hint>

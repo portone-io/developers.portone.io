@@ -4,120 +4,106 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets the account holder name for a bank account.
+## Gets the account holder name for a bank account.
 
 <Swagger method="get" path="/vbanks/holder" baseUrl="https://api.iamport.kr" summary="Gets the account holder name for a bank account.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Query
 
-#### Query
+  <SwaggerParameter name="bank_code" type="String" required="true">
+    <mark style="color:red;">
+      **Bank code**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="bank_code" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="bank_num" type="String" required="true">
+    <mark style="color:red;">**Account number**</mark>
 
-**Bank code**
+    `Numbers and special characters allowed`
+  </SwaggerParameter>
 
-</mark>
+  ### Responses
 
-</SwaggerParameter>
-<SwaggerParameter name="bank_num" type="String" required="true">
-<mark style="color:red;">**Account number**</mark>
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="VbankHolderResponse">
+        **`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
-`Numbers and special characters allowed`
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="VbankHolderResponse">
-**`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **`response`** <mark style="color:red;"> **(VbankHolderAnnotation, optional)** </mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
+    <Tabs>
+      <Tab title="VbankHolderAnnotation">
+        **`bank_holder`** <mark style="color:red;"> **`*`** </mark> <mark style="color:green;"> **`string`** </mark>
 
-**Response message**
+        **`Account holder name`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-A non-zero code includes a message like 'Invalid payment info'.
+  <SwaggerResponse status="400: Bad Request" description="Missing bank_code">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`response`** <mark style="color:red;"> **(VbankHolderAnnotation, optional)** </mark>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-</Tab>
-</Tabs>
-
-<Tabs>
-<Tab title="VbankHolderAnnotation">
-**`bank_holder`** <mark style="color:red;"> **`*`** </mark> <mark style="color:green;"> **`string`** </mark>
-
-**`Account holder name`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Missing bank_code">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Request not found">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="Request not found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "bank_holder": "string"
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "bank_holder": "string"
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/vbanks/queryBankHolder**](https://api.iamport.kr/#!/vbanks/queryBankHolder)
-
+  [**https://api.iamport.kr/#!/vbanks/queryBankHolder**](https://api.iamport.kr/#!/vbanks/queryBankHolder)
 </Hint>

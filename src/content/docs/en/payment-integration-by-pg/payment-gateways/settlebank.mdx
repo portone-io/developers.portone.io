@@ -6,148 +6,150 @@ description: Settlebank payment window integration guide
 import Codepen from "~/components/gitbook/Codepen.astro";
 import ContentRef from "~/components/gitbook/ContentRef.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure **Settlebank** PG settings
+## 1. Configure **Settlebank** PG settings
 
-Refer to the [**Settlebank settings**](../../ready/2.-pg/payment-gateway-settings/undefined-3) page to configure the PG settings.
+Refer to the [**Settlebank settings**](../../ready/2.-pg/payment-gateway-settings/undefined-3) page
+to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-01 4.32.44.png>)
 
-### 2. Request payment
+## 2. Request payment
 
-To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'settle',
-    pay_method : 'card',
-    merchant_uid : '{Merchant created Order ID}', // Example: order_no_0001
-    name : 'Order name: Test payment request',
-    amount : 14000,
-    buyer_email : 'iamport@siot.do',
-    buyer_name : 'John Doe',
-    buyer_tel : '010-1234-5678', // Required
-    buyer_addr : 'Shinsa-dong, Gangnam-gu, Seoul',
-    company : 'iamport', // Recommended for virtual account payment
-    buyer_postcode : '123-456',
-    m_redirect_url : '{Mobile only - URL to redirect to after payment approval}' // Example: https://www.my-service.com/payments/complete/mobile
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "settle",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678", // Required
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        company: "iamport", // Recommended for virtual account payment
+        buyer_postcode: "123-456",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-####
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`settle`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`settle`**.
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Payment method code**
 
-**Payment method code**
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+      - `phone`(mobile micropayment)
+    </Details>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
-- `phone`(mobile micropayment)
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
+    **Order ID**
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    Must be unique for each request.
 
-**Order ID**
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-Must be unique for each request.
+    **Payment amount**
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    Must be an integer (not string)
 
-**Payment amount**
+    **`buyer_tel`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-Must be an integer (not string)
+    **Customer phone number**
 
-**`buyer_tel`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+    <mark style="color:red;">Required</mark>
 
-**Customer phone number**
+    **`company`` `**<mark style="color:green;">**`string`**</mark>
 
-<mark style="color:red;">Required</mark>
+    **`Company name`**
 
-**` company``  `**<mark style="color:green;">**`string`**</mark>
+    <mark style="color:red;">Required for virtual account payment</mark>
 
-**`Company name`**
+    <Codepen user="chaiport" slug="GRQdjpa" caption="Settlebank credit card payment example" />
+  </Tab>
 
-<mark style="color:red;">Required for virtual account payment</mark>
+  <Tab title="Non-authenticated payment request">
+    #### Not supported
+  </Tab>
 
-<Codepen
-  user="chaiport"
-  slug="GRQdjpa"
-  caption="Settlebank credit card payment example"
-/>
+  <Tab title="Non-authenticated API  request">
+    #### **You can use i'mport REST API to request payment and schedule payment.**
 
-</Tab>
+    ### Request one-time payment
 
-<Tab title="Non-authenticated payment request">
-#### Not supported
+    To request a one-time payment, use the key-in [**REST API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
+    The card information is not saved during this process.
 
-</Tab>
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-<Tab title="Non-authenticated API  request">
-#### **You can use i'mport REST API to request payment and schedule payment.**
+    ### Request billing key + initial payment
 
-### Request one-time payment
+    To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
 
-To request a one-time payment, use the key-in REST[ **API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api). The card information is not saved during this process.
+    - **`customer_uid`** : required for saving the billing key.
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-### Request billing key + initial payment
+    ### Request payment with billing key
 
-To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
+    After successfully getting the billing key and making the initial payment,
+    the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api))
+    with the `customer_uid` as follows:
 
-- **`customer_uid`** : required for saving the billing key.
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    <Hint style="info">
+      **Settlebank does not support** [**Request billing key API**](../../api/billing-key-api/api-1)**.**
+    </Hint>
 
-### Request payment with billing key
+    **For detailed information, refer to:**
 
-After successfully getting the billing key and making the initial payment, the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api)) with the `customer_uid` as follows:
-
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-<Hint style="info">
-**Settlebank does not support** [**Request billing key API**](../../api/billing-key-api/api-1)**.**
-
-</Hint>
-
-**For detailed information, refer to:**
-
-<ContentRef slug="/en///auth/guide-1/readme" />
-
-</Tab>
+    <ContentRef slug="/en///auth/guide-1/readme" />
+  </Tab>
 </Tabs>

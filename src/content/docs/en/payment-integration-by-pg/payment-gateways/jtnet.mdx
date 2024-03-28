@@ -6,231 +6,233 @@ description: JTNet payment window integration guide
 import Codepen from "~/components/gitbook/Codepen.astro";
 import ContentRef from "~/components/gitbook/ContentRef.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure JTNet settings
+## 1. Configure JTNet settings
 
 Refer to the [**JTNET settings**](../../ready/2.-pg/payment-gateway-settings/jtnet) page to
 configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-05-31 12.07.01.png>)
 
-### 2. Request payment
+## 2. Request payment
 
 To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
-IMP.**request_pay**(param, callback).
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "jtnet",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "jtnet",
-    pay_method: "card",
-    merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
-    name: "Order name: Test payment request",
-    amount: 14000,
-    buyer_email: "iamport@siot.do",
-    buyer_name: "John Doe",
-    buyer_tel: "010-1234-5678",
-    buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
-    buyer_postcode: "123-456",
-    m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
-  },
-  function (rsp) {
-    // callback logic
-    //* ...Omitted... *//
-  }
-);
-```
+    ### Key parameter description
 
-####
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-### Key parameter description
+    **PG code**
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`jtnet`**.
 
-**PG code**
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`jtnet`**.
+    **Payment method code**
 
-**`pay_method`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-**Payment method code**
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+      - `phone`(mobile micropayment)
+    </Details>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
-- `phone`(mobile micropayment)
+    **Order ID**
 
-</Details>
+    Must be unique for each request.
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-**Order ID**
+    **Payment amount**
 
-Must be unique for each request.
+    Must be an integer (not string)
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    <Codepen user="chaiport" slug="qBxoPoN" />
+  </Tab>
 
-**Payment amount**
+  <Tab title="Non-authenticated payment request">
+    To open non-authenticated payment window, specify the **customer\_uid** parameter.
 
-Must be an integer (not string)
+    <Hint style="danger">
+      #### **amount**
 
-<Codepen user="chaiport" slug="qBxoPoN" />
+      - If requesting **both billing key and initial payment**, specify the payment amount.
+      - If only requesting for billing key, set to <mark style="color:red;">**0**</mark>.
+    </Hint>
 
-</Tab>
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "jtnet",
+        pay_method: "card", // only 'card' supported.
+        merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+        name: "Initial billing key request",
+        amount: 0, // For display purpose only (no payment approval).
+        customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
+        buyer_email: "johndoe@gmail.com",
+        buyer_name: "John Doe",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
+      },
+      function (rsp) {
+        if (rsp.success) {
+          alert("Success");
+        } else {
+          alert("Failed");
+        }
+      },
+    );
+    ```
 
-<Tab title="Non-authenticated payment request">
-To open non-authenticated payment window, specify the **customer\_uid** parameter.
+    ### Key parameter description
 
-<Hint style="danger">
-#### **amount**
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-- If requesting **both billing key and initial payment**, specify the payment amount.
-- If only requesting for billing key, set to <mark style="color:red;">**0**</mark>.
+    **PG code**
 
-</Hint>
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`jtnet`**.
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "jtnet",
-    pay_method: "card", // only 'card' supported.
-    merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
-    name: "Initial billing key request",
-    amount: 0, // For display purpose only (no payment approval).
-    customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
-    buyer_email: "johndoe@gmail.com",
-    buyer_name: "John Doe",
-    buyer_tel: "02-1234-1234",
-    m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
-  },
-  function (rsp) {
-    if (rsp.success) {
-      alert("Success");
-    } else {
-      alert("Failed");
-    }
-  }
-);
-```
+    >
 
-### Key parameter description
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Credit card billing key**
 
-**PG code**
+    Billing key to be mapped 1:1 with the user-entered credit card information.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`jtnet`**.
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
 
->
+    **Payment amount**
 
-**`customer_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+    0: only billing key, **> 0: billing key + initial payment**\\
 
-**Credit card billing key**
+    ### Request payment with billing key (customer\_uid)
 
-Billing key to be mapped 1:1 with the user-entered credit card information.
+    After successfully getting the billing key, the billing key is **stored on the i'mport server**
+    mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api)
+    with the `customer_uid` as follows:
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**Integer\*\*</mark>
+    ```sh title="sever-side"
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+  </Tab>
 
-**Payment amount**
+  <Tab title="Non-authenticated API  request">
+    **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
 
-0: only billing key, **> 0: billing key + initial payment**\
+    ### Request one-time payment
 
-### Request payment with billing key (customer_uid)
+    To request a one-time payment, use the key-in [**REST API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api). The card information is not saved during this process.
 
-After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api) with the `customer_uid` as follows:
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-```title="sever-side"
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
+    ### Request billing key
 
-</Tab>
+    To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer\_uid}**](../../api/billing-key-api/api-1).
 
-<Tab title="Non-authenticated API  request">
-#### **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
+         https://api.iamport.kr/subscribe/customers/your-customer-unique-id
+    ```
 
-### Request one-time payment
+    ### Request billing key + initial payment
 
-To request a one-time payment, use the key-in REST[ **API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api). The card information is not saved during this process.
+    To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
+    - **`customer_uid`** : required for saving the billing key.
 
-###
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
 
-### Request billing key
+    ### Request payment with billing key
 
-To request a billing key, use the billing key request REST [**API POST /subscribe/customers/\{customer_uid}**](../../api/billing-key-api/api-1).
+        After successfully getting the billing key and making the initial payment,
+    the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api))
+    with the `customer_uid` as follows:
 
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
-     https://api.iamport.kr/subscribe/customers/your-customer-unique-id
-```
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
 
-### Request billing key + initial payment
+    **For detailed information, refer to:**
 
-To request a billing key and initial payment, use the key-in REST [**API POST /subscribe/payments/onetime**](../../api/api/request-non-authenticated-payment-one-time-api).
-
-- **`customer_uid`** : required for saving the billing key.
-
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/onetime
-```
-
-### Request payment with billing key
-
-After successfully getting the billing key and making the initial payment, the billing key is stored on the i'mport server mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the repeat pay REST API ([**POST /subscribe/payments/again**](../../api/api/api)) with the `customer_uid` as follows:
-
-```
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-**For detailed information, refer to:**
-
-<ContentRef slug="/en///auth/guide-1/readme" />
-
-</Tab>
+    <ContentRef slug="/en///auth/guide-1/readme" />
+  </Tab>
 </Tabs>
 
-### 3. Additional functions
+## 3. Additional functions
 
 <Tabs>
-<Tab title="Enable specific credit cards">
-```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     // Disable all credit cards
-        {card_code:'366', enabled:true}     // Enable specific credit card
-    ]
-}
-```
+  <Tab title="Enable specific credit cards">
+    ```json title="javascript"
+    {
+      "card": {
+        "detail": [
+          { "card_code": "*", "enabled": false }, // Disable all credit cards
+          { "card_code": "366", "enabled": true }, // Enable specific credit card
+        ]
+      }
+    }
+    ```
 
-**Parameters**
+    **Parameters**
 
-- **card_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
-- **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
-
-</Tab>
+    - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
+    - **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+  </Tab>
 </Tabs>

@@ -5,256 +5,254 @@ description: Danal payment window integration guide
 
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure Danal PG settings
+## 1. Configure Danal PG settings
 
-Refer to the [**Danal settings**](../../ready/2.-pg/payment-gateway-settings/undefined-2) page to configure the PG settings.
+Refer to the [**Danal settings**](../../ready/2.-pg/payment-gateway-settings/undefined-2) page
+to configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-05-30 5.30.00.png>)
 
-### 2. Request payment
+## 2. Request payment
 
-To open the Danal TPay payment window, call [JavaScript SDK](../../sdk/javascript-sdk/) IMP.**request_pay**(param, callback).
+To open the Danal TPay payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
+IMP.**request\_pay**(param, callback).
 
 In both PC and mobile browsers, <mark style="color:red;"> **callback** </mark> is invoked after calling `IMP.request_pay(param, callback)`.
 
 <Tabs>
-<Tab title="Authenticated payment request">
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "danal_tpay",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "danal_tpay",
-    pay_method: "card",
-    merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
-    name: "Order name: Test payment request",
-    amount: 14000,
-    buyer_email: "iamport@siot.do",
-    buyer_name: "John Doe",
-    buyer_tel: "010-1234-5678",
-    buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
-    buyer_postcode: "123-456",
-  },
-  function (rsp) {
-    // callback logic
-    //* ...Omitted... *//
-  }
-);
-```
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-**`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`danal_tpay`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`danal_tpay`**.
+    **`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-**`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    **Payment method code**
 
-**Payment method code**
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+      - `cultureland`(Cultureland)
+      - `happymoney`(Happy Money)
+      - `booknlife` (Book n culture gift card)
+    </Details>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
-- `cultureland`(Cultureland)
-- `happymoney`(Happy Money)
-- `booknlife` (Book n culture gift card)
+    **`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-</Details>
+    **Order ID**
 
-**`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    Must be unique for each request.
 
-**Order ID**
+    **`buyer_tel`** <mark style="color:red;"> **\*** </mark><mark style="color:green;"> **`string`** </mark>
 
-Must be unique for each request.
+    **Customer phone number**
 
-**`buyer_tel`** <mark style="color:red;"> **`*`** </mark><mark style="color:green;"> **`string`** </mark>
+    Danal payment window may throw an error if omitted
 
-**Customer phone number**
+    **`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
-Danal payment window may throw an error if omitted
+    **Payment amount**
 
-**`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+    Must be an integer (not string)
 
-**Payment amount**
+    <Hint style="info">
+      #### Virtual account payment requirement
 
-Must be an integer (not string)
+      - **`biz_num`**: 10-digit business registration number (required)
+    </Hint>
 
-<Hint style="info">
-#### Virtual account payment requirement
+    <Codepen user="chaiport" slug="jOZZgGG" />
+  </Tab>
 
-- **`biz_num`**: 10-digit business registration number (required)
+  <Tab title="Non-authenticated payment request">
+    To open non-authenticated payment window, specify the **customer\_uid** parameter.
 
-</Hint>
+    <Hint style="danger">
+      #### **amount**
 
-<Codepen user="chaiport" slug="jOZZgGG" />
-</Tab>
+      - If requesting **both billing key and initial payment**, specify the payment amount.
 
-<Tab title="Non-authenticated payment request">
-To open non-authenticated payment window, specify the **customer\_uid** parameter.
+      - If only requesting for billing key, set to <mark style="color:red;">**0**</mark>.\
+        (if amount is set to 0, Danal executes a test payment of 10 won which is automatically cancelled after 30 minutes.)
+    </Hint>
 
-<Hint style="danger">
-#### **amount**
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "danal_tpay",
+        pay_method: "card", // only 'card' supported.
+        merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+        name: "Order name: Billing key request test",
+        amount: 0, // For display purpose only (set actual amount to also request payment approval).
+        customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
+        buyer_email: "johndoe@gmail.com",
+        buyer_name: "John Doe",
+        buyer_tel: "02-1234-1234",
+        buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
+        period: {
+          from: "20200101", //YYYYMMDD
+          to: "20201231", //YYYYMMDD
+        },
+      },
+      function (rsp) {
+        if (rsp.success) {
+          alert("Success");
+        } else {
+          alert("Failed");
+        }
+      },
+    );
+    ```
 
-- If requesting **both billing key and initial payment**, specify the payment amount.
-- If only requesting for billing key, set to <mark style="color:red;">**0**</mark>.\
-  (if amount is set to 0, Danal executes a test payment of 10 won which is automatically cancelled after 30 minutes.)
+    ### Key parameter description
 
-</Hint>
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "danal_tpay",
-    pay_method: "card", // only 'card' supported.
-    merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
-    name: "Order name: Billing key request test",
-    amount: 0, // For display purpose only (set actual amount to also request payment approval).
-    customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
-    buyer_email: "johndoe@gmail.com",
-    buyer_name: "John Doe",
-    buyer_tel: "02-1234-1234",
-    buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
-    period: {
-      from: "20200101", //YYYYMMDD
-      to: "20201231", //YYYYMMDD
-    },
-  },
-  function (rsp) {
-    if (rsp.success) {
-      alert("Success");
-    } else {
-      alert("Failed");
-    }
-  }
-);
-```
+    **PG code**
 
-### Key parameter description
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`danal_tpay`**.
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**PG code**
+    **Credit card billing key**
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`danal_tpay`**.
+    Billing key to be mapped 1:1 with the user-entered credit card information.
 
-**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
 
-**Credit card billing key**
+    **Payment amount**
 
-Billing key to be mapped 1:1 with the user-entered credit card information.
+    0: only billing key, **> 0: billing key + initial payment**
 
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
+    **`period`` `**<mark style="color:orange;">**`array`**</mark>
 
-**Payment amount**
+    Product subscription payment for subscription payment. The date is displayed on the Danal payment window.
 
-0: only billing key, **> 0: billing key + initial payment**
+    **`from`**<mark style="color:orange;">**`: YYYYMMDD`**</mark>
 
-**` period``  `**<mark style="color:orange;">**`array`**</mark>
+    **`to`**<mark style="color:orange;">**`: YYYYMMDD`**</mark>\\
 
-Product subscription payment for subscription payment. The date is displayed on the Danal payment window.
+    ### Request payment with billing key (customer\_uid)
 
-**`from`**<mark style="color:orange;">**`: YYYYMMDD`**</mark>
+    After successfully getting the billing key,
+    the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api)
+    with the `customer_uid` as follows:
 
-**`to`**<mark style="color:orange;">**`: YYYYMMDD`**</mark>\
-
-### Request payment with billing key (customer_uid)
-
-After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api) with the `customer_uid` as follows:
-
-```title="sever-side"
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-</Tab>
+    ```sh title="sever-side"
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+  </Tab>
 </Tabs>
 
-### 3. Additional functions
+## 3. Additional functions
 
 <Tabs>
-<Tab title="Installment setting">
-```javascript title="javascript"
-display: {
-    card_quota: [6]  // Display up to 6 months installment plans
-}
-```
-
-**Parameters**
-
-- **card_quota :**
-  - `[]`: Only immediate pay
-  - `3,6`: immediate, 3, 6 month installment plans
-
-<Hint style="info">
-Installment plan option is available only for **KRW 50,000 or more**.
-
-</Hint>
-
-<Codepen
-  user="chaiport"
-  slug="mdXXNXV"
-  caption="Example of allowing up to 3 months installment plans"
-/>
-
-</Tab>
-
-<Tab title="Direct credit card module call">
-```javascript title="javascript"
-card: {
-     direct: {
-        code: "367",
-        quota: 3,
-        usePoint : “Y”
+  <Tab title="Installment setting">
+    ```json title="javascript"
+    {
+      "display": {
+        "card_quota": [6] // Display up to 6 months installment plans
+      }
     }
-}
-```
+    ```
 
-**Parameters**
+    **Parameters**
 
-- **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
-- **quota**: Installment plan. For immediate, set to 0. (**integer**)
-- **usePoint**: Option to use points (post applied)
+    - **card\_quota :**
+      - `[]`: Only immediate pay
+      - `3,6`: immediate, 3, 6 month installment plans
 
-<Hint style="danger">
-**Danal setup required**
+    <Hint style="info">
+      Installment plan option is available only for **KRW 50,000 or more**.
+    </Hint>
 
-- Direct module call requires pre-setup by Danal.
+    <Codepen user="chaiport" slug="mdXXNXV" caption="Example of allowing up to 3 months installment plans" />
+  </Tab>
 
-</Hint>
+  <Tab title="Direct credit card module call">
+    ```json title="javascript"
+    {
+      "card": {
+        "direct": {
+          "code": "367",
+          "quota": 3,
+          "usePoint": "Y"
+        }
+      }
+    }
+    ```
 
-</Tab>
+    **Parameters**
 
-<Tab title="Enable specific credit cards">
-```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     // Disable all credit cards
-        {card_code:'366', enabled:true}     // Enable specific credit card
-    ]
-}
-```
+    - **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
+    - **quota**: Installment plan. For immediate, set to 0. (**integer**)
+    - **usePoint**: Option to use points (post applied)
 
-**Parameters**
+    <Hint style="danger">
+      **Danal setup required**
 
-- **card_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
-- **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+      - Direct module call requires pre-setup by Danal.
+    </Hint>
+  </Tab>
 
-<Codepen
-  user="chaiport"
-  slug="WNMMVJZ"
-  caption="Example of showing only Shinhan Card in the payment window"
-/>
+  <Tab title="Enable specific credit cards">
+    ```json title="javascript"
+    {
+      "card": {
+        "detail": [
+          { "card_code": "*", "enabled": false }, // Disable all credit cards
+          { "card_code": "366", "enabled": true }, // Enable specific credit card
+        ]
+      }
+    }
+    ```
 
-</Tab>
+    **Parameters**
+
+    - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630)
+      (<mark style="color:green;">**string)**</mark>
+
+    - **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+
+    <Codepen user="chaiport" slug="WNMMVJZ" caption="Example of showing only Shinhan Card in the payment window" />
+  </Tab>
 </Tabs>

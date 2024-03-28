@@ -63,7 +63,7 @@ import Details from "~/components/gitbook/Details.astro";
 기존 `다날-휴대폰 본인인증` 외 `이니시스-신용카드 본인인증` 수단이 추가됨에 따라, 휴대폰 본인인증도 복수PG 설정을 지원합니다.\
 또한, `다날-휴대폰 본인인증` 을 2개 이상의 CPID를 발급받아 사이트별로 사용하려는 경우에도 `pg : danal.{다날 CPID}` 복수PG 호출 방식을 지원합니다.
 
-```javascript title="다날-휴대폰 본인인증"
+```ts title="다날-휴대폰 본인인증"
   IMP.certification({
     pg: "danal", //danal 또는 danal.{다날 CPID}, 이하 다른 파라미터는 생략
     ...
@@ -77,7 +77,7 @@ import Details from "~/components/gitbook/Details.astro";
   });
 ```
 
-```javascript title="이니시스-신용카드 본인인증"
+```ts title="이니시스-신용카드 본인인증"
 // PC/모바일 환경 모두 popup : true가 기본값
 // PC환경 : popup 파라미터 무관하게 팝업창 방식으로 진행(이니시스 정책)
 // 모바일환경 : popup : false 선언된 경우 m_redirect_url 파라미터 필요
@@ -106,7 +106,7 @@ Safari 브라우저의 Back 버튼으로 이전 페이지로 돌아가면, 리�
 
 결제 요청 시 호출하는 `IMP.request_pay(param, callback)`함수의 `popup : true` 옵션을 지정하면, 결제창이 팝업창으로 열리며 결제 프로세스 완료 후 `callback` 함수가 호출됩니다. 이전 버전에서는 페이지 리디렉션 방식만 지원됩니다.
 
-```javascript title="javascript 팝업 방식"
+```ts title="javascript 팝업 방식"
   // popup : true 옵션과 콜백 함수 등록부분 참고 (그 외 파라미터 생략)
   IMP.request_pay({
     pg: "paypal",
@@ -122,7 +122,7 @@ Safari 브라우저의 Back 버튼으로 이전 페이지로 돌아가면, 리�
   });
 ```
 
-```javascript title="javascript redirect 방식"
+```ts title="javascript redirect 방식"
  // m_redirect_url 지정 필요 (popup : false가 기본값이므로 생략됨)
   IMP.request_pay({
     pg: "paypal",
@@ -136,7 +136,7 @@ Safari 브라우저의 Back 버튼으로 이전 페이지로 돌아가면, 리�
 
 본인인증(다날) 요청 시, 본인인증 후 이동될 URL을 `m_redirect_url` 파라미터에 지정하면 리디렉션 방식으로 진행됩니다. 이전 버전에서는 팝업 방식만 지원됩니다.리디렉션 설정하는 방법은 휴대폰 본인인증 연동하기를 참고하세요.
 
-```javascript title="javascript (팝업 방식)"
+```ts title="javascript (팝업 방식)"
   // popup : true 옵션
   IMP.certification({
     merchant_uid : "본인인증 건 트랜잭션 ID",
@@ -150,7 +150,7 @@ Safari 브라우저의 Back 버튼으로 이전 페이지로 돌아가면, 리�
   });
 ```
 
-```javascript title="javascript (리디렉션 방식)"
+```ts title="javascript (리디렉션 방식)"
 // m_redirect_url 지정 필요 (popup : false가 기본값이므로 생략됨)
   IMP.certification({
     merchant_uid : "본인인증 건 트랜잭션 ID"

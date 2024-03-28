@@ -16,55 +16,69 @@ following example.
 
 <Tabs>
   <Tab title="JavaScript">
-    ```javascript title="client-side"
-    IMP.request_pay({
+    ```ts title="client-side"
+    IMP.request_pay(
+      {
         /* ...Omitted... */
-      }, function (rsp) { // callback
-        if (rsp.success) { // payment successful: payment accepted or virtual account issued
-            // jQuery HTTP request
-            jQuery.ajax({
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // payment successful: payment accepted or virtual account issued
+          // jQuery HTTP request
+          jQuery
+            .ajax({
               /* ...Omitted... */
-            }).done(function(data) { // response processing
-              switch(data.status) {
-                case: "vbankIssued":
+            })
+            .done(function (data) {
+              // response processing
+              switch (data.status) {
+                case "vbankIssued":
                   // Virtual account issued
                   break;
-                case: "success":
+                case "success":
                   // Payment successful
                   break;
               }
             });
         } else {
-          alert("Payment failed. Error message: " +  rsp.error_msg);
+          alert("Payment failed. Error message: " + rsp.error_msg);
         }
-      });
+      },
+    );
     ```
   </Tab>
 
   <Tab title="JavaScript (ES Next)">
-    ```javascript title="client-side"
-    IMP.request_pay({
+    ```ts title="client-side"
+    IMP.request_pay(
+      {
         /* ...Omitted... */
-      }, rsp => { // callback
-        if (rsp.success) { // payment successful: payment accepted or virtual account issued
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          // payment successful: payment accepted or virtual account issued
           // axios HTTP request
           axios({
             /* ...Omitted... */
-          }).then((data) => { // Response processing
-            switch(data.status) {
-              case: "vbankIssued":
+          }).then((data) => {
+            // Response processing
+            switch (data.status) {
+              case "vbankIssued":
                 // Virtual account issued
                 break;
-              case: "success":
+              case "success":
                 // Payment successful
 
                 break;
             }
           });
         } else {
-          alert(\`Payment failed. Error message: \${rsp.error_msg}\`);
+          alert(`Payment failed. Error message: ${rsp.error_msg}`);
         }
-      });
+      },
+    );
     ```
   </Tab>
 </Tabs>

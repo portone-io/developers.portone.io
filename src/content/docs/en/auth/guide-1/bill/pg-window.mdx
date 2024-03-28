@@ -4,154 +4,170 @@ description: Get a billing key through the payment window provided by the PG.
 ---
 
 import Figure from "~/components/Figure.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-#### You can enter the card information through the PG's payment window to get a billing key.
+You can enter the card information through the PG's payment window to get a billing key.
 
-- **Pros**: **no need to establish additional security process** for transmitting card information because the data is transmitted directly to PG without going through the server or i'mport server.
-- **Cons**: **cannot customize card registration form** since billing key is requested through the PG's payment window via web browser (cannot implement merchant site friendly UI/UX).
+- **Pros**: **no need to establish additional security process** for transmitting card information
+  because the data is transmitted directly to PG without going through the server or i'mport server.
 
-<Figure
-  src="/gitbook-assets/en/image (122).png"
-  caption="Sample PG's window for card info entry"
-/>
+- **Cons**: **cannot customize card registration form** since billing key is requested
+  through the PG's payment window via web browser (cannot implement merchant site friendly UI/UX).
 
-### <mark style="color:blue;">**STEP 01.**</mark> Request billing key
+<Figure src="/gitbook-assets/en/image (122).png" caption="Sample PG's window for card info entry" />
 
-As with authenticated payment, use the **JavaScript SDK** to call the PG's payment window. To get a billing key, specify the following additional parameters.
+## <mark style="color:blue;">**STEP 01.**</mark> Request billing key
 
-> #### customer_uid: unique key that maps 1:1 with billing key
+As with authenticated payment, use the **JavaScript SDK** to call the PG's payment window.
+To get a billing key, specify the following additional parameters.
+
+> customer\_uid: unique key that maps 1:1 with billing key
 
 <Tabs>
-<Tab title="JavaScript">
-```javascript title="client-side"
-  IMP.request_pay({ // Refer to above mentioned PG specific guide for param settings
-    customer_uid: "gildong_0001_1234", // Unique ID for each card (billing key)
-    /* ...Omitted... */
-  }, function (rsp) { // callback
-    if (rsp.success) {
-      // Billing key request successful
-    } else {
-      // Billing key request failed
-    }
-  });
-```
+  <Tab title="JavaScript">
+    ```ts title="client-side"
+    IMP.request_pay(
+      {
+        // Refer to above mentioned PG specific guide for param settings
+        customer_uid: "gildong_0001_1234", // Unique ID for each card (billing key)
+        /* ...Omitted... */
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // Billing key request successful
+        } else {
+          // Billing key request failed
+        }
+      },
+    );
+    ```
 
-<Hint style="info">
-**What is a customer\_uid?**
+    <Hint style="info">
+      **What is a customer\_uid?**
 
-It is a unique value specified by the merchant that maps 1:1 with the billing key issued by PG. A unique `customer_uid` must be created for each card.
+      It is a unique value specified by the merchant that maps 1:1 with the billing key issued by PG. A unique `customer_uid` must be created for each card.
 
-Example: If a customer named **Hong Gildong** requests for a billing key from **A card**, the customer_uid must be issued for the **specified member's credit card number**
-
-</Hint>
-
-</Tab>
+      Example: If a customer named **Hong Gildong** requests for a billing key from **A card**, the customer\_uid must be issued for the **specified member's credit card number**
+    </Hint>
+  </Tab>
 </Tabs>
 
 ### <mark style="color:blue;">**STEP 02.**</mark> Handle response
 
 <Tabs>
-<Tab title="JavaScript">
-```javascript title="client-side"
-  IMP.request_pay({ // param
-    /* ...Omitted... */
-  }, function (rsp) { // callback
-    if (rsp.success) {
-      // Billing key request successful
-      // jQuery HTTP request
-      jQuery.ajax({
-        url: "{URL to receive customer-uid}", // Example: https://www.myservice.com/billings/
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        data: {
-          customer_uid: "gildong_0001_1234", // Unique ID for each card (billing key)
+  <Tab title="JavaScript">
+    ```ts title="client-side"
+    IMP.request_pay(
+      {
+        // param
+        /* ...Omitted... */
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // Billing key request successful
+          // jQuery HTTP request
+          jQuery.ajax({
+            url: "{URL to receive customer-uid}", // Example: https://www.myservice.com/billings/
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            data: {
+              customer_uid: "gildong_0001_1234", // Unique ID for each card (billing key)
+            },
+          });
+        } else {
+          // Billing key request failed
         }
-      });
-    } else {
-      // Billing key request failed
-    }
-  });
-```
+      },
+    );
+    ```
 
-Once the billing key is issued successfully, the **customer_uid** is sent to the merchant server. The server creates an API endpoint that receives the **customer_uid** from the client. The server can use the **customer_uid** to request future payments.\
+    Once the billing key is issued successfully, the **customer\_uid** is sent to the merchant server. The server creates an API endpoint that receives the **customer\_uid** from the client. The server can use the **customer\_uid** to request future payments.\\
 
-```javascript title="server-side"
-  app.post("/billings", async (req, res) => {
-    try {
-      const { customer_uid } = req.body; // Get customer_uid from req.body
+    ```ts title="server-side"
+    app.post("/billings", async (req, res) => {
+      try {
+        const { customer_uid } = req.body; // Get customer_uid from req.body
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
+    ```
 
-        ...
-    } catch (e) {
-      res.status(400).send(e);
-    }
-  });
-```
-
-Save the `customer_uid` in the merchant's database and use it to request future payments.
-
-</Tab>
+    Save the `customer_uid` in the merchant's database and use it to request future payments.
+  </Tab>
 </Tabs>
 
 ### <mark style="color:blue;">**STEP 03.**</mark> Request payment
 
-Use the saved **customer_uid** and call the i'mport [**Non-authenticated payment (billing key) API**](../../../api/api/api) to request payment.
+Use the saved **customer\_uid** and call the i'mport
+[**Non-authenticated payment (billing key) API**](../../../api/api/api) to request payment.
 
 <Hint style="success">
-**To use the i'mport REST API, you must first get an** [**access token**](../../../api/rest-api-access-token).
-
+  **To use the i'mport REST API, you must first get an** [**access token**](../../../api/rest-api-access-token).
 </Hint>
 
 <Tabs>
-<Tab title="Node.js">
-```javascript title="server-side"
-app.post("/billings", async (req, res) => {
-    try {
-      const { customer_uid } = req.body; // Get customer_uid from req.body
-      // Get billing key
-      const getToken = await axios({
-        url: "https://api.iamport.kr/users/getToken",
-        method: "post", // POST method
-        headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
-        data: {
-          imp_key: "imp_apikey", // REST API key
-          imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
+  <Tab title="Node.js">
+    ```ts title="server-side"
+    app.post("/billings", async (req, res) => {
+      try {
+        const { customer_uid } = req.body; // Get customer_uid from req.body
+        // Get billing key
+        const getToken = await axios({
+          url: "https://api.iamport.kr/users/getToken",
+          method: "post", // POST method
+          headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
+          data: {
+            imp_key: "imp_apikey", // REST API key
+            imp_secret:
+              "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+          },
+        });
+        const { access_token } = getToken.data.response; // Access token
+        // Request payment (for first or nth time)
+        const paymentResult = await axios({
+          url: `https://api.iamport.kr/subscribe/payments/again`,
+          method: "post",
+          headers: { Authorization: access_token }, // Add access token to authorization header
+          data: {
+            customer_uid,
+            merchant_uid: "order_monthly_0001", // Order ID
+            amount: 8900,
+            name: "recurring payments for monthly subscription",
+          },
+        });
+        const { code, message } = paymentResult;
+        if (code === 0) {
+          // Successful communication with the card company (additional check is required to confirm whether the payment was successful)
+          if (paymentResult.status === "paid") {
+            // Payment approved
+            res.send({
+              // ...
+            });
+          } else {
+            // Payment not approved (Example: card limit exceeded, card suspended, insufficient balance)
+            // paymentResult.status: failed is returned
+            res.send({
+              // ...
+            });
+          }
+          res.send({
+            // ...
+          });
+        } else {
+          // Card company rejected payment (paymentResult is null)
+          res.send({
+            // ...
+          });
         }
-      });
-      const { access_token } = getToken.data.response; // Access token
-      ...
-      // Request payment (for first or nth time)
-      const paymentResult = await axios({
-        url: \`https://api.iamport.kr/subscribe/payments/again\`,
-        method: "post",
-        headers: { "Authorization": access_token }, // Add access token to authorization header
-        data: {
-          customer_uid,
-          merchant_uid: "order_monthly_0001", // Order ID
-          amount: 8900,
-          name: "recurring payments for monthly subscription"
-        }
-      });
-      ...
-      const { code, message } = paymentResult;
-      if (code === 0) { // Successful communication with the card company (additional check is required to confirm whether the payment was successful)
-        if ( paymentResult.status === "paid" ) { // Payment approved
-          res.send({ ... });
-        } else { // Payment not approved (Example: card limit exceeded, card suspended, insufficient balance)
-          // paymentResult.status: failed is returned
-          res.send({ ... });
-        }
-        res.send({ ... });
-      } else { // Card company rejected payment (paymentResult is null)
-        res.send({ ... });
+      } catch (e) {
+        res.status(400).send(e);
       }
-    } catch (e) {
-      res.status(400).send(e);
-    }
-  });
-```
-
-</Tab>
+    });
+    ```
+  </Tab>
 </Tabs>

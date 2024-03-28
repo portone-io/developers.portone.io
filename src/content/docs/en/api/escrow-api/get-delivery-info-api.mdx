@@ -4,147 +4,131 @@ description: ""
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets delivery information for an escrow payment transaction.
+## Gets delivery information for an escrow payment transaction.
 
 <Details>
-<p slot="summary"><strong>Supported PGs</strong></p>
+  <p slot="summary"><strong>Supported PGs</strong></p>
 
-- KG INICIS
-- NHN KCP
-- PAYJOA (Daou)
-
+  - KG INICIS
+  - NHN KCP
+  - PAYJOA (Daou)
 </Details>
 
 <Swagger method="get" path="/escrows/logis/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Gets delivery information for an escrow payment transaction.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">
+  ### Responses
 
-**i'mport transaction ID**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="EscrowLogisResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="EscrowLogisResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **`response`**<mark style="color:red;">**`(EscrowLogisAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+    <Tabs>
+      <Tab title="EscrowLogisAnnotation">
+        **`company`** <mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**Response message**
+        **`Courier code`**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`invoice`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`response`**<mark style="color:red;">**`(EscrowLogisAnnotation, optional)`**</mark>
+        **`Tracking number`**
 
-</Tab>
-</Tabs>
+        **`sent_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-<Tabs>
-<Tab title="EscrowLogisAnnotation">
-**`company`** <mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`Sent at`** _**UNIX TIMESTAMP**_
 
-**`Courier code`**
+        **`applied_at`**_<mark style="color:red;">**`*`**</mark>_<mark style="color:orange;">**`integer`**</mark>
 
-**`invoice`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`Delivery info created at`** _**UNIX TIMESTAMP**_
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`Tracking number`**
+  <SwaggerResponse status="400: Bad Request" description="Missing parameter (varies by PG) or request not supported by specified PG">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`sent_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`Sent at`** _**UNIX TIMESTAMP**_
+  <SwaggerResponse status="404: Not Found" description="No result found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`applied_at`**_<mark style="color:red;">**`*`**</mark>_<mark style="color:orange;">**`integer`**</mark>
-
-**`Delivery info created at`** _**UNIX TIMESTAMP**_
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Missing parameter (varies by PG) or request not supported by specified PG">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="No result found">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Server error">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Server error">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "company": "string",
-    "invoice": "string",
-    "sent_at": 0,
-    "applied_at": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "company": "string",
+      "invoice": "string",
+      "sent_at": 0,
+      "applied_at": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/escrow.logis/escrow_logis_get**](https://api.iamport.kr/#!/escrow.logis/escrow_logis_get)
-
+  [**https://api.iamport.kr/#!/escrow.logis/escrow\_logis\_get**](https://api.iamport.kr/#!/escrow.logis/escrow_logis_get)
 </Hint>

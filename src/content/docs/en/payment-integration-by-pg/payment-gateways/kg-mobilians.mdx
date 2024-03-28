@@ -5,161 +5,168 @@ description: KG Mobilians payment window integration guide
 
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure KG Mobilians PG Settings
+## 1. Configure KG Mobilians PG Settings
 
 Refer to the [**KG Mobilians settings**](../../ready/2.-pg/payment-gateway-settings/kg) page to
 configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-03 7.34.26.png>)
 
-### 2. Request payment
+## 2. Request payment
 
 To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
-IMP.**request_pay**(param, callback).
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'mobilians',
-    pay_method : 'phone',
-    merchant_uid : '{Merchant created Order ID}', // Example: order_no_0001
-    name : 'Order name: Test payment request',
-    amount : 14000,
-    buyer_email : 'iamport@siot.do',
-    buyer_name : 'John Doe',
-    buyer_tel : '010-1234-5678', //required
-    buyer_addr : 'Shinsa-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456',
-    m_redirect_url : '{Mobile only - URL to redirect to after payment approval}' // Example: https://www.my-service.com/payments/complete/mobile
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "mobilians",
+        pay_method: "phone",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678", //required
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-###
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`mobilians`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`mobilians`**.
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Payment method code**
 
-**Payment method code**
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `phone`(mobile micropayment)
+    </Details>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `phone`(mobile micropayment)
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
+    **Order ID**
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    Must be unique for each request.
 
-**Order ID**
+    **`buyer_tel`**<mark style="color:red;">**`*`**</mark> <mark style="color:green;">**`string`**</mark>
 
-Must be unique for each request.
+    **Customer phone number**
 
-**`buyer_tel`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+    <mark style="color:red;">Required</mark>
 
-**Customer phone number**
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-<mark style="color:red;">Required</mark>
+    **Payment amount**
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    Must be an integer (not string)
 
-**Payment amount**
+    <Codepen user="chaiport" slug="zYRapvw" />
+  </Tab>
 
-Must be an integer (not string)
+  <Tab title="Non-authenticated payment request">
+    To open non-authenticated payment window, specify the **customer\_uid** parameter.
+    After getting a billing key from this window, you can request payment using the billing key.
 
-<Codepen user="chaiport" slug="zYRapvw" />
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "mobilians",
+        pay_method: "phone",
+        merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+        name: "Initial billing key request",
+        amount: 0, // For display purpose only (no payment approval).
+        customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
+        buyer_email: "johndoe@gmail.com",
+        buyer_name: "John Doe",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
+      },
+      function (rsp) {
+        if (rsp.success) {
+          alert("Success");
+        } else {
+          alert("Failed");
+        }
+      },
+    );
+    ```
 
-</Tab>
+    <Hint style="info">
+      - To request non-authenticated payment, you must set the **MID info issued by KG Mobilians** in the Admin console.
 
-<Tab title="Non-authenticated payment request">
-To open non-authenticated payment window, specify the **customer\_uid** parameter. After getting a billing key from this window, you can request payment using the billing key.
+      - KG Mobilians <mark style="color:red;">**does not process the payment**</mark>
+        when issuing the billing key even if you specify an amount.
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "mobilians",
-    pay_method: "phone",
-    merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
-    name: "Initial billing key request",
-    amount: 0, // For display purpose only (no payment approval).
-    customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
-    buyer_email: "johndoe@gmail.com",
-    buyer_name: "John Doe",
-    buyer_tel: "02-1234-1234",
-    m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
-  },
-  function (rsp) {
-    if (rsp.success) {
-      alert("Success");
-    } else {
-      alert("Failed");
-    }
-  }
-);
-```
+      - Subsequent payments using the billing key must be for
+        the <mark style="color:red;">**same amount and on the same day**</mark>
+        as the initial payment on monthly basis.
+    </Hint>
 
-####
+    ### Key parameter description
 
-<Hint style="info">
-- To request non-authenticated payment, you must set the **MID info issued by KG Mobilians** in the Admin console.
-- KG Mobilians <mark style="color:red;">**does not process the payment**</mark> when issuing the billing key even if you specify an amount.
-- Subsequent payments using the billing key must be for the <mark style="color:red;">**same amount and on the same day**</mark> as the initial payment on monthly basis.
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Hint>
+    **PG code**
 
-### Key parameter description
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`mobilians.[MID]`**.
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**PG code**
+    **Credit card billing key**
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`mobilians.[MID]`**.
+    Billing key to be mapped 1:1 with the user-entered credit card information.
 
-**`customer_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
 
-**Credit card billing key**
+    **Payment amount**
 
-Billing key to be mapped 1:1 with the user-entered credit card information.
+    Amount to display in the payment window, but <mark style="color:red;">actual payment approval is not processed.</mark>
+    (To request payment, use the **REST API with the customer\_uid**.)\\
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**Integer\*\*</mark>
+    ### Request payment with billing key (customer\_uid)
 
-**Payment amount**
+    After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling the
+    [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api)
+    with the `customer_uid` as follows:
 
-Amount to display in the payment window, but <mark style="color:red;">actual payment approval is not processed.</mark> (To request payment, use the **REST API with the customer_uid**.)\
+    ```sh title="sever-side"
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+  </Tab>
 
-### Request payment with billing key (customer_uid)
-
-After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api) with the `customer_uid` as follows:
-
-```title="sever-side"
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-</Tab>
-
-<Tab title="Non-authenticated API  request">
-#### **Not supported.**
-
-</Tab>
+  <Tab title="Non-authenticated API  request">
+    #### **Not supported.**
+  </Tab>
 </Tabs>

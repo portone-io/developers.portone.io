@@ -4,9 +4,9 @@ description: Easily get a billing key using the i'mport REST API.
 ---
 
 import Codepen from "~/components/gitbook/Codepen.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
 You can use the i'mport REST API to request for a billing key to make a payment request. When you
 request for a billing key with the customer's credit card information, the i'mport server calls the
@@ -19,137 +19,150 @@ has the following pros/cons:
   requirements are strict for this service, and must take precautions to protect personal
   information.
 
-#### If you are planning to develop a merchant UI/UX-friendly payment environment, API integration is the right choice.
+If you are planning to develop a merchant UI/UX-friendly payment environment,
+API integration is the right choice.
 
-### <mark style="color:blue;">**STEP 01.**</mark> Accept credit card information
+## <mark style="color:blue;">**STEP 01.**</mark> Accept credit card information
 
 Add input fields for card information as shown below. Create a hidden field to store the
-**customer_uid** to send to the server upon form submission. For corporate cards (excluding cards
+**customer\_uid** to send to the server upon form submission. For corporate cards (excluding cards
 issued under an employee's name), enter a _10-digit business registration number_ for the `birth`
 parameter. The following example calls a `POST` request for `/subscription/issue-billing` with input
-values and **customer_uid** when you click the **Pay** button.
+values and **customer\_uid** when you click the **Pay** button.
 
 <Hint style="info">
-**What is a customer\_uid?**
+  **What is a customer\_uid?**
 
-It is a unique value specified by the merchant that maps 1:1 with the billing key issued by PG. A unique `customer_uid` must be created for each card.
+  It is a unique value specified by the merchant that maps 1:1 with the billing key issued by PG. A unique `customer_uid` must be created for each card.
 
-Example: If a customer named **Hong Gildong** requests for a billing key from **A card**, the customer_uid must be issued for the **specified member's credit card number**.
-
+  Example: If a customer named **Hong Gildong** requests for a billing key from **A card**, the customer\_uid must be issued for the **specified member's credit card number**.
 </Hint>
 
 <Hint style="danger">
-If you reuse the customer\_uid used to get the existing billing key, the existing billing key will be replaced with the new billing key issued on the new card number. (**The billing key that maps to the existing card will be deleted.**)
-
+  If you reuse the customer\_uid used to get the existing billing key, the existing billing key will be replaced with the new billing key issued on the new card number. (**The billing key that maps to the existing card will be deleted.**)
 </Hint>
 
 <Hint style="info">
-**Credit card information required for billing key**
+  **Credit card information required for billing key**
 
-- **Credit card number**
-- **Credit card expiration**
-- **DOB**
-- **First 2-digits of card password**
-
+  - **Credit card number**
+  - **Credit card expiration**
+  - **DOB**
+  - **First 2-digits of card password**
 </Hint>
 
 <Tabs>
-<Tab title="HTML">
-```html title="client-side"
-<form action="{service URL to receive billing key request}", method="post">
-  <!--Example: https://www.myservice.com/subscription/issue-billing-->
-    <div>
-        <label for="card_number">card number XXXX-XXXX-XXXX-XXXX</label>
-        <input id="card_number" type="text" name="card_number">
-    </div>
-    <div>
-        <label for="expiry">card expiration YYYY-MM</label>
-        <input id="expiry" type="text" name="expiry">
-    </div>
-    <div>
-        <label for="birth">DOB YYMMDD</label>
-        <input id="birth" type="text" name="birth">
-    </div>
-    <div>
-        <label for="pwd_2digit">first 2-digits of card password XX</label>
-        <input id="pwd_2digit" type="text" name="pwd_2digit">
-    </div>
-    <input hidden type="text" value="gildong_0001_1234" name="customer_uid">
-    <input type="submit" value="Pay">
-  </form>
-```
+  <Tab title="HTML">
+    ```html title="client-side"
+    <form action="{service URL to receive billing key request}", method="post">
+      <!--Example: https://www.myservice.com/subscription/issue-billing-->
+        <div>
+            <label for="card_number">card number XXXX-XXXX-XXXX-XXXX</label>
+            <input id="card_number" type="text" name="card_number">
+        </div>
+        <div>
+            <label for="expiry">card expiration YYYY-MM</label>
+            <input id="expiry" type="text" name="expiry">
+        </div>
+        <div>
+            <label for="birth">DOB YYMMDD</label>
+            <input id="birth" type="text" name="birth">
+        </div>
+        <div>
+            <label for="pwd_2digit">first 2-digits of card password XX</label>
+            <input id="pwd_2digit" type="text" name="pwd_2digit">
+        </div>
+        <input hidden type="text" value="gildong_0001_1234" name="customer_uid">
+        <input type="submit" value="Pay">
+      </form>
+    ```
+  </Tab>
 
-</Tab>
-
-<Tab title="React.js">
-```jsx title="client-side"
-// React.js
-  class CardForm extends React.Components {
-    constructor(props) {
-      super(props);
-      this.state = {
-        cardNumber: "",
-        expiry: "",
-        birth: "",
-        pwd2Digit: "",
-        customer_uid: "gildong_0001_1234",
+  <Tab title="React.js">
+    ```tsx title="client-side"
+    // React.js
+    class CardForm extends React.Components {
+      constructor(props) {
+        super(props);
+        this.state = {
+          cardNumber: "",
+          expiry: "",
+          birth: "",
+          pwd2Digit: "",
+          customer_uid: "gildong_0001_1234",
+        };
+      }
+      handleInputChange = (event) => {
+        const { value, name } = event.target;
+        this.setState({
+          [name]: value,
+        });
       };
+      handleFormSubmit = (event) => {
+        event.preventDefault();
+        const { cardNumber, expiry, birth, pwd2Digit, customer_uid } = this.state;
+        axios({
+          // Example: https://www.myservice.com/subscription/issue-billing
+          url: "{service URL to receive billing key request}",
+          method: "post",
+          data: {
+            cardNumber,
+            expiry,
+            birth,
+            pwd2Digit,
+            customer_uid,
+          },
+        }).then((rsp) => {
+          // Do something with the response
+        });
+      };
+      render() {
+        const { cardNumber, expiry, birth, pwd2Digit } = this.state;
+        return (
+          <form onSubmit={this.handleFormSubmit}>
+            <label>
+              card number
+              <input
+                type="text"
+                name="cardNumber"
+                value={cardNumber}
+                onChange={this.handleInputChange}
+              />
+            </label>
+            <label>
+              card expiration
+              <input
+                type="text"
+                name="expiry"
+                value={expiry}
+                onChange={this.handleInputChange}
+              />
+            </label>
+            <label>
+              DOB
+              <input
+                type="text"
+                name="birth"
+                value={birth}
+                onChange={this.handleInputChange}
+              />
+            </label>
+            <label>
+              'first 2-digits of card password'
+              <input
+                type="text"
+                name="pwd2Digit"
+                value={pwd2Digit}
+                onChange={this.handleInputChange}
+              />
+            </label>
+            <input type="submit" value="Pay" />
+          </form>
+        );
+      }
     }
-    ...
-    handleInputChange = (event) => {
-      const { value, name } = event.target;
-      this.setState({
-        [name]: value,
-      });
-    };
-    ...
-    handleFormSubmit = (event) => {
-      event.preventDefault();
-      const { cardNumber, expiry, birth, pwd2Digit, customer_uid } = this.state;
-      axios({
-        // Example: https://www.myservice.com/subscription/issue-billing
-        url: "{service URL to receive billing key request}", 
-        method: "post",
-        data: {
-          cardNumber,
-          expiry,
-          birth,
-          pwd2Digit,
-          customer_uid,
-        }
-      }).then(rsp => {
-        ...
-      });
-    };
-    ...
-    render() {
-      const { cardNumber, expiry, birth, pwd2Digit } = this.state;
-      return (
-        <form onSubmit={this.handleFormSubmit}>
-          <label>
-            card number
-            <input type="text" name="cardNumber" value={cardNumber} onChange={this.handleInputChange} />
-          </label>
-          <label>
-            card expiration
-            <input type="text" name="expiry" value={expiry} onChange={this.handleInputChange} />
-          </label>
-          <label>
-            DOB
-            <input type="text" name="birth" value={birth} onChange={this.handleInputChange} />
-          </label>
-          <label>
-            'first 2-digits of card password'
-            <input type="text" name="pwd2Digit" value={pwd2Digit} onChange={this.handleInputChange} />
-          </label>
-          <input type="submit" value="Pay" />
-        </form>
-      )
-    }
-  }
-```
-
-</Tab>
+    ```
+  </Tab>
 </Tabs>
 
 <Codepen user="chaiport" slug="mdpWYqg" />
@@ -157,29 +170,27 @@ If you reuse the customer\_uid used to get the existing billing key, the existin
 ### <mark style="color:blue;">**STEP 02.**</mark> Extract card information
 
 Create an API endpoint to extract the card information from the request body. The following is a
-sample **API endpoint** that processes a `POST` request to `/subscription/issue-billing`.\
+sample **API endpoint** that processes a `POST` request to `/subscription/issue-billing`.\\
 
 <Tabs>
-<Tab title="Node.js">
-```javascript title="server-side"
-// Process POST request to "/subscription/issue-billing"
-  app.post("/subscriptions/issue-billing", async (req, res) => {
-    try {
-      const {
-        card_number, // card number
-        expiry, // card expiration
-        birth, // DOB
-        pwd_2digit, // first 2-digits of card password
-        customer_uid, // value that maps 1:1 with card (billing key)
-      } = req.body; // extract card info from req.body
-      ...
-    } catch (e) {
-      res.status(400).send(e);
-    }
-  });
-```
-
-</Tab>
+  <Tab title="Node.js">
+    ```ts title="server-side"
+    // Process POST request to "/subscription/issue-billing"
+    app.post("/subscriptions/issue-billing", async (req, res) => {
+      try {
+        const {
+          card_number, // card number
+          expiry, // card expiration
+          birth, // DOB
+          pwd_2digit, // first 2-digits of card password
+          customer_uid, // value that maps 1:1 with card (billing key)
+        } = req.body; // extract card info from req.body
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
+    ```
+  </Tab>
 </Tabs>
 
 ### <mark style="color:blue;">**STEP 03.**</mark> Request billing key and handle response
@@ -188,8 +199,8 @@ Request for a billing key by using the i'mport [**Get billing key REST API**](..
 return a response based on the result code.
 
 <Tabs>
-<Tab title="Node.js">
-```javascript title="server-side"
+  <Tab title="Node.js">
+    ```ts title="server-side"
     // Process POST request to "/subscription/issue-billing"
     app.post("/subscriptions/issue-billing", async (req, res) => {
       try {
@@ -200,7 +211,6 @@ return a response based on the result code.
           pwd_2digit, // First 2-digits of card password
           customer_uid, // Unique ID for each card (billing key)
         } = req.body; // Get card info from req.body
-        ...
         // Get billing key
         const getToken = await axios({
           url: "https://api.iamport.kr/users/getToken",
@@ -208,47 +218,48 @@ return a response based on the result code.
           headers: { "Content-Type": "application/json" }, // "Content-Type": "application/json"
           data: {
             imp_key: "imp_apikey", // REST API key
-            imp_secret: "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f" // REST API Secret
-          }
+            imp_secret:
+              "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+          },
         });
         const { access_token } = getToken.data.response; // Access token
-        ...
         // Get access token
         const issueBilling = await axios({
-          url: \`https://api.iamport.kr/subscribe/customers/\${customer_uid}\`,
+          url: `https://api.iamport.kr/subscribe/customers/${customer_uid}`,
           method: "post",
-          headers: { "Authorization": access_token }, // Add access token to authorization header
+          headers: { Authorization: access_token }, // Add access token to authorization header
           data: {
             card_number, // Card number
             expiry, // Card expiration
             birth, // Date of birth
             pwd_2digit, // First 2-digits of card password
-          }
+          },
         });
-        ...
         const { code, message } = issueBilling.data;
-        if (code === 0) { // Billing key request successful
-          res.send({ status: "success", message: "Billing has successfully issued" });
-        } else { // Billing key request failed
+        if (code === 0) {
+          // Billing key request successful
+          res.send({
+            status: "success",
+            message: "Billing has successfully issued",
+          });
+        } else {
+          // Billing key request failed
           res.send({ status: "failed", message });
         }
       } catch (e) {
         res.status(400).send(e);
       }
     });
-```
-
-</Tab>
+    ```
+  </Tab>
 </Tabs>
 
 <Hint style="success">
-**To use the i'mport REST API, you must first get an** [**access token**](../../../api/rest-api-access-token)**.**
-
+  **To use the i'mport REST API, you must first get an** [**access token**](../../../api/rest-api-access-token)**.**
 </Hint>
 
 <Hint style="info">
-**Request billing key and make payment at once**
+  **Request billing key and make payment at once**
 
-By using the key-in payment REST API[**`/subscribe/payments/onetime`**](../../../api/api/), you can get the billing key and make a payment in a single API call.
-
+  By using the key-in payment REST API[**`/subscribe/payments/onetime`**](../../../api/api/), you can get the billing key and make a payment in a single API call.
 </Hint>

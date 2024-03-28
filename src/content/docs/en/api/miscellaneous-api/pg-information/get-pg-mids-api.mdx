@@ -4,97 +4,88 @@ description: ""
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
-import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets a list of PG settings (MIDs) configured in the Admin console.
+## Gets a list of PG settings (MIDs) configured in the Admin console.
 
 <Swagger method="get" path="/users/pg" baseUrl="https://api.iamport.kr" summary="Gets a list of PG settings (MIDs) configured in the Admin console.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Responses
 
-### Responses
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="MultiplePgSettingResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="MultiplePgSettingResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response code**
 
-**Response code**
+        0: success, Not 0: check the message
 
-0: success, Not 0: check the message
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`message`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **Response message**
 
-**Response message**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`response`**<mark style="color:red;">**`(Array[PgSettingAnnotation], optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-**`response`**<mark style="color:red;">**`(Array[PgSettingAnnotation], optional)`**</mark>
+    <Tabs>
+      <Tab title="PgSettingAnnotation">
+        **`pg_provider`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-</Tab>
-</Tabs>
+        **`PG code`**
 
-<Tabs>
-<Tab title="PgSettingAnnotation">
-**`pg_provider`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        [**PG codes**](../../../tips/pg-codes)
 
-**`PG code`**
+        **`pg_id`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-[**PG codes**](../../../tips/pg-codes)
+        **`PG MID`**
 
-**`pg_id`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`sandbox`** <mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`boolean`**</mark>
 
-**`PG MID`**
+        **`Test mode?`**
 
-**` sandbox``  `**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`boolean`**</mark>
+        **`type`** <mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`Test mode?`**
+        **`PG setting type`**
 
-**` type``  `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**`PG setting type`**
-
-- `payment` : Authenticated payment (Admin console > PG settings \[general/subscription] tab)
-- `api_payment` : API payment (Admin console > PG settings \[general/key-in] tab)
-- `certification` : Identity verification (Admin console > identity verification tab)
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
+        - `payment` : Authenticated payment (Admin console > PG settings \[general/subscription] tab)
+        - `api_payment` : API payment (Admin console > PG settings \[general/key-in] tab)
+        - `certification` : Identity verification (Admin console > identity verification tab)
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": [
-    {
-      "pg_provider": "string",
-      "pg_id": "string",
-      "sandbox": true,
-      "type": "payment"
-    }
-  ]
-}
-```
-
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": [
+      {
+        "pg_provider": "string",
+        "pg_id": "string",
+        "sandbox": true,
+        "type": "payment"
+      }
+    ]
+  }
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/users/getPgSettingList**](https://api.iamport.kr/#!/users/getPgSettingList)
-
+  [**https://api.iamport.kr/#!/users/getPgSettingList**](https://api.iamport.kr/#!/users/getPgSettingList)
 </Hint>

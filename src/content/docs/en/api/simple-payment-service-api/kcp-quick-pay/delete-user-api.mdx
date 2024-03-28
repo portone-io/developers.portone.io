@@ -4,142 +4,130 @@ description: ""
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Deletes a KCP Quick Pay user information.
+## Deletes a KCP Quick Pay user information.
 
 <Hint style="danger">
-### Accept setting is required
+  ### Accept setting is required
 
-You must specify the Accept setting in the HTTP header as follows:
+  You must specify the Accept setting in the HTTP header as follows:
 
-**Accept : application/json**
-
+  **Accept : application/json**
 </Hint>
 
 <Swagger method="delete" path="/kcpquick/members/{member_id}" baseUrl="https://api.iamport.kr" summary="Deletes a KCP Quick Pay user information.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="member_id" type="String">
+    **Member ID**
+  </SwaggerParameter>
 
-<SwaggerParameter name="member_id" type="String">
-**Member ID**
+  <SwaggerParameter name="site_code" type="String(80)">
+    **KCP Quick Pay site code**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="site_code" type="String(80)">
-**KCP Quick Pay site code**
+  <SwaggerParameter name="partner_type" type="String(80)">
+    **KCP Quick Pay partner type**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="partner_type" type="String(80)">
-**KCP Quick Pay partner type**
+  <SwaggerParameter name="partner_subtype" type="String(80)">
+    **KCP Quick Pay partner subtype**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="partner_subtype" type="String(80)">
-**KCP Quick Pay partner subtype**
+  ### Responses
 
-</SwaggerParameter>
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="KcpQuickMemberResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-### Responses
+        **Response code**
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="KcpQuickMemberResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        0: success, Not 0: check the message
 
-**Response code**
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-0: success, Not 0: check the message
+        **Response message**
 
-**`message`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        A non-zero code includes a message like 'Invalid payment info'.
 
-**Response message**
+        **`response`` `**<mark style="color:red;">**`(KcpQuickMemberAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-A non-zero code includes a message like 'Invalid payment info'.
+    <Tabs>
+      <Tab title="KcpQuickMemberAnnotation">
+        **`member_id`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**` response``  `**<mark style="color:red;">**`(KcpQuickMemberAnnotation, optional)`**</mark>
+        **`Member ID`**
 
-</Tab>
-</Tabs>
+        **`pg_provider`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-<Tabs>
-<Tab title="KcpQuickMemberAnnotation">
-**`member_id`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`PG code`**
 
-**`Member ID`**
+        **`pg_id`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`pg_provider`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`PG Merchant ID`**
 
-**`PG code`**
+        **`inserted`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`pg_id`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`User created at (UNIX timestamp)`**
 
-**`PG Merchant ID`**
+        **`updated`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`inserted`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+        **`User updated at (UNIX timestamp)`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`User created at (UNIX timestamp)`**
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`updated`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
-
-**`User updated at (UNIX timestamp)`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Invalid member_id">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="Invalid member_id">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "member_id": "string",
-    "pg_provider": "string",
-    "pg_id": "string",
-    "inserted": 0,
-    "updated": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "member_id": "string",
+      "pg_provider": "string",
+      "pg_id": "string",
+      "inserted": 0,
+      "updated": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/kcpquick/member_delete**](https://api.iamport.kr/#!/kcpquick/member_delete)
-
+  [**https://api.iamport.kr/#!/kcpquick/member\_delete**](https://api.iamport.kr/#!/kcpquick/member_delete)
 </Hint>

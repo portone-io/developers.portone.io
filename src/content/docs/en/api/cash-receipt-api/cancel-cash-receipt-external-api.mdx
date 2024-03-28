@@ -4,185 +4,168 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Cancels a cash receipt issued for an external transaction.
+## Cancels a cash receipt issued for an external transaction.
 
 <Details>
-<p slot="summary"><strong>Supported PGs</strong></p>
+  <p slot="summary"><strong>Supported PGs</strong></p>
 
-- **KG INICIS**
-- **NHN KCP**
-- **Settle Bank**
-- **NICE Payments**
-- **PAYJOA (Daou)**
-- **KICC**
-
+  - **KG INICIS**
+  - **NHN KCP**
+  - **Settle Bank**
+  - **NICE Payments**
+  - **PAYJOA (Daou)**
+  - **KICC**
 </Details>
 
 <Swagger method="delete" path="/receipts/external/{merchant_uid}" baseUrl="https://api.iamport.kr" summary="Cancels a cash receipt issued for an external transaction.">
-<SwaggerDescription>
-This cancels the issuance of a cash receipt for a payment processed externally through an i'mport supported PG. Pass the 
+  <SwaggerDescription>
+    This cancels the issuance of a cash receipt for a payment processed externally through an i'mport supported PG. Pass the
 
-**merchant_uid**
+    **merchant\_uid**
 
-, the unique order number for the cash transaction, that was used to request the issuance of cash receipt.
+    , the unique order number for the cash transaction, that was used to request the issuance of cash receipt.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="merchant_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="merchant_uid" type="String" required="true">
-<mark style="color:red;">
+  ### Responses
 
-**i'mport transaction ID**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="ExternalReceiptResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
- 
+        0: success, Not 0: check the message
 
-</SwaggerParameter>
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-### Responses
+        **Response message**
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="ExternalReceiptResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        A non-zero code includes a message like 'Invalid payment info'.
 
-**Response code**
+        **`response`**<mark style="color:red;">**`(ExternalReceiptAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-0: success, Not 0: check the message
+    <Tabs>
+      <Tab title="ExternalReceiptAnnotation">
+        **`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+        **`i'mport transaction ID`**
 
-**Response message**
+        **`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`Cash receipt ID issued by PG`**
 
-**`response`**<mark style="color:red;">**`(ExternalReceiptAnnotation, optional)`**</mark>
+        **`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-</Tab>
-</Tabs>
+        **`Cash receipt ID issued by National Tax Service`**
 
-<Tabs>
-<Tab title="ExternalReceiptAnnotation">
-**`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`i'mport transaction ID`**
+        **`Recipient type`**
 
-**`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
+        - Personal use: `person`
+        - Business use: `company`
 
-**`Cash receipt ID issued by PG`**
+        **`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`Cash receipt Amount`**
 
-**`Cash receipt ID issued by National Tax Service`**
+        **`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`VAT`**
 
-**`Recipient type`**
+        **`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
 
-- Personal use: `person`
-- Business use: `company`
+        **`Cash receipt URL`**
 
-**`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+        **`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`Cash receipt Amount`**
+        **Issued at** `UNIX TIMESTAMP`
 
-**`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+        **`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
 
-**`VAT`**
+        **`Cancelled at`** `UNIX TIMESTAMP`
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
+  <SwaggerResponse status="400: Bad Request" description="Missing merchant_uid">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`Cash receipt URL`**
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+  <SwaggerResponse status="404: Not Found" description="Result not found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**Issued at** `UNIX TIMESTAMP`
-
-**`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
-
-**`Cancelled at`** `UNIX TIMESTAMP`
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Missing merchant_uid">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Result not found">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Request failed">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Request failed">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "merchant_uid": "string",
-    "receipt_tid": "string",
-    "apply_num": "string",
-    "type": "person",
-    "amount": 0,
-    "vat": 0,
-    "receipt_url": "string",
-    "applied_at": 0,
-    "cancelled_at": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "merchant_uid": "string",
+      "receipt_tid": "string",
+      "apply_num": "string",
+      "type": "person",
+      "amount": 0,
+      "vat": 0,
+      "receipt_url": "string",
+      "applied_at": 0,
+      "cancelled_at": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/receipts/revokeExternalReceipt**](https://api.iamport.kr/#!/receipts/revokeExternalReceipt)
-
+  [**https://api.iamport.kr/#!/receipts/revokeExternalReceipt**](https://api.iamport.kr/#!/receipts/revokeExternalReceipt)
 </Hint>

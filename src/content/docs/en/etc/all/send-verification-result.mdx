@@ -3,62 +3,70 @@ title: Send verification result
 description: Process the result obtained from integrated identity verification.
 ---
 
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 Based on the the verification result in the response object (<mark style="color:red;">**`rsp`**</mark>) returned after the verification process is completed, add the post-verification processing logic in the **`callback`** function. When the verification is successful, add the logic to **send the verification ID (`imp_uid`) to the server** as in the following example. Check the <mark style="color:blue;">**value returned**</mark> when the verification is successful.
 
-### 1. Example of sending data via callback
+## 1. Example of sending data via callback
 
 <Tabs>
-<Tab title="JavaScript">
-```javascript title="client-side"
-  IMP.certification({
-    /* ...Omitted... */
-  }, function (rsp) { // callback
-    if (rsp.success) { // When verification is successful
-      // jQuery HTTP request
-      jQuery.ajax({
-        url: "{server-side endpoint to receive verification info}",
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        data: { imp_uid: rsp.imp_uid }
-      });
-    } else {
-      alert("Verification failed. Error: " +  rsp.error_msg);
-    }
-  });Example of sending data via redirection
-```
+  <Tab title="JavaScript">
+    ```ts title="client-side"
+    IMP.certification(
+      {
+        /* ...Omitted... */
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // When verification is successful
+          // jQuery HTTP request
+          jQuery.ajax({
+            url: "{server-side endpoint to receive verification info}",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            data: { imp_uid: rsp.imp_uid },
+          });
+        } else {
+          alert("Verification failed. Error: " + rsp.error_msg);
+        }
+      },
+    );
+    ```
+  </Tab>
 
-</Tab>
-
-<Tab title="JS ES Next">
-```javascript title="client-side"
-IMP.certification({
-    /* ...Omitted... */
-  }, rsp => { // callback
-    if (rsp.success) { // When verification is successful
-      // axios HTTP request
-      axios({
-        url: "{server-side endpoint to receive verification info}",
-        method: "post",
-        headers: { "Content-Type": "application/json" },
-        data: { imp_uid: rsp.imp_uid }
-      });
-    } else {
-      alert(\`Verification failed. Error: \${rsp.error_msg}\`);
-    }
-  });
-```
-
-</Tab>
+  <Tab title="JS ES Next">
+    ```ts title="client-side"
+    IMP.certification(
+      {
+        /* ...Omitted... */
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          // When verification is successful
+          // axios HTTP request
+          axios({
+            url: "{server-side endpoint to receive verification info}",
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            data: { imp_uid: rsp.imp_uid },
+          });
+        } else {
+          alert(`Verification failed. Error: ${rsp.error_msg}`);
+        }
+      },
+    );
+    ```
+  </Tab>
 </Tabs>
 
 ### 2. Example of sending data via redirection
 
-The page is redirected to the URL specified in `param.`**`m_redirect_url`** of `IMP.`<mark style="color:red;">**`certification`**</mark> with the verification data as follows:
+The page is redirected to the URL specified in `param.`**`m_redirect_url`**
+of `IMP.`<mark style="color:red;">**`certification`**</mark> with the verification data as follows:
 
-```uri title="Query String"
+```http title="Query String"
 GET {m_redirect_url}?imp_uid={}&merchant_uid={merchant_uid for verification}&success={true or false}
 ```
-

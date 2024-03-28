@@ -4,111 +4,98 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Updates the status of a PAYCO order.
+## Updates the status of a PAYCO order.
 
 <Swagger method="post" path="/payco/orders/status/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Updates the status of a PAYCO order.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">
+  #### Body
 
-**i'mport transaction ID**
+  <SwaggerParameter name="status" type="String" required="true">
+    <mark style="color:red;"> **Status code** </mark>
 
-</mark>
+    `DELIVERY_START`
 
-</SwaggerParameter>
+    `PURCHASE_DECISION`
 
-#### Body
+    `CANCELED`
+  </SwaggerParameter>
 
-<SwaggerParameter name="status" type="String" required="true">
-<mark style="color:red;"> **Status code** </mark>
+  ### Responses
 
-`DELIVERY_START`
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="PaycoStatusResponse">
+        **`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
-`PURCHASE_DECISION`
+        **Response code**
 
-`CANCELED`
+        0: success, Not 0: check the message
 
-</SwaggerParameter>
+        **`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-### Responses
+        **Response message**
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="PaycoStatusResponse">
-**`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+        A non-zero code includes a message like 'Invalid payment info'.
 
-**Response code**
+        **`response`** <mark style="color:red;"> **(PaycoStatusAnnotation, optional)** </mark>
+      </Tab>
+    </Tabs>
 
-0: success, Not 0: check the message
+    <Tabs>
+      <Tab title="PaycoStatusAnnotation">
+        **`status`** <mark style="color:red;"> **`*`** </mark><mark style="color:green;"> **`string`** </mark>
 
-**`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
+        **`PAYCO updated order status`**
 
-**Response message**
+        \['DELIVERY\_START', 'PURCHASE\_DECISION', 'CANCELED']
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-A non-zero code includes a message like 'Invalid payment info'.
-
-**`response` **<mark style="color:red;"> **(PaycoStatusAnnotation, optional)** </mark>
-
-</Tab>
-</Tabs>
-
-<Tabs>
-<Tab title="PaycoStatusAnnotation">
-**`status`** <mark style="color:red;"> **`*`** </mark><mark style="color:green;"> **`string`** </mark>
-
-**`PAYCO updated order status`**
-
-\['DELIVERY\_START', 'PURCHASE\_DECISION', 'CANCELED']
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "status": "DELIVERY_START"
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "status": "DELIVERY_START"
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/payco/changeOrderStatus**](https://api.iamport.kr/#!/payco/changeOrderStatus)
-
+  [**https://api.iamport.kr/#!/payco/changeOrderStatus**](https://api.iamport.kr/#!/payco/changeOrderStatus)
 </Hint>

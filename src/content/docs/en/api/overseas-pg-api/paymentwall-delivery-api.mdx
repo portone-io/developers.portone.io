@@ -4,241 +4,226 @@ description: ""
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Registers delivery information.
+## Registers delivery information.
 
 Registers delivery information required by Paymentwall for e-Commerce (physical goods) businesses.
 
 <Swagger method="post" path="/paymentwall/delivery" baseUrl="https://api.iamport.kr" summary="Registers delivery information for physical products.">
-<SwaggerDescription>
-If omitted, you cannot receive settlement from Paymentwall.
+  <SwaggerDescription>
+    If omitted, you cannot receive settlement from Paymentwall.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Body
 
-#### Body
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="merchant_uid" type="String(40)" required="true">
+    <mark style="color:red;">
+      **Order ID**
+    </mark>
+  </SwaggerParameter>
 
-**i'mport transaction ID**
+  <SwaggerParameter name="type" type="String(10)" required="true">
+    <mark style="color:red;">**Product code**</mark>
 
-</mark>
+    **`physical`**
 
-</SwaggerParameter>
-<SwaggerParameter name="merchant_uid" type="String(40)" required="true">
-<mark style="color:red;">
+    **`digital`**
+  </SwaggerParameter>
 
-**Order ID**
+  <SwaggerParameter name="status" type="String(10)" required="true">
+    <mark style="color:red;">**Delivery status code**</mark>
 
-</mark>
+    **`order_placed`**
 
-</SwaggerParameter>
-<SwaggerParameter name="type" type="String(10)" required="true">
-<mark style="color:red;">**Product code**</mark>
+    **`order_shipped`**
 
-**`physical`**
+    **`delivering`**
 
-**`digital`**
+    **`delivered`**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="status" type="String(10)" required="true">
-<mark style="color:red;">**Delivery status code**</mark>
+  <SwaggerParameter name="carrier_tracking_id" type="String(64)">
+    **Tracking number**
 
-**`order_placed`**
+    Required for physical order
+  </SwaggerParameter>
 
-**`order_shipped`**
+  <SwaggerParameter name="carrier_type" type="String(64)">
+    **Courier name**
 
-**`delivering`**
+    Required for physical order
+  </SwaggerParameter>
 
-**`delivered`**
+  <SwaggerParameter name="estimated_delivery_datetime" type="integer">
+    **Estimated delivery date/time**
 
-</SwaggerParameter>
-<SwaggerParameter name="carrier_tracking_id" type="String(64)">
-**Tracking number**
+    Unix timestamp
 
-Required for physical order
+    (May specify current time for digital order)
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="carrier_type" type="String(64)">
-**Courier name**
+  <SwaggerParameter name="estimated_update_datetime" type="integer">
+    **Estimated status update date/time**
 
-Required for physical order
+    Unix timestamp sec
 
-</SwaggerParameter>
-<SwaggerParameter name="estimated_delivery_datetime" type="integer">
-**Estimated delivery date/time**
+    (May specify current time for digital order)
+  </SwaggerParameter>
 
-Unix timestamp
+  <SwaggerParameter name="reason" type="String(64)">
+    **Reason**
+  </SwaggerParameter>
 
-(May specify current time for digital order)
+  <SwaggerParameter name="refundable" type="String" required="true">
+    <mark style="color:red;">**Refundable?**</mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="estimated_update_datetime" type="integer">
-**Estimated status update date/time**
+    `yes`
 
-Unix timestamp sec
+    `no`
+  </SwaggerParameter>
 
-(May specify current time for digital order)
+  <SwaggerParameter name="details" type="String(400)">
+    **Details**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="reason" type="String(64)">
-**Reason**
+  <SwaggerParameter name="shipping_address_email" type="String(50)" required="true">
+    <mark style="color:red;">
+      **Recipient's email**
+    </mark>
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="refundable" type="String" required="true">
-<mark style="color:red;">**Refundable?**</mark>
+  <SwaggerParameter name="shipping_address_country" type="String(40)">
+    **Recipient's country**
 
-`yes`
+    Required for physical order
+  </SwaggerParameter>
 
-`no`
+  <SwaggerParameter name="shipping_address_city" type="String(40)">
+    **Recipient's city**
 
-</SwaggerParameter>
-<SwaggerParameter name="details" type="String(400)">
-**Details**
+    Required for physical order
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_email" type="String(50)" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="shipping_address_zip" type="String(40)">
+    **Recipient's zip code**
 
-**Recipient's email**
+    Required for physical order
+  </SwaggerParameter>
 
-</mark>
+  <SwaggerParameter name="shipping_address_state" type="String(40)">
+    **Recipient's  state**
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_country" type="String(40)">
-**Recipient's country**
+    Set to 'N/A' if outside of USA
 
-Required for physical order
+    Required for physical order
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_city" type="String(40)">
-**Recipient's city**
+  <SwaggerParameter name="shipping_address_street" type="String(40)">
+    **Recipient's street name**
 
-Required for physical order
+    Required for physical order
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_zip" type="String(40)">
-**Recipient's zip code**
+  <SwaggerParameter name="shipping_address_phone" type="String(40)">
+    **Recipient's  phone**
 
-Required for physical order
+    Required for physical order
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_state" type="String(40)">
-**Recipient's  state**
+  <SwaggerParameter name="shipping_address_firstname" type="String(40)">
+    **Recipient's first name**
 
-Set to 'N/A' if outside of USA
+    Required for physical order
+  </SwaggerParameter>
 
-Required for physical order
+  <SwaggerParameter name="shipping_address_lastname" type="String(40)">
+    **Recipient's last name**
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_street" type="String(40)">
-**Recipient's street name**
+    Required for physical order
+  </SwaggerParameter>
 
-Required for physical order
+  ### Responses
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_phone" type="String(40)">
-**Recipient's  phone**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="PaymentwallDeliveryAnnotation">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-Required for physical order
+        **Response code**
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_firstname" type="String(40)">
-**Recipient's first name**
+        0: success, Not 0: check the message
 
-Required for physical order
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="shipping_address_lastname" type="String(40)">
-**Recipient's last name**
+        **Response message**
 
-Required for physical order
+        A non-zero code includes a message like 'Invalid payment info'.
 
-</SwaggerParameter>
+        **response** <mark style="color:red;">**(PaymentwallDeliveryDetailAnnotation, optional):**</mark>
 
-### Responses
+        Includes multiple error messages or 'success: 1' message when successful.
+      </Tab>
+    </Tabs>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="PaymentwallDeliveryAnnotation">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+    <Tabs>
+      <Tab title="PaymentwallDeliveryDetailAnnotation">
+        **`error_code`**<mark style="color:orange;">**`integer`**</mark>
 
-**Response code**
+        Success if null. Otherwise, check notices for error message.
 
-0: success, Not 0: check the message
+        **`error`` `**<mark style="color:green;">**`string`**</mark>
 
-**`message`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`Error message`**
 
-**Response message**
+        **`notices`` `**<mark style="color:yellow;background-color:yellow;">**`Array[string]`**</mark>
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`Detailed error message`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**response** <mark style="color:red;">**(PaymentwallDeliveryDetailAnnotation, optional):**</mark>
-
-Includes multiple error messages or 'success: 1' message when successful.
-
-</Tab>
-</Tabs>
-
-<Tabs>
-<Tab title="PaymentwallDeliveryDetailAnnotation">
-**`error_code`**<mark style="color:orange;">**`integer`**</mark>
-
-Success if null. Otherwise, check notices for error message.
-
-**` error``  `**<mark style="color:green;">**`string`**</mark>
-
-**`Error message`**
-
-**` notices``  `**<mark style="color:yellow;background-color:yellow;">**`Array[string]`**</mark>
-
-**`Detailed error message`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "error_code": 0,
-    "error": "string",
-    "notices": ["string"]
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "error_code": 0,
+      "error": "string",
+      "notices": ["string"]
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/paymentwall/paymentwall_delivery**](https://api.iamport.kr/#!/paymentwall/paymentwall_delivery)
-
+  [**https://api.iamport.kr/#!/paymentwall/paymentwall\_delivery**](https://api.iamport.kr/#!/paymentwall/paymentwall_delivery)
 </Hint>

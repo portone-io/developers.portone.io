@@ -5,265 +5,270 @@ description: KICC payment window integration guide
 
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure KICC PG settings
+## 1. Configure KICC PG settings
 
 Refer to the [**KICC settings**](../../ready/2.-pg/payment-gateway-settings/kicc) page to configure
 the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-03 4.54.05.png>)
 
-### 2. Request payment
+## 2. Request payment
 
 To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
-IMP.**request_pay**(param, callback).
+IMP.**request\_pay**(param, callback).
 
-In PC browsers, <mark style="color:red;"> **callback** </mark> is invoked after calling `IMP.request_pay(param, callback)`. In mobile browsers, the page is redirected to <mark style="color:red;"> **m_redirect_url** </mark>.
+In PC browsers, <mark style="color:red;"> **callback** </mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_redirect\_url** </mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "kicc",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "kicc",
-    pay_method: "card",
-    merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
-    name: "Order name: Test payment request",
-    amount: 14000,
-    buyer_email: "iamport@siot.do",
-    buyer_name: "John Doe",
-    buyer_tel: "010-1234-5678",
-    buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
-    buyer_postcode: "123-456",
-    m_redirect_url: "{Mobile only - URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
-  },
-  function (rsp) {
-    // callback logic
-    //* ...Omitted... *//
-  }
-);
-```
+    ### Key parameter description
 
-###
+    **`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-### Key parameter description
+    **PG code**
 
-**`pg`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`kicc`**.
 
-**PG code**
+    **`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`kicc`**.
+    **Payment method code**
 
-**`pay_method`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-**Payment method code**
+      - `card` (credit card)
+      - `trans`(instant account transfer)
+      - `vbank`(virtual account)
+      - `phone`(mobile micropayment)
+    </Details>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+    **`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
 
-- `card` (credit card)
-- `trans`(instant account transfer)
-- `vbank`(virtual account)
-- `phone`(mobile micropayment)
+    **Order ID**
 
-</Details>
+    Must be unique for each request.
 
-**`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring** </mark>
+    **`buyer_tel`** <mark style="color:red;"> **`*`** </mark><mark style="color:green;"> **`string`** </mark>
 
-**Order ID**
+    **Customer phone number**
 
-Must be unique for each request.
+    **`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
 
-**`buyer_tel`** <mark style="color:red;"> **`*`** </mark><mark style="color:green;"> **`string`** </mark>
+    **Payment amount**
 
-**Customer phone number**
+    Must be an integer (not string)
 
-**`amount`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+    **`escrow`**<mark style="color:orange;"> **`boolean`** </mark>
 
-**Payment amount**
+    **Escrow option**
 
-Must be an integer (not string)
+    Only supports account transfer and virtual account payment.
 
-**`escrow`**<mark style="color:orange;"> **`boolean`** </mark>
+    <Codepen user="chaiport" slug="YzevrGz" />
+  </Tab>
 
-**Escrow option**
+  <Tab title="Non-authenticated payment request">
+    To open non-authenticated payment window, specify the **customer\_uid** parameter. After getting a billing key from this window, you can request payment using the billing key.
 
-Only supports account transfer and virtual account payment.
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "kicc",
+        pay_method: "card", // only 'card' supported.
+        merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+        name: "Initial billing key request",
+        amount: 0, // For display purpose only (no payment approval).
+        customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
+        buyer_email: "johndoe@gmail.com",
+        buyer_name: "John Doe",
+        buyer_tel: "02-1234-1234",
+        m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
+      },
+      function (rsp) {
+        if (rsp.success) {
+          alert("Success");
+        } else {
+          alert("Failed");
+        }
+      },
+    );
+    ```
 
-<Codepen user="chaiport" slug="YzevrGz"/>
-</Tab>
+    ####
 
-<Tab title="Non-authenticated payment request">
-To open non-authenticated payment window, specify the **customer\_uid** parameter. After getting a billing key from this window, you can request payment using the billing key.
+    <Hint style="info">
+      - To request non-authenticated payment, you must set the **MID info issued by KICC** in the Admin console.
+      - KICC <mark style="color:red;"> **does not process the payment** </mark> when issuing the billing key even if you specify an amount.
+    </Hint>
 
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "kicc",
-    pay_method: "card", // only 'card' supported.
-    merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
-    name: "Initial billing key request",
-    amount: 0, // For display purpose only (no payment approval).
-    customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
-    buyer_email: "johndoe@gmail.com",
-    buyer_name: "John Doe",
-    buyer_tel: "02-1234-1234",
-    m_redirect_url: "{redirect URL}", // Example: https://www.my-service.com/payments/complete/mobile (for mobile only)
-  },
-  function (rsp) {
-    if (rsp.success) {
-      alert("Success");
-    } else {
-      alert("Failed");
-    }
-  }
-);
-```
+    ### Key parameter description
 
-####
+    **`pg`** <mark style="color:red;"> **\*** </mark>   <mark style="color:green;"> **string** </mark>
 
-<Hint style="info">
-- To request non-authenticated payment, you must set the **MID info issued by KICC** in the Admin console.
-- KICC <mark style="color:red;"> **does not process the payment** </mark> when issuing the billing key even if you specify an amount.
+    **PG code**
 
-</Hint>
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`kicc.[billing MID]`**.
 
-### Key parameter description
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;"> **\*** </mark> \*\* ** <mark style="color:green;"> **s** </mark><mark style="color:green;"> **tring\*\* </mark>
+    **Credit card billing key**
 
-**PG code**
+    Billing key to be mapped 1:1 with the user-entered credit card information.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`kicc.[billing MID]`**.
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
 
-**`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+    **Payment amount**
 
-**Credit card billing key**
+    Amount to display in the payment window, but <mark style="color:red;">actual payment approval is not processed.</mark> (To request payment, use the **REST API with the customer\_uid**.)\\
 
-Billing key to be mapped 1:1 with the user-entered credit card information.
+    ### Request payment with billing key (customer\_uid)
 
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
+    After successfully getting the billing key, the billing key is **stored on the i'mport server**
+    mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api)
+    with the `customer_uid` as follows:
 
-**Payment amount**
+    ```sh title="sever-side"
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+  </Tab>
 
-Amount to display in the payment window, but <mark style="color:red;">actual payment approval is not processed.</mark> (To request payment, use the **REST API with the customer_uid**.)\
-
-### Request payment with billing key (customer_uid)
-
-After successfully getting the billing key, the billing key is **stored on the i'mport server** mapped 1:1 with the specified `customer_uid`. For security reasons, the server cannot directly access the billing key. Subsequent payments can be requested by calling the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api) with the `customer_uid` as follows:
-
-```title="sever-side"
-curl -H "Content-Type: application/json" \
-     -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-     https://api.iamport.kr/subscribe/payments/again
-```
-
-</Tab>
-
-<Tab title="Non-authenticated API  request">
-#### **Not supported.**
-
-</Tab>
+  <Tab title="Non-authenticated API  request">
+    #### **Not supported.**
+  </Tab>
 </Tabs>
 
 ### 3. Additional functions
 
 <Tabs>
-<Tab title="Escrow setting">
-KICC supports escrow payments only for **cash payment methods** (instant account transfer or virtual bank account).
+  <Tab title="Escrow setting">
+    KICC supports escrow payments only for **cash payment methods** (instant account transfer or virtual bank account).
 
-> To enable escrow payment, first set the following parameters and then configure additional parameters below.
->
-> - **escrow : true**
+    > To enable escrow payment, first set the following parameters and then configure additional parameters below.
+    >
+    > - **escrow : true**
 
-### Additional parameters
+    ### Additional parameters
 
-When making an escrow payment, you must enter the following required parameters:
+    When making an escrow payment, you must enter the following required parameters:
 
-- `buyer_name` : Customer name
-- `buyer_email` : Customer email
-- `buyer_tel` : Customer phone number
-- `kiccProducts` : An array of objects consisting of the following 4 required properties. The `amount` value has no relation to the payment amount (`param.amount`) value and is not used for comparison.
-  - `orderNumber` : Product order number
-  - `name` : Product name
-  - `quantity` : Quantity
-  - `amount` : Product price
+    - `buyer_name` : Customer name
 
-```javascript title="JavaScript SDK"
-IMP.request_pay({
-   ...
-   escrow : true, // Required for escrow payment
-   kiccProducts : [
-    	       {
-			"orderNumber" : "xxxx",
-			"name" : "Product A",
-			"quantity" : 3,
-			"amount" : 1000
-		},
-		{
-			"orderNumber" : "yyyy",
-			"name" : "Product B",
-			"quantity" : 2,
-			"amount" : 3000
-		}
-	       ]
-    ...
-}, function(rsp) { // callback logic
-	//* ...Omitted ... *//
-});
-```
+    - `buyer_email` : Customer email
 
-</Tab>
+    - `buyer_tel` : Customer phone number
 
-<Tab title="Direct credit card module call">
-```javascript title="javascript"
-card: {
-     direct: {
-        code: "367",
-        quota: 3
+    - `kiccProducts` : An array of objects consisting of the following 4 required properties. The `amount` value has no relation to the payment amount (`param.amount`) value and is not used for comparison.
+      - `orderNumber` : Product order number
+      - `name` : Product name
+      - `quantity` : Quantity
+      - `amount` : Product price
+
+    ```ts title="JavaScript SDK"
+    IMP.request_pay(
+      {
+        escrow: true, // Required for escrow payment
+        kiccProducts: [
+          {
+            orderNumber: "xxxx",
+            name: "Product A",
+            quantity: 3,
+            amount: 1000,
+          },
+          {
+            orderNumber: "yyyy",
+            name: "Product B",
+            quantity: 2,
+            amount: 3000,
+          },
+        ],
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted ... *//
+      },
+    );
+    ```
+  </Tab>
+
+  <Tab title="Direct credit card module call">
+    ```json title="javascript"
+    {
+      "card": {
+        "direct": {
+          "code": "367",
+          "quota": 3
+        }
+      }
     }
-}
-```
+    ```
 
-**Parameters**
+    **Parameters**
 
-- **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
-- **quota**: Installment plan. For immediate, set to 0. (**integer**)
+    - **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
+    - **quota**: Installment plan. For immediate, set to 0. (**integer**)
 
-<Hint style="danger">
-**Precautions**
+    <Hint style="danger">
+      **Precautions**
 
-- Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs. You must check your Merchant ID with each PG for direct call support.
+      - Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs.
+        You must check your Merchant ID with each PG for direct call support.
+    </Hint>
+  </Tab>
 
-</Hint>
+  <Tab title="Enable specific credit cards">
+    ```json title="javascript"
+    {
+      "card": {
+        "detail": [
+          { "card_code": "*", "enabled": false }, // Disable all credit cards
+          { "card_code": "366", "enabled": true }, // Enable specific credit card
+        ]
+      }
+    }
+    ```
 
-</Tab>
+    **Parameters**
 
-<Tab title="Enable specific credit cards">
-```javascript title="javascript"
-card : {
-    detail : [
-        {card_code:"*", enabled:false},     // Disable all credit cards
-        {card_code:'366', enabled:true}     // Enable specific credit card
-    ]
-}
-```
+    - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
+    - **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
 
-**Parameters**
+    <Codepen user="chaiport" slug="MWQKdVo" />
 
-- **card_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
-- **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
-
-<Codepen user="chaiport" slug="MWQKdVo" />
-
-**Example of enabling only **<mark style="color:red;">**Shinhan Card**</mark>** payment
-window**" />
-
-</Tab>
+    **Example of enabling only **<mark style="color:red;">**Shinhan Card**</mark>** payment
+    window**
+  </Tab>
 </Tabs>

@@ -4,97 +4,96 @@ description: PayPal payment window integration guide
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### 1. Configure PayPal PG settings
+## 1. Configure PayPal PG settings
 
 Refer to the [**PayPal settings**](../../ready/2.-pg/payment-gateway-settings/undefined-5) page to
 configure the PG settings.
 
 ![](</gitbook-assets/en/screenshot 2022-06-03 1.01.05.png>)
 
-### 2. Request payment
+## 2. Request payment
 
 To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/)
-IMP.**request_pay**(param, callback).
+IMP.**request\_pay**(param, callback).
 
-In PC and mobile browsers, the page is redirected to <mark style="color:red;">**m_redirect_url**</mark>.
+In PC and mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-<Tab title="Authenticated payment request">
-```javascript title="Javascript SDK"
-IMP.request_pay({
-    pg : 'paypal',
-    pay_method : 'card',
-    merchant_uid : '{Merchant created Order ID}', // Example: order_no_0001
-    name : 'Order name: Test payment request',
-    amount : 14.20,
-    currency : 'USD' // default: USD (KRW not supported)
-    buyer_email : 'iamport@siot.do',
-    buyer_name : 'John Doe',
-    buyer_tel : '010-1234-5678', // Required
-    buyer_addr : 'Shinsa-dong, Gangnam-gu, Seoul',
-    buyer_postcode : '123-456'
-    m_redirect_url : '{URL to redirect to after payment approval}' // Example: https://www.my-service.com/payments/complete/mobile
-}, function(rsp) { // callback logic
-	//* ...Omitted... *//
-});
-```
+  <Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "paypal",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14.2,
+        currency: "USD", // default: USD (KRW not supported)
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678", // Required
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{URL to redirect to after payment approval}", // Example: https://www.my-service.com/payments/complete/mobile
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
 
-####
+    ### Key parameter description
 
-### Key parameter description
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **PG code**
 
-**PG code**
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`paypal`**.
 
-- If not specified and this is the only PG setting that exists, `default PG` is automatically set.
-- If there are multiple PG settings, set to **`paypal`**.
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pay_method`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    **Payment method code**
 
-**Payment method code**
+    <Details>
+      <p slot="summary">Payment method codes</p>
 
-<Details>
-<p slot="summary">Payment method codes</p>
+      - `card` (credit card)
+    </Details>
 
-- `card` (credit card)
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
+    **Order ID**
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**s**</mark><mark style="color:green;">**tring\*\*</mark>
+    Must be unique for each request.
 
-**Order ID**
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-Must be unique for each request.
+    **Payment amount**
 
-**`amount`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:purple;">**integer\*\*</mark>
+    Must be an integer (not string)\
+    \
+    **`currency`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**Payment amount**
+    **Currency**
 
-Must be an integer (not string)\
-\
-**`currency`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+    For supported currencies, refer to [PayPal currency codes](https://developer.paypal.com/docs/api/reference/currency-codes/#paypal-account-payments).
 
-**Currency**
+    **`m_redirect_url`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-For supported currencies, refer to [PayPal currency codes](https://developer.paypal.com/docs/api/reference/currency-codes/#paypal-account-payments).
+    **Redirect URL**
 
-**`m_redirect_url`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
-
-**Redirect URL**
-
-Required in both PC and mobile to receive payment result.
-
-</Tab>
+    Required in both PC and mobile to receive payment result.
+  </Tab>
 </Tabs>
 
 <Hint style="warning">
-### Note
+  ### Note
 
-i'mport does not support PayPal subscription payment.
-
+  i'mport does not support PayPal subscription payment.
 </Hint>

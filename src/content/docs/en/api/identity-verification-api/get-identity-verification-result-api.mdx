@@ -4,207 +4,196 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Gets identity verification result.
+## Gets identity verification result.
 
 <Swagger method="get" path="/certifications/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Gets identity verification result by imp_uid.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Body
 
-#### Body
+  <SwaggerParameter required="true" name="imp_uid" type="String">
+    <mark style="color:red;">
+      **i'mport verification ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter required="true" name="imp_uid" type="String">
-<mark style="color:red;">
+  ### Responses
 
-**i'mport verification ID**
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="CertificationResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</mark>
+        **Response code**
 
-</SwaggerParameter>
+        0: success, Not 0: check the message
 
-### Responses
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="CertificationResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **Response message**
 
-**Response code**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-0: success, Not 0: check the message
+        **response** <mark style="color:red;">**(CertificationAnnotation, optional)**</mark>
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+    <Tabs>
+      <Tab title="CertificationAnnotation">
+        **`imp_uid`**  <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
 
-**Response message**
+        **`verification ID`**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`merchant_uid`**  <mark style="color:green;">**string**</mark>
 
-**response** <mark style="color:red;">**(CertificationAnnotation, optional)**</mark>
+        **`Order ID`**
 
-</Tab>
-</Tabs>
+        **`pg_tid`**  <mark style="color:green;">**string**</mark>
 
-<Tabs>
-<Tab title="CertificationAnnotation">
-**`imp_uid`**  <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
+        **`PG verification ID`**
 
-**`verification ID`**
+        **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`merchant_uid`**  <mark style="color:green;">**string**</mark>
+        **`PG provider`**
 
-**`Order ID`**
+        **`name`**   <mark style="color:green;">**string**</mark>
 
-**`pg_tid`**  <mark style="color:green;">**string**</mark>
+        **`Name`**
 
-**`PG verification ID`**
+        **`gender`**  <mark style="color:green;">**string**</mark>
 
-**`pg_provider`** <mark style="color:red;">**\***</mark>**  **<mark style="color:green;">**string**</mark>
+        **`Gender`**
 
-**`PG provider`**
+        - male
+        - female
 
-**`name`**   <mark style="color:green;">**string**</mark>
+        **`birthday`** <mark style="color:green;">**string**</mark>
 
-**`Name`**
+        **`DOB`**
 
-**`gender`**  <mark style="color:green;">**string**</mark>
+        ISO8601 date in string format. <mark style="color:red;">YYYY-MM-DD (10-digit)</mark>
 
-**`Gender`**
+        **`foreigner`**  <mark style="color:red;">**\***</mark>  <mark style="color:orange;">**boolean**</mark>
 
-- male
-- female
+        **`Foreigner status`**
 
-**`birthday`   **<mark style="color:green;">**string**</mark>
+        <mark style="color:red;">When signing a Danal identity verification service contract</mark>, you must request to use foreigner identification service.
 
-**`DOB`**
+        - true : foreigner
+        - false : not foreigner
 
-ISO8601 date in string format. <mark style="color:red;">YYYY-MM-DD (10-digit)</mark>
+        **`phone`**  <mark style="color:green;">**string**</mark>
 
-**`foreigner`**  <mark style="color:red;">**\***</mark>  <mark style="color:orange;">**boolean**</mark>
+        **`Mobile phone number`**
 
-**`Foreigner status`**
+        Returns mobile phone number with only numbers without special symbols.
+        This attribute is omitted unless pre-approved by the carrier.
+        For pre-approval from the carrier, send a request with your Danal CPID to **[cs@iamport.kr](mailto:cs@iamport.kr)**.
 
-<mark style="color:red;">When signing a Danal identity verification service contract</mark>, you must request to use foreigner identification service.
+        **`carrier`**  <mark style="color:green;">**string**</mark>
 
-- true : foreigner
-- false : not foreigner
+        **`Mobile carrier`**
 
-**`phone`**  <mark style="color:green;">**string**</mark>
+        Requires pre-approval from the carrier (send a request with your Danal CPID to **[cs@iamport.kr](mailto:cs@iamport.kr)**).
 
-**`Mobile phone number`**
+        - SKT
+        - KT
+        - LGT
+        - SKT\_MVNO
+        - KT\_MVNO
+        - LGT\_MVNO
 
-Returns mobile phone number with only numbers without special symbols. This attribute is omitted unless pre-approved by the carrier. For pre-approval from the carrier, send a request with your Danal CPID to **cs@iamport.kr**.
+        **`certified`**   <mark style="color:red;">**\***</mark>  <mark style="color:orange;">**boolean**</mark>
 
-**`carrier`**  <mark style="color:green;">**string**</mark>
+        **`Whether verification is successful`**
 
-**`Mobile carrier`**
+        **`certified_at`**    <mark style="color:green;">**string**</mark>
 
-Requires pre-approval from the carrier (send a request with your Danal CPID to **cs@iamport.kr**).
+        **`Verified at`** (UNIX timestamp)
 
-- SKT
-- KT
-- LGT
-- SKT\_MVNO
-- KT\_MVNO
-- LGT\_MVNO
+        **`unique_key`** <mark style="color:green;">**string**</mark>
 
-**`certified`**   <mark style="color:red;">**\***</mark>  <mark style="color:orange;">**boolean**</mark>
+        **`Personal Identification Key (CI)`**
 
-**`Whether verification is successful`**
+        **`unique_in_site`**   <mark style="color:green;">**string**</mark>
 
-**`certified_at`**    <mark style="color:green;">**string**</mark>
+        **`Merchant Personal Identification Key (DI)`**
 
-**`Verified at`** (UNIX timestamp)
+        **`origin`**  <mark style="color:green;">**string**</mark>
 
-**`unique_key`  **<mark style="color:green;">**string**</mark>
+        **URL of the web page where the identity verification process is processed**
 
-**`Personal Identification Key (CI)`**
+        **`foreigner_v2`**   <mark style="color:orange;">**boolean**</mark>
 
-**`unique_in_site`**   <mark style="color:green;">**string**</mark>
+        **`Foreigner status (nullable)`**
 
-**`Merchant Personal Identification Key (DI)`**
+        - true : foreigner
+        - false : not foreigner
 
-**`origin`**  <mark style="color:green;">**string**</mark>
+        Requires a separate request to use Danal identity verification service
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**URL of the web page where the identity verification process is processed**
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`foreigner_v2`**   <mark style="color:orange;">**boolean**</mark>
-
-**`Foreigner status (nullable)`**
-
-- true : foreigner
-- false : not foreigner
-
-Requires a separate request to use Danal identity verification service
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Result not found">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="Result not found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "imp_uid": "string",
-    "merchant_uid": "string",
-    "pg_tid": "string",
-    "pg_provider": "string",
-    "name": "string",
-    "gender": "string",
-    "birth": 0,
-    "birthday": "string",
-    "foreigner": true,
-    "phone": "string",
-    "carrier": "SKT",
-    "certified": true,
-    "certified_at": 0,
-    "unique_key": "string",
-    "unique_in_site": "string",
-    "origin": "string",
-    "foreigner_v2": true
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "imp_uid": "string",
+      "merchant_uid": "string",
+      "pg_tid": "string",
+      "pg_provider": "string",
+      "name": "string",
+      "gender": "string",
+      "birth": 0,
+      "birthday": "string",
+      "foreigner": true,
+      "phone": "string",
+      "carrier": "SKT",
+      "certified": true,
+      "certified_at": 0,
+      "unique_key": "string",
+      "unique_in_site": "string",
+      "origin": "string",
+      "foreigner_v2": true
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/certifications/getCertification**](https://api.iamport.kr/#!/certifications/getCertification)
-
+  [**https://api.iamport.kr/#!/certifications/getCertification**](https://api.iamport.kr/#!/certifications/getCertification)
 </Hint>

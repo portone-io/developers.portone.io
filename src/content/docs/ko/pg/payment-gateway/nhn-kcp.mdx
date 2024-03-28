@@ -25,7 +25,7 @@ KCP 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 `I
 
 <Tabs>
 <Tab title="인증결제 연동하기">
-```javascript
+```ts
 IMP.request_pay({
     pg : 'kcp.{사이트코드}',   //테스트인경우 kcp.T0000
     pay_method : 'card',
@@ -102,7 +102,7 @@ IMP.request_pay({
 <Tab title="비인증결제 연동하기(예약결제)">
 인증결제창 호출 파라미터에서 **customer\_uid** 값을 추가하면 비 인증 결제창을 호출할 수 있습니다. 비인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
 
-```javascript title="Javascript SDK" showLineNumbers
+```ts title="Javascript SDK" showLineNumbers
 IMP.request_pay(
   {
     pg: "kcp_billing.{사이트코드}",
@@ -222,7 +222,7 @@ curl -H "Content-Type: application/json" \
 
 <Tabs>
 <Tab title="할부개월 고정">
-```javascript title="javascript"
+```ts title="javascript"
 display: {
   card_quota: [6]  // 할부개월 6개월까지만 활성화
 }
@@ -246,7 +246,7 @@ display: {
 </Tab>
 
 <Tab title="카드사 모듈 바로 호출">
-```javascript title="javascript"
+```ts title="javascript"
 {
   card: {
     direct: {
@@ -379,7 +379,7 @@ display: {
 </Tab>
 
 <Tab title="특정 카드사 노출">
-```javascript
+```ts
 {
   card: {
     detail: [
@@ -404,7 +404,7 @@ display: {
 <Tab title="카드사 간편결제 노출">
 인증결제시 각 카드사 앱카드 결제 화면만 노출하고 싶은 경우 아래 파라미터를 설정하시면 됩니다.
 
-```javascript title="request_pay()"
+```ts title="request_pay()"
 {
   appCard: true; //true 설정시 각 카드사 앱카드 결제만 활성화
 }
@@ -419,7 +419,7 @@ display: {
 <Tab title="상품권 결제수단">
 **상품권 결제수단**을 사용하기 위해서는 고객사에서 관리하는 회원ID를 아래와 같은 방법으로 파라미터 설정이 필요합니다.
 
-```javascript title="javascript SDK"
+```ts title="javascript SDK"
 {
   bypass: {
     shop_user_id: "ABCD123"; // 고객사 회원ID (20byte)
@@ -434,7 +434,7 @@ display: {
 
 **컬처랜드 문화 상품권을 호출하는 경우**
 
-```javascript
+```ts
 IMP.request_pay({
   pg: "kcp.{문화상품권 대상 사이트코드}",
   pay_method: "cultureland", //문화상품권
@@ -456,7 +456,7 @@ IMP.request_pay({
 
 <Tab title="에스크로 결제">
 에스크로 결제를 위해서는 **`escrow`** 파라미터를 추가하고 **true** 값으로 설정되어야 합니다. 에스크로 결제요청 시 **장바구니 상품을 묶어서 결제하는 경우** 해당 품목에 대한 정보를 전달하기 위해 해당 상품관련 정보를 추가 파라미터(**`kcpProducts`**)로 전달해야 합니다.\
-\*\*`kcpProducts`\*\*는 다음 4개의 필수 속성으로 구성된 객체배열입니다.
+**`kcpProducts`**는 다음 4개의 필수 속성으로 구성된 객체배열입니다.
 
 **`amount`** 값은 결제 금액(`param.amount`) 값과 관계가 없으며 비교검증되지 않습니다.
 
@@ -465,7 +465,7 @@ IMP.request_pay({
 - quantity : 수량
 - amount : 상품 가격
 
-```javascript title="JavaScript SDK"
+```ts title="JavaScript SDK"
 IMP.request_pay({
   pg: "kcp",
   escrow: true, // 에스크로 결제인 경우 필요
@@ -490,7 +490,7 @@ IMP.request_pay({
 </Tab>
 
 <Tab title="휴대폰 결제 휴대폰번호 고정">
-```javascript title="request_pay()"
+```ts title="request_pay()"
 {
   prefill: {
     phoneNumber: "고정할 휴대폰번호"
@@ -503,7 +503,7 @@ IMP.request_pay({
 </Tab>
 
 <Tab title="할인쿠폰">
-```javascript
+```ts
 IMP.request_pay({
   ...
   bypass: {
@@ -519,7 +519,7 @@ IMP.request_pay({
 </Tab>
 
 <Tab title="빌링키 발급 시 생년월일 입력 박스 고정">
-```javascript
+```ts
 IMP.request_pay({
   ...
   bypass : {

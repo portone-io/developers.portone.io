@@ -3,14 +3,13 @@ title: 나이스페이먼츠 (신모듈)
 description: 나이스페이먼츠 연동 방법을 안내합니다.
 ---
 
-import * as prose from "~/components/prose";
 import Details from "~/components/gitbook/Details.astro";
 import Hint from "~/components/Hint.astro";
+import * as prose from "~/components/prose";
 export const components = prose;
 
-import Figure from "~/components/Figure.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 ## 1. 나이스페이먼츠(신모듈) 채널 설정하기
 
@@ -20,14 +19,23 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 그렇지 않은 상태에서 해당 기능 이용시 PG창 호출에 실패하거나, 승인에 실패하거나, 승인에 성공하더라도 의도한 바와는 다른 응답을 얻게 될 수 있으니 주의 해주시기 바랍니다.
 
 - 모든 결제 수단(간편결제 포함)
+
 - 면세 / 복합과세 사용
+
 - 부가세 지정 금액 방식 사용(영세율 포함)
+
 - 부분 취소
+
 - 할부 사용
+
 - 상점 부담 무이자 할부 사용
+
 - 카드사 포인트 사용
+
 - 에스크로 사용
+
 - 해외 결제 사용
+
 - 일부 bypass 파라미터
   - UserCI
   - MallUserID
@@ -48,19 +56,18 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 </Hint>
 
 <Hint style="danger">
-#### **기존에 deprecated된 콜백 응답은 모두 제거**됐습니다.
+  ## **기존에 deprecated된 콜백 응답은 모두 제거**됐습니다.
 
-신규 JS SDK는 기존 모듈에서 제공했던 CallBack 응답 파라미터가 대부분 삭제되었습니다.
-(특히 deprecated 로 명시된 파라미터는 모두 삭제되었습니다.)
+  신규 JS SDK는 기존 모듈에서 제공했던 CallBack 응답 파라미터가 대부분 삭제되었습니다.
+  (특히 deprecated 로 명시된 파라미터는 모두 삭제되었습니다.)
 
-해당 JS SDK 사용시 Callback 으로 내려받을수 있는 데이터는 오직 아래 두가지 입니다.
+  해당 JS SDK 사용시 Callback 으로 내려받을수 있는 데이터는 오직 아래 두가지 입니다.
 
-**`imp_uid`, `merchant_uid`**
+  **`imp_uid`, `merchant_uid`**
 
-따라서 해당 SDK를 사용하실때는 `IMP.request_pay`로부터 응답된 객체(또는 쿼리 파라미터)에서
-`imp_uid`를 가지고 **아임포트 REST API(GET `/payments/imp_uid`)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여
-응답 파라미터 중 `status` 파라미터로 결제 상태를 파악하셔야 합니다.
-
+  따라서 해당 SDK를 사용하실때는 `IMP.request_pay`로부터 응답된 객체(또는 쿼리 파라미터)에서
+  `imp_uid`를 가지고 **아임포트 REST API(GET `/payments/imp_uid`)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여
+  응답 파라미터 중 `status` 파라미터로 결제 상태를 파악하셔야 합니다.
 </Hint>
 
 [JavaScript SDK](../../../sdk/javascript-sdk/readme) 문서를 통해 최신 SDK를 설치해주세요.
@@ -70,131 +77,126 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 [JavaScript SDK](../../../sdk/javascript-sdk/readme) `IMP.request_pay(param, callback)`을 호출하여
 (신) 나이스페이먼츠 결제창을 호출할 수 있습니다. **결제 결과**는 PC의 경우 `IMP.request_pay(param,
 callback)` 호출 후 <mark style="color:red;">**callback**</mark>으로 수신되고 모바일의 경우
-<mark style="color:red;">**m_redirect_url**</mark> 로 리디렉션됩니다.
+<mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
-<Tab title="인증결제창 요청">
-```javascript title="Javascript SDK"
-IMP.request_pay(
-  {
-    pg: "nice_v2.{상점 ID}",
-    pay_method: "card",
-    merchant_uid: "orderNo0001",
-    name: "주문명:결제테스트",
-    amount: 1004,
-    buyer_email: "test@portone.io",
-    buyer_name: "구매자이름",
-    buyer_tel: "010-1234-5678",
-    buyer_addr: "서울특별시 강남구 삼성동",
-    buyer_postcode: "123-456",
-    m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
-  },
-  function (rsp) {
-    // callback 로직
-  }
-);
-```
+  <Tab title="인증결제창 요청">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "nice_v2.{상점 ID}",
+        pay_method: "card",
+        merchant_uid: "orderNo0001",
+        name: "주문명:결제테스트",
+        amount: 1004,
+        buyer_email: "test@portone.io",
+        buyer_name: "구매자이름",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "서울특별시 강남구 삼성동",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+      },
+      function (rsp) {
+        // callback 로직
+      },
+    );
+    ```
 
-<Details>
-<p slot="summary"><strong>주요 파라미터 설명</strong></p>
+    <Details>
+      <p slot="summary"><strong>주요 파라미터 설명</strong></p>
 
-**`pg` \***<mark style="color:green;">**string**</mark>
+      **`pg` \***<mark style="color:green;">**string**</mark>
 
-**PG사 구분코드**
+      **PG사 구분코드**
 
-`nice_v2` 로 지정하면 됩니다.
+      `nice_v2` 로 지정하면 됩니다.
 
-**`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**결제수단 구분코드**
+      **결제수단 구분코드**
 
-- card (신용카드)
-- trans (실시간 계좌이체)
-- vbank (가상계좌)
-- phone (휴대폰소액결제)
-- cultureland (컬쳐랜드)
-- naverpay_card (네이버페이 - 카드)
-- naverpay_point (네이버페이 - 포인트)
-- kakaopay (카카오페이)
-- payco (페이코)
-- samsungpay (삼성페이)
-- skpay (11Pay (구.SKPay))
-- ssgpay (SSGPAY)
-- ssgpay_bank (SSGPAY 은행계좌)
-- lpay (LPAY)
-- applepay (애플페이)
+      - card (신용카드)
+      - trans (실시간 계좌이체)
+      - vbank (가상계좌)
+      - phone (휴대폰소액결제)
+      - cultureland (컬쳐랜드)
+      - naverpay\_card (네이버페이 - 카드)
+      - naverpay\_point (네이버페이 - 포인트)
+      - kakaopay (카카오페이)
+      - payco (페이코)
+      - samsungpay (삼성페이)
+      - skpay (11Pay (구.SKPay))
+      - ssgpay (SSGPAY)
+      - ssgpay\_bank (SSGPAY 은행계좌)
+      - lpay (LPAY)
+      - applepay (애플페이)
 
-**`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**주문번호**
+      **주문번호**
 
-매번 고유하게 채번되어야 합니다.
+      매번 고유하게 채번되어야 합니다.
 
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
+      **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
 
-**결제금액**
+      **결제금액**
 
-소수점 두번째 자리까지 허용합니다.
+      소수점 두번째 자리까지 허용합니다.
 
-**`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**구매자 전화번호**
+      **구매자 전화번호**
 
-**`vbank_due`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      **`vbank_due`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**가상계좌 입금기한 (YYYY-MM-DD)**
+      **가상계좌 입금기한 (YYYY-MM-DD)**
 
-(신) 나이스페이먼츠의 경우 필수 입력이며 날짜는 무조건 23:59:59로 설정 됨
+      (신) 나이스페이먼츠의 경우 필수 입력이며 날짜는 무조건 23:59:59로 설정 됨
 
-**`escrow`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+      **`escrow`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
 
-**에스크로 결제 여부**
+      **에스크로 결제 여부**
 
-**`period`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**array**</mark>
+      **`period`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**array**</mark>
 
-**서비스 제공 기간**
+      **서비스 제공 기간**
 
-날짜만 입력이 가능하며(시간은 무시) 시작 날짜와 종료 날짜를 모두 입력해야 합니다.
+      날짜만 입력이 가능하며(시간은 무시) 시작 날짜와 종료 날짜를 모두 입력해야 합니다.
 
-**`from`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+      **`from`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
 
-**`to`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+      **`to`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+    </Details>
 
-</Details>
+    <Details>
+      <p slot="summary">
+        <strong>결제 가능 결제수단</strong>
+      </p>
 
-<Details>
-  <p slot="summary">
-    <strong>결제 가능 결제수단</strong>
-  </p>
-
-- card + 에스크로, 다이렉트
-- vbank + 에스크로
-- trans + 에스크로, 다이렉트(은행 지정 X)
-- phone + 다이렉트(통신사 지정 X)
-- cultureland
-- naverpay_card
-- naverpay_point
-- kakaopay
-- payco
-- samsungpay
-- skpay
-- ssgpay
-- ssgpay_bank
-- lpay
-- applepay
-
-</Details>
-
-</Tab>
-
+      - card + 에스크로, 다이렉트
+      - vbank + 에스크로
+      - trans + 에스크로, 다이렉트(은행 지정 X)
+      - phone + 다이렉트(통신사 지정 X)
+      - cultureland
+      - naverpay\_card
+      - naverpay\_point
+      - kakaopay
+      - payco
+      - samsungpay
+      - skpay
+      - ssgpay
+      - ssgpay\_bank
+      - lpay
+      - applepay
+    </Details>
+  </Tab>
 </Tabs>
 
 <Details>
-<p slot="summary">
-  <strong>가능한 결제 환경</strong>
-</p>
+  <p slot="summary">
+    <strong>가능한 결제 환경</strong>
+  </p>
 
-- PC (iframe)
-- 모바일 (리디렉션)
-
+  - PC (iframe)
+  - 모바일 (리디렉션)
 </Details>
