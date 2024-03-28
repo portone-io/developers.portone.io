@@ -40,7 +40,7 @@ export function Tabs({ uniqueId, getTabs }: TabsProps) {
               ? "-ml-px rounded-tr"
               : "-ml-px";
           const selectedStyle = selected
-            ? "shrink-0 border-b-white bg-white z-1"
+            ? "shrink-0 border-b-white bg-white z-selected-tab"
             : "shrink text-ellipsis overflow-hidden whitespace-nowrap text-slate bg-slate-1";
           return (
             <button
