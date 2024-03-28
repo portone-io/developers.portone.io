@@ -43,11 +43,11 @@ interface ExpandButtonProps {
 function ExpandButton({ title, expand, onClick }: ExpandButtonProps) {
   return (
     <button class="relative w-full" onClick={onClick}>
-      <hr class="absolute top-1/2 z-0 w-full" />
+      <hr class="absolute top-1/2 w-full" />
       <div
         class={`${
           expand ? "bg-slate-7 text-white" : "bg-white"
-        } z-1 border-slate-3 relative inline-flex justify-center gap-2 rounded-full border py-2 pl-6 pr-4`}
+        } border-slate-3 relative inline-flex justify-center gap-2 rounded-full border py-2 pl-6 pr-4`}
       >
         {expand ? (
           <>
