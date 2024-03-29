@@ -36,6 +36,7 @@ export default defineConfig({
         if (name && name in zIndex) {
           return { "z-index": zIndex[name as keyof typeof zIndex] };
         }
+        return;
       },
       { autocomplete: "z-$zIndex" },
     ],
