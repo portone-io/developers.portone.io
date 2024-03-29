@@ -16,7 +16,7 @@ const lang: Lang = "ko";
 const { slug } = Astro.params;
 const docEntries = await getCollection("docs");
 const entry = docEntries.find((entry) => entry.slug === `ko/api-v2/${slug}`);
-if (!entry) return new Response(null, { status: 404 });
+if (!slug || !entry) return new Response(null, { status: 404 });
 const { title, description } = entry.data;
 const mdx = await entry.render();
 const Content = mdx.Content;

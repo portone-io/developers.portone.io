@@ -13,7 +13,7 @@ import TrackingScript from "~/layouts/TrackingScript.astro";
 const { slug } = Astro.params;
 const entries = await getCollection("docs");
 const entry = entries.find((entry) => entry.slug === `ko/platform/${slug}`);
-if (!entry) return new Response(null, { status: 404 });
+if (!slug || !entry) return new Response(null, { status: 404 });
 const { title, description } = entry.data;
 const mdx = await entry.render();
 const Content = mdx.Content;
