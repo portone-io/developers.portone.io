@@ -30,3 +30,10 @@ PortOne 개발자센터 저장소입니다.
 pnpm install
 pnpm dev # http://localhost:4321/ 접속
 ```
+
+--------
+
+이 프로젝트는 [GNU Affero General Public License v3.0] 또는 그 이후 버전에 따라 라이센스가 부여됩니다. 자세한 내용은 [COPYRIGHT] 파일을 참고하세요.
+
+[GNU Affero General Public License v3.0]: LICENSE
+[COPYRIGHT]: COPYRIGHT
