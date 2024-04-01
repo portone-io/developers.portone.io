@@ -15,7 +15,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 ### 채널 설정하기
 
-- \[결제 연동 준비하기 - 결제대행사 채널 설정하기]의 내용을 참고하여 PG 설정을 진행합니다.
+- [결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기)의 내용을 참고하여 PG 설정을 진행합니다.
 
 #### 사전 계약 안내
 
@@ -26,10 +26,10 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 - API를 통한 수기 결제 (가상계좌, 카드)
 - API를 통한 빌링키 발급
 - 에스크로 결제
-- 상점부담무이자 설정
+- 상점분담무이자 설정
 - 부가세 및 비과세 금액 직접 설정
 - 카드사 포인트 사용 여부 설정
-- 오케이캐시백 적립 옵션 설정
+- OK캐시백 적립 옵션 설정
 - 부분무이자 설정
 - 몰포인트 설정
 - 카드사/간편결제 다이렉트 호출
@@ -53,12 +53,6 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
   `billingKeyMethod` 파라미터를 결제 수단에 따라 아래와 같이 설정해야 합니다.
 
   - 카드: `CARD`
-
-- **결제창 빌링키 발급과 동시에 최초 결제**
-
-  `billingKeyAndPayMethod` 파라미터를 결제 수단에 따라 아래와 같이 설정해야 합니다.
-
-  - 휴대폰 소액결제 : `MOBILE`
 
 - **API 수기(키인) 결제**
 
@@ -371,7 +365,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
   ASCII 문자에 포함되지 않는 한글이나 `♤`, `♡`, `♧` 등의 특수 문자는 허용되지 않습니다.
 
-  입력 가능한 ASCII 문자의 종류는 [링크](https://www.ascii-code.com/) -> `ASCII printable characters` 섹션을 참고하세요.
+  입력 가능한 ASCII 문자의 종류는 [링크](https://www.ascii-code.com/) → `ASCII printable characters` 섹션을 참고하세요.
 </Details>
 
 <Details>
@@ -394,6 +388,15 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
   SDK를 통한 결제 요청 파라미터에는 부가세를 지정할 수 있는 `vat` 파라미터와 면세 금액을 지정할 수 있는 `taxFreeAmount` 파라미터가 존재합니다.
   이니시스의 경우 부가세 및 면세금액을 직접 지정하기 위해서는 별도 계약이 필요합니다. 별도 계약이 되지 않은 상태에서 `vat`와 `taxFreeAmount`에 값을 지정해 결제를 요청하면
   요청한 내용과 다른 금액으로 실결제가 발생할 수 있습니다.
+</Details>
+
+<Details>
+  <p slot="summary">이니시스에서 지원하는 현금영수증 발급 유형</p>
+
+  현금영수증은 현금성 거래인 실시간 계좌이체 및 가상계좌 발급 시 사용이 가능합니다.
+  이니시스의 경우 현금영수증 발급 유형을 `CORPORATE` 혹은 `PERSONAL` 등 파라미터로 제어할 수 없습니다.
+  어떤 유형의 현금영수증을 발행할지는 항상 결제창 내에서 선택 가능하며, 결제창 호출 파라미터로는 현금영수증을 발행 여부만을 제어할 수 있습니다.
+  `cashReceiptType` 파라미터를 `ANONYMOUS`로 설정 시 결제창에서 현금영수증 발급 UI가 미노출됩니다.
 </Details>
 
 #### 카드 결제
@@ -455,14 +458,6 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 #### 계좌이체
 
 <Details>
-  <p slot="summary">이니시스에서 지원하는 현금영수증 발급 유형</p>
-
-  이니시스의 경우 현금영수증 발급 유형을 `CORPORATE` 혹은 `PERSONAL` 등 파라미터로 제어할 수 없습니다.
-  어떤 유형의 현금영수증을 발행할지는 항상 결제창 내에서 선택 가능하며, 결제창 호출 파라미터로는 현금영수증을 발행 여부만을 제어할 수 있습니다.
-  `cashReceiptType` 파라미터를 `ANONYMOUS`로 설정 시 결제창에서 현금영수증 발급 UI가 미노출됩니다.
-</Details>
-
-<Details>
   <p slot="summary">이니시스에서 지원하지 않는 계좌이체 관련 파라미터</p>
 
   이니시스의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
@@ -472,14 +467,6 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 </Details>
 
 #### 가상계좌 결제
-
-<Details>
-  <p slot="summary">이니시스에서 지원하는 현금영수증 발급 유형</p>
-
-  이니시스의 경우 현금영수증 발급 유형을 `CORPORATE` 혹은 `PERSONAL` 등 파라미터로 제어할 수 없습니다.
-  어떤 유형의 현금영수증을 발행할지는 항상 결제창 내에서 선택 가능하며, 결제창 호출 파라미터로는 현금영수증을 발행 여부만을 제어할 수 있습니다.
-  `cashReceiptType` 파라미터를 `ANONYMOUS`로 설정 시 결제창에서 현금영수증 발급 UI가 미노출됩니다.
-</Details>
 
 <Details>
   <p slot="summary">이니시스에서 지원하지 않는 가상계좌 관련 파라미터</p>
@@ -510,7 +497,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 <Details>
   <p slot="summary">`productType` 파라미터는 필수 입력해야 합니다.</p>
 
-  - 이니시스의 경우 **휴대폰 소액결제시 상품 유형을 구분 짓는 `productType` 파라미터가 필수**로 요구됩니다.
+  - 이니시스의 경우 **휴대폰 소액결제시 상품 유형을 구분 짓는 `productType` 파라미터가 필수**로 입력해야 합니다.
   - `productType`의 값은 `PRODUCT_TYPE_REAL` 또는 `PRODUCT_TYPE_DIGITAL`를 입력해야 합니다.
 </Details>
 
@@ -681,7 +668,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
   ASCII 문자에 포함되지 않는 한글이나 `♤`, `♡`, `♧` 등의 특수 문자는 허용되지 않습니다.
 
-  입력 가능한 ASCII 문자의 종류는 [링크](https://www.ascii-code.com/) -> `ASCII printable characters` 섹션을 참고하세요.
+  입력 가능한 ASCII 문자의 종류는 [링크](https://www.ascii-code.com/) → `ASCII printable characters` 섹션을 참고하세요.
 </Details>
 
 <Details>
@@ -713,38 +700,6 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
   이니시스 경우 카드사 다이렉트 호출을 통한 빌링키 발급을 지원하지 않습니다.
   `card.cardCompany` 필드에 값을 채워도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.
-</Details>
-
-### API 결제 - 유의사항
-
-#### 수기(키인) 결제, 빌링키 발급, 빌링키 단건 결제, 현금영수증 발급
-
-<Details>
-  <p slot="summary">이니시스에서 필수로 요구하는 파라미터</p>
-
-  이니시스에서 아래의 파라미터들을 필수로 요구합니다.
-
-  - `customer.name.full` 혹은 `customer.name.separated`
-  - `customer.phoneNumber`
-  - `customer.email`
-</Details>
-
-#### 에스크로 배송 정보 등록
-
-<Details>
-  <p slot="summary">이니시스에서 필수로 요구하는 파라미터</p>
-
-  이니시스에서 아래의 파라미터들을 필수로 요구합니다.
-
-  - `sender.name`
-  - `sender.phoneNumber`
-  - `sender.zipcode`
-  - `sender.address`
-  - `receiver.name`
-  - `receiver.phoneNumber`
-  - `receiver.zipcode`
-  - `receiver.address`
-  - `products`
 </Details>
 
 ### API 수기(키인)결제 요청하기
@@ -794,7 +749,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
   </Tab>
 </Tabs>
 
-#### 주요 파라미터
+#### **주요 파라미터**
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -1003,11 +958,11 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
     </ParamTree>
 </ParamTree>
 
-### API 빌링키 발급
+### API 빌링키 발급 요청하기
 
 빌링키를 발급하기 위해서는 `POST /billing-keys`를 이용하여 빌링키 발급 요청을 해야합니다.
 
-예시코드
+이니시스 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
   <Tab title="API 빌링키 발급 요청">
@@ -1038,7 +993,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
   </Tab>
 </Tabs>
 
-#### 빌링키 발급 주요 파라미터
+#### **주요 파라미터**
 
 <ParamTree>
   - `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -1132,7 +1087,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 발급된 빌링키로 단건 결제를 하기 위해 `POST /payments/${PAYMENT_ID_HERE}/billing-key`를 이용하여 결제를 요청합니다.
 
-예시코드
+이니시스 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
   <Tab title="API 예약/반복 결제">
@@ -1162,7 +1117,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
   </Tab>
 </Tabs>
 
-#### 빌링키 단건 결제 주요 파라미터
+#### **주요 파라미터**
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -1247,11 +1202,11 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
     **상품 개수**
 </ParamTree>
 
-### API 빌링키 예약/반복 결제
+### API 빌링키 예약/반복 결제 요청하기
 
 예약 결제를 하기위해서는 `POST /payments/${PAYMENT_ID_HERE}/schedule` 를 이용하여 결제를 예약합니다.
 
-예시코드
+이니시스 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
   <Tab title="API 예약/반복 결제">
@@ -1279,7 +1234,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
   </Tab>
 </Tabs>
 
-#### 빌링키 예약 결제 주요 파라미터
+#### **주요 파라미터**
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -1370,15 +1325,47 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
     </ParamTree>
 </ParamTree>
 
+### API 유의사항
+
+#### 공통
+
+<Details>
+  <p slot="summary">이니시스 필수 파라미터</p>
+
+  이니시스의 경우에는 키인(수기)결제, 빌링키 발급, 빌링키 단건 결제 시 아래의 파라미터를 필수로 입력해야 합니다.
+
+  - `customer.name.full` 혹은 `customer.name.separated`
+  - `customer.phoneNumber`
+  - `customer.email`
+</Details>
+
+#### 에스크로
+
+<Details>
+  <p slot="summary">이니시스에서 에스크로 배송 등록시 필수 파라미터</p>
+
+  이니시스의 경우 에스크로 배송 등록 시 아래의 파라미터를 필수로 입력해야 합니다.
+
+  - `sender.name`
+  - `sender.phoneNumber`
+  - `sender.zipcode`
+  - `sender.address`
+  - `receiver.name`
+  - `receiver.phoneNumber`
+  - `receiver.zipcode`
+  - `receiver.address`
+  - `products`
+</Details>
+
 ### API 영수증 내 하위 상점 거래 등록
 
-오픈마켓 고객사의 경우 해당 API를 호출하여 결제 내역 매출 전표에 하위 상점 거래를 등록하실 수 있습니다.
+오픈마켓 고객사의 경우 해당 API를 호출하여 결제 내역 매출 전표에 하위 상점 거래를 등록할 수 있습니다.
 
 자세한 파라미터 구성은
 [REST API Docs](/api/rest-v2/payment#post%20%2Fpayments%2F%7BpaymentId%7D%2Fregister-store-receipt)
 를 참고해주시기 바랍니다.
 
-#### 영수증 내 하위 상점 거래 등록 주요 파라미터
+#### **주요 파라미터**
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
