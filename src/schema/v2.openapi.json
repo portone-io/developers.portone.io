@@ -22,6 +22,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/LoginViaApiSecretBody"
+              },
+              "example": {
+                "apiSecret": "your-api-secret"
               }
             }
           },
@@ -34,6 +37,10 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LoginViaApiSecretResponse"
+                },
+                "example": {
+                  "accessToken": "new-access-token",
+                  "refreshToken": "new-refresh-token"
                 }
               }
             },
@@ -78,6 +85,9 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RefreshTokenBody"
+              },
+              "example": {
+                "refreshToken": "previous-refresh-token"
               }
             }
           },
@@ -90,6 +100,10 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RefreshTokenResponse"
+                },
+                "example": {
+                  "accessToken": "new-access-token",
+                  "refreshToken": "new-refresh-token"
                 }
               }
             }
@@ -3936,6 +3950,7 @@
             "schema": {
               "type": "string"
             },
+            "example": "your-identity-verification-id",
             "x-portone-title": "조회할 본인인증 아이디"
           },
           {
@@ -3946,6 +3961,7 @@
             "schema": {
               "type": "string"
             },
+            "example": "your-store-id",
             "x-portone-title": "상점 아이디",
             "x-portone-description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
           }
@@ -3957,6 +3973,35 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/IdentityVerification"
+                },
+                "example": {
+                  "status": "VERIFIED",
+                  "id": "your-identity-verification-id",
+                  "channel": {
+                    "type": "LIVE",
+                    "id": "your-channel-id",
+                    "key": "your-channel-key",
+                    "name": "your-channel-name",
+                    "pgProvider": "DANAL",
+                    "pgMerchantId": "your-pg-merchant-id"
+                  },
+                  "verifiedCustomer": {
+                    "id": "your-customer-id",
+                    "name": "customer-name",
+                    "phoneNumber": "01012345678",
+                    "birthDate": "1992-10-16",
+                    "gender": "FEMALE",
+                    "isForeigner": false,
+                    "ci": "ci-value",
+                    "di": "di-value"
+                  },
+                  "customData": "your-custom-data-string",
+                  "requestedAt": "2023-10-15T23:59:59Z",
+                  "updatedAt": "2023-10-16T00:00Z",
+                  "statusChangedAt": "2023-10-16T00:00Z",
+                  "verifiedAt": "2023-10-16T00:00Z",
+                  "pgTxId": "transaction-id-from-pg-provider",
+                  "pgRawResponse": "{ .. raw response from pg provider .. }"
                 }
               }
             },
@@ -7999,6 +8044,16 @@
               }
             }
           },
+          "409": {
+            "description": "<ul>\n<li><code>B2bIdAlreadyExistsError</code>: ID가 이미 사용중인 경우</li>\n<li><code>B2bCompanyAlreadyRegisteredError</code>: 사업자가 이미 연동돼 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterB2bMemberCompanyError"
+                }
+              }
+            }
+          },
           "502": {
             "description": "<ul>\n<li><code>B2bExternalServiceError</code>: 외부 서비스에서 에러가 발생한 경우</li>\n</ul>\n",
             "content": {
@@ -8669,6 +8724,16 @@
           },
           "502": {
             "description": "<ul>\n<li><code>B2bExternalServiceError</code>: 외부 서비스에서 에러가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCompanyStateError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "<ul>\n<li><code>B2bHometaxUnderMaintenanceError</code>: 홈택스가 점검중이거나 순단이 발생한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -11873,6 +11938,24 @@
         "x-portone-title": "인증서가 등록되어 있지 않은 경우",
         "x-portone-status-code": 404
       },
+      "B2bCompanyAlreadyRegisteredError": {
+        "title": "사업자가 이미 연동돼 경우",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>사업자가 이미 연동돼 경우</p>\n",
+        "x-portone-title": "사업자가 이미 연동돼 경우",
+        "x-portone-status-code": 409
+      },
       "B2bCompanyContact": {
         "required": [
           "id",
@@ -12152,6 +12235,42 @@
         "description": "<p>계좌 정보 조회가 불가능한 외화 계좌인 경우</p>\n",
         "x-portone-title": "계좌 정보 조회가 불가능한 외화 계좌인 경우",
         "x-portone-status-code": 404
+      },
+      "B2bHometaxUnderMaintenanceError": {
+        "title": "홈택스가 점검중이거나 순단이 발생한 경우",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>홈택스가 점검중이거나 순단이 발생한 경우</p>\n",
+        "x-portone-title": "홈택스가 점검중이거나 순단이 발생한 경우",
+        "x-portone-status-code": 503
+      },
+      "B2bIdAlreadyExistsError": {
+        "title": "ID가 이미 사용중인 경우",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>ID가 이미 사용중인 경우</p>\n",
+        "x-portone-title": "ID가 이미 사용중인 경우",
+        "x-portone-status-code": 409
       },
       "B2bMemberCompany": {
         "required": [
@@ -22219,6 +22338,9 @@
             "$ref": "#/components/schemas/B2bExternalServiceError"
           },
           {
+            "$ref": "#/components/schemas/B2bHometaxUnderMaintenanceError"
+          },
+          {
             "$ref": "#/components/schemas/B2bNotEnabledError"
           },
           {
@@ -22233,6 +22355,7 @@
           "mapping": {
             "B2B_COMPANY_NOT_FOUND": "#/components/schemas/B2bCompanyNotFoundError",
             "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_HOMETAX_UNDER_MAINTENANCE": "#/components/schemas/B2bHometaxUnderMaintenanceError",
             "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
@@ -33089,7 +33212,13 @@
       "RegisterB2bMemberCompanyError": {
         "oneOf": [
           {
+            "$ref": "#/components/schemas/B2bCompanyAlreadyRegisteredError"
+          },
+          {
             "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bIdAlreadyExistsError"
           },
           {
             "$ref": "#/components/schemas/B2bNotEnabledError"
@@ -33104,7 +33233,9 @@
         "discriminator": {
           "propertyName": "type",
           "mapping": {
+            "B2B_COMPANY_ALREADY_REGISTERED": "#/components/schemas/B2bCompanyAlreadyRegisteredError",
             "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_ID_ALREADY_EXISTS": "#/components/schemas/B2bIdAlreadyExistsError",
             "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
