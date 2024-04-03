@@ -55,9 +55,8 @@ export default function RestV2(props: RestV2Props) {
       </prose.p>
       <prose.h3>인증 방식</prose.h3>
       <prose.p>
-        V2 API를 사용하기 위해서는 V2 API Secret이 필요합니다. 관리자 이메일을
-        통해 tech.support@portone.io로 Store ID를 보내 주시면 V2 API Secret을
-        발급해 드립니다.
+        V2 API를 사용하기 위해서는 V2 API Secret이 필요하며, 포트원 콘솔 내
+        결제연동 탭에서 발급받을 수 있습니다.
       </prose.p>
       <prose.p>
         인증 관련 API를 제외한 모든 API는 HTTP <code>Authorization</code> 헤더로
