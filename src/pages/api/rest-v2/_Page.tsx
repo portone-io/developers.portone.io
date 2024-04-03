@@ -53,7 +53,7 @@ export default function RestV2(props: RestV2Props) {
         <code>encodeURIComponent</code> 함수 등을 사용할 수 있습니다.
         {/* TODO: 안전한 paymentId 사용에 대해 설명 */}
       </prose.p>
-      <prose.h3>인증 방식</prose.h3>
+      <prose.h3 id="auth">인증 방식</prose.h3>
       <prose.p>
         V2 API를 사용하기 위해서는 V2 API Secret이 필요하며, 포트원 콘솔 내
         결제연동 탭에서 발급받을 수 있습니다.
