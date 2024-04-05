@@ -720,20 +720,20 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
         orderName: "나이키 와플 트레이너 2 SD",
         amount: {
           total: 10000,
+          taxFree: 3000,
         },
         currency: "KRW",
         customer: {
           name: {
             full: "홍길동",
           },
-          email: "test@test.com",
           phoneNumber: "010-1234-0000",
         },
         method: {
           virtualAccount: {
             bank: `SHINHAN`,
             expiry: {
-              dueDate: `2024-11-12T00:00:00+09+00`, //입금기한은 미래시간만 가능합니다.
+              dueDate: `2024-11-12T00:00:00+09+00`, // 입금기한은 미래시간만 가능합니다.
             },
             cashReceipt: {
               type: `PERSONAL`,
@@ -780,6 +780,12 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
         **총 결제 금액**
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+
+      - `taxFree` <mark style="color:purple;">**number**</mark>
+
+        **면세액**
+
+        결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
     </ParamTree>
 
   - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -793,7 +799,7 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
     **결제수단 정보**
 
     <ParamTree>
-      - `virtualAccount` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+      - `virtualAccount` <mark style="color:blue;">**object**</mark>
 
         **가상계좌 결제 시 파라미터**
 
@@ -834,28 +840,18 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 
                 - 회전식 가상계좌 : `NORMAL`
                 - 고정식 가상계좌 : `FIXED`
-                - 회전식 가상계좌는 일반적으로 사용되는 방식이며 PG사에서 직접 채번한 가상계좌번호를 사용합니다.
 
-              - `fixed` <mark style="color:blue;">**object**</mark>
+                KPN의 경우 **회전식 가상계좌**(`NORMAL`)만 지원합니다.
 
-                **고정식 가상계좌 발급 유형**
-
-                <ParamTree>
-                  - `accountNumber` <mark style="color:green;">**string**</mark>
-
-                    **고정식 가상계좌번호**
-
-                    - PG사가 일정 개수만큼의 가상계좌번호를 발급하여 가맹점에게 미리 전달하고 가맹점이 그 중 하나를 선택하여 사용하는 방식입니다.
-                      KPN에서는 해당 방식만 지원하고 있습니다.
-                </ParamTree>
+                회전식 가상계좌는 일반적으로 사용되는 방식이며 PG사에서 직접 채번한 가상계좌번호를 사용합니다.
             </ParamTree>
 
-          - `cashReceipt` <mark style="color:blue;">**object**</mark>
+          - `cashReceipt` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
             **현금영수증 정보**
 
             <ParamTree>
-              - `type` <mark style="color:green;">**string**</mark>
+              - `type` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
                 **발급 유형**
 
@@ -865,7 +861,7 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
                 - 지출증빙용 : `CORPORATE`
                 - 미발행 : `NO_RECEIPT`
 
-              - `customerIdentityNumber` <mark style="color:green;">**string**</mark>
+              - `customerIdentityNumber` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
                 **현금영수증 식별 번호**
 
@@ -878,78 +874,70 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
             **예금주명**
         </ParamTree>
 
-      - `card` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+      - `card` <mark style="color:blue;">**object**</mark>
 
-      <ParamTree>
-        - `credential` <mark style="color:green;">**string**</mark>
+        **카드 결제 시 파라미터**
 
-          **인증 관련 정보**
+        <ParamTree>
+          - `credential` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
-          <ParamTree>
-            - `number` <mark style="color:blue;">**object**</mark>
+            **인증 관련 정보**
 
-              **카드 번호**
+            <ParamTree>
+              - `number` <mark style="color:red;">**\***</mark><mark style="color:blue;">**object**</mark>
 
-            - `expiryYear` <mark style="color:blue;">**object**</mark>
+                **카드 번호**
 
-              **유효 기간 만료 연도 (YY 형식 ex. 24)**
+              - `expiryYear` <mark style="color:red;">**\***</mark><mark style="color:blue;">**object**</mark>
 
-            - `expiryMonth` <mark style="color:green;">**string**</mark>
+                **유효 기간 만료 연도 (YY 형식 ex. 24)**
 
-              **유효기간 만료 월 (MM 형식 ex. 05)**
+              - `expiryMonth` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
-            - `birthOrBusinessRegistrationNumber` <mark style="color:green;">**string**</mark>
+                **유효기간 만료 월 (MM 형식 ex. 05)**
 
-              **생년월일 또는 사업자 등록 번호**
+              - `birthOrBusinessRegistrationNumber` <mark style="color:green;">**string**</mark>
 
-            - `passwordTwoDigits` <mark style="color:green;">**string**</mark>
+                **생년월일 6자리 또는 사업자 등록 번호**
 
-              **비밀번호 앞 두자리**
-          </ParamTree>
-      </ParamTree>
+              - `passwordTwoDigits` <mark style="color:green;">**string**</mark>
+
+                **비밀번호 앞 두자리**
+            </ParamTree>
+        </ParamTree>
 
       - `customer` <mark style="color:blue;">**object**</mark>
 
         **고객 정보**
 
         <ParamTree>
-          - `name`  <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+          - `name` <mark style="color:blue;">**object**</mark>
 
             **고객 이름**
 
-            - KPN의 경우 full 혹은 separated를 필수로 입력해야 합니다.
+            <ParamTree>
+              - `full` <mark style="color:green;">**string**</mark>
 
-              <ParamTree>
-                - `full` <mark style="color:green;">**string**</mark>
+                **한 줄 이름 형식 (ex. 김포트)**
 
-                  **한 줄 이름 형식 (ex. 김포트)**
+              - `separated` <mark style="color:blue;">**object**</mark>
 
-                - `separated` <mark style="color:blue;">**object**</mark>
+                **분리된 이름**
 
-                  **분리된 이름**
+                <ParamTree>
+                  - `first` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
-                  <ParamTree>
-                    - `first` <mark style="color:green;">**string**</mark>
+                    **이름**
 
-                      **이름**
+                  - `last` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
-                    - `last` <mark style="color:green;">**string**</mark>
+                    **성**
+                </ParamTree>
+            </ParamTree>
 
-                      **성**
-                  </ParamTree>
-              </ParamTree>
-
-          - `phoneNumber`  <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - `phoneNumber` <mark style="color:green;">**string**</mark>
 
             **구매자 연락처**
-
-          - KPN의 경우 필수 입력입니다.
-
-          - `email` <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
-
-            **구매자 이메일**
-
-          - KPN의 경우 필수 입력입니다.
         </ParamTree>
 
       - `productCount` <mark style="color:purple;">**integer**</mark>
@@ -975,6 +963,10 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
         channelKey: "channel-key-9987cb87-****-****-****-********896d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
         customer: {
           id: "customer-1234", // 고객사에서 관리하는 고객 고유번호
+          name: {
+            full: "홍길동",
+          },
+          phoneNumber: "010-1234-0000",
         },
         method: {
           card: {
@@ -1011,28 +1003,28 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
       **카드 빌링키 발급 시 파라미터**
 
       <ParamTree>
-        - `credential` <mark style="color:green;">**string**</mark>
+        - `credential` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
           **인증 관련 정보**
 
           <ParamTree>
-            - `number` <mark style="color:blue;">**object**</mark>
+            - `number` <mark style="color:red;">**\***</mark><mark style="color:blue;">**object**</mark>
 
               **카드 번호**
 
-            - `expiryYear` <mark style="color:blue;">**object**</mark>
+            - `expiryYear` <mark style="color:red;">**\***</mark><mark style="color:blue;">**object**</mark>
 
               **유효 기간 만료 연도 (YY 형식 ex. 24)**
 
-            - `expiryMonth` <mark style="color:green;">**string**</mark>
+            - `expiryMonth` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
               **유효기간 만료 월 (MM 형식 ex. 05)**
 
-            - `birthOrBusinessRegistrationNumber` <mark style="color:green;">**string**</mark>
+            - `birthOrBusinessRegistrationNumber` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
               **생년월일 또는 사업자 등록 번호**
 
-            - `passwordTwoDigits` <mark style="color:green;">**string**</mark>
+            - `passwordTwoDigits` <mark style="color:red;">**\***</mark><mark style="color:green;">**string**</mark>
 
               **비밀번호 앞 두자리**
           </ParamTree>
@@ -1069,17 +1061,9 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
               </ParamTree>
           </ParamTree>
 
-      - `phoneNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - `phoneNumber` <mark style="color:green;">**string**</mark>
 
         **구매자 연락처**
-
-        - KPN의 경우 필수로 입력해야 합니다.
-
-      - `email`<mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-        **구매자 이메일**
-
-        - KPN의 경우 필수로 입력해야 합니다.
     </ParamTree>
 </ParamTree>
 
@@ -1090,7 +1074,7 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="API 예약/반복 결제">
+  <Tab title="API 빌링키 단건 결제">
     ```javascript
     const response = await axios({
       url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/schedule`,
@@ -1107,6 +1091,7 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
           },
           amount: {
             total: 10000,
+            taxFree: 3000,
           },
           currency: "KRW",
         },
@@ -1145,6 +1130,12 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
         **총 결제 금액**
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+
+      - `taxFree` <mark style="color:purple;">**number**</mark>
+
+        **면세액**
+
+        결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
     </ParamTree>
 
   - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -1153,48 +1144,42 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     결제통화로 원화 결제 시 `KRW`로 입력해야 합니다.
 
-  - `customer`  <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+  - `customer` <mark style="color:blue;">**object**</mark>
 
     **고객 정보**
 
     <ParamTree>
-      - `name` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+      - `name` <mark style="color:blue;">**object**</mark>
 
         **고객 이름**
 
-        - KPN의 경우 full 혹은 separated를 필수로 입력해야 합니다.
+        <ParamTree>
+          - `full` <mark style="color:green;">**string**</mark>
 
-          <ParamTree>
-            - `full` <mark style="color:green;">**string**</mark>
+            **한 줄 이름 형식 (ex. 김포트)**
 
-              **한 줄 이름 형식 (ex. 김포트)**
+          - `separated` <mark style="color:blue;">**object**</mark>
 
-            - `separated` <mark style="color:blue;">**object**</mark>
+            **분리된 이름**
 
-              **분리된 이름**
+            <ParamTree>
+              - `first` <mark style="color:green;">**string**</mark>
 
-              <ParamTree>
-                - `first` <mark style="color:green;">**string**</mark>
+                **이름**
 
-                  **이름**
+              - `last` <mark style="color:green;">**string**</mark>
 
-                - `last` <mark style="color:green;">**string**</mark>
+                **성**
+            </ParamTree>
+        </ParamTree>
 
-                  **성**
-              </ParamTree>
-          </ParamTree>
-
-      - `phoneNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - `phoneNumber` <mark style="color:green;">**string**</mark>
 
         **구매자 연락처**
 
-        - KPN의 경우 필수로 입력해야 합니다.
-
-      - `email`<mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - `email` <mark style="color:green;">**string**</mark>
 
         **구매자 이메일**
-
-        - KPN의 경우 필수로 입력해야 합니다.
     </ParamTree>
 
   - `productCount` <mark style="color:purple;">**integer**</mark>
@@ -1224,10 +1209,11 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
           },
           amount: {
             total: 10000,
+            taxFree: 3000,
           },
           currency: "KRW",
         },
-        timeToPay: "2023-01-01 00:00:00", // 결제를 시도할 시각
+        timeToPay: "2023-01-01 00:00:00", // 결제를 시도할 시각이며 미래 시각만 가능합니다.
       },
     });
     ```
@@ -1265,6 +1251,12 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
           - `total` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
 
             **총 결제 금액**
+
+            결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+
+          - `taxFree` <mark style="color:purple;">**number**</mark>
+
+            **면세액**
 
             결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
         </ParamTree>
@@ -1311,17 +1303,13 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
               </ParamTree>
           </ParamTree>
 
-      - `phoneNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - `phoneNumber` <mark style="color:green;">**string**</mark>
 
         **구매자 연락처**
 
-        - KPN의 경우 필수로 입력해야 합니다.
-
-      - `email`<mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - `email` <mark style="color:green;">**string**</mark>
 
         **구매자 이메일**
-
-        - KPN의 경우 필수로 입력해야 합니다.
     </ParamTree>
 </ParamTree>
 
@@ -1332,92 +1320,87 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 <Details>
   <p slot="summary">KPN 필수 파라미터</p>
 
-  KPN의 경우에는 키인(수기)결제, 빌링키 발급, 빌링키 단건 결제 시 아래의 파라미터를 필수로 입력해야 합니다.
+  KPN의 경우에는 빌링키 발급 시 아래의 파라미터를 필수로 입력해야 합니다.
 
   - `customer.name.full` 혹은 `customer.name.separated`
-  - `customer.phoneNumber`
-  - `customer.email`
-</Details>
 
-#### 에스크로
+  그 외에는 위에서 설명한 주요 파라미터들을 참고하여 입력해주시기 바랍니다.
+</Details>
 
 <Details>
-  <p slot="summary">KPN에서 에스크로 배송 등록시 필수 파라미터</p>
+  <p slot="summary">키인 결제 시 카드 정보 입력 파라미터</p>
 
-  KPN의 경우 에스크로 배송 등록 시 아래의 파라미터를 필수로 입력해야 합니다.
+  API를 통한 수기(키인)결제 요청 파라미터에는 카드의 상세 정보를 입력하는 필드가 존재합니다.
 
-  - `sender.name`
-  - `sender.phoneNumber`
-  - `sender.zipcode`
-  - `sender.address`
-  - `receiver.name`
-  - `receiver.phoneNumber`
-  - `receiver.zipcode`
-  - `receiver.address`
-  - `products`
+  KPN의 경우 카드 번호 + 유효기간 만으로 결제가 가능하나, 가맹점 별로 생년월일 + 비밀번호 앞 두자리를 입력해야 하는 경우도 있습니다.
+
+  자세한 내용은 KPN 담당자에게 문의해주시기 바랍니다.
 </Details>
 
-### API 영수증 내 하위 상점 거래 등록
+<Details>
+  <p slot="summary">지원되는 결제 통화</p>
 
-오픈마켓 고객사의 경우 해당 API를 호출하여 결제 내역 매출 전표에 하위 상점 거래를 등록할 수 있습니다.
+  API를 통한 수기(키인)결제 요청 파라미터에는 결제 통화를 지정할 수 있는 `currency` 파라미터가 존재합니다.
 
-자세한 파라미터 구성은
-[REST API Docs](/api/rest-v2/payment#post%20%2Fpayments%2F%7BpaymentId%7D%2Fregister-store-receipt)
-를 참고해주시기 바랍니다.
+  KPN의 경우 `KRW`와 `USD`를 지원하며, 이 중 `USD`는 해외 카드일 때 지정 가능합니다.
 
-#### **주요 파라미터**
+  결제는 1센트 단위로 하능하지만, 매입사에 따라 결제 취소는 1달러 이상부터 가능할 수 있습니다.
 
-<ParamTree>
-  - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  자세한 내용은 KPN 담당자에게 문의해주시기 바랍니다.
+</Details>
 
-    **결제 주문 번호**
+<Details>
+  <p slot="summary">가상계좌 에스크로 결제 불가</p>
 
-    - 고객사에서 채번하여 사용하는 주문번호로 고유한 값이여야 합니다.
-    - URL path에 포함하여 요청해야 합니다.
+  KPN의 경우, API 수기(키인)결제를 통한 가상계좌 발급 시 에스크로 결제는 불가능합니다.
 
-  - `items` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**RegisterStoreReceiptBodyItem\[]**</mark>
+  결제창 방식에서는 가상계좌 에스크로 결제가 가능합니다.
+</Details>
 
-    **등록할 거래 건 리스트**
+<Details>
+  <p slot="summary">결제 취소 시 환불서비스 MID 설정 필요</p>
 
-    \= 매출전표에 등록할 하위 상점 거래 건 리스트를 등록 하셔야합니다.
+  KPN의 경우, 계좌 환불의 형태로 결제를 취소해야 하는 경우에 대해 별도로 MID에 설정을 진행해야 합니다.
 
-    <ParamTree>
-      - `storeBusinessRegistrationNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  일반적으로 아래와 같은 경우에 대해 계좌 환불 서비스 신청이 필요합니다.
 
-        **하위 상점 사업자등록번호**
+  - 가상계좌 입금 후 환불
+  - 휴대폰 결제 후 익월 환불
+  - 계좌이체 취소가 불가능한 경우(환불 기한 초과, 계좌 제한 등)
 
-      - `storeName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  자세한 내용은 KPN 담당자에게 문의해주시기 바랍니다.
+</Details>
 
-        **하위 상점 명**
+<Details>
+  <p slot="summary">가상계좌 사용 시 입금통보 URL 별도 설정 필요</p>
 
-      - `totalAmount` <mark style="color:red;">**\***</mark> <mark style="color:green;">**number**</mark>
+  KPN의 경우, 가상계좌를 사용하는 경우 입금통보 URL을 별도로 설정해야 합니다.
 
-        **총 결제 금액**
+  자세한 내용은 [가상계좌 입금통보 URL 설정 가이드](/docs/ko/result/notice?v=v2#notice-config-kpn)를
+  참조해주세요
+</Details>
 
-        결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+<Details>
+  <p slot="summary">가상계좌 지원 은행 리스트</p>
 
-      - `taxFreeAmount` <mark style="color:green;">**number**</mark>
+  KPN에서 가상계좌 발급이 가능한 은행 리스트는 아래와 같습니다.
+  
+  은행코드는 [BANK ENUM](https://developers.portone.io/api/rest-v2/type-def#Bank)으로 정의되어 있으며 
+  아래 목록에 대한 ENUM 코드를 매핑하여 API에 사용하실 수 있습니다.
 
-        **면세액**
+  - 기업은행
+  - 국민은행
+  - 외환은행
+  - 농협은행
+  - 우리은행
+  - SC은행
+  - 한국씨티은행
+  - 대구은행
+  - 부산은행
+  - 광주은행
+  - 경남은행             
+  - 우체국                  
+  - KEB하나은행             
+  - 신한은행                   
 
-        - KPN의 경우 필수로 입력해야 합니다.
-
-      - `vatAmount` <mark style="color:green;">**number**</mark>
-
-        **부가세**
-
-        - KPN의 경우 필수로 입력해야 합니다.
-
-      - `supplyAmount`  <mark style="color:green;">**number**</mark>
-
-        **공급가액**
-
-        - KPN의 경우 필수로 입력해야 합니다.
-
-      - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-        **결제 통화**
-
-        결제통화로 원화 결제 시 `KRW`로 입력해야 합니다.
-    </ParamTree>
-</ParamTree>
+</Details>
