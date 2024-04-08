@@ -26,6 +26,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 - API를 통한 수기 결제 (가상계좌, 카드)
 - API를 통한 빌링키 발급
 - 에스크로 결제 (결제창)
+- 가상계좌 입금통보 백노티 설정
 - 상점분담무이자 설정
 - 비과세 금액 직접 설정
 - 카드사 포인트 사용 여부 설정
@@ -33,8 +34,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 - 부분무이자 설정
 - 몰포인트 설정
 - 간편결제 다이렉트 호출
-- 가상계좌 입금통보 백노티 설정
-- 
+- 결제 취소 시 계좌 환불 서비스 설정
 
 ### 가능한 결제 수단
 
@@ -740,10 +740,8 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
               type: `PERSONAL`,
               customerIdentityNumber: `010-1234-0000`,
             },
-            remitteeName: `테스트`,
           },
         },
-        productCount: 1,
       },
     });
     ```
@@ -840,7 +838,6 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
                 발급 유형은 ENUM으로 정의되어 있습니다.
 
                 - 회전식 가상계좌 : `NORMAL`
-                - 고정식 가상계좌 : `FIXED`
 
                 KPN의 경우 **회전식 가상계좌**(`NORMAL`)만 지원합니다.
 
@@ -869,10 +866,6 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
                 - 소득공제인 경우 주민등록번호 혹은 휴대폰 번호를 입력해야 합니다.
                 - 지출증빙인 경우 사업자등록번호를 입력해야 합니다.
             </ParamTree>
-
-          - `remitteeName` <mark style="color:green;">**string**</mark>
-
-            **예금주명**
         </ParamTree>
 
       - `card` <mark style="color:blue;">**object**</mark>
@@ -940,10 +933,6 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 
             **구매자 연락처**
         </ParamTree>
-
-      - `productCount` <mark style="color:purple;">**integer**</mark>
-
-        **상품 개수**
     </ParamTree>
 </ParamTree>
 
@@ -1096,7 +1085,6 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
           },
           currency: "KRW",
         },
-        productCount: 1,
       },
     });
     ```
@@ -1182,10 +1170,6 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 
         **구매자 이메일**
     </ParamTree>
-
-  - `productCount` <mark style="color:purple;">**integer**</mark>
-
-    **상품 개수**
 </ParamTree>
 
 ### API 빌링키 예약/반복 결제 요청하기
