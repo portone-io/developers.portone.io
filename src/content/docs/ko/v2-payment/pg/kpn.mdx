@@ -93,11 +93,6 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
         totalAmount: 1000,
         currency: "CURRENCY_KRW",
         payMethod: "CARD",
-        customer: {
-          fullName: "포트원",
-          phoneNumber: "010-0000-1234",
-          email: "test@portone.io",
-        },
       });
     }
     ```
@@ -157,191 +152,27 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
     - 휴대폰 소액결제 : `MOBILE`
     - 간편 결제 : `EASY_PAY`
 
-  - `customer` <mark style="color:blue;">**object**</mark>
-
-    **고객 정보**
-
-    <ParamTree>
-      - `fullName` <mark style="color:green;">**string**</mark>
-
-        **구매자 전체 이름**
-
-        - KPN의 경우 fullName 혹은 (firstName + lastName)을 필수로 입력해야 합니다.
-
-      - `firstName` <mark style="color:green;">**string**</mark>
-
-        **구매자 이름**
-
-        - KPN의 경우 fullName 혹은 (firstName + lastName)을 필수로 입력해야 합니다.
-
-      - `lastName` <mark style="color:green;">**string**</mark>
-
-        **구매자 성**
-
-        - KPN의 경우 fullName 혹은 (firstName + lastName)을 필수로 입력해야 합니다.
-
-      - `phoneNumber` <mark style="color:green;">**string**</mark>
-
-        **구매자 연락처**
-
-        - KPN의 PC 결제의 경우 필수로 입력해야 합니다. (모바일인 경우에는 optional)
-
-      - `email` <mark style="color:green;">**string**</mark>
-
-        **구매자 이메일**
-
-        - KPN의 PC 결제의 경우 필수로 입력해야 합니다. (모바일인 경우에는 optional)
-    </ParamTree>
-
-  - `bypass` <mark style="color:blue;">**oneof object**</mark>
+  - `bypass` <mark style="color:blue;">**object**</mark>
 
     **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
     <ParamTree>
-      - `inicis_v2` <mark style="color:blue;">**object**</mark>
+      - `kpn` <mark style="color:blue;">**object**</mark>
 
-        **KPN에서 제공하는 파라미터 모음**
-
-        KPN는 PC 결제 모듈과 모바일 결제 모듈이 분리되어 있기 때문에 bypass 파라미터 또한 PC용과 모바일용이 분리되어 있습니다.
-
-        고객사에서 지원되는 플랫폼에 따라 적절한 bypass 파라미터를 설정하시기 바랍니다.
-
-        **PC용 파라미터**
-
+        **KPN에서 제공하는 파라미터**
+        
         <ParamTree>
-          - `logo_url` <mark style="color:green;">**string**</mark>
+          - `CardSelect` <mark style="color:green;">**enum\[]**</mark>
 
-            **결제창에 삽입할 메인 로고 url**
+            **일부 렌더링할 결제방식 목록**
 
-            - 결제창 중앙 상단에 표시됩니다.
-            - 이미지 권장 사이즈는 89\*18 입니다.
+            특정 카드사로 구별되지 않는 결제수단을 지정할 때 사용합니다.
+            
+            - 해외카드 (VISA + MASTER + JCB) : `GLOBAL`
+            - 구인증 : `LEGACY_AUTH`
+            - 키인 : `KEY_IN`
 
-          - `logo_2nd` <mark style="color:green;">**string**</mark>
-
-            **결제창에 삽입할 서브 로고 url**
-
-            - 결제창 우측 상단에 표시됩니다.
-            - 이미지 권장 사이즈는 64\*13 입니다.
-
-          - `parentemail` <mark style="color:green;">**string**</mark>
-
-            **보호자 이메일 주소l**
-
-            - 14세 미만 고객의 경우 필수 입력입니다.
-            - "@", "." 외의 특수문자는 입력 불가합니다.
-
-          - `Ini_SSGPAY_MDN` <mark style="color:green;">**string**</mark>
-
-            **SSGPAY 결제요청 시 PUSH 전송 휴대폰번호**
-
-            - `-` 없이 숫자만 허용합니다.
-
-          - `acceptmethod` <mark style="color:green;">**string\[]**</mark>
-
-            **추가 옵션**
-
-            <ParamTree>
-              - 아래 string 중 원하는 옵션들을 골라 array 형태로 입력합니다.
-
-              - `SKIN(${string})` <mark style="color:green;">**string**</mark>
-
-                **결제창 색상**
-
-                - `string` 부분에는 `#`으로 시작하는 여섯자리 Hex 값을 입력합니다. (ex. `SKIN(#C1272C)`)
-
-              - `below1000` <mark style="color:green;">**string**</mark>
-
-                **(카드결제 & 간편결제 시) 1000원 미만 결제 허용 옵션**
-
-              - `ocb` <mark style="color:green;">**string**</mark>
-
-                **(카드결제 시) 카드 메인화면에 OCB 적립을 위한 카드번호 창 표시옵션 (별도 계약시 이용 가능)**
-
-              - `paypopup` <mark style="color:green;">**string**</mark>
-
-                **(카드결제 시) 안심클릭계열 신용카드 POPUP 형태 표시옵션**
-
-              - `hidebar` <mark style="color:green;">**string**</mark>
-
-                **(카드결제 시) 프로그레스바 미노출 옵션**
-
-              - `noeasypay` <mark style="color:green;">**string**</mark>
-
-                **(카드결제 시) 간편결제 미노출 옵션**
-
-              - `slimquota(${string})` <mark style="color:green;">**string**</mark>
-
-                **부분 무이자 설정 (별도 계약시 이용 가능)**
-
-                - `string` 부분에는 `코드-개월:개월^코드-개월:개월` 와 같은 형식으로 입력합니다. (ex. `slimquota(11-2:3^34-2:3)`)
-                - 카드사 코드는 [KPN 통합 코드](https://manual.inicis.com/pay/code.html) 페이지에서 "결제요청 시 카드코드" 섹션을 참고하시기 바랍니다.
-
-              - `mallpoint(${string})` <mark style="color:green;">**string**</mark>
-
-                **몰포인트 (별도 계약시 이용 가능)**
-
-                - `string` 부분에는 `카드코드:카드코드` 와 같은 형식으로 입력합니다. (ex. `mallpoint(11:34)`)
-                - 카드사 코드는 [KPN 통합 코드](https://manual.inicis.com/pay/code.html) 페이지에서 "결제요청 시 카드코드" 섹션을 참고하시기 바랍니다.
-            </ParamTree>
         </ParamTree>
-
-        **모바일용 파라미터**
-
-        <ParamTree>
-          - `P_CARD_OPTION` <mark style="color:green;">**string**</mark>
-
-            **신용카드 우선선택 옵션**
-
-            - 설정한 카드코드에 해당하는 카드가 선택된 채로 Display 됩니다.
-            - `selcode=카드코드` 형식으로 입력합니다. (ex. `selcode=14`)
-
-          - `P_MNAME` <mark style="color:green;">**string**</mark>
-
-            **가맹점 이름**
-
-          - `P_RESERVED` <mark style="color:green;">**string\[]**</mark>
-
-            **추가 옵션**
-
-            <ParamTree>
-              - 아래 string 중 원하는 옵션들을 골라 array 형태로 입력합니다.
-
-              - `below1000=Y` <mark style="color:green;">**string**</mark>
-
-                **(카드결제 & 간편결제 시) 1000원 미만 결제 허용 옵션**
-
-              - `noeasypay=Y` <mark style="color:green;">**string**</mark>
-
-                **(카드결제 시) 간편결제 미노출 옵션**
-
-              - `global_visa3d=Y` <mark style="color:green;">**string**</mark>
-
-                **해외카드 노출 옵션**
-
-              - `apprun_check=Y` <mark style="color:green;">**string**</mark>
-
-                **(android의 경우) custom url scheme 대신 intent schema(intent://) 호출**
-            </ParamTree>
-        </ParamTree>
-
-        - **bypass 예시 코드**
-
-        ```json
-        {
-            "bypass": {
-                "inicis_v2": {
-                    "logo_url": "https://portone.io/assets/portone.87061e94.avif",
-                    "logo_2nd": "https://admin.portone.io/assets/img/auth/lock.png",
-                    "parentemail": "parentemail",
-                    "Ini_SSGPAY_MDN": "01012341234",
-                    "acceptmethod": [ "SKIN(#C1272C)", "below1000", "ocb" ],
-                    "P_CARD_OPTION": "selcode=14",
-                    "P_NMANE": "포트원",
-                    "P_RESERVED": [ "below1000=Y", "noeasypay=Y" ]
-                }
-            }
-        }
-        ```
     </ParamTree>
 </ParamTree>
 
@@ -350,45 +181,25 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 #### 공통
 
 <Details>
-  <p slot="summary">PC와 모바일에서 파라미터 필수 여부가 상이합니다.</p>
+  <p slot="summary">`paymentId` 에는 영문 대소문자 및 숫자만 허용됩니다.</p>
 
-  위의 주요 파라미터 설명에도 안내되어 있듯이, PC 결제와 모바일 결제에서 필수 여부가 상이한 파라미터가 존재합니다. 아래 필드들은 PC 결제에서는 필수이지만, 모바일 결제에서는 선택입니다.
+  `paymentId` 에는 0-9,a-z,A-Z 의 문자만으로 이루어진 문자열만 입력할 수 있습니다.
 
-  - `customer.fullName` 혹은 `customer.firstName + customer.lastName`
-  - `customer.phoneNumber`
-  - `customer.email`
-</Details>
-
-<Details>
-  <p slot="summary">`paymentId` 에는 ASCII 문자만 허용됩니다.</p>
-
-  `paymentId` 에는 ASCII 문자만으로 이루어진 문자열만 입력할 수 있습니다.
-
-  ASCII 문자에 포함되지 않는 한글이나 `♤`, `♡`, `♧` 등의 특수 문자는 허용되지 않습니다.
-
-  입력 가능한 ASCII 문자의 종류는 [링크](https://www.ascii-code.com/) → `ASCII printable characters` 섹션을 참고하세요.
+  한글이나 `♤`, `♡`, `♧` 등의 특수 문자는 허용되지 않습니다.
 </Details>
 
 <Details>
   <p slot="summary">지원되는 결제창 언어</p>
 
   SDK를 통한 결제 요청 파라미터에는 결제창 언어를 지정할 수 있는 `locale` 파라미터가 존재합니다.
-  PC 결제의 경우 `KO_KR`, `EN_US`, `ZH_CN`을 지원하며, 모바일 결제의 경우 `KO_KR`, `EN_US`만을 지원합니다.
+  `KO_KR`, `EN_US` 를 지원합니다.
 </Details>
 
 <Details>
   <p slot="summary">지원되는 결제 통화</p>
 
   SDK를 통한 결제 요청 파라미터에는 결제 통화를 지정할 수 있는 `currency` 파라미터가 존재합니다.
-  KPN의 경우 `KRW`와 `USD`를 지원하며, 이 중 `USD`는 카드 결제일 경우에만 지정 가능합니다.
-</Details>
-
-<Details>
-  <p slot="summary">부가세, 면세금액 직접 지정을 위해서는 별도 계약이 필요합니다.</p>
-
-  SDK를 통한 결제 요청 파라미터에는 부가세를 지정할 수 있는 `vat` 파라미터와 면세 금액을 지정할 수 있는 `taxFreeAmount` 파라미터가 존재합니다.
-  KPN의 경우 부가세 및 면세금액을 직접 지정하기 위해서는 별도 계약이 필요합니다. 별도 계약이 되지 않은 상태에서 `vat`와 `taxFreeAmount`에 값을 지정해 결제를 요청하면
-  요청한 내용과 다른 금액으로 실결제가 발생할 수 있습니다.
+  KPN의 경우 SDK를 통한 결제 요청시, `KRW` 만을 지원합니다.
 </Details>
 
 <Details>
@@ -403,27 +214,13 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 #### 카드 결제
 
 <Details>
-  <p slot="summary">카드사 다이렉트 호출 시 할부 개월 수 옵션은 고정 할부 개월 수만 지원합니다.</p>
-
-  KPN 경우 **카드사 다이렉트 호출 시 할부 개월 수 옵션은** 고정 할부 개월 수만 지원합니다. 카드사 다이렉트 호출을 설정했으나 할부 개월 수 옵션을 `card.installment.monthOption.fixedMonth` 가 아닌
-  `card.installment.monthOption.availableMonthList`로 설정할 경우 에러가 발생합니다.
-</Details>
-
-<Details>
-  <p slot="summary">카드사 다이렉트 호출 시 지원하는 카드사 종류</p>
-
-  KPN의 경우 **포트원에서 관리하는 카드사 중 토스뱅크를 제외한 모든 카드사를 지원**합니다. 포트원에서 관리하는 카드사 목록을 확인하시려면
-  [JS SDK 결제요청 파라미터](/docs/ko/v2-payment/v2-sdk/payment-request) 페이지에서 `card` -> `cardCompany` 필드 설명을 참고해주세요.
-</Details>
-
-<Details>
   <p slot="summary">KPN에서 지원하지 않는 카드 관련 파라미터</p>
 
   KPN의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
   - `useAppCardOnly`: 앱카드만 허용할지 여부
-  - `useInstallment`: 할부 사용 여부. (KPN의 경우 `installment` 파라미터로 직접 설정 가능합니다.)
-  - `useFreeInterestFromMall`: 상점부담무이자 사용 여부. (KPN의 경우 `installment.freeInstallmentPlans` 파라미터로 직접 설정 가능합니다.)
+  - `useFreeInterestFromMall`: 상점부담무이자 사용 여부.
+  - `cardCompany`: 카드 다이렉트 호출시 카드사 값.
 </Details>
 
 #### 간편 결제
@@ -432,13 +229,11 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
   <p slot="summary">KPN에서 지원하는 간편결제사 종류</p>
 
   KPN의 경우 아래 간편결제사를 지원합니다. `easyPay.easyPayProvider` 파라미터에 아래 리스트 중 원하는 값을 입력하세요.
+  현제 네이버페이 다이렉트의 경우, 지원하지 않습니다.
 
   - 카카오페이: `KAKAOPAY`
   - 네이버페이: `NAVERPAY`
   - 삼성페이: `SAUMSUNGPAY`
-  - ssg페이: `SSGPAY`
-  - 애플페이: `APPLEPAY`
-  - lpay: `LPAY`
   - 토스페이: `TOSSPAY`
   - 페이코: `PAYCO`
 </Details>
@@ -448,12 +243,14 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 
   KPN의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
-  - `useCardPoint`: 카드사 포인트 사용 여부
   - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
-  - `availablePayMethod`: 간편결제 세부 결제수단 지정 렌더링 옵션
+  - `useCardPoint`: 카드사 포인트 사용 여부
+  - `useFreeInterestFromMall`: 상점부담무이자 사용 여부.
+  - `useInstallment`: 할부 사용 여부.
+  - `cashReceiptType`: 현금영수증 타입
+  - `installment`: 할부 설정
   - `availableCards`: 결제 수단으로써 사용 허가할 카드사 리스트
-  - `useInstallment`: 할부 사용 여부. (KPN의 경우 `installment` 파라미터로 직접 설정 가능합니다.)
-  - `useFreeInterestFromMall`: 상점부담무이자 사용 여부. (KPN의 경우 `installment.freeInstallmentPlans` 파라미터로 직접 설정 가능합니다.)
+  - `availablePayMethod`: 간편결제 세부 결제수단 지정 렌더링 옵션
 </Details>
 
 #### 계좌이체
@@ -479,20 +276,6 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
   - `fixedOption`: 고정식 가상계좌 옵션. (KPN의 경우 API를 통해서만 고정식 가상계좌 발급이 가능합니다.)
 </Details>
 
-#### 상품권 결제
-
-<Details>
-  <p slot="summary">KPN에서 지원하는 상품권 종류 및 필수 여부</p>
-
-  KPN 모바일 결제의 경우 `giftCertificateType`을 필수로 입력해야 하며, PC 결제의 경우는 선택 사항입니다.
-  PC 결제에서 해당 파라미터를 입력하지 않을 경우 결제창 내에서 상품권 종류를 선택할 수 있습니다. KPN에서 지원하는 상품권 종류는 아래와 같습니다.
-
-  - 도서문화상품권: `BOOKNLIFE`
-  - 스마트문상: `SMART_MUNSANG`
-  - 컬쳐랜드 문화상품권: `CULTURELAND`
-  - 해피머니: `HAPPYMONEY`
-</Details>
-
 #### 휴대폰 소액 결제
 
 <Details>
@@ -503,17 +286,12 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 </Details>
 
 <Details>
-  <p slot="summary">결제창에 노출될 통신사 리스트 지정 옵션 지원 여부</p>
-
-  KPN 모바일 결제의 경우 `availableCarriers` 필드를 통해 결제창에 노출될 통신사 리스트를 지정할 수 있습니다. PC에서는 해당 파라미터를 지원하지 않습니다.
-</Details>
-
-<Details>
   <p slot="summary">KPN에서 지원하지 않는 휴대폰 소액결제 관련 파라미터</p>
 
   KPN의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
   - `carrier`: 휴대폰 소액결제 통신사 바로 호출을 위한 통신사 구분 값
+  - `availableCarriers`: 결제창에 노출될 통신사 리스트 지정 옵션
 </Details>
 
 ### SDK 빌링키 발급 요청하기
@@ -535,9 +313,8 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
         issueId: "test-issueId",
         issueName: "test-issueName",
         customer: {
+          customerId: "uniqueCustomerId",
           fullName: "포트원",
-          phoneNumber: "010-0000-1234",
-          email: "test@portone.io",
         },
       });
     }
@@ -568,24 +345,16 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     KPN는 빌링키 발급 수단으로 카드만을 지원하므로 해당 파라미터는 `CARD`로 고정해야 합니다.
 
-  - `issueId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-    **빌링키 발급 건 고유 ID**
-
-    - 고객사에서 채번하여 사용해야 합니다.
-    - KPN의 경우 필수 입력해야 합니다.
-
-  - `issueName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-    **빌링키 발급 시 결제창에 표시되는 제목**
-
-    - KPN의 경우 필수 입력해야 합니다.
-
   - `customer` <mark style="color:blue;">**object**</mark>
 
     **고객 정보**
 
     <ParamTree>
+      - `customerId` <mark style="color:green;">**string**</mark>
+        **구매자 고유 ID**
+
+        - KPN의 경우 구매자 ID를 필수로 입력해야 합니다.
+
       - `fullName` <mark style="color:green;">**string**</mark>
 
         **구매자 전체 이름**
@@ -603,97 +372,23 @@ KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
         **구매자 성**
 
         - KPN의 경우 fullName 혹은 (firstName + lastName)을 필수로 입력해야 합니다.
-
-      - `phoneNumber` <mark style="color:green;">**string**</mark>
-
-        **구매자 연락처**
-
-        - KPN의 PC 빌링키 발급의 경우 필수로 입력해야 합니다. (모바일인 경우에는 optional)
-
-      - `email` <mark style="color:green;">**string**</mark>
-
-        **구매자 이메일**
-
-        - KPN의 PC 빌링키 발급의 경우 필수로 입력해야 합니다. (모바일인 경우에는 optional)
-    </ParamTree>
-
-  - `offerPeriod` <mark style="color:blue;">**object**</mark>
-
-    **제공 기간**
-
-    - KPN 모바일 빌링키 발급의 경우 필수로 입력해야 합니다. (PC인 경우에는 optional)
-
-  - `bypass` <mark style="color:blue;">**oneof object**</mark>
-
-    **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
-
-    <ParamTree>
-      - `inicis_v2` <mark style="color:blue;">**object**</mark>
-
-        **KPN에서 제공하는 파라미터 모음**
-
-        <ParamTree>
-          - `carduse` <mark style="color:green;">**'percard' | 'cocard'**</mark>
-
-            **개인/법인카드 사용 선택 옵션**
-
-            - 모바일에서만 동작하는 파라미터입니다.
-            - 'percard' 혹은 'cocard'를 입력할 수 있습니다.
-            - 'percard' 입력 시 개인 카드로만 결제를 진행할 수 있으며, 'cocard' 입력 시 법인 카드로만 결제를 진행 할 수 있습니다.
-        </ParamTree>
     </ParamTree>
 </ParamTree>
 
 ### SDK 빌링키 발급 - 유의사항
 
 <Details>
-  <p slot="summary">PC와 모바일에서 파라미터 필수 여부가 상이합니다.</p>
-
-  위의 주요 파라미터 설명에도 안내되어 있듯이, PC 빌링키 발급과 모바일 빌링키 발급에서 필수 여부가 상이한 파라미터가 존재합니다.
-
-  아래 필드들은 PC에서는 필수이지만, 모바일에서는 선택입니다.
-
-  - `customer.fullName` 혹은 `customer.firstName + customer.lastName`
-  - `customer.phoneNumber`
-  - `customer.email`
-
-  아래 필드들은 모바일에서는 필수이지만, PC에서는 선택입니다.
-
-  - `offerPeriod`
-</Details>
-
-<Details>
-  <p slot="summary">`issueId` 에는 ASCII 문자만 허용됩니다.</p>
-
-  `issueId` 에는 ASCII 문자만으로 이루어진 문자열만 입력할 수 있습니다.
-
-  ASCII 문자에 포함되지 않는 한글이나 `♤`, `♡`, `♧` 등의 특수 문자는 허용되지 않습니다.
-
-  입력 가능한 ASCII 문자의 종류는 [링크](https://www.ascii-code.com/) → `ASCII printable characters` 섹션을 참고하세요.
-</Details>
-
-<Details>
   <p slot="summary">`offerPeriod` 파라미터 제약 사항</p>
 
   SDK를 통한 빌링키 발급 요청 파라미터에는 제공 기간을 나타내는 `offerPeriod` 파라미터가 존재합니다.
-  날짜 범위를 입력하는 방식(`range`)과 간격을 입력하는 방식(`interval`) 중 하나를 선택하여 입력할 수 있습니다.
-
-  - `range` 방식으로 입력할 경우 `from`과 `to` 모두를 입력하셔야 하, `from`은 `to`보다 과거 시간이어야 합니다.
-  - `interval` 방식으로 입력할 경우는 `1m` 또는 `1y`만 허용됩니다. `1m`를 입력할 경우 `월 정기결제`, `1y`를 입력할 경우 `연 정기결제` 로 빌링키 발급 창에 노출됩니다.
+  KPN은 날짜 범위를 입력하는 방식(`range`) 만 지원합니다.
 </Details>
 
 <Details>
   <p slot="summary">지원되는 결제창 언어</p>
 
   SDK를 통한 빌링키 발급 요청 파라미터에는 결제창 언어를 지정할 수 있는 `locale` 파라미터가 존재합니다.
-  PC 빌링키 발급의 경우 `KO_KR`, `EN_US`, `ZH_CN`을 지원하며, 모바일 빌링키 발급의 경우 해당 파라미터를 지원하지 않고 항상 한국어로 노출됩니다.
-</Details>
-
-<Details>
-  <p slot="summary">지원되는 결제 통화</p>
-
-  SDK를 통한 빌링키 발급 요청 파라미터에는 displayAmount에 대한 통화를 지정할 수 있는 `currency` 파라미터가 존재합니다.
-  PC 빌링키 발급의 경우 `KRW`와 `USD`를 지원하며, 모바일 빌링키 발급의 경우 `KRW`만 지원합니다.
+  KPN 빌링키 발급의 경우 `KO_KR`, `EN_US`을 지원합니다.
 </Details>
 
 <Details>
