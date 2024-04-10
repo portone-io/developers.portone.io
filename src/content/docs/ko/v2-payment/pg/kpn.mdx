@@ -1,6 +1,6 @@
 ---
-title: KPN
-description: KPN 연동 가이드를 확인합니다.
+title: 한국 결제 네트웍스(KPN)
+description: 한국 결제 네트웍스(KPN) 연동 가이드를 확인합니다.
 ---
 
 import Details from "~/components/gitbook/Details.astro";
@@ -14,7 +14,7 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 
 #### 사전 계약 안내
 
-아래 기능을 사용하시려면 KPN에 사전 신청 후 계약이 완료되어야 합니다.
+아래 기능을 사용하시려면 한국 결제 네트웍스(KPN)에 사전 신청 후 계약이 완료되어야 합니다.
 그렇지 않은 상태에서 해당 기능 이용시 결제 승인에 실패하거나,
 승인에 성공하더라도 의도한 바와는 다른 응답(ex. 결제창에서 에스크로 결제를 했으나 비-에스크로 결제 응답을 받음)을 얻게 될 수 있으니 주의해주시기 바랍니다.
 
@@ -67,9 +67,9 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 ### SDK 결제 요청하기
 
 결제 요청 시에는 `requestPayment` 함수를 호출해야 합니다.
-`channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 KPN 채널 사용을 명시해주세요.
+`channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 한국 결제 네트웍스(KPN) 채널 사용을 명시해주세요.
 
-KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
+한국 결제 네트웍스(KPN) 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ```typescript title="SDK 결제 요청"
 import * as PortOne from "@portone/browser-sdk/v2";
@@ -142,9 +142,9 @@ function requestPayment() {
     **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
     <ParamTree>
-      - `kpn` <mark style="color:blue;">**object**</mark>
+      - `한국 결제 네트웍스(KPN)` <mark style="color:blue;">**object**</mark>
 
-        **KPN에서 제공하는 파라미터**
+        **한국 결제 네트웍스(KPN)에서 제공하는 파라미터**
 
         <ParamTree>
           - `CardSelect` <mark style="color:green;">**enum\[]**</mark>
@@ -173,24 +173,27 @@ function requestPayment() {
 </Details>
 
 <Details>
-  <p slot="summary">지원되는 결제창 언어</p>
+  <p slot="summary">결제창 표시 언어는 한국어 및 영어만 지원합니다.</p>
 
-  SDK를 통한 결제 요청 파라미터에는 결제창 언어를 지정할 수 있는 `locale` 파라미터가 존재합니다.
-  `KO_KR`, `EN_US` 를 지원합니다.
+  SDK를 통한 빌링키 발급 요청 시 locale 파라미터를 사용하여 결제창 내에 언어를 제어할 수 있습니다.
+  한국 결제 네트웍스의 경우 한국어 및 영어만 지원합니다.
+
+  한국어 : `KO_KR`
+  영어 : `EN_US`
 </Details>
 
 <Details>
   <p slot="summary">지원되는 결제 통화</p>
 
   SDK를 통한 결제 요청 파라미터에는 결제 통화를 지정할 수 있는 `currency` 파라미터가 존재합니다.
-  KPN의 경우 SDK를 통한 결제 요청시, `KRW` 만을 지원합니다.
+  한국 결제 네트웍스(KPN)의 경우 SDK를 통한 결제 요청시, `KRW` 만을 지원합니다.
 </Details>
 
 <Details>
-  <p slot="summary">KPN에서 지원하는 현금영수증 발급 유형</p>
+  <p slot="summary">한국 결제 네트웍스(KPN)에서 지원하는 현금영수증 발급 유형</p>
 
   현금영수증은 현금성 거래인 실시간 계좌이체 및 가상계좌 발급 시 사용이 가능합니다.
-  KPN의 경우 현금영수증 발급 유형을 `CORPORATE` 혹은 `PERSONAL` 등 파라미터로 제어할 수 없습니다.
+  한국 결제 네트웍스(KPN)의 경우 현금영수증 발급 유형을 `CORPORATE` 혹은 `PERSONAL` 등 파라미터로 제어할 수 없습니다.
   어떤 유형의 현금영수증을 발행할지는 항상 결제창 내에서 선택 가능하며, 결제창 호출 파라미터로는 현금영수증을 발행 여부만을 제어할 수 있습니다.
   `cashReceiptType` 파라미터를 `ANONYMOUS`로 설정 시 결제창에서 현금영수증 발급 UI가 미노출됩니다.
 </Details>
@@ -205,7 +208,7 @@ function requestPayment() {
 <Details>
   <p slot="summary">가상계좌 사용 시 입금통보 URL 별도 설정 필요</p>
 
-  KPN의 경우, 가상계좌를 사용하는 경우 입금통보 URL을 별도로 설정해야 합니다.
+  한국 결제 네트웍스(KPN)의 경우, 가상계좌를 사용하는 경우 입금통보 URL을 별도로 설정해야 합니다.
 
   자세한 내용은 [가상계좌 입금통보 URL 설정 가이드](/docs/ko/result/notice?v=v2#notice-config-kpn)를
   참조해 주세요.
@@ -214,7 +217,7 @@ function requestPayment() {
 <Details>
   <p slot="summary">가상계좌 지원 은행 리스트</p>
 
-  KPN에서 가상계좌 발급이 가능한 은행 리스트는 아래와 같습니다.
+  한국 결제 네트웍스(KPN)에서 가상계좌 발급이 가능한 은행 리스트는 아래와 같습니다.
 
   은행코드는 [BANK ENUM](https://developers.portone.io/api/rest-v2/type-def#Bank)으로 정의되어 있으며
   아래 목록에 대한 ENUM 코드를 매핑하여 API에 사용하실 수 있습니다.
@@ -238,9 +241,9 @@ function requestPayment() {
 #### 카드 결제
 
 <Details>
-  <p slot="summary">KPN에서 지원하지 않는 카드 관련 파라미터</p>
+  <p slot="summary">한국 결제 네트웍스(KPN)에서 지원하지 않는 카드 관련 파라미터</p>
 
-  KPN의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  한국 결제 네트웍스(KPN)의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
   - `useAppCardOnly`: 앱카드만 허용할지 여부
   - `useFreeInterestFromMall`: 상점부담무이자 사용 여부
@@ -250,10 +253,9 @@ function requestPayment() {
 #### 간편 결제
 
 <Details>
-  <p slot="summary">KPN에서 지원하는 간편결제사 종류</p>
+  <p slot="summary">한국 결제 네트웍스(KPN)에서 지원하는 간편결제사 종류</p>
 
-  KPN의 경우 아래 간편결제사를 지원합니다. `easyPay.easyPayProvider` 파라미터에 아래 리스트 중 원하는 값을 입력하세요.
-  단, 현재 네이버페이 다이렉트 호출은 지원되지 않습니다.
+  한국 결제 네트웍스(KPN)의 경우 아래 간편결제사를 지원합니다. `easyPay.easyPayProvider` 파라미터에 아래 리스트 중 원하는 값을 입력하세요.
 
   - 카카오페이: `KAKAOPAY`
   - 네이버페이: `NAVERPAY`
@@ -263,9 +265,15 @@ function requestPayment() {
 </Details>
 
 <Details>
-  <p slot="summary">KPN에서 지원하지 않는 간편결제 관련 파라미터</p>
+  <p slot="summary">네이버페이 다이렉트 호출 미지원</p>
 
-  KPN의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  한국 결제 네트웍스(KPN)의 경우, 현재 네이버페이 다이렉트 호출은 지원하지 않습니다.
+</Details>
+
+<Details>
+  <p slot="summary">한국 결제 네트웍스(KPN)에서 지원하지 않는 간편결제 관련 파라미터</p>
+
+  한국 결제 네트웍스(KPN)의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
   - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
   - `useCardPoint`: 카드사 포인트 사용 여부
@@ -280,9 +288,9 @@ function requestPayment() {
 #### 계좌이체
 
 <Details>
-  <p slot="summary">KPN에서 지원하지 않는 계좌이체 관련 파라미터</p>
+  <p slot="summary">한국 결제 네트웍스(KPN)에서 지원하지 않는 계좌이체 관련 파라미터</p>
 
-  KPN의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  한국 결제 네트웍스(KPN)의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
   - `bankCode`: 계좌이체 은행 다이렉트 호출 시 은행 코드
   - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
@@ -291,9 +299,9 @@ function requestPayment() {
 #### 가상계좌 결제
 
 <Details>
-  <p slot="summary">KPN에서 지원하지 않는 가상계좌 관련 파라미터</p>
+  <p slot="summary">한국 결제 네트웍스(KPN)에서 지원하지 않는 가상계좌 관련 파라미터</p>
 
-  KPN의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  한국 결제 네트웍스(KPN)의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
   - `bankCode`: 가상계좌 은행 다이렉트 호출 시 은행 코드
   - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
@@ -305,14 +313,14 @@ function requestPayment() {
 <Details>
   <p slot="summary">`productType` 파라미터는 필수 입력해야 합니다.</p>
 
-  - KPN의 경우 **휴대폰 소액결제 시 상품 유형을 구분짓는 `productType` 파라미터를 필수**로 입력해야 합니다.
+  - 한국 결제 네트웍스(KPN)의 경우 **휴대폰 소액결제 시 상품 유형을 구분짓는 `productType` 파라미터를 필수**로 입력해야 합니다.
   - `productType`의 값은 `PRODUCT_TYPE_REAL` 또는 `PRODUCT_TYPE_DIGITAL`를 입력해야 합니다.
 </Details>
 
 <Details>
-  <p slot="summary">KPN에서 지원하지 않는 휴대폰 소액결제 관련 파라미터</p>
+  <p slot="summary">한국 결제 네트웍스(KPN)에서 지원하지 않는 휴대폰 소액결제 관련 파라미터</p>
 
-  KPN의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  한국 결제 네트웍스(KPN)의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
   - `carrier`: 휴대폰 소액결제 통신사 바로 호출을 위한 통신사 구분 값
   - `availableCarriers`: 결제창에 노출될 통신사 리스트 지정 옵션
@@ -321,9 +329,9 @@ function requestPayment() {
 ### SDK 빌링키 발급 요청하기
 
 빌링키 발급 요청 시에는 `requestIssueBillingKey` 함수를 호출해야 합니다.
-`channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 KPN 채널 사용을 명시해주세요.
+`channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 한국 결제 네트웍스(KPN) 채널 사용을 명시해주세요.
 
-KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
+한국 결제 네트웍스(KPN) 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ```typescript title="SDK 빌링키 발급 요청"
 import * as PortOne from "@portone/browser-sdk/v2";
@@ -361,7 +369,7 @@ function requestIssueBillingKey() {
 
     **빌링키 발급수단**
 
-    KPN는 빌링키 발급 수단으로 카드만을 지원하므로 해당 파라미터는 `CARD`로 고정해야 합니다.
+    한국 결제 네트웍스(KPN)는 빌링키 발급 수단으로 카드만을 지원하므로 해당 파라미터는 `CARD`로 고정해야 합니다.
 
   - `customer` <mark style="color:blue;">**object**</mark>
 
@@ -371,49 +379,54 @@ function requestIssueBillingKey() {
       - `customerId` <mark style="color:green;">**string**</mark>
         **구매자 고유 ID**
 
-        - KPN의 경우 구매자 ID를 필수로 입력해야 합니다.
+        - 한국 결제 네트웍스(KPN)의 경우 구매자 ID를 필수로 입력해야 합니다.
 
       - `fullName` <mark style="color:green;">**string**</mark>
 
         **구매자 전체 이름**
 
-        - KPN의 경우 `fullName` 혹은 (`firstName` + `lastName`)을 필수로 입력해야 합니다.
+        - 한국 결제 네트웍스(KPN)의 경우 `fullName` 혹은 (`firstName` + `lastName`)을 필수로 입력해야 합니다.
 
       - `firstName` <mark style="color:green;">**string**</mark>
 
         **구매자 이름**
 
-        - KPN의 경우 `fullName` 혹은 (`firstName` + `lastName`)을 필수로 입력해야 합니다.
+        - 한국 결제 네트웍스(KPN)의 경우 `fullName` 혹은 (`firstName` + `lastName`)을 필수로 입력해야 합니다.
 
       - `lastName` <mark style="color:green;">**string**</mark>
 
         **구매자 성**
 
-        - KPN의 경우 `fullName` 혹은 (`firstName` + `lastName`)을 필수로 입력해야 합니다.
+        - 한국 결제 네트웍스(KPN)의 경우 `fullName` 혹은 (`firstName` + `lastName`)을 필수로 입력해야 합니다.
     </ParamTree>
 </ParamTree>
 
 ### SDK 빌링키 발급 - 유의사항
 
 <Details>
-  <p slot="summary">`offerPeriod` 파라미터 제약 사항</p>
+  <p slot="summary">offerPeriod 파라미터는 range형식만 가능합니다.</p>
 
-  SDK를 통한 빌링키 발급 요청 파라미터에는 제공 기간을 나타내는 `offerPeriod` 파라미터가 존재합니다.
-  KPN은 날짜 범위를 입력하는 방식(`range`)만 지원합니다.
+  SDK를 통한 빌링키 발급 요청 시 offerPeriod 파라미터를 사용하여 결제창 내에 제공 기간을 표시할 수 있습니다.
+  해당 파라미터는 range형태로만 입력 가능합니다.
+  
+  구체적인 형식은 SDK 가이드를 참고해주세요.
 </Details>
 
 <Details>
-  <p slot="summary">지원되는 결제창 언어</p>
+  <p slot="summary">결제창 표시 언어는 한국어 및 영어만 지원합니다.</p>
 
-  SDK를 통한 빌링키 발급 요청 파라미터에는 결제창 언어를 지정할 수 있는 `locale` 파라미터가 존재합니다.
-  KPN 빌링키 발급의 경우 `KO_KR`, `EN_US`을 지원합니다.
+  SDK를 통한 빌링키 발급 요청 시 locale 파라미터를 사용하여 결제창 내에 언어를 제어할 수 있습니다.
+  한국 결제 네트웍스의 경우 한국어 및 영어만 지원합니다.
+
+  한국어 : `KO_KR`
+  영어 : `EN_US`
 </Details>
 
 <Details>
   <p slot="summary">카드사 다이렉트 호출을 지원하지 않습니다.</p>
 
-  KPN 경우 카드사 다이렉트 호출을 통한 빌링키 발급을 지원하지 않습니다.
-  `card.cardCompany` 필드에 값을 채워도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.
+  한국 결제 네트웍스(KPN) 경우 빌링키 발급 시 카드사 다이렉트 호출 기능을 지원하지 않습니다.
+  `card.cardCompany` 필드에 값을 입력한 후 빌링키 발급을 요청한 경우에도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.
 </Details>
 
 ### API 수기(키인) 결제 요청하기
@@ -548,7 +561,7 @@ const issueResponse = await axios({
 
                 - 회전식 가상계좌 : `NORMAL`
 
-                KPN의 경우 **회전식 가상계좌**(`NORMAL`)만 지원합니다.
+                한국 결제 네트웍스(KPN)의 경우 **회전식 가상계좌**(`NORMAL`)만 지원합니다.
 
                 회전식 가상계좌는 일반적으로 사용되는 방식이며 PG사에서 직접 채번한 가상계좌번호를 사용합니다.
             </ParamTree>
@@ -649,7 +662,7 @@ const issueResponse = await axios({
 
 빌링키를 발급하기 위해서는 `POST /billing-keys` API를 이용하여 빌링키 발급을 요청해야 합니다.
 
-KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
+한국 결제 네트웍스(KPN) 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ```typescript title="API 빌링키 발급 요청"
 const issueResponse = await axios({
@@ -734,7 +747,7 @@ const issueResponse = await axios({
 
         **고객 이름**
 
-        - KPN의 경우 full 혹은 separated를 필수로 입력해야 합니다.
+        - 한국 결제 네트웍스(KPN)의 경우 full 혹은 separated를 필수로 입력해야 합니다.
 
           <ParamTree>
             - `full` <mark style="color:green;">**string**</mark>
@@ -766,7 +779,7 @@ const issueResponse = await axios({
 
 발급된 빌링키로 단건 결제를 진행하려면 `POST /payments/${PAYMENT_ID_HERE}/billing-key` API를 이용하여 결제를 요청하실 수 있습니다.
 
-KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
+한국 결제 네트웍스(KPN) 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ```typescript title="API 빌링키 단건 결제"
 const response = await axios({
@@ -877,7 +890,7 @@ const response = await axios({
 
 예약 결제를 진행하려면 `POST /payments/${PAYMENT_ID_HERE}/schedule` API를 이용하여 결제를 예약하실 수 있습니다.
 
-KPN 기준으로 작성한 예시 코드는 아래와 같습니다.
+한국 결제 네트웍스(KPN) 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ```typescript title="API 예약/반복 결제"
 const response = await axios({
@@ -963,7 +976,7 @@ const response = await axios({
 
         **고객 이름**
 
-        - KPN의 경우 full 혹은 separated를 필수로 입력해야 합니다.
+        - 한국 결제 네트웍스(KPN)의 경우 full 혹은 separated를 필수로 입력해야 합니다.
 
           <ParamTree>
             - `full` <mark style="color:green;">**string**</mark>
@@ -1000,9 +1013,9 @@ const response = await axios({
 #### 공통
 
 <Details>
-  <p slot="summary">KPN 필수 파라미터</p>
+  <p slot="summary">한국 결제 네트웍스(KPN) 필수 파라미터</p>
 
-  KPN의 경우에는 빌링키 발급 시 아래의 파라미터를 필수로 입력해야 합니다.
+  한국 결제 네트웍스(KPN)의 경우에는 빌링키 발급 시 아래의 파라미터를 필수로 입력해야 합니다.
 
   - `customer.name.full` 혹은 `customer.name.separated`
 
@@ -1014,45 +1027,45 @@ const response = await axios({
 
   API를 통한 수기(키인) 결제 요청 파라미터에는 카드의 상세 정보를 입력하는 필드가 존재합니다.
 
-  KPN의 경우 카드 번호 + 유효기간 만으로 결제가 가능하나, 일부 고객사의 경우 생년월일 + 비밀번호 앞 두 자리를 추가적으로 입력해야 하는 경우도 있습니다.
+  한국 결제 네트웍스(KPN)의 경우 카드 번호 + 유효기간 만으로 결제가 가능하나, 일부 고객사의 경우 생년월일 + 비밀번호 앞 두 자리를 추가적으로 입력해야 하는 경우도 있습니다.
 
-  자세한 내용은 KPN 담당자에게 문의해주시기 바랍니다.
+  자세한 내용은 한국 결제 네트웍스(KPN) 담당자에게 문의해주시기 바랍니다.
 </Details>
 
 <Details>
-  <p slot="summary">부가세 지정 금액 불가</p>
+  <p slot="summary">부가세 금액을 지정할 수 없습니다.</p>
 
-  KPN의 경우 결제 시 부가세액을 직접 지정할 수 없습니다.
+  한국 결제 네트웍스(KPN)의 경우 결제 시 부가세액을 직접 지정할 수 없습니다.
 
-  따라서, 결제 요청 파라미터에 VAT(부가세)를 지정하시더라도 해당 값은 무시되며, 결제 금액에 대한 부가세는 KPN에서 자동으로 계산됩니다.
+  따라서, 결제 요청 파라미터에 VAT(부가세)를 지정하시더라도 해당 값은 무시되며, 결제 금액에 대한 부가세는 한국 결제 네트웍스(KPN)에서 자동으로 계산됩니다.
 
   그러나 결제 요청 파라미터에 부가세를 지정하시게 되면 결제 조회 시 요청 파라미터에 입력한 값이 응답으로 내려가므로, 부가세를 지정하지 않는 것을 권장합니다.
 </Details>
 
 <Details>
-  <p slot="summary">지원되는 결제 통화</p>
+  <p slot="summary">결제 통화는 KRW, USD만 지원됩니다.</p>
 
   API를 통한 수기(키인) 결제 요청 파라미터에는 결제 통화를 지정할 수 있는 `currency` 파라미터가 존재합니다.
 
-  KPN의 경우 `KRW`와 `USD`를 지원하며, 이 중 `USD`는 해외 카드일 때 지정 가능합니다.
+  한국 결제 네트웍스(KPN)의 경우 `KRW`와 `USD`를 지원하며, 이 중 `USD`는 해외 카드일 때 지정 가능합니다.
 
   결제는 1센트 단위로 가능하지만, 매입사에 따라 결제 취소는 1달러 이상부터 가능할 수 있습니다.
 
-  자세한 내용은 KPN 담당자에게 문의해주시기 바랍니다.
+  자세한 내용은 한국 결제 네트웍스(KPN) 담당자에게 문의해주시기 바랍니다.
 </Details>
 
 <Details>
-  <p slot="summary">가상계좌 에스크로 결제 불가</p>
+  <p slot="summary">API 가상계좌 발급 시 에스크로 결제가 불가능합니다.</p>
 
-  KPN의 경우, API 수기(키인) 결제를 통한 가상계좌 발급 시 에스크로 결제를 진행할 수 없습니다.
+  한국 결제 네트웍스(KPN)의 경우, API 수기(키인) 결제를 통한 가상계좌 발급 시 에스크로 결제를 진행할 수 없습니다.
 
   결제창 방식에서는 가상계좌 에스크로 결제가 가능합니다.
 </Details>
 
 <Details>
-  <p slot="summary">결제 취소 시 환불서비스 MID 설정 필요</p>
+  <p slot="summary">결제 취소 시 MID에 환불서비스 설정을 해야합니다.</p>
 
-  KPN의 경우, 계좌 환불의 형태로 결제를 취소하려면 별도 설정을 진행해야 합니다.
+  한국 결제 네트웍스(KPN)의 경우, 계좌 환불의 형태로 결제를 취소하려면 별도 설정을 진행해야 합니다.
 
   일반적으로 아래와 같은 경우에 대해 계좌 환불 서비스 신청이 필요합니다.
 
@@ -1062,5 +1075,5 @@ const response = await axios({
 
   또한, 위 환불 서비스를 이용할 경우에는 결제 취소 시 환불 계좌 정보를 필수적으로 입력해야 합니다.
 
-  자세한 내용은 KPN 담당자에게 문의해주시기 바랍니다.
+  자세한 내용은 한국 결제 네트웍스(KPN) 담당자에게 문의해주시기 바랍니다.
 </Details>
