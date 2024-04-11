@@ -5,6 +5,7 @@ import type { Operation } from "../../../schema-utils/operation";
 import Err from "./Err";
 import Req from "./Req";
 import ResComponent, { type Res } from "./Res";
+import ResExample from "./ResExample";
 
 export interface TryProps {
   apiHost: string;
@@ -20,7 +21,7 @@ export default function Try(props: TryProps) {
   const resSignal = useSignal<Res | undefined>(undefined);
   return (
     <div
-      class={`grid flex-1 grid-rows-2 gap-3 ${
+      class={`grid flex-1 grid-rows-3 gap-3 ${
         waiting ? "pointer-events-none opacity-50" : ""
       }`}
     >
@@ -41,6 +42,7 @@ export default function Try(props: TryProps) {
         }
       />
       {err ? <Err>{err}</Err> : <ResComponent resSignal={resSignal} />}
+      <ResExample operation={props.operation} />
     </div>
   );
 }
