@@ -120,7 +120,8 @@ export function getInitialJsonText(
 }
 
 function getDefaultValue(_schema: unknown, param: Parameter): unknown {
-  const type = param.type || "object";
+  if (param.example) return param.example;
+  const type = param.type ? param.type : param.schema?.type || "object";
   if (type === "boolean") return false;
   if (type === "number" || type === "integer") return 0;
   if (type === "string") return "";
