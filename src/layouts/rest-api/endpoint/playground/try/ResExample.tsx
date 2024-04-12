@@ -1,15 +1,11 @@
-import type { Operation } from "~/layouts/rest-api/schema-utils/operation";
-
 import JsonViewer from "../../../editor/JsonViewer";
 import Card from "../Card";
 
 export interface ResExampleProps {
-  operation: Operation;
+  example: { [key: string]: unknown };
 }
 
-export default function ResExample({ operation }: ResExampleProps) {
-  const example =
-    operation.responses?.["200"]?.content?.["application/json"]?.example;
+export default function ResExample({ example }: ResExampleProps) {
   return (
     <Card title={`Response Example`}>
       {example ? (
