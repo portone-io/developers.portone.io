@@ -124,7 +124,7 @@ function getDefaultValue(_schema: unknown, param: Parameter): unknown {
   const type = param.type ? param.type : param.schema?.type || "object";
   if (type === "boolean") return false;
   if (type === "number" || type === "integer") return 0;
-  if (type === "string") return "";
+  if (type === "string") return param.name;
   if (type === "object") return {};
   if (type === "array") return [];
   return null;
