@@ -60,7 +60,10 @@ export default {
     "remark-lint-table-pipe-alignment",
     "remark-lint-table-pipes",
     ["remark-lint-unordered-list-marker-style", "-"],
-    ["remark-lint-local-links-valid", { baseDir: "./src/content" }],
+    [
+      "remark-lint-local-links-valid",
+      { baseDir: "./src/content", excludePaths: ["/api"] },
+    ],
   ],
   settings: {
     bullet: "-",

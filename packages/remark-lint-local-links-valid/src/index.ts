@@ -6,6 +6,7 @@ import { visit } from "unist-util-visit";
 
 interface LintOptions {
   baseDir: string;
+  excludePaths?: string[];
 }
 
 const remarkLintLocalLinksValid = lintRule(
@@ -16,6 +17,8 @@ const remarkLintLocalLinksValid = lintRule(
     }
     const baseDir = path.resolve(options.baseDir);
     const filePath = path.resolve(file.cwd, file.history[0] || "");
+    const excludePaths =
+      options.excludePaths?.map((p) => path.join(baseDir, p)) || [];
 
     const tasks: Promise<void>[] = [];
     visit(tree, (node) => {
@@ -31,6 +34,9 @@ const remarkLintLocalLinksValid = lintRule(
           absPath = path.join(baseDir, url);
         } else {
           absPath = path.join(path.dirname(filePath), url);
+        }
+        if (excludePaths.some((p) => absPath.startsWith(p))) {
+          return;
         }
         if (path.extname(absPath) !== "") {
           file.message("Local link should not have an extension", node);
