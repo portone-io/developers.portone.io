@@ -5,9 +5,7 @@ import { readFileSync } from "node:fs";
 import { load } from "js-yaml";
 import stringWidth from "string-width";
 
-const redirects = load(
-  readFileSync("../../src/content/docs/_redir.yaml", "utf8"),
-);
+const redirects = load(readFileSync("./src/content/docs/_redir.yaml", "utf8"));
 
 export default {
   plugins: [
