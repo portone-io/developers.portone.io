@@ -71,8 +71,7 @@ const t = lang === "ko" ? ko : en;
         class={clsx(
           "flex gap-6 md:h-full items-center",
           navAsMenu
-            ? // prettier-ignore
-              "nav-as-menu <md:(absolute inset-x-0 bottom-0 py-4 transition-transform transform duration-300 flex-col bg-white data-[open]:(translate-y-full shadow-lg))>"
+            ? "nav-as-menu <md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white data-[open]:(translate-y-full shadow-lg))>"
             : "<md:hidden",
         )}
       >
@@ -89,15 +88,32 @@ const t = lang === "ko" ? ko : en;
             },
           ]}
         >
-          API & SDK
+          <span
+            class={clsx(Astro.url.pathname.startsWith("/api") && "nav-active")}
+          >
+            API & SDK
+          </span>
         </Dropdown>
         {
           lang === "ko" && [
             <a class="h-full inline-flex items-center" href="/release-notes">
-              릴리즈 노트
+              <span
+                class={clsx(
+                  Astro.url.pathname.startsWith("/release-notes") &&
+                    "nav-active",
+                )}
+              >
+                릴리즈 노트
+              </span>
             </a>,
             <a class="h-full inline-flex items-center" href="/blog">
-              기술 블로그
+              <span
+                class={clsx(
+                  Astro.url.pathname.startsWith("/blog") && "nav-active",
+                )}
+              >
+                기술 블로그
+              </span>
             </a>,
           ]
         }
@@ -132,3 +148,24 @@ const t = lang === "ko" ? ko : en;
     });
   }
 </script>
+<style is:global>
+  @screen lt-md {
+    span.nav-active {
+      position: relative;
+    }
+
+    span.nav-active::before {
+      position: absolute;
+      display: inline-block;
+      content: " ";
+      mask: url("data:image/svg+xml;utf8,%3Csvg%20width%3D%2212%22%20height%3D%229%22%20viewBox%3D%220%200%2012%209%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M11.3337%201L4.00033%208.33333L0.666992%205%22%20stroke%3D%22%230F172A%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E")
+        no-repeat;
+      mask-size: 100% 100%;
+      background-color: #0f172a;
+      top: 0;
+      bottom: 0;
+      right: calc(100% + 10px);
+      width: 10px;
+    }
+  }
+</style>
