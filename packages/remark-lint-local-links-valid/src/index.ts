@@ -7,6 +7,7 @@ import { visit } from "unist-util-visit";
 interface LintOptions {
   baseDir: string;
   excludePaths?: string[];
+  redirects?: Record<string, string>;
 }
 
 const remarkLintLocalLinksValid = lintRule(
@@ -19,6 +20,7 @@ const remarkLintLocalLinksValid = lintRule(
     const filePath = path.resolve(file.cwd, file.history[0] || "");
     const excludePaths =
       options.excludePaths?.map((p) => path.join(baseDir, p)) || [];
+    const redirects = options.redirects || {};
 
     const tasks: Promise<void>[] = [];
     visit(tree, (node) => {
@@ -26,7 +28,7 @@ const remarkLintLocalLinksValid = lintRule(
         "url" in node &&
         typeof node.url === "string" &&
         node.type === "link" &&
-        !node.url.includes(":")
+        isLocalLink(node.url)
       ) {
         const url = node.url.split(/[#?]/)[0] || "";
         let absPath: string = "";
@@ -35,6 +37,14 @@ const remarkLintLocalLinksValid = lintRule(
         } else {
           absPath = path.join(path.dirname(filePath), url);
         }
+        const resolvedPath = resolveRedirect(
+          redirects,
+          path.relative(baseDir, absPath),
+        );
+        if (isLocalLink(resolvedPath) === false) {
+          return;
+        }
+        absPath = path.join(baseDir, resolvedPath);
         if (excludePaths.some((p) => absPath.startsWith(p))) {
           return;
         }
@@ -53,5 +63,20 @@ const remarkLintLocalLinksValid = lintRule(
     await Promise.all(tasks);
   },
 );
+
+const isLocalLink = (url: string): boolean => {
+  return !url.includes(":");
+};
+
+const resolveRedirect = (
+  redirects: Record<string, string>,
+  url: string,
+): string => {
+  let resolved = url;
+  while (redirects[resolved]) {
+    resolved = redirects[resolved].split(/[#?]/)[0];
+  }
+  return resolved;
+};
 
 export default remarkLintLocalLinksValid;

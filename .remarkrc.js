@@ -1,6 +1,13 @@
 // @ts-check
 
+import { readFileSync } from "node:fs";
+
+import { load } from "js-yaml";
 import stringWidth from "string-width";
+
+const redirects = load(
+  readFileSync("../../src/content/docs/_redir.yaml", "utf8"),
+);
 
 export default {
   plugins: [
@@ -62,7 +69,23 @@ export default {
     ["remark-lint-unordered-list-marker-style", "-"],
     [
       "remark-lint-local-links-valid",
-      { baseDir: "./src/content", excludePaths: ["/api"] },
+      {
+        baseDir: "./src/content",
+        excludePaths: ["/api"],
+        redirects: Object.fromEntries(
+          // @ts-expect-error
+          redirects.map((redir) => {
+            let { old: from, new: to } = redir;
+            return [prefix(from), prefix(to)];
+            function prefix(str) {
+              if (str.startsWith("/")) {
+                return "docs" + str;
+              }
+              return str;
+            }
+          }),
+        ),
+      },
     ],
   ],
   settings: {
