@@ -92,7 +92,7 @@ export default function ReqSample({ harRequestSignal }: ReqSampleProps) {
 }
 
 function useTargetInfo(
-  keySignal: Signal<string>,
+  keySignal: ReadonlySignal<string>,
 ): ReadonlySignal<AvailableTarget | null> {
   return useComputed(
     () =>
