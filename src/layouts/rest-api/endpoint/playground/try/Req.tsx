@@ -245,10 +245,9 @@ function createHarRequest(
     headers: Object.entries(headers).map(([name, value]) => ({ name, value })),
     cookies: [],
     httpVersion: "HTTP/1.1",
-    queryString: Object.entries(reqQuery as object).map(([name, value]) => ({
-      name,
-      value: value as string,
-    })),
+    queryString: Object
+      .entries(reqQuery as Record<string, string>)
+      .map(([name, value]) => ({ name, value })),
     postData: {
       mimeType: "application/json",
       text: JSON.stringify(reqBody),
