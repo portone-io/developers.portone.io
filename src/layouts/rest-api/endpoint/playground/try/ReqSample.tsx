@@ -45,9 +45,9 @@ export default function ReqSample({ harRequestSignal }: ReqSampleProps) {
             <div className="flex-shrink-0">
               <select
                 value={targetKeySignal.value}
-                onChange={(e) =>
-                  (targetKeySignal.value = String(e.currentTarget.value))
-                }
+                onChange={(e) => {
+                  targetKeySignal.value = String(e.currentTarget.value);
+                }}
               >
                 {availableTargets.map((target) => (
                   <option key={target.key} value={target.key}>
