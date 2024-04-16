@@ -108,11 +108,11 @@ function useClientInfo(
     const clientInfo =
       targetInfoSignal.value?.clients.find(
         (client) => client.key === clientKeySignal.value,
-      ) ||
+      ) ??
       targetInfoSignal.value?.clients.find(
         (client) => client.key === targetInfoSignal.value?.default,
-      ) ||
-      targetInfoSignal.value?.clients[0] ||
+      ) ??
+      targetInfoSignal.value?.clients[0] ??
       null;
     if (clientInfo) {
       clientKeySignal.value = clientInfo.key;
