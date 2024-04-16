@@ -6,6 +6,9 @@ import { load } from "js-yaml";
 import stringWidth from "string-width";
 
 const redirects = load(readFileSync("./src/content/docs/_redir.yaml", "utf8"));
+if (!Array.isArray(redirects)) {
+  throw new Error("Expected an array of redirects");
+}
 
 export default {
   plugins: [
@@ -71,9 +74,8 @@ export default {
         baseDir: "./src/content",
         excludePaths: ["/api"],
         redirects: Object.fromEntries(
-          // @ts-expect-error
           redirects.map((redir) => {
-            let { old: from, new: to } = redir;
+            const { old: from, new: to } = redir;
             return [prefix(from), prefix(to)];
             function prefix(str) {
               if (str.startsWith("/")) {
