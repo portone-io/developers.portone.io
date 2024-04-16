@@ -74,7 +74,7 @@ export function getBodyParameters(
   operation: Operation,
 ): Parameter[] {
   const { schema: requestSchema, example } =
-    operation.requestBody?.content["application/json"] || {};
+    operation.requestBody?.content["application/json"] ?? {};
   if (requestSchema) return bakeProperties(schema, requestSchema, example);
   return (
     operation.parameters?.filter((p) => p.in !== "path" && p.in !== "query") ||
