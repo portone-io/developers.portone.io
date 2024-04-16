@@ -96,7 +96,7 @@ function useTargetInfo(
 ): ReadonlySignal<AvailableTarget | null> {
   return useComputed(
     () =>
-      availableTargets.find((target) => target.key === keySignal.value) || null,
+      availableTargets.find((target) => target.key === keySignal.value) ?? null,
   );
 }
 
