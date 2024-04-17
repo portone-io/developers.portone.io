@@ -5,6 +5,7 @@ description: 결제요청 파라미터를 확인 할 수 있습니다.
 
 import Codepen from "~/components/gitbook/Codepen.astro";
 import Details from "~/components/gitbook/Details.astro";
+import ParamTree from "~/components/gitbook/ParamTree.astro";
 import Hint from "~/components/Hint.astro";
 
 ## 기존 SDK와의 변경점
@@ -17,13 +18,13 @@ import Hint from "~/components/Hint.astro";
 
 ## 결제요청 파라미터 정의
 
-> **`pg`** <mark style="color:green;">**string**</mark>
->
-> **PG사 구분코드**
->
-> 다음과 같은 형식으로 기재합니다.
->
-> <mark style="color:red;">**`PG사코드.{상점ID}`**</mark>
+### **`pg`** <mark style="color:green;">**string**</mark>
+
+**PG사 구분코드**
+
+다음과 같은 형식으로 기재합니다.
+
+<mark style="color:red;">**`PG사코드.{상점ID}`**</mark>
 
 <Details>
   <p slot="summary">상세코드 확인하기</p>
@@ -70,13 +71,13 @@ import Hint from "~/components/Hint.astro";
   - `paymentwall`(페이먼트월 결제창 일반 및 API 수기/정기결제)
 </Details>
 
-> **`pay_method`** <mark style="color:green;">**string**</mark>
->
-> **결제수단 구분코드**
->
-> PG사별 지원되는 결제수단이 모두 상이합니다.
->
-> [**각 PG사별 결제 연동 가이드**](../../pg/payment-gateway/readme)를 참고하세요
+### **`pay_method`** <mark style="color:green;">**string**</mark>
+
+**결제수단 구분코드**
+
+PG사별 지원되는 결제수단이 모두 상이합니다.
+
+[**각 PG사별 결제 연동 가이드**](../../pg/payment-gateway/readme)를 참고하세요
 
 <Details>
   <p slot="summary">상세코드 확인하기</p>
@@ -114,84 +115,86 @@ import Hint from "~/components/Hint.astro";
   - `tosspay_money` (토스페이 - 머니(계좌, 포인트))
 </Details>
 
-> **`escrow`** <mark style="color:orange;background-color:yellow;">**boolean**</mark>
->
-> **에스크로 결제창 활성화 여부**
->
-> 일부 PG사만 지원됩니다.
->
-> - [x] 에스크로 설정은 PG사와 협의 이후 진행되어야 하는점 주의하세요
+### **`escrow`** <mark style="color:orange;background-color:yellow;">**boolean**</mark>
 
-> **`escrowProducts`** <mark style="color:blue;">**array**</mark>
->
-> **에스크로 결제 정보**
->
-> 에스크로 결제(`escrow`: `true`)시에만 유효하고, 필수 값은 아닙니다.\
-> 토스페이먼츠 신모듈 (`pg`: `tosspayments.~`)시에만 유효합니다
->
-> **1개의 주문 건에 여러 상품이 결제될 때 상품에 따라 배송이 다르게 이루어지는 경우, 1개의 주문에 여러 배송 정보를 넣기 위해 필요합니다.**
->
-> 상품을 나타내는 아래의 객체들을 갖는 **배열**을 전달해주세요.
->
-> > **`id`** <mark style="color:green;">**string**</mark>
-> >
-> > 상품 고유 ID
-> >
-> > **`name`** <mark style="color:green;">**string**</mark>
-> >
-> > 상품명
-> >
-> > **`code`** <mark style="color:green;">**string**</mark>
-> >
-> > 상품 코드
-> >
-> > **`unitPrice`** <mark style="color:purple;">**number**</mark>
-> >
-> > 상품 단위 가격
-> >
-> > **`quantity`** <mark style="color:purple;">**number**</mark>
-> >
-> > 수량
+**에스크로 결제창 활성화 여부**
 
-> **`merchant_uid`** <mark style="color:green;">**string**</mark>
->
-> **고객사 주문번호**
->
-> - 주문번호는 매 결제 요청시 고유하게 채번 되어야 합니다.
-> - **40Byte** 이내로 작성해주세요
-> - 결제 승인완료 처리된 주문번호를 동일하게 재 설정시 **사전거절** 처리 됩니다.
+일부 PG사만 지원됩니다.
 
-> **`name`** <mark style="color:green;">**string**</mark>
->
-> **결제대상 제품명**
->
-> - 16byte 이내로 작성해주세요
+- [x] 에스크로 설정은 PG사와 협의 이후 진행되어야 하는점 주의하세요
 
-> **`amount`** <mark style="color:purple;">**number**</mark>
->
-> **결제금액**
->
-> - 숫자타입으로 지정해야 하는점 유의하세요
+### **`escrowProducts`** <mark style="color:blue;">**array**</mark>
 
-> **`custom_data`** <mark style="color:blue;">**object**</mark>
->
-> **사용자 정의 데이타**
->
-> - 결제 응답시 **echo** 로 받아보실수 있는 필드 입니다.
-> - JSON notation(string)으로 저장됩니다.
-> - 주문 건에 대해 부가정보를 저장할 공간이 필요할 때 사용합니다
+**에스크로 결제 정보**
 
-> **`tax_free`** <mark style="color:purple;">**number**</mark>
->
-> **면세금액**
->
-> - 결제 금액 중 면세금액에 해당하는 금액을 입력합니다.
+에스크로 결제(`escrow`: `true`)시에만 유효하고, 필수 값은 아닙니다.\
+토스페이먼츠 신모듈 (`pg`: `tosspayments.~`)시에만 유효합니다
 
-> `vat_amount`: <mark style="color:purple;">**number**</mark>
->
-> **부가세**
->
-> - 결제 금액 중 부가세(기본값: null)
+**1개의 주문 건에 여러 상품이 결제될 때 상품에 따라 배송이 다르게 이루어지는 경우, 1개의 주문에 여러 배송 정보를 넣기 위해 필요합니다.**
+
+상품을 나타내는 아래의 객체들을 갖는 **배열**을 전달해주세요.
+
+<ParamTree>
+  - **`id`** <mark style="color:green;">**string**</mark>
+
+    상품 고유 ID
+
+  - **`name`** <mark style="color:green;">**string**</mark>
+
+    상품명
+
+  - **`code`** <mark style="color:green;">**string**</mark>
+
+    상품 코드
+
+  - **`unitPrice`** <mark style="color:purple;">**number**</mark>
+
+    상품 단위 가격
+
+  - **`quantity`** <mark style="color:purple;">**number**</mark>
+
+    수량
+</ParamTree>
+
+### **`merchant_uid`** <mark style="color:green;">**string**</mark>
+
+**고객사 주문번호**
+
+- 주문번호는 매 결제 요청시 고유하게 채번 되어야 합니다.
+- **40Byte** 이내로 작성해주세요
+- 결제 승인완료 처리된 주문번호를 동일하게 재 설정시 **사전거절** 처리 됩니다.
+
+### **`name`** <mark style="color:green;">**string**</mark>
+
+**결제대상 제품명**
+
+- 16byte 이내로 작성해주세요
+
+### **`amount`** <mark style="color:purple;">**number**</mark>
+
+**결제금액**
+
+- 숫자타입으로 지정해야 하는점 유의하세요
+
+### **`custom_data`** <mark style="color:blue;">**object**</mark>
+
+**사용자 정의 데이타**
+
+- 결제 응답시 **echo** 로 받아보실수 있는 필드 입니다.
+- JSON notation(string)으로 저장됩니다.
+- 주문 건에 대해 부가정보를 저장할 공간이 필요할 때 사용합니다
+
+### **`tax_free`** <mark style="color:purple;">**number**</mark>
+
+**면세금액**
+
+- 결제 금액 중 면세금액에 해당하는 금액을 입력합니다.
+
+`vat_amount`: <mark style="color:purple;">**number**</mark>
+
+**부가세**
+
+- 결제 금액 중 부가세(기본값: null)
 
 <Details>
   <p slot="summary">지원되는 PG사</p>
@@ -200,12 +203,12 @@ import Hint from "~/components/Hint.astro";
   - (신) 토스페이
 </Details>
 
-> **`currency`** <mark style="color:green;">**string**</mark>
->
-> **결제통화 구분코드**
->
-> - PayPal은 원화(KRW) 미 지원으로 USD가 기본
-> - PayPal에서 지원하는 통화는 [PayPal 지원 통화](https://developer.paypal.com/docs/reports/reference/paypal-supported-currencies/) 참조
+### **`currency`** <mark style="color:green;">**string**</mark>
+
+**결제통화 구분코드**
+
+- PayPal은 원화(KRW) 미 지원으로 USD가 기본
+- PayPal에서 지원하는 통화는 [PayPal 지원 통화](https://developer.paypal.com/docs/reports/reference/paypal-supported-currencies/) 참조
 
 <Details>
   <p slot="summary">상세코드 확인하기</p>
@@ -221,9 +224,9 @@ import Hint from "~/components/Hint.astro";
   - PayPal에서 지원하는 통화는 [PayPal 지원 통화](https://developer.paypal.com/docs/reports/reference/paypal-supported-currencies/%20target=) 참조
 </Details>
 
-> **`language`** <mark style="color:green;">**string**</mark>
->
-> **결제창 언어 설정** (지원되지 않은 일부 PG사 존재)
+### **`language`** <mark style="color:green;">**string**</mark>
+
+**결제창 언어 설정** (지원되지 않은 일부 PG사 존재)
 
 <Details>
   <p slot="summary">상세코드 확인하기</p>
@@ -233,92 +236,92 @@ import Hint from "~/components/Hint.astro";
   - zh (중국어)
 </Details>
 
-> **`buyer_name`** <mark style="color:green;">**string**</mark>
->
-> **주문자명**
+### **`buyer_name`** <mark style="color:green;">**string**</mark>
 
-> **`buyer_tel`** <mark style="color:green;">**string**</mark>
->
-> **주문자 연락처**
->
-> - 일부 PG사에서 해당 필드 누락시 오류 발생
+**주문자명**
 
-> **`buyer_email`** <mark style="color:green;">**string**</mark>
->
-> **주문자 이메일**
->
-> - 일부 PG사에서 해당 필드 누락시 오류 발생(페이먼트월)
+### **`buyer_tel`** <mark style="color:green;">**string**</mark>
 
-> **`buyer_addr`** <mark style="color:green;">**string**</mark>
->
-> **주문자 주소**
+**주문자 연락처**
 
-> **`buyer_postcode`** <mark style="color:green;">**string**</mark>
->
-> **주문자 우편번호**
+- 일부 PG사에서 해당 필드 누락시 오류 발생
 
-> **`confirm_url`** <mark style="color:green;">**string**</mark>
->
-> [**confirm\_process**](../../tip/confirm-process) **사용 시 고객사 endpoint url 설정**
->
-> - 기술지원 메일로 별도 요청이 필요합니다. ([support@portone.io](mailto:support@portone.io))
+### **`buyer_email`** <mark style="color:green;">**string**</mark>
 
-> **`notice_url`** <mark style="color:green;">**string**</mark>
->
-> **웹훅(Webhook) 수신 주소**
->
-> - 포트원 관리자 콘솔에 설정한 웹훅 주소대신 사용할 웹훅 주소를 결제시마다 설정할 수 있습니다.
-> - 해당 값 설정시 관리자 콘솔에 설정한 주소로는 웹훅발송이 되지 않는점 유의하시기 바랍니다.
+**주문자 이메일**
 
-> **`customer_uid`** <mark style="color:green;">**string**</mark>
->
-> **고객사 정의 빌링키**
->
-> 비인증 결제 이용시 빌링키와 1:1로 맵핑되는 고객사 정의 고객 빌링키입니다.
+- 일부 PG사에서 해당 필드 누락시 오류 발생(페이먼트월)
+
+### **`buyer_addr`** <mark style="color:green;">**string**</mark>
+
+**주문자 주소**
+
+### **`buyer_postcode`** <mark style="color:green;">**string**</mark>
+
+**주문자 우편번호**
+
+### **`confirm_url`** <mark style="color:green;">**string**</mark>
+
+[**confirm\_process**](../../tip/confirm-process) **사용 시 고객사 endpoint url 설정**
+
+- 기술지원 메일로 별도 요청이 필요합니다. ([support@portone.io](mailto:support@portone.io))
+
+### **`notice_url`** <mark style="color:green;">**string**</mark>
+
+**웹훅(Webhook) 수신 주소**
+
+- 포트원 관리자 콘솔에 설정한 웹훅 주소대신 사용할 웹훅 주소를 결제시마다 설정할 수 있습니다.
+- 해당 값 설정시 관리자 콘솔에 설정한 주소로는 웹훅발송이 되지 않는점 유의하시기 바랍니다.
+
+### **`customer_uid`** <mark style="color:green;">**string**</mark>
+
+**고객사 정의 빌링키**
+
+비인증 결제 이용시 빌링키와 1:1로 맵핑되는 고객사 정의 고객 빌링키입니다.
 
 ## **추가속성**
 
-> **`digital`** <mark style="color:orange;">**boolean**</mark>
->
-> **디지털 구분자**
->
-> - 휴대폰 결제수단인 경우 필수 항목입니다.
-> - 결제제품이 실물이 아닌 경우 true 로 설정합니다.
-> - 실물/디지털 여부에 따라 수수료율이 상이하게 측정되니 유의하시기 바랍니다.
+### **`digital`** <mark style="color:orange;">**boolean**</mark>
 
-> **`vbank_due`** <mark style="color:green;">**string**</mark>
->
-> **가상계좌 입금기한**
->
-> - 결제수단이 가상계좌인 경우 입금기한을 설정할 수 있습니다.
->
-> - 다음과 같은 형식으로 설정이 가능합니다 :
->
->   - `YYYY-MM-DD`
->   - `YYYYMMDD`
->   - `YYYY-MM-DD HH:mm:ss`
->   - `YYYYMMDDHHmmss`
+**디지털 구분자**
 
-> **`m_redirect_url`** <mark style="color:green;">**string**</mark>
->
-> **결제완료이후 이동될 EndPoint URL 주소**
->
-> - 결제창이 새로운 창으로 리다이렉트 되어 결제가 진행되는 결제 방식인 경우 필수 설정 항목 입니다.
-> - 대부분의 모바일 결제환경에서 결제창 호출시 필수 항목입니다.
-> - 리다이렉트 환경에서 해당 필드 누락시 결제 결과를 수신 받지 못합니다.
+- 휴대폰 결제수단인 경우 필수 항목입니다.
+- 결제제품이 실물이 아닌 경우 true 로 설정합니다.
+- 실물/디지털 여부에 따라 수수료율이 상이하게 측정되니 유의하시기 바랍니다.
 
-> **`app_scheme`** <mark style="color:green;">**string**</mark>
->
-> **모바일 앱 결제중 고객사 앱복귀를 위한 URL scheme**
->
-> - WebView 환경 결제시 필수설정 항목 입니다.
-> - ISP/앱카드 앱에서 결제정보인증 후 기존 앱으로 복귀할 때 사용합니다.
+### **`vbank_due`** <mark style="color:green;">**string**</mark>
 
-> **`biz_num`** <mark style="color:green;">**string**</mark>
->
-> **사업자등록번호**
->
-> - 다날-가상계좌 결제수단 사용시 필수 항목입니다.
+**가상계좌 입금기한**
+
+- 결제수단이 가상계좌인 경우 입금기한을 설정할 수 있습니다.
+
+- 다음과 같은 형식으로 설정이 가능합니다 :
+
+  - `YYYY-MM-DD`
+  - `YYYYMMDD`
+  - `YYYY-MM-DD HH:mm:ss`
+  - `YYYYMMDDHHmmss`
+
+### **`m_redirect_url`** <mark style="color:green;">**string**</mark>
+
+**결제완료이후 이동될 EndPoint URL 주소**
+
+- 결제창이 새로운 창으로 리다이렉트 되어 결제가 진행되는 결제 방식인 경우 필수 설정 항목 입니다.
+- 대부분의 모바일 결제환경에서 결제창 호출시 필수 항목입니다.
+- 리다이렉트 환경에서 해당 필드 누락시 결제 결과를 수신 받지 못합니다.
+
+### **`app_scheme`** <mark style="color:green;">**string**</mark>
+
+**모바일 앱 결제중 고객사 앱복귀를 위한 URL scheme**
+
+- WebView 환경 결제시 필수설정 항목 입니다.
+- ISP/앱카드 앱에서 결제정보인증 후 기존 앱으로 복귀할 때 사용합니다.
+
+### **`biz_num`** <mark style="color:green;">**string**</mark>
+
+**사업자등록번호**
+
+- 다날-가상계좌 결제수단 사용시 필수 항목입니다.
 
 ## 부가기능
 
