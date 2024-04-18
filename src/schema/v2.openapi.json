@@ -3988,6 +3988,7 @@
                   "verifiedCustomer": {
                     "id": "your-customer-id",
                     "name": "customer-name",
+                    "operator": "KT_MVNO",
                     "phoneNumber": "01012345678",
                     "birthDate": "1992-10-16",
                     "gender": "FEMALE",
@@ -8044,6 +8045,112 @@
           "$ref": "#/components/schemas/GetB2bMemberCompanyError"
         },
         "x-portone-unstable": true
+      },
+      "patch": {
+        "summary": "<p>연동 사업자 정보 수정</p>\n",
+        "description": "<p>연동 사업자 정보 수정</p>\n<p>연동 사업자 정보를 수정합니다.</p>\n",
+        "operationId": "updateB2bMemberCompany",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "<p>테스트 모드 여부</p>\n<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n"
+          },
+          {
+            "name": "brn",
+            "in": "path",
+            "description": "<p>사업자등록번호</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateB2bMemberCompanyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>B2bNotEnabledError</code>: B2B 기능이 활성화되지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>B2bMemberCompanyNotFoundError</code>: 연동 사업자가 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b",
+        "x-portone-title": "연동 사업자 정보 수정",
+        "x-portone-description": "<p>연동 사업자 정보를 수정합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdateB2bMemberCompanyError"
+        },
+        "x-portone-unstable": true
       }
     },
     "/b2b-preview/member-companies": {
@@ -8268,6 +8375,132 @@
         "x-portone-description": "<p>연동 사업자에 등록된 담당자를 조회합니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/GetB2bMemberCompanyContactError"
+        },
+        "x-portone-unstable": true
+      },
+      "patch": {
+        "summary": "<p>담당자 정보 수정</p>\n",
+        "description": "<p>담당자 정보 수정</p>\n<p>담당자 정보를 수정합니다.</p>\n",
+        "operationId": "updateB2bMemberCompanyContact",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "<p>테스트 모드 여부</p>\n<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n"
+          },
+          {
+            "name": "brn",
+            "in": "path",
+            "description": "<p>사업자등록번호</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          },
+          {
+            "name": "contactId",
+            "in": "path",
+            "description": "<p>담당자 ID</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "담당자 ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateB2bMemberCompanyContactBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyContactResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyContactError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyContactError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>B2bNotEnabledError</code>: B2B 기능이 활성화되지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyContactError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>B2bContactNotFoundError</code>: 담당자가 존재하지 않는 경우</li>\n<li><code>B2bMemberCompanyNotFoundError</code>: 연동 사업자가 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyContactError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>B2bExternalServiceError</code>: 외부 서비스에서 에러가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bMemberCompanyContactError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b",
+        "x-portone-title": "담당자 정보 수정",
+        "x-portone-description": "<p>담당자 정보를 수정합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdateB2bMemberCompanyContactError"
         },
         "x-portone-unstable": true
       }
@@ -10387,6 +10620,452 @@
         "x-portone-unstable": true
       }
     },
+    "/b2b-preview/tax-invoices/file-upload-link": {
+      "post": {
+        "summary": "<p>세금계산서 파일 업로드 링크 생성</p>\n",
+        "description": "<p>세금계산서 파일 업로드 링크 생성</p>\n<p>세금계산서의 첨부파일를 업로드할 링크를 생성합니다.</p>\n",
+        "operationId": "createB2bTaxInvoiceFileUploadLink",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "<p>테스트 모드 여부</p>\n<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateB2bTaxInvoiceFileUploadLinkBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bTaxInvoiceFileUploadLinkResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bTaxInvoiceFileUploadLinkCreateError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bTaxInvoiceFileUploadLinkCreateError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>B2bNotEnabledError</code>: B2B 기능이 활성화되지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bTaxInvoiceFileUploadLinkCreateError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b",
+        "x-portone-title": "세금계산서 파일 업로드 링크 생성",
+        "x-portone-description": "<p>세금계산서의 첨부파일를 업로드할 링크를 생성합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreateB2bTaxInvoiceFileUploadLinkCreateError"
+        },
+        "x-portone-unstable": true
+      }
+    },
+    "/b2b-preview/tax-invoices/attach-file": {
+      "post": {
+        "summary": "<p>세금계산서 파일 첨부</p>\n",
+        "description": "<p>세금계산서 파일 첨부</p>\n<p>세금계산서에 파일을 첨부합니다.</p>\n",
+        "operationId": "attachB2bTaxInvoiceFile",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "<p>테스트 모드 여부</p>\n<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachB2bTaxInvoiceFileBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n<li><code>B2bTaxInvoiceNotRegisteredStatusError</code>: 세금계산서가 임시저장 상태가 아닌 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachB2bTaxInvoiceFileError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachB2bTaxInvoiceFileError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>B2bNotEnabledError</code>: B2B 기능이 활성화되지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachB2bTaxInvoiceFileError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>B2bTaxInvoiceNotFoundError</code>: 세금계산서가 존재하지 않은 경우</li>\n<li><code>B2bFileNotFoundError</code>: 업로드한 파일을 찾을 수 없는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachB2bTaxInvoiceFileError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>B2bExternalServiceError</code>: 외부 서비스에서 에러가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachB2bTaxInvoiceFileError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b",
+        "x-portone-title": "세금계산서 파일 첨부",
+        "x-portone-description": "<p>세금계산서에 파일을 첨부합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/AttachB2bTaxInvoiceFileError"
+        },
+        "x-portone-unstable": true
+      }
+    },
+    "/b2b-preview/tax-invoices/{documentKey}/attachments": {
+      "get": {
+        "summary": "<p>세금계산서 첨부파일 목록 조회</p>\n",
+        "description": "<p>세금계산서 첨부파일 목록 조회</p>\n<p>세금계산서에 첨부된 파일 목록을 조회합니다.</p>\n",
+        "operationId": "getB2bTaxInvoiceAttachments",
+        "parameters": [
+          {
+            "name": "documentKey",
+            "in": "path",
+            "description": "<p>세금계산서 문서 번호</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "세금계산서 문서 번호"
+          },
+          {
+            "name": "brn",
+            "in": "query",
+            "description": "<p>사업자등록번호</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          },
+          {
+            "name": "documentKeyType",
+            "in": "query",
+            "description": "<p>문서 번호 유형</p>\n<p>path 파라미터로 전달된 문서번호 유형. 기본 값은 RECIPIENT이며 SUPPLIER, RECIPIENT을 지원합니다.</p>\n",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/B2bTaxInvoiceDocumentKeyType"
+            },
+            "x-portone-title": "문서 번호 유형",
+            "x-portone-description": "<p>path 파라미터로 전달된 문서번호 유형. 기본 값은 RECIPIENT이며 SUPPLIER, RECIPIENT을 지원합니다.</p>\n"
+          },
+          {
+            "name": "test",
+            "in": "query",
+            "description": "<p>테스트 모드 여부</p>\n<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bTaxInvoiceAttachmentsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bTaxInvoiceAttachmentsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bTaxInvoiceAttachmentsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>B2bNotEnabledError</code>: B2B 기능이 활성화되지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bTaxInvoiceAttachmentsError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>B2bTaxInvoiceNotFoundError</code>: 세금계산서가 존재하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bTaxInvoiceAttachmentsError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>B2bExternalServiceError</code>: 외부 서비스에서 에러가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bTaxInvoiceAttachmentsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b",
+        "x-portone-title": "세금계산서 첨부파일 목록 조회",
+        "x-portone-description": "<p>세금계산서에 첨부된 파일 목록을 조회합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetB2bTaxInvoiceAttachmentsError"
+        },
+        "x-portone-unstable": true
+      }
+    },
+    "/b2b-preview/tax-invoices/{documentKey}/attachments/{attachmentId}": {
+      "delete": {
+        "summary": "<p>세금계산서 첨부파일 삭제</p>\n",
+        "description": "<p>세금계산서 첨부파일 삭제</p>\n<p>세금계산서 첨부파일을 삭제합니다.</p>\n",
+        "operationId": "deleteB2bTaxInvoiceAttachment",
+        "parameters": [
+          {
+            "name": "documentKey",
+            "in": "path",
+            "description": "<p>세금계산서 문서 번호</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "세금계산서 문서 번호"
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "description": "<p>첨부파일 아이디</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "첨부파일 아이디"
+          },
+          {
+            "name": "brn",
+            "in": "query",
+            "description": "<p>사업자등록번호</p>\n",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          },
+          {
+            "name": "documentKeyType",
+            "in": "query",
+            "description": "<p>문서 번호 유형</p>\n<p>path 파라미터로 전달된 문서번호 유형. 기본 값은 RECIPIENT이며 SUPPLIER, RECIPIENT을 지원합니다.</p>\n",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/B2bTaxInvoiceDocumentKeyType"
+            },
+            "x-portone-title": "문서 번호 유형",
+            "x-portone-description": "<p>path 파라미터로 전달된 문서번호 유형. 기본 값은 RECIPIENT이며 SUPPLIER, RECIPIENT을 지원합니다.</p>\n"
+          },
+          {
+            "name": "test",
+            "in": "query",
+            "description": "<p>테스트 모드 여부</p>\n<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "<p>true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n<li><code>B2bTaxInvoiceNotRegisteredStatusError</code>: 세금계산서가 임시저장 상태가 아닌 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bTaxInvoiceAttachmentError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bTaxInvoiceAttachmentError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>B2bNotEnabledError</code>: B2B 기능이 활성화되지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bTaxInvoiceAttachmentError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>B2bTaxInvoiceNotFoundError</code>: 세금계산서가 존재하지 않은 경우</li>\n<li><code>B2bTaxInvoiceAttachmentNotFoundError</code>: 세금계산서의 첨부파일을 찾을 수 없는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bTaxInvoiceAttachmentError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>B2bExternalServiceError</code>: 외부 서비스에서 에러가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bTaxInvoiceAttachmentError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b",
+        "x-portone-title": "세금계산서 첨부파일 삭제",
+        "x-portone-description": "<p>세금계산서 첨부파일을 삭제합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DeleteB2bTaxInvoiceAttachmentError"
+        },
+        "x-portone-unstable": true
+      }
+    },
     "/kakaopay/payment/order": {
       "get": {
         "summary": "<p>카카오페이 주문 조회 API</p>\n",
@@ -11903,6 +12582,74 @@
         "description": "<p>파트너 보관 성공 응답</p>\n",
         "x-portone-title": "파트너 보관 성공 응답"
       },
+      "AttachB2bTaxInvoiceFileBody": {
+        "title": "세금계산서 파일 첨부 정보",
+        "required": [
+          "brn",
+          "documentKey",
+          "fileId"
+        ],
+        "type": "object",
+        "properties": {
+          "brn": {
+            "type": "string",
+            "title": "사업자등록번호",
+            "description": "<ul>\n<li>없이 숫자 10자리로 구성됩니다.</li>\n</ul>\n"
+          },
+          "documentKey": {
+            "type": "string",
+            "title": "세금계산서 문서 번호"
+          },
+          "documentKeyType": {
+            "$ref": "#/components/schemas/B2bTaxInvoiceDocumentKeyType",
+            "title": "문서 번호 유형",
+            "description": "<p>기본 값은 RECIPIENT이며 SUPPLIER, RECIPIENT을 지원합니다.</p>\n"
+          },
+          "fileId": {
+            "type": "string",
+            "title": "파일 아이디"
+          }
+        },
+        "description": "<p>세금계산서 파일 첨부 정보</p>\n",
+        "x-portone-title": "세금계산서 파일 첨부 정보"
+      },
+      "AttachB2bTaxInvoiceFileError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bFileNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bTaxInvoiceNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bTaxInvoiceNotRegisteredStatusError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_FILE_NOT_FOUND": "#/components/schemas/B2bFileNotFoundError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "B2B_TAX_INVOICE_NOT_FOUND": "#/components/schemas/B2bTaxInvoiceNotFoundError",
+            "B2B_TAX_INVOICE_NOT_REGISTERED_STATUS": "#/components/schemas/B2bTaxInvoiceNotRegisteredStatusError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
       "B2bBankAccountNotFoundError": {
         "title": "계좌가 존재하지 않는 경우",
         "required": [
@@ -12239,6 +12986,24 @@
         "description": "<p>외부 서비스에서 에러가 발생한 경우</p>\n",
         "x-portone-title": "외부 서비스에서 에러가 발생한 경우",
         "x-portone-status-code": 502
+      },
+      "B2bFileNotFoundError": {
+        "title": "업로드한 파일을 찾을 수 없는 경우",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>업로드한 파일을 찾을 수 없는 경우</p>\n",
+        "x-portone-title": "업로드한 파일을 찾을 수 없는 경우",
+        "x-portone-status-code": 404
       },
       "B2bFinancialSystemCommunicationError": {
         "title": "금융기관과의 통신에 실패한 경우",
@@ -12643,6 +13408,50 @@
         },
         "description": "<p>추가 담당자</p>\n",
         "x-portone-title": "추가 담당자"
+      },
+      "B2bTaxInvoiceAttachment": {
+        "title": "세금계산서 첨부파일",
+        "required": [
+          "id",
+          "name",
+          "attachedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "첨부 파일 아이디"
+          },
+          "name": {
+            "type": "string",
+            "title": "첨부 파일명"
+          },
+          "attachedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "첨부 일시"
+          }
+        },
+        "description": "<p>세금계산서 첨부파일</p>\n",
+        "x-portone-title": "세금계산서 첨부파일"
+      },
+      "B2bTaxInvoiceAttachmentNotFoundError": {
+        "title": "세금계산서의 첨부파일을 찾을 수 없는 경우",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>세금계산서의 첨부파일을 찾을 수 없는 경우</p>\n",
+        "x-portone-title": "세금계산서의 첨부파일을 찾을 수 없는 경우",
+        "x-portone-status-code": 404
       },
       "B2bTaxInvoiceBeforeSending": {
         "required": [
@@ -18587,6 +19396,62 @@
           }
         }
       },
+      "CreateB2bTaxInvoiceFileUploadLinkBody": {
+        "title": "세금계산서 파일 업로드 링크 생성",
+        "required": [
+          "fileName"
+        ],
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "title": "파일 이름"
+          }
+        },
+        "description": "<p>세금계산서 파일 업로드 링크 생성</p>\n",
+        "x-portone-title": "세금계산서 파일 업로드 링크 생성"
+      },
+      "CreateB2bTaxInvoiceFileUploadLinkCreateError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "CreateB2bTaxInvoiceFileUploadLinkResponse": {
+        "title": "세금계산서 파일 업로드 링크 생성 성공 응답",
+        "required": [
+          "fileId",
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "title": "파일 아이디"
+          },
+          "url": {
+            "type": "string",
+            "title": "파일 업로드 링크"
+          }
+        },
+        "description": "<p>세금계산서 파일 업로드 링크 생성 성공 응답</p>\n",
+        "x-portone-title": "세금계산서 파일 업로드 링크 생성 성공 응답"
+      },
       "CreateManualTransferResponse": {
         "required": [
           "transfer"
@@ -20691,6 +21556,43 @@
           "FRI": {}
         }
       },
+      "DeleteB2bTaxInvoiceAttachmentError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bTaxInvoiceAttachmentNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bTaxInvoiceNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bTaxInvoiceNotRegisteredStatusError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "B2B_TAX_INVOICE_ATTACHMENT_NOT_FOUND": "#/components/schemas/B2bTaxInvoiceAttachmentNotFoundError",
+            "B2B_TAX_INVOICE_NOT_FOUND": "#/components/schemas/B2bTaxInvoiceNotFoundError",
+            "B2B_TAX_INVOICE_NOT_REGISTERED_STATUS": "#/components/schemas/B2bTaxInvoiceNotRegisteredStatusError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
       "DeleteB2bTaxInvoiceError": {
         "oneOf": [
           {
@@ -22514,6 +23416,53 @@
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }
         }
+      },
+      "GetB2bTaxInvoiceAttachmentsError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bTaxInvoiceNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "B2B_TAX_INVOICE_NOT_FOUND": "#/components/schemas/B2bTaxInvoiceNotFoundError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetB2bTaxInvoiceAttachmentsResponse": {
+        "title": "세금계산서 첨부파일 목록 조회 성공 응답",
+        "required": [
+          "attachments"
+        ],
+        "type": "object",
+        "properties": {
+          "attachments": {
+            "title": "첨부파일 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/B2bTaxInvoiceAttachment"
+            }
+          }
+        },
+        "description": "<p>세금계산서 첨부파일 목록 조회 성공 응답</p>\n",
+        "x-portone-title": "세금계산서 첨부파일 목록 조회 성공 응답"
       },
       "GetB2bTaxInvoiceError": {
         "oneOf": [
@@ -24398,6 +25347,10 @@
           "name": {
             "type": "string",
             "title": "이름"
+          },
+          "operator": {
+            "$ref": "#/components/schemas/IdentityVerificationOperator",
+            "title": "통신사"
           },
           "phoneNumber": {
             "type": "string",
@@ -35567,6 +36520,146 @@
         "description": "<p>인증 정보가 올바르지 않은 경우</p>\n",
         "x-portone-title": "인증 정보가 올바르지 않은 경우",
         "x-portone-status-code": 401
+      },
+      "UpdateB2bMemberCompanyBody": {
+        "title": "연동 사업자 정보 수정 요청",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "회사명"
+          },
+          "ceoName": {
+            "type": "string",
+            "title": "대표자 성명"
+          },
+          "address": {
+            "type": "string",
+            "title": "회사 주소"
+          },
+          "businessType": {
+            "type": "string",
+            "title": "업태"
+          },
+          "businessClass": {
+            "type": "string",
+            "title": "업종"
+          }
+        },
+        "description": "<p>연동 사업자 정보 수정 요청</p>\n",
+        "x-portone-title": "연동 사업자 정보 수정 요청"
+      },
+      "UpdateB2bMemberCompanyContactBody": {
+        "title": "담당자 정보 수정 요청",
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "title": "비밀번호"
+          },
+          "name": {
+            "type": "string",
+            "title": "담당자 성명"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "담당자 핸드폰 번호"
+          },
+          "email": {
+            "type": "string",
+            "title": "담당자 이메일"
+          }
+        },
+        "description": "<p>담당자 정보 수정 요청</p>\n",
+        "x-portone-title": "담당자 정보 수정 요청"
+      },
+      "UpdateB2bMemberCompanyContactError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bContactNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bMemberCompanyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_CONTACT_NOT_FOUND": "#/components/schemas/B2bContactNotFoundError",
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_MEMBER_COMPANY_NOT_FOUND": "#/components/schemas/B2bMemberCompanyNotFoundError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "UpdateB2bMemberCompanyContactResponse": {
+        "title": "담당자 정보 수정 응답",
+        "required": [
+          "contact"
+        ],
+        "type": "object",
+        "properties": {
+          "contact": {
+            "$ref": "#/components/schemas/B2bCompanyContact",
+            "title": "담당자 정보"
+          }
+        },
+        "description": "<p>담당자 정보 수정 응답</p>\n",
+        "x-portone-title": "담당자 정보 수정 응답"
+      },
+      "UpdateB2bMemberCompanyError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bMemberCompanyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_MEMBER_COMPANY_NOT_FOUND": "#/components/schemas/B2bMemberCompanyNotFoundError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "UpdateB2bMemberCompanyResponse": {
+        "title": "연동 사업자 정보 수정 응답",
+        "required": [
+          "memberCompany"
+        ],
+        "type": "object",
+        "properties": {
+          "memberCompany": {
+            "$ref": "#/components/schemas/B2bMemberCompany",
+            "title": "연동 사업자 정보"
+          }
+        },
+        "description": "<p>연동 사업자 정보 수정 응답</p>\n",
+        "x-portone-title": "연동 사업자 정보 수정 응답"
       },
       "UpdatePayoutAllPartnerSettlementsBody": {
         "required": [
