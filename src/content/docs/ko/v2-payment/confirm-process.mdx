@@ -6,9 +6,8 @@ description: 결제요청의 주체를 고객사 서버로 가져갈수 있는 �
 import Figure from "~/components/Figure.astro";
 import Hint from "~/components/Hint.astro";
 
-import ConfirmProcessCaseImage from "./_assets/confirm_process_case_v2.png";
-import ConfirmProcessImage from "./_assets/confirm_process_v2.png";
-import image1 from "./_assets/user_code.png";
+import ConfirmProcessCaseImage from "./_assets/v2/confirm_process_case_v2.png";
+import ConfirmProcessImage from "./_assets/v2/confirm_process_v2.png";
 
 ## 해당 서비스는 결제요청직전에 고객사 측에 결제의사를 최종적으로 확인하는 서비스입니다.
 
@@ -53,45 +52,33 @@ import image1 from "./_assets/user_code.png";
 <Hint style="info">
   **Confirm Process 신청 방법**
 
-  기술지원 메일([support@portone.io](mailto:support@portone.io))로 <mark style="color:red;">**고객사 식별코드**</mark>를 기재하여 메일 발송
+  기술지원 메일([support@portone.io](mailto:support@portone.io))로 <mark style="color:red;">**상점 아이디**</mark>를 기재하여 메일 발송
 
-  <Figure src={image1} caption="포트원 콘솔 내 고객사 식별코드 확인 예시" />
-
-  포트원 콘솔 로그인 후 \[결제연동] → \[식별코드 ・ API Keys] → \[V1 API] 페이지에서 확인할 수 있습니다.
+  포트원 콘솔 로그인 후 \[결제연동] 페이지 상단에서 상점 아이디를 확인 하실 수 있습니다.
 </Hint>
 
 ## Confirm Process 이용방법
 
-Confirm Process 이용시 고객사는 Javascript request\_pay() 함수 호출시 **confirm\_url** 파라미터를
-정의하고 해당 파라미터의 고객사 EndPoint URL을 설정합니다.
+Confirm Process 이용시 고객사는  `PortOne.requestPayment()`, `PortOne.loadPaymentUI()` 함수 호출 시 
+
+**confirmUrl** 파라미터를 정의하고 해당 파라미터의 고객사 EndPoint URL을 설정합니다.
 
 ```json title="JavaScript SDK"
 {
   //...중략
-  "confirm_url": "고객사 EndPoint URL 기재",
+  "confirmUrl": "고객사 EndPoint URL 기재",
   //...중략
 }
 ```
 
 해당 URL이 설정되면 당사에서 결제 요청 직전 해당 URL 로 **HTTP 통신**이 진행되며 아래와 같은 Data가 POST로 요청됩니다. (Timeout : **10s**)
 
-> `imp_uid`: 결제번호
+> `tx_id`: 결제번호
 >
-> `merchant_uid`: 주문번호
+> `payment_id`: 주문번호
 >
-> `amount`: 결제 금액
+> `total_amount`: 결제 금액
 
 해당 요청에 대한 고객사 응답으로 HTTP Status **200** 응답을 주시는 경우 결제를 요청합니다.
 
 (<mark style="color:red;">**200응답이 아닌 경우 결제가 진행되지 않습니다**</mark>.(**`실패처리`**)
-
-**200** 외 응답을 통해 승인을 막음과 동시에 해당 사유를 함께 기록하고싶으실 경우 요청 응답 body에 `reason` 파라미터를 json 형태로 전달해주시면 되며
-
-```json
-{
-  "reason" : "재고 부족"
-}
-```
-
-전달주신 `reason` 값이 `고객사 요청에 의해 결제를 중단합니다. (상세사유 : %s)`의 상세사유에 추가되어
-결제 실패 사유(fail\_reason)으로 기록됩니다. (기본값 : `알 수 없음`)
