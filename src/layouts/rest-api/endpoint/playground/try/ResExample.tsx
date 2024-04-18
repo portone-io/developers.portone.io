@@ -2,7 +2,7 @@ import JsonViewer from "../../../editor/JsonViewer";
 import Card from "../Card";
 
 export interface ResExampleProps {
-  example: { [key: string]: unknown };
+  example: { [key: string]: unknown } | undefined;
 }
 
 export default function ResExample({ example }: ResExampleProps) {
