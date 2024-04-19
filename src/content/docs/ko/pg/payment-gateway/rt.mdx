@@ -27,12 +27,15 @@ import Hint from "~/components/Hint.astro";
   - `imp_uid`
   - `merchant_uid`
 
-  해당 SDK를 사용하실때는 IMP.request\_pay로부터 응답된 객체(또는 쿼리 파라미터)에서 imp\_uid를 가지고 **포트원 REST API(GET /payments/imp\_uid)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여 응답 파라미터 중 status(결제 상태)파라미터에 따라 추가 로직을 구현해야 합니다.
+  해당 SDK를 사용하실때는 IMP.request\_pay로부터 응답된 객체(또는 쿼리 파라미터)에서
+  imp\_uid를 가지고 **포트원 REST API(GET /payments/imp\_uid)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여
+  응답 파라미터 중 status(결제 상태)파라미터에 따라 추가 로직을 구현해야 합니다.
 </Hint>
 
 ## 페이팔 정기결제 버튼 렌더링
 
-페이팔 정기결제 빌링키 발급은 고객사 체크아웃 페이지에 페이팔 정기결제 버튼(아래 이미지 참고)을 렌더링 한 후, 버튼을 클릭해 페이팔 빌링키 발급 창을 호출하는 방식입니다.
+페이팔 정기결제 빌링키 발급은 고객사 체크아웃 페이지에 페이팔 정기결제 버튼(아래 이미지 참고)을 렌더링 한 후,
+버튼을 클릭해 페이팔 빌링키 발급 창을 호출하는 방식입니다.
 
 <Figure src="/gitbook-assets/ko/paypal-rt/btn-paypal-rt.png" />
 
@@ -67,7 +70,7 @@ import Hint from "~/components/Hint.astro";
     // 6-7. 포트원 DB에 미결제(ready) 빌링키 발급 건이 생성됩니다.
     // 8. PG사 빌링키 발급 창이 호출됩니다.
     // 9. 빌링키 발급 프로세스가 종료되면 2-2번에 두번째 파라미터로 전달 한 콜백 함수가 호출됩니다.
-  });
+  };
 </script>
 ```
 
@@ -116,10 +119,9 @@ import Hint from "~/components/Hint.astro";
   />
 </form>
 
-// 1. 고객사 체크아웃 페이지가 렌더링됩니다. // 페이팔 버튼을 렌더링 하고 싶은
-위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣어줍니다. //
-향후 비슷한 플로우로 동작하는 PG사가 생기거나, 2개 이상의 dom element가 렌더링
-될 것을 대비해 // data-portone-ui-type을 paypal-rt로 설정합니다.
+<!-- 1. 고객사 체크아웃 페이지가 렌더링됩니다. -->
+<!-- 페이팔 버튼을 렌더링 하고 싶은 위치에 "portone-ui-container"라는 class 이름을 갖는 div element를 넣어줍니다. -->
+<!-- 향후 비슷한 플로우로 동작하는 PG사가 생기거나, 2개 이상의 dom element가 렌더링 될 것을 대비해 data-portone-ui-type을 paypal-rt로 설정합니다. -->
 <div class="portone-ui-container" data-portone-ui-type="paypal-rt">
   <!-- 3. 여기에 페이팔 버튼이 생성됩니다. -->
 </div>
@@ -128,7 +130,7 @@ import Hint from "~/components/Hint.astro";
   var requestData = {
     pg: 'paypal_v2',
     name: '카카오페이로 등록',
-    ...중략
+    // ...중략
   }
   window.onload = function() {
     // 2. 고객사 체크아웃 페이지가 렌더링 되면
@@ -138,12 +140,12 @@ import Hint from "~/components/Hint.astro";
     // 이때 전달하는 파라미터는 IMP.request_pay 함수 호출시 전달하는 파라미터와 동일합니다.
     IMP.loadUI('paypal-rt', requestData, 콜백 함수)
     // 6. 구매자가 PG사 버튼을 누르면 PG사 빌링키 발급 창이 렌더링 됩니다.
-     // 7. 이때 포트원은 내부적으로 IMP.request_pay 함수를 고객사 대신 호출하며
-     // 빌링키 발급 주문 명은 '카카오페이로 등록'에서 '페이팔로 등록'으로 변경됩니다.
-     // 8-9. 포트원 DB에 미결제(ready) 빌링키 발급 건이 생성됩니다.
+    // 7. 이때 포트원은 내부적으로 IMP.request_pay 함수를 고객사 대신 호출하며
+    // 빌링키 발급 주문 명은 '카카오페이로 등록'에서 '페이팔로 등록'으로 변경됩니다.
+    // 8-9. 포트원 DB에 미결제(ready) 빌링키 발급 건이 생성됩니다.
     // 10. PG사 빌링키 발급 창이 호출됩니다.
     // 11. 빌링키 발급 프로세스가 종료되면 2-2번에 두번째 파라미터로 전달 한 콜백 함수가 호출됩니다.
-   });
+  };
 
   function onChangeName() {
     // 5. 빌링키 발급 주문 명이 변경되면 고객사가 선언한 onChangeName 함수가 호출됩니다.
@@ -254,9 +256,7 @@ status가 cancelled 이고 cancel\_history에 취소 요청 내역이 있는 경
 </script>
 <script type="text/javascript" src="https://c.paypal.com/da/r/fb.js"></script>
 <noscript>
-  <img
-    src="https://c.paypal.com/v1/r/d/b/ns?f=RISK_SESSION_CORRELATION_ID&s=SOURCE_IDENTIFIER&js=0&r=1"
-  />
+  <img src="https://c.paypal.com/v1/r/d/b/ns?f=RISK_SESSION_CORRELATION_ID&s=SOURCE_IDENTIFIER&js=0&r=1" />
 </noscript>
 ```
 
@@ -380,7 +380,7 @@ STC 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다.
     발급 된 빌링키로 단건 결제(again API 호출)시 STC 적용하기
   </p>
 
-  ```javascript
+  ```ts
   await fetch("https://api.iamport.kr/subscribe/payments/again", {
     method: "POST",
     headers: {

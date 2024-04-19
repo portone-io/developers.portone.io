@@ -14,1051 +14,1003 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 ## ⌨ 본인인증 내역 단건조회
 
 <Swagger method="get" path="/identity-verifications/{id}" baseUrl="https://api.portone.io" summary="본인인증 내역 조회">
-<SwaggerDescription>주어진 아이디에 대응되는 본인인증 내역을 조회합니다.</SwaggerDescription>
+  <SwaggerDescription>주어진 아이디에 대응되는 본인인증 내역을 조회합니다.</SwaggerDescription>
 
-### Parameters
+  ### Parameters
 
-#### Path
+  #### Path
 
-<SwaggerParameter name="id" type="string" required="true">
-  본인인증 내역 아이디
-</SwaggerParameter>
+  <SwaggerParameter name="id" type="string" required="true">
+    본인인증 내역 아이디
+  </SwaggerParameter>
 
-#### Query
+  #### Query
 
-<SwaggerParameter name="storeId" type="string" required="false">
-  상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴
-  상점 아이디를 사용)
-</SwaggerParameter>
+  <SwaggerParameter name="storeId" type="string" required="false">
+    상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴
+    상점 아이디를 사용)
+  </SwaggerParameter>
 
-### Responses
+  ### Responses
 
-<SwaggerResponse status="200" description="성공 응답으로 본인 인증 객체를 반환합니다.">
-<Tabs>
-<Tab title="Response">
-**`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="200" description="성공 응답으로 본인 인증 객체를 반환합니다.">
+    <Tabs>
+      <Tab title="Response">
+        **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-본인인증 상태 (`READY`, `VERIFIED`, `FAILED`)
+        본인인증 상태 (`READY`, `VERIFIED`, `FAILED`)
 
----
+        ---
 
-**`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-본인인증 내역 아이디
+        본인인증 내역 아이디
 
----
+        ---
 
-**`channel`** <mark style="color:red;">**SelectedChannel**</mark>
+        **`channel`** <mark style="color:red;">**SelectedChannel**</mark>
 
-채널 정보
+        채널 정보
 
-<Details>
-<p slot="summary">SelectedChannel</p>
+        <Details>
+          <p slot="summary">SelectedChannel</p>
 
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-채널 타입 (`LIVE`, `TEST`)
+          채널 타입 (`LIVE`, `TEST`)
 
----
+          ---
 
-**`id`** <mark style="color:green;">**string**</mark>
+          **`id`** <mark style="color:green;">**string**</mark>
 
-채널 아이디
+          채널 아이디
 
----
+          ---
 
-**`key`** <mark style="color:green;">**string**</mark>
+          **`key`** <mark style="color:green;">**string**</mark>
 
-채널 키
+          채널 키
 
----
+          ---
 
-**`name`** <mark style="color:green;">**string**</mark>
+          **`name`** <mark style="color:green;">**string**</mark>
 
-채널 명
+          채널 명
 
----
+          ---
 
-**`pgProvider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`pgProvider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-PG사 (`DANAL`)
+          PG사 (`DANAL`)
 
----
+          ---
 
-**`pgMerchantId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`pgMerchantId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-PG사 고객사 식별 아이디
+          PG사 고객사 식별 아이디
 
----
+          ---
+        </Details>
 
-</Details>
+        ---
 
----
+        **`customData`** <mark style="color:green;">**string**</mark>
 
-**`customData`** <mark style="color:green;">**string**</mark>
+        사용자 지정 데이터
 
-사용자 지정 데이터
+        ---
 
----
+        **`requestedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`requestedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        본인인증 요청 시각
 
-본인인증 요청 시각
+        ---
 
----
+        **`updatedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`updatedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        업데이트 시각
 
-업데이트 시각
+        ---
 
----
+        **`statusChangedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`statusChangedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        상태 업데이트 시각
 
-상태 업데이트 시각
+        ---
 
----
+        **`requestedCustomer`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**RequestedCustomer**</mark>
 
-**`requestedCustomer`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**RequestedCustomer**</mark>
+        (status - `READY`, `FAILED` 일 때만 존재)
 
-(status - `READY`, `FAILED` 일 때만 존재)
+        요청 시 고객 정보
 
-요청 시 고객 정보
+        <Details>
+          <p slot="summary">RequestedCustomer</p>
 
-<Details>
-<p slot="summary">RequestedCustomer</p>
+          **`id`** <mark style="color:green;">**string**</mark>
 
-**`id`** <mark style="color:green;">**string**</mark>
+          식별 아이디
 
-식별 아이디
+          ---
 
----
+          **`name`** <mark style="color:green;">**string**</mark>
 
-**`name`** <mark style="color:green;">**string**</mark>
+          이름
 
-이름
+          ---
 
----
+          **`phoneNumber`** <mark style="color:green;">**string**</mark>
 
-**`phoneNumber`** <mark style="color:green;">**string**</mark>
+          핸드폰 번호. 특수 문자(-) 없이 숫자로만 이루어진 번호 형식
 
-핸드폰 번호. 특수 문자(-) 없이 숫자로만 이루어진 번호 형식
+          ---
+        </Details>
 
----
+        ---
 
-</Details>
+        **`verifiedCustomer`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**VerifiedCustomer**</mark>
 
----
+        (status - `VERIFIED` 일 때만 존재)
 
-**`verifiedCustomer`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**VerifiedCustomer**</mark>
+        인증된 고객 정보
 
-(status - `VERIFIED` 일 때만 존재)
+        <Details>
+          <p slot="summary">VerifiedCustomer</p>
 
-인증된 고객 정보
+          **`id`** <mark style="color:green;">**string**</mark>
 
-<Details>
-<p slot="summary">VerifiedCustomer</p>
+          식별 아이디
 
-**`id`** <mark style="color:green;">**string**</mark>
+          ---
 
-식별 아이디
+          **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+          이름
 
-**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
 
-이름
+          **`phoneNumber`** <mark style="color:green;">**string**</mark>
 
----
+          핸드폰 번호. 특수 문자(-) 없이 숫자로만 이루어진 번호 형식
 
-**`phoneNumber`** <mark style="color:green;">**string**</mark>
+          ---
 
-핸드폰 번호. 특수 문자(-) 없이 숫자로만 이루어진 번호 형식
+          **`birthDate`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+          생년월일 (yyyy-MM-dd)
 
-**`birthDate`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
 
-생년월일 (yyyy-MM-dd)
+          **`gender`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+          성별
 
-**`gender`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          `MALE`, `FEMALE`, `OTHER`
 
-성별
+          ---
 
-`MALE`, `FEMALE`, `OTHER`
+          **`isForeigner`** <mark style="color:green;">**boolean**</mark>
 
----
+          외국인 여부 (`true` - 외국인, `false` - 내국인)
 
-**`isForeigner`** <mark style="color:green;">**boolean**</mark>
+          ---
 
-외국인 여부 (`true` - 외국인, `false` - 내국인)
+          **`ci`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+          개인 고유 식별키
 
-**`ci`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
 
-개인 고유 식별키
+          **`di`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+          사이트별 개인 고유 식별키
 
-**`di`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
+        </Details>
 
-사이트별 개인 고유 식별키
+        ---
 
----
+        **`verifiedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
+        (status - `VERIFIED` 일 때만 존재)
 
----
+        본인인증 완료 시각
 
-**`verifiedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-(status - `VERIFIED` 일 때만 존재)
+        **`pgTxId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-본인인증 완료 시각
+        (status - `VERIFIED` 일 때만 존재)
 
----
+        본인인증 건 PG사 아이디
 
-**`pgTxId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-(status - `VERIFIED` 일 때만 존재)
+        **`pgRawResponse`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-본인인증 건 PG사 아이디
+        (status - `VERIFIED` 일 때만 존재)
 
----
+        PG사 응답 데이터
 
-**`pgRawResponse`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-(status - `VERIFIED` 일 때만 존재)
+  <SwaggerResponse status="400" description="올바른 상점 아이디를 입력해주세요.">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-PG사 응답 데이터
+        에러 타입
 
----
+        `INVALID_REQUEST`
 
-</Tab>
-</Tabs>
+        ---
 
-</SwaggerResponse>
+        **`message`** <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="400" description="올바른 상점 아이디를 입력해주세요.">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        에러 메시지
 
-에러 타입
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-`INVALID_REQUEST`
+  <SwaggerResponse status="401" description="인증 정보가 올바르지 않은 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 타입
 
-**`message`** <mark style="color:green;">**string**</mark>
+        `UNAUTHORIZED`
 
-에러 메시지
+        ---
 
----
+        **`message`** <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        에러 메시지
 
-<SwaggerResponse status="401" description="인증 정보가 올바르지 않은 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-에러 타입
+  <SwaggerResponse status="403" description="요청이 거절된 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-`UNAUTHORIZED`
+        에러 타입
 
----
+        `FORBIDDEN`
 
-**`message`** <mark style="color:green;">**string**</mark>
+        ---
 
-에러 메시지
+        **`message`** <mark style="color:green;">**string**</mark>
 
----
+        에러 메시지
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-<SwaggerResponse status="403" description="요청이 거절된 경우">
-<Tabs>
-<Tab title="Response">
+  <SwaggerResponse status="404" description="요청된 본인인증 건이 존재하지 않는 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        에러 타입
 
-에러 타입
+        `IDENTITY_VERIFICATION_NOT_FOUND`
 
-`FORBIDDEN`
+        ---
 
----
+        **`message`** <mark style="color:green;">**string**</mark>
 
-**`message`** <mark style="color:green;">**string**</mark>
+        에러 메시지
 
-에러 메시지
-
----
-
-</Tab>
-</Tabs>
-</SwaggerResponse>
-
-<SwaggerResponse status="404" description="요청된 본인인증 건이 존재하지 않는 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-에러 타입
-
-`IDENTITY_VERIFICATION_NOT_FOUND`
-
----
-
-**`message`** <mark style="color:green;">**string**</mark>
-
-에러 메시지
-
----
-
-</Tab>
-</Tabs>
-</SwaggerResponse>
-
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 </Swagger>
 
 ## ⌨ 본인인증 요청 전송
 
 <Swagger method="post" path="/identity-verifications/{id}/send" baseUrl="https://api.portone.io" summary="본인인증 요청 전송">
-<SwaggerDescription>
-본인인증 요청을 전송합니다.
+  <SwaggerDescription>
+    본인인증 요청을 전송합니다.
 
-SMS 방식을 이용할 경우 입력한 전화번호로 문자 메시지가 발송되며 APP 방식을 이용할 경우에는 PASS 앱으로 푸쉬 알람이 전송됩니다.
+    SMS 방식을 이용할 경우 입력한 전화번호로 문자 메시지가 발송되며 APP 방식을 이용할 경우에는 PASS 앱으로 푸쉬 알람이 전송됩니다.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="id" type="string" required="true">
+    본인인증 내역 아이디
+  </SwaggerParameter>
 
-<SwaggerParameter name="id" type="string" required="true">
-  본인인증 내역 아이디
-</SwaggerParameter>
+  #### Body
 
-#### Body
+  <SwaggerParameter name="storeId" type="string" required="false">
+    상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴 상점 아이디를 사용)
+  </SwaggerParameter>
 
-<SwaggerParameter name="storeId" type="string" required="false">
-상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴 상점 아이디를 사용)
+  <SwaggerParameter name="channelKey" type="string" required="true">
+    채널 키
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="channelKey" type="string" required="true">
-채널 키
+  <SwaggerParameter name="customer" type="SendIdentityVerificationBodyCustomer" required="true">
+    고객 정보
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="customer" type="SendIdentityVerificationBodyCustomer" required="true">
-고객 정보
+  <SwaggerParameter name="customData" type="String" required="false">
+    사용자 정의 데이터
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="customData" type="String" required="false">
-사용자 정의 데이터
+  <SwaggerParameter name="bypass" type="string" required="false">
+    PG사 별 추가 데이터 ([특수 파라미터 안내](../../ko/v2-payment/pg/danal-identity-verification#다날-특수-파라미터-안내))
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="bypass" type="string" required="false">
-PG사 별 추가 데이터 ([특수 파라미터 안내](../../ko/v2-payment/pg/danal-identity-verification#다날-특수-파라미터-안내))
+  <SwaggerParameter name="operator" type="IdentityVerificationOperator" required="true">
+    통신사
 
-</SwaggerParameter>
-<SwaggerParameter name="operator" type="IdentityVerificationOperator" required="true">
-통신사
+    `SKT`, `KT`, `LGU`, `SKT_MVNO`, `KT_MVNO`, `LGU_MVNO`
+  </SwaggerParameter>
 
-`SKT`, `KT`, `LGU`, `SKT_MVNO`, `KT_MVNO`, `LGU_MVNO`
+  <SwaggerParameter name="method" type="IdentityVerificationMethod" required="true">
+    본인인증 수단
 
-</SwaggerParameter>
-<SwaggerParameter name="method" type="IdentityVerificationMethod" required="true">
-본인인증 수단
+    `SMS`, `APP`
+  </SwaggerParameter>
 
-`SMS`, `APP`
+  ### Responses
 
-</SwaggerParameter>
+  <SwaggerResponse status="200" description="본인인증 요청 전송 성공 응답">
+    <Tabs>
+      <Tab title="Response" />
+    </Tabs>
+  </SwaggerResponse>
 
-### Responses
+  <SwaggerResponse status="400" description="요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200" description="본인인증 요청 전송 성공 응답">
-<Tabs>
-<Tab title="Response">
-</Tab>
-</Tabs>
+        에러 타입
 
-</SwaggerResponse>
+        `INVALID_REQUEST`
 
-<SwaggerResponse status="400" description="요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-에러 타입
+        **`message`** <mark style="color:green;">**string**</mark>
 
-`INVALID_REQUEST`
+        에러 메시지
 
----
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`message`** <mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="401" description="인증 정보가 올바르지 않은 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-에러 메시지
+        에러 타입
 
----
+        `UNAUTHORIZED`
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        ---
 
-<SwaggerResponse status="401" description="인증 정보가 올바르지 않은 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`message`** <mark style="color:green;">**string**</mark>
 
-에러 타입
+        에러 메시지
 
-`UNAUTHORIZED`
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
----
+  <SwaggerResponse status="403" description="요청이 거절된 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`message`** <mark style="color:green;">**string**</mark>
+        에러 타입
 
-에러 메시지
+        `FORBIDDEN`
 
----
+        ---
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        **`message`** <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="403" description="요청이 거절된 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        에러 메시지
 
-에러 타입
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-`FORBIDDEN`
+  <SwaggerResponse status="404" description="요청된 채널이 존재하지 않는 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 타입
 
-**`message`** <mark style="color:green;">**string**</mark>
+        `CHANNEL_NOT_FOUND`
 
-에러 메시지
+        ---
 
----
+        **`message`** <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        에러 메시지
 
-<SwaggerResponse status="404" description="요청된 채널이 존재하지 않는 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-에러 타입
+  <SwaggerResponse status="409" description="이미 인증이 완료됐거나 API로 인증이 요청된 상태인 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-`CHANNEL_NOT_FOUND`
+        에러 타입
 
----
+        `IDENTITY_VERIFICATION_ALREADY_VERIFIED`, `IDENTITY_VERIFICATION_ALREADY_SENT`
 
-**`message`** <mark style="color:green;">**string**</mark>
+        ---
 
-에러 메시지
+        **`message`** <mark style="color:green;">**string**</mark>
 
----
+        에러 메시지
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-<SwaggerResponse status="409" description="이미 인증이 완료됐거나 API로 인증이 요청된 상태인 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="500" description="PG사에서 오류가 발생한 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-에러 타입
+        에러 타입
 
-`IDENTITY_VERIFICATION_ALREADY_VERIFIED`, `IDENTITY_VERIFICATION_ALREADY_SENT`
+        `PG_PROVIDER`
 
----
+        ---
 
-**`message`** <mark style="color:green;">**string**</mark>
+        **`pgCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-에러 메시지
+        PG사 에러 코드
 
----
+        ---
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        **`pgMessage`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="500" description="PG사에서 오류가 발생한 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        PG사 에러 메시지
 
-에러 타입
-
-`PG_PROVIDER`
-
----
-
-**`pgCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-PG사 에러 코드
-
----
-
-**`pgMessage`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-PG사 에러 메시지
-
----
-
-</Tab>
-</Tabs>
-</SwaggerResponse>
-
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 </Swagger>
 
 <Tabs>
-<Tab title="SendIdentityVerificationBodyCustomer">
-**`id`** <mark style="color:green;">**string**</mark>
+  <Tab title="SendIdentityVerificationBodyCustomer">
+    **`id`** <mark style="color:green;">**string**</mark>
 
-식별 아이디
+    식별 아이디
 
----
+    ---
 
-**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+    **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-고객 성명
+    고객 성명
 
----
+    ---
 
-**`phoneNumber`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+    **`phoneNumber`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-핸드폰 번호. 특수 문자(-) 없이 숫자로만 이루어진 번호 형식
+    핸드폰 번호. 특수 문자(-) 없이 숫자로만 이루어진 번호 형식
 
----
+    ---
 
-**`identityNumber`** <mark style="color:green;">**string**</mark>
+    **`identityNumber`** <mark style="color:green;">**string**</mark>
 
-주민등록번호 앞 7자리 (SMS 방식의 경우 필수 입력)
+    주민등록번호 앞 7자리 (SMS 방식의 경우 필수 입력)
 
----
-
-</Tab>
+    ---
+  </Tab>
 </Tabs>
 
 ## ⌨ 본인인증 확인
 
 <Swagger method="post" path="/identity-verifications/{id}/confirm" baseUrl="https://api.portone.io" summary="본인인증 확인">
-<SwaggerDescription>
-요청된 본인인증에 대한 확인을 진행하여 성공한다면 인증을 완료합니다.
+  <SwaggerDescription>
+    요청된 본인인증에 대한 확인을 진행하여 성공한다면 인증을 완료합니다.
 
-SMS 방식의 경우에는 입력된 OTP가 실제 발송되었던 OTP와 일치하는지 확인하며, APP 방식의 경우 PASS 인증이 완료되었는지 여부를 검사합니다.
+    SMS 방식의 경우에는 입력된 OTP가 실제 발송되었던 OTP와 일치하는지 확인하며, APP 방식의 경우 PASS 인증이 완료되었는지 여부를 검사합니다.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="id" type="string" required="true">
+    본인인증 내역 아이디
+  </SwaggerParameter>
 
-<SwaggerParameter name="id" type="string" required="true">
-  본인인증 내역 아이디
-</SwaggerParameter>
+  #### Body
 
-#### Body
+  <SwaggerParameter name="storeId" type="string" required="false">
+    상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴 상점 아이디를 사용)
+  </SwaggerParameter>
 
-<SwaggerParameter name="storeId" type="string" required="false">
-상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴 상점 아이디를 사용)
+  <SwaggerParameter name="otp" type="string" required="false">
+    OTP (SMS 방식일 때만 입력, APP 방식은 입력하지 않음)
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="otp" type="string" required="false">
-OTP (SMS 방식일 때만 입력, APP 방식은 입력하지 않음)
+  ### Responses
 
-</SwaggerParameter>
+  <SwaggerResponse status="200" description="본인인증 확인 성공 응답">
+    <Tabs>
+      <Tab title="Response">
+        **`identityVerification`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**VerifiedIdentityVerification**</mark>
 
-### Responses
+        본인인증 완료 상태 건
 
-<SwaggerResponse status="200" description="본인인증 확인 성공 응답">
-<Tabs>
-<Tab title="Response">
+        <Details>
+          <p slot="summary">VerifiedIdentityVerification</p>
 
-**`identityVerification`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**VerifiedIdentityVerification**</mark>
+          **`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-본인인증 완료 상태 건
+          본인인증 내역 아이디
 
-<Details>
-<p slot="summary">VerifiedIdentityVerification</p>
+          ---
 
-**`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`channel`** <mark style="color:red;">**SelectedChannel**</mark>
 
-본인인증 내역 아이디
+          채널 정보
 
----
+          <Details>
+            <p slot="summary">Channel</p>
 
-**`channel`** <mark style="color:red;">**SelectedChannel**</mark>
+            **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-채널 정보
+            채널 타입 (`LIVE`, `TEST`)
 
-<Details>
-<p slot="summary">Channel</p>
+            ---
 
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+            **`id`** <mark style="color:green;">**string**</mark>
 
-채널 타입 (`LIVE`, `TEST`)
+            채널 아이디
 
----
+            ---
 
-**`id`** <mark style="color:green;">**string**</mark>
+            **`key`** <mark style="color:green;">**string**</mark>
 
-채널 아이디
+            채널 키
 
----
+            ---
 
-**`key`** <mark style="color:green;">**string**</mark>
+            **`name`** <mark style="color:green;">**string**</mark>
 
-채널 키
+            채널 명
 
----
+            ---
 
-**`name`** <mark style="color:green;">**string**</mark>
+            **`pgProvider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-채널 명
+            PG사 (`DANAL`)
 
----
+            ---
 
-**`pgProvider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+            **`pgMerchantId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-PG사 (`DANAL`)
+            PG사 고객사 식별 아이디
 
----
+            ---
+          </Details>
 
-**`pgMerchantId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
 
-PG사 고객사 식별 아이디
+          **`customData`** <mark style="color:green;">**string**</mark>
 
----
+          사용자 지정 데이터
 
-</Details>
+          ---
 
----
+          **`requestedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`customData`** <mark style="color:green;">**string**</mark>
+          본인인증 요청 시각
 
-사용자 지정 데이터
+          ---
 
----
+          **`updatedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`requestedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          업데이트 시각
 
-본인인증 요청 시각
+          ---
 
----
+          **`statusChangedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`updatedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          상태 업데이트 시각
 
-업데이트 시각
+          ---
 
----
+          **`verifiedCustomer`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**VerifiedCustomer**</mark>
 
-**`statusChangedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          인증된 고객 정보
 
-상태 업데이트 시각
+          <Details>
+            <p slot="summary">VerifiedCustomer</p>
 
----
+            **`id`** <mark style="color:green;">**string**</mark>
 
-**`verifiedCustomer`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**VerifiedCustomer**</mark>
+            식별 아이디
 
-인증된 고객 정보
+            ---
 
-<Details>
-<p slot="summary">VerifiedCustomer</p>
+            **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`id`** <mark style="color:green;">**string**</mark>
+            이름
 
-식별 아이디
+            ---
 
----
+            **`phoneNumber`** <mark style="color:green;">**string**</mark>
 
-**`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+            핸드폰 번호. 특수 문자(-) 없이 숫자로만 이루어진 번호 형식
 
-이름
+            ---
 
----
+            **`birthDate`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`phoneNumber`** <mark style="color:green;">**string**</mark>
+            생년월일 (yyyy-MM-dd)
 
-핸드폰 번호. 특수 문자(-) 없이 숫자로만 이루어진 번호 형식
+            ---
 
----
+            **`gender`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`birthDate`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+            성별
 
-생년월일 (yyyy-MM-dd)
+            `MALE`, `FEMALE`, `OTHER`
 
----
+            ---
 
-**`gender`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+            **`isForeigner`** <mark style="color:green;">**boolean**</mark>
 
-성별
+            외국인 여부
 
-`MALE`, `FEMALE`, `OTHER`
+            ---
 
----
+            **`ci`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`isForeigner`** <mark style="color:green;">**boolean**</mark>
+            개인 고유 식별키
 
-외국인 여부
+            ---
 
----
+            **`di`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`ci`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+            사이트별 개인 고유 식별키
 
-개인 고유 식별키
+            ---
+          </Details>
 
----
+          ---
 
-**`di`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`verifiedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-사이트별 개인 고유 식별키
+          본인인증 완료 시각
 
----
+          ---
 
-</Details>
+          **`pgTxId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+          본인인증 건 PG사 아이디
 
-**`verifiedAt`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
 
-본인인증 완료 시각
+          **`pgRawResponse`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+          PG사 응답 데이터
 
-**`pgTxId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
+        </Details>
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-본인인증 건 PG사 아이디
+  <SwaggerResponse status="400" description="요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 타입
 
-**`pgRawResponse`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        `INVALID_REQUEST`
 
-PG사 응답 데이터
+        ---
 
----
+        **`message`** <mark style="color:green;">**string**</mark>
 
-</Details>
+        에러 메시지
 
-</Tab>
-</Tabs>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-</SwaggerResponse>
+  <SwaggerResponse status="401" description="인증 정보가 올바르지 않은 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="400" description="요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        에러 타입
 
-에러 타입
+        `UNAUTHORIZED`
 
-`INVALID_REQUEST`
+        ---
 
----
+        **`message`** <mark style="color:green;">**string**</mark>
 
-**`message`** <mark style="color:green;">**string**</mark>
+        에러 메시지
 
-에러 메시지
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
----
+  <SwaggerResponse status="403" description="요청이 거절된 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        에러 타입
 
-<SwaggerResponse status="401" description="인증 정보가 올바르지 않은 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        `FORBIDDEN`
 
-에러 타입
+        ---
 
-`UNAUTHORIZED`
+        **`message`** <mark style="color:green;">**string**</mark>
 
----
+        에러 메시지
 
-**`message`** <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-에러 메시지
+  <SwaggerResponse status="404" description="요청된 본인인증 건이 없거나 API로 본인인증이 요청된 상태가 아닌 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 타입
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        `IDENTITY_VERIFICATION_NOT_FOUND`, `IDENTITY_VERIFICATION_NOT_SENT`
 
-<SwaggerResponse status="403" description="요청이 거절된 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-에러 타입
+        **`message`** <mark style="color:green;">**string**</mark>
 
-`FORBIDDEN`
+        에러 메시지
 
----
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`message`** <mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="409" description="본인인증 건이 이미 인증 완료된 상태인 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-에러 메시지
+        에러 타입
 
----
+        `IDENTITY_VERIFICATION_ALREADY_VERIFIED`
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        ---
 
-<SwaggerResponse status="404" description="요청된 본인인증 건이 없거나 API로 본인인증이 요청된 상태가 아닌 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`message`** <mark style="color:green;">**string**</mark>
 
-에러 타입
+        에러 메시지
 
-`IDENTITY_VERIFICATION_NOT_FOUND`, `IDENTITY_VERIFICATION_NOT_SENT`
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
----
+  <SwaggerResponse status="500" description="PG사에서 오류가 발생한 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`message`** <mark style="color:green;">**string**</mark>
+        에러 타입
 
-에러 메시지
+        `PG_PROVIDER`
 
----
+        ---
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        **`pgCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="409" description="본인인증 건이 이미 인증 완료된 상태인 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        PG사 에러 코드
 
-에러 타입
+        ---
 
-`IDENTITY_VERIFICATION_ALREADY_VERIFIED`
+        **`pgMessage`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        PG사 에러 메시지
 
-**`message`** <mark style="color:green;">**string**</mark>
-
-에러 메시지
-
----
-
-</Tab>
-</Tabs>
-</SwaggerResponse>
-
-<SwaggerResponse status="500" description="PG사에서 오류가 발생한 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-에러 타입
-
-`PG_PROVIDER`
-
----
-
-**`pgCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-PG사 에러 코드
-
----
-
-**`pgMessage`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-PG사 에러 메시지
-
----
-
-</Tab>
-</Tabs>
-</SwaggerResponse>
-
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 </Swagger>
 
 ## ⌨ 본인인증 요청 재전송 (SMS)
 
 <Swagger method="post" path="/identity-verifications/{id}/resend" baseUrl="https://api.portone.io" summary="본인인증 요청 재전송 (SMS)">
-<SwaggerDescription>
-본인인증 요청을 재전송합니다.
+  <SwaggerDescription>
+    본인인증 요청을 재전송합니다.
 
-SMS 방식일 때에만 사용 가능하며, 기존 OTP가 만료되고 새로운 OTP가 전송됩니다.
+    SMS 방식일 때에만 사용 가능하며, 기존 OTP가 만료되고 새로운 OTP가 전송됩니다.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="id" type="string" required="true">
+    본인인증 내역 아이디
+  </SwaggerParameter>
 
-<SwaggerParameter name="id" type="string" required="true">
-  본인인증 내역 아이디
-</SwaggerParameter>
+  #### Query
 
-#### Query
+  <SwaggerParameter name="storeId" type="string" required="false">
+    상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴
+    상점 아이디를 사용)
+  </SwaggerParameter>
 
-<SwaggerParameter name="storeId" type="string" required="false">
-  상점 아이디 (접근 권한이 있는 상점 아이디 입력 가능, 미 입력시 토큰에 담긴
-  상점 아이디를 사용)
-</SwaggerParameter>
+  ### Responses
 
-### Responses
+  <SwaggerResponse status="200" description="본인인증 요청 재전송 성공 응답">
+    <Tabs>
+      <Tab title="Response" />
+    </Tabs>
+  </SwaggerResponse>
 
-<SwaggerResponse status="200" description="본인인증 요청 재전송 성공 응답">
-<Tabs>
-<Tab title="Response">
-</Tab>
-</Tabs>
+  <SwaggerResponse status="400" description="요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerResponse>
+        에러 타입
 
-<SwaggerResponse status="400" description="요청된 입력 정보가 유효하지 않은 경우. 허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        `INVALID_REQUEST`
 
-에러 타입
+        ---
 
-`INVALID_REQUEST`
+        **`message`** <mark style="color:green;">**string**</mark>
 
----
+        에러 메시지
 
-**`message`** <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-에러 메시지
+  <SwaggerResponse status="401" description="인증 정보가 올바르지 않은 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 타입
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        `UNAUTHORIZED`
 
-<SwaggerResponse status="401" description="인증 정보가 올바르지 않은 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-에러 타입
+        **`message`** <mark style="color:green;">**string**</mark>
 
-`UNAUTHORIZED`
+        에러 메시지
 
----
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`message`** <mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="403" description="요청이 거절된 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-에러 메시지
+        에러 타입
 
----
+        `FORBIDDEN`
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        ---
 
-<SwaggerResponse status="403" description="요청이 거절된 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`message`** <mark style="color:green;">**string**</mark>
 
-에러 타입
+        에러 메시지
 
-`FORBIDDEN`
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
----
+  <SwaggerResponse status="404" description="요청된 본인인증 건이 없거나 API로 본인인증이 요청된 상태가 아닌 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`message`** <mark style="color:green;">**string**</mark>
+        에러 타입
 
-에러 메시지
+        `IDENTITY_VERIFICATION_NOT_FOUND`, `IDENTITY_VERIFICATION_NOT_SENT`
 
----
+        ---
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        **`message`** <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="404" description="요청된 본인인증 건이 없거나 API로 본인인증이 요청된 상태가 아닌 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        에러 메시지
 
-에러 타입
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-`IDENTITY_VERIFICATION_NOT_FOUND`, `IDENTITY_VERIFICATION_NOT_SENT`
+  <SwaggerResponse status="409" description="본인인증 건이 이미 인증 완료된 상태인 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 타입
 
-**`message`** <mark style="color:green;">**string**</mark>
+        `IDENTITY_VERIFICATION_ALREADY_VERIFIED`
 
-에러 메시지
+        ---
 
----
+        **`message`** <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        에러 메시지
 
-<SwaggerResponse status="409" description="본인인증 건이 이미 인증 완료된 상태인 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-에러 타입
+  <SwaggerResponse status="500" description="PG사에서 오류가 발생한 경우">
+    <Tabs>
+      <Tab title="Response">
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-`IDENTITY_VERIFICATION_ALREADY_VERIFIED`
+        에러 타입
 
----
+        `PG_PROVIDER`
 
-**`message`** <mark style="color:green;">**string**</mark>
+        ---
 
-에러 메시지
+        **`pgCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        PG사 에러 코드
 
-</Tab>
-</Tabs>
-</SwaggerResponse>
+        ---
 
-<SwaggerResponse status="500" description="PG사에서 오류가 발생한 경우">
-<Tabs>
-<Tab title="Response">
-**`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`pgMessage`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-에러 타입
+        PG사 에러 메시지
 
-`PG_PROVIDER`
-
----
-
-**`pgCode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-PG사 에러 코드
-
----
-
-**`pgMessage`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-PG사 에러 메시지
-
----
-
-</Tab>
-</Tabs>
-</SwaggerResponse>
-
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 </Swagger>

@@ -6,8 +6,7 @@ description: 구매자 인증 없이 결제 수단 정보만으로 결제를 요
 import Hint from "~/components/Hint.astro";
 
 <Hint style="info">
-수기 결제를 이용하기 위해서는 PG사와 별도 협의가 필요합니다.
-
+  수기 결제를 이용하기 위해서는 PG사와 별도 협의가 필요합니다.
 </Hint>
 
 수기(키인) 결제 API를 이용해 1회성 결제 요청이 가능합니다.
@@ -22,14 +21,14 @@ import Hint from "~/components/Hint.astro";
 
 고객사 서버에서 아래와 같이 포트원 API를 호출합니다.
 
-```javascript title="server-side"
+```ts title="server-side"
 // 포트원 수기(키인)결제 API 호출
 const paymentResponse = await fetch(
   `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
   {
     method: "POST",
     headers: {
-      "Authorization": `PortOne ${PORTONE_API_SECRET}`,
+      Authorization: `PortOne ${PORTONE_API_SECRET}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -46,5 +45,6 @@ const paymentResponse = await fetch(
     }),
   },
 );
-if (!paymentResponse.ok) throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
+if (!paymentResponse.ok)
+  throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
 ```

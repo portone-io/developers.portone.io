@@ -22,6 +22,7 @@ const pretendardPromises = Object.fromEntries(
 ) as { [key in (typeof pretendardVariants)[number]]: Promise<ArrayBuffer> };
 
 interface GenerateConfig {
+  siteName?: string;
   name?: string;
   role?: string;
   profileImage?: string;
@@ -29,6 +30,7 @@ interface GenerateConfig {
   description?: string;
 }
 export async function generate({
+  siteName,
   name,
   role,
   profileImage,
@@ -47,7 +49,7 @@ export async function generate({
     ) : title ? (
       <TitleAndDescription title={title} description={description || ""} />
     ) : (
-      <Main />
+      <Main siteName={siteName} />
     ),
     {
       width: 1200,

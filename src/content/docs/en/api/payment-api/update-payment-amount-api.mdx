@@ -4,120 +4,105 @@ description: ""
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Updates the amount saved via [**Save payment amount API**](save-payment-amount-api).
+## Updates the amount saved via [**Save payment amount API**](save-payment-amount-api).
 
 <Swagger method="put" path="/payments/prepare" baseUrl="https://api.iamport.kr" summary="Updates the pre-saved amount.">
-<SwaggerDescription>
+  <SwaggerDescription />
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Body
 
-#### Body
+  <SwaggerParameter name="merchant_uid" type="String" required="true">
+    <mark style="color:red;">
+      **Merchant order ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="merchant_uid" type="String" required="true">
-<mark style="color:red;">
+  <SwaggerParameter name="amount" type="double" required="true">
+    <mark style="color:red;">
+      **Payment amount**
+    </mark>
+  </SwaggerParameter>
 
-**Merchant order ID**
+  ### Responses
 
-</mark>
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="PaymentPrepareResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="amount" type="double" required="true">
-<mark style="color:red;">
+        **Response code**
 
-**Payment amount**
+        0: success, Not 0: check the message
 
-</mark>
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerParameter>
+        **Response message**
 
-### Responses
+        A non-zero code includes a message like 'Invalid payment info'.
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="PaymentPrepareResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        <mark style="color:red;">
+          **`response (PaymentPrepareAnnotation, optional)`**
+        </mark>
+      </Tab>
+    </Tabs>
 
-**Response code**
+    <Tabs>
+      <Tab title="PaymentPrepareAnnotation">
+        **`merchant_uid`` `**<mark style="color:red;">**`*`**</mark>**` `**<mark style="color:green;">**`string`**</mark>
 
-0: success, Not 0: check the message
+        **`Merchant order ID`**
 
-**`message`** <mark style="color:red;">**\***</mark>\*\* **<mark style="color:green;">**string\*\*</mark>
+        **`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`number`**</mark>
 
-**Response message**
+        **`Payment amount`**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-A non-zero code includes a message like 'Invalid payment info'.
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-<mark style="color:red;">
-  **`response (PaymentPrepareAnnotation, optional)`**
-</mark>
-
-</Tab>
-</Tabs>
-
-<Tabs>
-<Tab title="PaymentPrepareAnnotation">
-**`merchant_uid`` `**<mark style="color:red;">**`*`**</mark>**` `**<mark style="color:green;">**`string`**</mark>
-
-**`Merchant order ID`**
-
-**`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`number`**</mark>
-
-**`Payment amount`**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="404: Not Found" description="Invalid merchant_uid">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="404: Not Found" description="Invalid merchant_uid">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "merchant_uid": "string",
-    "amount": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "merchant_uid": "string",
+      "amount": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/payments.validation/editPreparePayment**](https://api.iamport.kr/#!/payments.validation/editPreparePayment)
-
+  [**https://api.iamport.kr/#!/payments.validation/editPreparePayment**](https://api.iamport.kr/#!/payments.validation/editPreparePayment)
 </Hint>

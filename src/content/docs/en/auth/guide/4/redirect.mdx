@@ -9,7 +9,6 @@ import ContentRef from "~/components/gitbook/ContentRef.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
-import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Hint from "~/components/Hint.astro";
@@ -22,25 +21,30 @@ import Hint from "~/components/Hint.astro";
 
 <Tabs>
   <Tab title="JavaScript">
-    ```javascript title="client-side"
-    IMP.request_pay({
-          /* ...Omitted... */,
-          m_redirect_url: "{redirect URL}" 
-      }, /* callback */);     // callback is not called
+    ```ts title="client-side"
+    IMP.request_pay(
+      {
+        /* ...Omitted... */
+        m_redirect_url: "{redirect URL}",
+      } /* callback */,
+    ); // callback is not called
     ```
   </Tab>
 
   <Tab title="JavaScript (ES Next)">
-    ```javascript title="client-side"
-    IMP.request_pay({
-          /* ...Omitted... */,
-          m_redirect_url: "{redirect URL}" 
-    }, /* callback */); // callback is not called
+    ```ts title="client-side"
+    IMP.request_pay(
+      {
+        /* ...Omitted... */
+        m_redirect_url: "{redirect URL}",
+      } /* callback */,
+    ); // callback is not called
     ```
   </Tab>
 </Tabs>
 
-If **m\_redirect\_url** is specified as the **request\_pay** function parameter as above, the payment result is sent to the URL address in the form of a query string after <mark style="color:blue;">**payment is completed**</mark>.
+If **m\_redirect\_url** is specified as the **request\_pay** function parameter as above,
+the payment result is sent to the URL address in the form of a query string after <mark style="color:blue;">**payment is completed**</mark>.
 
 <Hint style="info">
   **What is a query string?**
@@ -53,9 +57,9 @@ If **m\_redirect\_url** is specified as the **request\_pay** function parameter 
     You can receive the following parameters through the specified URL as a query string.
   </SwaggerDescription>
 
-  ### Parameters
+  ## Parameters
 
-  #### Query
+  ### Query
 
   <SwaggerParameter name="imp_uid" required="true">
     i'mport payment ID
@@ -80,13 +84,13 @@ The following is an example of a redirecting URL based on the query string.
 
 <Tabs>
   <Tab title="Payment successful/virtual account issued">
-    ```url
+    ```sh
     curl https://myservice.com/payments/complete?imp_uid=unique_iamport_paymentID&merchant_uid=unique_merchant_orderID&imp_success=true
     ```
   </Tab>
 
   <Tab title="Payment failed">
-    ```
+    ```sh
     curl https://myservice.com/payments/complete?imp_uid=unique_iamport_paymentID&merchant_uid=unique_merchant_orderID&imp_success=false&error_code=error_code(none_defined_currently)&error_msg=error_message
     ```
   </Tab>
@@ -105,16 +109,26 @@ The following is an example of a redirecting URL based on the query string.
 > The `payment process is complete` when:
 >
 > 1. **Payment is successful** (Status: `paid`, imp\_success: `true`)
+>
 > 2. **Payment fails** (Status: `failed`, imp\_success: `false`)
+>
 > 3. **Payment window fails to open** due to PG module setting error
+>
 > 4. User **terminates the payment process** by clicking the X or Cancel button
-> 5. **Payment is suspended** due to invalid card information, limit exceeded, insufficient balance, etc.
+>
+> 5. **Payment is suspended** due to invalid card information,
+>    limit exceeded, insufficient balance, etc.
+>
 > 6. **Virtual account is issued** (status: `ready`, imp\_success: `true`)
 
 <Hint style="warning">
   **Note - imp\_success parameter**
 
-  The <mark style="color:red;">`imp_success`</mark> parameter indicates **whether or not the payment process completed successfully**. However, since the payment page is opened by calling a JavaScript function from the client-side, **the payment amount can be forged** by a malicious user. Hence, **this value should not be used to determine the success of the payment**. Depending on the value of `imp_success`, determine the payment success as follows:
+  The <mark style="color:red;">`imp_success`</mark> parameter indicates **whether or not the payment process completed successfully**.
+  However, since the payment page is opened by calling a JavaScript function from the client-side,
+  **the payment amount can be forged** by a malicious user.
+  Hence, **this value should not be used to determine the success of the payment**.
+  Depending on the value of `imp_success`, determine the payment success as follows:
 
   - imp\_success = true: First send payment information (imp\_uid, merchant\_uid) to the server to verify the payment amount, and then finalize payment success.
   - imp\_success = false: Alert the user that the payment failed.

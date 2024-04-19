@@ -105,8 +105,6 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 #### **주요 파라미터**
 
-<br />
-
 <ParamTree>
   - `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -327,18 +325,18 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
         ```json
         {
-            "bypass": {
-                "inicis_v2": {
-                    "logo_url": "https://portone.io/assets/portone.87061e94.avif",
-                    "logo_2nd": "https://admin.portone.io/assets/img/auth/lock.png",
-                    "parentemail": "parentemail",
-                    "Ini_SSGPAY_MDN": "01012341234",
-                    "acceptmethod": [ "SKIN(#C1272C)", "below1000", "ocb" ],
-                    "P_CARD_OPTION": "selcode=14",
-                    "P_NMANE": "포트원",
-                    "P_RESERVED": [ "below1000=Y", "noeasypay=Y" ]
-                }
+          "bypass": {
+            "inicis_v2": {
+              "logo_url": "https://portone.io/assets/portone.87061e94.avif",
+              "logo_2nd": "https://admin.portone.io/assets/img/auth/lock.png",
+              "parentemail": "parentemail",
+              "Ini_SSGPAY_MDN": "01012341234",
+              "acceptmethod": [ "SKIN(#C1272C)", "below1000", "ocb" ],
+              "P_CARD_OPTION": "selcode=14",
+              "P_NMANE": "포트원",
+              "P_RESERVED": [ "below1000=Y", "noeasypay=Y" ]
             }
+          }
         }
         ```
     </ParamTree>
@@ -715,7 +713,6 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
       method: "post",
       headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
       data: {
-        paymentId: `payment${crypto.randomUUID()}`,
         channelKey: "channel-key-9987cb87-****-****-****-********896d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
         orderName: "나이키 와플 트레이너 2 SD",
         amount: {
@@ -780,6 +777,12 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
         **총 결제 금액**
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+
+      - `taxFree` <mark style="color:purple;">**number**</mark>
+
+        **면세액**
+
+        결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
     </ParamTree>
 
   - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -793,7 +796,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
     **결제수단 정보**
 
     <ParamTree>
-      - `virtualAccount` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+      - `virtualAccount` <mark style="color:blue;">**object**</mark>
 
         **가상계좌 결제 시 파라미터**
 
@@ -850,12 +853,12 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
                 </ParamTree>
             </ParamTree>
 
-          - `cashReceipt` <mark style="color:blue;">**object**</mark>
+          - `cashReceipt` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
             **현금영수증 정보**
 
             <ParamTree>
-              - `type` <mark style="color:green;">**string**</mark>
+              - `type` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                 **발급 유형**
 
@@ -865,7 +868,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
                 - 지출증빙용 : `CORPORATE`
                 - 미발행 : `NO_RECEIPT`
 
-              - `customerIdentityNumber` <mark style="color:green;">**string**</mark>
+              - `customerIdentityNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                 **현금영수증 식별 번호**
 
@@ -878,23 +881,23 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
             **예금주명**
         </ParamTree>
 
-      - `card` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+      - `card` <mark style="color:blue;">**object**</mark>
 
       <ParamTree>
-        - `credential` <mark style="color:green;">**string**</mark>
+        - `credential` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
           **인증 관련 정보**
 
           <ParamTree>
-            - `number` <mark style="color:blue;">**object**</mark>
+            - `number` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
               **카드 번호**
 
-            - `expiryYear` <mark style="color:blue;">**object**</mark>
+            - `expiryYear` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
               **유효 기간 만료 연도 (YY 형식 ex. 24)**
 
-            - `expiryMonth` <mark style="color:green;">**string**</mark>
+            - `expiryMonth` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
               **유효기간 만료 월 (MM 형식 ex. 05)**
 
@@ -929,11 +932,11 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
                   **분리된 이름**
 
                   <ParamTree>
-                    - `first` <mark style="color:green;">**string**</mark>
+                    - `first` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                       **이름**
 
-                    - `last` <mark style="color:green;">**string**</mark>
+                    - `last` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                       **성**
                   </ParamTree>
@@ -1016,15 +1019,15 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
           **인증 관련 정보**
 
           <ParamTree>
-            - `number` <mark style="color:blue;">**object**</mark>
+            - `number` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
               **카드 번호**
 
-            - `expiryYear` <mark style="color:blue;">**object**</mark>
+            - `expiryYear` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
               **유효 기간 만료 연도 (YY 형식 ex. 24)**
 
-            - `expiryMonth` <mark style="color:green;">**string**</mark>
+            - `expiryMonth` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
               **유효기간 만료 월 (MM 형식 ex. 05)**
 
@@ -1059,11 +1062,11 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
               **분리된 이름**
 
               <ParamTree>
-                - `first` <mark style="color:green;">**string**</mark>
+                - `first` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                   **이름**
 
-                - `last` <mark style="color:green;">**string**</mark>
+                - `last` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                   **성**
               </ParamTree>
@@ -1091,7 +1094,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 <Tabs>
   <Tab title="API 예약/반복 결제">
-    ```javascript
+    ```ts
     const response = await axios({
       url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/schedule`,
       method: "post",
@@ -1145,6 +1148,12 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
         **총 결제 금액**
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+
+      - `taxFree` <mark style="color:purple;">**number**</mark>
+
+        **면세액**
+
+        결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
     </ParamTree>
 
   - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -1174,11 +1183,11 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
               **분리된 이름**
 
               <ParamTree>
-                - `first` <mark style="color:green;">**string**</mark>
+                - `first` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                   **이름**
 
-                - `last` <mark style="color:green;">**string**</mark>
+                - `last` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                   **성**
               </ParamTree>
@@ -1204,13 +1213,13 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 ### API 빌링키 예약/반복 결제 요청하기
 
-예약 결제를 하기위해서는 `POST /payments/${PAYMENT_ID_HERE}/schedule` 를 이용하여 결제를 예약합니다.
+예약 결제를 하기 위해서는 `POST /payments/${PAYMENT_ID_HERE}/schedule` 를 이용하여 결제를 예약합니다.
 
 이니시스 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
   <Tab title="API 예약/반복 결제">
-    ```javascript
+    ```ts
     const response = await axios({
       url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/schedule`,
       method: "post",
@@ -1267,6 +1276,12 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
             **총 결제 금액**
 
             결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+
+          - `taxFree` <mark style="color:purple;">**number**</mark>
+
+            **면세액**
+
+            결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
         </ParamTree>
 
       - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -1301,11 +1316,11 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
               **분리된 이름**
 
               <ParamTree>
-                - `first` <mark style="color:green;">**string**</mark>
+                - `first` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                   **이름**
 
-                - `last` <mark style="color:green;">**string**</mark>
+                - `last` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                   **성**
               </ParamTree>
@@ -1396,19 +1411,19 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
 
-      - `taxFreeAmount` <mark style="color:green;">**number**</mark>
+      - `taxFreeAmount` <mark style="color:red;">**\***</mark> <mark style="color:green;">**number**</mark>
 
         **면세액**
 
         - 이니시스의 경우 필수로 입력해야 합니다.
 
-      - `vatAmount` <mark style="color:green;">**number**</mark>
+      - `vatAmount` <mark style="color:red;">**\***</mark> <mark style="color:green;">**number**</mark>
 
         **부가세**
 
         - 이니시스의 경우 필수로 입력해야 합니다.
 
-      - `supplyAmount`  <mark style="color:green;">**number**</mark>
+      - `supplyAmount` <mark style="color:red;">**\***</mark> <mark style="color:green;">**number**</mark>
 
         **공급가액**
 

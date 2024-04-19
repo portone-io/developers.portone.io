@@ -8,1022 +8,952 @@ import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
 ## ⌨ 하위상점의 전자결제 신청 정보를 가져오기 (호스팅사 > 포트원)
 
 <Swagger method="get" path="/stores/{store-id}/applications" baseUrl="https://api.portone.io/v2" summary="하위상점의 전자결제 신청 정보를 가져오기 (호스팅사 > 포트원)">
-<SwaggerDescription>
-하위상점 등록 API를 통해서 호스팅사의 사업자 정보를 포트원에 전달하면 전자결제 신청을 위해 하위상점의 전자결제 신청 정보, 계약 진행 상태 정보를 가져옵니다.
+  <SwaggerDescription>
+    하위상점 등록 API를 통해서 호스팅사의 사업자 정보를 포트원에 전달하면 전자결제 신청을 위해 하위상점의 전자결제 신청 정보, 계약 진행 상태 정보를 가져옵니다.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Header
 
-#### Header
+  <SwaggerParameter name="Authorization" type="string" required="true">
+    jwt 토큰 헤더
+  </SwaggerParameter>
 
-<SwaggerParameter name="Authorization" type="string" required="true">
-jwt 토큰 헤더
+  #### Path
 
-</SwaggerParameter>
+  <SwaggerParameter name="store-id" type="string" required="true">
+    store의 id
+  </SwaggerParameter>
 
-#### Path
+  ### Responses
 
-<SwaggerParameter name="store-id" type="string" required="true">
-store의 id
+  <SwaggerResponse status="200" description="조회 성공">
+    <Tabs>
+      <Tab title="Response">
+        **`applications`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**Array\[ApplicationPublic]**</mark>
 
-</SwaggerParameter>
+        전자결제 신청내역
 
-### Responses
+        <Details>
+          <p slot="summary">ApplicationPublic</p>
 
-<SwaggerResponse status="200" description="조회 성공">
-<Tabs>
-<Tab title="Response">
-**`applications`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**Array\[ApplicationPublic]**</mark>
+          **`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-전자결제 신청내역
+          전자결제 신청 id
 
-<Details>
-<p slot="summary">ApplicationPublic</p>
+          ---
 
-**`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`store_id`** <mark style="color:green;">**string**</mark>
 
-전자결제 신청 id
+          전자결제 신청한 store id
 
----
+          ---
 
-**`store_id`** <mark style="color:green;">**string**</mark>
+          **`pg_company`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**PgCompany**</mark>
 
-전자결제 신청한 store id
+          PG사
 
----
+          `"UNIDENTIFIED"`, `"NICE"`, `"KCP"`, `"KICC"`, `"DANAL"`, `"SETTLE"`, `"INICIS"`, `"SMARTRO"`, `"TOSSPAYMENTS"`, `"DAOU"`, `"KSNET"`, `"MOBILIANS"`, `"EXIMBAY"`, `"PAYPAL"`, `"PAYMENTWALL"`, `"NAVERPAY"`, `"NAVERCO"`, `"KAKAOPAY"`, `"TOSSPAY"`, `"CHAI"`, `"PAYCO"`, `"SMILEPAY"`
 
-**`pg_company`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**PgCompany**</mark>
+          ---
 
-PG사
+          **`methods`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[MethodAndType]**</mark>
 
-`"UNIDENTIFIED"`, `"NICE"`, `"KCP"`, `"KICC"`, `"DANAL"`, `"SETTLE"`, `"JTNET"`, `"INICIS"`, `"SMARTRO"`, `"BLUEWALNUT"`, `"TOSSPAYMENTS"`, `"DAOU"`, `"KSNET"`, `"MOBILIANS"`, `"ALIPAY"`, `"EXIMBAY"`, `"PAYPAL"`, `"PAYMENTWALL"`, `"NAVERPAY"`, `"NAVERCO"`, `"KAKAOPAY"`, `"TOSSPAY"`, `"CHAI"`, `"PAYCO"`, `"SMILEPAY"`
+          해당 PG사로 신청한 결제수단 및 방식
 
----
+          `"CARD_GENERAL"`, `"CARD_SUBSCRIBE"`, `"CARD_KEYIN"`, `"TRANS_GENERAL"`, `"VBANK_GENERAL"`, `"PHONE_GENERAL"`, `"PHONE_SUBSCRIBE"`, `"GIFT_CARD_GENERAL"`, `"ABROAD_GENERAL"`, `"MY_ACCOUNT_GENERAL"`, `"NAVERPAY_GENERAL"`, `"NAVERCO_GENERAL"`, `"KAKAOPAY_GENERAL"`, `"TOSSPAY_GENERAL"`, `"PAYCO_GENERAL"`, `"SMILEPAY_GENERAL"`, `"CERTIFICATION_PHONE"`, `"CERTIFICATION_UNIFIED"`
 
-**`methods`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[MethodAndType]**</mark>
+          ---
 
-해당 PG사로 신청한 결제수단 및 방식
+          **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**ApplicationStatusClass**</mark>
 
-`"CARD_GENERAL"`, `"CARD_SUBSCRIBE"`, `"CARD_KEYIN"`, `"TRANS_GENERAL"`, `"VBANK_GENERAL"`, `"PHONE_GENERAL"`, `"PHONE_SUBSCRIBE"`, `"GIFT_CARD_GENERAL"`, `"ABROAD_GENERAL"`, `"MY_ACCOUNT_GENERAL"`, `"NAVERPAY_GENERAL"`, `"NAVERCO_GENERAL"`, `"KAKAOPAY_GENERAL"`, `"TOSSPAY_GENERAL"`, `"PAYCO_GENERAL"`, `"SMILEPAY_GENERAL"`, `"CERTIFICATION_PHONE"`, `"CERTIFICATION_UNIFIED"`
+          신청 상태 대분류
 
----
+          `"RECEPTION_SCHEDULED"`, `"TRANSFER"`, `"RECEPTION_PENDING"`, `"RECEPTION_COMPLETED"`, `"APPLICATION_CANCELED"`, `"MERCHANT_REVIEWING"`, `"CONTRACT_PROCESSING"`, `"CONTRACT_COMPLETED"`, `"CONTRACT_CANCELED"`, `"CONTRACT_PENDING"`, `"CONTRACT_REJECTED"`, `"SERVICE_CLOSED"`, `"SERVICE_OPEN"`
 
-**`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**ApplicationStatusClass**</mark>
+          ---
 
-신청 상태 대분류
+          **`pg_specific_info`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**PgSpecificInfo**</mark>
 
-`"RECEPTION_SCHEDULED"`, `"TRANSFER"`, `"RECEPTION_PENDING"`, `"RECEPTION_COMPLETED"`, `"APPLICATION_CANCELED"`, `"MERCHANT_REVIEWING"`, `"CONTRACT_PROCESSING"`, `"CONTRACT_COMPLETED"`, `"CONTRACT_CANCELED"`, `"CONTRACT_PENDING"`, `"CONTRACT_REJECTED"`, `"SERVICE_CLOSED"`, `"SERVICE_OPEN"`
+          PG사별 특수값
 
----
+          ---
 
-**`pg_specific_info`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**PgSpecificInfo**</mark>
+          **`failed_reason`** <mark style="color:green;">**string**</mark>
 
-PG사별 특수값
+          실패 사유
 
----
+          ---
 
-**`failed_reason`** <mark style="color:green;">**string**</mark>
+          **`pg_credential`** <mark style="color:red;">**object**</mark>
 
-실패 사유
+          결제 연동에 필요한 Credential
 
----
+          ---
 
-**`pg_credential`** <mark style="color:red;">**object**</mark>
+          **`created`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-결제 연동에 필요한 Credential
+          생성 시각
 
----
+          ---
 
-**`created`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`modified`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-생성 시각
+          수정 시각
 
----
+          ---
+        </Details>
 
-**`modified`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
 
-수정 시각
+      <Tab title="PgCredential">
+        **`mid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        mid
 
-</Details>
+        ---
 
----
+        **`api_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Tab>
+        api key
 
-<Tab title="PgCredential">
-**`mid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-mid
+        **`client_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        client key
 
-**`api_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-api key
+        **`mert_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        mert key
 
-**`client_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
 
-client key
+      <Tab title="PgSpecificInfo">
+        **`delivery_or_service_period`** <mark style="color:green;">**string**</mark>
 
----
+        배송 및 서비스 기간
 
-**`mert_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-mert key
+        **`development_method`** <mark style="color:green;">**string**</mark>
 
----
+        개발 방식
 
-</Tab>
+        `"SELF_DEVELOPMENT"`, `"WORDPRESS"`
 
-<Tab title="PgSpecificInfo">
-**`delivery_or_service_period`** <mark style="color:green;">**string**</mark>
+        ---
 
-배송 및 서비스 기간
+        **`supporting_countries`** <mark style="color:green;">**Array\[string]**</mark>
 
----
+        결제 제공 국가 (ISO 3166-1 alpha-2)
 
-**`development_method`** <mark style="color:green;">**string**</mark>
+        ---
 
-개발 방식
+        **`payco_id`** <mark style="color:green;">**string**</mark>
 
-`"SELF_DEVELOPMENT"`, `"WORDPRESS"`
+        페이코 ID
 
----
+        ---
 
-**`supporting_countries`** <mark style="color:green;">**Array\[string]**</mark>
+        **`bank_name`** <mark style="color:green;">**BankName**</mark>
 
-결제 제공 국가 (ISO 3166-1 alpha-2)
+        은행
 
----
+        `"BANK_OF_KOREA"`, `"KDB"`, `"IBK"`, `"KB"`, `"HANA"`, `"SH"`, `"KOREA_EXIMBANK"`, `"NH"`, `"WOORI"`, `"SHINHAN"`, `"SC"`, `"CITY"`, `"DGB"`, `"BOOSAN_BANK"`, `"KJ_BANK"`, `"JEJU_BANK"`, `"JB_BANK"`, `"KN_BANK"`, `"MG"`, `"CU"`, `"SB"`, `"BOA"`, `"MORGAN_STANLEY"`, `"HSBC"`, `"DEUTSCHE_BANK"`, `"JP_MORGAN"`, `"BNP_PARISBAS"`, `"ICBC"`, `"BANK_OF_CHINA"`, `"SJ"`, `"CHINA_CONSTRUCTION_BANK"`, `"POST_BANK"`, `"K_BANK"`, `"KAKAO_BANK"`, `"TOSS_BANK"`
 
-**`payco_id`** <mark style="color:green;">**string**</mark>
+        ---
 
-페이코 ID
+        **`account_number`** <mark style="color:green;">**string**</mark>
 
----
+        계좌번호
 
-**`bank_name`** <mark style="color:green;">**BankName**</mark>
+        ---
 
-은행
+        **`account_holder_name`** <mark style="color:green;">**string**</mark>
 
-`"BANK_OF_KOREA"`, `"KDB"`, `"IBK"`, `"KB"`, `"HANA"`, `"SH"`, `"KOREA_EXIMBANK"`, `"NH"`, `"WOORI"`, `"SHINHAN"`, `"SC"`, `"CITY"`, `"DGB"`, `"BOOSAN_BANK"`, `"KJ_BANK"`, `"JEJU_BANK"`, `"JB_BANK"`, `"KN_BANK"`, `"MG"`, `"CU"`, `"SB"`, `"BOA"`, `"MORGAN_STANLEY"`, `"HSBC"`, `"DEUTSCHE_BANK"`, `"JP_MORGAN"`, `"BNP_PARISBAS"`, `"ICBC"`, `"BANK_OF_CHINA"`, `"SJ"`, `"CHINA_CONSTRUCTION_BANK"`, `"POST_BANK"`, `"K_BANK"`, `"KAKAO_BANK"`, `"TOSS_BANK"`
+        예금주명
 
----
+        ---
 
-**`account_number`** <mark style="color:green;">**string**</mark>
+        **`homepage_name`** <mark style="color:green;">**string**</mark>
 
-계좌번호
+        홈페이지 명 (서비스 명)
 
----
+        ---
 
-**`account_holder_name`** <mark style="color:green;">**string**</mark>
+        **`nicepay_terms_agreed`** <mark style="color:orange;">**Array\[boolean]**</mark>
 
-예금주명
+        약관들 동의 여부
 
----
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`homepage_name`** <mark style="color:green;">**string**</mark>
+  <SwaggerResponse status="400" description="요청 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-홈페이지 명 (서비스 명)
+        에러 코드
 
----
+        ---
 
-**`nicepay_terms_agreed`** <mark style="color:orange;">**Array\[boolean]**</mark>
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-약관들 동의 여부
+        에러 세부사항
 
----
+        <Details>
+          <p slot="summary">params</p>
 
-</Tab>
-</Tabs>
+          **`message`** <mark style="color:green;">**string**</mark>
 
-</SwaggerResponse>
+          에러 메시지
 
-<SwaggerResponse status="400" description="요청 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
+        </Details>
 
-에러 코드
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
----
+  <SwaggerResponse status="401" description="토큰 인증 실패">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+        에러 코드
 
-에러 세부사항
+        ---
 
-<Details>
-<p slot="summary">params</p>
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-**`message`** <mark style="color:green;">**string**</mark>
+        에러 세부사항
 
-에러 메시지
+        <Details>
+          <p slot="summary">params</p>
 
----
+          **`message`** <mark style="color:green;">**string**</mark>
 
-</Details>
+          에러 메시지
 
----
+          ---
+        </Details>
 
-</Tab>
-</Tabs>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-</SwaggerResponse>
+  <SwaggerResponse status="404" description="존재하지 않는 리소스 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="401" description="토큰 인증 실패">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        에러 코드
 
-에러 코드
+        ---
 
----
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+        에러 세부사항
 
-에러 세부사항
+        <Details>
+          <p slot="summary">params</p>
 
-<Details>
-<p slot="summary">params</p>
+          **`message`** <mark style="color:green;">**string**</mark>
 
-**`message`** <mark style="color:green;">**string**</mark>
+          에러 메시지
 
-에러 메시지
+          ---
+        </Details>
 
----
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-</Details>
+  <SwaggerResponse status="500" description="서버 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 코드
 
-</Tab>
-</Tabs>
+        ---
 
-</SwaggerResponse>
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-<SwaggerResponse status="404" description="존재하지 않는 리소스 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        에러 세부사항
 
-에러 코드
+        <Details>
+          <p slot="summary">params</p>
 
----
+          **`message`** <mark style="color:green;">**string**</mark>
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+          에러 메시지
 
-에러 세부사항
+          ---
+        </Details>
 
-<Details>
-<p slot="summary">params</p>
-
-**`message`** <mark style="color:green;">**string**</mark>
-
-에러 메시지
-
----
-
-</Details>
-
----
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500" description="서버 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-에러 코드
-
----
-
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
-
-에러 세부사항
-
-<Details>
-<p slot="summary">params</p>
-
-**`message`** <mark style="color:green;">**string**</mark>
-
-에러 메시지
-
----
-
-</Details>
-
----
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 </Swagger>
 
 ## ⌨ 온보딩 API 를 통해 전자결제 신청하기 (호스팅사 > 포트원 > 결제대행사)
 
 <Swagger method="post" path="/stores/{store-id}/applications" baseUrl="https://api.portone.io/v2" summary="온보딩 API 를 통해 전자결제 신청하기 (호스팅사 > 포트원 > 결제대행사)">
-<SwaggerDescription>
-호스팅사 고객의 사업자 정보를 기반으로 생성된 스토어 식별코드로 전자 결제를 신청합니다.
+  <SwaggerDescription>
+    호스팅사 고객의 사업자 정보를 기반으로 생성된 스토어 식별코드로 전자 결제를 신청합니다.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Header
 
-#### Header
+  <SwaggerParameter name="Authorization" type="string" required="true">
+    jwt 토큰 헤더
+  </SwaggerParameter>
 
-<SwaggerParameter name="Authorization" type="string" required="true">
-jwt 토큰 헤더
+  #### Path
 
-</SwaggerParameter>
+  <SwaggerParameter name="store-id" type="string" required="true">
+    store의 id
+  </SwaggerParameter>
 
-#### Path
+  #### Body
 
-<SwaggerParameter name="store-id" type="string" required="true">
-store의 id
+  <SwaggerParameter name="applications" type="Array[ApplicationByPgCompany]" required="true">
+    pg사 기준으로 묶은 application
+  </SwaggerParameter>
 
-</SwaggerParameter>
+  <SwaggerParameter name="pg_specific_info" type="PgSpecificInfo" required="true">
+    PG사별 특수값
+  </SwaggerParameter>
 
-#### Body
+  ### Responses
 
-<SwaggerParameter name="applications" type="Array[ApplicationByPgCompany]" required="true">
-pg사 기준으로 묶은 application
+  <SwaggerResponse status="200" description="전자결제 신청 성공">
+    <Tabs>
+      <Tab title="Response">
+        **`applications`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**Array\[ApplicationPublic]**</mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="pg_specific_info" type="PgSpecificInfo" required="true">
-PG사별 특수값
+        전자결제 신청내역
 
-</SwaggerParameter>
+        <Details>
+          <p slot="summary">ApplicationPublic</p>
 
-### Responses
+          **`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200" description="전자결제 신청 성공">
-<Tabs>
-<Tab title="Response">
-**`applications`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**Array\[ApplicationPublic]**</mark>
+          전자결제 신청 id
 
-전자결제 신청내역
+          ---
 
-<Details>
-<p slot="summary">ApplicationPublic</p>
+          **`store_id`** <mark style="color:green;">**string**</mark>
 
-**`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          전자결제 신청한 store id
 
-전자결제 신청 id
+          ---
 
----
+          **`pg_company`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**PgCompany**</mark>
 
-**`store_id`** <mark style="color:green;">**string**</mark>
+          PG사
 
-전자결제 신청한 store id
+          `"UNIDENTIFIED"`, `"NICE"`, `"KCP"`, `"KICC"`, `"DANAL"`, `"SETTLE"`, `"INICIS"`, `"SMARTRO"`, `"TOSSPAYMENTS"`, `"DAOU"`, `"KSNET"`, `"MOBILIANS"`, `"EXIMBAY"`, `"PAYPAL"`, `"PAYMENTWALL"`, `"NAVERPAY"`, `"NAVERCO"`, `"KAKAOPAY"`, `"TOSSPAY"`, `"CHAI"`, `"PAYCO"`, `"SMILEPAY"`
 
----
+          ---
 
-**`pg_company`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**PgCompany**</mark>
+          **`methods`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[MethodAndType]**</mark>
 
-PG사
+          해당 PG사로 신청한 결제수단 및 방식
 
-`"UNIDENTIFIED"`, `"NICE"`, `"KCP"`, `"KICC"`, `"DANAL"`, `"SETTLE"`, `"JTNET"`, `"INICIS"`, `"SMARTRO"`, `"BLUEWALNUT"`, `"TOSSPAYMENTS"`, `"DAOU"`, `"KSNET"`, `"MOBILIANS"`, `"ALIPAY"`, `"EXIMBAY"`, `"PAYPAL"`, `"PAYMENTWALL"`, `"NAVERPAY"`, `"NAVERCO"`, `"KAKAOPAY"`, `"TOSSPAY"`, `"CHAI"`, `"PAYCO"`, `"SMILEPAY"`
+          `"CARD_GENERAL"`, `"CARD_SUBSCRIBE"`, `"CARD_KEYIN"`, `"TRANS_GENERAL"`, `"VBANK_GENERAL"`, `"PHONE_GENERAL"`, `"PHONE_SUBSCRIBE"`, `"GIFT_CARD_GENERAL"`, `"ABROAD_GENERAL"`, `"MY_ACCOUNT_GENERAL"`, `"NAVERPAY_GENERAL"`, `"NAVERCO_GENERAL"`, `"KAKAOPAY_GENERAL"`, `"TOSSPAY_GENERAL"`, `"PAYCO_GENERAL"`, `"SMILEPAY_GENERAL"`, `"CERTIFICATION_PHONE"`, `"CERTIFICATION_UNIFIED"`
 
----
+          ---
 
-**`methods`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[MethodAndType]**</mark>
+          **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**ApplicationStatusClass**</mark>
 
-해당 PG사로 신청한 결제수단 및 방식
+          신청 상태 대분류
 
-`"CARD_GENERAL"`, `"CARD_SUBSCRIBE"`, `"CARD_KEYIN"`, `"TRANS_GENERAL"`, `"VBANK_GENERAL"`, `"PHONE_GENERAL"`, `"PHONE_SUBSCRIBE"`, `"GIFT_CARD_GENERAL"`, `"ABROAD_GENERAL"`, `"MY_ACCOUNT_GENERAL"`, `"NAVERPAY_GENERAL"`, `"NAVERCO_GENERAL"`, `"KAKAOPAY_GENERAL"`, `"TOSSPAY_GENERAL"`, `"PAYCO_GENERAL"`, `"SMILEPAY_GENERAL"`, `"CERTIFICATION_PHONE"`, `"CERTIFICATION_UNIFIED"`
+          `"RECEPTION_SCHEDULED"`, `"TRANSFER"`, `"RECEPTION_PENDING"`, `"RECEPTION_COMPLETED"`, `"APPLICATION_CANCELED"`, `"MERCHANT_REVIEWING"`, `"CONTRACT_PROCESSING"`, `"CONTRACT_COMPLETED"`, `"CONTRACT_CANCELED"`, `"CONTRACT_PENDING"`, `"CONTRACT_REJECTED"`, `"SERVICE_CLOSED"`, `"SERVICE_OPEN"`
 
----
+          ---
 
-**`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**ApplicationStatusClass**</mark>
+          **`pg_specific_info`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**PgSpecificInfo**</mark>
 
-신청 상태 대분류
+          PG사별 특수값
 
-`"RECEPTION_SCHEDULED"`, `"TRANSFER"`, `"RECEPTION_PENDING"`, `"RECEPTION_COMPLETED"`, `"APPLICATION_CANCELED"`, `"MERCHANT_REVIEWING"`, `"CONTRACT_PROCESSING"`, `"CONTRACT_COMPLETED"`, `"CONTRACT_CANCELED"`, `"CONTRACT_PENDING"`, `"CONTRACT_REJECTED"`, `"SERVICE_CLOSED"`, `"SERVICE_OPEN"`
+          ---
 
----
+          **`failed_reason`** <mark style="color:green;">**string**</mark>
 
-**`pg_specific_info`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**PgSpecificInfo**</mark>
+          실패 사유
 
-PG사별 특수값
+          ---
 
----
+          **`pg_credential`** <mark style="color:red;">**object**</mark>
 
-**`failed_reason`** <mark style="color:green;">**string**</mark>
+          결제 연동에 필요한 Credential
 
-실패 사유
+          ---
 
----
+          **`created`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`pg_credential`** <mark style="color:red;">**object**</mark>
+          생성 시각
 
-결제 연동에 필요한 Credential
+          ---
 
----
+          **`modified`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`created`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          수정 시각
 
-생성 시각
+          ---
+        </Details>
 
----
+        ---
+      </Tab>
 
-**`modified`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      <Tab title="PgCredential">
+        **`mid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-수정 시각
+        mid
 
----
+        ---
 
-</Details>
+        **`api_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        api key
 
-</Tab>
+        ---
 
-<Tab title="PgCredential">
-**`mid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`client_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-mid
+        client key
 
----
+        ---
 
-**`api_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`mert_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-api key
+        mert key
 
----
+        ---
+      </Tab>
 
-**`client_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      <Tab title="PgSpecificInfo">
+        **`delivery_or_service_period`** <mark style="color:green;">**string**</mark>
 
-client key
+        배송 및 서비스 기간
 
----
+        ---
 
-**`mert_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`development_method`** <mark style="color:green;">**string**</mark>
 
-mert key
+        개발 방식
 
----
+        `"SELF_DEVELOPMENT"`, `"WORDPRESS"`
 
-</Tab>
+        ---
 
-<Tab title="PgSpecificInfo">
-**`delivery_or_service_period`** <mark style="color:green;">**string**</mark>
+        **`supporting_countries`** <mark style="color:green;">**Array\[string]**</mark>
 
-배송 및 서비스 기간
+        결제 제공 국가 (ISO 3166-1 alpha-2)
 
----
+        ---
 
-**`development_method`** <mark style="color:green;">**string**</mark>
+        **`payco_id`** <mark style="color:green;">**string**</mark>
 
-개발 방식
+        페이코 ID
 
-`"SELF_DEVELOPMENT"`, `"WORDPRESS"`
+        ---
 
----
+        **`bank_name`** <mark style="color:green;">**BankName**</mark>
 
-**`supporting_countries`** <mark style="color:green;">**Array\[string]**</mark>
+        은행
 
-결제 제공 국가 (ISO 3166-1 alpha-2)
+        `"BANK_OF_KOREA"`, `"KDB"`, `"IBK"`, `"KB"`, `"HANA"`, `"SH"`, `"KOREA_EXIMBANK"`, `"NH"`, `"WOORI"`, `"SHINHAN"`, `"SC"`, `"CITY"`, `"DGB"`, `"BOOSAN_BANK"`, `"KJ_BANK"`, `"JEJU_BANK"`, `"JB_BANK"`, `"KN_BANK"`, `"MG"`, `"CU"`, `"SB"`, `"BOA"`, `"MORGAN_STANLEY"`, `"HSBC"`, `"DEUTSCHE_BANK"`, `"JP_MORGAN"`, `"BNP_PARISBAS"`, `"ICBC"`, `"BANK_OF_CHINA"`, `"SJ"`, `"CHINA_CONSTRUCTION_BANK"`, `"POST_BANK"`, `"K_BANK"`, `"KAKAO_BANK"`, `"TOSS_BANK"`
 
----
+        ---
 
-**`payco_id`** <mark style="color:green;">**string**</mark>
+        **`account_number`** <mark style="color:green;">**string**</mark>
 
-페이코 ID
+        계좌번호
 
----
+        ---
 
-**`bank_name`** <mark style="color:green;">**BankName**</mark>
+        **`account_holder_name`** <mark style="color:green;">**string**</mark>
 
-은행
+        예금주명
 
-`"BANK_OF_KOREA"`, `"KDB"`, `"IBK"`, `"KB"`, `"HANA"`, `"SH"`, `"KOREA_EXIMBANK"`, `"NH"`, `"WOORI"`, `"SHINHAN"`, `"SC"`, `"CITY"`, `"DGB"`, `"BOOSAN_BANK"`, `"KJ_BANK"`, `"JEJU_BANK"`, `"JB_BANK"`, `"KN_BANK"`, `"MG"`, `"CU"`, `"SB"`, `"BOA"`, `"MORGAN_STANLEY"`, `"HSBC"`, `"DEUTSCHE_BANK"`, `"JP_MORGAN"`, `"BNP_PARISBAS"`, `"ICBC"`, `"BANK_OF_CHINA"`, `"SJ"`, `"CHINA_CONSTRUCTION_BANK"`, `"POST_BANK"`, `"K_BANK"`, `"KAKAO_BANK"`, `"TOSS_BANK"`
+        ---
 
----
+        **`homepage_name`** <mark style="color:green;">**string**</mark>
 
-**`account_number`** <mark style="color:green;">**string**</mark>
+        홈페이지 명 (서비스 명)
 
-계좌번호
+        ---
 
----
+        **`nicepay_terms_agreed`** <mark style="color:orange;">**Array\[boolean]**</mark>
 
-**`account_holder_name`** <mark style="color:green;">**string**</mark>
+        약관들 동의 여부
 
-예금주명
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
----
+  <SwaggerResponse status="400" description="요청 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`homepage_name`** <mark style="color:green;">**string**</mark>
+        에러 코드
 
-홈페이지 명 (서비스 명)
+        ---
 
----
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-**`nicepay_terms_agreed`** <mark style="color:orange;">**Array\[boolean]**</mark>
+        에러 세부사항
 
-약관들 동의 여부
+        <Details>
+          <p slot="summary">params</p>
 
----
+          **`message`** <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
+          에러 메시지
 
-</SwaggerResponse>
+          ---
+        </Details>
 
-<SwaggerResponse status="400" description="요청 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-에러 코드
+  <SwaggerResponse status="401" description="토큰 인증 실패">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 코드
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+        ---
 
-에러 세부사항
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-<Details>
-<p slot="summary">params</p>
+        에러 세부사항
 
-**`message`** <mark style="color:green;">**string**</mark>
+        <Details>
+          <p slot="summary">params</p>
 
-에러 메시지
+          **`message`** <mark style="color:green;">**string**</mark>
 
----
+          에러 메시지
 
-</Details>
+          ---
+        </Details>
 
----
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-</Tab>
-</Tabs>
+  <SwaggerResponse status="403" description="권한 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerResponse>
+        에러 코드
 
-<SwaggerResponse status="401" description="토큰 인증 실패">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-에러 코드
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
----
+        에러 세부사항
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+        <Details>
+          <p slot="summary">params</p>
 
-에러 세부사항
+          **`message`** <mark style="color:green;">**string**</mark>
 
-<Details>
-<p slot="summary">params</p>
+          에러 메시지
 
-**`message`** <mark style="color:green;">**string**</mark>
+          ---
+        </Details>
 
-에러 메시지
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
----
+  <SwaggerResponse status="404" description="존재하지 않는 리소스 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</Details>
+        에러 코드
 
----
+        ---
 
-</Tab>
-</Tabs>
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-</SwaggerResponse>
+        에러 세부사항
 
-<SwaggerResponse status="403" description="권한 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        <Details>
+          <p slot="summary">params</p>
 
-에러 코드
+          **`message`** <mark style="color:green;">**string**</mark>
 
----
+          에러 메시지
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+          ---
+        </Details>
 
-에러 세부사항
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-<Details>
-<p slot="summary">params</p>
+  <SwaggerResponse status="500" description="서버 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**`message`** <mark style="color:green;">**string**</mark>
+        에러 코드
 
-에러 메시지
+        ---
 
----
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-</Details>
+        에러 세부사항
 
----
+        <Details>
+          <p slot="summary">params</p>
 
-</Tab>
-</Tabs>
+          **`message`** <mark style="color:green;">**string**</mark>
 
-</SwaggerResponse>
+          에러 메시지
 
-<SwaggerResponse status="404" description="존재하지 않는 리소스 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
+        </Details>
 
-에러 코드
-
----
-
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
-
-에러 세부사항
-
-<Details>
-<p slot="summary">params</p>
-
-**`message`** <mark style="color:green;">**string**</mark>
-
-에러 메시지
-
----
-
-</Details>
-
----
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500" description="서버 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-에러 코드
-
----
-
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
-
-에러 세부사항
-
-<Details>
-<p slot="summary">params</p>
-
-**`message`** <mark style="color:green;">**string**</mark>
-
-에러 메시지
-
----
-
-</Details>
-
----
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 </Swagger>
 
 <Tabs>
-<Tab title="ApplicationByPgCompany">
-**`pg_company`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**PublicPgCompany**</mark>
+  <Tab title="ApplicationByPgCompany">
+    **`pg_company`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**PublicPgCompany**</mark>
 
-PG사
+    PG사
 
-`"UNIDENTIFIED"`, `"TOSSPAYMENTS"`
+    `"UNIDENTIFIED"`, `"TOSSPAYMENTS"`
 
----
+    ---
 
-**`methods`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[PublicMethodAndType]**</mark>
+    **`methods`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[PublicMethodAndType]**</mark>
 
-결제 수단 및 방식\
-`CARD_GENERAL`: 카드 일반결제\
-`CARD_SUBSCRIBE`: 카드 정기결제\
-`TRANS_GENERAL`: 계좌이체 일반결제\
-`VBANK_GENERAL`: 가상계좌 일반결제\
-`PHONE_GENERAL`: 휴대폰 일반결제\
-`GIFT_CARD_GENERAL`: 상품권 일반결제\
+    결제 수단 및 방식\
+    `CARD_GENERAL`: 카드 일반결제\
+    `CARD_SUBSCRIBE`: 카드 정기결제\
+    `TRANS_GENERAL`: 계좌이체 일반결제\
+    `VBANK_GENERAL`: 가상계좌 일반결제\
+    `PHONE_GENERAL`: 휴대폰 일반결제\
+    `GIFT_CARD_GENERAL`: 상품권 일반결제\\
 
-`"CARD_GENERAL"`, `"CARD_SUBSCRIBE"`, `"TRANS_GENERAL"`, `"VBANK_GENERAL"`, `"PHONE_GENERAL"`, `"GIFT_CARD_GENERAL"`
+    `"CARD_GENERAL"`, `"CARD_SUBSCRIBE"`, `"TRANS_GENERAL"`, `"VBANK_GENERAL"`, `"PHONE_GENERAL"`, `"GIFT_CARD_GENERAL"`
 
----
+    ---
+  </Tab>
 
-</Tab>
+  <Tab title="BankName">
+    은행
 
-<Tab title="BankName">
-은행
+    `"BANK_OF_KOREA"`, `"KDB"`, `"IBK"`, `"KB"`, `"HANA"`, `"SH"`, `"KOREA_EXIMBANK"`, `"NH"`, `"WOORI"`, `"SHINHAN"`, `"SC"`, `"CITY"`, `"DGB"`, `"BOOSAN_BANK"`, `"KJ_BANK"`, `"JEJU_BANK"`, `"JB_BANK"`, `"KN_BANK"`, `"MG"`, `"CU"`, `"SB"`, `"BOA"`, `"MORGAN_STANLEY"`, `"HSBC"`, `"DEUTSCHE_BANK"`, `"JP_MORGAN"`, `"BNP_PARISBAS"`, `"ICBC"`, `"BANK_OF_CHINA"`, `"SJ"`, `"CHINA_CONSTRUCTION_BANK"`, `"POST_BANK"`, `"K_BANK"`, `"KAKAO_BANK"`, `"TOSS_BANK"`
+  </Tab>
 
-`"BANK_OF_KOREA"`, `"KDB"`, `"IBK"`, `"KB"`, `"HANA"`, `"SH"`, `"KOREA_EXIMBANK"`, `"NH"`, `"WOORI"`, `"SHINHAN"`, `"SC"`, `"CITY"`, `"DGB"`, `"BOOSAN_BANK"`, `"KJ_BANK"`, `"JEJU_BANK"`, `"JB_BANK"`, `"KN_BANK"`, `"MG"`, `"CU"`, `"SB"`, `"BOA"`, `"MORGAN_STANLEY"`, `"HSBC"`, `"DEUTSCHE_BANK"`, `"JP_MORGAN"`, `"BNP_PARISBAS"`, `"ICBC"`, `"BANK_OF_CHINA"`, `"SJ"`, `"CHINA_CONSTRUCTION_BANK"`, `"POST_BANK"`, `"K_BANK"`, `"KAKAO_BANK"`, `"TOSS_BANK"`
+  <Tab title="PgSpecificInfo">
+    **`delivery_or_service_period`** <mark style="color:green;">**string**</mark>
 
-</Tab>
+    배송 및 서비스 기간
 
-<Tab title="PgSpecificInfo">
-**`delivery_or_service_period`** <mark style="color:green;">**string**</mark>
+    ---
 
-배송 및 서비스 기간
+    **`development_method`** <mark style="color:green;">**string**</mark>
 
----
+    개발 방식
 
-**`development_method`** <mark style="color:green;">**string**</mark>
+    `"SELF_DEVELOPMENT"`, `"WORDPRESS"`
 
-개발 방식
+    ---
 
-`"SELF_DEVELOPMENT"`, `"WORDPRESS"`
+    **`supporting_countries`** <mark style="color:green;">**Array\[string]**</mark>
 
----
+    결제 제공 국가 (ISO 3166-1 alpha-2)
 
-**`supporting_countries`** <mark style="color:green;">**Array\[string]**</mark>
+    ---
 
-결제 제공 국가 (ISO 3166-1 alpha-2)
+    **`payco_id`** <mark style="color:green;">**string**</mark>
 
----
+    페이코 ID
 
-**`payco_id`** <mark style="color:green;">**string**</mark>
+    ---
 
-페이코 ID
+    **`bank_name`** <mark style="color:green;">**BankName**</mark>
 
----
+    은행
 
-**`bank_name`** <mark style="color:green;">**BankName**</mark>
+    `"BANK_OF_KOREA"`, `"KDB"`, `"IBK"`, `"KB"`, `"HANA"`, `"SH"`, `"KOREA_EXIMBANK"`, `"NH"`, `"WOORI"`, `"SHINHAN"`, `"SC"`, `"CITY"`, `"DGB"`, `"BOOSAN_BANK"`, `"KJ_BANK"`, `"JEJU_BANK"`, `"JB_BANK"`, `"KN_BANK"`, `"MG"`, `"CU"`, `"SB"`, `"BOA"`, `"MORGAN_STANLEY"`, `"HSBC"`, `"DEUTSCHE_BANK"`, `"JP_MORGAN"`, `"BNP_PARISBAS"`, `"ICBC"`, `"BANK_OF_CHINA"`, `"SJ"`, `"CHINA_CONSTRUCTION_BANK"`, `"POST_BANK"`, `"K_BANK"`, `"KAKAO_BANK"`, `"TOSS_BANK"`
 
-은행
+    ---
 
-`"BANK_OF_KOREA"`, `"KDB"`, `"IBK"`, `"KB"`, `"HANA"`, `"SH"`, `"KOREA_EXIMBANK"`, `"NH"`, `"WOORI"`, `"SHINHAN"`, `"SC"`, `"CITY"`, `"DGB"`, `"BOOSAN_BANK"`, `"KJ_BANK"`, `"JEJU_BANK"`, `"JB_BANK"`, `"KN_BANK"`, `"MG"`, `"CU"`, `"SB"`, `"BOA"`, `"MORGAN_STANLEY"`, `"HSBC"`, `"DEUTSCHE_BANK"`, `"JP_MORGAN"`, `"BNP_PARISBAS"`, `"ICBC"`, `"BANK_OF_CHINA"`, `"SJ"`, `"CHINA_CONSTRUCTION_BANK"`, `"POST_BANK"`, `"K_BANK"`, `"KAKAO_BANK"`, `"TOSS_BANK"`
+    **`account_number`** <mark style="color:green;">**string**</mark>
 
----
+    계좌번호
 
-**`account_number`** <mark style="color:green;">**string**</mark>
+    ---
 
-계좌번호
+    **`account_holder_name`** <mark style="color:green;">**string**</mark>
 
----
+    예금주명
 
-**`account_holder_name`** <mark style="color:green;">**string**</mark>
+    ---
 
-예금주명
+    **`homepage_name`** <mark style="color:green;">**string**</mark>
 
----
+    홈페이지 명 (서비스 명)
 
-**`homepage_name`** <mark style="color:green;">**string**</mark>
+    ---
 
-홈페이지 명 (서비스 명)
+    **`nicepay_terms_agreed`** <mark style="color:orange;">**Array\[boolean]**</mark>
 
----
+    약관들 동의 여부
 
-**`nicepay_terms_agreed`** <mark style="color:orange;">**Array\[boolean]**</mark>
+    ---
+  </Tab>
 
-약관들 동의 여부
+  <Tab title="PublicMethodAndType">
+    결제 수단 및 방식\
+    `CARD_GENERAL`: 카드 일반결제\
+    `CARD_SUBSCRIBE`: 카드 정기결제\
+    `TRANS_GENERAL`: 계좌이체 일반결제\
+    `VBANK_GENERAL`: 가상계좌 일반결제\
+    `PHONE_GENERAL`: 휴대폰 일반결제\
+    `GIFT_CARD_GENERAL`: 상품권 일반결제\\
 
----
-
-</Tab>
-
-<Tab title="PublicMethodAndType">
-결제 수단 및 방식\
-`CARD_GENERAL`: 카드 일반결제\
-`CARD_SUBSCRIBE`: 카드 정기결제\
-`TRANS_GENERAL`: 계좌이체 일반결제\
-`VBANK_GENERAL`: 가상계좌 일반결제\
-`PHONE_GENERAL`: 휴대폰 일반결제\
-`GIFT_CARD_GENERAL`: 상품권 일반결제\
-
-`"CARD_GENERAL"`, `"CARD_SUBSCRIBE"`, `"TRANS_GENERAL"`, `"VBANK_GENERAL"`, `"PHONE_GENERAL"`, `"GIFT_CARD_GENERAL"`
-
-</Tab>
+    `"CARD_GENERAL"`, `"CARD_SUBSCRIBE"`, `"TRANS_GENERAL"`, `"VBANK_GENERAL"`, `"PHONE_GENERAL"`, `"GIFT_CARD_GENERAL"`
+  </Tab>
 </Tabs>
 
 <Tabs>
-<Tab title="PublicPgCompany">
-PG사
+  <Tab title="PublicPgCompany">
+    PG사
 
-`"UNIDENTIFIED"`, `"TOSSPAYMENTS"`
-
-</Tab>
+    `"UNIDENTIFIED"`, `"TOSSPAYMENTS"`
+  </Tab>
 </Tabs>
 
 ## ⌨ 가입 신청 URL 호출 & 상태값 조회하기
 
 <Swagger method="get" path="/stores/{store-id}/applications/tosspayments-status-and-url" baseUrl="https://api.portone.io/v2" summary="가입 신청 URL 호출 & 상태값 조회하기">
-<SwaggerDescription>
-**1. 가입 신청 URL 호출 (호스팅사 > 포트원 > 결제대행사) - 토스페이먼츠 전용**
+  <SwaggerDescription>
+    **1. 가입 신청 URL 호출 (호스팅사 > 포트원 > 결제대행사) - 토스페이먼츠 전용**
 
-**2. 상태값 조회하기 (결제대행사 > 포트원 > 호스팅사)**
+    **2. 상태값 조회하기 (결제대행사 > 포트원 > 호스팅사)**
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Header
 
-#### Header
+  <SwaggerParameter name="Authorization" type="string" required="true">
+    jwt 토큰 헤더
+  </SwaggerParameter>
 
-<SwaggerParameter name="Authorization" type="string" required="true">
-jwt 토큰 헤더
+  #### Path
 
-</SwaggerParameter>
+  <SwaggerParameter name="store-id" type="string" required="true">
+    store의 id
+  </SwaggerParameter>
 
-#### Path
+  ### Responses
 
-<SwaggerParameter name="store-id" type="string" required="true">
-store의 id
+  <SwaggerResponse status="200" description="조회 성공">
+    <Tabs>
+      <Tab title="Response">
+        **`urls`** <mark style="color:red;">**Array\[TosspaymentsApplicationUrl]**</mark>
 
-</SwaggerParameter>
+        <Details>
+          <p slot="summary">TosspaymentsApplicationUrl</p>
 
-### Responses
+          **`application_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<SwaggerResponse status="200" description="조회 성공">
-<Tabs>
-<Tab title="Response">
-**`urls`** <mark style="color:red;">**Array\[TosspaymentsApplicationUrl]**</mark>
+          전자결제 신청 id
 
-<Details>
-<p slot="summary">TosspaymentsApplicationUrl</p>
+          ---
 
-**`application_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`payment_type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-전자결제 신청 id
+          `GENERAL`: 일반결제\
+          `SUBSCRIBE`: 정기결제\
+          `EASY`: 간편결제\\
 
----
+          `"GENERAL"`, `"SUBSCRIBE"`, `"EASY"`
 
-**`payment_type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
 
-`GENERAL`: 일반결제\
-`SUBSCRIBE`: 정기결제\
-`EASY`: 간편결제\
+          **`onboarding_url`** <mark style="color:green;">**string**</mark>
 
-`"GENERAL"`, `"SUBSCRIBE"`, `"EASY"`
+          토스페이먼츠 온보딩페이지 url status가 `READY`, `IN_DRAFT`인 경우만 값이 담겨짐
 
----
+          ---
 
-**`onboarding_url`** <mark style="color:green;">**string**</mark>
+          **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-토스페이먼츠 온보딩페이지 url status가 `READY`, `IN_DRAFT`인 경우만 값이 담겨짐
+          토스페이먼츠 계약 상태 (토스페이먼츠에서 내려주는 상태값)\
+          `READY`: 신청서 작성 전\
+          `IN_DRAFT`: 신청서 작성 중\
+          `WAIT_FOR_REVIEW`: 신청서 제출 완료\
+          `IN_REVIEW`: 심사 중\
+          `DONE`: 계약 완료\
+          `CANCELED`: 계약 취소\
+          `TERMINATED`: 계약 해지\\
 
----
+          `"READY"`, `"IN_DRAFT"`, `"WAIT_FOR_REVIEW"`, `"IN_REVIEW"`, `"DONE"`, `"CANCELED"`, `"TERMINATED"`
 
-**`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          ---
+        </Details>
 
-토스페이먼츠 계약 상태 (토스페이먼츠에서 내려주는 상태값)\
-`READY`: 신청서 작성 전\
-`IN_DRAFT`: 신청서 작성 중\
-`WAIT_FOR_REVIEW`: 신청서 제출 완료\
-`IN_REVIEW`: 심사 중\
-`DONE`: 계약 완료\
-`CANCELED`: 계약 취소\
-`TERMINATED`: 계약 해지\
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-`"READY"`, `"IN_DRAFT"`, `"WAIT_FOR_REVIEW"`, `"IN_REVIEW"`, `"DONE"`, `"CANCELED"`, `"TERMINATED"`
+  <SwaggerResponse status="400" description="요청 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 코드
 
-</Details>
+        ---
 
----
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-</Tab>
-</Tabs>
+        에러 세부사항
 
-</SwaggerResponse>
+        <Details>
+          <p slot="summary">params</p>
 
-<SwaggerResponse status="400" description="요청 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          **`message`** <mark style="color:green;">**string**</mark>
 
-에러 코드
+          에러 메시지
 
----
+          ---
+        </Details>
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-에러 세부사항
+  <SwaggerResponse status="401" description="토큰 인증 실패">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<Details>
-<p slot="summary">params</p>
+        에러 코드
 
-**`message`** <mark style="color:green;">**string**</mark>
+        ---
 
-에러 메시지
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
----
+        에러 세부사항
 
-</Details>
+        <Details>
+          <p slot="summary">params</p>
 
----
+          **`message`** <mark style="color:green;">**string**</mark>
 
-</Tab>
-</Tabs>
+          에러 메시지
 
-</SwaggerResponse>
+          ---
+        </Details>
 
-<SwaggerResponse status="401" description="토큰 인증 실패">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-에러 코드
+  <SwaggerResponse status="404" description="존재하지 않는 리소스 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
----
+        에러 코드
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+        ---
 
-에러 세부사항
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
-<Details>
-<p slot="summary">params</p>
+        에러 세부사항
 
-**`message`** <mark style="color:green;">**string**</mark>
+        <Details>
+          <p slot="summary">params</p>
 
-에러 메시지
+          **`message`** <mark style="color:green;">**string**</mark>
 
----
+          에러 메시지
 
-</Details>
+          ---
+        </Details>
 
----
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-</Tab>
-</Tabs>
+  <SwaggerResponse status="500" description="서버 에러">
+    <Tabs>
+      <Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerResponse>
+        에러 코드
 
-<SwaggerResponse status="404" description="존재하지 않는 리소스 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        ---
 
-에러 코드
+        **`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
 
----
+        에러 세부사항
 
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+        <Details>
+          <p slot="summary">params</p>
 
-에러 세부사항
+          **`message`** <mark style="color:green;">**string**</mark>
 
-<Details>
-<p slot="summary">params</p>
+          에러 메시지
 
-**`message`** <mark style="color:green;">**string**</mark>
+          ---
+        </Details>
 
-에러 메시지
-
----
-
-</Details>
-
----
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500" description="서버 에러">
-<Tabs>
-<Tab title="Response">
-**`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-에러 코드
-
----
-
-**`params`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
-
-에러 세부사항
-
-<Details>
-<p slot="summary">params</p>
-
-**`message`** <mark style="color:green;">**string**</mark>
-
-에러 메시지
-
----
-
-</Details>
-
----
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
+        ---
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 </Swagger>

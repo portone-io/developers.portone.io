@@ -4,182 +4,172 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Cancels a convenience store barcode to block payment.
+## Cancels a convenience store barcode to block payment.
 
 <Swagger method="delete" path="/cvs/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Cancels a convenience store barcode to block payment.">
-<SwaggerDescription>
-You can cancel a barcode with pending payment to block payment for orders that cannot be fulfilled due to out of stock items etc.
+  <SwaggerDescription>
+    You can cancel a barcode with pending payment to block payment for orders that cannot be fulfilled due to out of stock items etc.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">**i'mport transaction ID**</mark>
 
-<SwaggerParameter name="imp_uid" type="String" required="true">
-<mark style="color:red;">**i'mport transaction ID**</mark>
+    For convenience store payment
+  </SwaggerParameter>
 
-For convenience store payment
+  ### Responses
 
-</SwaggerParameter>
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="PaymentResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-### Responses
+        **Response code**
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="PaymentResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        0: success, Not 0: check the message
 
-**Response code**
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-0: success, Not 0: check the message
+        **Response message**
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+        A non-zero code includes a message like 'Invalid payment info'.
 
-**Response message**
+        **`response`** <mark style="color:red;">**`(PaymentAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-A non-zero code includes a message like 'Invalid payment info'.
+    <Tabs>
+      <Tab title="PaymentAnnotation">
+        **Response code**
 
-**`response`** <mark style="color:red;">**`(PaymentAnnotation, optional)`**</mark>
+        0: success, Not 0: check the message
 
-</Tab>
-</Tabs>
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-<Tabs>
-<Tab title="PaymentAnnotation">
-**Response code**
+        **Response message**
 
-0: success, Not 0: check the message
+        A non-zero code includes a message like 'Invalid payment info'.
+      </Tab>
+    </Tabs>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+    <Tabs>
+      <Tab title="PaymentCancelAnnotation">
+        **`pg_tid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**Response message**
+        **PG cancellation transaction ID**
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-</Tab>
-</Tabs>
+        **Cancelled amount**
 
-<Tabs>
-<Tab title="PaymentCancelAnnotation">
-**`pg_tid`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+        **`cancelled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-**PG cancellation transaction ID**
+        **Cancelled at (UNIX timestamp)**
 
-**`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+        **`reason`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string(256)**</mark>
 
-**Cancelled amount**
+        **Reason for cancellation**
 
-**`cancelled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`receipt_url`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string(300)**</mark>
 
-**Cancelled at (UNIX timestamp)**
+        **Cancellation receipt URL. Availability varies by PG.**
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`reason`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string(256)**</mark>
-
-**Reason for cancellation**
-
-**`receipt_url`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string(300)**</mark>
-
-**Cancellation receipt URL. Availability varies by PG.**
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "imp_uid": "string",
-    "merchant_uid": "string",
-    "pay_method": "string",
-    "channel": "pc",
-    "pg_provider": "string",
-    "emb_pg_provider": "string",
-    "pg_tid": "string",
-    "pg_id": "string",
-    "escrow": true,
-    "apply_num": "string",
-    "bank_code": "string",
-    "bank_name": "string",
-    "card_code": "string",
-    "card_name": "string",
-    "card_quota": 0,
-    "card_number": "string",
-    "card_type": "null",
-    "vbank_code": "string",
-    "vbank_name": "string",
-    "vbank_num": "string",
-    "vbank_holder": "string",
-    "vbank_date": 0,
-    "vbank_issued_at": 0,
-    "name": "string",
-    "amount": 0,
-    "cancel_amount": 0,
-    "currency": "string",
-    "buyer_name": "string",
-    "buyer_email": "string",
-    "buyer_tel": "string",
-    "buyer_addr": "string",
-    "buyer_postcode": "string",
-    "custom_data": "string",
-    "user_agent": "string",
-    "status": "ready",
-    "started_at": 0,
-    "paid_at": 0,
-    "failed_at": 0,
-    "cancelled_at": 0,
-    "fail_reason": "string",
-    "cancel_reason": "string",
-    "receipt_url": "string",
-    "cancel_history": [
-      {
-        "pg_tid": "string",
-        "amount": 0,
-        "cancelled_at": 0,
-        "reason": "string",
-        "receipt_url": "string"
-      }
-    ],
-    "cancel_receipt_urls": [
-      "string"
-    ],
-    "cash_receipt_issued": true,
-    "customer_uid": "string",
-    "customer_uid_usage": "issue"
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "imp_uid": "string",
+      "merchant_uid": "string",
+      "pay_method": "string",
+      "channel": "pc",
+      "pg_provider": "string",
+      "emb_pg_provider": "string",
+      "pg_tid": "string",
+      "pg_id": "string",
+      "escrow": true,
+      "apply_num": "string",
+      "bank_code": "string",
+      "bank_name": "string",
+      "card_code": "string",
+      "card_name": "string",
+      "card_quota": 0,
+      "card_number": "string",
+      "card_type": "null",
+      "vbank_code": "string",
+      "vbank_name": "string",
+      "vbank_num": "string",
+      "vbank_holder": "string",
+      "vbank_date": 0,
+      "vbank_issued_at": 0,
+      "name": "string",
+      "amount": 0,
+      "cancel_amount": 0,
+      "currency": "string",
+      "buyer_name": "string",
+      "buyer_email": "string",
+      "buyer_tel": "string",
+      "buyer_addr": "string",
+      "buyer_postcode": "string",
+      "custom_data": "string",
+      "user_agent": "string",
+      "status": "ready",
+      "started_at": 0,
+      "paid_at": 0,
+      "failed_at": 0,
+      "cancelled_at": 0,
+      "fail_reason": "string",
+      "cancel_reason": "string",
+      "receipt_url": "string",
+      "cancel_history": [
+        {
+          "pg_tid": "string",
+          "amount": 0,
+          "cancelled_at": 0,
+          "reason": "string",
+          "receipt_url": "string"
+        }
+      ],
+      "cancel_receipt_urls": [
+        "string"
+      ],
+      "cash_receipt_issued": true,
+      "customer_uid": "string",
+      "customer_uid_usage": "issue"
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/cvs/revokeCvsPayment**](https://api.iamport.kr/#!/cvs/revokeCvsPayment)
-
+  [**https://api.iamport.kr/#!/cvs/revokeCvsPayment**](https://api.iamport.kr/#!/cvs/revokeCvsPayment)
 </Hint>

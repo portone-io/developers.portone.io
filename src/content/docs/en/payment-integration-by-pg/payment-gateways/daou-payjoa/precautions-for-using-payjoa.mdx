@@ -8,171 +8,169 @@ import Details from "~/components/gitbook/Details.astro";
 ## Things to note when integrating PAYJOA
 
 <Details>
-<p slot="summary">Returns <code>success</code> in PC and <code>imp_success</code> in mobile</p>
+  <p slot="summary">Returns <code>success</code> in PC and <code>imp\_success</code> in mobile</p>
 
-The payment window call (`IMP.request_pay`) and post-payment processing differs for PC and mobile. In PC, the call is made using iframe and the callback function (the second argument of IMP.request_pay) is called after the payment process is completed. In mobile, the page is redirected (302) to the specified URL (`m_redirect_url`_)._ At this time, the payment result (success/failure) is returned using the `success` parameter for PC and `imp_success` parameter for mobile. To summarize the flow:
+  The payment window call (`IMP.request_pay`) and post-payment processing differs for PC and mobile.
+  In PC, the call is made using iframe and the callback function
+  (the second argument of IMP.request\_pay) is called after the payment process is completed.
+  In mobile, the page is redirected (302) to the specified URL (`m_redirect_url`).
+  At this time, the payment result (success/failure) is returned using the `success` parameter for PC
+  and `imp_success` parameter for mobile. To summarize the flow:
 
-- \[PC] iframe → callback → result delivered in response.`success` returned via callback
+  - \[PC] iframe → callback → result delivered in response.`success` returned via callback
 
-  ```jsx
-  IMP.request_pay(
-    {
-      // Omitted
-    },
-    function (response) {
-      const { success } = response; // payment successul or failed
-      if (success) {
-        // Success logic
-      } else {
-        // Failure logic
-      }
+    ```tsx
+    IMP.request_pay(
+      {
+        // Omitted
+      },
+      function (response) {
+        const { success } = response; // payment successul or failed
+        if (success) {
+          // Success logic
+        } else {
+          // Failure logic
+        }
+      },
+    );
+    ```
+
+  - \[Mobile] Redirect → redirct (302) to m\_redirect\_url → result delivered in `imp_success` query parameter
+
+    ```js
+    /**
+     * Sample 302 redirect URL redirected to after payment process is completed
+     * when m_redirect_url is set to 'https://myservice.com/payments/complete'
+     */
+    "https://myservice.com/payments/complete?imp_success=true&imp_uid=imp1234567890&merchant_uid=mid_123467890";
+    ```
+
+  ### **`imp_success` and `success` are deprecated**
+
+  Regardless you should not determine the success/failure of a payment based on either of these parameters.
+  It only indicates the failure/success of payment at the time of the response from i'mport → merchant client,
+  and its value can only be finalized when notification of the result is sent from PAYJOA → i'mport
+  and then it is updated in the i'mport DB.
+
+  Since the **payment result is sent asynchronously in \[PAYJOA → i'mport → i'mport DB update]
+  and \[i'mport → merchant client]**, **the `imp_success` or `success` parameter received
+  by the merchant client can be false (failed) for a successful transaction
+  if it has not been updated in the database yet**.
+
+  Hence, only the i'mport order ID (`imp_uid`) and the merchant order ID
+  (`merchant_uid`)  of the result are accurate.
+  You must send these values to the merchant server and use them
+  to call the i'mport Get payment API ([GET /payments/\{imp\_uid}](https://api.iamport.kr/#!/payments/getPaymentByImpUid))
+  to accurately determine whether the payment is successful (`status`=`paid`) or failed (`status`=`failed`).
+</Details>
+
+<Details>
+  <p slot="summary">Session related issues when paying with Hana card/NH Apps Cache in Safari</p>
+
+  When paying with Hana card/NH Apps Cache (account transfer) in Safari,
+  the message below (the session has expired and the connection with the card company has been terminated)
+  is displayed and payment cannot be processed.
+
+  <img src="/gitbook-assets/en/image (243).png" alt="참고이미지" data-size="original" />
+
+  If you are experiencing this, make sure that the `Prevent cross-site tracking` and `Block all cookies` options
+  are not checked in Safari Preferences as shown below, and then try again.
+
+  <img src="/gitbook-assets/en/image (10).png" alt="참고이미지" data-size="original" />
+</Details>
+
+<Details>
+  <p slot="summary">Issues when paying with BC card in Safari/Firefox</p>
+
+  If you click the Next button after selecting BC Card in the credit card payment window,
+  “Payment failed” alert message is displayed and you cannot proceed any further.
+  In other browsers (Chrome, Opera, Edge, etc.) or when using other credit cards,
+  the Facebook QR code for BC card payment is rendered without any problem.
+
+  <img src="/gitbook-assets/en/image (92).png" alt="참고이미지" data-size="original" />
+
+  If you are experiencing this, make sure that pop-ups are allowed for the `*.payjoa.co.kr` domain
+  in Safari Preferences as shown below, and then try again.
+
+  <img src="/gitbook-assets/en/image (55).png" alt="참고이미지" data-size="original" />
+</Details>
+
+<Details>
+  <p slot="summary">Instant account transfer payment flow difference</p>
+
+  Since PAYJOA internally uses Toss Payments - account transfer, account transfer is available
+  only through Toss Simple Payment, NH Apps Cache, and direct input of account information.
+  Entering account information directly requires security card/OTP authentication → public certificate authentication.
+
+  For mobile payment, account transfer payment is available only through Toss Simple Payment and NH Apps Cache.
+
+  <img src="/gitbook-assets/en/image (255).png" alt="PC 결제" data-size="original" />
+
+  <img src="/gitbook-assets/en/image (45).png" alt="모바일 결제" data-size="original" />
+</Details>
+
+<Details>
+  <p slot="summary">Only depositor's name can be accessed after virtual account deposit</p>
+
+  When deposit is made to the (issued) virtual account,
+  PAYJOA only reveals the name among the depositor's information (bank name, account number, sender).
+  Therefore, when you retrieve the i'mport payment details ([**GET /payments/\{imp\_uid}**](../../../api/payment-api/get-payment-api)),
+  the depositor's bank code (`bank_code`) and bank name (`bank_name`) are both NULL.
+  To get the depositor's name, you must set the query parameter (`extension`) to `true` as follows:
+
+  ```json
+  // GET http://api.iamport.kr/payments/{i'mport number}?extension=true
+  {
+    // ... Omitted
+    "bank_code": null, // Depositor's bank code not provided
+    "bank_name": null, // Depositor's bank name not provided
+    "extension": {
+      // ... Omitted
+      "REMITTER": "John Doe" // Depositor's name
     }
-  );
+  }
   ```
-
-- \[Mobile] Redirect → redirct (302) to m_redirect_url → result delivered in `imp_success` query parameter
-
-  ```jsx
-  /**
-   * Sample 302 redirect URL redirected to after payment process is completed
-   * when m_redirect_url is set to 'https://myservice.com/payments/complete'
-   */
-  https://myservice.com/payments/complete?**imp_success=true**&imp_uid=imp1234567890&merchant_uid=mid_123467890
-  ```
-
-#### **`imp_success` and `success` are deprecated**
-
-Regardless you should not determine the success/failure of a payment based on either of these parameters. It only indicates the failure/success of payment at the time of the response from i'mport → merchant client, and its value can only be finalized when notification of the result is sent from PAYJOA → i'mport and then it is updated in the i'mport DB.
-
-Since the **payment result is sent asynchronously in \[PAYJOA → i'mport → i'mport DB update] and \[i'mport → merchant client]**, **the `imp_success` or `success` parameter received by the merchant client can be false (failed) for a successful transaction if it has not been updated in the database yet**.
-
-Hence, only the i'mport order ID (`imp_uid`) and the merchant order ID (`merchant_uid`) of the result are accurate. You must send these values to the merchant server and use them to call the i'mport Get payment API ([GET /payments/\{imp_uid}](https://api.iamport.kr/#!/payments/getPaymentByImpUid)) to accurately determine whether the payment is successful (`status`=`paid`) or failed (`status`=`failed`).
-
 </Details>
 
 <Details>
-<p slot="summary">Session related issues when paying with Hana card/NH Apps Cache in Safari</p>
+  <p slot="summary">Special contract with PAYJOA is required to cancel virtual account payment</p>
 
-When paying with Hana card/NH Apps Cache (account transfer) in Safari, the message below (the session has expired and the connection with the card company has been terminated) is displayed and payment cannot be processed.
-
-<img
-  src="/gitbook-assets/en/image (243).png"
-  alt="참고이미지"
-  data-size="original"
-/>
-
-If you are experiencing this, make sure that the `Prevent cross-site tracking` and `Block all cookies` options are not checked in Safari Preferences as shown below, and then try again.
-
-<img
-  src="/gitbook-assets/en/image (10).png"
-  alt="참고이미지"
-  data-size="original"
-/>
-
+  Cancellation (refund) of payment for completed virtual account deposit is available
+  only through a special contract with PAYJOA due to virtual account issuance fee issues.
+  Refunds for virtual account payments cannot be processed without this contract.
 </Details>
 
 <Details>
-<p slot="summary">Issues when paying with BC card in Safari/Firefox</p>
+  <p slot="summary">Cancellation of virtual account payment takes more than 7 business days to process</p>
 
-If you click the Next button after selecting BC Card in the credit card payment window, “Payment failed” alert message is displayed and you cannot proceed any further. In other browsers (Chrome, Opera, Edge, etc.) or when using other credit cards, the Facebook QR code for BC card payment is rendered without any problem.
-
-<img
-  src="/gitbook-assets/en/image (92).png"
-  alt="참고이미지"
-  data-size="original"
-/>
-
-If you are experiencing this, make sure that pop-ups are allowed for the `*.payjoa.co.kr` domain in Safari Preferences as shown below, and then try again.
-
-<img
-  src="/gitbook-assets/en/image (55).png"
-  alt="참고이미지"
-  data-size="original"
-/>
-
+  Cancellation (refund) of PAYJOA virtual account payment is requested from the merchant → i'mport → PAYJOA.
+  Since the refund is processed after a PAYJOA staff manually checks the request,
+  it takes more than 7 business days for the refund amount to be deposited.
 </Details>
 
 <Details>
-<p slot="summary">Instant account transfer payment flow difference</p>
+  <p slot="summary">Only one taxable/tax-free/c<strong>ombination</strong> CPID is issued for each case</p>
 
-Since PAYJOA internally uses Toss Payments - account transfer, account transfer is available only through Toss Simple Payment, NH Apps Cache, and direct input of account information. Entering account information directly requires security card/OTP authentication → public certificate authentication.
-
-For mobile payment, account transfer payment is available only through Toss Simple Payment and NH Apps Cache.
-
-<img
-  src="/gitbook-assets/en/image (255).png"
-  alt="PC 결제"
-  data-size="original"
-/>
-
-<img
-  src="/gitbook-assets/en/image (45).png"
-  alt="모바일 결제"
-  data-size="original"
-/>
-
+  You need to request PAYJOA to issue the CPID on a `case-by-case` basis.
+  In this way, all taxable/tax-free/combination transactions can be processed with one CPID.
 </Details>
 
 <Details>
-<p slot="summary">Only depositor's name can be accessed after virtual account deposit</p>
+  <p slot="summary">Tax-free amount can be set only for card payment</p>
 
-When deposit is made to the (issued) virtual account, PAYJOA only reveals the name among the depositor's information (bank name, account number, sender). Therefore, when you retrieve the i'mport payment details ([**GET /payments/\{imp_uid}**](../../../api/payment-api/get-payment-api)), the depositor's bank code (`bank_code`) and bank name (`bank_name`) are both NULL. To get the depositor's name, you must set the query parameter (`extension`) to `true` as follows:
-
-```jsx
-GET http://api.iamport.kr/payments/{i'mport number}?extension=true
-
-{
-	// ... Omitted
-	bank_code: null, // Depositor's bank code not provided
-	bank_name: null, // Depositor's bank name not provided
-	extension: {
-		// ... Omitted
-		**"REMITTER": "John Doe" // Depositor's name**
-	}
-}
-```
-
+  When calling the payment window (IMP.request\_pay function),
+  you can set the tax-free amount (`tax_free`) out of the total amount (`amount`).
+  In the PAYJOA system, the tax-free amount is only available when paying by card (pay\_method: `card`).
+  Account transfer and virtual account payments are taxed in full.
 </Details>
 
 <Details>
-<p slot="summary">Special contract with PAYJOA is required to cancel virtual account payment</p>
+  <p slot="summary">PAYJOA bug</p>
 
-Cancellation (refund) of payment for completed virtual account deposit is available only through a special contract with PAYJOA due to virtual account issuance fee issues. Refunds for virtual account payments cannot be processed without this contract.
+  ### Customer's phone number is not automatically filled in the escrow payment window
 
-</Details>
+  <img src="/gitbook-assets/en/image (59).png" alt="참고이미지" data-size="original" />
 
-<Details>
-<p slot="summary">Cancellation of virtual account payment takes more than 7 business days to process</p>
-
-Cancellation (refund) of PAYJOA virtual account payment is requested from the merchant → i'mport → PAYJOA. Since the refund is processed after a PAYJOA staff manually checks the request, it takes more than 7 business days for the refund amount to be deposited.
-
-</Details>
-
-<Details>
-<p slot="summary">Only one taxable/tax-free/c<strong>ombination</strong> CPID is issued for each case</p>
-
-You need to request PAYJOA to issue the CPID on a `case-by-case` basis. In this way, all taxable/tax-free/combination transactions can be processed with one CPID.
-
-</Details>
-
-<Details>
-<p slot="summary">Tax-free amount can be set only for card payment</p>
-
-When calling the payment window (IMP.request_pay function), you can set the tax-free amount (`tax_free`) out of the total amount (`amount`). In the PAYJOA system, the tax-free amount is only available when paying by card (pay_method: `card`). Account transfer and virtual account payments are taxed in full.
-
-</Details>
-
-<Details>
-<p slot="summary">PAYJOA bug</p>
-
-#### Customer's phone number is not automatically filled in the escrow payment window
-
-<img
-  src="/gitbook-assets/en/image (59).png"
-  alt="참고이미지"
-  data-size="original"
-/>
-
-- Unlike other payment windows, the customer's phone number (`buyer_tel`) passed into IMP.request_pay is not automatically filled in the escrow payment window. Note that PAYJOA does not support this function.
-
+  - Unlike other payment windows, the customer's phone number (`buyer_tel`) passed into IMP.request\_pay
+    is not automatically filled in the escrow payment window. Note that PAYJOA does not support this function.
 </Details>

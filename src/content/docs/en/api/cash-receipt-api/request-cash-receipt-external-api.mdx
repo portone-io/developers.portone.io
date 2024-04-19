@@ -4,219 +4,202 @@ description: ''
 ---
 
 import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
 import Swagger from "~/components/gitbook/swagger/Swagger.astro";
 import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
 import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
 import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
 
-### Requests a cash receipt for an external cash transaction.
+## Requests a cash receipt for an external cash transaction.
 
 <Details>
-<p slot="summary"><strong>Supported PGs</strong></p>
+  <p slot="summary"><strong>Supported PGs</strong></p>
 
-- **KG INICIS**
-- **NHN KCP**
-- **Settle Bank**
-- **NICE Payments**
-- **PAYJOA (Daou)**
-- **KICC**
-
+  - **KG INICIS**
+  - **NHN KCP**
+  - **Settle Bank**
+  - **NICE Payments**
+  - **PAYJOA (Daou)**
+  - **KICC**
 </Details>
 
 <Swagger method="post" path="/receipts/external/{merchant_uid}" baseUrl="https://api.iamport.kr" summary="Requests a cash receipt for an external cash transaction.">
-<SwaggerDescription>
-A cash receipt can be issued for a non-i'mport transaction. However, the order number must be the same as the cash transaction order number so that it can be replaced later.
+  <SwaggerDescription>
+    A cash receipt can be issued for a non-i'mport transaction. However, the order number must be the same as the cash transaction order number so that it can be replaced later.
 
-If the `pg` parameter is not specified, the request will be processed using the default PG.
+    If the `pg` parameter is not specified, the request will be processed using the default PG.
+  </SwaggerDescription>
 
-</SwaggerDescription>
+  ### Parameters
 
-### Parameters
+  #### Path
 
-#### Path
+  <SwaggerParameter name="merchant_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
 
-<SwaggerParameter name="merchant_uid" type="String" required="true">
-<mark style="color:red;">
+  #### Body
 
-**i'mport transaction ID**
+  <SwaggerParameter name="name" type="String" required="true">
+    <mark style="color:red;">
+      **Order name**
+    </mark>
+  </SwaggerParameter>
 
-</mark>
+  <SwaggerParameter name="amount" type="integer" required="true">
+    <mark style="color:red;">
+      **Amount**
+    </mark>
+  </SwaggerParameter>
 
-</SwaggerParameter>
+  <SwaggerParameter name="identifier" type="String" required="true">
+    <mark style="color:red;">**Cash receipt code**</mark>
 
-#### Body
+    `National Tax Service cash receipt card`
 
-<SwaggerParameter name="name" type="String" required="true">
-<mark style="color:red;">
+    `Mobile phone number`
 
-**Order name**
+    `Social security number`
 
-</mark>
+    `Business registration number`
 
-</SwaggerParameter>
-<SwaggerParameter name="amount" type="integer" required="true">
-<mark style="color:red;">
+    `Mobile phone number`
+  </SwaggerParameter>
 
-**Amount**
+  <SwaggerParameter name="identifier_type" type="String">
+    **Cash receipt code type**
 
-</mark>
+    `person: social security number`
 
-</SwaggerParameter>
-<SwaggerParameter name="identifier" type="String" required="true">
-<mark style="color:red;">**Cash receipt code**</mark>
+    `business: business registration number`
 
-`National Tax Service cash receipt card`
+    `phone: mobile phone number`
 
-`Mobile phone number`
+    `taxcard: National Tax Service cash receipt card`
+  </SwaggerParameter>
 
-`Social security number`
+  <SwaggerParameter name="type" type="String">
+    **Cash receipt type**
 
-`Business registration number`
+    `For income deduction (personal) : person`
 
-`Mobile phone number`
+    `For proof of expenses (business) : company`
 
-</SwaggerParameter>
-<SwaggerParameter name="identifier_type" type="String">
-**Cash receipt code type**
+    `Default: person`
+  </SwaggerParameter>
 
-`person: social security number`
+  <SwaggerParameter name="buyer_name" type="String">
+    **Customer name**
+  </SwaggerParameter>
 
-`business: business registration number`
+  <SwaggerParameter name="buyer_email" type="String">
+    **Customer email**
+  </SwaggerParameter>
 
-`phone: mobile phone number`
+  <SwaggerParameter name="buyer_tel" type="String">
+    **Customer phone**
+  </SwaggerParameter>
 
-`taxcard: National Tax Service cash receipt card`
+  <SwaggerParameter name="tax_free" type="integer">
+    **Tax free amount**
+  </SwaggerParameter>
 
-</SwaggerParameter>
-<SwaggerParameter name="type" type="String">
-**Cash receipt type**
+  <SwaggerParameter name="pg" type="String">
+    **PG code**
+  </SwaggerParameter>
 
-`For income deduction (personal) : person`
+  ### Responses
 
-`For proof of expenses (business) : company`
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tab title="ExternalReceiptResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
-`Default: person`
+        **Response code**
 
-</SwaggerParameter>
-<SwaggerParameter name="buyer_name" type="String">
-**Customer name**
+        0: success, Not 0: check the message
 
-</SwaggerParameter>
-<SwaggerParameter name="buyer_email" type="String">
-**Customer email**
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-</SwaggerParameter>
-<SwaggerParameter name="buyer_tel" type="String">
-**Customer phone**
+        **Response message**
 
-</SwaggerParameter>
-<SwaggerParameter name="tax_free" type="integer">
-**Tax free amount**
+        A non-zero code includes a message like 'Invalid payment info'.
 
-</SwaggerParameter>
-<SwaggerParameter name="pg" type="String">
-**PG code**
+        **`response`**<mark style="color:red;">**`(ExternalReceiptAnnotation, optional)`**</mark>
+      </Tab>
+    </Tabs>
 
-</SwaggerParameter>
+    <Tabs>
+      <Tab title="ExternalReceiptAnnotation">
+        **`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-### Responses
+        **`i'mport transaction ID`**
 
-<SwaggerResponse status="200: OK" description="Success">
-<Tabs>
-<Tab title="ExternalReceiptResponse">
-**`code`** <mark style="color:red;">**\***</mark>** **<mark style="color:purple;">**integer**</mark>
+        **`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
 
-**Response code**
+        **`Cash receipt ID issued by PG`**
 
-0: success, Not 0: check the message
+        **`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-**`message`** <mark style="color:red;">**\***</mark>** **<mark style="color:green;">**string**</mark>
+        **`Cash receipt ID issued by National Tax Service`**
 
-**Response message**
+        **`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
-A non-zero code includes a message like 'Invalid payment info'.
+        **`Recipient type`**
 
-**`response`**<mark style="color:red;">**`(ExternalReceiptAnnotation, optional)`**</mark>
+        - Personal use: `person`
+        - Business use: `company`
 
-</Tab>
-</Tabs>
+        **`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-<Tabs>
-<Tab title="ExternalReceiptAnnotation">
-**`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`Cash receipt Amount`**
 
-**`i'mport transaction ID`**
+        **`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
+        **`VAT`**
 
-**`Cash receipt ID issued by PG`**
+        **`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
 
-**`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **`Cash receipt URL`**
 
-**`Cash receipt ID issued by National Tax Service`**
+        **`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
 
-**`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+        **Issued at** `UNIX TIMESTAMP`
 
-**`Recipient type`**
+        **`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
 
-- Personal use: `person`
-- Business use: `company`
+        **`Cancelled at`** `UNIX TIMESTAMP`
+      </Tab>
+    </Tabs>
+  </SwaggerResponse>
 
-**`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+  <SwaggerResponse status="400: Bad Request" description="Missing parameter or already issued transaction">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`Cash receipt Amount`**
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 
-**`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
-
-**`VAT`**
-
-**`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
-
-**`Cash receipt URL`**
-
-**`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
-
-**Issued at** `UNIX TIMESTAMP`
-
-**`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
-
-**`Cancelled at`** `UNIX TIMESTAMP`
-
-</Tab>
-</Tabs>
-
-</SwaggerResponse>
-
-<SwaggerResponse status="400: Bad Request" description="Missing parameter or already issued transaction">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
-<SwaggerResponse status="500: Internal Server Error" description="Request failed">
-```javascript
-{
-    // Response
-}
-```
-
-</SwaggerResponse>
-
+  <SwaggerResponse status="500: Internal Server Error" description="Request failed">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
 </Swagger>
 
 ### **Key request parameter description**
@@ -232,7 +215,7 @@ A non-zero code includes a message like 'Invalid payment info'.
 >
 > **`Cash receipt code type`**
 >
-> <mark style="color:red;">**Required for**</mark>** KICC and Settlebank only**
+> <mark style="color:red;">**Required for**</mark> **KICC and Settlebank only**
 >
 > Request for KG INICIS/NHN KCP/Nice Payments/PayJoa is automatically processed with only the
 > **identifier.**
@@ -255,31 +238,29 @@ A non-zero code includes a message like 'Invalid payment info'.
 > - If you have multiple MIDs from NICE Payments, specify as **nice.MID1** or **nice.MID2**.
 
 <Details>
-<p slot="summary">Response Model Schema</p>
+  <p slot="summary">Response Model Schema</p>
 
-```json
-{
-  "code": 0,
-  "message": "string",
-  "response": {
-    "merchant_uid": "string",
-    "receipt_tid": "string",
-    "apply_num": "string",
-    "type": "person",
-    "amount": 0,
-    "vat": 0,
-    "receipt_url": "string",
-    "applied_at": 0,
-    "cancelled_at": 0
+  ```json
+  {
+    "code": 0,
+    "message": "string",
+    "response": {
+      "merchant_uid": "string",
+      "receipt_tid": "string",
+      "apply_num": "string",
+      "type": "person",
+      "amount": 0,
+      "vat": 0,
+      "receipt_url": "string",
+      "applied_at": 0,
+      "cancelled_at": 0
+    }
   }
-}
-```
-
+  ```
 </Details>
 
 <Hint style="success">
-**Swagger Test Link**
+  **Swagger Test Link**
 
-[**https://api.iamport.kr/#!/receipts/issueExternalReceipt**](https://api.iamport.kr/#!/receipts/issueExternalReceipt)
-
+  [**https://api.iamport.kr/#!/receipts/issueExternalReceipt**](https://api.iamport.kr/#!/receipts/issueExternalReceipt)
 </Hint>
