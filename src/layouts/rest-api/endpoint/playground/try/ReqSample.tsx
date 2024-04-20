@@ -21,7 +21,32 @@ export interface ReqSampleProps {
   harRequestSignal: Signal<HarRequest | undefined>;
 }
 
-const availableTargets = _availableTargets();
+const httpSnippetLanguageMap = new Map(
+  Object.entries({
+    c: "c",
+    clojure: "clojure",
+    csharp: "csharp",
+    go: "go",
+    java: "java",
+    javascript: "javascript",
+    kotlin: "kotlin",
+    node: "javascript",
+    objc: "objective-c",
+    php: "php",
+    powershell: "powershell",
+    python: "python",
+    r: "r",
+    ruby: "ruby",
+    shell: "shell",
+    swift: "swift",
+  }),
+);
+const availableTargets = _availableTargets()
+  .map((target) => ({
+    ...target,
+    language: httpSnippetLanguageMap.get(target.key),
+  }))
+  .filter((target) => target.language);
 type AvailableTarget = (typeof availableTargets)[number];
 type ClientInfo = AvailableTarget["clients"][number];
 
@@ -79,7 +104,7 @@ export default function ReqSample({ harRequestSignal }: ReqSampleProps) {
             monaco.editor.create(domElement, {
               ...commonEditorConfig,
               value: snippetSignal.value || "",
-              language: targetInfoSignal.value?.key || "plaintext",
+              language: targetInfoSignal.value?.language ?? "plaintext",
               readOnly: true,
             })
           }
