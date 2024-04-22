@@ -13,7 +13,14 @@ export interface Operation {
   summary?: string | undefined;
   description?: string | undefined;
   requestBody?:
-    | { content: { "application/json": { schema: TypeDef } } }
+    | {
+        content: {
+          "application/json": {
+            schema: TypeDef;
+            example?: { [key: string]: unknown };
+          };
+        };
+      }
     | undefined;
   parameters?: Parameter[] | undefined;
   responses: { [statusCode: number]: Response };
@@ -36,7 +43,12 @@ export interface Parameter extends Property {
 export interface Response {
   description?: string | undefined;
   schema?: TypeDef | undefined;
-  content?: { "application/json": { schema: TypeDef } };
+  content?: {
+    "application/json": {
+      schema: TypeDef;
+      example?: { [key: string]: unknown };
+    };
+  };
 }
 
 export function getOperation(
@@ -61,9 +73,9 @@ export function getBodyParameters(
   schema: unknown,
   operation: Operation,
 ): Parameter[] {
-  const requestSchema =
-    operation.requestBody?.content["application/json"]?.schema;
-  if (requestSchema) return bakeProperties(schema, requestSchema);
+  const { schema: requestSchema, example } =
+    operation.requestBody?.content["application/json"] ?? {};
+  if (requestSchema) return bakeProperties(schema, requestSchema, example);
   return (
     operation.parameters?.filter((p) => p.in !== "path" && p.in !== "query") ||
     []

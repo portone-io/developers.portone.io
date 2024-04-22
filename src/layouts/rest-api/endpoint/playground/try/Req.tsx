@@ -1,4 +1,10 @@
-import { type Signal, signal, useSignal } from "@preact/signals";
+import {
+  type Signal,
+  signal,
+  useSignal,
+  useSignalEffect,
+} from "@preact/signals";
+import { type HarRequest } from "httpsnippet-lite";
 import json5 from "json5";
 import { useMemo } from "preact/hooks";
 import { encode as encodeQs } from "querystring";
@@ -23,6 +29,7 @@ export interface ReqProps {
   schema: unknown;
   endpoint: Endpoint;
   operation: Operation;
+  harRequestSignal: Signal<HarRequest | undefined>;
   execute: (fn: () => Promise<Res>) => void;
 }
 export default function Req({
@@ -30,6 +37,7 @@ export default function Req({
   schema,
   endpoint,
   operation,
+  harRequestSignal,
   execute,
 }: ReqProps) {
   const { path, method } = endpoint;
@@ -39,6 +47,17 @@ export default function Req({
   const reqPathParams = useReqParams(schema, operation, "path");
   const reqQueryParams = useReqParams(schema, operation, "query");
   const reqBodyParams = useReqParams(schema, operation, "body");
+  useSignalEffect(() => {
+    harRequestSignal.value = createHarRequest(
+      apiHost,
+      path,
+      method,
+      reqHeaderSignal,
+      reqPathParams,
+      reqQueryParams,
+      reqBodyParams,
+    );
+  });
   return (
     <Card
       title={
@@ -205,4 +224,35 @@ async function responseToRes(res: Response): Promise<Res> {
   const { status, headers } = res;
   const body = (await res.json()) as unknown;
   return { status, headers, body };
+}
+
+function createHarRequest(
+  apiHost: string,
+  path: string,
+  method: string,
+  reqHeaderSignal: Signal<KvList>,
+  reqPathParams: ReqParams,
+  reqQueryParams: ReqParams,
+  reqBodyParams: ReqParams,
+): HarRequest {
+  const headers = kvListToObject(reqHeaderSignal.value);
+  const reqPath = reqPathParams.parseJson();
+  const reqQuery = reqQueryParams.parseJson();
+  const reqBody = reqBodyParams.parseJson();
+  return {
+    url: createUrl(apiHost, path, reqPath, reqQuery).toString(),
+    method,
+    headers: Object.entries(headers).map(([name, value]) => ({ name, value })),
+    cookies: [],
+    httpVersion: "HTTP/1.1",
+    queryString: Object.entries(reqQuery as Record<string, string>).map(
+      ([name, value]) => ({ name, value }),
+    ),
+    postData: {
+      mimeType: "application/json",
+      text: JSON.stringify(reqBody),
+    },
+    bodySize: -1,
+    headersSize: -1,
+  } satisfies HarRequest;
 }

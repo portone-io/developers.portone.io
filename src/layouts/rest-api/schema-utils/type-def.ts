@@ -40,6 +40,7 @@ export interface Property {
   format?: string | undefined;
   items?: string | TypeDef | undefined;
   deprecated?: boolean | undefined;
+  example?: unknown;
   /**
    * @deprecated use `x-portone-title`
    */
@@ -64,6 +65,7 @@ export interface BakedProperty extends Property {
 export function bakeProperties(
   schema: unknown,
   typeDef: TypeDef,
+  example?: { [key: string]: unknown },
 ): BakedProperty[] {
   filter: if (!typeDef.$ref && typeDef.type) {
     switch (typeDef.type) {
@@ -81,7 +83,14 @@ export function bakeProperties(
     const resolvedProperty = resolveTypeDef(schema, property);
     const type = $ref ? getTypenameByRef($ref) : resolvedProperty.type;
     const required = resolvedDef.required?.includes(name);
-    return { ...resolvedProperty, $ref, type, name, required } as BakedProperty;
+    return {
+      ...resolvedProperty,
+      $ref,
+      type,
+      name,
+      required,
+      example: example?.[name],
+    } as BakedProperty;
   });
 }
 
