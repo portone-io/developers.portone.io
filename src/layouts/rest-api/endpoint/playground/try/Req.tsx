@@ -7,6 +7,7 @@ import {
 import { type HarRequest } from "httpsnippet-lite";
 import json5 from "json5";
 import { useMemo } from "preact/hooks";
+import { match } from "ts-pattern";
 
 import RequestHeaderEditor, {
   type KvList,
@@ -18,7 +19,11 @@ import RequestJsonEditor, {
   type RequestPart,
 } from "../../../editor/RequestJsonEditor";
 import type { Endpoint } from "../../../schema-utils/endpoint";
-import type { Operation, Parameter } from "../../../schema-utils/operation";
+import {
+  isQueryOrBodyOperation,
+  type Operation,
+  type Parameter,
+} from "../../../schema-utils/operation";
 import Card from "../Card";
 import type { Res } from "./Res";
 import { Tabs } from "./Tabs";
@@ -46,6 +51,7 @@ export default function Req({
   const reqPathParams = useReqParams(schema, operation, "path");
   const reqQueryParams = useReqParams(schema, operation, "query");
   const reqBodyParams = useReqParams(schema, operation, "body");
+  const isQueryOrBody = isQueryOrBodyOperation(operation);
   useSignalEffect(() => {
     harRequestSignal.value = createHarRequest(
       apiHost,
@@ -68,8 +74,13 @@ export default function Req({
               execute(async () => {
                 const headers = kvListToObject(reqHeaderSignal.value);
                 const reqPath = reqPathParams.parseJson();
-                const reqQuery = reqQueryParams.parseJson();
-                const reqBody = reqBodyParams.parseJson();
+                const [reqQuery, reqBody] = match(isQueryOrBody)
+                  .with(true, () => [reqBodyParams.parseJson(), null])
+                  .with(false, () => [
+                    reqQueryParams.parseJson(),
+                    reqBodyParams.parseJson(),
+                  ])
+                  .exhaustive();
                 const body =
                   method === "get" || method === "head"
                     ? null

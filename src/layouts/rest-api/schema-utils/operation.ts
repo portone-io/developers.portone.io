@@ -82,6 +82,12 @@ export function getBodyParameters(
   );
 }
 
+export function isQueryOrBodyOperation(operation: Operation): boolean {
+  return (
+    operation.parameters?.some((p) => "x-portone-query-or-body" in p) || false
+  );
+}
+
 export type ResponseSchemata = ResponseSchema[];
 export type ResponseSchema = [
   string /* statusCode */,

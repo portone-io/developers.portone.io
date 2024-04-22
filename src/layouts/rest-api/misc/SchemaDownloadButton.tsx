@@ -2,7 +2,10 @@ import type React from "preact/compat";
 import { createRef } from "preact/compat";
 
 import { getEveryEndpoints } from "../schema-utils/endpoint";
-import { getOperation } from "../schema-utils/operation";
+import {
+  getOperation,
+  isQueryOrBodyOperation,
+} from "../schema-utils/operation";
 
 export interface SchemaDownloadButtonProps {
   href: string;
@@ -49,9 +52,7 @@ async function downloadSchema(href: string) {
   getEveryEndpoints(schema)
     .map((endpoint) => getOperation(schema, endpoint))
     .filter(({ parameters }) => parameters !== undefined)
-    .filter(({ parameters }) =>
-      parameters!.some((parameter) => "x-portone-query-or-body" in parameter),
-    )
+    .filter(isQueryOrBodyOperation)
     .forEach((operation) => {
       delete operation.requestBody;
       operation.parameters!.forEach((parameter) => {
