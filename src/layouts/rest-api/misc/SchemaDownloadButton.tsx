@@ -20,7 +20,12 @@ export default function SchemaDownloadButton({
   const downloadRef = createRef<HTMLAnchorElement>();
   return (
     <div class="flex flex-col items-start gap-1 text-14px">
-      <a ref={downloadRef} class="hidden"></a>
+      <a
+        ref={downloadRef}
+        class="hidden"
+        download="portone-api-schema.json"
+        target="_blank"
+      ></a>
       <button
         type="button"
         class="inline-flex items-center gap-2 rounded bg-slate-1 p-2 pr-3 font-bold hover:bg-slate-2"
@@ -33,7 +38,6 @@ export default function SchemaDownloadButton({
             const url = URL.createObjectURL(blob);
             const a = downloadRef.current!;
             a.href = url;
-            a.download = "schema.json";
             a.click();
           })()
         }
