@@ -12,9 +12,7 @@ export interface TabsProps<Id extends string> {
 }
 export function Tabs<Id extends string>({ tabs, tabIdSignal }: TabsProps<Id>) {
   const _tabs = tabs.filter(Boolean);
-  const currTabIdSignal = tabIdSignal
-    ? tabIdSignal
-    : useSignal(_tabs[0]?.id || "");
+  const currTabIdSignal = tabIdSignal ?? useSignal(_tabs[0]?.id || "");
   const currTabId = currTabIdSignal.value;
   const currTab = _tabs.find((tab) => tab.id === currTabId);
   return (
