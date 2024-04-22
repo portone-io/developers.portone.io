@@ -1,4 +1,8 @@
 import type React from "preact/compat";
+import { createRef } from "preact/compat";
+
+import { getEveryEndpoints } from "../schema-utils/endpoint";
+import { getOperation } from "../schema-utils/operation";
 
 export interface SchemaDownloadButtonProps {
   href: string;
@@ -10,20 +14,55 @@ export default function SchemaDownloadButton({
   label,
   children,
 }: SchemaDownloadButtonProps) {
+  const downloadRef = createRef<HTMLAnchorElement>();
   return (
     <div class="flex flex-col items-start gap-1 text-14px">
-      <a
-        download="portone-v1-swagger.json"
-        target="_blank"
-        href={href}
+      <a ref={downloadRef} class="hidden"></a>
+      <button
+        type="button"
         class="inline-flex items-center gap-2 rounded bg-slate-1 p-2 pr-3 font-bold hover:bg-slate-2"
+        onClick={() =>
+          void (async () => {
+            const schema = await downloadSchema(href);
+            const blob = new Blob([JSON.stringify(schema)], {
+              type: "application/json",
+            });
+            const url = URL.createObjectURL(blob);
+            const a = downloadRef.current!;
+            a.href = url;
+            a.download = "schema.json";
+            a.click();
+          })()
+        }
       >
         <i class="i-ic-baseline-download text-xl" />
         {label}
-      </a>
+      </button>
       {children}
     </div>
   );
+}
+
+async function downloadSchema(href: string) {
+  const response = await fetch(href);
+  const schema = (await response.json()) as unknown;
+  getEveryEndpoints(schema)
+    .map((endpoint) => getOperation(schema, endpoint))
+    .filter(({ parameters }) => parameters !== undefined)
+    .filter(({ parameters }) =>
+      parameters!.some((parameter) => "x-portone-query-or-body" in parameter),
+    )
+    .forEach((operation) => {
+      delete operation.requestBody;
+      operation.parameters!.forEach((parameter) => {
+        if ("x-portone-query-or-body" in parameter) {
+          const { required } = parameter["x-portone-query-or-body"]!;
+          if (required) parameter.required = true;
+          delete parameter["x-portone-query-or-body"];
+        }
+      });
+    });
+  return schema;
 }
 
 export interface PostmanGuideProps {
