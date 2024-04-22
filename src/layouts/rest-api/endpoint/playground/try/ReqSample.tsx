@@ -64,37 +64,37 @@ export default function ReqSample({ harRequestSignal }: ReqSampleProps) {
   return (
     <Card
       title={
-        <>
-          <div className="flex flex-wrap">
-            <span className="flex-shrink-0">Request Sample{": "}</span>
-            <div className="flex-shrink-0">
-              <select
-                value={targetKeySignal.value}
-                onChange={(e) => {
-                  targetKeySignal.value = String(e.currentTarget.value);
-                }}
-              >
-                {availableTargets.map((target) => (
-                  <option key={target.key} value={target.key}>
-                    {target.title}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={clientKeySignal.value}
-                onChange={(e) =>
-                  (clientKeySignal.value = String(e.currentTarget.value))
-                }
-              >
-                {targetInfoSignal.value?.clients.map((client) => (
-                  <option key={client.key} value={client.key}>
-                    {client.title}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="flex flex-grow flex-wrap items-center justify-between gap-3">
+          <span className="flex-shrink-0">Request Sample</span>
+          <div className="flex-shrink-0">
+            <select
+              className="rounded-l bg-slate-1 px-2 py-1 font-medium"
+              value={targetKeySignal.value}
+              onChange={(e) => {
+                targetKeySignal.value = String(e.currentTarget.value);
+              }}
+            >
+              {availableTargets.map((target) => (
+                <option key={target.key} value={target.key}>
+                  {target.title}
+                </option>
+              ))}
+            </select>
+            <select
+              className="rounded-r bg-slate-1 px-2 py-1 font-medium"
+              value={clientKeySignal.value}
+              onChange={(e) =>
+                (clientKeySignal.value = String(e.currentTarget.value))
+              }
+            >
+              {targetInfoSignal.value?.clients.map((client) => (
+                <option key={client.key} value={client.key}>
+                  {client.title}
+                </option>
+              ))}
+            </select>
           </div>
-        </>
+        </div>
       }
     >
       {snippetSignal.value ? (
