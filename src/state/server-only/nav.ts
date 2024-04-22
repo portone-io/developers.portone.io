@@ -31,13 +31,13 @@ export interface NavMenuPage {
   slug: string;
   title: string;
   items: NavMenuPage[];
-  systemVersion: SystemVersion;
+  systemVersion?: SystemVersion | undefined;
 }
 export interface NavMenuGroup {
   type: "group";
   label: string;
   items: NavMenuPage[];
-  systemVersion: SystemVersion;
+  systemVersion?: SystemVersion | undefined;
 }
 export const navMenuItemsEn = toNavMenuItems(
   navYamlEn as YamlNavMenuToplevelItem[],
@@ -58,7 +58,7 @@ export function calcNavMenuSystemVersions(
   const result: NavMenuSystemVersions = {};
   for (const item of iterNavMenuItems(navMenuItems)) {
     if (!("slug" in item)) continue;
-    result[item.slug] = item.systemVersion;
+    if (item.systemVersion) result[item.slug] = item.systemVersion;
   }
   return result;
 }
@@ -101,7 +101,7 @@ function* iterNavMenuItems(items: NavMenuItem[]): Generator<NavMenuItem> {
 function toNavMenuItems(
   yaml: YamlNavMenuToplevelItem[],
   frontmatters: Frontmatters,
-  systemVersion: SystemVersion = "all",
+  systemVersion?: SystemVersion,
 ): NavMenuItem[] {
   return yaml.map((item) => {
     if (typeof item === "string") {

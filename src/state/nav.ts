@@ -1,4 +1,5 @@
 import { effect, signal } from "@preact/signals";
+import type { AstroGlobal } from "astro";
 
 import type { SystemVersion } from "~/type";
 
@@ -31,10 +32,14 @@ const parseSystemVersion = (value: unknown) => {
 
 export const systemVersionSignal = signal(getInitialSystemVersion());
 function getInitialSystemVersion() {
-  if (isServer) return "all";
+  if (isServer) return "v1"; // default
   const storageItem = globalThis.sessionStorage.getItem("systemVersion");
   const searchParams = new URLSearchParams(location.search);
   return parseSystemVersion(searchParams.get("v") || storageItem);
+}
+export function getServerSystemVersion(astro: AstroGlobal) {
+  const value = astro.url.searchParams.get("v");
+  return parseSystemVersion(value);
 }
 if (isClient) {
   effect(() => {

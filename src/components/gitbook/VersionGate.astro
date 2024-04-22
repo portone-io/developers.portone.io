@@ -1,4 +1,6 @@
 ---
+import { getServerSystemVersion } from "~/state/nav";
+
 import Impl from "./VersionGate";
 
 interface Props {
@@ -6,9 +8,10 @@ interface Props {
 }
 
 const { default: version } = Astro.props;
+const serverSystemVersion = getServerSystemVersion(Astro);
 ---
 
-<Impl client:idle default={version}>
+<Impl client:idle default={version} serverSystemVersion={serverSystemVersion}>
   {Astro.slots.has("v1") ? <slot name="v1" slot="v1" /> : null}
   {Astro.slots.has("v2") ? <slot name="v2" slot="v2" /> : null}
   <slot />
