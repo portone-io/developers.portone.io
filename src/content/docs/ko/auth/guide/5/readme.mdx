@@ -3,32 +3,196 @@ title: 5. 결제정보 검증하기
 description: 안정적인 결제서비스를 제공할 수 있도록 결제결과를 검증합니다.
 ---
 
-> **결제금액의 위변조 검증 이유**
->
-> 결제 요청은 클라이언트 환경에서 이루어지기 때문에 별도의 검증을 하지 않으면 **클라이언트가
-> 스크립트를 조작해 금액을 위 변조하여 결제를 요청**할 수 있습니다. 따라서 결제하고자 하는 상품의
-> 금액과 실제로 결제된 금액을 반드시 검증해야 합니다.
->
-> 예를 들어 420,000원짜리 상품을 결제할 때에는 `amount: 420000`으로 결제요청을 하게 되는데, 공격자가
-> 스크립트를 조작하여 해당 속성을 실제 금액보다 낮은 값(예 `amount: 420`)으로 변조할 수 있습니다.
->
-> 클라이언트에서의 스크립트 조작은 원천적으로 막을 수 없는 기술적 특징이 있기 때문에 **결제 전후로
-> 서버에서 결제금액의 위변조 여부를 반드시 검증**해야 합니다.
+import Hint from "~/components/Hint.astro";
+import ContentRef from "~/components/gitbook/ContentRef.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
-운영중인 서버에서 클라이언트로 부터 전달 받은 결제 결과 데이터를 바탕으로
+## 결제금액의 위변조 검증 이유
+
+결제 요청은 클라이언트 환경에서 이루어지기 때문에 별도의 검증을 하지 않으면 **클라이언트가
+스크립트를 조작해 금액을 위/변조하여 결제를 요청**할 수 있습니다. 따라서 결제하고자 하는 상품의
+금액과 실제로 결제된 금액을 반드시 검증해야 합니다.
+
+예를 들어 420,000원짜리 상품을 결제할 때에는 `amount: 420000`으로 결제요청을 하게 되는데,
+구매자(공격자)가 스크립트를 조작하여 해당 속성을 실제 금액보다 낮은 값(예시: `amount: 420`)으로
+변조할 수 있습니다.
+
+클라이언트에서의 스크립트 조작은 원천적으로 막을 수 없는 기술적 특징이 있기 때문에 **결제 전후로
+서버에서 결제금액의 위변조 여부를 반드시 검증**해야 합니다.
+
+운영중인 서버에서 클라이언트로부터 전달 받은 결제 결과 데이터를 바탕으로
 <mark style="color:red;">**결제금액 위변조 여부**</mark>를 검증하고 필요시 데이터베이스에 저장합니다.
 결제 정보를 검증하는 과정은 크게 아래와 같은 단계로 진행합니다.
 
-1. [백엔드 - 사전 검증](pre)
-   - [**결제금액 사전등록 API**](../../../api/api-1/api-5) 요청
+## 사전 검증
 
-2. [프론트엔드 - 결제 요청](../3)
-   - SDK `IMP.request_pay` 호출
+결제정보 사전 검증은 클라이언트 변조를 원천적으로 차단하기 위한 필수 절차입니다.
 
-3. [백엔드 - 사후 검증](post)
-   1. 포트원 결제고유번호(**imp\_uid**), 고객사 주문번호(**merchant\_uid**)를 프론트엔드로부터 수신
+결제창을 띄우는 프론트엔드를 보여주기 전에 어떤 주문번호로 얼마만큼의 결제가 이루어져야 하는지를
+아래의 API를 사용하여 사전에 등록할 수 있습니다.
 
-   2. 결제 상세내역 조회를 위해 포트원
-      [**결제 단건 조회 API**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) 요청
+[결제금액 사전등록 API 가이드 바로가기](https://developers.portone.io/api/rest-v1/payment.validation?v=v1#post%20%2Fpayments%2Fprepare)
 
-   3. 응답받은 내용을 바탕으로 실 결제 금액과 결제요청금액(고객사 자체 데이터베이스)을 비교
+<Tabs>
+  <Tab title="Node.js">
+    ```ts
+    // 사용자에게 결제 화면을 보여주기 전에 서버 코드에서
+    await axios({
+      url: "https://api.iamport.kr/payments/prepare",
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      data: {
+        merchant_uid: "...", // 고객사 주문번호
+        amount: 420000, // 결제 예정금액
+      },
+    });
+    ```
+  </Tab>
+</Tabs>
+
+## 결제 요청
+
+`IMP.request_pay`의 인자로 들어온 금액이 위의 API로 사전 등록해둔 금액과 일치하지 않으면 SDK 수준에서 결제 요청이 차단됩니다.
+
+## 사후 검증
+
+결제 정보를 사후 검증하는 과정은 크게 세 단계로 이루어집니다.
+
+- 포트원 결제고유번호(**imp\_uid**), 고객사 주문번호(**merchant\_uid**)를 프론트엔드로부터 수신
+- [결제 단건 조회 API](https://developers.portone.io/api/rest-v1/payment#get%20%2Fpayments%2F%7Bimp_uid%7D) 요청
+- 응답받은 내용을 바탕으로 실 결제 금액과 결제 요청 금액(고객사 자체 데이터베이스)을 비교
+
+### <mark style="color:green;">**STEP 01**</mark> 결제 결과 서버 수신
+
+결제 완료 후 결제 결과 데이터를 고객사의 endpoint URL로 전달되며, POST 요청을 수신할 수 있습니다.
+
+<Tabs>
+  <Tab title="Node.js 예제코드">
+  ```ts
+    app.use(bodyParser.json());
+    // "{서버의 결제 정보를 받는 고객사 endpoint}" POST 요청 수신부
+    app.post("/payments/complete", async (req, res) => {
+    try {
+    // req의 body에서 imp_uid, merchant_uid 추출
+    const { imp_uid, merchant_uid } = req.body;
+    } catch (e) {
+    res.status(400).send(e);
+    }
+});
+```
+  </Tab>
+</Tabs>
+
+### <mark style="color:green;">**STEP 02**</mark> 결제 내역 조회
+
+수신받은 포트원 **결제고유번호**(imp\_uid)로 [결제 단건 조회 API](https://developers.portone.io/api/rest-v1/payment#get%20%2Fpayments%2F%7Bimp_uid%7D)
+**API**를 호출하여 결제 정보를 확인할 수 있습니다.
+
+<Tabs>
+  <Tab title="Node.js 예제코드">
+    ```ts
+    app.use(bodyParser.json());
+    app.post("/payments/complete", async (req, res) => {
+      try {
+        // req의 body에서 imp_uid, merchant_uid 추출
+        const { imp_uid, merchant_uid } = req.body;
+        // 액세스 토큰(access token) 발급 받기
+        const getToken = await axios({
+          url: "https://api.iamport.kr/users/getToken",
+          method: "post", // POST method
+          headers: { "Content-Type": "application/json" },
+          data: {
+            imp_key: "imp_apikey", // V1 REST API 키
+            imp_secret:
+              "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // V2 REST API Secret
+          },
+        });
+        const { access_token } = getToken.data; // 인증 토큰
+        // imp_uid로 포트원 서버에서 결제 정보 조회
+        const getPaymentData = await axios({
+          // imp_uid 전달
+          url: `https://api.iamport.kr/payments/${imp_uid}`,
+          // GET method
+          method: "get",
+          // 인증 토큰 Authorization header에 추가
+          headers: { Authorization: access_token },
+        });
+        const paymentData = getPaymentData.data.response; // 조회한 결제 정보
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
+    ```
+  </Tab>
+</Tabs>
+
+### <mark style="color:green;">**STEP 03**</mark> 결제 정보 검증
+
+실제 결제된 금액과 고객사 자체 데이터 베이스에 저장된 결제 요청 금액을 비교하여 **결제금액 위변조여부 검증**합니다.
+
+<Tabs>
+  <Tab title="Node.js 예제코드">
+    ```ts
+    app.use(bodyParser.json());
+    app.post("/payments/complete", async (req, res) => {
+      try {
+        // req의 body에서 imp_uid, merchant_uid 추출
+        const { imp_uid, merchant_uid } = req.body;
+
+        // 액세스 토큰(access token) 발급 받기
+        // 코드 생략
+
+        // imp_uid로 포트원 서버에서 결제 정보 조회
+        // 코드 생략
+
+        const paymentData = getPaymentData.data.response; // 조회한 결제 정보
+        // DB에서 결제되어야 하는 금액 조회
+        const order = await Orders.findById(paymentData.merchant_uid);
+        const amountToBePaid = order.amount; // 결제 되어야 하는 금액
+        // 결제 검증하기
+        const { amount, status } = paymentData;
+        // 결제금액 일치. 결제 된 금액 === 결제 되어야 하는 금액
+        if (amount === amountToBePaid) {
+          await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // DB에 결제 정보 저장
+          switch (status) {
+            case "ready": // 가상계좌 발급
+              // DB에 가상계좌 발급 정보 저장
+              const { vbank_num, vbank_date, vbank_name } = paymentData;
+              await Users.findByIdAndUpdate("/* 고객 id */", {
+                $set: { vbank_num, vbank_date, vbank_name },
+              });
+              // 가상계좌 발급 안내 문자메시지 발송
+              SMS.send({
+                text: `가상계좌 발급이 성공되었습니다. 계좌 정보 ${vbank_num} ${vbank_date} ${vbank_name}`,
+              });
+              res.send({ status: "vbankIssued", message: "가상계좌 발급 성공" });
+              break;
+            case "paid": // 결제 완료
+              res.send({ status: "success", message: "일반 결제 성공" });
+              break;
+          }
+        } else {
+          // 결제금액 불일치. 위/변조 된 결제
+          throw { status: "forgery", message: "위조된 결제시도" };
+        }
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
+    ```
+  </Tab>
+</Tabs>
+
+처음 요청한 금액은 **`merchant_uid`** 로 데이터베이스에서 조회하고 실제 결제금액은 **`imp_uid`**로
+포트원 서버에서 조회하여 두 값을 비교합니다. 검증이 성공하면 결제 정보를 데이터베이스에 저장한 뒤
+결제 상태(`status`)에 따라 알맞은 응답을 반환하고 실패 시 에러 메세지를 출력하시길 권장드립니다.
+
+<Hint style="danger">
+  결제 결과 DB 처리는 [**웹훅(Webhook)을 연동**](../../../result/webhook)하여 수신되는 데이터를
+  기준으로 처리하셔야 결제 결과를 누락 없이 안정적으로 처리할 수 있습니다.
+</Hint>
+
+<Hint style="info">
+  [**Confirm Process**](../../../tip/confirm-process) 기능을 사용하여 결제금액 검증이 가능합니다.
+</Hint>
