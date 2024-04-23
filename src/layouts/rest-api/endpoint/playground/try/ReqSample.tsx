@@ -1,4 +1,5 @@
 import {
+  effect,
   type ReadonlySignal,
   type Signal,
   useComputed,
@@ -99,15 +100,19 @@ export default function ReqSample({ harRequestSignal }: ReqSampleProps) {
     >
       {snippetSignal.value ? (
         <MonacoEditor
-          key={snippetSignal.value}
-          init={(monaco, domElement) =>
-            monaco.editor.create(domElement, {
+          init={(monaco, domElement) => {
+            const instance = monaco.editor.create(domElement, {
               ...commonEditorConfig,
               value: snippetSignal.value || "",
               language: targetInfoSignal.value?.language ?? "plaintext",
               readOnly: true,
-            })
-          }
+            });
+            const dispose = effect(() => {
+              instance.setValue(snippetSignal.value || "");
+            });
+            instance.onDidDispose(() => dispose());
+            return instance;
+          }}
         />
       ) : (
         <span class="p-4 text-xs text-slate-4 font-bold">N/A</span>
