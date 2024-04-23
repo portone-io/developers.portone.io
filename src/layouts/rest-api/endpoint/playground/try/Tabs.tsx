@@ -1,4 +1,5 @@
 import { Signal, useSignal } from "@preact/signals";
+import clsx from "clsx";
 import type React from "preact/compat";
 
 export interface Tab<Id extends string> {
@@ -37,7 +38,16 @@ export function Tabs<Id extends string>({ tabs, tabIdSignal }: TabsProps<Id>) {
           );
         })}
       </div>
-      <div class="relative">{currTab && currTab.render(currTab.id)}</div>
+      <div class="relative">
+        {_tabs.map((tab) => (
+          <div
+            key={tab.id}
+            class={clsx("w-full h-full relative", currTab !== tab && "hidden")}
+          >
+            {tab.render(tab.id)}
+          </div>
+        ))}
+      </div>
     </>
   );
 }
