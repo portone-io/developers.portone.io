@@ -7,7 +7,6 @@ import {
 import { type HarRequest } from "httpsnippet-lite";
 import json5 from "json5";
 import { useMemo } from "preact/hooks";
-import { encode as encodeQs } from "querystring";
 
 import RequestHeaderEditor, {
   type KvList,
@@ -197,8 +196,12 @@ function createUrl(
   queryObject?: unknown,
 ): URL {
   const result = new URL(bakePath(path, pathObject), base);
-  if (queryObject)
-    result.search = `?${encodeQs(queryObject as Parameters<typeof encodeQs>[0])}`;
+  if (queryObject) {
+    for (const [key, value] of Object.entries(queryObject)) {
+      if (value === undefined) continue;
+      result.searchParams.append(key, JSON.stringify(value));
+    }
+  }
   return result;
 }
 
