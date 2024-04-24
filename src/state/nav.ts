@@ -45,9 +45,13 @@ if (isClient) {
   effect(() => {
     const systemVersion = systemVersionSignal.value;
     globalThis.sessionStorage.setItem("systemVersion", systemVersion);
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.set("v", systemVersion);
-    const hash = location.hash;
-    history.replaceState(null, "", `?${searchParams.toString()}${hash}`);
+    if (
+      [/^\/docs\//, /^\/api\//].some((regex) => regex.test(location.pathname))
+    ) {
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set("v", systemVersion);
+      const hash = location.hash;
+      history.replaceState(null, "", `?${searchParams.toString()}${hash}`);
+    }
   });
 }
