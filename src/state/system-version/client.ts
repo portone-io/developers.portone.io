@@ -15,7 +15,7 @@ export function getInitialSystemVersion() {
 export const useSystemVersion = () => systemVersionSignal.value;
 
 const systemVersionSignal = signal(getInitialSystemVersion());
-export const setSystemVersion = (systemVersion: SystemVersion) => {
+export const updateSystemVersion = (systemVersion: SystemVersion) => {
   systemVersionSignal.value = systemVersion;
 };
 

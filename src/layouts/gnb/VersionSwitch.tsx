@@ -1,6 +1,5 @@
-import { useSystemVersion } from "#state/system-version";
+import { updateSystemVersion, useSystemVersion } from "#state/system-version";
 import { useServerFallback } from "~/misc/useServerFallback";
-import { setSystemVersion } from "~/state/system-version/client";
 import type { SystemVersion } from "~/type";
 
 const pathMappings = {
@@ -32,7 +31,7 @@ export function VersionSwitch({
     <div
       style={{ transition: "margin 0.1s" }}
       onClick={() => {
-        setSystemVersion(systemVersion !== "v1" ? "v1" : "v2");
+        updateSystemVersion(systemVersion !== "v1" ? "v1" : "v2");
         if (location.pathname.startsWith("/docs/")) return;
         location.href =
           Object.entries(pathMappings).find(([from]) =>

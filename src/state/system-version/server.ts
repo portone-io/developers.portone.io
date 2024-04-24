@@ -38,3 +38,4 @@ export function getInitialSystemVersion() {
 }
 
 export const useSystemVersion = () => useServerSystemVersion();
+export const updateSystemVersion = () => {};
