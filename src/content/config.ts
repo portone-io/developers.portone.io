@@ -4,6 +4,9 @@ const docCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    targetVersions: z
+      .array(z.union([z.literal("v1"), z.literal("v2")]))
+      .optional(),
   }),
 });
 

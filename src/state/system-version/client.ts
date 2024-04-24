@@ -5,9 +5,12 @@ import type { SystemVersion } from "~/type";
 import { parseSystemVersion } from "./utils";
 
 export function getInitialSystemVersion() {
+  const override = globalThis.document
+    .querySelector(`meta[name="portone:system-version"]`)
+    ?.getAttribute("content");
   const storageItem = globalThis.sessionStorage.getItem("systemVersion");
   const searchParams = new URLSearchParams(location.search);
-  return parseSystemVersion(searchParams.get("v") || storageItem);
+  return parseSystemVersion(override || searchParams.get("v") || storageItem);
 }
 export const useSystemVersion = () => systemVersionSignal.value;
 

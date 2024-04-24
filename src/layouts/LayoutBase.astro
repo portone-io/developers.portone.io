@@ -1,5 +1,5 @@
 ---
-import type { Lang } from "~/type";
+import type { Lang, SystemVersion } from "~/type";
 
 import ArticleStyle from "./ArticleStyle.astro";
 import Gnb from "./gnb/Gnb.astro";
@@ -11,6 +11,7 @@ interface Props {
   lang: Lang;
   title: string;
   description?: string | undefined;
+  systemVersion?: SystemVersion | undefined;
   navAsMenu?: boolean | undefined;
   slug?: string | undefined;
   ogType?: string | undefined;
@@ -21,6 +22,7 @@ const {
   lang,
   title,
   description,
+  systemVersion,
   navAsMenu,
   slug = "",
   ogType = "website",
@@ -37,6 +39,11 @@ const {
     <link rel="sitemap" href="/sitemap-index.xml" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    {
+      systemVersion && (
+        <meta name="portone:system-version" content={systemVersion} />
+      )
+    }
     <script>
       import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
     </script>

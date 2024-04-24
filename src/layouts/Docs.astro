@@ -7,6 +7,10 @@ import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu.astro";
 import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
 import { SearchScreen } from "~/layouts/sidebar/search";
 import { calcNavMenuSystemVersions, navMenu } from "~/state/server-only/nav";
+import {
+  overrideSystemVersion,
+  useServerSystemVersion,
+} from "~/state/system-version/server";
 import type { Lang } from "~/type";
 
 interface Props {
@@ -15,7 +19,7 @@ interface Props {
   entry: CollectionEntry<"docs">;
 }
 const { lang, slug, entry } = Astro.props;
-const { title, description } = entry.data;
+const { title, description, targetVersions } = entry.data;
 const mdx = await entry.render();
 const Content = mdx.Content;
 
@@ -23,12 +27,17 @@ const toc = headingsToToc(lang, mdx.headings);
 
 const navMenuItems = navMenu[lang] || [];
 const navMenuSystemVersions = calcNavMenuSystemVersions(navMenuItems);
+
+if (targetVersions && targetVersions.length === 1) {
+  overrideSystemVersion(targetVersions[0]!);
+}
 ---
 
 <LayoutBase
   lang={lang}
   title={title}
   description={description}
+  systemVersion={useServerSystemVersion()}
   slug={`docs${slug}`}
   ogType="article"
   ogImageSlug={`docs${slug}.png`}
