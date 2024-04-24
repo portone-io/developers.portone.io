@@ -66,7 +66,11 @@ export function getPathParameters(operation: Operation): Parameter[] {
 }
 
 export function getQueryParameters(operation: Operation): Parameter[] {
-  return operation.parameters?.filter((p) => p.in === "query") || [];
+  return (
+    operation.parameters
+      ?.filter((p) => p.in === "query")
+      .filter((p) => p.name !== "requestBody") || []
+  );
 }
 
 export function getBodyParameters(
