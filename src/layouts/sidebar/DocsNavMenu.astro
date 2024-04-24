@@ -1,10 +1,7 @@
 ---
-import {
-  getServerSystemVersion,
-  navOpenStatesSignal,
-  slugSignal,
-} from "~/state/nav";
+import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 import { calcNavMenuAncestors, navMenu } from "~/state/server-only/nav";
+import { useServerSystemVersion } from "~/state/system-version/server";
 import type { Lang } from "~/type";
 
 import LeftSidebar from "./LeftSidebar.astro";
@@ -25,17 +22,14 @@ const navOpenStates = (navOpenStatesSignal.value = Object.fromEntries([
 ]));
 slugSignal.value = slug;
 
-const serverSystemVersion = getServerSystemVersion(Astro);
+const serverSystemVersion = useServerSystemVersion();
 ---
 
 <script>
   import { effect } from "@preact/signals";
 
-  import {
-    navOpenStatesSignal,
-    slugSignal,
-    systemVersionSignal,
-  } from "~/state/nav";
+  import { useSystemVersion } from "#state/system-version";
+  import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 
   const navMenu = document.getElementById("nav-menu")!;
   navOpenStatesSignal.value = {
@@ -52,7 +46,7 @@ const serverSystemVersion = getServerSystemVersion(Astro);
       50;
   }
   effect(() => {
-    const systemVersion = systemVersionSignal.value;
+    const systemVersion = useSystemVersion();
     navMenu.dataset.selectedSystemVersion = systemVersion;
   });
 </script>

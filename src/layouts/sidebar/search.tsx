@@ -2,8 +2,8 @@ import { computed, signal } from "@preact/signals";
 import Fuse from "fuse.js";
 import * as React from "react";
 
+import { useSystemVersion } from "#state/system-version";
 import { lazy } from "~/misc/async";
-import { systemVersionSignal } from "~/state/nav";
 import type { NavMenuSystemVersions } from "~/state/server-only/nav";
 
 export interface SearchButtonProps {
@@ -40,7 +40,7 @@ export interface SearchIndexItem {
 export const searchIndexSignal = signal<SearchIndex | undefined>(undefined);
 export const fuseSignal = computed(() => {
   const searchIndex = searchIndexSignal.value;
-  const systemVersion = systemVersionSignal.value;
+  const systemVersion = useSystemVersion();
   const navMenuSystemVersions = navMenuSystemVersionsSignal.value;
   if (!searchIndex) return;
   const filteredIndex = searchIndex.filter((item) => {

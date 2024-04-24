@@ -1,8 +1,8 @@
 import { useSignal } from "@preact/signals";
 import type React from "preact/compat";
 
+import { useSystemVersion } from "#state/system-version";
 import { useServerFallback } from "~/misc/useServerFallback";
-import { systemVersionSignal } from "~/state/nav";
 import type { SystemVersion } from "~/type";
 
 export interface DropdownProps {
@@ -24,7 +24,7 @@ export default function Dropdown({
 }: DropdownProps) {
   const showItemsSignal = useSignal(false);
   const systemVersion = useServerFallback(
-    systemVersionSignal.value,
+    useSystemVersion(),
     serverSystemVersion,
   );
   return (

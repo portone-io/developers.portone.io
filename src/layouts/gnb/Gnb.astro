@@ -1,7 +1,7 @@
 ---
 import { clsx } from "clsx";
 
-import { getServerSystemVersion } from "~/state/nav";
+import { useServerSystemVersion } from "~/state/system-version/server";
 import type { Lang } from "~/type";
 
 import Dropdown from "./Dropdown";
@@ -30,17 +30,17 @@ const en: typeof ko = {
   language: "Language",
 };
 const t = lang === "ko" ? ko : en;
-const serverSystemVersion = getServerSystemVersion(Astro);
+const serverSystemVersion = useServerSystemVersion();
 ---
 
 <script>
   import { effect } from "@preact/signals";
 
-  import { systemVersionSignal } from "~/state/nav";
+  import { useSystemVersion } from "#state/system-version";
 
   const navMenu = document.getElementById("gnb")!;
   effect(() => {
-    const systemVersion = systemVersionSignal.value;
+    const systemVersion = useSystemVersion();
     navMenu.dataset.selectedSystemVersion = systemVersion;
   });
 </script>
