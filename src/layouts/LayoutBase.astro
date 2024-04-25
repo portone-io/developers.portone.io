@@ -1,5 +1,7 @@
 ---
-import type { Lang, SystemVersion } from "~/type";
+import { readDocData } from "~/state/server-only/docData";
+import { readServerSystemVersion } from "~/state/system-version/server";
+import type { Lang } from "~/type";
 
 import ArticleStyle from "./ArticleStyle.astro";
 import Gnb from "./gnb/Gnb.astro";
@@ -11,7 +13,6 @@ interface Props {
   lang: Lang;
   title: string;
   description?: string | undefined;
-  systemVersion?: SystemVersion | undefined;
   navAsMenu?: boolean | undefined;
   slug?: string | undefined;
   ogType?: string | undefined;
@@ -22,12 +23,20 @@ const {
   lang,
   title,
   description,
-  systemVersion,
   navAsMenu,
   slug = "",
   ogType = "website",
   ogImageSlug = "opengraph.png",
 } = Astro.props;
+
+const systemVersion = readServerSystemVersion();
+const docData = readDocData();
+
+const canonicalUrl = `${Astro.site}${slug}${
+  // 버전별로 다른 내용을 가질 수 있다고 명시된 페이지인 경우,
+  // 검색엔진이 별도로 인덱싱할 수 있도록 ?v= 추가
+  (docData?.targetVersions?.length ?? 0) > 1 ? `?v=${systemVersion}` : ""
+}`;
 ---
 
 <html lang={lang}>
@@ -39,6 +48,7 @@ const {
     <link rel="sitemap" href="/sitemap-index.xml" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalUrl} />
     {
       systemVersion && (
         <meta name="portone:system-version" content={systemVersion} />
