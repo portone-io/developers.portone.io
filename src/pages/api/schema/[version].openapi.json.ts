@@ -22,10 +22,10 @@ const schemaMap = new Map(
   }),
 );
 
-export const GET: APIRoute = ({ params, redirect }) => {
+export const GET: APIRoute = ({ params }) => {
   const { version } = params;
   const schema = schemaMap.get(version ?? "");
-  if (!schema) return redirect("/404");
+  if (!schema) return new Response(null, { status: 404 });
 
   return new Response(schema, {
     headers: {
