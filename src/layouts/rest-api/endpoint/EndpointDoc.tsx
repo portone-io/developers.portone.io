@@ -11,6 +11,7 @@ import {
   getPathParameters,
   getQueryParameters,
   getResponseSchemata,
+  isQueryOrBodyOperation,
   type Operation,
   type Parameter,
 } from "../schema-utils/operation";
@@ -143,8 +144,9 @@ interface RequestDocProps {
   operation: Operation;
 }
 function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
+  const isQueryOrBody = isQueryOrBodyOperation(operation);
   const pathParameters = getPathParameters(operation);
-  const queryParameters = getQueryParameters(operation);
+  const queryParameters = getQueryParameters(operation, isQueryOrBody);
   const bodyParameters = getBodyParameters(schema, operation);
   const showPath = pathParameters.length > 0;
   const showQuery = queryParameters.length > 0;
@@ -155,6 +157,12 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
         <prose.h4 class="border-b pb-1" style={{ marginTop: 0 }}>
           Request
         </prose.h4>
+        {isQueryOrBody && (
+          <prose.h5 class="text-slate-5">
+            body를 쿼리 문자열에 포함시켜 보낼 수 있습니다.{" "}
+            <prose.a href="#get-with-body">자세히 보기</prose.a>
+          </prose.h5>
+        )}
         {showPath && (
           <ReqParameters
             basepath={basepath}

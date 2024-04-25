@@ -35,7 +35,8 @@ export default function RestV2(props: RestV2Props) {
       <prose.p>
         <SchemaDownloadButton
           label="OpenAPI JSON 내려받기"
-          href="https://raw.githubusercontent.com/portone-io/developers.portone.io/main/src/schema/v2.openapi.json"
+          href="/api/schema/v2.openapi.json"
+          download="portone-v2-openapi.json"
         >
           <PostmanGuide href="https://learning.postman.com/docs/integrations/available-integrations/working-with-openAPI/" />
         </SchemaDownloadButton>
@@ -76,6 +77,15 @@ export default function RestV2(props: RestV2Props) {
         </li>
       </ul>
       액세스 토큰을 사용한 인증을 원하는 경우, 인증 관련 API를 이용해 주세요.
+      <prose.h3 id="get-with-body">GET 요청 시 Body 대신 Query 사용</prose.h3>
+      <prose.p>
+        GET 요청 시에 Body를 사용해야 하는 경우, Body 대신 Query를 사용할 수
+        있습니다.
+      </prose.p>
+      <prose.p>
+        이 경우, Body 객체를 <code>requestBody</code> Query 필드에 넣어주시면
+        됩니다.
+      </prose.p>
     </RestApi>
   );
 }

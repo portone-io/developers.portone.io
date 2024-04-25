@@ -48,6 +48,12 @@ export interface Property {
   "x-portone-title"?: string | undefined;
   "x-portone-summary"?: string | undefined;
   "x-portone-description"?: string | undefined;
+  "x-portone-query-or-body"?:
+    | {
+        enabled: boolean;
+        required: boolean;
+      }
+    | undefined;
 }
 
 export type TypeDefKind = "object" | "union" | "enum";

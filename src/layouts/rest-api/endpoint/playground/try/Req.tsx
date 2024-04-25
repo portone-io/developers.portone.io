@@ -18,7 +18,11 @@ import RequestJsonEditor, {
   type RequestPart,
 } from "../../../editor/RequestJsonEditor";
 import type { Endpoint } from "../../../schema-utils/endpoint";
-import type { Operation, Parameter } from "../../../schema-utils/operation";
+import {
+  isQueryOrBodyOperation,
+  type Operation,
+  type Parameter,
+} from "../../../schema-utils/operation";
 import Card from "../Card";
 import type { Res } from "./Res";
 import { Tabs } from "./Tabs";
@@ -43,8 +47,14 @@ export default function Req({
   const reqHeaderSignal = useSignal<KvList>([
     { key: "Content-Type", value: "application/json" },
   ]);
+  const isQueryOrBody = isQueryOrBodyOperation(operation);
   const reqPathParams = useReqParams(schema, operation, "path");
-  const reqQueryParams = useReqParams(schema, operation, "query");
+  const reqQueryParams = useReqParams(
+    schema,
+    operation,
+    "query",
+    isQueryOrBody,
+  );
   const reqBodyParams = useReqParams(schema, operation, "body");
   useSignalEffect(() => {
     harRequestSignal.value = createHarRequest(
@@ -68,10 +78,16 @@ export default function Req({
               execute(async () => {
                 const headers = kvListToObject(reqHeaderSignal.value);
                 const reqPath = reqPathParams.parseJson();
-                const reqQuery = reqQueryParams.parseJson();
                 const reqBody = reqBodyParams.parseJson();
+                const reqQuery = isQueryOrBody
+                  ? {
+                      ...(reqQueryParams.parseJson() ?? {}),
+                      requestBody: reqBody,
+                    }
+                  : reqQueryParams.parseJson();
+
                 const body =
-                  method === "get" || method === "head"
+                  method === "get" || method === "head" || isQueryOrBody
                     ? null
                     : JSON.stringify(reqBody);
                 const reqUrl = createUrl(apiHost, path, reqPath, reqQuery);
@@ -152,20 +168,25 @@ export default function Req({
 
 interface ReqParams {
   params: Parameter[];
-  reqSchema: unknown;
+  reqSchema: ReqSchema;
   initialJsonText: string;
   jsonTextSignal: Signal<string>;
   updateJsonText: (value: string) => void;
   parseJson: () => unknown;
 }
+interface ReqSchema {
+  type: "object";
+  properties: Record<string, Parameter>;
+}
 function useReqParams(
   schema: unknown,
   operation: Operation,
   part: RequestPart,
+  isQueryOrBody: boolean = false,
 ): ReqParams {
   return useMemo(() => {
-    const params = getReqParams(schema, operation, part);
-    const reqSchema = {
+    const params = getReqParams(schema, operation, part, isQueryOrBody);
+    const reqSchema: ReqSchema = {
       type: "object",
       properties: Object.fromEntries(
         params.map(({ $ref, ...param }) => {

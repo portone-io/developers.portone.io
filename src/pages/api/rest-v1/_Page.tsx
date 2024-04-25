@@ -39,7 +39,8 @@ export default function RestV1(props: RestV1Props) {
       <prose.p>
         <SchemaDownloadButton
           label="Swagger JSON 내려받기"
-          href="https://raw.githubusercontent.com/portone-io/developers.portone.io/main/src/schema/v1.openapi.json"
+          href="/api/schema/v1.openapi.json"
+          download="portone-v1-swagger.json"
         >
           <PostmanGuide href="https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-from-swagger/" />
         </SchemaDownloadButton>

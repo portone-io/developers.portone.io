@@ -96,11 +96,12 @@ export function getReqParams(
   schema: unknown,
   operation: Operation,
   part: RequestPart,
+  isQueryOrBody: boolean,
 ): Parameter[] {
   return part === "path"
     ? getPathParameters(operation)
     : part === "query"
-      ? getQueryParameters(operation)
+      ? getQueryParameters(operation, isQueryOrBody)
       : getBodyParameters(schema, operation);
 }
 

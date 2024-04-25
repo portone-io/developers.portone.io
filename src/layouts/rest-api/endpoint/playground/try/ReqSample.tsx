@@ -20,38 +20,52 @@ import Card from "../Card";
 
 export interface ReqSampleProps {
   harRequestSignal: Signal<HarRequest | undefined>;
+  isQueryOrBody: boolean;
 }
 
-const httpSnippetLanguageMap = new Map(
-  Object.entries({
-    c: "c",
-    clojure: "clojure",
-    csharp: "csharp",
-    go: "go",
-    java: "java",
-    javascript: "javascript",
-    kotlin: "kotlin",
-    node: "javascript",
-    objc: "objective-c",
-    php: "php",
-    powershell: "powershell",
-    python: "python",
-    r: "r",
-    ruby: "ruby",
-    shell: "shell",
-    swift: "swift",
-  }),
-);
+const httpSnippetLanguageMap = new Map([
+  ["csharp", "csharp"],
+  ["go", "go"],
+  ["java", "java"],
+  ["javascript", "javascript"],
+  ["kotlin", "kotlin"],
+  ["node", "javascript"],
+  ["objc", "objective-c"],
+  ["php", "php"],
+  ["python", "python"],
+  ["ruby", "ruby"],
+  ["shell", "shell"],
+  ["swift", "swift"],
+]);
+const supportGetWithBodyTargetMap: Map<string, Set<string>> = new Map([
+  ["go", new Set(["native"])],
+  ["java", new Set(["asynchttp", "nethttp"])],
+  ["node", new Set(["native", "request", "unirest"])],
+  ["php", new Set(["curl", "guzzle", "http2"])],
+  ["python", new Set(["python3", "requests"])],
+  ["ruby", new Set(["native"])],
+  ["shell", new Set(["curl", "httpie", "wget"])],
+]);
 const availableTargets = _availableTargets()
   .map((target) => ({
     ...target,
     language: httpSnippetLanguageMap.get(target.key),
+    clients: target.clients.map((client) => ({
+      ...client,
+      supportGetWithBody:
+        supportGetWithBodyTargetMap
+          .get(httpSnippetLanguageMap.get(target.key)!)
+          ?.has(client.key) ?? false,
+    })),
   }))
   .filter((target) => target.language);
 type AvailableTarget = (typeof availableTargets)[number];
 type ClientInfo = AvailableTarget["clients"][number];
 
-export default function ReqSample({ harRequestSignal }: ReqSampleProps) {
+export default function ReqSample({
+  harRequestSignal,
+  isQueryOrBody,
+}: ReqSampleProps) {
   const targetKeySignal = useSignal("shell");
   const clientKeySignal = useSignal("curl");
   const targetInfoSignal = useTargetInfo(targetKeySignal);
@@ -60,6 +74,7 @@ export default function ReqSample({ harRequestSignal }: ReqSampleProps) {
     harRequestSignal,
     targetInfoSignal,
     clientInfoSignal,
+    isQueryOrBody,
   );
 
   return (
@@ -153,18 +168,19 @@ function useClientInfo(
 
 function useHTTPSnippet(
   harRequestSignal: Signal<HarRequest | undefined>,
-  targetIdSignal: ReadonlySignal<AvailableTarget | null>,
-  clientIdSignal: ReadonlySignal<ClientInfo | null>,
+  targetSignal: ReadonlySignal<AvailableTarget | null>,
+  clientSignal: ReadonlySignal<ClientInfo | null>,
+  isQueryOrBody: boolean,
 ): Signal<string | null> {
   const snippetSignal = useSignal<string | null>(null);
   useSignalEffect(() => {
-    if (
-      harRequestSignal.value &&
-      targetIdSignal.value &&
-      clientIdSignal.value
-    ) {
-      new HTTPSnippet(harRequestSignal.value)
-        .convert(targetIdSignal.value.key, clientIdSignal.value.key)
+    if (harRequestSignal.value && targetSignal.value && clientSignal.value) {
+      const harRequest =
+        isQueryOrBody && !clientSignal.value.supportGetWithBody
+          ? transformHarRequestBodyToQs(harRequestSignal.value)
+          : harRequestSignal.value;
+      new HTTPSnippet(harRequest)
+        .convert(targetSignal.value.key, clientSignal.value.key)
         .then((snippet) => {
           if (Array.isArray(snippet)) {
             snippet = snippet.join("\n");
@@ -179,4 +195,19 @@ function useHTTPSnippet(
     }
   });
   return snippetSignal;
+}
+
+function transformHarRequestBodyToQs(harRequest: HarRequest): HarRequest {
+  if (!harRequest.postData) return harRequest;
+  if (!harRequest.postData.text) return harRequest;
+  if (harRequest.postData.mimeType !== "application/json") return harRequest;
+  const transformed = {
+    ...harRequest,
+    queryString: [
+      { name: "requestBody", value: harRequest.postData.text },
+      ...harRequest.queryString,
+    ],
+  } satisfies HarRequest;
+  delete transformed.postData;
+  return transformed;
 }

@@ -65,8 +65,15 @@ export function getPathParameters(operation: Operation): Parameter[] {
   return operation.parameters?.filter((p) => p.in === "path") || [];
 }
 
-export function getQueryParameters(operation: Operation): Parameter[] {
-  return operation.parameters?.filter((p) => p.in === "query") || [];
+export function getQueryParameters(
+  operation: Operation,
+  isQueryOrBody: boolean,
+): Parameter[] {
+  const parameters =
+    operation.parameters?.filter((p) => p.in === "query") || [];
+  return isQueryOrBody
+    ? parameters.filter((p) => p.name !== "requestBody")
+    : parameters;
 }
 
 export function getBodyParameters(
@@ -79,6 +86,12 @@ export function getBodyParameters(
   return (
     operation.parameters?.filter((p) => p.in !== "path" && p.in !== "query") ||
     []
+  );
+}
+
+export function isQueryOrBodyOperation(operation: Operation): boolean {
+  return (
+    operation.parameters?.some((p) => "x-portone-query-or-body" in p) || false
   );
 }
 

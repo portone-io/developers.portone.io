@@ -4,16 +4,18 @@ export interface SchemaDownloadButtonProps {
   href: string;
   label: React.ReactNode;
   children: React.ReactNode;
+  download: string;
 }
 export default function SchemaDownloadButton({
   href,
   label,
   children,
+  download,
 }: SchemaDownloadButtonProps) {
   return (
     <div class="flex flex-col items-start gap-1 text-14px">
       <a
-        download="portone-v1-swagger.json"
+        download={download}
         target="_blank"
         href={href}
         class="inline-flex items-center gap-2 rounded bg-slate-1 p-2 pr-3 font-bold hover:bg-slate-2"
