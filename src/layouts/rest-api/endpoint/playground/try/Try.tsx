@@ -2,7 +2,10 @@ import { useSignal } from "@preact/signals";
 import { type HarRequest } from "httpsnippet-lite";
 
 import type { Endpoint } from "../../../schema-utils/endpoint";
-import type { Operation } from "../../../schema-utils/operation";
+import {
+  isQueryOrBodyOperation,
+  type Operation,
+} from "../../../schema-utils/operation";
 import Err from "./Err";
 import Req from "./Req";
 import ReqSample from "./ReqSample";
@@ -26,6 +29,7 @@ export default function Try(props: TryProps) {
   const example =
     props.operation.responses?.["200"]?.content?.["application/json"]?.example;
   const tabIdSignal = useSignal<"request" | "response">("request");
+  const isQueryOrBody = isQueryOrBodyOperation(props.operation);
   return (
     <div
       class={`grid grid-rows-[auto_1fr] flex-1 gap-3 ${waiting ? "pointer-events-none opacity-50" : ""}`}
@@ -56,7 +60,10 @@ export default function Try(props: TryProps) {
                     })()
                   }
                 />
-                <ReqSample harRequestSignal={harRequestSignal} />
+                <ReqSample
+                  harRequestSignal={harRequestSignal}
+                  isQueryOrBody={isQueryOrBody}
+                />
               </div>
             ),
           },

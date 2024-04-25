@@ -49,7 +49,12 @@ export default function Req({
   ]);
   const isQueryOrBody = isQueryOrBodyOperation(operation);
   const reqPathParams = useReqParams(schema, operation, "path");
-  const reqQueryParams = useReqParams(schema, operation, "query");
+  const reqQueryParams = useReqParams(
+    schema,
+    operation,
+    "query",
+    isQueryOrBody,
+  );
   const reqBodyParams = useReqParams(schema, operation, "body");
   useSignalEffect(() => {
     harRequestSignal.value = createHarRequest(
@@ -177,9 +182,10 @@ function useReqParams(
   schema: unknown,
   operation: Operation,
   part: RequestPart,
+  isQueryOrBody: boolean = false,
 ): ReqParams {
   return useMemo(() => {
-    const params = getReqParams(schema, operation, part);
+    const params = getReqParams(schema, operation, part, isQueryOrBody);
     const reqSchema: ReqSchema = {
       type: "object",
       properties: Object.fromEntries(

@@ -11,6 +11,7 @@ import {
   getPathParameters,
   getQueryParameters,
   getResponseSchemata,
+  isQueryOrBodyOperation,
   type Operation,
   type Parameter,
 } from "../schema-utils/operation";
@@ -143,8 +144,9 @@ interface RequestDocProps {
   operation: Operation;
 }
 function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
+  const isQueryOrBody = isQueryOrBodyOperation(operation);
   const pathParameters = getPathParameters(operation);
-  const queryParameters = getQueryParameters(operation);
+  const queryParameters = getQueryParameters(operation, isQueryOrBody);
   const bodyParameters = getBodyParameters(schema, operation);
   const showPath = pathParameters.length > 0;
   const showQuery = queryParameters.length > 0;
