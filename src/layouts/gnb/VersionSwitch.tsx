@@ -1,6 +1,6 @@
 import type { CollectionEntry } from "astro:content";
 import clsx from "clsx";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { updateSystemVersion, useSystemVersion } from "#state/system-version";
 import { useServerFallback } from "~/misc/useServerFallback";
@@ -26,6 +26,7 @@ export function VersionSwitch({
   docData,
 }: VersionSwitchProps) {
   const popoverRef = useRef<HTMLDivElement>(null);
+  const [showPopover, setShowPopover] = useState(true);
 
   if (hiddenPaths.some((path) => new URL(url).pathname.startsWith(path)))
     return null;
@@ -36,13 +37,7 @@ export function VersionSwitch({
   );
 
   useEffect(() => {
-    if (!popoverRef.current) return;
-    const el = popoverRef.current;
-    el.animate([{ opacity: 0 }, { opacity: 1 }], {
-      duration: 400,
-      fill: "forwards",
-    });
-    el.animate(
+    const animation = popoverRef.current?.animate(
       [{ transform: "translateY(0px)" }, { transform: "translateY(4px)" }],
       {
         duration: 600,
@@ -51,12 +46,33 @@ export function VersionSwitch({
         iterations: Infinity,
       },
     );
-    el.animate([{ opacity: 1 }, { opacity: 0, pointerEvents: "none" }], {
-      delay: 5000,
-      duration: 400,
-      fill: "forwards",
-    });
+    const timeout = setTimeout(() => {
+      setShowPopover(false);
+    }, 5000);
+
+    return () => {
+      animation?.cancel();
+      clearTimeout(timeout);
+    };
   }, []);
+
+  useEffect(() => {
+    const animation = showPopover
+      ? popoverRef.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: 400,
+          fill: "forwards",
+        })
+      : popoverRef.current?.animate(
+          [{ opacity: 1 }, { opacity: 0, pointerEvents: "none" }],
+          {
+            duration: 400,
+            fill: "forwards",
+          },
+        );
+    return () => {
+      animation?.cancel();
+    };
+  }, [showPopover]);
 
   return (
     <div className="relative">
@@ -65,6 +81,7 @@ export function VersionSwitch({
         onClick={() => {
           const newVersion = systemVersion !== "v1" ? "v1" : "v2";
           updateSystemVersion(newVersion);
+          setShowPopover(false);
 
           const mappedPath =
             Object.entries(pathMappings).find(([from]) =>
