@@ -157,6 +157,12 @@ function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
         <prose.h4 class="border-b pb-1" style={{ marginTop: 0 }}>
           Request
         </prose.h4>
+        {isQueryOrBody && (
+          <prose.h5 class="text-slate-5">
+            body를 쿼리 문자열에 포함시켜 보낼 수 있습니다.{" "}
+            <prose.a href="#get-with-body">자세히 보기</prose.a>
+          </prose.h5>
+        )}
         {showPath && (
           <ReqParameters
             basepath={basepath}
