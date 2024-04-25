@@ -26,8 +26,9 @@ export function overrideSystemVersion(
 }
 
 export function parseServerSystemVersion(ctx: APIContext) {
-  const value = ctx.url.searchParams.get("v");
-  return parseSystemVersion(value);
+  const searchValue = ctx.url.searchParams.get("v");
+  const cookieValue = ctx.cookies.get("systemVersion")?.value;
+  return parseSystemVersion(searchValue || cookieValue);
 }
 
 export function getInitialSystemVersion() {
