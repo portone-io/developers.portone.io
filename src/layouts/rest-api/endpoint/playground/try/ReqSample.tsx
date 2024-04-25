@@ -24,8 +24,6 @@ export interface ReqSampleProps {
 
 const httpSnippetLanguageMap = new Map(
   Object.entries({
-    c: "c",
-    clojure: "clojure",
     csharp: "csharp",
     go: "go",
     java: "java",
@@ -34,9 +32,7 @@ const httpSnippetLanguageMap = new Map(
     node: "javascript",
     objc: "objective-c",
     php: "php",
-    powershell: "powershell",
     python: "python",
-    r: "r",
     ruby: "ruby",
     shell: "shell",
     swift: "swift",
