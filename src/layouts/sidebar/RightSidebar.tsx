@@ -1,9 +1,11 @@
 import type React from "preact/compat";
+import { useEffect, useState } from "react";
+
+import { useSystemVersion } from "#state/system-version";
 
 export interface RightSidebarProps {
   lang: string;
   slug: string;
-  toc: Toc;
   editThisPagePrefix?: string;
 }
 export type Toc = TocItem[];
@@ -15,41 +17,49 @@ export interface TocItem {
 function RightSidebar({
   lang,
   slug,
-  toc,
   editThisPagePrefix = "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
 }: RightSidebarProps) {
+  const [toc, setToc] = useState<Toc | null>(null);
+  const systemVersion = useSystemVersion();
+
+  useEffect(() => {
+    setToc(headingsToToc(lang));
+  }, [systemVersion]);
+
   return (
     <div class="hidden min-w-0 w-56 shrink-0 text-slate-7 lg:block">
-      <nav class="fixed h-[calc(100%-56px)] w-inherit overflow-y-auto px-2 py-[28px]">
-        <h2 class="mb-2 px-2 font-bold">{t(lang, "toc")}</h2>
-        <ul>
-          {toc.map((item) => (
+      {toc && (
+        <nav class="fixed h-[calc(100%-56px)] w-inherit overflow-y-auto px-2 py-[28px]">
+          <h2 class="mb-2 px-2 font-bold">{t(lang, "toc")}</h2>
+          <ul>
+            {toc.map((item) => (
+              <SidebarItem
+                key={item.slug}
+                href={`#${item.slug}`}
+                label={item.text}
+              >
+                <ul class="pl-2">
+                  {item.children.map((item) => (
+                    <SidebarItem
+                      key={item.slug}
+                      href={`#${item.slug}`}
+                      label={item.text}
+                    />
+                  ))}
+                </ul>
+              </SidebarItem>
+            ))}
+          </ul>
+          <h2 class="mb-2 mt-4 px-2 font-bold">{t(lang, "contribute")}</h2>
+          <ul>
             <SidebarItem
-              key={item.slug}
-              href={`#${item.slug}`}
-              label={item.text}
-            >
-              <ul class="pl-2">
-                {item.children.map((item) => (
-                  <SidebarItem
-                    key={item.slug}
-                    href={`#${item.slug}`}
-                    label={item.text}
-                  />
-                ))}
-              </ul>
-            </SidebarItem>
-          ))}
-        </ul>
-        <h2 class="mb-2 mt-4 px-2 font-bold">{t(lang, "contribute")}</h2>
-        <ul>
-          <SidebarItem
-            href={`${editThisPagePrefix}${slug}.mdx`}
-            icon="i-ic-baseline-edit"
-            label={t(lang, "edit-this-page")}
-          />
-        </ul>
-      </nav>
+              href={`${editThisPagePrefix}${slug}.mdx`}
+              icon="i-ic-baseline-edit"
+              label={t(lang, "edit-this-page")}
+            />
+          </ul>
+        </nav>
+      )}
     </div>
   );
 }
@@ -95,11 +105,18 @@ export interface Heading {
   text: string;
 }
 
-export function headingsToToc(lang: string, headings: Heading[]): Toc {
+export function headingsToToc(lang: string): Toc {
   const result: Toc = [
     { slug: "overview", text: t(lang, "overview"), children: [] },
   ];
   let recent2: TocItem | undefined;
+  const headings: Heading[] = [
+    ...document.querySelectorAll("article :is(h2, h3)"),
+  ].map((el) => ({
+    depth: Number(el.tagName.slice(1)),
+    slug: el.id,
+    text: el.textContent ?? "",
+  }));
   for (const h of headings.filter((h) => h.depth === 2 || h.depth === 3)) {
     const item = { ...h, children: [] };
     if (recent2 && item.depth === 3) recent2.children.push(item);
