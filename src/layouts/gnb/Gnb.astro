@@ -1,7 +1,8 @@
 ---
 import { clsx } from "clsx";
 
-import { useServerSystemVersion } from "~/state/system-version/server";
+import { readDocData } from "~/state/server-only/docData";
+import { readServerSystemVersion } from "~/state/system-version/server";
 import type { Lang } from "~/type";
 
 import Dropdown from "./Dropdown";
@@ -30,7 +31,8 @@ const en: typeof ko = {
   language: "Language",
 };
 const t = lang === "ko" ? ko : en;
-const serverSystemVersion = useServerSystemVersion();
+const serverSystemVersion = readServerSystemVersion();
+const docData = readDocData();
 ---
 
 <script>
@@ -68,9 +70,10 @@ const serverSystemVersion = useServerSystemVersion();
         </a>
         <div class="mx-6 md:ml-[70px]">
           <VersionSwitch
-            serverSystemVersion={serverSystemVersion}
-            url={url.toString()}
             client:load
+            url={url.toString()}
+            serverSystemVersion={serverSystemVersion}
+            docData={docData}
           />
         </div>
       </div>

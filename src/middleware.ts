@@ -1,11 +1,9 @@
 import type { MiddlewareHandler } from "astro";
 
-import {
-  parseServerSystemVersion,
-  withSystemVersion,
-} from "./state/system-version/server";
+import { withContext } from "~/state/server-only/context";
+import { parseServerSystemVersion } from "~/state/system-version/server";
 
 export const onRequest: MiddlewareHandler = async (ctx, next) => {
   const systemVersion = parseServerSystemVersion(ctx);
-  return withSystemVersion(systemVersion, next);
+  return withContext({ systemVersion, docData: null }, next);
 };

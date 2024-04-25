@@ -1,41 +1,38 @@
-import { AsyncLocalStorage } from "node:async_hooks";
-
-import { Signal, signal } from "@preact/signals";
 import type { APIContext } from "astro";
 
+import {
+  overrideContext,
+  readContext,
+  type ServerContext,
+} from "~/state/server-only/context";
 import type { SystemVersion } from "~/type";
 
 import { parseSystemVersion } from "./utils";
 
-const systemVersionStorage = new AsyncLocalStorage<Signal<SystemVersion>>();
-export function useServerSystemVersion() {
-  const value = systemVersionStorage.getStore()?.value;
-  if (!value) {
-    throw new Error("Failed to get system version");
+declare module "~/state/server-only/context" {
+  interface ServerContext {
+    systemVersion: SystemVersion;
   }
-  return value;
 }
-export function withSystemVersion<T>(
-  systemVersion: SystemVersion,
-  fn: () => Promise<T>,
+
+export function readServerSystemVersion() {
+  return readContext("systemVersion");
+}
+
+export function overrideSystemVersion(
+  systemVersion: ServerContext["systemVersion"],
 ) {
-  return systemVersionStorage.run(signal(systemVersion), fn);
+  return overrideContext("systemVersion", systemVersion);
 }
-export function overrideSystemVersion(systemVersion: SystemVersion) {
-  const signal = systemVersionStorage.getStore();
-  if (!signal) {
-    throw new Error("No system version to override");
-  }
-  signal.value = systemVersion;
-}
+
 export function parseServerSystemVersion(ctx: APIContext) {
   const value = ctx.url.searchParams.get("v");
   return parseSystemVersion(value);
 }
 
 export function getInitialSystemVersion() {
-  return useServerSystemVersion();
+  return readServerSystemVersion();
 }
 
-export const useSystemVersion = () => useServerSystemVersion();
+export const useSystemVersion = () => readServerSystemVersion();
 export const updateSystemVersion = () => {};

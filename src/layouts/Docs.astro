@@ -6,10 +6,11 @@ import LayoutBase from "~/layouts/LayoutBase.astro";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu.astro";
 import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
 import { SearchScreen } from "~/layouts/sidebar/search";
+import { overrideDocData } from "~/state/server-only/docData";
 import { calcNavMenuSystemVersions, navMenu } from "~/state/server-only/nav";
 import {
   overrideSystemVersion,
-  useServerSystemVersion,
+  readServerSystemVersion,
 } from "~/state/system-version/server";
 import type { Lang } from "~/type";
 
@@ -31,13 +32,14 @@ const navMenuSystemVersions = calcNavMenuSystemVersions(navMenuItems);
 if (targetVersions && targetVersions.length === 1) {
   overrideSystemVersion(targetVersions[0]!);
 }
+overrideDocData(entry.data);
 ---
 
 <LayoutBase
   lang={lang}
   title={title}
   description={description}
-  systemVersion={useServerSystemVersion()}
+  systemVersion={readServerSystemVersion()}
   slug={`docs${slug}`}
   ogType="article"
   ogImageSlug={`docs${slug}.png`}
