@@ -7,7 +7,7 @@ import Logo from "~/layouts/gnb/Logo.astro";
 import MobileMenuButton from "~/layouts/gnb/MobileMenuButton";
 import LeftSidebar from "~/layouts/sidebar/LeftSidebar.astro";
 import { JustLink } from "~/layouts/sidebar/LeftSidebarItem";
-import RightSidebar, { headingsToToc } from "~/layouts/sidebar/RightSidebar";
+import RightSidebar from "~/layouts/sidebar/RightSidebar";
 import Trackers from "~/layouts/trackers/Trackers.astro";
 import TrackingScript from "~/layouts/TrackingScript.astro";
 import type { Lang } from "~/type";
@@ -20,8 +20,6 @@ if (!slug || !entry) return new Response(null, { status: 404 });
 const { title, description } = entry.data;
 const mdx = await entry.render();
 const Content = mdx.Content;
-
-const toc = headingsToToc("ko", mdx.headings);
 ---
 
 <html lang={lang}>
@@ -128,7 +126,6 @@ const toc = headingsToToc("ko", mdx.headings);
             <RightSidebar
               lang={lang}
               slug={slug}
-              toc={toc}
               editThisPagePrefix="https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs/ko/api-v2/"
               client:idle
             />

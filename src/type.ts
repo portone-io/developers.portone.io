@@ -1,10 +1,13 @@
+import { z } from "astro:content";
+
 export type Lang = "ko" | "en";
 
 export const isLang = (lang: unknown): lang is Lang => {
   return ["ko", "en"].includes(String(lang));
 };
 
-export type SystemVersion = "v1" | "v2";
+export const SystemVersion = z.enum(["v1", "v2"]);
+export type SystemVersion = z.infer<typeof SystemVersion>;
 
 export type YamlNavMenuToplevelItem =
   | YamlNavMenuPageSugar

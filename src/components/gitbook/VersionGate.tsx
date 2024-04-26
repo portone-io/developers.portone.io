@@ -1,7 +1,7 @@
 import type React from "react";
 
+import { useSystemVersion } from "#state/system-version";
 import { useServerFallback } from "~/misc/useServerFallback";
-import { systemVersionSignal } from "~/state/nav";
 import type { SystemVersion } from "~/type";
 
 interface Props {
@@ -26,7 +26,7 @@ const isEmptyStaticHtml = (node: React.ReactNode) => {
 
 export default function VersionGate(props: Props) {
   const systemVersion = useServerFallback(
-    systemVersionSignal.value,
+    useSystemVersion(),
     props.serverSystemVersion,
   );
 

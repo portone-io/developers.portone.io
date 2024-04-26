@@ -1,9 +1,13 @@
 import { defineCollection, z } from "astro:content";
 
+import { SystemVersion } from "~/type";
+
 const docCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    targetVersions: z.array(SystemVersion).optional(),
+    versionVariants: z.record(SystemVersion, z.string()).optional(),
   }),
 });
 
