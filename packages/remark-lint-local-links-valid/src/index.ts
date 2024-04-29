@@ -75,7 +75,7 @@ const resolveRedirect = (
 ): string => {
   let resolved = url;
   while (redirects[resolved]) {
-    resolved = redirects[resolved].split(/[#?]/)[0];
+    resolved = redirects[resolved]?.split(/[#?]/)[0] ?? resolved;
   }
   return resolved;
 };
