@@ -31,23 +31,6 @@ pnpm install
 pnpm dev # http://localhost:4321/ 접속
 ```
 
-## `ERR_PNPM_FETCH_401` Unauthorized 오류가 발생했을 때
-
-개발자센터는 일부 패키지를 [Github Packages](https://docs.github.com/packages)로 관리하고 있습니다.\
-해당 패키지에 접근하려면 [Personal Access Token](https://github.com/settings/tokens)으로 registry에 로그인해야 합니다.
-
-### Github Packages Registry에 로그인하기
-
-1. `read:packages` 권한을 가진 [Personal Access Token](https://github.com/settings/tokens/new)을 발급합니다.
-  ![image](https://github.com/portone-io/developers.portone.io/assets/17797795/704cc625-4e0e-430e-897b-6748c46f5d4c)
-2. 아래 명령어를 실행합니다.
-   ```sh
-    pnpm login --scope=@portone-io --auth-type=legacy --registry=https://npm.pkg.github.com
-    # Username: <Username>
-    # Password: <Personal Access Token>
-    # Logged in to scope @portone-io on https://npm.pkg.github.com/
-   ```
-
 --------
 
 이 프로젝트는 [GNU Affero General Public License v3.0] 또는 그 이후 버전에 따라 라이센스가 부여됩니다. 자세한 내용은 [COPYRIGHT] 파일을 참고하세요.

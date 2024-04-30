@@ -69,7 +69,7 @@ export default {
     "remark-lint-table-pipes",
     ["remark-lint-unordered-list-marker-style", "-"],
     [
-      "@portone-io/remark-lint-local-links-valid",
+      "remark-lint-local-links-valid",
       {
         baseDir: "./src/content",
         excludePaths: ["/api"],
