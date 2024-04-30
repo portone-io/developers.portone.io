@@ -1,9 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { load } from "js-yaml";
 import { lintRule } from "unified-lint-rule";
 import { visit } from "unist-util-visit";
+import * as YAML from "yaml";
 
 interface Options {
   baseDir: string;
@@ -31,22 +31,48 @@ const remarkLintLocalLinksValid = lintRule(
     visit(tree, (node) => {
       if (node.type === "yaml" && "value" in node) {
         try {
-          const yaml = load(node.value as string);
-          if (isObject(yaml) && "versionVariants" in yaml) {
-            const versionVariants = yaml["versionVariants"];
-            if (isObject(versionVariants)) {
-              for (const [_version, link] of Object.entries(versionVariants)) {
-                if (typeof link === "string") {
+          const lineCounter = new YAML.LineCounter();
+          const doc = YAML.parseDocument(String(node.value), {
+            lineCounter,
+          });
+          const versionVariants = doc.getIn(["versionVariants"]);
+          if (YAML.isMap(versionVariants)) {
+            YAML.visit(versionVariants, {
+              Pair(_, pair) {
+                if (
+                  YAML.isScalar(pair.value) &&
+                  typeof pair.value.value === "string"
+                ) {
+                  const link = pair.value.value;
+                  const range = pair.value.range;
                   const task = checkLink(
                     path.isAbsolute(link) ? path.join("/docs", link) : link,
                     (reason) => {
-                      file.message(reason, node);
+                      if (node.position && range) {
+                        const start = lineCounter.linePos(range[0]);
+                        const end = lineCounter.linePos(range[1]);
+                        file.message(reason, {
+                          ...node,
+                          position: {
+                            start: {
+                              line: node.position.start.line + start.line,
+                              column: start.col,
+                            },
+                            end: {
+                              line: node.position.start.line + end.line,
+                              column: end.col,
+                            },
+                          },
+                        });
+                      } else {
+                        file.message(reason, node);
+                      }
                     },
                   );
                   tasks.push(task);
                 }
-              }
-            }
+              },
+            });
           }
         } catch (e) {
           file.message(String(e), node);
@@ -115,8 +141,5 @@ const resolveRedirect = (
     resolved = redirects[resolved]?.split(/[#?]/)[0] ?? resolved;
   }
   return resolved;
-};
-const isObject = (value: unknown): value is Record<string, unknown> => {
-  return typeof value === "object" && value !== null;
 };
 export default remarkLintLocalLinksValid;
