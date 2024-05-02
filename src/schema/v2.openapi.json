@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "PortOne API",
-    "version": "1.12.0"
+    "version": "1.16.0"
   },
   "servers": [
     {
@@ -5300,13 +5300,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RevokePaymentScheduleBody"
+                  "$ref": "#/components/schemas/RevokePaymentSchedulesBody"
                 }
               }
             },
             "x-portone-query-or-body": {
               "enabled": true,
-              "required": false
+              "required": true
             }
           }
         ],
@@ -5314,7 +5314,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RevokePaymentScheduleBody"
+                "$ref": "#/components/schemas/RevokePaymentSchedulesBody"
               }
             }
           },
@@ -5479,7 +5479,7 @@
             }
           },
           "409": {
-            "description": "<ul>\n<li><code>AlreadyPaidOrWaitingError</code>: 결제가 이미 완료되었거나 대기중인 경우</li>\n<li><code>SumOfPartsExceedsTotalAmountError</code>: 면세 금액 등 하위 항목들의 합이 전체 결제 금액을 초과한 경우</li>\n<li><code>BillingKeyAlreadyDeletedError</code>: 빌링키가 이미 삭제된 경우</li>\n<li><code>PaymentScheduleAlreadyExistsError</code>: 결제 예약건이 이미 존재하는 경우</li>\n<li><code>PastPaymentScheduleError</code>: 결제 예약 시점이 과거로 지정된 경우</li>\n</ul>\n",
+            "description": "<ul>\n<li><code>AlreadyPaidOrWaitingError</code>: 결제가 이미 완료되었거나 대기중인 경우</li>\n<li><code>SumOfPartsExceedsTotalAmountError</code>: 면세 금액 등 하위 항목들의 합이 전체 결제 금액을 초과한 경우</li>\n<li><code>BillingKeyAlreadyDeletedError</code>: 빌링키가 이미 삭제된 경우</li>\n<li><code>PaymentScheduleAlreadyExistsError</code>: 결제 예약건이 이미 존재하는 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -16552,6 +16552,32 @@
         "description": "<p>계좌이체 정보</p>\n",
         "x-portone-title": "계좌이체 정보"
       },
+      "BillingKeyPaymentMethodType": {
+        "title": "빌링키 결제 수단",
+        "type": "string",
+        "description": "<p>빌링키 결제 수단</p>\n",
+        "enum": [
+          "CARD",
+          "EASY_PAY",
+          "MOBILE",
+          "TRANSFER"
+        ],
+        "x-portone-title": "빌링키 결제 수단",
+        "x-portone-enum": {
+          "CARD": {
+            "title": "카드"
+          },
+          "MOBILE": {
+            "title": "모바일"
+          },
+          "EASY_PAY": {
+            "title": "간편 결제"
+          },
+          "TRANSFER": {
+            "title": "계좌 이체"
+          }
+        }
+      },
       "BillingKeyPaymentSummary": {
         "title": "빌링키 결제 완료된 결제 건 요약 정보",
         "required": [
@@ -16804,6 +16830,11 @@
             "type": "string",
             "title": "취소 사유"
           },
+          "requester": {
+            "$ref": "#/components/schemas/CancelRequester",
+            "title": "취소 요청자",
+            "description": "<p>고객에 의한 취소일 경우 Customer, 관리자에 의한 취소일 경우 Admin으로 입력합니다.</p>\n"
+          },
           "currentCancellableAmount": {
             "type": "integer",
             "format": "int64",
@@ -17043,6 +17074,17 @@
         "type": "object",
         "description": "<p>파트너 예약 업데이트 취소 성공 응답</p>\n",
         "x-portone-title": "파트너 예약 업데이트 취소 성공 응답"
+      },
+      "CancelRequester": {
+        "type": "string",
+        "enum": [
+          "Admin",
+          "Customer"
+        ],
+        "x-portone-enum": {
+          "Customer": {},
+          "Admin": {}
+        }
       },
       "CancelTaxAmountExceedsCancellableTaxAmountError": {
         "title": "취소 과세 금액이 취소 가능한 과세 금액을 초과한 경우",
@@ -17333,6 +17375,10 @@
             "type": "string",
             "format": "date-time",
             "title": "결제 완료 시점"
+          },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
           },
           "cashReceipt": {
             "$ref": "#/components/schemas/PaymentCashReceipt",
@@ -17630,23 +17676,23 @@
         "properties": {
           "number": {
             "type": "string",
-            "title": "카드 번호"
+            "title": "카드 번호 (숫자만)"
           },
           "expiryYear": {
             "type": "string",
-            "title": "유효 기간 만료 연도"
+            "title": "유효 기간 만료 연도 (2자리)"
           },
           "expiryMonth": {
             "type": "string",
-            "title": "유효 기간 만료 월"
+            "title": "유효 기간 만료 월 (2자리)"
           },
           "birthOrBusinessRegistrationNumber": {
             "type": "string",
-            "title": "생년월일 또는 사업자 등록 번호"
+            "title": "생년월일 (yyMMdd) 또는 사업자 등록 번호 (10자리, 숫자만)"
           },
           "passwordTwoDigits": {
             "type": "string",
-            "title": "비밀번호 앞 두자리"
+            "title": "비밀번호 앞 2자리"
           }
         },
         "description": "<p>카드 인증 관련 정보</p>\n",
@@ -17870,30 +17916,35 @@
       "Channel": {
         "title": "채널 정보",
         "required": [
-          "channelId",
-          "channelName",
+          "id",
+          "name",
           "pgProvider",
-          "channelType",
+          "pgCompany",
+          "type",
           "pgMerchantId",
           "isForPayment",
-          "isForIdentityCertification",
-          "channelKey"
+          "isForIdentityVerification",
+          "key"
         ],
         "type": "object",
         "properties": {
-          "channelId": {
+          "id": {
             "type": "string",
             "title": "채널 아이디"
           },
-          "channelName": {
+          "name": {
             "type": "string",
             "title": "채널명"
           },
           "pgProvider": {
             "$ref": "#/components/schemas/PgProvider",
-            "title": "V2 결제가 가능한 PG사"
+            "title": "PG사 모듈"
           },
-          "channelType": {
+          "pgCompany": {
+            "$ref": "#/components/schemas/PgCompany",
+            "title": "PG사 모듈에 해당하는 PG사"
+          },
+          "type": {
             "$ref": "#/components/schemas/ChannelType",
             "title": "채널 유형"
           },
@@ -17905,81 +17956,17 @@
             "type": "boolean",
             "title": "결제용 채널 여부"
           },
-          "isForIdentityCertification": {
+          "isForIdentityVerification": {
             "type": "boolean",
             "title": "본인인증용 채널 여부"
           },
-          "channelKey": {
+          "key": {
             "type": "string",
             "title": "채널키"
-          },
-          "pgCredential": {
-            "$ref": "#/components/schemas/ChannelPgCredential",
-            "title": "PG사 인증 정보"
           }
         },
         "description": "<p>채널 정보</p>\n",
         "x-portone-title": "채널 정보"
-      },
-      "ChannelDanalCredential": {
-        "title": "다날 인증 정보",
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "cppwd": {
-            "type": "string"
-          },
-          "itemCode": {
-            "type": "string"
-          }
-        },
-        "description": "<p>다날 인증 정보</p>\n",
-        "x-portone-title": "다날 인증 정보"
-      },
-      "ChannelKsnetCredential": {
-        "title": "KSNET 인증 정보",
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "apiKey": {
-            "type": "string"
-          }
-        },
-        "description": "<p>KSNET 인증 정보</p>\n",
-        "x-portone-title": "KSNET 인증 정보"
-      },
-      "ChannelNaverPayCredential": {
-        "title": "네이버페이 인증 정보",
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "clientId": {
-            "type": "string"
-          },
-          "clientSecret": {
-            "type": "string"
-          },
-          "chainId": {
-            "type": "string"
-          }
-        },
-        "description": "<p>네이버페이 인증 정보</p>\n",
-        "x-portone-title": "네이버페이 인증 정보"
       },
       "ChannelNotFoundError": {
         "title": "요청된 채널이 존재하지 않는 경우",
@@ -17998,101 +17985,6 @@
         "description": "<p>요청된 채널이 존재하지 않는 경우</p>\n",
         "x-portone-title": "요청된 채널이 존재하지 않는 경우",
         "x-portone-status-code": 404
-      },
-      "ChannelPgCredential": {
-        "title": "PG사 인증 정보",
-        "description": "<p>PG사 인증 정보</p>\n",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ChannelDanalCredential"
-          },
-          {
-            "$ref": "#/components/schemas/ChannelKsnetCredential"
-          },
-          {
-            "$ref": "#/components/schemas/ChannelNaverPayCredential"
-          },
-          {
-            "$ref": "#/components/schemas/ChannelSmartroV2Credential"
-          },
-          {
-            "$ref": "#/components/schemas/ChannelTossPaymentsCredential"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "DANAL": "#/components/schemas/ChannelDanalCredential",
-            "KSNET": "#/components/schemas/ChannelKsnetCredential",
-            "NAVER_PAY": "#/components/schemas/ChannelNaverPayCredential",
-            "SMARTRO_V2": "#/components/schemas/ChannelSmartroV2Credential",
-            "TOSS_PAYMENTS": "#/components/schemas/ChannelTossPaymentsCredential"
-          }
-        },
-        "x-portone-title": "PG사 인증 정보",
-        "x-portone-discriminator": {
-          "NAVER_PAY": {
-            "title": "네이버페이 인증 정보"
-          },
-          "SMARTRO_V2": {
-            "title": "스마트로V2 인증 정보"
-          },
-          "DANAL": {
-            "title": "다날 인증 정보"
-          },
-          "TOSS_PAYMENTS": {
-            "title": "토스페이먼츠 인증 정보"
-          },
-          "KSNET": {
-            "title": "KSNET 인증 정보"
-          }
-        }
-      },
-      "ChannelSmartroV2Credential": {
-        "title": "스마트로V2 인증 정보",
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "merchantKey": {
-            "type": "string"
-          },
-          "cancelPassword": {
-            "type": "string"
-          },
-          "sspMallId": {
-            "type": "string"
-          },
-          "apiKey": {
-            "type": "string"
-          }
-        },
-        "description": "<p>스마트로V2 인증 정보</p>\n",
-        "x-portone-title": "스마트로V2 인증 정보"
-      },
-      "ChannelTossPaymentsCredential": {
-        "title": "토스페이먼츠 인증 정보",
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "secretKey": {
-            "type": "string"
-          },
-          "clientKey": {
-            "type": "string"
-          }
-        },
-        "description": "<p>토스페이먼츠 인증 정보</p>\n",
-        "x-portone-title": "토스페이먼츠 인증 정보"
       },
       "ChannelType": {
         "title": "채널 유형",
@@ -19524,9 +19416,6 @@
             "$ref": "#/components/schemas/InvalidRequestError"
           },
           {
-            "$ref": "#/components/schemas/PastPaymentScheduleError"
-          },
-          {
             "$ref": "#/components/schemas/PaymentScheduleAlreadyExistsError"
           },
           {
@@ -19544,7 +19433,6 @@
             "BILLING_KEY_NOT_FOUND": "#/components/schemas/BillingKeyNotFoundError",
             "FORBIDDEN": "#/components/schemas/ForbiddenError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
-            "PAST_PAYMENT_SCHEDULE": "#/components/schemas/PastPaymentScheduleError",
             "PAYMENT_SCHEDULE_ALREADY_EXISTS": "#/components/schemas/PaymentScheduleAlreadyExistsError",
             "SUM_OF_PARTS_EXCEEDS_TOTAL_AMOUNT": "#/components/schemas/SumOfPartsExceedsTotalAmountError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
@@ -22143,10 +22031,14 @@
         "required": [
           "status",
           "id",
+          "graphqlId",
           "merchantId",
+          "merchantGraphqlId",
           "storeId",
+          "storeGraphqlId",
           "paymentId",
           "billingKey",
+          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -22154,6 +22046,7 @@
           "customData",
           "totalAmount",
           "currency",
+          "createdAt",
           "timeToPay",
           "startedAt",
           "completedAt"
@@ -22166,13 +22059,25 @@
           },
           "id": {
             "type": "string",
-            "title": "결제 예약건 아이디"
+            "title": "결제 예약 건 아이디"
+          },
+          "graphqlId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디"
           },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
+          "merchantGraphqlId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
           "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -22183,6 +22088,10 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
+          },
+          "billingKeyInfo": {
+            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
+            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -22214,6 +22123,11 @@
             "format": "int64",
             "title": "면세액"
           },
+          "vatAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "부가세"
+          },
           "currency": {
             "$ref": "#/components/schemas/Currency",
             "title": "통화"
@@ -22236,6 +22150,11 @@
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
             }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예약 등록 시점"
           },
           "timeToPay": {
             "type": "string",
@@ -23723,45 +23642,6 @@
           }
         }
       },
-      "GetChannelsError": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ForbiddenError"
-          },
-          {
-            "$ref": "#/components/schemas/InvalidRequestError"
-          },
-          {
-            "$ref": "#/components/schemas/UnauthorizedError"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "FORBIDDEN": "#/components/schemas/ForbiddenError",
-            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
-            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
-          }
-        }
-      },
-      "GetChannelsResponse": {
-        "title": "채널 다건 조회 성공 응답 정보",
-        "required": [
-          "items"
-        ],
-        "type": "object",
-        "properties": {
-          "items": {
-            "title": "조회된 채널 리스트",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Channel"
-            }
-          }
-        },
-        "description": "<p>채널 다건 조회 성공 응답 정보</p>\n",
-        "x-portone-title": "채널 다건 조회 성공 응답 정보"
-      },
       "GetIdentityVerificationError": {
         "oneOf": [
           {
@@ -23938,6 +23818,11 @@
             "$ref": "#/components/schemas/PageInput",
             "title": "요청할 페이지 정보",
             "description": "<p>미 입력 시 number: 0, size: 10 으로 기본값이 적용됩니다.</p>\n"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/PaymentScheduleSortInput",
+            "title": "정렬 조건",
+            "description": "<p>미 입력 시 sortBy: TIME_TO_PAY, sortOrder: DESC 으로 기본값이 적용됩니다.</p>\n"
           },
           "filter": {
             "$ref": "#/components/schemas/PaymentScheduleFilterInput",
@@ -25152,6 +25037,45 @@
             "$ref": "#/components/schemas/PageInfo"
           }
         }
+      },
+      "GetV2SupportedChannelsError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetV2SupportedChannelsResponse": {
+        "title": "채널 다건 조회 성공 응답 정보",
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "title": "조회된 채널 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Channel"
+            }
+          }
+        },
+        "description": "<p>채널 다건 조회 성공 응답 정보</p>\n",
+        "x-portone-title": "채널 다건 조회 성공 응답 정보"
       },
       "IdentityVerification": {
         "title": "본인인증 내역",
@@ -26810,6 +26734,10 @@
             "format": "date-time",
             "title": "결제 완료 시점"
           },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
+          },
           "cashReceipt": {
             "$ref": "#/components/schemas/PaymentCashReceipt",
             "title": "현금영수증"
@@ -26833,24 +26761,6 @@
         },
         "description": "<p>결제 부분 취소 상태 건</p>\n",
         "x-portone-title": "결제 부분 취소 상태 건"
-      },
-      "PastPaymentScheduleError": {
-        "title": "결제 예약 시점이 과거로 지정된 경우",
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "description": "<p>결제 예약 시점이 과거로 지정된 경우</p>\n",
-        "x-portone-title": "결제 예약 시점이 과거로 지정된 경우",
-        "x-portone-status-code": 409
       },
       "PayInstantlyError": {
         "oneOf": [
@@ -27536,7 +27446,7 @@
             "title": "결제 건 정렬 기준"
           },
           "sortOrder": {
-            "$ref": "#/components/schemas/PaymentSortOrder",
+            "$ref": "#/components/schemas/SortOrder",
             "title": "결제 건 정렬 방식"
           },
           "version": {
@@ -28289,6 +28199,9 @@
             "$ref": "#/components/schemas/FailedPaymentSchedule"
           },
           {
+            "$ref": "#/components/schemas/PendingPaymentSchedule"
+          },
+          {
             "$ref": "#/components/schemas/RevokedPaymentSchedule"
           },
           {
@@ -28305,6 +28218,7 @@
           "propertyName": "status",
           "mapping": {
             "FAILED": "#/components/schemas/FailedPaymentSchedule",
+            "PENDING": "#/components/schemas/PendingPaymentSchedule",
             "REVOKED": "#/components/schemas/RevokedPaymentSchedule",
             "SCHEDULED": "#/components/schemas/ScheduledPaymentSchedule",
             "STARTED": "#/components/schemas/StartedPaymentSchedule",
@@ -28318,6 +28232,9 @@
           },
           "STARTED": {
             "title": "결제 시작"
+          },
+          "PENDING": {
+            "title": "결제 대기"
           },
           "FAILED": {
             "title": "결제 실패"
@@ -28384,6 +28301,64 @@
         "x-portone-title": "결제 예약건이 이미 취소된 경우",
         "x-portone-status-code": 409
       },
+      "PaymentScheduleBillingKeyEasyPayMethodType": {
+        "title": "빌링키 간편결제 상세 결제 수단",
+        "type": "string",
+        "description": "<p>빌링키 간편결제 상세 결제 수단</p>\n",
+        "enum": [
+          "CARD",
+          "CHARGE",
+          "TRANSFER"
+        ],
+        "x-portone-title": "빌링키 간편결제 상세 결제 수단",
+        "x-portone-enum": {
+          "CARD": {
+            "title": "카드"
+          },
+          "TRANSFER": {
+            "title": "계좌 이체"
+          },
+          "CHARGE": {
+            "title": "포인트"
+          }
+        }
+      },
+      "PaymentScheduleBillingKeyInfo": {
+        "title": "결제 예약 시 입력된 빌링키 요약 정보",
+        "type": "object",
+        "properties": {
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "methodType": {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethodType",
+            "title": "빌링키 결제 수단"
+          },
+          "easyPayMethodType": {
+            "$ref": "#/components/schemas/PaymentScheduleBillingKeyEasyPayMethodType",
+            "title": "빌링키 간편 결제 수단"
+          },
+          "groupId": {
+            "type": "string",
+            "title": "빌링키 발급에 사용한 그룹 ID"
+          },
+          "groupName": {
+            "type": "string",
+            "title": "빌링키 발급에 사용한 그룹 이름"
+          },
+          "pgCompany": {
+            "$ref": "#/components/schemas/PgCompany",
+            "title": "빌링키 발급에 사용한 PG사"
+          },
+          "pgProvider": {
+            "$ref": "#/components/schemas/PgProvider",
+            "title": "빌링키 발급에 사용한 PG사 결제 모듈"
+          }
+        },
+        "description": "<p>결제 예약 시 입력된 빌링키 요약 정보</p>\n",
+        "x-portone-title": "결제 예약 시 입력된 빌링키 요약 정보"
+      },
       "PaymentScheduleFilterInput": {
         "title": "결제 예약 건 다건 조회를 위한 입력 정보",
         "type": "object",
@@ -28396,6 +28371,27 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
+          },
+          "paymentScheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 ID"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제건 ID"
+          },
+          "customerId": {
+            "type": "string",
+            "title": "고객 ID"
+          },
+          "textSearch": {
+            "$ref": "#/components/schemas/PaymentScheduleTextSearchInput",
+            "title": "텍스트 검색 필터"
+          },
+          "timeRangeField": {
+            "$ref": "#/components/schemas/PaymentScheduleTimeRangeField",
+            "title": "시각 범위를 적용할 필드",
+            "description": "<p>from 과 until 필드가 해당 필드의 값에 대해 적용됩니다. 미입력 시 TIME_TO_PAY 로 기본값이 설정됩니다.</p>\n"
           },
           "from": {
             "type": "string",
@@ -28414,7 +28410,32 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentScheduleStatus"
-            }
+            },
+            "description": "<p>값을 입력하지 않으면 상태 필터링이 적용되지 않습니다.</p>\n"
+          },
+          "pgProviders": {
+            "title": "PG사 결제 모듈 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgProvider"
+            },
+            "description": "<p>값을 입력하지 않으면 PG사 결제 모듈 필터링이 적용되지 않습니다.</p>\n"
+          },
+          "pgCompanies": {
+            "title": "PG사 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgCompany"
+            },
+            "description": "<p>값을 입력하지 않으면 PG사 필터링이 적용되지 않습니다.</p>\n"
+          },
+          "smartRoutingGroupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "스마트 라우팅 그룹 아이디 리스트",
+            "description": "<p>값을 입력하지 않으면 스마트 라우팅 그룹 아이디 필터링이 적용되지 않습니다.</p>\n"
           }
         },
         "description": "<p>결제 예약 건 다건 조회를 위한 입력 정보</p>\n",
@@ -28438,12 +28459,57 @@
         "x-portone-title": "결제 예약건이 존재하지 않는 경우",
         "x-portone-status-code": 404
       },
+      "PaymentScheduleSortBy": {
+        "title": "결제 예약 건 정렬 기준",
+        "type": "string",
+        "description": "<p>결제 예약 건 정렬 기준</p>\n",
+        "enum": [
+          "COMPLETED_AT",
+          "CREATED_AT",
+          "STATUS_TIMESTAMP",
+          "TIME_TO_PAY"
+        ],
+        "x-portone-title": "결제 예약 건 정렬 기준",
+        "x-portone-enum": {
+          "CREATED_AT": {
+            "title": "결제 예약 생성 시각"
+          },
+          "TIME_TO_PAY": {
+            "title": "결제 예정 시각"
+          },
+          "COMPLETED_AT": {
+            "title": "예약 결제 시도(성공 / 실패) 시각"
+          },
+          "STATUS_TIMESTAMP": {
+            "title": "결제 시도 또는 예정 시각. 해지 건은 해지 시각."
+          }
+        }
+      },
+      "PaymentScheduleSortInput": {
+        "title": "결제 예약 건 다건 조회 시 정렬 조건",
+        "type": "object",
+        "properties": {
+          "by": {
+            "$ref": "#/components/schemas/PaymentScheduleSortBy",
+            "title": "정렬 기준 필드",
+            "description": "<p>어떤 필드를 기준으로 정렬할 지 결정합니다. 비워서 보낼 경우, TIME_TO_PAY가 기본값으로 설정됩니다.</p>\n"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SortOrder",
+            "title": "정렬 순서",
+            "description": "<p>어떤 순서로 정렬할 지 결정합니다. 비워서 보낼 경우, DESC(내림차순)가 기본값으로 설정됩니다.</p>\n"
+          }
+        },
+        "description": "<p>결제 예약 건 다건 조회 시 정렬 조건</p>\n",
+        "x-portone-title": "결제 예약 건 다건 조회 시 정렬 조건"
+      },
       "PaymentScheduleStatus": {
         "title": "결제 예약 건 상태",
         "type": "string",
         "description": "<p>결제 예약 건 상태</p>\n",
         "enum": [
           "FAILED",
+          "PENDING",
           "REVOKED",
           "SCHEDULED",
           "STARTED",
@@ -28456,6 +28522,9 @@
           },
           "STARTED": {
             "title": "결제 시작"
+          },
+          "PENDING": {
+            "title": "결제 승인 대기"
           },
           "FAILED": {
             "title": "결제 실패"
@@ -28483,6 +28552,70 @@
         "description": "<p>결제 예약 건</p>\n",
         "x-portone-title": "결제 예약 건"
       },
+      "PaymentScheduleTextSearchField": {
+        "title": "결제 예약 건 다건 조회 시, 텍스트 검색 필터의 검색 기준 필드",
+        "type": "string",
+        "description": "<p>결제 예약 건 다건 조회 시, 텍스트 검색 필터의 검색 기준 필드</p>\n",
+        "enum": [
+          "CUSTOMER_NAME",
+          "ORDER_NAME"
+        ],
+        "x-portone-title": "결제 예약 건 다건 조회 시, 텍스트 검색 필터의 검색 기준 필드",
+        "x-portone-enum": {
+          "CUSTOMER_NAME": {
+            "title": "고객명"
+          },
+          "ORDER_NAME": {
+            "title": "주문명"
+          }
+        }
+      },
+      "PaymentScheduleTextSearchInput": {
+        "title": "결제 예약 건 다건 조회 시, 텍스트 검색 필터 정보",
+        "required": [
+          "field",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "$ref": "#/components/schemas/PaymentScheduleTextSearchField",
+            "title": "검색 기준 필드"
+          },
+          "value": {
+            "type": "string",
+            "title": "검색할 값"
+          }
+        },
+        "description": "<p>결제 예약 건 다건 조회 시, 텍스트 검색 필터 정보</p>\n",
+        "x-portone-title": "결제 예약 건 다건 조회 시, 텍스트 검색 필터 정보"
+      },
+      "PaymentScheduleTimeRangeField": {
+        "title": "결제 예약 건 다건 조회 시, 시각 범위를 적용할 필드",
+        "type": "string",
+        "description": "<p>결제 예약 건 다건 조회 시, 시각 범위를 적용할 필드</p>\n",
+        "enum": [
+          "COMPLETED_AT",
+          "CREATED_AT",
+          "STATUS_TIMESTAMP",
+          "TIME_TO_PAY"
+        ],
+        "x-portone-title": "결제 예약 건 다건 조회 시, 시각 범위를 적용할 필드",
+        "x-portone-enum": {
+          "CREATED_AT": {
+            "title": "결제 예약 생성 시각"
+          },
+          "TIME_TO_PAY": {
+            "title": "결제 예정 시각"
+          },
+          "COMPLETED_AT": {
+            "title": "예약 결제 시도(성공 / 실패) 시각"
+          },
+          "STATUS_TIMESTAMP": {
+            "title": "결제 시도 또는 예정 시각. 해지 건은 해지 시각."
+          }
+        }
+      },
       "PaymentSortBy": {
         "title": "결제 건 정렬 기준",
         "type": "string",
@@ -28498,24 +28631,6 @@
           },
           "STATUS_CHANGED_AT": {
             "title": "상태 변경 시점"
-          }
-        }
-      },
-      "PaymentSortOrder": {
-        "title": "결제 건 정렬 방식",
-        "type": "string",
-        "description": "<p>결제 건 정렬 방식</p>\n",
-        "enum": [
-          "ASC",
-          "DESC"
-        ],
-        "x-portone-title": "결제 건 정렬 방식",
-        "x-portone-enum": {
-          "DESC": {
-            "title": "내림차순"
-          },
-          "ASC": {
-            "title": "오름차순"
           }
         }
       },
@@ -28897,6 +29012,155 @@
             "type": "string"
           }
         }
+      },
+      "PendingPaymentSchedule": {
+        "title": "결제 대기 상태",
+        "required": [
+          "status",
+          "id",
+          "graphqlId",
+          "merchantId",
+          "merchantGraphqlId",
+          "storeId",
+          "storeGraphqlId",
+          "paymentId",
+          "billingKey",
+          "billingKeyInfo",
+          "orderName",
+          "isCulturalExpense",
+          "isEscrow",
+          "customer",
+          "customData",
+          "totalAmount",
+          "currency",
+          "createdAt",
+          "timeToPay",
+          "startedAt",
+          "completedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 예약 건 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 예약 건 아이디"
+          },
+          "graphqlId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "merchantGraphqlId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "storeGraphqlId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "billingKeyInfo": {
+            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
+            "title": "빌링키 요약 정보"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "isEscrow": {
+            "type": "boolean",
+            "title": "에스크로 결제 여부"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "고객 정보"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "결제 총 금액"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "면세액"
+          },
+          "vatAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "부가세"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "installmentMonth": {
+            "type": "integer",
+            "format": "int32",
+            "title": "할부 개월 수"
+          },
+          "noticeUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "웹훅 주소"
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예약 등록 시점"
+          },
+          "timeToPay": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예정 시점"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 시작 시점"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 완료 시점"
+          }
+        },
+        "description": "<p>결제 대기 상태</p>\n",
+        "x-portone-title": "결제 대기 상태"
       },
       "PgCompany": {
         "title": "PG사",
@@ -35149,31 +35413,6 @@
         "description": "<p>웹훅 재발송 응답 정보</p>\n",
         "x-portone-title": "웹훅 재발송 응답 정보"
       },
-      "RevokePaymentScheduleBody": {
-        "title": "결제 예약 건 취소 요청 입력 정보",
-        "type": "object",
-        "properties": {
-          "storeId": {
-            "type": "string",
-            "title": "상점 아이디",
-            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
-          },
-          "billingKey": {
-            "type": "string",
-            "title": "빌링키"
-          },
-          "scheduleIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "title": "결제 예약 건 아이디 목록"
-          }
-        },
-        "description": "<p>결제 예약 건 취소 요청 입력 정보</p>\n<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n",
-        "x-portone-title": "결제 예약 건 취소 요청 입력 정보",
-        "x-portone-description": "<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n"
-      },
       "RevokePaymentScheduleError": {
         "oneOf": [
           {
@@ -35238,15 +35477,44 @@
         "description": "<p>결제 예약 건 취소 성공 응답</p>\n",
         "x-portone-title": "결제 예약 건 취소 성공 응답"
       },
+      "RevokePaymentSchedulesBody": {
+        "title": "결제 예약 건 취소 요청 입력 정보",
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "<p>접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.</p>\n"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "scheduleIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "결제 예약 건 아이디 목록"
+          }
+        },
+        "description": "<p>결제 예약 건 취소 요청 입력 정보</p>\n<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n",
+        "x-portone-title": "결제 예약 건 취소 요청 입력 정보",
+        "x-portone-description": "<p>billingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -&gt; 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -&gt; 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 그리고 예약한 빌링키가 입력된 빌링키와 일치하는지 검증합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.</p>\n"
+      },
       "RevokedPaymentSchedule": {
         "title": "결제 예약 취소 상태",
         "required": [
           "status",
           "id",
+          "graphqlId",
           "merchantId",
+          "merchantGraphqlId",
           "storeId",
+          "storeGraphqlId",
           "paymentId",
           "billingKey",
+          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -35254,6 +35522,7 @@
           "customData",
           "totalAmount",
           "currency",
+          "createdAt",
           "timeToPay",
           "revokedAt"
         ],
@@ -35267,11 +35536,23 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
+          "graphqlId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디"
+          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
+          "merchantGraphqlId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
           "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -35282,6 +35563,10 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
+          },
+          "billingKeyInfo": {
+            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
+            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -35313,6 +35598,11 @@
             "format": "int64",
             "title": "면세액"
           },
+          "vatAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "부가세"
+          },
           "currency": {
             "$ref": "#/components/schemas/Currency",
             "title": "통화"
@@ -35335,6 +35625,11 @@
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
             }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예약 등록 시점"
           },
           "timeToPay": {
             "type": "string",
@@ -35820,10 +36115,14 @@
         "required": [
           "status",
           "id",
+          "graphqlId",
           "merchantId",
+          "merchantGraphqlId",
           "storeId",
+          "storeGraphqlId",
           "paymentId",
           "billingKey",
+          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -35831,6 +36130,7 @@
           "customData",
           "totalAmount",
           "currency",
+          "createdAt",
           "timeToPay"
         ],
         "type": "object",
@@ -35843,11 +36143,23 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
+          "graphqlId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디"
+          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
+          "merchantGraphqlId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
           "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -35858,6 +36170,10 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
+          },
+          "billingKeyInfo": {
+            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
+            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -35889,6 +36205,11 @@
             "format": "int64",
             "title": "면세액"
           },
+          "vatAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "부가세"
+          },
           "currency": {
             "$ref": "#/components/schemas/Currency",
             "title": "통화"
@@ -35911,6 +36232,11 @@
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
             }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예약 등록 시점"
           },
           "timeToPay": {
             "type": "string",
@@ -36170,15 +36496,37 @@
         "description": "<p>분리 형식 주소 입력 정보</p>\n",
         "x-portone-title": "분리 형식 주소 입력 정보"
       },
+      "SortOrder": {
+        "title": "정렬 방식",
+        "type": "string",
+        "description": "<p>정렬 방식</p>\n",
+        "enum": [
+          "ASC",
+          "DESC"
+        ],
+        "x-portone-title": "정렬 방식",
+        "x-portone-enum": {
+          "DESC": {
+            "title": "내림차순"
+          },
+          "ASC": {
+            "title": "오름차순"
+          }
+        }
+      },
       "StartedPaymentSchedule": {
         "title": "결제 시작 상태",
         "required": [
           "status",
           "id",
+          "graphqlId",
           "merchantId",
+          "merchantGraphqlId",
           "storeId",
+          "storeGraphqlId",
           "paymentId",
           "billingKey",
+          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -36186,6 +36534,7 @@
           "customData",
           "totalAmount",
           "currency",
+          "createdAt",
           "timeToPay",
           "startedAt"
         ],
@@ -36199,11 +36548,23 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
+          "graphqlId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디"
+          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
+          "merchantGraphqlId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
           "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -36214,6 +36575,10 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
+          },
+          "billingKeyInfo": {
+            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
+            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -36245,6 +36610,11 @@
             "format": "int64",
             "title": "면세액"
           },
+          "vatAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "부가세"
+          },
           "currency": {
             "$ref": "#/components/schemas/Currency",
             "title": "통화"
@@ -36267,6 +36637,11 @@
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
             }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예약 등록 시점"
           },
           "timeToPay": {
             "type": "string",
@@ -36354,10 +36729,14 @@
         "required": [
           "status",
           "id",
+          "graphqlId",
           "merchantId",
+          "merchantGraphqlId",
           "storeId",
+          "storeGraphqlId",
           "paymentId",
           "billingKey",
+          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -36365,6 +36744,7 @@
           "customData",
           "totalAmount",
           "currency",
+          "createdAt",
           "timeToPay",
           "startedAt",
           "completedAt"
@@ -36377,13 +36757,25 @@
           },
           "id": {
             "type": "string",
-            "title": "결제 예약건 아이디"
+            "title": "결제 예약 건 아이디"
+          },
+          "graphqlId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디"
           },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
+          "merchantGraphqlId": {
+            "type": "string",
+            "title": "가맹점 아이디"
+          },
           "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -36394,6 +36786,10 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
+          },
+          "billingKeyInfo": {
+            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
+            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -36425,6 +36821,11 @@
             "format": "int64",
             "title": "면세액"
           },
+          "vatAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "부가세"
+          },
           "currency": {
             "$ref": "#/components/schemas/Currency",
             "title": "통화"
@@ -36447,6 +36848,11 @@
             "items": {
               "$ref": "#/components/schemas/PaymentProduct"
             }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 예약 등록 시점"
           },
           "timeToPay": {
             "type": "string",
