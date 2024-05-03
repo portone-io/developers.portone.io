@@ -16552,32 +16552,6 @@
         "description": "<p>계좌이체 정보</p>\n",
         "x-portone-title": "계좌이체 정보"
       },
-      "BillingKeyPaymentMethodType": {
-        "title": "빌링키 결제 수단",
-        "type": "string",
-        "description": "<p>빌링키 결제 수단</p>\n",
-        "enum": [
-          "CARD",
-          "EASY_PAY",
-          "MOBILE",
-          "TRANSFER"
-        ],
-        "x-portone-title": "빌링키 결제 수단",
-        "x-portone-enum": {
-          "CARD": {
-            "title": "카드"
-          },
-          "MOBILE": {
-            "title": "모바일"
-          },
-          "EASY_PAY": {
-            "title": "간편 결제"
-          },
-          "TRANSFER": {
-            "title": "계좌 이체"
-          }
-        }
-      },
       "BillingKeyPaymentSummary": {
         "title": "빌링키 결제 완료된 결제 건 요약 정보",
         "required": [
@@ -22031,14 +22005,10 @@
         "required": [
           "status",
           "id",
-          "graphqlId",
           "merchantId",
-          "merchantGraphqlId",
           "storeId",
-          "storeGraphqlId",
           "paymentId",
           "billingKey",
-          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -22061,23 +22031,11 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
-          "graphqlId": {
-            "type": "string",
-            "title": "결제 예약 건 아이디"
-          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
-          "merchantGraphqlId": {
-            "type": "string",
-            "title": "가맹점 아이디"
-          },
           "storeId": {
-            "type": "string",
-            "title": "상점 아이디"
-          },
-          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -22088,10 +22046,6 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
-          },
-          "billingKeyInfo": {
-            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
-            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -28301,64 +28255,6 @@
         "x-portone-title": "결제 예약건이 이미 취소된 경우",
         "x-portone-status-code": 409
       },
-      "PaymentScheduleBillingKeyEasyPayMethodType": {
-        "title": "빌링키 간편결제 상세 결제 수단",
-        "type": "string",
-        "description": "<p>빌링키 간편결제 상세 결제 수단</p>\n",
-        "enum": [
-          "CARD",
-          "CHARGE",
-          "TRANSFER"
-        ],
-        "x-portone-title": "빌링키 간편결제 상세 결제 수단",
-        "x-portone-enum": {
-          "CARD": {
-            "title": "카드"
-          },
-          "TRANSFER": {
-            "title": "계좌 이체"
-          },
-          "CHARGE": {
-            "title": "포인트"
-          }
-        }
-      },
-      "PaymentScheduleBillingKeyInfo": {
-        "title": "결제 예약 시 입력된 빌링키 요약 정보",
-        "type": "object",
-        "properties": {
-          "billingKey": {
-            "type": "string",
-            "title": "빌링키"
-          },
-          "methodType": {
-            "$ref": "#/components/schemas/BillingKeyPaymentMethodType",
-            "title": "빌링키 결제 수단"
-          },
-          "easyPayMethodType": {
-            "$ref": "#/components/schemas/PaymentScheduleBillingKeyEasyPayMethodType",
-            "title": "빌링키 간편 결제 수단"
-          },
-          "groupId": {
-            "type": "string",
-            "title": "빌링키 발급에 사용한 그룹 ID"
-          },
-          "groupName": {
-            "type": "string",
-            "title": "빌링키 발급에 사용한 그룹 이름"
-          },
-          "pgCompany": {
-            "$ref": "#/components/schemas/PgCompany",
-            "title": "빌링키 발급에 사용한 PG사"
-          },
-          "pgProvider": {
-            "$ref": "#/components/schemas/PgProvider",
-            "title": "빌링키 발급에 사용한 PG사 결제 모듈"
-          }
-        },
-        "description": "<p>결제 예약 시 입력된 빌링키 요약 정보</p>\n",
-        "x-portone-title": "결제 예약 시 입력된 빌링키 요약 정보"
-      },
       "PaymentScheduleFilterInput": {
         "title": "결제 예약 건 다건 조회를 위한 입력 정보",
         "type": "object",
@@ -28371,27 +28267,6 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
-          },
-          "paymentScheduleId": {
-            "type": "string",
-            "title": "결제 예약 건 ID"
-          },
-          "paymentId": {
-            "type": "string",
-            "title": "결제건 ID"
-          },
-          "customerId": {
-            "type": "string",
-            "title": "고객 ID"
-          },
-          "textSearch": {
-            "$ref": "#/components/schemas/PaymentScheduleTextSearchInput",
-            "title": "텍스트 검색 필터"
-          },
-          "timeRangeField": {
-            "$ref": "#/components/schemas/PaymentScheduleTimeRangeField",
-            "title": "시각 범위를 적용할 필드",
-            "description": "<p>from 과 until 필드가 해당 필드의 값에 대해 적용됩니다. 미입력 시 TIME_TO_PAY 로 기본값이 설정됩니다.</p>\n"
           },
           "from": {
             "type": "string",
@@ -28412,30 +28287,6 @@
               "$ref": "#/components/schemas/PaymentScheduleStatus"
             },
             "description": "<p>값을 입력하지 않으면 상태 필터링이 적용되지 않습니다.</p>\n"
-          },
-          "pgProviders": {
-            "title": "PG사 결제 모듈 리스트",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PgProvider"
-            },
-            "description": "<p>값을 입력하지 않으면 PG사 결제 모듈 필터링이 적용되지 않습니다.</p>\n"
-          },
-          "pgCompanies": {
-            "title": "PG사 리스트",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PgCompany"
-            },
-            "description": "<p>값을 입력하지 않으면 PG사 필터링이 적용되지 않습니다.</p>\n"
-          },
-          "smartRoutingGroupIds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "title": "스마트 라우팅 그룹 아이디 리스트",
-            "description": "<p>값을 입력하지 않으면 스마트 라우팅 그룹 아이디 필터링이 적용되지 않습니다.</p>\n"
           }
         },
         "description": "<p>결제 예약 건 다건 조회를 위한 입력 정보</p>\n",
@@ -28466,7 +28317,6 @@
         "enum": [
           "COMPLETED_AT",
           "CREATED_AT",
-          "STATUS_TIMESTAMP",
           "TIME_TO_PAY"
         ],
         "x-portone-title": "결제 예약 건 정렬 기준",
@@ -28551,70 +28401,6 @@
         },
         "description": "<p>결제 예약 건</p>\n",
         "x-portone-title": "결제 예약 건"
-      },
-      "PaymentScheduleTextSearchField": {
-        "title": "결제 예약 건 다건 조회 시, 텍스트 검색 필터의 검색 기준 필드",
-        "type": "string",
-        "description": "<p>결제 예약 건 다건 조회 시, 텍스트 검색 필터의 검색 기준 필드</p>\n",
-        "enum": [
-          "CUSTOMER_NAME",
-          "ORDER_NAME"
-        ],
-        "x-portone-title": "결제 예약 건 다건 조회 시, 텍스트 검색 필터의 검색 기준 필드",
-        "x-portone-enum": {
-          "CUSTOMER_NAME": {
-            "title": "고객명"
-          },
-          "ORDER_NAME": {
-            "title": "주문명"
-          }
-        }
-      },
-      "PaymentScheduleTextSearchInput": {
-        "title": "결제 예약 건 다건 조회 시, 텍스트 검색 필터 정보",
-        "required": [
-          "field",
-          "value"
-        ],
-        "type": "object",
-        "properties": {
-          "field": {
-            "$ref": "#/components/schemas/PaymentScheduleTextSearchField",
-            "title": "검색 기준 필드"
-          },
-          "value": {
-            "type": "string",
-            "title": "검색할 값"
-          }
-        },
-        "description": "<p>결제 예약 건 다건 조회 시, 텍스트 검색 필터 정보</p>\n",
-        "x-portone-title": "결제 예약 건 다건 조회 시, 텍스트 검색 필터 정보"
-      },
-      "PaymentScheduleTimeRangeField": {
-        "title": "결제 예약 건 다건 조회 시, 시각 범위를 적용할 필드",
-        "type": "string",
-        "description": "<p>결제 예약 건 다건 조회 시, 시각 범위를 적용할 필드</p>\n",
-        "enum": [
-          "COMPLETED_AT",
-          "CREATED_AT",
-          "STATUS_TIMESTAMP",
-          "TIME_TO_PAY"
-        ],
-        "x-portone-title": "결제 예약 건 다건 조회 시, 시각 범위를 적용할 필드",
-        "x-portone-enum": {
-          "CREATED_AT": {
-            "title": "결제 예약 생성 시각"
-          },
-          "TIME_TO_PAY": {
-            "title": "결제 예정 시각"
-          },
-          "COMPLETED_AT": {
-            "title": "예약 결제 시도(성공 / 실패) 시각"
-          },
-          "STATUS_TIMESTAMP": {
-            "title": "결제 시도 또는 예정 시각. 해지 건은 해지 시각."
-          }
-        }
       },
       "PaymentSortBy": {
         "title": "결제 건 정렬 기준",
@@ -29018,14 +28804,10 @@
         "required": [
           "status",
           "id",
-          "graphqlId",
           "merchantId",
-          "merchantGraphqlId",
           "storeId",
-          "storeGraphqlId",
           "paymentId",
           "billingKey",
-          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -29048,23 +28830,11 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
-          "graphqlId": {
-            "type": "string",
-            "title": "결제 예약 건 아이디"
-          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
-          "merchantGraphqlId": {
-            "type": "string",
-            "title": "가맹점 아이디"
-          },
           "storeId": {
-            "type": "string",
-            "title": "상점 아이디"
-          },
-          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -29075,10 +28845,6 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
-          },
-          "billingKeyInfo": {
-            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
-            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -35507,14 +35273,10 @@
         "required": [
           "status",
           "id",
-          "graphqlId",
           "merchantId",
-          "merchantGraphqlId",
           "storeId",
-          "storeGraphqlId",
           "paymentId",
           "billingKey",
-          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -35536,23 +35298,11 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
-          "graphqlId": {
-            "type": "string",
-            "title": "결제 예약 건 아이디"
-          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
-          "merchantGraphqlId": {
-            "type": "string",
-            "title": "가맹점 아이디"
-          },
           "storeId": {
-            "type": "string",
-            "title": "상점 아이디"
-          },
-          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -35563,10 +35313,6 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
-          },
-          "billingKeyInfo": {
-            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
-            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -36115,14 +35861,10 @@
         "required": [
           "status",
           "id",
-          "graphqlId",
           "merchantId",
-          "merchantGraphqlId",
           "storeId",
-          "storeGraphqlId",
           "paymentId",
           "billingKey",
-          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -36143,23 +35885,11 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
-          "graphqlId": {
-            "type": "string",
-            "title": "결제 예약 건 아이디"
-          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
-          "merchantGraphqlId": {
-            "type": "string",
-            "title": "가맹점 아이디"
-          },
           "storeId": {
-            "type": "string",
-            "title": "상점 아이디"
-          },
-          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -36170,10 +35900,6 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
-          },
-          "billingKeyInfo": {
-            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
-            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -36519,14 +36245,10 @@
         "required": [
           "status",
           "id",
-          "graphqlId",
           "merchantId",
-          "merchantGraphqlId",
           "storeId",
-          "storeGraphqlId",
           "paymentId",
           "billingKey",
-          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -36548,23 +36270,11 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
-          "graphqlId": {
-            "type": "string",
-            "title": "결제 예약 건 아이디"
-          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
-          "merchantGraphqlId": {
-            "type": "string",
-            "title": "가맹점 아이디"
-          },
           "storeId": {
-            "type": "string",
-            "title": "상점 아이디"
-          },
-          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -36575,10 +36285,6 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
-          },
-          "billingKeyInfo": {
-            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
-            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
@@ -36729,14 +36435,10 @@
         "required": [
           "status",
           "id",
-          "graphqlId",
           "merchantId",
-          "merchantGraphqlId",
           "storeId",
-          "storeGraphqlId",
           "paymentId",
           "billingKey",
-          "billingKeyInfo",
           "orderName",
           "isCulturalExpense",
           "isEscrow",
@@ -36759,23 +36461,11 @@
             "type": "string",
             "title": "결제 예약 건 아이디"
           },
-          "graphqlId": {
-            "type": "string",
-            "title": "결제 예약 건 아이디"
-          },
           "merchantId": {
             "type": "string",
             "title": "가맹점 아이디"
           },
-          "merchantGraphqlId": {
-            "type": "string",
-            "title": "가맹점 아이디"
-          },
           "storeId": {
-            "type": "string",
-            "title": "상점 아이디"
-          },
-          "storeGraphqlId": {
             "type": "string",
             "title": "상점 아이디"
           },
@@ -36786,10 +36476,6 @@
           "billingKey": {
             "type": "string",
             "title": "빌링키"
-          },
-          "billingKeyInfo": {
-            "$ref": "#/components/schemas/PaymentScheduleBillingKeyInfo",
-            "title": "빌링키 요약 정보"
           },
           "orderName": {
             "type": "string",
