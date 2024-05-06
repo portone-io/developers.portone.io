@@ -148,7 +148,7 @@ export default [
     files: ["src/content/docs/_redir.yaml"],
     ignores: [],
     plugins: {
-      "redir": eslintLintLocalLinksValid,
+      redir: eslintLintLocalLinksValid,
     },
     languageOptions: {
       parser: YAMLParser,

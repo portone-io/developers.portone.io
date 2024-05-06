@@ -186,11 +186,7 @@ function isYAMLDocument(
 function isYAMLScalar(
   node: AST.YAMLNode | null | undefined,
 ): node is AST.YAMLScalar {
-  return (
-    node !== null &&
-    node !== undefined &&
-    node.type === "YAMLScalar"
-  );
+  return node !== null && node !== undefined && node.type === "YAMLScalar";
 }
 
 export default plugin;
