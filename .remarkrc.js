@@ -3,6 +3,7 @@
 import { readFileSync } from "node:fs";
 
 import { load } from "js-yaml";
+import { remarkLintLocalLinksValid } from "lint-local-links-valid";
 import stringWidth from "string-width";
 
 const redirects = load(readFileSync("./src/content/docs/_redir.yaml", "utf8"));
@@ -69,7 +70,7 @@ export default {
     "remark-lint-table-pipes",
     ["remark-lint-unordered-list-marker-style", "-"],
     [
-      "remark-lint-local-links-valid",
+      remarkLintLocalLinksValid,
       {
         baseDir: "./src/content",
         excludePaths: ["/api"],

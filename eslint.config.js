@@ -8,6 +8,8 @@ import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
 import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
+import { eslintLintLocalLinksValid } from "lint-local-links-valid";
+import YAMLParser from "yaml-eslint-parser";
 
 /** @type {import("eslint").Linter.RulesRecord} */
 const tsRules = {
@@ -34,7 +36,12 @@ export default [
   },
   {
     files: ["**/*.{ts,tsx}"],
-    ignores: ["scripts/**/*.ts", "**/*.astro/*.ts", "**/*.mdx/*"],
+    ignores: [
+      "scripts/**/*.ts",
+      "**/*.astro/*.ts",
+      "**/*.mdx/*",
+      "**/__fixtures__/**/*",
+    ],
     languageOptions: {
       parser: tsEslintParser,
       parserOptions: {
@@ -135,6 +142,19 @@ export default [
     rules: {
       ...tsRules,
       "prettier/prettier": "off",
+    },
+  },
+  {
+    files: ["src/content/docs/_redir.yaml"],
+    ignores: [],
+    plugins: {
+      "redir": eslintLintLocalLinksValid,
+    },
+    languageOptions: {
+      parser: YAMLParser,
+    },
+    rules: {
+      "redir/redir-local-links-valid": "error",
     },
   },
 ];
