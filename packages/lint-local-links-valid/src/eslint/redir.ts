@@ -34,6 +34,7 @@ export const rule: RuleModule = {
       missingNewLink: "Missing 'new' link",
       localLinkWithExtension: "Local link should not have an extension",
       fileNotFound: "File not found: {{resolvedPath}}",
+      duplicateRedirect: "Duplicate redirect",
     },
     schema: [],
     docs: {
@@ -120,6 +121,12 @@ export const rule: RuleModule = {
             ([stack, [_fromLink, _toLink]]) => {
               const fromLink = _fromLink.split(/[#?]/)[0] ?? "";
               const toLink = _toLink.split(/[#?]/)[0] ?? "";
+              if (stack.redirects.has(fromLink)) {
+                context.report({
+                  loc: stack.node.loc,
+                  messageId: "duplicateRedirect",
+                });
+              }
               stack.redirects.set(fromLink, toLink);
               stack.tasks.push(() => {
                 if (!isLocalLink(toLink)) return;
