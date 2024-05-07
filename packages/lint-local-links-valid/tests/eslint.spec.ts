@@ -4,7 +4,8 @@ import { type Rule, RuleTester } from "eslint";
 import * as vitest from "vitest";
 import YAMLParser from "yaml-eslint-parser";
 
-import { rule } from "../src/eslint.ts";
+import { rule as redirRule } from "../src/eslint/redir.ts";
+import { rule as navRule } from "../src/eslint/nav.ts";
 
 // @ts-expect-error https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester
 RuleTester.describe = vitest.describe;
@@ -22,8 +23,7 @@ const ruleTester = new RuleTester({
 });
 
 const redirYamlPath = path.resolve(__dirname, "__fixtures__/_redir.yaml");
-
-ruleTester.run("lint-local-links-valid", rule as unknown as Rule.RuleModule, {
+ruleTester.run("_redir.yaml", redirRule as unknown as Rule.RuleModule, {
   valid: [
     {
       code: `
@@ -72,5 +72,60 @@ ruleTester.run("lint-local-links-valid", rule as unknown as Rule.RuleModule, {
         },
       ],
     },
+  ],
+});
+
+const navYamlPath = path.resolve(__dirname, "__fixtures__/a/_nav.yaml");
+ruleTester.run("_nav.yaml", navRule as unknown as Rule.RuleModule, {
+  valid: [
+    {
+      code: `
+        - label: 결제 연동
+          systemVersion: v1
+          items:
+            - slug: /a/b/c
+            - slug: /a/b/c/d
+              items:
+                - slug: /a/b/c/e
+                  items:
+                    - /a/b/c/f
+                    - /a/b/g
+                - /a/h
+                - /a/i
+      `,
+      filename: navYamlPath,
+      options: [
+        {
+          redirects: {
+            "/a/b/c/d": "/a/b/c",
+            "/a/b/c/e": "/a/b/c",
+            "/a/b/c/f": "/a/b/c",
+            "/a/b/g": "/a/b/c",
+            "/a/h": "/a/b/c",
+            "/a/i": "/a/b/c",
+          },
+        },
+      ],
+    },
+  ],
+  invalid: [
+    {
+      code: `
+        - title: Test
+          url: test
+          items:
+            - slug: /a/b/d
+      `,
+      errors: [
+        {
+          messageId: "fileNotFound",
+          line: 5,
+          endLine: 5,
+          column: 21,
+          endColumn: 27,
+        }
+      ],
+      filename: navYamlPath,
+    }
   ],
 });

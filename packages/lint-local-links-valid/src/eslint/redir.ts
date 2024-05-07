@@ -1,12 +1,14 @@
-import fs from "node:fs";
-import path from "node:path";
+import fs from "fs";
+import path from "path";
 
-import type { Rule } from "eslint";
-import type { RuleListener } from "eslint-plugin-yml/lib/types.js";
-import { match, P } from "ts-pattern";
+import { P, match } from "ts-pattern";
 import type { AST } from "yaml-eslint-parser";
-
-import { isLocalLink } from "./utils.ts";
+import {
+  isLocalLink,
+  isYAMLDocument,
+  isYAMLScalar,
+  type RuleModule,
+} from "../utils.ts";
 
 type Stack = {
   upper: Stack | null;
@@ -22,11 +24,6 @@ type Stack = {
   to?: AST.YAMLScalar;
 };
 
-interface RuleModule {
-  meta: Rule.RuleMetaData;
-  create(context: Rule.RuleContext): RuleListener;
-}
-
 export const rule: RuleModule = {
   meta: {
     type: "problem",
@@ -40,7 +37,7 @@ export const rule: RuleModule = {
     },
     schema: [],
     docs: {
-      description: "Validate local links in `_redir.yml`",
+      description: "Validate local links in `_redir.yaml`",
     },
     fixable: "code",
   },
@@ -174,19 +171,7 @@ export const rule: RuleModule = {
 };
 
 const plugin = {
-  rules: { "redir-local-links-valid": rule },
+  rules: { "local-links-valid": rule },
 };
-
-function isYAMLDocument(
-  node: AST.YAMLNode | null | undefined,
-): node is AST.YAMLDocument {
-  return node !== null && node !== undefined && node.type === "YAMLDocument";
-}
-
-function isYAMLScalar(
-  node: AST.YAMLNode | null | undefined,
-): node is AST.YAMLScalar {
-  return node !== null && node !== undefined && node.type === "YAMLScalar";
-}
 
 export default plugin;
