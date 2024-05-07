@@ -1,5 +1,5 @@
 import type { Rule } from "eslint";
-import type { RuleListener } from "eslint-plugin-yml/lib/types.js";
+import type { RuleListener } from "eslint-plugin-yml/lib/types.ts";
 import type { AST } from "yaml-eslint-parser";
 
 export function isLocalLink(url: string): boolean {

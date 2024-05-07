@@ -12,7 +12,7 @@ interface Options {
   excludePaths: string[];
   redirects: Map<string, string>;
 }
-const remarkLintLocalLinksValid = lintRule(
+export const remarkLintLocalLinksValid = lintRule(
   "remark-lint:local-links-valid",
   async (tree, file, options: Partial<Options>) => {
     const workingDir = path.dirname(
@@ -131,5 +131,3 @@ const initLinter = (workingDir: string, options: Partial<Options>) => {
     return task;
   };
 };
-
-export default remarkLintLocalLinksValid;

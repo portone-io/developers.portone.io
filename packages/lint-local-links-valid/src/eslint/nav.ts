@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-
 import type { AST } from "yaml-eslint-parser";
+
 import {
   isLocalLink,
   isYAMLPair,
@@ -9,7 +9,7 @@ import {
   isYAMLSequence,
   resolveRedirect,
   type RuleModule,
-} from "../utils.ts";
+} from "../utils.js";
 
 export const rule: RuleModule = {
   meta: {
@@ -42,12 +42,15 @@ export const rule: RuleModule = {
   create(context) {
     const { name: filename, dir } = path.parse(context.physicalFilename);
     const baseDir = path.resolve(dir, "..");
-    const redirects =
-      context.options[0] && context.options[0].redirects
-        ? new Map(
-            Object.entries(context.options[0].redirects) as [string, string][],
-          )
-        : new Map();
+    const options = context.options[0] as unknown;
+    const redirects: Map<string, string> =
+      options &&
+      typeof options === "object" &&
+      "redirects" in options &&
+      options.redirects &&
+      typeof options.redirects === "object"
+        ? new Map<string, string>(Object.entries(options.redirects))
+        : new Map<string, string>();
     if (filename !== "_nav") return {};
     return {
       YAMLScalar(node: AST.YAMLScalar) {

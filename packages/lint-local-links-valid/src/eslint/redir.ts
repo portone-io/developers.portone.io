@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
-
-import { P, match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import type { AST } from "yaml-eslint-parser";
+
 import {
   isLocalLink,
   isYAMLDocument,

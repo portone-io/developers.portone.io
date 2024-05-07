@@ -4,8 +4,8 @@ import { type Rule, RuleTester } from "eslint";
 import * as vitest from "vitest";
 import YAMLParser from "yaml-eslint-parser";
 
-import { rule as redirRule } from "../src/eslint/redir.ts";
 import { rule as navRule } from "../src/eslint/nav.ts";
+import { rule as redirRule } from "../src/eslint/redir.ts";
 
 // @ts-expect-error https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester
 RuleTester.describe = vitest.describe;
@@ -123,9 +123,9 @@ ruleTester.run("_nav.yaml", navRule as unknown as Rule.RuleModule, {
           endLine: 5,
           column: 21,
           endColumn: 27,
-        }
+        },
       ],
       filename: navYamlPath,
-    }
+    },
   ],
 });
