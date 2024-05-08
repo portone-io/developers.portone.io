@@ -1,11 +1,10 @@
-import fs from "node:fs/promises";
 import path from "node:path";
 
 import { lintRule } from "unified-lint-rule";
 import { visit } from "unist-util-visit";
 import * as YAML from "yaml";
 
-import { isLocalLink, resolveRedirect } from "./utils.ts";
+import { isLocalLink, isMarkdownExists, resolveRedirect } from "./utils.ts";
 
 interface Options {
   baseDir: string;
@@ -117,21 +116,6 @@ const initLinter = (workingDir: string, options: Partial<Options>) => {
       absPath = path.join(workingDir, url);
     }
     const resolvedPath = resolveRedirect(redirects, absPath);
-    if (!isLocalLink(resolvedPath)) {
-      return;
-    }
-    if (excludePaths.some((p) => resolvedPath.startsWith(p))) {
-      return;
-    }
-    if (path.extname(resolvedPath) !== "") {
-      message("Local link should not have an extension");
-      return;
-    }
-    const task = Promise.any(
-      [".md", ".mdx"].map((ext) => fs.access(resolvedPath + ext)),
-    ).catch(() => {
-      message(`File not found: ${resolvedPath}`);
-    });
-    return task;
+    return isMarkdownExists(resolvedPath, excludePaths, message);
   };
 };

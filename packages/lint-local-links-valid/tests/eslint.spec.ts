@@ -118,7 +118,8 @@ ruleTester.run("_nav.yaml", navRule as unknown as Rule.RuleModule, {
       `,
       errors: [
         {
-          messageId: "fileNotFound",
+          message:
+            "File not found: /home/lastation/portone/developers.portone.io/packages/lint-local-links-valid/tests/__fixtures__/a/b/d",
           line: 5,
           endLine: 5,
           column: 21,

@@ -1,10 +1,10 @@
-import fs from "fs";
 import path from "path";
 import { match, P } from "ts-pattern";
 import type { AST } from "yaml-eslint-parser";
 
 import {
   isLocalLink,
+  isMarkdownExistsSync,
   isYAMLDocument,
   isYAMLScalar,
   type RuleModule,
@@ -32,8 +32,6 @@ export const rule: RuleModule = {
       invalidLocalLink: "Local link should start with '/'",
       missingOldLink: "Missing 'old' link",
       missingNewLink: "Missing 'new' link",
-      localLinkWithExtension: "Local link should not have an extension",
-      fileNotFound: "File not found: {{resolvedPath}}",
       duplicateRedirect: "Duplicate redirect",
     },
     schema: [],
@@ -132,22 +130,12 @@ export const rule: RuleModule = {
                 if (!isLocalLink(toLink)) return;
                 if (stack.redirects.has(toLink)) return;
                 const absPath = path.join(baseDir, toLink);
-                if (path.extname(absPath) !== "") {
+                isMarkdownExistsSync(absPath, [], (reason) => {
                   context.report({
                     loc: stack.node.loc,
-                    messageId: "localLinkWithExtension",
+                    message: reason,
                   });
-                }
-                const exists = [".md", ".mdx"].some((ext) =>
-                  fs.existsSync(absPath + ext),
-                );
-                if (!exists) {
-                  context.report({
-                    loc: stack.node.loc,
-                    messageId: "fileNotFound",
-                    data: { resolvedPath: absPath },
-                  });
-                }
+                });
               });
             },
           )

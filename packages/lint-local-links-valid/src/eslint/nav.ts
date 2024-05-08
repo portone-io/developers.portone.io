@@ -1,9 +1,9 @@
-import fs from "fs";
 import path from "path";
 import type { AST } from "yaml-eslint-parser";
 
 import {
   isLocalLink,
+  isMarkdownExistsSync,
   isYAMLPair,
   isYAMLScalar,
   isYAMLSequence,
@@ -14,9 +14,6 @@ import {
 export const rule: RuleModule = {
   meta: {
     type: "problem",
-    messages: {
-      fileNotFound: "File not found: {{resolvedPath}}",
-    },
     schema: [
       {
         type: "object",
@@ -78,16 +75,12 @@ export const rule: RuleModule = {
           const resolvedUrl = resolveRedirect(redirects, url);
           if (!isLocalLink(resolvedUrl)) return;
           const absPath = path.join(baseDir, resolvedUrl);
-          const exists = [".md", ".mdx"].some((ext) =>
-            fs.existsSync(absPath + ext),
-          );
-          if (!exists) {
+          isMarkdownExistsSync(absPath, [], (reason) => {
             context.report({
               loc: node.loc,
-              messageId: "fileNotFound",
-              data: { resolvedPath: absPath },
+              message: reason,
             });
-          }
+          });
         }
       },
     };
