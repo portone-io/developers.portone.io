@@ -15,8 +15,12 @@ interface Options {
 export const remarkLintLocalLinksValid = lintRule(
   "remark-lint:local-links-valid",
   async (tree, file, options: Partial<Options>) => {
+    const workingFile = path.resolve(file.cwd, file.history[0] ?? "");
     const workingDir = path.dirname(
-      path.resolve(file.cwd, file.history[0] ?? ""),
+      // https://github.com/portone-io/developers.portone.io/issues/453
+      ["index.mdx", "index.md"].includes(path.basename(workingFile))
+        ? path.resolve(workingFile, "..")
+        : workingFile,
     );
     const checkLink = initLinter(workingDir, options as Options);
     const tasks: Promise<void>[] = [];
