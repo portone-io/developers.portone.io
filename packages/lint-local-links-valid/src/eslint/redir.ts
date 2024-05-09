@@ -28,11 +28,11 @@ export const rule: RuleModule = {
   meta: {
     type: "problem",
     messages: {
-      invalidKey: "Key should be 'old' or 'new'",
-      invalidLocalLink: "Local link should start with '/'",
-      missingOldLink: "Missing 'old' link",
-      missingNewLink: "Missing 'new' link",
-      duplicateRedirect: "Duplicate redirect",
+      invalidKey: "Pair 키는 'old' 또는 'new' 이어야 합니다.",
+      invalidLocalLink: "로컬 링크는 '/' 로 시작해야 합니다.",
+      missingOldLink: "'old' 링크를 찾을 수 없습니다.",
+      missingNewLink: "'new' 링크를 찾을 수 없습니다.",
+      duplicateRedirect: "리다이렉트가 중복되었습니다.",
     },
     schema: [],
     docs: {

@@ -37,36 +37,45 @@ ruleTester.run("_redir.yaml", redirRule as unknown as Rule.RuleModule, {
   invalid: [
     {
       code: `
+        - old: /a/b
+          new: /a/c
         - title: Test
           url: test
       `,
       filename: redirYamlPath,
       errors: [
         {
-          messageId: "invalidKey",
+          message: `파일을 찾을 수 없습니다: ${path.resolve(__dirname, "__fixtures__/a/c")}`,
           line: 2,
-          endLine: 2,
+          endLine: 3,
+          column: 11,
+          endColumn: 20,
+        },
+        {
+          messageId: "invalidKey",
+          line: 4,
+          endLine: 4,
           column: 11,
           endColumn: 16,
         },
         {
           messageId: "missingOldLink",
-          line: 2,
-          endLine: 3,
+          line: 4,
+          endLine: 5,
           column: 11,
           endColumn: 20,
         },
         {
           messageId: "missingNewLink",
-          line: 2,
-          endLine: 3,
+          line: 4,
+          endLine: 5,
           column: 11,
           endColumn: 20,
         },
         {
           messageId: "invalidKey",
-          line: 3,
-          endLine: 3,
+          line: 5,
+          endLine: 5,
           column: 11,
           endColumn: 14,
         },
@@ -118,8 +127,7 @@ ruleTester.run("_nav.yaml", navRule as unknown as Rule.RuleModule, {
       `,
       errors: [
         {
-          message:
-            `File not found: ${path.resolve(__dirname, '__fixtures__/a/b/d')}`,
+          message: `파일을 찾을 수 없습니다: ${path.resolve(__dirname, "__fixtures__/a/b/d")}`,
           line: 5,
           endLine: 5,
           column: 21,

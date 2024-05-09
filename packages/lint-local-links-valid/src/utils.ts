@@ -23,7 +23,7 @@ export function resolveRedirect(
   const visited = new Set<string>();
   while (redirects.has(resolved)) {
     if (visited.has(resolved)) {
-      throw new Error("Redirect loop detected");
+      throw new Error("리다이렉트 사이클이 발생했습니다.");
     }
     visited.add(resolved);
     resolved = redirects.get(resolved)?.split(/[#?]/)[0] ?? resolved;
@@ -43,13 +43,13 @@ export async function isMarkdownExists(
     return;
   }
   if (path.extname(mdPath) !== "") {
-    message("Local link should not have an extension");
+    message("로컬 링크는 확장자를 가질 수 없습니다.");
     return;
   }
   await Promise.any(
     [".md", ".mdx"].map((ext) => fsPromises.access(mdPath + ext)),
   ).catch(() => {
-    message(`File not found: ${mdPath}`);
+    message(`파일을 찾을 수 없습니다: ${mdPath}`);
   });
 }
 
@@ -65,12 +65,12 @@ export function isMarkdownExistsSync(
     return;
   }
   if (path.extname(mdPath) !== "") {
-    message("Local link should not have an extension");
+    message("로컬 링크는 확장자를 가질 수 없습니다.");
     return;
   }
   const exists = [".md", ".mdx"].some((ext) => fs.existsSync(mdPath + ext));
   if (!exists) {
-    message(`File not found: ${mdPath}`);
+    message(`파일을 찾을 수 없습니다: ${mdPath}`);
   }
 }
 
