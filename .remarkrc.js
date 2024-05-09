@@ -3,7 +3,7 @@
 import { readFileSync } from "node:fs";
 
 import { load } from "js-yaml";
-import { remarkLintLocalLinksValid } from "lint-local-links-valid";
+import { remarkLintLocalLinksValid } from "@portone-io/lint-local-links-valid";
 import stringWidth from "string-width";
 
 const redirects = load(readFileSync("./src/content/docs/_redir.yaml", "utf8"));

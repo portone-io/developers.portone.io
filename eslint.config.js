@@ -13,7 +13,7 @@ import { load } from "js-yaml";
 import {
   navLintLocalLinksValid,
   redirLintLocalLinksValid,
-} from "lint-local-links-valid";
+} from "@portone-io/lint-local-links-valid";
 import YAMLParser from "yaml-eslint-parser";
 
 const redirects = load(readFileSync("src/content/docs/_redir.yaml", "utf8"));
