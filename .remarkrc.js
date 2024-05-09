@@ -2,6 +2,7 @@
 
 import { readFileSync } from "node:fs";
 
+import { remarkLintLocalLinksValid } from "@portone-io/lint-local-links-valid";
 import { load } from "js-yaml";
 import stringWidth from "string-width";
 
@@ -69,7 +70,7 @@ export default {
     "remark-lint-table-pipes",
     ["remark-lint-unordered-list-marker-style", "-"],
     [
-      "remark-lint-local-links-valid",
+      remarkLintLocalLinksValid,
       {
         baseDir: "./src/content",
         excludePaths: ["/api"],

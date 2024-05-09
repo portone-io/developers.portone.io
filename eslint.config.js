@@ -1,4 +1,8 @@
 import eslint from "@eslint/js";
+import {
+  navLintLocalLinksValid,
+  redirLintLocalLinksValid,
+} from "@portone-io/lint-local-links-valid";
 import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsEslintParser from "@typescript-eslint/parser";
 import unocss from "@unocss/eslint-plugin";
@@ -8,6 +12,14 @@ import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
 import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
+import { readFileSync } from "fs";
+import { load } from "js-yaml";
+import YAMLParser from "yaml-eslint-parser";
+
+const redirects = load(readFileSync("src/content/docs/_redir.yaml", "utf8"));
+if (!Array.isArray(redirects)) {
+  throw new Error("Expected an array of redirects");
+}
 
 /** @type {import("eslint").Linter.RulesRecord} */
 const tsRules = {
@@ -34,7 +46,12 @@ export default [
   },
   {
     files: ["**/*.{ts,tsx}"],
-    ignores: ["scripts/**/*.ts", "**/*.astro/*.ts", "**/*.mdx/*"],
+    ignores: [
+      "scripts/**/*.ts",
+      "**/*.astro/*.ts",
+      "**/*.mdx/*",
+      "**/__fixtures__/**/*",
+    ],
     languageOptions: {
       parser: tsEslintParser,
       parserOptions: {
@@ -135,6 +152,28 @@ export default [
     rules: {
       ...tsRules,
       "prettier/prettier": "off",
+    },
+  },
+  {
+    files: ["**/_redir.yaml", "**/_nav.yaml"],
+    ignores: [],
+    plugins: {
+      redir: redirLintLocalLinksValid,
+      nav: navLintLocalLinksValid,
+    },
+    languageOptions: {
+      parser: YAMLParser,
+    },
+    rules: {
+      "redir/local-links-valid": "error",
+      "nav/local-links-valid": [
+        "error",
+        {
+          redirects: Object.fromEntries(
+            redirects.map(({ old: from, new: to }) => [from, to]),
+          ),
+        },
+      ],
     },
   },
 ];
