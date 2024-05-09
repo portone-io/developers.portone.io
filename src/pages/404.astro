@@ -1,3 +1,17 @@
+---
+export const prerender = true;
+
+import { getImage, Image } from "astro:assets";
+
+import portoneGradientBg from "../../public/portone-gradient-bg.png";
+import portoneLogoWhite from "../../public/portone-logo-white.png";
+
+const optimizedBackground = await getImage({
+  src: portoneGradientBg,
+  format: "webp",
+});
+---
+
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
@@ -37,10 +51,11 @@
     </style>
     <body>
       <div
-        class="h-full flex flex-col items-center justify-center gap-3xl bg-[url(/portone-gradient-bg.png)] bg-cover text-white"
+        class="h-full flex flex-col items-center justify-center gap-3xl bg-cover text-white"
+        style={`background-image: url(${optimizedBackground.src});`}
       >
         <div class="flex flex-col items-center gap-2.5">
-          <img src="/portone-logo-white.png" alt="PortOne" class="w-40" />
+          <Image src={portoneLogoWhite} alt="PortOne" class="w-40" />
           <span class="text-7xl font-bold tracking-[0.08em]">404</span>
           <span class="text-2xl tracking-[0.06em]">
             페이지를 찾을 수 없습니다
