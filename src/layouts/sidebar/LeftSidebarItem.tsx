@@ -32,7 +32,12 @@ function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
         class={`flex ${getLinkStyle(isActive)} pr-0`}
         data-active={isActive && "active"} // true로 지정하면 SSR시에는 값 없이 attr key만 들어감
       >
-        <a href={`/docs${slug}?v=${systemVersion}`} class="grow">
+        <a
+          href={["/docs", slug, systemVersion && `?v=${systemVersion}`]
+            .filter(Boolean)
+            .join("")}
+          class="grow"
+        >
           <LinkTitle title={title} />
         </a>
         <button
