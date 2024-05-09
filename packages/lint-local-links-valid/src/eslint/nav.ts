@@ -32,7 +32,8 @@ export const rule: RuleModule = {
       },
     ],
     docs: {
-      description: "`_nav.yaml` 파일에 정의되어 있는 markdown 파일 링크의 유효성을 검사합니다.",
+      description:
+        "`_nav.yaml` 파일에 정의되어 있는 markdown 파일 링크의 유효성을 검사합니다.",
     },
     fixable: "code",
   },
