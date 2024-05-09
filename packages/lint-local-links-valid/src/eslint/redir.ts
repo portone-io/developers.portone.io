@@ -8,7 +8,7 @@ import {
   isYAMLDocument,
   isYAMLScalar,
   type RuleModule,
-} from "../utils.ts";
+} from "../utils.js";
 
 type Stack = {
   upper: Stack | null;

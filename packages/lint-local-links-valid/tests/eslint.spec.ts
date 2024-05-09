@@ -4,8 +4,8 @@ import { type Rule, RuleTester } from "eslint";
 import * as vitest from "vitest";
 import YAMLParser from "yaml-eslint-parser";
 
-import { rule as navRule } from "../src/eslint/nav.ts";
-import { rule as redirRule } from "../src/eslint/redir.ts";
+import { rule as navRule } from "../src/eslint/nav.js";
+import { rule as redirRule } from "../src/eslint/redir.js";
 
 // @ts-expect-error https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester
 RuleTester.describe = vitest.describe;

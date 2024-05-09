@@ -1,5 +1,5 @@
 export {
   navLintLocalLinksValid,
   redirLintLocalLinksValid,
-} from "./eslint/index.ts";
-export { remarkLintLocalLinksValid } from "./remark.ts";
+} from "./eslint/index.js";
+export { remarkLintLocalLinksValid } from "./remark.js";

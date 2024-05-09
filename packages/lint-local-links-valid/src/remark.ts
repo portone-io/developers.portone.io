@@ -4,7 +4,7 @@ import { lintRule } from "unified-lint-rule";
 import { visit } from "unist-util-visit";
 import * as YAML from "yaml";
 
-import { isLocalLink, isMarkdownExists, resolveRedirect } from "./utils.ts";
+import { isLocalLink, isMarkdownExists, resolveRedirect } from "./utils.js";
 
 interface Options {
   baseDir: string;
