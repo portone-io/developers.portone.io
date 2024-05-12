@@ -1,0 +1,238 @@
+---
+title: KSNET 카드 다이렉트
+description: KSNET 카드 다이렉트 결제창 연동 가이드입니다.
+targetVersions: ["v1"]
+---
+
+import Details from "~/components/gitbook/Details.astro";
+import ParamTree from "~/components/gitbook/ParamTree.astro";
+import Hint from "~/components/Hint.astro";
+
+## 1. KSNET 채널 설정하기
+
+[결제대행사 채널 설정하기](../../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
+
+## 2. 결제 요청하기
+
+[JavaScript SDK (신규)](../../../sdk/javascript-sdk/readme)의 `IMP.request_pay(param, callback)`을 호출하여 KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 `IMP.request_pay(param, callback)` 호출 후 <mark style="color:red;">**callback**</mark>으로 수신되고 모바일의 경우 <mark style="color:red;">**m\_redirect\_url**</mark>로 리디렉션됩니다.
+
+<Hint style="warning">
+  기존 JavaScript SDK를 사용 중이신 경우 [JavaScript SDK (신규)](../../../sdk/javascript-sdk/readme) 문서를 참고하여 업데이트를 진행해주세요.
+</Hint>
+
+KSNET 결제는 최신 SDK에서만 지원되는 기능입니다.
+
+```html
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+```
+
+<Hint style="info">
+  **KSNET을 연동하기 위해서는 위에 안내된 JS SDK를 이용하셔야 합니다.**
+</Hint>
+
+<Hint style="danger">
+  ### **기존에 deprecated된 응답들은 모두 제거**됐습니다. ⚠️
+
+  KSNET 연동시에 사용되는 신규 JS SDK는 기존 모듈에서 제공했던 CallBack 파라미터가 대부분 삭제되었습니다.(특히 deprecated 로 명시된 파라미터는 모두 삭제되었습니다.)
+
+  해당 JS SDK 사용시 Callback 으로 내려받을수 있는 데이터는 오직 아래 두가지 입니다.
+
+  **`imp_uid`, `merchant_uid`**
+
+  따라서 해당 SDK를 사용하실때는 `IMP.request_pay`로부터 응답된 객체(또는 쿼리 파라미터)에서 `imp_uid`를 가지고 **아임포트 REST API(GET `/payments/imp_uid`)로 결제 상세 내역(승인 상태, 승인 결과 등등)을 조회**하여 응답 파라미터 중 status 파라미터로 결제 상태를 파악하셔야 합니다.
+</Hint>
+
+<Hint style="info">
+  ```html
+  <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+  ```
+
+  위 JS SDK를 이용하여 토스페이먼츠, KSNET 연동시 callback Data는
+  아래와 같이 두가지 형태로만 내려갑니다.
+
+  - `imp_uid`
+  - `merchant_uid`
+
+  위 PG사를 제외한 다른 PG사는 `imp_success` 파라미터가 기존처럼 내려가지만
+  해당 파리미터는 deprecated 된 값이기 때문에 해당 값에 의존성을 가진 프로그램 로직은 모두 삭제하시는
+  방향성을 잡아가셔야 하는점 유념하시기 바랍니다.
+</Hint>
+
+### SDK 결제 요청하기
+
+결제 요청 시에는 `request_pay` 함수를 호출해야 합니다.
+
+KSNET 카드 다이렉트 기준으로 작성한 예시 코드는 아래와 같습니다.
+
+```typescript title="SDK 결제 요청"
+IMP.request_pay(
+  {
+    pg: "ksnet.{PG 상점 아이디}", // 테스트인 경우 ksnet.2999199999
+    pay_method: "card",
+    merchant_uid: "order_id_1667634130160", // 상점에서 채번하는 고유 주문 번호
+    name: "나이키 와플 트레이너 2 SD",
+    pay_method: "card",
+    amount: "109000",
+    buyer_name: "홍길동",
+    buyer_email: "buyer@example.com",
+    buyer_tel: "02-1670-5176",
+    currency: "KRW",
+    digital: false,
+    card: {
+      direct: {
+        code: "361",
+      },
+    },
+  },
+  function (rsp) {
+    // callback 로직
+    //* ...중략... *//
+  },
+);
+```
+
+#### **주요 파라미터**
+<ParamTree>
+  - `pg` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **PG사 구분코드**
+
+    `ksnet.${PG 상점 아이디}`
+
+  - `pay_method` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **결제수단 구분코드**
+
+    ksnet 카드 다이렉트의 경우, card 로 고정입니다.
+
+  - `merchant_uid` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **고객사 채번 주문 고유번호**
+
+    고객사에서 매번 고유하게 채번되어야 합니다.
+    
+  - `amount` <mark style="color:green;">**string**</mark>
+
+    **결제금액**
+
+    지정하지 않은 경우 0원입니다.
+
+  - `buyer_name` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **구매자명**
+
+    KSNET 카드 다이렉트의 경우, 필수 입력입니다.
+
+  - `buyer_tel` <mark style="color:green;">**string**</mark>
+
+    **구매자 전화번호**
+
+    <Hint style="warning">
+      ISP_MOBILE 호출방식을 사용하는 카드사의 경우, 필수 입력입니다.  
+      ISP_MOBILE 호출방식을 사용하는 카드사 목록의 경우, 아래 유의사항을 참고해주세요.
+    </Hint>
+
+  - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **결제 통화**
+
+    결제통화로 KSNET 카드 다이렉트의 경우 `KRW` 만 허용됩니다.
+
+  - `digital` <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+
+    **디지털 상품 유형 여부**
+
+    상점이 `디지털 상품유형`으로 설정된 경우 항상 `true`로 전달해야 합니다.
+
+  - `card.direct.code` <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+
+    **카드사 다이렉트 호출을 위한 카드사 코드**
+
+    - 카드사 코드는 아래 문서에 정의되어 있습니다.
+    - [카드사 코드 바로가기](https://developers.portone.io/docs/ko/tip/card-code?v=v1)
+
+  - `popup` <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+
+    **결제창 팝업 호출 여부**
+
+    <Hint style="warning">
+      KB 호출방식을 사용하는 카드사의 경우, true를 전달해야 합니다.\\
+      KB 호출방식을 사용하는 카드사 목록의 경우, 아래 유의사항을 참고해주세요.
+    </Hint>
+
+  - `dispay.card_quota` <mark style="color:green;">**number[]**</mark>
+
+    **렌더링 할 할부개월 리스트를 지정하는 파라미터**
+  
+    ```[2,3,12]``` : 일시불, 2개월, 3개월, 12개월 할부만 사용가능
+
+    <Hint style="warning">
+      MPI 호출방식을 사용하는 카드사의 경우, 지원하지 않습니다.  
+      MPI 호출방식을 사용하는 카드사 목록의 경우, 아래 유의사항을 참고해주세요.
+    </Hint>
+
+  - `storeDetails.businessName` <mark style="color:green;">**string**</mark>
+
+    **상점 사업자 명**
+
+    <Hint style="warning">
+      MPI/KB 호출방식을 사용하는 카드사의 경우, 필수 입력입니다.  
+      MPI/KB 호출방식을 사용하는 카드사 목록의 경우, 아래 유의사항을 참고해주세요.
+    </Hint>
+
+  - `storeDetails.businessRegistrationNumber` <mark style="color:green;">**string**</mark>
+
+    **상점 사업자 번호**
+
+    하이픈(-) 을 제외한, 숫자만 전달하여야합니다.
+
+    <Hint style="warning">
+      MPI/KB 호출방식을 사용하는 카드사의 경우, 필수 입력입니다.  
+      MPI/KB 호출방식을 사용하는 카드사 목록의 경우, 아래 유의사항을 참고해주세요.
+    </Hint>
+
+  - `bypass.ksnet.tcode` <mark style="color:green;">**string**</mark>
+
+    **통신사 구분**
+
+    - SKT : `skt`
+    - KT : `ktf`
+    - LG U+ : `lgt`
+
+    <Hint style="warning">
+      ISP_MOBILE 호출방식을 사용하는 카드사의 경우, 필수 입력입니다.  
+      ISP_MOBILE 호출방식을 사용하는 카드사 목록의 경우, 아래 유의사항을 참고해주세요.
+    </Hint>
+
+  - `bypass.ksnet.url` <mark style="color:green;">**string**</mark>
+
+    **고객사 url**
+
+    결제를 요청하는 사이트의 url을 입력하여야 합니다.
+
+    <Hint style="warning">
+      MPI 호출방식을 사용하는 카드사의 경우, 필수 입력입니다.  
+      MPI 호출방식을 사용하는 카드사 목록의 경우, 아래 유의사항을 참고해주세요.
+    </Hint>
+
+</ParamTree>
+
+### SDK 결제 - 유의사항
+
+<Details>
+  <p slot="summary">선택한 카드사에 따라, 일부 파라미터의 동작이 상이할 수 있습니다.</p>
+
+  KSNET 에서 제공하는 모듈이 카드사별로 상이하여, 일부 파라미터의 동작이 상이할 수 있습니다.
+
+  상세한 내용은 위의 주요 파라미터 문서를 참고해주세요.
+
+  모듈은 총 4개로, 아래에 정의된 모듈 구별을 따라갑니다.
+
+  `ISP_PC`: BC, 수협, 전북, 광주, 카카오뱅크
+
+  `ISP_MOBILE`: BC, 수협, 전북, 광주, 카카오뱅크
+
+  `MPI`: 우리, 하나, 농협, 삼성, 현대, 롯데, 신한, 시티
+
+  `KB`: 국민
+</Details>
