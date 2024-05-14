@@ -1,10 +1,12 @@
 import { useComputed } from "@preact/signals";
 
+import { useSystemVersion } from "#state/system-version";
 import { navOpenStatesSignal, slugSignal } from "~/state/nav";
 import type { NavMenuPage } from "~/state/server-only/nav";
 import type { SystemVersion } from "~/type";
 
 function LeftSidebarItem(props: NavMenuPage) {
+  const systemVersion = useSystemVersion();
   if (props.items.length > 0) return <FolderLink {...props} />;
   const { title, slug } = props;
   const pageSlug = slugSignal.value;
@@ -15,7 +17,7 @@ function LeftSidebarItem(props: NavMenuPage) {
       title={title}
       href={href}
       isActive={isActive}
-      systemVersion={props.systemVersion}
+      systemVersion={props.systemVersion ?? systemVersion}
     />
   );
 }
