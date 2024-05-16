@@ -9,12 +9,15 @@ export async function getReleaseNotes() {
   const docEntries = await getCollection("release-notes");
   const apiSdkNotes: ReleaseNote[] = [];
   const consoleNotes: ReleaseNote[] = [];
+  const platformNotes: ReleaseNote[] = [];
   for (const entry of docEntries) {
     const slug = entry.slug;
     if (slug.startsWith("api-sdk")) apiSdkNotes.push({ slug, entry });
     else if (slug.startsWith("console")) consoleNotes.push({ slug, entry });
+    else if (slug.startsWith("platform")) platformNotes.push({ slug, entry });
   }
-  apiSdkNotes.sort((a, b) => (a.slug > b.slug ? -1 : 1));
-  consoleNotes.sort((a, b) => (a.slug > b.slug ? -1 : 1));
-  return { apiSdkNotes, consoleNotes };
+  for (const notes of [apiSdkNotes, consoleNotes, platformNotes]) {
+    notes.sort((a, b) => (a.slug > b.slug ? -1 : 1));
+  }
+  return { apiSdkNotes, consoleNotes, platformNotes };
 }

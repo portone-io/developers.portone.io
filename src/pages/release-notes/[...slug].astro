@@ -1,5 +1,6 @@
 ---
 import { format } from "date-fns";
+import { match } from "ts-pattern";
 
 import * as prose from "~/components/prose";
 import Banner from "~/components/release-note/Banner.astro";
@@ -10,17 +11,34 @@ import { getReleaseNotes } from "~/misc/releaseNote";
 
 const { slug } = Astro.params;
 if (!slug) return new Response(null, { status: 404 });
-const { apiSdkNotes, consoleNotes } = await getReleaseNotes();
+const { apiSdkNotes, consoleNotes, platformNotes } = await getReleaseNotes();
 const { entry } =
-  [...apiSdkNotes, ...consoleNotes].find((entry) => entry.slug === slug) ?? {};
+  [...apiSdkNotes, ...consoleNotes, ...platformNotes].find(
+    (entry) => entry.slug === slug,
+  ) ?? {};
 if (!entry) return new Response(null, { status: 404 });
 
-const type = entry.slug.startsWith("api-sdk") ? "apiSdkNotes" : "consoleNotes";
+const type = match(entry.slug)
+  .when(
+    (v) => v.startsWith("api-sdk"),
+    () => "apiSdkNotes" as const,
+  )
+  .when(
+    (v) => v.startsWith("console"),
+    () => "consoleNotes" as const,
+  )
+  .when(
+    (v) => v.startsWith("platform"),
+    () => "platformNotes" as const,
+  )
+  .run();
+
 const { releasedAt, writtenAt } = entry.data;
 const { Content } = await entry.render();
 const label = {
   apiSdkNotes: "API / SDK",
   consoleNotes: "관리자콘솔",
+  platformNotes: "파트너 정산 자동화",
 }[type];
 const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
 ---
@@ -44,6 +62,7 @@ const title = `${format(releasedAt, "yyyy-MM-dd")} ${label} 업데이트`;
         <Nav
           consoleNotes={consoleNotes}
           apiSdkNotes={apiSdkNotes}
+          platformNotes={platformNotes}
           activeSlug={slug}
         />
       </div>

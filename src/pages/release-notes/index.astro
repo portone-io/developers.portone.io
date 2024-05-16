@@ -7,7 +7,7 @@ import LayoutBase from "~/layouts/LayoutBase.astro";
 import Nav from "~/layouts/release-notes/Nav.astro";
 import { getReleaseNotes } from "~/misc/releaseNote";
 
-const { consoleNotes, apiSdkNotes } = await getReleaseNotes();
+const { consoleNotes, apiSdkNotes, platformNotes } = await getReleaseNotes();
 ---
 
 <LayoutBase lang="ko" title="포트원 릴리즈노트" slug="release-notes" navAsMenu>
@@ -19,7 +19,11 @@ const { consoleNotes, apiSdkNotes } = await getReleaseNotes();
       <div
         class="fixed h-[calc(100%-3.5rem)] w-inherit overflow-y-scroll border-r bg-white"
       >
-        <Nav consoleNotes={consoleNotes} apiSdkNotes={apiSdkNotes} />
+        <Nav
+          consoleNotes={consoleNotes}
+          apiSdkNotes={apiSdkNotes}
+          platformNotes={platformNotes}
+        />
       </div>
     </aside>
     <div class="mx-auto shrink basis-200">
@@ -36,6 +40,7 @@ const { consoleNotes, apiSdkNotes } = await getReleaseNotes();
               [
                 ["관리자콘솔", consoleNotes],
                 ["API / SDK", apiSdkNotes],
+                ["파트너 정산 자동화", platformNotes],
               ] as const
             ).map(([title, notes]) => (
               <section class="my-4 flex-1 whitespace-nowrap pr-4">
