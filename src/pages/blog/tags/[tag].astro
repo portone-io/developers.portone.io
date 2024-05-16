@@ -1,7 +1,21 @@
 ---
 import { getCollection } from "astro:content";
+import sitemap from "sitemap-ext:config";
 
 import PostListLayout from "~/components/blog/PostList/PostListLayout.astro";
+
+sitemap(async ({ addToSitemap }) => {
+  const entries = await getCollection(
+    "blog",
+    (entry) =>
+      !entry.data.draft ||
+      import.meta.env.DEV ||
+      import.meta.env.VERCEL_ENV === "preview",
+  );
+  const tags = [...new Set(entries.flatMap((entry) => entry.data.tags))];
+
+  addToSitemap(tags.map((tag) => ({ tag })));
+});
 
 const tag = decodeURIComponent(Astro.params.tag?.toString() ?? "");
 const entries = await getCollection(

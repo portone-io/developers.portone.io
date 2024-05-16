@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import { format } from "date-fns";
+import sitemap from "sitemap-ext:config";
 import { match, P } from "ts-pattern";
 
 import PostList from "~/components/blog/PostList/PostList.astro";
@@ -14,6 +15,12 @@ import TableOfContents, {
 import authors from "~/content/blog/_authors.yaml";
 import LayoutBase from "~/layouts/LayoutBase.astro";
 // import NavigationMenu from "~/components/blog/NavigationMenu";
+
+sitemap(async ({ addToSitemap }) => {
+  const entries = await getCollection("blog");
+
+  addToSitemap(entries.map((entry) => ({ slug: entry.slug })));
+});
 
 const { slug } = Astro.params;
 const entries = await getCollection("blog").then((entries) =>
