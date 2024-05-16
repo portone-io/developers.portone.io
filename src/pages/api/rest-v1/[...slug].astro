@@ -1,4 +1,6 @@
 ---
+import sitemap from "sitemap-ext:config";
+
 import * as prose from "~/components/prose";
 import LayoutBase from "~/layouts/LayoutBase.astro";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu.astro";
@@ -8,6 +10,19 @@ import schema from "~/schema/v1.openapi.json";
 import { overrideSystemVersion } from "~/state/system-version/server";
 
 import Component from "./_Page";
+
+sitemap(async ({ addToSitemap }) => {
+  const categories = getCategories(schema).flatMap((category) => [
+    category,
+    ...(category.children ?? []),
+  ]);
+
+  addToSitemap(
+    categories.map((category) => ({
+      slug: category.id,
+    })),
+  );
+});
 
 const { v1auth } = await getApiSectionDescriptions();
 

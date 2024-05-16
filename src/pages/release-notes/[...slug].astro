@@ -1,5 +1,7 @@
 ---
+import { getCollection } from "astro:content";
 import { format } from "date-fns";
+import sitemap from "sitemap-ext:config";
 import { match } from "ts-pattern";
 
 import * as prose from "~/components/prose";
@@ -8,6 +10,12 @@ import Footer from "~/components/release-note/Footer.astro";
 import LayoutBase from "~/layouts/LayoutBase.astro";
 import Nav from "~/layouts/release-notes/Nav.astro";
 import { getReleaseNotes } from "~/misc/releaseNote";
+
+sitemap(async ({ addToSitemap }) => {
+  const entries = await getCollection("release-notes");
+
+  addToSitemap(entries.map((entry) => ({ slug: entry.slug })));
+});
 
 const { slug } = Astro.params;
 if (!slug) return new Response(null, { status: 404 });
