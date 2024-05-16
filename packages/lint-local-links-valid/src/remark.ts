@@ -105,6 +105,9 @@ const initLinter = (workingDir: string, options: Partial<Options>) => {
     link: string,
     message: (reason: string) => void,
   ): Promise<void> {
+    if (link.startsWith("#")) {
+      return;
+    }
     if (!isLocalLink(link)) {
       return;
     }
