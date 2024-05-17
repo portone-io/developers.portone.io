@@ -98,9 +98,5 @@ export default defineConfig({
     ],
   },
   output: "server",
-  adapter: vercel({
-    isr: {
-      expiration: 180,
-    },
-  }),
+  adapter: vercel(),
 });
