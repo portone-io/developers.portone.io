@@ -1,0 +1,141 @@
+---
+title: 인증결제 스마트 라우팅 연동하기
+description: 인증결제 사용 시에 스마트 라우팅을 연동하는 방법을 설명합니다.
+targetVersions: ["v2"]
+---
+
+import ParamTree from "~/components/gitbook/ParamTree.astro";
+
+인증결제 스마트 라우팅은 먼저 스마트 라우팅을 위해 사용할 채널 그룹을 생성하고,
+해당 그룹의 ID를 전용 파라미터인 `channelGroupId`를 통해 지정해 주기만 하면
+다른 부분은 기본적인 인증결제 사용법과 동일하게 사용할 수 있습니다.
+인증결제와 관련된 자세한 내용은 [인증결제 연동하기](/docs/ko/authpay/guide) 문서를 참고하시기 바랍니다.
+
+## 스마트 라우팅 결제창 호출하기
+
+```tsx title="스마트 라우팅 결제창 호출하기"
+PortOne.requestPayment({
+  storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
+
+  // 단일 채널에 대한 Channel Key 대신
+  // 사용할 모든 채널을 포함하는 Channel Group의 ID를 설정합니다.
+  channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+
+  // 기타 인증결제 파라미터 설정
+  paymentId: `payment-${crypto.randomUUID()}`,
+  orderName: "나이키 와플 트레이너 2 SD",
+  totalAmount: 1000,
+  currency: "CURRENCY_KRW",
+  payMethod: "CARD",
+
+  // 스마트 라우팅 사용 시 필수 파라미터들 추가 설정
+  productType: "DIGITAL",
+  customer: {
+    fullName: "홍길동",
+    phoneNumber: "010-1234-5678",
+    email: "test@test.com",
+  },
+});
+```
+
+### 주요 파라미터
+
+- **`channelGroupId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+  결제창을 호출하기 위해 사용할 채널 그룹의 ID입니다.
+
+  - 관리자 콘솔의 \[결제 연동] → \[스마트 라우팅] 메뉴에서 확인할 수 있습니다.
+
+  - 채널 그룹 ID를 지정하여 결제창을 호출하면, 채널 그룹 내의 채널 중 하나가
+    매 결제창 호출 시마다 무작위로 지정되어 결제창이 호출됩니다.
+
+  - 무작위 채널 지정은 채널 그룹에 설정된 비율 설정을 반영하여 이루어집니다.
+
+### 기타 파라미터
+
+각 파라미터에 대한 상세한 설명은 [JavaScript SDK 레퍼런스 → 결제요청 파라미터](/docs/ko/v2-payment/v2-sdk/payment-request)
+문서를 참고하시기 바랍니다.
+
+<ParamTree>
+  - **`productType`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    스마트 라우팅 사용 시 필수 입력해야 합니다.
+
+  - **`customer`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+
+    구매자 정보를 지정하는 파라미터입니다.
+
+    <ParamTree>
+      - **`fullName`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        스마트 라우팅 사용 시 해당 파라미터 혹은 `firstName`과 `lastName` 파라미터를 필수 입력해야 합니다.
+
+      - **`phoneNumber`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        스마트 라우팅 사용 시 필수 입력해야 합니다.
+
+      - **`email`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        스마트 라우팅 사용 시 필수 입력해야 합니다.
+    </ParamTree>
+
+  - **`easyPay`** <mark style="color:blue;">**object**</mark>
+
+    간편결제 사용 시 필요한 파라미터입니다.
+
+    <ParamTree>
+      - **`easyPayProvider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        스마트 라우팅으로 간편결제 사용 시 필수 입력해야 합니다.
+    </ParamTree>
+
+  - **`virtualAccount`** <mark style="color:blue;">**object**</mark>
+
+    가상계좌 결제 사용 시 필요한 파라미터입니다.
+
+    <ParamTree>
+      - **`accountExpiry`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+
+        스마트 라우팅으로 가상계좌 결제 사용 시 필수 입력해야 합니다.
+
+        `dueDate` 혹은 `validHours` 파라미터를 사용하여 원하는 방식으로 기한을 지정할 수 있습니다.
+    </ParamTree>
+
+  - **`giftCertificate`** <mark style="color:blue;">**object**</mark>
+
+    상품권 결제 사용 시 필요한 파라미터입니다.
+
+    <ParamTree>
+      - **`giftCertificateType`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        스마트 라우팅으로 상품권 결제 사용 시 필수 입력해야 합니다.
+    </ParamTree>
+
+  - **`bypass`** <mark style="color:blue;">**object**</mark>
+
+    PG사별 고유 옵션 지정을 위한 파라미터입니다.
+
+    <ParamTree>
+      - **`nice_v2`** <mark style="color:blue;">**object**</mark>
+
+        `nice_v2` 채널 사용 시 적용되는 파라미터입니다.
+
+        <ParamTree>
+          - **`MallUserID`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            스마트 라우팅에 사용할 채널 그룹 내에 `nice_v2` 채널이 포함된 경우 필수 입력해야 합니다.
+        </ParamTree>
+    </ParamTree>
+
+    <ParamTree>
+      - **`kcp_v2`** <mark style="color:blue;">**object**</mark>
+
+        `kcp_v2` 채널 사용 시 적용되는 파라미터입니다.
+
+        <ParamTree>
+          - **`shop_user_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            스마트 라우팅에 사용할 채널 그룹 내에 `kcp_v2` 채널이 포함된 경우 필수 입력해야 합니다.
+        </ParamTree>
+    </ParamTree>
+</ParamTree>
