@@ -12,12 +12,22 @@ export type SystemVersion = z.infer<typeof SystemVersion>;
 export type YamlNavMenuToplevelItem =
   | YamlNavMenuPageSugar
   | YamlNavMenuPage
+  | YamlNavMenuExternalPage
   | YamlNavMenuGroup;
-export type YamlNavMenuItem = YamlNavMenuPageSugar | YamlNavMenuPage;
+export type YamlNavMenuItem =
+  | YamlNavMenuPageSugar
+  | YamlNavMenuPage
+  | YamlNavMenuExternalPage;
 type YamlNavMenuPageSugar = string;
 interface YamlNavMenuPage {
   slug: string;
   items: YamlNavMenuItem[];
+  systemVersion?: SystemVersion;
+}
+interface YamlNavMenuExternalPage {
+  label: string;
+  href: string;
+  items?: YamlNavMenuItem[];
   systemVersion?: SystemVersion;
 }
 interface YamlNavMenuGroup {

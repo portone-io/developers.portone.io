@@ -8,14 +8,21 @@ import type { SystemVersion } from "~/type";
 function LeftSidebarItem(props: NavMenuPage) {
   const systemVersion = useSystemVersion();
   if (props.items.length > 0) return <FolderLink {...props} />;
-  const { title, slug } = props;
+  const { title, path } = props;
   const pageSlug = slugSignal.value;
-  const isActive = pageSlug === slug;
-  const href = `/docs${slug}`;
+  const isActive = pageSlug === path;
+  const [href, isExternal] = (() => {
+    try {
+      return [new URL(path).toString(), true];
+    } catch (e) {
+      return [`/docs${path}`, false];
+    }
+  })();
   return (
     <JustLink
       title={title}
       href={href}
+      isExternal={isExternal}
       isActive={isActive}
       systemVersion={props.systemVersion ?? systemVersion}
     />
@@ -23,11 +30,11 @@ function LeftSidebarItem(props: NavMenuPage) {
 }
 export default LeftSidebarItem;
 
-function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
-  const openSignal = useComputed(() => !!navOpenStatesSignal.value[slug]);
+function FolderLink({ title, path, items, systemVersion }: NavMenuPage) {
+  const openSignal = useComputed(() => !!navOpenStatesSignal.value[path]);
   const open = openSignal.value;
   const pageSlug = slugSignal.value;
-  const isActive = pageSlug === slug;
+  const isActive = pageSlug === path;
   return (
     <div data-system-version={systemVersion}>
       <div
@@ -35,7 +42,7 @@ function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
         data-active={isActive && "active"} // true로 지정하면 SSR시에는 값 없이 attr key만 들어감
       >
         <a
-          href={["/docs", slug, systemVersion && `?v=${systemVersion}`]
+          href={["/docs", path, systemVersion && `?v=${systemVersion}`]
             .filter(Boolean)
             .join("")}
           class="grow"
@@ -47,7 +54,7 @@ function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
           onClick={() => {
             navOpenStatesSignal.value = {
               ...navOpenStatesSignal.value,
-              [slug]: !open,
+              [path]: !open,
             };
           }}
         >
@@ -63,7 +70,7 @@ function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
       <div class={`${open ? "block" : "hidden"} pl-2`}>
         <ul class="flex flex-col gap-1 border-l pl-2">
           {items.map((item) => (
-            <li key={item.slug} data-system-version={item.systemVersion}>
+            <li key={item.path} data-system-version={item.systemVersion}>
               <LeftSidebarItem {...item} />
             </li>
           ))}
@@ -76,6 +83,7 @@ function FolderLink({ title, slug, items, systemVersion }: NavMenuPage) {
 export interface JustLinkProps {
   title: string;
   href: string;
+  isExternal?: boolean;
   isActive: boolean;
   systemVersion?: SystemVersion | undefined;
   event?: {
@@ -86,6 +94,7 @@ export interface JustLinkProps {
 export function JustLink({
   title,
   href,
+  isExternal,
   isActive,
   systemVersion,
   event,
@@ -93,12 +102,13 @@ export function JustLink({
   return (
     <a
       data-system-version={systemVersion}
-      href={systemVersion ? `${href}?v=${systemVersion}` : href}
+      href={!isExternal && systemVersion ? `${href}?v=${systemVersion}` : href}
       class={getLinkStyle(isActive)}
       data-active={isActive && "active"}
       onClick={() => event && trackEvent(event.name, event.props)}
+      target={isExternal ? "_blank" : "_self"}
     >
-      <LinkTitle title={title} />
+      <LinkTitle title={title} isExternal={isExternal} />
     </a>
   );
 }
@@ -113,11 +123,15 @@ export function getLinkStyle(isActive: boolean): string {
 
 interface LinkTitleProps {
   title: string;
+  isExternal?: boolean | undefined;
 }
-function LinkTitle({ title }: LinkTitleProps) {
+function LinkTitle({ title, isExternal }: LinkTitleProps) {
   return (
-    <span class="flex gap-2 py-1">
+    <span class="flex items-center gap-2 py-1">
       <span>{title || <span class="text-red">(unknown page)</span>}</span>
+      {isExternal && (
+        <i class="i-ic-baseline-open-in-new inline-block opacity-70" />
+      )}
     </span>
   );
 }

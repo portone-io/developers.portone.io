@@ -28,7 +28,7 @@ export interface NavMenu {
 export type NavMenuItem = NavMenuPage | NavMenuGroup;
 export interface NavMenuPage {
   type: "page";
-  slug: string;
+  path: string;
   title: string;
   items: NavMenuPage[];
   systemVersion?: SystemVersion | undefined;
@@ -50,15 +50,15 @@ export const navMenuItemsKo = toNavMenuItems(
 export const navMenu = { en: navMenuItemsEn, ko: navMenuItemsKo };
 
 export interface NavMenuSystemVersions {
-  [slug: string]: SystemVersion;
+  [path: string]: SystemVersion;
 }
 export function calcNavMenuSystemVersions(
   navMenuItems: NavMenuItem[],
 ): NavMenuSystemVersions {
   const result: NavMenuSystemVersions = {};
   for (const item of iterNavMenuItems(navMenuItems)) {
-    if (!("slug" in item)) continue;
-    if (item.systemVersion) result[item.slug] = item.systemVersion;
+    if (!("path" in item)) continue;
+    if (item.systemVersion) result[item.path] = item.systemVersion;
   }
   return result;
 }
@@ -84,7 +84,7 @@ function* iterNavMenuAncestors(
     if (item.type === "group") {
       yield* iterNavMenuAncestors(item.items, ancestors);
     } else if (item.type === "page") {
-      const { slug, items } = item;
+      const { path: slug, items } = item;
       yield { slug, ancestors };
       yield* iterNavMenuAncestors(items, [...ancestors, slug]);
     }
@@ -107,7 +107,7 @@ function toNavMenuItems(
     if (typeof item === "string") {
       return {
         type: "page",
-        slug: item,
+        path: item,
         title: frontmatters[item]?.["title"] || "",
         items: [],
         systemVersion,
@@ -116,8 +116,23 @@ function toNavMenuItems(
       const _systemVersion = item.systemVersion || systemVersion;
       return {
         type: "page",
-        slug: item.slug,
+        path: item.slug,
         title: frontmatters[item.slug]?.["title"] || "",
+        items: item.items
+          ? (toNavMenuItems(
+              item.items,
+              frontmatters,
+              _systemVersion,
+            ) as NavMenuPage[])
+          : [],
+        systemVersion: _systemVersion,
+      };
+    } else if ("href" in item) {
+      const _systemVersion = item.systemVersion || systemVersion;
+      return {
+        type: "page",
+        path: item.href,
+        title: item.label,
         items: item.items
           ? (toNavMenuItems(
               item.items,
