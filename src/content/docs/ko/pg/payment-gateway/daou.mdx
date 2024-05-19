@@ -1,0 +1,377 @@
+---
+title: 키움페이 (다우데이타/페이조아)
+description: 키움페이 연동 방법을 안내합니다.
+targetVersions: ["v1"]
+---
+
+import Figure from "~/components/Figure.astro";
+import ContentRef from "~/components/gitbook/ContentRef.astro";
+import Details from "~/components/gitbook/Details.astro";
+import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Hint from "~/components/Hint.astro";
+
+## 1. 키움페이 채널 설정하기
+
+[결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
+
+<Figure src="/gitbook-assets/ko/screenshot 2022-06-05 11.53.10.png" />
+
+## 2.결제 요청하기
+
+[JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 다우 페이조아 결제창을 호출할 수 있습니다. **결제 결과**는 PC의 경우 `IMP.request_pay(param, callback)` 호출 후 <mark style="color:red;">**callback**</mark>으로 수신되고 모바일의 경우 <mark style="color:red;">**m\_redirect\_url**</mark>로 리디렉션됩니다.
+
+<Hint style="warning">
+  **페이조아 결제창 연동을 위해서는 **<mark style="color:red;">**JS SDK Version 1.2.0**</mark>** 이상을 사용하셔야 합니다.**
+</Hint>
+
+<Tabs>
+  <Tab title="인증결제창 요청">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "daou.{상점 ID}",
+        pay_method: "card",
+        merchant_uid: "mid_1234567890",
+        escrow: false,
+        amount: 1004,
+        name: "노스페이스 롱패딩 M",
+        buyer_name: "홍길동",
+        buyer_email: "hello@world.com",
+        buyer_tel: "01012345678",
+        digital: false, // 디지털로 계약되었다면 true로 설정
+        m_redirect_url: "https://allerts.com/payments/complete",
+        bypass: {
+          // 페이조아(다우데이타) 전용 파라미터
+          daou: {
+            PRODUCTCODE: "portone",
+            CASHRECEIPTFLAG: 0,
+          },
+        },
+        app_scheme: "portoneappscheme",
+      },
+      function (rsp) {
+        // callback 로직
+        // * ...중략... *
+      },
+    );
+    ```
+
+    **주요 파라미터 설명**
+
+    **`pg` \***<mark style="color:green;">**string**</mark>
+
+    **PG사 구분코드**
+
+    **`daou`** 로 지정하면 됩니다.
+
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **결제수단 구분코드**
+
+    - card(신용카드)
+    - trans(실시간 계좌이체)
+    - vbank(가상계좌)
+
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **주문번호**
+
+    매번 고유하게 채번되어야 합니다.
+
+    **`digital`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+
+    **디지털 컨텐츠 여부**
+
+    고객사 \<-> 페이조아간 계약 상태에 따라 정해진 올바른 값을 넣어야 함. 그렇지 않은 경우 결제 진행 불가
+
+    **`bypass.daou.PRODUCTCODE`** <mark style="color:green;">**`string`**</mark>
+
+    **결제 상품 고유 번호**
+
+    값에 대해 정해진 규격이 없고 보내지 않을 경우 포트원에서 기본값(iamport)을 설정해 페이조아 측으로 전달
+
+    **`bypass.daou.CASHRECEIPTFLAG`** <mark style="color:green;">**\`\`**</mark><mark style="color:purple;">**`number`**</mark>
+
+    **현금영수증 발급 구분코드**
+
+    비 신용결제(계좌,가상)시 페이조아에서 자동발급 여부 구분코드
+
+    **`1`: 허용**
+
+    **`0`: 차단**
+
+    **`app_scheme`** <mark style="color:green;">**`string`**</mark>
+
+    **모바일 앱 URL Scheme**
+
+    모바일 앱 환경에서 결제시 필수 파라미터
+
+    **`amount` \***<mark style="color:purple;">**number**</mark>
+
+    **결제금액**
+
+    <mark style="color:green;">**string**</mark> 이 아닌 점에 유의하세요.
+
+    **`escrow`** <mark style="color:orange;">**`boolean`**</mark>
+
+    **에스크로 설정여부**
+
+    계좌이체,가상계좌만 지원됩니다.
+  </Tab>
+
+  <Tab title="비 인증 API 요청">
+    **API 방식으로 빌링키 발급,결제요청,예약결제를 구현할수 있습니다.**
+
+    **일회성 결제 요청하기**
+
+    REST API [**POST /subscribe/payments/onetime**](../../api/api-4/api-1)을 호출하여 일회성 결제를 요청합니다. 요청 시 전달된 카드는 포트원에 등록되지 않습니다.
+
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
+
+    **빌링키 발급 요청하기**
+
+    REST API [**POST /subscribe/customers/\{customer\_uid}**](../../api/api-2/api-1)를 호출하여 빌링키 발급을 요청합니다.
+
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"card_number":"1234-1234-1234-1234", "expiry":"2025-12", "birth":"820213", "pwd_2digit":"00"}' \
+         https://api.iamport.kr/subscribe/customers/your-customer-unique-id
+    ```
+
+    **빌링키 발급 및 최초 결제 요청하기**
+
+    REST API [**POST /subscribe/payments/onetime**](../../api/api-4/api-1)을 호출하여 빌링키 발급과 최초 결제를 요청합니다.
+
+    - **`customer_uid`** : 빌링키 등록을 위해서 지정해야 합니다.
+
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/onetime
+    ```
+
+    **빌링키로 결제 요청하기**
+
+    빌링키 발급과 최초 결제가 성공하면 빌링키는 전달된 `customer_uid` 와 1:1 매칭되어 포트원에 저장됩니다. 보안상의 이유로 서버는 빌링키에 직접 접근할 수 없기 때문에 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
+
+    ```sh
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+
+    **자세한 가이드는 아래 링크를 참조하세요**
+
+    <ContentRef slug="/ko/auth/guide-1/readme" />
+  </Tab>
+</Tabs>
+
+## 3. 부가기능
+
+<Tabs>
+  <Tab title="할부개월수 설정">
+    ```json
+    {
+      "display": {
+        "card_quota": [6] // 할부개월 6개월까지만 활성화
+      }
+    }
+    ```
+
+    **파라미터 설명**
+
+    - **`card_quota` :**
+      - `[]`: 일시불만 결제 가능
+      - `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능
+
+    <Hint style="info">
+      할부결제는 **5만원 이상 결제 요청시**에만 이용 가능합니다.
+    </Hint>
+  </Tab>
+
+  <Tab title="카드사 모듈 바로 호출">
+    ```json
+    {
+      "card": {
+        "direct": {
+          "code": "367",
+          "quota": 3
+        }
+      }
+    }
+    ```
+
+    **파라미터 설명**
+
+    - **`code`** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
+    - **`quota`** : 할부 개월 수. 일시불일 시 0으로 지정 (**number**)
+  </Tab>
+
+  <Tab title="에스크로 결제">
+    에스크로 결제를 위해서는 **`escrow`** 파라미터를 추가하고 <mark style="color:red;">**true**</mark> 값으로 설정해야 합니다. 에스크로 결제가 완료되면 고객사는 배송정보 등록을 진행해야 하며 해당 작업이 누락되는 경우 **정산이 진행되지 않습니다**. [**배송정보 등록**](../../api/api-7/api-1) 및 [**배송수정 API**](../../api/api-7/api-2) 를 이용하여 배송정보를 관리할 수 있습니다.
+
+    ```json title="API Body 예시"
+    {
+      "logis": {
+        "invoice": "1728384716123",
+        "company": "CJGLS",
+        "receiving_at": "20220215",
+        "address": "성수이로20길16"
+      },
+      "receiver": {
+        "name": "홍길동"
+      },
+      "sender": {
+        "relationship": "본인"
+      }
+    }
+    ```
+
+    <Hint style="danger">
+      **주의사항**
+
+      - 에스크로 배송정보 등록/수정 시 고객사가 전달한 배송정보(운송장 번호, 택배사 이름 등)에 대해 페이조아 측에서 유효성 체크를 하지 않습니다.
+    </Hint>
+  </Tab>
+</Tabs>
+
+## 페이조아 결제 특이사항
+
+<Details>
+  <p slot="summary">PC 결제는 `success`, 모바일 결제는 `imp_success` 전달</p>
+
+  PC와 모바일에서 결제창이 각기 다른 방식으로 호출되기 때문에, 결제 후속 프로세스에도 차이가 있습니다. PC 결제의 경우 페이조아 결제창이 iframe 방식으로 호출되기 때문에 결제 프로세스 완료 후 콜백 함수(`IMP.request_pay` 함수 호출시 전달한 두 번째 파라미터)가 호출되지만, 모바일 결제의 경우 페이조아 결제창이 페이조아 URL로 리디렉션되기 때문에 결제 프로세스 완료 후 지정 된 URL(`m_redirect_url`)로 302 리디렉션 됩니다. 이때 결제 실패/성공 여부를 의미하는 파라미터가 전달되는데, PC 결제시에는 `success`, 모바일 결제시에는 `imp_success`로 서로 다른 이름의 파라미터가 전달되어 주의가 요구됩니다. 정리해보면 아래와 같습니다.
+
+  - \[PC결제] iframe → 콜백 함수 호출 → 콜백 함수로 전달되는 response 객체에 `success` 키 값으로 전달
+
+    ```tsx
+    IMP.request_pay(
+      {
+        // 중략
+      },
+      function (response) {
+        const { success } = response; // 결제 성공 또는 실패 여부
+        if (success) {
+          // 결제 성공 시 프로세스
+        } else {
+          // 결제 실패 시 프로세스
+        }
+      },
+    );
+    ```
+
+  - \[모바일 결제] 리디렉션 → m\_redirect\_url로 302 리디렉션 → `imp_success` 쿼리 파라미터 전달
+
+    ```text
+    /**
+     * m_redirect_url을 https://myservice.com/payments/complete로 설정한 후
+     * 결제 프로세스 종료 됐을때 302 리디렉션 되는 URL 예시
+     */
+    https://myservice.com/payments/complete?**imp_success=true**&imp_uid=imp1234567890&merchant_uid=mid_123467890
+    ```
+
+  **`imp_success`와 `success`는 deprecated**
+
+  하지만 애초에 `imp_success` 파라미터든 `success` 파라미터는 deprecated 되었기 때문에 해당 파라미터를 기반으로 결제 실패/성공 여부를 판단하시면 안 됩니다. 해당 파라미터는 단순히 포트원 → 고객사 클라이언트로 응답되는 시기의 결제 실패/성공 여부를 내려주는데, 이 값은 페이조아 → 포트원으로 결제 결과 통지 → 포트원 DB 업데이트가 완료된 시점이어야지만 정확하다고 볼 수 있습니다.
+
+  그런데 **페이조아 → 포트원으로의 결제 결과가 전달 → 포트원 DB 업데이트와 포트원 → 고객사 클라이언트로의 응답이 비동기로 동작**하기 때문에 **실제로는 결제가 정상적으로 완료된 경우에도 아직 포트원 DB에 업데이트가 안 된 시점이라 고객사 클라이언트로 응답되는 `imp_success` 또는 `success` 파라미터가 `false`일 수** 있습니다.
+
+  따라서 포트원 → 고객사 클라이언트로 응답되는 결과 데이터 중 신뢰할 수 있는 값은 오로지 포트원 주문 번호(`imp_uid`)와 고객사 주문 번호(`merchant_uid`)이며, 이 값을 고객사 서버로 전달해 포트원 결제내역 조회 API([GET /payments/\{imp\_uid}](https://api.iamport.kr/#!/payments/getPaymentByImpUid))를 호출한 결과(`status`)를 보고 결제 실패(`failed`)/성공(`paid`) 여부를 판단하시길 바랍니다.
+</Details>
+
+<Details>
+  <p slot="summary">사파리 브라우저 - 하나카드 / NH앱캐시 결제 시 세션 관련 이슈 존재</p>
+
+  사파리 브라우저에서 하나카드 / NH앱캐시(계좌이체) 결제 시 아래와 같이 `세션 유효기간이 초과되어 카드사와 연결이 종료되었습니다`와 같은 메시지가 렌더링되며 더 이상 결제가 불가능한 이슈가 있습니다.
+
+  <img src="/gitbook-assets/ko/image (116).png" alt="참고이미지" data-size="original" />
+
+  이러한 현상을 겪으시는 경우, 사파리 환경설정에서 아래와 같이 `크로스 사이트 추적 방지` 해제 및 `모든 쿠키 차단`이 모두 해제되어 있는지 확인해 보시고, 모두 해제 후 다시 시도해보시길 바랍니다.
+
+  <img src="/gitbook-assets/ko/image (159).png" alt="참고이미지" data-size="original" />
+</Details>
+
+<Details>
+  <p slot="summary">사파리/파이어폭스 브라우저 - BC카드 결제시 이슈 존재</p>
+
+  신용카드 결제창에서 BC카드 선택 후 다음 버튼 클릭시 "지불에 실패하였습니다"라는 알림창이 뜨면서 더 이상 진행되지 않는 이슈가 있습니다. 다른 브라우저(크롬, 오페라, 엣지 등)나 다른 카드사에서는 이상 없이 BC카드 결제를 위한 페이북 QR코드가 렌더링되지만, 사파리와 파이어폭스에서는 아래와 같이 "지불에 실패하였습니다"라는 메시지를 담고 있는 알림창이 뜨면서 더 이상 결제가 진행되지 않습니다.
+
+  <img src="/gitbook-assets/ko/image (223).png" alt="참고이미지" data-size="original" />
+
+  이러한 현상을 겪으시는 경우, 사파리 환경설정에서 아래와 같이 `*.payjoa.co.kr` 도메인에 대해 팝업 `허용` 설정 되어 있으신지 확인해보시고, 허용 후 다시 시도해보시길 바랍니다.
+
+  <img src="/gitbook-assets/ko/image (256).png" alt="참고이미지" data-size="original" />
+</Details>
+
+<Details>
+  <p slot="summary">실시간 계좌이체 결제 플로우 상이</p>
+
+  페이조아의 경우 내부적으로 토스페이먼츠 - 계좌이체를 사용하고 있어 토스 간편결제, NH앱캐시 그리고 계좌 정보 직접 입력을 통해서만 계좌이체가 가능합니다. 여기서 계좌 정보 직접 입력시, 보안카드 / OTP 인증 → 공인인증서 인증까지 진행해야 합니다.
+
+  단, 모바일 결제의 경우엔 토스 간편결제와 NH앱캐시를 통해서만 결제가 가능합니다.
+
+  <img src="/gitbook-assets/ko/image (109).png" alt="PC 결제" data-size="original" />
+
+  <img src="/gitbook-assets/ko/image (249).png" alt="모바일 결제" data-size="original" />
+</Details>
+
+<Details>
+  <p slot="summary">가상계좌 입금 완료시, 송금자 이름만 알 수 있음</p>
+
+  페이조아는 (발급된) 가상계좌에 입금 완료시, 송금자의 정보(은행명, 계좌번호, 송금인) 중 송금자 이름만 알려줍니다. 따라서 포트원 결제내역 조회([**GET /payments/\{imp\_uid}**](../../api/api-1/api-1))시 송금자의 은행코드(`bank_code`)과 은행명(`bank_name`)은 모두 NULL로 내려가며, 송금자 이름을 확인하기 위해서는 아래 예시와 같이 별도의 쿼리 파라미터(`extension`)를 `true`로 설정해주셔야 합니다.
+
+  ```http
+  GET http://api.iamport.kr/payments/{포트원 번호}?**extension=true**
+  ```
+
+  ```json
+  {
+    // ... 중략
+    "bank_code": null, // 송금자 은행 코드 알 수 없음
+    "bank_name": null, // 송금자 은행 이름 알 수 없음
+    "extension": {
+      // ... 중략
+      "REMITTER": "홍길동" // 송금자 이름
+    }
+  }
+  ```
+</Details>
+
+<Details>
+  <p slot="summary">가상계좌 결제 취소시, PG사와 특약 필요</p>
+
+  가상계좌 입금 완료 건에 대한 결제 취소(환불)은 가상계좌 발급 시 부과되는 수수료 이슈로 인해 페이조아와 특약을 맺어야지만 가능합니다. 이 특약 없이는 기본적으로 가상계좌 결제 건의 환불은 불가능합니다.
+</Details>
+
+<Details>
+  <p slot="summary">가상계좌 결제 취소시, 실제 환불 금액 입금까지 7 영업일 이상 소요</p>
+
+  페이조아 가상계좌 결제 취소(환불)는 고객사 → 포트원 → 페이조아로 환불 요청 접수 시, 페이조아 담당자가 수기로 확인 후 환불 처리를 해 주는 프로세스로 진행되기 때문에 환불 금액이 실제로 입금 될때까지 7 영업일 이상 소요됩니다.
+</Details>
+
+<Details>
+  <p slot="summary">과세/면세/복합과세용 CPID는 모두 건별 구분으로 1개만 발급하여 사용</p>
+
+  페이조아 측으로 해당 CPID 설정을 `건별구분`으로 발급 해달라고 요청해주셔야 합니다. 그래야 하나의 CPID로 과세/면세/복합과세 거래건을 모두 처리할 수 있습니다.
+</Details>
+
+<Details>
+  <p slot="summary">면세금액은 카드 결제만 설정 가능</p>
+
+  결제창(`IMP.request_pay` 함수) 호출시 총 결제 금액(`amount`)중 면세 금액(`tax_free`)을 설정할 수 있습니다. 단, 페이조아 시스템 상 면세 금액은 카드 결제(`pay_method: "card"`) 시에만 가능하고 계좌이체 / 가상계좌 결제 시에는 설정할 수 없어 전액 과세 처리 됩니다.
+</Details>
+
+<Details>
+  <p slot="summary">페이조아 자체 버그</p>
+
+  **에스크로 결제시 구매자 전화번호가 결제창에 자동 완성되지 않음**
+
+  <img src="/gitbook-assets/ko/image (253).png" alt="참고이미지" data-size="original" />
+
+  - `IMP.request_pay` 호출시 전달한 구매자의 전화번호(`buyer_tel`)가 다른 결제창과는 달리 에스크로 결제창에서는 자동 완성되지 않습니다. 이는 페이조아가 해당 기능을 제공하지 않는 것으로 이용에 참고 부탁드립니다.
+</Details>
