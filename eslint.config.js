@@ -6,12 +6,9 @@ import {
 import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsEslintParser from "@typescript-eslint/parser";
 import unocss from "@unocss/eslint-plugin";
-import astroParser from "astro-eslint-parser";
 import * as parserPlain from "eslint-parser-plain";
-import astro from "eslint-plugin-astro";
 import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
-import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
 import { readFileSync } from "fs";
 import { load } from "js-yaml";
@@ -40,19 +37,14 @@ const tsTypeCheckedRules = {
 
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
-  { ignores: ["dist", ".astro", ".vercel"] },
+  { ignores: ["dist", ".vercel"] },
   {
     ...eslint.configs.recommended,
     ignores: ["scripts/**/*.ts", "**/*.mdx/*"],
   },
   {
     files: ["**/*.{ts,tsx}"],
-    ignores: [
-      "scripts/**/*.ts",
-      "**/*.astro/*.ts",
-      "**/*.mdx/*",
-      "**/__fixtures__/**/*",
-    ],
+    ignores: ["scripts/**/*.ts", "**/*.mdx/*", "**/__fixtures__/**/*"],
     languageOptions: {
       parser: tsEslintParser,
       parserOptions: {
@@ -82,13 +74,9 @@ export default [
   {
     ...mdx.flat,
     files: ["**/*.mdx"],
-    plugins: {
-      ...mdx.flat.plugins,
-      react,
-    },
+    plugins: mdx.flat.plugins,
     rules: {
       "mdx/remark": "error",
-      "react/jsx-uses-vars": "error",
       "prettier/prettier": "off",
     },
     processor: await mdx.createRemarkProcessor({
@@ -124,48 +112,6 @@ export default [
     rules: {
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
-    },
-  },
-  {
-    files: ["**/*.astro"],
-    plugins: { astro, "@typescript-eslint": tsEslintPlugin },
-    processor: "astro/client-side-ts",
-    languageOptions: {
-      globals: {
-        node: true,
-        "astro/astro": true,
-        es2020: true,
-      },
-      parser: astroParser,
-      parserOptions: {
-        parser: "@typescript-eslint/parser",
-        extraFileExtensions: [".astro"],
-        sourceType: "module",
-      },
-    },
-    rules: {
-      ...astro.configs.recommended.rules,
-      ...tsRules,
-    },
-  },
-  {
-    files: ["**/*.astro/*.ts", "*.astro/*.ts"],
-    plugins: {
-      "@typescript-eslint": tsEslintPlugin,
-    },
-    languageOptions: {
-      globals: {
-        browser: true,
-        es2020: true,
-      },
-      parser: tsEslintParser,
-      parserOptions: {
-        sourceType: "module",
-      },
-    },
-    rules: {
-      ...tsRules,
-      "prettier/prettier": "off",
     },
   },
   {
