@@ -1,6 +1,6 @@
 ---
 title: 결제 URL 생성하기
-description: 결제 URL 생성 API 명세를 기술합니다.
+description: 결제 URL 생성 API 사용법을 안내합니다.
 targetVersions: ["v1"]
 ---
 
@@ -15,7 +15,8 @@ import Hint from "~/components/Hint.astro";
 
 ## 1. 개요
 
-본 문서는 포트원에서 제공하는 결제 URL 생성 API 명세를 기술합니다. 포트원 서비스를 이용중인 고객사는 해당 서비스를 제약없이 이용 가능합니다.
+본 문서는 포트원에서 제공하는 결제 URL 생성 API 명세를 기술합니다. 포트원 서비스를 이용중인 고객사는
+해당 서비스를 제약없이 이용 가능합니다.
 
 ## 2. API URI
 
@@ -35,8 +36,9 @@ import Hint from "~/components/Hint.astro";
 
 ## 3. 설명
 
-결제가 가능한 URL을 생성하여 고객이 해당 URL에 접근하여 결제를 진행 할 수 있습니다.
-PG사가 지원하는 모든 결제수단 지원이 가능하며 설정한 시간이 만료된 경우 해당 URL 접근시 결제를 진행할 수 없습니다.
+API를 이용하여 결제가 가능한 URL을 생성하고, 고객이 해당 URL을 클릭하면 결제를 진행할 수 있습니다.
+PG사가 지원하는 모든 결제수단에 대해 지원이 가능합니다. 만약 설정한 시간이 만료된 경우 해당 URL을
+클릭하더라도 결제가 진행되지 않습니다.
 
 ## 4. 요청 메세시 상세
 
@@ -51,112 +53,110 @@ PG사가 지원하는 모든 결제수단 지원이 가능하며 설정한 시�
 
   #### Body
 
-  <SwaggerParameter name="title" type="String" required="true">
-    <mark style="color:red;">
-      브릿지 페이지 노출문구
-    </mark>
+  <SwaggerParameter name="title" type="string" required="true">
+    브릿지 페이지 노출문구
   </SwaggerParameter>
 
-  <SwaggerParameter name="user_code" type="String" required="true">
-    <mark style="color:red;">
-      고객사식별코드
-    </mark>
+  <SwaggerParameter name="user_code" type="string" required="true">
+    고객사식별코드
   </SwaggerParameter>
 
   <SwaggerParameter name="amount" type="integer" required="true">
-    <mark style="color:red;">
-      결제금액
-    </mark>
+    결제금액
   </SwaggerParameter>
 
-  <SwaggerParameter name="merchant_uid" type="String" required="true">
-    <mark style="color:red;">
-      주문번호
-    </mark>
+  <SwaggerParameter name="merchant_uid" type="string" required="true">
+    주문번호
   </SwaggerParameter>
 
-  <SwaggerParameter name="name" type="String" required="true">
-    <mark style="color:red;">
-      제품명
-    </mark>
+  <SwaggerParameter name="name" type="string" required="true">
+    제품명
   </SwaggerParameter>
 
   <SwaggerParameter name="tax_free" type="integer" required="false">
     면세금액
   </SwaggerParameter>
 
-  <SwaggerParameter name="currency" type="String" required="true">
-    <mark style="color:red;">
-      통화구분코드
-    </mark>
+  <SwaggerParameter name="currency" type="string" required="true">
+    통화구분코드
   </SwaggerParameter>
 
-  <SwaggerParameter name="language" type="String" required="false">
-    실 결제창 표기언어
+  <SwaggerParameter name="language" type="string" required="false">
+    결제대행사 결제창 표기언어
 
     - ko
     - en
   </SwaggerParameter>
 
-  <SwaggerParameter name="buyer_name" type="String" required="false">
+  <SwaggerParameter name="buyer_name" type="string" required="false">
     주문자명
   </SwaggerParameter>
 
-  <SwaggerParameter name="buyer_tel" type="String" required="true">
-    <mark style="color:red;">
-      주문자연락처
-    </mark>
+  <SwaggerParameter name="buyer_tel" type="string" required="true">
+    주문자연락처
   </SwaggerParameter>
 
-  <SwaggerParameter name="buyer_addr" type="String" required="false">
+  <SwaggerParameter name="buyer_addr" type="string" required="false">
     주문자주소
   </SwaggerParameter>
 
-  <SwaggerParameter name="buyer_email" type="String" required="false">
+  <SwaggerParameter name="buyer_email" type="string" required="false">
     주문자 이메일주
   </SwaggerParameter>
 
-  <SwaggerParameter name="buyer_postcode" type="String" required="false">
+  <SwaggerParameter name="buyer_postcode" type="string" required="false">
     주문자 우편번호
   </SwaggerParameter>
 
-  <SwaggerParameter name="custom_data" type="Object" required="false">
+  <SwaggerParameter name="custom_data" type="object" required="false">
     에코항목
   </SwaggerParameter>
 
-  <SwaggerParameter name="notice_url" type="String" required="false">
+  <SwaggerParameter name="notice_url" type="string" required="false">
     결제결과(성공거래)를 수신받을 URL(웹훅)
   </SwaggerParameter>
 
-  <SwaggerParameter name="expired_at" type="String" required="true">
-    <mark style="color:red;">
-      페이지 만료시각
-    </mark>
+  <SwaggerParameter name="expired_at" type="string" required="true">
+    페이지 만료시각
   </SwaggerParameter>
 
-  <SwaggerParameter name="display_language" type="String" required="false">
+  <SwaggerParameter name="display_language" type="string" required="false">
     브릿지 페이지 표기언어
 
     - ko : 한국어
     - en : 영어
   </SwaggerParameter>
 
-  <SwaggerParameter name="pay_methods" type="Object" required="true">
+  <SwaggerParameter name="pay_methods" type="object array" required="true">
     **pg** <mark style="color:green;">**string**</mark>
 
     pg사 구분코드
 
-    [#undefined](../sdk/javascript-sdk/payrq#undefined "mention")
+    [pg 파라미터 가이드 바로가기](../sdk/javascript-sdk/payrq?v=v1#pg-string)
 
     **pay\_method** <mark style="color:green;">**string**</mark>
 
     결제수단 구분코드
 
-    [#undefined](../sdk/javascript-sdk/payrq#undefined "mention")
+    [pay\_method 가이드 바로가기](../sdk/javascript-sdk/payrq?v=v1#pay_method-string)
 
     **label** <mark style="color:green;">**string**</mark>
 
-    브릿지페이지 결제수단 표현값
+    브릿지페이지 결제수단 표현값 ex. 신용카드
+  </SwaggerParameter>
+
+  <SwaggerParameter name="direct" type="object" required="false">
+    **pg** <mark style="color:green;">**string**</mark>
+
+    pg사 구분코드 ex. paymentwall.mid
+
+    [pg 파라미터 가이드 바로가기](../sdk/javascript-sdk/payrq?v=v1#pg-string)
+
+    **pay\_method** <mark style="color:green;">**string**</mark>
+
+    결제수단 구분코드. (하나의 결제수단만 선택 가능합니다.)
+
+    [pay\_method 가이드 바로가기](../sdk/javascript-sdk/payrq?v=v1#pay_method-string)
   </SwaggerParameter>
 
   ### Responses
@@ -164,7 +164,7 @@ PG사가 지원하는 모든 결제수단 지원이 가능하며 설정한 시�
   <SwaggerResponse status="200: OK" description="성공">
     ```json title="json"
     {
-      "shortenedUrl": "https://dev.impay.link/4bdf239e"  //결제링크 생성
+      "shortenedUrl": "https://impay.link/91e8f8cc"  //결제링크 생성
     }
     ```
   </SwaggerResponse>
@@ -172,9 +172,16 @@ PG사가 지원하는 모든 결제수단 지원이 가능하며 설정한 시�
 
 ### 요청 JSON 전문 예시
 
-```json title="json"
+```json title="일반 호출"
 {
   "payment_info": "{\"title\":\"테스트고객사\",\"user_code\":\"imp68124833\",\"amount\":10000,\"merchant_uid\":\"merchant_1630665784552\",\"name\":\"결제링크 테스트\",\"tax_free\":\"면세공급가액\",\"currency\":\"KRW\",\"language\":\"ko\",\"buyer_name\":\"\",\"buyer_tel\":\"\",\"buyer_addr\":\"\",\"buyer_email\":\"\",\"buyer_postcode\":\"\",\"custom_data\":\"json_object\",\"notice_url\":\"결제 결과를 받을 url\",\"pay_methods\":[{\"pg\":\"INIpayTest\",\"pay_method\":\"card\",\"label\":\"신용/체크카드\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"naverpay\",\"label\":\"네이버페이\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"kakaopay\",\"label\":\"카카오페이\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"phone\",\"label\":\"핸드폰 소액결제\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"trans\",\"label\":\"계좌이체\"},{\"pg\":\"INIpayTest\",\"pay_method\":\"vbank\",\"label\":\"가상계좌\"}]}",
+  "expired_at": 1634324016
+}
+```
+
+```json title="PG사 결제창 다이렉트 호출"
+{
+  "payment_info": "{\"title\":\"테스트고객사\",\"user_code\":\"imp68124833\",\"amount\":1000,\"merchant_uid\":\"merchant_16306657845522\",\"name\":\"결제링크 테스트\",\"tax_free\":\"면세공급가액\",\"currency\":\"KRW\",\"language\":\"ko\",\"buyer_name\":\"\",\"buyer_tel\":\"\",\"buyer_addr\":\"\",\"buyer_email\":\"\",\"direct\":{\"pg\":\"tosspayments\",\"pay_method\":\"card\"}}",
   "expired_at": 1634324016
 }
 ```
@@ -205,7 +212,7 @@ PG사가 지원하는 모든 결제수단 지원이 가능하며 설정한 시�
   **API 응답이 아래와 같은경우**
 
   ```json
-  { "shortenedUrl": "https://dev.impay.link/4bdf239e" }
+  { "shortenedUrl": "https://impay.link/4bdf239e" }
   ```
 
   `https://api.iamport.co/api/supplements/v1/link/payment/4bdf239e`
