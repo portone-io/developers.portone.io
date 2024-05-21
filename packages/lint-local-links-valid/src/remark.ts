@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { lintRule } from "unified-lint-rule";
+import { lintRule, type Node } from "unified-lint-rule";
 import { visit } from "unist-util-visit";
 import * as YAML from "yaml";
 
@@ -82,6 +82,37 @@ export const remarkLintLocalLinksValid = lintRule(
           file.message(reason, node);
         });
         tasks.push(task);
+      }
+      if (
+        node.type === "mdxJsxFlowElement" &&
+        "name" in node &&
+        node.name === "ContentRef" &&
+        "attributes" in node &&
+        Array.isArray(node.attributes)
+      ) {
+        for (const _attr of node.attributes) {
+          const attr = _attr as unknown;
+          if (
+            typeof attr === "object" &&
+            attr !== null &&
+            "type" in attr &&
+            attr.type === "mdxJsxAttribute" &&
+            "name" in attr &&
+            attr.name === "slug" &&
+            "value" in attr &&
+            typeof attr.value === "string" &&
+            "position" in attr
+          ) {
+            const link = attr.value;
+            const task = checkLink(
+              path.isAbsolute(link) ? path.join("/docs", link) : link,
+              (reason) => {
+                file.message(reason, attr as Node);
+              },
+            );
+            tasks.push(task);
+          }
+        }
       }
     });
     await Promise.all(tasks);
