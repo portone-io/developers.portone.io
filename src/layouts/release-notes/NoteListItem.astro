@@ -1,0 +1,30 @@
+---
+import { format } from "date-fns";
+
+import { JustLink } from "~/layouts/sidebar/LeftSidebarItem";
+import type { ReleaseNote } from "~/misc/releaseNote";
+
+interface Props {
+  note: ReleaseNote;
+  activeSlug?: string | undefined;
+}
+
+const { note, activeSlug } = Astro.props;
+
+const noteTitle = `${format(note.entry.data.releasedAt, "yyyy-MM-dd")} 업데이트`;
+const isActive = activeSlug ? note.slug === activeSlug : false;
+const href = `/release-notes/${note.slug}`;
+---
+
+<li>
+  <JustLink
+    client:visible
+    title={noteTitle}
+    href={href}
+    isActive={isActive}
+    event={{
+      name: "Developers_Releasenote_Menu_Click",
+      props: { slug: note.slug },
+    }}
+  />
+</li>

@@ -1,8 +1,9 @@
 ---
-import { format } from "date-fns";
+import { match, P } from "ts-pattern";
 
-import { JustLink } from "~/layouts/sidebar/LeftSidebarItem";
 import type { ReleaseNote } from "~/misc/releaseNote";
+
+import NoteListItem from "./NoteListItem.astro";
 
 interface Props {
   title: string;
@@ -10,29 +11,44 @@ interface Props {
   activeSlug?: string | undefined;
 }
 
-const { title, notes, activeSlug } = Astro.props;
+const { title, notes: _notes, activeSlug } = Astro.props;
+const [notes, noteMap] = _notes.reduce(
+  (acc, note) => {
+    const [notes, noteMap] = acc;
+    match(note.slug.split("/").slice(1))
+      .with([P.select(P.string), P.string], (directory) => {
+        if (!noteMap.has(directory)) {
+          noteMap.set(directory, [note]);
+        } else {
+          noteMap.get(directory)!.push(note);
+        }
+      })
+      .with([P.string], () => {
+        notes.push(note);
+      })
+      .otherwise(() => {
+        console.error(`Invalid slug: ${note.slug}`);
+      });
+    return acc;
+  },
+  [[] as ReleaseNote[], new Map<string, ReleaseNote[]>()],
+);
 ---
 
 <li>
   <h4 class="p-2 text-lg font-bold first:mt-0">{title}</h4>
   <ul class="flex flex-col gap-1">
+    {notes.map((note) => <NoteListItem note={note} activeSlug={activeSlug} />)}
     {
-      notes.map((note) => {
-        const noteTitle = `${format(note.entry.data.releasedAt, "yyyy-MM-dd")} 업데이트`;
-        const isActive = activeSlug ? note.slug === activeSlug : false;
-        const href = `/release-notes/${note.slug}`;
+      Array.from(noteMap.entries()).map(([title, notes]) => {
         return (
           <li>
-            <JustLink
-              client:visible
-              title={noteTitle}
-              href={href}
-              isActive={isActive}
-              event={{
-                name: "Developers_Releasenote_Menu_Click",
-                props: { slug: note.slug },
-              }}
-            />
+            <h5 class="p-2 text-lg font-bold">{title}</h5>
+            <ul class="flex flex-col gap-1">
+              {notes.map((note) => (
+                <NoteListItem note={note} activeSlug={activeSlug} />
+              ))}
+            </ul>
           </li>
         );
       })
