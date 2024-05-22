@@ -9,6 +9,7 @@ versionVariants:
 import Figure from "~/components/Figure.astro";
 import Codepen from "~/components/gitbook/Codepen.astro";
 import ContentRef from "~/components/gitbook/ContentRef.astro";
+import Details from "~/components/gitbook/Details.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 import Hint from "~/components/Hint.astro";
@@ -47,9 +48,10 @@ KG이니시스 결제창을 호출할 수 있습니다.
         vbank_due: "YYYYMMDD",
         bypass: {
           acceptmethod: "noeasypay", // 간편결제 버튼을 통합결제창에서 제외(PC)
+          // acceptmethod: "cardpoint", // 카드포인트 사용시 설정(PC)
           P_RESERVED: "noeasypay=Y", // 간편결제 버튼을 통합결제창에서 제외(모바일)
-          acceptmethod: "cardpoint", // 카드포인트 사용시 설정(PC)
-          P_RESERVED: "cp_yn=Y", // 카드포인트 사용시 설정(모바일)
+          // P_RESERVED: "cp_yn=Y", // 카드포인트 사용시 설정(모바일)
+          // P_RESERVED: "twotrs_bank=Y&iosapp=Y&app_scheme={고객사의 앱 스킴}", // iOS에서 계좌이체시 결제가 이뤄지던 앱으로 돌아가기
         },
         period: {
           from: "20200101", //YYYYMMDD
@@ -69,7 +71,7 @@ KG이니시스 결제창을 호출할 수 있습니다.
 
     **PG사 구분코드**
 
-    **`html5_inicis.`**`{`PG상점아이디}
+    - `html5_inicis.{PG상점아이디}`
 
     PG상점아이디는 KG 이니시스와 계약 후 발급받을 수 있습니다.
 
@@ -77,22 +79,26 @@ KG이니시스 결제창을 호출할 수 있습니다.
 
     **결제수단 구분코드**
 
-    - `card` (신용카드)
-    - `samsung` (삼성페이 허브형)
-    - `kakaopay` (카카오페이 허브형)
-    - `ssgpay` (SSG페이 허브형)
-    - `chai` (차이페이)
-    - `trans` (실시간 계좌이체)
-    - `vbank`(가상계좌)
-    - `phone` (휴대폰소액결제)
-    - `payco` (페이코 허브형)
-    - tosspay (토스간편결제 허브형)
-    - lpay (L페이 허브형)
-    - `naverpay` (네이버페이)
-    - `cultureland` (문화상품권)
-    - `smartculture` (스마트문상)
-    - `happymoney` (해피머니)
-    - booknlife(도서문화상품권)
+    <Details>
+      <p slot="summary">결제수단 구분코드</p>
+
+      - `card` (신용카드)
+      - `samsung` (삼성페이 허브형)
+      - `kakaopay` (카카오페이 허브형)
+      - `ssgpay` (SSG페이 허브형)
+      - `chai` (차이페이)
+      - `trans` (실시간 계좌이체)
+      - `vbank`(가상계좌)
+      - `phone` (휴대폰소액결제)
+      - `payco` (페이코 허브형)
+      - `tosspay` (토스간편결제 허브형)
+      - `lpay` (L페이 허브형)
+      - `naverpay` (네이버페이)
+      - `cultureland` (문화상품권)
+      - `smartculture` (스마트문상)
+      - `happymoney` (해피머니)
+      - `booknlife`(도서문화상품권)
+    </Details>
 
     **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -100,15 +106,15 @@ KG이니시스 결제창을 호출할 수 있습니다.
 
     매번 고유하게 채번되어야 합니다.
 
-    **`amount` \***<mark style="color:purple;">**integer**</mark>
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
     **결제금액**
 
     <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
 
-    **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+    **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-    **`주문자연락처`**
+    **주문자연락처**
 
     <mark style="color:red;">필수</mark> 파라미터 입니다.
 
