@@ -9,6 +9,7 @@ import unocss from "@unocss/eslint-plugin";
 import * as parserPlain from "eslint-parser-plain";
 import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
+import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
 import { readFileSync } from "fs";
 import { load } from "js-yaml";
@@ -74,9 +75,13 @@ export default [
   {
     ...mdx.flat,
     files: ["**/*.mdx"],
-    plugins: mdx.flat.plugins,
+    plugins: {
+      ...mdx.flat.plugins,
+      react,
+    },
     rules: {
       "mdx/remark": "error",
+      "react/jsx-uses-vars": "error",
       "prettier/prettier": "off",
     },
     processor: await mdx.createRemarkProcessor({
