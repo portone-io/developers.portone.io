@@ -32,8 +32,3 @@ declare module "*/_redir.yaml" {
   const value: Redir[];
   export default value;
 }
-
-declare module "*?base64" {
-  const base64: string;
-  export default base64;
-}
