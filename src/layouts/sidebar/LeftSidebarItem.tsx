@@ -125,7 +125,7 @@ interface LinkTitleProps {
   title: string;
   isExternal?: boolean | undefined;
 }
-function LinkTitle({ title, isExternal }: LinkTitleProps) {
+export function LinkTitle({ title, isExternal }: LinkTitleProps) {
   return (
     <span class="flex items-center gap-2 py-1">
       <span>{title || <span class="text-red">(unknown page)</span>}</span>

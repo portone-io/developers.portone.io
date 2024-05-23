@@ -3,27 +3,32 @@ import { match, P } from "ts-pattern";
 
 import type { ReleaseNote } from "~/misc/releaseNote";
 
+import NoteFolder from "./NoteFolder";
 import NoteListItem from "./NoteListItem.astro";
 
 interface Props {
   title: string;
   notes: ReleaseNote[];
-  activeSlug?: string | undefined;
+  activeSlug: string | undefined;
 }
 
 const { title, notes: _notes, activeSlug } = Astro.props;
 const [notes, noteMap] = _notes.reduce(
   (acc, note) => {
     const [notes, noteMap] = acc;
-    match(note.slug.split("/").slice(1))
-      .with([P.select(P.string), P.string], (directory) => {
-        if (!noteMap.has(directory)) {
-          noteMap.set(directory, [note]);
+    match(note.slug.split("/"))
+      .with([P.string, P.string, P.string], ([prefix, directory]) => {
+        const path = `${prefix}/${directory}`;
+        if (!noteMap.has(path)) {
+          noteMap.set(path, {
+            title: `${directory}년 업데이트`,
+            notes: [note],
+          });
         } else {
-          noteMap.get(directory)!.push(note);
+          noteMap.get(path)!.notes.push(note);
         }
       })
-      .with([P.string], () => {
+      .with([P.string, P.string], () => {
         notes.push(note);
       })
       .otherwise(() => {
@@ -31,7 +36,10 @@ const [notes, noteMap] = _notes.reduce(
       });
     return acc;
   },
-  [[] as ReleaseNote[], new Map<string, ReleaseNote[]>()],
+  [
+    [] as ReleaseNote[],
+    new Map<string, { title: string; notes: ReleaseNote[] }>(),
+  ],
 );
 ---
 
@@ -40,15 +48,19 @@ const [notes, noteMap] = _notes.reduce(
   <ul class="flex flex-col gap-1">
     {notes.map((note) => <NoteListItem note={note} activeSlug={activeSlug} />)}
     {
-      Array.from(noteMap.entries()).map(([title, notes]) => {
+      Array.from(noteMap.entries()).map(([path, { notes, title }]) => {
         return (
           <li>
-            <h5 class="p-2 text-lg font-bold">{title}</h5>
-            <ul class="flex flex-col gap-1">
+            <NoteFolder
+              title={title}
+              path={path}
+              activeSlug={activeSlug}
+              client:visible
+            >
               {notes.map((note) => (
                 <NoteListItem note={note} activeSlug={activeSlug} />
               ))}
-            </ul>
+            </NoteFolder>
           </li>
         );
       })
