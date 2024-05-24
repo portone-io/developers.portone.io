@@ -1,5 +1,8 @@
 // @refresh reload
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+import "@unocss/reset/tailwind.css";
 import "uno.css";
+import "./global.css";
 
 import { mount, StartClient } from "@solidjs/start/client";
 
