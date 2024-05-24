@@ -4,21 +4,34 @@ description: 스마트 라우팅 연동 방법을 안내합니다.
 targetVersions: ["v2"]
 ---
 
+import Details from "~/components/gitbook/Details.astro";
+import Hint from "~/components/Hint.astro";
 import ParamTree from "~/components/gitbook/ParamTree.astro";
 
-인증결제 스마트 라우팅은 먼저 스마트 라우팅을 위해 사용할 채널 그룹을 생성하고,
-해당 그룹의 ID를 전용 파라미터인 `channelGroupId`를 통해 지정해 주기만 하면
-다른 부분은 기본적인 인증결제 사용법과 동일하게 사용할 수 있습니다.
+<Hint style="info">
+  스마트 라우팅 기능이 궁금하다면 [스마트 라우팅 기능 소개](../../smartrouting/smartrouting)를 확인해 보세요!
+
+  스마트 라우팅을 이용하시려면 관리자콘솔에서 스마트 라우팅 그룹을 먼저 설정해야합니다.
+  그룹 설정 방법이 궁금하다면 [스마트 라우팅 그룹 설정 가이드](../console/guide/smartrouting)를 확인해 보세요.
+</Hint>
+
+## SDK(결제창) 인증결제 연동하기
+
+SDK를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그룹의 ID를 전용 파라미터인 `channelGroupId`에
+지정하여 사용이 가능합니다.
+이 외에 다른 결제 기능들은 동일하게 사용이 가능합니다. 단, 결제대행사 별로 지원하는 기능이 다를 수 있으니
+그룹 내에서 사용하는 모든 결제대행사에서 지원하는 기능만 사용하시길 권장드립니다.
+
 인증결제와 관련된 자세한 내용은 [인증결제 연동하기](/docs/ko/authpay/guide) 문서를 참고하시기 바랍니다.
 
-## 스마트 라우팅 결제창 호출하기
+### 예제 코드
 
-```tsx title="스마트 라우팅 결제창 호출하기"
+```tsx
 PortOne.requestPayment({
   storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
 
-  // 단일 채널에 대한 Channel Key 대신
-  // 사용할 모든 채널을 포함하는 Channel Group의 ID를 설정합니다.
+  // 결제대행사를 지정할 때 사용한 channelKey 대신
+  // channelGroupId 파라미터에 스마트 라우팅 그룹 ID를 설정합니다.
   channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
 
   // 기타 인증결제 파라미터 설정
@@ -28,8 +41,7 @@ PortOne.requestPayment({
   currency: "CURRENCY_KRW",
   payMethod: "CARD",
 
-  // 스마트 라우팅 사용 시 필수 파라미터들 추가 설정
-  productType: "DIGITAL",
+  // 스마트 라우팅 사용 시 필수 파라미터 추가 설정
   customer: {
     fullName: "홍길동",
     phoneNumber: "010-1234-5678",
@@ -40,54 +52,44 @@ PortOne.requestPayment({
 
 ### 주요 파라미터
 
-- **`channelGroupId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+**`channelGroupId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-  결제창을 호출하기 위해 사용할 채널 그룹의 ID입니다.
+  **스마트 라우팅 그룹 ID**
 
-  - 관리자 콘솔의 \[결제 연동] → \[스마트 라우팅] 메뉴에서 확인할 수 있습니다.
+  - 관리자 콘솔의 \[연동 관리] → \[스마트 라우팅] 메뉴에서 확인할 수 있습니다.
 
-  - 채널 그룹 ID를 지정하여 결제창을 호출하면, 채널 그룹 내의 채널 중 하나가
-    매 결제창 호출 시마다 무작위로 지정되어 결제창이 호출됩니다.
+  - 스마트 라우팅 그룹 ID를 지정하여 결제창을 호출하면, 스마트 라우팅 그룹 내 설정된 채널 비율에 따라
+  확률 기반으로 하나의 결제대행사가 호출됩니다.
 
-  - 무작위 채널 지정은 채널 그룹에 설정된 비율 설정을 반영하여 이루어집니다.
+### 필수 파라미터
 
-### 기타 파라미터
-
-각 파라미터에 대한 상세한 설명은 [JavaScript SDK 레퍼런스 → 결제요청 파라미터](/docs/ko/v2-payment/v2-sdk/payment-request)
+각 파라미터에 대한 상세한 설명은 [결제요청 파라미터](/docs/ko/v2-payment/v2-sdk/payment-request)
 문서를 참고하시기 바랍니다.
 
 <ParamTree>
-  - **`productType`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - **`storeId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-    스마트 라우팅 사용 시 필수 입력해야 합니다.
+    **고객사 ID**
 
-  - **`customer`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+  - **`paymentId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-    구매자 정보를 지정하는 파라미터입니다.
+    **고객사 주문 고유 번호**
 
-    <ParamTree>
-      - **`fullName`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - **`orderName`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-        스마트 라우팅 사용 시 해당 파라미터 혹은 `firstName`과 `lastName` 파라미터를 필수 입력해야 합니다.
+    **주문명**
 
-      - **`phoneNumber`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - **`totalAmount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
 
-        스마트 라우팅 사용 시 필수 입력해야 합니다.
+    **결제 금액**
 
-      - **`email`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - **`currency`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-        스마트 라우팅 사용 시 필수 입력해야 합니다.
-    </ParamTree>
+    **결제 통화**
 
-  - **`easyPay`** <mark style="color:blue;">**object**</mark>
+  - **`payMethod`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-    간편결제 사용 시 필요한 파라미터입니다.
-
-    <ParamTree>
-      - **`easyPayProvider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-        스마트 라우팅으로 간편결제 사용 시 필수 입력해야 합니다.
-    </ParamTree>
+    **결제수단 구분코드**
 
   - **`virtualAccount`** <mark style="color:blue;">**object**</mark>
 
@@ -96,46 +98,158 @@ PortOne.requestPayment({
     <ParamTree>
       - **`accountExpiry`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
-        스마트 라우팅으로 가상계좌 결제 사용 시 필수 입력해야 합니다.
+        **가상계좌 입금 만료기한**
 
-        `dueDate` 혹은 `validHours` 파라미터를 사용하여 원하는 방식으로 기한을 지정할 수 있습니다.
-    </ParamTree>
-
-  - **`giftCertificate`** <mark style="color:blue;">**object**</mark>
-
-    상품권 결제 사용 시 필요한 파라미터입니다.
-
-    <ParamTree>
-      - **`giftCertificateType`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-        스마트 라우팅으로 상품권 결제 사용 시 필수 입력해야 합니다.
-    </ParamTree>
-
-  - **`bypass`** <mark style="color:blue;">**object**</mark>
-
-    PG사별 고유 옵션 지정을 위한 파라미터입니다.
-
-    <ParamTree>
-      - **`nice_v2`** <mark style="color:blue;">**object**</mark>
-
-        `nice_v2` 채널 사용 시 적용되는 파라미터입니다.
+        스마트 라우팅을 이용한 가상계좌 결제 사용 시 필수 입력해야 합니다.
 
         <ParamTree>
-          - **`MallUserID`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - **`validHours`** <mark style="color:blue;">**number**</mark>
 
-            스마트 라우팅에 사용할 채널 그룹 내에 `nice_v2` 채널이 포함된 경우 필수 입력해야 합니다.
+            **가상계좌 입금 유효 시간**
+
+          - **`dueDate`** <mark style="color:blue;">**string**</mark>
+
+            **가상계좌 입금 유효 시각**
         </ParamTree>
     </ParamTree>
 
+  - **`easyPay`** <mark style="color:blue;">**object**</mark>
+
+    **간편결제 정보**
+
+    스마트 라우팅을 이용한 간편결제 다이렉트 호출 시 필수 입력해야 합니다.
+
     <ParamTree>
-      - **`kcp_v2`** <mark style="color:blue;">**object**</mark>
+      - **`easyPayProvider`** <mark style="color:green;">**string**</mark>
 
-        `kcp_v2` 채널 사용 시 적용되는 파라미터입니다.
+        **간편결제 수단**
+    </ParamTree>
 
-        <ParamTree>
-          - **`shop_user_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - **`productType`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-            스마트 라우팅에 사용할 채널 그룹 내에 `kcp_v2` 채널이 포함된 경우 필수 입력해야 합니다.
-        </ParamTree>
+    **상품 유형**
+
+    스마트 라우팅을 이용한 휴대폰 소액결제 사용 시 필수 입력해야 합니다.
+
+  - **`customer`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+
+    구매자 정보를 지정하는 파라미터입니다.
+
+    <ParamTree>
+      - **`fullName`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **구매자 전체 이름**
+
+        `fullName` 파라미터 대신 `firstName`과 `lastName` 파라미터를 사용해도 됩니다.
+
+      - **`phoneNumber`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **구매자 연락처**
+
+      - **`email`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **구매자 이메일 주소**
     </ParamTree>
 </ParamTree>
+
+### 유의사항
+
+<Details>
+  <Fragment slot="summary"> 스마트 라우팅 내 새로운 결제대행사 채널 추가 시 테스트 후 사용하시길 권장드립니다. </Fragment>
+
+  결제대행사별로 결제 수단에 따라 필수 파라미터가 다르므로 그룹 내 새로운 결제대행사 추가 시 테스트 환경에서
+  테스트를 진행한 후 실환경에 반영하시길 권장 드립니다.
+  필수 파라미터 조건을 충족하지 못하는 경우 에러가 리턴되며, 결제창이 정상적으로 호출되지 않을 수 있습니다.
+
+</Details>
+
+<Details>
+  <Fragment slot="summary"> 간편결제 사용을 원하시는 경우 허브형으로 사용하시길 권장드립니다. </Fragment>
+
+  **간편결제 허브형을 사용하시는 경우**, 결제대행사 별 계약에 따라 결제창에 표시되는 간편결제가 상이할 수 있습니다.
+
+  **간편결제 다이렉트 호출을 사용하시는 경우**, 결제대행사 별 계약에 따라 결제 호출 시 에러가 리턴되며 결제창이
+호출되지 않을 수 있습니다. 가급적 결제대행사 별 동일한 간편결제 수단을 모두 계약하신 후 사용하시길 권장드립니다.
+
+  단, **간편결제 직연동**의 경우 스마트 라우팅 기능을 제공하지 않습니다.
+
+</Details>
+
+## API 수기(키인)결제 연동하기
+
+API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그룹의 ID를 전용 파라미터인 `channelGroupId`에
+지정하여 사용이 가능합니다.
+이 외에 다른 결제 기능들은 동일하게 사용이 가능합니다. 단, 결제대행사 별로 지원하는 기능이 다를 수 있으니
+그룹 내에서 사용하는 모든 결제대행사에서 지원하는 기능만 사용하시길 권장드립니다.
+
+수기(키인)결제와 관련된 자세한 내용은 [수기(키인)결제 연동하기](/docs/ko/v2-payment/key-in) 문서를 참고하시기 바랍니다.
+
+### 예제 코드
+
+```ts
+  // 포트원 수기(키인)결제 API 호출
+  const paymentResponse = await fetch(
+    `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `PortOne ${PORTONE_API_SECRET}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channelGroupId: "channel-group-test-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
+        orderName: "월간 이용권 정기결제",
+        // 수기 결제 API를 참고해 고객 정보를 채워주세요.
+        customer: YOUR_CUSTOMER_INFO,
+        amount: {
+          total: 8900,
+        },
+        currency: "KRW",
+        // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
+        method: PAYMENT_METHOD_HERE,
+      }),
+    },
+  );
+  if (!paymentResponse.ok)
+    throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
+  ```
+
+### 주요 파라미터
+
+### 필수 파라미터
+
+### 유의사항
+
+
+## API 빌링키 발급 및 정기결제 연동하기
+
+### 예제 코드
+
+### 주요 파라미터
+
+### 필수 파라미터
+
+### 유의사항
+
+<Details>
+  <Fragment slot="summary"> 빌링키 발급 요청 시 지정한 그룹 내 모든 채널로 빌링키를 발급합니다. </Fragment>
+
+  그룹 내 채널을 활성화한 채로 비율을 0으로 설정한 경우 해당 채널로도 빌링키 발급을 요청합니다.
+  빌링키 발급을 원하지 않는 경우 채널을 비활성화 상태로 두거나 그룹 내에서 삭제해야 합니다.
+
+</Details>
+
+<Details>
+  <Fragment slot="summary"> 슈퍼 빌링키를 이용하여 결제 요청 시 불가피하게 그룹 내 비율이 0인 채널로 진행될 수 있습니다. </Fragment>
+
+  슈퍼 빌링키를 이용하여 결제 요청했을 때, 슈퍼 빌링키에 맵핑된 결제대행사 빌링키 중 그룹 비율에 따라
+  사용 가능한 빌링키가 없는 경우 그룹 내 채널 비율이 0으로 설정되어있더라도 해당 결제대행사로 결제가
+  일어날 수 있습니다.
+
+  예를 들어, 그룹 내에 나이스페이먼츠, 이니시스, 토스페이먼츠 총 3개의 결제대행사를 설정한 경우 빌링키
+  발급 시 3개의 결제대행사로부터 빌링키를 발급 받은 후 슈퍼 빌링키에 맵핑 됩니다.
+  이후 그룹 설정을 토스페이먼츠 0%, 스마트로 100%로 변경한 경우 위에 발급한 슈퍼 빌링키로 결제 요청 시
+  토스페이먼츠 빌링키만 사용이 가능하기 때문에 0%로 결제 비율이 설정되어있음에도 토스페이먼츠로 결제가
+  발생하게 됩니다.
+
+</Details>
