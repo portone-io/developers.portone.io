@@ -32,3 +32,9 @@ declare module "*/_redir.yaml" {
   const value: Redir[];
   export default value;
 }
+
+declare module "*?imagetools" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
