@@ -41,4 +41,7 @@ export default defineConfig({
   solid: {
     exclude: ["./src/misc/opengraph/**/*"],
   },
+  experimental: {
+    islands: true,
+  },
 });
