@@ -3,6 +3,7 @@ import type { Picture } from "vite-imagetools";
 
 interface Props extends JSX.ImgHTMLAttributes<HTMLImageElement> {
   picture: Picture;
+  alt: string;
 }
 
 export default function Picture(props: Props) {
