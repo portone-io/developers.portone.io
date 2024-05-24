@@ -1,4 +1,5 @@
 import { useSignal } from "@preact/signals";
+import clsx from "clsx";
 import type { PropsWithChildren } from "preact/compat";
 
 import { getLinkStyle, LinkTitle } from "../sidebar/LeftSidebarItem";
@@ -20,7 +21,7 @@ function NoteFolder({
   return (
     <div>
       <button
-        class={`flex w-full ${getLinkStyle(false)} pr-0`}
+        class={clsx("flex w-full pr-0", getLinkStyle(false))}
         onClick={() => {
           openSignal.value = !open;
         }}
