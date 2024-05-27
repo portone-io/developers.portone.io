@@ -1,0 +1,69 @@
+---
+import { match, P } from "ts-pattern";
+
+import type { ReleaseNote } from "~/misc/releaseNote";
+
+import NoteFolder from "./NoteFolder";
+import NoteListItem from "./NoteListItem.astro";
+
+interface Props {
+  title: string;
+  notes: ReleaseNote[];
+  activeSlug: string | undefined;
+}
+const groupedNotesBeforeYear = new Date().getFullYear();
+
+const { title, notes: _notes, activeSlug } = Astro.props;
+const [notes, noteMap] = _notes.reduce(
+  (acc, note) => {
+    const [notes, noteMap] = acc;
+    match(new Date(note.entry.data.releasedAt).getFullYear())
+      .with(P.number.gte(groupedNotesBeforeYear), () => {
+        notes.push(note);
+      })
+      .with(P.number, (year) => {
+        const [prefix] = note.slug.split("/");
+        const path = `${prefix}/${year}`;
+        if (!noteMap.has(path)) {
+          noteMap.set(path, {
+            title: `${year}년 업데이트`,
+            notes: [note],
+          });
+        } else {
+          noteMap.get(path)!.notes.push(note);
+        }
+      })
+      .exhaustive();
+    return acc;
+  },
+  [
+    [] as ReleaseNote[],
+    new Map<string, { title: string; notes: ReleaseNote[] }>(),
+  ],
+);
+---
+
+<li>
+  <h4 class="p-2 text-lg font-bold first:mt-0">{title}</h4>
+  <ul class="flex flex-col gap-1">
+    {notes.map((note) => <NoteListItem note={note} activeSlug={activeSlug} />)}
+    {
+      [...noteMap].map(([path, { notes, title }]) => {
+        return (
+          <li>
+            <NoteFolder
+              title={title}
+              path={path}
+              activeSlug={activeSlug}
+              client:visible
+            >
+              {notes.map((note) => (
+                <NoteListItem note={note} activeSlug={activeSlug} />
+              ))}
+            </NoteFolder>
+          </li>
+        );
+      })
+    }
+  </ul>
+</li>
