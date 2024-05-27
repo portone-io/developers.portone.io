@@ -13,6 +13,11 @@ export default defineConfig({
     preset: "vercel",
   },
   vite: {
+    ssr: {
+      optimizeDeps: {
+        include: ["mixpanel-browser"],
+      },
+    },
     plugins: [
       yaml(),
       unocss(),

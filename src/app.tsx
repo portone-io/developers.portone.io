@@ -3,6 +3,8 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 
+import Trackers from "./layouts/trackers/Trackers";
+
 export default function App() {
   return (
     <Router
@@ -12,6 +14,7 @@ export default function App() {
           <Meta charset="utf-8" />
           <Meta name="viewport" content="width=device-width,initial-scale=1" />
           <Link rel="icon" type="image/png" href="/favicon.png" />
+          <Trackers />
           <Suspense>{props.children}</Suspense>
         </MetaProvider>
       )}
