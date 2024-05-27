@@ -11,29 +11,29 @@ interface Props {
   notes: ReleaseNote[];
   activeSlug: string | undefined;
 }
+const groupedNotesBeforeYear = new Date().getFullYear();
 
 const { title, notes: _notes, activeSlug } = Astro.props;
 const [notes, noteMap] = _notes.reduce(
   (acc, note) => {
     const [notes, noteMap] = acc;
-    match(note.slug.split("/"))
-      .with([P.string, P.string, P.string], ([prefix, directory]) => {
-        const path = `${prefix}/${directory}`;
+    match(new Date(note.entry.data.releasedAt).getFullYear())
+      .with(P.number.gte(groupedNotesBeforeYear), () => {
+        notes.push(note);
+      })
+      .with(P.number, (year) => {
+        const [prefix] = note.slug.split("/");
+        const path = `${prefix}/${year}`;
         if (!noteMap.has(path)) {
           noteMap.set(path, {
-            title: `${directory}년 업데이트`,
+            title: `${year}년 업데이트`,
             notes: [note],
           });
         } else {
           noteMap.get(path)!.notes.push(note);
         }
       })
-      .with([P.string, P.string], () => {
-        notes.push(note);
-      })
-      .otherwise(() => {
-        console.error(`Invalid slug: ${note.slug}`);
-      });
+      .exhaustive();
     return acc;
   },
   [
