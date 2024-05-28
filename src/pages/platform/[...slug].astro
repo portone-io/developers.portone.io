@@ -1,0 +1,77 @@
+---
+import { getCollection } from "astro:content";
+import sitemap from "sitemap-ext:config";
+import { match } from "ts-pattern";
+
+import * as prose from "~/components/prose";
+import LayoutBase from "~/layouts/LayoutBase.astro";
+import Nav from "~/layouts/platform/Nav.astro";
+import { getPlatformDocuments } from "~/misc/platform";
+
+sitemap(async ({ addToSitemap }) => {
+  const entries = await getCollection("platform");
+
+  addToSitemap(entries.map((entry) => ({ slug: entry.slug })));
+});
+
+const { slug } = Astro.params;
+if (!slug) return new Response(null, { status: 404 });
+const { guides, usages } = await getPlatformDocuments();
+const { entry } =
+  [...guides, ...usages].find(
+    (entry) => entry.slug === slug,
+  ) ?? {};
+if (!entry) return new Response(null, { status: 404 });
+
+const type = match(entry.slug)
+  .when(
+    (v) => v.startsWith("guides"),
+    () => "guides" as const,
+  )
+  .when(
+    (v) => v.startsWith("usages"),
+    () => "usages" as const,
+  )
+  .run();
+
+const { title } = entry.data;
+const { Content } = await entry.render();
+const label = {
+  guides: "API / SDK",
+  usages: "관리자콘솔",
+}[type];
+---
+
+<LayoutBase
+  lang="ko"
+  title={title}
+  slug={`platform/${slug}`}
+  ogType="article"
+  navAsMenu
+>
+  <div class="flex">
+    <aside
+      id="left-sidebar"
+      class="relative hidden w-65 shrink-0 text-slate-700 md:block"
+    >
+      <div
+        class="fixed h-[calc(100%-3.5rem)] w-inherit overflow-y-scroll border-r bg-white"
+      >
+        <Nav
+          usages={usages}
+          guides={guides}
+          activeSlug={slug}
+        />
+      </div>
+    </aside>
+    <div class="mx-auto shrink basis-200">
+      <article class="m-4 flex flex-col text-slate-700">
+        <prose.h1>{title}</prose.h1>
+        <p class="my-4 text-xl text-gray">
+          {label} 업데이트 소식을 안내드립니다.
+        </p>
+        <Content components={prose} />
+      </article>
+    </div>
+  </div>
+</LayoutBase>

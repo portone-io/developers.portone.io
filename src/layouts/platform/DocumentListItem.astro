@@ -1,0 +1,30 @@
+---
+import { JustLink } from "~/layouts/sidebar/LeftSidebarItem";
+import type { Document } from "~/misc/platform";
+
+interface Props {
+  document: Document;
+  activeSlug: string | undefined;
+}
+
+const { document, activeSlug } = Astro.props;
+
+const documentTitle = document.entry.data.title;
+
+console.log(document.entry) 
+const isActive = activeSlug ? document.slug === activeSlug : false;
+const href = `/platform/${document.slug}`;
+---
+
+<li>
+  <JustLink
+    client:visible
+    title={documentTitle}
+    href={href}
+    isActive={isActive}
+    event={{
+      name: "Platform_Guide_Click",
+      props: { slug: document.slug },
+    }}
+  />
+</li>
