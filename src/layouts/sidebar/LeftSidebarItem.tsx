@@ -1,4 +1,3 @@
-import { useSystemVersion } from "#state/system-version";
 import { useComputed } from "@preact/signals";
 
 import { useSystemVersion } from "#state/system-version";
