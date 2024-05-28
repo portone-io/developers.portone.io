@@ -103,4 +103,29 @@
   article ol {
     list-style-type: decimal;
   }
+
+  article ol:has(li > .body) {
+    counter-reset: numb;
+    list-style: none;
+  }
+
+  article ol:has(li > .body) li > .body,
+  article ol:has(li > .body) li:not(:has(> .body)) {
+    position: relative;
+  }
+
+  article ol:has(li > .body) li > .body::before,
+  article ol:has(li > .body) li:not(:has(> .body))::before {
+    position: absolute;
+    top: 0px;
+    right: calc(100% + 0.4em);
+    text-align: right;
+    white-space: nowrap;
+    counter-increment: numb;
+    content: counter(numb) ". ";
+  }
+
+  article ol:has(li > .body) li:has(> .body) > :not(.body) {
+    margin-left: -1.5em;
+  }
 </style>
