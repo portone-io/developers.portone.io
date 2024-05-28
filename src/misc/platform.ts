@@ -15,7 +15,7 @@ export async function getPlatformDocuments() {
     else if (slug.startsWith("usages")) usages.push({ slug, entry });
   }
   for (const notes of [usages, guides]) {
-    notes.sort((a, b) => (a.slug > b.slug ? -1 : 1));
+    notes.sort((a, b) => (a.entry.data.no < b.entry.data.no ? -1 : 1));
   }
   return { usages, guides };
 }
