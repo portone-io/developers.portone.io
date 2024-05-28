@@ -254,33 +254,33 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
           // 수기 결제 API를 참고해 고객 정보를 채워주세요.
           customer: {
             name: {
-              full: "김포트", //고객 이름을 입력해야 합니다.
+              full: "김포트", // 고객 이름을 입력해야 합니다.
             },
-            phoneNumber: "01000001234", //고객 전화번호를 입력해야 합니다.
-            email: "port@portone.io", //고객 이메일을 입력해야 합니다.
+            phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+            email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
           },
           amount: {
             total: 8900,
           },
           currency: "KRW",
 
-          //수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
+          // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
           method: {
             virtaulAccount: {
-              bank: "KOOKMIN", //은행별 enum 확인 후 발급할 은행 값을 입력해야 합니다.
+              bank: "KOOKMIN", // 은행별 enum 확인 후 발급할 은행 값을 입력해야 합니다.
               expiry: {
                 dueDate: "2023-12-21T00:00:00+09:00", // RFC 3339 형식으로 입력해야 합니다.
               },
               option: {
-                type: "NORMAL", //일반 가상계좌 (회전식)인 경우 `NORMAL`로 입력해야 합니다.
+                type: "NORMAL", // 일반 가상계좌 (회전식)인 경우 `NORMAL`로 입력해야 합니다.
               },
               cashReceipt: {
-                type: "PERSONAL", //소득공제용인 경우 `PERSONAL`, 지출증빙용인 경우 `CORPORATE`로 입력해야 합니다.
-                customerIdentityNumber: "01000001234", //현금영수증 발급 번호
+                type: "PERSONAL", // 소득공제용인 경우 `PERSONAL`, 지출증빙용인 경우 `CORPORATE`로 입력해야 합니다.
+                customerIdentityNumber: "01000001234", // 현금영수증 발급 번호
               },
-              remitteeName: "포트원", //가상계좌 예금주명을 입력해야 합니다.
+              remitteeName: "포트원", // 가상계좌 예금주명을 입력해야 합니다.
             },
-            productCount: 1, //상품 개수를 입력해야 합니다.
+            productCount: 1, // 상품 개수를 입력해야 합니다.
           },
         }),
       },
@@ -528,21 +528,21 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
       body: JSON.stringify({
         chanenlGroupId: "channel-group-live-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
         customer: {
-          id: "customerId_2333", //고객사가 지정한 고객 식별정보를 입력해야 합니다.
+          id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
           name: {
-            full: "김포트", //고객 이름을 입력해야 합니다.
+            full: "김포트", // 고객 이름을 입력해야 합니다.
           },
-          phoneNumber: "01000001234", //고객 전화번호를 입력해야 합니다.
-          email: "port@portone@io", //고객 이메일을 입력해야 합니다.
+          phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+          email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
         },
         method: {
           card: {
             cardCredintial: {
-              number: "0000123400001234", //16자리 숫자만 입력해야 합니다.
-              expiryYear: "26", //연도의 뒤 2자리를 입력해야 합니다.
+              number: "0000123400001234", // 16자리 숫자만 입력해야 합니다.
+              expiryYear: "26", // 연도의 뒤 2자리를 입력해야 합니다.
               expiryMonth: "12",
-              birthOrBusinessRegistrationNumber: "900101", //생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
-              passwordTwoDigits: "00", //카드 비밀번호 앞 2자리 입력해야 합니다.
+              birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
+              passwordTwoDigits: "00", // 카드 비밀번호 앞 2자리 입력해야 합니다.
             },
           },
         },
@@ -550,12 +550,17 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     });
     if (!issueResponse.ok)
       throw new Error(`issueResponse: ${issueResponse.statusText}`);
+
     const {
       billingKeyInfo: { billingKey, channels },
       channelSpecificFailures,
     } = await issueResponse.json();
+
+    // `channels` 필드에 사용 가능한 채널 여러 개가 포함된 것을 확인할 수 있습니다.
+    // 이 필드는 빌링키 조회에서도 확인 가능합니다.
     console.log(`빌링키: ${billingKey}`);
-    console.log(`발급 성공한 채널: ${channels}`); //`channels` 필드에 사용 가능한 채널 여러 개가 포함된 것을 확인할 수 있습니다. 이 필드는 빌링키 조회에서도 확인 가능합니다.
+    console.log(`발급 성공한 채널: ${channels}`);
+
     if (channelSpecificFailures.length !== 0)
       console.log(`발급에 실패한 채널이 있습니다: ${channelSpecificFailures}`);
     ```
@@ -572,22 +577,22 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", //발급된 빌링키 값을 입력해야 합니다.
+          billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
           orderName: "후불 결제",
           customer: {
-            id: "customerId_2333", //고객사가 지정한 고객 식별정보를 입력해야 합니다.
+            id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
             name: {
-              full: "김포트", //고객 이름을 입력해야 합니다.
+              full: "김포트", // 고객 이름을 입력해야 합니다.
             },
-            phoneNumber: "01000001234", //고객 전화번호를 입력해야 합니다.
-            email: "port@portone@io", //고객 이메일을 입력해야 합니다.
+            phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+            email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
           },
           amount: {
             total: 8900,
           },
           currency: "KRW",
-          productType: "PHYSICAL", //상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
-          productCount: 1, //상품 개수를 입력해야 합니다.
+          productType: "PHYSICAL", // 상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
+          productCount: 1, // 상품 개수를 입력해야 합니다.
         }),
       },
     );
@@ -608,24 +613,24 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
         },
         body: JSON.stringify({
           payment: {
-            billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", //발급된 빌링키 값을 입력해야 합니다.
+            billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
             orderName: "월간 이용권 정기 결제",
             customer: {
-              id: "customerId_2333", //고객사가 지정한 고객 식별정보를 입력해야 합니다.
+              id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
               name: {
-                full: "김포트", //고객 이름을 입력해야 합니다.
+                full: "김포트", // 고객 이름을 입력해야 합니다.
               },
-              phoneNumber: "01000001234", //고객 전화번호를 입력해야 합니다.
-              email: "port@portone@io", //고객 이메일을 입력해야 합니다.
+              phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+              email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
             },
             amount: {
               total: 8900,
             },
             currency: "KRW",
-            productType: "PHYSICAL", //상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
-            productCount: 1, //상품 개수를 입력해야 합니다.
+            productType: "PHYSICAL", // 상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
+            productCount: 1, // 상품 개수를 입력해야 합니다.
           },
-          timeToPay: "2024-05-01T00:00:00+09:00", //ISO8601 형식으로 입력해야 합니다.
+          timeToPay: "2024-05-01T00:00:00+09:00", // ISO8601 형식으로 입력해야 합니다.
         }),
       },
     );
