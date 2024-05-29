@@ -17,11 +17,8 @@ const { slug } = Astro.params;
 if (!slug) return new Response(null, { status: 404 });
 const { guides, usages } = await getPlatformDocuments();
 const { entry } =
-  [...guides, ...usages].find(
-    (entry) => entry.slug === slug,
-  ) ?? {};
+  [...guides, ...usages].find((entry) => entry.slug === slug) ?? {};
 if (!entry) return new Response(null, { status: 404 });
-
 
 const { title } = entry.data;
 const { Content } = await entry.render();
@@ -42,11 +39,7 @@ const { Content } = await entry.render();
       <div
         class="fixed h-[calc(100%-3.5rem)] w-inherit overflow-y-scroll border-r bg-white"
       >
-        <Nav
-          usages={usages}
-          guides={guides}
-          activeSlug={slug}
-        />
+        <Nav usages={usages} guides={guides} activeSlug={slug} />
       </div>
     </aside>
     <div class="mx-auto shrink basis-200">
