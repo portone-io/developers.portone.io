@@ -11,7 +11,7 @@ const pathMappings = {
   "/api/rest-v2": "/api/rest-v1",
 };
 
-const hiddenPaths = ["/release-notes", "/blog"];
+const hiddenPaths = ["/release-notes", "/blog", "/platform"];
 
 export interface VersionSwitchProps {
   url: string;

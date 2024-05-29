@@ -1,0 +1,62 @@
+---
+import { getCollection } from "astro:content";
+import sitemap from "sitemap-ext:config";
+
+import * as prose from "~/components/prose";
+import LayoutBase from "~/layouts/LayoutBase.astro";
+import Nav from "~/layouts/platform/Nav.astro";
+import RightSidebar from "~/layouts/sidebar/RightSidebar";
+import { getPlatformDocuments } from "~/misc/platform";
+
+sitemap(async ({ addToSitemap }) => {
+  const entries = await getCollection("platform");
+
+  addToSitemap(entries.map((entry) => ({ slug: entry.slug })));
+});
+
+const { slug } = Astro.params;
+if (!slug) return new Response(null, { status: 404 });
+const { guides, usages } = await getPlatformDocuments();
+const { entry } =
+  [...guides, ...usages].find((entry) => entry.slug === slug) ?? {};
+if (!entry) return new Response(null, { status: 404 });
+
+const { title } = entry.data;
+const { Content } = await entry.render();
+---
+
+<LayoutBase
+  lang="ko"
+  title={title}
+  slug={`platform/${slug}`}
+  ogType="article"
+  navAsMenu
+>
+  <div class="flex">
+    <aside
+      id="left-sidebar"
+      class="relative hidden w-65 shrink-0 text-slate-700 md:block"
+    >
+      <div
+        class="fixed h-[calc(100%-3.5rem)] w-inherit overflow-y-scroll border-r bg-white"
+      >
+        <Nav usages={usages} guides={guides} activeSlug={slug} />
+      </div>
+    </aside>
+    <div class="min-w-0 flex flex-1 justify-center">
+      <article
+        class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700"
+      >
+        <prose.h1>{title}</prose.h1>
+        <Content components={prose} />
+      </article>
+      <div class="hidden shrink-10 basis-10 lg:block"></div>
+      <RightSidebar
+        lang="ko"
+        slug={slug}
+        editThisPagePrefix="https://github.com/portone-io/developers.portone.io/blob/main/src/content/platform/"
+        client:idle
+      />
+    </div>
+  </div>
+</LayoutBase>

@@ -35,9 +35,17 @@ const apiSectionDescriptionCollection = defineCollection({
   schema: z.object({}),
 });
 
+const platformCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    no: z.number(),
+  }),
+});
+
 export const collections = {
   docs: docCollection,
   blog: blogCollection,
   "release-notes": releaseNoteCollection,
   "api-section-description": apiSectionDescriptionCollection,
+  platform: platformCollection,
 };

@@ -97,6 +97,12 @@ export default defineConfig({
       ],
     ],
   },
+  redirects: {
+    "/platform": {
+      status: 301,
+      destination: "/platform/guides/intro",
+    },
+  },
   output: "server",
   adapter: vercel(),
 });
