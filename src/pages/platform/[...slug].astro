@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 import sitemap from "sitemap-ext:config";
-import { match } from "ts-pattern";
 
 import * as prose from "~/components/prose";
 import LayoutBase from "~/layouts/LayoutBase.astro";
@@ -23,16 +22,6 @@ const { entry } =
   ) ?? {};
 if (!entry) return new Response(null, { status: 404 });
 
-const type = match(entry.slug)
-  .when(
-    (v) => v.startsWith("guides"),
-    () => "guides" as const,
-  )
-  .when(
-    (v) => v.startsWith("usages"),
-    () => "usages" as const,
-  )
-  .run();
 
 const { title } = entry.data;
 const { Content } = await entry.render();
