@@ -20,7 +20,14 @@ export default function DropdownLink({ children, items }: DropdownLinkProps) {
       >
         {children}
         <div class="flex-1" />
-        <i class="i-ic-baseline-keyboard-arrow-up text-xl"></i>
+        <i
+          class={clsx(
+            "text-xl",
+            showItemsSignal.value
+              ? "i-ic-baseline-keyboard-arrow-up"
+              : "i-ic-baseline-keyboard-arrow-down",
+          )}
+        ></i>
       </button>
       <div class="relative z-[12] w-full">
         {showItemsSignal.value && (
