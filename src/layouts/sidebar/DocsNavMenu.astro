@@ -4,6 +4,7 @@ import { calcNavMenuAncestors, navMenu } from "~/state/server-only/nav";
 import { readServerSystemVersion } from "~/state/system-version/server";
 import type { Lang } from "~/type";
 
+import DropdownLink from "./DropdownLink";
 import LeftSidebar from "./LeftSidebar.astro";
 import LeftSidebarItem from "./LeftSidebarItem";
 import { SearchButton } from "./search";
@@ -57,7 +58,23 @@ const serverSystemVersion = readServerSystemVersion();
   }
 </style>
 <LeftSidebar>
-  <div class="relative flex flex-col gap-2 px-2 pb-4 pt-[28px]">
+  <div class="px-4 pt-28px">
+    <div class="md:hidden">
+      <DropdownLink
+        client:visible
+        pathname={Astro.url.pathname}
+        items={[
+          { label: "개발자센터", link: "/docs" },
+          { label: "API & SDK", link: "/api/rest-v2" },
+          { label: "파트너 정산", link: "/platform" },
+          { label: "릴리스 노트", link: "/release-notes" },
+          { label: "기술 블로그", link: "/blog" },
+        ]}
+      />
+      <div class="my-4 h-1px bg-neutral-200"></div>
+    </div>
+  </div>
+  <div class="relative flex flex-col gap-2 px-2 pb-4">
     <SearchButton lang={lang} client:visible />
   </div>
   <nav
