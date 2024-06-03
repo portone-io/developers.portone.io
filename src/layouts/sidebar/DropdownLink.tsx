@@ -44,7 +44,7 @@ export default function DropdownLink({ items, pathname }: DropdownLinkProps) {
                 <i
                   class={clsx(
                     "i-ic-baseline-check",
-                    location.pathname.startsWith(link) || "opacity-0",
+                    pathname.startsWith(link) || "opacity-0",
                   )}
                 />
                 <span>{label}</span>
