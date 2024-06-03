@@ -32,9 +32,9 @@ export default function DropdownLink({ children, items }: DropdownLinkProps) {
       <div class="relative w-full z-dropdown-link">
         {showItemsSignal.value && (
           <div class="absolute w-full flex flex-col border bg-white py-2 shadow-lg">
-            {items.map(({ label, link }, i) => (
+            {items.map(({ label, link }) => (
               <a
-                key={i}
+                key={link}
                 class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
                 href={link}
               >
