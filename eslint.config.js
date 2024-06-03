@@ -7,6 +7,7 @@ import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsEslintParser from "@typescript-eslint/parser";
 import unocss from "@unocss/eslint-plugin";
 import astroParser from "astro-eslint-parser";
+import * as parserPlain from "eslint-parser-plain";
 import astro from "eslint-plugin-astro";
 import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
@@ -65,6 +66,19 @@ export default [
     rules: tsTypeCheckedRules,
   },
   prettierRecommended,
+  {
+    files: ["**/*.mdx/*.{json,yaml,yml,html,css,graphql,md,vue}"],
+    languageOptions: {
+      parser: {
+        meta: {
+          name: "eslint-parser-plain",
+        },
+        ...parserPlain,
+      },
+      ...prettierRecommended.languageOptions,
+    },
+    ...prettierRecommended,
+  },
   {
     ...mdx.flat,
     files: ["**/*.mdx"],
