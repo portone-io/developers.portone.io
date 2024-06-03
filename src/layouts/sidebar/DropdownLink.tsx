@@ -3,14 +3,14 @@ import clsx from "clsx";
 import type React from "preact/compat";
 
 export interface DropdownLinkProps {
-  children: React.ReactNode;
   items: DropdownItem[];
+  pathname: string;
 }
 export interface DropdownItem {
   label: React.ReactNode;
   link: string;
 }
-export default function DropdownLink({ children, items }: DropdownLinkProps) {
+export default function DropdownLink({ items, pathname }: DropdownLinkProps) {
   const showItemsSignal = useSignal(false);
   return (
     <div class="relative h-full w-full flex flex-col cursor-default">
@@ -18,7 +18,10 @@ export default function DropdownLink({ children, items }: DropdownLinkProps) {
         class="flex flex-1 items-center gap-2 border-1 border-slate-3 rounded-6px p-2 px-4 text-slate-600"
         onClick={() => (showItemsSignal.value = !showItemsSignal.value)}
       >
-        {children}
+        <span>
+          {items.find(({ link }) => pathname.startsWith(link))?.label ??
+            "Unknown"}
+        </span>
         <div class="flex-1" />
         <i
           class={clsx(
