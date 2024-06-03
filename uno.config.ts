@@ -7,6 +7,7 @@ import {
 } from "unocss";
 
 const zIndex = {
+  "dropdown-link": 12,
   search: 11,
   gnb: 10,
   "gnb-body": 9,
