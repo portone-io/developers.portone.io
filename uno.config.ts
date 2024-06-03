@@ -7,10 +7,10 @@ import {
 } from "unocss";
 
 const zIndex = {
-  "dropdown-link": 12,
-  search: 11,
-  gnb: 10,
-  "gnb-body": 9,
+  search: 12,
+  gnb: 11,
+  "gnb-body": 10,
+  "dropdown-link": 9,
   "left-sidebar": 8,
   "overlay-dim": 2,
   "selected-tab": 1,
