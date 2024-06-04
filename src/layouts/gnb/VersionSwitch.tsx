@@ -1,9 +1,8 @@
-import type { CollectionEntry } from "astro:content";
+import { useLocation, useNavigate } from "@solidjs/router";
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import { createEffect, createSignal } from "solid-js";
 
-import { updateSystemVersion, useSystemVersion } from "#state/system-version";
-import { useServerFallback } from "~/misc/useServerFallback";
+import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
 
 const pathMappings = {
@@ -14,30 +13,26 @@ const pathMappings = {
 const hiddenPaths = ["/release-notes", "/blog", "/platform"];
 
 export interface VersionSwitchProps {
-  url: string;
-  className?: string;
-  serverSystemVersion: SystemVersion;
-  docData: CollectionEntry<"docs">["data"] | null;
+  class?: string;
+  docData?: {
+    versionVariants?: Record<SystemVersion, string>;
+    targetVersions?: SystemVersion[];
+  } | null;
 }
-export function VersionSwitch({
-  url,
-  className,
-  serverSystemVersion,
-  docData,
-}: VersionSwitchProps) {
-  const popoverRef = useRef<HTMLDivElement>(null);
-  const [showPopover, setShowPopover] = useState(true);
+export function VersionSwitch(props: VersionSwitchProps) {
+  let popoverRef: HTMLDivElement | undefined;
+  const [showPopover, setShowPopover] = createSignal(true);
 
-  if (hiddenPaths.some((path) => new URL(url).pathname.startsWith(path)))
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  if (hiddenPaths.some((path) => location.pathname.startsWith(path)))
     return null;
 
-  const systemVersion = useServerFallback(
-    useSystemVersion(),
-    serverSystemVersion,
-  );
+  const { systemVersion, setSystemVersion } = useSystemVersion();
 
-  useEffect(() => {
-    const animation = popoverRef.current?.animate(
+  createEffect(() => {
+    const animation = popoverRef?.animate(
       [{ transform: "translateY(0px)" }, { transform: "translateY(4px)" }],
       {
         duration: 600,
@@ -56,13 +51,13 @@ export function VersionSwitch({
     };
   }, []);
 
-  useEffect(() => {
-    const animation = showPopover
-      ? popoverRef.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
+  createEffect(() => {
+    const animation = showPopover()
+      ? popoverRef?.animate([{ opacity: 0 }, { opacity: 1 }], {
           duration: 400,
           fill: "forwards",
         })
-      : popoverRef.current?.animate(
+      : popoverRef?.animate(
           [{ opacity: 1 }, { opacity: 0, pointerEvents: "none" }],
           {
             duration: 400,
@@ -75,41 +70,41 @@ export function VersionSwitch({
   }, [showPopover]);
 
   return (
-    <div className="relative">
+    <div class="relative">
       <div
         style={{ transition: "margin 0.1s" }}
         onClick={() => {
-          const newVersion = systemVersion !== "v1" ? "v1" : "v2";
-          updateSystemVersion(newVersion);
+          const newVersion = systemVersion() !== "v1" ? "v1" : "v2";
+          setSystemVersion(newVersion);
           setShowPopover(false);
 
           const mappedPath =
             Object.entries(pathMappings).find(([from]) =>
               location.pathname.startsWith(from),
             )?.[1] ??
-            (docData?.versionVariants?.[newVersion] &&
-              `/docs/${docData.versionVariants[newVersion]}`);
-          if (mappedPath) location.href = mappedPath;
+            (props.docData?.versionVariants?.[newVersion] &&
+              `/docs/${props.docData.versionVariants[newVersion]}`);
+          if (mappedPath) navigate(mappedPath);
           else if (location.pathname.startsWith("/docs/")) return;
-          else location.href = "/";
+          else navigate("/");
         }}
         class={clsx(
           "bg-slate-1 border-slate-3 text-12px text-slate-5 p-1px border-1 flex cursor-pointer select-none overflow-hidden whitespace-pre rounded-[6px] text-center font-bold",
-          className,
+          props.class,
         )}
       >
-        <div class={getVersionClass("v1", systemVersion)}>V1</div>
-        <div class={getVersionClass("v2", systemVersion)}>V2</div>
+        <div class={getVersionClass("v1", systemVersion())}>V1</div>
+        <div class={getVersionClass("v2", systemVersion())}>V2</div>
       </div>
-      {(docData?.versionVariants ||
-        (docData?.targetVersions?.length ?? 0) > 1) && (
+      {(props.docData?.versionVariants ||
+        (props.docData?.targetVersions?.length ?? 0) > 1) && (
         <div
           ref={popoverRef}
-          className="absolute inset-x-0 top-[calc(100%+16px)] opacity-0"
+          class="absolute inset-x-0 top-[calc(100%+16px)] opacity-0"
         >
-          <div className="absolute left-1/2 top-0 whitespace-nowrap rounded bg-portone px-2 py-1 text-white font-semibold shadow-md -translate-x-1/2">
+          <div class="absolute left-1/2 top-0 whitespace-nowrap rounded bg-portone px-2 py-1 text-white font-semibold shadow-md -translate-x-1/2">
             이 페이지의 다른 버전 보기
-            <div className="absolute left-1/2 rotate-45 border-10px border-transparent border-l-portone border-t-portone -top-8px -translate-x-1/2" />
+            <div class="absolute left-1/2 rotate-45 border-10px border-transparent border-l-portone border-t-portone -top-8px -translate-x-1/2" />
           </div>
         </div>
       )}
