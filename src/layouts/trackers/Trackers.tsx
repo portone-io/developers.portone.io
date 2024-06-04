@@ -1,5 +1,3 @@
-"use client";
-
 import mixpanel from "mixpanel-browser";
 import { onMount } from "solid-js";
 
