@@ -2,213 +2,337 @@
 대상의 하위호환성이 보장되지 않음을 명시합니다.
 Represents that the target definition does not guarentee backward compatibility.
 """
-directive @unstable on ENUM | ARGUMENT_DEFINITION | INPUT_OBJECT | FIELD_DEFINITION | INTERFACE | OBJECT | UNION | INPUT_FIELD_DEFINITION | ENUM_VALUE
+directive @unstable on OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 """
 대상이 PortOne Public API 지원 대상에 공식적으로 포함되지 않음을 명시합니다.
 Represents that the target definition is excluded from PortOne Public API specification.
 """
-directive @hidden on ENUM | ARGUMENT_DEFINITION | INPUT_OBJECT | FIELD_DEFINITION | INTERFACE | OBJECT | UNION | INPUT_FIELD_DEFINITION | ENUM_VALUE
+directive @hidden on OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | INTERFACE | UNION | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+""
+directive @defer(if: Boolean, label: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
 
 schema {
   query: Query
   mutation: Mutation
 }
-
 "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
 scalar Date
-
-"날짜와 시간을 포함한 특정 시점을 나타냅니다. ISO 8601 date-time 문자열 형식을 따릅니다."
+"날짜와 시간을 포함한 특정 시점을 나타냅니다. RFC 3339 date-time 형식의 문자열입니다. 윤초는 지원하지 않습니다."
 scalar DateTime
-
 scalar Long
 
 "평균 거래액 현황 조회 결과"
-union AnalyticsAverageAmountChartOutput = AnalyticsAverageAmountChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsAverageAmountChartOutput = AnalyticsAverageAmountChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "환불율 조회 결과"
-union AnalyticsCancellationRateOutput = AnalyticsCancellationRate | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsCancellationRateOutput = AnalyticsCancellationRate | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "카드결제 현황 조회 결과"
-union AnalyticsCardChartOutput = AnalyticsCardChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsCardChartOutput = AnalyticsCardChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "카드사별 결제 현황 조회 결과"
-union AnalyticsCardCompanyChartOutput = AnalyticsCardCompanyChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsCardCompanyChartOutput = AnalyticsCardCompanyChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "간편결제 현황 조회 결과"
-union AnalyticsEasyPayChartOutput = AnalyticsEasyPayChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsEasyPayChartOutput = AnalyticsEasyPayChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "간편결제사별 결제 현황 조회 결과"
-union AnalyticsEasyPayProviderChartOutput = AnalyticsEasyPayProviderChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsEasyPayProviderChartOutput = AnalyticsEasyPayProviderChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "해외 결제 사용 여부 조회 결과"
-union AnalyticsOverseasPaymentUsageOutput = AnalyticsOverseasPaymentUsage | UnauthorizedError | ForbiddenError
+union AnalyticsOverseasPaymentUsageOutput = AnalyticsOverseasPaymentUsage | UnauthorizedError | ForbiddenError | InternalError
+
+"결제현황 인사이트 조회 결과"
+union AnalyticsPaymentChartInsightOutput = AnalyticsPaymentChartInsight | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "결제현황 조회 결과"
-union AnalyticsPaymentChartOutput = AnalyticsPaymentChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsPaymentChartOutput = AnalyticsPaymentChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "결제현황 조회 결과"
-union AnalyticsPaymentMethodChartOutput = AnalyticsPaymentMethodChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsPaymentMethodChartOutput = AnalyticsPaymentMethodChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "결제수단 트렌드 조회 결과"
-union AnalyticsPaymentMethodTrendChartOutput = AnalyticsPaymentMethodTrendChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsPaymentMethodTrendChartOutput = AnalyticsPaymentMethodTrendChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"결제환경별 결제전환율 조회 결과"
+union AnalyticsPaymentStatusByPaymentClientChartOutput = AnalyticsPaymentStatusByPaymentClientChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"결제수단별 결제전환율 조회 결과"
+union AnalyticsPaymentStatusByPaymentMethodChartOutput = AnalyticsPaymentStatusByPaymentMethodChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"PG사별 결제전환율 조회 결과"
+union AnalyticsPaymentStatusByPgCompanyChartOutput = AnalyticsPaymentStatusByPgCompanyChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"결제상태 이력 집계 결과"
+union AnalyticsPaymentStatusChartOutput = AnalyticsPaymentStatusChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "결제현황 조회 결과"
-union AnalyticsPgCompanyChartOutput = AnalyticsPgCompanyChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsPgCompanyChartOutput = AnalyticsPgCompanyChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "결제대행사별 거래 추이 조회 결과"
-union AnalyticsPgCompanyTrendChartOutput = AnalyticsPgCompanyTrendChart | InvalidRequestError | UnauthorizedError | ForbiddenError
+union AnalyticsPgCompanyTrendChartOutput = AnalyticsPgCompanyTrendChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "파트너 상태 승인 완료 변경 결과"
-union ApprovePlatformPartnerOutput = ApprovePlatformPartnerPayload | PlatformNotEnabledError | InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError
+union ApprovePlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | PlatformArchivedPartnerError | ApprovePlatformPartnerPayload | PlatformNotEnabledError | UnauthorizedError | InternalError
+
+"추가 수수료 정책 보관 결과"
+union ArchivePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | PlatformCannotArchiveScheduledAdditionalFeePolicyError | ArchivePlatformAdditionalFeePolicyPayload | PlatformNotEnabledError | UnauthorizedError | InternalError
+
+"계약 보관 결과"
+union ArchivePlatformContractOutput = InvalidRequestError | PlatformContractNotFoundError | PlatformCannotArchiveScheduledContractError | ArchivePlatformContractPayload | PlatformNotEnabledError | UnauthorizedError | InternalError
+
+"할인 분담 보관 결과"
+union ArchivePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | PlatformCannotArchiveScheduledDiscountSharePolicyError | ArchivePlatformDiscountSharePolicyPayload | PlatformNotEnabledError | UnauthorizedError | InternalError
+
+"파트너 보관 결과"
+union ArchivePlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | PlatformCannotArchiveScheduledPartnerError | ArchivePlatformPartnerPayload | PlatformNotEnabledError | UnauthorizedError | InternalError
 
 "추가 수수료 정책 예약 업데이트 취소 결과"
-union CancelPlatformAdditionalFeePolicyScheduleOutput = CancelPlatformAdditionalFeePolicySchedulePayload | PlatformNotEnabledError | InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError
+union CancelPlatformAdditionalFeePolicyScheduleOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | CancelPlatformAdditionalFeePolicySchedulePayload | PlatformNotEnabledError | InternalError
+
+"일괄 지급 취소 결과"
+union CancelPlatformBulkPayoutOutput = PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | CancelPlatformBulkPayoutPayload | UnauthorizedError | PlatformBulkPayoutNonCancellableStatusError | InternalError
 
 "계약 예약 업데이트 취소 결과"
-union CancelPlatformContractScheduleOutput = CancelPlatformContractSchedulePayload | PlatformNotEnabledError | InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError
+union CancelPlatformContractScheduleOutput = InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError | CancelPlatformContractSchedulePayload | PlatformNotEnabledError | InternalError
 
 "할인 분담 정책 예약 업데이트 취소 결과"
-union CancelPlatformDiscountSharePolicyScheduleOutput = CancelPlatformDiscountSharePolicySchedulePayload | PlatformNotEnabledError | InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError
+union CancelPlatformDiscountSharePolicyScheduleOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError | CancelPlatformDiscountSharePolicySchedulePayload | PlatformNotEnabledError | InternalError
 
 "파트너 예약 업데이트 취소 결과"
-union CancelPlatformPartnerScheduleOutput = CancelPlatformPartnerSchedulePayload | PlatformNotEnabledError | InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError
+union CancelPlatformPartnerScheduleOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | CancelPlatformPartnerSchedulePayload | PlatformNotEnabledError | InternalError
 
-"대량이체 완료 결과"
-union CompletePlatformPayoutOutput = CompletePlatformPayoutPayload | UnauthorizedError | PlatformPayoutNotFoundError | PlatformPayoutAlreadyCompletedError | InvalidRequestError | ForbiddenError | PlatformNotEnabledError | PlatformPayoutCreatorMismatchedError
+"결제 예정 시각 변경 요청 결과"
+union ChangePaymentScheduleOutput = UnauthorizedError | ForbiddenError | PaymentScheduleNotFoundError | ChangePaymentSchedulePayload | InvalidRequestError | PaymentScheduleNotScheduledError | InternalError
 
-union CreateManualTransferOutput = InvalidRequestError | PlatformNotEnabledError | PlatformPartnerNotFoundError | CreateManualTransferPayload | UnauthorizedError | PlatformUnavailableSettlementDateError
+"채널 그룹 세션 목록 조회 결과"
+union ChannelGroupSessionsOutput = ChannelGroupSessionList | InternalError
 
-union CreateOrderCancelTransferOutput = PlatformTransferAlreadyExistsError | PlatformOrderDetailMismatchedError | PlatformDiscountSharePolicyIdDuplicatedError | PlatformProductIdDuplicatedError | PlatformDiscountCancelExceededOrderCancelAmountError | CreateOrderCancelTransferPayload | UnauthorizedError | PlatformProductIdNotFoundError | PlatformCancellableDiscountAmountExceededError | PlatformCancellationAndPaymentTypeMismatchedError | PlatformTransferNotFoundError | PlatformCancellationNotFoundError | PlatformPaymentNotFoundError | PlatformCancellableProductQuantityExceededError | PlatformOrderTransferAlreadyCancelledError | InvalidRequestError | PlatformNotEnabledError | PlatformCancellableAmountExceededError | PlatformTransferDiscountSharePolicyNotFoundError | PlatformSettlementCancelAmountExceededPortOneCancelError
+"결제 예약 건이 존재하는 채널 그룹 정보 조회 결과"
+union ChannelGroupUsageByPaymentSchedulesOutput = ChannelGroupUsageByPaymentSchedulesPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
-union CreateOrderTransferOutput = PlatformContractNotFoundError | PlatformPaymentNotFoundError | InvalidRequestError | PlatformNotEnabledError | PlatformPartnerNotFoundError | PlatformTransferAlreadyExistsError | PlatformSettlementPaymentAmountExceededPortOnePaymentError | CreateOrderTransferPayload | UnauthorizedError | PlatformProductIdDuplicatedError | PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformAdditionalFeePoliciesNotFoundError | PlatformDiscountSharePoliciesNotFoundError | PlatformDiscountExceededOrderAmountError | PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError
+"결제 건이 존재하는 채널 그룹 정보 조회 결과"
+union ChannelGroupUsageByPaymentsOutput = ChannelGroupUsageByPaymentsPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"채널 그룹 목록 조회 결과"
+union ChannelGroupsOutput = UnauthorizedError | ForbiddenError | StoreNotFoundError | ChannelGroupsPayload | InvalidRequestError | InternalError
+
+"채널 다건 조회 결과"
+union ChannelsOutput = ChannelsPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+union CreateChannelGroupOutput = CreateChannelGroupPayload | InvalidRequestError | ChannelNotFoundError | LimitExceededError | UnauthorizedError | ForbiddenError | StoreNotFoundError | ChannelGroupDuplicateNameError | InternalError
+
+union CreateManualTransferOutput = InvalidRequestError | PlatformNotEnabledError | PlatformPartnerNotFoundError | CreateManualTransferPayload | UnauthorizedError | PlatformUnavailableSettlementDateError | InternalError
+
+union CreateOrderCancelTransferOutput = PlatformTransferAlreadyExistsError | PlatformOrderDetailMismatchedError | PlatformDiscountSharePolicyIdDuplicatedError | PlatformProductIdDuplicatedError | PlatformDiscountCancelExceededOrderCancelAmountError | CreateOrderCancelTransferPayload | UnauthorizedError | PlatformProductIdNotFoundError | PlatformCancellableDiscountAmountExceededError | PlatformCancellationAndPaymentTypeMismatchedError | PlatformTransferNotFoundError | PlatformCancellationNotFoundError | PlatformPaymentNotFoundError | PlatformCancellableProductQuantityExceededError | PlatformOrderTransferAlreadyCancelledError | PlatformCancellableAmountExceededError | PlatformTransferDiscountSharePolicyNotFoundError | PlatformSettlementCancelAmountExceededPortOneCancelError | InvalidRequestError | PlatformNotEnabledError | InternalError
+
+union CreateOrderTransferOutput = CreateOrderTransferPayload | UnauthorizedError | PlatformProductIdDuplicatedError | PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformAdditionalFeePoliciesNotFoundError | PlatformDiscountSharePoliciesNotFoundError | PlatformDiscountExceededOrderAmountError | PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformNotEnabledError | PlatformPartnerNotFoundError | PlatformTransferAlreadyExistsError | PlatformSettlementPaymentAmountExceededPortOnePaymentError | PlatformContractNotFoundError | PlatformPaymentNotFoundError | InvalidRequestError | InternalError
 
 "추가 수수료 정책 생성 결과"
-union CreatePlatformAdditionalFeePolicyOutput = CreatePlatformAdditionalFeePayload | PlatformNotEnabledError | InvalidRequestError | PlatformAdditionalFeePolicyAlreadyExistsError | UnauthorizedError
-
-"계약 객체 생성 결과"
-union CreatePlatformContractOutput = CreatePlatformContractPayload | PlatformNotEnabledError | InvalidRequestError | PlatformContractAlreadyExistsError | UnauthorizedError
-
-"할인 분담 정책 생성 결과"
-union CreatePlatformDiscountSharePolicyOutput = CreatePlatformDiscountSharePayload | PlatformNotEnabledError | InvalidRequestError | PlatformDiscountSharePolicyAlreadyExistsError | UnauthorizedError
-
-"파트너 생성 결과"
-union CreatePlatformPartnerOutput = InvalidRequestError | PlatformPartnerIdAlreadyExistsError | UnauthorizedError | CreatePlatformPartnerPayload | PlatformNotEnabledError | PlatformContractNotFoundError
-
-"파트너 다건 생성 결과"
-union CreatePlatformPartnersOutput = InvalidRequestError | PlatformPartnerIdsAlreadyExistError | UnauthorizedError | CreatePlatformPartnersPayload | PlatformNotEnabledError | PlatformContractsNotFoundError | PlatformPartnerIdsDuplicatedError
+union CreatePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyAlreadyExistsError | UnauthorizedError | CreatePlatformAdditionalFeePayload | PlatformNotEnabledError | InternalError
 
 "대량이체 생성 결과"
-union CreatePlatformPayoutOutput = InvalidRequestError | ForbiddenError | PlatformNotEnabledError | CreatePlatformPayoutPayload | UnauthorizedError | PlatformOngoingPayoutExistsError | PlatformNoPayablePartnerSettlementsError
+union CreatePlatformBulkPayoutOutput = InvalidRequestError | ForbiddenError | PlatformNotEnabledError | PlatformCurrencyNotSupportedForAgencyMethodError | PlatformNonPayablePartnerSettlementStatusError | PlatformActiveBulkPayoutAlreadyExistsError | PlatformNoPayablePartnerSettlementsError | PlatformVirtualAccountNotAllocatedError | CreatePlatformBulkPayoutPayload | UnauthorizedError | InternalError
 
-"대량이체 삭제 결과"
-union DeletePlatformPayoutOutput = DeletePlatformPayoutPayload | UnauthorizedError | PlatformPayoutNotFoundError | PlatformPayoutAlreadyCompletedError | InvalidRequestError | ForbiddenError | PlatformNotEnabledError | PlatformPayoutCreatorMismatchedError
+"계약 객체 생성 결과"
+union CreatePlatformContractOutput = InvalidRequestError | PlatformContractAlreadyExistsError | UnauthorizedError | CreatePlatformContractPayload | PlatformNotEnabledError | InternalError
 
-"API key 로그인 결과"
-union LoginViaApiKeyOutput = LoginViaApiKeyPayload | UnauthorizedError
+"할인 분담 정책 생성 결과"
+union CreatePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyAlreadyExistsError | UnauthorizedError | CreatePlatformDiscountSharePayload | PlatformNotEnabledError | InternalError
 
-"가맹점 정보 조회 결과"
-union MerchantOutput = Merchant | UnauthorizedError
+"파트너 생성 결과"
+union CreatePlatformPartnerOutput = InvalidRequestError | PlatformPartnerIdAlreadyExistsError | UnauthorizedError | PlatformAccountVerificationNotFoundError | PlatformAccountVerificationAlreadyUsedError | PlatformContractNotFoundError | PlatformAccountVerificationFailedError | PlatformCurrencyNotSupportedError | CreatePlatformPartnerPayload | PlatformNotEnabledError | InternalError
+
+"파트너 다건 생성 결과"
+union CreatePlatformPartnersOutput = CreatePlatformPartnersPayload | PlatformNotEnabledError | PlatformContractsNotFoundError | PlatformPartnerIdsDuplicatedError | InvalidRequestError | PlatformPartnerIdsAlreadyExistError | UnauthorizedError | PlatformCurrencyNotSupportedError | InternalError
+
+union DeleteChannelGroupOutput = UnauthorizedError | ForbiddenError | ChannelGroupNotFoundError | DeleteChannelGroupPayload | InvalidRequestError | InternalError
+
+union DeleteChannelGroupScheduledSessionOutput = UnauthorizedError | ForbiddenError | ChannelGroupNotFoundError | DeleteChannelGroupScheduledSessionPayload | InvalidRequestError | NoScheduledSessionError | InternalError
+
+union DeletePaymentRecoverySettingOutput = DeletePaymentRecoverySettingPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"정산건 삭제 결과"
+union DeletePlatformTransferOutput = DeletePlatformTransferPayload | PlatformTransferNotFoundError | InvalidRequestError | UnauthorizedError | PlatformCancelOrderTransfersExistsError | PlatformTransferNonDeletableStatusError | PlatformNotEnabledError | InternalError
+
+union DeleteV2ApiSecretOutput = ForbiddenError | V2ApiSecretNotFoundError | StoreNotFoundError | DeleteV2ApiSecretPayload | UnauthorizedError | InternalError
+
+"일괄 지급 실행 결과"
+union ExecutePlatformBulkPayoutOutput = PlatformBulkPayoutNotFoundError | PlatformBulkPayoutStatusNotPreparingError | ForbiddenError | PlatformNotEnabledError | InvalidRequestError | PlatformBrnNotRegisteredError | PlatformDocumentHashMismatchedError | ExecutePlatformBulkPayoutPayload | UnauthorizedError | PlatformVirtualAccountBalanceCheckFailedError | PlatformSignatureVerificationFailedError | PlatformPayoutMethodNotAgencyError | PlatformNotEnoughAccountBalanceError | PlatformVirtualAccountNotAllocatedError | InternalError
+
+"지급 건 생성 결과"
+union GeneratePlatformPayoutsOutput = GeneratePlatformPayoutsPayload | UnauthorizedError | PlatformBulkPayoutNotFoundError | PlatformPayoutsAlreadyGeneratedError | PlatformNotEnabledError | InvalidRequestError | PlatformNoSelectedPartnerSettlementsError | PlatformNegativePayoutAmountPartnersError | InternalError
+
+"예금주 조회 결과"
+union GetPlatformAccountHolderOutput = InvalidRequestError | UnauthorizedError | PlatformExternalApiTemporarilyFailedError | PlatformAccountHolder | PlatformNotEnabledError | PlatformExternalApiFailedError | InternalError
+
+union IssueV2ApiSecretOutput = IssueV2ApiSecretPayload | UnauthorizedError | ForbiddenError | StoreNotFoundError | InternalError
+
+"API secret 로그인 결과"
+union LoginViaApiSecretOutput = LoginViaApiSecretPayload | UnauthorizedError | InternalError
+
+"고객사 정보 조회 결과"
+union MerchantOutput = Merchant | UnauthorizedError | InternalError
+
+"빌링 결제 리커버리 최근 실행 내역 조회 결과"
+union PaymentRecoveryLogOutput = UnauthorizedError | ForbiddenError | PaymentRecoveryLogNotFoundError | PaymentRecoveryLog | InvalidRequestError | InternalError
+
+"빌링 결제 리커버리 세팅값 조회 결과"
+union PaymentRecoverySettingOutput = UnauthorizedError | ForbiddenError | PaymentRecoverySettingNotFoundError | PaymentRecoverySetting | InvalidRequestError | InternalError
+
+union PaymentScheduleCalendarOutput = PaymentScheduleCalendar | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"결제 예약 단건 조회 결과"
+union PaymentScheduleOutput = UnauthorizedError | ForbiddenError | PaymentScheduleNotFoundError | ScheduledPaymentSchedule | StartedPaymentSchedule | PendingPaymentSchedule | SucceededPaymentSchedule | FailedPaymentSchedule | RevokedPaymentSchedule | InvalidRequestError | InternalError
+
+union PaymentScheduleStatOutput = PaymentScheduleStat | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"결제 예약 다건 조회 결과"
+union PaymentSchedulesOutput = PaymentSchedulesPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"결제 예약 건이 존재하는 PG사 조회 결과"
+union PgCompanyUsageByPaymentSchedulesOutput = PgCompanyUsageByPaymentSchedulesPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"결제 건이 존재하는 PG사 조회 결과"
+union PgCompanyUsageByPaymentsOutput = PgCompanyUsageByPaymentsPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 "추가 수수료 정책 다건 조회 결과"
-union PlatformAdditionalFeePoliciesOutput = PlatformAdditionalFeePoliciesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
-
-"추가 수수료 정책 필터 옵션 조회 결과"
-union PlatformAdditionalFeePolicyFilterOptionsOutput = PlatformAdditionalFeePolicyFilterOptions | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformAdditionalFeePoliciesOutput = PlatformAdditionalFeePoliciesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "추가 수수료 정책 아이디 조회 결과"
-union PlatformAdditionalFeePolicyIdOutput = PlatformAdditionalFeePolicyId | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformAdditionalFeePolicyIdOutput = PlatformAdditionalFeePolicyId | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
+
+"추가 수수료 정책 제안 조회 결과"
+union PlatformAdditionalFeePolicyIdSuggestionOutput = PlatformAdditionalFeePolicyIdSuggestion | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
 
 "추가 수수료 정책 단건 조회 결과"
-union PlatformAdditionalFeePolicyOutput = PlatformAdditionalFeePolicy | PlatformNotEnabledError | InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError
+union PlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | PlatformAdditionalFeePolicy | PlatformNotEnabledError | InternalError
 
 "추가 수수료 정책 예약 업데이트 조회 결과"
-union PlatformAdditionalFeePolicyScheduleOutput = PlatformAdditionalFeePolicySchedule | PlatformNotEnabledError | InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError
+union PlatformAdditionalFeePolicyScheduleOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | PlatformAdditionalFeePolicySchedule | PlatformNotEnabledError | InternalError
 
-"계약 필터 옵션 조회 결과"
-union PlatformContractFilterOptionsOutput = PlatformContractFilterOptions | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+"추가 수수료 정책 요약 조회"
+union PlatformAdditionalFeePolicySummariesOutput = PlatformAdditionalFeePolicySummaries | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
+
+"일괄 지급 전자 서명용 문서 생성 결과"
+union PlatformBulkPayoutDocumentOutput = PlatformBulkPayoutDocument | UnauthorizedError | PlatformPayoutsNotGeneratedError | PlatformPayoutMethodNotAgencyError | InvalidRequestError | PlatformNotEnabledError | PlatformBulkPayoutNotFoundError | ForbiddenError | InternalError
+
+"일괄 지급 조회 결과"
+union PlatformBulkPayoutOutput = InvalidRequestError | PlatformNotEnabledError | PlatformBulkPayoutNotFoundError | PlatformBulkPayout | UnauthorizedError | InternalError
+
+"일괄지급 정산내역 대시보드 조회 결과"
+union PlatformBulkPayoutPartnerSettlementsDashboardOutput = PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | PlatformBulkPayoutPartnerSettlementsDashboardPayload | UnauthorizedError | InternalError
+
+"대량이체 내 파트너 정산 다건 조회 결과"
+union PlatformBulkPayoutPartnerSettlementsOutput = InvalidRequestError | PlatformNotEnabledError | PlatformBulkPayoutNotFoundError | PlatformBulkPayoutPartnerSettlementsPayload | UnauthorizedError | InternalError
+
+"플랫폼 다건 조회 결과"
+union PlatformBulkPayoutsOutput = PlatformBulkPayoutsPayload | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError | InternalError
 
 "계약 아이디 조회 결과"
-union PlatformContractIdOutput = PlatformContractId | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformContractIdOutput = PlatformContractId | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "계약 아이디 제안 조회 결과"
-union PlatformContractIdSuggestionOutput = PlatformContractIdSuggestion | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformContractIdSuggestionOutput = PlatformContractIdSuggestion | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "계약 조회 결과"
-union PlatformContractOutput = PlatformContract | PlatformNotEnabledError | InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError
+union PlatformContractOutput = InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError | PlatformContract | PlatformNotEnabledError | InternalError
 
 "계약 예약 업데이트 조회 결과"
-union PlatformContractScheduleOutput = PlatformContractSchedule | PlatformNotEnabledError | InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError
+union PlatformContractScheduleOutput = InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError | PlatformContractSchedule | PlatformNotEnabledError | InternalError
+
+"계약 요약 다건 조회 결과"
+union PlatformContractSummariesOutput = PlatformContractSummariesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "계약 다건 조회 결과"
-union PlatformContractsOutput = PlatformContractsPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformContractsOutput = PlatformContractsPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "할인 분담 정책 다건 조회 결과"
-union PlatformDiscountSharePoliciesOutput = PlatformDiscountSharePoliciesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformDiscountSharePoliciesOutput = PlatformDiscountSharePoliciesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "할인 분담 정책 필터 옵션 조회 결과"
-union PlatformDiscountSharePolicyFilterOptionsOutput = PlatformDiscountSharePolicyFilterOptions | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformDiscountSharePolicyFilterOptionsOutput = PlatformDiscountSharePolicyFilterOptions | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "할인 분담 정책 아이디 조회 결과"
-union PlatformDiscountSharePolicyIdOutput = PlatformDiscountSharePolicyId | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformDiscountSharePolicyIdOutput = PlatformDiscountSharePolicyId | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
+
+"할인 분담 정책 아이디 제안 조회 결과"
+union PlatformDiscountSharePolicyIdSuggestionOutput = PlatformDiscountSharePolicyIdSuggestion | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
 
 "할인 분담 정책 조회 결과"
-union PlatformDiscountSharePolicyOutput = PlatformDiscountSharePolicy | PlatformNotEnabledError | InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError
+union PlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError | PlatformDiscountSharePolicy | PlatformNotEnabledError | InternalError
 
 "할인 분담 정책 예약 업데이트 조회 결과"
-union PlatformDiscountSharePolicyScheduleOutput = PlatformDiscountSharePolicySchedule | PlatformNotEnabledError | InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError
+union PlatformDiscountSharePolicyScheduleOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError | PlatformDiscountSharePolicySchedule | PlatformNotEnabledError | InternalError
 
 "플랫폼 중개수수료 정보"
 union PlatformFee = PlatformFixedAmountFee | PlatformFixedRateFee
 
 "플랫폼 정보 조회 결과"
-union PlatformOutput = Platform | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformOutput = Platform | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
+
+"파트너 계좌 은행 조회 결과"
+union PlatformPartnerBanksOutput = PlatformPartnerBanksPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
+
+"파트너 계좌 통화 조회 결과"
+union PlatformPartnerCurrenciesOutput = PlatformPartnerCurrenciesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "파트너 현황 조회 결과"
-union PlatformPartnerDashboardOutput = PlatformPartnerDashboard | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformPartnerDashboardOutput = PlatformPartnerDashboard | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "파트너 필터 옵션 조회 결과"
-union PlatformPartnerFilterOptionsOutput = PlatformPartnerFilterOptions | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformPartnerFilterOptionsOutput = PlatformPartnerFilterOptions | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "파트너 아이디 조회 결과"
-union PlatformPartnerIdOutput = PlatformPartnerId | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformPartnerIdOutput = PlatformPartnerId | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "파트너 아이디 제안 조회 결과"
-union PlatformPartnerIdSuggestionOutput = PlatformPartnerIdSuggestion | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformPartnerIdSuggestionOutput = PlatformPartnerIdSuggestion | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "플랫폼 파트너 조회 결과"
-union PlatformPartnerOutput = PlatformPartner | PlatformNotEnabledError | InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError
+union PlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | PlatformPartner | PlatformNotEnabledError | InternalError
 
 "파트너 예약 업데이트 조회 결과"
-union PlatformPartnerScheduleOutput = PlatformPartnerSchedule | PlatformNotEnabledError | InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError
+union PlatformPartnerScheduleOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | PlatformPartnerSchedule | PlatformNotEnabledError | InternalError
 
-"정산내역 필터 옵션 조회 결과"
-union PlatformPartnerSettlementFilterOptionsOutput = PlatformPartnerSettlementFilterOptions | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError
+"정산내역 통화 조회 결과"
+union PlatformPartnerSettlementCurrenciesOutput = PlatformPartnerSettlementCurrenciesPayload | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError | InternalError
+
+"정산내역 대시보드 조회 결과"
+union PlatformPartnerSettlementDashboardOutput = PlatformPartnerSettlementDashboard | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError | InternalError
+
+"정산일 리스트 조회 결과"
+union PlatformPartnerSettlementDatesOutput = PlatformPartnerSettlementDatesPayload | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError | InternalError
 
 "정산내역 다건 조회 결과"
-union PlatformPartnerSettlementsOutput = PlatformPartnerSettlementsPayload | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError
+union PlatformPartnerSettlementsOutput = PlatformPartnerSettlementsPayload | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError | InternalError
 
 "파트너 요약 다건 조회 결과"
-union PlatformPartnerSummariesOutput = PlatformPartnerSummariesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformPartnerSummariesOutput = PlatformPartnerSummariesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
+
+"파트너 태그 조회 결과"
+union PlatformPartnerTagsOutput = PlatformPartnerTagsPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
+
+"파트너 유형별 추가 정보"
+union PlatformPartnerType = PlatformPartnerTypeBusiness | PlatformPartnerTypeWhtPayer
 
 "파트너 다건 조회 결과"
-union PlatformPartnersOutput = PlatformPartnersPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformPartnersOutput = PlatformPartnersPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
 "지급 가능한 정산일 리스트 조회 결과"
-union PlatformPayableSettlementDatesOutput = PlatformPayableSettlementDatesPayload | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError
+union PlatformPayableSettlementDatesOutput = PlatformPayableSettlementDatesPayload | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError | InternalError
 
+"결제 수단"
 union PlatformPaymentMethod = PlatformPaymentMethodCard | PlatformPaymentMethodEasyPay | PlatformPaymentMethodGiftCertificate | PlatformPaymentMethodMobile | PlatformPaymentMethodTransfer | PlatformPaymentMethodVirtualAccount
 
-"이체 조회 결과"
-union PlatformPayoutOutput = UnauthorizedError | InvalidRequestError | PlatformNotEnabledError | PlatformOngoingPayout | PlatformCompletedPayout | PlatformPayoutNotFoundError
+"지급에 사용된 통화 조회 결과"
+union PlatformPayoutCurrenciesOutput = PlatformPayoutCurrenciesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
 
-"대량이체 내 파트너 정산 다건 조회 결과"
-union PlatformPayoutPartnerSettlementsOutput = PayoutPartnerSettlementsPayload | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError
+"지급 조회 결과"
+union PlatformPayoutOutput = InvalidRequestError | PlatformNotEnabledError | PlatformPayoutNotFoundError | PlatformPayout | UnauthorizedError | InternalError
 
-"정산금 지급 시트 목록 조회 결과"
-union PlatformPayoutSheetsOutput = PlatformPayoutSheetsPayload | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError | PlatformPayoutNotFoundError
-
-"플랫폼 다건 조회 결과"
-union PlatformPayoutsOutput = PlatformPayoutsPayload | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError
+"플랫폼 지급내역 다건 조회 결과"
+union PlatformPayoutsOutput = PlatformPayoutsPayload | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError | InternalError
 
 "플랫폼 정산 주기 계산 방식"
 union PlatformSettlementCycleMethod = PlatformSettlementCycleMethodDaily | PlatformSettlementCycleMethodManualDates | PlatformSettlementCycleMethodMonthly | PlatformSettlementCycleMethodWeekly
@@ -216,405 +340,1215 @@ union PlatformSettlementCycleMethod = PlatformSettlementCycleMethodDaily | Platf
 union PlatformSettlementFormulaError = PlatformSettlementFormulaInvalidFunction | PlatformSettlementFormulaInvalidOperator | PlatformSettlementFormulaInvalidSyntax | PlatformSettlementFormulaInvalidVariable | PlatformSettlementFormulaUnexpectedFunctionArguments | PlatformSettlementFormulaUnknownError | PlatformSettlementFormulaUnsupportedVariable
 
 "플랫폼 계산식 검증 응답"
-union PlatformSettlementFormulaValidationOutput = PlatformSettlementFormulaValidation | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError
+union PlatformSettlementFormulaValidationOutput = PlatformSettlementFormulaValidation | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError | InternalError
 
 "정산내역 대시보드 조회 결과"
-union PlatformTransferDashboardOutput = PlatformTransferDashboard | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError
+union PlatformTransferDashboardOutput = PlatformTransferDashboard | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError | InternalError
 
 "정산내역 필터 옵션 조회 결과"
-union PlatformTransferFilterOptionsOutput = PlatformTransferFilterOptions | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError
+union PlatformTransferFilterOptionsOutput = PlatformTransferFilterOptions | UnauthorizedError | PlatformNotEnabledError | InvalidRequestError | InternalError
 
-union PlatformTransferOutput = PlatformManualTransfer | PlatformTransferNotFoundError | PlatformNotEnabledError | PlatformOrderTransfer | PlatformOrderCancelTransfer | InvalidRequestError | UnauthorizedError
+union PlatformTransferOutput = PlatformOrderTransfer | PlatformOrderCancelTransfer | InvalidRequestError | UnauthorizedError | PlatformManualTransfer | PlatformTransferNotFoundError | PlatformNotEnabledError | InternalError
 
-union PlatformTransferSummariesOutput = PlatformTransferSummariesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError
+union PlatformTransferSummariesOutput = PlatformTransferSummariesPayload | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
+
+"가상계좌 정보 조회 결과"
+union PlatformVirtualAccountOutput = PlatformVirtualAccount | PlatformNotEnabledError | PlatformExternalApiFailedError | PlatformVirtualAccountNotAllocatedError | InvalidRequestError | UnauthorizedError | PlatformExternalApiTemporarilyFailedError | InternalError
+
+"추가 수수료 정책 복원 결과"
+union RecoverPlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | RecoverPlatformAdditionalFeePolicyPayload | PlatformNotEnabledError | InternalError
+
+"계약 복원 결과"
+union RecoverPlatformContractOutput = InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError | RecoverPlatformContractPayload | PlatformNotEnabledError | InternalError
+
+"할인 분담 복원 결과"
+union RecoverPlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError | RecoverPlatformDiscountSharePolicyPayload | PlatformNotEnabledError | InternalError
+
+"파트너 복원 결과"
+union RecoverPlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | RecoverPlatformPartnerPayload | PlatformNotEnabledError | InternalError
 
 "토큰 재발급 결과"
-union RefreshTokenOutput = RefreshTokenPayload | UnauthorizedError
+union RefreshTokenOutput = RefreshTokenPayload | UnauthorizedError | InternalError
 
 "파트너 상태 승인 거절 변경 결과"
-union RejectPlatformPartnerOutput = RejectPlatformPartnerPayload | PlatformNotEnabledError | InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError
+union RejectPlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | PlatformArchivedPartnerError | RejectPlatformPartnerPayload | PlatformNotEnabledError | UnauthorizedError | InternalError
 
 "추가 수수료 정책 예약 업데이트 재설정 결과"
-union ReschedulePlatformAdditionalFeePolicyOutput = ReschedulePlatformAdditionalFeePayload | PlatformNotEnabledError | InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError
+union ReschedulePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | ReschedulePlatformAdditionalFeePayload | PlatformNotEnabledError | InternalError
 
 "계약 예약 업데이트 재설정 결과"
-union ReschedulePlatformContractOutput = ReschedulePlatformContractPayload | PlatformNotEnabledError | InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError
+union ReschedulePlatformContractOutput = InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError | ReschedulePlatformContractPayload | PlatformNotEnabledError | InternalError
 
 "할인 분담 정책 예약 업데이트 재설정 결과"
-union ReschedulePlatformDiscountSharePolicyOutput = ReschedulePlatformDiscountSharePayload | PlatformNotEnabledError | InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError
+union ReschedulePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError | ReschedulePlatformDiscountSharePayload | PlatformNotEnabledError | InternalError
 
 "파트너 예약 업데이트 재설정 결과"
-union ReschedulePlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | ReschedulePlatformPartnerPayload | PlatformNotEnabledError | PlatformContractNotFoundError
+union ReschedulePlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | ReschedulePlatformPartnerPayload | PlatformNotEnabledError | PlatformContractNotFoundError | InternalError
+
+"재시도 요청 결과"
+union RetryPaymentScheduleOutput = PaymentScheduleNotRevokedOrFailedError | BillingKeyAlreadyDeletedError | PaymentScheduleAlreadyExistsError | RetryPaymentSchedulePayload | InvalidRequestError | PgProviderError | PaymentScheduleNotFoundError | ChannelNotFoundError | AlreadyPaidOrWaitingError | UnauthorizedError | ForbiddenError | InternalError
+
+"결제 예약 건 취소 요청 결과"
+union RevokePaymentScheduleOutput = UnauthorizedError | ForbiddenError | PaymentScheduleNotFoundError | RevokePaymentSchedulePayload | InvalidRequestError | PaymentScheduleNotScheduledError | InternalError
 
 "추가 수수료 정책 업데이트 예약 결과"
-union SchedulePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | PlatformAdditionalFeePolicyScheduleAlreadyExistsError | SchedulePlatformAdditionalFeePayload | PlatformNotEnabledError | UnauthorizedError
+union SchedulePlatformAdditionalFeePolicyOutput = SchedulePlatformAdditionalFeePayload | PlatformNotEnabledError | PlatformArchivedAdditionalFeePolicyError | UnauthorizedError | InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | PlatformAdditionalFeePolicyScheduleAlreadyExistsError | InternalError
 
 "계약 업데이트 예약 결과"
-union SchedulePlatformContractOutput = InvalidRequestError | PlatformContractNotFoundError | PlatformContractScheduleAlreadyExistsError | SchedulePlatformContractPayload | PlatformNotEnabledError | UnauthorizedError
+union SchedulePlatformContractOutput = SchedulePlatformContractPayload | PlatformNotEnabledError | PlatformArchivedContractError | UnauthorizedError | InvalidRequestError | PlatformContractNotFoundError | PlatformContractScheduleAlreadyExistsError | InternalError
 
 "할인 분담 정책 업데이트 예약 결과"
-union SchedulePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | PlatformDiscountSharePolicyScheduleAlreadyExistsError | SchedulePlatformDiscountSharePayload | PlatformNotEnabledError | UnauthorizedError
+union SchedulePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | PlatformDiscountSharePolicyScheduleAlreadyExistsError | SchedulePlatformDiscountSharePayload | PlatformNotEnabledError | UnauthorizedError | InternalError
 
 "파트너 업데이트 예약 결과"
-union SchedulePlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | PlatformPartnerScheduleAlreadyExistsError | SchedulePlatformPartnerPayload | PlatformNotEnabledError | UnauthorizedError | PlatformContractNotFoundError
+union SchedulePlatformPartnerOutput = UnauthorizedError | PlatformContractNotFoundError | PlatformAccountVerificationNotFoundError | SchedulePlatformPartnerPayload | PlatformNotEnabledError | PlatformAccountVerificationAlreadyUsedError | PlatformPartnerScheduleAlreadyExistsError | PlatformArchivedPartnerError | PlatformAccountVerificationFailedError | InvalidRequestError | PlatformPartnerNotFoundError | InternalError
 
 "파트너 예약 업데이트 결과"
-union SchedulePlatformPartnersOutput = InvalidRequestError | PlatformNotEnabledError | PlatformPartnerSchedulesAlreadyExistError | SchedulePlatformPartnersPayload | UnauthorizedError | PlatformContractNotFoundError
+union SchedulePlatformPartnersOutput = SchedulePlatformPartnersPayload | UnauthorizedError | PlatformContractNotFoundError | PlatformArchivedPartnersCannotBeScheduledError | InvalidRequestError | PlatformNotEnabledError | PlatformPartnerSchedulesAlreadyExistError | InternalError
 
-"대량이체 파트너 정산 전체 업데이트 결과"
-union UpdatePayoutAllPartnerSettlementsOutput = UpdatePayoutAllPartnerSettlementsPayload | UnauthorizedError | PlatformPayoutNotFoundError | PlatformPayoutAlreadyCompletedError | InvalidRequestError | ForbiddenError | PlatformNotEnabledError | PlatformPayoutCreatorMismatchedError
+union SetPaymentRecoverySettingOutput = UnauthorizedError | ForbiddenError | PaymentRecoverySettingNotFoundError | PaymentRecoverySetting | InvalidRequestError | InternalError
+
+"일괄 지급 중단 결과"
+union StopPlatformBulkPayoutOutput = PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | StopPlatformBulkPayoutPayload | UnauthorizedError | PlatformBulkPayoutNonStoppableStatusError | InternalError
+
+union StoreOutput = Store | UnauthorizedError | StoreNotFoundError | ForbiddenError | InternalError
+
+"웹훅 설정 조회 결과"
+union StoreWebhookSettingOutput = InvalidRequestError | StoreNotFoundError | ForbiddenError | StoreWebhookSetting | UnauthorizedError | InternalError
+
+union StoresOutput = StoresPayload | UnauthorizedError | StoreNotFoundError | ForbiddenError | InternalError
+
+"웹훅 호출 테스트 결과"
+union TestWebhookOutput = InvalidRequestError | ForbiddenError | StoreWebhookUrlNotSetError | TestWebhookPayload | UnauthorizedError | WebhookTestFailedError | InternalError
+
+"일괄지급 정산 건 토글 결과"
+union TogglePlatformBulkPayoutPartnerSettlementsOutput = TogglePlatformBulkPayoutPartnerSettlementsPayload | UnauthorizedError | PlatformPayoutsAlreadyGeneratedError | ForbiddenError | PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | InternalError
+
+union UpdateChannelGroupOutput = UpdateChannelGroupPayload | InvalidRequestError | ChannelNotFoundError | ChannelGroupDuplicateNameError | UnauthorizedError | ForbiddenError | ChannelGroupNotFoundError | InternalError
 
 "추가 수수료 정책 업데이트 결과"
-union UpdatePlatformAdditionalFeePolicyOutput = UpdatePlatformAdditionalFeePayload | PlatformNotEnabledError | InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError
+union UpdatePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | PlatformArchivedAdditionalFeePolicyError | UpdatePlatformAdditionalFeePayload | PlatformNotEnabledError | UnauthorizedError | InternalError
 
 "계약 업데이트 결과"
-union UpdatePlatformContractOutput = UpdatePlatformContractPayload | PlatformNotEnabledError | InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError
+union UpdatePlatformContractOutput = InvalidRequestError | PlatformContractNotFoundError | PlatformArchivedContractError | UpdatePlatformContractPayload | PlatformNotEnabledError | UnauthorizedError | InternalError
 
 "할인 분담 정책 업데이트 결과"
-union UpdatePlatformDiscountSharePolicyOutput = UpdatePlatformDiscountSharePayload | PlatformNotEnabledError | InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | UnauthorizedError
+union UpdatePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | PlatformArchivedDiscountSharePolicyError | UpdatePlatformDiscountSharePayload | PlatformNotEnabledError | UnauthorizedError | InternalError
 
 "플랫폼 업데이트 결과"
-union UpdatePlatformOutput = UpdatePlatformPayload | PlatformNotEnabledError | PlatformInvalidSettlementFormulaError | InvalidRequestError | UnauthorizedError
+union UpdatePlatformOutput = PlatformInvalidSettlementFormulaError | InvalidRequestError | UnauthorizedError | UpdatePlatformPayload | PlatformNotEnabledError | InternalError
 
 "파트너 업데이트 결과"
-union UpdatePlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | UpdatePlatformPartnerPayload | PlatformNotEnabledError | PlatformContractNotFoundError
+union UpdatePlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | PlatformAccountVerificationFailedError | PlatformAccountVerificationNotFoundError | PlatformContractNotFoundError | PlatformArchivedPartnerError | PlatformAccountVerificationAlreadyUsedError | UpdatePlatformPartnerPayload | PlatformNotEnabledError | InternalError
 
-"대량이체 파트너 정산 업데이트 결과"
-union UpdatePlatformPayoutPartnerSettlementOutput = UpdatePlatformPayoutPartnerSettlementPayload | UnauthorizedError | PlatformPayoutPartnerSettlementNotFoundError | PlatformPayoutNotFoundError | InvalidRequestError | ForbiddenError | PlatformNotEnabledError | PlatformPayoutPartnerSettlementAlreadyPaidOutError | PlatformPayoutCreatorMismatchedError
+"정산내역 상태 업데이트 결과"
+union UpdatePlatformPartnerSettlementStatusOutput = PlatformNotEnabledError | InvalidRequestError | PlatformNonUpdatableStatusError | UpdatePlatformPartnerSettlementStatusPayload | UnauthorizedError | PlatformPartnerSettlementNotFoundError | InternalError
 
-"조회 시간 단위"
-enum AnalyticsTimeGranularity {
-  "시간"
-HOUR
-  "일"
-DAY
-  "주"
-WEEK
-  "월"
-MONTH
-}
+"지급 건 메모 업데이트 결과"
+union UpdatePlatformPayoutOutput = PlatformNotEnabledError | InvalidRequestError | PlatformPayoutNotFoundError | UpdatePlatformPayoutPayload | UnauthorizedError | PlatformNonUpdatableStatusError | InternalError
+
+"지급 건 일괄 업데이트 결과"
+union UpdatePlatformPayoutsOutput = UpdatePlatformPayoutsPayload | UnauthorizedError | PlatformBulkPayoutStatusNotPreparingError | ForbiddenError | PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | InternalError
+
+"웹훅 설정 저장 결과"
+union UpdateStoreWebhookSettingOutput = InvalidRequestError | StoreNotFoundError | ForbiddenError | UpdateStoreWebhookSettingPayload | UnauthorizedError | InvalidWebhookUrlError | InternalError
+
+"결제 예약 건이 존재하는 통화 조회 결과"
+union UsedCurrenciesForPaymentScheduleOutput = UsedCurrenciesForPaymentSchedulePayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+union V2ApiSecretInfosOutput = V2ApiSecretInfosPayload | UnauthorizedError | StoreNotFoundError | ForbiddenError | InternalError
 
 "은행"
 enum Bank {
   "한국은행"
-BOK
+  BANK_OF_KOREA
   "산업은행"
-KDB
+  KDB
   "기업은행"
-IBK
+  IBK
   "국민은행"
-KB
+  KOOKMIN
   "수협은행"
-SUHYUP
+  SUHYUP
   "수출입은행"
-EIB
+  KEXIM
   "NH농협은행"
-NH
+  NONGHYUP
   "지역농축협"
-REGIONAL_NH
+  LOCAL_NONGHYUP
   "우리은행"
-WOORI
+  WOORI
   "SC제일은행"
-SCB
+  STANDARD_CHARTERED
   "한국씨티은행"
-CITI
+  CITI
   "대구은행"
-DAEGU
+  DAEGU
   "부산은행"
-BUSAN
+  BUSAN
   "광주은행"
-GWANGJU
+  KWANGJU
   "제주은행"
-JEJU
+  JEJU
   "전북은행"
-JEONBUK
+  JEONBUK
   "경남은행"
-GYEONGNAM
+  KYONGNAM
   "새마을금고"
-KFCC
+  KFCC
   "신협"
-CREDIT_UNION
+  SHINHYUP
   "저축은행"
-FSB
-  "기타 외국계은행(중국 농업은행 등)"
-MISC
+  SAVINGS_BANK
   "모간스탠리은행"
-MORGAN_STANLEY
+  MORGAN_STANLEY
   "HSBC은행"
-HSBC
+  HSBC
   "도이치은행"
-DEUTSCHE
+  DEUTSCHE
   "제이피모간체이스은행"
-JPMC
+  JPMC
   "미즈호은행"
-MIZUHO
+  MIZUHO
   "엠유에프지은행"
-MUFG
+  MUFG
   "BOA은행"
-BOA
+  BANK_OF_AMERICA
   "비엔피파리바은행"
-BNP
+  BNP_PARIBAS
+  "중국공상은행"
+  ICBC
+  "중국은행"
+  BANK_OF_CHINA
   "산림조합중앙회"
-NFCF
+  NFCF
+  "대화은행"
+  UOB
+  "교통은행"
+  BOCOM
+  "중국건설은행"
+  CCB
   "우체국"
-EPOST
+  POST
+  "신용보증기금"
+  KODIT
+  "기술보증기금"
+  KIBO
   "하나은행"
-HANA
+  HANA
   "신한은행"
-SHINHAN
+  SHINHAN
   "케이뱅크"
-KBANK
+  K_BANK
   "카카오뱅크"
-KAKAO
+  KAKAO
   "토스뱅크"
-TOSS_BANK
-  "대신저축은행"
-DAISHIN_SB
-  "에스비아이저축은행"
-SBI_SB
-  "에이치케이저축은행"
-HK_SB
-  "웰컴저축은행"
-WELCOME_SB
-  "신한저축은행"
-SHINHAN_SB
+  TOSS
+  "기타 외국계은행(중국 농업은행 등)"
+  MISC_FOREIGN
+  "서울보증보험"
+  SGI
+  "한국신용정보원"
+  KCIS
+  "유안타증권"
+  YUANTA_SECURITIES
+  "KB증권"
+  KB_SECURITIES
+  "다울투자증권"
+  DAOL_SECURITIES
+  "미래에셋증권"
+  MIRAE_ASSET_SECURITIES
+  "삼성증권"
+  SAMSUNG_SECURITIES
+  "한국투자증권"
+  KOREA_SECURITIES
+  "NH투자증권"
+  NH_SECURITIES
+  "교보증권"
+  KYOBO_SECURITIES
+  "하이투자증권"
+  HI_SECURITIES
+  "현대차증권"
+  HYUNDAI_MOTOR_SECURITIES
+  "키움증권"
+  KIWOOM_SECURITIES
+  "이베스트투자증권"
+  EBEST_SECURITIES
+  "SK증권"
+  SK_SECURITIES
+  "대신증권"
+  DAISHIN_SECURITIES
+  "메리츠증권"
+  MERITZ_SECURITIES
+  "한화투자증권"
+  HANHWA_SECURITIES
+  "하나증권"
+  HANA_SECURITIES
+  "토스증권"
+  TOSS_SECURITIES
+  "신한투자증권"
+  SHINHAN_SECURITIES
+  "DB금융투자"
+  DB_SECURITIES
+  "유진투자증권"
+  EUGENE_SECURITIES
+  "카카오페이증권"
+  KAKAO_PAY_SECURITIES
+  "부국증권"
+  BOOKOOK_SECURITIES
+  "신영증권"
+  SHINYOUNG_SECURITIES
+  "케이프투자증권"
+  CAPE_SECURITIES
+  "한국포스증권"
+  KOREA_FOSS_SECURITIES
+}
+
+"빌링키 결제 수단"
+enum BillingKeyPaymentMethodType {
+  "카드"
+  CARD
+  "모바일"
+  MOBILE
+  "간편 결제"
+  EASY_PAY
+  "계좌 이체"
+  TRANSFER
 }
 
 "카드사"
 enum CardCompany {
   "KDB산업은행"
-KOREA_DEVELOPMENT_BANK
+  KOREA_DEVELOPMENT_BANK
   "새마을금고"
-KFCC
+  KFCC
   "신협"
-SHINHYUP
+  SHINHYUP
   "우체국"
-EPOST
+  EPOST
   "저축은행"
-SAVINGS_BANK_KOREA
+  SAVINGS_BANK_KOREA
   "카카오뱅크"
-KAKAO_BANK
+  KAKAO_BANK
   "케이뱅크"
-K_BANK
+  K_BANK
   "토스뱅크"
-TOSS_BANK
+  TOSS_BANK
   "우리카드"
-WOORI_CARD
+  WOORI_CARD
   "BC카드"
-BC_CARD
+  BC_CARD
   "광주카드"
-GWANGJU_CARD
+  GWANGJU_CARD
   "삼성카드"
-SAMSUNG_CARD
+  SAMSUNG_CARD
   "신한카드"
-SHINHAN_CARD
+  SHINHAN_CARD
   "현대카드"
-HYUNDAI_CARD
+  HYUNDAI_CARD
   "롯데카드"
-LOTTE_CARD
+  LOTTE_CARD
   "수협카드"
-SUHYUP_CARD
+  SUHYUP_CARD
   "씨티카드"
-CITI_CARD
+  CITI_CARD
   "NH카드"
-NH_CARD
+  NH_CARD
   "전북카드"
-JEONBUK_CARD
+  JEONBUK_CARD
   "제주카드"
-JEJU_CARD
+  JEJU_CARD
   "하나카드"
-HANA_CARD
+  HANA_CARD
   "국민카드"
-KOOKMIN_CARD
+  KOOKMIN_CARD
   "해외카드"
-UNIDENTIFIED_GLOBAL_CARD
+  UNIDENTIFIED_GLOBAL_CARD
+}
+
+"채널 그룹 유형"
+enum ChannelGroupType {
+  "라이브 채널 그룹"
+  LIVE
+  "테스트 채널 그룹"
+  TEST
+}
+
+"채널 유형"
+enum ChannelType {
+  "라이브 채널"
+  LIVE
+  "고객사 전용 테스트 채널"
+  MERCHANT_TEST
+  "공용 테스트 채널"
+  SHARED_TEST
+}
+
+"국가"
+enum Country {
+  "Andorra"
+  AD
+  "United Arab Emirates (the)"
+  AE
+  "Afghanistan"
+  AF
+  "Antigua and Barbuda"
+  AG
+  "Anguilla"
+  AI
+  "Albania"
+  AL
+  "Armenia"
+  AM
+  "Angola"
+  AO
+  "Antarctica"
+  AQ
+  "Argentina"
+  AR
+  "American Samoa"
+  AS
+  "Austria"
+  AT
+  "Australia"
+  AU
+  "Aruba"
+  AW
+  "Åland Islands"
+  AX
+  "Azerbaijan"
+  AZ
+  "Bosnia and Herzegovina"
+  BA
+  "Barbados"
+  BB
+  "Bangladesh"
+  BD
+  "Belgium"
+  BE
+  "Burkina Faso"
+  BF
+  "Bulgaria"
+  BG
+  "Bahrain"
+  BH
+  "Burundi"
+  BI
+  "Benin"
+  BJ
+  "Saint Barthélemy"
+  BL
+  "Bermuda"
+  BM
+  "Brunei Darussalam"
+  BN
+  "Bolivia (Plurinational State of)"
+  BO
+  "Bonaire, Sint Eustatius and Saba"
+  BQ
+  "Brazil"
+  BR
+  "Bahamas (the)"
+  BS
+  "Bhutan"
+  BT
+  "Bouvet Island"
+  BV
+  "Botswana"
+  BW
+  "Belarus"
+  BY
+  "Belize"
+  BZ
+  "Canada"
+  CA
+  "Cocos (Keeling) Islands (the)"
+  CC
+  "Congo (the Democratic Republic of the)"
+  CD
+  "Central African Republic (the)"
+  CF
+  "Congo (the)"
+  CG
+  "Switzerland"
+  CH
+  "Côte d'Ivoire"
+  CI
+  "Cook Islands (the)"
+  CK
+  "Chile"
+  CL
+  "Cameroon"
+  CM
+  "China"
+  CN
+  "Colombia"
+  CO
+  "Costa Rica"
+  CR
+  "Cuba"
+  CU
+  "Cabo Verde"
+  CV
+  "Curaçao"
+  CW
+  "Christmas Island"
+  CX
+  "Cyprus"
+  CY
+  "Czechia"
+  CZ
+  "Germany"
+  DE
+  "Djibouti"
+  DJ
+  "Denmark"
+  DK
+  "Dominica"
+  DM
+  "Dominican Republic (the)"
+  DO
+  "Algeria"
+  DZ
+  "Ecuador"
+  EC
+  "Estonia"
+  EE
+  "Egypt"
+  EG
+  "Western Sahara"
+  EH
+  "Eritrea"
+  ER
+  "Spain"
+  ES
+  "Ethiopia"
+  ET
+  "Finland"
+  FI
+  "Fiji"
+  FJ
+  "Falkland Islands (the) [Malvinas]"
+  FK
+  "Micronesia (Federated States of)"
+  FM
+  "Faroe Islands (the)"
+  FO
+  "France"
+  FR
+  "Gabon"
+  GA
+  "United Kingdom of Great Britain and Northern Ireland (the)"
+  GB
+  "Grenada"
+  GD
+  "Georgia"
+  GE
+  "French Guiana"
+  GF
+  "Guernsey"
+  GG
+  "Ghana"
+  GH
+  "Gibraltar"
+  GI
+  "Greenland"
+  GL
+  "Gambia (the)"
+  GM
+  "Guinea"
+  GN
+  "Guadeloupe"
+  GP
+  "Equatorial Guinea"
+  GQ
+  "Greece"
+  GR
+  "South Georgia and the South Sandwich Islands"
+  GS
+  "Guatemala"
+  GT
+  "Guam"
+  GU
+  "Guinea-Bissau"
+  GW
+  "Guyana"
+  GY
+  "Hong Kong"
+  HK
+  "Heard Island and McDonald Islands"
+  HM
+  "Honduras"
+  HN
+  "Croatia"
+  HR
+  "Haiti"
+  HT
+  "Hungary"
+  HU
+  "Indonesia"
+  ID
+  "Ireland"
+  IE
+  "Israel"
+  IL
+  "Isle of Man"
+  IM
+  "India"
+  IN
+  "British Indian Ocean Territory (the)"
+  IO
+  "Iraq"
+  IQ
+  "Iran (Islamic Republic of)"
+  IR
+  "Iceland"
+  IS
+  "Italy"
+  IT
+  "Jersey"
+  JE
+  "Jamaica"
+  JM
+  "Jordan"
+  JO
+  "Japan"
+  JP
+  "Kenya"
+  KE
+  "Kyrgyzstan"
+  KG
+  "Cambodia"
+  KH
+  "Kiribati"
+  KI
+  "Comoros (the)"
+  KM
+  "Saint Kitts and Nevis"
+  KN
+  "Korea (the Democratic People's Republic of)"
+  KP
+  "Korea (the Republic of)"
+  KR
+  "Kuwait"
+  KW
+  "Cayman Islands (the)"
+  KY
+  "Kazakhstan"
+  KZ
+  "Lao People's Democratic Republic (the)"
+  LA
+  "Lebanon"
+  LB
+  "Saint Lucia"
+  LC
+  "Liechtenstein"
+  LI
+  "Sri Lanka"
+  LK
+  "Liberia"
+  LR
+  "Lesotho"
+  LS
+  "Lithuania"
+  LT
+  "Luxembourg"
+  LU
+  "Latvia"
+  LV
+  "Libya"
+  LY
+  "Morocco"
+  MA
+  "Monaco"
+  MC
+  "Moldova (the Republic of)"
+  MD
+  "Montenegro"
+  ME
+  "Saint Martin (French part)"
+  MF
+  "Madagascar"
+  MG
+  "Marshall Islands (the)"
+  MH
+  "North Macedonia"
+  MK
+  "Mali"
+  ML
+  "Myanmar"
+  MM
+  "Mongolia"
+  MN
+  "Macao"
+  MO
+  "Northern Mariana Islands (the)"
+  MP
+  "Martinique"
+  MQ
+  "Mauritania"
+  MR
+  "Montserrat"
+  MS
+  "Malta"
+  MT
+  "Mauritius"
+  MU
+  "Maldives"
+  MV
+  "Malawi"
+  MW
+  "Mexico"
+  MX
+  "Malaysia"
+  MY
+  "Mozambique"
+  MZ
+  "Namibia"
+  NA
+  "New Caledonia"
+  NC
+  "Niger (the)"
+  NE
+  "Norfolk Island"
+  NF
+  "Nigeria"
+  NG
+  "Nicaragua"
+  NI
+  "Netherlands (Kingdom of the)"
+  NL
+  "Norway"
+  NO
+  "Nepal"
+  NP
+  "Nauru"
+  NR
+  "Niue"
+  NU
+  "New Zealand"
+  NZ
+  "Oman"
+  OM
+  "Panama"
+  PA
+  "Peru"
+  PE
+  "French Polynesia"
+  PF
+  "Papua New Guinea"
+  PG
+  "Philippines (the)"
+  PH
+  "Pakistan"
+  PK
+  "Poland"
+  PL
+  "Saint Pierre and Miquelon"
+  PM
+  "Pitcairn"
+  PN
+  "Puerto Rico"
+  PR
+  "Palestine, State of"
+  PS
+  "Portugal"
+  PT
+  "Palau"
+  PW
+  "Paraguay"
+  PY
+  "Qatar"
+  QA
+  "Réunion"
+  RE
+  "Romania"
+  RO
+  "Serbia"
+  RS
+  "Russian Federation (the)"
+  RU
+  "Rwanda"
+  RW
+  "Saudi Arabia"
+  SA
+  "Solomon Islands"
+  SB
+  "Seychelles"
+  SC
+  "Sudan (the)"
+  SD
+  "Sweden"
+  SE
+  "Singapore"
+  SG
+  "Saint Helena, Ascension and Tristan da Cunha"
+  SH
+  "Slovenia"
+  SI
+  "Svalbard and Jan Mayen"
+  SJ
+  "Slovakia"
+  SK
+  "Sierra Leone"
+  SL
+  "San Marino"
+  SM
+  "Senegal"
+  SN
+  "Somalia"
+  SO
+  "Suriname"
+  SR
+  "South Sudan"
+  SS
+  "Sao Tome and Principe"
+  ST
+  "El Salvador"
+  SV
+  "Sint Maarten (Dutch part)"
+  SX
+  "Syrian Arab Republic (the)"
+  SY
+  "Eswatini"
+  SZ
+  "Turks and Caicos Islands (the)"
+  TC
+  "Chad"
+  TD
+  "French Southern Territories (the)"
+  TF
+  "Togo"
+  TG
+  "Thailand"
+  TH
+  "Tajikistan"
+  TJ
+  "Tokelau"
+  TK
+  "Timor-Leste"
+  TL
+  "Turkmenistan"
+  TM
+  "Tunisia"
+  TN
+  "Tonga"
+  TO
+  "Türkiye"
+  TR
+  "Trinidad and Tobago"
+  TT
+  "Tuvalu"
+  TV
+  "Taiwan (Province of China)"
+  TW
+  "Tanzania, the United Republic of"
+  TZ
+  "Ukraine"
+  UA
+  "Uganda"
+  UG
+  "United States Minor Outlying Islands (the)"
+  UM
+  "United States of America (the)"
+  US
+  "Uruguay"
+  UY
+  "Uzbekistan"
+  UZ
+  "Holy See (the)"
+  VA
+  "Saint Vincent and the Grenadines"
+  VC
+  "Venezuela (Bolivarian Republic of)"
+  VE
+  "Virgin Islands (British)"
+  VG
+  "Virgin Islands (U.S.)"
+  VI
+  "Viet Nam"
+  VN
+  "Vanuatu"
+  VU
+  "Wallis and Futuna"
+  WF
+  "Samoa"
+  WS
+  "Yemen"
+  YE
+  "Mayotte"
+  YT
+  "South Africa"
+  ZA
+  "Zambia"
+  ZM
+  "Zimbabwe"
+  ZW
 }
 
 "통화 단위"
 enum Currency {
   "대한민국 원화"
-KRW
+  KRW
   "미국 달러"
-USD
+  USD
   "일본 엔화"
-JPY
-  EUR
-  CNY
-  VND
-  THB
-  SGD
-  AUD
-  HKD
+  JPY
+  "UAE Dirham"
   AED
+  "Afghani"
   AFN
+  "Lek"
   ALL
+  "Armenian Dram"
   AMD
+  "Netherlands Antillean Guilder"
   ANG
+  "Kwanza"
   AOA
+  "Argentine Peso"
   ARS
+  "Australian Dollar"
+  AUD
+  "Aruban Florin"
   AWG
+  "Azerbaijan Manat"
   AZN
+  "Convertible Mark"
   BAM
+  "Barbados Dollar"
   BBD
+  "Taka"
   BDT
+  "Bulgarian Lev"
   BGN
+  "Bahraini Dinar"
   BHD
+  "Burundi Franc"
   BIF
+  "Bermudian Dollar"
   BMD
+  "Brunei Dollar"
   BND
+  "Boliviano"
   BOB
+  "Mvdol"
   BOV
+  "Brazilian Real"
   BRL
+  "Bahamian Dollar"
   BSD
+  "Ngultrum"
   BTN
+  "Pula"
   BWP
+  "Belarusian Ruble"
   BYN
+  "Belize Dollar"
   BZD
+  "Canadian Dollar"
   CAD
+  "Congolese Franc"
   CDF
+  "WIR Euro"
   CHE
+  "Swiss Franc"
   CHF
+  "WIR Franc"
   CHW
+  "Unidad de Fomento"
   CLF
+  "Chilean Peso"
   CLP
+  "Yuan Renminbi"
+  CNY
+  "Colombian Peso"
   COP
+  "Unidad de Valor Real"
   COU
+  "Costa Rican Colon"
   CRC
+  "Peso Convertible"
   CUC
+  "Cuban Peso"
   CUP
+  "Cabo Verde Escudo"
   CVE
+  "Czech Koruna"
   CZK
+  "Djibouti Franc"
   DJF
+  "Danish Krone"
   DKK
+  "Dominican Peso"
   DOP
+  "Algerian Dinar"
   DZD
+  "Egyptian Pound"
   EGP
+  "Nakfa"
   ERN
+  "Ethiopian Birr"
   ETB
+  "Euro"
+  EUR
+  "Fiji Dollar"
   FJD
+  "Falkland Islands Pound"
   FKP
+  "Pound Sterling"
   GBP
+  "Lari"
   GEL
+  "Ghana Cedi"
   GHS
+  "Gibraltar Pound"
   GIP
+  "Dalasi"
   GMD
+  "Guinean Franc"
   GNF
+  "Quetzal"
   GTQ
+  "Guyana Dollar"
   GYD
+  "Hong Kong Dollar"
+  HKD
+  "Lempira"
   HNL
+  "Kuna (Replaced by EUR)"
   HRK
+  "Gourde"
   HTG
+  "Forint"
   HUF
+  "Rupiah"
   IDR
+  "New Israeli Sheqel"
   ILS
+  "Indian Rupee"
   INR
+  "Iraqi Dinar"
   IQD
+  "Iranian Rial"
   IRR
+  "Iceland Krona"
   ISK
+  "Jamaican Dollar"
   JMD
+  "Jordanian Dinar"
   JOD
+  "Kenyan Shilling"
   KES
+  "Som"
   KGS
+  "Riel"
   KHR
+  "Comorian Franc "
   KMF
+  "North Korean Won"
   KPW
+  "Kuwaiti Dinar"
   KWD
+  "Cayman Islands Dollar"
   KYD
+  "Tenge"
   KZT
+  "Lao Kip"
   LAK
+  "Lebanese Pound"
   LBP
+  "Sri Lanka Rupee"
   LKR
+  "Liberian Dollar"
   LRD
+  "Loti"
   LSL
+  "Libyan Dinar"
   LYD
+  "Moroccan Dirham"
   MAD
+  "Moldovan Leu"
   MDL
+  "Malagasy Ariary"
   MGA
+  "Denar"
   MKD
+  "Kyat"
   MMK
+  "Tugrik"
   MNT
+  "Pataca"
   MOP
+  "Ouguiya"
   MRU
+  "Mauritius Rupee"
   MUR
+  "Rufiyaa"
   MVR
+  "Malawi Kwacha"
   MWK
+  "Mexican Peso"
   MXN
+  "Mexican Unidad de Inversion (UDI)"
   MXV
+  "Malaysian Ringgit"
   MYR
+  "Mozambique Metical"
   MZN
+  "Namibia Dollar"
   NAD
+  "Naira"
   NGN
+  "Cordoba Oro"
   NIO
+  "Norwegian Krone"
   NOK
+  "Nepalese Rupee"
   NPR
+  "New Zealand Dollar"
   NZD
+  "Rial Omani"
   OMR
+  "Balboa"
   PAB
+  "Sol"
   PEN
+  "Kina"
   PGK
+  "Philippine Peso"
   PHP
+  "Pakistan Rupee"
   PKR
+  "Zloty"
   PLN
+  "Guarani"
   PYG
+  "Qatari Rial"
   QAR
+  "Romanian Leu"
   RON
+  "Serbian Dinar"
   RSD
+  "Russian Ruble"
   RUB
+  "Rwanda Franc"
   RWF
+  "Saudi Riyal"
   SAR
+  "Solomon Islands Dollar"
   SBD
+  "Seychelles Rupee"
   SCR
+  "Sudanese Pound"
   SDG
+  "Swedish Krona"
   SEK
+  "Singapore Dollar"
+  SGD
+  "Saint Helena Pound"
   SHP
+  "Leone"
   SLE
+  "Leone"
   SLL
+  "Somali Shilling"
   SOS
+  "Surinam Dollar"
   SRD
+  "South Sudanese Pound"
   SSP
+  "Dobra"
   STN
+  "El Salvador Colon"
   SVC
+  "Syrian Pound"
   SYP
+  "Lilangeni"
   SZL
+  "Baht"
+  THB
+  "Somoni"
   TJS
+  "Turkmenistan New Manat"
   TMT
+  "Tunisian Dinar"
   TND
+  "Pa’anga"
   TOP
+  "Turkish Lira"
   TRY
+  "Trinidad and Tobago Dollar"
   TTD
+  "New Taiwan Dollar"
   TWD
+  "Tanzanian Shilling"
   TZS
+  "Hryvnia"
   UAH
+  "Uganda Shilling"
   UGX
+  "US Dollar (Next day)"
   USN
+  "Uruguay Peso en Unidades Indexadas (UI)"
   UYI
+  "Peso Uruguayo"
   UYU
+  "Unidad Previsional"
   UYW
+  "Uzbekistan Sum"
   UZS
+  "Bolívar Soberano"
   VED
+  "Bolívar Soberano"
   VES
+  "Dong"
+  VND
+  "Vatu"
   VUV
+  "Tala"
   WST
+  "CFA Franc BEAC"
   XAF
+  "Silver"
   XAG
+  "Gold"
   XAU
+  "Bond Markets Unit European Composite Unit (EURCO)"
   XBA
+  "Bond Markets Unit European Monetary Unit (E.M.U.-6)"
   XBB
+  "Bond Markets Unit European Unit of Account 9 (E.U.A.-9)"
   XBC
+  "Bond Markets Unit European Unit of Account 17 (E.U.A.-17)"
   XBD
+  "East Caribbean Dollar"
   XCD
+  "SDR (Special Drawing Right)"
   XDR
+  "CFA Franc BCEAO"
   XOF
+  "Palladium"
   XPD
+  "CFP Franc"
   XPF
+  "Platinum"
   XPT
+  "Sucre"
   XSU
+  "Codes specifically reserved for testing purposes"
   XTS
+  "ADB Unit of Account"
   XUA
+  "The codes assigned for transactions where no currency is involved"
   XXX
+  "Yemeni Rial"
   YER
+  "Rand"
   ZAR
+  "Zambian Kwacha"
   ZMW
+  "Zimbabwe Dollar"
   ZWL
 }
 
@@ -653,6 +1587,24 @@ enum EasyPayProvider {
   SKPAY
   TOSS_BRANDPAY
   KB_APP
+  ALIPAY
+}
+
+"성별"
+enum Gender {
+  "남성"
+  MALE
+  "여성"
+  FEMALE
+  "그 외 성별"
+  OTHER
+}
+
+"결제가 발생한 클라이언트 환경"
+enum PaymentClientType {
+  SDK_MOBILE
+  SDK_PC
+  API
 }
 
 enum PaymentMethodType {
@@ -662,6 +1614,81 @@ enum PaymentMethodType {
   GIFT_CERTIFICATE
   MOBILE
   EASY_PAY
+}
+
+"빌링키 간편결제 상세 결제 수단"
+enum PaymentScheduleBillingKeyEasyPayMethodType {
+  "카드"
+  CARD
+  "계좌 이체"
+  TRANSFER
+  "포인트"
+  CHARGE
+}
+
+"결제 예약 캘린더 타임존"
+enum PaymentScheduleCalendarFilterTimeZone {
+  UTC
+  KST
+}
+
+"결제 예약 건 정렬 기준"
+enum PaymentScheduleSortBy {
+  "결제 예약 생성 시각"
+  CREATED_AT
+  "결제 예정 시각"
+  TIME_TO_PAY
+  "예약 결제 시도(성공 / 실패) 시각"
+  COMPLETED_AT
+  "결제 시도 또는 예정 시각. 해지 건은 해지 시각."
+  STATUS_TIMESTAMP
+}
+
+"결제 예약 건 상태"
+enum PaymentScheduleStatus {
+  "예약 완료"
+  SCHEDULED
+  "결제 시작"
+  STARTED
+  "결제 성공"
+  SUCCEEDED
+  "결제 실패"
+  FAILED
+  "취소된 결제 예약"
+  REVOKED
+  "결제 승인 대기"
+  PENDING
+}
+
+"결제 예약 건 다건 조회 시, 텍스트 검색 필터의 검색 기준 필드"
+enum PaymentScheduleTextSearchField {
+  "고객명"
+  CUSTOMER_NAME
+  "주문명"
+  ORDER_NAME
+}
+
+"결제 예약 건 다건 조회 시, 시각 범위를 적용할 필드"
+enum PaymentScheduleTimeRangeField {
+  "결제 예약 생성 시각"
+  CREATED_AT
+  "결제 예정 시각"
+  TIME_TO_PAY
+  "예약 결제 시도(성공 / 실패) 시각"
+  COMPLETED_AT
+  "결제 시도 또는 예정 시각. 해지 건은 해지 시각."
+  STATUS_TIMESTAMP
+}
+
+"결제 건 상태"
+enum PaymentStatus {
+  READY
+  PENDING
+  VIRTUAL_ACCOUNT_ISSUED
+  PAID
+  FAILED
+  PARTIAL_CANCELLED
+  CANCELLED
 }
 
 "PG사"
@@ -685,6 +1712,7 @@ enum PgCompany {
   NAVERPAY
   KAKAOPAY
   SMILEPAY
+  KAKAO
   TOSSPAY
   CHAI
   PAYCO
@@ -692,46 +1720,145 @@ enum PgCompany {
   SYRUP
   KSNET
   WELCOME
+  JTNET
+  KPN
+}
+
+"PG사 결제 모듈"
+enum PgProvider {
+  HTML5_INICIS
+  PAYPAL
+  PAYPAL_V2
+  INICIS
+  DANAL
+  NICE
+  DANAL_TPAY
+  JTNET
+  UPLUS
+  NAVERPAY
+  KAKAO
+  SETTLE
+  KCP
+  MOBILIANS
+  KAKAOPAY
+  NAVERCO
+  SYRUP
+  KICC
+  EXIMBAY
+  SMILEPAY
+  PAYCO
+  KCP_BILLING
+  ALIPAY
+  PAYPLE
+  CHAI
+  BLUEWALNUT
+  SMARTRO
+  SMARTRO_V2
+  PAYMENTWALL
+  TOSSPAYMENTS
+  KCP_QUICK
+  DAOU
+  GALAXIA
+  TOSSPAY
+  KCP_DIRECT
+  SETTLE_ACC
+  SETTLE_FIRM
+  INICIS_UNIFIED
+  KSNET
+  PINPAY
+  NICE_V2
+  TOSS_BRANDPAY
+  WELCOME
+  TOSSPAY_V2
+  INICIS_V2
+  KPN
 }
 
 "플랫폼 계좌 상태"
 enum PlatformAccountStatus {
   "계좌 인증 중"
-VERIFYING
+  VERIFYING
   "계좌 인증 완료됨"
-VERIFIED
+  VERIFIED
   "계좌 인증 실패함"
-VERIFY_FAILED
+  VERIFY_FAILED
   "계좌 인증 만료됨"
-EXPIRED
+  EXPIRED
   "알 수 없는 상태"
-UNKNOWN
+  UNKNOWN
 }
 
-enum PlatformPartnerSettlementFilterKeywordType {
-  PARTNER_ID
-  PARTNER_EMAIL
-  PARTNER_BUSINESS_REGISTRATION_NUMBER
-  PARTNER_MEMO
-  PLATFORM_FEE
-  CONTRACT_MEMO
-  ADDITIONAL_FEE_POLICY_ID
-  ADDITIONAL_FEE_POLICY_FEE
-  ADDITIONAL_FEE_POLICY_MEMO
-  DISCOUNT_SHARE_POLICY_ID
-  DISCOUNT_SHARE_POLICY_RATE
-  DISCOUNT_SHARE_POLICY_MEMO
-  PRODUCT_ID
+enum PlatformBulkPayoutStatus {
+  PREPARING
+  PREPARED
+  ONGOING
+  CANCELLED
+  STOPPED
+  COMPLETED
+}
+
+"플랫폼 파트너 사업자 상태"
+enum PlatformPartnerBusinessStatus {
+  "인증 되지 않음"
+  NOT_VERIFIED
+  "인증 실패"
+  VERIFY_FAILED
+  "대응되는 사업자 없음"
+  NOT_FOUND
+  "인증 대기 중"
+  VERIFYING
+  "사업 중"
+  IN_BUSINESS
+  "폐업"
+  CLOSED
+  "휴업"
+  SUSPENDED
+}
+
+"정산 상태"
+enum PlatformPartnerSettlementStatus {
+  "지급 예정"
+  PAYOUT_PREPARED
+  "지급 보류"
+  PAYOUT_WITHHELD
+  "지급 실패"
+  PAYOUT_FAILED
+  "지급 중"
+  IN_PAYOUT
+  "지급 완료"
+  PAID_OUT
+}
+
+"정산 유형"
+enum PlatformPartnerSettlementType {
+  "수동 정산"
+  MANUAL
+  "주문 정산"
+  ORDER
+  "주문 취소 정산"
+  ORDER_CANCEL
 }
 
 "플랫폼 파트너 상태"
 enum PlatformPartnerStatus {
   "승인 대기 중"
-PENDING
+  PENDING
   "승인 완료"
-APPROVED
+  APPROVED
   "승인 거절"
-REJECTED
+  REJECTED
+}
+
+"플랫폼 파트너 과세 유형"
+enum PlatformPartnerTaxationType {
+  "일반 과세"
+  NORMAL
+  "간이과세(세금계산서 발행)"
+  SIMPLE_TAX_INVOICE_ISSUER
+  "간이과세(세금계산서 미발행)"
+  SIMPLE
+  "면세"
+  TAX_FREE
 }
 
 """
@@ -741,58 +1868,68 @@ REJECTED
 """
 enum PlatformPayer {
   "파트너가 부담하는 경우"
-PARTNER
-  "가맹점이 부담하는 경우"
-MERCHANT
+  PARTNER
+  "고객사가 부담하는 경우"
+  MERCHANT
 }
 
-enum PlatformPayoutPartnerSettlementStatus {
-  PAID_OUT
-  WITHHELD
+enum PlatformPayoutMethod {
+  DIRECT
+  AGENCY
 }
 
 enum PlatformPayoutStatus {
-  ONGOING
-  COMPLETED
+  PREPARED
+  CANCELLED
+  STOPPED
+  PROCESSING
+  SUCCEEDED
+  FAILED
 }
 
 "금액에 대한 소수점 처리 방식"
 enum PlatformRoundType {
   "소수점 반올림"
-OFF
+  OFF
   "소수점 내림"
-DOWN
+  DOWN
   "소수점 올림"
-UP
+  UP
 }
 
 "플랫폼 정산 기준일"
 enum PlatformSettlementCycleDatePolicy {
   "공휴일 전 영업일"
-HOLIDAY_BEFORE
+  HOLIDAY_BEFORE
   "공휴일 후 영업일"
-HOLIDAY_AFTER
+  HOLIDAY_AFTER
   "달력일"
-CALENDAR_DAY
+  CALENDAR_DAY
 }
 
 "플랫폼 정산 주기 계산 방식"
 enum PlatformSettlementCycleType {
   "매일 정산"
-DAILY
+  DAILY
   "매주 정해진 요일에 정산"
-WEEKLY
+  WEEKLY
   "매월 정해진 날(일)에 정산"
-MONTHLY
+  MONTHLY
   "정해진 날짜(월, 일)에 정산"
-MANUAL_DATES
+  MANUAL_DATES
 }
 
+"정산 상태"
 enum PlatformTransferStatus {
+  "정산 예약"
   SCHEDULED
+  "정산 중"
   IN_PROCESS
+  "정산 완료"
   SETTLED
+  "지급 중"
   IN_PAYOUT
+  "지급 완료"
   PAID_OUT
 }
 
@@ -800,6 +1937,81 @@ enum PlatformTransferType {
   ORDER
   ORDER_CANCEL
   MANUAL
+}
+
+"포트원 버전"
+enum PortOneVersion {
+  V1
+  V2
+}
+
+"정렬 방식"
+enum SortOrder {
+  "내림차순"
+  DESC
+  "오름차순"
+  ASC
+}
+
+"웹훅 발송 시의 Content-Type"
+enum WebhookContentType {
+  "application/json"
+  JSON
+  "application/x-www-form-urlencoded"
+  FORM
+}
+
+enum WebhookEnvironment {
+  "실 운영 환경"
+  PROD
+  "개발 및 테스트 환경"
+  DEV
+}
+
+"웹훅 버전"
+enum WebhookVersion {
+  V20240101
+  V20240425
+}
+
+"일"
+input AnalyticsTimeGranularityDayInput {
+  timezoneHourOffset: Int!
+}
+
+"시간"
+input AnalyticsTimeGranularityHourInput {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+"""
+조회 시간 단위
+
+하나의 단위 필드만 선택하여 입력합니다.
+"""
+input AnalyticsTimeGranularityInput {
+  minute: AnalyticsTimeGranularityMinuteInput
+  hour: AnalyticsTimeGranularityHourInput
+  day: AnalyticsTimeGranularityDayInput
+  week: AnalyticsTimeGranularityWeekInput
+  month: AnalyticsTimeGranularityMonthInput
+}
+
+"분"
+input AnalyticsTimeGranularityMinuteInput {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+"월"
+input AnalyticsTimeGranularityMonthInput {
+  timezoneHourOffset: Int!
+}
+
+"주"
+input AnalyticsTimeGranularityWeekInput {
+  timezoneHourOffset: Int!
 }
 
 "파트너 상태를 승인 완료로 변경하기 위한 입력 정보"
@@ -810,10 +2022,38 @@ input ApprovePlatformPartnerInput {
   memo: String
 }
 
+"추가 수수료 정책을 보관하기 위한 입력 정보"
+input ArchivePlatformAdditionalFeePolicyInput {
+  "추가 수수료 정책 아이디"
+  id: ID!
+}
+
+"계약을 보관하기 위한 입력 정보"
+input ArchivePlatformContractInput {
+  "계약 아이디"
+  id: ID!
+}
+
+"할인 분담을 보관하기 위한 입력 정보"
+input ArchivePlatformDiscountSharePolicyInput {
+  "할인 분담 아이디"
+  id: ID!
+}
+
+"파트너를 보관하기 위한 입력 정보"
+input ArchivePlatformPartnerInput {
+  "파트너 아이디"
+  id: ID!
+}
+
 "추가 수수료 정책 예약 업데이트 취소를 위한 입력 정보"
 input CancelPlatformAdditionalFeePolicyScheduleInput {
   "추가 수수료 정책 아이디"
   targetId: ID!
+}
+
+input CancelPlatformBulkPayoutInput {
+  bulkPayoutId: ID!
 }
 
 "계약 예약 업데이트 취소를 위한 입력 정보"
@@ -834,30 +2074,36 @@ input CancelPlatformPartnerScheduleInput {
   targetId: ID!
 }
 
-input CompletePlatformPayoutInput {
+input ChangePaymentScheduleInput {
+  "결제 예약 건 아이디"
   id: ID!
+  "결제 예정 시각"
+  timeToPay: DateTime!
 }
 
-"플랫폼 계좌 생성을 위한 정보"
-input CreatePlatformAccountInput {
-  "은행"
-  bank: Bank!
-  "정산에 사용할 통화"
-  currency: Currency!
-  "계좌번호"
-  number: String!
-  "예금주명"
-  holder: String!
+input ChannelGroupEntryInput {
+  channelKey: String!
+  weight: Int!
+  enabled: Boolean!
+}
+
+input CreateChannelGroupInput {
+  storeId: ID
+  name: String!
+  type: ChannelGroupType!
+  entries: [ChannelGroupEntryInput!]!
 }
 
 "추가 수수료 정책 생성을 위한 입력 정보"
 input CreatePlatformAdditionalFeePolicyInput {
-  """
+"""
 생성할 추가 수수료 정책 아이디
 
 명시하지 않으면 id 가 임의로 생성됩니다.
 """
   plainId: String
+  "이름"
+  name: String!
   "수수료 정보"
   fee: PlatformFeeInput!
   "메모"
@@ -866,14 +2112,23 @@ input CreatePlatformAdditionalFeePolicyInput {
   vatPayer: PlatformPayer!
 }
 
+input CreatePlatformBulkPayoutInput {
+  isForTest: Boolean!
+  filter: PlatformPartnerSettlementFilterInput!
+  method: PlatformPayoutMethod!
+  name: String!
+}
+
 "계약 객체 생성을 위한 입력 정보"
 input CreatePlatformContractInput {
-  """
+"""
 계약에 부여할 고유 아이디
 
 명시하지 않는 경우 포트원이 임의의 아이디를 발급해드립니다.
 """
   plainId: String
+  "계약 이름"
+  name: String!
   "계약 내부 표기를 위한 메모"
   memo: String
   "중개수수료"
@@ -882,154 +2137,328 @@ input CreatePlatformContractInput {
   settlementCycle: PlatformSettlementCycleInput!
   "중개수수료에 대한 부가세 부담 주체"
   platformFeeVatPayer: PlatformPayer!
+  "정산 시 결제금액 부가세 감액 여부"
+  subtractPaymentVatAmount: Boolean!
 }
 
 "할인 분담 정책 생성을 위한 입력 정보"
 input CreatePlatformDiscountSharePolicyInput {
-  """
+"""
 할인 분담에 부여할 고유 아이디
 
 명시하지 않는 경우 포트원이 임의의 아이디를 발급해드립니다.
 """
   plainId: String
+  "할인 분담에 부여할 이름"
+  name: String!
   "파트너가 분담할 할인금액의 비율을 의미하는 밀리 퍼센트 단위 (10^-5) 의 음이 아닌 정수이며, 파트너가 부담할 금액은 `할인금액 * partnerShareRate * 10^5` 로 책정합니다."
   partnerShareRate: Int!
   "해당 할인 분담에 대한 메모 ex) 파트너 브랜드 쿠폰"
   memo: String
 }
 
+"수기 정산건 생성을 위한 입력 정보"
 input CreatePlatformManualTransferInput {
+  "파트너 아이디"
   partnerPlainId: String!
+  "메모"
   memo: String
+  "정산 금액"
   settlementAmount: Long!
+  "정산 일"
   settlementDate: Date!
+"""
+테스트 모드 여부
+
+기본값은 false 입니다.
+"""
   isForTest: Boolean
 }
 
+"할인 정보"
 input CreatePlatformOrderCancelTransferDiscountInput {
+  "할인 분담 정책 아이디"
   sharePolicyPlainId: String!
+  "할인 금액"
   amount: Long!
 }
 
+"외부 결제 상세 정보"
 input CreatePlatformOrderCancelTransferExternalCancellationDetailInput {
+  "취소 일시"
   cancelledAt: DateTime
 }
 
+"""
+주문 취소 정산 등록을 위한 입력 정보
+
+하나의 payment에 하나의 정산 건만 존재하는 경우에는 (partnerId, paymentId)로 취소 정산을 등록하실 수 있습니다.
+하나의 payment에 여러 개의 정산 건이 존재하는 경우에는 transferId를 필수로 입력해야 합니다.
+transferId를 입력한 경우 (partnerId, paymentId)는 생략 가능합니다.
+"""
 input CreatePlatformOrderCancelTransferInput {
-  partnerPlainId: String!
-  paymentPlainId: String!
+  "파트너 아이디"
+  partnerPlainId: String
+  "결제 아이디"
+  paymentPlainId: String
+  "정산건 아이디"
+  transferPlainId: String
+  "취소 내역 아이디"
   cancellationPlainId: String!
+  "메모"
   memo: String
+  "주문 취소 정보"
   orderDetail: CreatePlatformOrderCancelTransferOrderDetailInput
+  "할인 정보"
   discounts: [CreatePlatformOrderCancelTransferDiscountInput!]!
+  "정산 시작일"
   settlementStartDate: Date
+"""
+외부 결제 상세 정보
+
+해당 정보가 존재하는 경우 외부 결제 취소 정산건으로 등록되고, 존재하지않은 경우 포트원 결제 취소 정산건으로 등록됩니다.
+"""
   externalCancellationDetail: CreatePlatformOrderCancelTransferExternalCancellationDetailInput
+"""
+테스트 모드 여부
+
+기본값은 false 입니다.
+"""
   isForTest: Boolean
 }
 
+"전체 금액 취소"
 input CreatePlatformOrderCancelTransferOrderDetailAllInput {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
 }
 
+"""
+주문 취소 정보
+
+orderAmount, orderLines, all 중에서 하나만 입력하여야 합니다.
+"""
 input CreatePlatformOrderCancelTransferOrderDetailInput {
+  "주문 취소 금액"
   orderAmount: Long
+  "주문 취소 항목 리스트"
   orderLines: [CreatePlatformOrderCancelTransferOrderLineInput!]
+  "전체 금액 취소"
   all: CreatePlatformOrderCancelTransferOrderDetailAllInput
 }
 
+"주문 취소 항목 리스트"
 input CreatePlatformOrderCancelTransferOrderLineInput {
+  "상품 아이디"
   productPlainId: String!
+  "상품 수량"
   quantity: Int!
+  "상품 할인 정보"
   discounts: [CreatePlatformOrderCancelTransferDiscountInput!]!
 }
 
+"추가 수수료 정보"
 input CreatePlatformOrderTransferAdditionalFeeInput {
+  "추가 수수료 정책 아이디"
   policyPlainId: String!
 }
 
+"할인 정보"
 input CreatePlatformOrderTransferDiscountInput {
+  "할인 분담 정책 아이디"
   sharePolicyPlainId: String!
+  "할인 금액"
   amount: Long!
 }
 
+"외부 결제 상세 정보"
 input CreatePlatformOrderTransferExternalPaymentDetailInput {
+  "통화"
   currency: Currency!
+  "주문 명"
   orderName: String
+  "결제 일시"
   paidAt: DateTime
+  "결제 수단"
   method: PlatformPaymentMethodInput
 }
 
+"주문 정산건 생성을 위한 입력 정보"
 input CreatePlatformOrderTransferInput {
+  "파트너 아이디"
   partnerPlainId: String!
+"""
+계약 아이디
+
+기본값은 파트너의 기본 계약 아이디 입니다.
+"""
   contractPlainId: String
+  "메모"
   memo: String
+  "결제 아이디"
   paymentPlainId: String!
+  "주문 정보"
   orderDetail: CreatePlatformOrderTransferOrderDetailInput!
+"""
+정산 시작일
+
+기본값은 결제 일시 입니다.
+"""
   settlementStartDate: Date
+  "할인 정보"
   discounts: [CreatePlatformOrderTransferDiscountInput!]!
+  "추가 수수료 정보"
   additionalFees: [CreatePlatformOrderTransferAdditionalFeeInput!]!
+"""
+외부 결제 상세 정보
+
+해당 정보가 존재하는 경우 외부 결제 정산건 으로 등록되고, 존재하지않은 경우 포트원 결제 정산건으로 등록됩니다.
+"""
   externalPaymentDetail: CreatePlatformOrderTransferExternalPaymentDetailInput
+"""
+테스트 모드 여부
+
+기본값은 false 입니다.
+"""
   isForTest: Boolean
 }
 
+"""
+주문 정보
+
+주문 금액 또는 주문 항목 하나만 입력 가능합니다.
+"""
 input CreatePlatformOrderTransferOrderDetailInput {
+  "주문 금액"
   orderAmount: Long
+  "주문 항목 리스트"
   orderLines: [CreatePlatformOrderTransferOrderLineInput!]
 }
 
+"주문 항목"
 input CreatePlatformOrderTransferOrderLineInput {
+  "상품"
   product: CreatePlatformOrderTransferProductInput!
+  "상품 수량"
   quantity: Int!
+  "상품 할인 정보"
   discounts: [CreatePlatformOrderTransferDiscountInput!]!
+  "상품 추가 수수료 정보"
   additionalFees: [CreatePlatformOrderTransferAdditionalFeeInput!]!
 }
 
+"상품"
 input CreatePlatformOrderTransferProductInput {
+  "상품 아이디"
   plainId: String!
+  "상품 이름"
   name: String!
+  "상품 금액"
   amount: Long!
+  "태그"
   tag: String
+}
+
+"파트너 계좌 등록을 위한 정보"
+input CreatePlatformPartnerAccountInput {
+  "은행"
+  bank: Bank!
+  "정산에 사용할 통화"
+  currency: Currency!
+  "계좌번호"
+  number: String!
+  "예금주명"
+  holder: String!
+  "계좌 검증 아이디"
+  accountVerificationId: String
+}
+
+"파트너 담당자 정보"
+input CreatePlatformPartnerContactInput {
+  "담당자 이름"
+  name: String!
+  "담당자 휴대폰 번호"
+  phoneNumber: String
+  "담당자 이메일"
+  email: String!
 }
 
 "파트너 생성을 위한 입력 정보"
 input CreatePlatformPartnerInput {
-  """
+"""
 파트너에 부여할 고유 아이디
 
-가맹점 서버에 등록된 파트너 지칭 아이디와 동일하게 설정하는 것을 권장합니다. 명시하지 않는 경우 포트원이 임의의 아이디를 발급해드립니다.
+고객사 서버에 등록된 파트너 지칭 아이디와 동일하게 설정하는 것을 권장합니다. 명시하지 않는 경우 포트원이 임의의 아이디를 발급해드립니다.
 """
   plainId: String
   "파트너 법인명 혹은 이름"
   name: String!
-  "파트너 이메일"
-  email: String!
-  """
-파트너 사업자등록번호
+  "파트너 담당자 연락 정보"
+  contact: CreatePlatformPartnerContactInput!
+"""
+정산 계좌
 
 파트너의 사업자등록번호가 존재하는 경우 명시합니다. 별도로 검증하지는 않으며, 번호와 기호 모두 입력 가능합니다.
 """
-  businessRegistrationNumber: String
-  "정산 계좌"
-  account: CreatePlatformAccountInput!
-  """
+  account: CreatePlatformPartnerAccountInput!
+"""
 기본 계약 아이디
 
 이미 존재하는 계약 아이디를 등록해야 합니다.
 """
   defaultContractPlainId: String!
-  """
+"""
 파트너에 대한 메모
 
 총 256자까지 입력할 수 있습니다.
 """
   memo: String
-  """
+"""
 파트너에 부여할 태그 리스트
 
 최대 10개까지 입력할 수 있습니다.
 """
   tags: [String!]!
+"""
+파트너 유형별 추가 정보
+
+사업자/원천징수대상자 중 추가할 파트너의 유형에 따른 정보를 입력해야 합니다.
+"""
+  type: CreatePlatformPartnerTypeInput!
+}
+
+input CreatePlatformPartnerTypeBusinessInput {
+  "상호명"
+  companyName: String!
+"""
+사업자 유형
+
+값을 입력하지 않으면 일반 과세로 설정됩니다.
+"""
+  taxationType: PlatformPartnerTaxationType
+  "사업자등록번호"
+  businessRegistrationNumber: String!
+  "대표자 이름"
+  representativeName: String!
+  "사업장 주소"
+  companyAddress: String
+  "업태"
+  businessType: String
+  "업종"
+  businessClass: String
+}
+
+"파트너 생성을 위한 유형별 추가 정보"
+input CreatePlatformPartnerTypeInput {
+  "사업자 추가 정보"
+  business: CreatePlatformPartnerTypeBusinessInput
+  "원천징수대상자 추가 정보"
+  whtPayer: CreatePlatformPartnerTypeWhtPayerInput
+}
+
+input CreatePlatformPartnerTypeWhtPayerInput {
+  "생년월일"
+  birthdate: String
 }
 
 "파트너 다건 생성을 위한 입력 정보"
@@ -1038,23 +2467,70 @@ input CreatePlatformPartnersInput {
   partners: [CreatePlatformPartnerInput!]!
 }
 
-input CreatePlatformPayoutInput {
-  filter: PlatformPartnerSettlementFilterInput!
-}
-
 input DateRangeInput {
   from: Date!
   until: Date!
 }
 
-input DeletePlatformPayoutInput {
+"시간 범위"
+input DateTimeRangeInput {
+  from: DateTime!
+  until: DateTime!
+}
+
+input DeleteChannelGroupInput {
   id: ID!
 }
 
-"API key 로그인을 위한 입력 정보"
-input LoginViaApiKeyInput {
-  "발급받은 API key"
-  apiKey: String!
+input DeleteChannelGroupScheduledSessionInput {
+  id: ID!
+}
+
+input DeletePaymentRecoverySettingInput {
+  storeId: ID!
+}
+
+input DeletePlatformTransferInput {
+  id: ID!
+}
+
+input DeleteV2ApiSecretInput {
+  "삭제할 시크릿의 상점 아이디"
+  storeId: ID!
+  "시크릿을 인증정보로 가지고 있는 유저 아이디"
+  userPlainId: String!
+}
+
+input ExecutePlatformBulkPayoutInput {
+  bulkPayoutId: ID!
+  "전자 서명 문서(서명 원본 문서 형식 : [document hash]@[ISO8601 timestamp])"
+  signature: String!
+  "전사 서명이 함께 전달된 VID RANDOM"
+  vidRandom: String!
+}
+
+input GeneratePlatformPayoutsInput {
+  bulkPayoutId: ID!
+  isForTest: Boolean
+}
+
+input IssueV2ApiSecretInput {
+  "생성할 시크릿의 상점 아이디"
+  storeId: ID!
+  "생성할 시크릿 이름"
+  name: String!
+"""
+만료기한(일)
+
+시크릿이 만료되기까지의 일 수를 의미합니다. 주어지지 않는 경우 무기한의 시크릿이 생성됩니다.
+"""
+  expirationDays: Int
+}
+
+"API Secret 로그인을 위한 입력 정보"
+input LoginViaApiSecretInput {
+  "발급받은 API secret"
+  apiSecret: String!
 }
 
 "월 및 일자 정보"
@@ -1071,34 +2547,172 @@ input PageInput {
   size: Int
 }
 
+"결제 예약 캘린더 조회를 위한 입력 정보"
+input PaymentScheduleCalendarFilterInput {
+  "결제 예약 캘린더 연도"
+  year: Int!
+  "결제 예약 캘린더 월"
+  month: Int!
+"""
+결제 예약 캘린더 일
+
+값을 입력하면 해당 일의 정보만 조회, 입력하지 않으면 월 전체 정보 조회
+"""
+  day: Int
+  "조회 기준 타임존"
+  timezone: PaymentScheduleCalendarFilterTimeZone!
+  "결제 예약 건 상태 리스트"
+  status: [PaymentScheduleStatus!]
+  "결제 예약 건 통화"
+  currency: Currency!
+}
+
+"결제 예약 건 다건 조회를 위한 입력 정보"
+input PaymentScheduleFilterInput {
+  "빌링키"
+  billingKey: String
+  "결제 예약 건 ID"
+  paymentSchedulePlainId: String
+  "결제건 ID"
+  paymentPlainId: String
+  "고객 ID"
+  customerPlainId: String
+  "텍스트 검색 필터"
+  textSearch: PaymentScheduleTextSearchInput
+"""
+시각 범위를 적용할 필드
+
+from 과 until 필드가 해당 필드의 값에 대해 적용됩니다. 미입력 시 TIME_TO_PAY 로 기본값이 설정됩니다.
+"""
+  timeRangeField: PaymentScheduleTimeRangeField
+"""
+결제 예정 시점 조건 범위의 시작
+
+값을 입력하지 않으면 파라미터 end의 90일 전으로 설정됩니다.
+"""
+  from: DateTime
+"""
+결제 예정 시점 조건 범위의 끝
+
+값을 입력하지 않으면 현재 시점으로 설정됩니다.
+"""
+  until: DateTime
+"""
+결제 예약 건 상태 리스트
+
+값을 입력하지 않으면 상태 필터링이 적용되지 않습니다.
+"""
+  status: [PaymentScheduleStatus!]
+"""
+PG사 결제 모듈 리스트
+
+값을 입력하지 않으면 PG사 결제 모듈 필터링이 적용되지 않습니다.
+"""
+  pgProviders: [PgProvider!]
+"""
+PG사 리스트
+
+값을 입력하지 않으면 PG사 필터링이 적용되지 않습니다.
+"""
+  pgCompanies: [PgCompany!]
+"""
+스마트 라우팅 그룹 아이디 리스트
+
+값을 입력하지 않으면 스마트 라우팅 그룹 아이디 필터링이 적용되지 않습니다.
+"""
+  smartRoutingGroupIds: [String!]
+}
+
+"결제 예약 건 다건 조회 시 정렬 조건"
+input PaymentScheduleSortInput {
+"""
+정렬 기준 필드
+
+어떤 필드를 기준으로 정렬할 지 결정합니다. 비워서 보낼 경우, TIME_TO_PAY가 기본값으로 설정됩니다.
+"""
+  by: PaymentScheduleSortBy
+"""
+정렬 순서
+
+어떤 순서로 정렬할 지 결정합니다. 비워서 보낼 경우, DESC(내림차순)가 기본값으로 설정됩니다.
+"""
+  order: SortOrder
+}
+
+"결제 예약 건 다건 조회 시, 텍스트 검색 필터 정보"
+input PaymentScheduleTextSearchInput {
+  "검색 기준 필드"
+  field: PaymentScheduleTextSearchField!
+  "검색할 값"
+  value: String!
+}
+
+"신원확인번호(생년월일6자리 or 사업자번호)"
+input PlatformAccountHolderIdentifierInput {
+  "개인명의 계좌 조회 시, 주민등록번호 앞자리를 사용합니다."
+  birthdate: String
+  "법인명의 계좌 조회 시, 사업자등록번호를 사용합니다."
+  businessRegistrationNumber: String
+}
+
 "추가 수수료 정책 다건 조회를 위한 필터 조건"
 input PlatformAdditionalFeePolicyFilterInput {
-  """
-숨김 조회 여부
-
-true 이면 숨김 처리된 추가 수수료 정책까지 조회하고, false 이면 숨김 처리되지 않은 추가 수수료 정책만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.
 """
-  includeHidden: Boolean
-  ids: [String!]
+보관 조회 여부
+
+true 이면 보관된 추가 수수료 정책의 필터 옵션을 조회하고, false 이면 보관되지 않은 추가 수수료 정책의 필터 옵션을 조회합니다. 기본값은 false 입니다.
+"""
+  isArchived: Boolean
+  "하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 부가세 부담 주체에 해당하는 추가 수수료 정책만 조회합니다."
   vatPayers: [PlatformPayer!]
+  "검색 키워드"
+  keyword: PlatformAdditionalFeePolicyFilterKeywordInput
+}
+
+"""
+검색 키워드 입력 정보
+
+검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 추가 수수료 정책만 조회합니다. 하위 필드는 명시된 값 중 한 가지만 적용됩니다.
+"""
+input PlatformAdditionalFeePolicyFilterKeywordInput {
+  "해당 값이 포함된 name 을 가진 추가 수수료 정책만 조회합니다."
+  name: String
+  "해당 값이 포함된 id 를 가진 추가 수수료 정책만 조회합니다."
+  id: String
+  "해당 값과 같은 수수료 를 가진 추가 수수료 정책만 조회합니다."
+  fee: String
+}
+
+input PlatformBulkPayoutFilterCriteriaInput {
+  timestampRange: DateTimeRangeInput
+  bulkPayoutPlainId: String
+}
+
+input PlatformBulkPayoutFilterInput {
+  statuses: [PlatformBulkPayoutStatus!]
+  methods: [PlatformPayoutMethod!]
+  criteria: PlatformBulkPayoutFilterCriteriaInput
+}
+
+input PlatformBulkPayoutPartnerSettlementsFilterInput {
+  partnerIds: [ID!]!
+  statuses: [PlatformPartnerSettlementStatus!]!
 }
 
 "계약 다건 조회를 위한 필터 조건"
 input PlatformContractFilterInput {
-  "하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 중개 수수료를 가진 계약만 조회합니다."
-  platformFees: [PlatformFeeInput!]
   "하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 수수료 부담 주체를 가진 계약만 조회합니다."
   platformFeePayers: [PlatformPayer!]
   "하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 정산 주기 계산 방식을 가진 계약만 조회합니다."
   cycleTypes: [PlatformSettlementCycleType!]
   "하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 정산 기준일을 가진 계약만 조회합니다."
   datePolicies: [PlatformSettlementCycleDatePolicy!]
-  """
-숨김 조회 여부
-
-true 이면 숨김 처리된 계약까지 조회하고, false 이면 숨김 처리되지 않은 계약만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.
 """
-  includeHidden: Boolean
+보관 조회 여부
+
+true 이면 보관된 계약을 조회하고, false 이면 보관되지 않은 계약을 조회합니다. 기본값은 false 입니다.
+"""
+  isArchived: Boolean
   "검색 키워드"
   keyword: PlatformContractFilterKeywordInput
 }
@@ -1109,23 +2723,21 @@ true 이면 숨김 처리된 계약까지 조회하고, false 이면 숨김 처�
 검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 계약만 조회합니다. 하나의 하위 필드에만 값을 명시하여 요청합니다.
 """
 input PlatformContractFilterKeywordInput {
-  "해당 키워드가 포함된 정보를 가진 계약만 조회합니다."
-  all: String
   "해당 값이 포함된 id 를 가진 계약만 조회합니다."
   id: String
-  "해당 값이 포함된 메모를 가진 계약만 조회합니다."
-  memo: String
+  "해당 값이 포함된 name 을 가진 계약만 조회합니다."
+  name: String
 }
 
 "할인 분담 정책 다건 조회를 위한 필터 조건"
 input PlatformDiscountSharePolicyFilterInput {
-  """
-숨김 조회 여부
-
-true 이면 숨김 처리된 할인 분담 정책까지 조회하고, false 이면 숨김 처리되지 않은 할인 분담 정책만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.
 """
-  includeHidden: Boolean
-  "하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 파트너 분담율을 가진 할인 분담만 조회합니다."
+보관 조회 여부
+
+true 이면 보관된 할인 분담 정책을 조회하고, false 이면 보관되지 않은 할인 분담 정책을 조회합니다. 기본값은 false 입니다.
+"""
+  isArchived: Boolean
+  "하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 파트너 분담율을 가진 할인 분담 정책만 조회합니다."
   partnerShareRates: [Int!]
   "검색 키워드"
   keyword: PlatformDiscountSharePolicyFilterKeywordInput
@@ -1134,15 +2746,13 @@ true 이면 숨김 처리된 할인 분담 정책까지 조회하고, false 이�
 """
 검색 키워드 입력 정보
 
-검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 파트너만 조회합니다. 하위 필드는 명시된 값 중 한 가지만 적용됩니다.
+검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 할인 분담 정책만 조회합니다. 하위 필드는 명시된 값 중 한 가지만 적용됩니다.
 """
 input PlatformDiscountSharePolicyFilterKeywordInput {
-  "해당 값이 포함된 id 를 가진 할인 분담만 조회합니다."
+  "해당 값이 포함된 id 를 가진 할인 분담 정책만 조회합니다."
   id: String
-  "해당 값이 포함된 메모를 가진 할인 분담만 조회합니다."
-  memo: String
-  "해당 키워드가 포함된 정보를 가진 할인 분담만 조회합니다."
-  all: String
+  "해당 값이 포함된 name 을 가진 할인 분담만 조회합니다."
+  name: String
 }
 
 """
@@ -1160,12 +2770,12 @@ input PlatformFeeInput {
 
 "파트너 필터 입력 정보"
 input PlatformPartnerFilterInput {
-  """
-숨김 조회 여부
-
-true 이면 숨김 처리된 파트너까지 조회하고, false 이면 숨김 처리되지 않은 파트너만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.
 """
-  includeHidden: Boolean
+보관 조회 여부
+
+true 이면 보관된 파트너를 조회하고, false 이면 보관되지 않은 파트너를 조회합니다. 기본값은 false 입니다.
+"""
+  isArchived: Boolean
   "하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 태그를 하나 이상 가지는 파트너만 조회합니다."
   tags: [String!]
   "하나 이상의 값이 존재하는 경우,  해당 리스트에 포함되는 계좌 은행을 가진 파트너만 조회합니다."
@@ -1174,6 +2784,8 @@ true 이면 숨김 처리된 파트너까지 조회하고, false 이면 숨김 �
   accountCurrencies: [Currency!]
   "하나 이상의 값이 존재하는 경우,  해당 리스트에 포함되는 아이디를 가진 파트너만 조회합니다."
   plainIds: [String!]
+  "하나 이상의 값이 존재하는 경우,  해당 리스트에 포함되는 기본 계약 id를 가진 파트너만 조회합니다."
+  contractIds: [String!]
   "검색 키워드"
   keyword: PlatformPartnerFilterKeywordInput
 }
@@ -1203,34 +2815,20 @@ input PlatformPartnerFilterKeywordInput {
 }
 
 input PlatformPartnerSettlementFilterInput {
-  settlementDate: Date!
-  settlementStartDateRange: DateRangeInput!
+  settlementDates: [Date!]
   contractPlainIds: [String!]
-  transferTypes: [PlatformTransferType!]
-  transferStatuses: [PlatformTransferStatus!]
-  banks: [Bank!]
-  paymentMethodTypes: [PaymentMethodType!]
-  settlementCurrencies: [Currency!]
-  payoutCurrencies: [Currency!]
   partnerTags: [String!]
+  settlementCurrencies: [Currency!]
+  statuses: [PlatformPartnerSettlementStatus!]
+  partnerIds: [ID!]
+  settlementTypes: [PlatformPartnerSettlementType!]
   keyword: PlatformPartnerSettlementFilterKeywordInput
-  isForTest: Boolean
 }
 
 input PlatformPartnerSettlementFilterKeywordInput {
-  partnerPlainId: String
-  partnerEmail: String
-  partnerBusinessRegistrationNumber: String
-  partnerMemo: String
-  platformFee: String
-  contractMemo: String
-  additionalFeePolicyPlainId: String
-  additionalFeePolicyFee: String
-  additionalFeePolicyMemo: String
-  discountSharePolicyPlainId: String
-  discountSharePolicyRate: String
-  discountSharePolicyMemo: String
-  productPlainId: String
+  partnerSettlementPlainId: String
+  payoutPlainId: String
+  bulkPayoutPlainId: String
 }
 
 input PlatformPaymentMethodCardInput {
@@ -1238,8 +2836,11 @@ input PlatformPaymentMethodCardInput {
   _: Boolean
 }
 
+"간편 결제 입력 정보"
 input PlatformPaymentMethodEasyPayInput {
+  "간편 결제사"
   provider: EasyPayProvider
+  "간편 결제 수단"
   methodType: EasyPayMethodType
 }
 
@@ -1248,12 +2849,19 @@ input PlatformPaymentMethodGiftCertificateInput {
   _: Boolean
 }
 
+"결제 수단 입력 정보"
 input PlatformPaymentMethodInput {
+  "카드"
   card: PlatformPaymentMethodCardInput
+  "계좌이체"
   transfer: PlatformPaymentMethodTransferInput
+  "가상계좌"
   virtualAccount: PlatformPaymentMethodVirtualAccountInput
+  "상품권"
   giftCertificate: PlatformPaymentMethodGiftCertificateInput
+  "모바일"
   mobile: PlatformPaymentMethodMobileInput
+  "간편 결제"
   easyPay: PlatformPaymentMethodEasyPayInput
 }
 
@@ -1272,14 +2880,33 @@ input PlatformPaymentMethodVirtualAccountInput {
   _: Boolean
 }
 
+"검색 기준 입력 정보"
+input PlatformPayoutFilterCriteriaInput {
+  timestampRange: DateTimeRangeInput
+  payoutPlainId: String
+  bulkPayoutPlainId: String
+}
+
 input PlatformPayoutFilterInput {
   statuses: [PlatformPayoutStatus!]
-  isForTest: Boolean
+  partnerIds: [ID!]
+  criteria: PlatformPayoutFilterCriteriaInput
+  payoutAccountBanks: [Bank!]
+  partnerTags: [String!]
+  payoutCurrencies: [Currency!]
+}
+
+input PlatformPayoutUpdateInput {
+  status: PlatformPayoutStatus
+  withdrawalMemo: String
+  depositMemo: String
+  memo: String
+  onlyEmpty: Boolean!
 }
 
 "플랫폼 정산 주기 입력 정보"
 input PlatformSettlementCycleInput {
-  """
+"""
 지체일 (d+n 의 n)
 
 정산시작일(통상 주문완료일)로부터 더해진 다음 날짜로부터 가장 가까운 날에 정산이 됩니다. 최소 1 에서 최대 10 까지 지정할 수 있습니다.
@@ -1324,31 +2951,118 @@ input PlatformSettlementCycleMethodWeeklyInput {
   daysOfWeek: [DayOfWeek!]!
 }
 
+"""
+정산건 필터 입력 정보
+
+정산 시작일 범위와 정산 일 범위는 둘 중 하나만 입력 가능합니다.
+"""
 input PlatformTransferFilterInput {
+  "정산 시작일 범위"
   settlementStartDateRange: DateRangeInput
+  "정산 일 범위"
   settlementDateRange: DateRangeInput
+"""
+파트너 태그 리스트
+
+하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 태그를 하나 이상 가지는 파트너에 대한 정산건만 조회합니다.
+"""
   partnerTags: [String!]
+"""
+계약 아이디 리스트
+
+하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 계약 아이디를 가지는 정산건만 조회합니다.
+"""
   contractPlainIds: [String!]
+"""
+할인 분담 정책 아이디 리스트
+
+하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 할인 분담 정책 아이디를 하나 이상 가지는 정산건만 조회합니다.
+"""
   discountSharePolicyPlainIds: [String!]
+"""
+추가 수수료 정책 아이디 리스트
+
+하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 추가 수수료 아이디를 하나 이상 가지는 정산건만 조회합니다.
+"""
   additionalFeePolicyPlainIds: [String!]
+"""
+결제 수단 리스트
+
+하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 결제 수단을 가지는 파트너만 조회합니다.
+"""
   paymentMethodTypes: [PaymentMethodType!]
+"""
+채널 키 리스트
+
+하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 채널 키를 가지는 정산건만 조회합니다.
+"""
   channelKeys: [String!]
+"""
+정산 방식 리스트
+
+하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 정산 방식의 정산건만 조회합니다.
+"""
   types: [PlatformTransferType!]
+"""
+정산 상태 리스트
+
+하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 정산 상태인 정산건만 조회합니다.
+"""
   statuses: [PlatformTransferStatus!]
+  "검색 키워드"
   keyword: PlatformTransferFilterKeywordInput
+  "테스트 모드 여부"
   isForTest: Boolean
 }
 
+"""
+정산건 검색 키워드 입력 정보
+
+검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 정산건만 조회합니다. 하나의 하위 필드에만 값을 명시하여 요청합니다.
+"""
 input PlatformTransferFilterKeywordInput {
+  "해당 값이 포함된 정보를 가진 정산건만 조회합니다."
   all: String
+  "해당 값이랑 일치하는 paymentId 를 가진 정산건만 조회합니다."
   paymentId: String
+  "해당 값이랑 일치하는 transferId 를 가진 정산건만 조회합니다."
   transferId: String
+  "해당 값이 포함된 transferMemo 를 가진 정산건만 조회합니다."
   transferMemo: String
+  "해당 값이랑 일치하는 productId 를 가진 정산건만 조회합니다."
   productId: String
+  "해당 값이랑 일치하는 productName 을 가진 정산건만 조회합니다."
   productName: String
+  "해당 값이랑 일치하는 partnerId 를 가진 정산건만 조회합니다."
   partnerId: String
+  "해당 값이 포함된 partnerName 을 가진 정산건만 조회합니다."
   partnerName: String
+  "해당 값이 포함된 partnerMemo 를 가진 정산건만 조회합니다."
   partnerMemo: String
+}
+
+"추가 수수료 정책을 복원하기 위한 입력 정보"
+input RecoverPlatformAdditionalFeePolicyInput {
+  "추가 수수료 정책 아이디"
+  id: ID!
+}
+
+"계약을 복원하기 위한 입력 정보"
+input RecoverPlatformContractInput {
+  "계약 아이디"
+  id: ID!
+}
+
+"할인 분담을 복원하기 위한 입력 정보"
+input RecoverPlatformDiscountSharePolicyInput {
+  "할인 분담 아이디"
+  id: ID!
+}
+
+"파트너를 복원하기 위한 입력 정보"
+input RecoverPlatformPartnerInput {
+  "파트너 아이디"
+  id: ID!
 }
 
 "토큰 재발급을 위한 입력 정보"
@@ -1395,6 +3109,52 @@ input ReschedulePlatformPartnerInput {
   update: UpdatePlatformPartnerInput!
   "업데이트 적용 시점"
   appliedAt: DateTime!
+}
+
+input RetryPaymentScheduleInput {
+  "결제 예약 건 아이디"
+  id: ID!
+"""
+재시도 옵션(즉시 재시도/재예약)
+
+재시도 옵션을 지정합니다.
+"""
+  option: RetryPaymentScheduleOptionInput!
+}
+
+"""
+예약 결제 재시도 옵션
+
+재시도 옵션을 지정합니다. payImmediately 와 schedule 중 한 필드에만 값이 채워져 있어야 합니다.
+payImmediately 일 경우 즉시 결제를 재시도하며, schedule 일 경우 미래 시간으로 다시 한 번 예약합니다.
+"""
+input RetryPaymentScheduleOptionInput {
+"""
+즉시 재시도 옵션
+
+취소 또는 실패한 예약 건에 대해 즉시 결제를 재시도합니다.
+"""
+  payImmediately: RetryPaymentScheduleOptionPayImmediatelyInput
+"""
+재예약 옵션
+
+취소 또는 실패한 예약 건을 다시 한 번 예약합니다.
+"""
+  schedule: RetryPaymentScheduleOptionScheduleInput
+}
+
+input RetryPaymentScheduleOptionPayImmediatelyInput {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+input RetryPaymentScheduleOptionScheduleInput {
+  timeToPay: DateTime!
+}
+
+input RevokePaymentScheduleInput {
+  "결제 예약 건 아이디"
+  id: ID!
 }
 
 "추가 수수료 정책 업데이트 예약을 위한 입력 정보"
@@ -1445,23 +3205,110 @@ input SchedulePlatformPartnersUpdateAccountInput {
   number: String!
   "예금주명"
   holder: String!
+  "계좌 검증 아이디"
+  accountVerificationId: String
+}
+
+"파트너 업데이트를 위한 유형별 추가 정보"
+input SchedulePlatformPartnersUpdateContactInput {
+  "담당자 이름"
+  name: String
+  "담당자 휴대폰 번호"
+  phoneNumber: String
+  "담당자 이메일"
+  email: String
 }
 
 input SchedulePlatformPartnersUpdateInput {
   name: String
-  email: String
-  "필드를 명시하지 않으면 업데이트하지 않고, 빈 문자열로 명시하면 빈 값으로 업데이트합니다."
-  businessRegistrationNumber: String
+  contact: SchedulePlatformPartnersUpdateContactInput
+  type: SchedulePlatformPartnersUpdateTypeInput
   account: SchedulePlatformPartnersUpdateAccountInput
   defaultContractPlainId: String
   memo: String
   tags: [String!]
-  isHidden: Boolean
 }
 
-input UpdatePayoutAllPartnerSettlementsInput {
-  payoutId: ID!
-  status: PlatformPayoutPartnerSettlementStatus!
+input SchedulePlatformPartnersUpdateTypeBusinessInput {
+  "상호명"
+  companyName: String
+  "사업자 유형"
+  taxationType: PlatformPartnerTaxationType
+  "사업자등록번호"
+  businessRegistrationNumber: String
+  "대표자 이름"
+  representativeName: String
+  "사업장 주소"
+  companyAddress: String
+  "업태"
+  businessType: String
+  "업종"
+  businessClass: String
+}
+
+"""
+파트너 유형별 정보 업데이트를 위한 입력 정보
+
+파트너 유형별 추가 정보를 수정합니다.
+최초 생성된 유형 내에서 세부 정보만 수정할 수 있고 파트너의 유형 자체를 수정할 수는 없습니다.
+"""
+input SchedulePlatformPartnersUpdateTypeInput {
+  "사업자 추가 정보"
+  business: SchedulePlatformPartnersUpdateTypeBusinessInput
+  "원천징수대상자 추가 정보"
+  whtPayer: SchedulePlatformPartnersUpdateTypeWhtPayerInput
+}
+
+input SchedulePlatformPartnersUpdateTypeWhtPayerInput {
+  "생년월일"
+  birthdate: String
+}
+
+input SetPaymentRecoverySettingInput {
+  storeId: ID!
+  "리커버리를 시도할 시각"
+  recoveryHour: Int!
+  "해당 시각 이후부터 리커버리 실행 (최초 설정 시 필요)"
+  applyAfter: DateTime
+}
+
+input StopPlatformBulkPayoutInput {
+  bulkPayoutId: ID!
+  isForTest: Boolean
+}
+
+"웹훅 호출 테스트를 위한 입력 정보"
+input TestWebhookInput {
+  "웹훅 호출 시 사용할 하위 상점 ID"
+  storeId: ID!
+  "웹훅 호출을 진행하고자 하는 포트원 버전"
+  portOneVersion: PortOneVersion!
+  "웹훅 호출을 진행하고자 하는 환경"
+  environment: WebhookEnvironment!
+}
+
+input TogglePlatformBulkPayoutPartnerSettlementsInput {
+  bulkPayoutId: ID!
+  value: Boolean!
+  select: TogglePlatformBulkPayoutPartnerSettlementsSelectInput
+}
+
+input TogglePlatformBulkPayoutPartnerSettlementsSelectAllInput {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+input TogglePlatformBulkPayoutPartnerSettlementsSelectInput {
+  partnerSettlementPlainId: String
+  filter: PlatformBulkPayoutPartnerSettlementsFilterInput
+  all: TogglePlatformBulkPayoutPartnerSettlementsSelectAllInput
+}
+
+input UpdateChannelGroupInput {
+  id: ID!
+  name: String!
+  entries: [ChannelGroupEntryInput!]!
+  beginAt: DateTime
 }
 
 """
@@ -1474,12 +3321,12 @@ input UpdatePlatformAdditionalFeePolicyInput {
   id: ID!
   "책정 수수료"
   fee: PlatformFeeInput
+  "추가 수수료 정책 이름"
+  name: String
   "해당 추가 수수료 정책에 대한 메모"
   memo: String
   "부가세를 부담할 주체"
   vatPayer: PlatformPayer
-  "숨김 여부"
-  isHidden: Boolean
 }
 
 """
@@ -1490,6 +3337,8 @@ input UpdatePlatformAdditionalFeePolicyInput {
 input UpdatePlatformContractInput {
   "업데이트할 계약 아이디"
   id: ID!
+  "계약 이름"
+  name: String
   "계약 내부 표기를 위한 메모"
   memo: String
   "중개수수료"
@@ -1498,8 +3347,8 @@ input UpdatePlatformContractInput {
   settlementCycle: PlatformSettlementCycleInput
   "중개수수료에 대한 부가세 부담 주체"
   platformFeeVatPayer: PlatformPayer
-  "숨김 여부"
-  isHidden: Boolean
+  "정산 시 결제금액 부가세 감액 여부"
+  subtractPaymentVatAmount: Boolean
 }
 
 """
@@ -1510,7 +3359,9 @@ input UpdatePlatformContractInput {
 input UpdatePlatformDiscountSharePolicyInput {
   "업데이트할 할인 분담 정책 아이디"
   id: ID!
-  """
+  "할인 분담 정책 이름"
+  name: String
+"""
 할인 분담율
 
 파트너가 분담할 할인금액의 비율을 의미하는 밀리 퍼센트 단위 (10^-5) 의 음이 아닌 정수이며, 파트너가 부담할 금액은 `할인금액 * partnerShareRate * 10^5` 로 책정합니다.
@@ -1518,8 +3369,6 @@ input UpdatePlatformDiscountSharePolicyInput {
   partnerShareRate: Int
   "해당 할인 분담에 대한 메모"
   memo: String
-  "숨김 여부"
-  isHidden: Boolean
 }
 
 """
@@ -1532,6 +3381,8 @@ input UpdatePlatformInput {
   roundType: PlatformRoundType
   "수수료 및 할인 분담 정책 관련 계산식"
   settlementFormula: UpdatePlatformSettlementFormulaInput
+  "정산 규칙"
+  settlementRule: UpdatePlatformSettlementRuleInput
 }
 
 "파트너 계좌 업데이트를 위한 입력 정보"
@@ -1544,6 +3395,18 @@ input UpdatePlatformPartnerAccountInput {
   number: String!
   "예금주명"
   holder: String!
+  "계좌 검증 아이디"
+  accountVerificationId: String
+}
+
+"파트너 담당자 업데이트를 위한 정보"
+input UpdatePlatformPartnerContactInput {
+  "담당자 이름"
+  name: String
+  "담당자 휴대폰 번호"
+  phoneNumber: String
+  "담당자 이메일"
+  email: String
 }
 
 """
@@ -1556,10 +3419,8 @@ input UpdatePlatformPartnerInput {
   id: ID!
   "파트너 법인명 혹은 이름"
   name: String
-  "파트너 이메일"
-  email: String
-  "파트너의 사업자등록번호. 개인 혹은 법인 사업자일 때만 명시합니다."
-  businessRegistrationNumber: String
+  "파트너 담당자 연락 정보"
+  contact: UpdatePlatformPartnerContactInput
   "정산 계좌"
   account: UpdatePlatformPartnerAccountInput
   "파트너에 설정된 기본 계약 아이디"
@@ -1568,13 +3429,59 @@ input UpdatePlatformPartnerInput {
   memo: String
   "파트너의 태그 리스트"
   tags: [String!]
-  "숨김 여부"
-  isHidden: Boolean
+  "파트너 유형별 정보"
+  type: UpdatePlatformPartnerTypeInput
 }
 
-input UpdatePlatformPayoutPartnerSettlementInput {
+input UpdatePlatformPartnerSettlementStatusInput {
+  partnerSettlementId: ID!
+  status: PlatformPartnerSettlementStatus!
+  memo: String
+}
+
+input UpdatePlatformPartnerTypeBusinessInput {
+  "상호명"
+  companyName: String
+  "사업자 유형"
+  taxationType: PlatformPartnerTaxationType
+  "사업자등록번호"
+  businessRegistrationNumber: String
+  "대표자 이름"
+  representativeName: String
+  "사업장 주소"
+  companyAddress: String
+  "업태"
+  businessType: String
+  "업종"
+  businessClass: String
+}
+
+"""
+파트너 업데이트를 위한 유형별 추가 정보
+
+파트너 유형별 추가 정보를 수정합니다.
+기존과 다른 파트너 유형 정보가 입력된 경우, 파트너의 유형 자체가 변경됩니다.
+"""
+input UpdatePlatformPartnerTypeInput {
+  "사업자 추가 정보"
+  business: UpdatePlatformPartnerTypeBusinessInput
+  "원천징수대상자 추가 정보"
+  whtPayer: UpdatePlatformPartnerTypeWhtPayerInput
+}
+
+input UpdatePlatformPartnerTypeWhtPayerInput {
+  "생년월일"
+  birthdate: String
+}
+
+input UpdatePlatformPayoutInput {
   id: ID!
-  status: PlatformPayoutPartnerSettlementStatus!
+  update: PlatformPayoutUpdateInput!
+}
+
+input UpdatePlatformPayoutsInput {
+  bulkPayoutId: ID!
+  update: PlatformPayoutUpdateInput!
 }
 
 """
@@ -1589,6 +3496,47 @@ input UpdatePlatformSettlementFormulaInput {
   discountShare: String
   "추가 수수료 계산식"
   additionalFee: String
+}
+
+"""
+플랫폼 업데이트 시 변경할 정산 규칙 정보
+
+값이 명시되지 않은 필드는 업데이트하지 않습니다.
+"""
+input UpdatePlatformSettlementRuleInput {
+  "paymentId, storeId, partnerId가 같은 주문 정산건에 대한 중복 정산 지원 여부"
+  supportsMultipleOrderTransfersPerPartner: Boolean
+  "정산일이 정산시작일보다 작거나 같을 경우 공휴일 후 영업일로 정산일 다시 계산 여부"
+  adjustSettlementDateAfterHolidayIfEarlier: Boolean
+}
+
+input UpdateStoreWebhookSettingInput {
+  "웹훅 설정을 업데이트할 하위 상점 ID"
+  storeId: ID!
+  "업데이트할 웹훅 설정의 포트원 버전"
+  portOneVersion: PortOneVersion!
+  "업데이트할 웹훅 설정의 환경"
+  environment: WebhookEnvironment!
+"""
+웹훅을 발송할 URL
+
+값 없이 요청하면 웹훅 URL 이 빈 값으로 업데이트됩니다.
+"""
+  url: String
+  "웹훅 발송 시의 Content-Type"
+  contentType: WebhookContentType!
+  "웹훅 버전"
+  version: WebhookVersion
+}
+
+"""
+분리 형식 주소
+
+oneLine(한 줄 형식 주소) 필드는 항상 존재합니다.
+"""
+interface Address {
+  "주소 (한 줄)"
+  oneLine: String!
 }
 
 "PortOne Public API 요청이 실패했을 때 발생하는 에러를 의미합니다."
@@ -1607,154 +3555,257 @@ interface Node {
   plainId: String!
 }
 
-interface PlatformPartnerSettlement {
-  partner: PlatformPartnerSettlementPartner!
-  settlementDate: Date!
-  isForTest: Boolean!
-  payoutCurrency: Currency!
-  settlementCurrency: Currency!
-}
-
-interface PlatformPayment {
-  method: PlatformPaymentMethod
-  paidAt: DateTime
-  paymentPlainId: String!
-  orderName: String
-  currency: Currency!
-}
-
-interface PlatformPayout {
-  partnerSettlements(page: PageInput): PlatformPayoutPartnerSettlementsOutput! @hidden @unstable
-  plainId: String!
-  creator: PlatformPayoutCreator!
-  filter: PlatformPartnerSettlementFilter!
-  settlementDate: Date!
-  id: ID!
-  sheets: PlatformPayoutSheetsOutput! @hidden @unstable
-  summary: PlatformPayoutSummary!
+"결제 예약 건"
+interface PaymentSchedule {
+  "빌링키"
+  billingKey: String!
+  "빌링키 요약 정보"
+  billingKeyInfo: PaymentScheduleBillingKeyInfo!
+  "결제 예약 등록 시점"
   createdAt: DateTime!
+  "통화"
+  currency: Currency!
+  "사용자 지정 데이터"
+  customData: String!
+  "고객 정보"
+  customer: Customer!
+  "결제 예약 이벤트 리스트"
+  events: PaymentScheduleEvents!
+  "결제 예약 건 아이디"
+  id: ID!
+  "할부 개월 수"
+  installmentMonth: Int
+  "문화비 지출 여부"
+  isCulturalExpense: Boolean!
+  "에스크로 결제 여부"
+  isEscrow: Boolean!
+  "고객사 아이디"
+  merchantId: ID!
+  "고객사 아이디"
+  merchantPlainId: String!
+  "웹훅 주소"
+  noticeUrls: [String!]
+  "주문명"
+  orderName: String!
+  "결제 건 아이디"
+  paymentPlainId: String!
+  "결제 예약 건 아이디"
+  plainId: String!
+  "상품 정보"
+  products: [PaymentProduct!]
+  "상점 아이디"
+  storeId: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "면세액"
+  taxFreeAmount: Long
+  "결제 예정 시점"
+  timeToPay: DateTime
+  "결제 총 금액"
+  totalAmount: Long!
+  "부가세"
+  vatAmount: Long
 }
 
-interface PlatformTransfer {
-  plainId: String!
-  payoutId: ID
-  partner: PlatformPartner!
-  payoutPlainId: String
-  settlementDate: Date!
-  status: PlatformTransferStatus!
-  isForTest: Boolean!
-  memo: String
+interface PaymentScheduleEvent {
+  timestamp: DateTime!
+}
+
+interface PlatformPartnerSettlement {
   id: ID!
+  "테스트 모드 여부"
+  isForTest: Boolean!
+  "메모"
+  memo: String
+  "파트너"
+  partner: PlatformPartner!
+  "정산내역 아이디"
+  plainId: String!
+  "정산 통화"
   settlementCurrency: Currency!
+  "정산 일"
+  settlementDate: Date!
+  "정산 상태"
+  status: PlatformPartnerSettlementStatus!
+}
+
+"결제 정보"
+interface PlatformPayment {
+  "통화"
+  currency: Currency!
+  "결제 수단"
+  method: PlatformPaymentMethod
+  "주문 명"
+  orderName: String
+  "결제 일시"
+  paidAt: DateTime
+  "결제 아이디"
+  paymentPlainId: String!
+}
+
+"""
+정산건
+
+정산건은 파트너에 정산해줄 정산 금액과 정산 방식 등이 포함되어 있는 정산 정보입니다.
+정산 방식은은 주문 정산, 주문 취소 정산, 수기 정산이 있습니다.
+"""
+interface PlatformTransfer {
+  id: ID!
+  "테스트 모드 여부"
+  isForTest: Boolean!
+  "메모"
+  memo: String
+  "파트너"
+  partner: PlatformPartner!
+  payoutId: ID
+  payoutPlainId: String
+  "정산건 아이디"
+  plainId: String!
+  "정산 통화"
+  settlementCurrency: Currency!
+  "정산 일"
+  settlementDate: Date!
+  "정산 상태"
+  status: PlatformTransferStatus!
 }
 
 interface PlatformTransferSummary {
-  transferPlainId: String!
-  partner: PlatformTransferSummaryPartner!
-  settlementDate: Date!
-  status: PlatformTransferStatus!
   isForTest: Boolean!
   memo: String
-  transferId: ID!
+  partner: PlatformTransferSummaryPartner!
   settlementCurrency: Currency!
+  settlementDate: Date!
+  status: PlatformTransferStatus!
+  transferId: ID!
+  transferPlainId: String!
 }
 
 interface PlatformTransferSummaryPayment {
-  paymentPlainId: String!
+  currency: Currency!
   methodType: PaymentMethodType
   orderName: String
-  currency: Currency!
+  paymentPlainId: String!
 }
 
-"가맹점의 analytics 관련 정보"
+"결제가 이미 완료되었거나 대기중인 경우"
+type AlreadyPaidOrWaitingError implements Error {
+  message: String
+}
+
+"고객사의 analytics 관련 정보"
 type Analytics {
-  "가맹점의 결제 현황을 조회합니다."
+  "고객사의 결제 현황을 조회합니다."
   paymentChart("조회할 결제 현황의 시작 시간" from: DateTime!, "조회할 결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean, """결제 현황 조회 단위
 
-시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularity!): AnalyticsPaymentChartOutput! @unstable
-  "가맹점의 평균 거래액 현황을 조회합니다."
+시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularityInput!): AnalyticsPaymentChartOutput! @unstable
+  "고객사의 결제 현황 인사이트를 조회합니다."
+  paymentChartInsight("조회할 결제 현황의 시작 시간" from: DateTime!, "조회할 결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
+
+입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
+
+true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean, """타임존 시간 오프셋
+
+입력된 시간 오프셋 기준으로 일, 주, 월이 집계 됩니다.""" timezoneHourOffset: Int!): AnalyticsPaymentChartInsightOutput! @unstable
+  "고객사의 평균 거래액 현황을 조회합니다."
   averageAmountChart("조회할 평균 거래액 현황의 시작 시간" from: DateTime!, "조회할 평균 거래액 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!, """평균 거래액 현황 조회 단위
 
-시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularity!): AnalyticsAverageAmountChartOutput! @unstable
-  "가맹점의 결제수단 현황을 조회합니다."
+시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularityInput!): AnalyticsAverageAmountChartOutput! @unstable
+  "고객사의 결제수단 현황을 조회합니다."
   paymentMethodChart("조회할 결제수단 현황의 시작 시간" from: DateTime!, "조회할 결제수단 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!): AnalyticsPaymentMethodChartOutput! @unstable
-  "가맹점의 결제수단 트렌드를 조회합니다."
+  "고객사의 결제수단 트렌드를 조회합니다."
   paymentMethodTrendChart("조회할 결제수단 트렌드의 시작 시간" from: DateTime!, "조회할 결제수단 트렌드의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!, """결제 결제수단 트렌드 조회 단위
 
-시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularity!): AnalyticsPaymentMethodTrendChartOutput! @unstable
-  "가맹점의 카드결제 현황을 조회합니다."
+시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularityInput!): AnalyticsPaymentMethodTrendChartOutput! @unstable
+  "고객사의 카드결제 현황을 조회합니다."
   cardChart("조회할 카드결제 현황의 시작 시간" from: DateTime!, "조회할 카드결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!, """카드결제 현황 조회 단위
 
-시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularity!): AnalyticsCardChartOutput! @unstable
-  "가맹점의 카드사별 결제 현황을 조회합니다."
+시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularityInput!): AnalyticsCardChartOutput! @unstable
+  "고객사의 카드사별 결제 현황을 조회합니다."
   cardCompanyChart("조회할 카드사별 결제 현황의 시작 시간" from: DateTime!, "조회할 카드사별 결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!, """카드사별 결제 현황 조회 단위
 
-시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularity!, "조회할 카드사" cardCompanies: [CardCompany!]!, "나머지 집계에 포함되지 않을 카드사" excludesFromRemainders: [CardCompany!]!): AnalyticsCardCompanyChartOutput! @unstable
-  "가맹점의 간편결제 현황을 조회합니다."
+시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularityInput!, "조회할 카드사" cardCompanies: [CardCompany!]!, "나머지 집계에 포함되지 않을 카드사" excludesFromRemainders: [CardCompany!]!): AnalyticsCardCompanyChartOutput! @unstable
+  "고객사의 간편결제 현황을 조회합니다."
   easyPayChart("조회할 간편결제 현황의 시작 시간" from: DateTime!, "조회할 간편결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!, """간편결제 현황 조회 단위
 
-시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularity!): AnalyticsEasyPayChartOutput! @unstable
-  "가맹점의 간편결제사별 결제 현황을 조회합니다."
+시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularityInput!): AnalyticsEasyPayChartOutput! @unstable
+  "고객사의 간편결제사별 결제 현황을 조회합니다."
   easyPayProviderChart("조회할 간편결제사별 결제 현황의 시작 시간" from: DateTime!, "조회할 간편결제사별 결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!, """간편결제사별 결제 현황 조회 단위
 
-시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularity!, "조회할 간편결제사" easyPayProviders: [EasyPayProvider!]!, "나머지 집계에 포함되지 않을 간편결제사" excludesFromRemainders: [EasyPayProvider!]!): AnalyticsEasyPayProviderChartOutput! @unstable
-  "가맹점의 결제대행사 현황을 조회합니다."
+시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularityInput!, "조회할 간편결제사" easyPayProviders: [EasyPayProvider!]!, "나머지 집계에 포함되지 않을 간편결제사" excludesFromRemainders: [EasyPayProvider!]!): AnalyticsEasyPayProviderChartOutput! @unstable
+  "고객사의 결제대행사 현황을 조회합니다."
   pgCompanyChart("조회할 결제대행사 현황의 시작 시간" from: DateTime!, "조회할 결제대행사 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!): AnalyticsPgCompanyChartOutput! @unstable
-  "가맹점의 결제대행사별 거래 추이를 조회합니다."
+  "고객사의 결제대행사별 거래 추이를 조회합니다."
   pgCompanyTrendChart("조회할 결제대행사별 거래 추이의 시작 시간" from: DateTime!, "조회할 결제대행사별 거래 추이의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!, """결제취소건 제외 여부
 
 true 이면 결제취소내역은 응답에 포함 및 반영되지 않습니다. false 또는 값을 명시하지 않은 경우 결제취소내역이 응답에 반영됩니다.""" excludeCancelled: Boolean!, """결제 결제대행사별 거래 추이 조회 단위
 
-시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularity!, "조회할 결제대행사" pgCompanies: [PgCompany!]!): AnalyticsPgCompanyTrendChartOutput! @unstable
-  "가맹점의 해외 결제 사용 여부를 조회합니다."
+시간별, 월별 단위만 지원됩니다.""" timeGranularity: AnalyticsTimeGranularityInput!, "조회할 결제대행사" pgCompanies: [PgCompany!]!): AnalyticsPgCompanyTrendChartOutput! @unstable
+  "고객사의 해외 결제 사용 여부를 조회합니다."
   overseasPaymentUsage: AnalyticsOverseasPaymentUsageOutput! @unstable
-  "가맹점의 환불율을 조회합니다."
+  "고객사의 환불율을 조회합니다."
   cancellationRate("환불율 조회 기간의 시작 시간" from: DateTime!, "환불율 조회 기간의 끝 시간" until: DateTime!, """조회할 결제 통화
 
 입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!): AnalyticsCancellationRateOutput! @unstable
+  "고객사의 결제상태 이력 집계를 조회합니다."
+  paymentStatusChart("조회할 결제 현황의 시작 시간" from: DateTime!, "조회할 결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
+
+입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!): AnalyticsPaymentStatusChartOutput! @unstable
+  "고객사의 결제수단별 결제전환율을 조회합니다."
+  paymentStatusByPaymentMethodChart("조회할 결제 현황의 시작 시간" from: DateTime!, "조회할 결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
+
+입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!): AnalyticsPaymentStatusByPaymentMethodChartOutput! @unstable
+  "고객사의 PG사별 결제전환율을 조회합니다."
+  paymentStatusByPgCompanyChart("조회할 결제 현황의 시작 시간" from: DateTime!, "조회할 결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
+
+입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!): AnalyticsPaymentStatusByPgCompanyChartOutput! @unstable
+  "고객사의 결제환경별 결제전환율을 조회합니다."
+  paymentStatusByPaymentClientChart("조회할 결제 현황의 시작 시간" from: DateTime!, "조회할 결제 현황의 끝 시간" until: DateTime!, """조회할 결제 통화
+
+입력된 통화로 발생한 결제내역만 응답에 포함됩니다.""" currency: Currency!): AnalyticsPaymentStatusByPaymentClientChartOutput! @unstable
 }
 
-"가맹점의 평균 거래액 현황 조회 응답"
+"고객사의 평균 거래액 현황 조회 응답"
 type AnalyticsAverageAmountChart {
   stats: [AnalyticsAverageAmountChartStat!]!
+  summary: AnalyticsAverageAmountChartSummary!
 }
 
 "특정 시점의 건별 평균 거래액, 고객 당 평균 거래액을 나타냅니다."
@@ -1767,12 +3818,20 @@ type AnalyticsAverageAmountChartStat {
   customerAverageAmount: Long!
 }
 
-"가맹점의 환불율 정보"
+"전체 구간의 건별 평균 거래액, 고객 당 평균 거래액을 나타냅니다."
+type AnalyticsAverageAmountChartSummary {
+  "건별 평균 거래액"
+  paymentAverageAmount: Long!
+  "고객 당 평균 거래액"
+  customerAverageAmount: Long!
+}
+
+"고객사의 환불율 정보"
 type AnalyticsCancellationRate {
   cancellationRate: Float!
 }
 
-"가맹점의 카드결제 현황 차트 정보"
+"고객사의 카드결제 현황 차트 정보"
 type AnalyticsCardChart {
   stats: [AnalyticsCardChartStat!]!
 }
@@ -1787,7 +3846,7 @@ type AnalyticsCardChartStat {
   count: Long!
 }
 
-"가맹점의 카드사별 결제 현황 조회 응답"
+"고객사의 카드사별 결제 현황 조회 응답"
 type AnalyticsCardCompanyChart {
   stats: [AnalyticsCardCompanyChartStat!]!
   remainderStats: [AnalyticsCardCompanyChartRemainderStat!]!
@@ -1824,7 +3883,7 @@ type AnalyticsCardCompanyChartSummary {
   totalCount: Long!
 }
 
-"가맹점의 간편결제 현황 차트 정보"
+"고객사의 간편결제 현황 차트 정보"
 type AnalyticsEasyPayChart {
   stats: [AnalyticsEasyPayChartStat!]!
 }
@@ -1839,7 +3898,7 @@ type AnalyticsEasyPayChartStat {
   count: Long!
 }
 
-"가맹점의 간편결제사별 결제 현황 차트 정보"
+"고객사의 간편결제사별 결제 현황 차트 정보"
 type AnalyticsEasyPayProviderChart {
   stats: [AnalyticsEasyPayProviderChartStat!]!
   remainderStats: [AnalyticsEasyPayProviderChartRemainderStat!]!
@@ -1876,29 +3935,18 @@ type AnalyticsEasyPayProviderChartSummary {
   totalCount: Long!
 }
 
-"가맹점의 해외 결제 사용 여부"
+"고객사의 해외 결제 사용 여부"
 type AnalyticsOverseasPaymentUsage {
   isUsing: Boolean!
 }
 
-"가맹점의 결제 현황 차트 정보"
+"고객사의 결제 현황 차트 정보"
 type AnalyticsPaymentChart {
   stats: [AnalyticsPaymentChartStat!]!
-  summary: AnalyticsPaymentChartSummary!
 }
 
-"특정 시점의 거래 건 수와 금액을 나타냅니다."
-type AnalyticsPaymentChartStat {
-  "시점"
-  timestamp: DateTime!
-  "거래액"
-  amount: Long!
-  "거래 건수"
-  count: Long!
-}
-
-"월간, 주간, 일간 최고/최저 거래액 시점을 나타냅니다."
-type AnalyticsPaymentChartSummary {
+"고객사의 결제 현황 인사이트 정보"
+type AnalyticsPaymentChartInsight {
   "월간 최고 거래액 발생일"
   highestDateInMonth: Long
   "월간 최저 거래액 발생일"
@@ -1913,7 +3961,17 @@ type AnalyticsPaymentChartSummary {
   lowestHourInDay: Long!
 }
 
-"가맹점의 결제수단 현황 차트 정보"
+"특정 시점의 거래 건 수와 금액을 나타냅니다."
+type AnalyticsPaymentChartStat {
+  "시점"
+  timestamp: DateTime!
+  "거래액"
+  amount: Long!
+  "거래 건수"
+  count: Long!
+}
+
+"고객사의 결제수단 현황 차트 정보"
 type AnalyticsPaymentMethodChart {
   stats: [AnalyticsPaymentMethodChartStat!]!
 }
@@ -1921,16 +3979,16 @@ type AnalyticsPaymentMethodChart {
 "결제수단별 결제금액, 결제 건수를 나타냅니다."
 type AnalyticsPaymentMethodChartStat {
   "결제수단"
-  paymentMethod: PaymentMethodType!
+  paymentMethod: PaymentMethodType
   "결제수단별 결제금액"
   amount: Long!
   "결제수단별 결제 건수"
   count: Long!
 }
 
-"가맹점의 결제수단 트렌드 차트 정보"
+"고객사의 결제수단 트렌드 차트 정보"
 type AnalyticsPaymentMethodTrendChart {
-  """
+"""
 결제수단별 결제금액, 결제 건수 데이터
 
 (timestamp, paymentMethod) 를 기준으로 오름차순 정렬되어 주어집니다.
@@ -1943,14 +4001,88 @@ type AnalyticsPaymentMethodTrendChartStat {
   "시점"
   timestamp: DateTime!
   "결제수단"
-  paymentMethod: PaymentMethodType!
+  paymentMethod: PaymentMethodType
   "결제금액"
   amount: Long!
   "결제 건수"
   count: Long!
 }
 
-"가맹점의 결제대행사 현황 차트 정보"
+"고객사의 결제 환경 별 결제 상태 차트 정보"
+type AnalyticsPaymentStatusByPaymentClientChart {
+  stats: [AnalyticsPaymentStatusByPaymentClientChartStat!]!
+}
+
+"고객사의 결제 환경 별 결제 상태 차트 정보"
+type AnalyticsPaymentStatusByPaymentClientChartStat {
+  "결제가 발생한 클라이언트 환경"
+  paymentClientType: PaymentClientType!
+  "결제 건 상태"
+  paymentStatus: PaymentStatus!
+  "거래액"
+  amount: Long!
+  "거래 건수"
+  count: Long!
+}
+
+"고객사의 결제 수단 별 결제 상태 차트 정보"
+type AnalyticsPaymentStatusByPaymentMethodChart {
+  stats: [AnalyticsPaymentStatusByPaymentMethodChartStat!]!
+}
+
+"각 결제수단, 상태 별 건수와 금액을 나타냅니다."
+type AnalyticsPaymentStatusByPaymentMethodChartStat {
+  "결제수단"
+  paymentMethod: PaymentMethodType
+  "결제 건 상태"
+  paymentStatus: PaymentStatus!
+  "거래액"
+  amount: Long!
+  "거래 건수"
+  count: Long!
+}
+
+"고객사의 PG사 별 결제 상태 차트 정보"
+type AnalyticsPaymentStatusByPgCompanyChart {
+  stats: [AnalyticsPaymentStatusByPgCompanyChartStat!]!
+}
+
+"각 상태의 건수와 금액, 사분위수를 나타냅니다."
+type AnalyticsPaymentStatusByPgCompanyChartStat {
+  "PG사"
+  pgCompany: PgCompany!
+  "결제 건 상태"
+  paymentStatus: PaymentStatus!
+  "거래액"
+  amount: Long!
+  "거래 건수"
+  count: Long!
+}
+
+"고객사의 결제 상태 차트 정보"
+type AnalyticsPaymentStatusChart {
+  stats: [AnalyticsPaymentStatusChartStat!]!
+}
+
+"각 상태의 건수와 금액, 사분위수를 나타냅니다."
+type AnalyticsPaymentStatusChartStat {
+  "결제 건 상태"
+  paymentStatus: PaymentStatus!
+  "거래액"
+  amount: Long!
+  "거래 건수"
+  count: Long!
+  "해당 상태 비율"
+  averageRatio: Long!
+  "1 사분위수"
+  firstQuantile: Long!
+  "중앙값"
+  median: Long!
+  "3 사분위수"
+  thirdQuantile: Long!
+}
+
+"고객사의 결제대행사 현황 차트 정보"
 type AnalyticsPgCompanyChart {
   stats: [AnalyticsPgCompanyChartStat!]!
 }
@@ -1965,7 +4097,7 @@ type AnalyticsPgCompanyChartStat {
   count: Long!
 }
 
-"가맹점의 결제대행사별 거래 추이 차트 정보"
+"고객사의 결제대행사별 거래 추이 차트 정보"
 type AnalyticsPgCompanyTrendChart {
   stats: [AnalyticsPgCompanyTrendChartStat!]!
 }
@@ -1988,10 +4120,44 @@ type ApprovePlatformPartnerPayload {
   partner: PlatformPartner!
 }
 
+"추가 수수료 정책 보관 성공 응답"
+type ArchivePlatformAdditionalFeePolicyPayload {
+  "보관된 추가 수수료 정책"
+  additionalFeePolicy: PlatformAdditionalFeePolicy!
+}
+
+"계약 보관 성공 응답"
+type ArchivePlatformContractPayload {
+  "보관된 계약"
+  contract: PlatformContract!
+}
+
+"할인 분담 보관 성공 응답"
+type ArchivePlatformDiscountSharePolicyPayload {
+  "보관된 할인 분담"
+  discountSharePolicy: PlatformDiscountSharePolicy!
+}
+
+"파트너 보관 성공 응답"
+type ArchivePlatformPartnerPayload {
+  "보관된 파트너"
+  partner: PlatformPartner!
+}
+
+"빌링키가 이미 삭제된 경우"
+type BillingKeyAlreadyDeletedError implements Error {
+  message: String
+}
+
 "추가 수수료 정책 예약 업데이트 취소 성공 응답"
 type CancelPlatformAdditionalFeePolicySchedulePayload {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
+}
+
+"일괄 지급 취소 결과"
+type CancelPlatformBulkPayoutPayload {
+  bulkPayout: PlatformBulkPayout!
 }
 
 "계약 예약 업데이트 취소 성공 응답"
@@ -2012,13 +4178,115 @@ type CancelPlatformPartnerSchedulePayload {
   _: Boolean
 }
 
+"결제 예정 시각 변경 성공 응답"
+type ChangePaymentSchedulePayload {
+  schedule: PaymentSchedule!
+}
+
+"채널 정보"
+type Channel {
+  "채널 아이디"
+  plainId: String!
+  "채널명"
+  name: String!
+  "PG사 모듈"
+  pgProvider: PgProvider!
+  "PG사 모듈에 해당하는 PG사"
+  pgCompany: PgCompany!
+  "채널 유형"
+  type: ChannelType!
+  "PG사 상점 아이디"
+  pgMerchantId: String!
+  "결제용 채널 여부"
+  isForPayment: Boolean!
+  "본인인증용 채널 여부"
+  isForIdentityVerification: Boolean!
+  "채널 키"
+  key: String!
+}
+
+type ChannelGroup implements Node {
+  plainId: String!
+  id: ID!
+  storePlainId: String!
+  storeId: ID!
+  name: String!
+  type: ChannelGroupType!
+  currentSession: ChannelGroupSession!
+  scheduledSession: ChannelGroupSession
+  sessions: ChannelGroupSessionsOutput!
+}
+
+"이름 중복이 허용되지 않는데 이름이 겹치는 대상이 있는 경우"
+type ChannelGroupDuplicateNameError implements Error {
+  message: String
+}
+
+type ChannelGroupEntry {
+  channel: Channel!
+  weight: Int!
+  enabled: Boolean!
+}
+
+"채널 그룹을 찾을 수 없는 경우"
+type ChannelGroupNotFoundError implements Error {
+  message: String
+}
+
+type ChannelGroupSession {
+  entries: [ChannelGroupEntry!]!
+  beginAt: DateTime!
+}
+
+type ChannelGroupSessionList {
+  value: [ChannelGroupSession!]!
+}
+
+"채널 그룹 정보"
+type ChannelGroupSummary {
+  "채널 그룹 아이디"
+  id: ID!
+  "채널 그룹 아이디"
+  plainId: String!
+  "채널 그룹 이름"
+  name: String!
+  isForTest: Boolean!
+}
+
+type ChannelGroupUsage {
+  "결제 건이 존재하는 채널 그룹 정보 조회"
+  byPayments: ChannelGroupUsageByPaymentsOutput! @hidden @unstable
+  "결제 예약 건이 존재하는 채널 그룹 정보 조회"
+  byPaymentSchedules: ChannelGroupUsageByPaymentSchedulesOutput! @hidden @unstable
+}
+
+"결제 예약 건이 존재하는 채널 그룹 정보 조회 성공 응답 정보"
+type ChannelGroupUsageByPaymentSchedulesPayload {
+  channelGroupsInUse: [ChannelGroupSummary!]!
+}
+
+"결제 건이 존재하는 채널 그룹 정보 조회 성공 응답 정보"
+type ChannelGroupUsageByPaymentsPayload {
+  channelGroupsInUse: [ChannelGroupSummary!]!
+}
+
+type ChannelGroupsPayload {
+  channelGroups: [ChannelGroup!]!
+}
+
 "요청된 채널이 존재하지 않는 경우"
 type ChannelNotFoundError implements Error {
   message: String
 }
 
-type CompletePlatformPayoutPayload {
-  payout: PlatformPayout!
+"채널 다건 조회 성공 응답 정보"
+type ChannelsPayload {
+  "조회된 채널 리스트"
+  items: [Channel!]!
+}
+
+type CreateChannelGroupPayload {
+  channelGroup: ChannelGroup!
 }
 
 type CreateManualTransferPayload {
@@ -2037,6 +4305,10 @@ type CreateOrderTransferPayload {
 type CreatePlatformAdditionalFeePayload {
   "생성된 추가 수수료 정책"
   additionalFeePolicy: PlatformAdditionalFeePolicy!
+}
+
+type CreatePlatformBulkPayoutPayload {
+  bulkPayout: PlatformBulkPayout!
 }
 
 "계약 객체 생성 성공 응답"
@@ -2063,8 +4335,28 @@ type CreatePlatformPartnersPayload {
   partners: [PlatformPartner!]!
 }
 
-type CreatePlatformPayoutPayload {
-  payout: PlatformPayout!
+"고객 정보"
+type Customer {
+"""
+고객 아이디
+
+고객사가 지정한 고객의 고유 식별자입니다.
+"""
+  id: String
+  "이름"
+  name: String
+  "출생 연도"
+  birthYear: String
+  "성별"
+  gender: Gender
+  "이메일"
+  email: String
+  "전화번호"
+  phoneNumber: String
+  "주소"
+  address: Address
+  "우편번호"
+  zipcode: String
 }
 
 type DateRange {
@@ -2072,14 +4364,105 @@ type DateRange {
   until: Date!
 }
 
-type DeletePlatformPayoutPayload {
+type DeleteChannelGroupPayload {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
+}
+
+type DeleteChannelGroupScheduledSessionPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+"빌링 결제 리커버리 세팅값 삭제 성공 응답 정보"
+type DeletePaymentRecoverySettingPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+type DeletePlatformTransferPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+type DeleteV2ApiSecretPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+"일괄 지급 실행 결과"
+type ExecutePlatformBulkPayoutPayload {
+  bulkPayout: PlatformBulkPayout!
+}
+
+"결제 실패 상태"
+type FailedPaymentSchedule implements Node & PaymentSchedule {
+  "결제 예약 건 아이디"
+  plainId: String!
+  "결제 예약 건 아이디"
+  id: ID!
+  "고객사 아이디"
+  merchantPlainId: String!
+  "고객사 아이디"
+  merchantId: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "상점 아이디"
+  storeId: ID!
+  "결제 건 아이디"
+  paymentPlainId: String!
+  "빌링키"
+  billingKey: String!
+  "빌링키 요약 정보"
+  billingKeyInfo: PaymentScheduleBillingKeyInfo!
+  "PG"
+  determinedPgProvider: PgProvider
+  "PG사"
+  determinedPgCompany: PgCompany
+  "주문명"
+  orderName: String!
+  "문화비 지출 여부"
+  isCulturalExpense: Boolean!
+  "에스크로 결제 여부"
+  isEscrow: Boolean!
+  "고객 정보"
+  customer: Customer!
+  "사용자 지정 데이터"
+  customData: String!
+  "결제 총 금액"
+  totalAmount: Long!
+  "면세액"
+  taxFreeAmount: Long
+  "부가세"
+  vatAmount: Long
+  "통화"
+  currency: Currency!
+  "할부 개월 수"
+  installmentMonth: Int
+  "웹훅 주소"
+  noticeUrls: [String!]
+  "상품 정보"
+  products: [PaymentProduct!]
+  "결제 예약 등록 시점"
+  createdAt: DateTime!
+  "결제 예정 시점"
+  timeToPay: DateTime
+  "결제 시작 시점"
+  startedAt: DateTime!
+  "결제 완료 시점"
+  completedAt: DateTime!
+  "결제 예약 이벤트 리스트"
+  events: PaymentScheduleEvents!
 }
 
 "요청이 거절된 경우"
 type ForbiddenError implements Error {
   message: String
+}
+
+"지급 건 생성 결과"
+type GeneratePlatformPayoutsPayload {
+  bulkPayout: PlatformBulkPayout!
 }
 
 "본인인증 건이 이미 API로 요청된 상태인 경우"
@@ -2102,6 +4485,11 @@ type IdentityVerificationNotSentError implements Error {
   message: String
 }
 
+"포트원 시스템에서 알 수 없는 오류가 발생한 경우"
+type InternalError {
+  message: String
+}
+
 """
 요청된 입력 정보가 유효하지 않은 경우
 
@@ -2111,15 +4499,32 @@ type InvalidRequestError implements Error {
   message: String
 }
 
+"올바르지 않은 웹훅 URL 이 요청으로 주어진 경우"
+type InvalidWebhookUrlError implements Error {
+  message: String
+}
+
+type IssueV2ApiSecretPayload {
+  "생성된 시크릿 관련 정보"
+  info: V2ApiSecretInfo!
+  "생성된 시크릿"
+  secret: String!
+}
+
+"개수 상한에 도달한 경우"
+type LimitExceededError implements Error {
+  message: String
+}
+
 "API key 로그인 성공 응답"
-type LoginViaApiKeyPayload {
-  """
+type LoginViaApiSecretPayload {
+"""
 인증에 사용하는 엑세스 토큰
 
 하루의 유효기간을 가지고 있습니다.
 """
   accessToken: String!
-  """
+"""
 토큰 재발급 및 유효기간 연장을 위해 사용하는 리프레시 토큰
 
 일주일의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.
@@ -2127,18 +4532,67 @@ type LoginViaApiKeyPayload {
   refreshToken: String!
 }
 
-"가맹점 정보"
+"고객사 정보"
 type Merchant implements Node {
-  "가맹점 아이디"
+  "고객사 아이디"
   plainId: String!
   id: ID!
-  """
-가맹점의 플랫폼 정보를 조회합니다.
-요청된 Authorization header 를 통해 자동으로 요청자의 가맹점을 특정합니다.
+"""
+하위 상점
+
+하위 상점을 조회합니다.
+id 가 주어지는 경우 해당 아이디를 가진 하위 상점을 조회하고, 그렇지 않은 경우 유저 인증 정보에 기록된 상점 아이디를 통해 자동으로 조회합니다.
+"""
+  store(id: ID): StoreOutput! @hidden @unstable
+"""
+하위 상점 리스트
+
+하위 상점들을 조회합니다.
+"""
+  stores: StoresOutput! @hidden @unstable
+"""
+고객사의 플랫폼 정보를 조회합니다.
+요청된 Authorization header 를 통해 자동으로 요청자의 고객사를 특정합니다.
 """
   platform: PlatformOutput!
   "리포트 정보"
   analytics: Analytics!
+"""
+결제 예약 캘린더 조회
+
+고객사 내 모든 하위 상점의 결제 예약 캘린더를 조회합니다.
+"""
+  paymentScheduleCalendar(filter: PaymentScheduleCalendarFilterInput!): PaymentScheduleCalendarOutput! @hidden @unstable
+"""
+결제 예약 상태별 통계 조회
+
+고객사 내 모든 하위 상점의 결제 예약 상태별 통계를 조회합니다.
+"""
+  paymentScheduleStat(filter: PaymentScheduleFilterInput): PaymentScheduleStatOutput! @hidden @unstable
+"""
+결제 예약 다건 조회
+
+고객사 내 모든 하위 상점의 결제 예약 건들을 조회합니다.
+"""
+  paymentSchedules("""요청할 페이지 정보
+
+미 입력 시 number: 0, size: 10 으로 기본값이 적용됩니다.""" page: PageInput, """정렬 조건
+
+미 입력 시 sortBy: TIME_TO_PAY, sortOrder: DESC 으로 기본값이 적용됩니다.""" sort: PaymentScheduleSortInput, "조회할 결제 예약 건의 조건 필터" filter: PaymentScheduleFilterInput): PaymentSchedulesOutput! @hidden @unstable
+"""
+결제 예약 단건 조회
+
+주어진 아이디에 대응되는 결제 예약 건을 조회합니다.
+"""
+  paymentSchedule(id: ID!): PaymentScheduleOutput! @hidden @unstable
+"""
+결제 예약 건이 존재하는 통화 조회
+
+고객사 내 모든 하위 상점의 결제 예약 건이 존재하는 통화를 조회합니다.
+"""
+  usedCurrenciesForPaymentSchedule: UsedCurrenciesForPaymentScheduleOutput! @hidden @unstable
+  channelGroupUsage: ChannelGroupUsage! @hidden @unstable
+  pgCompanyUsage: PgCompanyUsage! @hidden @unstable
 }
 
 "월 및 일자 정보"
@@ -2148,21 +4602,27 @@ type MonthDay {
 }
 
 type Mutation {
-  """
-API key 를 사용한 토큰 발급
-
-API key 를 통해 API 인증에 사용할 토큰을 가져옵니다.
 """
-  loginViaApiKey(input: LoginViaApiKeyInput!): LoginViaApiKeyOutput!
-  """
+API secret 를 사용한 토큰 발급
+
+API secret 를 통해 API 인증에 사용할 토큰을 가져옵니다.
+"""
+  loginViaApiSecret(input: LoginViaApiSecretInput!): LoginViaApiSecretOutput!
+"""
 토큰 갱신
 
 리프레시 토큰을 사용해 유효기간이 연장된 새로운 토큰을 재발급합니다.
 """
   refreshToken(input: RefreshTokenInput!): RefreshTokenOutput!
-  """
-가맹점의 플랫폼 관련 정보를 업데이트합니다.
-요청된 Authorization header 를 통해 자동으로 요청자의 가맹점을 특정합니다.
+  issueV2ApiSecret(input: IssueV2ApiSecretInput!): IssueV2ApiSecretOutput! @hidden @unstable
+  deleteV2ApiSecret(input: DeleteV2ApiSecretInput!): DeleteV2ApiSecretOutput! @hidden @unstable
+  "웹훅 설정 업데이트"
+  updateStoreWebhookSetting(input: UpdateStoreWebhookSettingInput!): UpdateStoreWebhookSettingOutput! @hidden @unstable
+  "웹훅 호출 테스트"
+  testWebhook(input: TestWebhookInput!): TestWebhookOutput! @hidden @unstable
+"""
+고객사의 플랫폼 관련 정보를 업데이트합니다.
+요청된 Authorization header 를 통해 자동으로 요청자의 고객사를 특정합니다.
 """
   updatePlatform(input: UpdatePlatformInput!): UpdatePlatformOutput!
   "새로운 할인 분담을 생성합니다."
@@ -2175,6 +4635,10 @@ API key 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   reschedulePlatformDiscountSharePolicy(input: ReschedulePlatformDiscountSharePolicyInput!): ReschedulePlatformDiscountSharePolicyOutput! @unstable
   "주어진 아이디에 대응되는 할인 분담의 예약 업데이트를 취소합니다."
   cancelPlatformDiscountSharePolicySchedule(input: CancelPlatformDiscountSharePolicyScheduleInput!): CancelPlatformDiscountSharePolicyScheduleOutput! @unstable
+  "주어진 아이디에 대응되는 할인 분담을 보관합니다."
+  archivePlatformDiscountSharePolicy(input: ArchivePlatformDiscountSharePolicyInput!): ArchivePlatformDiscountSharePolicyOutput!
+  "주어진 아이디에 대응되는 할인 분담을 복원합니다."
+  recoverPlatformDiscountSharePolicy(input: RecoverPlatformDiscountSharePolicyInput!): RecoverPlatformDiscountSharePolicyOutput!
   "새로운 추가 수수료 정책을 생성합니다."
   createPlatformAdditionalFeePolicy(input: CreatePlatformAdditionalFeePolicyInput!): CreatePlatformAdditionalFeePolicyOutput!
   "주어진 아이디에 대응되는 추가 수수료 정책을 업데이트합니다."
@@ -2185,6 +4649,10 @@ API key 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   reschedulePlatformAdditionalFeePolicy(input: ReschedulePlatformAdditionalFeePolicyInput!): ReschedulePlatformAdditionalFeePolicyOutput! @unstable
   "주어진 아이디에 대응되는 추가 수수료 정책의 예약 업데이트를 취소합니다."
   cancelPlatformAdditionalFeePolicySchedule(input: CancelPlatformAdditionalFeePolicyScheduleInput!): CancelPlatformAdditionalFeePolicyScheduleOutput! @unstable
+  "주어진 아이디에 대응되는 추가 수수료 정책을 보관합니다."
+  archivePlatformAdditionalFeePolicy(input: ArchivePlatformAdditionalFeePolicyInput!): ArchivePlatformAdditionalFeePolicyOutput!
+  "주어진 아이디에 대응되는 추가 수수료 정책을 복원합니다."
+  recoverPlatformAdditionalFeePolicy(input: RecoverPlatformAdditionalFeePolicyInput!): RecoverPlatformAdditionalFeePolicyOutput!
   "새로운 파트너를 생성합니다."
   createPlatformPartner(input: CreatePlatformPartnerInput!): CreatePlatformPartnerOutput!
   "새로운 파트너를 다건 생성합니다."
@@ -2202,6 +4670,10 @@ API key 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   reschedulePlatformPartner(input: ReschedulePlatformPartnerInput!): ReschedulePlatformPartnerOutput! @unstable
   "주어진 아이디에 대응되는 파트너의 예약 업데이트를 취소합니다."
   cancelPlatformPartnerSchedule(input: CancelPlatformPartnerScheduleInput!): CancelPlatformPartnerScheduleOutput! @unstable
+  "주어진 아이디에 대응되는 파트너를 보관합니다."
+  archivePlatformPartner(input: ArchivePlatformPartnerInput!): ArchivePlatformPartnerOutput!
+  "주어진 아이디에 대응되는 파트너를 복원합니다."
+  recoverPlatformPartner(input: RecoverPlatformPartnerInput!): RecoverPlatformPartnerOutput!
   "새로운 계약을 생성합니다."
   createPlatformContract(input: CreatePlatformContractInput!): CreatePlatformContractOutput!
   "주어진 아이디에 대응되는 계약을 업데이트합니다."
@@ -2212,14 +4684,92 @@ API key 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   reschedulePlatformContract(input: ReschedulePlatformContractInput!): ReschedulePlatformContractOutput! @unstable
   "주어진 아이디에 대응되는 계약의 예약 업데이트를 취소합니다."
   cancelPlatformContractSchedule(input: CancelPlatformContractScheduleInput!): CancelPlatformContractScheduleOutput! @unstable
+  "주어진 아이디에 대응되는 계약을 보관합니다."
+  archivePlatformContract(input: ArchivePlatformContractInput!): ArchivePlatformContractOutput!
+  "주어진 아이디에 대응되는 계약을 복원합니다."
+  recoverPlatformContract(input: RecoverPlatformContractInput!): RecoverPlatformContractOutput!
   createPlatformOrderTransfer(input: CreatePlatformOrderTransferInput!): CreateOrderTransferOutput!
   createPlatformOrderCancelTransfer(input: CreatePlatformOrderCancelTransferInput!): CreateOrderCancelTransferOutput!
   createPlatformManualTransfer(input: CreatePlatformManualTransferInput!): CreateManualTransferOutput!
-  createPlatformPayout(input: CreatePlatformPayoutInput!): CreatePlatformPayoutOutput! @hidden @unstable
-  completePlatformPayout(input: CompletePlatformPayoutInput!): CompletePlatformPayoutOutput! @hidden @unstable
-  deletePlatformPayout(input: DeletePlatformPayoutInput!): DeletePlatformPayoutOutput! @hidden @unstable
-  updatePlatformPayoutPartnerSettlement(input: UpdatePlatformPayoutPartnerSettlementInput!): UpdatePlatformPayoutPartnerSettlementOutput! @hidden @unstable
-  updatePlatformPayoutAllPartnerSettlements(input: UpdatePayoutAllPartnerSettlementsInput!): UpdatePayoutAllPartnerSettlementsOutput! @hidden @unstable
+  deletePlatformTransfer(input: DeletePlatformTransferInput!): DeletePlatformTransferOutput!
+  createPlatformBulkPayout(input: CreatePlatformBulkPayoutInput!): CreatePlatformBulkPayoutOutput! @hidden @unstable
+"""
+결제 예정 시각 변경
+
+결제가 예정되어 있는 예약 건에 대하여 결제 예정 시각을 변경합니다.
+"""
+  changePaymentSchedule(input: ChangePaymentScheduleInput!): ChangePaymentScheduleOutput!
+"""
+예약 결제 재시도 또는 재예약
+
+취소했거나 결제 시도가 실패한 예약 결제 건에 대해 재시도 또는 재예약합니다.
+"""
+  retryPaymentSchedule(input: RetryPaymentScheduleInput!): RetryPaymentScheduleOutput!
+"""
+결제 예약 취소
+
+결제 예약 건을 취소합니다.
+"""
+  revokePaymentSchedule(input: RevokePaymentScheduleInput!): RevokePaymentScheduleOutput!
+"""
+빌링 결제 리커버리 세팅값 설정
+
+빌링 결제 리커버리 세팅값을 설정합니다.
+"""
+  setPaymentRecoverySetting(input: SetPaymentRecoverySettingInput!): SetPaymentRecoverySettingOutput! @hidden @unstable
+"""
+빌링 결제 리커버리 세팅값 삭제
+
+빌링 결제 리커버리 세팅값을 삭제합니다.
+"""
+  deletePaymentRecoverySetting(input: DeletePaymentRecoverySettingInput!): DeletePaymentRecoverySettingOutput! @hidden @unstable
+  updatePlatformPartnerSettlementStatus(input: UpdatePlatformPartnerSettlementStatusInput!): UpdatePlatformPartnerSettlementStatusOutput! @hidden @unstable
+  togglePlatformBulkPayoutPartnerSettlements(input: TogglePlatformBulkPayoutPartnerSettlementsInput!): TogglePlatformBulkPayoutPartnerSettlementsOutput! @hidden @unstable
+  generatePlatformPayouts(input: GeneratePlatformPayoutsInput!): GeneratePlatformPayoutsOutput! @hidden @unstable
+  updatePlatformPayouts(input: UpdatePlatformPayoutsInput!): UpdatePlatformPayoutsOutput! @hidden @unstable
+  cancelPlatformBulkPayout(input: CancelPlatformBulkPayoutInput!): CancelPlatformBulkPayoutOutput! @hidden @unstable
+  executePlatformBulkPayout(input: ExecutePlatformBulkPayoutInput!): ExecutePlatformBulkPayoutOutput! @hidden @unstable
+  stopPlatformBulkPayout(input: StopPlatformBulkPayoutInput!): StopPlatformBulkPayoutOutput! @hidden @unstable
+  updatePlatformPayout(input: UpdatePlatformPayoutInput!): UpdatePlatformPayoutOutput! @hidden @unstable
+"""
+채널 그룹 생성
+
+채널 그룹을 생성합니다.
+"""
+  createChannelGroup(input: CreateChannelGroupInput!): CreateChannelGroupOutput!
+"""
+채널 그룹 수정
+
+채널 그룹 정보를 수정합니다.
+"""
+  updateChannelGroup(input: UpdateChannelGroupInput!): UpdateChannelGroupOutput!
+"""
+채널 그룹 삭제
+
+채널 그룹을 삭제합니다.
+"""
+  deleteChannelGroup(input: DeleteChannelGroupInput!): DeleteChannelGroupOutput!
+"""
+채널 그룹 수정 예약 취소
+
+채널 그룹 정보를 수정하기로 예약한 것을 취소합니다.
+"""
+  deleteChannelGroupScheduledSession(input: DeleteChannelGroupScheduledSessionInput!): DeleteChannelGroupScheduledSessionOutput!
+}
+
+"예약된 세션이 없는 경우"
+type NoScheduledSessionError implements Error {
+  message: String
+}
+
+"""
+한 줄 형식 주소
+
+한 줄 형식 주소만 존재합니다.
+"""
+type OneLineAddress implements Address {
+  "주소 (한 줄)"
+  oneLine: String!
 }
 
 "반환된 페이지 결과 정보"
@@ -2232,35 +4782,343 @@ type PageInfo {
   totalCount: Int!
 }
 
-type PayoutPartnerSettlementsPayload {
-  items: [PlatformPayoutPartnerSettlement!]!
+"상품 정보"
+type PaymentProduct {
+"""
+상품 고유 식별자
+
+고객사가 직접 부여한 식별자입니다.
+"""
+  id: String!
+  "상품명"
+  name: String!
+"""
+상품 태그
+
+카테고리 등으로 활용될 수 있습니다.
+"""
+  tag: String
+  "상품 코드"
+  code: String
+  "상품 단위가격"
+  amount: Long!
+  "주문 수량"
+  quantity: Int!
+}
+
+"빌링 결제 리커버리 최근 실행 내역"
+type PaymentRecoveryLog {
+  recoveredAt: DateTime!
+  succeededCount: Int!
+  failedCount: Int!
+}
+
+"빌링 결제 리커버리 실행 내역이 존재하지 않는 경우"
+type PaymentRecoveryLogNotFoundError implements Error {
+  message: String
+}
+
+"빌링 결제 리커버리 세팅값"
+type PaymentRecoverySetting {
+  recoveryHour: Int!
+  applyAfter: DateTime!
+}
+
+"빌링 결제 리커버리 세팅값이 존재하지 않는 경우"
+type PaymentRecoverySettingNotFoundError implements Error {
+  message: String
+}
+
+"결제 예약건이 이미 존재하는 경우"
+type PaymentScheduleAlreadyExistsError {
+  message: String
+}
+
+"결제 예약 시 입력된 빌링키 요약 정보"
+type PaymentScheduleBillingKeyInfo {
+  "빌링키"
+  billingKey: String
+  "빌링키 결제 수단"
+  methodType: BillingKeyPaymentMethodType
+  "빌링키 간편 결제 수단"
+  easyPayMethodType: PaymentScheduleBillingKeyEasyPayMethodType
+  "빌링키 발급에 사용한 채널 그룹 ID"
+  groupId: String
+  "빌링키 발급에 사용한 채널 그룹 이름"
+  groupName: String
+  "빌링키 발급에 사용한 PG사"
+  pgCompany: PgCompany
+  "빌링키 발급에 사용한 PG사 결제 모듈"
+  pgProvider: PgProvider
+}
+
+"결제 예약 캘린더 조회 성공 응답 정보"
+type PaymentScheduleCalendar {
+  totalStat: PaymentScheduleCalendarStat!
+  dateStats: [PaymentScheduleCalendarDateStat!]!
+}
+
+"결제 예약 건 캘린더의 일별 통계를 나타냅니다."
+type PaymentScheduleCalendarDateStat {
+  date: Date!
+  stat: PaymentScheduleCalendarStat!
+}
+
+"결제 예약 건 캘린더의 상태별 통계를 나타냅니다."
+type PaymentScheduleCalendarStat {
+  scheduledCount: Long!
+  startedCount: Long!
+  revokedCount: Long!
+  succeededCount: Long!
+  failedCount: Long!
+  pendingCount: Long!
+  scheduledAmount: Long!
+  startedAmount: Long!
+  revokedAmount: Long!
+  succeededAmount: Long!
+  failedAmount: Long!
+  pendingAmount: Long!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventFailed implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String
+  pgProvider: PgProvider
+  pgCompany: PgCompany
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventImmediateTryFailed implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String
+  pgProvider: PgProvider
+  pgCompany: PgCompany
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventImmediateTryPending implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String!
+  pgProvider: PgProvider!
+  pgCompany: PgCompany!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventImmediateTrySucceeded implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String!
+  pgProvider: PgProvider!
+  pgCompany: PgCompany!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventPending implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String!
+  pgProvider: PgProvider!
+  pgCompany: PgCompany!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventRescheduled implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "재예약된 결제 예정 시각"
+  timeToPay: DateTime!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventRetryFailed implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String
+  pgProvider: PgProvider
+  pgCompany: PgCompany
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventRetryPending implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String!
+  pgProvider: PgProvider!
+  pgCompany: PgCompany!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventRetrySucceeded implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String!
+  pgProvider: PgProvider!
+  pgCompany: PgCompany!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventRevoked implements PaymentScheduleEvent {
+  timestamp: DateTime!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventScheduleChanged implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "변경된 결제 예정 시각"
+  timeToPay: DateTime!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventScheduled implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제 예정 시각"
+  timeToPay: DateTime!
+}
+
+"결제 예약 관련 이벤트"
+type PaymentScheduleEventSucceeded implements PaymentScheduleEvent {
+  timestamp: DateTime!
+  "결제건 트랜잭션 ID"
+  transactionPlainId: String!
+  pgProvider: PgProvider!
+  pgCompany: PgCompany!
+}
+
+type PaymentScheduleEvents {
+  items: [PaymentScheduleEvent!]!
+}
+
+"결제 예약건이 존재하지 않는 경우"
+type PaymentScheduleNotFoundError implements Error {
+  message: String
+}
+
+"결제 예약 건이 해지 또는 실패 상태가 아닌 경우"
+type PaymentScheduleNotRevokedOrFailedError implements Error {
+  message: String
+}
+
+"결제 예약 건이 결제 예정 상태가 아닌 경우"
+type PaymentScheduleNotScheduledError implements Error {
+  message: String
+}
+
+"결제 예약 건 상태별 통계 조회 성공 응답 정보"
+type PaymentScheduleStat {
+  scheduledCount: Long!
+  startedCount: Long!
+  revokedCount: Long!
+  succeededCount: Long!
+  failedCount: Long!
+  pendingCount: Long!
+}
+
+"결제 예약 다건 조회 성공 응답 정보"
+type PaymentSchedulesPayload {
+  "조회된 결제 예약 건 리스트"
+  items: [PaymentSchedule!]!
+  "조회된 페이지 정보"
   page: PageInfo!
 }
 
-type PayoutSheet {
-  payoutPlainId: String!
-  contractPlainId: String
-  settlementCurrency: Currency!
-  payoutCurrency: Currency!
-  name: String!
+"결제 대기 상태"
+type PendingPaymentSchedule implements Node & PaymentSchedule {
+  "결제 예약 건 아이디"
+  plainId: String!
+  "결제 예약 건 아이디"
+  id: ID!
+  "고객사 아이디"
+  merchantPlainId: String!
+  "고객사 아이디"
+  merchantId: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "상점 아이디"
+  storeId: ID!
+  "결제 건 아이디"
+  paymentPlainId: String!
+  "빌링키"
+  billingKey: String!
+  "빌링키 요약 정보"
+  billingKeyInfo: PaymentScheduleBillingKeyInfo!
+  "PG"
+  determinedPgProvider: PgProvider!
+  "PG사"
+  determinedPgCompany: PgCompany!
+  "주문명"
+  orderName: String!
+  "문화비 지출 여부"
+  isCulturalExpense: Boolean!
+  "에스크로 결제 여부"
+  isEscrow: Boolean!
+  "고객 정보"
+  customer: Customer!
+  "사용자 지정 데이터"
+  customData: String!
+  "결제 총 금액"
+  totalAmount: Long!
+  "면세액"
+  taxFreeAmount: Long
+  "부가세"
+  vatAmount: Long
+  "통화"
+  currency: Currency!
+  "할부 개월 수"
+  installmentMonth: Int
+  "웹훅 주소"
+  noticeUrls: [String!]
+  "상품 정보"
+  products: [PaymentProduct!]
+  "결제 예약 등록 시점"
+  createdAt: DateTime!
+  "결제 예정 시점"
+  timeToPay: DateTime
+  "결제 시작 시점"
+  startedAt: DateTime!
+  "결제 완료 시점"
+  completedAt: DateTime!
+  "결제 예약 이벤트 리스트"
+  events: PaymentScheduleEvents!
 }
 
-"PG사에서 오류가 발생한 경우"
+type PgCompanyUsage {
+  "결제 건이 존재하는 PG사 조회"
+  byPayments: PgCompanyUsageByPaymentsOutput! @hidden @unstable
+  "결제 예약 건이 존재하는 PG사 조회"
+  byPaymentSchedules: PgCompanyUsageByPaymentSchedulesOutput! @hidden @unstable
+}
+
+"결제 예약 건이 존재하는 PG사 조회 성공 응답 정보"
+type PgCompanyUsageByPaymentSchedulesPayload {
+  pgCompaniesInUse: [PgCompany!]!
+}
+
+"결제 건이 존재하는 PG사 조회 성공 응답 정보"
+type PgCompanyUsageByPaymentsPayload {
+  pgCompaniesInUse: [PgCompany!]!
+}
+
+"PG사에서 오류를 전달한 경우"
 type PgProviderError implements Error {
   message: String
   pgCode: String!
   pgMessage: String!
 }
 
-"가맹점의 플랫폼 기능 관련 정보"
+"고객사의 플랫폼 기능 관련 정보"
 type Platform implements Node {
-  "해당 플랫폼의 가맹점 아이디"
+  "해당 플랫폼의 고객사 아이디"
   plainId: String!
   id: ID!
   "파트너 정산금액의 소수점 처리 방식"
   roundType: PlatformRoundType!
   "수수료 및 할인 분담 정책 관련 계산식"
   settlementFormula: PlatformSettlementFormula!
+  "정산 규칙"
+  settlementRule: PlatformSettlementRule!
   settlementFormulaValidation(platformFee: String, discountShare: String, additionalFee: String): PlatformSettlementFormulaValidationOutput! @hidden @unstable
   "주어진 아이디에 대응되는 할인 분담을 조회합니다."
   discountSharePolicy("조회할 할인 분담 정책 아이디" id: ID!): PlatformDiscountSharePolicyOutput!
@@ -2269,33 +5127,29 @@ type Platform implements Node {
   "주어진 아이디에 대응되는 할인 분담의 예약 업데이트를 조회합니다."
   discountSharePolicySchedule(targetId: ID!): PlatformDiscountSharePolicyScheduleOutput! @unstable
   "할인 분담 정책 다건 조회 시 필요한 필터 옵션을 조회합니다."
-  discountSharePolicyFilterOptions(includeHidden: Boolean): PlatformDiscountSharePolicyFilterOptionsOutput! @unstable
+  discountSharePolicyFilterOptions(isArchived: Boolean): PlatformDiscountSharePolicyFilterOptionsOutput! @unstable
   discountSharePolicyId(plainId: String!): PlatformDiscountSharePolicyIdOutput! @hidden @unstable
+  discountSharePolicyIdSuggestion: PlatformDiscountSharePolicyIdSuggestionOutput! @hidden @unstable
   "주어진 아이디에 대응되는 추가 수수료 정책을 조회합니다."
   additionalFeePolicy(id: ID!): PlatformAdditionalFeePolicyOutput!
   "여러 추가 수수료 정책을 조회합니다."
-  additionalFeePolicies("요청할 페이지 정보" page: PageInput!, "조회할 추가 수수료 정책 조건 필터" filter: PlatformAdditionalFeePolicyFilterInput): PlatformAdditionalFeePoliciesOutput! @unstable
+  additionalFeePolicies("요청할 페이지 정보" page: PageInput, "조회할 추가 수수료 정책 조건 필터" filter: PlatformAdditionalFeePolicyFilterInput): PlatformAdditionalFeePoliciesOutput! @unstable
   "주어진 아이디에 대응되는 추가 수수료 정책의 예약 업데이트를 조회합니다."
   additionalFeePolicySchedule("추가 수수료 정책 아이디" targetId: ID!): PlatformAdditionalFeePolicyScheduleOutput! @unstable
-  "추가 수수료 정책 다건 조회 시 필요한 필터 옵션을 조회합니다."
-  additionalFeePolicyFilterOptions("""숨김 조회 여부
-
-true 이면 숨김 처리된 추가 수수료 정책의 필터 옵션까지 조회하고, false 이면 숨김 처리되지 않은 추가 수수료 정책의 필터 옵션만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.""" includeHidden: Boolean): PlatformAdditionalFeePolicyFilterOptionsOutput! @unstable
   additionalFeePolicyId(plainId: String!): PlatformAdditionalFeePolicyIdOutput! @hidden @unstable
+  additionalFeePolicyIdSuggestion: PlatformAdditionalFeePolicyIdSuggestionOutput! @hidden @unstable
   "파트너 객체를 조회합니다."
   partner("조회하고 싶은 파트너 아이디" id: ID!): PlatformPartnerOutput!
   "여러 파트너를 조회합니다."
   partners("요청할 페이지 정보" page: PageInput, "조회할 파트너 조건 필터" filter: PlatformPartnerFilterInput): PlatformPartnersOutput! @unstable
   "파트너 현황을 조회합니다."
-  partnerDashboard("""숨김 조회 여부
+  partnerDashboard("""테스트 조회 여부
 
-true 이면 숨김 처리된 파트너까지 조회하고, false 이면 숨김 처리되지 않은 파트너만 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.""" includeHidden: Boolean, """테스트 조회 여부
-
-true 이면 isForTest 가 true 인 파트너들을 조회하고, false 이면 isForTest 가 false 인 파트너들을 조회합니다. 아무 값도 넘기지 않을 경우 기본값은 false 입니다.""" isForTest: Boolean): PlatformPartnerDashboardOutput! @hidden @unstable
+true 이면 isForTest 가 true 인 파트너들을 조회하고, false 이면 isForTest 가 false 인 파트너들을 조회합니다. 기본값은 false 입니다.""" isForTest: Boolean): PlatformPartnerDashboardOutput! @hidden @unstable
   "주어진 아이디에 대응되는 파트너의 예약 업데이트를 조회합니다."
   partnerSchedule("파트너 아이디" targetId: ID!): PlatformPartnerScheduleOutput! @unstable
   "파트너 다건 조회 시 필요한 필터 옵션을 조회합니다."
-  partnerFilterOptions(includeHidden: Boolean): PlatformPartnerFilterOptionsOutput! @unstable
+  partnerFilterOptions(isArchived: Boolean): PlatformPartnerFilterOptionsOutput! @unstable
   partnerId(plainId: String!): PlatformPartnerIdOutput! @hidden @unstable
   partnerIdSuggestion: PlatformPartnerIdSuggestionOutput! @hidden @unstable
   partnerSummaries(keyword: String!, limit: Int!): PlatformPartnerSummariesOutput! @hidden @unstable
@@ -2305,19 +5159,36 @@ true 이면 isForTest 가 true 인 파트너들을 조회하고, false 이면 is
   contracts("요청할 페이지 정보" page: PageInput, "조회할 계약 조건 필터" filter: PlatformContractFilterInput): PlatformContractsOutput! @unstable
   "주어진 아이디에 대응되는 계약의 예약 업데이트를 조회합니다."
   contractSchedule(targetId: ID!): PlatformContractScheduleOutput! @unstable
-  "계약 다건 조회 시 필요한 필터 옵션을 조회합니다."
-  contractFilterOptions(includeHidden: Boolean): PlatformContractFilterOptionsOutput! @unstable
   contractId(plainId: String!): PlatformContractIdOutput! @hidden @unstable
   contractIdSuggestion: PlatformContractIdSuggestionOutput! @hidden @unstable
+  contractSummaries("검색 키워드" keyword: String!, "조회 할 계약 수" limit: Int!): PlatformContractSummariesOutput! @hidden @unstable
   transfer(id: ID!): PlatformTransferOutput!
   transferDashboard(settlementDate: Date!, isForTest: Boolean): PlatformTransferDashboardOutput! @hidden @unstable
-  transferSummaries(page: PageInput, filter: PlatformTransferFilterInput): PlatformTransferSummariesOutput! @hidden @unstable
-  transferFilterOptions(includeHidden: Boolean): PlatformTransferFilterOptionsOutput! @hidden @unstable
+  transferSummaries("요청할 페이지 정보" page: PageInput, "조회할 정산건 조건 필터" filter: PlatformTransferFilterInput): PlatformTransferSummariesOutput! @hidden @unstable
+  transferFilterOptions(includeHidden: Boolean, isArchived: Boolean): PlatformTransferFilterOptionsOutput! @hidden @unstable
   payableSettlementDates(isForTest: Boolean): PlatformPayableSettlementDatesOutput! @hidden @unstable
-  partnerSettlements("요청할 페이지 정보" page: PageInput, "조회할 정산내역 조건 필터" filter: PlatformPartnerSettlementFilterInput!): PlatformPartnerSettlementsOutput! @hidden @unstable
-  partnerSettlementFilterOptions(includeHidden: Boolean, isForTest: Boolean): PlatformPartnerSettlementFilterOptionsOutput! @hidden @unstable
+  partnerSettlements("요청할 페이지 정보" page: PageInput, "조회할 정산내역 조건 필터" filter: PlatformPartnerSettlementFilterInput!, isForTest: Boolean!): PlatformPartnerSettlementsOutput! @hidden @unstable
+  settlementDates(isForTest: Boolean!): PlatformPartnerSettlementDatesOutput! @hidden @unstable
+  settlementCurrencies(isForTest: Boolean!): PlatformPartnerSettlementCurrenciesOutput! @hidden @unstable
+  partnerSettlementDashboard(filter: PlatformPartnerSettlementFilterInput!, isForTest: Boolean!): PlatformPartnerSettlementDashboardOutput! @hidden @unstable
+  bulkPayout(id: ID!): PlatformBulkPayoutOutput! @hidden @unstable
+  bulkPayouts(isForTest: Boolean, page: PageInput, filter: PlatformBulkPayoutFilterInput): PlatformBulkPayoutsOutput! @hidden @unstable
+  bulkPayoutPartnerSettlementsDashboard(bulkPayoutId: ID!, filter: PlatformBulkPayoutPartnerSettlementsFilterInput, isForTest: Boolean): PlatformBulkPayoutPartnerSettlementsDashboardOutput! @hidden @unstable
+  "계좌의 예금주를 조회합니다."
+  accountHolder(bank: Bank!, accountNumber: String!, identifier: PlatformAccountHolderIdentifierInput): GetPlatformAccountHolderOutput! @unstable
+  payouts(isForTest: Boolean, page: PageInput, filter: PlatformPayoutFilterInput): PlatformPayoutsOutput! @hidden @unstable
+  virtualAccount("""잔액조회한 값은 5분 동안 캐시되는데, 즉시 업데이트하고 싶다면 true를 전달합니다.
+전달하지 않을 시, 캐시된 값이 리턴됩니다.""" forceUpdate: Boolean): PlatformVirtualAccountOutput! @hidden @unstable
+  additionalFeePolicySummaries(isArchived: Boolean!): PlatformAdditionalFeePolicySummariesOutput! @hidden @unstable
   payout(id: ID!): PlatformPayoutOutput! @hidden @unstable
-  payouts(page: PageInput, filter: PlatformPayoutFilterInput): PlatformPayoutsOutput! @hidden @unstable
+  "파트너 태그들을 조회합니다."
+  partnerTags(isArchived: Boolean): PlatformPartnerTagsOutput! @hidden @unstable
+  "파트너 계좌 은행들을 조회합니다."
+  partnerBanks(isArchived: Boolean): PlatformPartnerBanksOutput! @hidden @unstable
+  "파트너 계좌 통화들을 조회합니다."
+  partnerCurrencies(isArchived: Boolean): PlatformPartnerCurrenciesOutput! @hidden @unstable
+  "지급에 사용된 통화들을 조회합니다."
+  payoutCurrencies(isForTest: Boolean): PlatformPayoutCurrenciesOutput! @hidden @unstable
 }
 
 """
@@ -2338,6 +5209,34 @@ type PlatformAccount {
   status: PlatformAccountStatus!
 }
 
+"예금주 조회 성공 응답 정보"
+type PlatformAccountHolder {
+  "계좌 예금주 이름"
+  holderName: String!
+  "계좌 검증 아이디"
+  accountVerificationId: String!
+}
+
+"파트너 계좌 검증 아이디를 이미 사용한 경우"
+type PlatformAccountVerificationAlreadyUsedError implements Error {
+  message: String
+}
+
+"파트너 계좌 인증이 실패한 경우"
+type PlatformAccountVerificationFailedError implements Error {
+  message: String
+}
+
+"파트너 계좌 검증 아이디를 찾을 수 없는 경우"
+type PlatformAccountVerificationNotFoundError implements Error {
+  message: String
+}
+
+"진행 중인 일괄 지급이 있는 경우"
+type PlatformActiveBulkPayoutAlreadyExistsError implements Error {
+  message: String
+}
+
 type PlatformAdditionalFeePoliciesNotFoundError implements Error {
   plainIds: [String!]!
   ids: [ID!]!
@@ -2355,19 +5254,22 @@ type PlatformAdditionalFeePoliciesPayload {
 """
 추가 수수료 정책
 
-추가 수수료 정책는 가맹점의 주문건에 대한 중개수수료에 별도로 추가로 부여되는 수수료입니다. 대표적인 사용 예시로 풀필먼트 수수료, 로켓배송 수수료, 마케팅 채널 수수료등이 있습니다.
+추가 수수료 정책는 고객사의 주문건에 대한 중개수수료에 별도로 추가로 부여되는 수수료입니다. 대표적인 사용 예시로 풀필먼트 수수료, 로켓배송 수수료, 마케팅 채널 수수료등이 있습니다.
 """
 type PlatformAdditionalFeePolicy implements Node {
+  "추가 수수료 정책 고유 아이디"
   plainId: String!
   id: ID!
+  "추가 수수료 정책 이름"
+  name: String!
   "책정 수수료"
   fee: PlatformFee!
   "해당 추가 수수료 정책에 대한 메모"
   memo: String
   "부가세를 부담할 주체"
   vatPayer: PlatformPayer!
-  "숨김 여부"
-  isHidden: Boolean!
+  "보관 여부"
+  isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
 }
@@ -2376,16 +5278,15 @@ type PlatformAdditionalFeePolicyAlreadyExistsError implements Error {
   message: String
 }
 
-"추가 수수료 정책 필터 옵션 정보"
-type PlatformAdditionalFeePolicyFilterOptions {
-  "조회된 추가 수수료 정책 id 리스트"
-  ids: [String!]!
-}
-
 type PlatformAdditionalFeePolicyId {
   additionalFeePolicyPlainId: String!
   additionalFeePolicyId: ID!
   exists: Boolean!
+}
+
+type PlatformAdditionalFeePolicyIdSuggestion {
+  additionalFeePolicyPlainId: String!
+  additionalFeePolicyId: ID!
 }
 
 type PlatformAdditionalFeePolicyNotFoundError implements Error {
@@ -2394,17 +5295,20 @@ type PlatformAdditionalFeePolicyNotFoundError implements Error {
 
 "추가 수수료 정책의 예약된 업데이트 정보"
 type PlatformAdditionalFeePolicySchedule {
+  "추가 수수료 정책 고유 아이디"
   targetPlainId: String!
   "예약 업데이트의 대상 객체 아이디"
   targetId: ID!
+  "추가 수수료 정책 이름"
+  name: String!
   "책정 수수료"
   fee: PlatformFee!
   "해당 추가 수수료 정책에 대한 메모"
   memo: String
   "부가세를 부담할 주체"
   vatPayer: PlatformPayer!
-  "숨김 여부"
-  isHidden: Boolean!
+  "보관 여부"
+  isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
 }
@@ -2413,11 +5317,146 @@ type PlatformAdditionalFeePolicyScheduleAlreadyExistsError implements Error {
   message: String
 }
 
-type PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError {
+type PlatformAdditionalFeePolicySummaries {
+  summaries: [PlatformAdditionalFeePolicySummary!]!
+}
+
+type PlatformAdditionalFeePolicySummary {
+  "추가 수수료 정책 고유 아이디"
+  plainId: String!
+  id: ID!
+  "추가 수수료 정책 이름"
+  name: String!
+}
+
+type PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError implements Error {
   additionalFeePolicyPlainId: String!
   additionalFeePolicyId: ID!
   feeCurrency: Currency!
   settlementCurrency: Currency!
+  message: String
+}
+
+"보관된 추가 수수료 정책을 업데이트하려고 하는 경우"
+type PlatformArchivedAdditionalFeePolicyError implements Error {
+  message: String
+}
+
+"보관된 계약을 업데이트하려고 하는 경우"
+type PlatformArchivedContractError implements Error {
+  message: String
+}
+
+"보관된 할인 분담 정책을 업데이트하려고 하는 경우"
+type PlatformArchivedDiscountSharePolicyError implements Error {
+  message: String
+}
+
+"보관된 파트너를 업데이트하려고 하는 경우"
+type PlatformArchivedPartnerError implements Error {
+  message: String
+}
+
+"보관된 파트너들을 예약 업데이트하려고 하는 경우"
+type PlatformArchivedPartnersCannotBeScheduledError implements Error {
+  message: String
+}
+
+"사업자등록번호가 설정되지 않은 경우"
+type PlatformBrnNotRegisteredError implements Error {
+  message: String
+}
+
+type PlatformBulkPayout implements Node {
+  "일괄 지급 고유 아이디"
+  plainId: String!
+  id: ID!
+  name: String!
+  creatorId: String!
+  method: PlatformPayoutMethod!
+  arePayoutsGenerated: Boolean!
+  totalPayoutAmount: Long!
+  status: PlatformBulkPayoutStatus!
+  payoutStats: PlatformBulkPayoutStats!
+  partnerSettlements(filter: PlatformBulkPayoutPartnerSettlementsFilterInput, page: PageInput): PlatformBulkPayoutPartnerSettlementsOutput! @hidden @unstable
+  "일괄 지급 전자 서명용 문서를 생성합니다. 전자 서명 시에만 사용하시길 바랍니다."
+  document: PlatformBulkPayoutDocumentOutput! @hidden @unstable
+  statusUpdatedAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PlatformBulkPayoutDocument {
+  title: String!
+  summaries: [PlatformBulkPayoutDocumentSummary!]!
+  content: String!
+  hash: String!
+}
+
+type PlatformBulkPayoutDocumentSummary {
+  label: String!
+  value: String!
+}
+
+"일괄 지급이 취소 가능한 상태가 아닌 경우"
+type PlatformBulkPayoutNonCancellableStatusError implements Error {
+  message: String
+}
+
+"일괄 지급이 정지 가능한 상태(ONGOING)가 아닌 경우"
+type PlatformBulkPayoutNonStoppableStatusError implements Error {
+  message: String
+}
+
+"일괄 지급이 존재하지 않는 경우"
+type PlatformBulkPayoutNotFoundError implements Error {
+  message: String
+}
+
+type PlatformBulkPayoutPartnerSettlement {
+  bulkPayoutId: ID!
+  partnerSettlement: PlatformPartnerSettlement!
+  isSelected: Boolean!
+}
+
+"일괄지급 정산내역 대시보드 조회 결과"
+type PlatformBulkPayoutPartnerSettlementsDashboardPayload {
+  counts: PlatformPartnerSettlementStatusStats!
+  amount: PlatformPartnerSettlementStatusStats!
+}
+
+type PlatformBulkPayoutPartnerSettlementsPayload {
+  items: [PlatformBulkPayoutPartnerSettlement!]!
+  page: PageInfo!
+  counts: PlatformPartnerSettlementStatusStats!
+}
+
+type PlatformBulkPayoutStats {
+  amount: PlatformPayoutStatusStats!
+  count: PlatformPayoutStatusStats!
+}
+
+"일괄 지급이 준비중인 상태가 아닌 경우"
+type PlatformBulkPayoutStatusNotPreparingError implements Error {
+  message: String
+}
+
+type PlatformBulkPayoutStatusStats {
+  preparing: Long!
+  prepared: Long!
+  ongoing: Long!
+  stopped: Long!
+  cancelled: Long!
+  completed: Long!
+}
+
+type PlatformBulkPayoutsPayload {
+  items: [PlatformBulkPayout!]!
+  page: PageInfo!
+  counts: PlatformBulkPayoutStatusStats!
+}
+
+type PlatformCancelOrderTransfersExistsError implements Error {
   message: String
 }
 
@@ -2448,29 +5487,52 @@ type PlatformCancellationNotFoundError implements Error {
   message: String
 }
 
-type PlatformCompletedPayout implements PlatformPayout & Node {
-  plainId: String!
-  id: ID!
-  creator: PlatformPayoutCreator!
-  settlementDate: Date!
-  summary: PlatformPayoutSummary!
-  filter: PlatformPartnerSettlementFilter!
-  partnerSettlements(page: PageInput): PlatformPayoutPartnerSettlementsOutput! @hidden @unstable
-  sheets: PlatformPayoutSheetsOutput! @hidden @unstable
-  createdAt: DateTime!
-  paidOutAt: DateTime!
+"예약된 업데이트가 있는 추가 수수료 정책을 보관하려고 하는 경우"
+type PlatformCannotArchiveScheduledAdditionalFeePolicyError implements Error {
+  message: String
+}
+
+"예약된 업데이트가 있는 계약을 보관하려고 하는 경우"
+type PlatformCannotArchiveScheduledContractError implements Error {
+  message: String
+}
+
+"예약된 업데이트가 있는 할인 분담 정책을 보관하려고 하는 경우"
+type PlatformCannotArchiveScheduledDiscountSharePolicyError implements Error {
+  message: String
+}
+
+"예약된 업데이트가 있는 파트너를 보관하려고 하는 경우"
+type PlatformCannotArchiveScheduledPartnerError implements Error {
+  message: String
+}
+
+"""
+플랫폼 파트너 담당자 연락 정보
+
+파트너 담당자에게 연락하기 위한 정보들 입니다.
+"""
+type PlatformContact {
+  "담당자 이름"
+  name: String!
+  "담당자 휴대폰 번호"
+  phoneNumber: String
+  "담당자 이메일"
+  email: String!
 }
 
 """
 계약
 
-계약은 플랫폼 가맹점이 파트너에게 정산해줄 대금과 정산일을 계산하는 데 적용되는 정보입니다.
-가맹점의 플랫폼에서 재화 및 서비스를 판매하기 위한 중개수수료와 판매금에 대한 정산일로 구성되어 있습니다.
+계약은 플랫폼 고객사가 파트너에게 정산해줄 대금과 정산일을 계산하는 데 적용되는 정보입니다.
+고객사의 플랫폼에서 재화 및 서비스를 판매하기 위한 중개수수료와 판매금에 대한 정산일로 구성되어 있습니다.
 """
 type PlatformContract implements Node {
   "계약 고유 아이디"
   plainId: String!
   id: ID!
+  "계약 이름"
+  name: String!
   "계약 내부 표기를 위한 메모"
   memo: String
   "중개수수료"
@@ -2479,20 +5541,20 @@ type PlatformContract implements Node {
   settlementCycle: PlatformSettlementCycle!
   "중개수수료에 대한 부가세 부담 주체"
   platformFeeVatPayer: PlatformPayer!
-  "숨김 여부"
-  isHidden: Boolean!
+"""
+정산 시 결제금액 부가세 감액 여부
+
+false인 경우 정산금에서 결제 금액 부가세를 감액하지 않고, true인 경우 정산금에서 결제 금액 부가세를 감액합니다.
+"""
+  subtractPaymentVatAmount: Boolean!
+  "보관 여부"
+  isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
 }
 
 type PlatformContractAlreadyExistsError implements Error {
   message: String
-}
-
-"계약 필터 옵션 조회 성공 응답 정보"
-type PlatformContractFilterOptions {
-  "조회된 중개 수수료 리스트"
-  platformFees: [PlatformFee!]!
 }
 
 type PlatformContractId {
@@ -2510,7 +5572,7 @@ type PlatformContractNotFoundError implements Error {
   message: String
 }
 
-type PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError {
+type PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError implements Error {
   contractPlainId: String!
   contractId: ID!
   feeCurrency: Currency!
@@ -2524,6 +5586,8 @@ type PlatformContractSchedule {
   targetPlainId: String!
   "예약 업데이트의 대상 객체 아이디"
   targetId: ID!
+  "계약 이름"
+  name: String!
   "계약 내부 표기를 위한 메모"
   memo: String
   "중개수수료"
@@ -2532,14 +5596,35 @@ type PlatformContractSchedule {
   settlementCycle: PlatformSettlementCycle!
   "중개수수료에 대한 부가세 부담 주체"
   platformFeeVatPayer: PlatformPayer!
-  "숨김 여부"
-  isHidden: Boolean!
+"""
+정산 시 결제금액 부가세 감액 여부
+
+false인 경우 정산금에서 결제 금액 부가세를 감액하지 않고, true인 경우 정산금에서 결제 금액 부가세를 감액합니다.
+"""
+  subtractPaymentVatAmount: Boolean!
+  "보관 여부"
+  isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
 }
 
 type PlatformContractScheduleAlreadyExistsError implements Error {
   message: String
+}
+
+type PlatformContractSummariesPayload {
+  items: [PlatformContractSummary!]!
+}
+
+"계약 요약 정보"
+type PlatformContractSummary {
+  "계약 아이디"
+  contractId: ID!
+  contractPlainId: String!
+  "계약 이름"
+  name: String!
+  "계약 메모"
+  memo: String
 }
 
 type PlatformContractsNotFoundError implements Error {
@@ -2554,6 +5639,16 @@ type PlatformContractsPayload {
   items: [PlatformContract!]!
   "조회된 페이지 정보"
   page: PageInfo!
+}
+
+"지원 되지 않는 통화를 선택한 경우"
+type PlatformCurrencyNotSupportedError implements Error {
+  message: String
+}
+
+"일괄 송금 대행에 지원 되지 않는 통화를 선택한 경우"
+type PlatformCurrencyNotSupportedForAgencyMethodError implements Error {
+  message: String
 }
 
 type PlatformDiscountCancelExceededOrderCancelAmountError implements Error {
@@ -2581,13 +5676,15 @@ type PlatformDiscountSharePoliciesPayload {
 """
 할인 분담 정책
 
-할인 분담은 가맹점의 주문건에 쿠폰 및 포인트와 같은 할인금액이 적용될 때, 파트너 정산 시 할인금액에 대한 분담 정책을 가지는 객체입니다.
+할인 분담은 고객사의 주문건에 쿠폰 및 포인트와 같은 할인금액이 적용될 때, 파트너 정산 시 할인금액에 대한 분담 정책을 가지는 객체입니다.
 할인 유형에 대한 아이디와 메모, 그리고 파트너 분담율을 가집니다.
 """
 type PlatformDiscountSharePolicy implements Node {
   plainId: String!
   id: ID!
-  """
+  "할인 분담 정책 이름"
+  name: String!
+"""
 할인 분담율
 
 파트너가 분담할 할인금액의 비율을 의미하는 밀리 퍼센트 단위 (10^-5) 의 음이 아닌 정수이며, 파트너가 부담할 금액은 `할인금액 * partnerShareRate * 10^5` 로 책정합니다.
@@ -2595,8 +5692,8 @@ type PlatformDiscountSharePolicy implements Node {
   partnerShareRate: Int!
   "해당 할인 분담에 대한 메모"
   memo: String
-  "숨김 여부"
-  isHidden: Boolean!
+  "보관 여부"
+  isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
 }
@@ -2623,6 +5720,11 @@ type PlatformDiscountSharePolicyIdDuplicatedError implements Error {
   message: String
 }
 
+type PlatformDiscountSharePolicyIdSuggestion {
+  discountSharePolicyPlainId: String!
+  discountSharePolicyId: ID!
+}
+
 type PlatformDiscountSharePolicyNotFoundError implements Error {
   message: String
 }
@@ -2632,7 +5734,9 @@ type PlatformDiscountSharePolicySchedule {
   targetPlainId: String!
   "예약 업데이트의 대상 객체 아이디"
   targetId: ID!
-  """
+  "할인 분담 정책 이름"
+  name: String!
+"""
 할인 분담율
 
 파트너가 분담할 할인금액의 비율을 의미하는 밀리 퍼센트 단위 (10^-5) 의 음이 아닌 정수이며, 파트너가 부담할 금액은 `할인금액 * partnerShareRate * 10^5` 로 책정합니다.
@@ -2640,8 +5744,8 @@ type PlatformDiscountSharePolicySchedule {
   partnerShareRate: Int!
   "해당 할인 분담에 대한 메모"
   memo: String
-  "숨김 여부"
-  isHidden: Boolean!
+  "보관 여부"
+  isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
 }
@@ -2650,11 +5754,32 @@ type PlatformDiscountSharePolicyScheduleAlreadyExistsError implements Error {
   message: String
 }
 
+"서명한 전자서명의 원본 문서가 현재 문서와 해시가 일치하지 않는 경우"
+type PlatformDocumentHashMismatchedError implements Error {
+  message: String
+}
+
+"외부 api 오류"
+type PlatformExternalApiFailedError implements Error {
+  message: String
+}
+
+"외부 api의 일시적인 오류"
+type PlatformExternalApiTemporarilyFailedError implements Error {
+  message: String
+}
+
+"외부 결제 정보"
 type PlatformExternalPayment implements PlatformPayment {
+  "결제 아이디"
   paymentPlainId: String!
+  "주문 명"
   orderName: String
+  "통화"
   currency: Currency!
+  "결제 수단"
   method: PlatformPaymentMethod
+  "결제 일시"
   paidAt: DateTime
 }
 
@@ -2674,7 +5799,7 @@ type PlatformFixedAmountFee {
 총 금액에 정해진 비율을 곱한 만큼의 수수료를 책정합니다.
 """
 type PlatformFixedRateFee {
-  """
+"""
 수수료율
 
 총 금액 대비 수수료 비율을 의미하며, 밀리 퍼센트 단위 (10^-5) 의 음이 아닌 정수입니다. `총 금액 * rate * 10^5` (`rate * 10^3 %`) 만큼 수수료를 책정합니다.
@@ -2689,17 +5814,26 @@ type PlatformInvalidSettlementFormulaError implements Error {
   message: String
 }
 
+"수기 정산건"
 type PlatformManualTransfer implements Node & PlatformTransfer {
+  "정산건 아이디"
   plainId: String!
   id: ID!
+  "파트너"
   partner: PlatformPartner!
+  "정산 상태"
   status: PlatformTransferStatus!
+  "메모"
   memo: String
+  "정산 일"
   settlementDate: Date!
+  "정산 통화"
   settlementCurrency: Currency!
   payoutPlainId: String
   payoutId: ID
+  "테스트 모드 여부"
   isForTest: Boolean!
+  "정산 금액"
   settlementAmount: Long!
 }
 
@@ -2715,7 +5849,27 @@ type PlatformManualTransferSummary implements PlatformTransferSummary {
   settlementAmount: Long!
 }
 
+"지급 금액의 총합이 음수인 파트너가 존재하는 경우"
+type PlatformNegativePayoutAmountPartnersError implements Error {
+  message: String
+}
+
 type PlatformNoPayablePartnerSettlementsError implements Error {
+  message: String
+}
+
+"선택된 정산건이 없는 경우"
+type PlatformNoSelectedPartnerSettlementsError implements Error {
+  message: String
+}
+
+"지급할 수 없는 정산 상태 값을 선택한 경우"
+type PlatformNonPayablePartnerSettlementStatusError implements Error {
+  message: String
+}
+
+"업데이트 불가능한 상태를 업데이트하려는 경우"
+type PlatformNonUpdatableStatusError implements Error {
   message: String
 }
 
@@ -2724,40 +5878,45 @@ type PlatformNotEnabledError implements Error {
   message: String
 }
 
-type PlatformOngoingPayout implements PlatformPayout & Node {
-  plainId: String!
-  id: ID!
-  creator: PlatformPayoutCreator!
-  settlementDate: Date!
-  summary: PlatformPayoutSummary!
-  filter: PlatformPartnerSettlementFilter!
-  partnerSettlements(page: PageInput): PlatformPayoutPartnerSettlementsOutput! @hidden @unstable
-  sheets: PlatformPayoutSheetsOutput! @hidden @unstable
-  createdAt: DateTime!
-}
-
-type PlatformOngoingPayoutExistsError implements Error {
+"가상 계좌에 충분한 잔액이 없는 경우"
+type PlatformNotEnoughAccountBalanceError implements Error {
   message: String
 }
 
+"주문 취소 정산건"
 type PlatformOrderCancelTransfer implements Node & PlatformTransfer {
+  "정산건 아이디"
   plainId: String!
   id: ID!
+  "파트너"
   partner: PlatformPartner!
+  "정산 상태"
   status: PlatformTransferStatus!
+  "메모"
   memo: String
+  "정산 일"
   settlementDate: Date!
+  "정산 통화"
   settlementCurrency: Currency!
   payoutPlainId: String
   payoutId: ID
+  "테스트 모드 여부"
   isForTest: Boolean!
+  "정산 금액 정보"
   amount: PlatformOrderSettlementAmount!
+  "계약"
   contract: PlatformContract!
+  "결제 정보"
   payment: PlatformPayment!
+  "정산 시작일"
   settlementStartDate: Date!
+  "주문 항목 리스트"
   orderLines: [PlatformOrderTransferOrderLine!]!
+  "정산 금액 계산 시 사용된 추가 수수료 정보"
   additionalFees: [PlatformOrderTransferAdditionalFee!]!
+  "정산 금액 계산 시 사용된 할인 정보"
   discounts: [PlatformOrderTransferDiscount!]!
+  "주문 취소 정보"
   cancellation: PlatformOrderTransferCancellation!
 }
 
@@ -2780,41 +5939,82 @@ type PlatformOrderDetailMismatchedError implements Error {
   message: String
 }
 
+"""
+정산 금액 정보
+
+정산 금액과 정산 금액 계산에 사용된 금액 정보들 입니다.
+"""
 type PlatformOrderSettlementAmount {
+  "정산 금액"
   settlement: Long!
+  "결제 금액"
   payment: Long!
+  "결제 금액 부가세"
+  paymentVat: Long!
+"""
+결제 금액 부가세 부담금액
+
+참조된 계약의 결제 금액 부가세 감액 여부에 따라 false인 경우 0원, true인 경우 결제 금액 부가세입니다.
+"""
+  paymentVatBurden: Long!
+  "주문 금액"
   order: Long!
+  "중개 수수료"
   platformFee: Long!
+  "중개 수수료 부가세"
   platformFeeVat: Long!
+  "추가 수수료"
   additionalFee: Long!
+  "추가 수수료 부가세"
   additionalFeeVat: Long!
+  "할인 금액"
   discount: Long!
+  "할인 분담 금액"
   discountShare: Long!
 }
 
+"주문 정산건"
 type PlatformOrderTransfer implements Node & PlatformTransfer {
+  "정산건 아이디"
   plainId: String!
   id: ID!
+  "파트너"
   partner: PlatformPartner!
+  "정산 상태"
   status: PlatformTransferStatus!
+  "메모"
   memo: String
+  "정산 일"
   settlementDate: Date!
+  "정산 통화"
   settlementCurrency: Currency!
   payoutPlainId: String
   payoutId: ID
+  "테스트 모드 여부"
   isForTest: Boolean!
+  "정산 금액 정보"
   amount: PlatformOrderSettlementAmount!
+  "계약"
   contract: PlatformContract!
+  "결제 정보"
   payment: PlatformPayment!
+  "정산 시작일"
   settlementStartDate: Date!
+  "주문 항목 리스트"
   orderLines: [PlatformOrderTransferOrderLine!]!
+  "정산 금액 계산 시 사용된 추가 수수료 정보"
   additionalFees: [PlatformOrderTransferAdditionalFee!]!
+  "정산 금액 계산 시 사용된 할인 정보"
   discounts: [PlatformOrderTransferDiscount!]!
 }
 
+"추가 수수료 정보"
 type PlatformOrderTransferAdditionalFee {
+  "추가 수수료 정책"
   policy: PlatformAdditionalFeePolicy!
+  "추가 수수료 금액"
   amount: Long!
+  "추가 수수료 부가세 금액"
   vat: Long!
 }
 
@@ -2822,29 +6022,47 @@ type PlatformOrderTransferAlreadyCancelledError implements Error {
   message: String
 }
 
+"주문 취소 정보"
 type PlatformOrderTransferCancellation {
+  "주문 취소 아이디"
   cancellationPlainId: String!
+  "취소 일시"
   cancelledAt: DateTime!
 }
 
+"할인 정보"
 type PlatformOrderTransferDiscount {
+  "할인 분담 정책"
   sharePolicy: PlatformDiscountSharePolicy!
+  "할인 금액"
   amount: Long!
+  "할인 분담 금액"
   shareAmount: Long!
 }
 
+"주문 항목"
 type PlatformOrderTransferOrderLine {
+  "상품"
   product: PlatformOrderTransferProduct!
+  "상품 수량"
   quantity: Int!
+  "상품 할인 정보"
   discounts: [PlatformOrderTransferDiscount!]!
+  "상품 추가 수수료 정보"
   additionalFees: [PlatformOrderTransferAdditionalFee!]!
+  "상품 정산 금액 정보"
   amount: PlatformOrderSettlementAmount!
 }
 
+"상품"
 type PlatformOrderTransferProduct {
+  "상품 아이디"
   productPlainId: String!
+  "상품 이름"
   name: String!
+  "상품 금액"
   amount: Long!
+  "태그"
   tag: String
 }
 
@@ -2866,7 +6084,7 @@ type PlatformOrderTransferSummary implements PlatformTransferSummary {
 """
 파트너
 
-파트너는 가맹점이 정산해주어야 할 대상입니다.
+파트너는 고객사가 정산해주어야 할 대상입니다.
 기본 사업자 정보와 정산정보, 그리고 적용될 계약의 정보를 등록 및 관리할 수 있습니다.
 """
 type PlatformPartner implements Node {
@@ -2875,10 +6093,8 @@ type PlatformPartner implements Node {
   id: ID!
   "파트너 법인명 혹은 이름"
   name: String!
-  "파트너 이메일"
-  email: String!
-  "파트너의 사업자등록번호. 개인 혹은 법인 사업자일 때만 명시합니다."
-  businessRegistrationNumber: String
+  "파트너 담당자 연락 정보"
+  contact: PlatformContact!
   "정산 계좌"
   account: PlatformAccount!
   "파트너의 상태"
@@ -2889,19 +6105,45 @@ type PlatformPartner implements Node {
   memo: String
   "파트너의 태그 리스트"
   tags: [String!]!
-  "숨김 여부"
-  isHidden: Boolean!
+  "파트너 유형별 정보"
+  type: PlatformPartnerType!
+  "보관 여부"
+  isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
 }
 
+type PlatformPartnerAlreadyExistsError implements Error {
+  message: String
+}
+
+"파트너 계좌 은행 조회 성공 응답"
+type PlatformPartnerBanksPayload {
+  "파트너 계좌 은행 리스트"
+  banks: [Bank!]!
+}
+
+"파트너 계약 요약 정보"
+type PlatformPartnerContractSummary {
+  "계약 고유 아이디"
+  id: String!
+  "계약 이름"
+  name: String!
+}
+
+"파트너 계좌 통화 조회 성공 응답"
+type PlatformPartnerCurrenciesPayload {
+  "파트너 계좌 통화 리스트"
+  currencies: [Currency!]!
+}
+
 "파트너 현황 조회 성공 응답"
 type PlatformPartnerDashboard {
-  "전체 파트너 수"
-  totalCount: Int!
-  "정산 예정인 파트너 수"
-  upcomingSettledCount: Int!
-  """
+  "전체 파트너 현황"
+  totalPartner: PlatformPartnerDashboardCount!
+  "정산 예정인 파트너 현황"
+  upcomingSettledPartner: PlatformPartnerDashboardCount!
+"""
 예정된 정산일
 
 정산이 예정되어 있지 않은 경우 값이 주어지지 않습니다.
@@ -2909,10 +6151,20 @@ type PlatformPartnerDashboard {
   upcomingSettlementDate: Date
 }
 
+"파트너 현황 정보"
+type PlatformPartnerDashboardCount {
+  "보관된 파트너를 포함한 전체 파트너 수"
+  total: Int!
+  "보관된 파트너 수"
+  archived: Int!
+}
+
 "파트너 필터 옵션 조회 성공 응답 정보"
 type PlatformPartnerFilterOptions {
   "조회된 태그 리스트"
   tags: [String!]!
+  "조회된 파트너 계약 요약 정보 리스트"
+  contractSummary: [PlatformPartnerContractSummary!]!
 }
 
 type PlatformPartnerId {
@@ -2943,11 +6195,22 @@ type PlatformPartnerIdsDuplicatedError implements Error {
 }
 
 type PlatformPartnerManualSettlement implements PlatformPartnerSettlement {
-  partner: PlatformPartnerSettlementPartner!
+  "정산내역 아이디"
+  plainId: String!
+  id: ID!
+  "파트너"
+  partner: PlatformPartner!
+  "정산 일"
   settlementDate: Date!
-  settlementAmount: Long!
+  "정산 통화"
   settlementCurrency: Currency!
-  payoutCurrency: Currency!
+  "정산 상태"
+  status: PlatformPartnerSettlementStatus!
+  "메모"
+  memo: String
+  "정산 금액"
+  amount: Long!
+  "테스트 모드 여부"
   isForTest: Boolean!
 }
 
@@ -2955,14 +6218,51 @@ type PlatformPartnerNotFoundError implements Error {
   message: String
 }
 
-type PlatformPartnerOrderSettlement implements PlatformPartnerSettlement {
-  partner: PlatformPartnerSettlementPartner!
+type PlatformPartnerOrderCancelSettlement implements PlatformPartnerSettlement {
+  "정산내역 아이디"
+  plainId: String!
+  id: ID!
+  "파트너"
+  partner: PlatformPartner!
+  "정산 일"
   settlementDate: Date!
+  "정산 통화"
   settlementCurrency: Currency!
-  payoutCurrency: Currency!
-  contract: PlatformContractOutput!
+  "정산 상태"
+  status: PlatformPartnerSettlementStatus!
+  "메모"
+  memo: String
+  "계약"
+  contract: PlatformContract!
+  "정산 시작 일 범위"
   settlementStartDateRange: DateRange!
+  "금액 정보"
   amount: PlatformOrderSettlementAmount!
+  "테스트 모드 여부"
+  isForTest: Boolean!
+}
+
+type PlatformPartnerOrderSettlement implements PlatformPartnerSettlement {
+  "정산내역 아이디"
+  plainId: String!
+  id: ID!
+  "파트너"
+  partner: PlatformPartner!
+  "정산 일"
+  settlementDate: Date!
+  "정산 통화"
+  settlementCurrency: Currency!
+  "정산 상태"
+  status: PlatformPartnerSettlementStatus!
+  "메모"
+  memo: String
+  "계약"
+  contract: PlatformContract!
+  "정산 시작 일 범위"
+  settlementStartDateRange: DateRange!
+  "금액 정보"
+  amount: PlatformOrderSettlementAmount!
+  "테스트 모드 여부"
   isForTest: Boolean!
 }
 
@@ -2974,10 +6274,8 @@ type PlatformPartnerSchedule {
   targetId: ID!
   "파트너 법인명 혹은 이름"
   name: String!
-  "파트너 이메일"
-  email: String!
-  "파트너의 사업자등록번호. 개인 혹은 법인 사업자일 때만 명시합니다."
-  businessRegistrationNumber: String
+  "파트너 담당자 연락 정보"
+  contact: PlatformContact!
   "정산 계좌"
   account: PlatformAccount!
   "파트너의 상태"
@@ -2988,8 +6286,10 @@ type PlatformPartnerSchedule {
   memo: String
   "파트너의 태그 리스트"
   tags: [String!]!
-  "숨김 여부"
-  isHidden: Boolean!
+  "파트너 유형별 정보"
+  type: PlatformPartnerType!
+  "보관 여부"
+  isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
 }
@@ -3004,47 +6304,53 @@ type PlatformPartnerSchedulesAlreadyExistError implements Error {
   message: String
 }
 
-type PlatformPartnerSettlementFilter {
-  settlementDate: Date!
-  settlementStartDateRange: DateRange!
-  contractPlainIds: [String!]!
-  transferTypes: [PlatformTransferType!]!
-  transferStatuses: [PlatformTransferStatus!]!
-  banks: [Bank!]!
-  paymentMethodTypes: [PaymentMethodType!]!
+"정산내역 통화 조회 결과"
+type PlatformPartnerSettlementCurrenciesPayload {
   settlementCurrencies: [Currency!]!
-  payoutCurrencies: [Currency!]!
-  partnerTags: [String!]!
-  keyword: PlatformPartnerSettlementFilterKeyword
-  isForTest: Boolean!
 }
 
-type PlatformPartnerSettlementFilterDateOption {
-  settlementDate: Date!
-  settlementStartDateRange: DateRange!
+"정산내역 대시보드"
+type PlatformPartnerSettlementDashboard {
+  "정산 통화별 정산내역 통계 리스트"
+  currencyStats: [PlatformPartnerSettlementDashboardCurrencyStat!]!
 }
 
-type PlatformPartnerSettlementFilterKeyword {
-  type: PlatformPartnerSettlementFilterKeywordType!
-  value: String!
+"정산 통화별 정산내역 통계"
+type PlatformPartnerSettlementDashboardCurrencyStat {
+  "정산 통화"
+  currency: Currency!
+  "총 정산 금액"
+  settlementAmount: Long!
+  "총 주문 금액"
+  orderAmount: Long!
+"""
+총 정산 수수료 금액
+
+중개 수수료, 중개 수수료 부가세, 추가 수수료, 추가 수수료 부가세, 할인 분담금, 결제금액 부가세 부담금을 더한 금액 입니다.
+"""
+  feeAmount: Long!
+  "총 수기 정산 금액"
+  manualAmount: Long!
+  "상태별 총 정산 금액"
+  statusSettlementAmount: PlatformPartnerSettlementStatusStats!
 }
 
-type PlatformPartnerSettlementFilterOptions {
-  contractPlainIds: [String!]!
-  dateOptions: [PlatformPartnerSettlementFilterDateOption!]!
-  banks: [Bank!]!
-  settlementCurrencies: [Currency!]!
-  payoutCurrencies: [Currency!]!
-  partnerTags: [String!]!
+"정산일 리스트 조회 결과"
+type PlatformPartnerSettlementDatesPayload {
+  settlementDates: [Date!]!
 }
 
-type PlatformPartnerSettlementPartner {
-  partnerPlainId: String!
-  partnerId: ID!
-  name: String!
-  bank: Bank!
-  accountHolder: String!
-  accountNumber: String!
+"정산내역을 찾을 수 없는 경우"
+type PlatformPartnerSettlementNotFoundError implements Error {
+  message: String
+}
+
+type PlatformPartnerSettlementStatusStats {
+  payoutPrepared: Long!
+  payoutWithheld: Long!
+  payoutFailed: Long!
+  inPayout: Long!
+  paidOut: Long!
 }
 
 "정산내역 다건 조회 성공 응답 정보"
@@ -3053,6 +6359,8 @@ type PlatformPartnerSettlementsPayload {
   items: [PlatformPartnerSettlement!]!
   "조회된 페이지 정보"
   page: PageInfo!
+  "정산내역 상태 별 갯수"
+  counts: PlatformPartnerSettlementStatusStats!
 }
 
 type PlatformPartnerSummariesPayload {
@@ -3064,6 +6372,47 @@ type PlatformPartnerSummary {
   partnerPlainId: String!
   name: String!
   email: String!
+  businessRegistrationNumber: String
+}
+
+"파트너 태그 조회 성공 응답"
+type PlatformPartnerTagsPayload {
+  "파트너 태그 리스트"
+  tags: [String!]!
+}
+
+"""
+사업자 파트너 정보
+
+사업자 유형의 파트너 추가 정보 입니다.
+"""
+type PlatformPartnerTypeBusiness {
+  "상호명"
+  companyName: String!
+  "과세 유형"
+  taxationType: PlatformPartnerTaxationType!
+  "사업자 상태"
+  businessStatus: PlatformPartnerBusinessStatus!
+  "사업자등록번호"
+  businessRegistrationNumber: String!
+  "대표자 이름"
+  representativeName: String!
+  "사업장 주소"
+  companyAddress: String
+  "업태"
+  businessType: String
+  "업종"
+  businessClass: String
+}
+
+"""
+원천징수대상자 파트너 정보
+
+비사업자 유형의 파트너 추가 정보 입니다.
+"""
+type PlatformPartnerTypeWhtPayer {
+  "생년월일"
+  birthdate: String
 }
 
 "파트너 다건 조회 성공 응답 정보"
@@ -3080,39 +6429,53 @@ type PlatformPayableSettlementDatesPayload {
   settlementDates: [Date!]!
 }
 
+"채널"
 type PlatformPaymentChannel {
+  "채널 아이디"
   channelPlainId: String!
+  "채널 키"
   key: String!
+  "채널 이름"
   name: String!
+  "PG사 가맹점 식별 아이디"
   pgMerchantId: String!
+  "PG사"
   pgCompany: PgCompany
 }
 
+"카드"
 type PlatformPaymentMethodCard {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
 }
 
+"간편 결제"
 type PlatformPaymentMethodEasyPay {
+  "간편 결제사"
   provider: EasyPayProvider
+  "간편 결제 수단"
   methodType: EasyPayMethodType
 }
 
+"상품권"
 type PlatformPaymentMethodGiftCertificate {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
 }
 
+"모바일"
 type PlatformPaymentMethodMobile {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
 }
 
+"계좌이체"
 type PlatformPaymentMethodTransfer {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
 }
 
+"가상계좌"
 type PlatformPaymentMethodVirtualAccount {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
@@ -3122,14 +6485,26 @@ type PlatformPaymentNotFoundError implements Error {
   message: String
 }
 
-type PlatformPayoutAlreadyCompletedError implements Error {
-  message: String
+type PlatformPayout implements Node {
+  plainId: String!
+  id: ID!
+  method: PlatformPayoutMethod!
+  status: PlatformPayoutStatus!
+  statusUpdatedAt: DateTime!
+  memo: String
+  partner: PlatformPartner!
+  account: PlatformPayoutAccount!
+  currency: Currency!
+  amount: Long!
+  withdrawalMemo: String
+  depositMemo: String
+  createdAt: DateTime!
 }
 
-type PlatformPayoutCreator {
-  userId: ID!
-  userPlainId: String!
-  email: String
+type PlatformPayoutAccount {
+  bank: Bank!
+  number: String!
+  holder: String!
 }
 
 type PlatformPayoutCreatorMismatchedError implements Error {
@@ -3137,17 +6512,18 @@ type PlatformPayoutCreatorMismatchedError implements Error {
   message: String
 }
 
-type PlatformPayoutNotFoundError implements Error {
+"지급에 사용된 조회 성공 응답"
+type PlatformPayoutCurrenciesPayload {
+  currencies: [Currency!]!
+}
+
+"지급 방식이 송금 대행 방식이 아닌 경우"
+type PlatformPayoutMethodNotAgencyError implements Error {
   message: String
 }
 
-type PlatformPayoutPartnerSettlement {
-  plainId: String!
-  id: ID!
-  payoutPlainId: String!
-  payoutId: ID!
-  status: PlatformPayoutPartnerSettlementStatus!
-  partnerSettlement: PlatformPartnerSettlement!
+type PlatformPayoutNotFoundError implements Error {
+  message: String
 }
 
 type PlatformPayoutPartnerSettlementAlreadyPaidOutError implements Error {
@@ -3158,29 +6534,50 @@ type PlatformPayoutPartnerSettlementNotFoundError implements Error {
   message: String
 }
 
-type PlatformPayoutSheetsPayload {
-  items: [PayoutSheet!]!
+type PlatformPayoutSheetNotFoundError implements Error {
+  message: String
 }
 
-type PlatformPayoutSummary {
-  partnerCount: Int!
-  totalSettlementAmount: Long!
-  paidOutPartnerSettlementCount: Int!
-  totalPartnerSettlementCount: Int!
+type PlatformPayoutStatusStats {
+  prepared: Long!
+  cancelled: Long!
+  stopped: Long!
+  processing: Long!
+  succeeded: Long!
+  failed: Long!
+}
+
+"일괄 지급의 지급 내역이 이미 생성된 경우"
+type PlatformPayoutsAlreadyGeneratedError implements Error {
+  message: String
+}
+
+"일괄 지급의 지급 내역이 생성되지 않은 경우"
+type PlatformPayoutsNotGeneratedError implements Error {
+  message: String
 }
 
 type PlatformPayoutsPayload {
   items: [PlatformPayout!]!
   page: PageInfo!
+  counts: PlatformPayoutStatusStats!
 }
 
+"포트원 결제 정보"
 type PlatformPortOnePayment implements PlatformPayment {
+  "결제 아이디"
   paymentPlainId: String!
+  "상점 아이디"
   storePlainId: String!
+  "채널 키"
   channelKey: String!
+  "주문 명"
   orderName: String!
+  "결제 수단"
   method: PlatformPaymentMethod
+  "통화"
   currency: Currency!
+  "결제 일시"
   paidAt: DateTime!
 }
 
@@ -3207,7 +6604,7 @@ type PlatformSettlementCancelAmountExceededPortOneCancelError implements Error {
 지체일, 정산일, 기준일로 구성되며, 해당 요소들의 조합으로 실제 정산일을 계산합니다.
 """
 type PlatformSettlementCycle {
-  """
+"""
 지체일 (d+n 의 n)
 
 정산시작일(통상 주문완료일)로부터 더해진 다음 날짜로부터 가장 가까운 날에 정산이 됩니다. 최소 1 에서 최대 10 까지 지정할 수 있습니다.
@@ -3296,7 +6693,7 @@ type PlatformSettlementFormulaUnsupportedVariable {
 
 "플랫폼 계산식 검증 결과"
 type PlatformSettlementFormulaValidation {
-  """
+"""
 계산식 오류 정보
 
 계산식이 올바른 경우 주어지지 않습니다.
@@ -3308,6 +6705,19 @@ type PlatformSettlementPaymentAmountExceededPortOnePaymentError implements Error
   registeredSettlementPaymentAmount: Long!
   requestSettlementPaymentAmount: Long!
   portOnePaymentAmount: Long!
+  message: String
+}
+
+"플랫폼 정산건 처리 방식에 관한 규칙"
+type PlatformSettlementRule {
+  "paymentId, storeId, partnerId가 같은 주문 정산건에 대한 중복 정산 지원 여부"
+  supportsMultipleOrderTransfersPerPartner: Boolean!
+  "정산일이 정산시작일보다 작거나 같을 경우 공휴일 후 영업일로 정산일 다시 계산 여부"
+  adjustSettlementDateAfterHolidayIfEarlier: Boolean!
+}
+
+"전자서명에 대한 유효성 검증에 실패한 경우"
+type PlatformSignatureVerificationFailedError implements Error {
   message: String
 }
 
@@ -3337,6 +6747,10 @@ type PlatformTransferFilterOptions {
   additionalFeePolicyPlainIds: [String!]!
   discountSharePolicyPlainIds: [String!]!
   paymentChannels: [PlatformPaymentChannel!]!
+}
+
+type PlatformTransferNonDeletableStatusError implements Error {
+  message: String
 }
 
 type PlatformTransferNotFoundError implements Error {
@@ -3378,25 +6792,69 @@ type PlatformUnavailableSettlementDateError implements Error {
   message: String
 }
 
+"가상계좌 정보 조회 성공 응답 정보"
+type PlatformVirtualAccount {
+  "가상계좌 잔액"
+  amount: String!
+  "가상계좌 은행"
+  bank: Bank!
+  "가상계좌 번호"
+  accountNumber: String!
+}
+
+"계상계좌 잔액을 확인할 수 없는 경우"
+type PlatformVirtualAccountBalanceCheckFailedError implements Error {
+  message: String
+}
+
+"가상계좌가 할당되지 않은 경우"
+type PlatformVirtualAccountNotAllocatedError implements Error {
+  message: String
+}
+
 type Query {
   "요청된 ID 에 대응되는 객체를 반환합니다 (Global Object Identification)."
   node(id: ID!): Node
-  """
-가맹점 정보를 조회합니다.
-요청된 Authorization header 를 통해 자동으로 요청자의 가맹점을 특정합니다.
+"""
+고객사 정보를 조회합니다.
+요청된 Authorization header 를 통해 자동으로 요청자의 고객사를 특정합니다.
 """
   merchant: MerchantOutput!
 }
 
+"추가 수수료 정책 복원 성공 응답"
+type RecoverPlatformAdditionalFeePolicyPayload {
+  "복원된 추가 수수료 정책"
+  additionalFeePolicy: PlatformAdditionalFeePolicy!
+}
+
+"계약 복원 성공 응답"
+type RecoverPlatformContractPayload {
+  "복원된 계약"
+  contract: PlatformContract!
+}
+
+"할인 분담 복원 성공 응답"
+type RecoverPlatformDiscountSharePolicyPayload {
+  "복원된 할인 분담"
+  discountSharePolicy: PlatformDiscountSharePolicy!
+}
+
+"파트너 복원 성공 응답"
+type RecoverPlatformPartnerPayload {
+  "복원된 파트너"
+  partner: PlatformPartner!
+}
+
 "토큰 재발급 성공 응답"
 type RefreshTokenPayload {
-  """
+"""
 인증에 사용하는 엑세스 토큰
 
 하루의 유효기간을 가지고 있습니다.
 """
   accessToken: String!
-  """
+"""
 토큰 재발급 및 유효기간 연장을 위해 사용하는 리프레시 토큰
 
 일주일의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.
@@ -3434,6 +6892,80 @@ type ReschedulePlatformPartnerPayload {
   scheduledPartner: PlatformPartnerSchedule!
 }
 
+"예약 결제 실패 후 재시도 성공 응답"
+type RetryPaymentSchedulePayload {
+  schedule: PaymentSchedule!
+  "결제건 요약 정보입니다. payImmediately 옵션을 통해 즉시 재시도했을 경우에만 존재합니다."
+  payment: RetryPaymentScheduleSummary
+}
+
+"즉시 재시도로 결제 완료된 결제건 요약 정보"
+type RetryPaymentScheduleSummary {
+  "PG사 결제 아이디"
+  pgTxId: String!
+  "결제 완료 시점"
+  paidAt: DateTime!
+}
+
+"결제 예약 건 취소 성공 응답"
+type RevokePaymentSchedulePayload {
+  schedule: PaymentSchedule!
+}
+
+"결제 예약 취소 상태"
+type RevokedPaymentSchedule implements Node & PaymentSchedule {
+  "결제 예약 건 아이디"
+  plainId: String!
+  "결제 예약 건 아이디"
+  id: ID!
+  "고객사 아이디"
+  merchantPlainId: String!
+  "고객사 아이디"
+  merchantId: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "상점 아이디"
+  storeId: ID!
+  "결제 건 아이디"
+  paymentPlainId: String!
+  "빌링키"
+  billingKey: String!
+  "빌링키 요약 정보"
+  billingKeyInfo: PaymentScheduleBillingKeyInfo!
+  "주문명"
+  orderName: String!
+  "문화비 지출 여부"
+  isCulturalExpense: Boolean!
+  "에스크로 결제 여부"
+  isEscrow: Boolean!
+  "고객 정보"
+  customer: Customer!
+  "사용자 지정 데이터"
+  customData: String!
+  "결제 총 금액"
+  totalAmount: Long!
+  "면세액"
+  taxFreeAmount: Long
+  "부가세"
+  vatAmount: Long
+  "통화"
+  currency: Currency!
+  "할부 개월 수"
+  installmentMonth: Int
+  "웹훅 주소"
+  noticeUrls: [String!]
+  "상품 정보"
+  products: [PaymentProduct!]
+  "결제 예약 등록 시점"
+  createdAt: DateTime!
+  "결제 예정 시점"
+  timeToPay: DateTime
+  "결제 취소 시점"
+  revokedAt: DateTime!
+  "결제 예약 이벤트 리스트"
+  events: PaymentScheduleEvents!
+}
+
 "추가 수수료 정책 업데이트 예약 성공 응답"
 type SchedulePlatformAdditionalFeePayload {
   "예약된 추가 수수료 정책"
@@ -3463,13 +6995,307 @@ type SchedulePlatformPartnersPayload {
   _: Boolean
 }
 
+"결제 예약 완료 상태"
+type ScheduledPaymentSchedule implements Node & PaymentSchedule {
+  "결제 예약 건 아이디"
+  plainId: String!
+  "결제 예약 건 아이디"
+  id: ID!
+  "고객사 아이디"
+  merchantPlainId: String!
+  "고객사 아이디"
+  merchantId: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "상점 아이디"
+  storeId: ID!
+  "결제 건 아이디"
+  paymentPlainId: String!
+  "빌링키"
+  billingKey: String!
+  "빌링키 요약 정보"
+  billingKeyInfo: PaymentScheduleBillingKeyInfo!
+  "주문명"
+  orderName: String!
+  "문화비 지출 여부"
+  isCulturalExpense: Boolean!
+  "에스크로 결제 여부"
+  isEscrow: Boolean!
+  "고객 정보"
+  customer: Customer!
+  "사용자 지정 데이터"
+  customData: String!
+  "결제 총 금액"
+  totalAmount: Long!
+  "면세액"
+  taxFreeAmount: Long
+  "부가세"
+  vatAmount: Long
+  "통화"
+  currency: Currency!
+  "할부 개월 수"
+  installmentMonth: Int
+  "웹훅 주소"
+  noticeUrls: [String!]
+  "상품 정보"
+  products: [PaymentProduct!]
+  "결제 예약 등록 시점"
+  createdAt: DateTime!
+  "결제 예정 시점"
+  timeToPay: DateTime
+  "결제 예약 이벤트 리스트"
+  events: PaymentScheduleEvents!
+}
+
+"""
+분리 형식 주소
+
+한 줄 형식 주소와 분리 형식 주소 모두 존재합니다.
+한 줄 형식 주소는 분리 형식 주소를 이어 붙인 형태로 생성됩니다.
+"""
+type SeparatedAddress implements Address {
+  "주소 (한 줄)"
+  oneLine: String!
+  "상세 주소 1"
+  addressLine1: String!
+  "상세 주소 2"
+  addressLine2: String!
+  "시/군/구"
+  city: String
+  "주/도/시"
+  province: String
+  "국가"
+  country: Country
+}
+
+"결제 시작 상태"
+type StartedPaymentSchedule implements Node & PaymentSchedule {
+  "결제 예약 건 아이디"
+  plainId: String!
+  "결제 예약 건 아이디"
+  id: ID!
+  "고객사 아이디"
+  merchantPlainId: String!
+  "고객사 아이디"
+  merchantId: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "상점 아이디"
+  storeId: ID!
+  "결제 건 아이디"
+  paymentPlainId: String!
+  "빌링키"
+  billingKey: String!
+  "빌링키 요약 정보"
+  billingKeyInfo: PaymentScheduleBillingKeyInfo!
+  "주문명"
+  orderName: String!
+  "문화비 지출 여부"
+  isCulturalExpense: Boolean!
+  "에스크로 결제 여부"
+  isEscrow: Boolean!
+  "고객 정보"
+  customer: Customer!
+  "사용자 지정 데이터"
+  customData: String!
+  "결제 총 금액"
+  totalAmount: Long!
+  "면세액"
+  taxFreeAmount: Long
+  "부가세"
+  vatAmount: Long
+  "통화"
+  currency: Currency!
+  "할부 개월 수"
+  installmentMonth: Int
+  "웹훅 주소"
+  noticeUrls: [String!]
+  "상품 정보"
+  products: [PaymentProduct!]
+  "결제 예약 등록 시점"
+  createdAt: DateTime!
+  "결제 예정 시점"
+  timeToPay: DateTime
+  "결제 시작 시점"
+  startedAt: DateTime!
+  "결제 예약 이벤트 리스트"
+  events: PaymentScheduleEvents!
+}
+
+"일괄 지급 중단 결과"
+type StopPlatformBulkPayoutPayload {
+  bulkPayout: PlatformBulkPayout!
+}
+
+type Store implements Node {
+  id: ID!
+  plainId: String!
+  name: String!
+"""
+API Secret 정보 목록
+
+하위 상점의 API Secret 정보들을 조회합니다
+"""
+  v2ApiSecrets: V2ApiSecretInfosOutput!
+  "하위 상점 설정 정보"
+  settings: StoreSettings! @hidden @unstable
+"""
+채널 리스트 조회
+
+상점에 존재하는 채널 리스트를 조회합니다.
+"""
+  channels: ChannelsOutput! @hidden @unstable
+"""
+채널 그룹 목록 조회
+
+해당 상점에서 지정한 채널 그룹 목록을 조회합니다.
+"""
+  channelGroups: ChannelGroupsOutput! @hidden @unstable
+"""
+결제 예약 캘린더 조회
+
+하위 상점의 결제 예약 캘린더를 조회합니다.
+"""
+  paymentScheduleCalendar(filter: PaymentScheduleCalendarFilterInput!): PaymentScheduleCalendarOutput! @hidden @unstable
+"""
+결제 예약 상태별 통계 조회
+
+하위 상점의 결제 예약 상태별 통계를 조회합니다.
+"""
+  paymentScheduleStat(filter: PaymentScheduleFilterInput): PaymentScheduleStatOutput! @hidden @unstable
+"""
+결제 예약 다건 조회
+
+하위 상점의 결제 예약 건들을 조회합니다.
+"""
+  paymentSchedules("""요청할 페이지 정보
+
+미 입력 시 number: 0, size: 10 으로 기본값이 적용됩니다.""" page: PageInput, """정렬 조건
+
+미 입력 시 sortBy: TIME_TO_PAY, sortOrder: DESC 으로 기본값이 적용됩니다.""" sort: PaymentScheduleSortInput, "조회할 결제 예약 건의 조건 필터" filter: PaymentScheduleFilterInput): PaymentSchedulesOutput! @hidden @unstable
+"""
+결제 예약 건이 존재하는 통화 조회
+
+하위 상점의 결제 예약 건이 존재하는 통화를 조회합니다.
+"""
+  usedCurrenciesForPaymentSchedule: UsedCurrenciesForPaymentScheduleOutput! @hidden @unstable
+"""
+빌링 결제 리커버리 최근 실행 내역 조회
+
+빌링 결제 리커버리 최근 실행 내역을 조회합니다.
+"""
+  paymentRecoveryLog: PaymentRecoveryLogOutput! @hidden @unstable
+  channelGroupUsage: ChannelGroupUsage! @hidden @unstable
+  pgCompanyUsage: PgCompanyUsage! @hidden @unstable
+}
+
+"요청된 상점이 존재하지 않는 경우"
+type StoreNotFoundError implements Error {
+  message: String
+}
+
+type StoreSettings {
+  "웹훅 설정"
+  webhook(portOneVersion: PortOneVersion!, environment: WebhookEnvironment!): StoreWebhookSettingOutput! @hidden @unstable
+  "빌링결제 리커버리 설정"
+  paymentRecovery: PaymentRecoverySettingOutput! @hidden @unstable
+}
+
+type StoreWebhookSetting {
+  url: String
+  contentType: WebhookContentType!
+  version: WebhookVersion
+}
+
+"하위 상점의 웹훅 URL 이 설정되어 있지 않은 경우"
+type StoreWebhookUrlNotSetError implements Error {
+  message: String
+}
+
+type StoresPayload {
+  "조회된 하위 상점 리스트"
+  items: [Store!]!
+}
+
+"결제 성공 상태"
+type SucceededPaymentSchedule implements Node & PaymentSchedule {
+  "결제 예약 건 아이디"
+  plainId: String!
+  "결제 예약 건 아이디"
+  id: ID!
+  "고객사 아이디"
+  merchantPlainId: String!
+  "고객사 아이디"
+  merchantId: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "상점 아이디"
+  storeId: ID!
+  "결제 건 아이디"
+  paymentPlainId: String!
+  "빌링키"
+  billingKey: String!
+  "빌링키 요약 정보"
+  billingKeyInfo: PaymentScheduleBillingKeyInfo!
+  "PG"
+  determinedPgProvider: PgProvider!
+  "PG사"
+  determinedPgCompany: PgCompany!
+  "주문명"
+  orderName: String!
+  "문화비 지출 여부"
+  isCulturalExpense: Boolean!
+  "에스크로 결제 여부"
+  isEscrow: Boolean!
+  "고객 정보"
+  customer: Customer!
+  "사용자 지정 데이터"
+  customData: String!
+  "결제 총 금액"
+  totalAmount: Long!
+  "면세액"
+  taxFreeAmount: Long
+  "부가세"
+  vatAmount: Long
+  "통화"
+  currency: Currency!
+  "할부 개월 수"
+  installmentMonth: Int
+  "웹훅 주소"
+  noticeUrls: [String!]
+  "상품 정보"
+  products: [PaymentProduct!]
+  "결제 예약 등록 시점"
+  createdAt: DateTime!
+  "결제 예정 시점"
+  timeToPay: DateTime
+  "결제 시작 시점"
+  startedAt: DateTime!
+  "결제 완료 시점"
+  completedAt: DateTime!
+  "결제 예약 이벤트 리스트"
+  events: PaymentScheduleEvents!
+}
+
+type TestWebhookPayload {
+  requestBody: String!
+  responseBody: String!
+  responseStatusCode: Int!
+}
+
+"일괄지급 정산 건 토글 결과"
+type TogglePlatformBulkPayoutPartnerSettlementsPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
 "인증 정보가 올바르지 않은 경우"
 type UnauthorizedError implements Error {
   message: String
 }
 
-type UpdatePayoutAllPartnerSettlementsPayload {
-  payout: PlatformPayout!
+type UpdateChannelGroupPayload {
+  channelGroup: ChannelGroup!
 }
 
 "추가 수수료 정책 업데이트 성공 응답"
@@ -3496,13 +7322,63 @@ type UpdatePlatformPartnerPayload {
   partner: PlatformPartner!
 }
 
+"정산내역 상태 업데이트 결과"
+type UpdatePlatformPartnerSettlementStatusPayload {
+  partnerSettlement: PlatformPartnerSettlement!
+}
+
 "플랫폼 업데이트 결과 정보"
 type UpdatePlatformPayload {
   "업데이트된 플랫폼 정보"
   platform: Platform!
 }
 
-type UpdatePlatformPayoutPartnerSettlementPayload {
-  payoutPartnerSettlement: PlatformPayoutPartnerSettlement!
+"지급 건 메모 업데이트 결과"
+type UpdatePlatformPayoutPayload {
   payout: PlatformPayout!
+}
+
+"지급 건 일괄 업데이트 결과"
+type UpdatePlatformPayoutsPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+type UpdateStoreWebhookSettingPayload {
+  setting: StoreWebhookSetting!
+}
+
+"결제 예약 건이 존재하는 통화 조회 성공 응답 정보"
+type UsedCurrenciesForPaymentSchedulePayload {
+  items: [Currency!]!
+}
+
+"V2 API Secret 에 관한 정보"
+type V2ApiSecretInfo {
+  "시크릿 등록 시의 이름"
+  name: String!
+  "시크릿을 인증정보로 가지고 있는 유저 아이디"
+  userId: String!
+"""
+시크릿 만료 시각
+
+존재하지 않는 경우 무기한 시크릿입니다.
+"""
+  expiresAt: DateTime
+  "시크릿 생성 시각"
+  createdAt: DateTime!
+}
+
+type V2ApiSecretInfosPayload {
+  infos: [V2ApiSecretInfo!]!
+}
+
+"요청된 시크릿이 존재하지 않는 경우"
+type V2ApiSecretNotFoundError implements Error {
+  message: String
+}
+
+"테스트 웹훅 발송이 실패한 경우"
+type WebhookTestFailedError implements Error {
+  message: String
 }
