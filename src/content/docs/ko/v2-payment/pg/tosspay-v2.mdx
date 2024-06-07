@@ -7,7 +7,7 @@ targetVersions: ["v2"]
 import Details from "~/components/gitbook/Details.astro";
 import ParamTree from "~/components/gitbook/ParamTree.astro";
 
-## KPN PG 설정하기
+## 토스페이(신모듈) PG 설정하기
 
 ### 채널 설정하기
 
@@ -33,7 +33,7 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 
   `billingKeyMethod` 파라미터를 결제 수단에 따라 아래와 같이 설정해야 합니다.
 
-  - 카드: `EASY_PAY`
+  - 간편결제 : `EASY_PAY`
 
 ### SDK 결제 요청하기
 
@@ -158,9 +158,9 @@ function requestPayment() {
 ### SDK 빌링키 발급 요청하기
 
 빌링키 발급 요청 시에는 `requestIssueBillingKey` 함수를 호출해야 합니다.
-`channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 한국결제네트웍스(KPN) 채널 사용을 명시해주세요.
+`channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 토스페이 채널 사용을 명시해주세요.
 
-한국결제네트웍스(KPN) 기준으로 작성한 예시 코드는 아래와 같습니다.
+토스페이 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ```typescript title="SDK 빌링키 발급 요청"
 import * as PortOne from "@portone/browser-sdk/v2";
@@ -244,30 +244,30 @@ function requestIssueBillingKey() {
 
 발급된 빌링키로 단건 결제를 진행하려면 `POST /payments/${PAYMENT_ID_HERE}/billing-key` API를 이용하여 결제를 요청하실 수 있습니다.
 
-한국결제네트웍스(KPN) 기준으로 작성한 예시 코드는 아래와 같습니다.
+토스페이 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ```typescript title="API 빌링키 단건 결제"
 const response = await axios({
-  url: `https://api.portone.io/payments/${encodeURIComponent(PAYMENT_ID_HERE)}/schedule`,
+  url: `https://api.portone.io/payments/${encodeURIComponent(PAYMENT_ID_HERE)}/billing-key`,
   method: "post",
   headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
   data: {
-    payment: {
-      billingKey: "billing-key-1", // 빌링키 발급 API를 통해 발급받은 빌링키
-      orderName: "월간 이용권 정기결제",
-      customer: {
-        id: "customer-1234", // 고객사에서 관리하는 고객 고유번호
-      },
-      amount: {
-        total: 50000,
-        taxFree: 3000,
-      },
-      currency: "KRW",
-      useFreeInterestFromMerchant: true, // 고객사 분담 무이자 설정
-      InstallmentMonth: 3, // 카드 할부 개월수
-      useCardPoint: true, // 카드 포인트 사용 설정
+    billingKey: "billing-key-1", // 빌링키 발급 API를 통해 발급받은 빌링키
+    orderName: "월간 이용권 정기결제",
+    customer: {
+      id: "customer-1234", // 고객사에서 관리하는 고객 고유번호
+      phoneNumber: `010-1234-5678`,
+      email: `test@test.com`,
     },
-    timeToPay: "2025-01-01T00:00:00+09:00", // 결제를 시도할 시각
+    amount: {
+      total: 50000,
+        taxFree: 3000,
+    },
+    currency: "KRW",
+    useFreeInterestFromMerchant: true, // 고객사 분담 무이자 설정
+    InstallmentMonth: 3, // 카드 할부 개월수
+    useCardPoint: true, // 카드 포인트 사용 설정
+    productCount: 1,
   },
 });
 ```
@@ -282,55 +282,80 @@ const response = await axios({
     - 고객사에서 채번하여 사용하는 주문번호로 고유한 값이여야 합니다.
     - URL path에 포함하여 요청해야 합니다.
 
-  - `payment` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+  - `billingKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-    **빌링키 결제 요청 입력정보**
+    **빌링키 결제에 사용할 빌링키**
+
+  - `orderName`  <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **주문명**
+
+  - `amount` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+
+    **결제 금액**
 
     <ParamTree>
-      - `billingKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - `total` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
 
-        **빌링키 결제에 사용할 빌링키**
+        **총 결제 금액**
 
-      - `orderName`  <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-        **주문명**
-
-      - `amount` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-
-        **결제 금액**
-
-        <ParamTree>
-          - `total` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
-
-            **총 결제 금액**
-
-            결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-
-          - `taxFree` <mark style="color:purple;">**number**</mark>
-
-            **면세액**
-
-            결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-        </ParamTree>
-
-      - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
-        **결제 통화**
-
-        결제통화로 원화 결제 시 `KRW`로 입력해야 합니다.
+      결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
     </ParamTree>
 
-  - `timeToPay` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-    **결제 예정 시점**
+    **결제 통화**
 
+    결제통화로 원화 결제 시 `KRW`로 입력해야 합니다.
+
+  - `customer` <mark style="color:blue;">**object**</mark>
+
+    **고객 정보**
+
+    <ParamTree>
+      - `name` <mark style="color:blue;">**object**</mark>
+
+        **고객 이름**
+
+        <ParamTree>
+          - `full` <mark style="color:green;">**string**</mark>
+
+            **한 줄 이름 형식 (ex. 김포트)**
+
+          - `separated` <mark style="color:blue;">**object**</mark>
+
+            **분리된 이름**
+
+            <ParamTree>
+              - `first` <mark style="color:green;">**string**</mark>
+
+                **이름**
+
+              - `last` <mark style="color:green;">**string**</mark>
+
+                **성**
+            </ParamTree>
+        </ParamTree>
+
+      - `phoneNumber` <mark style="color:green;">**string**</mark>
+
+        **구매자 연락처**
+
+      - `email` <mark style="color:green;">**string**</mark>
+
+        **구매자 이메일**
+    </ParamTree>
+
+  - `productCount` <mark style="color:purple;">**integer**</mark>
+
+    **상품 개수**
 </ParamTree>
 
 ### API 빌링키 예약/반복 결제 요청하기
 
 예약 결제를 진행하려면 `POST /payments/${PAYMENT_ID_HERE}/schedule` API를 이용하여 결제를 예약하실 수 있습니다.
 
-한국결제네트웍스(KPN) 기준으로 작성한 예시 코드는 아래와 같습니다.
+토스페이 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ```typescript title="API 예약/반복 결제"
 const response = await axios({
@@ -416,7 +441,7 @@ const response = await axios({
 
         **고객 이름**
 
-        - 한국결제네트웍스(KPN)의 경우 full 혹은 separated를 필수로 입력해야 합니다.
+        - 토스페이의 경우 full 혹은 separated를 필수로 입력해야 합니다.
 
           <ParamTree>
             - `full` <mark style="color:green;">**string**</mark>
