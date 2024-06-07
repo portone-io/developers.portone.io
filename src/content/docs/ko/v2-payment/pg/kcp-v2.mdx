@@ -529,6 +529,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 가상계좌 수기 결제 관련 유의 사항은 다음과 같습니다.
 * 회전식 가상계좌만 지원되고, 고정식 가상계좌는 지원되지 않습니다.
 * 가상계좌 입금자명을 `customer.name`에 입력해야 합니다.
+* 예금주명 지정은 무시됩니다.
 * 사용 가능한 은행은 다음과 같습니다.
   * 기업은행
   * 국민은행
@@ -601,7 +602,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
     **주문명**
 
     주문명으로 고객사에서 자유롭게 입력합니다.
-    KCP의 경우 최대 100Byte까지 허용합니다.
+    KCP의 경우 최대 100 바이트까지 허용합니다.
 
   - `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -653,6 +654,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
           - `expiry` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
 
             **입금 만료 기한**
+            `validHours` 또는 `dueDate` 필드 중 하나를 지정합니다.
 
             <ParamTree>
               - `validHours` <mark style="color:purple;">**integer**</mark>
@@ -663,7 +665,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
                 **만료 시점**
 
-                시간은 ISO8601 형식으로 입력해야 합니다.
+                시간은 RFC 3339 date-time 형식으로 입력해야 합니다.
             </ParamTree>
 
           - `option` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
@@ -674,25 +676,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
               - `type` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                 **가상계좌 발급 유형**
-
-                발급 유형은 ENUM으로 정의되어 있습니다.
-
-                - 회전식 가상계좌 : `NORMAL`
-                - 고정식 가상계좌 : `FIXED`
-                - 회전식 가상계좌는 일반적으로 사용되는 방식이며 PG사에서 직접 채번한 가상계좌번호를 사용합니다.
-
-              - `fixed` <mark style="color:blue;">**object**</mark>
-
-                **고정식 가상계좌 발급 유형**
-
-                <ParamTree>
-                  - `accountNumber` <mark style="color:green;">**string**</mark>
-
-                    **고정식 가상계좌번호**
-
-                    - PG사가 일정 개수만큼의 가상계좌번호를 발급하여 가맹점에게 미리 전달하고 가맹점이 그 중 하나를 선택하여 사용하는 방식입니다.
-                      KCP에서는 해당 방식만 지원하고 있습니다.
-                </ParamTree>
+                회전식 가상계좌만 지원하므로 `NORMAL`로 입력합니다.
             </ParamTree>
 
           - `cashReceipt` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
@@ -703,12 +687,10 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
               - `type` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
                 **발급 유형**
-
-                발급 유형은 ENUM으로 정의되어 있습니다.
+                `PERSONAL` 또는 `CORPORATE`로 입력합니다.
 
                 - 소득공제용 : `PERSONAL`
                 - 지출증빙용 : `CORPORATE`
-                - 미발행 : `NO_RECEIPT`
 
               - `customerIdentityNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -717,10 +699,6 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
                 - 소득공제인 경우 주민등록번호 혹은 휴대폰 번호를 입력해야 합니다.
                 - 지출증빙인 경우 사업자등록번호를 입력해야 합니다.
             </ParamTree>
-
-          - `remitteeName` <mark style="color:green;">**string**</mark>
-
-            **예금주명**
         </ParamTree>
 
       - `card` <mark style="color:blue;">**object**</mark>
@@ -743,11 +721,11 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
               **유효기간 만료 월 (MM 형식 ex. 05)**
 
-            - `birthOrBusinessRegistrationNumber` <mark style="color:green;">**string**</mark>
+            - `birthOrBusinessRegistrationNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
               **생년월일 또는 사업자 등록 번호**
 
-            - `passwordTwoDigits` <mark style="color:green;">**string**</mark>
+            - `passwordTwoDigits`<mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
               **비밀번호 앞 두자리**
           </ParamTree>
@@ -758,11 +736,11 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
         **고객 정보**
 
         <ParamTree>
-          - `name`  <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
+          - `name` <mark style="color:blue;">**object**</mark>
 
             **고객 이름**
 
-            - KCP의 경우 full 혹은 separated를 필수로 입력해야 합니다.
+            - full 또는 separated 중 하나를 입력할 수 있습니다. 입력시 KCP에 전달됩니다.
 
               <ParamTree>
                 - `full` <mark style="color:green;">**string**</mark>
@@ -784,22 +762,18 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
                   </ParamTree>
               </ParamTree>
 
-          - `phoneNumber`  <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - `phoneNumber` <mark style="color:green;">**string**</mark>
 
             **구매자 연락처**
 
-          - KCP의 경우 필수 입력입니다.
+            입력시 KCP에 전달됩니다.
 
-          - `email` <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
+          - `email` <mark style="color:green;">**string**</mark>
 
             **구매자 이메일**
 
-          - KCP의 경우 필수 입력입니다.
+            입력시 KCP에 전달됩니다.
         </ParamTree>
-
-      - `productCount` <mark style="color:purple;">**integer**</mark>
-
-        **상품 개수**
     </ParamTree>
 </ParamTree>
 
