@@ -31,7 +31,7 @@ import Hint from "~/components/Hint.astro";
         merchant_uid: "order_no_0001", // 상점에서 관리하는 주문 번호
         name: "주문명:결제테스트",
         amount: 14.2,
-        currency: "USD", // 기본값: USD(원화 KRW는 페이팔 정책으로 인해 지원하지 않음)
+        currency: "USD", // 기본값: USD
         buyer_email: "test@portone.io",
         buyer_name: "구매자이름",
         buyer_tel: "010-1234-5678",
@@ -162,3 +162,51 @@ import Hint from "~/components/Hint.astro";
 
   7. 10분 후 결제상태가 `status: "paid"`로 바뀌는지 확인 (이 때 입금에 대한 웹훅 발송됨)
 </Details>
+
+## 3. 기타 파라미터
+
+<Tabs>
+  <Tab title="국내 결제창 호출">
+    엑심베이**국내 결제창**을 사용하기 위해서는 아래와 같은 방법으로 파라미터 설정이 필요합니다.
+
+    ```json
+    {
+      "bypass": {
+        "issuercountry": "KR"
+      }
+    }
+    ```
+    <Hint style="success">
+      **국내 결제창 카드 별 승인 통화**  
+        
+      **해외카드**  
+      - VISA/MAster/JCB : KRW 승인 (자국통화승인 서비스 가능)
+      - AMEX/UnionPay : USD 승인  (자국통화승인 서비스 불가)  
+        
+      **국내카드(국내에서 발행 된 (8개) 카드사 모두 이용 가능)**
+      - 결제(승인)/정산 통화 : KRW만 지원
+    </Hint>
+
+    **국내 결제창을 호출하는 경우**
+
+    ```ts
+    IMP.request_pay({
+      pg: "eximbay.{상점 ID}",
+      pay_method: "card",
+      merchant_uid: "order_no_0001",
+      name: "주문명:결제테스트",
+      amount: 14.2,
+      currency: "KRW", 
+      buyer_email: "test@portone.io",
+      buyer_name: "구매자이름",
+      buyer_tel: "010-1234-5678",
+      buyer_addr: "서울특별시 강남구 삼성동",
+      buyer_postcode: "123-456",
+      popup: false,
+      bypass: {
+        issuercountry: "KR", 
+      },
+    });
+    ```
+  </Tab>
+</Tabs>
