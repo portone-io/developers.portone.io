@@ -1,7 +1,11 @@
+import "~/styles/article.css";
+
 import { Link } from "@solidjs/meta";
 import { useLocation, useParams } from "@solidjs/router";
 import { createMemo, type JSXElement } from "solid-js";
+import { MDXProvider } from "solid-mdx";
 
+import * as prose from "~/components/prose";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
@@ -24,11 +28,13 @@ export default function Layout(props: Props) {
         href={`https://developers.portone.io${location.pathname}`}
       />
       <SidebarProvider>
-        <div class="h-full flex flex-col">
-          <Gnb lang={lang()} navAsMenu={false} />
-          <SidebarBackground />
-          <main class="min-h-0 flex-1">{props.children}</main>
-        </div>
+        <MDXProvider components={prose}>
+          <div class="h-full flex flex-col">
+            <Gnb lang={lang()} navAsMenu={false} />
+            <SidebarBackground />
+            <main class="min-h-0 flex-1">{props.children}</main>
+          </div>
+        </MDXProvider>
       </SidebarProvider>
     </SystemVersionProvider>
   );
