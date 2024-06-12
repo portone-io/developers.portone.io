@@ -9,8 +9,9 @@ versionVariants:
 import Figure from "~/components/Figure.astro";
 import Hint from "~/components/Hint.astro";
 
-import image1 from "../result/_assets/webhook_intro.png";
 import image0 from "./_assets/v2/webhook-setting.png";
+import image1 from "../result/_assets/webhook_intro.png";
+import image2 from "./_assets/v2/webhook-secret-1.png";
 
 <Figure src={image1} />
 
@@ -30,24 +31,88 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
 인터넷 연결 끊김, 브라우저 자동 새로고침 등의 이유로 클라이언트에서 결제 완료에 대한 응답을 받지 못하는 경우가 간헐적으로 발생합니다.
 이런 경우 연동한 웹훅을 통해 누락 없이 결제 정보를 동기화할 수 있습니다.
 
-## 웹훅 발생 이벤트
+## 웹훅 버전에 따른 스키마 안내
 
-포트원 웹훅은 다음과 같은 이벤트에 발생됩니다.
+### `2024-01-01` 사용 시
 
-- **결제창이 열렸을 때** - (status: `Ready`)
-- **결제(예약 결제 포함)가 승인**되었을 때 (모든 결제 수단) - (status : `Paid`)
-- **가상계좌가 발급**되었을 때 - (status : `VirtualAccountIssued`)
-- **가상계좌에 결제 금액이 입금**되었을 때 - (status : `Paid`)
-- **결제가 부분 취소**되었을 때 - (status : `PartialCancelled`)
-- **결제가 완전 취소**되었을 때 - (status : `Cancelled`)
-- **결제(예약 결제 포함)가 실패**했을 때 - (status: `Failed`)
-- **결제 승인 대기** 상태가 되었을 때 (페이팔 연동 시 발생) - (status: `PayPending`)
-- (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때 - (status : `CancelPending`)
-- **빌링키 발급이 인증**되었을 때 - (billingKeyStatus : `Ready`)
-- **빌링키가 발급**되었을 때 - (billingKeyStatus : `Issued`)
-- **빌링키 발급이 실패**했을 때 - (billingKeyStatus : `Failed`)
-- **빌링키가 삭제**되었을 때 - (billingKeyStatus : `Deleted`)
-- **빌링키가 업데이트**되었을 때 - (billingKeyStatus : `Updated`)
+- `payment_id`: 고객사에서 채번한 결제건의 고유 주문 번호입니다.
+- `tx_id`: 포트원에서 채번한 결제건의 고유 거래 번호입니다.
+- `status`: 결제건의 상태입니다. 가능한 `status`의 종류는 아래와 같습니다.
+  - `Ready`: **결제창이 열렸을 때**
+  - `Paid`: **결제(예약 결제 포함)가 승인**되었을 때 (모든 결제 수단, 가상계좌의 경우 계좌에 입금이 완료되는 순간)
+  - `VirtualAccountIssued`: **가상계좌가 발급**되었을 때
+  - `PartialCancelled`: **결제가 부분 취소**되었을 때
+  - `Cancelled`: **결제가 완전 취소**되었을 때
+  - `Failed`: **결제(예약 결제 포함)가 실패**했을 때
+  - `PayPending`: **결제 승인 대기** 상태가 되었을 때 (페이팔 연동 시 발생)
+  - `CancelPending`: (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때
+
+웹훅 payload 예시:
+```json
+{
+  "payment_id": "example-payment-id",
+  "tx_id": "55451513-9763-4a7a-bb43-78a4c65be843",
+  "status": "Ready"
+}
+```
+
+### `2024-04-25` 사용 시
+
+- `type`: 웹훅을 트리거한 이벤트의 타입입니다. 가능한 `type`의 종류는 아래와 같습니다.
+  - **결제 관련**
+    - `Transaction.Ready`: **결제창이 열렸을 때**
+    - `Transaction.Paid`: **결제(예약 결제 포함)가 승인**되었을 때 (모든 결제 수단)
+    - `Transaction.VirtualAccountIssued`: **가상계좌가 발급**되었을 때
+    - `Transaction.PartialCancelled`: **결제가 부분 취소**되었을 때
+    - `Transaction.Cancelled`: **결제가 완전 취소**되었을 때
+    - `Transaction.Failed`: **결제(예약 결제 포함)가 실패**했을 때
+    - `Transaction.PayPending`: **결제 승인 대기** 상태가 되었을 때
+    - `Transaction.CancelPending`: (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때
+  - **빌링키 발급 관련**
+    - `BillingKey.Ready`: **빌링키 발급창이 열렸을 때**
+    - `BillingKey.Issued`: **빌링키가 발급**되었을 때
+    - `BillingKey.Failed`: **빌링키 발급이 실패**했을 때
+    - `BillingKey.Deleted`: **빌링키가 삭제**되었을 때
+    - `BillingKey.Updated`: **빌링키가 업데이트**되었을 때
+- `timestamp`: 해당 웹훅을 트리거한 이벤트의 발생 시각(RFC 3339 형식)입니다. 고객사 서버가 웹훅을 수신하는 데 실패하여 재시도가 일어나도 이 값은 동일하게 유지됩니다.
+- `data`: 웹훅을 트리거한 이벤트의 실제 세부 내용입니다. `type` 에 따라 해당 필드의 스키마가 달라질 수 있으며, `type` 별 상세 스키마는 아래와 같습니다.
+  - **결제 관련**
+    - `paymentId`: 고객사에서 채번한 결제건의 고유 주문 번호입니다.
+    - `transactionId`: 포트원에서 채번한 결제건의 고유 거래 번호입니다.
+    - `cancellationId`: (optional) 포트원에서 채번한 결제건의 취소 고유 번호입니다. `type`이 `Transaction.PartialCancelled` 혹은 `Transaction.Cancelled` 일 때 존재합니다.
+  - **빌링키 발급 관련**
+    - `billingKey`: 포트원에서 채번한 빌링키 고유 아이디입니다.
+
+<Hint style="info">
+    **`data` 스키마에는 별도 안내 없이 필드가 추가될 수 있습니다. 따라서 `data` 필드를 decode 하실 때에는 unknown 필드가 존재할 경우 에러를 발생시키지 않고 무시하도록 코드를 작성해주세요.**
+</Hint>
+
+
+**웹훅 payload 예시 1**: `type`이 `Transaction.Cancelled` 일 때
+```json
+{
+  "type": "Transaction.Cancelled",
+  "timestamp": "2024-04-25T10:00:00.000Z",
+  "data": {
+    "paymentId": "example-payment-id",
+    "transactionId": "55451513-9763-4a7a-bb43-78a4c65be843",
+    "cancellationId": "0cdd91e9-4e7c-44a3-a72e-1a6511826c2b"
+  }
+}
+```
+
+**웹훅 payload 예시 2**: `type`이 `BillingKey.Issued` 일 때
+```json
+{
+  "type": "BillingKey.Issued",
+  "timestamp": "2024-04-25T10:00:00.000Z",
+  "data": {
+    "billingKey": "billing-key-75ae3cab-6afe-422d-bf34-3a7b1762451d"
+  }
+}
+```
+
+
 
 ## 웹훅 URL 설정
 
@@ -70,6 +135,7 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
 
 - **Content Type**을 설정합니다. `Content Type`은 `application/json` 또는
   `application/x-www-form-urlencoded` 중 하나로 설정할 수 있습니다.
+   > **`2024-04-25` 버전부터는 `application/json` 만 지원합니다.**
 
 - `저장` 버튼을 클릭합니다.
 
@@ -90,13 +156,52 @@ PortOne.requestPayment({
 });
 ```
 
-## 요청 처리
+## 웹훅 요청 검증하기
 
-웹훅 POST 요청의 본문은 다음의 정보를 포함합니다. 고객사 서버는 아래 정보를 수신하고
-포트원 서버에서 결제 정보를 조회하여 검증 및 저장할 수 있습니다. (필드는 별도 안내 없이 추가될 수 있습니다.)
+웹훅 수신 주소는 공개된 URL이기 때문에 고객사 입장에서는 웹훅이 포트원으로부터 전달되었는지를 필수적으로 검사할 필요가 있습니다.
+포트원에서는 악의적인 행위자가 웹훅을 위조하여 보냈는지를 검사할 수 있도록 시크릿을 기반으로 signature를 만들어 Webhook Request Header에 함께 전달합니다.
+또한 포트원에서 제공하는 SDK를 이용하면 이 signature를 손쉽게 verify할 수 있습니다.
 
-- `payment_id`: 주문 ID
-- `status`: 결제 상태
+### 1. 웹훅 시크릿 발급하기
+
+<Figure src={image2} />
+
+- 포트원 관리자 콘솔 내 \[결제 연동] → \[연동 관리] → **\[결제알림(Webhook) 관리]** 탭을 선택합니다.
+
+- \[웹훅 버전] 항목에서 **\[결제모듈 V2]** 를 선택합니다.
+
+- \[설정 모드] 항목에서 \[실연동] 또는 \[테스트]를 선택합니다. (연동 환경에 따라 웹훅 시크릿을 각각 발급할 수 있습니다.)
+
+- 우측 하단의 **[웹훅 시크릿 발급]** 버튼을 클릭합니다.
+
+### 2. 시크릿을 이용해 signature 검사하기
+
+시크릿을 발급하고 난 이후부터 포트원에서 보내는 웹훅에는 **해당 시크릿을 이용해 만들어진 signature 정보가 Request Header에 함께 전달**될 것입니다.
+포트원에서 제공하는 Server SDK를 이용하면 고객사 서버에서 웹훅을 수신할 때 signature가 유효한지를 손쉽게 verify할 수 있습니다. 현재 제공되고 있는 Server SDK 목록은 아래와 같습니다.
+
+- jvm-server-sdk [Fina TODO 링크 달기]
+- js-server-sdk [Cosmo TODO 링크 달기]
+
+Express에서 server-sdk 사용 예시 코드:
+[Cosmo TODO]
+
+혹은 server-sdk 사용을 원치 않으시거나 sdk가 지원되지 않는 언어를 이용중이시라면 signature를 verify하는 코드를 직접 작성하실 수 있습니다.
+포트원의 웹훅 verification은 [standard-webhooks](https://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md) 스펙을 준수하고 있으므로, 해당 스펙에서 안내된대로 verify 코드를 작성하시면 됩니다.
+
+### 3. 무중단으로 시크릿 교체하기
+
+시크릿은 항상 기밀성 있게 관리되어야 하지만, 실수로 인해 타인에게 노출될 수 있고 시크릿을 얻은 누군가는 이를 악용할 수 있습니다.
+이러한 경우에 대비해 포트원에서는 **고객사의 서비스에 영향을 주지 않고 무중단으로 기존 시크릿을 새 시크릿으로 교체**하는 방법을 가이드하고 있습니다.
+
+- 먼저 웹훅 시크릿을 추가로 하나 더 발급합니다. (웹훅 시크릿은 테스트/실연동 환경별로 각각 동시에 **최대 2개까지** 발급 가능합니다.)
+- 고객사 서버 코드에서 사용되고 있던 시크릿을 새로 발급한 시크릿으로 교체합니다. (시크릿은 기밀 정보이므로 어플리케이션 내에 하드코딩하지 않고 환경 변수로 관리하시는 것을 권장합니다.)
+[TODO 시크릿 만료 스샷 하나 첨부]
+- 더 이상 기존 시크릿이 고객사 서버에서 사용되지 않는 것을 확인한 후, 콘솔에서 기존 시크릿을 만료시킵니다.
+
+## 웹훅 요청 처리 코드 예시
+
+다음은 포트원으로부터 보내진 웹훅 요청을 고객사 서버에서 받아 처리하는 예시 코드입니다.
+본 코드는 참고용으로 작성된 코드이며, Server SDK를 이용한 signature verify 과정과 포트원 서버에서 결제 정보를 조회하여 검증 및 저장하는 과정을 포함하고 있습니다.
 
 ```ts title="Express"
 // Content-Type을 application/json으로 설정한 경우
@@ -104,6 +209,8 @@ app.use(bodyParser.json());
 // POST 요청을 받는 /portone-webhook
 app.post("/portone-webhook", async (req, res) => {
   try {
+    // [Cosmo TODO] verification code 여기도 첨부
+
     const { payment_id: paymentId } = req.body;
 
     // 1. 포트원 결제내역 단건조회 API 호출
@@ -148,12 +255,6 @@ app.post("/portone-webhook", async (req, res) => {
 
   Connection Timeout 및 Read Timeout 모두 30초 입니다.
 </Hint>
-
-### 3. 웹훅 요청 검증하기
-
-웹훅 수신주소는 공개된 URL이기 때문에 요청자 IP가 포트원의 IP인지 반드시 확인해야 합니다. 포트원 웹훅은 다음의 고정된 IP로부터 요청이 생성됩니다.
-
-- <mark style="color:red;">**52.78.5.241**</mark>
 
 <Hint style="info">
   **웹훅 처리 전에 브라우저 결제 완료 처리가 진행되는 경우**
