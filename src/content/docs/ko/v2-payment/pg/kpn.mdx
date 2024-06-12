@@ -1,19 +1,17 @@
 ---
 title: 한국결제네트웍스(KPN)
-description: 한국결제네트웍스(KPN) 연동 가이드를 확인합니다.
+description: 한국결제네트웍스(KPN) 결제 연동 방법을 안내합니다.
 targetVersions: ["v2"]
 ---
 
 import Details from "~/components/gitbook/Details.astro";
 import ParamTree from "~/components/gitbook/ParamTree.astro";
 
-## KPN PG 설정하기
-
-### 채널 설정하기
+## 채널 설정하기
 
 - [결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기)의 내용을 참고하여 PG 설정을 진행합니다.
 
-#### 사전 계약 안내
+## 사전 계약 안내
 
 아래 기능을 사용하시려면 한국결제네트웍스(KPN)에 사전 신청 후 계약이 완료되어야 합니다.
 그렇지 않은 상태에서 해당 기능 이용시 결제 승인에 실패하거나,
@@ -29,7 +27,7 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 - 간편결제 다이렉트 호출
 - 결제 취소 시 계좌 환불 서비스 설정
 
-### 가능한 결제 수단
+## 가능한 결제 수단
 
 - **결제창 일반 결제**
 
@@ -65,7 +63,7 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 
   자세한 파라미터 구성은 [REST API Docs](/api/rest-v2/billingKey#post%20%2Fbilling-keys)를 참고해주시기 바랍니다.
 
-### SDK 결제 요청하기
+## SDK 결제 요청하기
 
 결제 요청 시에는 `requestPayment` 함수를 호출해야 합니다.
 `channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 한국결제네트웍스(KPN) 채널 사용을 명시해주세요.
@@ -87,7 +85,7 @@ function requestPayment() {
 }
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -161,7 +159,7 @@ function requestPayment() {
     </ParamTree>
 </ParamTree>
 
-### SDK 결제 - 유의사항
+### 유의사항
 
 #### 공통
 
@@ -327,7 +325,7 @@ function requestPayment() {
   - `availableCarriers`: 결제창에 노출될 통신사 리스트 지정 옵션
 </Details>
 
-### SDK 빌링키 발급 요청하기
+## SDK 빌링키 발급 요청하기
 
 빌링키 발급 요청 시에는 `requestIssueBillingKey` 함수를 호출해야 합니다.
 `channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 한국결제네트웍스(KPN) 채널 사용을 명시해주세요.
@@ -351,7 +349,7 @@ function requestIssueBillingKey() {
 }
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -402,14 +400,14 @@ function requestIssueBillingKey() {
     </ParamTree>
 </ParamTree>
 
-### SDK 빌링키 발급 - 유의사항
+### 유의사항
 
 <Details>
   <p slot="summary">offerPeriod 파라미터는 range형식만 가능합니다.</p>
 
   SDK를 통한 빌링키 발급 요청 시 offerPeriod 파라미터를 사용하여 결제창 내에 제공 기간을 표시할 수 있습니다.
   해당 파라미터는 range형태로만 입력 가능합니다.
-  
+
   구체적인 형식은 SDK 가이드를 참고해주세요.
 </Details>
 
@@ -430,7 +428,7 @@ function requestIssueBillingKey() {
   `card.cardCompany` 필드에 값을 입력한 후 빌링키 발급을 요청한 경우에도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.
 </Details>
 
-### API 수기(키인) 결제 요청하기
+## API 수기(키인) 결제 요청하기
 
 수기(키인)로 결제하기 위해서는 `POST /payments/${PAYMENT_ID_HERE}/instant` API를 통해 결제를 요청해야 합니다.
 
@@ -471,7 +469,7 @@ const issueResponse = await axios({
 });
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -659,7 +657,7 @@ const issueResponse = await axios({
     </ParamTree>
 </ParamTree>
 
-### API 빌링키 발급 요청하기
+## API 빌링키 발급 요청하기
 
 빌링키를 발급하기 위해서는 `POST /billing-keys` API를 이용하여 빌링키 발급을 요청해야 합니다.
 
@@ -694,7 +692,7 @@ const issueResponse = await axios({
 });
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -776,7 +774,7 @@ const issueResponse = await axios({
     </ParamTree>
 </ParamTree>
 
-### API 빌링키 단건 결제 요청하기
+## API 빌링키 단건 결제 요청하기
 
 발급된 빌링키로 단건 결제를 진행하려면 `POST /payments/${PAYMENT_ID_HERE}/billing-key` API를 이용하여 결제를 요청하실 수 있습니다.
 
@@ -804,7 +802,7 @@ const response = await axios({
 });
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
