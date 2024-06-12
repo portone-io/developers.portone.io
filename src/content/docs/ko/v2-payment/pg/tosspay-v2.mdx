@@ -1,19 +1,17 @@
 ---
 title: 토스페이
-description: 토스페이 간편결제 결제창 연동가이드를 확인 합니다.
+description: 토스페이 간편결제 연동 방법을 안내합니다.
 targetVersions: ["v2"]
 ---
 
 import Details from "~/components/gitbook/Details.astro";
 import ParamTree from "~/components/gitbook/ParamTree.astro";
 
-## 토스페이(신모듈) PG 설정하기
-
-### 채널 설정하기
+## 채널 설정하기
 
 - [결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기)의 내용을 참고하여 PG 설정을 진행합니다.
 
-#### 사전 계약 안내
+## 사전 계약 안내
 
 아래 기능을 사용하시려면 토스페이에 사전 신청 후 계약이 완료되어야 합니다.
 그렇지 않은 상태에서 해당 기능 이용시 결제 승인에 실패하거나,
@@ -21,7 +19,7 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 
 - API를 통한 정기결제
 
-### 가능한 결제 수단
+## 가능한 결제 수단
 
 - **결제창 일반 결제**
 
@@ -35,7 +33,7 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 
   - 간편결제 : `EASY_PAY`
 
-### SDK 결제 요청하기
+## SDK 결제 요청하기
 
 결제 요청 시에는 `requestPayment` 함수를 호출해야 합니다.
 `channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 토스페이 채널 사용을 명시해주세요.
@@ -57,7 +55,7 @@ function requestPayment() {
 }
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -70,7 +68,7 @@ function requestPayment() {
 
     **채널 키**
 
-    포트원 콘솔 내 \[결제연동] > \[채널관리] 화면에서 채널 추가 시 생성되는 값입니다. 결제 호출 시 채널을 지정할 때 사용됩니다.
+    포트원 콘솔 내 \[연동 관리] > \[연동 정보] > \[채널 관리] 화면에서 채널 추가 시 생성되는 값입니다. 결제 호출 시 채널을 지정할 때 사용됩니다.
 
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -109,7 +107,7 @@ function requestPayment() {
     **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
     <ParamTree>
-      - `tosspay` <mark style="color:blue;">**object**</mark>
+      - `tosspay_v2` <mark style="color:blue;">**object**</mark>
 
         **토스페이에서 제공하는 파라미터**
 
@@ -118,7 +116,7 @@ function requestPayment() {
 
             **결제 만료 기한**
 
-            `yyyy-MM-dd HH:mm:ss` 의 형식입니다.
+            `yyyy-MM-dd HH:mm:ss` 의 형식으로 입력해야 합니다.
 
             입력하지 않을 경우, 기본값인 15분으로 설정됩니다. 최대 60분까지 설정할 수 있습니다.
         </ParamTree>
@@ -137,7 +135,7 @@ function requestPayment() {
     </ParamTree>
 </ParamTree>
 
-### SDK 결제 - 유의사항
+### 유의사항
 
 #### 공통
 
@@ -152,10 +150,10 @@ function requestPayment() {
 
   토스페이의 경우, 현금영수증 발급에 대한 정보를 따로 입력받지 않고, 앱에 저장된 식별정보로 현금영수증을 발급합니다.
 
-  이 떄문에 현금영수증 타입을 personal, corporate로 지정하더라도 실제로는 다른 타입의 현금영수증이 발급될 수 있습니다.
+  이 때문에 현금영수증 타입을 personal, corporate로 지정하더라도 실제로는 다른 타입의 현금영수증이 발급될 수 있습니다.
 </Details>
 
-### SDK 빌링키 발급 요청하기
+## SDK 빌링키 발급 요청하기
 
 빌링키 발급 요청 시에는 `requestIssueBillingKey` 함수를 호출해야 합니다.
 `channelKey` 파라미터에 결제 채널 연동 후 생성된 채널 키를 지정하여 토스페이 채널 사용을 명시해주세요.
@@ -179,7 +177,7 @@ function requestIssueBillingKey() {
 }
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -192,7 +190,7 @@ function requestIssueBillingKey() {
 
     **채널 키**
 
-    포트원 콘솔 내 \[결제연동] > \[채널관리] 화면에서 채널 추가 시 생성되는 값입니다. 결제 호출 시 채널을 지정할 때 사용됩니다.
+    포트원 콘솔 내 \[연동 관리] > \[연동 정보] > \[채널 관리] 화면에서 채널 추가 시 생성되는 값입니다. 결제 호출 시 채널을 지정할 때 사용됩니다.
 
   - `billingKeyMethod` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -218,10 +216,10 @@ function requestIssueBillingKey() {
     모바일 환경의 경우, 필수 입력입니다.
 </ParamTree>
 
-### SDK 빌링키 발급 - 유의사항
+### 유의사항
 
 <Details>
-  <p slot="summary">빌링키 발급 웹훅 연동 필요</p>
+  <p slot="summary">빌링키 발급 웹훅 연동 안내</p>
 
   토스페이 빌링키 발급시 빌링키 발급 웹훅을 반드시 연동하는 것이 좋습니다.
 
@@ -231,7 +229,7 @@ function requestIssueBillingKey() {
 </Details>
 
 <Details>
-  <p slot="summary">빌링키 업데이트 웹훅 연동 필요</p>
+  <p slot="summary">빌링키 업데이트 웹훅 연동 안내</p>
 
   빌링키가 발급된후에 토스페이앱에서 엔드유저가 직접 빌링키에 연결된 결제수단을 변경할 수 있습니다.
 
@@ -240,7 +238,7 @@ function requestIssueBillingKey() {
   만약 빌링키에 연결된 결제수단을 서비스 내부적으로 사용하고 있다면, 빌링키 업데이트 웹훅을 연동하시거나 정보를 표시하기 전 포트원의 빌링키 정보 조회 API를 호출하여 데이터를 최신화하기를 권장합니다.
 </Details>
 
-### API 빌링키 단건 결제 요청하기
+## API 빌링키 단건 결제 요청하기
 
 발급된 빌링키로 단건 결제를 진행하려면 `POST /payments/${PAYMENT_ID_HERE}/billing-key` API를 이용하여 결제를 요청하실 수 있습니다.
 
@@ -261,7 +259,7 @@ const response = await axios({
     },
     amount: {
       total: 50000,
-        taxFree: 3000,
+      taxFree: 3000,
     },
     currency: "KRW",
     useFreeInterestFromMerchant: true, // 고객사 분담 무이자 설정
@@ -272,7 +270,7 @@ const response = await axios({
 });
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -351,7 +349,7 @@ const response = await axios({
     **상품 개수**
 </ParamTree>
 
-### API 빌링키 예약/반복 결제 요청하기
+## API 빌링키 예약/반복 결제 요청하기
 
 예약 결제를 진행하려면 `POST /payments/${PAYMENT_ID_HERE}/schedule` API를 이용하여 결제를 예약하실 수 있습니다.
 
@@ -380,7 +378,7 @@ const response = await axios({
 });
 ```
 
-#### **주요 파라미터**
+### 주요 파라미터
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
