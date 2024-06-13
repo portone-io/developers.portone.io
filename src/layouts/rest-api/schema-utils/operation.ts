@@ -134,10 +134,7 @@ function narrowResponseSchema(
     })
     .filter(({ match }) => match);
   const filteredRefs = matches.map(({ ref }) => ref);
-  if (matches.length === 1) {
-    const schema = matches[0]?.typeDef;
-    return [statusCode, { ...pair, schema }];
-  } else if (matches.length > 1) {
+  if (matches.length > 0) {
     const oneOf = responseTypeDef.oneOf?.filter(({ $ref }) =>
       filteredRefs.includes($ref!),
     );
