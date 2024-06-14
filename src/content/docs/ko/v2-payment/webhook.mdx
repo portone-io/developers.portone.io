@@ -33,34 +33,16 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
 이런 경우 연동한 웹훅을 통해 누락 없이 결제 정보를 동기화할 수 있습니다.
 
 ## 웹훅 버전에 따른 스키마 안내
+웹훅 형식에 하위 호환이 보장되지 않는 변경이 있을 경우 새로운 웹훅 버전이 추가됩니다. 어떤 버전의 웹훅을 받을지 콘솔에서 설정할 수 있습니다.
 
-### `2024-01-01` 사용 시
+현재 웹훅 버전은 두 가지입니다.
+* `2024-04-25` (최신)
+  * 본문 형식이 Standard Webhooks를 따르도록 변경 (Standard Webhooks 기반 메시지 검증의 경우 기존 버전에서도 사용 가능)
+  * 메시지의 확장성을 명시
+* `2024-01-01`
+  * 최초 웹훅 버전
 
-- `payment_id`: 고객사에서 채번한 결제건의 고유 주문 번호입니다.
-
-- `tx_id`: 포트원에서 채번한 결제건의 고유 거래 번호입니다.
-
-- `status`: 결제건의 상태입니다. 가능한 `status`의 종류는 아래와 같습니다.
-  - `Ready`: **결제창이 열렸을 때**
-  - `Paid`: **결제(예약 결제 포함)가 승인**되었을 때 (모든 결제 수단, 가상계좌의 경우 계좌에 입금이 완료되는 순간)
-  - `VirtualAccountIssued`: **가상계좌가 발급**되었을 때
-  - `PartialCancelled`: **결제가 부분 취소**되었을 때
-  - `Cancelled`: **결제가 완전 취소**되었을 때
-  - `Failed`: **결제(예약 결제 포함)가 실패**했을 때
-  - `PayPending`: **결제 승인 대기** 상태가 되었을 때 (페이팔 연동 시 발생)
-  - `CancelPending`: (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때
-
-웹훅 payload 예시:
-
-```json
-{
-  "payment_id": "example-payment-id",
-  "tx_id": "55451513-9763-4a7a-bb43-78a4c65be843",
-  "status": "Ready"
-}
-```
-
-### `2024-04-25` 사용 시
+### `2024-04-25` (최신) 사용 시
 
 - `type`: 웹훅을 트리거한 이벤트의 타입입니다. 가능한 `type`의 종류는 아래와 같습니다.
   - **결제 관련**
@@ -85,18 +67,20 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
 
 - `data`: 웹훅을 트리거한 이벤트의 실제 세부 내용입니다. `type` 에 따라 해당 필드의 스키마가 달라질 수 있으며, `type` 별 상세 스키마는 아래와 같습니다.
   - **결제 관련**
-    - `paymentId`: 고객사에서 채번한 결제건의 고유 주문 번호입니다.
-    - `transactionId`: 포트원에서 채번한 결제건의 고유 거래 번호입니다.
+    - `paymentId`: 고객사에서 채번한 결제 건의 고유 주문 번호입니다.
+    - `transactionId`: 포트원에서 채번한 고유 거래 번호입니다. 한 결제 건에 여러 시도가 있을 경우 transactionId가 달라질 수 있습니다.
     - `cancellationId`: (optional) 포트원에서 채번한 결제건의 취소 고유 번호입니다. `type`이 `Transaction.PartialCancelled` 혹은 `Transaction.Cancelled` 일 때 존재합니다.
 
   - **빌링키 발급 관련**
-    - `billingKey`: 포트원에서 채번한 빌링키 고유 아이디입니다.
+    - `billingKey`: 포트원에서 채번한 빌링키입니다.
 
 <Hint style="info">
-  **`data` 스키마에는 별도 안내 없이 필드가 추가될 수 있습니다. 따라서 `data` 필드를 decode 하실 때에는 unknown 필드가 존재할 경우 에러를 발생시키지 않고 무시하도록 코드를 작성해주세요.**
+  **웹훅 메시지에는 별도 안내 없이 `type` 값이나 새로운 필드가 추가될 수 있습니다.**
+  * 알지 못하는 `type`을 가진 메시지의 경우 에러를 발생시키지 말고 메시지 전체를 무시해 주세요.
+  * 알지 못하는 필드가 있는 경우 해당 필드를 무시해 주세요.
 </Hint>
 
-**웹훅 payload 예시 1**: `type`이 `Transaction.Cancelled` 일 때
+**웹훅 본문 예시 1**: `type`이 `Transaction.Cancelled` 일 때
 
 ```json
 {
@@ -110,7 +94,7 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
 }
 ```
 
-**웹훅 payload 예시 2**: `type`이 `BillingKey.Issued` 일 때
+**웹훅 본문 예시 2**: `type`이 `BillingKey.Issued` 일 때
 
 ```json
 {
@@ -119,6 +103,32 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
   "data": {
     "billingKey": "billing-key-75ae3cab-6afe-422d-bf34-3a7b1762451d"
   }
+}
+```
+
+### `2024-01-01` 사용 시
+
+- `payment_id`: 고객사에서 채번한 결제 건의 고유 주문 번호입니다.
+
+- `tx_id`: 포트원에서 채번한 고유 거래 번호입니다. 한 결제 건에 여러 시도가 있을 경우 transactionId가 달라질 수 있습니다.
+
+- `status`: 결제건의 상태입니다. 가능한 `status`의 종류는 아래와 같습니다.
+  - `Ready`: **결제창이 열렸을 때**
+  - `Paid`: **결제(예약 결제 포함)가 승인**되었을 때 (모든 결제 수단, 가상계좌의 경우 계좌에 입금이 완료되는 순간)
+  - `VirtualAccountIssued`: **가상계좌가 발급**되었을 때
+  - `PartialCancelled`: **결제가 부분 취소**되었을 때
+  - `Cancelled`: **결제가 완전 취소**되었을 때
+  - `Failed`: **결제(예약 결제 포함)가 실패**했을 때
+  - `PayPending`: **결제 승인 대기** 상태가 되었을 때 (페이팔 이용 시 발생 가능)
+  - `CancelPending`: (결제 취소가 비동기로 수행되는 경우) **결제 취소를 요청**했을 때
+
+웹훅 payload 예시:
+
+```json
+{
+  "payment_id": "example-payment-id",
+  "tx_id": "55451513-9763-4a7a-bb43-78a4c65be843",
+  "status": "Ready"
 }
 ```
 
@@ -168,8 +178,12 @@ PortOne.requestPayment({
 ## 웹훅 요청 검증하기
 
 웹훅 수신 주소는 공개된 URL이기 때문에 고객사 입장에서는 웹훅이 포트원으로부터 전달되었는지를 필수적으로 검사할 필요가 있습니다.
-포트원에서는 악의적인 행위자가 웹훅을 위조하여 보냈는지를 검사할 수 있도록 시크릿을 기반으로 signature를 만들어 Webhook Request Header에 함께 전달합니다.
-또한 포트원에서 제공하는 SDK를 이용하면 이 signature를 손쉽게 verify할 수 있습니다.
+포트원은 [Standard Webhooks](https://www.standardwebhooks.com/)에 따른 메시지 검증을 지원합니다.
+또한, JVM 및 JS 환경의 경우 메시지 검증 코드를 서버 SDK를 통해 배포하고 있습니다.
+
+<Hint style="info">
+  메시지 검증 지원 이전에 포트원 서버 IP 필터링 방식으로 연동하신 고객사의 경우, 웹훅 엔드포인트에 메시지 검증을 추가하시면 보안 향상 효과를 얻으실 수 있습니다.
+</Hint>
 
 ### 1. 웹훅 시크릿 발급하기
 
@@ -182,16 +196,24 @@ PortOne.requestPayment({
 
 ### 2. 시크릿을 이용해 signature 검사하기
 
-시크릿을 발급하고 난 이후부터 포트원에서 보내는 웹훅에는 **해당 시크릿을 이용해 만들어진 signature 정보가 Request Header에 함께 전달**될 것입니다.
-포트원에서 제공하는 Server SDK를 이용하면 고객사 서버에서 웹훅을 수신할 때 signature가 유효한지를 손쉽게 verify할 수 있습니다.
-현재 제공되고 있는 Server SDK 목록은 아래와 같습니다.
+포트원에서 보내는 웹훅에는 **해당 시크릿을 이용해 생성된 시그니처가 요청 헤더를 통해 전달**됩니다.
+포트원에서 제공하는 서버 SDK를 이용하면 고객사 서버에서 웹훅을 수신할 때 시그니처가 유효한지 손쉽게 검증할 수 있습니다.
+현재 제공되고 있는 서버 SDK 목록은 아래와 같습니다.
 
-- server-sdk-jvm [(GitHub 링크)](https://github.com/portone-io/server-sdk-jvm)
-- server-sdk-js [(GitHub 링크)](https://github.com/portone-io/server-sdk-js) [(예시 코드)](https://github.com/portone-io/server-sdk-js/blob/main/examples/express/index.js)
+- JVM (코틀린, 자바 등)
+  - [Maven Central](https://central.sonatype.com/artifact/io.portone/server-sdk)
+    - groupId: `id.portone`, artifactId: `server-sdk`
+  - [GitHub](https://github.com/portone-io/server-sdk-jvm)
+  - [Javadoc](https://javadoc.io/doc/io.portone/server-sdk/latest/-port-one%20-server%20-s-d-k%20for%20-j-v-m/io.portone.sdk.server.webhook/-webhook-verifier/index.html)
+- JS (자바스크립트)
+  - [npm](https://www.npmjs.com/package/@portone/server-sdk)
+    - @portone/server-sdk
+  - [GitHub](https://github.com/portone-io/server-sdk-js)
+  - [Express 예시 코드](https://github.com/portone-io/server-sdk-js/blob/main/examples/express/index.js)
 
-혹은 Server SDK 사용을 원치 않으시거나 SDK가 지원되지 않는 언어를 이용중이시라면 signature를 verify하는 코드를 직접 작성하실 수 있습니다.
-포트원의 웹훅 검증 절차는 [standard-webhooks](https://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md) 스펙을
-준수하고 있으므로, 해당 스펙에서 안내된 대로 verify 코드를 작성하시면 됩니다.
+Server SDK 사용을 원치 않으시거나 SDK가 지원되지 않는 언어를 이용중이시라면 메시지 검증 코드를 직접 작성하실 수 있습니다.
+포트원의 웹훅 검증 절차는 [Standard Webhooks](https://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md) 스펙을
+준수하고 있으므로, 해당 스펙에서 안내된 대로 검증 코드를 작성하시면 됩니다. 해당 저장소에는 여러 언어로 레퍼런스 구현도 작성되어 있습니다.
 
 ### 3. 무중단으로 시크릿 교체하기
 
@@ -236,11 +258,12 @@ app.post(
   rawBody, // plaintext 본문이 필요하므로 위에서 정의한 middleware를 사용합니다.
   async (req, res) => {
     try {
-      // 웹훅 signature를 검증합니다.
+      // 웹훅 메시지를 검증합니다.
+      // 시그니처 불일치 등 검증에 실패할 경우 PortOne.Webhook.WebhookVerificationError가 발생합니다.
       await PortOne.Webhook.verify(
         process.env.PORTONE_WEBHOOK_SECRET,
         req.rawBody,
-        req.Headers,
+        req.headers,
       );
 
       const { payment_id: paymentId } = req.body;
