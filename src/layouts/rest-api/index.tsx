@@ -28,10 +28,10 @@ export default function RestApi({
   schema,
 }: RestApiProps) {
   React.useEffect(() => {
-    if (location.hash) return;
-    document
-      .getElementById(currentSection)
-      ?.scrollIntoView({ behavior: "smooth" });
+    const id = location.hash
+      ? decodeURIComponent(location.hash.slice(1))
+      : currentSection;
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }, []);
   const everyEndpoints = getEveryEndpoints(schema);
   const endpointGroups = groupEndpointsByCategory(schema, everyEndpoints);
