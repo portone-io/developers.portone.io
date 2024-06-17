@@ -91,7 +91,11 @@ export default function Req({
                     ? null
                     : JSON.stringify(reqBody);
                 const reqUrl = createUrl(apiHost, path, reqPath, reqQuery);
-                const res = await fetch(reqUrl, { method, headers, body });
+                const res = await fetch(reqUrl, {
+                  method: method.toUpperCase(),
+                  headers,
+                  body,
+                });
                 return await responseToRes(res);
               })
             }

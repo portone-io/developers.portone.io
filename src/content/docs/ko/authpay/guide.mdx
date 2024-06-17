@@ -376,7 +376,7 @@ SDK의 반환값 대신 URL의 [쿼리 문자열](https://en.wikipedia.org/wiki/
           }),
         });
         if (!tokenResponse.ok)
-          throw new Error(`tokenResponse: ${tokenResponse.statusText}`);
+          throw new Error(`tokenResponse: ${await tokenResponse.json()}`);
         const { access_token } = await tokenResponse.json();
 
         // 2. 포트원 결제내역 단건조회 API 호출
@@ -385,7 +385,7 @@ SDK의 반환값 대신 URL의 [쿼리 문자열](https://en.wikipedia.org/wiki/
           { headers: { Authorization: access_token } },
         );
         if (!paymentResponse.ok)
-          throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
+          throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
         const payment = await paymentResponse.json();
 
         // 3. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
@@ -433,7 +433,7 @@ SDK의 반환값 대신 URL의 [쿼리 문자열](https://en.wikipedia.org/wiki/
           { headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` } },
         );
         if (!paymentResponse.ok)
-          throw new Error(`paymentResponse: ${paymentResponse.statusText}`);
+          throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
         const payment = await paymentResponse.json();
 
         // 2. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
