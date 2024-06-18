@@ -20,14 +20,6 @@ export default defineConfig({
   extensions: ["ts", "tsx", "mdx"],
   vite: () =>
     ({
-      resolve: {
-        alias: {
-          $content: path.join(
-            import.meta.dirname,
-            "./src/content/__generated__/index.ts",
-          ),
-        },
-      },
       ssr: {
         optimizeDeps: {
           include: ["mixpanel-browser"],
