@@ -1,6 +1,6 @@
 ---
-title: KG이니시스
-description: KG이니시스 연동 가이드를 확인합니다.
+title: 이니시스
+description: 이니시스 결제 연동 방법을 안내합니다.
 targetVersions: ["v2"]
 versionVariants:
   v1: /ko/pg/payment-gateway/inicis
@@ -14,9 +14,7 @@ import ParamTree from "~/components/gitbook/ParamTree.astro";
 import Tab from "~/components/gitbook/tabs/Tab.astro";
 import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 
-## 이니시스 PG 설정하기
-
-### 채널 설정하기
+## 채널 설정하기
 
 - [결제대행사 채널 설정하기](../../ready/readme#3-결제대행사-채널-설정하기)의 내용을 참고하여 PG 설정을 진행합니다.
 
@@ -345,7 +343,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
     </ParamTree>
 </ParamTree>
 
-### SDK 결제 - 유의사항
+### 유의사항
 
 #### 공통
 
@@ -644,7 +642,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
     </ParamTree>
 </ParamTree>
 
-### SDK 빌링키 발급 - 유의사항
+### 유의사항
 
 <Details>
   <p slot="summary">PC와 모바일에서 파라미터 필수 여부가 상이합니다.</p>
@@ -1099,23 +1097,21 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
   <Tab title="API 예약/반복 결제">
     ```ts
     const response = await axios({
-      url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/schedule`,
+      url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/billing-key`,
       method: "post",
       headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
       data: {
-        payment: {
-          billingKey: "billing-key-1", // 빌링키 발급 API를 통해 발급받은 빌링키
-          orderName: "월간 이용권 정기결제",
-          customer: {
-            id: "customer-1234", // 고객사에서 관리하는 고객 고유번호
-            phoneNumber: `010-1234-5678`,
-            email: `test@test.com`,
-          },
-          amount: {
-            total: 10000,
-          },
-          currency: "KRW",
+        billingKey: "billing-key-1", // 빌링키 발급 API를 통해 발급받은 빌링키
+        orderName: "월간 이용권 정기결제",
+        customer: {
+          id: "customer-1234", // 고객사에서 관리하는 고객 고유번호
+          phoneNumber: `010-1234-5678`,
+          email: `test@test.com`,
         },
+        amount: {
+          total: 10000,
+        },
+        currency: "KRW",
         productCount: 1,
       },
     });
@@ -1343,7 +1339,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
     </ParamTree>
 </ParamTree>
 
-### API 유의사항
+### 유의사항
 
 #### 공통
 
@@ -1375,7 +1371,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
   - `products`
 </Details>
 
-### API 영수증 내 하위 상점 거래 등록
+## API 영수증 내 하위 상점 거래 등록
 
 오픈마켓 고객사의 경우 해당 API를 호출하여 결제 내역 매출 전표에 하위 상점 거래를 등록할 수 있습니다.
 
@@ -1383,7 +1379,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 [REST API Docs](/api/rest-v2/payment#post%20%2Fpayments%2F%7BpaymentId%7D%2Fregister-store-receipt)
 를 참고해주시기 바랍니다.
 
-#### 주요 파라미터
+### 주요 파라미터
 
 <ParamTree>
   - `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
