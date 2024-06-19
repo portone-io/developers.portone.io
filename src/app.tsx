@@ -3,6 +3,7 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 
+import { NotFoundBoundary } from "./components/404";
 import Trackers from "./layouts/trackers/Trackers";
 
 export default function App() {
@@ -15,7 +16,9 @@ export default function App() {
           <Meta name="viewport" content="width=device-width,initial-scale=1" />
           <Link rel="icon" type="image/png" href="/favicon.png" />
           <Trackers />
-          <Suspense>{props.children}</Suspense>
+          <Suspense>
+            <NotFoundBoundary>{props.children}</NotFoundBoundary>
+          </Suspense>
         </MetaProvider>
       )}
     >
