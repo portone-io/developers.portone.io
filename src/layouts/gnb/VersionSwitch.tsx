@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "@solidjs/router";
 import clsx from "clsx";
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, startTransition } from "solid-js";
 
 import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
@@ -75,7 +75,9 @@ export function VersionSwitch(props: VersionSwitchProps) {
         style={{ transition: "margin 0.1s" }}
         onClick={() => {
           const newVersion = systemVersion() !== "v1" ? "v1" : "v2";
-          setSystemVersion(newVersion);
+          void startTransition(() => {
+            setSystemVersion(newVersion);
+          });
           setShowPopover(false);
 
           const mappedPath =
