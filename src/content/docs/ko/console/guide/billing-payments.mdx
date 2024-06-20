@@ -8,7 +8,7 @@ targetVersions: ["v1", "v2"]
 
 import Figure from "~/components/Figure.astro";
 import Details from "~/components/gitbook/Details.astro";
-import VersionGate from "~/components/gitbook/VersionGate.astro";
+import VersionGate from "~/components/gitbook/VersionGate";
 import Hint from "~/components/Hint.astro";
 
 import Image2 from "../_assets/billing-calendar.png";
@@ -27,18 +27,16 @@ import Image4 from "../_assets/schedule.png";
 
 <Figure src={Image1} caption="[결제] - [빌링결제 내역 조회] 예시 화면" />
 
-<VersionGate>
-  <Fragment slot="v1">
-    발급한 빌링키를 이용하여 [비 인증 결제(빌링키) API](https://developers.portone.io/api/rest-v1/nonAuthPayment#post%20%2Fsubscribe%2Fpayments%2Fagain)
-    혹은 [결제 예약 API](https://developers.portone.io/api/rest-v1/nonAuthPayment.subscribe#post%20%2Fsubscribe%2Fpayments%2Fschedule)로
-    시도된 거래 건을 상태별로 조회할 수 있습니다.
-  </Fragment>
+<VersionGate v="v1">
+  발급한 빌링키를 이용하여 [비 인증 결제(빌링키) API](https://developers.portone.io/api/rest-v1/nonAuthPayment#post%20%2Fsubscribe%2Fpayments%2Fagain)
+  혹은 [결제 예약 API](https://developers.portone.io/api/rest-v1/nonAuthPayment.subscribe#post%20%2Fsubscribe%2Fpayments%2Fschedule)로
+  시도된 거래 건을 상태별로 조회할 수 있습니다.
+</VersionGate>
 
-  <Fragment slot="v2">
-    발급한 빌링키를 이용하여 [빌링키 결제 API](https://developers.portone.io/api/rest-v2/payment#post%20%2Fpayments%2F%7BpaymentId%7D%2Fbilling-key)
-    혹은 [결제 예약 API](https://developers.portone.io/api/rest-v2/paymentSchedule#post%20%2Fpayments%2F%7BpaymentId%7D%2Fschedule)로
-    시도된 거래 건을 상태별로 조회할 수 있습니다.
-  </Fragment>
+<VersionGate v="v2">
+  발급한 빌링키를 이용하여 [빌링키 결제 API](https://developers.portone.io/api/rest-v2/payment#post%20%2Fpayments%2F%7BpaymentId%7D%2Fbilling-key)
+  혹은 [결제 예약 API](https://developers.portone.io/api/rest-v2/paymentSchedule#post%20%2Fpayments%2F%7BpaymentId%7D%2Fschedule)로
+  시도된 거래 건을 상태별로 조회할 수 있습니다.
 </VersionGate>
 
 ### 조회 기준
@@ -77,25 +75,25 @@ import Image4 from "../_assets/schedule.png";
 
 빌링 결제 정보를 검색하여 거래건을 특정할 수 있습니다.
 
-- **빌링결제 아이디** : 빌링결제 아이디(`schedule_id`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
+<ul>
+  <li>**빌링결제 아이디** : 빌링결제 아이디(`schedule_id`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
 
-<VersionGate>
-  <Fragment slot="v1">
-    - **고객사 거래번호** : 고객사 거래번호(`merchant_uid`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-    - **포트원 빌링키** : 포트원 빌링키(`customer_uid`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-    - **고객 식별 정보** : 고객식별정보 (`customer_id`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-    - **고객 이름** : 고객 이름 (`buyer_name`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-    - **상품 이름** : 상품 이름 (`name`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-  </Fragment>
+  <VersionGate v="v1">
+    <li>**고객사 거래번호** : 고객사 거래번호(`merchant_uid`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+    <li>**포트원 빌링키** : 포트원 빌링키(`customer_uid`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+    <li>**고객 식별 정보** : 고객식별정보 (`customer_id`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+    <li>**고객 이름** : 고객 이름 (`buyer_name`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+    <li>**상품 이름** : 상품 이름 (`name`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+  </VersionGate>
 
-  <Fragment slot="v2">
-    - **고객사 거래번호** : 고객사 거래번호(`paymentId`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-    - **포트원 빌링키** : 포트원 빌링키(`billingKey`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-    - **고객 식별 정보** : 고객식별정보 (`customer.id`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-    - **고객 이름**: 고객 이름 (`customer.name`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-    - **상품 이름** : 상품 이름 (`orderName`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.
-  </Fragment>
-</VersionGate>
+  <VersionGate v="v2">
+    <li>**고객사 거래번호** : 고객사 거래번호(`paymentId`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+    <li>**포트원 빌링키** : 포트원 빌링키(`billingKey`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+    <li>**고객 식별 정보** : 고객식별정보 (`customer.id`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+    <li>**고객 이름**: 고객 이름 (`customer.name`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+    <li>**상품 이름** : 상품 이름 (`orderName`) 데이터 중 입력한 텍스트와 일치하는 데이터가 표시됩니다.</li>
+  </VersionGate>
+</ul>
 
 ### 리커버리
 
@@ -108,15 +106,13 @@ import Image4 from "../_assets/schedule.png";
 
 리커버리 시간 설정은 01시부터 23시까지 가능합니다.
 
-<VersionGate>
-  <Fragment slot="v1">
-    결제예약 API(Schedule API)를 이용한 결제 예약 건 중 결제 실패 상태인 거래 건에 한하여 리커버리 기능을 사용할 수 있습니다.
-    비 인증 결제(빌링키) API(Again API) 건에 대한 리커버리 기능은 상반기 내로 업데이트될 예정입니다.
-  </Fragment>
+<VersionGate v="v1">
+  결제예약 API(Schedule API)를 이용한 결제 예약 건 중 결제 실패 상태인 거래 건에 한하여 리커버리 기능을 사용할 수 있습니다.
+  비 인증 결제(빌링키) API(Again API) 건에 대한 리커버리 기능은 상반기 내로 업데이트될 예정입니다.
+</VersionGate>
 
-  <Fragment slot="v2">
-    빌링키 결제 API 및 결제 예약 API를 이용한 결제 건 중 결제 실패 상태인 거래 건에 한하여 리커버리 기능을 사용할 수 있습니다.
-  </Fragment>
+<VersionGate v="v2">
+  빌링키 결제 API 및 결제 예약 API를 이용한 결제 건 중 결제 실패 상태인 거래 건에 한하여 리커버리 기능을 사용할 수 있습니다.
 </VersionGate>
 
 ### 상태별 상세조회
@@ -129,114 +125,125 @@ import Image4 from "../_assets/schedule.png";
 
 #### 예약
 
-<VersionGate>
-  <Fragment slot="v1">
-    - 결제예약 API(Schedule API)를 이용한 결제 예약 건 중 결제 예약 상태인 거래 건입니다.
-  </Fragment>
+<ul>
+  <VersionGate v="v1">
+    <li>결제예약 API(Schedule API)를 이용한 결제 예약 건 중 결제 예약 상태인 거래 건입니다.</li>
+  </VersionGate>
 
-  <Fragment slot="v2">
-    - 결제 예약 API를 이용한 결제 예약 건 중 결제 예약 상태인 거래 건입니다.
-  </Fragment>
-</VersionGate>
+  <VersionGate v="v2">
+    <li>결제 예약 API를 이용한 결제 예약 건 중 결제 예약 상태인 거래 건입니다.</li>
+  </VersionGate>
 
-- 예약 상태의 빌링 결제 건을 클릭하면 오른쪽에 모달이 표시됩니다.
+  <li>예약 상태의 빌링 결제 건을 클릭하면 오른쪽에 모달이 표시됩니다.</li>
 
-- 해당 모달에서 결제 건의 상세정보, 예약해지 및 변경, 예약 결제 히스토리를 확인할 수 있습니다.
+  <li>
+    해당 모달에서 결제 건의 상세정보, 예약해지 및 변경, 예약 결제 히스토리를 확인할 수 있습니다.
 
-  - 상세정보 카테고리에서는 고객정보, 예약정보 등을 확인할 수 있습니다.
+    - 상세정보 카테고리에서는 고객정보, 예약정보 등을 확인할 수 있습니다.
 
-  - 예약 해지 변경 카테고리에서는 예약 해지 또는 예약일 변경을 할 수 있습니다.
+    - 예약 해지 변경 카테고리에서는 예약 해지 또는 예약일 변경을 할 수 있습니다.
 
-    <Details>
-      <Fragment slot="summary">예약 상태 건 클릭 시 상세 조회 화면 예시</Fragment>
+      <Details>
+        <Fragment slot="summary">예약 상태 건 클릭 시 상세 조회 화면 예시</Fragment>
 
-      <Figure src={Image4} />
-    </Details>
+        <Figure src={Image4} />
+      </Details>
 
-  - 예약 결제 히스토리 카테고리에서는 해당 거래 건의 상태 변경 히스토리를 확인할 수 있습니다.
+    - 예약 결제 히스토리 카테고리에서는 해당 거래 건의 상태 변경 히스토리를 확인할 수 있습니다.
+  </li>
+</ul>
 
 #### 성공
 
-<VersionGate>
-  <Fragment slot="v1">
-    - 결제예약 API(Schedule API)를 이용한 결제 예약 건 중 정상적으로 예약 결제가 진행되어 결제 성공 상태인 거래 건입니다.
-    - 비 인증 결제(빌링키) API(Again API)를 이용한 결제 건 중 정상적으로 결제가 진행되어 결제 성공 상태인 겨래 건입니다.
-  </Fragment>
+<ul>
+  <VersionGate v="v1">
+    <li>결제예약 API(Schedule API)를 이용한 결제 예약 건 중 정상적으로 예약 결제가 진행되어 결제 성공 상태인 거래 건입니다.</li>
+    <li>비 인증 결제(빌링키) API(Again API)를 이용한 결제 건 중 정상적으로 결제가 진행되어 결제 성공 상태인 겨래 건입니다.</li>
+  </VersionGate>
 
-  <Fragment slot="v2">
-    - 결제 예약 API를 이용한 결제 예약 건 중 정상적으로 예약 결제가 진행되어 결제 성공 상태인 거래 건입니다.
-    - 빌링키 결제 API를 이용한 결제 건 중 정상적으로 결제가 진행되어 결제 성공 상태인 거래 건입니다.
-  </Fragment>
-</VersionGate>
+  <VersionGate v="v2">
+    <li>결제 예약 API를 이용한 결제 예약 건 중 정상적으로 예약 결제가 진행되어 결제 성공 상태인 거래 건입니다.</li>
+    <li>빌링키 결제 API를 이용한 결제 건 중 정상적으로 결제가 진행되어 결제 성공 상태인 거래 건입니다.</li>
+  </VersionGate>
 
-- 성공 상태의 빌링 결제 건을 클릭하면 오른쪽에 모달이 표시됩니다.
+  <li>성공 상태의 빌링 결제 건을 클릭하면 오른쪽에 모달이 표시됩니다.</li>
 
-- 해당 모달에서 결제 건의 상세정보, 예약 결제 히스토리를 확인할 수 있습니다.
-  - 상세정보 카테고리에서는 고객정보, 예약정보 등을 확인할 수 있으며,
-    해당 건의 결제 내역 조회 화면으로 이동할 수 있습니다.
+  <li>
+    해당 모달에서 결제 건의 상세정보, 예약 결제 히스토리를 확인할 수 있습니다.
 
-  - 예약 결제 히스토리 카테고리에서는 해당 거래 건의 상태 변경 히스토리를 확인할 수 있습니다.
+    - 상세정보 카테고리에서는 고객정보, 예약정보 등을 확인할 수 있으며,
+      해당 건의 결제 내역 조회 화면으로 이동할 수 있습니다.
+
+    - 예약 결제 히스토리 카테고리에서는 해당 거래 건의 상태 변경 히스토리를 확인할 수 있습니다.
+  </li>
+</ul>
 
 #### 실패
 
-<VersionGate>
-  <Fragment slot="v1">
-    - 결제예약 API(Schedule API)를 이용한 결제 예약 건 중 정상적으로 예약 결제가 진행되지 못해 결제 실패 상태인 거래 건입니다.
-    - 비 인증 결제(빌링키) API(Again API)를 이용한 결제 건 중 정상적으로 결제가 진행되지 못해 결제 실패 상태인 겨래 건입니다.
-  </Fragment>
+<ul>
+  <VersionGate v="v1">
+    <li>결제예약 API(Schedule API)를 이용한 결제 예약 건 중 정상적으로 예약 결제가 진행되지 못해 결제 실패 상태인 거래 건입니다.</li>
+    <li>비 인증 결제(빌링키) API(Again API)를 이용한 결제 건 중 정상적으로 결제가 진행되지 못해 결제 실패 상태인 겨래 건입니다.</li>
+  </VersionGate>
 
-  <Fragment slot="v2">
-    - 결제 예약 API를 이용한 결제 예약 건 중 정상적으로 예약 결제가 진행되지 못해 결제 실패 상태인 거래 건입니다.
-    - 빌링키 결제 API를 이용한 결제 건 중 정상적으로 결제가 진행되지 못해 결제 실패 상태인 거래 건입니다.
-  </Fragment>
-</VersionGate>
+  <VersionGate v="v2">
+    <li>결제 예약 API를 이용한 결제 예약 건 중 정상적으로 예약 결제가 진행되지 못해 결제 실패 상태인 거래 건입니다.</li>
+    <li>빌링키 결제 API를 이용한 결제 건 중 정상적으로 결제가 진행되지 못해 결제 실패 상태인 거래 건입니다.</li>
+  </VersionGate>
 
-- 빌링 결제 실패는 한도초과, 잔액부족, 정지된 카드, 유효기간 만료 등 사용자 이유
-  혹은 사용 불가한 빌링키, 올바르지 않은 결제 요청 등의 이유로 발생할 수 있습니다.
+  <li>
+    빌링 결제 실패는 한도초과, 잔액부족, 정지된 카드, 유효기간 만료 등 사용자 이유
+    혹은 사용 불가한 빌링키, 올바르지 않은 결제 요청 등의 이유로 발생할 수 있습니다.
+  </li>
 
-- 실패 상태의 빌링 결제 건을 클릭하면 오른쪽에 모달이 표시됩니다.
+  <li>실패 상태의 빌링 결제 건을 클릭하면 오른쪽에 모달이 표시됩니다.</li>
 
-- 해당 모달에서 결제 건의 상세정보, 재시도 재예약, 예약 결제 히스토리를 확인할 수 있습니다.
+  <li>
+    해당 모달에서 결제 건의 상세정보, 재시도 재예약, 예약 결제 히스토리를 확인할 수 있습니다.
 
-  - 상세정보 카테고리에서는 고객정보, 예약정보 등을 확인할 수 있습니다.
+    - 상세정보 카테고리에서는 고객정보, 예약정보 등을 확인할 수 있습니다.
 
-  - 재시도 재예약 카테고리에서는 해당 건을 즉시 재시도하거나 결제를 재예약할 수 있습니다.
+    - 재시도 재예약 카테고리에서는 해당 건을 즉시 재시도하거나 결제를 재예약할 수 있습니다.
 
-    <Details>
-      <Fragment slot="summary">실패 상태 건 클릭 시 상세 조회 화면 예시</Fragment>
+      <Details>
+        <Fragment slot="summary">실패 상태 건 클릭 시 상세 조회 화면 예시</Fragment>
 
-      <Figure src={Image5} />
-    </Details>
+        <Figure src={Image5} />
+      </Details>
 
-  - 예약 결제 히스토리 카테고리에서는 해당 거래 건의 상태 변경 히스토리를 확인할 수 있습니다.
+    - 예약 결제 히스토리 카테고리에서는 해당 거래 건의 상태 변경 히스토리를 확인할 수 있습니다.
+  </li>
+</ul>
 
 #### 해지
 
-<VersionGate>
-  <Fragment slot="v1">
-    - 결제예약 API(Schedule API)를 이용한 결제 예약 건 중 예약 해지 상태인 거래 건입니다.
-  </Fragment>
+<ul>
+  <VersionGate v="v1">
+    <li>결제예약 API(Schedule API)를 이용한 결제 예약 건 중 예약 해지 상태인 거래 건입니다.</li>
+  </VersionGate>
 
-  <Fragment slot="v2">
-    - 결제 예약 API를 이용한 결제 예약 건 중 예약 해지 상태인 거래 건입니다.
-  </Fragment>
-</VersionGate>
+  <VersionGate v="v2">
+    <li>결제 예약 API를 이용한 결제 예약 건 중 예약 해지 상태인 거래 건입니다.</li>
+  </VersionGate>
 
-- 해지 상태의 빌링 결제 건을 클릭하면 오른쪽에 모달이 표시됩니다.
+  <li>해지 상태의 빌링 결제 건을 클릭하면 오른쪽에 모달이 표시됩니다.</li>
 
-- 해당 모달에서 결제 건의 상세정보, 재예약, 예약 결제 히스토리를 확인할 수 있습니다.
+  <li>
+    해당 모달에서 결제 건의 상세정보, 재예약, 예약 결제 히스토리를 확인할 수 있습니다.
 
-  - 상세정보 카테고리에서는 고객정보, 예약정보 등을 확인할 수 있습니다.
+    - 상세정보 카테고리에서는 고객정보, 예약정보 등을 확인할 수 있습니다.
 
-  - 재예약 카테고리에서는 해당 건을 다시 재예약할 수 있습니다.
+    - 재예약 카테고리에서는 해당 건을 다시 재예약할 수 있습니다.
 
-    <Details>
-      <Fragment slot="summary">해지 상태 건 클릭 시 상세 조회 화면 예시</Fragment>
+      <Details>
+        <Fragment slot="summary">해지 상태 건 클릭 시 상세 조회 화면 예시</Fragment>
 
-      <Figure src={Image6} />
-    </Details>
+        <Figure src={Image6} />
+      </Details>
 
-  - 예약 결제 히스토리 카테고리에서는 해당 거래 건의 상태 변경 히스토리를 확인할 수 있습니다.
+    - 예약 결제 히스토리 카테고리에서는 해당 거래 건의 상태 변경 히스토리를 확인할 수 있습니다.
+  </li>
+</ul>
 
 ## 빌링결제 캘린더
 
