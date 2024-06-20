@@ -83,23 +83,14 @@ import Details from "~/components/gitbook/Details.astro";
 최상단의 V1/V2 토글 상태에 따라 다른 컨텐츠를 표시하기 위한 컴포넌트입니다.
 
 ```tsx
-import VersionGate from "~/components/gitbook/VersionGate.astro";
+import VersionGate from "~/components/gitbook/VersionGate";
 
-// <Fragment> 외에 <p>나 다른 컴포넌트를 활용할 수도 있습니다.
-// 버전에 일치하는 슬롯이 없을 경우 아무 것도 보여지지 않습니다.
-<VersionGate>
-  <Fragment slot="v1">
-    V1에서 보여질 내용
-  </Fragment>
-  <Fragment slot="v2">
-    V2에서 보여질 내용
-  </Fragment>
+<VersionGate v="v1">
+  V1에서 보여질 내용
 </VersionGate>
 
-// default 속성을 통해 버전별 slot 바깥에 들어가는 내용의 버전을 설정할 수 있습니다.
-// 해당 버전에 대한 슬롯이 있을 경우 슬롯 내 콘텐츠가 우선적으로 보여집니다.
-<VersionGate default="v1">
-  V1에서 보여질 내용
+<VersionGate v="v2">
+  V2에서 보여질 내용
 </VersionGate>
 ```
 
