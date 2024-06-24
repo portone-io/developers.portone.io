@@ -1,4 +1,4 @@
-import { cache, createAsync } from "@solidjs/router";
+import { A, cache, createAsync } from "@solidjs/router";
 import { createMemo, Show } from "solid-js";
 
 interface Props {
@@ -20,12 +20,12 @@ export default function ContentRef(props: Props) {
 
   return (
     <Show when={title()}>
-      <a class="m-4" href={`/docs/${slug()}`}>
+      <A class="m-4" href={`/docs/${slug()}`}>
         <div class="flex items-center justify-between gap-4 border rounded bg-white p-4 transition-transform hover:translate-y-[-2px] hover:text-orange-5 hover:drop-shadow-[0_12px_13px_rgba(0,0,0,0.02)]">
           <span>{title()}</span>
           <i class="i-ic-baseline-chevron-right inline-block text-2xl" />
         </div>
-      </a>
+      </A>
     </Show>
   );
 }
