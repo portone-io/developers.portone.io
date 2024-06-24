@@ -5,6 +5,7 @@ import { defineConfig } from "@solidjs/start/config";
 import vinxiMdxPkg from "@vinxi/plugin-mdx";
 import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
+import remarkGfm from "remark-gfm";
 import unocss from "unocss/vite";
 import { imagetools } from "vite-imagetools";
 
@@ -41,7 +42,7 @@ export default defineConfig({
           jsx: true,
           jsxImportSource: "solid-js",
           providerImportSource: "solid-mdx",
-          remarkPlugins: [remarkFrontmatter],
+          remarkPlugins: [remarkFrontmatter, remarkGfm],
           rehypePlugins: [rehypeSlug],
         }),
         imagetools({
