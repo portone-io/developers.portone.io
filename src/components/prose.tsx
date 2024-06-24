@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import { clsx } from "clsx";
 import { type JSX, splitProps } from "solid-js";
 
@@ -107,17 +108,18 @@ export function p(props: JSX.IntrinsicElements["p"]) {
 }
 
 export function a(props: JSX.IntrinsicElements["a"]) {
-  const [local, rest] = splitProps(props, ["children", "class"]);
+  const [local, rest] = splitProps(props, ["children", "class", "href"]);
   return (
-    <a
+    <A
       {...rest}
+      href={local.href ?? "#"}
       class={clsx(
         "text-orange-5 hover:text-orange-7 cursor-pointer hover:underline",
         local.class,
       )}
     >
       {local.children}
-    </a>
+    </A>
   );
 }
 
