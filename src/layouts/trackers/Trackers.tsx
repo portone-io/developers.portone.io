@@ -38,9 +38,19 @@ export default function Trackers() {
     window.addEventListener("click", (e) => {
       const a = (e.target as Element).closest("a");
       if (!a) return;
+      const isExternalLink = (() => {
+        try {
+          const url = new URL(a.href);
+          return url.hostname !== location.hostname;
+        } catch {
+          return false;
+        }
+      })();
       const targetIsSelf = !a.target || a.target === "_self";
       const specialBehavior = e.ctrlKey || e.metaKey || e.button !== 0;
-      if (targetIsSelf && !specialBehavior) e.preventDefault();
+      if (isExternalLink && targetIsSelf && !specialBehavior) {
+        e.preventDefault();
+      }
       trackEvent(
         "Developers_Link_Click",
         {
@@ -52,6 +62,7 @@ export default function Trackers() {
           if (!targetIsSelf) return;
           if ("norefresh" in a.dataset) return;
           if (specialBehavior) return;
+          if (!isExternalLink) return;
           location.href = a.href;
         },
       );
