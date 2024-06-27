@@ -117,6 +117,8 @@ union ChannelGroupUsageByPaymentsOutput = ChannelGroupUsageByPaymentsPayload | I
 "채널 그룹 목록 조회 결과"
 union ChannelGroupsOutput = UnauthorizedError | ForbiddenError | StoreNotFoundError | ChannelGroupsPayload | InvalidRequestError | InternalError
 
+union ChannelSpecificFailure = ChannelSpecificFailureInvalidRequest | ChannelSpecificFailurePgProvider
+
 "채널 다건 조회 결과"
 union ChannelsOutput = ChannelsPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
@@ -124,9 +126,9 @@ union CreateChannelGroupOutput = CreateChannelGroupPayload | InvalidRequestError
 
 union CreateManualTransferOutput = InvalidRequestError | PlatformNotEnabledError | PlatformPartnerNotFoundError | CreateManualTransferPayload | UnauthorizedError | PlatformUnavailableSettlementDateError | InternalError
 
-union CreateOrderCancelTransferOutput = PlatformTransferAlreadyExistsError | PlatformOrderDetailMismatchedError | PlatformDiscountSharePolicyIdDuplicatedError | PlatformProductIdDuplicatedError | PlatformDiscountCancelExceededOrderCancelAmountError | CreateOrderCancelTransferPayload | UnauthorizedError | PlatformProductIdNotFoundError | PlatformCancellableDiscountAmountExceededError | PlatformCancellationAndPaymentTypeMismatchedError | PlatformTransferNotFoundError | PlatformCancellationNotFoundError | PlatformPaymentNotFoundError | PlatformCancellableProductQuantityExceededError | PlatformOrderTransferAlreadyCancelledError | PlatformCancellableAmountExceededError | PlatformTransferDiscountSharePolicyNotFoundError | PlatformSettlementCancelAmountExceededPortOneCancelError | InvalidRequestError | PlatformNotEnabledError | InternalError
+union CreateOrderCancelTransferOutput = PlatformTransferNotFoundError | PlatformCancellationNotFoundError | PlatformPaymentNotFoundError | PlatformCancellableProductQuantityExceededError | PlatformOrderTransferAlreadyCancelledError | PlatformCancellableAmountExceededError | PlatformTransferDiscountSharePolicyNotFoundError | PlatformSettlementCancelAmountExceededPortOneCancelError | InvalidRequestError | PlatformNotEnabledError | PlatformCannotSpecifyTransferError | PlatformProductIdNotFoundError | PlatformCancellableDiscountAmountExceededError | PlatformCancellationAndPaymentTypeMismatchedError | CreateOrderCancelTransferPayload | UnauthorizedError | PlatformTaxFreeAmountOverFlowError | PlatformDiscountSharePolicyIdDuplicatedError | PlatformProductIdDuplicatedError | PlatformDiscountCancelExceededOrderCancelAmountError | PlatformTransferAlreadyExistsError | PlatformOrderDetailMismatchedError | InternalError
 
-union CreateOrderTransferOutput = CreateOrderTransferPayload | UnauthorizedError | PlatformProductIdDuplicatedError | PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformAdditionalFeePoliciesNotFoundError | PlatformDiscountSharePoliciesNotFoundError | PlatformDiscountExceededOrderAmountError | PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformNotEnabledError | PlatformPartnerNotFoundError | PlatformTransferAlreadyExistsError | PlatformSettlementPaymentAmountExceededPortOnePaymentError | PlatformContractNotFoundError | PlatformPaymentNotFoundError | InvalidRequestError | InternalError
+union CreateOrderTransferOutput = PlatformAdditionalFeePoliciesNotFoundError | PlatformDiscountSharePoliciesNotFoundError | PlatformDiscountExceededOrderAmountError | PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError | PlatformCurrencyNotSupportedError | CreateOrderTransferPayload | UnauthorizedError | PlatformProductIdDuplicatedError | PlatformSettlementTaxFreeAmountExceededPortOnePaymentError | PlatformTaxFreeAmountOverFlowError | PlatformContractNotFoundError | PlatformPaymentNotFoundError | InvalidRequestError | PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformNotEnabledError | PlatformPartnerNotFoundError | PlatformTransferAlreadyExistsError | PlatformSettlementPaymentAmountExceededPortOnePaymentError | InternalError
 
 "추가 수수료 정책 생성 결과"
 union CreatePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyAlreadyExistsError | UnauthorizedError | CreatePlatformAdditionalFeePayload | PlatformNotEnabledError | InternalError
@@ -158,13 +160,19 @@ union DeletePlatformTransferOutput = DeletePlatformTransferPayload | PlatformTra
 union DeleteV2ApiSecretOutput = ForbiddenError | V2ApiSecretNotFoundError | StoreNotFoundError | DeleteV2ApiSecretPayload | UnauthorizedError | InternalError
 
 "일괄 지급 실행 결과"
-union ExecutePlatformBulkPayoutOutput = PlatformBulkPayoutNotFoundError | PlatformBulkPayoutStatusNotPreparingError | ForbiddenError | PlatformNotEnabledError | InvalidRequestError | PlatformBrnNotRegisteredError | PlatformDocumentHashMismatchedError | ExecutePlatformBulkPayoutPayload | UnauthorizedError | PlatformVirtualAccountBalanceCheckFailedError | PlatformSignatureVerificationFailedError | PlatformPayoutMethodNotAgencyError | PlatformNotEnoughAccountBalanceError | PlatformVirtualAccountNotAllocatedError | InternalError
+union ExecutePlatformBulkPayoutOutput = ExecutePlatformBulkPayoutPayload | UnauthorizedError | PlatformVirtualAccountBalanceCheckFailedError | PlatformSignatureVerificationFailedError | PlatformPayoutMethodNotAgencyError | PlatformNotEnoughAccountBalanceError | PlatformVirtualAccountNotAllocatedError | PlatformRemitRequestFailedError | PlatformNotEnabledError | InvalidRequestError | PlatformBrnNotRegisteredError | PlatformDocumentHashMismatchedError | PlatformBulkPayoutNotFoundError | PlatformBulkPayoutStatusNotPreparingError | ForbiddenError | InternalError
+
+"웹훅 시크릿 만료 결과"
+union ExpireStoreWebhookSecretOutput = InvalidRequestError | StoreNotFoundError | ForbiddenError | ExpireStoreWebhookSecretPayload | UnauthorizedError | WebhookSecretNotFoundError | InternalError
 
 "지급 건 생성 결과"
-union GeneratePlatformPayoutsOutput = GeneratePlatformPayoutsPayload | UnauthorizedError | PlatformBulkPayoutNotFoundError | PlatformPayoutsAlreadyGeneratedError | PlatformNotEnabledError | InvalidRequestError | PlatformNoSelectedPartnerSettlementsError | PlatformNegativePayoutAmountPartnersError | InternalError
+union GeneratePlatformPayoutsOutput = PlatformNotEnabledError | InvalidRequestError | PlatformNoSelectedPartnerSettlementsError | PlatformNegativePayoutAmountPartnersError | ForbiddenError | GeneratePlatformPayoutsPayload | UnauthorizedError | PlatformBulkPayoutNotFoundError | PlatformPayoutsAlreadyGeneratedError | InternalError
 
 "예금주 조회 결과"
 union GetPlatformAccountHolderOutput = InvalidRequestError | UnauthorizedError | PlatformExternalApiTemporarilyFailedError | PlatformAccountHolder | PlatformNotEnabledError | PlatformExternalApiFailedError | InternalError
+
+"웹훅 시크릿 발급 결과"
+union IssueStoreWebhookSecretOutput = InvalidRequestError | StoreNotFoundError | ForbiddenError | IssueStoreWebhookSecretPayload | UnauthorizedError | TooManyWebhookSecretsError | InternalError
 
 union IssueV2ApiSecretOutput = IssueV2ApiSecretPayload | UnauthorizedError | ForbiddenError | StoreNotFoundError | InternalError
 
@@ -267,6 +275,9 @@ union PlatformDiscountSharePolicyScheduleOutput = InvalidRequestError | Platform
 
 "플랫폼 중개수수료 정보"
 union PlatformFee = PlatformFixedAmountFee | PlatformFixedRateFee
+
+"공휴일 조회 결과"
+union PlatformHolidaysOutput = PlatformHolidaysPayload | UnauthorizedError | InternalError
 
 "플랫폼 정보 조회 결과"
 union PlatformOutput = Platform | PlatformNotEnabledError | InvalidRequestError | UnauthorizedError | InternalError
@@ -401,7 +412,7 @@ union SchedulePlatformContractOutput = SchedulePlatformContractPayload | Platfor
 union SchedulePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | PlatformDiscountSharePolicyScheduleAlreadyExistsError | SchedulePlatformDiscountSharePayload | PlatformNotEnabledError | UnauthorizedError | InternalError
 
 "파트너 업데이트 예약 결과"
-union SchedulePlatformPartnerOutput = UnauthorizedError | PlatformContractNotFoundError | PlatformAccountVerificationNotFoundError | SchedulePlatformPartnerPayload | PlatformNotEnabledError | PlatformAccountVerificationAlreadyUsedError | PlatformPartnerScheduleAlreadyExistsError | PlatformArchivedPartnerError | PlatformAccountVerificationFailedError | InvalidRequestError | PlatformPartnerNotFoundError | InternalError
+union SchedulePlatformPartnerOutput = UnauthorizedError | PlatformContractNotFoundError | PlatformAccountVerificationNotFoundError | SchedulePlatformPartnerPayload | PlatformNotEnabledError | PlatformAccountVerificationAlreadyUsedError | PlatformPartnerScheduleAlreadyExistsError | PlatformArchivedPartnerError | PlatformAccountVerificationFailedError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformInSufficientDataToChangePartnerTypeError | InternalError
 
 "파트너 예약 업데이트 결과"
 union SchedulePlatformPartnersOutput = SchedulePlatformPartnersPayload | UnauthorizedError | PlatformContractNotFoundError | PlatformArchivedPartnersCannotBeScheduledError | InvalidRequestError | PlatformNotEnabledError | PlatformPartnerSchedulesAlreadyExistError | InternalError
@@ -482,7 +493,7 @@ enum Bank {
   STANDARD_CHARTERED
   "한국씨티은행"
   CITI
-  "대구은행"
+  "iM뱅크"
   DAEGU
   "부산은행"
   BUSAN
@@ -554,7 +565,7 @@ enum Bank {
   YUANTA_SECURITIES
   "KB증권"
   KB_SECURITIES
-  "다울투자증권"
+  "다올투자증권"
   DAOL_SECURITIES
   "미래에셋증권"
   MIRAE_ASSET_SECURITIES
@@ -572,7 +583,7 @@ enum Bank {
   HYUNDAI_MOTOR_SECURITIES
   "키움증권"
   KIWOOM_SECURITIES
-  "이베스트투자증권"
+  "LS증권"
   EBEST_SECURITIES
   "SK증권"
   SK_SECURITIES
@@ -1772,6 +1783,7 @@ enum PgProvider {
   TOSSPAY_V2
   INICIS_V2
   KPN
+  KCP_V2
 }
 
 "플랫폼 계좌 상태"
@@ -1795,6 +1807,18 @@ enum PlatformBulkPayoutStatus {
   CANCELLED
   STOPPED
   COMPLETED
+}
+
+"금액 타입"
+enum PlatformCancellableAmountType {
+"""
+공급대가
+
+공급가액과 부가세를 더한 금액입니다.
+"""
+  SUPPLY_WITH_VAT
+  "면세 금액"
+  TAX_FREE
 }
 
 "플랫폼 파트너 사업자 상태"
@@ -1887,6 +1911,18 @@ enum PlatformPayoutStatus {
   FAILED
 }
 
+"금액 타입"
+enum PlatformPortOnePaymentCancelAmountType {
+"""
+공급대가
+
+공급가액과 부가세를 더한 금액입니다.
+"""
+  SUPPLY_WITH_VAT
+  "면세 금액"
+  TAX_FREE
+}
+
 "금액에 대한 소수점 처리 방식"
 enum PlatformRoundType {
   "소수점 반올림"
@@ -1943,6 +1979,14 @@ enum PlatformTransferType {
 enum PortOneVersion {
   V1
   V2
+}
+
+"채널 타입"
+enum SelectedChannelType {
+  "실 연동 채널"
+  LIVE
+  "테스트 연동 채널"
+  TEST
 }
 
 "정렬 방식"
@@ -2209,6 +2253,12 @@ input CreatePlatformOrderCancelTransferInput {
   memo: String
   "주문 취소 정보"
   orderDetail: CreatePlatformOrderCancelTransferOrderDetailInput
+"""
+주문 취소 면세 금액
+
+주문 취소 항목과 취소 면세 금액을 같이 전달하시면 최종 취소 면세 금액은 주문 취소 항목의 면세 금액이 아닌 전달해주신 취소 면세 금액으로 적용됩니다.
+"""
+  taxFreeAmount: Long
   "할인 정보"
   discounts: [CreatePlatformOrderCancelTransferDiscountInput!]!
   "정산 시작일"
@@ -2300,6 +2350,12 @@ input CreatePlatformOrderTransferInput {
   "주문 정보"
   orderDetail: CreatePlatformOrderTransferOrderDetailInput!
 """
+주문 면세 금액
+
+주문 항목과 면세 금액을 같이 전달하시면 최종 면세 금액은 주문 항목의 면세 금액이 아닌 전달해주신 면세 금액으로 적용됩니다.
+"""
+  taxFreeAmount: Long
+"""
 정산 시작일
 
 기본값은 결제 일시 입니다.
@@ -2355,6 +2411,8 @@ input CreatePlatformOrderTransferProductInput {
   name: String!
   "상품 금액"
   amount: Long!
+  "상품 면세 금액"
+  taxFreeAmount: Long
   "태그"
   tag: String
 }
@@ -2509,9 +2567,25 @@ input ExecutePlatformBulkPayoutInput {
   vidRandom: String!
 }
 
+input ExpireStoreWebhookSecretInput {
+  "웹훅 시크릿을 만료할 하위 상점 ID"
+  storeId: ID!
+  "만료시킬 웹훅 시크릿의 환경"
+  environment: WebhookEnvironment!
+  "만료시킬 웹훅 시크릿"
+  secret: String!
+}
+
 input GeneratePlatformPayoutsInput {
   bulkPayoutId: ID!
   isForTest: Boolean
+}
+
+input IssueStoreWebhookSecretInput {
+  "웹훅 시크릿을 발급할 하위 상점 ID"
+  storeId: ID!
+  "발급할 웹훅 시크릿의 환경"
+  environment: WebhookEnvironment!
 }
 
 input IssueV2ApiSecretInput {
@@ -3687,6 +3761,11 @@ interface PlatformTransferSummaryPayment {
   paymentPlainId: String!
 }
 
+"결제가 이미 완료된 경우"
+type AlreadyPaidError implements Error {
+  message: String
+}
+
 "결제가 이미 완료되었거나 대기중인 경우"
 type AlreadyPaidOrWaitingError implements Error {
   message: String
@@ -4149,6 +4228,20 @@ type BillingKeyAlreadyDeletedError implements Error {
   message: String
 }
 
+"빌링키가 존재하지 않는 경우"
+type BillingKeyNotFoundError implements Error {
+  message: String
+}
+
+type BillingKeyNotIssuedError implements Error {
+  message: String
+}
+
+"결제 취소 금액이 취소 가능 금액을 초과한 경우"
+type CancelAmountExceedsCancellableAmountError implements Error {
+  message: String
+}
+
 "추가 수수료 정책 예약 업데이트 취소 성공 응답"
 type CancelPlatformAdditionalFeePolicySchedulePayload {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
@@ -4176,6 +4269,36 @@ type CancelPlatformDiscountSharePolicySchedulePayload {
 type CancelPlatformPartnerSchedulePayload {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
+}
+
+"취소 과세 금액이 취소 가능한 과세 금액을 초과한 경우"
+type CancelTaxAmountExceedsCancellableTaxAmountError implements Error {
+  message: String
+}
+
+"취소 면세 금액이 취소 가능한 면세 금액을 초과한 경우"
+type CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError implements Error {
+  message: String
+}
+
+"취소 가능 잔액 검증에 실패한 경우"
+type CancellableAmountConsistencyBrokenError implements Error {
+  message: String
+}
+
+"현금영수증이 이미 발급된 경우"
+type CashReceiptAlreadyIssuedError implements Error {
+  message: String
+}
+
+"현금영수증이 존재하지 않는 경우"
+type CashReceiptNotFoundError implements Error {
+  message: String
+}
+
+"현금영수증이 발급되지 않은 경우"
+type CashReceiptNotIssuedError implements Error {
+  message: String
 }
 
 "결제 예정 시각 변경 성공 응답"
@@ -4250,6 +4373,7 @@ type ChannelGroupSummary {
   plainId: String!
   "채널 그룹 이름"
   name: String!
+  "테스트 채널 그룹 여부"
   isForTest: Boolean!
 }
 
@@ -4277,6 +4401,31 @@ type ChannelGroupsPayload {
 "요청된 채널이 존재하지 않는 경우"
 type ChannelNotFoundError implements Error {
   message: String
+}
+
+"여러 채널을 지정한 요청에서, 채널 각각에서 오류가 발생한 경우"
+type ChannelSpecificError implements Error {
+  message: String
+  failures: [ChannelSpecificFailure!]!
+  succeededChannels: [SelectedChannel!]!
+}
+
+"""
+요청된 입력 정보가 유효하지 않은 경우
+
+허가되지 않은 값, 올바르지 않은 형식의 요청 등이 모두 해당됩니다.
+"""
+type ChannelSpecificFailureInvalidRequest {
+  channel: SelectedChannel!
+  message: String
+}
+
+"PG사에서 오류를 전달한 경우"
+type ChannelSpecificFailurePgProvider {
+  channel: SelectedChannel!
+  message: String
+  pgCode: String!
+  pgMessage: String!
 }
 
 "채널 다건 조회 성공 응답 정보"
@@ -4395,6 +4544,11 @@ type ExecutePlatformBulkPayoutPayload {
   bulkPayout: PlatformBulkPayout!
 }
 
+type ExpireStoreWebhookSecretPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
 "결제 실패 상태"
 type FailedPaymentSchedule implements Node & PaymentSchedule {
   "결제 예약 건 아이디"
@@ -4486,7 +4640,7 @@ type IdentityVerificationNotSentError implements Error {
 }
 
 "포트원 시스템에서 알 수 없는 오류가 발생한 경우"
-type InternalError {
+type InternalError implements Error {
   message: String
 }
 
@@ -4502,6 +4656,10 @@ type InvalidRequestError implements Error {
 "올바르지 않은 웹훅 URL 이 요청으로 주어진 경우"
 type InvalidWebhookUrlError implements Error {
   message: String
+}
+
+type IssueStoreWebhookSecretPayload {
+  newSecret: WebhookSecretInfo!
 }
 
 type IssueV2ApiSecretPayload {
@@ -4618,6 +4776,10 @@ API secret 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   deleteV2ApiSecret(input: DeleteV2ApiSecretInput!): DeleteV2ApiSecretOutput! @hidden @unstable
   "웹훅 설정 업데이트"
   updateStoreWebhookSetting(input: UpdateStoreWebhookSettingInput!): UpdateStoreWebhookSettingOutput! @hidden @unstable
+  "웹훅 시크릿 발급"
+  issueStoreWebhookSecret(input: IssueStoreWebhookSecretInput!): IssueStoreWebhookSecretOutput! @hidden @unstable
+  "웹훅 시크릿 만료"
+  expireStoreWebhookSecret(input: ExpireStoreWebhookSecretInput!): ExpireStoreWebhookSecretOutput! @hidden @unstable
   "웹훅 호출 테스트"
   testWebhook(input: TestWebhookInput!): TestWebhookOutput! @hidden @unstable
 """
@@ -4782,6 +4944,26 @@ type PageInfo {
   totalCount: Int!
 }
 
+"결제가 이미 취소된 경우"
+type PaymentAlreadyCancelledError implements Error {
+  message: String
+}
+
+"결제 건이 존재하지 않는 경우"
+type PaymentNotFoundError implements Error {
+  message: String
+}
+
+"결제가 완료되지 않은 경우"
+type PaymentNotPaidError implements Error {
+  message: String
+}
+
+"결제 건이 입금 대기 상태가 아닌 경우"
+type PaymentNotWaitingForDepositError implements Error {
+  message: String
+}
+
 "상품 정보"
 type PaymentProduct {
 """
@@ -4830,7 +5012,17 @@ type PaymentRecoverySettingNotFoundError implements Error {
 }
 
 "결제 예약건이 이미 존재하는 경우"
-type PaymentScheduleAlreadyExistsError {
+type PaymentScheduleAlreadyExistsError implements Error {
+  message: String
+}
+
+"결제 예약건이 이미 처리된 경우"
+type PaymentScheduleAlreadyProcessedError implements Error {
+  message: String
+}
+
+"결제 예약건이 이미 취소된 경우"
+type PaymentScheduleAlreadyRevokedError implements Error {
   message: String
 }
 
@@ -5189,6 +5381,8 @@ true 이면 isForTest 가 true 인 파트너들을 조회하고, false 이면 is
   partnerCurrencies(isArchived: Boolean): PlatformPartnerCurrenciesOutput! @hidden @unstable
   "지급에 사용된 통화들을 조회합니다."
   payoutCurrencies(isForTest: Boolean): PlatformPayoutCurrenciesOutput! @hidden @unstable
+  "공휴일을 조회합니다."
+  holidays(year: Int!): PlatformHolidaysOutput!
 }
 
 """
@@ -5460,8 +5654,10 @@ type PlatformCancelOrderTransfersExistsError implements Error {
   message: String
 }
 
+"취소 가능한 금액이 초과한 경우"
 type PlatformCancellableAmountExceededError implements Error {
   cancellableAmount: Long!
+  amountType: PlatformCancellableAmountType!
   message: String
 }
 
@@ -5504,6 +5700,11 @@ type PlatformCannotArchiveScheduledDiscountSharePolicyError implements Error {
 
 "예약된 업데이트가 있는 파트너를 보관하려고 하는 경우"
 type PlatformCannotArchiveScheduledPartnerError implements Error {
+  message: String
+}
+
+"정산 건 식별에 실패한 경우"
+type PlatformCannotSpecifyTransferError implements Error {
   message: String
 }
 
@@ -5807,6 +6008,25 @@ type PlatformFixedRateFee {
   rate: Int!
 }
 
+"공휴일"
+type PlatformHoliday {
+  "이름"
+  name: String!
+  "날짜"
+  date: Date!
+}
+
+"공휴일 조회"
+type PlatformHolidaysPayload {
+  "공휴일 리스트"
+  holidays: [PlatformHoliday!]!
+}
+
+"파트너 타입 수정에 필요한 데이터가 부족한 경우"
+type PlatformInSufficientDataToChangePartnerTypeError implements Error {
+  message: String
+}
+
 type PlatformInvalidSettlementFormulaError implements Error {
   platformFee: PlatformSettlementFormulaError
   discountShare: PlatformSettlementFormulaError
@@ -5957,6 +6177,10 @@ type PlatformOrderSettlementAmount {
 참조된 계약의 결제 금액 부가세 감액 여부에 따라 false인 경우 0원, true인 경우 결제 금액 부가세입니다.
 """
   paymentVatBurden: Long!
+  "면세 금액"
+  taxFree: Long!
+  "공급가액"
+  supply: Long!
   "주문 금액"
   order: Long!
   "중개 수수료"
@@ -6062,6 +6286,8 @@ type PlatformOrderTransferProduct {
   name: String!
   "상품 금액"
   amount: Long!
+  "상품 면세 금액"
+  taxFreeAmount: Long!
   "태그"
   tag: String
 }
@@ -6591,10 +6817,17 @@ type PlatformProductIdNotFoundError implements Error {
   message: String
 }
 
+"송금 api 요청에 실패한 경우"
+type PlatformRemitRequestFailedError implements Error {
+  message: String
+}
+
+"정산 취소 요청 금액이 포트원 결제 취소 내역의 취소 금액을 초과한 경우"
 type PlatformSettlementCancelAmountExceededPortOneCancelError implements Error {
   registeredSettlementCancelAmount: Long!
   requestSettlementCancelAmount: Long!
   portOneCancelAmount: Long!
+  amountType: PlatformPortOnePaymentCancelAmountType!
   message: String
 }
 
@@ -6701,6 +6934,7 @@ type PlatformSettlementFormulaValidation {
   error: PlatformInvalidSettlementFormulaError
 }
 
+"정산 요청 결제 금액이 포트원 결제 내역의 결제 금액을 초과한 경우"
 type PlatformSettlementPaymentAmountExceededPortOnePaymentError implements Error {
   registeredSettlementPaymentAmount: Long!
   requestSettlementPaymentAmount: Long!
@@ -6716,8 +6950,29 @@ type PlatformSettlementRule {
   adjustSettlementDateAfterHolidayIfEarlier: Boolean!
 }
 
+"정산 요청 공급대가가 포트원 결제 내역의 공급대가를 초과한 경우"
+type PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError implements Error {
+  registeredSettlementSupplyWithVatAmount: Long!
+  requestSettlementSupplyWithVatAmount: Long!
+  portOneSupplyWithVatAmount: Long!
+  message: String
+}
+
+"정산 요청 면세 금액이 포트원 결제 내역의 면세 금액을 초과한 경우"
+type PlatformSettlementTaxFreeAmountExceededPortOnePaymentError implements Error {
+  registeredSettlementTaxFreeAmount: Long!
+  requestSettlementTaxFreeAmount: Long!
+  portOneTaxFreeAmount: Long!
+  message: String
+}
+
 "전자서명에 대한 유효성 검증에 실패한 경우"
 type PlatformSignatureVerificationFailedError implements Error {
+  message: String
+}
+
+"면세 금액이 결제금액을 초과한 경우"
+type PlatformTaxFreeAmountOverFlowError implements Error {
   message: String
 }
 
@@ -7047,6 +7302,22 @@ type ScheduledPaymentSchedule implements Node & PaymentSchedule {
   events: PaymentScheduleEvents!
 }
 
+"(결제, 본인인증 등에) 선택된 채널 정보"
+type SelectedChannel {
+  "채널 타입"
+  type: SelectedChannelType!
+  "채널 아이디"
+  id: String
+  "채널 키"
+  key: String
+  "채널 명"
+  name: String
+  "PG사"
+  pgProvider: PgProvider!
+  "PG사 고객사 식별 아이디"
+  pgMerchantId: String!
+}
+
 """
 분리 형식 주소
 
@@ -7205,6 +7476,7 @@ type StoreWebhookSetting {
   url: String
   contentType: WebhookContentType!
   version: WebhookVersion
+  secrets: [WebhookSecretInfo!]!
 }
 
 "하위 상점의 웹훅 URL 이 설정되어 있지 않은 경우"
@@ -7277,6 +7549,16 @@ type SucceededPaymentSchedule implements Node & PaymentSchedule {
   events: PaymentScheduleEvents!
 }
 
+"면세 금액 등 하위 항목들의 합이 전체 취소 금액을 초과한 경우"
+type SumOfPartsExceedsCancelAmountError implements Error {
+  message: String
+}
+
+"면세 금액 등 하위 항목들의 합이 전체 결제 금액을 초과한 경우"
+type SumOfPartsExceedsTotalAmountError implements Error {
+  message: String
+}
+
 type TestWebhookPayload {
   requestBody: String!
   responseBody: String!
@@ -7287,6 +7569,11 @@ type TestWebhookPayload {
 type TogglePlatformBulkPayoutPartnerSettlementsPayload {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
+}
+
+"웹훅 시크릿이 최대 갯수에 도달하여 추가 발급에 실패한 경우"
+type TooManyWebhookSecretsError implements Error {
+  message: String
 }
 
 "인증 정보가 올바르지 않은 경우"
@@ -7375,6 +7662,21 @@ type V2ApiSecretInfosPayload {
 
 "요청된 시크릿이 존재하지 않는 경우"
 type V2ApiSecretNotFoundError implements Error {
+  message: String
+}
+
+"웹훅 내역이 존재하지 않는 경우"
+type WebhookNotFoundError implements Error {
+  message: String
+}
+
+type WebhookSecretInfo {
+  secret: String!
+  createdAt: DateTime!
+}
+
+"만료하고자 하는 웹훅 시크릿을 찾을 수 없는 경우"
+type WebhookSecretNotFoundError implements Error {
   message: String
 }
 
