@@ -2912,7 +2912,7 @@
             "x-portone-description": "<p>성공 응답으로 예약된 파트너 객체가 반환됩니다.</p>\n"
           },
           "400": {
-            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n<li><code>PlatformAccountVerificationFailedError</code>: 파트너 계좌 인증이 실패한 경우</li>\n</ul>\n",
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n<li><code>PlatformAccountVerificationFailedError</code>: 파트너 계좌 인증이 실패한 경우</li>\n<li><code>PlatformInSufficientDataToChangePartnerTypeError</code>: 파트너 타입 수정에 필요한 데이터가 부족한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4523,7 +4523,7 @@
             }
           },
           "400": {
-            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n<li><code>PlatformDiscountExceededOrderAmountError</code></li>\n<li><code>PlatformProductIdDuplicatedError</code></li>\n<li><code>PlatformSettlementPaymentAmountExceededPortOnePaymentError</code></li>\n<li><code>PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError</code></li>\n<li><code>PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n<li><code>PlatformDiscountExceededOrderAmountError</code></li>\n<li><code>PlatformProductIdDuplicatedError</code></li>\n<li><code>PlatformSettlementPaymentAmountExceededPortOnePaymentError</code>: 정산 요청 결제 금액이 포트원 결제 내역의 결제 금액을 초과한 경우</li>\n<li><code>PlatformSettlementTaxFreeAmountExceededPortOnePaymentError</code>: 정산 요청 면세 금액이 포트원 결제 내역의 면세 금액을 초과한 경우</li>\n<li><code>PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError</code>: 정산 요청 공급대가가 포트원 결제 내역의 공급대가를 초과한 경우</li>\n<li><code>PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError</code></li>\n<li><code>PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError</code></li>\n<li><code>PlatformCurrencyNotSupportedError</code>: 지원 되지 않는 통화를 선택한 경우</li>\n<li><code>PlatformTaxFreeAmountOverFlowError</code>: 면세 금액이 결제금액을 초과한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4616,7 +4616,7 @@
             }
           },
           "400": {
-            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n<li><code>PlatformOrderDetailMismatchedError</code></li>\n<li><code>PlatformDiscountSharePolicyIdDuplicatedError</code></li>\n<li><code>PlatformCancellableAmountExceededError</code></li>\n<li><code>PlatformCancellableDiscountAmountExceededError</code></li>\n<li><code>PlatformProductIdDuplicatedError</code></li>\n<li><code>PlatformCancellableProductQuantityExceededError</code></li>\n<li><code>PlatformOrderTransferAlreadyCancelledError</code></li>\n<li><code>PlatformDiscountCancelExceededOrderCancelAmountError</code></li>\n<li><code>PlatformCancellationAndPaymentTypeMismatchedError</code></li>\n<li><code>PlatformSettlementCancelAmountExceededPortOneCancelError</code></li>\n</ul>\n",
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n<li><code>PlatformOrderDetailMismatchedError</code></li>\n<li><code>PlatformDiscountSharePolicyIdDuplicatedError</code></li>\n<li><code>PlatformCancellableAmountExceededError</code>: 취소 가능한 금액이 초과한 경우</li>\n<li><code>PlatformCancellableDiscountAmountExceededError</code></li>\n<li><code>PlatformProductIdDuplicatedError</code></li>\n<li><code>PlatformCancellableProductQuantityExceededError</code></li>\n<li><code>PlatformOrderTransferAlreadyCancelledError</code></li>\n<li><code>PlatformDiscountCancelExceededOrderCancelAmountError</code></li>\n<li><code>PlatformCancellationAndPaymentTypeMismatchedError</code></li>\n<li><code>PlatformSettlementCancelAmountExceededPortOneCancelError</code>: 정산 취소 요청 금액이 포트원 결제 취소 내역의 취소 금액을 초과한 경우</li>\n<li><code>PlatformCannotSpecifyTransferError</code>: 정산 건 식별에 실패한 경우</li>\n<li><code>PlatformTaxFreeAmountOverFlowError</code>: 면세 금액이 결제금액을 초과한 경우</li>\n</ul>\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -4978,6 +4978,7 @@
         }
       }
     },
+    "/platform/holidays/{year}": {},
     "/identity-verifications/{identityVerificationId}": {
       "get": {
         "summary": "<p>본인인증 단건 조회</p>\n",
@@ -5761,6 +5762,190 @@
         "x-portone-description": "<p>빌링키를 삭제합니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/DeleteBillingKeyError"
+        }
+      }
+    },
+    "/billing-keys": {
+      "get": {
+        "summary": "<p>빌링키 다건 조회</p>\n",
+        "description": "<p>빌링키 다건 조회</p>\n<p>주어진 조건에 맞는 빌링키들을 페이지 기반으로 조회합니다.</p>\n",
+        "operationId": "getBillingKeyInfos",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetBillingKeyInfosBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답으로 조회된 빌링키 리스트와 페이지 정보가 반환됩니다.</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답으로 조회된 빌링키 리스트와 페이지 정보가 반환됩니다."
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "billingKey",
+        "x-portone-title": "빌링키 다건 조회",
+        "x-portone-description": "<p>주어진 조건에 맞는 빌링키들을 페이지 기반으로 조회합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetBillingKeyInfosError"
+        }
+      },
+      "post": {
+        "summary": "<p>빌링키 발급</p>\n",
+        "description": "<p>빌링키 발급</p>\n<p>빌링키 발급을 요청합니다.</p>\n",
+        "operationId": "issueBillingKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueBillingKeyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "<p>성공 응답</p>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "<ul>\n<li><code>ChannelNotFoundError</code>: 요청된 채널이 존재하지 않는 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류를 전달한 경우</li>\n<li><code>ChannelSpecificError</code>: 여러 채널을 지정한 요청에서, 채널 각각에서 오류가 발생한 경우</li>\n</ul>\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "billingKey",
+        "x-portone-title": "빌링키 발급",
+        "x-portone-description": "<p>빌링키 발급을 요청합니다.</p>\n",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/IssueBillingKeyError"
         }
       }
     },
@@ -6892,100 +7077,6 @@
         "x-portone-description": "<p>수기 결제를 진행합니다.</p>\n",
         "x-portone-error": {
           "$ref": "#/components/schemas/PayInstantlyError"
-        }
-      }
-    },
-    "/billing-keys": {
-      "post": {
-        "summary": "<p>빌링키 발급</p>\n",
-        "description": "<p>빌링키 발급</p>\n<p>빌링키 발급을 요청합니다.</p>\n",
-        "operationId": "issueBillingKey",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IssueBillingKeyBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "<p>성공 응답</p>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IssueBillingKeyResponse"
-                }
-              }
-            },
-            "x-portone-title": "성공 응답"
-          },
-          "400": {
-            "description": "<ul>\n<li><code>InvalidRequestError</code>: 요청된 입력 정보가 유효하지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IssueBillingKeyError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "<ul>\n<li><code>UnauthorizedError</code>: 인증 정보가 올바르지 않은 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IssueBillingKeyError"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "<ul>\n<li><code>ForbiddenError</code>: 요청이 거절된 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IssueBillingKeyError"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "<ul>\n<li><code>ChannelNotFoundError</code>: 요청된 채널이 존재하지 않는 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IssueBillingKeyError"
-                }
-              }
-            }
-          },
-          "502": {
-            "description": "<ul>\n<li><code>PgProviderError</code>: PG사에서 오류를 전달한 경우</li>\n<li><code>ChannelSpecificError</code>: 여러 채널을 지정한 요청에서, 채널 각각에서 오류가 발생한 경우</li>\n</ul>\n",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IssueBillingKeyError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerJwt": []
-          },
-          {
-            "portOne": []
-          }
-        ],
-        "x-portone-category": "billingKey",
-        "x-portone-title": "빌링키 발급",
-        "x-portone-description": "<p>빌링키 발급을 요청합니다.</p>\n",
-        "x-portone-error": {
-          "$ref": "#/components/schemas/IssueBillingKeyError"
         }
       }
     },
@@ -16989,7 +17080,7 @@
             "title": "미즈호은행"
           },
           "EBEST_SECURITIES": {
-            "title": "이베스트투자증권"
+            "title": "LS증권"
           },
           "IBK": {
             "title": "기업은행"
@@ -17052,7 +17143,7 @@
             "title": "유진투자증권"
           },
           "DAEGU": {
-            "title": "대구은행"
+            "title": "iM뱅크"
           },
           "SUHYUP": {
             "title": "수협은행"
@@ -17073,7 +17164,7 @@
             "title": "교통은행"
           },
           "DAOL_SECURITIES": {
-            "title": "다울투자증권"
+            "title": "다올투자증권"
           },
           "NFCF": {
             "title": "산림조합중앙회"
@@ -17191,70 +17282,146 @@
         "x-portone-title": "빌링키가 이미 삭제된 경우",
         "x-portone-status-code": 409
       },
-      "BillingKeyInfo": {
-        "title": "빌링키 정보",
+      "BillingKeyFailure": {
+        "title": "발급 실패 상세 정보",
         "required": [
-          "billingKey",
-          "merchantId",
-          "storeId",
-          "channels",
-          "customer",
-          "issuedAt"
+          "failedAt"
         ],
         "type": "object",
         "properties": {
-          "billingKey": {
+          "message": {
             "type": "string",
-            "title": "빌링키"
+            "title": "실패 사유"
           },
-          "merchantId": {
+          "pgCode": {
             "type": "string",
-            "title": "고객사 아이디"
+            "title": "PG사 실패 코드"
           },
-          "storeId": {
+          "pgMessage": {
             "type": "string",
-            "title": "상점 아이디"
+            "title": "PG사 실패 사유"
           },
-          "methods": {
-            "title": "빌링키 결제수단 상세 정보",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/BillingKeyPaymentMethod"
-            },
-            "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 결제수단 정보가 담길 수 있습니다.</p>\n"
-          },
-          "channels": {
-            "title": "빌링키 발급 시 사용된 채널",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SelectedChannel"
-            },
-            "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 채널 정보가 담길 수 있습니다.</p>\n"
-          },
-          "customer": {
-            "$ref": "#/components/schemas/Customer",
-            "title": "고객 정보"
-          },
-          "customData": {
-            "type": "string",
-            "title": "사용자 지정 데이터"
-          },
-          "issueId": {
-            "type": "string",
-            "title": "고객사가 채번하는 빌링키 발급 건 고유 아이디"
-          },
-          "issueName": {
-            "type": "string",
-            "title": "빌링키 발급 건 이름"
-          },
-          "issuedAt": {
+          "failedAt": {
             "type": "string",
             "format": "date-time",
-            "title": "발급 시점"
+            "title": "실패 시점"
           }
         },
+        "description": "<p>발급 실패 상세 정보</p>\n",
+        "x-portone-title": "발급 실패 상세 정보"
+      },
+      "BillingKeyFilterInput": {
+        "title": "빌링키 다건 조회를 위한 입력 정보",
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "<p>Merchant 사용자만 사용가능하며, 지정되지 않은 경우 고객사 전체 빌링키를 조회합니다.</p>\n"
+          },
+          "timeRangeField": {
+            "$ref": "#/components/schemas/BillingKeyTimeRangeField",
+            "title": "조회 기준 시점 유형"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time",
+            "title": "조회 기준 시점 범위의 시작",
+            "description": "<p>값을 입력하지 않으면 end의 90일 전으로 설정됩니다.</p>\n"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "title": "조회 기준 시점 범위의 끝",
+            "description": "<p>값을 입력하지 않으면 현재 시점으로 설정됩니다.</p>\n"
+          },
+          "status": {
+            "title": "빌링키 상태 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingKeyStatus"
+            },
+            "description": "<p>값을 입력하지 않으면 빌링키 상태 필터링이 적용되지 않습니다.</p>\n"
+          },
+          "channelGroupIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "채널 그룹 아이디 리스트",
+            "description": "<p>값을 입력하지 않으면 스마트 라우팅 그룹 아이디 필터링이 적용되지 않습니다.</p>\n"
+          },
+          "customerId": {
+            "type": "string",
+            "title": "고객 ID"
+          },
+          "platformType": {
+            "$ref": "#/components/schemas/PaymentClientType",
+            "title": "플랫폼 유형"
+          },
+          "textSearch": {
+            "$ref": "#/components/schemas/BillingKeyTextSearch",
+            "title": "통합 검색 필터"
+          },
+          "pgProviders": {
+            "title": "PG사 결제 모듈 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgProvider"
+            },
+            "description": "<p>값을 입력하지 않으면 PG사 결제 모듈 필터링이 적용되지 않습니다.</p>\n"
+          },
+          "pgCompanies": {
+            "title": "PG사 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgCompany"
+            },
+            "description": "<p>값을 입력하지 않으면 PG사 필터링이 적용되지 않습니다.</p>\n"
+          },
+          "methods": {
+            "title": "결제수단 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingKeyPaymentMethodType"
+            },
+            "description": "<p>값을 입력하지 않으면 결제수단 필터링이 적용되지 않습니다.</p>\n"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          }
+        },
+        "description": "<p>빌링키 다건 조회를 위한 입력 정보</p>\n",
+        "x-portone-title": "빌링키 다건 조회를 위한 입력 정보"
+      },
+      "BillingKeyInfo": {
+        "title": "빌링키 정보",
         "description": "<p>빌링키 정보</p>\n",
-        "x-portone-title": "빌링키 정보"
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DeletedBillingKeyInfo"
+          },
+          {
+            "$ref": "#/components/schemas/IssuedBillingKeyInfo"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "status",
+          "mapping": {
+            "DELETED": "#/components/schemas/DeletedBillingKeyInfo",
+            "ISSUED": "#/components/schemas/IssuedBillingKeyInfo"
+          }
+        },
+        "x-portone-title": "빌링키 정보",
+        "x-portone-discriminator": {
+          "ISSUED": {
+            "title": "발급 완료"
+          },
+          "DELETED": {
+            "title": "발급 삭제 완료"
+          }
+        }
       },
       "BillingKeyInfoSummary": {
         "required": [
@@ -17629,6 +17796,32 @@
         "description": "<p>계좌이체 정보</p>\n",
         "x-portone-title": "계좌이체 정보"
       },
+      "BillingKeyPaymentMethodType": {
+        "title": "빌링키 결제 수단",
+        "type": "string",
+        "description": "<p>빌링키 결제 수단</p>\n",
+        "enum": [
+          "CARD",
+          "EASY_PAY",
+          "MOBILE",
+          "TRANSFER"
+        ],
+        "x-portone-title": "빌링키 결제 수단",
+        "x-portone-enum": {
+          "CARD": {
+            "title": "카드"
+          },
+          "MOBILE": {
+            "title": "모바일"
+          },
+          "EASY_PAY": {
+            "title": "간편 결제"
+          },
+          "TRANSFER": {
+            "title": "계좌 이체"
+          }
+        }
+      },
       "BillingKeyPaymentSummary": {
         "title": "빌링키 결제 완료된 결제 건 요약 정보",
         "required": [
@@ -17649,6 +17842,142 @@
         },
         "description": "<p>빌링키 결제 완료된 결제 건 요약 정보</p>\n",
         "x-portone-title": "빌링키 결제 완료된 결제 건 요약 정보"
+      },
+      "BillingKeySortBy": {
+        "title": "빌링키 정렬 기준",
+        "type": "string",
+        "description": "<p>빌링키 정렬 기준</p>\n",
+        "enum": [
+          "DELETED_AT",
+          "ISSUED_AT",
+          "REQUESTED_AT",
+          "STATUS_TIMESTAMP"
+        ],
+        "x-portone-title": "빌링키 정렬 기준",
+        "x-portone-enum": {
+          "REQUESTED_AT": {
+            "title": "발급 요청 시각"
+          },
+          "ISSUED_AT": {
+            "title": "발급 완료 시각"
+          },
+          "DELETED_AT": {
+            "title": "삭제 완료 시각"
+          },
+          "STATUS_TIMESTAMP": {
+            "title": "상태 변경 시각",
+            "description": "<p>발급 완료 상태의 경우 ISSUED_AT, 삭제 완료 상태의 경우 DELETED_AT</p>\n"
+          }
+        }
+      },
+      "BillingKeySortInput": {
+        "title": "빌링키 다건 조회 시 정렬 조건",
+        "type": "object",
+        "properties": {
+          "by": {
+            "$ref": "#/components/schemas/BillingKeySortBy",
+            "title": "정렬 기준 필드",
+            "description": "<p>어떤 필드를 기준으로 정렬할 지 결정합니다. 비워서 보낼 경우, REQUESTED_AT이 기본값으로 설정됩니다.</p>\n"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SortOrder",
+            "title": "정렬 순서",
+            "description": "<p>어떤 순서로 정렬할 지 결정합니다. 비워서 보낼 경우, DESC(내림차순)가 기본값으로 설정됩니다.</p>\n"
+          }
+        },
+        "description": "<p>빌링키 다건 조회 시 정렬 조건</p>\n",
+        "x-portone-title": "빌링키 다건 조회 시 정렬 조건"
+      },
+      "BillingKeyStatus": {
+        "title": "빌링키 상태",
+        "type": "string",
+        "description": "<p>빌링키 상태</p>\n",
+        "enum": [
+          "DELETED",
+          "ISSUED"
+        ],
+        "x-portone-title": "빌링키 상태",
+        "x-portone-enum": {
+          "ISSUED": {},
+          "DELETED": {}
+        }
+      },
+      "BillingKeyTextSearch": {
+        "title": "통합검색 입력 정보",
+        "required": [
+          "field",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "$ref": "#/components/schemas/BillingKeyTextSearchField"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "description": "<p>통합검색 입력 정보</p>\n",
+        "x-portone-title": "통합검색 입력 정보"
+      },
+      "BillingKeyTextSearchField": {
+        "title": "통합검색 항목",
+        "type": "string",
+        "description": "<p>통합검색 항목</p>\n",
+        "enum": [
+          "BILLING_KEY",
+          "CARD_BIN",
+          "CARD_NUMBER",
+          "CHANNEL_GROUP_NAME",
+          "CUSTOMER_ADDRESS",
+          "CUSTOMER_EMAIL",
+          "CUSTOMER_NAME",
+          "CUSTOMER_PHONE_NUMBER",
+          "CUSTOMER_ZIPCODE",
+          "PG_MERCHANT_ID",
+          "USER_AGENT"
+        ],
+        "x-portone-title": "통합검색 항목",
+        "x-portone-enum": {
+          "CUSTOMER_EMAIL": {},
+          "USER_AGENT": {},
+          "CUSTOMER_ADDRESS": {},
+          "CARD_BIN": {},
+          "CHANNEL_GROUP_NAME": {},
+          "PG_MERCHANT_ID": {},
+          "CUSTOMER_PHONE_NUMBER": {},
+          "CUSTOMER_ZIPCODE": {},
+          "CUSTOMER_NAME": {},
+          "CARD_NUMBER": {},
+          "BILLING_KEY": {}
+        }
+      },
+      "BillingKeyTimeRangeField": {
+        "title": "빌링키 다건 조회 시, 시각 범위를 적용할 필드",
+        "type": "string",
+        "description": "<p>빌링키 다건 조회 시, 시각 범위를 적용할 필드</p>\n",
+        "enum": [
+          "DELETED_AT",
+          "ISSUED_AT",
+          "REQUESTED_AT",
+          "STATUS_TIMESTAMP"
+        ],
+        "x-portone-title": "빌링키 다건 조회 시, 시각 범위를 적용할 필드",
+        "x-portone-enum": {
+          "REQUESTED_AT": {
+            "title": "발급 요청 시각"
+          },
+          "ISSUED_AT": {
+            "title": "발급 완료 시각"
+          },
+          "DELETED_AT": {
+            "title": "삭제 완료 시각"
+          },
+          "STATUS_TIMESTAMP": {
+            "title": "상태 변경 시각",
+            "description": "<p>발급 완료 상태의 경우 ISSUED_AT, 삭제 완료 상태의 경우 DELETED_AT</p>\n"
+          }
+        }
       },
       "CancelAmountExceedsCancellableAmountError": {
         "title": "결제 취소 금액이 취소 가능 금액을 초과한 경우",
@@ -19041,7 +19370,8 @@
             "title": "채널 그룹 이름"
           },
           "isForTest": {
-            "type": "boolean"
+            "type": "boolean",
+            "title": "테스트 채널 그룹 여부"
           }
         },
         "description": "<p>채널 그룹 정보</p>\n",
@@ -20922,6 +21252,12 @@
             "$ref": "#/components/schemas/CreatePlatformOrderCancelTransferBodyOrderDetail",
             "title": "주문 취소 정보"
           },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "주문 취소 면세 금액",
+            "description": "<p>주문 취소 항목과 취소 면세 금액을 같이 전달하시면 최종 취소 면세 금액은 주문 취소 항목의 면세 금액이 아닌 전달해주신 취소 면세 금액으로 적용됩니다.</p>\n"
+          },
           "discounts": {
             "title": "할인 정보",
             "type": "array",
@@ -21065,6 +21401,9 @@
             "$ref": "#/components/schemas/PlatformCancellationNotFoundError"
           },
           {
+            "$ref": "#/components/schemas/PlatformCannotSpecifyTransferError"
+          },
+          {
             "$ref": "#/components/schemas/PlatformDiscountCancelExceededOrderCancelAmountError"
           },
           {
@@ -21092,6 +21431,9 @@
             "$ref": "#/components/schemas/PlatformSettlementCancelAmountExceededPortOneCancelError"
           },
           {
+            "$ref": "#/components/schemas/PlatformTaxFreeAmountOverFlowError"
+          },
+          {
             "$ref": "#/components/schemas/PlatformTransferAlreadyExistsError"
           },
           {
@@ -21113,6 +21455,7 @@
             "PLATFORM_CANCELLABLE_PRODUCT_QUANTITY_EXCEEDED": "#/components/schemas/PlatformCancellableProductQuantityExceededError",
             "PLATFORM_CANCELLATION_AND_PAYMENT_TYPE_MISMATCHED": "#/components/schemas/PlatformCancellationAndPaymentTypeMismatchedError",
             "PLATFORM_CANCELLATION_NOT_FOUND": "#/components/schemas/PlatformCancellationNotFoundError",
+            "PLATFORM_CANNOT_SPECIFY_TRANSFER": "#/components/schemas/PlatformCannotSpecifyTransferError",
             "PLATFORM_DISCOUNT_CANCEL_EXCEEDED_ORDER_CANCEL_AMOUNT": "#/components/schemas/PlatformDiscountCancelExceededOrderCancelAmountError",
             "PLATFORM_DISCOUNT_SHARE_POLICY_ID_DUPLICATED": "#/components/schemas/PlatformDiscountSharePolicyIdDuplicatedError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
@@ -21122,6 +21465,7 @@
             "PLATFORM_PRODUCT_ID_DUPLICATED": "#/components/schemas/PlatformProductIdDuplicatedError",
             "PLATFORM_PRODUCT_ID_NOT_FOUND": "#/components/schemas/PlatformProductIdNotFoundError",
             "PLATFORM_SETTLEMENT_CANCEL_AMOUNT_EXCEEDED_PORT_ONE_CANCEL": "#/components/schemas/PlatformSettlementCancelAmountExceededPortOneCancelError",
+            "PLATFORM_TAX_FREE_AMOUNT_OVER_FLOW": "#/components/schemas/PlatformTaxFreeAmountOverFlowError",
             "PLATFORM_TRANSFER_ALREADY_EXISTS": "#/components/schemas/PlatformTransferAlreadyExistsError",
             "PLATFORM_TRANSFER_DISCOUNT_SHARE_POLICY_NOT_FOUND": "#/components/schemas/PlatformTransferDiscountSharePolicyNotFoundError",
             "PLATFORM_TRANSFER_NOT_FOUND": "#/components/schemas/PlatformTransferNotFoundError",
@@ -21160,6 +21504,12 @@
           "orderDetail": {
             "$ref": "#/components/schemas/CreatePlatformOrderTransferBodyOrderDetail",
             "title": "주문 정보"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "주문 면세 금액",
+            "description": "<p>주문 항목과 면세 금액을 같이 전달하시면 최종 면세 금액은 주문 항목의 면세 금액이 아닌 전달해주신 면세 금액으로 적용됩니다.</p>\n"
           },
           "settlementStartDate": {
             "type": "string",
@@ -21339,6 +21689,11 @@
             "format": "int64",
             "title": "상품 금액"
           },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "상품 면세 금액"
+          },
           "tag": {
             "type": "string",
             "title": "태그"
@@ -21365,6 +21720,9 @@
             "$ref": "#/components/schemas/PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError"
           },
           {
+            "$ref": "#/components/schemas/PlatformCurrencyNotSupportedError"
+          },
+          {
             "$ref": "#/components/schemas/PlatformDiscountExceededOrderAmountError"
           },
           {
@@ -21386,6 +21744,15 @@
             "$ref": "#/components/schemas/PlatformSettlementPaymentAmountExceededPortOnePaymentError"
           },
           {
+            "$ref": "#/components/schemas/PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformSettlementTaxFreeAmountExceededPortOnePaymentError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformTaxFreeAmountOverFlowError"
+          },
+          {
             "$ref": "#/components/schemas/PlatformTransferAlreadyExistsError"
           },
           {
@@ -21397,8 +21764,10 @@
           "mapping": {
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "PLATFORM_ADDITIONAL_FEE_POLICIES_NOT_FOUND": "#/components/schemas/PlatformAdditionalFeePoliciesNotFoundError",
+            "PLATFORM_ADDITIONAL_FIXED_AMOUNT_FEE_CURRENCY_AND_SETTLEMENT_CURRENCY_MISMATCHED": "#/components/schemas/PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError",
             "PLATFORM_CONTRACT_NOT_FOUND": "#/components/schemas/PlatformContractNotFoundError",
-            "PLATFORM_CONTRACT_PLATFORM_FIXED_AMOUNT_FEE_CURRENCY_AND_SETTLEMENT_CURRENCY_MISMATCHED": "#/components/schemas/PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError",
+            "PLATFORM_CONTRACT_PLATFORM_FIXED_AMOUNT_FEE_CURRENCY_AND_SETTLEMENT_CURRENCY_MISMATCHED": "#/components/schemas/PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError",
+            "PLATFORM_CURRENCY_NOT_SUPPORTED": "#/components/schemas/PlatformCurrencyNotSupportedError",
             "PLATFORM_DISCOUNT_EXCEEDED_ORDER_AMOUNT": "#/components/schemas/PlatformDiscountExceededOrderAmountError",
             "PLATFORM_DISCOUNT_SHARE_POLICIES_NOT_FOUND": "#/components/schemas/PlatformDiscountSharePoliciesNotFoundError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
@@ -21406,6 +21775,9 @@
             "PLATFORM_PAYMENT_NOT_FOUND": "#/components/schemas/PlatformPaymentNotFoundError",
             "PLATFORM_PRODUCT_ID_DUPLICATED": "#/components/schemas/PlatformProductIdDuplicatedError",
             "PLATFORM_SETTLEMENT_PAYMENT_AMOUNT_EXCEEDED_PORT_ONE_PAYMENT": "#/components/schemas/PlatformSettlementPaymentAmountExceededPortOnePaymentError",
+            "PLATFORM_SETTLEMENT_SUPPLY_WITH_VAT_AMOUNT_EXCEEDED_PORT_ONE_PAYMENT": "#/components/schemas/PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError",
+            "PLATFORM_SETTLEMENT_TAX_FREE_AMOUNT_EXCEEDED_PORT_ONE_PAYMENT": "#/components/schemas/PlatformSettlementTaxFreeAmountExceededPortOnePaymentError",
+            "PLATFORM_TAX_FREE_AMOUNT_OVER_FLOW": "#/components/schemas/PlatformTaxFreeAmountOverFlowError",
             "PLATFORM_TRANSFER_ALREADY_EXISTS": "#/components/schemas/PlatformTransferAlreadyExistsError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }
@@ -22822,6 +23194,99 @@
       "DeletePlatformTransferResponse": {
         "type": "object"
       },
+      "DeletedBillingKeyInfo": {
+        "title": "빌링키 삭제 완료 상태 건",
+        "required": [
+          "status",
+          "billingKey",
+          "merchantId",
+          "storeId",
+          "channels",
+          "customer",
+          "issuedAt",
+          "deletedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "빌링키 상태"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "methods": {
+            "title": "빌링키 결제수단 상세 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingKeyPaymentMethod"
+            },
+            "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 결제수단 정보가 담길 수 있습니다.</p>\n"
+          },
+          "channels": {
+            "title": "빌링키 발급 시 사용된 채널",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SelectedChannel"
+            },
+            "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 채널 정보가 담길 수 있습니다.</p>\n"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "고객 정보"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "issueId": {
+            "type": "string",
+            "title": "고객사가 채번하는 빌링키 발급 건 고유 아이디"
+          },
+          "issueName": {
+            "type": "string",
+            "title": "빌링키 발급 건 이름"
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "발급 요청 시점"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "발급 시점"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "채널 그룹"
+          },
+          "pgBillingKeyIssueResponses": {
+            "title": "채널 별 빌링키 발급 응답",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBillingKeyIssueResponse"
+            },
+            "description": "<p>슈퍼빌링키의 경우, 빌링키 발급이 성공하더라도 일부 채널에 대한 발급은 실패할 수 있습니다.</p>\n"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "발급 삭제 시점"
+          }
+        },
+        "description": "<p>빌링키 삭제 완료 상태 건</p>\n",
+        "x-portone-title": "빌링키 삭제 완료 상태 건"
+      },
       "DeliveredPaymentEscrow": {
         "title": "배송 완료",
         "required": [
@@ -23441,6 +23906,31 @@
         },
         "description": "<p>결제 실패 상태</p>\n",
         "x-portone-title": "결제 실패 상태"
+      },
+      "FailedPgBillingKeyIssueResponse": {
+        "title": "빌링키 발급 실패 채널 응답",
+        "required": [
+          "type",
+          "channel",
+          "failure"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "채널",
+            "description": "<p>빌링키 발급을 시도한 채널입니다.</p>\n"
+          },
+          "failure": {
+            "$ref": "#/components/schemas/BillingKeyFailure",
+            "title": "발급 실패 상세 정보"
+          }
+        },
+        "description": "<p>빌링키 발급 실패 채널 응답</p>\n",
+        "x-portone-title": "빌링키 발급 실패 채널 응답"
       },
       "ForbiddenError": {
         "title": "요청이 거절된 경우",
@@ -24884,6 +25374,72 @@
           }
         }
       },
+      "GetBillingKeyInfosBody": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/PageInput",
+            "title": "요청할 페이지 정보",
+            "description": "<p>미 입력 시 number: 0, size: 10 으로 기본값이 적용됩니다.</p>\n"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/BillingKeySortInput",
+            "title": "정렬 조건",
+            "description": "<p>미 입력 시 sortBy: TIME_TO_PAY, sortOrder: DESC 으로 기본값이 적용됩니다.</p>\n"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/BillingKeyFilterInput",
+            "title": "조회할 빌링키 조건 필터",
+            "description": "<p>V1 빌링키 건의 경우 일부 필드에 대해 필터가 적용되지 않을 수 있습니다.</p>\n"
+          }
+        },
+        "description": "<p>빌링키 다건 조회를 위한 입력 정보</p>\n",
+        "x-portone-description": "<p>빌링키 다건 조회를 위한 입력 정보</p>\n"
+      },
+      "GetBillingKeyInfosError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetBillingKeyInfosResponse": {
+        "title": "빌링키 다건 조회 성공 응답 정보",
+        "required": [
+          "items",
+          "page"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "title": "조회된 빌링키 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingKeyInfo"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInfo",
+            "title": "조회된 페이지 정보"
+          }
+        },
+        "description": "<p>빌링키 다건 조회 성공 응답 정보</p>\n",
+        "x-portone-title": "빌링키 다건 조회 성공 응답 정보"
+      },
       "GetCashReceiptError": {
         "oneOf": [
           {
@@ -25874,6 +26430,37 @@
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }
         }
+      },
+      "GetPlatformHolidaysError": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetPlatformHolidaysResponse": {
+        "title": "공휴일 조회",
+        "required": [
+          "holidays"
+        ],
+        "type": "object",
+        "properties": {
+          "holidays": {
+            "title": "공휴일 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformHoliday"
+            }
+          }
+        },
+        "description": "<p>공휴일 조회</p>\n",
+        "x-portone-title": "공휴일 조회"
       },
       "GetPlatformPartnerDashboardBody": {
         "title": "파트너 현황 조회를 위한 입력 정보",
@@ -27342,6 +27929,11 @@
           "customer": {
             "$ref": "#/components/schemas/IssueCashReceiptCustomerInput",
             "title": "고객 정보"
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 일자"
           }
         },
         "description": "<p>현금영수증 발급 요청 양식</p>\n",
@@ -27464,6 +28056,93 @@
         },
         "description": "<p>발급 실패</p>\n",
         "x-portone-title": "발급 실패"
+      },
+      "IssuedBillingKeyInfo": {
+        "title": "빌링키 발급 완료 상태 건",
+        "required": [
+          "status",
+          "billingKey",
+          "merchantId",
+          "storeId",
+          "channels",
+          "customer",
+          "issuedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "빌링키 상태"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "빌링키"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "methods": {
+            "title": "빌링키 결제수단 상세 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingKeyPaymentMethod"
+            },
+            "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 결제수단 정보가 담길 수 있습니다.</p>\n"
+          },
+          "channels": {
+            "title": "빌링키 발급 시 사용된 채널",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SelectedChannel"
+            },
+            "description": "<p>추후 슈퍼빌링키 기능 제공 시 여러 채널 정보가 담길 수 있습니다.</p>\n"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "고객 정보"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "issueId": {
+            "type": "string",
+            "title": "고객사가 채번하는 빌링키 발급 건 고유 아이디"
+          },
+          "issueName": {
+            "type": "string",
+            "title": "빌링키 발급 건 이름"
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "발급 요청 시점"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "발급 시점"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "채널 그룹"
+          },
+          "pgBillingKeyIssueResponses": {
+            "title": "채널 별 빌링키 발급 응답",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PgBillingKeyIssueResponse"
+            },
+            "description": "<p>슈퍼빌링키의 경우, 빌링키 발급이 성공하더라도 일부 채널에 대한 빌링키 발급은 실패할 수 있습니다.</p>\n"
+          }
+        },
+        "description": "<p>빌링키 발급 완료 상태 건</p>\n",
+        "x-portone-title": "빌링키 발급 완료 상태 건"
       },
       "IssuedCashReceipt": {
         "title": "발급 완료",
@@ -27607,6 +28286,35 @@
         },
         "description": "<p>발급 완료된 현금영수증</p>\n",
         "x-portone-title": "발급 완료된 현금영수증"
+      },
+      "IssuedPgBillingKeyIssueResponse": {
+        "title": "빌링키 발급 성공 채널 응답",
+        "required": [
+          "type",
+          "channel"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "채널",
+            "description": "<p>빌링키 발급을 시도한 채널입니다.</p>\n"
+          },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/BillingKeyPaymentMethod",
+            "title": "빌링키 결제수단 상세 정보",
+            "description": "<p>채널에 대응되는 PG사에서 응답한 빌링키 발급 수단 정보입니다.</p>\n"
+          }
+        },
+        "description": "<p>빌링키 발급 성공 채널 응답</p>\n",
+        "x-portone-title": "빌링키 발급 성공 채널 응답"
       },
       "LoginViaApiKeyBody": {
         "title": "API key 로그인을 위한 입력 정보",
@@ -30439,6 +31147,34 @@
         "description": "<p>결제 대기 상태</p>\n",
         "x-portone-title": "결제 대기 상태"
       },
+      "PgBillingKeyIssueResponse": {
+        "title": "채널 별 빌링키 발급 응답",
+        "description": "<p>채널 별 빌링키 발급 응답</p>\n",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/FailedPgBillingKeyIssueResponse"
+          },
+          {
+            "$ref": "#/components/schemas/IssuedPgBillingKeyIssueResponse"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FAILED": "#/components/schemas/FailedPgBillingKeyIssueResponse",
+            "ISSUED": "#/components/schemas/IssuedPgBillingKeyIssueResponse"
+          }
+        },
+        "x-portone-title": "채널 별 빌링키 발급 응답",
+        "x-portone-discriminator": {
+          "ISSUED": {
+            "title": "발급 성공 채널 응답"
+          },
+          "FAILED": {
+            "title": "발급 실패 채널 응답"
+          }
+        }
+      },
       "PgCompany": {
         "title": "PG사",
         "type": "string",
@@ -30531,6 +31267,7 @@
           "KCP_BILLING",
           "KCP_DIRECT",
           "KCP_QUICK",
+          "KCP_V2",
           "KICC",
           "KPN",
           "KSNET",
@@ -30572,7 +31309,6 @@
           "PAYPAL_V2": {},
           "KPN": {},
           "KAKAO": {},
-          "INICIS_V2": {},
           "DANAL": {},
           "KAKAOPAY": {},
           "EXIMBAY": {},
@@ -30600,6 +31336,8 @@
           "SETTLE": {},
           "MOBILIANS": {},
           "UPLUS": {},
+          "INICIS_V2": {},
+          "KCP_V2": {},
           "INICIS_UNIFIED": {},
           "BLUEWALNUT": {},
           "NICE": {},
@@ -31419,9 +32157,11 @@
         "x-portone-status-code": 400
       },
       "PlatformCancellableAmountExceededError": {
+        "title": "취소 가능한 금액이 초과한 경우",
         "required": [
           "type",
-          "cancellableAmount"
+          "cancellableAmount",
+          "amountType"
         ],
         "type": "object",
         "properties": {
@@ -31432,11 +32172,35 @@
             "type": "integer",
             "format": "int64"
           },
+          "amountType": {
+            "$ref": "#/components/schemas/PlatformCancellableAmountType"
+          },
           "message": {
             "type": "string"
           }
         },
+        "description": "<p>취소 가능한 금액이 초과한 경우</p>\n",
+        "x-portone-title": "취소 가능한 금액이 초과한 경우",
         "x-portone-status-code": 400
+      },
+      "PlatformCancellableAmountType": {
+        "title": "금액 타입",
+        "type": "string",
+        "description": "<p>금액 타입</p>\n",
+        "enum": [
+          "SUPPLY_WITH_VAT",
+          "TAX_FREE"
+        ],
+        "x-portone-title": "금액 타입",
+        "x-portone-enum": {
+          "SUPPLY_WITH_VAT": {
+            "title": "공급대가",
+            "description": "<p>공급가액과 부가세를 더한 금액입니다.</p>\n"
+          },
+          "TAX_FREE": {
+            "title": "면세 금액"
+          }
+        }
       },
       "PlatformCancellableDiscountAmountExceededError": {
         "required": [
@@ -31594,6 +32358,24 @@
         "description": "<p>예약된 업데이트가 있는 파트너를 보관하려고 하는 경우</p>\n",
         "x-portone-title": "예약된 업데이트가 있는 파트너를 보관하려고 하는 경우",
         "x-portone-status-code": 409
+      },
+      "PlatformCannotSpecifyTransferError": {
+        "title": "정산 건 식별에 실패한 경우",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>정산 건 식별에 실패한 경우</p>\n",
+        "x-portone-title": "정산 건 식별에 실패한 경우",
+        "x-portone-status-code": 400
       },
       "PlatformContact": {
         "title": "플랫폼 파트너 담당자 연락 정보",
@@ -32259,6 +33041,46 @@
         "x-portone-title": "정률 수수료",
         "x-portone-description": "<p>총 금액에 정해진 비율을 곱한 만큼의 수수료를 책정합니다.</p>\n"
       },
+      "PlatformHoliday": {
+        "title": "공휴일",
+        "required": [
+          "name",
+          "date"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "이름"
+          },
+          "date": {
+            "type": "string",
+            "description": "<p>날짜를 나타내는 문자열로, <code>yyyy-MM-dd</code> 형식을 따릅니다.</p>\n",
+            "x-portone-description": "<p>날짜를 나타내는 문자열로, <code>yyyy-MM-dd</code> 형식을 따릅니다.</p>\n",
+            "title": "날짜"
+          }
+        },
+        "description": "<p>공휴일</p>\n",
+        "x-portone-title": "공휴일"
+      },
+      "PlatformInSufficientDataToChangePartnerTypeError": {
+        "title": "파트너 타입 수정에 필요한 데이터가 부족한 경우",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>파트너 타입 수정에 필요한 데이터가 부족한 경우</p>\n",
+        "x-portone-title": "파트너 타입 수정에 필요한 데이터가 부족한 경우",
+        "x-portone-status-code": 400
+      },
       "PlatformInvalidSettlementFormulaError": {
         "required": [
           "type"
@@ -32629,6 +33451,8 @@
           "payment",
           "paymentVat",
           "paymentVatBurden",
+          "taxFree",
+          "supply",
           "order",
           "platformFee",
           "platformFeeVat",
@@ -32659,6 +33483,16 @@
             "format": "int64",
             "title": "결제 금액 부가세 부담금액",
             "description": "<p>참조된 계약의 결제 금액 부가세 감액 여부에 따라 false인 경우 0원, true인 경우 결제 금액 부가세입니다.</p>\n"
+          },
+          "taxFree": {
+            "type": "integer",
+            "format": "int64",
+            "title": "면세 금액"
+          },
+          "supply": {
+            "type": "integer",
+            "format": "int64",
+            "title": "공급가액"
           },
           "order": {
             "type": "integer",
@@ -32943,7 +33777,8 @@
         "required": [
           "id",
           "name",
-          "amount"
+          "amount",
+          "taxFreeAmount"
         ],
         "type": "object",
         "properties": {
@@ -32959,6 +33794,11 @@
             "type": "integer",
             "format": "int64",
             "title": "상품 금액"
+          },
+          "taxFreeAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "상품 면세 금액"
           },
           "tag": {
             "type": "string",
@@ -33854,6 +34694,8 @@
           "SETTLEMENT_PLATFORM_FEE_AMOUNT",
           "SETTLEMENT_PLATFORM_FEE_VAT_AMOUNT",
           "SETTLEMENT_START_DATE_RANGE",
+          "SETTLEMENT_SUPPLY_AMOUNT",
+          "SETTLEMENT_TAX_FREE_AMOUNT",
           "SETTLEMENT_TYPE",
           "STATUS"
         ],
@@ -33886,8 +34728,8 @@
           "SETTLEMENT_PAYMENT_VAT_BURDEN_AMOUNT": {
             "title": "결제 금액 부가세 부담금"
           },
-          "SETTLEMENT_DATE": {
-            "title": "정산 일"
+          "SETTLEMENT_TAX_FREE_AMOUNT": {
+            "title": "면세액"
           },
           "SETTLEMENT_ADDITIONAL_FEE_VAT_AMOUNT": {
             "title": "추가 수수료 부가세"
@@ -33915,6 +34757,12 @@
           },
           "CONTRACT_NAME": {
             "title": "계약 이름"
+          },
+          "SETTLEMENT_DATE": {
+            "title": "정산 일"
+          },
+          "SETTLEMENT_SUPPLY_AMOUNT": {
+            "title": "공급가액"
           },
           "SETTLEMENT_ADDITIONAL_FEE_AMOUNT": {
             "title": "추가 수수료"
@@ -34810,6 +35658,25 @@
         "description": "<p>포트원 결제 정보</p>\n",
         "x-portone-title": "포트원 결제 정보"
       },
+      "PlatformPortOnePaymentCancelAmountType": {
+        "title": "금액 타입",
+        "type": "string",
+        "description": "<p>금액 타입</p>\n",
+        "enum": [
+          "SUPPLY_WITH_VAT",
+          "TAX_FREE"
+        ],
+        "x-portone-title": "금액 타입",
+        "x-portone-enum": {
+          "SUPPLY_WITH_VAT": {
+            "title": "공급대가",
+            "description": "<p>공급가액과 부가세를 더한 금액입니다.</p>\n"
+          },
+          "TAX_FREE": {
+            "title": "면세 금액"
+          }
+        }
+      },
       "PlatformProductIdDuplicatedError": {
         "required": [
           "type",
@@ -34871,11 +35738,13 @@
         }
       },
       "PlatformSettlementCancelAmountExceededPortOneCancelError": {
+        "title": "정산 취소 요청 금액이 포트원 결제 취소 내역의 취소 금액을 초과한 경우",
         "required": [
           "type",
           "registeredSettlementCancelAmount",
           "requestSettlementCancelAmount",
-          "portOneCancelAmount"
+          "portOneCancelAmount",
+          "amountType"
         ],
         "type": "object",
         "properties": {
@@ -34894,10 +35763,15 @@
             "type": "integer",
             "format": "int64"
           },
+          "amountType": {
+            "$ref": "#/components/schemas/PlatformPortOnePaymentCancelAmountType"
+          },
           "message": {
             "type": "string"
           }
         },
+        "description": "<p>정산 취소 요청 금액이 포트원 결제 취소 내역의 취소 금액을 초과한 경우</p>\n",
+        "x-portone-title": "정산 취소 요청 금액이 포트원 결제 취소 내역의 취소 금액을 초과한 경우",
         "x-portone-status-code": 400
       },
       "PlatformSettlementCycle": {
@@ -35432,6 +36306,7 @@
         }
       },
       "PlatformSettlementPaymentAmountExceededPortOnePaymentError": {
+        "title": "정산 요청 결제 금액이 포트원 결제 내역의 결제 금액을 초과한 경우",
         "required": [
           "type",
           "registeredSettlementPaymentAmount",
@@ -35459,6 +36334,8 @@
             "type": "string"
           }
         },
+        "description": "<p>정산 요청 결제 금액이 포트원 결제 내역의 결제 금액을 초과한 경우</p>\n",
+        "x-portone-title": "정산 요청 결제 금액이 포트원 결제 내역의 결제 금액을 초과한 경우",
         "x-portone-status-code": 400
       },
       "PlatformSettlementRule": {
@@ -35480,6 +36357,90 @@
         },
         "description": "<p>플랫폼 정산건 처리 방식에 관한 규칙</p>\n",
         "x-portone-title": "플랫폼 정산건 처리 방식에 관한 규칙"
+      },
+      "PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError": {
+        "title": "정산 요청 공급대가가 포트원 결제 내역의 공급대가를 초과한 경우",
+        "required": [
+          "type",
+          "registeredSettlementSupplyWithVatAmount",
+          "requestSettlementSupplyWithVatAmount",
+          "portOneSupplyWithVatAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "registeredSettlementSupplyWithVatAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requestSettlementSupplyWithVatAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "portOneSupplyWithVatAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>정산 요청 공급대가가 포트원 결제 내역의 공급대가를 초과한 경우</p>\n",
+        "x-portone-title": "정산 요청 공급대가가 포트원 결제 내역의 공급대가를 초과한 경우",
+        "x-portone-status-code": 400
+      },
+      "PlatformSettlementTaxFreeAmountExceededPortOnePaymentError": {
+        "title": "정산 요청 면세 금액이 포트원 결제 내역의 면세 금액을 초과한 경우",
+        "required": [
+          "type",
+          "registeredSettlementTaxFreeAmount",
+          "requestSettlementTaxFreeAmount",
+          "portOneTaxFreeAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "registeredSettlementTaxFreeAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requestSettlementTaxFreeAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "portOneTaxFreeAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>정산 요청 면세 금액이 포트원 결제 내역의 면세 금액을 초과한 경우</p>\n",
+        "x-portone-title": "정산 요청 면세 금액이 포트원 결제 내역의 면세 금액을 초과한 경우",
+        "x-portone-status-code": 400
+      },
+      "PlatformTaxFreeAmountOverFlowError": {
+        "title": "면세 금액이 결제금액을 초과한 경우",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "description": "<p>면세 금액이 결제금액을 초과한 경우</p>\n",
+        "x-portone-title": "면세 금액이 결제금액을 초과한 경우",
+        "x-portone-status-code": 400
       },
       "PlatformTransfer": {
         "title": "정산건",
@@ -35821,6 +36782,8 @@
           "SETTLEMENT_PLATFORM_FEE_AMOUNT",
           "SETTLEMENT_PLATFORM_FEE_VAT_AMOUNT",
           "SETTLEMENT_START_DATE",
+          "SETTLEMENT_SUPPLY_AMOUNT",
+          "SETTLEMENT_TAX_FREE_AMOUNT",
           "STATUS",
           "TRANSFER_ID",
           "TYPE"
@@ -35854,11 +36817,11 @@
           "ORDER_NAME": {
             "title": "주문 명"
           },
-          "SETTLEMENT_DATE": {
-            "title": "정산 일"
-          },
           "TYPE": {
             "title": "정산 구분"
+          },
+          "SETTLEMENT_TAX_FREE_AMOUNT": {
+            "title": "면세액"
           },
           "SETTLEMENT_ADDITIONAL_FEE_VAT_AMOUNT": {
             "title": "추가 수수료 부가세"
@@ -35877,6 +36840,12 @@
           },
           "SETTLEMENT_PAYMENT_AMOUNT": {
             "title": "결제 금액"
+          },
+          "SETTLEMENT_DATE": {
+            "title": "정산 일"
+          },
+          "SETTLEMENT_SUPPLY_AMOUNT": {
+            "title": "공급가액"
           },
           "SETTLEMENT_ADDITIONAL_FEE_AMOUNT": {
             "title": "추가 수수료"
@@ -37880,6 +38849,9 @@
             "$ref": "#/components/schemas/PlatformContractNotFoundError"
           },
           {
+            "$ref": "#/components/schemas/PlatformInSufficientDataToChangePartnerTypeError"
+          },
+          {
             "$ref": "#/components/schemas/PlatformNotEnabledError"
           },
           {
@@ -37901,6 +38873,7 @@
             "PLATFORM_ACCOUNT_VERIFICATION_NOT_FOUND": "#/components/schemas/PlatformAccountVerificationNotFoundError",
             "PLATFORM_ARCHIVED_PARTNER": "#/components/schemas/PlatformArchivedPartnerError",
             "PLATFORM_CONTRACT_NOT_FOUND": "#/components/schemas/PlatformContractNotFoundError",
+            "PLATFORM_INSUFFICIENT_DATA_TO_CHANGE_PARTNER_TYPE": "#/components/schemas/PlatformInSufficientDataToChangePartnerTypeError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
             "PLATFORM_PARTNER_SCHEDULE_ALREADY_EXISTS": "#/components/schemas/PlatformPartnerScheduleAlreadyExistsError",
