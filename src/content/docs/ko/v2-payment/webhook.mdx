@@ -280,15 +280,24 @@ app.use(express.json());
 app.post(
   "/portone-webhook",
   rawBody, // plaintext 본문이 필요하므로 위에서 정의한 middleware를 사용합니다.
-  async (req, res) => {
+  async (req, res, next) => {
     try {
-      // 웹훅 메시지를 검증합니다.
-      // 시그니처 불일치 등 검증에 실패할 경우 PortOne.Webhook.WebhookVerificationError가 발생합니다.
-      await PortOne.Webhook.verify(
-        process.env.PORTONE_WEBHOOK_SECRET,
-        req.rawBody,
-        req.headers,
-      );
+      try {
+        // 웹훅 메시지를 검증합니다.
+        // 시그니처 불일치 등 검증에 실패할 경우 PortOne.Webhook.WebhookVerificationError가 발생합니다.
+        await PortOne.Webhook.verify(
+          process.env.PORTONE_WEBHOOK_SECRET,
+          req.rawBody,
+          req.headers,
+        );
+      } catch (err) {
+        if (err instanceof PortOne.WebhookVerificationError) {
+          // 결제 검증에 실패했습니다.
+          res.status(400).send(e);
+          return;
+        }
+        throw e;
+      }
 
       const { paymentId } = req.body;
 
@@ -322,9 +331,8 @@ app.post(
       } else {
         // 결제 금액이 불일치하여 위/변조 시도가 의심됩니다.
       }
-    } catch (e) {
-      // 결제 검증에 실패했습니다.
-      res.status(400).send(e);
+    } catch (err) {
+      next(err);
     }
   },
 );
