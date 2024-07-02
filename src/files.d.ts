@@ -33,7 +33,8 @@ declare module "*/_redir.yaml" {
   export default value;
 }
 
-declare module "*?base64" {
-  const base64: string;
-  export default base64;
+declare module "*?imagetools" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
 }

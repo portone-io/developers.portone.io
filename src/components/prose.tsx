@@ -1,131 +1,133 @@
-import clsx from "clsx";
-import { forwardRef, type HTMLAttributes } from "preact/compat";
+import { A } from "@solidjs/router";
+import { clsx } from "clsx";
+import { type JSX, splitProps } from "solid-js";
 
-import { get } from "~/misc/get";
-
-export function h1({ children, ...props }: HTMLAttributes<HTMLHeadingElement>) {
+export function h1(props: JSX.IntrinsicElements["h1"]) {
+  const [local, rest] = splitProps(props, ["children", "class"]);
   return (
     <h1
-      {...props}
+      {...rest}
       class={clsx(
         "text-1.875rem mt-12px mb-12px font-600 leading-[1.15] tracking-[-.021em] first:mt-0 last:mb-0",
-        get(props.class),
+        local.class,
       )}
     >
-      {children}
+      {local.children}
     </h1>
   );
 }
 
-export const h2 = forwardRef<
-  HTMLHeadingElement,
-  HTMLAttributes<HTMLHeadingElement>
->(function h2({ children, ...props }, ref) {
+export function h2(props: JSX.IntrinsicElements["h2"]) {
+  const [local, rest] = splitProps(props, ["children", "class"]);
   return (
     <h2
-      ref={ref}
-      {...props}
+      {...rest}
       class={clsx(
         "text-1.625rem mt-12px mb-12px font-600 leading-[1.22] tracking-[-.02em] first:mt-0 last:mb-0",
-        get(props.class),
+        local.class,
       )}
     >
-      {children}
+      {local.children}
     </h2>
   );
-});
+}
 
-export function h3({ children, ...props }: HTMLAttributes<HTMLHeadingElement>) {
+export function h3(props: JSX.IntrinsicElements["h3"]) {
+  const [local, rest] = splitProps(props, ["children", "class"]);
   return (
     <h3
-      {...props}
+      {...rest}
       class={clsx(
         "text-1.375rem mt-12px mb-12px font-600 leading-[1.25] tracking-[-.018em] first:mt-0 last:mb-0",
-        get(props.class),
+        local.class,
       )}
     >
-      {children}
+      {local.children}
     </h3>
   );
 }
 
-export function h4({ children, ...props }: HTMLAttributes<HTMLHeadingElement>) {
+export function h4(props: JSX.IntrinsicElements["h4"]) {
+  const [local, rest] = splitProps(props, ["children", "class"]);
   return (
     <h4
-      {...props}
+      {...rest}
       class={clsx(
         "text-1.125rem mt-8px mb-8px font-600 leading-[1.35] tracking-[-.014em] first:mt-0 last:mb-0",
-        get(props.class),
+        local.class,
       )}
     >
-      {children}
+      {local.children}
     </h4>
   );
 }
 
-export function h5({ children, ...props }: HTMLAttributes<HTMLHeadingElement>) {
+export function h5(props: JSX.IntrinsicElements["h5"]) {
+  const [local, rest] = splitProps(props, ["children", "class"]);
   return (
     <h5
-      {...props}
+      {...rest}
       class={clsx(
         "text-.875rem mt-8px mb-8px font-500 leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
-        get(props.class),
+        local.class,
       )}
     >
-      {children}
+      {local.children}
     </h5>
   );
 }
 
-export function h6({ children, ...props }: HTMLAttributes<HTMLHeadingElement>) {
+export function h6(props: JSX.IntrinsicElements["h6"]) {
+  const [local, rest] = splitProps(props, ["children", "class"]);
   return (
     <h6
-      {...props}
+      {...rest}
       class={clsx(
         "text-.875rem mt-8px mb-8px font-500 leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
-        get(props.class),
+        local.class,
       )}
     >
-      {children}
+      {local.children}
     </h6>
   );
 }
 
-export function p({
-  children,
-  ...props
-}: HTMLAttributes<HTMLParagraphElement>) {
+export function p(props: JSX.IntrinsicElements["p"]) {
+  const [local, rest] = splitProps(props, ["children", "class"]);
   return (
     <p
-      {...props}
+      {...rest}
       class={clsx(
         "mt-8px mb-8px leading-[1.5] first:mt-0 last:mb-0",
-        get(props.class),
+        local.class,
       )}
     >
-      {children}
+      {local.children}
     </p>
   );
 }
 
-export function a({ children, ...props }: HTMLAttributes<HTMLAnchorElement>) {
+export function a(props: JSX.IntrinsicElements["a"]) {
+  const [local, rest] = splitProps(props, ["children", "class", "href"]);
   return (
-    <a
-      {...props}
-      class="cursor-pointer text-orange-5 hover:text-orange-7 hover:underline"
+    <A
+      {...rest}
+      href={local.href ?? "#"}
+      class={clsx(
+        "text-orange-5 hover:text-orange-7 cursor-pointer hover:underline",
+        local.class,
+      )}
     >
-      {children}
-    </a>
+      {local.children}
+    </A>
   );
 }
 
-export function blockquote({
-  children,
-  ...props
-}: HTMLAttributes<HTMLQuoteElement>) {
+export function blockquote(props: JSX.IntrinsicElements["blockquote"]) {
+  const [local, rest] = splitProps(props, ["children", "class"]);
   return (
-    <blockquote {...props} class="my-2 border-l-4 pl-4">
-      {children}
+    <blockquote {...rest} class={clsx("my-2 border-l-4 pl-4", local.class)}>
+      {local.children}
     </blockquote>
   );
 }

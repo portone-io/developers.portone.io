@@ -1,5 +1,3 @@
-/** @jsxImportSource ./jsx */
-
 import satori from "satori";
 import sharp from "sharp";
 
