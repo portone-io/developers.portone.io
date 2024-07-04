@@ -105,7 +105,12 @@ export default function DocsNavMenu(props: Props) {
               {(item) => {
                 if (item.type === "group") {
                   return (
-                    <Show when={systemVersion() === item.systemVersion}>
+                    <Show
+                      when={
+                        !item.systemVersion ||
+                        systemVersion() === item.systemVersion
+                      }
+                    >
                       <li class="[&:not(:last-child)]:mb-4">
                         <h4 class="p-2 text-lg font-bold first:mt-0">
                           <span>{item.label}</span>
@@ -114,7 +119,10 @@ export default function DocsNavMenu(props: Props) {
                           <For each={item.items}>
                             {(item) => (
                               <Show
-                                when={systemVersion() === item.systemVersion}
+                                when={
+                                  !item.systemVersion ||
+                                  systemVersion() === item.systemVersion
+                                }
                               >
                                 <li>
                                   <LeftSidebarItem
@@ -138,7 +146,12 @@ export default function DocsNavMenu(props: Props) {
                   );
                 }
                 return (
-                  <Show when={systemVersion() === item.systemVersion}>
+                  <Show
+                    when={
+                      !item.systemVersion ||
+                      systemVersion() === item.systemVersion
+                    }
+                  >
                     <li>
                       <LeftSidebarItem {...item} pageSlug={props.slug} />
                     </li>

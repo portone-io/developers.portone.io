@@ -52,7 +52,9 @@ function FolderLink(
   });
 
   return (
-    <Show when={systemVersion() === props.systemVersion}>
+    <Show
+      when={!props.systemVersion || systemVersion() === props.systemVersion}
+    >
       <div ref={anchorRef}>
         <div class={`flex ${getLinkStyle(props.isActive)} pr-0`}>
           <a
@@ -84,7 +86,12 @@ function FolderLink(
           <ul class="flex flex-col gap-1 border-l pl-2">
             <For each={props.items}>
               {(item) => (
-                <Show when={systemVersion() === item.systemVersion}>
+                <Show
+                  when={
+                    !props.systemVersion ||
+                    systemVersion() === item.systemVersion
+                  }
+                >
                   <LeftSidebarItem {...item} pageSlug={props.pageSlug} />
                 </Show>
               )}
@@ -111,7 +118,9 @@ export function JustLink(props: JustLinkProps) {
   const { systemVersion } = useSystemVersion();
 
   return (
-    <Show when={systemVersion() === props.systemVersion}>
+    <Show
+      when={!props.systemVersion || systemVersion() === props.systemVersion}
+    >
       <a
         href={
           !props.isExternal && props.systemVersion
