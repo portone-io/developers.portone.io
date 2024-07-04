@@ -1,8 +1,8 @@
 import { HttpStatusCode } from "@solidjs/start";
 import { ErrorBoundary, type JSXElement } from "solid-js";
 
-import portoneGradientBg from "~/assets/portone-gradient-bg.png?imagetools";
-import portoneLogoWhite from "~/assets/portone-logo-white.png?imagetools";
+import portoneGradientBg from "~/assets/portone-gradient-bg.png";
+import portoneLogoWhite from "~/assets/portone-logo-white.png";
 
 import Picture from "./Picture";
 

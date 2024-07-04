@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 import yaml from "@rollup/plugin-yaml";
 import { defineConfig } from "@solidjs/start/config";
@@ -47,12 +48,27 @@ export default defineConfig({
         }),
         imagetools({
           defaultDirectives: (url) => {
-            if (url.searchParams.has("imagetools")) {
-              return new URLSearchParams({
-                as: "picture",
-                format: "avif;webp",
-              });
-            } else return new URLSearchParams({});
+            const extname = path.extname(url.pathname);
+            if (
+              // formats supported by Sharp (https://sharp.pixelplumbing.com/#formats)
+              [
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".webp",
+                ".gif",
+                ".avif",
+                ".tiff",
+                ".tif",
+                ".svg",
+              ].includes(extname)
+            ) {
+              return new URLSearchParams([
+                ["as", "picture"],
+                ["format", "webp"], // TODO: enable AVIF after investigating transform performance issue
+                ...url.searchParams.entries(),
+              ]);
+            } else return url.searchParams;
           },
         }),
         {
