@@ -38,7 +38,7 @@ export default {
     ["remark-lint-link-title-style", '"'],
     "remark-lint-list-item-bullet-indent",
     "remark-lint-list-item-content-indent",
-    ["remark-lint-list-item-indent", "space"],
+    ["remark-lint-list-item-indent", "one"],
     "remark-lint-list-item-spacing",
     ["remark-lint-maximum-line-length", 100],
     "remark-lint-no-blockquote-without-marker",

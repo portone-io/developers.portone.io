@@ -1,0 +1,83 @@
+diff --git a/index.js b/index.js
+index c4a73fa98db4d8db9da03d2d88290aae2112c241..86d84e7d0833f8c1a7176c511f858991c75bf1c7 100644
+--- a/index.js
++++ b/index.js
+@@ -412,6 +412,7 @@ import {lintRule} from 'unified-lint-rule'
+ import {pointEnd, pointStart} from 'unist-util-position'
+ import {SKIP, visitParents} from 'unist-util-visit-parents'
+ import {VFileMessage} from 'vfile-message'
++import stringWidth from 'string-width'
+ 
+ const remarkLintTableCellPadding = lintRule(
+   {
+@@ -440,6 +441,7 @@ const remarkLintTableCellPadding = lintRule(
+      * @property {number} middle
+      * @property {number | undefined} right
+      * @property {Point} rightPoint
++     * @property {number} visual
+      */
+ 
+     const value = String(file)
+@@ -478,9 +480,9 @@ const remarkLintTableCellPadding = lintRule(
+         if (
+           entry.size &&
+           (sizes[entry.column] === undefined ||
+-            entry.size.middle > sizes[entry.column])
++            entry.size.visual > sizes[entry.column])
+         ) {
+-          sizes[entry.column] = entry.size.middle
++          sizes[entry.column] = entry.size.visual
+         }
+       }
+ 
+@@ -489,8 +491,8 @@ const remarkLintTableCellPadding = lintRule(
+         for (const info of entries) {
+           if (
+             info.size &&
+-            info.size.middle &&
+-            info.size.middle === sizes[info.column]
++            info.size.visual &&
++            info.size.visual === sizes[info.column]
+           ) {
+             const node = info.ancestors.at(-1)
+             assert(node) // Always defined.
+@@ -543,7 +545,7 @@ const remarkLintTableCellPadding = lintRule(
+         return
+       }
+ 
+-      const alignSpaces = sizes[info.column] - info.size.middle
++      const alignSpaces = sizes[info.column] - info.size.visual
+       const min = expected === 'compact' ? 0 : 1
+       /** @type {number} */
+       let max = min
+@@ -556,7 +558,7 @@ const remarkLintTableCellPadding = lintRule(
+ 
+       // For empty cells,
+       // the `left` field is used for all the whitespace in them.
+-      if (info.size.middle === 0) {
++      if (info.size.visual === 0) {
+         if (side === 'right') return
+         max = Math.max(max, sizes[info.column] + 2 * min)
+       }
+@@ -839,7 +841,8 @@ const remarkLintTableCellPadding = lintRule(
+             line: end.line,
+             column: end.column - (end.offset - rightEdgeIndex),
+             offset: rightEdgeIndex
+-          }
++          },
++          visual: stringWidth(value.slice(leftIndex, rightIndex))
+         }
+       }
+     }
+diff --git a/package.json b/package.json
+index 640830a0a976ba8f72cdd6e171a0abef81ff663e..c393ce5477f0b38791045d6b1b2713599cfc0447 100644
+--- a/package.json
++++ b/package.json
+@@ -37,6 +37,7 @@
+     "devlop": "^1.0.0",
+     "mdast-util-phrasing": "^4.0.0",
+     "pluralize": "^8.0.0",
++    "string-width": "^5",
+     "unified-lint-rule": "^3.0.0",
+     "unist-util-position": "^5.0.0",
+     "unist-util-visit-parents": "^6.0.0",
