@@ -3,10 +3,9 @@ title: redirect 결제창 결과처리
 description: 새로운 창으로 리디렉션되어 결제가 진행되는 환경에서의 결과 처리 방법을 안내합니다.
 ---
 
-import ContentRef from "~/components/gitbook/ContentRef.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import ContentRef from "~/components/gitbook/ContentRef";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 > 아래 예제 코드는 결제창 형태가 **새로운 페이지로 리디렉션되어** 결제가 진행되는
 > 대부분의 **모바일 환경**에서의 결제 요청에 대한 응답을 처리하는 부분입니다.
@@ -14,7 +13,7 @@ import Hint from "~/components/Hint.astro";
 <ContentRef slug="/ko/tip/redirect" />
 
 <Tabs>
-  <Tab title="JavaScript">
+  <Tabs.Tab title="JavaScript">
     ```ts
     IMP.request_pay(
       {
@@ -23,7 +22,7 @@ import Hint from "~/components/Hint.astro";
       } /* callback */,
     ); // 리디렉션 방식의 경우 callback은 실행되지 않습니다.
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 위와 같이 **request\_pay** 함수 파라미터로 **m\_redirect\_url** 을 설정하면
@@ -43,17 +42,17 @@ import Hint from "~/components/Hint.astro";
 아래는 Query String 으로 리디렉션되는 URL 예제입니다.
 
 <Tabs>
-  <Tab title="결제완료/가상계좌 발급완료">
+  <Tabs.Tab title="결제완료/가상계좌 발급완료">
     ```http
     GET https://myservice.com/payments/complete?imp_uid=결제건을_특정하는_포트원_번호&merchant_uid=고객사_고유_주문번호&imp_success=true
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="결제 실패">
+  <Tabs.Tab title="결제 실패">
     ```http
     GET https://myservice.com/payments/complete?imp_uid=결제건을_특정하는_포트원_번호&merchant_uid=고객사_고유_주문번호&imp_success=false&error_code=에러_코드(현재_정리된_체계는_없음)&error_msg=에러_메시지
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 |                 파라미터명                |        설명        |  비고 |

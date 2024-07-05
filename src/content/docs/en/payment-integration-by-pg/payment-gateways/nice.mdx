@@ -3,10 +3,9 @@ title: NICE Payments
 description: NICE Payments payment window integration guideNICE
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. Configure NICE Payments PG settings
 
@@ -24,7 +23,7 @@ In PC browsers, <mark style="color:red;"> **callback** </mark> is invoked after 
 In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_redirect\_url** </mark>.
 
 <Tabs>
-  <Tab title="Authenticated payment request">
+  <Tabs.Tab title="Authenticated payment request">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -62,16 +61,18 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
     **Payment method code**
 
     <Details>
-      <p slot="summary">Payment method codes</p>
+      <Details.Summary>Payment method codes</Details.Summary>
 
-      - `card` (credit card)
-      - `trans`(instant account transfer)
-      - `vbank`(virtual account)
-      - `samsung`(Samsung Pay)
-      - `phone`(mobile micropayment)
-      - `kakaopay`(Kakao Pay)
-      - `payco` ( PAYCO hub-type)
-      - `naverpay` (Naver Pay)
+      <Details.Content>
+        - `card` (credit card)
+        - `trans`(instant account transfer)
+        - `vbank`(virtual account)
+        - `samsung`(Samsung Pay)
+        - `phone`(mobile micropayment)
+        - `kakaopay`(Kakao Pay)
+        - `payco` ( PAYCO hub-type)
+        - `naverpay` (Naver Pay)
+      </Details.Content>
     </Details>
 
     **`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
@@ -93,9 +94,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
     **`escrow`** <mark style="color:orange;"> **`boolean`** </mark>
 
     **Ecrow option**
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Non-authenticated API  request">
+  <Tabs.Tab title="Non-authenticated API  request">
     **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
 
     ### Request one-time payment
@@ -152,13 +153,13 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
       To integrate non-authenticated payments, you need to provide a UI for accepting user's card information.
       For more information, refer to the [**REST API**](../../auth/guide-1/bill/rest-api) page.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 3. Additional functions
 
 <Tabs>
-  <Tab title="Installment setting">
+  <Tabs.Tab title="Installment setting">
     ```json title="javascript"
     {
       "display": {
@@ -176,9 +177,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
     <Hint style="info">
       Installment plan option is available only for **KRW 50,000 or more**.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Direct credit card module call">
+  <Tabs.Tab title="Direct credit card module call">
     ```json title="javascript"
     {
       "card": {
@@ -201,9 +202,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
       - Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs.
         You must check your Merchant ID with each PG for direct call support.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Enable specific credit cards">
+  <Tabs.Tab title="Enable specific credit cards">
     ```json title="javascript"
     {
       "card": {
@@ -219,5 +220,5 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
 
     - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) <mark style="color:green;"> (**string**) </mark>
     - **enabled:** Option to enable the credit card <mark style="color:orange;"> (**boolean**) </mark>
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

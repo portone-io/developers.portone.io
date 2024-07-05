@@ -3,10 +3,9 @@ title: Naver Pay (Standard)
 description: "\bNaver Pay simple payment integration guide"
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. Configure Naver Pay simple payment PG settings
 
@@ -24,7 +23,7 @@ In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after ca
 In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-  <Tab title="General payment request">
+  <Tabs.Tab title="General payment request">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -161,9 +160,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
 
     - **`payReferrer`** (Optional) : Funnel path to Naver Pay. Enter only when in partnership agreement with other services on the Naver platform.
       Refer to [NPay Developers](https://developer.pay.naver.com/docs/v2/api#etc-etc_product_ref).
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Subscription payment request">
+  <Tabs.Tab title="Subscription payment request">
     ## Request billing key
 
     ```ts title="JavaScript SDK"
@@ -320,7 +319,7 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
     ```txt title="form-urlencoded"
     customer_uid={Unique key to identify the customer}&schedules[0][merchant_uid]={Oder number}&schedules[0][schedule_at]={Scheduled time of payment UNIX timestamp}&schedules[0][amount]=10000&schedules[0][extra][naverUseCfm]=20201001
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 <Hint style="warning">
@@ -348,32 +347,34 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
 </Hint>
 
 <Details>
-  <p slot="summary">Payment cancellation</p>
+  <Details.Summary>Payment cancellation</Details.Summary>
 
-  To call the i'mport cancel payment API `POST` [**`/payments/cancel`**](../../api/payment-api/cancel-payment-api) , you must specify the following parameters. (**If omitted, Naver Pay's inspection will fail**)
+  <Details.Content>
+    To call the i'mport cancel payment API `POST` [**`/payments/cancel`**](../../api/payment-api/cancel-payment-api) , you must specify the following parameters. (**If omitted, Naver Pay's inspection will fail**)
 
-  - **`extra.requester`** : API requestor
-    - **`customer`**
-    - **`admin`**(default)
+    - **`extra.requester`** : API requestor
+      - **`customer`**
+      - **`admin`**(default)
 
-  - **`reason`**: reason for cancellation
+    - **`reason`**: reason for cancellation
 
-  **Example (json)**
+    **Example (json)**
 
-  ```json
-  {
-    "imp_uid": "imp_123412341234", // i'mport transaction ID
-    "amount": 3000, // Refund amount
-    "reason": "Reson for cancellation", // Must be the actual reason
-    "extra": {
-      "requester": "customer"
+    ```json
+    {
+      "imp_uid": "imp_123412341234", // i'mport transaction ID
+      "amount": 3000, // Refund amount
+      "reason": "Reson for cancellation", // Must be the actual reason
+      "extra": {
+        "requester": "customer"
+      }
     }
-  }
-  ```
+    ```
 
-  **Example (form-urlencoded)**
+    **Example (form-urlencoded)**
 
-  ```txt
-  imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
-  ```
+    ```txt
+    imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
+    ```
+  </Details.Content>
 </Details>

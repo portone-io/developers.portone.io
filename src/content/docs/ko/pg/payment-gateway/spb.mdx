@@ -4,9 +4,9 @@ description: 페이팔(Smart Payment Buttons) 일반결제 연동 방법을 안�
 targetVersions: ["v1"]
 ---
 
-import Figure from "~/components/Figure.astro";
-import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import Details from "~/components/gitbook/Details";
+import Hint from "~/components/Hint";
 
 <Hint style="info">
   페이팔 일반결제의 경우 SPB(Smart Payment Button) 방식만 지원합니다.
@@ -229,15 +229,19 @@ status가 cancelled 이고 cancel\_history에 취소 요청 내역이 있는 경
 고객사는 최종 취소 처리 결과를 전달받기 위해 고객사 통보 웹훅 기능을 연동해야 합니다.
 
 <Details>
-  <p slot="summary">취소 요청이 승인대기 중인 결제상태</p>
+  <Details.Summary>취소 요청이 승인대기 중인 결제상태</Details.Summary>
 
-  <Figure src="/gitbook-assets/ko/image (3) (2).png" />
+  <Details.Content>
+    <Figure src="/gitbook-assets/ko/image (3) (2).png" />
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">취소 요청이 승인대기 중인 결제내역 상세</p>
+  <Details.Summary>취소 요청이 승인대기 중인 결제내역 상세</Details.Summary>
 
-  <Figure src="/gitbook-assets/ko/image (1) (2).png" />
+  <Details.Content>
+    <Figure src="/gitbook-assets/ko/image (1) (2).png" />
+  </Details.Content>
 </Details>
 
 ### 고위험 결제 처리
@@ -252,43 +256,45 @@ STC 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다.
 2. 계정의 산업 종류를 확인하신 뒤, 해당 산업에 맞는 파라미터를 아래와 같은 형식으로 loadUI 호출 시 bypass.paypal\_v2 객체에 작성해 추가해 주시면 됩니다.
 
 <Details>
-  <p slot="summary">결제 요청시 STC 적용하기</p>
+  <Details.Summary>결제 요청시 STC 적용하기</Details.Summary>
 
-  ```json
-  // 해당 파라미터들은 산업군 별로 추가가 필요하거나 제외해도 되는 파라미터들이 있습니다.
-  {
-    "additional_data": [
-      {
-        "key": "sender_account_id", // 고객사 account ID(merchant-id)
-        "value": "A12345N343"
-      },
-      {
-        "key": "sender_first_name", // 고객사의 account에 등록 된 구매자의 이름
-        "value": "John"
-      },
-      {
-        "key": "sender_last_name", // 고객사의 account에 등록 된 구매자의 이름
-        "value": "Doe"
-      },
-      {
-        "key": "sender_email", // 고객사의 account에 등록 된 구매자의 이메일 주소
-        "value": "example@example.com"
-      },
-      {
-        "key": "sender_phone", // 고객사의 account에 등록 된 구매자의 연락처
-        "value": "(02)16705176"
-      },
-      {
-        "key": "sender_country_code", // 고객사의 account에 등록 된 국가 코드
-        "value": "KR" // ISO Alpha-2 형식 국가 코드
-      },
-      {
-        "key": "sender_create_date", // 고객사의 account에 등록 된 국가 코드
-        "value": "2023-10-10T23:59:59+09:00" // IOS8601 형식
-      }
-    ]
-  }
-  ```
+  <Details.Content>
+    ```json
+    // 해당 파라미터들은 산업군 별로 추가가 필요하거나 제외해도 되는 파라미터들이 있습니다.
+    {
+      "additional_data": [
+        {
+          "key": "sender_account_id", // 고객사 account ID(merchant-id)
+          "value": "A12345N343"
+        },
+        {
+          "key": "sender_first_name", // 고객사의 account에 등록 된 구매자의 이름
+          "value": "John"
+        },
+        {
+          "key": "sender_last_name", // 고객사의 account에 등록 된 구매자의 이름
+          "value": "Doe"
+        },
+        {
+          "key": "sender_email", // 고객사의 account에 등록 된 구매자의 이메일 주소
+          "value": "example@example.com"
+        },
+        {
+          "key": "sender_phone", // 고객사의 account에 등록 된 구매자의 연락처
+          "value": "(02)16705176"
+        },
+        {
+          "key": "sender_country_code", // 고객사의 account에 등록 된 국가 코드
+          "value": "KR" // ISO Alpha-2 형식 국가 코드
+        },
+        {
+          "key": "sender_create_date", // 고객사의 account에 등록 된 국가 코드
+          "value": "2023-10-10T23:59:59+09:00" // IOS8601 형식
+        }
+      ]
+    }
+    ```
+  </Details.Content>
 </Details>
 
 <Hint style="warning">
@@ -335,83 +341,87 @@ STC 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다.
 </Hint>
 
 <Details>
-  <p slot="summary">연동가능 결제수단</p>
+  <Details.Summary>연동가능 결제수단</Details.Summary>
 
-  - card
+  <Details.Content>
+    - card
 
-  - credit(PayPal Credit (US, UK))
+    - credit(PayPal Credit (US, UK))
 
-  - paylater
-    - Pay Later (US): 4개월 무이자 할부 또는 6, 12, 24개월 할부
-    - Pay Later (UK): 3개월 무이자 할부 또는 4개월 무이자 할부 + 이후 유이자 할부
-    - Pay in 4 (AU): 매 2주마다 4회에 걸쳐 지불
-    - 4X PayPal (France): 90일 내 4회에 걸쳐 지불
-    - Später Bezahlen (Germany): 3, 6, 12, 24개월 할부 또는 30일 이내 지불
-    - Italy: 3개월 할부
-    - Spain: 3개월 할부
+    - paylater
+      - Pay Later (US): 4개월 무이자 할부 또는 6, 12, 24개월 할부
+      - Pay Later (UK): 3개월 무이자 할부 또는 4개월 무이자 할부 + 이후 유이자 할부
+      - Pay in 4 (AU): 매 2주마다 4회에 걸쳐 지불
+      - 4X PayPal (France): 90일 내 4회에 걸쳐 지불
+      - Später Bezahlen (Germany): 3, 6, 12, 24개월 할부 또는 30일 이내 지불
+      - Italy: 3개월 할부
+      - Spain: 3개월 할부
 
-  - bancontact(BE / EUR)
+    - bancontact(BE / EUR)
 
-  - blik(PL / PLN)
+    - blik(PL / PLN)
 
-  - eps(AT / EUR)
+    - eps(AT / EUR)
 
-  - giropay(DE / EUR)
+    - giropay(DE / EUR)
 
-  - ideal(NL / EUR)
+    - ideal(NL / EUR)
 
-  - mybank(IT / EUR)
+    - mybank(IT / EUR)
 
-  - sepa(DE / EUR)
+    - sepa(DE / EUR)
 
-  - p24(PL / PLN, EUR)
+    - p24(PL / PLN, EUR)
 
-  - sofort(AT, BE, DE, ES, NL / EUR 또는 GB / GBP)
+    - sofort(AT, BE, DE, ES, NL / EUR 또는 GB / GBP)
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">간편결제 </p>
+  <Details.Summary>간편결제 </Details.Summary>
 
-  ### Alternative Methods
+  <Details.Content>
+    ### Alternative Methods
 
-  페이팔은 간편 결제를 Alternative Methods라고 부르고 있습니다. Alternative Methods도 Pay Later 처럼 결제가 가능한 국가와 통화는 매우 제한적입니다.
+    페이팔은 간편 결제를 Alternative Methods라고 부르고 있습니다. Alternative Methods도 Pay Later 처럼 결제가 가능한 국가와 통화는 매우 제한적입니다.
 
-  - Bancontact
-    - 구매자: BE / EUR
-    - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
+    - Bancontact
+      - 구매자: BE / EUR
+      - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
 
-  - BLIK
-    - 구매자: PL/ PLN
-    - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
+    - BLIK
+      - 구매자: PL/ PLN
+      - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
 
-  - eps
-    - 구매자: AT / EUR
-    - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
+    - eps
+      - 구매자: AT / EUR
+      - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
 
-  - giropay
-    - 구매자: DE / EUR
-    - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
+    - giropay
+      - 구매자: DE / EUR
+      - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
 
-  - iDEAL
-    - 구매자: IT / EUR
+    - iDEAL
+      - 구매자: IT / EUR
 
-  - MyBank
-    - 구매자: IT
-    - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
+    - MyBank
+      - 구매자: IT
+      - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
 
-  - Przelewy24
-    - 구매자: PL / PLN, EUR
-    - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
+    - Przelewy24
+      - 구매자: PL / PLN, EUR
+      - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
 
-  - SEPA-Lastschrift
-    - 구매자: DE
+    - SEPA-Lastschrift
+      - 구매자: DE
 
-  - SOFORT
-    - 구매자
-      - AT, BE, DE, ES, NL / EUR
-      - GB / GBP
+    - SOFORT
+      - 구매자
+        - AT, BE, DE, ES, NL / EUR
+        - GB / GBP
 
-    - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
+      - 머천트: 브라질, 러시아, 일본을 제외한 모든 국가
 
-  단, **Venmo(US)와 Pay upon Invoice(DE)는 지원하지 않습니다.**
+    단, **Venmo(US)와 Pay upon Invoice(DE)는 지원하지 않습니다.**
+  </Details.Content>
 </Details>

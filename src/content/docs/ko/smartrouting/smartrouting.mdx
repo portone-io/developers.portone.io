@@ -4,11 +4,10 @@ description: 스마트 라우팅 연동 방법을 안내합니다.
 targetVersions: ["v2"]
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import ParamTree from "~/components/gitbook/ParamTree.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Details from "~/components/gitbook/Details";
+import ParamTree from "~/components/gitbook/ParamTree";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 <Hint style="info">
   스마트 라우팅 기능이 궁금하다면 [스마트 라우팅 기능 소개](/docs/ko/smartrouting/intro-sr)를 확인해 보세요!
@@ -160,22 +159,26 @@ PortOne.requestPayment({
 ### 유의사항
 
 <Details>
-  <Fragment slot="summary"> 스마트 라우팅 내 새로운 결제대행사 채널 추가 시 테스트 후 사용하시길 권장드립니다. </Fragment>
+  <Details.Summary> 스마트 라우팅 내 새로운 결제대행사 채널 추가 시 테스트 후 사용하시길 권장드립니다. </Details.Summary>
 
-  결제대행사별로 결제 수단에 따라 필수 파라미터가 다르므로 그룹 내 새로운 결제대행사 추가 시 테스트 환경에서
-  테스트를 진행한 후 실환경에 반영하시길 권장 드립니다.
-  필수 파라미터 조건을 충족하지 못하는 경우 에러가 리턴되며, 결제창이 정상적으로 호출되지 않을 수 있습니다.
+  <Details.Content>
+    결제대행사별로 결제 수단에 따라 필수 파라미터가 다르므로 그룹 내 새로운 결제대행사 추가 시 테스트 환경에서
+    테스트를 진행한 후 실환경에 반영하시길 권장 드립니다.
+    필수 파라미터 조건을 충족하지 못하는 경우 에러가 리턴되며, 결제창이 정상적으로 호출되지 않을 수 있습니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <Fragment slot="summary"> 간편결제 사용을 원하시는 경우 허브형으로 사용하시길 권장드립니다. </Fragment>
+  <Details.Summary> 간편결제 사용을 원하시는 경우 허브형으로 사용하시길 권장드립니다. </Details.Summary>
 
-  **간편결제 허브형을 사용하시는 경우**, 결제대행사 별 계약에 따라 결제창에 표시되는 간편결제가 상이할 수 있습니다.
+  <Details.Content>
+    **간편결제 허브형을 사용하시는 경우**, 결제대행사 별 계약에 따라 결제창에 표시되는 간편결제가 상이할 수 있습니다.
 
-  **간편결제 다이렉트 호출을 사용하시는 경우**, 결제대행사 별 계약에 따라 결제 호출 시 에러가 리턴되며 결제창이
-  호출되지 않을 수 있습니다. 가급적 결제대행사 별 동일한 간편결제 수단을 모두 계약하신 후 사용하시길 권장드립니다.
+    **간편결제 다이렉트 호출을 사용하시는 경우**, 결제대행사 별 계약에 따라 결제 호출 시 에러가 리턴되며 결제창이
+    호출되지 않을 수 있습니다. 가급적 결제대행사 별 동일한 간편결제 수단을 모두 계약하신 후 사용하시길 권장드립니다.
 
-  단, **간편결제 직연동**의 경우 스마트 라우팅 기능을 제공하지 않습니다.
+    단, **간편결제 직연동**의 경우 스마트 라우팅 기능을 제공하지 않습니다.
+  </Details.Content>
 </Details>
 
 ## API 수기(키인)결제 연동하기
@@ -190,7 +193,7 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 ### 예제 코드
 
 <Tabs>
-  <Tab title="카드 결제">
+  <Tabs.Tab title="카드 결제">
     ```ts
     // 포트원 수기(키인)결제 API 호출
     const paymentResponse = await fetch(
@@ -235,9 +238,9 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     if (!paymentResponse.ok)
       throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="가상계좌 결제">
+  <Tabs.Tab title="가상계좌 결제">
     ```ts
     // 포트원 수기(키인)결제 API 호출
     const paymentResponse = await fetch(
@@ -288,7 +291,7 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     if (!paymentResponse.ok)
       throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -461,34 +464,42 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 ### 유의사항
 
 <Details>
-  <Fragment slot="summary"> 실제로 결제된 결제대행사 정보는 결제 조회 시 확인할 수 있습니다. </Fragment>
+  <Details.Summary> 실제로 결제된 결제대행사 정보는 결제 조회 시 확인할 수 있습니다. </Details.Summary>
 
-  실제로 결제를 요청하여 결제 승인, 실패된 경우 결제대행사 정보를 확인할 수 있습니다.
-  결제대행사 정보는 콘솔 결제내역 또는 결제 조회 API의 `channel` 파라미터에서 확인 가능합니다.
+  <Details.Content>
+    실제로 결제를 요청하여 결제 승인, 실패된 경우 결제대행사 정보를 확인할 수 있습니다.
+    결제대행사 정보는 콘솔 결제내역 또는 결제 조회 API의 `channel` 파라미터에서 확인 가능합니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <Fragment slot="summary"> 수기(키인) 결제 시 카드를 이용하는 경우 결제대행사 계약을 사전에 확인하시길 바랍니다. </Fragment>
+  <Details.Summary> 수기(키인) 결제 시 카드를 이용하는 경우 결제대행사 계약을 사전에 확인하시길 바랍니다. </Details.Summary>
 
-  카드 결제의 경우 결제대행사에 따라 카드번호, 유효기간, 비밀번호, 생년월일 4가지 정보를 다르게 요구할 수 있습니다.
-  스마트 라우팅 사용 시 4개의 정보를 전부 입력하시거나 사용하시는 결제대행사의 계약 조건을 모두 충족할 수 있도록
-  파라미터를 입력한 후 결제 요청을 해야합니다.
+  <Details.Content>
+    카드 결제의 경우 결제대행사에 따라 카드번호, 유효기간, 비밀번호, 생년월일 4가지 정보를 다르게 요구할 수 있습니다.
+    스마트 라우팅 사용 시 4개의 정보를 전부 입력하시거나 사용하시는 결제대행사의 계약 조건을 모두 충족할 수 있도록
+    파라미터를 입력한 후 결제 요청을 해야합니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <Fragment slot="summary"> 가상계좌 발급 이용 시 고정식 가상계좌 사용을 권장하지 않습니다.</Fragment>
+  <Details.Summary> 가상계좌 발급 이용 시 고정식 가상계좌 사용을 권장하지 않습니다.</Details.Summary>
 
-  고정식 가상계좌의 경우 결제대행사별로 발급 유형이 다르므로 스마트 라우팅 이용 시 가상계좌 발급이
-  올바르지 않을 수 있습니다.
-  가상계좌 발급을 이용하시는 경우 일반(회전식) 가상계좌를 이용하시길 권장드립니다.
+  <Details.Content>
+    고정식 가상계좌의 경우 결제대행사별로 발급 유형이 다르므로 스마트 라우팅 이용 시 가상계좌 발급이
+    올바르지 않을 수 있습니다.
+    가상계좌 발급을 이용하시는 경우 일반(회전식) 가상계좌를 이용하시길 권장드립니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <Fragment slot="summary"> 가상계좌 발급 이용 시 `virtualAccount.expiry.validHours` 사용을 권장하지 않습니다.</Fragment>
+  <Details.Summary> 가상계좌 발급 이용 시 `virtualAccount.expiry.validHours` 사용을 권장하지 않습니다.</Details.Summary>
 
-  스마트 라우팅 이용 시 가상계좌 만료시간 파라미터 중 `virtualAccount.expiry.validHours` 사용을 권장하지 않습니다.
-  해당 파라미터의 경우 지원하는 PG사가 한정적이기 때문에 해당 파라미터를 사용하는 경우 일부 PG사에 한하여
-  정상적으로 가상계좌 발급이 불가능할 수 있습니다.
+  <Details.Content>
+    스마트 라우팅 이용 시 가상계좌 만료시간 파라미터 중 `virtualAccount.expiry.validHours` 사용을 권장하지 않습니다.
+    해당 파라미터의 경우 지원하는 PG사가 한정적이기 때문에 해당 파라미터를 사용하는 경우 일부 PG사에 한하여
+    정상적으로 가상계좌 발급이 불가능할 수 있습니다.
+  </Details.Content>
 </Details>
 
 ## API 빌링키 발급 및 정기결제 연동하기
@@ -517,7 +528,7 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 ### 예제 코드
 
 <Tabs>
-  <Tab title="빌링키 발급">
+  <Tabs.Tab title="빌링키 발급">
     ```ts
     const issueResponse = await fetch("https://api.portone.io/billing-keys", {
       method: "POST",
@@ -564,9 +575,9 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     if (channelSpecificFailures.length !== 0)
       console.log(`발급에 실패한 채널이 있습니다: ${channelSpecificFailures}`);
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="빌링키 결제">
+  <Tabs.Tab title="빌링키 결제">
     ```ts
     const issueResponse = await fetch(
       `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/billing-key`,
@@ -599,9 +610,9 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     if (!issueResponse.ok)
       throw new Error(`issueResponse: ${await issueResponse.json()}`);
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="빌링키 예약 결제">
+  <Tabs.Tab title="빌링키 예약 결제">
     ```ts
     const issueResponse = await fetch(
       `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
@@ -637,7 +648,7 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     if (!issueResponse.ok)
       throw new Error(`issueResponse: ${await issueResponse.json()}`);
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -654,7 +665,7 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 ### 필수 파라미터
 
 <Tabs>
-  <Tab title="빌링키 발급">
+  <Tabs.Tab title="빌링키 발급">
     <ParamTree>
       - **`paymentId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -732,9 +743,9 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
             </ParamTree>
         </ParamTree>
     </ParamTree>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="빌링키 결제">
+  <Tabs.Tab title="빌링키 결제">
     <ParamTree>
       - **`paymentId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -804,9 +815,9 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
         스마트로로 가상계좌 발급시에만 정보가 유효합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
     </ParamTree>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="빌링키 예약 결제">
+  <Tabs.Tab title="빌링키 예약 결제">
     <ParamTree>
       - **`paymentId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -890,64 +901,74 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
         **결제 예정 시점**
     </ParamTree>
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 유의사항
 
 <Details>
-  <Fragment slot="summary"> 빌링키 발급 요청 시 지정한 그룹 내 모든 채널로 빌링키를 발급합니다. </Fragment>
+  <Details.Summary> 빌링키 발급 요청 시 지정한 그룹 내 모든 채널로 빌링키를 발급합니다. </Details.Summary>
 
-  그룹 내 채널을 활성화한 채로 비율을 0으로 설정한 경우 해당 채널로도 빌링키 발급을 요청합니다.
-  빌링키 발급을 원하지 않는 경우 채널을 비활성화 상태로 두거나 그룹 내에서 삭제해야 합니다.
+  <Details.Content>
+    그룹 내 채널을 활성화한 채로 비율을 0으로 설정한 경우 해당 채널로도 빌링키 발급을 요청합니다.
+    빌링키 발급을 원하지 않는 경우 채널을 비활성화 상태로 두거나 그룹 내에서 삭제해야 합니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <Fragment slot="summary"> 슈퍼빌링키 발급 시 일부 PG사에 대해서만 발급될 수 있습니다.  </Fragment>
+  <Details.Summary> 슈퍼빌링키 발급 시 일부 PG사에 대해서만 발급될 수 있습니다.  </Details.Summary>
 
-  슈퍼 빌링키를 발급 요청 시 일부 PG사는 요청은 성공하고, 일부 PG사는 요청은 실패하는 경우가 발생할 수 있습니다.
-  이 경우 포트원 빌링키(슈퍼빌링키)는 정상적으로 발급되지만 사용 가능한 빌링키는 요청이 성공한
-  결제대행사의 빌링키로 제한됩니다.
+  <Details.Content>
+    슈퍼 빌링키를 발급 요청 시 일부 PG사는 요청은 성공하고, 일부 PG사는 요청은 실패하는 경우가 발생할 수 있습니다.
+    이 경우 포트원 빌링키(슈퍼빌링키)는 정상적으로 발급되지만 사용 가능한 빌링키는 요청이 성공한
+    결제대행사의 빌링키로 제한됩니다.
 
-  요청이 실패한 결제대행사 목록은 API 응답의 `channelSpecificFailures` 필드로 확인할 수 있고,
-  이 배열에 항목이 있는 경우 필요에 따라 빌링키 발급 실패로 취급하여 사용할 수 있습니다.
+    요청이 실패한 결제대행사 목록은 API 응답의 `channelSpecificFailures` 필드로 확인할 수 있고,
+    이 배열에 항목이 있는 경우 필요에 따라 빌링키 발급 실패로 취급하여 사용할 수 있습니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <Fragment slot="summary"> 슈퍼빌링키 결제 시 특정 PG사를 지정할 수 있습니다.  </Fragment>
+  <Details.Summary> 슈퍼빌링키 결제 시 특정 PG사를 지정할 수 있습니다.  </Details.Summary>
 
-  슈퍼 빌링키를 이용해 결제를 요청할 때 결제 요청에 `channelKey` 파라미터를 전달하는 경우 해당 채널로
-  결제를 요청합니다.
+  <Details.Content>
+    슈퍼 빌링키를 이용해 결제를 요청할 때 결제 요청에 `channelKey` 파라미터를 전달하는 경우 해당 채널로
+    결제를 요청합니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <Fragment slot="summary"> 슈퍼빌링키 결제 시 그룹 설정에 따라 결제됩니다.  </Fragment>
+  <Details.Summary> 슈퍼빌링키 결제 시 그룹 설정에 따라 결제됩니다.  </Details.Summary>
 
-  `channelKey`를 별도로 전달하지 않은 경우 아래와 같이 자동으로 채널이 결정됩니다.
+  <Details.Content>
+    `channelKey`를 별도로 전달하지 않은 경우 아래와 같이 자동으로 채널이 결정됩니다.
 
-  - 슈퍼 빌링키 발급에 사용된 스마트 라우팅 그룹의 현재 설정된 채널 비율에 따라 확률에 기반하여
-    자동으로 선택합니다.
+    - 슈퍼 빌링키 발급에 사용된 스마트 라우팅 그룹의 현재 설정된 채널 비율에 따라 확률에 기반하여
+      자동으로 선택합니다.
 
-  - 만약 결제 시점에 스마트 라우팅 그룹 내에 새로운 결제대행사 채널이 추가되어 있는 경우,
-    해당 결제대행사의 빌링키가 발급되어 있지 않으므로 채널 선택 시 제외됩니다.
+    - 만약 결제 시점에 스마트 라우팅 그룹 내에 새로운 결제대행사 채널이 추가되어 있는 경우,
+      해당 결제대행사의 빌링키가 발급되어 있지 않으므로 채널 선택 시 제외됩니다.
 
-  예를 들어 PG사 A, B, C에 대해 슈퍼 빌링키가 발급되었고,
-  이후 그룹 설정을 B 10%, C 30%, D 60%로 변경한 후 결제 요청을 하면
-  빌링키가 B와 C에 대해서만 존재하기 때문에 B와 C의 설정된 비율에 따라 확률에 기반하여 자동으로 선택됩니다.
+    예를 들어 PG사 A, B, C에 대해 슈퍼 빌링키가 발급되었고,
+    이후 그룹 설정을 B 10%, C 30%, D 60%로 변경한 후 결제 요청을 하면
+    빌링키가 B와 C에 대해서만 존재하기 때문에 B와 C의 설정된 비율에 따라 확률에 기반하여 자동으로 선택됩니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <Fragment slot="summary"> 슈퍼 빌링키를 이용하여 결제 요청 시 불가피하게 그룹 내 비율이 0인 채널로 진행될 수 있습니다. </Fragment>
+  <Details.Summary> 슈퍼 빌링키를 이용하여 결제 요청 시 불가피하게 그룹 내 비율이 0인 채널로 진행될 수 있습니다. </Details.Summary>
 
-  슈퍼 빌링키를 이용하여 결제 요청했을 때, 슈퍼 빌링키에 맵핑된 결제대행사 빌링키 중 그룹 비율에 따라
-  사용 가능한 빌링키가 없는 경우 그룹 내 채널 비율이 0으로 설정되어있더라도 해당 결제대행사로 결제가
-  일어날 수 있습니다.
+  <Details.Content>
+    슈퍼 빌링키를 이용하여 결제 요청했을 때, 슈퍼 빌링키에 맵핑된 결제대행사 빌링키 중 그룹 비율에 따라
+    사용 가능한 빌링키가 없는 경우 그룹 내 채널 비율이 0으로 설정되어있더라도 해당 결제대행사로 결제가
+    일어날 수 있습니다.
 
-  예를 들어, 그룹 내에 나이스페이먼츠, 이니시스, 토스페이먼츠 총 3개의 결제대행사를 설정한 경우 빌링키
-  발급 시 3개의 결제대행사로부터 빌링키를 발급 받은 후 슈퍼 빌링키에 맵핑 됩니다.
-  이후 그룹 설정을 토스페이먼츠 0%, 스마트로 100%로 변경한 경우 위에 발급한 슈퍼 빌링키로 결제 요청 시
-  토스페이먼츠 빌링키만 사용이 가능하기 때문에 0%로 결제 비율이 설정되어있음에도 토스페이먼츠로 결제가
-  발생하게 됩니다.
-  만약 기존에 발급한 결제대행사 채널이 모두 비활성화되어 있거나 그룹 내에서 삭제된 경우 결제가 실패되오니
-  그룹 설정 변경 시 유의하시기 바랍니다.
+    예를 들어, 그룹 내에 나이스페이먼츠, 이니시스, 토스페이먼츠 총 3개의 결제대행사를 설정한 경우 빌링키
+    발급 시 3개의 결제대행사로부터 빌링키를 발급 받은 후 슈퍼 빌링키에 맵핑 됩니다.
+    이후 그룹 설정을 토스페이먼츠 0%, 스마트로 100%로 변경한 경우 위에 발급한 슈퍼 빌링키로 결제 요청 시
+    토스페이먼츠 빌링키만 사용이 가능하기 때문에 0%로 결제 비율이 설정되어있음에도 토스페이먼츠로 결제가
+    발생하게 됩니다.
+    만약 기존에 발급한 결제대행사 채널이 모두 비활성화되어 있거나 그룹 내에서 삭제된 경우 결제가 실패되오니
+    그룹 설정 변경 시 유의하시기 바랍니다.
+  </Details.Content>
 </Details>

@@ -4,10 +4,9 @@ description: 다날 결제연동 방법을 안내합니다.
 targetVersions: ["v1"]
 ---
 
-import Figure from "~/components/Figure.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. 다날 PG 설정하기
 
@@ -18,7 +17,7 @@ import Hint from "~/components/Hint.astro";
 ## 2. 결제 요청하기
 
 <Tabs>
-  <Tab title="인증결제창 호출">
+  <Tabs.Tab title="인증결제창 호출">
     [JavaScript SDK](../../sdk/javascript-sdk-old/readme) `IMP.request_pay(param, callback)`을 호출하여 다날 Tpay 결제창을 호출할 수 있습니다.
     **결제결과**는 PC/모바일 환경 모두 경우 IMP.request\_pay(param, callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신됩니다.
 
@@ -86,11 +85,9 @@ import Hint from "~/components/Hint.astro";
 
       - **`biz_num`**: `사업자등록번호 10자리` 필수 입력 (미설정 시 다날 결제창에서 오류 발생 가능)
     </Hint>
+  </Tabs.Tab>
 
-    
-  </Tab>
-
-  <Tab title="비인증 결제(결제창 방식)">
+  <Tabs.Tab title="비인증 결제(결제창 방식)">
     인증결제창 호출 파라미터에서 **customer\_uid** 값을 추가하면 비 인증 결제창을 호출할 수 있습니다.
 
     <Hint style="danger">
@@ -167,13 +164,13 @@ import Hint from "~/components/Hint.astro";
          -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
          https://api.iamport.kr/subscribe/payments/again
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 3. 부가기능
 
 <Tabs>
-  <Tab title="통신사 노출 제어">
+  <Tabs.Tab title="통신사 노출 제어">
     ```json title="특정 통신사만 노출"
     {
       "phone": {
@@ -233,9 +230,9 @@ import Hint from "~/components/Hint.astro";
     <Hint style="info">
       `phone 파라미터 미 설정시`(기본값) 모든 통신사 노출됨
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="휴대폰 번호 고정">
+  <Tabs.Tab title="휴대폰 번호 고정">
     ```json
     {
       "prefill": {
@@ -247,9 +244,9 @@ import Hint from "~/components/Hint.astro";
     <Hint style="info">
       휴대폰 결제시 해당 파라미터를 설정하면 휴대폰번호를 고정시킬수 있습니다.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="카드결제 할부개월수">
+  <Tabs.Tab title="카드결제 할부개월수">
     ```json
     {
       "display": {
@@ -269,11 +266,9 @@ import Hint from "~/components/Hint.astro";
     </Hint>
 
     할부개월수 <mark style="color:red;">**3개월**</mark>**까지 활성화 예제**
+  </Tabs.Tab>
 
-    
-  </Tab>
-
-  <Tab title="카드사 모듈 호출">
+  <Tabs.Tab title="카드사 모듈 호출">
     ```json
     {
       "card": {
@@ -315,7 +310,5 @@ import Hint from "~/components/Hint.astro";
     - **enabled :** 해당카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
 
     <mark style="color:red;">**신한카드**</mark>**만 결제창 노출 처리 예제**
-
-    
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

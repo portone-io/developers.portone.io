@@ -4,7 +4,7 @@ description: 채널 그룹을 지정해 결제를 호출하면 여러 PG로 결�
 targetVersions: ["v2"]
 ---
 
-import Hint from "~/components/Hint.astro";
+import Hint from "~/components/Hint";
 
 ## 멀티 PG 연동이 필요한 경우
 
@@ -42,7 +42,7 @@ import Hint from "~/components/Hint.astro";
 이 중 인증 결제와 수기 결제의 경우, 결제 호출시에 `channelKey` 대신 `channelGroupId` 파라미터를 전달하는 것으로 채널 그룹을 이용할 수 있습니다.
 
 <Tabs>
-  <Tab title="인증 결제">
+  <Tabs.Tab title="인증 결제">
     ```ts
     const response = await PortOne.requestPayment({
       // Store ID 설정
@@ -56,9 +56,9 @@ import Hint from "~/components/Hint.astro";
       payMethod: "CARD",
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="수기(키인) 결제">
+  <Tabs.Tab title="수기(키인) 결제">
     ```ts title="server-side"
     // 포트원 수기(키인)결제 API 호출
     const paymentResponse = await fetch(
@@ -86,7 +86,7 @@ import Hint from "~/components/Hint.astro";
     if (!paymentResponse.ok)
       throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 실제로 어떤 채널이 사용되었는지는 결제 조회의 `channel` 필드를 통해 알 수 있습니다.

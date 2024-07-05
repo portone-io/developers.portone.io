@@ -6,13 +6,9 @@ versionVariants:
   v2: /ko/v2-payment/pg/nice-v2
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
-import * as prose from "~/components/prose";
-export const components = prose;
-
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. 나이스페이먼츠(신모듈) 채널 설정하기
 
@@ -84,7 +80,7 @@ callback)` 호출 후 <mark style="color:red;">**callback**</mark>으로 수신�
 <mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
-  <Tab title="인증결제창 요청">
+  <Tabs.Tab title="인증결제창 요청">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -107,112 +103,118 @@ callback)` 호출 후 <mark style="color:red;">**callback**</mark>으로 수신�
     ```
 
     <Details>
-      <p slot="summary"><strong>주요 파라미터 설명</strong></p>
+      <Details.Summary><strong>주요 파라미터 설명</strong></Details.Summary>
 
-      **`pg` \***<mark style="color:green;">**string**</mark>
+      <Details.Content>
+        **`pg` \***<mark style="color:green;">**string**</mark>
 
-      **PG사 구분코드**
+        **PG사 구분코드**
 
-      `nice_v2` 로 지정하면 됩니다.
+        `nice_v2` 로 지정하면 됩니다.
 
-      **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **결제수단 구분코드**
+        **결제수단 구분코드**
 
-      - card (신용카드)
-      - trans (실시간 계좌이체)
-      - vbank (가상계좌)
-      - phone (휴대폰소액결제)
-      - cultureland (컬쳐랜드)
-      - naverpay\_card (네이버페이 - 카드)
-      - naverpay\_point (네이버페이 - 포인트)
-      - kakaopay (카카오페이)
-      - payco (페이코)
-      - samsungpay (삼성페이)
-      - skpay (11Pay (구.SKPay))
-      - ssgpay (SSGPAY)
-      - ssgpay\_bank (SSGPAY 은행계좌)
-      - lpay (LPAY)
-      - applepay (애플페이)
+        - card (신용카드)
+        - trans (실시간 계좌이체)
+        - vbank (가상계좌)
+        - phone (휴대폰소액결제)
+        - cultureland (컬쳐랜드)
+        - naverpay\_card (네이버페이 - 카드)
+        - naverpay\_point (네이버페이 - 포인트)
+        - kakaopay (카카오페이)
+        - payco (페이코)
+        - samsungpay (삼성페이)
+        - skpay (11Pay (구.SKPay))
+        - ssgpay (SSGPAY)
+        - ssgpay\_bank (SSGPAY 은행계좌)
+        - lpay (LPAY)
+        - applepay (애플페이)
 
-      **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **주문번호**
+        **주문번호**
 
-      매번 고유하게 채번되어야 합니다.
+        매번 고유하게 채번되어야 합니다.
 
-      **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **상품명**
+        **상품명**
 
-      **40Byte** 이내로 작성해주세요
+        **40Byte** 이내로 작성해주세요
 
-      <mark style="color:red;">**\***</mark>**특수문자 유의사항**
+        <mark style="color:red;">**\***</mark>**특수문자 유의사항**
 
-      - 사용 가능 : **\_**
-      - 사용 불가 : **% & | $ - + = \[ ]**
-      - 사용 가능하나 권장하지 않음 : **( )**
+        - 사용 가능 : **\_**
+        - 사용 불가 : **% & | $ - + = \[ ]**
+        - 사용 가능하나 권장하지 않음 : **( )**
 
-      **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
 
-      **결제금액**
+        **결제금액**
 
-      소수점 두번째 자리까지 허용합니다.
+        소수점 두번째 자리까지 허용합니다.
 
-      **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **구매자 전화번호**
+        **구매자 전화번호**
 
-      **`vbank_due`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`vbank_due`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **가상계좌 입금기한 (YYYY-MM-DD)**
+        **가상계좌 입금기한 (YYYY-MM-DD)**
 
-      (신) 나이스페이먼츠의 경우 필수 입력이며 날짜는 무조건 23:59:59로 설정 됨
+        (신) 나이스페이먼츠의 경우 필수 입력이며 날짜는 무조건 23:59:59로 설정 됨
 
-      **`escrow`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+        **`escrow`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
 
-      **에스크로 결제 여부**
+        **에스크로 결제 여부**
 
-      **`period`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**array**</mark>
+        **`period`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**array**</mark>
 
-      **서비스 제공 기간**
+        **서비스 제공 기간**
 
-      날짜만 입력이 가능하며(시간은 무시) 시작 날짜와 종료 날짜를 모두 입력해야 합니다.
+        날짜만 입력이 가능하며(시간은 무시) 시작 날짜와 종료 날짜를 모두 입력해야 합니다.
 
-      **`from`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+        **`from`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
 
-      **`to`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+        **`to`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+      </Details.Content>
     </Details>
 
     <Details>
-      <p slot="summary">
+      <Details.Summary>
         <strong>결제 가능 결제수단</strong>
-      </p>
+      </Details.Summary>
 
-      - card + 에스크로, 다이렉트
-      - vbank + 에스크로
-      - trans + 에스크로, 다이렉트(은행 지정 X)
-      - phone + 다이렉트(통신사 지정 X)
-      - cultureland
-      - naverpay\_card
-      - naverpay\_point
-      - kakaopay
-      - payco
-      - samsungpay
-      - skpay
-      - ssgpay
-      - ssgpay\_bank
-      - lpay
-      - applepay
+      <Details.Content>
+        - card + 에스크로, 다이렉트
+        - vbank + 에스크로
+        - trans + 에스크로, 다이렉트(은행 지정 X)
+        - phone + 다이렉트(통신사 지정 X)
+        - cultureland
+        - naverpay\_card
+        - naverpay\_point
+        - kakaopay
+        - payco
+        - samsungpay
+        - skpay
+        - ssgpay
+        - ssgpay\_bank
+        - lpay
+        - applepay
+      </Details.Content>
     </Details>
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 <Details>
-  <p slot="summary">
+  <Details.Summary>
     <strong>가능한 결제 환경</strong>
-  </p>
+  </Details.Summary>
 
-  - PC (iframe)
-  - 모바일 (리디렉션)
+  <Details.Content>
+    - PC (iframe)
+    - 모바일 (리디렉션)
+  </Details.Content>
 </Details>

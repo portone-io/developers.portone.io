@@ -6,9 +6,8 @@ versionVariants:
   v1: /ko/pg/payment-gateway/ksnet/readme
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
 
 ## 채널 설정하기
 
@@ -44,7 +43,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="SDK 결제 요청">
+  <Tabs.Tab title="SDK 결제 요청">
     ```ts
     import * as PortOne from "@portone/browser-sdk/v2";
     function requestPayment() {
@@ -59,7 +58,7 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
       });
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## API 수기(키인)결제 및 빌링키 발급 및 예약/반복 결제 요청하기
@@ -70,7 +69,7 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
 결제를 예약합니다.
 
 <Tabs>
-  <Tab title="API 수기(키인) 결제 요청">
+  <Tabs.Tab title="API 수기(키인) 결제 요청">
     ```ts
     // ... 수기(키인) 결제
     const issueResponse = await axios({
@@ -106,9 +105,9 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="API 빌링키 발급 요청">
+  <Tabs.Tab title="API 빌링키 발급 요청">
     ```ts
     // ... 빌링키 발급
     const issueResponse = await axios({
@@ -134,9 +133,9 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="API 예약/반복 결제">
+  <Tabs.Tab title="API 예약/반복 결제">
     ```ts
     async function schedulePayment() {
       // 포트원 결제 예약 API 호출
@@ -163,7 +162,7 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
       // 결제 예약 이후 로직을 구성해주세요.
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 주요 파라미터
@@ -282,22 +281,24 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
   - 지원 불가능한 카드 : 씨티
 
 <Details>
-  <p slot="summary">파라미터 사용 예시 </p>
+  <Details.Summary>파라미터 사용 예시 </Details.Summary>
 
-  ```json
-  {
-    "card": {
-      "installment": {
-        "freeInstallmentPlans": [
-          {
-            "cardCompany": "KOOKMIN_CARD",
-            "months": [9, 10]
-          }
-        ]
+  <Details.Content>
+    ```json
+    {
+      "card": {
+        "installment": {
+          "freeInstallmentPlans": [
+            {
+              "cardCompany": "KOOKMIN_CARD",
+              "months": [9, 10]
+            }
+          ]
+        }
       }
     }
-  }
-  ```
+    ```
+  </Details.Content>
 </Details>
 
 - 결제 통화 `currency`를 `USD`로 지정하여 결제 요청한 경우 해외 발급 카드로만 결제가 가능합니다. 국내에서 발급받은 해외 겸용 카드는 결제 승인이 불가합니다.
@@ -336,10 +337,12 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
   `validHours`는 number 형식으로 입력해야 합니다.
 
 <Details>
-  <p slot="summary">ISO8601 형식 예시 </p>
+  <Details.Summary>ISO8601 형식 예시 </Details.Summary>
 
-  - YYYY-MM-DDTHH:mm:ssZ
-  - YYYY-MM-DDTHH:mm:ss±hh:mm
+  <Details.Content>
+    - YYYY-MM-DDTHH:mm:ssZ
+    - YYYY-MM-DDTHH:mm:ss±hh:mm
+  </Details.Content>
 </Details>
 
 - 가상계좌 결제 건 결제취소(환불)은 06:00 \~ 23:00 까지만 가능하며, 이 외의 시간에 시도하면 에러를 리턴합니다. 이는 KSNET의 정책으로 포트원과 무관합니다.
@@ -367,10 +370,12 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
   배송정보 발송일시 `logistics_form.send_at` 파라미터는 ISO8601 형식으로 입력해야 합니다.
 
 <Details>
-  <p slot="summary">ISO8601 형식 예시</p>
+  <Details.Summary>ISO8601 형식 예시</Details.Summary>
 
-  - YYYY-MM-DDTHH:mm:ssZ
-  - YYYY-MM-DDTHH:mm:ss±hh:mm
+  <Details.Content>
+    - YYYY-MM-DDTHH:mm:ssZ
+    - YYYY-MM-DDTHH:mm:ss±hh:mm
+  </Details.Content>
 </Details>
 
 ### API 수기(키인) 결제

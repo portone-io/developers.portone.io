@@ -5,11 +5,10 @@ description: 토스페이먼츠 브랜드페이 연동 방법을 안내합니다
 targetVersions: ["v1"]
 ---
 
-import Figure from "~/components/Figure.astro";
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. 토스페이먼츠 브랜드페이 채널 설정하기
 
@@ -55,7 +54,7 @@ import Hint from "~/components/Hint.astro";
   수신됩니다.
 
 <Tabs>
-  <Tab title="인증결제창 요청">
+  <Tabs.Tab title="인증결제창 요청">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -77,54 +76,56 @@ import Hint from "~/components/Hint.astro";
     ```
 
     <Details>
-      <p slot="summary"><strong>주요 파라미터 설명</strong></p>
+      <Details.Summary><strong>주요 파라미터 설명</strong></Details.Summary>
 
-      **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      <Details.Content>
+        **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **PG사 구분코드**
+        **PG사 구분코드**
 
-      `toss_brandpay` 로 지정하면 됩니다.
+        `toss_brandpay` 로 지정하면 됩니다.
 
-      **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **결제수단 구분코드**
+        **결제수단 구분코드**
 
-      `toss_brandpay` 로 지정하면 됩니다.
+        `toss_brandpay` 로 지정하면 됩니다.
 
-      **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **주문번호**
+        **주문번호**
 
-      매번 고유하게 채번되어야 합니다.
+        매번 고유하게 채번되어야 합니다.
 
-      **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **주문명**
+        **주문명**
 
-      **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**integer**</mark>
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**integer**</mark>
 
-      **결제금액**
+        **결제금액**
 
-      브랜드페이는 원화 결제만 지원합니다. KRW 기준으로 금액을 입력해주세요.
+        브랜드페이는 원화 결제만 지원합니다. KRW 기준으로 금액을 입력해주세요.
 
-      **`buyer_email`** <mark style="color:green;">**string**</mark>
+        **`buyer_email`** <mark style="color:green;">**string**</mark>
 
-      **구매자 email 주소**
+        **구매자 email 주소**
 
-      **`customer_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`customer_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **구매자 ID**
+        **구매자 ID**
 
-      고객 ID입니다. 다른사용자에게 노출될 경우, 악의적 사용에 대한 문제가 있음으로 자동 증가하는 숫자는 허용되지 않습니다.\
-      UUID 등 유추가 불가능한 무작위 값을 사용하시길 권장드립니다.
+        고객 ID입니다. 다른사용자에게 노출될 경우, 악의적 사용에 대한 문제가 있음으로 자동 증가하는 숫자는 허용되지 않습니다.\
+        UUID 등 유추가 불가능한 무작위 값을 사용하시길 권장드립니다.
 
-      **`bypass.isCulturalExpense`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`bypass.isCulturalExpense`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **도서 문화비 결제 여부**
+        **도서 문화비 결제 여부**
 
-      도서 문화비 소득 공제 결제 여부를 나타내는 파라미터입니다. 기본값은 `false`입니다.
+        도서 문화비 소득 공제 결제 여부를 나타내는 파라미터입니다. 기본값은 `false`입니다.
+      </Details.Content>
     </Details>
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 3. UI 커스터마이징
@@ -135,7 +136,7 @@ import Hint from "~/components/Hint.astro";
   커스터마이징 기능을 사용할 수 있습니다.
 
 <Tabs>
-  <Tab title="UI 커스터마이징">
+  <Tabs.Tab title="UI 커스터마이징">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -203,7 +204,7 @@ import Hint from "~/components/Hint.astro";
     **원터치결제 대체 텍스트**
 
     - UI에 표시되는 `원터치결제`를 대신해 사용할 텍스트입니다. 값을 넣지 않으면 `원터치결제`로 표시됩니다.
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 4. 결제수단 지정 바로 결제
@@ -217,7 +218,7 @@ import Hint from "~/components/Hint.astro";
   있는, `getPaymentMethods()` 함수를 통해 확인할 수 있습니다.
 
 <Tabs>
-  <Tab title="바로 결제">
+  <Tabs.Tab title="바로 결제">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -341,5 +342,5 @@ import Hint from "~/components/Hint.astro";
 
     - 결제 혜택의 상세 설명을 보여주거나 숨깁니다.
     - `true`인 경우, 결제 카드사의 결제 혜택을 자세히 설명합니다. 기본값은 `false`입니다.
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

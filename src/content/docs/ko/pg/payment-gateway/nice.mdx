@@ -4,10 +4,9 @@ description: (구) 나이스페이먼츠 결제창 연동 가이드를 안내합
 targetVersions: ["v1"]
 ---
 
-import Figure from "~/components/Figure.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 <Hint style="warning">
   **나이스페이먼츠(구모듈) 연동 방법에 관한 매뉴얼**입니다.
@@ -31,7 +30,7 @@ NICE페이먼츠 결제창을 호출할 수 있습니다.
 모바일의 경우 <mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
-  <Tab title="인증결제창 요청">
+  <Tabs.Tab title="인증결제창 요청">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -102,9 +101,9 @@ NICE페이먼츠 결제창을 호출할 수 있습니다.
 
     - KRW(한국 원)
     - USD(미국 달러)(모바일의 경우 `niceMobileV2` 파라미터가 `true`일 경우에만 사용 가능)
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="비인증 API 요청">
+  <Tabs.Tab title="비인증 API 요청">
     **API 방식으로 빌링키 발급,결제요청,예약결제를 구현할수 있습니다.**
 
     ---
@@ -165,13 +164,13 @@ NICE페이먼츠 결제창을 호출할 수 있습니다.
       비인증 결제를 연동하기 위해서는 카드정보를 획득할수 있는 UI를 구성해 주셔야 하며
       해당 가이드는 [**링크**](../../auth/guide-1/readme)에서 확인해주시면 됩니다.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 3. 부가기능
 
 <Tabs>
-  <Tab title="할부개월수 설정">
+  <Tabs.Tab title="할부개월수 설정">
     ```json
     {
       "display": {
@@ -189,9 +188,9 @@ NICE페이먼츠 결제창을 호출할 수 있습니다.
     <Hint style="info">
       할부결제는 **5만원 이상 결제 요청 시**에만 이용 가능합니다.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="카드사 모듈 바로 호출">
+  <Tabs.Tab title="카드사 모듈 바로 호출">
     ```json
     {
       "card": {
@@ -213,9 +212,9 @@ NICE페이먼츠 결제창을 호출할 수 있습니다.
 
       - 일부 PG사의 경우, 모든 상점아이디에 대하여 카드사 결제창 direct 노출 기능을 지원하지 않습니다. 반드시 포트원을 통해 현재 사용중인 상점아이디가 카드사 결제창 direct 호출이 가능하도록 설정이 되어있는지 PG사에 확인이 필요합니다.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="특정 카드사 노출">
+  <Tabs.Tab title="특정 카드사 노출">
     ```json
     {
       "card": {
@@ -231,9 +230,9 @@ NICE페이먼츠 결제창을 호출할 수 있습니다.
 
     - **`card_code` :** 금융결제원 카드사 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (<mark style="color:green;">**string)**</mark>
     - **`enabled` :** 해당 카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="부가세 지정">
+  <Tabs.Tab title="부가세 지정">
     ```json
     // 영세율 결제 경우
     {
@@ -252,5 +251,5 @@ NICE페이먼츠 결제창을 호출할 수 있습니다.
 
       - 상점 아이디 설정이 지정금액 방식인 경우에는 취소 시에 공급가액, 부가세, 봉사료, 면세금액 등을 설정하도록 하고 있습니다.([링크](https://developers.nicepay.co.kr/tip.php)의 1617 코드 참조). 취소 시 취소할 금액, 부가세, 면세금액을 정확하게 전달해 주셔야 공급가액, 부가세, 면세금액, 봉사료(0원)가 설정되어 정상적으로 취소가 된다는 점 주의해주시기 바랍니다.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

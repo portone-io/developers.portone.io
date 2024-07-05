@@ -6,12 +6,11 @@ versionVariants:
   v2: /ko/v2-payment/pg/inicis-v2
 ---
 
-import Figure from "~/components/Figure.astro";
-import ContentRef from "~/components/gitbook/ContentRef.astro";
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import ContentRef from "~/components/gitbook/ContentRef";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. KG이니시스 채널 설정하기
 
@@ -28,7 +27,7 @@ KG이니시스 결제창을 호출할 수 있습니다.
 모바일의 경우 <mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
-  <Tab title="인증결제창 요청">
+  <Tabs.Tab title="인증결제창 요청">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -81,25 +80,26 @@ KG이니시스 결제창을 호출할 수 있습니다.
     **결제수단 구분코드**
 
     <Details>
-      <p slot="summary">결제수단 구분코드</p>
+      <Details.Summary>결제수단 구분코드</Details.Summary>
 
-      - `card` (신용카드)
-      - `kakaopay` (카카오페이 허브형)
-      - `naverpay` (네이버페이)
-      - `samsung` (삼성페이 허브형)
-      - `applepay` (애플페이 허브형)
-      - `ssgpay` (SSG페이 허브형)
-      - `payco` (페이코 허브형)
-      - `tosspay` (토스페이 허브형)
-      - `lpay` (L페이 허브형)
-      - `trans` (실시간 계좌이체)
-      - `vbank`(가상계좌)
-      - `phone` (휴대폰소액결제)
-      - `cultureland` (문화상품권)
-      - `smartculture` (스마트문상)
-      - `happymoney` (해피머니)
-      - `booknlife`(도서문화상품권)
-
+      <Details.Content>
+        - `card` (신용카드)
+        - `kakaopay` (카카오페이 허브형)
+        - `naverpay` (네이버페이)
+        - `samsung` (삼성페이 허브형)
+        - `applepay` (애플페이 허브형)
+        - `ssgpay` (SSG페이 허브형)
+        - `payco` (페이코 허브형)
+        - `tosspay` (토스페이 허브형)
+        - `lpay` (L페이 허브형)
+        - `trans` (실시간 계좌이체)
+        - `vbank`(가상계좌)
+        - `phone` (휴대폰소액결제)
+        - `cultureland` (문화상품권)
+        - `smartculture` (스마트문상)
+        - `happymoney` (해피머니)
+        - `booknlife`(도서문화상품권)
+      </Details.Content>
     </Details>
 
     **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -130,9 +130,9 @@ KG이니시스 결제창을 호출할 수 있습니다.
     - `to`
 
     인증 결제창 제공기간을 표현할수 있습니다.
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="비인증 결제창 요청">
+  <Tabs.Tab title="비인증 결제창 요청">
     **PG사 결제창으로 카드정보를 입력받고 빌링키를 발급할수 있습니다.**
 
     - 인증결제창 호출 파라미터에서 **customer\_uid** 값을 추가하면 비 인증 결제창을 호출할 수 있습니다.
@@ -194,9 +194,9 @@ KG이니시스 결제창을 호출할 수 있습니다.
          -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
          https://api.iamport.kr/subscribe/payments/again
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="비인증 API 방식">
+  <Tabs.Tab title="비인증 API 방식">
     **API 방식으로 빌링키 발급,결제요청,예약결제를 구현할수 있습니다.**
 
     **일회성 결제 요청하기**
@@ -245,13 +245,13 @@ KG이니시스 결제창을 호출할 수 있습니다.
     **자세한 가이드는 아래 링크를 참조하세요**
 
     <ContentRef slug="/ko/auth/guide-1/readme" />
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 3. 부가기능
 
 <Tabs>
-  <Tab title="할부개월수 조정">
+  <Tabs.Tab title="할부개월수 조정">
     ```json
     {
       "display": {
@@ -269,9 +269,9 @@ KG이니시스 결제창을 호출할 수 있습니다.
     <Hint style="info">
       할부결제는 **5만원 이상 결제 요청시**에만 이용 가능합니다.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="카드사 모듈 바로 호출">
+  <Tabs.Tab title="카드사 모듈 바로 호출">
     ```json
     {
       "card": {
@@ -287,9 +287,9 @@ KG이니시스 결제창을 호출할 수 있습니다.
 
     - **code** : 카드사 금융결제원 표준 코드. [<mark style="color:red;">**링크**</mark>](https://faq.portone.io/6503bcb4-4a61-4cf3-afd8-5d913b1385a6) 참조 (**string**)
     - **quota** : 할부 개월 수. 일시불일 시 0 으로 지정. (**integer**)
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="카드사 노출 조작">
+  <Tabs.Tab title="카드사 노출 조작">
     ```json
     {
       "card": {
@@ -305,9 +305,9 @@ KG이니시스 결제창을 호출할 수 있습니다.
 
     - **card\_code :** 금결원 카드사코드 [<mark style="color:red;">**링크**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) 참조 (<mark style="color:green;">**string)**</mark>
     - **enabled :** 해당카드 활성화 여부 (<mark style="color:orange;">**boolean)**</mark>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="영세율">
+  <Tabs.Tab title="영세율">
     ```json
     // 영세율의 경우
     {
@@ -327,9 +327,9 @@ KG이니시스 결제창을 호출할 수 있습니다.
       - 취소 시 **요청된 값 그대로 이니시스에서 취소**가 되므로, 취소할 금액, 부가세, 면세금액을 정확하게 전달해 주셔야 부가세, 면세금액이 설정되어 정상적으로 취소가 된다는 점 주의해주시기 바랍니다.
       - 실시간 계좌이체 및 가상계좌의 경우 현금영수증 발급하지 않으면 매출전표에 부가세가 나눠서 표시 되지 않습니다
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="상점부담무이자할부 설정">
+  <Tabs.Tab title="상점부담무이자할부 설정">
     <Hint style="info">
       <mark style="color:red;">**상점 부담 무이자 할부 설정은 사전에 반드시 이니시스에 협의후 이니시스쪽 설정이 먼저 선행되어야 합니다.**</mark>
     </Hint>
@@ -343,5 +343,5 @@ KG이니시스 결제창을 호출할 수 있습니다.
       }
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

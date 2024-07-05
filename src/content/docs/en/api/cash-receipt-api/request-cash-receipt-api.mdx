@@ -3,28 +3,29 @@ title: Request cash receipt API
 description: ''
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import Swagger from "~/components/gitbook/swagger/Swagger.astro";
-import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription.astro";
-import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter.astro";
-import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## Requests cash receipt for a cash transaction.
 
 A cash receipt is issued for the i'mport transaction number (<mark style="color:red;">**`imp_uid`**</mark>) of the cash transaction (**virtual account, account transfer**) processed through i'mport. The cash receipt amount is **automatically applied as cash transaction amount**. For a partially cancelled transaction, cash receipt is **issued for the remaining balance**.
 
 <Details>
-  <p slot="summary">Supported PGs</p>
+  <Details.Summary>Supported PGs</Details.Summary>
 
-  - **KG INICIS**
-  - **NHN KCP**
-  - **Settle Bank**
-  - **NICE Payments**
-  - **PAYJOA (Daou)**
-  - **KICC**
+  <Details.Content>
+    - **KG INICIS**
+    - **NHN KCP**
+    - **Settle Bank**
+    - **NICE Payments**
+    - **PAYJOA (Daou)**
+    - **KICC**
+  </Details.Content>
 </Details>
 
 <Swagger method="post" path="/receipts/{imp_uid}" baseUrl="https://api.ianport.kr" summary="Requests cash receipt for a cash transaction.">
@@ -108,7 +109,7 @@ A cash receipt is issued for the i'mport transaction number (<mark style="color:
 
   <SwaggerResponse status="200: OK" description="Success">
     <Tabs>
-      <Tab title="ReceiptResponse">
+      <Tabs.Tab title="ReceiptResponse">
         **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
         **Response code**
@@ -122,11 +123,11 @@ A cash receipt is issued for the i'mport transaction number (<mark style="color:
         A non-zero code includes a message like 'Invalid payment info'.
 
         **`response`` `**<mark style="color:red;">**`(ReceiptAnnotation, optional)`**</mark>
-      </Tab>
+      </Tabs.Tab>
     </Tabs>
 
     <Tabs>
-      <Tab title="ReceiptAnnotation">
+      <Tabs.Tab title="ReceiptAnnotation">
         **`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
 
         **`i'mport transaction ID`**
@@ -165,7 +166,7 @@ A cash receipt is issued for the i'mport transaction number (<mark style="color:
         **`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
 
         **`Cancelled at`** `UNIX TIMESTAMP`
-      </Tab>
+      </Tabs.Tab>
     </Tabs>
   </SwaggerResponse>
 
@@ -213,25 +214,27 @@ A cash receipt is issued for the i'mport transaction number (<mark style="color:
 > **identifier.**
 
 <Details>
-  <p slot="summary">Response Model Schema</p>
+  <Details.Summary>Response Model Schema</Details.Summary>
 
-  ```json
-  {
-    "code": 0,
-    "message": "string",
-    "response": {
-      "imp_uid": "string",
-      "receipt_tid": "string",
-      "apply_num": "string",
-      "type": "person",
-      "amount": 0,
-      "vat": 0,
-      "receipt_url": "string",
-      "applied_at": 0,
-      "cancelled_at": 0
+  <Details.Content>
+    ```json
+    {
+      "code": 0,
+      "message": "string",
+      "response": {
+        "imp_uid": "string",
+        "receipt_tid": "string",
+        "apply_num": "string",
+        "type": "person",
+        "amount": 0,
+        "vat": 0,
+        "receipt_url": "string",
+        "applied_at": 0,
+        "cancelled_at": 0
+      }
     }
-  }
-  ```
+    ```
+  </Details.Content>
 </Details>
 
 <Hint style="success">

@@ -6,12 +6,8 @@ versionVariants:
   v1: /ko/pg/payment-gateway/nice-v2/readme
 ---
 
-import * as prose from "~/components/prose";
-export const components = prose;
-
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
 
 ## 채널 설정하기
 
@@ -43,7 +39,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 나이스페이먼츠 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="SDK 결제 요청">
+  <Tabs.Tab title="SDK 결제 요청">
     ```ts
     import * as PortOne from "@portone/browser-sdk/v2";
     function requestPayment() {
@@ -58,7 +54,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
       });
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -133,7 +129,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 수기(키인)로 결제하기 위해서는 `POST /payments/${PAYMENT_ID_HERE}/instant`를 이용하여 결제 요청을 해야합니다.
 
 <Tabs>
-  <Tab title="API 수기(키인) 결제 요청">
+  <Tabs.Tab title="API 수기(키인) 결제 요청">
     ```ts
     // ... 수기(키인) 결제
     const issueResponse = await axios({
@@ -172,7 +168,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -246,7 +242,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 결제를 예약합니다.
 
 <Tabs>
-  <Tab title="API 빌링키 발급 요청">
+  <Tabs.Tab title="API 빌링키 발급 요청">
     ```ts
     const issueResponse = await axios({
       url: "https://api.portone.io/billing-keys",
@@ -271,9 +267,9 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="API 예약/반복 결제">
+  <Tabs.Tab title="API 예약/반복 결제">
     ```ts
     const response = await axios({
       url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/schedule`,
@@ -299,7 +295,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 빌링키 발급 주요 파라미터
@@ -532,20 +528,22 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
     확인하시길 바랍니다.
 
 <Details>
-  <p slot="summary">파라미터 예시</p>
+  <Details.Summary>파라미터 예시</Details.Summary>
 
-  ```ts
-  PortOne.requestPayment({
-    // ...중략
-    payMethod: "EASY_PAY",
-    easyPay: {
-      easyPayProvider: "SSGPAY",
-      availablePayMethods: "TRANSGER",
-      cashReceiptType: "PERSONAL",
-      customerIdentifier: "01000000000",
-    },
-  });
-  ```
+  <Details.Content>
+    ```ts
+    PortOne.requestPayment({
+      // ...중략
+      payMethod: "EASY_PAY",
+      easyPay: {
+        easyPayProvider: "SSGPAY",
+        availablePayMethods: "TRANSGER",
+        cashReceiptType: "PERSONAL",
+        customerIdentifier: "01000000000",
+      },
+    });
+    ```
+  </Details.Content>
 </Details>
 
 ### 일반결제 현금영수증 유의사항

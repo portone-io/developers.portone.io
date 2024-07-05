@@ -4,8 +4,8 @@ description: 토스페이 간편결제 연동 방법을 안내합니다.
 targetVersions: ["v2"]
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import ParamTree from "~/components/gitbook/ParamTree.astro";
+import Details from "~/components/gitbook/Details";
+import ParamTree from "~/components/gitbook/ParamTree";
 
 ## 채널 설정하기
 
@@ -119,7 +119,6 @@ function requestPayment() {
             전달하지 않을경우, 기본값은 GENERAL 입니다.
 
             일반 (default) : `GENERAL` / 문화비 : `CULTURE` / 교통비 : `PUBLIC_TP`
-
         </ParamTree>
     </ParamTree>
 </ParamTree>
@@ -129,17 +128,21 @@ function requestPayment() {
 #### 공통
 
 <Details>
-  <p slot="summary">매출전표 지원 안내</p>
+  <Details.Summary>매출전표 지원 안내</Details.Summary>
 
-  카드결제인 경우에만 매출전표가 제공됩니다.
+  <Details.Content>
+    카드결제인 경우에만 매출전표가 제공됩니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">현금영수증 발급 안내</p>
+  <Details.Summary>현금영수증 발급 안내</Details.Summary>
 
-  토스페이의 경우, 현금영수증 발급에 대한 정보를 따로 입력받지 않고 앱에 저장된 식별정보로 현금영수증이 발급됩니다.
+  <Details.Content>
+    토스페이의 경우, 현금영수증 발급에 대한 정보를 따로 입력받지 않고 앱에 저장된 식별정보로 현금영수증이 발급됩니다.
 
-  이 때문에 현금영수증 타입을 personal, corporate로 지정하더라도 실제로는 다른 타입의 현금영수증이 발급될 수 있습니다.
+    이 때문에 현금영수증 타입을 personal, corporate로 지정하더라도 실제로는 다른 타입의 현금영수증이 발급될 수 있습니다.
+  </Details.Content>
 </Details>
 
 ## SDK 빌링키 발급 요청하기
@@ -208,27 +211,31 @@ function requestIssueBillingKey() {
 ### 유의사항
 
 <Details>
-  <p slot="summary">빌링키 발급 웹훅 연동 안내</p>
+  <Details.Summary>빌링키 발급 웹훅 연동 안내</Details.Summary>
 
-  토스페이 빌링키 발급시 빌링키 발급 웹훅을 반드시 연동하는 것이 좋습니다.
+  <Details.Content>
+    토스페이 빌링키 발급시 빌링키 발급 웹훅을 반드시 연동하는 것이 좋습니다.
 
-  콘솔에서 웹훅 URL을 설정하거나, `requestIssueBillingKey` 함수 파라미터 중 noticeUrls를 입력하여 웹훅을 전달받을 수 있습니다.
+    콘솔에서 웹훅 URL을 설정하거나, `requestIssueBillingKey` 함수 파라미터 중 noticeUrls를 입력하여 웹훅을 전달받을 수 있습니다.
 
-  만약 웹훅을 연동하지 않은 경우, 엔드유저가 빌링키 발급 도중 팝업이나 브라우저를 끄는 행위등으로 인해 고객사의 SDK 콜백 코드가 실행되지 않아 실제로 빌링키가 발급됐으나 발급정보가 누락될 수 있습니다.
+    만약 웹훅을 연동하지 않은 경우, 엔드유저가 빌링키 발급 도중 팝업이나 브라우저를 끄는 행위등으로 인해 고객사의 SDK 콜백 코드가 실행되지 않아 실제로 빌링키가 발급됐으나 발급정보가 누락될 수 있습니다.
 
-  [웹훅 연동 가이드 바로가기](../webhook)
+    [웹훅 연동 가이드 바로가기](../webhook)
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">빌링키 업데이트 웹훅 연동 안내</p>
+  <Details.Summary>빌링키 업데이트 웹훅 연동 안내</Details.Summary>
 
-  빌링키가 발급된후에 토스페이앱에서 엔드유저가 직접 빌링키에 연결된 결제수단을 변경할 수 있습니다.
+  <Details.Content>
+    빌링키가 발급된후에 토스페이앱에서 엔드유저가 직접 빌링키에 연결된 결제수단을 변경할 수 있습니다.
 
-  콘솔에 웹훅 URL을 설정해 둔 경우라면 이 때 빌링키 업데이트 웹훅이 전송됩니다.
+    콘솔에 웹훅 URL을 설정해 둔 경우라면 이 때 빌링키 업데이트 웹훅이 전송됩니다.
 
-  만약 빌링키에 연결된 결제수단을 서비스 내부적으로 사용하고 있다면, 빌링키 업데이트 웹훅을 연동하시거나 정보를 표시하기 전 포트원의 빌링키 정보 조회 API를 호출하여 데이터를 최신화하기를 권장합니다.
+    만약 빌링키에 연결된 결제수단을 서비스 내부적으로 사용하고 있다면, 빌링키 업데이트 웹훅을 연동하시거나 정보를 표시하기 전 포트원의 빌링키 정보 조회 API를 호출하여 데이터를 최신화하기를 권장합니다.
 
-  [웹훅 연동 가이드 바로가기](../webhook)
+    [웹훅 연동 가이드 바로가기](../webhook)
+  </Details.Content>
 </Details>
 
 ## API 빌링키 단건 결제 요청하기

@@ -3,10 +3,9 @@ title: Danal
 description: Danal payment window integration guide
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. Configure Danal PG settings
 
@@ -23,7 +22,7 @@ IMP.**request\_pay**(param, callback).
 In both PC and mobile browsers, <mark style="color:red;"> **callback** </mark> is invoked after calling `IMP.request_pay(param, callback)`.
 
 <Tabs>
-  <Tab title="Authenticated payment request">
+  <Tabs.Tab title="Authenticated payment request">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -59,14 +58,16 @@ In both PC and mobile browsers, <mark style="color:red;"> **callback** </mark> i
     **Payment method code**
 
     <Details>
-      <p slot="summary">Payment method codes</p>
+      <Details.Summary>Payment method codes</Details.Summary>
 
-      - `card` (credit card)
-      - `trans`(instant account transfer)
-      - `vbank`(virtual account)
-      - `cultureland`(Cultureland)
-      - `happymoney`(Happy Money)
-      - `booknlife` (Book n culture gift card)
+      <Details.Content>
+        - `card` (credit card)
+        - `trans`(instant account transfer)
+        - `vbank`(virtual account)
+        - `cultureland`(Cultureland)
+        - `happymoney`(Happy Money)
+        - `booknlife` (Book n culture gift card)
+      </Details.Content>
     </Details>
 
     **`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
@@ -92,9 +93,9 @@ In both PC and mobile browsers, <mark style="color:red;"> **callback** </mark> i
 
       - **`biz_num`**: 10-digit business registration number (required)
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Non-authenticated payment request">
+  <Tabs.Tab title="Non-authenticated payment request">
     To open non-authenticated payment window, specify the **customer\_uid** parameter.
 
     <Hint style="danger">
@@ -177,13 +178,13 @@ In both PC and mobile browsers, <mark style="color:red;"> **callback** </mark> i
          -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
          https://api.iamport.kr/subscribe/payments/again
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 3. Additional functions
 
 <Tabs>
-  <Tab title="Installment setting">
+  <Tabs.Tab title="Installment setting">
     ```json title="javascript"
     {
       "display": {
@@ -201,9 +202,9 @@ In both PC and mobile browsers, <mark style="color:red;"> **callback** </mark> i
     <Hint style="info">
       Installment plan option is available only for **KRW 50,000 or more**.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Direct credit card module call">
+  <Tabs.Tab title="Direct credit card module call">
     ```json title="javascript"
     {
       "card": {
@@ -227,9 +228,9 @@ In both PC and mobile browsers, <mark style="color:red;"> **callback** </mark> i
 
       - Direct module call requires pre-setup by Danal.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Enable specific credit cards">
+  <Tabs.Tab title="Enable specific credit cards">
     ```json title="javascript"
     {
       "card": {
@@ -247,5 +248,5 @@ In both PC and mobile browsers, <mark style="color:red;"> **callback** </mark> i
       (<mark style="color:green;">**string)**</mark>
 
     - **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

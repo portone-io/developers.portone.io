@@ -3,10 +3,9 @@ title: KICC
 description: KICC payment window integration guide
 ---
 
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. Configure KICC PG settings
 
@@ -24,7 +23,7 @@ In PC browsers, <mark style="color:red;"> **callback** </mark> is invoked after 
 In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_redirect\_url** </mark>.
 
 <Tabs>
-  <Tab title="Authenticated payment request">
+  <Tabs.Tab title="Authenticated payment request">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -61,12 +60,14 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
     **Payment method code**
 
     <Details>
-      <p slot="summary">Payment method codes</p>
+      <Details.Summary>Payment method codes</Details.Summary>
 
-      - `card` (credit card)
-      - `trans`(instant account transfer)
-      - `vbank`(virtual account)
-      - `phone`(mobile micropayment)
+      <Details.Content>
+        - `card` (credit card)
+        - `trans`(instant account transfer)
+        - `vbank`(virtual account)
+        - `phone`(mobile micropayment)
+      </Details.Content>
     </Details>
 
     **`merchant_uid`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
@@ -90,9 +91,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
     **Escrow option**
 
     Only supports account transfer and virtual account payment.
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Non-authenticated payment request">
+  <Tabs.Tab title="Non-authenticated payment request">
     To open non-authenticated payment window, specify the **customer\_uid** parameter. After getting a billing key from this window, you can request payment using the billing key.
 
     ```ts title="Javascript SDK"
@@ -161,17 +162,17 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
          -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
          https://api.iamport.kr/subscribe/payments/again
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Non-authenticated API  request">
+  <Tabs.Tab title="Non-authenticated API  request">
     #### **Not supported.**
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 3. Additional functions
 
 <Tabs>
-  <Tab title="Escrow setting">
+  <Tabs.Tab title="Escrow setting">
     KICC supports escrow payments only for **cash payment methods** (instant account transfer or virtual bank account).
 
     > To enable escrow payment, first set the following parameters and then configure additional parameters below.
@@ -219,9 +220,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
       },
     );
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Direct credit card module call">
+  <Tabs.Tab title="Direct credit card module call">
     ```json title="javascript"
     {
       "card": {
@@ -244,9 +245,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
       - Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs.
         You must check your Merchant ID with each PG for direct call support.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Enable specific credit cards">
+  <Tabs.Tab title="Enable specific credit cards">
     ```json title="javascript"
     {
       "card": {
@@ -265,5 +266,5 @@ In mobile browsers, the page is redirected to <mark style="color:red;"> **m\_red
 
     **Example of enabling only **<mark style="color:red;">**Shinhan Card**</mark>** payment
     window**
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

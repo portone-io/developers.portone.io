@@ -4,11 +4,10 @@ description: 네이버페이 결제형 연동 방법을 안내합니다.
 targetVersions: ["v1"]
 ---
 
-import Figure from "~/components/Figure.astro";
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. 네이버페이 채널 설정하기
 
@@ -24,7 +23,7 @@ callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 
 모바일의 경우 <mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
-  <Tab title="일반결제창 요청">
+  <Tabs.Tab title="일반결제창 요청">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -190,9 +189,9 @@ callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 
     - 개인 아이디와 같은 개인정보 데이터는 제외하여 전달해야 합니다.
     - 네이버페이 기준 <mark style="color:red;">**고위험군 제품을 판매하는 고객사의 경우 필수**</mark> 입력합니다.
     - 비 대상 고객사는 입력하지 않습니다.
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="정기결제창 요청">
+  <Tabs.Tab title="정기결제창 요청">
     **빌링키 발급받기**
 
     ```ts title="JavaScript SDK"
@@ -351,7 +350,7 @@ callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 
     ```http title="form-urlencoded"
     customer_uid={고객사의 결제 고객을 특정하는 Unique Key}&schedules[0][merchant_uid]={고객사 주문번호}&schedules[0][schedule_at]={결제요청 예약시각 UNIX timestamp}&schedules[0][amount]=10000&schedules[0][extra][naverUseCfm]=20201001\
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 <Hint style="warning">
@@ -384,35 +383,37 @@ callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 
 </Hint>
 
 <Details>
-  <p slot="summary">거래 취소 시 유의사항</p>
+  <Details.Summary>거래 취소 시 유의사항</Details.Summary>
 
-  포트원 환불 API인 `POST` [**`/payments/cancel`**](../../api/api-1/api) 호출시 아래 파라미터를 반드시 설정해 주셔야 합니다.
-  (**해당 파라미터 누락시 네이버페이 실 검수를 통과할 수 없습니다.**)
+  <Details.Content>
+    포트원 환불 API인 `POST` [**`/payments/cancel`**](../../api/api-1/api) 호출시 아래 파라미터를 반드시 설정해 주셔야 합니다.
+    (**해당 파라미터 누락시 네이버페이 실 검수를 통과할 수 없습니다.**)
 
-  - **`extra.requester`**: API를 호출하는 출처
-    - **`customer`**: 구매자에 의한 요청
-    - **`admin`**(기본값): 어드민에 의한 요청
+    - **`extra.requester`**: API를 호출하는 출처
+      - **`customer`**: 구매자에 의한 요청
+      - **`admin`**(기본값): 어드민에 의한 요청
 
-  - **`reason`**: 결제 취소 사유.
+    - **`reason`**: 결제 취소 사유.
 
-  **예시(json)**
+    **예시(json)**
 
-  ```json
-  {
-    "imp_uid": "imp_123412341234", //환불처리할 포트원 거래고유번호
-    "amount": 3000, //환불할 금액
-    "reason": "결제 취소 사유", //실제 사유와 같아야 함
-    "extra": {
-      "requester": "customer"
+    ```json
+    {
+      "imp_uid": "imp_123412341234", //환불처리할 포트원 거래고유번호
+      "amount": 3000, //환불할 금액
+      "reason": "결제 취소 사유", //실제 사유와 같아야 함
+      "extra": {
+        "requester": "customer"
+      }
     }
-  }
-  ```
+    ```
 
-  **예시(form-urlencoded)**
+    **예시(form-urlencoded)**
 
-  ```http
-  imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
-  ```
+    ```http
+    imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
+    ```
+  </Details.Content>
 </Details>
 
 <Details>

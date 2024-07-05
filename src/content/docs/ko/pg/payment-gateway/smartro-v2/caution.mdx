@@ -4,9 +4,9 @@ description: 스마트로 연동 유의사항을 소개합니다.
 targetVersions: ["v1"]
 ---
 
-import Figure from "~/components/Figure.astro";
-import Details from "~/components/gitbook/Details.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import Details from "~/components/gitbook/Details";
+import Hint from "~/components/Hint";
 
 import screenshot1 from "./_assets/caution/screenshot-1.png";
 import screenshot2 from "./_assets/caution/screenshot-2.png";
@@ -76,32 +76,34 @@ import screenshot2 from "./_assets/caution/screenshot-2.png";
 스마트로의 경우 카드사 다이렉트 호출시 고정 할부 개월수는 필수 입력이기 때문에 할부 개월수를 함께 넘겨야 하니다.
 
 <Details>
-  <p slot="summary">파라미터 예제 코드</p>
+  <Details.Summary>파라미터 예제 코드</Details.Summary>
 
-  ```json
-  // 예. BC카드 5개월 할부
-  {
-    "pg": "smartro_v2",
-    "pay_method": "card",
-    "card": {
-      "direct": {
-        // 다이렉트 호출할 카드사 코드와 고정 할부개월수를 모두 지정해야 함
-        "code": "361", // BC카드
-        "quota": 5 // 5개월 할부
+  <Details.Content>
+    ```json
+    // 예. BC카드 5개월 할부
+    {
+      "pg": "smartro_v2",
+      "pay_method": "card",
+      "card": {
+        "direct": {
+          // 다이렉트 호출할 카드사 코드와 고정 할부개월수를 모두 지정해야 함
+          "code": "361", // BC카드
+          "quota": 5 // 5개월 할부
+        }
       }
     }
-  }
-  ```
+    ```
 
-  ```json
-  // 예. 결제창에서 카드사와 할부개월수 선택
-  {
-    "pg": "smartro_v2",
-    "pay_method": "card"
-  }
+    ```json
+    // 예. 결제창에서 카드사와 할부개월수 선택
+    {
+      "pg": "smartro_v2",
+      "pay_method": "card"
+    }
 
-  // 다이렉트 호출할 카드사와 고정 할부개월수 모두 지정하지 않아야 함
-  ```
+    // 다이렉트 호출할 카드사와 고정 할부개월수 모두 지정하지 않아야 함
+    ```
+  </Details.Content>
 </Details>
 
 ### 카드사 포인트 사용 여부 파라미터 제어 불가능
@@ -159,9 +161,11 @@ V1에서는 가상계좌 다이렉트 호출을 지원하지 않기 때문에 **
 이를 보내지 않거나 `false`로 보내는 경우엔 아래와 같은 팝업이 노출되며 결제를 더 이상 진행할 수 없습니다.
 
 <Details>
-  <p slot="summary">고객사 설정 정보와 다른 `digital` 파라미터가 입력 된 경우</p>
+  <Details.Summary>고객사 설정 정보와 다른 `digital` 파라미터가 입력 된 경우</Details.Summary>
 
-  <Figure src={screenshot1} />
+  <Details.Content>
+    <Figure src={screenshot1} />
+  </Details.Content>
 </Details>
 
 ## 빌링키 발급시 유의사항
@@ -198,59 +202,65 @@ V1에서는 가상계좌 다이렉트 호출을 지원하지 않기 때문에 **
 만약 에스크로 결제 시 아래와 같이 다이렉트 호출을 할 경우 결제창이 호출되지 않으니 유의하시기 바랍니다.
 
 <Details>
-  <p slot="summary">V1 에스크로 + 카드사 다이렉트 호출</p>
+  <Details.Summary>V1 에스크로 + 카드사 다이렉트 호출</Details.Summary>
 
-  ```tsx {5-11}
-  IMP.request_pay({
-    pg: "smartro_v2",
-    pay_method: "card",
-    amount: 50000,
-    escrow: true, // 에스크로 결제
-    card: {
-      direct: {
-        code: "361", // 카드사 다이렉트 호출
-        quota: 5,
-      },
-    },
-  });
-  ```
-</Details>
-
-<Details>
-  <p slot="summary">V2 에스크로 + 카드사 다이렉트 호출</p>
-
-  ```tsx {5-13}
-  PortOne.requestPayment({
-    pgProvider: "SMARTRO_V2",
-    payMethod: "CARD",
-    totalAmount: 50000,
-    isEscrow: true, // 에스크로 결제
-    card: {
-      cardCompany: "BC_CARD", // 카드사 다이렉트 호출
-      installment: {
-        monthOption: {
-          fixedMonth: 5,
+  <Details.Content>
+    ```tsx {5-11}
+    IMP.request_pay({
+      pg: "smartro_v2",
+      pay_method: "card",
+      amount: 50000,
+      escrow: true, // 에스크로 결제
+      card: {
+        direct: {
+          code: "361", // 카드사 다이렉트 호출
+          quota: 5,
         },
       },
-    },
-  });
-  ```
+    });
+    ```
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">V2 에스크로 + 가상계좌 다이렉트 호출</p>
+  <Details.Summary>V2 에스크로 + 카드사 다이렉트 호출</Details.Summary>
 
-  ```tsx {5-8}
-  PortOne.requestPayment({
-    pgProvider: "SMARTRO_V2",
-    payMethod: "VIRTUAL_ACCOUNT",
-    totalAmount: 50000,
-    isEscrow: true, // 에스크로 결제
-    virtualAccount: {
-      bankCode: "SHINHAN_BANK", // 은행 다이렉트 호출
-    },
-  });
-  ```
+  <Details.Content>
+    ```tsx {5-13}
+    PortOne.requestPayment({
+      pgProvider: "SMARTRO_V2",
+      payMethod: "CARD",
+      totalAmount: 50000,
+      isEscrow: true, // 에스크로 결제
+      card: {
+        cardCompany: "BC_CARD", // 카드사 다이렉트 호출
+        installment: {
+          monthOption: {
+            fixedMonth: 5,
+          },
+        },
+      },
+    });
+    ```
+  </Details.Content>
+</Details>
+
+<Details>
+  <Details.Summary>V2 에스크로 + 가상계좌 다이렉트 호출</Details.Summary>
+
+  <Details.Content>
+    ```tsx {5-8}
+    PortOne.requestPayment({
+      pgProvider: "SMARTRO_V2",
+      payMethod: "VIRTUAL_ACCOUNT",
+      totalAmount: 50000,
+      isEscrow: true, // 에스크로 결제
+      virtualAccount: {
+        bankCode: "SHINHAN_BANK", // 은행 다이렉트 호출
+      },
+    });
+    ```
+  </Details.Content>
 </Details>
 
 ### 에스크로 + 계좌이체 결제 시 현금영수증 자동 입력 불가능
@@ -261,39 +271,43 @@ V1에서는 가상계좌 다이렉트 호출을 지원하지 않기 때문에 **
 현금영수증 정보를 전달할 경우 결제창이 호출되지 않으니 유의하시기 바랍니다.
 
 <Details>
-  <p slot="summary">V1 에스크로 + 계좌이체 + 현금영수증 정보 전달</p>
+  <Details.Summary>V1 에스크로 + 계좌이체 + 현금영수증 정보 전달</Details.Summary>
 
-  ```tsx {4-10}
-  IMP.request_pay({
-    pg: "smartro_v2",
-    amount: 50000,
-    pay_method: "trans", // 계좌이체 결제
-    escrow: true, // 에스크로 결제
-    bypass: {
-      // 현금영수증 정보 전달
-      cashReceiptType: "company",
-      customerIdentiifer: "1178178260",
-    },
-  });
-  ```
+  <Details.Content>
+    ```tsx {4-10}
+    IMP.request_pay({
+      pg: "smartro_v2",
+      amount: 50000,
+      pay_method: "trans", // 계좌이체 결제
+      escrow: true, // 에스크로 결제
+      bypass: {
+        // 현금영수증 정보 전달
+        cashReceiptType: "company",
+        customerIdentiifer: "1178178260",
+      },
+    });
+    ```
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">V2 에스크로 + 계좌이체 + 현금영수증 정보 전달</p>
+  <Details.Summary>V2 에스크로 + 계좌이체 + 현금영수증 정보 전달</Details.Summary>
 
-  ```tsx {4-10}
-  PortOne.requestPayment({
-    pgProvider: "SMARTRO_V2",
-    totalAmount: 50000,
-    payMethod: "TRANSFER", // 계좌이체 결제
-    isEscrow: true, // 에스크로 결제
-    transfer: {
-      // 현금영수증 정보 전달
-      cashReceiptType: "company",
-      customerIdentiifer: "1178178260",
-    },
-  });
-  ```
+  <Details.Content>
+    ```tsx {4-10}
+    PortOne.requestPayment({
+      pgProvider: "SMARTRO_V2",
+      totalAmount: 50000,
+      payMethod: "TRANSFER", // 계좌이체 결제
+      isEscrow: true, // 에스크로 결제
+      transfer: {
+        // 현금영수증 정보 전달
+        cashReceiptType: "company",
+        customerIdentiifer: "1178178260",
+      },
+    });
+    ```
+  </Details.Content>
 </Details>
 
 ## 기타 유의사항
@@ -326,20 +340,22 @@ V1에서는 가상계좌 다이렉트 호출을 지원하지 않기 때문에 **
 **둘 중 하나만 입력하거나 유효(`YYYMMDD`)하지 않은 날짜 형식을 입력하면 결제창에 노출되지 않**습니다.
 
 <Details>
-  <p slot="summary">파라미터 예시</p>
+  <Details.Summary>파라미터 예시</Details.Summary>
 
-  ```json
-  {
-    "pg": "smartro_v2",
-    "period": {
-      // 서비스 제공 시작 날짜와 종료 날짜를 모두 입력해야 함
-      "from": "2023-01-01", // 서비스 제공 시작 날짜
-      "to": "2023-03-31" // 서비스 제공 종료 날짜
+  <Details.Content>
+    ```json
+    {
+      "pg": "smartro_v2",
+      "period": {
+        // 서비스 제공 시작 날짜와 종료 날짜를 모두 입력해야 함
+        "from": "2023-01-01", // 서비스 제공 시작 날짜
+        "to": "2023-03-31" // 서비스 제공 종료 날짜
+      }
     }
-  }
-  ```
+    ```
 
-  <Figure src={screenshot2} />
+    <Figure src={screenshot2} />
+  </Details.Content>
 </Details>
 
 ### 현금성 결제 시 `cashReceiptType` 값에 따라 `customerIdentifier` 입력 정책이 달라짐

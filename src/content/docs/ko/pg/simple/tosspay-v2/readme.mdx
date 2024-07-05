@@ -4,11 +4,10 @@ description: 토스페이 연동 방법을 안내합니다.
 targetVersions: ["v1"]
 ---
 
-import Figure from "~/components/Figure.astro";
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 <Hint style="info">
   토스페이(tosspay\_v2)에서는 일반결제 및 정기결제 모두 지원하고 있습니다.
@@ -43,7 +42,7 @@ import Hint from "~/components/Hint.astro";
 모바일의 경우 <mark style="color:red;">**m\_redirect\_url**</mark> 로 리디렉션됩니다.
 
 <Tabs>
-  <Tab title="인증 결제창 요청">
+  <Tabs.Tab title="인증 결제창 요청">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -71,59 +70,61 @@ import Hint from "~/components/Hint.astro";
     ```
 
     <Details>
-      <p slot="summary"><strong>주요 파라미터 설명</strong></p>
+      <Details.Summary><strong>주요 파라미터 설명</strong></Details.Summary>
 
-      **`pg` \***<mark style="color:green;">**string**</mark>
+      <Details.Content>
+        **`pg` \***<mark style="color:green;">**string**</mark>
 
-      **PG사 구분코드**
+        **PG사 구분코드**
 
-      `tosspay_v2` 로 지정하면 됩니다.
+        `tosspay_v2` 로 지정하면 됩니다.
 
-      **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **결제수단 구분코드**
+        **결제수단 구분코드**
 
-      - `tosspay_money` : 계좌결제만 허용합니다.
-      - `tosspay_card` : 카드결제만 허용합니다.
-      - `tosspay` : 모든 결제수단을 허용합니다.
+        - `tosspay_money` : 계좌결제만 허용합니다.
+        - `tosspay_card` : 카드결제만 허용합니다.
+        - `tosspay` : 모든 결제수단을 허용합니다.
 
-      **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **주문번호**
+        **주문번호**
 
-      매번 고유하게 채번되어야 합니다.
+        매번 고유하게 채번되어야 합니다.
 
-      **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**integer**</mark>
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**integer**</mark>
 
-      **결제금액**
+        **결제금액**
 
-      string 이 아닌점에 유의하세요
+        string 이 아닌점에 유의하세요
 
-      **`card.useInstallment`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+        **`card.useInstallment`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
 
-      **할부 사용 가능 여부**
+        **할부 사용 가능 여부**
 
-      **`bypass.expiredTime`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`bypass.expiredTime`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **결제 만료 기한**
+        **결제 만료 기한**
 
-      `yyyy-MM-dd HH:mm:ss` 의 형식입니다.
+        `yyyy-MM-dd HH:mm:ss` 의 형식입니다.
 
-      입력하지 않을 경우, 기본값인 15분으로 설정됩니다. 최대 60분까지 설정할 수 있습니다.
+        입력하지 않을 경우, 기본값인 15분으로 설정됩니다. 최대 60분까지 설정할 수 있습니다.
 
-      **`bypass.cashReceiptTradeOption`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`bypass.cashReceiptTradeOption`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **현금영수증 발급 대상 타입**
+        **현금영수증 발급 대상 타입**
 
-      전달하지 않을경우, 기본값은 `GENERAL` 입니다.
+        전달하지 않을경우, 기본값은 `GENERAL` 입니다.
 
-      - `GENERAL`: 일반 (default)
-      - `CULTURE`: 문화비
-      - `PUBLIC_TP`: 교통비
+        - `GENERAL`: 일반 (default)
+        - `CULTURE`: 문화비
+        - `PUBLIC_TP`: 교통비
+      </Details.Content>
     </Details>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="비인증 결제창 요청">
+  <Tabs.Tab title="비인증 결제창 요청">
     인증결제창 호출 파라미터에서 **customer\_uid**, **customer\_id**값을 추가하면 비인증 결제창을 호출할 수 있습니다.
     비인증 결제창에서 빌링키를 발급받은 후 해당 빌링키로 결제를 요청합니다.
 
@@ -149,55 +150,57 @@ import Hint from "~/components/Hint.astro";
     ```
 
     <Details>
-      <p slot="summary"><strong>주요 파라미터 설명</strong></p>
+      <Details.Summary><strong>주요 파라미터 설명</strong></Details.Summary>
 
-      **`pg` \***<mark style="color:green;">**string**</mark>
+      <Details.Content>
+        **`pg` \***<mark style="color:green;">**string**</mark>
 
-      **PG사 구분코드**
+        **PG사 구분코드**
 
-      `tosspay_v2` 로 지정하면 됩니다.
+        `tosspay_v2` 로 지정하면 됩니다.
 
-      **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **결제수단 구분코드**
+        **결제수단 구분코드**
 
-      `tosspay` 로 지정하면 됩니다.
+        `tosspay` 로 지정하면 됩니다.
 
-      **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **주문번호**
+        **주문번호**
 
-      매번 고유하게 채번되어야 합니다.
+        매번 고유하게 채번되어야 합니다.
 
-      **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **`빌링키 발급을 위한 결제 수단을 특정하는 고유 번호`**
+        **`빌링키 발급을 위한 결제 수단을 특정하는 고유 번호`**
 
-      빌링키 발급시 필수 입력
+        빌링키 발급시 필수 입력
 
-      **`customer_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`customer_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **`구매자 식별자`**
+        **`구매자 식별자`**
 
-      주의: (신) 토스페이 빌링키 발급시 필수 입력으로 입력 길이는 **50자**로 제한됩니다.
+        주의: (신) 토스페이 빌링키 발급시 필수 입력으로 입력 길이는 **50자**로 제한됩니다.
 
-      **`m_redirect_url`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+        **`m_redirect_url`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
-      **`리다이렉트 URL`**
+        **`리다이렉트 URL`**
 
-      리디렉션 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 고객사 URL
+        리디렉션 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 고객사 URL
 
-      (신) 토스페이의 경우 모바일 환경에서 **리디렉션 방식으로 빌링키 발급창이 렌더링 되기 때문에 필수입력입니다.**
+        (신) 토스페이의 경우 모바일 환경에서 **리디렉션 방식으로 빌링키 발급창이 렌더링 되기 때문에 필수입력입니다.**
 
-      **`notice_url`** <mark style="color:green;">**string**</mark>
+        **`notice_url`** <mark style="color:green;">**string**</mark>
 
-      **`빌링키 발급 완료 웹훅 전달 URL`**
+        **`빌링키 발급 완료 웹훅 전달 URL`**
 
-      빌링키 발급이 완료됐을 때 웹훅이 전달될 URL입니다. 해당 파라미터가 전달되지 않은 경우 콘솔에 등록한 웹훅 주소로 웹훅이 발송됩니다. **(신) 토스페이의 경우 SDK 콜백만으로 빌링키 발급여부를 체크하는 경우 정보 유실 가능성이 있기 때문에, 반드시 웹훅으로 빌링키 발급여부를 체크하길 권장합니다**.
+        빌링키 발급이 완료됐을 때 웹훅이 전달될 URL입니다. 해당 파라미터가 전달되지 않은 경우 콘솔에 등록한 웹훅 주소로 웹훅이 발송됩니다. **(신) 토스페이의 경우 SDK 콜백만으로 빌링키 발급여부를 체크하는 경우 정보 유실 가능성이 있기 때문에, 반드시 웹훅으로 빌링키 발급여부를 체크하길 권장합니다**.
+      </Details.Content>
     </Details>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="비인증 결제 API">
+  <Tabs.Tab title="비인증 결제 API">
     **빌링키로 결제 요청하기**
 
     빌링키 발급 시 전달한 `customer_uid`를 이용해서 재결제([**POST /subscribe/payments/again**](../../../api/api-4/api)) REST API를 다음과 같이 호출합니다.
@@ -245,5 +248,5 @@ import Hint from "~/components/Hint.astro";
 
     - `false`: 미사용 (default)
     - `true`: 사용
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

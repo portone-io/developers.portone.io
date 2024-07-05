@@ -3,11 +3,10 @@ title: NHH KCP
 description: NHN KCP payment window integration guide
 ---
 
-import ContentRef from "~/components/gitbook/ContentRef.astro";
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import ContentRef from "~/components/gitbook/ContentRef";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 1. Configure NHH KCP PG settings
 
@@ -25,7 +24,7 @@ In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after ca
 In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
 
 <Tabs>
-  <Tab title="Authenticated payment request">
+  <Tabs.Tab title="Authenticated payment request">
     ```ts title="Javascript SDK"
     IMP.request_pay(
       {
@@ -63,22 +62,24 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
     **Payment method code**
 
     <Details>
-      <p slot="summary">Payment method codes</p>
+      <Details.Summary>Payment method codes</Details.Summary>
 
-      - `card` (credit card)
-      - `trans`(instant account transfer)
-      - `vbank`(virtual account)
-      - `phone`(mobile micropayment)
-      - `samsung`(Samsung Pay)
-      - `kakaopay`(Kakao Pay)
-      - `payco` ( PAYCO hub-type)
-      - `lpay` (LPAY hub-type)
-      - `naverpay` (Naver Pay)
-      - `cultureland`(Cultureland)
-      - `smartculture`(Smart Culture)
-      - `happymoney`(Happy Money)
-      - `booknlife`(Book culture gift certificate)
-      - `point`(Benepia)
+      <Details.Content>
+        - `card` (credit card)
+        - `trans`(instant account transfer)
+        - `vbank`(virtual account)
+        - `phone`(mobile micropayment)
+        - `samsung`(Samsung Pay)
+        - `kakaopay`(Kakao Pay)
+        - `payco` ( PAYCO hub-type)
+        - `lpay` (LPAY hub-type)
+        - `naverpay` (Naver Pay)
+        - `cultureland`(Cultureland)
+        - `smartculture`(Smart Culture)
+        - `happymoney`(Happy Money)
+        - `booknlife`(Book culture gift certificate)
+        - `point`(Benepia)
+      </Details.Content>
     </Details>
 
     **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
@@ -98,9 +99,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
 
       How to apply: [https://sir.kr/main/service/p\_payco\_hub.php](https://sir.kr/main/service/p_payco_hub.php)
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Non-authenticated payment request">
+  <Tabs.Tab title="Non-authenticated payment request">
     To open non-authenticated payment window, specify the **customer\_uid** parameter.
     After getting a billing key from this window, you can request payment using the billing key.
 
@@ -171,9 +172,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
          -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
          https://api.iamport.kr/subscribe/payments/again
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Non-authenticated API  request">
+  <Tabs.Tab title="Non-authenticated API  request">
     **You can use i'mport REST API to request billing key, request payment, and schedule payment.**
 
     ### Request one-time payment
@@ -227,13 +228,13 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
     **For detailed information, refer to:**
 
     <ContentRef slug="/en///auth/guide-1/readme" />
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 3. Additional functions
 
 <Tabs>
-  <Tab title="Installment setting">
+  <Tabs.Tab title="Installment setting">
     ```json title="javascript"
     {
       "display": {
@@ -254,9 +255,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
 
     Example of allowing up to <mark style="color:red;">**3 months**</mark>
     **installment plans**
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Direct credit card module call">
+  <Tabs.Tab title="Direct credit card module call">
     ```json title="javascript"
     {
       "card": {
@@ -406,9 +407,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
       - Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs.
         You must check your Merchant ID with each PG for direct call support.
     </Hint>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Enable specific credit cards">
+  <Tabs.Tab title="Enable specific credit cards">
     ```json title="javascript"
     {
       "card": {
@@ -424,9 +425,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
 
     - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
     - **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="App cards only">
+  <Tabs.Tab title="App cards only">
     Set the following parameter to only expose app cards for authenticated payments.
 
     ```json title="request_pay()"
@@ -434,13 +435,13 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
       "appCard": true // Set to true to only expose app cards.
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 4. Additional parameters
 
 <Tabs>
-  <Tab title="Gift certificate payment">
+  <Tabs.Tab title="Gift certificate payment">
     To use the **gift certificate payment method**, set the merchant assigned user ID as follows:
 
     ```json title="javascript SDK"
@@ -474,9 +475,9 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Escrow payment">
+  <Tabs.Tab title="Escrow payment">
     For escrow payment, set the **`escrow`** parameter to **true**.
     To bundle products in the shopping cart when making an escrow payment request,
     pass the item-related information as an additional parameter (**`kcpProducts`**).
@@ -511,5 +512,5 @@ In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redi
       //* ...Omitted... *//
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>

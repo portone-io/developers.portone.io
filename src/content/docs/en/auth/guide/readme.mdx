@@ -3,10 +3,9 @@ title: Authenticated payment
 description: Learn how to integrate authenticated payment through the PG payment window.
 ---
 
-import Figure from "~/components/Figure.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Hint from "~/components/Hint.astro";
+import Figure from "~/components/Figure";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
 
 ## 0. Definition
 
@@ -62,19 +61,19 @@ Add the JS library to your checkout page.
 On the checkout page, initialize the IMP object using your [Merchant ID](../../ready/3).
 
 <Tabs>
-  <Tab title="JavaScript">
+  <Tabs.Tab title="JavaScript">
     ```ts title="Client-side"
     const IMP = window.IMP; // Can be omitted
     IMP.init("Merchant ID"); // Example: imp00000000
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="JavaScript (ES Next)">
+  <Tabs.Tab title="JavaScript (ES Next)">
     ```ts title="Client-side"
     const IMP = window.IMP; // Can be omitted
     IMP.init("{Merchant ID}"); // Example: imp00000000a
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 <Hint style="warning">
@@ -89,7 +88,7 @@ You can pass the [**parameters**](../../sdk/javascript-sdk/readme) required to c
 window in the first argument of the **request\_pay** function.
 
 <Tabs>
-  <Tab title="JavaScript">
+  <Tabs.Tab title="JavaScript">
     ```ts
     IMP.request_pay(
       {
@@ -114,9 +113,9 @@ window in the first argument of the **request\_pay** function.
       },
     );
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="React.js">
+  <Tabs.Tab title="React.js">
     ```tsx
     export class RequestPay extends React.Component {
       requestPay = () => {
@@ -146,9 +145,9 @@ window in the first argument of the **request\_pay** function.
       };
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Vue.js">
+  <Tabs.Tab title="Vue.js">
     ```ts
     export default {
       methods: {
@@ -180,7 +179,7 @@ window in the first argument of the **request\_pay** function.
       },
     };
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 <Hint style="info">
@@ -272,7 +271,7 @@ through the callback function, which is the second argument of the request\_pay(
 > environment** where the payment window is **loaded as iframe**.
 
 <Tabs>
-  <Tab title="JavaScript">
+  <Tabs.Tab title="JavaScript">
     ```ts title="client-side"
     IMP.request_pay(
       {
@@ -303,9 +302,9 @@ through the callback function, which is the second argument of the request\_pay(
       },
     );
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="JavaScript (ES Next)">
+  <Tabs.Tab title="JavaScript (ES Next)">
     ```ts title="client-side"
     IMP.request_pay(
       {
@@ -333,7 +332,7 @@ through the callback function, which is the second argument of the request\_pay(
       },
     );
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 Based on the the payment result (sucess/fail) in the response object
@@ -355,7 +354,7 @@ above.
 > result.
 
 <Tabs>
-  <Tab title="JavaScript">
+  <Tabs.Tab title="JavaScript">
     ```ts title="client-side"
     IMP.request_pay(
       {
@@ -365,9 +364,9 @@ above.
       /* callback */
     ); // callback is not called
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="JavaScript (ES Next)">
+  <Tabs.Tab title="JavaScript (ES Next)">
     ```ts title="client-side"
     IMP.request_pay(
       {
@@ -377,7 +376,7 @@ above.
       /* callback */
     ); // callback is not called
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 If **m\_redirect\_url** is specified as the **request\_pay** function parameter as above, the
@@ -386,17 +385,17 @@ payment result is sent to the URL address in the form of a query string after pa
 The following is an example of redirecting URL based on the query string.
 
 <Tabs>
-  <Tab title="Payment successful/virtual account issued">
+  <Tabs.Tab title="Payment successful/virtual account issued">
     ```sh
     curl https://myservice.com/payments/complete?imp_uid=unique_iamport_paymentID&merchant_uid=unique_merchant_orderID&imp_success=true
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="Payment failed">
+  <Tabs.Tab title="Payment failed">
     ```sh
     curl https://myservice.com/payments/complete?imp_uid=unique_iamport_paymentID&merchant_uid=unique_merchant_orderID&imp_success=false&error_code=error_code(none_defined_currently)&error_msg=error_message
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 |                 Parameter                 |         Description         |   Remarks  |
@@ -450,7 +449,7 @@ The following are the steps for verifying the payment information.
 ### <mark style="color:green;">**STEP 01**</mark> Server receives payment result
 
 <Tabs>
-  <Tab title="Node.js">
+  <Tabs.Tab title="Node.js">
     Example of handling a POST request to the merchant endpoint URL that receives the payment information
 
     ```ts title="server-side"
@@ -465,13 +464,13 @@ The following are the steps for verifying the payment information.
       }
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### <mark style="color:green;">**STEP 02**</mark> Get payment details
 
 <Tabs>
-  <Tab title="Node.js">
+  <Tabs.Tab title="Node.js">
     Example of calling the [**Get payment**](https://api.iamport.kr/#!/payments/getPaymentByImpUid) **API** with the i'mport **payment ID (imp\_uid)** to retrieve the payment info.
 
     ```ts title="server-side"
@@ -507,7 +506,7 @@ The following are the steps for verifying the payment information.
       }
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### <mark style="color:green;">**STEP 03**</mark> Verify payment information
@@ -525,7 +524,7 @@ The following are the steps for verifying the payment information.
 > server after the payment is processed**.
 
 <Tabs>
-  <Tab title="Node.js">
+  <Tabs.Tab title="Node.js">
     Example of comparing the actual payment amount and the payment request amount, performing fraud check on the payment amount, and saving the data in the DB.
 
     ```ts title="server-side"
@@ -582,7 +581,7 @@ The following are the steps for verifying the payment information.
       }
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 The original requested amount is queried from the database with the **`merchant_uid`**, and the
@@ -603,7 +602,7 @@ server, the result message based on the success of the payment is returned as sh
 example.
 
 <Tabs>
-  <Tab title="JavaScript">
+  <Tabs.Tab title="JavaScript">
     ```ts title="client-side"
     IMP.request_pay(
       {
@@ -635,9 +634,9 @@ example.
       },
     );
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="JavaScript (ES Next)">
+  <Tabs.Tab title="JavaScript (ES Next)">
     ```ts title="client-side"
     IMP.request_pay(
       {
@@ -668,7 +667,7 @@ example.
       },
     );
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 In a typical **mobile environment** payment processed by redirecting to a new page, **process the

@@ -6,13 +6,9 @@ versionVariants:
   v1: /ko/pg/payment-gateway/nhn-kcp
 ---
 
-import * as prose from "~/components/prose";
-export const components = prose;
-
-import Details from "~/components/gitbook/Details.astro";
-import ParamTree from "~/components/gitbook/ParamTree.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Details from "~/components/gitbook/Details";
+import ParamTree from "~/components/gitbook/ParamTree";
+import Tabs from "~/components/gitbook/Tabs";
 
 ## 채널 설정하기
 
@@ -77,7 +73,7 @@ import Tabs from "~/components/gitbook/tabs/Tabs.astro";
 KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="SDK 결제 요청">
+  <Tabs.Tab title="SDK 결제 요청">
     ```javascript
     import * as PortOne from "@portone/browser-sdk/v2";
     function requestPayment() {
@@ -97,7 +93,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       });
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -263,216 +259,251 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 #### 공통
 
 <Details>
-  <p slot="summary">`paymentId` 파라미터 내 한글, 특수문자 미지원</p>
+  <Details.Summary>`paymentId` 파라미터 내 한글, 특수문자 미지원</Details.Summary>
 
-  `paymentId` 에는 영문/숫자만 사용할 수 있습니다. 한글이나 특수 문자가 포함된 채 결제를 요청하는 경우
-  결제 실패가 발생하오니 유의하시기 바랍니다.
+  <Details.Content>
+    `paymentId` 에는 영문/숫자만 사용할 수 있습니다. 한글이나 특수 문자가 포함된 채 결제를 요청하는 경우
+    결제 실패가 발생하오니 유의하시기 바랍니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">결제창 표시 언어 지원 안내</p>
+  <Details.Summary>결제창 표시 언어 지원 안내</Details.Summary>
 
-  SDK를 통한 결제 요청 시 `locale` 파라미터를 이용하여 결제창 언어를 변경할 수 있으며, PC 및 모바일 환경 모두
-  한국어(`KO_KR`) 및 영어(`EN_US`)를 지원합니다.
-  미입력 시 자동으로 한국어로 표시됩니다.
+  <Details.Content>
+    SDK를 통한 결제 요청 시 `locale` 파라미터를 이용하여 결제창 언어를 변경할 수 있으며, PC 및 모바일 환경 모두
+    한국어(`KO_KR`) 및 영어(`EN_US`)를 지원합니다.
+    미입력 시 자동으로 한국어로 표시됩니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">결제 통화 지원 안내</p>
+  <Details.Summary>결제 통화 지원 안내</Details.Summary>
 
-  SDK를 통한 결제 요청 시 `currency` 파라미터를 이용하여 결제 통화를 지정할 수 있으며, KCP에서는
-  `KRW`와 `USD`만 지원됩니다. 단, `USD`는 카드 결제일 경우에만 지정 가능합니다.
+  <Details.Content>
+    SDK를 통한 결제 요청 시 `currency` 파라미터를 이용하여 결제 통화를 지정할 수 있으며, KCP에서는
+    `KRW`와 `USD`만 지원됩니다. 단, `USD`는 카드 결제일 경우에만 지정 가능합니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">부가세, 면세금액 직접 지정을 위해서는 별도 계약이 필요합니다.</p>
+  <Details.Summary>부가세, 면세금액 직접 지정을 위해서는 별도 계약이 필요합니다.</Details.Summary>
 
-  SDK를 통한 결제 요청 시 면세 금액(`taxFreeAmount`) 와 부가세(`vatAmount`) 파라미터를 이용하여 면세금액과 부가세를
-  직접 지정할 수 있습니다. 다만 직접 지정하여 사용하기 위해서는 사전에 KCP와 별도로 계약을 진행해야 합니다.
-  별도로 계약을 진행하지 않은 상태에서 해당 파라미터에 값을 지정하여 결제를 요청하는 경우 요청한 내용과 다른 금액으로
-  실결제가 발생할 수 있습니다.
+  <Details.Content>
+    SDK를 통한 결제 요청 시 면세 금액(`taxFreeAmount`) 와 부가세(`vatAmount`) 파라미터를 이용하여 면세금액과 부가세를
+    직접 지정할 수 있습니다. 다만 직접 지정하여 사용하기 위해서는 사전에 KCP와 별도로 계약을 진행해야 합니다.
+    별도로 계약을 진행하지 않은 상태에서 해당 파라미터에 값을 지정하여 결제를 요청하는 경우 요청한 내용과 다른 금액으로
+    실결제가 발생할 수 있습니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">KCP에서 지원하는 현금영수증 발급 유형</p>
+  <Details.Summary>KCP에서 지원하는 현금영수증 발급 유형</Details.Summary>
 
-  현금영수증은 현금성 거래인 실시간 계좌이체 및 가상계좌 발급 시 사용이 가능합니다.
-  KCP의 경우 현금영수증 발급 유형을 `CORPORATE` 혹은 `PERSONAL` 등 파라미터로 제어할 수 없습니다.
-  어떤 유형의 현금영수증을 발행할지는 항상 결제창 내에서 선택 가능합니다.
+  <Details.Content>
+    현금영수증은 현금성 거래인 실시간 계좌이체 및 가상계좌 발급 시 사용이 가능합니다.
+    KCP의 경우 현금영수증 발급 유형을 `CORPORATE` 혹은 `PERSONAL` 등 파라미터로 제어할 수 없습니다.
+    어떤 유형의 현금영수증을 발행할지는 항상 결제창 내에서 선택 가능합니다.
+  </Details.Content>
 </Details>
 
 #### 카드 결제
 
 <Details>
-  <p slot="summary">카드사 다이렉트 호출 시 고정 할부 개월 수만 설정할 수 있습니다.</p>
+  <Details.Summary>카드사 다이렉트 호출 시 고정 할부 개월 수만 설정할 수 있습니다.</Details.Summary>
 
-  KCP의 경우 카드사 다이렉트 호출 시 **고정 할부 개월 수**만 설정 가능합니다.
-  카드사 다이렉트 호출 시 할부 개월 수 옵션을 `card.installment.monthOption.fixedMonth` 가 아닌
-  `card.installment.monthOption.availableMonthList`로 설정할 경우 에러가 발생합니다.
+  <Details.Content>
+    KCP의 경우 카드사 다이렉트 호출 시 **고정 할부 개월 수**만 설정 가능합니다.
+    카드사 다이렉트 호출 시 할부 개월 수 옵션을 `card.installment.monthOption.fixedMonth` 가 아닌
+    `card.installment.monthOption.availableMonthList`로 설정할 경우 에러가 발생합니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">카드사 다이렉트 호출 시 지원하는 카드사 종류</p>
+  <Details.Summary>카드사 다이렉트 호출 시 지원하는 카드사 종류</Details.Summary>
 
-  아래 카드사는 다이렉트 호출이 가능합니다.
+  <Details.Content>
+    아래 카드사는 다이렉트 호출이 가능합니다.
 
-  - 신한카드
-  - 현대카드
-  - 삼성카드
-  - 농협카드
-  - 하나카드
-  - 롯데카드
-  - 씨티카드
-  - 우리카드
-  - 비씨카드
-  - 국민카드
-  - 우체국은행 카드
-  - 광주은행 카드
-  - 새마을금고 카드
-  - 수협은행 카드
-  - 제주은행 카드
-  - 신협 카드
-  - 저축은행 카드
-  - KDB산업은행 카드
+    - 신한카드
+    - 현대카드
+    - 삼성카드
+    - 농협카드
+    - 하나카드
+    - 롯데카드
+    - 씨티카드
+    - 우리카드
+    - 비씨카드
+    - 국민카드
+    - 우체국은행 카드
+    - 광주은행 카드
+    - 새마을금고 카드
+    - 수협은행 카드
+    - 제주은행 카드
+    - 신협 카드
+    - 저축은행 카드
+    - KDB산업은행 카드
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">미지원 카드 관련 파라미터 안내 </p>
+  <Details.Summary>미지원 카드 관련 파라미터 안내 </Details.Summary>
 
-  KCP의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  <Details.Content>
+    KCP의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
-  - `useCardPoint`: 카드 포인트 사용 여부.
-    - KCP의 경우 지정하지 않아도 카드 포인트를 사용 가능합니다.
+    - `useCardPoint`: 카드 포인트 사용 여부.
+      - KCP의 경우 지정하지 않아도 카드 포인트를 사용 가능합니다.
 
-  - `useInstallment`: 할부 사용 여부.
-    - KCP의 경우 `installment` 파라미터로 직접 설정 가능합니다.
+    - `useInstallment`: 할부 사용 여부.
+      - KCP의 경우 `installment` 파라미터로 직접 설정 가능합니다.
 
-  - `useFreeInterestFromMall`: 상점부담무이자 사용 여부.
-    - KCP의 경우 `installment.freeInstallmentPlans` 파라미터로 직접 설정 가능합니다.
+    - `useFreeInterestFromMall`: 상점부담무이자 사용 여부.
+      - KCP의 경우 `installment.freeInstallmentPlans` 파라미터로 직접 설정 가능합니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">일부 카드사에 한하여 다이렉트 호출 시 필수 파라미터 안내 </p>
+  <Details.Summary>일부 카드사에 한하여 다이렉트 호출 시 필수 파라미터 안내 </Details.Summary>
 
-  PC 환경에서 카드사 다이렉트 결제 요청 시, 다음 카드사들의 경우 `bypass.kcp_v2.site_name`을 필수로 입력해야 합니다.
+  <Details.Content>
+    PC 환경에서 카드사 다이렉트 결제 요청 시, 다음 카드사들의 경우 `bypass.kcp_v2.site_name`을 필수로 입력해야 합니다.
 
-  - 신한카드
-  - 우리카드
-  - 현대카드
-  - 삼성카드
-  - 농협카드
-  - 하나카드
-  - 롯데카드
-  - 씨티카드
+    - 신한카드
+    - 우리카드
+    - 현대카드
+    - 삼성카드
+    - 농협카드
+    - 하나카드
+    - 롯데카드
+    - 씨티카드
 
-  모바일 환경에서 카드사 다이렉트 결제 요청 시, 고객사 상호명 파라미터인 `bypass.kcp_v2.site_name`을 필수로 입력해야 합니다.
+    모바일 환경에서 카드사 다이렉트 결제 요청 시, 고객사 상호명 파라미터인 `bypass.kcp_v2.site_name`을 필수로 입력해야 합니다.
+  </Details.Content>
 </Details>
 
 #### 간편 결제
 
 <Details>
-  <p slot="summary">간편결제 허브형 지원 안내</p>
+  <Details.Summary>간편결제 허브형 지원 안내</Details.Summary>
 
-  KCP의 경우 아래 간편결제 허브형을 지원합니다. `easyPay.easyPayProvider` 파라미터에 아래 리스트 중 원하는 값을 입력하세요.
+  <Details.Content>
+    KCP의 경우 아래 간편결제 허브형을 지원합니다. `easyPay.easyPayProvider` 파라미터에 아래 리스트 중 원하는 값을 입력하세요.
 
-  - 카카오페이: `KAKAOPAY`
-  - 네이버페이: `NAVERPAY`
-  - 삼성페이: `SAMSUNGPAY`
-  - ssg페이: `SSGPAY`
-  - 애플페이: `APPLEPAY`
-  - lpay: `LPAY`
-  - 토스페이: `TOSSPAY`
-  - 페이코: `PAYCO`
+    - 카카오페이: `KAKAOPAY`
+    - 네이버페이: `NAVERPAY`
+    - 삼성페이: `SAMSUNGPAY`
+    - ssg페이: `SSGPAY`
+    - 애플페이: `APPLEPAY`
+    - lpay: `LPAY`
+    - 토스페이: `TOSSPAY`
+    - 페이코: `PAYCO`
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">미지원 간편결제 관련 파라미터 안내</p>
+  <Details.Summary>미지원 간편결제 관련 파라미터 안내</Details.Summary>
 
-  KCP의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  <Details.Content>
+    KCP의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
-  - `useCardPoint`: 카드사 포인트 사용 여부
+    - `useCardPoint`: 카드사 포인트 사용 여부
 
-  - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
+    - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
 
-  - `availablePayMethod`: 간편결제 세부 결제수단 지정 렌더링 옵션
+    - `availablePayMethod`: 간편결제 세부 결제수단 지정 렌더링 옵션
 
-  - `availableCards`: 결제 수단으로써 사용 허가할 카드사 리스트
+    - `availableCards`: 결제 수단으로써 사용 허가할 카드사 리스트
 
-  - `useInstallment`: 할부 사용 여부.
-    - KCP의 경우 `installment` 파라미터로 직접 설정 가능합니다.
+    - `useInstallment`: 할부 사용 여부.
+      - KCP의 경우 `installment` 파라미터로 직접 설정 가능합니다.
 
-  - `useFreeInterestFromMall`: 상점부담무이자 사용 여부.
-    - KCP의 경우 `installment.freeInstallmentPlans` 파라미터로 직접 설정 가능합니다.
+    - `useFreeInterestFromMall`: 상점부담무이자 사용 여부.
+      - KCP의 경우 `installment.freeInstallmentPlans` 파라미터로 직접 설정 가능합니다.
+  </Details.Content>
 </Details>
 
 #### 계좌이체
 
 <Details>
-  <p slot="summary">미지원 계좌이체 관련 파라미터 안내</p>
+  <Details.Summary>미지원 계좌이체 관련 파라미터 안내</Details.Summary>
 
-  KCP의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  <Details.Content>
+    KCP의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
-  - `bankCode`: 계좌이체 은행 다이렉트 호출 시 은행 코드
-  - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
+    - `bankCode`: 계좌이체 은행 다이렉트 호출 시 은행 코드
+    - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
+  </Details.Content>
 </Details>
 
 #### 가상계좌 결제
 
 <Details>
-  <p slot="summary">미지원 가상계좌 관련 파라미터 안내</p>
+  <Details.Summary>미지원 가상계좌 관련 파라미터 안내</Details.Summary>
 
-  KCP의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  <Details.Content>
+    KCP의 경우 아래 파라미터들을 지원하지 않으며, 해당 파라미터들을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
 
-  - `bankCode`: 가상계좌 은행 다이렉트 호출 시 은행 코드
-  - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
-  - `fixedOption`: 고정식 가상계좌 옵션
+    - `bankCode`: 가상계좌 은행 다이렉트 호출 시 은행 코드
+    - `customerIdentifier`: 현금영수증 발행 대상 식별 정보
+    - `fixedOption`: 고정식 가상계좌 옵션
+  </Details.Content>
 </Details>
 
 #### 상품권 결제
 
 <Details>
-  <p slot="summary">상품권 지원 안내</p>
+  <Details.Summary>상품권 지원 안내</Details.Summary>
 
-  KCP PC, 모바일 결제에서 `giftCertificateType`는 선택 사항입니다.
-  결제에서 해당 파라미터를 입력하지 않을 경우 결제창 내에서 상품권 종류를 선택할 수 있습니다. KCP에서 지원하는 상품권 종류는 아래와 같습니다.
+  <Details.Content>
+    KCP PC, 모바일 결제에서 `giftCertificateType`는 선택 사항입니다.
+    결제에서 해당 파라미터를 입력하지 않을 경우 결제창 내에서 상품권 종류를 선택할 수 있습니다. KCP에서 지원하는 상품권 종류는 아래와 같습니다.
 
-  - 도서문화상품권: `BOOKNLIFE`
-  - 컬쳐랜드 문화상품권: `CULTURELAND`
-  - 해피머니: `HAPPYMONEY`
+    - 도서문화상품권: `BOOKNLIFE`
+    - 컬쳐랜드 문화상품권: `CULTURELAND`
+    - 해피머니: `HAPPYMONEY`
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">상품권 또는 휴대폰 결제 시 필수 파라미터 안내</p>
+  <Details.Summary>상품권 또는 휴대폰 결제 시 필수 파라미터 안내</Details.Summary>
 
-  KCP에서 상품권, 휴대폰 결제 시 리스크 관리를 위해 고객사 회원의 ID를 필수로 받고 있어,
-  `bypass.kcp_v2.shop_user_id`를 필수로 입력하셔야 합니다.
+  <Details.Content>
+    KCP에서 상품권, 휴대폰 결제 시 리스크 관리를 위해 고객사 회원의 ID를 필수로 받고 있어,
+    `bypass.kcp_v2.shop_user_id`를 필수로 입력하셔야 합니다.
+  </Details.Content>
 </Details>
 
 #### 휴대폰 소액 결제
 
 <Details>
-  <p slot="summary">결제창에 노출될 통신사 지정 옵션 지원 여부</p>
+  <Details.Summary>결제창에 노출될 통신사 지정 옵션 지원 여부</Details.Summary>
 
-  KCP 모바일 결제의 경우 하나의 통신사만 지정할 수 있으며 `availableCarriers`를 사용할 수 없습니다.
-  통신사 구분 값을 위한 `carrier`만 사용이 가능합니다.
+  <Details.Content>
+    KCP 모바일 결제의 경우 하나의 통신사만 지정할 수 있으며 `availableCarriers`를 사용할 수 없습니다.
+    통신사 구분 값을 위한 `carrier`만 사용이 가능합니다.
+  </Details.Content>
 </Details>
 
 #### 에스크로 결제
 
 <Details>
-  <p slot="summary">에스크로 결제 시 필수 파라미터 안내 </p>
+  <Details.Summary>에스크로 결제 시 필수 파라미터 안내 </Details.Summary>
 
-  KCP 에스크로 결제 시 `products` 파라미터를 필수로 요구합니다.
-  구매 상품의 정보를 담아 `products` 리스트에 하나 이상의 상품 정보가 포함되어야 합니다.
+  <Details.Content>
+    KCP 에스크로 결제 시 `products` 파라미터를 필수로 요구합니다.
+    구매 상품의 정보를 담아 `products` 리스트에 하나 이상의 상품 정보가 포함되어야 합니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">에스크로 결제 시 입력 권장 파라미터 안내 </p>
+  <Details.Summary>에스크로 결제 시 입력 권장 파라미터 안내 </Details.Summary>
 
-  KCP에서 에스크로 결제 시 예상 배송 소요일인 `bypass.kcp_v2.deli_term`을 입력을 권장하고 있습니다.
-  입력 형식은 두 자리 수로 입력 되어야 합니다. ex. 예상 배송 소요기간이 3일인 경우,'03'으로 입력
-  정확한 소요일을 알 수 없어 미입력 시 '00'으로 입력됩니다.
-
+  <Details.Content>
+    KCP에서 에스크로 결제 시 예상 배송 소요일인 `bypass.kcp_v2.deli_term`을 입력을 권장하고 있습니다.
+    입력 형식은 두 자리 수로 입력 되어야 합니다. ex. 예상 배송 소요기간이 3일인 경우,'03'으로 입력
+    정확한 소요일을 알 수 없어 미입력 시 '00'으로 입력됩니다.
+  </Details.Content>
 </Details>
 
 ## SDK 빌링키 발급 요청하기
@@ -483,7 +514,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="SDK 빌링키 발급 요청">
+  <Tabs.Tab title="SDK 빌링키 발급 요청">
     ```javascript
     import * as PortOne from "@portone/browser-sdk/v2";
     function requestIssueBillingKey() {
@@ -501,7 +532,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       });
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -593,17 +624,21 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 ### SDK 빌링키 발급 - 유의사항
 
 <Details>
-  <p slot="summary">파라미터 제약 사항</p>
+  <Details.Summary>파라미터 제약 사항</Details.Summary>
 
-  SDK를 통한 빌링키 발급 요청 `offerPeriod` 파라미터를 이용하여 제공 기간을 나타낼 수 있으며, 빌링키 발급 시
-  `interval`파라미터만 지원됩니다.
+  <Details.Content>
+    SDK를 통한 빌링키 발급 요청 `offerPeriod` 파라미터를 이용하여 제공 기간을 나타낼 수 있으며, 빌링키 발급 시
+    `interval`파라미터만 지원됩니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">카드사 다이렉트 호출 미지원 안내</p>
+  <Details.Summary>카드사 다이렉트 호출 미지원 안내</Details.Summary>
 
-  KCP 경우 카드사 다이렉트 호출을 통한 빌링키 발급을 지원하지 않습니다.
-  `card.cardCompany` 필드에 값을 채워도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.
+  <Details.Content>
+    KCP 경우 카드사 다이렉트 호출을 통한 빌링키 발급을 지원하지 않습니다.
+    `card.cardCompany` 필드에 값을 채워도 빌링키 발급 동작에 아무런 영향을 미치지 않습니다.
+  </Details.Content>
 </Details>
 
 ## API 수기(키인)결제 요청하기
@@ -613,7 +648,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="API 수기(키인) 카드 결제 요청">
+  <Tabs.Tab title="API 수기(키인) 카드 결제 요청">
     ```javascript
     // ... 수기(키인) 결제
     const issueResponse = await axios({
@@ -648,9 +683,9 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="API 수기(키인) 가상계좌 발급 요청">
+  <Tabs.Tab title="API 수기(키인) 가상계좌 발급 요청">
     ```javascript
     // ... 수기(키인) 결제
     const issueResponse = await axios({
@@ -687,7 +722,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -883,43 +918,51 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 #### 카드 결제
 
 <Details>
-  <p slot="summary">미지원 파라미터 안내</p>
+  <Details.Summary>미지원 파라미터 안내</Details.Summary>
 
-  무이자 및 카드 포인트 파라미터는 지원하지 않습니다. 해당 파라미터를 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  <Details.Content>
+    무이자 및 카드 포인트 파라미터는 지원하지 않습니다. 해당 파라미터를 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  </Details.Content>
 </Details>
 
 #### 가상계좌 결제
 
 <Details>
-  <p slot="summary">고정식 가상계좌 미지원 안내</p>
+  <Details.Summary>고정식 가상계좌 미지원 안내</Details.Summary>
 
-  회전식(일반) 가상계좌만 지원되며, 고정식 가상계좌는 지원하지 않습니다.
+  <Details.Content>
+    회전식(일반) 가상계좌만 지원되며, 고정식 가상계좌는 지원하지 않습니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">가상계좌 발급 시 입금자명 관련 안내</p>
+  <Details.Summary>가상계좌 발급 시 입금자명 관련 안내</Details.Summary>
 
-  발급된 가상계좌의 입금자명은 결제 요청 시 `customer.name` 파라미터에 입력된 이름으로 표시됩니다.
-  `remitteeName`을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  <Details.Content>
+    발급된 가상계좌의 입금자명은 결제 요청 시 `customer.name` 파라미터에 입력된 이름으로 표시됩니다.
+    `remitteeName`을 설정하더라도 결제 동작에 아무런 영향을 주지 않습니다.
+  </Details.Content>
 </Details>
 
 <Details>
-  <p slot="summary">가상계좌 발급 가능 은행 안내</p>
+  <Details.Summary>가상계좌 발급 가능 은행 안내</Details.Summary>
 
-  - 아래 은행에 한하여 가상계좌 발급이 가능합니다.
-    - 기업은행
-    - 국민은행
-    - 수협은행
-    - NH농협은행
-    - 우리은행
-    - SC제일은행
-    - iM뱅크
-    - 부산은행
-    - 광주은행
-    - 경남은행
-    - 우체국
-    - 하나은행
-    - 신한은행
+  <Details.Content>
+    - 아래 은행에 한하여 가상계좌 발급이 가능합니다.
+      - 기업은행
+      - 국민은행
+      - 수협은행
+      - NH농협은행
+      - 우리은행
+      - SC제일은행
+      - iM뱅크
+      - 부산은행
+      - 광주은행
+      - 경남은행
+      - 우체국
+      - 하나은행
+      - 신한은행
+  </Details.Content>
 </Details>
 
 ## API 빌링키 발급 요청하기
@@ -929,7 +972,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="API 빌링키 발급 요청">
+  <Tabs.Tab title="API 빌링키 발급 요청">
     ```javascript
     const issueResponse = await axios({
       url: "https://api.portone.io/billing-keys",
@@ -954,7 +997,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -1050,7 +1093,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="API 예약/반복 결제">
+  <Tabs.Tab title="API 예약/반복 결제">
     ```ts
     const response = await axios({
       url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/schedule`,
@@ -1073,7 +1116,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터
@@ -1168,7 +1211,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="API 예약/반복 결제">
+  <Tabs.Tab title="API 예약/반복 결제">
     ```ts
     const response = await axios({
       url: `https://api.portone.io/payments/${PAYMENT_ID_HERE}/schedule`,
@@ -1190,7 +1233,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ### 주요 파라미터

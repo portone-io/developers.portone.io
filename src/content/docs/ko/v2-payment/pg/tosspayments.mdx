@@ -6,10 +6,9 @@ versionVariants:
   v1: /ko/pg/payment-gateway/newtoss/readme
 ---
 
-import Figure from "~/components/Figure.astro";
-import Details from "~/components/gitbook/Details.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
+import Figure from "~/components/Figure";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
 
 import image1 from "./_assets/tosspayments/tosspayments_1.webp";
 import image2 from "./_assets/tosspayments/tosspayments_2.png";
@@ -47,7 +46,7 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
 토스페이먼츠 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
-  <Tab title="SDK 결제 요청">
+  <Tabs.Tab title="SDK 결제 요청">
     ```ts
     import * as PortOne from "@portone/browser-sdk/v2";
     function requestPayment() {
@@ -62,9 +61,9 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
       });
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="SDK 빌링키 발급 요청">
+  <Tabs.Tab title="SDK 빌링키 발급 요청">
     ```ts
     import * as PortOne from "@portone/browser-sdk/v2";
     function requestIssueBillingKey() {
@@ -75,7 +74,7 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
       });
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## API 빌링키 발급 및 예약/반복 결제 요청하기
@@ -85,7 +84,7 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
 결제를 예약합니다.
 
 <Tabs>
-  <Tab title="API 빌링키 발급 요청">
+  <Tabs.Tab title="API 빌링키 발급 요청">
     ```ts
     // ... 빌링키 발급
     const issueResponse = await axios({
@@ -111,9 +110,9 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
       },
     });
     ```
-  </Tab>
+  </Tabs.Tab>
 
-  <Tab title="API 예약/반복 결제">
+  <Tabs.Tab title="API 예약/반복 결제">
     ```ts
     async function schedulePayment() {
       // 포트원 결제 예약 API 호출
@@ -140,7 +139,7 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
       // 결제 예약 이후 로직을 구성해주세요.
     }
     ```
-  </Tab>
+  </Tabs.Tab>
 </Tabs>
 
 ## 주요 파라미터
@@ -284,91 +283,93 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
     중 최대값까지 모두** 랜더링됩니다.
 
   <Details>
-    <p slot="summary">파라미터 사용 예시 </p>
+    <Details.Summary>파라미터 사용 예시 </Details.Summary>
 
-    - 예1. 일시불만 허용하고 싶은 경우 (토스페이먼츠 가능)
+    <Details.Content>
+      - 예1. 일시불만 허용하고 싶은 경우 (토스페이먼츠 가능)
 
-      ```json
-      {
-        "card": {
-          "installment": {
-            "monthOption": {
-              "availableMonthList": [0]
+        ```json
+        {
+          "card": {
+            "installment": {
+              "monthOption": {
+                "availableMonthList": [0]
+              }
             }
           }
         }
-      }
-      ```
+        ```
 
-      - 예2. 5개월만 허용하고 싶은 경우 (토스페이먼츠 불가능)
+        - 예2. 5개월만 허용하고 싶은 경우 (토스페이먼츠 불가능)
 
-      ```json
-      {
-        "card": {
-          "installment": {
-            "monthOption": {
-              "availableMonthList": [5]
+        ```json
+        {
+          "card": {
+            "installment": {
+              "monthOption": {
+                "availableMonthList": [5]
+              }
             }
           }
         }
-      }
-      ```
+        ```
 
-      - 예3. 다른 PG사 호출 시 일시불\~5개월까지 허용하고 싶은 경우
+        - 예3. 다른 PG사 호출 시 일시불\~5개월까지 허용하고 싶은 경우
 
-      ```json
-      {
-        "card": {
-          "installment": {
-            "monthOption": {
-              "availableMonthList": [0, 1, 2, 3, 4, 5]
+        ```json
+        {
+          "card": {
+            "installment": {
+              "monthOption": {
+                "availableMonthList": [0, 1, 2, 3, 4, 5]
+              }
             }
           }
         }
-      }
-      ```
+        ```
 
-      - 예4. 토스페이먼츠 호출 시 일시불\~5개월까지 허용하고 싶은 경우
+        - 예4. 토스페이먼츠 호출 시 일시불\~5개월까지 허용하고 싶은 경우
 
-      ```json
-      {
-        "card": {
-          "installment": {
-            "monthOption": {
-              "availableMonthList": [0, 1, 2, 3, 4, 5] // [5], [3,5] 로 입력해도 됨
+        ```json
+        {
+          "card": {
+            "installment": {
+              "monthOption": {
+                "availableMonthList": [0, 1, 2, 3, 4, 5] // [5], [3,5] 로 입력해도 됨
+              }
             }
           }
         }
-      }
-      ```
+        ```
 
-      - 예5. 토스페이먼츠 호출 시 3개월과 5개월까지 허용하고 싶은 경우 -> 불가능
+        - 예5. 토스페이먼츠 호출 시 3개월과 5개월까지 허용하고 싶은 경우 -> 불가능
 
-      ```json
-      {
-        "card": {
-          "installment": {
-            "monthOption": {
-              "availableMonthList": [0, 1, 2, 3, 4, 5] // [5], [3,5] 로 입력해도 됨
+        ```json
+        {
+          "card": {
+            "installment": {
+              "monthOption": {
+                "availableMonthList": [0, 1, 2, 3, 4, 5] // [5], [3,5] 로 입력해도 됨
+              }
             }
           }
         }
-      }
-      ```
+        ```
 
-      - 예6. 다른 PG사 호출 시 3개월과 5개월까지 허용하고 싶은 경우
+        - 예6. 다른 PG사 호출 시 3개월과 5개월까지 허용하고 싶은 경우
 
-      ```json
-      {
-        "card": {
-          "installment": {
-            "monthOption": {
-              "availableMonthList": [3, 5]
+        ```json
+        {
+          "card": {
+            "installment": {
+              "monthOption": {
+                "availableMonthList": [3, 5]
+              }
             }
           }
         }
-      }
-      ```
+        ```
+    </Details.Content>
   </Details>
 
 - 무이자 할부가 적용 되어도 ISP 계열 카드로 결제시에는 `무이자` 표기가 되지 않습니다. 고객사은
@@ -377,14 +378,16 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
   표기됩니다.
 
   <Details>
-    <p slot="summary"> 예시 </p>
+    <Details.Summary> 예시 </Details.Summary>
 
-    - 예1. 삼성카드 - 최대 3개월 무이자 할부 적용 -> 3개월까지 `무` 표기
+    <Details.Content>
+      - 예1. 삼성카드 - 최대 3개월 무이자 할부 적용 -> 3개월까지 `무` 표기
 
-      <Figure src={image2} />
+        <Figure src={image2} />
 
-    - 예2. BC카드 - 최대 12개월 무이자 할부 적용 -> 표기되지 않음 -> 실제 결제 승인 시 무이자 할부 적용 됩니다. 이는 ISP 계열 카드사 결제 시 사용되는 페이북 앱 특성에 따른 것으로 실제 결제 승인시에는 정상적으로 무이자 할부가 적용됩니다.
-      <Figure src={image3} />
+      - 예2. BC카드 - 최대 12개월 무이자 할부 적용 -> 표기되지 않음 -> 실제 결제 승인 시 무이자 할부 적용 됩니다. 이는 ISP 계열 카드사 결제 시 사용되는 페이북 앱 특성에 따른 것으로 실제 결제 승인시에는 정상적으로 무이자 할부가 적용됩니다.
+        <Figure src={image3} />
+    </Details.Content>
   </Details>
 
 - ISP 계열 카드 및 간편결제의 경우 해당 앱 내에서 할부 기간 선택이 가능합니다.
@@ -408,26 +411,53 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
   - 카드사 다이렉트 호출 기능을 사용하고자 한다면 자체적으로 구매자가 할부 개월 수를 선택할 수 있는 UI/UX를 구현한 뒤 결제 요청 시 해당 값을 함께 요청해주셔야 합니다.
 
   <Details>
-    <p slot="summary"> 예시 </p>
+    <Details.Summary> 예시 </Details.Summary>
 
-    - 예1. 현대카드 다이렉트 호출 후 결제 시 일시불로 결제됩니다.
+    <Details.Content>
+      - 예1. 현대카드 다이렉트 호출 후 결제 시 일시불로 결제됩니다.
 
-      ```json
-      {
-        // ... 기타 파라미터
-        "card": {
-          "cardCompany": "HYUNDAI_CARD"
+        ```json
+        {
+          // ... 기타 파라미터
+          "card": {
+            "cardCompany": "HYUNDAI_CARD"
+          }
         }
-      }
-      ```
+        ```
 
-      - 예2. 삼성카드 다이렉트 호출 후 결제 시 5개월 할부로 결제 됩니다.
+        - 예2. 삼성카드 다이렉트 호출 후 결제 시 5개월 할부로 결제 됩니다.
+
+        ```json
+        {
+          // ... 기타 파라미터
+          "card": {
+            "cardCompany": "SAMSUNG_CARD",
+            "installment": {
+              "monthOption": {
+                "fixedMonth": 5
+              }
+            }
+          }
+        }
+        ```
+    </Details.Content>
+  </Details>
+
+- 고정 할부 개월수 (`card.installment.monthOption.fixedMonth`)를 입력한 후 결제 요청 시 앱카드
+  내에서 확인이 가능합니다. 결제창 혹은 앱카드 내에서 개월수가 확인되지 않더라도 실제 결제 승인 시
+  `fixedMonth`에 요청한 값으로 승인 됩니다.
+
+  <Details>
+    <Details.Summary> 예시 </Details.Summary>
+
+    <Details.Content>
+      - 예1. BD카드 다이렉트 호출 후 결제 시 5개월 할부로 결제 됩니다.
 
       ```json
       {
         // ... 기타 파라미터
         "card": {
-          "cardCompany": "SAMSUNG_CARD",
+          "cardCompany": "BC_CARD",
           "installment": {
             "monthOption": {
               "fixedMonth": 5
@@ -436,32 +466,9 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
         }
       }
       ```
-  </Details>
 
-- 고정 할부 개월수 (`card.installment.monthOption.fixedMonth`)를 입력한 후 결제 요청 시 앱카드
-  내에서 확인이 가능합니다. 결제창 혹은 앱카드 내에서 개월수가 확인되지 않더라도 실제 결제 승인 시
-  `fixedMonth`에 요청한 값으로 승인 됩니다.
-
-  <Details>
-    <p slot="summary"> 예시 </p>
-
-    - 예1. BD카드 다이렉트 호출 후 결제 시 5개월 할부로 결제 됩니다.
-
-    ```json
-    {
-      // ... 기타 파라미터
-      "card": {
-        "cardCompany": "BC_CARD",
-        "installment": {
-          "monthOption": {
-            "fixedMonth": 5
-          }
-        }
-      }
-    }
-    ```
-
-    <Figure src={image4} />
+      <Figure src={image4} />
+    </Details.Content>
   </Details>
 
 - 페이북을 통한 ISP 계열 카드 결제 시 실물 카드 번호와 다를 수 있습니다. 토스페이먼츠가 실제 카드
@@ -499,19 +506,23 @@ import image5 from "./_assets/tosspayments/tosspayments_5.png";
   현금영수증 정보를 정확하게 입력해야 합니다.
 
   <Details>
-    <p slot="summary"> 예시 </p>
+    <Details.Summary> 예시 </Details.Summary>
 
-    - 예1. 현금영수증 발급 유형이 지출 증빙일 때, 현금영수증 발급 번호에 휴대폰 번호를 입력하는 경우
-      정상 처리됩니다.
+    <Details.Content>
+      - 예1. 현금영수증 발급 유형이 지출 증빙일 때, 현금영수증 발급 번호에 휴대폰 번호를 입력하는 경우
+        정상 처리됩니다.
+    </Details.Content>
   </Details>
 
 - 삼성페이를 통한 결제 도중 세션값이 만료된 경우 안내 메세지가 잘려서 보일 수 있습니다. 이는
   토스페이먼츠에서 발생하는 이슈로 포트원과 무관합니다.
 
   <Details>
-    <p slot="summary"> 예시 </p>
+    <Details.Summary> 예시 </Details.Summary>
 
-    <Figure src={image5} />
+    <Details.Content>
+      <Figure src={image5} />
+    </Details.Content>
   </Details>
 
 - 사파리 또는 파이어폭스 브라우저의 경우 팝업 차단 해제가 설정되어있지 않는 경우 페이북, 가상계좌
