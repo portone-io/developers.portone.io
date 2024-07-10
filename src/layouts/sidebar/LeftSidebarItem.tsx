@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import { createMemo, For, onMount, Show } from "solid-js";
 
 import { type NavMenuPage } from "~/state/nav";
@@ -57,7 +58,7 @@ function FolderLink(
     >
       <div ref={anchorRef}>
         <div class={`flex ${getLinkStyle(props.isActive)} pr-0`}>
-          <a
+          <A
             href={[
               "/docs",
               props.path,
@@ -68,7 +69,7 @@ function FolderLink(
             class="grow"
           >
             <LinkTitle title={props.title} />
-          </a>
+          </A>
           <button
             class="h-full flex items-center p-2"
             onClick={() => toggleNav(props.path)}
@@ -121,7 +122,7 @@ export function JustLink(props: JustLinkProps) {
     <Show
       when={!props.systemVersion || systemVersion() === props.systemVersion}
     >
-      <a
+      <A
         href={
           !props.isExternal && props.systemVersion
             ? `${props.href}?v=${props.systemVersion}`
@@ -134,7 +135,7 @@ export function JustLink(props: JustLinkProps) {
         target={props.isExternal ? "_blank" : "_self"}
       >
         <LinkTitle title={props.title} isExternal={props.isExternal} />
-      </a>
+      </A>
     </Show>
   );
 }

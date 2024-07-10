@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import { createSignal, For, type JSXElement } from "solid-js";
 
 import { useSystemVersion } from "~/state/system-version";
@@ -24,7 +25,7 @@ export default function Dropdown(props: DropdownProps) {
       onMouseEnter={() => setShowItems(true)}
       onMouseLeave={() => setShowItems(false)}
     >
-      <a
+      <A
         class="h-full inline-flex items-center"
         href={
           typeof props.link === "string"
@@ -33,13 +34,13 @@ export default function Dropdown(props: DropdownProps) {
         }
       >
         {props.children}
-      </a>
+      </A>
       <div class="relative w-full">
         {showItems() && (
           <div class="absolute w-max flex flex-col border bg-white py-2 shadow-lg">
             <For each={props.items}>
               {(item) => (
-                <a
+                <A
                   class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
                   data-system-version={systemVersion}
                   href={item.link}
@@ -48,7 +49,7 @@ export default function Dropdown(props: DropdownProps) {
                   {item.link.startsWith("https://") && (
                     <i class="i-ic-baseline-launch opacity-40" />
                   )}
-                </a>
+                </A>
               )}
             </For>
           </div>

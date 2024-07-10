@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import clsx from "clsx";
 import { createSignal, For, type JSXElement, Show } from "solid-js";
 
@@ -36,7 +37,7 @@ export default function DropdownLink(props: DropdownLinkProps) {
           <div class="absolute w-full flex flex-col border bg-white py-2 shadow-lg">
             <For each={props.items}>
               {(item) => (
-                <a
+                <A
                   class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
                   href={item.link}
                 >
@@ -47,7 +48,7 @@ export default function DropdownLink(props: DropdownLinkProps) {
                     )}
                   />
                   <span>{item.label}</span>
-                </a>
+                </A>
               )}
             </For>
           </div>

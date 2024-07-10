@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import Fuse from "fuse.js";
 import {
   createContext,
@@ -138,7 +139,7 @@ export function SearchScreen(props: SearchScreenProps) {
               <ul>
                 <For each={searchResult()}>
                   {({ item }) => (
-                    <a href={`/${item.slug}`} tabIndex={0}>
+                    <A href={`/${item.slug}`} tabIndex={0}>
                       <li class="px-4 py-2 hover:bg-slate-1">
                         <div class="text-sm">{item.title}</div>
                         <Show when={item.description}>
@@ -147,7 +148,7 @@ export function SearchScreen(props: SearchScreenProps) {
                           </div>
                         </Show>
                       </li>
-                    </a>
+                    </A>
                   )}
                 </For>
               </ul>

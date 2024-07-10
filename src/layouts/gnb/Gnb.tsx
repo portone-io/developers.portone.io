@@ -1,4 +1,4 @@
-import { useLocation } from "@solidjs/router";
+import { A, useLocation } from "@solidjs/router";
 import { clsx } from "clsx";
 import { createMemo, untrack } from "solid-js";
 
@@ -54,7 +54,7 @@ export default function Gnb(props: Props) {
         >
           <div class="h-full flex flex-grow items-center pl-4 md:pl-6">
             <div class="h-full flex flex-grow items-center bg-white z-gnb-body md:flex-grow-0">
-              <a
+              <A
                 class="h-full inline-flex items-center"
                 href={`/docs/${props.lang}`}
               >
@@ -62,7 +62,7 @@ export default function Gnb(props: Props) {
                   <Logo class="w-22" />
                   <span class="break-keep">{t()["developers"]}</span>
                 </div>
-              </a>
+              </A>
               <div class="mx-6 md:ml-[70px]">
                 <VersionSwitch />
               </div>
@@ -106,7 +106,7 @@ export default function Gnb(props: Props) {
                 </span>
               </Dropdown>
               {props.lang === "ko" && [
-                <a
+                <A
                   class="h-full inline-flex items-center"
                   href="/release-notes"
                 >
@@ -118,8 +118,8 @@ export default function Gnb(props: Props) {
                   >
                     릴리즈 노트
                   </span>
-                </a>,
-                <a class="h-full inline-flex items-center" href="/blog">
+                </A>,
+                <A class="h-full inline-flex items-center" href="/blog">
                   <span
                     class={clsx(
                       location.pathname.startsWith("/blog") && styles.navActive,
@@ -127,7 +127,7 @@ export default function Gnb(props: Props) {
                   >
                     기술 블로그
                   </span>
-                </a>,
+                </A>,
               ]}
             </div>
           </div>
