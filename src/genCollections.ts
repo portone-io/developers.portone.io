@@ -4,6 +4,7 @@ import path from "node:path";
 import { subscribe } from "@parcel/watcher";
 import fastGlob from "fast-glob";
 import jsYaml from "js-yaml";
+import * as seroval from "seroval";
 
 import { type CollectionConfig } from "./content/config";
 
@@ -102,23 +103,22 @@ async function generate(
     }
   }
 
-  const content = `// prettier-ignore
-
-${[...collections]
-  .map(
-    ([name, c]) => `export const ${name} = {
+  const content = `${[...collections]
+    .map(
+      ([name, c]) => `// prettier-ignore
+export const ${name} = {
 ${[...c.entries.values()]
   .map(
     (entry) => `  ${JSON.stringify(entry.slug)}: {
     slug: ${JSON.stringify(entry.slug)},
-    frontmatter: ${JSON.stringify(entry.frontmatter, null, 2).replace(/\n/g, "\n    ")},
+    frontmatter: ${seroval.serialize(entry.frontmatter)},
     load: () => import(${JSON.stringify(`~/${entry.file}`)}),
   },`,
   )
   .join("\n")}
 }`,
-  )
-  .join("\n\n")}
+    )
+    .join("\n\n")}
 `;
 
   const file = path.join(
