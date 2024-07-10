@@ -1,3 +1,5 @@
+import { trackEvent } from "~/layouts/trackers/Trackers";
+
 export default function EasyGuideLink() {
   return (
     <div>

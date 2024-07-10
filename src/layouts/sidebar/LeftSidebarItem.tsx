@@ -5,6 +5,7 @@ import { type NavMenuPage } from "~/state/nav";
 import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
 
+import { trackEvent } from "../trackers/Trackers";
 import { useNavOpenStates } from "./DocsNavMenu";
 
 function LeftSidebarItem(props: NavMenuPage & { pageSlug: string }) {

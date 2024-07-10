@@ -34,7 +34,3 @@ interface YamlNavMenuGroup {
   items: YamlNavMenuItem[];
   systemVersion: SystemVersion;
 }
-
-declare global {
-  function trackEvent(event: string, props: object, cb?: () => void): void;
-}
