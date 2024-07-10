@@ -48,7 +48,7 @@ export const route = {
   matchFilters: {
     lang: isLang,
   },
-  load: ({ params }) => {
+  preload: ({ params }) => {
     void loadDocsSlug(params);
     void loadNavMenuSystemVersions(params.lang as Lang);
   },
