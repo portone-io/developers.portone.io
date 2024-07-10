@@ -2,6 +2,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import yaml from "@rollup/plugin-yaml";
+import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
+import { transformerMetaHighlight } from "@shikijs/transformers";
 import { defineConfig } from "@solidjs/start/config";
 import vinxiMdxPkg from "@vinxi/plugin-mdx";
 import rehypeSlug from "rehype-slug";
@@ -44,7 +46,55 @@ export default defineConfig({
           jsxImportSource: "solid-js",
           providerImportSource: "solid-mdx",
           remarkPlugins: [remarkFrontmatter, remarkGfm],
-          rehypePlugins: [rehypeSlug],
+          rehypePlugins: [
+            rehypeSlug,
+            [
+              rehypeShiki,
+              {
+                theme: "github-light",
+                transformers: [
+                  {
+                    name: "remove-trailing-newline",
+                    preprocess(code) {
+                      if (code.endsWith("\n")) {
+                        return code.slice(0, -1);
+                      }
+                      return code;
+                    },
+                  },
+                  transformerMetaHighlight(),
+                  {
+                    name: "line-number-meta",
+                    code(node) {
+                      if (
+                        this.options.meta?.__raw?.includes("showLineNumber")
+                      ) {
+                        this.addClassToHast(node, "line-numbers");
+                      }
+                    },
+                  },
+                  {
+                    name: "title",
+                    pre(node) {
+                      const matches = /title="([^"]+)"/.exec(
+                        this.options.meta?.__raw ?? "",
+                      );
+                      if (matches?.[1]) {
+                        node.children.unshift({
+                          type: "element",
+                          tagName: "div",
+                          properties: {
+                            className: ["title"],
+                          },
+                          children: [{ type: "text", value: matches[1] }],
+                        });
+                      }
+                    },
+                  },
+                ],
+              } satisfies RehypeShikiOptions,
+            ],
+          ],
         }),
         imagetools({
           defaultDirectives: (url) => {
