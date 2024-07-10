@@ -43,48 +43,49 @@ import Hint from "~/components/Hint.astro";
 
 <Tabs>
   <Tab title="인증 결제">
-  ```ts
-  const response = await PortOne.requestPayment({
-    // Store ID 설정
-    storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
-    // 채널 키 설정
-    channelGroupId: "channel-group-test-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
-    paymentId: `payment-${crypto.randomUUID()}`,
-    orderName: "나이키 와플 트레이너 2 SD",
-    totalAmount: 1000,
-    currency: "CURRENCY_KRW",
-    payMethod: "CARD",
-  });
-  ```
+    ```ts
+    const response = await PortOne.requestPayment({
+      // Store ID 설정
+      storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
+      // 채널 키 설정
+      channelGroupId: "channel-group-test-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
+      paymentId: `payment-${crypto.randomUUID()}`,
+      orderName: "나이키 와플 트레이너 2 SD",
+      totalAmount: 1000,
+      currency: "CURRENCY_KRW",
+      payMethod: "CARD",
+    });
+    ```
   </Tab>
+
   <Tab title="수기(키인) 결제">
-  ```ts title="server-side"
-  // 포트원 수기(키인)결제 API 호출
-  const paymentResponse = await fetch(
-    `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `PortOne ${PORTONE_API_SECRET}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        channelGroupId: "channel-group-test-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
-        orderName: "월간 이용권 정기결제",
-        // 수기 결제 API를 참고해 고객 정보를 채워주세요.
-        customer: YOUR_CUSTOMER_INFO,
-        amount: {
-          total: 8900,
+    ```ts title="server-side"
+    // 포트원 수기(키인)결제 API 호출
+    const paymentResponse = await fetch(
+      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `PortOne ${PORTONE_API_SECRET}`,
+          "Content-Type": "application/json",
         },
-        currency: "KRW",
-        // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
-        method: PAYMENT_METHOD_HERE,
-      }),
-    },
-  );
-  if (!paymentResponse.ok)
-    throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
-  ```
+        body: JSON.stringify({
+          channelGroupId: "channel-group-test-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
+          orderName: "월간 이용권 정기결제",
+          // 수기 결제 API를 참고해 고객 정보를 채워주세요.
+          customer: YOUR_CUSTOMER_INFO,
+          amount: {
+            total: 8900,
+          },
+          currency: "KRW",
+          // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
+          method: PAYMENT_METHOD_HERE,
+        }),
+      },
+    );
+    if (!paymentResponse.ok)
+      throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
+    ```
   </Tab>
 </Tabs>
 
