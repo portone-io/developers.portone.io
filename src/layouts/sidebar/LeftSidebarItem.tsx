@@ -132,7 +132,7 @@ export function JustLink(props: JustLinkProps) {
         onClick={() =>
           props.event && trackEvent(props.event.name, props.event.props)
         }
-        target={props.isExternal ? "_blank" : "_self"}
+        target={props.isExternal ? "_blank" : undefined}
       >
         <LinkTitle title={props.title} isExternal={props.isExternal} />
       </A>
