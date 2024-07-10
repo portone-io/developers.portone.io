@@ -28,6 +28,7 @@ const loadRedirection = cache(async (slug: string) => {
 const loadDocsSlug = cache(async (params: Record<string, string>) => {
   const lang = params.lang as Lang;
   const slug = params.slug as string;
+  if (!slug) throw redirect(`/docs/${lang}/readme`);
   const fullSlug = `${lang}/${slug}`;
 
   const redirection = await loadRedirection(`/${fullSlug}`);
