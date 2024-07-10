@@ -1,9 +1,8 @@
-import type { HTMLAttributes } from "preact/compat";
+import type { JSX } from "solid-js";
 
-export function PaymentV1({
-  children: _,
-  ...props
-}: HTMLAttributes<HTMLSpanElement>) {
+type Props = Omit<JSX.HTMLAttributes<HTMLSpanElement>, "children">;
+
+export function PaymentV1(props: Props) {
   return (
     <span
       {...props}
@@ -14,10 +13,7 @@ export function PaymentV1({
   );
 }
 
-export function PaymentV2({
-  children: _,
-  ...props
-}: HTMLAttributes<HTMLSpanElement>) {
+export function PaymentV2(props: Props) {
   return (
     <span
       {...props}
@@ -28,10 +24,7 @@ export function PaymentV2({
   );
 }
 
-export function Recon({
-  children: _,
-  ...props
-}: HTMLAttributes<HTMLSpanElement>) {
+export function Recon(props: Props) {
   return (
     <span
       {...props}
@@ -42,10 +35,7 @@ export function Recon({
   );
 }
 
-export function Partner({
-  children: _,
-  ...props
-}: HTMLAttributes<HTMLSpanElement>) {
+export function Partner(props: Props) {
   return (
     <span
       {...props}

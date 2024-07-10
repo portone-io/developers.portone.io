@@ -45,6 +45,10 @@ export const config = {
     path: "docs",
     entrySchema: DocsEntry,
   },
+  releaseNotes: {
+    path: "release-notes",
+    entrySchema: ReleaseNoteEntry,
+  },
 } satisfies Record<string, CollectionConfig>;
 
 export type CollectionConfig = {
