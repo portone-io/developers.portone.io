@@ -103,9 +103,11 @@ async function generate(
     }
   }
 
-  const content = `${[...collections]
-    .map(
-      ([name, c]) => `// prettier-ignore
+  const content = `// @vinxi-ignore-style-collection
+
+${[...collections]
+  .map(
+    ([name, c]) => `// prettier-ignore
 export const ${name} = {
 ${[...c.entries.values()]
   .map(
@@ -117,8 +119,8 @@ ${[...c.entries.values()]
   )
   .join("\n")}
 }`,
-    )
-    .join("\n\n")}
+  )
+  .join("\n\n")}
 `;
 
   const file = path.join(
