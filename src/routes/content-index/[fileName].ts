@@ -11,14 +11,14 @@ export async function GET({ params }: APIEvent) {
     fileName in indexFilesMapping &&
     indexFilesMapping[fileName as IndexFileName];
   if (!slug) return new Response(null, { status: 404 });
-  const entryMap = import.meta.glob("../../content/**/*.mdx", {
+  const entryMap = import.meta.glob("~/routes/**/*.mdx", {
     query: "?raw",
   });
   const mdxTable = Object.fromEntries(
     (
       await Promise.all(
         Object.entries(entryMap).map(async ([path, importEntry]) => {
-          const match = path.match(/\/content\/(.+)\.mdx$/);
+          const match = path.match(/\/routes\/\(root\)\/(.+)\.mdx$/);
           if (!match || !match[1]?.startsWith(slug)) return;
           const entry = await importEntry();
           if (

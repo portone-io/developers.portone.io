@@ -1,3 +1,4 @@
+import { Title } from "@solidjs/meta";
 import { createAsync, type RouteDefinition } from "@solidjs/router";
 import { format } from "date-fns";
 import { For, Show } from "solid-js";
@@ -17,6 +18,7 @@ export default function ReleaseNoteIndex() {
 
   return (
     <>
+      <Title>포트원 릴리즈노트</Title>
       <prose.h1>포트원 릴리즈노트</prose.h1>
       <p class="my-4 text-xl text-gray">
         포트원의 업데이트 소식을 전해드립니다.

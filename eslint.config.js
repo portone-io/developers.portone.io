@@ -15,7 +15,9 @@ import { readFileSync } from "fs";
 import { load } from "js-yaml";
 import YAMLParser from "yaml-eslint-parser";
 
-const redirects = load(readFileSync("src/content/docs/_redir.yaml", "utf8"));
+const redirects = load(
+  readFileSync("src/routes/(root)/docs/_redir.yaml", "utf8"),
+);
 if (!Array.isArray(redirects)) {
   throw new Error("Expected an array of redirects");
 }

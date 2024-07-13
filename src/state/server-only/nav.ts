@@ -3,8 +3,8 @@ import "#server-only";
 import * as path from "node:path";
 
 import { docs } from "#content";
-import navYamlEn from "~/content/docs/en/_nav.yaml";
-import navYamlKo from "~/content/docs/ko/_nav.yaml";
+import navYamlEn from "~/routes/(root)/docs/en/_nav.yaml";
+import navYamlKo from "~/routes/(root)/docs/ko/_nav.yaml";
 import type { NavMenuItem, NavMenuPage } from "~/state/nav";
 import type { SystemVersion, YamlNavMenuToplevelItem } from "~/type";
 

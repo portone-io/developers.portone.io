@@ -6,7 +6,9 @@ import { remarkLintLocalLinksValid } from "@portone-io/lint-local-links-valid";
 import { load } from "js-yaml";
 import stringWidth from "string-width";
 
-const redirects = load(readFileSync("./src/content/docs/_redir.yaml", "utf8"));
+const redirects = load(
+  readFileSync("./src/routes/(root)/docs/_redir.yaml", "utf8"),
+);
 if (!Array.isArray(redirects)) {
   throw new Error("Expected an array of redirects");
 }
@@ -71,7 +73,7 @@ export default {
     [
       remarkLintLocalLinksValid,
       {
-        baseDir: "./src/content",
+        baseDir: "./src/routes/(root)",
         excludePaths: ["/api"],
         redirects: Object.fromEntries(
           redirects.map((redir) => {

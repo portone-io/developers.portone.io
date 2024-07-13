@@ -42,11 +42,11 @@ export type PlatformEntry = z.infer<typeof PlatformEntry>;
 
 export const config = {
   docs: {
-    path: "docs",
+    path: "src/routes/(root)/docs",
     entrySchema: DocsEntry,
   },
   releaseNotes: {
-    path: "release-notes",
+    path: "src/routes/(root)/release-notes/(note)",
     entrySchema: ReleaseNoteEntry,
   },
 } satisfies Record<string, CollectionConfig>;
