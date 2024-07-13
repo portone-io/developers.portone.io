@@ -1,3 +1,8 @@
+import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+import "@unocss/reset/tailwind.css";
+import "uno.css";
+import "./styles/global.css";
+
 import { Link, Meta, MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
