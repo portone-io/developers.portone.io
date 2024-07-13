@@ -52,6 +52,8 @@ export default defineConfig({
               rehypeShiki,
               {
                 theme: "github-light",
+                fallbackLanguage: "text",
+                defaultLanguage: "text",
                 transformers: [
                   {
                     name: "remove-trailing-newline",
