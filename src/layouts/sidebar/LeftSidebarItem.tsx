@@ -1,16 +1,16 @@
-import { A } from "@solidjs/router";
-import { createMemo, For, onMount, Show } from "solid-js";
+import { A, useLocation } from "@solidjs/router";
+import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 
 import { type NavMenuPage } from "~/state/nav";
 import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
 
 import { trackEvent } from "../trackers/Trackers";
-import { useNavOpenStates } from "./DocsNavMenu";
 
-function LeftSidebarItem(props: NavMenuPage & { pageSlug: string }) {
+function LeftSidebarItem(props: NavMenuPage) {
   const { systemVersion } = useSystemVersion();
-  const isActive = createMemo(() => props.pageSlug === props.path);
+  const location = useLocation();
+  const isActive = createMemo(() => location.pathname === `/docs${props.path}`);
   const path = createMemo(() => {
     try {
       return { href: new URL(props.path).toString(), isExternal: true };
@@ -18,6 +18,7 @@ function LeftSidebarItem(props: NavMenuPage & { pageSlug: string }) {
       return { href: `/docs${props.path}`, isExternal: false };
     }
   });
+
   return (
     <Show
       when={props.items.length === 0}
@@ -35,12 +36,13 @@ function LeftSidebarItem(props: NavMenuPage & { pageSlug: string }) {
 }
 export default LeftSidebarItem;
 
-function FolderLink(
-  props: NavMenuPage & { pageSlug: string; isActive: boolean },
-) {
+function FolderLink(props: NavMenuPage & { isActive: boolean }) {
   const { systemVersion } = useSystemVersion();
-  const { openNavs, toggleNav } = useNavOpenStates();
-  const isOpen = createMemo(() => openNavs().has(props.path));
+  const location = useLocation();
+  const [isOpen, setIsOpen] = createSignal(
+    props.isActive ||
+      props.items.some((item) => location.pathname === `/docs${item.path}`),
+  );
   let anchorRef: HTMLDivElement | undefined;
 
   onMount(() => {
@@ -67,13 +69,14 @@ function FolderLink(
             ]
               .filter(Boolean)
               .join("")}
+            onClick={() => setIsOpen(true)}
             class="grow"
           >
-            <LinkTitle title={props.title} />
+            <LinkTitle title={props.title} isActive={props.isActive} />
           </A>
           <button
             class="h-full flex items-center p-2"
-            onClick={() => toggleNav(props.path)}
+            onClick={() => setIsOpen((prev) => !prev)}
           >
             <i
               class="inline-block"
@@ -94,7 +97,7 @@ function FolderLink(
                     systemVersion() === item.systemVersion
                   }
                 >
-                  <LeftSidebarItem {...item} pageSlug={props.pageSlug} />
+                  <LeftSidebarItem {...item} />
                 </Show>
               )}
             </For>
@@ -135,7 +138,11 @@ export function JustLink(props: JustLinkProps) {
         }
         target={props.isExternal ? "_blank" : undefined}
       >
-        <LinkTitle title={props.title} isExternal={props.isExternal} />
+        <LinkTitle
+          title={props.title}
+          isActive={props.isActive}
+          isExternal={props.isExternal}
+        />
       </A>
     </Show>
   );
@@ -151,11 +158,20 @@ export function getLinkStyle(isActive: boolean): string {
 
 interface LinkTitleProps {
   title: string;
+  isActive: boolean;
   isExternal?: boolean | undefined;
 }
 export function LinkTitle(props: LinkTitleProps) {
+  let ref: HTMLSpanElement | undefined;
+
+  onMount(() => {
+    if (props.isActive) {
+      ref?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  });
+
   return (
-    <span class="flex items-center gap-2 py-1">
+    <span ref={ref} class="flex items-center gap-2 py-1">
       <span>
         <Show
           when={props.title}
