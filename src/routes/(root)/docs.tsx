@@ -1,11 +1,16 @@
 import {
   cache,
-  createAsync,
   redirect,
   type RouteDefinition,
   useLocation,
 } from "@solidjs/router";
-import { createMemo, type JSXElement, Show, Suspense } from "solid-js";
+import {
+  createMemo,
+  createResource,
+  type JSXElement,
+  Show,
+  untrack,
+} from "solid-js";
 
 import { NotFoundError } from "~/components/404";
 import * as prose from "~/components/prose";
@@ -64,18 +69,20 @@ export default function Docs(props: { children: JSXElement }) {
     const [lang, slug] = fullSlug().split("/", 1) as [Lang, string];
     return { lang, slug };
   });
-  const doc = createAsync(() => loadDoc(fullSlug()), { deferStream: true });
-  const navMenuSystemVersions = createAsync(() =>
-    loadNavMenuSystemVersions(params().lang),
+  const [doc] = createResource(fullSlug, (slug) => loadDoc(slug), {
+    deferStream: true,
+  });
+  const [navMenuSystemVersions] = createResource(params, ({ lang }) =>
+    loadNavMenuSystemVersions(lang),
   );
 
   return (
     <SearchProvider>
       <div class="flex">
         <DocsNavMenu lang={params().lang} slug={params().slug} />
-        <Show when={doc()}>
-          {(doc) => (
-            <div class="min-w-0 flex flex-1 justify-center">
+        <div class="min-w-0 flex flex-1 justify-center">
+          <Show when={doc.latest ?? untrack(doc)}>
+            {(doc) => (
               <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
                 <div class="mb-6">
                   <prose.h1 id="overview">{doc().frontmatter.title}</prose.h1>
@@ -87,22 +94,20 @@ export default function Docs(props: { children: JSXElement }) {
                 </div>
                 {props.children}
               </article>
-              <div class="hidden shrink-10 basis-10 lg:block"></div>
-              <RightSidebar lang={params().lang} slug={params().slug} />
-            </div>
-          )}
-        </Show>
+            )}
+          </Show>
+          <div class="hidden shrink-10 basis-10 lg:block"></div>
+          <RightSidebar lang={params().lang} slug={params().slug} />
+        </div>
       </div>
-      <Suspense>
-        <Show when={navMenuSystemVersions()}>
-          {(versions) => (
-            <SearchScreen
-              lang={params().lang}
-              navMenuSystemVersions={versions()}
-            />
-          )}
-        </Show>
-      </Suspense>
+      <Show when={navMenuSystemVersions.latest}>
+        {(versions) => (
+          <SearchScreen
+            lang={params().lang}
+            navMenuSystemVersions={versions()}
+          />
+        )}
+      </Show>
     </SearchProvider>
   );
 }
