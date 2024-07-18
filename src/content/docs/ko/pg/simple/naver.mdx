@@ -372,34 +372,6 @@ callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 
 
   예) 사용자에게 최소 결제 금액이 10원이라 결제를 할 수 없다는 의미를 담는 에러 메시지가 노출되어야 함
 
-  ### 환불 API 요청 시 추가 속성
-
-  포트원 환불 API인 `POST /payments/cancel` 호출 시 다음 추가 속성를 설정해야 합니다.
-
-  - `extra.requester` : API를 호출하는 출처. 다음 중 선택 :
-    - customer : 구매자에 의한 요청
-    - admin(기본값) : 어드민에 의한 요청
-
-  - `reason`: 결제 취소 사유.
-
-  **예시(json)**
-
-  ```json
-  {
-    "imp_uid": "imp_123412341234", //환불처리할 아임포트 거래번호
-    "amount": 3000, //환불할 금액
-    "reason": "결제 취소 사유", //실제 사유와 같아야 함
-    "extra": {
-      "requester": "customer"
-    }
-  }
-  ```
-
-  **예시(form-urlencoded)**
-
-  ```http
-  imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
-  ```
 </Hint>
 
 <Hint style="info">
@@ -440,5 +412,24 @@ callback) 호출 후 <mark style="color:red;">**callback**</mark> 으로 수신 
 
   ```http
   imp_uid=imp_123412341234&amount=3000&extra[requester]=customer
+  ```
+</Details>
+
+<Details>
+  <p slot="summary">빌링키 삭제 시 유의사항</p>
+
+  포트원 빌링키 삭제 API인 `DELETE` [**`/subscribe/customers/{customer_uid}`**](../../api/api-1/api) 호출시 아래 파라미터를 반드시 설정해 주셔야 합니다.
+  (**해당 파라미터 누락시 네이버페이 실 검수를 통과할 수 없습니다.**)
+
+  - **`extra.requester`**: API를 호출하는 출처
+    - **`customer`**: 구매자에 의한 요청
+    - **`admin`**(기본값): 어드민에 의한 요청
+
+  - **`reason`**: 빌링키 삭제 사유.
+
+  **예시(Query string)**
+
+  ```http
+  reason=사용자 요청에 의한 해지&extra[requester]=customer
   ```
 </Details>
