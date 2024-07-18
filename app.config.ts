@@ -117,7 +117,7 @@ export default defineConfig({
             ) {
               return new URLSearchParams([
                 ["as", "picture"],
-                ["format", "webp"], // TODO: enable AVIF after investigating transform performance issue
+                ["format", "avif;webp"],
                 ...url.searchParams.entries(),
               ]);
             } else return url.searchParams;
