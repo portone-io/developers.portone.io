@@ -22,7 +22,9 @@ export default function MonacoEditor(props: MonacoEditorProps) {
     const p = Promise.all([
       import("monaco-editor"),
       import("./misc/scrollFinished"),
-      import("./misc/install-monaco-worker"),
+      import("./misc/install-monaco-worker").then(({ installWorkers }) =>
+        installWorkers(),
+      ),
     ]).then(async ([monaco, { default: scrollFinished }]) => {
       doCreateTheme(() => {
         monaco.editor.defineTheme("portone", {
