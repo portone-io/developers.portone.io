@@ -33,6 +33,12 @@ declare module "*/_redir.yaml" {
   export default value;
 }
 
+declare module "*.mdx" {
+	import type { Component } from "solid-js";
+	const component: Component;
+	export default component;
+}
+
 // supported formats by Sharp (https://sharp.pixelplumbing.com/#formats)
 declare module "*.png" {
   import { Picture } from "vite-imagetools";
