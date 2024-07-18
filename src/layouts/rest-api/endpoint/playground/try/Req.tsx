@@ -1,12 +1,12 @@
-import {
-  type Signal,
-  signal,
-  useSignal,
-  useSignalEffect,
-} from "@preact/signals";
 import { type HarRequest } from "httpsnippet-lite";
 import json5 from "json5";
-import { useMemo } from "preact/hooks";
+import {
+  type Accessor,
+  createEffect,
+  createMemo,
+  createSignal,
+  catchError,
+} from "solid-js";
 
 import RequestHeaderEditor, {
   type KvList,
@@ -32,41 +32,92 @@ export interface ReqProps {
   schema: unknown;
   endpoint: Endpoint;
   operation: Operation;
-  harRequestSignal: Signal<HarRequest | undefined>;
+  harRequest: HarRequest | undefined;
+  setHarRequest: (request: HarRequest | undefined) => void;
   execute: (fn: () => Promise<Res>) => void;
 }
-export default function Req({
-  apiHost,
-  schema,
-  endpoint,
-  operation,
-  harRequestSignal,
-  execute,
-}: ReqProps) {
-  const { path, method } = endpoint;
-  const reqHeaderSignal = useSignal<KvList>([
+export default function Req(props: ReqProps) {
+  const [reqHeader, setReqHeader] = createSignal<KvList>([
     { key: "Content-Type", value: "application/json" },
   ]);
-  const isQueryOrBody = isQueryOrBodyOperation(operation);
-  const reqPathParams = useReqParams(schema, operation, "path");
-  const reqQueryParams = useReqParams(
-    schema,
-    operation,
-    "query",
-    isQueryOrBody,
+  const isQueryOrBody = createMemo(() =>
+    isQueryOrBodyOperation(props.operation),
   );
-  const reqBodyParams = useReqParams(schema, operation, "body");
-  useSignalEffect(() => {
-    harRequestSignal.value = createHarRequest(
-      apiHost,
-      path,
-      method,
-      reqHeaderSignal,
-      reqPathParams,
-      reqQueryParams,
-      reqBodyParams,
-    );
+  const reqPathParams = createMemo(() =>
+    makeReqParams(props.schema, props.operation, "path"),
+  );
+  const reqQueryParams = createMemo(() =>
+    makeReqParams(props.schema, props.operation, "query", isQueryOrBody()),
+  );
+  const reqBodyParams = createMemo(() =>
+    makeReqParams(props.schema, props.operation, "body"),
+  );
+
+  const harRequest = createHarRequest(
+    props.apiHost,
+    props.endpoint.path,
+    props.endpoint.method,
+    reqHeader,
+    reqPathParams,
+    reqQueryParams,
+    reqBodyParams,
+  );
+
+  createEffect(() => {
+    const newRequest = harRequest();
+    if (newRequest) props.setHarRequest(newRequest);
   });
+
+  const pathTab = {
+    id: "path",
+    label: "Path",
+    render: () => (
+      <RequestJsonEditor
+        part="path"
+        initialValue={reqPathParams().initialJsonText}
+        operation={props.operation}
+        onChange={reqPathParams().updateJsonText}
+        openapiSchema={props.schema}
+        requestObjectSchema={reqPathParams().reqSchema}
+      />
+    ),
+  };
+  const queryTab = {
+    id: "query",
+    label: "Query",
+    render: () => (
+      <RequestJsonEditor
+        part="query"
+        initialValue={reqQueryParams().initialJsonText}
+        operation={props.operation}
+        onChange={reqQueryParams().updateJsonText}
+        openapiSchema={props.schema}
+        requestObjectSchema={reqQueryParams().reqSchema}
+      />
+    ),
+  };
+  const bodyTab = {
+    id: "body",
+    label: "Body",
+    render: () => (
+      <RequestJsonEditor
+        part="body"
+        initialValue={reqBodyParams().initialJsonText}
+        operation={props.operation}
+        onChange={reqBodyParams().updateJsonText}
+        openapiSchema={props.schema}
+        requestObjectSchema={reqBodyParams().reqSchema}
+      />
+    ),
+  };
+  const headerTab = {
+    id: "header",
+    label: "Header",
+    render: () => (
+      <RequestHeaderEditor reqHeader={reqHeader()} onChange={setReqHeader} />
+    ),
+  };
+
   return (
     <Card
       title={
@@ -75,24 +126,31 @@ export default function Req({
           <button
             class="border border-slate-2 rounded bg-slate-1 px-4 font-bold active:bg-white hover:bg-slate-2"
             onClick={() =>
-              execute(async () => {
-                const headers = kvListToObject(reqHeaderSignal.value);
-                const reqPath = reqPathParams.parseJson();
-                const reqBody = reqBodyParams.parseJson();
-                const reqQuery = isQueryOrBody
+              props.execute(async () => {
+                const headers = kvListToObject(reqHeader());
+                const reqPath = reqPathParams().parseJson();
+                const reqBody = reqBodyParams().parseJson();
+                const reqQuery = isQueryOrBody()
                   ? {
-                      ...(reqQueryParams.parseJson() ?? {}),
+                      ...(reqQueryParams().parseJson() ?? {}),
                       requestBody: reqBody,
                     }
-                  : reqQueryParams.parseJson();
+                  : reqQueryParams().parseJson();
 
                 const body =
-                  method === "get" || method === "head" || isQueryOrBody
+                  props.endpoint.method === "get" ||
+                  props.endpoint.method === "head" ||
+                  isQueryOrBody()
                     ? null
                     : JSON.stringify(reqBody);
-                const reqUrl = createUrl(apiHost, path, reqPath, reqQuery);
+                const reqUrl = createUrl(
+                  props.apiHost,
+                  props.endpoint.path,
+                  reqPath,
+                  reqQuery,
+                );
                 const res = await fetch(reqUrl, {
-                  method: method.toUpperCase(),
+                  method: props.endpoint.method.toUpperCase(),
                   headers,
                   body,
                 });
@@ -108,62 +166,11 @@ export default function Req({
       <div class="grid grid-rows-[auto_minmax(0,1fr)] flex-1 gap-3 p-4">
         <Tabs
           tabs={[
-            reqPathParams.params.length && {
-              id: "path",
-              label: "Path",
-              render: (id) => (
-                <RequestJsonEditor
-                  key={id}
-                  part="path"
-                  initialValue={reqPathParams.initialJsonText}
-                  operation={operation}
-                  onChange={reqPathParams.updateJsonText}
-                  openapiSchema={schema}
-                  requestObjectSchema={reqPathParams.reqSchema}
-                />
-              ),
-            },
-            reqQueryParams.params.length && {
-              id: "query",
-              label: "Query",
-              render: (id) => (
-                <RequestJsonEditor
-                  key={id}
-                  part="query"
-                  initialValue={reqQueryParams.initialJsonText}
-                  operation={operation}
-                  onChange={reqQueryParams.updateJsonText}
-                  openapiSchema={schema}
-                  requestObjectSchema={reqQueryParams.reqSchema}
-                />
-              ),
-            },
-            reqBodyParams.params.length && {
-              id: "body",
-              label: "Body",
-              render: (id) => (
-                <RequestJsonEditor
-                  key={id}
-                  part="body"
-                  initialValue={reqBodyParams.initialJsonText}
-                  operation={operation}
-                  onChange={reqBodyParams.updateJsonText}
-                  openapiSchema={schema}
-                  requestObjectSchema={reqBodyParams.reqSchema}
-                />
-              ),
-            },
-            {
-              id: "header",
-              label: "Header",
-              render: (id) => (
-                <RequestHeaderEditor
-                  key={id}
-                  reqHeaderSignal={reqHeaderSignal}
-                />
-              ),
-            },
-          ]}
+            reqPathParams().params.length && pathTab,
+            reqQueryParams().params.length && queryTab,
+            reqBodyParams().params.length && bodyTab,
+            headerTab,
+          ].filter(Boolean)}
         />
       </div>
     </Card>
@@ -174,7 +181,7 @@ interface ReqParams {
   params: Parameter[];
   reqSchema: ReqSchema;
   initialJsonText: string;
-  jsonTextSignal: Signal<string>;
+  jsonText: Accessor<string>;
   updateJsonText: (value: string) => void;
   parseJson: () => unknown;
 }
@@ -182,36 +189,33 @@ interface ReqSchema {
   type: "object";
   properties: Record<string, Parameter>;
 }
-function useReqParams(
+function makeReqParams(
   schema: unknown,
   operation: Operation,
   part: RequestPart,
   isQueryOrBody: boolean = false,
 ): ReqParams {
-  return useMemo(() => {
-    const params = getReqParams(schema, operation, part, isQueryOrBody);
-    const reqSchema: ReqSchema = {
-      type: "object",
-      properties: Object.fromEntries(
-        params.map(({ $ref, ...param }) => {
-          if (!$ref) return [param.name, param];
-          return [param.name, { ...param, $ref: `inmemory://schema${$ref}` }];
-        }),
-      ),
-    };
-    const initialJsonText = getInitialJsonText(schema, params);
-    const jsonTextSignal = signal(initialJsonText);
-    const updateJsonText = (value: string) => (jsonTextSignal.value = value);
-    const parseJson = () => parseReqJson(jsonTextSignal.value, part);
-    return {
-      params,
-      reqSchema,
-      initialJsonText,
-      jsonTextSignal,
-      updateJsonText,
-      parseJson,
-    };
-  }, []);
+  const params = getReqParams(schema, operation, part, isQueryOrBody);
+  const reqSchema: ReqSchema = {
+    type: "object",
+    properties: Object.fromEntries(
+      params.map(({ $ref, ...param }) => {
+        if (!$ref) return [param.name, param];
+        return [param.name, { ...param, $ref: `inmemory://schema${$ref}` }];
+      }),
+    ),
+  };
+  const initialJsonText = getInitialJsonText(schema, params);
+  const [jsonText, updateJsonText] = createSignal(initialJsonText);
+  const parseJson = () => parseReqJson(jsonText(), part);
+  return {
+    params,
+    reqSchema,
+    initialJsonText,
+    jsonText,
+    updateJsonText,
+    parseJson,
+  };
 }
 
 function createUrl(
@@ -258,29 +262,54 @@ function createHarRequest(
   apiHost: string,
   path: string,
   method: string,
-  reqHeaderSignal: Signal<KvList>,
-  reqPathParams: ReqParams,
-  reqQueryParams: ReqParams,
-  reqBodyParams: ReqParams,
-): HarRequest {
-  const headers = kvListToObject(reqHeaderSignal.value);
-  const reqPath = reqPathParams.parseJson();
-  const reqQuery = reqQueryParams.parseJson();
-  const reqBody = reqBodyParams.parseJson();
-  return {
-    url: createUrl(apiHost, path, reqPath, reqQuery).toString(),
-    method,
-    headers: Object.entries(headers).map(([name, value]) => ({ name, value })),
-    cookies: [],
-    httpVersion: "HTTP/1.1",
-    queryString: Object.entries(reqQuery as Record<string, string>).map(
-      ([name, value]) => ({ name, value }),
-    ),
-    postData: {
-      mimeType: "application/json",
-      text: JSON.stringify(reqBody),
-    },
-    bodySize: -1,
-    headersSize: -1,
-  } satisfies HarRequest;
+  reqHeader: Accessor<KvList>,
+  reqPathParams: Accessor<ReqParams>,
+  reqQueryParams: Accessor<ReqParams>,
+  reqBodyParams: Accessor<ReqParams>,
+): Accessor<HarRequest | null> {
+  const nullOnCatch = <T,>(fn: () => T): T | null => {
+    try {
+      return fn();
+    } catch {
+      return null;
+    }
+  };
+
+  const headers = createMemo(() => kvListToObject(reqHeader()));
+  const reqPath = createMemo(() =>
+    nullOnCatch(() => reqPathParams().parseJson()),
+  );
+  const reqQuery = createMemo(() =>
+    nullOnCatch(() => reqQueryParams().parseJson()),
+  );
+  const reqBody = createMemo(() =>
+    nullOnCatch(() => reqBodyParams().parseJson()),
+  );
+
+  return createMemo(() => {
+    const pathValue = reqPath();
+    const queryValue = reqQuery();
+    const bodyValue = reqBody();
+    if (!pathValue || !queryValue || !bodyValue) return null;
+
+    return {
+      url: createUrl(apiHost, path, pathValue, queryValue).toString(),
+      method,
+      headers: Object.entries(headers()).map(([name, value]) => ({
+        name,
+        value,
+      })),
+      cookies: [],
+      httpVersion: "HTTP/1.1",
+      queryString: Object.entries(queryValue as Record<string, string>).map(
+        ([name, value]) => ({ name, value }),
+      ),
+      postData: {
+        mimeType: "application/json",
+        text: JSON.stringify(bodyValue),
+      },
+      bodySize: -1,
+      headersSize: -1,
+    } satisfies HarRequest;
+  });
 }

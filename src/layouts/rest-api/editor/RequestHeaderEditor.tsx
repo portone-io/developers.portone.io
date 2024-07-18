@@ -1,4 +1,4 @@
-import type { Signal } from "@preact/signals";
+import { For } from "solid-js";
 
 export interface Kv {
   key: string;
@@ -6,24 +6,22 @@ export interface Kv {
 }
 export type KvList = Kv[];
 export interface RequestHeaderEditorProps {
-  reqHeaderSignal: Signal<KvList>;
+  reqHeader: KvList;
+  onChange: (reqHeader: KvList) => void;
 }
-export default function RequestHeaderEditor({
-  reqHeaderSignal,
-}: RequestHeaderEditorProps) {
-  const reqHeader = reqHeaderSignal.value;
+export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
   function updateReqHeader(index: number, kv: Partial<Kv>) {
-    const newReqHeader = reqHeader.slice();
+    const newReqHeader = props.reqHeader.slice();
     newReqHeader[index] = { ...newReqHeader[index]!, ...kv };
-    reqHeaderSignal.value = newReqHeader;
+    props.onChange(newReqHeader);
   }
   function addReqHeader() {
-    reqHeaderSignal.value = [...reqHeader, { key: "", value: "" }];
+    props.onChange([...props.reqHeader, { key: "", value: "" }]);
   }
   function delReqHeader(index: number) {
-    const newReqHeader = reqHeader.slice();
+    const newReqHeader = props.reqHeader.slice();
     newReqHeader.splice(index, 1);
-    reqHeaderSignal.value = newReqHeader;
+    props.onChange(newReqHeader);
   }
   return (
     <div class="absolute h-full w-full flex flex-col gap-1 overflow-y-scroll">
@@ -32,30 +30,32 @@ export default function RequestHeaderEditor({
         <div class="bg-slate-1 px-2 py-1">Value</div>
         <div />
       </div>
-      {reqHeader.map(({ key, value }, index) => (
-        <div key={index} class="grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
-          <input
-            class="w-full border border-slate-2 px-2 py-1"
-            value={key}
-            onInput={(e) =>
-              updateReqHeader(index, { key: e.currentTarget.value })
-            }
-          />
-          <input
-            class="w-full border border-slate-2 px-2 py-1"
-            value={value}
-            onInput={(e) =>
-              updateReqHeader(index, { value: e.currentTarget.value })
-            }
-          />
-          <button
-            class="inline-flex items-center text-lg text-slate-3 hover:text-slate-7"
-            onClick={() => delReqHeader(index)}
-          >
-            <i class="i-ic-twotone-delete-forever" />
-          </button>
-        </div>
-      ))}
+      <For each={props.reqHeader}>
+        {(header, index) => (
+          <div class="grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
+            <input
+              class="w-full border border-slate-2 px-2 py-1"
+              value={header.key}
+              onInput={(e) =>
+                updateReqHeader(index(), { key: e.currentTarget.value })
+              }
+            />
+            <input
+              class="w-full border border-slate-2 px-2 py-1"
+              value={header.value}
+              onInput={(e) =>
+                updateReqHeader(index(), { value: e.currentTarget.value })
+              }
+            />
+            <button
+              class="inline-flex items-center text-lg text-slate-3 hover:text-slate-7"
+              onClick={() => delReqHeader(index())}
+            >
+              <i class="i-ic-twotone-delete-forever" />
+            </button>
+          </div>
+        )}
+      </For>
       <button
         class="sticky bottom-0 mr-1.75rem inline-flex items-center justify-center bg-slate-1 py-1 text-lg opacity-50 hover:opacity-100"
         onClick={addReqHeader}

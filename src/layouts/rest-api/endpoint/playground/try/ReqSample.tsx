@@ -1,16 +1,16 @@
 import {
-  effect,
-  type ReadonlySignal,
-  type Signal,
-  useComputed,
-  useSignal,
-  useSignalEffect,
-} from "@preact/signals";
-import {
   availableTargets as _availableTargets,
   type HarRequest,
   HTTPSnippet,
 } from "httpsnippet-lite";
+import { Show } from "solid-js";
+import {
+  type Accessor,
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+} from "solid-js";
 
 import MonacoEditor, {
   commonEditorConfig,
@@ -19,7 +19,7 @@ import MonacoEditor, {
 import Card from "../Card";
 
 export interface ReqSampleProps {
-  harRequestSignal: Signal<HarRequest | undefined>;
+  harRequest: HarRequest | undefined;
   isQueryOrBody: boolean;
 }
 
@@ -62,139 +62,132 @@ const availableTargets = _availableTargets()
 type AvailableTarget = (typeof availableTargets)[number];
 type ClientInfo = AvailableTarget["clients"][number];
 
-export default function ReqSample({
-  harRequestSignal,
-  isQueryOrBody,
-}: ReqSampleProps) {
-  const targetKeySignal = useSignal("shell");
-  const clientKeySignal = useSignal("curl");
-  const targetInfoSignal = useTargetInfo(targetKeySignal);
-  const clientInfoSignal = useClientInfo(targetInfoSignal, clientKeySignal);
-  const snippetSignal = useHTTPSnippet(
-    harRequestSignal,
-    targetInfoSignal,
-    clientInfoSignal,
-    isQueryOrBody,
+export default function ReqSample(props: ReqSampleProps) {
+  const [targetKey, setTargetKey] = createSignal("shell");
+  const [clientKey, setClientKey] = createSignal("curl");
+  const targetInfo = useTargetInfo(targetKey);
+  const clientInfo = useClientInfo(targetInfo, clientKey, setClientKey);
+  const [snippet, setSnippet] = useHTTPSnippet(
+    () => props.harRequest,
+    targetInfo,
+    clientInfo,
+    () => props.isQueryOrBody,
   );
 
   return (
     <Card
       title={
-        <div className="flex flex-grow flex-wrap items-center justify-between gap-3">
-          <span className="flex-shrink-0">Request Sample</span>
-          <div className="flex-shrink-0">
+        <div class="flex flex-grow flex-wrap items-center justify-between gap-3">
+          <span class="flex-shrink-0">Request Sample</span>
+          <div class="flex-shrink-0">
             <select
-              className="rounded-l bg-slate-1 px-2 py-1 font-medium"
-              value={targetKeySignal.value}
+              class="rounded-l bg-slate-1 px-2 py-1 font-medium"
+              value={targetKey()}
               onChange={(e) => {
-                targetKeySignal.value = String(e.currentTarget.value);
+                setTargetKey(String(e.currentTarget.value));
               }}
             >
-              {availableTargets.map((target) => (
-                <option key={target.key} value={target.key}>
-                  {target.title}
-                </option>
-              ))}
+              <For each={availableTargets}>
+                {(target) => <option value={target.key}>{target.title}</option>}
+              </For>
             </select>
             <select
-              className="rounded-r bg-slate-1 px-2 py-1 font-medium"
-              value={clientKeySignal.value}
-              onChange={(e) =>
-                (clientKeySignal.value = String(e.currentTarget.value))
-              }
+              class="rounded-r bg-slate-1 px-2 py-1 font-medium"
+              value={clientKey()}
+              onChange={(e) => setClientKey(String(e.currentTarget.value))}
             >
-              {targetInfoSignal.value?.clients.map((client) => (
-                <option key={client.key} value={client.key}>
-                  {client.title}
-                </option>
-              ))}
+              <For each={targetInfo()?.clients}>
+                {(client) => <option value={client.key}>{client.title}</option>}
+              </For>
             </select>
           </div>
         </div>
       }
     >
-      {snippetSignal.value ? (
-        <MonacoEditor
-          init={(monaco, domElement) => {
-            const instance = monaco.editor.create(domElement, {
-              ...commonEditorConfig,
-              value: snippetSignal.value || "",
-              language: targetInfoSignal.value?.language ?? "plaintext",
-              readOnly: true,
-            });
-            const dispose = effect(() => {
-              instance.setValue(snippetSignal.value || "");
-            });
-            instance.onDidDispose(() => dispose());
-            return instance;
-          }}
-        />
-      ) : (
-        <span class="p-4 text-xs text-slate-4 font-bold">N/A</span>
-      )}
+      <Show
+        when={snippet()}
+        fallback={<span class="text-xs text-slate-4">N/A</span>}
+      >
+        {(snippet) => (
+          <MonacoEditor
+            init={(monaco, domElement) => {
+              const instance = monaco.editor.create(domElement, {
+                ...commonEditorConfig,
+                value: snippet() || "",
+                language: targetInfo()?.language ?? "plaintext",
+                readOnly: true,
+              });
+              createEffect(() => {
+                instance.setValue(snippet() || "");
+              });
+              return instance;
+            }}
+            onChange={(value) => setSnippet(value)}
+          />
+        )}
+      </Show>
     </Card>
   );
 }
 
 function useTargetInfo(
-  keySignal: ReadonlySignal<string>,
-): ReadonlySignal<AvailableTarget | null> {
-  return useComputed(
-    () =>
-      availableTargets.find((target) => target.key === keySignal.value) ?? null,
+  key: Accessor<string>,
+): Accessor<AvailableTarget | null> {
+  return createMemo(
+    () => availableTargets.find((target) => target.key === key()) ?? null,
   );
 }
 
 function useClientInfo(
-  targetInfoSignal: ReadonlySignal<AvailableTarget | null>,
-  clientKeySignal: Signal<string>,
-): ReadonlySignal<ClientInfo | null> {
-  return useComputed(() => {
+  targetInfo: Accessor<AvailableTarget | null>,
+  clientKey: Accessor<string>,
+  setClientKey: (key: string) => void,
+): Accessor<ClientInfo | null> {
+  return createMemo(() => {
     const clientInfo =
-      targetInfoSignal.value?.clients.find(
-        (client) => client.key === clientKeySignal.value,
+      targetInfo()?.clients.find((client) => client.key === clientKey()) ??
+      targetInfo()?.clients.find(
+        (client) => client.key === targetInfo()?.default,
       ) ??
-      targetInfoSignal.value?.clients.find(
-        (client) => client.key === targetInfoSignal.value?.default,
-      ) ??
-      targetInfoSignal.value?.clients[0] ??
+      targetInfo()?.clients[0] ??
       null;
-    if (clientInfo) {
-      clientKeySignal.value = clientInfo.key;
-    }
+    if (clientInfo) setClientKey(clientInfo.key);
     return clientInfo;
   });
 }
 
 function useHTTPSnippet(
-  harRequestSignal: Signal<HarRequest | undefined>,
-  targetSignal: ReadonlySignal<AvailableTarget | null>,
-  clientSignal: ReadonlySignal<ClientInfo | null>,
-  isQueryOrBody: boolean,
-): Signal<string | null> {
-  const snippetSignal = useSignal<string | null>(null);
-  useSignalEffect(() => {
-    if (harRequestSignal.value && targetSignal.value && clientSignal.value) {
-      const harRequest =
-        isQueryOrBody && !clientSignal.value.supportGetWithBody
-          ? transformHarRequestBodyToQs(harRequestSignal.value)
-          : harRequestSignal.value;
-      new HTTPSnippet(harRequest)
-        .convert(targetSignal.value.key, clientSignal.value.key)
+  harRequest: Accessor<HarRequest | undefined>,
+  target: Accessor<AvailableTarget | null>,
+  client: Accessor<ClientInfo | null>,
+  isQueryOrBody: Accessor<boolean>,
+): [Accessor<string | null>, (snippet: string) => void] {
+  const [snippet, setSnippet] = createSignal<string | null>(null);
+  createEffect(() => {
+    const requestValue = harRequest();
+    const targetValue = target();
+    const clientValue = client();
+    if (requestValue && targetValue && clientValue) {
+      const request =
+        isQueryOrBody() && !client()?.supportGetWithBody
+          ? transformHarRequestBodyToQs(requestValue)
+          : requestValue;
+      new HTTPSnippet(request)
+        .convert(targetValue.key, clientValue.key)
         .then((snippet) => {
           if (Array.isArray(snippet)) {
             snippet = snippet.join("\n");
           }
-          snippetSignal.value = snippet;
+          setSnippet(snippet);
         })
         .catch((err) => {
           console.error(err);
         });
     } else {
-      snippetSignal.value = null;
+      setSnippet(null);
     }
   });
-  return snippetSignal;
+  return [snippet, setSnippet];
 }
 
 function transformHarRequestBodyToQs(harRequest: HarRequest): HarRequest {

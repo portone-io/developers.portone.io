@@ -1,42 +1,41 @@
-import type React from "preact/compat";
+import { createMemo, type JSXElement, mergeProps } from "solid-js";
 
 export interface TwoColumnLayoutProps {
-  className?: string;
-  left: React.ReactNode;
-  leftClassName?: string;
-  right: React.ReactNode;
-  rightClassName?: string;
+  class?: string;
+  left: () => JSXElement;
+  leftClass?: string;
+  right: () => JSXElement;
+  rightClass?: string;
   smallRight?: boolean;
   stickyRight?: boolean;
   bp?: string;
   gap?: number;
 }
-export default function TwoColumnLayout({
-  className = "",
-  left,
-  leftClassName = "",
-  right,
-  rightClassName = "",
-  smallRight = !right,
-  stickyRight,
-  bp = "lg",
-  gap = 4,
-}: TwoColumnLayoutProps) {
+export default function TwoColumnLayout(_props: TwoColumnLayoutProps) {
+  const props = mergeProps({
+    class: "",
+    leftClass: "",
+    rightClass: "",
+    bp: "lg",
+    gap: 4,
+  }, _props);
+  const smallRight = createMemo(() => props.smallRight ?? !props.right);
+
   return (
     <div
-      class={`relative grid gap-${gap} ${bp}:${
-        smallRight ? "grid-cols-[3fr_2fr]" : "grid-cols-2"
-      } ${className}`}
+      class={`relative grid gap-${props.gap} ${props.bp}:${
+        smallRight() ? "grid-cols-[3fr_2fr]" : "grid-cols-2"
+      } ${props.class}`}
     >
-      <div class={leftClassName}>{left}</div>
+      <div class={props.leftClass}>{props.left()}</div>
       <div
         class={
-          stickyRight
-            ? `${bp}:sticky top-20 h-max ${rightClassName}`
-            : rightClassName
+          props.stickyRight
+            ? `${props.bp}:sticky top-20 h-max ${props.rightClass}`
+            : props.rightClass
         }
       >
-        {right}
+        {props.right()}
       </div>
     </div>
   );

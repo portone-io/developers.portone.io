@@ -1,5 +1,5 @@
-import { useSignal } from "@preact/signals";
 import { type HarRequest } from "httpsnippet-lite";
+import { createMemo, createSignal, Show } from "solid-js";
 
 import type { Endpoint } from "../../../schema-utils/endpoint";
 import {
@@ -20,49 +20,60 @@ export interface TryProps {
   operation: Operation;
 }
 export default function Try(props: TryProps) {
-  const waitingSignal = useSignal(false);
-  const waiting = waitingSignal.value;
-  const errSignal = useSignal("");
-  const err = errSignal.value;
-  const resSignal = useSignal<Res | undefined>(undefined);
-  const harRequestSignal = useSignal<HarRequest | undefined>(undefined);
-  const example =
-    props.operation.responses?.["200"]?.content?.["application/json"]?.example;
-  const tabIdSignal = useSignal<"request" | "response">("request");
-  const isQueryOrBody = isQueryOrBodyOperation(props.operation);
+  const [waiting, setWaiting] = createSignal(false);
+  const [err, setErr] = createSignal("");
+  const [res, setRes] = createSignal<Res | undefined>(undefined);
+  const [harRequest, setHarRequest] = createSignal<HarRequest | undefined>(
+    undefined,
+  );
+  const example = createMemo(
+    () =>
+      props.operation.responses?.["200"]?.content?.["application/json"]
+        ?.example,
+  );
+  const [tabId, setTabId] = createSignal<"request" | "response">("request");
+  const isQueryOrBody = createMemo(() =>
+    isQueryOrBodyOperation(props.operation),
+  );
   return (
     <div
-      class={`grid grid-rows-[auto_1fr] flex-1 gap-3 ${waiting ? "pointer-events-none opacity-50" : ""}`}
+      class="grid grid-rows-[auto_1fr] flex-1 gap-3"
+      classList={{
+        "pointer-events-none": waiting(),
+        "opacity-50": waiting(),
+      }}
     >
       <Tabs
-        tabIdSignal={tabIdSignal}
+        tabId={tabId()}
+        setTabId={setTabId}
         tabs={[
           {
             id: "request",
             label: "request",
-            render: (key) => (
-              <div key={key} class="grid grid-rows-2 h-full gap-3">
+            render: () => (
+              <div class="grid grid-rows-2 h-full gap-3">
                 <Req
                   {...props}
-                  harRequestSignal={harRequestSignal}
+                  harRequest={harRequest()}
+                  setHarRequest={setHarRequest}
                   execute={(fn) =>
                     void (async () => {
                       try {
-                        waitingSignal.value = true;
-                        resSignal.value = await fn();
-                        errSignal.value = "";
+                        setWaiting(true);
+                        setRes(await fn());
+                        setErr("");
                       } catch (err) {
-                        errSignal.value = (err as Error).message;
+                        setErr((err as Error).message);
                       } finally {
-                        waitingSignal.value = false;
-                        tabIdSignal.value = "response";
+                        setWaiting(false);
+                        setTabId("response");
                       }
                     })()
                   }
                 />
                 <ReqSample
-                  harRequestSignal={harRequestSignal}
-                  isQueryOrBody={isQueryOrBody}
+                  harRequest={harRequest()}
+                  isQueryOrBody={isQueryOrBody()}
                 />
               </div>
             ),
@@ -70,14 +81,12 @@ export default function Try(props: TryProps) {
           {
             id: "response",
             label: "response",
-            render: (key) => (
-              <div key={key} class="grid grid-rows-2 h-full gap-3">
-                {err ? (
-                  <Err>{err}</Err>
-                ) : (
-                  <ResComponent resSignal={resSignal} />
-                )}
-                <ResExample example={example} />
+            render: () => (
+              <div class="grid grid-rows-2 h-full gap-3">
+                <Show when={err()} fallback={<ResComponent res={res()} />}>
+                  <Err>{err()}</Err>
+                </Show>
+                <ResExample example={example()} />
               </div>
             ),
           },
