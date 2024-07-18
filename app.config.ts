@@ -117,7 +117,7 @@ export default defineConfig({
             ) {
               return new URLSearchParams([
                 ["as", "picture"],
-                ["format", "avif;webp"],
+                ["format", "webp"],
                 ...url.searchParams.entries(),
               ]);
             } else return url.searchParams;
