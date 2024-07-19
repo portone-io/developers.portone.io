@@ -4,6 +4,7 @@ import {
   createAsync,
   type RouteDefinition,
   useParams,
+  useLocation,
 } from "@solidjs/router";
 import { format } from "date-fns";
 import { createMemo, type JSXElement, Show } from "solid-js";
@@ -22,18 +23,21 @@ const loadNote = cache(async (slug: string) => {
 }, "release-notes/note");
 
 export const route = {
-  preload: ({ params }) => {
-    if (!params.slug) return;
-    void loadNote(params.slug);
+  preload: ({ location }) => {
+    const slug = getSlug(location.pathname);
+    if (slug) void loadNote(slug);
   },
 } satisfies RouteDefinition;
 
+const getSlug = (path: string) => path.replace(/^\/release-notes\//, "");
+
 export default function NoteLayout(props: { children: JSXElement }) {
-  const params = useParams<{ slug: string }>();
-  const note = createAsync(() => loadNote(params.slug), { deferStream: true });
+  const location = useLocation();
+  const slug = createMemo(() => getSlug(location.pathname));
+  const note = createAsync(() => loadNote(slug()), { deferStream: true });
 
   const type = createMemo(() =>
-    match(params.slug)
+    match(slug())
       .when(
         (v) => v.startsWith("api-sdk"),
         () => "apiSdkNotes" as const,
