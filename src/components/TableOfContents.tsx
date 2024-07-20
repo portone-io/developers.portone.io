@@ -1,82 +1,47 @@
-import { Signal, useSignal, useSignalEffect } from "@preact/signals";
-import type { MarkdownHeading } from "astro";
 import clsx from "clsx";
+import {
+  type Accessor,
+  createEffect,
+  createSignal,
+  For,
+  onCleanup,
+  Show,
+  untrack,
+} from "solid-js";
+
+import type { Heading } from "~/genCollections";
 
 interface Props {
   theme: "aside" | "island";
-  items: TOCItem[];
-}
-
-interface TOCItem {
-  title: string;
-  id: string;
-  depth: number;
-  children: TOCItem[];
-}
-
-export function itemsFromHeadings(headings: MarkdownHeading[]): TOCItem[] {
-  const items: TOCItem[] = [];
-
-  function getParentItem(
-    items: TOCItem[],
-    targetDepth: number,
-  ): TOCItem | undefined {
-    const lastItem = items[items.length - 1];
-    if (!lastItem || lastItem.depth > targetDepth) {
-      return undefined;
-    }
-    if (lastItem.depth === targetDepth) {
-      return lastItem;
-    }
-    return getParentItem(lastItem.children, targetDepth) ?? lastItem;
-  }
-
-  for (const heading of headings) {
-    const parentItem = getParentItem(items, heading.depth - 1);
-    if (parentItem) {
-      parentItem.children.push({
-        title: heading.text,
-        id: heading.slug,
-        depth: heading.depth,
-        children: [],
-      });
-    } else {
-      items.push({
-        title: heading.text,
-        id: heading.slug,
-        depth: heading.depth,
-        children: [],
-      });
-    }
-  }
-  return items;
+  headings: Heading[];
 }
 
 function useActiveId(
-  items: TOCItem[],
-  childActiveId: Signal<string | null> | null = null,
+  headings: Accessor<Heading[]>,
+  childActiveId: Accessor<string | null> = () => null,
 ) {
-  const activeId = useSignal<string | null>(items[0]?.id ?? null);
+  const [activeId, setActiveId] = createSignal(headings()[0]?.id ?? null);
 
-  useSignalEffect(() => {
+  createEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        const currentHeadings = untrack(headings);
         const intersectingEntry = entries.findLast(
           (entry) => entry.isIntersecting,
         );
         // 신규 진입 entry가 있을 경우 해당 entry를 활성 entry로 설정
         if (intersectingEntry) {
-          activeId.value = intersectingEntry.target.id;
+          setActiveId(intersectingEntry.target.id);
           return;
         }
 
         // 마지막으로 active였던 entry가 화면에서 사라지는 경우 처리
         const currentEntry = entries.find(
-          (entry) => entry.target.id === activeId.peek(),
+          (entry) => entry.target.id === untrack(activeId),
         );
         if (!currentEntry) return;
 
-        const currentItem = items.find(
+        const currentItem = currentHeadings.find(
           (item) => item.id === currentEntry.target.id,
         );
 
@@ -85,7 +50,7 @@ function useActiveId(
           !currentEntry.isIntersecting &&
           (!childActiveId ||
             !currentItem?.children.some(
-              (item) => item.id === childActiveId?.peek(),
+              (item) => item.id === untrack(childActiveId),
             ))
         ) {
           // entry가 화면보다 위쪽에 있는지
@@ -96,108 +61,108 @@ function useActiveId(
           if (!atTop) {
             // 즉 현재 entry 위쪽에 그려진 entry가 활성 entry가 되어야 한다
             const prevItem =
-              items[items.findIndex((item) => item.id === activeId.peek()) - 1];
-            if (prevItem) activeId.value = prevItem.id;
+              currentHeadings[
+                currentHeadings.findIndex(
+                  (item) => item.id === untrack(activeId),
+                ) - 1
+              ];
+            if (prevItem) setActiveId(prevItem.id);
             // 현재 entry가 현 depth에서 최상단 entry라면 activeId를 null로 설정
-            else activeId.value = null;
+            else setActiveId(null);
           }
         }
       },
       { rootMargin: "-40% 0px", threshold: 0.00001 },
     );
-    for (const item of items) {
+    for (const item of headings()) {
       const el = document.getElementById(item.id);
       if (el) {
         observer.observe(el);
       }
     }
-    return () => {
+    onCleanup(() => {
       observer.disconnect();
-    };
+    });
   });
 
   return activeId;
 }
 
 export default function TableOfContents(props: Props) {
-  const childActiveId = useSignal<string | null>(null);
-  const activeId = useActiveId(props.items, childActiveId);
+  const [childActiveId, setChildActiveId] = createSignal<string | null>(null);
+  const activeId = useActiveId(() => props.headings, childActiveId);
 
   return (
     <ul class="m-0 flex flex-col list-none gap-6px p-0">
-      {props.items.map((item) => (
-        <Item
-          key={item.id}
-          item={item}
-          isActive={item.id === activeId.value}
-          onActiveIdChange={(id) => {
-            childActiveId.value = id;
-          }}
-        />
-      ))}
+      <For each={props.headings}>
+        {(heading) => (
+          <Item
+            heading={heading}
+            isActive={heading.id === activeId()}
+            onActiveIdChange={(id) => setChildActiveId(id)}
+          />
+        )}
+      </For>
     </ul>
   );
 }
 
 function Item(props: {
-  item: TOCItem;
+  heading: Heading;
   isActive: boolean;
   onActiveIdChange?: (id: string | null) => void;
 }) {
-  const childActiveId = useSignal<string | null>(null);
-  const activeId = useActiveId(props.item.children, childActiveId);
+  const [childActiveId, setChildActiveId] = createSignal<string | null>(null);
+  const activeId = useActiveId(() => props.heading.children, childActiveId);
 
-  useSignalEffect(() => {
+  createEffect(() => {
     if (props.onActiveIdChange) {
-      props.onActiveIdChange(activeId.value);
+      props.onActiveIdChange(activeId());
     }
   });
 
   return (
     <li>
       <a
-        href={`#${props.item.id}`}
+        href={`#${props.heading.id}`}
         class={clsx(
           "py-6px block break-keep text-sm font-semibold",
           props.isActive ? "text-slate-8" : "text-slate-4",
         )}
       >
-        {props.item.title}
+        {props.heading.title}
       </a>
-      {props.item.children.length > 0 && (
+      <Show when={props.heading.children.length > 0}>
         <ul class="m-0 block list-none p-0">
-          {props.item.children.map((item) => (
-            <SubItem
-              key={item.id}
-              item={item}
-              depth={1}
-              isActive={props.isActive && item.id === activeId.value}
-              isParentActive={props.isActive}
-              onActiveIdChange={(id) => {
-                childActiveId.value = id;
-              }}
-            />
-          ))}
+          <For each={props.heading.children}>
+            {(heading) => (
+              <SubItem
+                heading={heading}
+                depth={1}
+                isActive={props.isActive && heading.id === activeId()}
+                isParentActive={props.isActive}
+                onActiveIdChange={(id) => setChildActiveId(id)}
+              />
+            )}
+          </For>
         </ul>
-      )}
+      </Show>
     </li>
   );
 }
 
 function SubItem(props: {
-  item: TOCItem;
+  heading: Heading;
   depth: number;
   isActive: boolean;
   isParentActive: boolean;
   onActiveIdChange?: (id: string | null) => void;
 }) {
-  const childActiveId = useSignal<string | null>(null);
-  const activeId = useActiveId(props.item.children, childActiveId);
+  const [childActiveId, setChildActiveId] = createSignal<string | null>(null);
+  const activeId = useActiveId(() => props.heading.children, childActiveId);
 
-  useSignalEffect(() => {
-    if (props.onActiveIdChange) {
-      props.onActiveIdChange(activeId.value);
-    }
+  createEffect(() => {
+    props.onActiveIdChange?.(activeId());
   });
 
   return (
@@ -208,7 +173,7 @@ function SubItem(props: {
       )}
     >
       <a
-        href={`#${props.item.id}`}
+        href={`#${props.heading.id}`}
         class={clsx(
           "py-6px block break-keep font-medium text-sm transition-[padding-top,padding-bottom] duration-300",
           props.isActive
@@ -218,7 +183,7 @@ function SubItem(props: {
               : "text-slate-3",
           props.depth > 1 ? "font-normal" : "font-medium",
         )}
-        style={{ paddingLeft: `${12 * props.depth}px` }}
+        style={{ "padding-left": `${12 * props.depth}px` }}
       >
         <div
           class={clsx(
@@ -226,25 +191,24 @@ function SubItem(props: {
             // props.isActive && "translate-x-2",
           )}
         >
-          {props.item.title}
+          {props.heading.title}
         </div>
       </a>
-      {props.item.children.length > 0 && (
+      <Show when={props.heading.children.length > 0}>
         <ul class="transition-[padding-left] m-0 block list-none p-0 duration-300">
-          {props.item.children.map((item) => (
-            <SubItem
-              key={item.id}
-              item={item}
-              depth={props.depth + 1}
-              isActive={props.isActive && item.id === activeId.value}
-              isParentActive={props.isParentActive}
-              onActiveIdChange={(id) => {
-                childActiveId.value = id;
-              }}
-            />
-          ))}
+          <For each={props.heading.children}>
+            {(heading) => (
+              <SubItem
+                heading={heading}
+                depth={props.depth + 1}
+                isActive={props.isActive && heading.id === activeId()}
+                isParentActive={props.isParentActive}
+                onActiveIdChange={(id) => setChildActiveId(id)}
+              />
+            )}
+          </For>
         </ul>
-      )}
+      </Show>
     </li>
   );
 }
