@@ -116,6 +116,10 @@ export const config = {
     path: "src/routes/(root)/blog/posts",
     entrySchema: BlogEntry,
   },
+  platform: {
+    path: "src/routes/(root)/platform/(doc)",
+    entrySchema: PlatformEntry,
+  },
 } satisfies Record<string, CollectionConfig>;
 
 export type CollectionConfig = {

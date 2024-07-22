@@ -1,6 +1,6 @@
 import { A, useLocation } from "@solidjs/router";
 import { clsx } from "clsx";
-import { createMemo, untrack } from "solid-js";
+import { createMemo, Show, untrack } from "solid-js";
 
 import { useSidebarContext } from "~/layouts/sidebar/context";
 import { useSystemVersion } from "~/state/system-version";
@@ -107,7 +107,17 @@ export default function Gnb(props: Props) {
                   API & SDK
                 </span>
               </Dropdown>
-              {props.lang === "ko" && [
+              <Show when={props.lang === "ko"}>
+                <A class="h-full inline-flex items-center" href="/platform">
+                  <span
+                    class={clsx(
+                      location.pathname.startsWith("/platform") &&
+                        styles.navActive,
+                    )}
+                  >
+                    파트너 정산
+                  </span>
+                </A>
                 <A
                   class="h-full inline-flex items-center"
                   href="/release-notes"
@@ -120,7 +130,7 @@ export default function Gnb(props: Props) {
                   >
                     릴리즈 노트
                   </span>
-                </A>,
+                </A>
                 <A class="h-full inline-flex items-center" href="/blog">
                   <span
                     class={clsx(
@@ -129,8 +139,8 @@ export default function Gnb(props: Props) {
                   >
                     기술 블로그
                   </span>
-                </A>,
-              ]}
+                </A>
+              </Show>
             </div>
           </div>
           <div class="hidden h-full items-center gap-4 pr-6 md:flex">

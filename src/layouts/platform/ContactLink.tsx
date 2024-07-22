@@ -1,3 +1,5 @@
+import { trackEvent } from "~/layouts/trackers/Trackers";
+
 function ContactLink() {
   return (
     <a
