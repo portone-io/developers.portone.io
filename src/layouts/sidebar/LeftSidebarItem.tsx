@@ -6,6 +6,7 @@ import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
 
 import { trackEvent } from "../trackers/Trackers";
+import { useSidebarContext } from "./context";
 
 function LeftSidebarItem(props: NavMenuPage) {
   const { systemVersion } = useSystemVersion();
@@ -37,6 +38,7 @@ function LeftSidebarItem(props: NavMenuPage) {
 export default LeftSidebarItem;
 
 function FolderLink(props: NavMenuPage & { isActive: boolean }) {
+  const sidebarOpen = useSidebarContext();
   const { systemVersion } = useSystemVersion();
   const location = useLocation();
   const [isOpen, setIsOpen] = createSignal(
@@ -69,7 +71,10 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
             ]
               .filter(Boolean)
               .join("")}
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              sidebarOpen.set(false);
+              setIsOpen(true);
+            }}
             class="grow"
           >
             <LinkTitle title={props.title} isActive={props.isActive} />
@@ -120,6 +125,7 @@ export interface JustLinkProps {
   };
 }
 export function JustLink(props: JustLinkProps) {
+  const sidebarOpen = useSidebarContext();
   const { systemVersion } = useSystemVersion();
 
   return (
@@ -133,9 +139,10 @@ export function JustLink(props: JustLinkProps) {
             : props.href
         }
         class={getLinkStyle(props.isActive)}
-        onClick={() =>
-          props.event && trackEvent(props.event.name, props.event.props)
-        }
+        onClick={() => {
+          sidebarOpen.set(false);
+          if (props.event) trackEvent(props.event.name, props.event.props);
+        }}
         target={props.isExternal ? "_blank" : undefined}
       >
         <LinkTitle
