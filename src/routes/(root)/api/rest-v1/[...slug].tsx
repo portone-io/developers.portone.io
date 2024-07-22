@@ -1,3 +1,4 @@
+import { Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
 import { createSignal } from "solid-js";
 
@@ -28,6 +29,7 @@ export default function ApiV2Docs() {
 
   return (
     <div class="flex">
+      <Title>PortOne REST API - V1</Title>
       <NavMenu
         title="REST API - V1"
         basepath="/api/rest-v1"

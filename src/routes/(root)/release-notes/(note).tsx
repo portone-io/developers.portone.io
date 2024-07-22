@@ -1,9 +1,7 @@
-import { Title } from "@solidjs/meta";
 import {
   cache,
   createAsync,
   type RouteDefinition,
-  useParams,
   useLocation,
 } from "@solidjs/router";
 import { format } from "date-fns";
@@ -11,6 +9,7 @@ import { createMemo, type JSXElement, Show } from "solid-js";
 import { match } from "ts-pattern";
 
 import { NotFoundError } from "~/components/404";
+import Metadata from "~/components/Metadata";
 import * as prose from "~/components/prose";
 import Banner from "~/components/release-note/Banner";
 import Footer from "~/components/release-note/Footer";
@@ -69,7 +68,7 @@ export default function NoteLayout(props: { children: JSXElement }) {
     <Show when={note()}>
       {(note) => (
         <>
-          <Title>{title()}</Title>
+          <Metadata title={title()!} ogType="article" />
           <prose.h1>{title()}</prose.h1>
           <p class="my-4 text-xl text-gray">
             {format(note().frontmatter.releasedAt, "yyyy년 M월 d일")} {label()}{" "}

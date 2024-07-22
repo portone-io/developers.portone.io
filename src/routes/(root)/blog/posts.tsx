@@ -1,4 +1,3 @@
-import { Title } from "@solidjs/meta";
 import {
   cache,
   createAsync,
@@ -16,10 +15,11 @@ import PostList from "~/components/blog/PostList/PostList";
 import ProfileImage from "~/components/blog/ProfileImage";
 import * as prose from "~/components/blog/prose";
 import TagList from "~/components/blog/TagList";
+import Metadata from "~/components/Metadata";
 import TableOfContents from "~/components/TableOfContents";
 
-import styles from "./posts.module.css";
 import { loadLatestPosts } from "./(list)";
+import styles from "./posts.module.css";
 
 const toSlug = (path: string) => path.replace(/^\/blog\/posts\//, "");
 const loadPost = cache(async (slug: string) => {
@@ -63,7 +63,12 @@ export default function PostsLayout(props: { children: JSXElement }) {
     <Show when={post()}>
       {(post) => (
         <>
-          <Title>{post().frontmatter.title} - PortOne 기술 블로그</Title>
+          <Metadata
+            title={`${post().frontmatter.title} - PortOne 기술 블로그`}
+            description={post().frontmatter.description}
+            ogType="article"
+            ogImageSlug={`blog/posts/${slug()}.png`}
+          />
           <div class="mx-auto max-w-[1150px] break-keep pb-50 [&_a]:break-keep">
             <article class="w-full flex flex-col gap-6 text-17px text-slate-7 <lg:mx-auto md:my-4">
               <div class="mx-auto max-w-[800px] w-full flex flex-col gap-3 px-4 lg:max-w-none md:px-6">

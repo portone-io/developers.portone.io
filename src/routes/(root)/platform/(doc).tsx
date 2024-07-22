@@ -4,9 +4,10 @@ import {
   type RouteDefinition,
   useLocation,
 } from "@solidjs/router";
-import { createMemo, type JSXElement } from "solid-js";
+import { createMemo, type JSXElement, Show } from "solid-js";
 
 import { NotFoundError } from "~/components/404";
+import Metadata from "~/components/Metadata";
 import * as prose from "~/components/prose";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
 
@@ -33,17 +34,22 @@ export default function PlatformDocLayout(props: { children: JSXElement }) {
   const doc = createAsync(() => loadDoc(slug()), { deferStream: true });
 
   return (
-    <>
-      <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
-        <prose.h1>{doc()?.frontmatter.title}</prose.h1>
-        {props.children}
-      </article>
-      <div class="hidden shrink-10 basis-10 lg:block"></div>
-      <RightSidebar
-        lang="ko"
-        slug={doc()?.slug ?? ""}
-        editThisPagePrefix="https://github.com/portone-io/developers.portone.io/blob/main/src/content/platform/"
-      />
-    </>
+    <Show when={doc()}>
+      {(doc) => (
+        <>
+          <Metadata title={doc().frontmatter.title} ogType="article" />
+          <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
+            <prose.h1>{doc()?.frontmatter.title}</prose.h1>
+            {props.children}
+          </article>
+          <div class="hidden shrink-10 basis-10 lg:block"></div>
+          <RightSidebar
+            lang="ko"
+            slug={doc()?.slug ?? ""}
+            editThisPagePrefix="https://github.com/portone-io/developers.portone.io/blob/main/src/content/platform/"
+          />
+        </>
+      )}
+    </Show>
   );
 }

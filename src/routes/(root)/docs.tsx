@@ -4,16 +4,12 @@ import {
   type RouteDefinition,
   useLocation,
 } from "@solidjs/router";
-import {
-  createMemo,
-  createResource,
-  type JSXElement,
-  Show,
-  untrack,
-} from "solid-js";
+import { createMemo, createResource, type JSXElement, Show } from "solid-js";
 
 import { NotFoundError } from "~/components/404";
+import Metadata from "~/components/Metadata";
 import * as prose from "~/components/prose";
+import type { DocsEntry } from "~/content/config";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
 import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
@@ -81,19 +77,28 @@ export default function Docs(props: { children: JSXElement }) {
       <div class="flex">
         <DocsNavMenu lang={params().lang} slug={params().slug} />
         <div class="min-w-0 flex flex-1 justify-center">
-          <Show when={doc.latest ?? untrack(doc)}>
+          <Show when={doc()}>
             {(doc) => (
-              <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
-                <div class="mb-6">
-                  <prose.h1 id="overview">{doc().frontmatter.title}</prose.h1>
-                  <Show when={doc().frontmatter.description}>
-                    <p class="my-4 text-xl text-gray">
-                      {doc().frontmatter.description}
-                    </p>
-                  </Show>
-                </div>
-                {props.children}
-              </article>
+              <>
+                <Metadata
+                  title={doc().frontmatter.title}
+                  description={doc().frontmatter.description}
+                  ogType="article"
+                  ogImageSlug={`docs/${params().lang}/${params().slug}.png`}
+                  docsEntry={doc().frontmatter as DocsEntry}
+                />
+                <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
+                  <div class="mb-6">
+                    <prose.h1 id="overview">{doc().frontmatter.title}</prose.h1>
+                    <Show when={doc().frontmatter.description}>
+                      <p class="my-4 text-xl text-gray">
+                        {doc().frontmatter.description}
+                      </p>
+                    </Show>
+                  </div>
+                  {props.children}
+                </article>
+              </>
             )}
           </Show>
           <div class="hidden shrink-10 basis-10 lg:block"></div>
