@@ -18,8 +18,8 @@ import * as prose from "~/components/blog/prose";
 import TagList from "~/components/blog/TagList";
 import TableOfContents from "~/components/TableOfContents";
 
-import { loadLatestPosts } from "./(list)/index";
 import styles from "./posts.module.css";
+import { loadLatestPosts } from "./(list)";
 
 const toSlug = (path: string) => path.replace(/^\/blog\/posts\//, "");
 const loadPost = cache(async (slug: string) => {

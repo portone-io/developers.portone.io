@@ -1,25 +1,8 @@
-import { cache, createAsync, type RouteDefinition } from "@solidjs/router";
+import { createAsync, type RouteDefinition } from "@solidjs/router";
 import { Show } from "solid-js";
 
 import PostList from "~/components/blog/PostList/PostList";
-import type { BlogEntry } from "~/content/config";
-
-export const loadLatestPosts = cache(async () => {
-  "use server";
-
-  const { blog } = await import("#content");
-  return (Object.values(blog) as { slug: string; frontmatter: BlogEntry }[])
-    .filter(
-      (entry) =>
-        !entry.frontmatter.draft ||
-        import.meta.env.DEV ||
-        import.meta.env.VERCEL_ENV === "preview",
-    )
-    .map((entry) => ({
-      slug: entry.slug,
-      entry: entry.frontmatter,
-    }));
-}, "blog/posts/latest");
+import { loadLatestPosts } from "../(list)";
 
 export const route = {
   preload: () => {
