@@ -16,6 +16,8 @@ interface Props {
   children: JSXElement;
 }
 
+const navAsMenuPaths = ["/platform", "/blog", "/release-notes"];
+
 export default function Layout(props: Props) {
   const location = useLocation();
   const params = useParams();
@@ -30,7 +32,12 @@ export default function Layout(props: Props) {
       <SidebarProvider>
         <MDXProvider components={prose}>
           <div class="h-full flex flex-col">
-            <Gnb lang={lang()} navAsMenu={false} />
+            <Gnb
+              lang={lang()}
+              navAsMenu={navAsMenuPaths.some((path) =>
+                location.pathname.startsWith(path),
+              )}
+            />
             <SidebarBackground />
             <main class="min-h-0 flex-1">{props.children}</main>
           </div>
