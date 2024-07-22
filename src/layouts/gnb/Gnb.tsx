@@ -71,10 +71,12 @@ export default function Gnb(props: Props) {
               class={clsx(
                 "flex gap-6 md:h-full items-center",
                 props.navAsMenu
-                  ? "nav-as-menu <md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white data-[open]:(translate-y-full shadow-lg))>"
+                  ? "<md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white)"
                   : "<md:hidden",
+                props.navAsMenu &&
+                  sidebarContext.get() &&
+                  "<md:(translate-y-full shadow-lg)",
               )}
-              data-open={sidebarContext.get()}
             >
               <Dropdown
                 serverSystemVersion={serverSystemVersion}
