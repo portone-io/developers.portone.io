@@ -2,11 +2,11 @@ import {
   createMemo,
   createSignal,
   For,
+  type JSXElement,
   Match,
   mergeProps,
   Show,
   Switch,
-  type JSXElement,
 } from "solid-js";
 
 import * as prose from "~/components/prose";
@@ -411,7 +411,7 @@ function PropertyDoc(_props: PropertyDocProps) {
   const deprecated = createMemo(() => Boolean(props.property.deprecated));
   return (
     <div
-      class="text-14px flex flex-col gap-2 p-2"
+      class="flex flex-col gap-2 p-2 text-14px"
       classList={{ "opacity-50": deprecated() }}
     >
       <div class="flex items-center justify-between gap-4">
@@ -464,7 +464,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
     () => typeRepr()[0]?.toUpperCase() === typeRepr()[0],
   );
   const typeName = createMemo(() => typeRepr().replace("[]", ""));
-  const href = createMemo(() => `${props.basepath}/type-def#${typeName}`);
+  const href = createMemo(() => `${props.basepath}/type-def#${typeName()}`);
   const format = createMemo((): JSXElement => {
     if (typeof props.def === "string" || !("format" in props.def)) return null;
     switch (props.def.format) {

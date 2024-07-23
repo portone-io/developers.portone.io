@@ -5,7 +5,6 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  catchError,
 } from "solid-js";
 
 import RequestHeaderEditor, {

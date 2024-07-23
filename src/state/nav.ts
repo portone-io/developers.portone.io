@@ -51,7 +51,7 @@ export function calcNavMenuAncestors(
 ): NavMenuAncestors {
   const navMenuAncestors: NavMenuAncestors = {};
   for (const { slug, ancestors } of iterNavMenuAncestors(navMenuItems)) {
-    if (navMenuAncestors[slug]) navMenuAncestors[slug]!.push(...ancestors);
+    if (navMenuAncestors[slug]) navMenuAncestors[slug].push(...ancestors);
     else navMenuAncestors[slug] = ancestors;
   }
   return navMenuAncestors;

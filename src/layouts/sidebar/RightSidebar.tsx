@@ -21,10 +21,13 @@ export interface TocItem {
   children: TocItem[];
 }
 function RightSidebar(_props: RightSidebarProps) {
-  const props = mergeProps({
-    editThisPagePrefix:
-      "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
-  }, _props);
+  const props = mergeProps(
+    {
+      editThisPagePrefix:
+        "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
+    },
+    _props,
+  );
 
   const [toc, setToc] = createSignal<Toc | null>(null);
   const { systemVersion } = useSystemVersion();

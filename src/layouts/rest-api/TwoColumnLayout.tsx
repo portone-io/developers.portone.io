@@ -12,13 +12,16 @@ export interface TwoColumnLayoutProps {
   gap?: number;
 }
 export default function TwoColumnLayout(_props: TwoColumnLayoutProps) {
-  const props = mergeProps({
-    class: "",
-    leftClass: "",
-    rightClass: "",
-    bp: "lg",
-    gap: 4,
-  }, _props);
+  const props = mergeProps(
+    {
+      class: "",
+      leftClass: "",
+      rightClass: "",
+      bp: "lg",
+      gap: 4,
+    },
+    _props,
+  );
   const smallRight = createMemo(() => props.smallRight ?? !props.right);
 
   return (

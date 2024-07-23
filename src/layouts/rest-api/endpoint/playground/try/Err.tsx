@@ -1,8 +1,9 @@
 import type { JSXElement } from "solid-js";
+
 import Card from "../Card";
 
 export interface ErrProps {
-	children: JSXElement;
+  children: JSXElement;
 }
 export default function Err(props: ErrProps) {
   return (

@@ -1,13 +1,18 @@
 import clsx from "clsx";
-import { splitProps, type JSX, type JSXElement } from "solid-js";
+import { type JSX, type JSXElement, splitProps } from "solid-js";
 
 export interface CardProps
   extends Omit<JSX.HTMLAttributes<HTMLDivElement>, "title"> {
-	title?: JSXElement;
+  title?: JSXElement;
   titleClass?: string;
 }
 export default function Card(props: CardProps) {
-	const [local, rest] = splitProps(props, ["title", "titleClass", "class", "children"]);
+  const [local, rest] = splitProps(props, [
+    "title",
+    "titleClass",
+    "class",
+    "children",
+  ]);
   return (
     <div
       {...rest}

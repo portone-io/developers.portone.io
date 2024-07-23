@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import {
   createMemo,
+  createResource,
   For,
   type JSX,
-  splitProps,
-  createResource,
   Show,
+  splitProps,
 } from "solid-js";
 import { isServer } from "solid-js/web";
 import type { Picture } from "vite-imagetools";
@@ -78,7 +78,7 @@ export default function Picture(props: Props) {
   // mount to the body to initiate loading
   document.body.appendChild(el);
   // unmount from the body once loaded
-  loadedPromise.then(() => document.body.removeChild(el));
+  void loadedPromise.then(() => document.body.removeChild(el));
   // render the picture element only when loaded
   // loaded() triggers suspense therefore blocks router navigation (which is performed with startTransition)
   return <Show when={loaded()}>{el}</Show>;

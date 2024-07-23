@@ -2,6 +2,7 @@ import { createAsync, type RouteDefinition } from "@solidjs/router";
 import { Show } from "solid-js";
 
 import PostList from "~/components/blog/PostList/PostList";
+
 import { loadLatestPosts } from "../(list)";
 
 export const route = {

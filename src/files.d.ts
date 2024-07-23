@@ -34,9 +34,9 @@ declare module "*/_redir.yaml" {
 }
 
 declare module "*.mdx" {
-	import type { Component } from "solid-js";
-	const component: Component;
-	export default component;
+  import type { Component } from "solid-js";
+  const component: Component;
+  export default component;
 }
 
 // supported formats by Sharp (https://sharp.pixelplumbing.com/#formats)
