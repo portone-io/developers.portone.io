@@ -26,6 +26,7 @@ export default defineConfig({
         ...Object.keys(indexFilesMapping).map(
           (fileName) => `/content-index/${fileName}.json`,
         ),
+        "/blog/rss.xml",
       ],
     },
   },
