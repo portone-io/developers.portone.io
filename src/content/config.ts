@@ -10,7 +10,7 @@ import { SystemVersion } from "~/type";
 
 export interface ParseContext {
   fileName: string;
-  outputPath: string;
+  outDir: string;
   registerImport: (importData: Import) => void;
 }
 export interface Import {
@@ -21,7 +21,7 @@ const ParseContext = new AsyncLocalStorage<ParseContext>();
 
 export const parseFrontmatter = async <T>(
   fileName: string,
-  outputPath: string,
+  outDir: string,
   content: unknown,
   schema: z.ZodSchema<T>,
 ) => {
@@ -29,7 +29,7 @@ export const parseFrontmatter = async <T>(
   const data = await ParseContext.run(
     {
       fileName,
-      outputPath,
+      outDir,
       registerImport: (importData) => {
         imports.push(importData);
       },
@@ -59,7 +59,7 @@ const image = () =>
     } catch {
       const ctx = ParseContext.getStore()!;
       const absPath = path.join(path.dirname(ctx.fileName), input);
-      const relativePath = path.relative(path.dirname(ctx.outputPath), absPath);
+      const relativePath = path.relative(ctx.outDir, absPath);
       void Sharp(await readFile(absPath)); // validate image
       const ident = `import_${crypto.randomUUID().replaceAll(/-/g, "")}`;
       ctx.registerImport({ ident, path: relativePath });

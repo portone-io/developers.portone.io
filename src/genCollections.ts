@@ -48,7 +48,7 @@ const cwd = process.cwd();
 
 async function getCollection(
   config: CollectionConfig,
-  outputPath: string,
+  outDir: string,
   parseFrontmatter: ParseFrontmatter,
   changedFiles?: Set<string>,
 ): Promise<Collection> {
@@ -74,7 +74,7 @@ async function getCollection(
         config,
         file,
         content,
-        outputPath,
+        outDir,
         parseFrontmatter,
       );
       return [slug, { slug, file, ...parsed }] as const;
@@ -88,7 +88,7 @@ async function parseMdx(
   config: CollectionConfig,
   fileName: string,
   content: string,
-  outputPath: string,
+  outDir: string,
   parseFrontmatter: ParseFrontmatter,
 ) {
   const result = await unified()
@@ -113,7 +113,7 @@ async function parseMdx(
 
   const { imports, data: frontmatter } = await parseFrontmatter(
     fileName,
-    outputPath,
+    outDir,
     data.frontmatter,
     config.entrySchema,
   );
@@ -130,24 +130,23 @@ async function generate(watch = false) {
     `./content/config?t=${Date.now()}`
   )) as typeof import("./content/config");
 
-  const outputPath = path.join(
-    import.meta.dirname,
-    "./content/__generated__/index.ts",
-  );
+  const outDir = path.join(import.meta.dirname, "./content/__generated__");
 
   const collections = new Map(
     await Promise.all(
-      Object.entries(config).map(
-        async ([name, config]) =>
-          [
-            name,
-            await getCollection(config, outputPath, parseFrontmatter),
-          ] as const,
-      ),
+      Object.entries(config).map(async ([name, config]) => {
+        const collection = await getCollection(
+          config,
+          outDir,
+          parseFrontmatter,
+        );
+        await writeCollection(name, collection, outDir);
+        return [name, collection] as const;
+      }),
     ),
   );
 
-  await writeFile(collections, outputPath);
+  await writeIndex(collections, outDir);
   if (!watch) return () => {};
 
   const subscriptions = await Promise.all(
@@ -158,7 +157,7 @@ async function generate(watch = false) {
           return;
         }
 
-        const collection = collections.get(name);
+        let collection = collections.get(name);
         let files: Set<string> | undefined;
 
         for (const event of events) {
@@ -172,17 +171,19 @@ async function generate(watch = false) {
           }
         }
 
-        void getCollection(config, outputPath, parseFrontmatter, files).then(
-          (newCollection) => {
+        void getCollection(config, outDir, parseFrontmatter, files).then(
+          async (newCollection) => {
             if (!collection) {
               collections.set(name, newCollection);
-              return;
+              collection = newCollection;
+              await writeCollection(name, collection, outDir);
+              await writeIndex(collections, outDir);
+            } else {
+              for (const [slug, entry] of newCollection.entries) {
+                collection.entries.set(slug, entry);
+              }
+              await writeCollection(name, collection, outDir);
             }
-            for (const [slug, entry] of newCollection.entries) {
-              collection.entries.set(slug, entry);
-            }
-            collections.set(name, collection);
-            return writeFile(collections, outputPath);
           },
         );
       }),
@@ -192,26 +193,24 @@ async function generate(watch = false) {
   return () => Promise.allSettled(subscriptions.map((s) => s.unsubscribe()));
 }
 
-async function writeFile(
-  collections: Map<string, Collection>,
-  outputPath: string,
+async function writeCollection(
+  name: string,
+  collection: Collection,
+  outDir: string,
 ) {
   const content = `// @vinxi-ignore-style-collection
 /* eslint-disable */
 
 import "#server-only";
 
-${[...collections.values()]
-  .flatMap(({ entries }) => [...entries.values()])
+${[...collection.entries.values()]
   .flatMap((entry) => entry.imports)
   .map(({ ident, path }) => `import ${ident} from "${path}";`)
   .join("\n")}
 
-${[...collections]
-  .map(
-    ([name, c]) => `// prettier-ignore
+// prettier-ignore
 export const ${name} = {
-${[...c.entries.values()]
+${[...collection.entries.values()]
   .map(
     (entry) => `  ${JSON.stringify(entry.slug)}: {
     slug: ${JSON.stringify(entry.slug)},
@@ -220,13 +219,27 @@ ${[...c.entries.values()]
   },`,
   )
   .join("\n")}
-}`,
-  )
-  .join("\n\n")}
+};
 `;
 
-  await fs.mkdir(path.dirname(outputPath), { recursive: true });
-  await fs.writeFile(outputPath, content);
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.writeFile(path.join(outDir, `${name}.ts`), content);
+}
+
+async function writeIndex(
+  collections: Map<string, Collection>,
+  outDir: string,
+) {
+  const content = `// @vinxi-ignore-style-collection
+/* eslint-disable */
+
+import "#server-only";
+
+${[...collections.keys()].map((name) => `export { ${name} } from "./${name}";`).join("\n")}
+`;
+
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.writeFile(path.join(outDir, "index.ts"), content);
 }
 
 if (process.argv[2] === "watch") {
