@@ -1,19 +1,49 @@
-import { computed, signal } from "@preact/signals";
+import { A } from "@solidjs/router";
 import Fuse from "fuse.js";
-import * as React from "react";
+import {
+  createContext,
+  createMemo,
+  createResource,
+  createSignal,
+  For,
+  type JSXElement,
+  Match,
+  Show,
+  Switch,
+  useContext,
+} from "solid-js";
 
-import { useSystemVersion } from "#state/system-version";
 import { lazy } from "~/misc/async";
-import type { NavMenuSystemVersions } from "~/state/server-only/nav";
+import type { NavMenuSystemVersions } from "~/state/nav";
+import { useSystemVersion } from "~/state/system-version";
+
+const SearchContext = createContext({
+  open: (): boolean => false,
+  setOpen: (_: boolean): void => {},
+});
+
+export function SearchProvider(props: { children: JSXElement }) {
+  const [open, setOpen] = createSignal(false);
+
+  return (
+    <SearchContext.Provider value={{ open, setOpen }}>
+      {props.children}
+    </SearchContext.Provider>
+  );
+}
+
+export const useSearchContext = () => useContext(SearchContext);
 
 export interface SearchButtonProps {
   lang: string;
 }
 export function SearchButton({ lang }: SearchButtonProps) {
+  const { setOpen } = useSearchContext();
+
   return (
     <button
       class="mx-2 flex flex-1 gap-2 border-1 border-slate-3 rounded-6px bg-slate-1 p-2 text-slate-4"
-      onClick={openSearchScreen}
+      onClick={() => setOpen(true)}
     >
       <i class="i-ic-baseline-search text-2xl"></i>
       <span>{t(lang, "search")}</span>
@@ -21,8 +51,6 @@ export function SearchButton({ lang }: SearchButtonProps) {
   );
 }
 
-export const searchScreenOpenSignal = signal(false);
-export const searchTextSignal = signal("");
 export const searchIndexKo = lazy(() => fetchSearchIndex("ko"));
 export const searchIndexEn = lazy(() => fetchSearchIndex("en"));
 async function fetchSearchIndex(lang: string): Promise<SearchIndex> {
@@ -37,65 +65,55 @@ export interface SearchIndexItem {
   description?: string;
   text: string;
 }
-export const searchIndexSignal = signal<SearchIndex | undefined>(undefined);
-export const fuseSignal = computed(() => {
-  const searchIndex = searchIndexSignal.value;
-  const systemVersion = useSystemVersion();
-  const navMenuSystemVersions = navMenuSystemVersionsSignal.value;
-  if (!searchIndex) return;
-  const filteredIndex = searchIndex.filter((item) => {
-    const navMenuSystemVersion =
-      navMenuSystemVersions[item.slug.replace(/^docs/, "")];
-    if (!navMenuSystemVersion) return true;
-    return navMenuSystemVersion === systemVersion;
-  });
-  return new Fuse(filteredIndex, { keys: ["title", "description", "text"] });
-});
-export const navMenuSystemVersionsSignal = signal<NavMenuSystemVersions>({});
-export const searchResultSignal = computed(() => {
-  const searchText = searchTextSignal.value;
-  const fuse = fuseSignal.value;
-  if (!searchText || !fuse) return [];
-  return fuse.search(searchText.normalize("NFKD"));
-});
-
-export function openSearchScreen() {
-  searchScreenOpenSignal.value = true;
-}
-export function closeSearchScreen() {
-  searchScreenOpenSignal.value = false;
-  document.body.focus();
-}
 
 export interface SearchScreenProps {
   lang: string;
   navMenuSystemVersions: NavMenuSystemVersions;
 }
-export function SearchScreen({
-  lang,
-  navMenuSystemVersions,
-}: SearchScreenProps) {
-  const searchScreenOpen = searchScreenOpenSignal.value;
-  const searchText = searchTextSignal.value;
-  const fuse = fuseSignal.value;
-  const searchResult = searchResultSignal.value;
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const className = `fixed left-0 top-0 z-search h-full w-full transition bg-[rgba(0,0,0,0.6)] ${
-    searchScreenOpen ? "backdrop-blur-sm" : "pointer-events-none opacity-0"
-  }`;
-  React.useEffect(() => {
-    navMenuSystemVersionsSignal.value = navMenuSystemVersions;
-  }, [navMenuSystemVersions]);
-  React.useEffect(() => {
-    if (!searchScreenOpen) return;
-    inputRef.current?.focus();
-    const searchIndexPromise = lang === "ko" ? searchIndexKo : searchIndexEn;
-    void searchIndexPromise.then(
-      (searchIndex) => (searchIndexSignal.value = searchIndex),
-    );
-  }, [searchScreenOpen]);
+export function SearchScreen(props: SearchScreenProps) {
+  const { open, setOpen } = useSearchContext();
+  const { systemVersion } = useSystemVersion();
+  let inputRef: HTMLInputElement | undefined;
+
+  const [searchText, setSearchText] = createSignal("");
+  const [searchIndex] = createResource(
+    () => open() && props.lang,
+    async (lang) => {
+      inputRef?.focus();
+      return await (lang === "ko" ? searchIndexKo : searchIndexEn);
+    },
+    { initialValue: undefined },
+  );
+  const fuse = createMemo(() => {
+    const index = searchIndex.latest;
+    if (!index) return;
+    const filteredIndex = index.filter((item) => {
+      const navMenuSystemVersion =
+        props.navMenuSystemVersions[item.slug.replace(/^docs/, "")];
+      if (!navMenuSystemVersion) return true;
+      return navMenuSystemVersion === systemVersion();
+    });
+    return new Fuse(filteredIndex, { keys: ["title", "description", "text"] });
+  });
+  const searchResult = createMemo(() => {
+    const text = searchText();
+    const f = fuse();
+    if (!text || !f) return [];
+    return f.search(text.normalize("NFKD"));
+  });
+
+  const closeSearchScreen = () => {
+    setOpen(false);
+    document.body.focus();
+  };
+
   return (
-    <div class={className} onClick={closeSearchScreen}>
+    <div
+      class={`fixed left-0 top-0 z-search h-full w-full transition bg-[rgba(0,0,0,0.6)] ${
+        open() ? "backdrop-blur-sm" : "pointer-events-none opacity-0"
+      }`}
+      onClick={closeSearchScreen}
+    >
       <div
         class="mx-auto h-full w-full flex flex-col border bg-white sm:mt-18 sm:max-h-1/2 sm:min-h-80 sm:w-150 sm:rounded-lg"
         onClick={(e) => e.stopPropagation()}
@@ -104,9 +122,9 @@ export function SearchScreen({
           <input
             class="flex-1 bg-transparent p-4"
             ref={inputRef}
-            placeholder={t(lang, "searchContent")}
-            value={searchText}
-            onInput={(e) => (searchTextSignal.value = e.currentTarget.value)}
+            placeholder={t(props.lang, "searchContent")}
+            value={searchText()}
+            onInput={(e) => setSearchText(e.currentTarget.value)}
             onKeyDown={(e) => {
               if (e.key === "Escape") closeSearchScreen();
             }}
@@ -116,24 +134,29 @@ export function SearchScreen({
           </button>
         </div>
         <div class="flex flex-1 flex-col overflow-y-auto border-t">
-          {searchResult.length ? (
-            <ul>
-              {searchResult.map(({ item }) => (
-                <a href={`/${item.slug}`} tabIndex={0}>
-                  <li key={item.slug} class="px-4 py-2 hover:bg-slate-1">
-                    <div class="text-sm">{item.title}</div>
-                    {item.description && (
-                      <div class="text-xs text-slate-4">{item.description}</div>
-                    )}
-                  </li>
-                </a>
-              ))}
-            </ul>
-          ) : fuse ? (
-            <Empty lang={lang} />
-          ) : (
-            <Waiting />
-          )}
+          <Switch fallback={<Waiting />}>
+            <Match when={searchResult().length > 0}>
+              <ul>
+                <For each={searchResult()}>
+                  {({ item }) => (
+                    <A href={`/${item.slug}`} tabIndex={0}>
+                      <li class="px-4 py-2 hover:bg-slate-1">
+                        <div class="text-sm">{item.title}</div>
+                        <Show when={item.description}>
+                          <div class="text-xs text-slate-4">
+                            {item.description}
+                          </div>
+                        </Show>
+                      </li>
+                    </A>
+                  )}
+                </For>
+              </ul>
+            </Match>
+            <Match when={fuse()}>
+              <Empty lang={props.lang} />
+            </Match>
+          </Switch>
         </div>
       </div>
     </div>
@@ -166,8 +189,8 @@ function Waiting() {
             cy="15"
             r="12"
             stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
+            stroke-width="2"
+            stroke-linecap="round"
             fill="transparent"
           />
         </svg>

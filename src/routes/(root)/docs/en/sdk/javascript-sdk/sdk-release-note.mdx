@@ -1,0 +1,281 @@
+---
+title: SDK Release Notes
+description: >-
+  Feature additions/changes, bug fixes, and enhancements to the i'mport
+  JavaScript SDK.
+---
+
+import Details from "~/components/gitbook/Details";
+
+## Version 1.2.0
+
+<Details>
+  <Details.Summary>TBU</Details.Summary>
+
+  <Details.Content />
+</Details>
+
+## Version 1.1.8
+
+<Details>
+  <Details.Summary>Details</Details.Summary>
+
+  <Details.Content>
+    **Changed Kakao Pay mobile payment to use redirection mode**
+
+    In compliance with the iframe non-support policy of Kakao Pay SDK, Kakao Pay mobile payment is processed now via page redirection instead of iframe.In the previous version, when the Kakao Pay mobile payment process is completed after calling `IMP.request_pay`, the specified callback is invoked as in PC web. In mobile, Kakao Pay is now processed via redirection mode.\\
+
+    **Added Naver Pay (Checkout) pop-up mode (redirection as default mode)**
+
+    To open the Naver Pay (Checkout) window as pop-up, set `popup: true` when calling `IMP.request_pay`. The callback mode is used by default.To avoid issues, such as browser pop-up blocking, Naver Pay recommends page redirection in both PC and mobile.
+
+    - **1.1.8 and later versions**
+      - PC/mobile: redirection is default, set to `popup : true` to enable popup mode.
+
+    - **1.1.7 and earlier versions (`popup` not supported)**
+      - PC: pop-up (new tab) mode
+      - Mobile: redirection mode
+
+    **Added redirection mode for Eximbay**
+
+    To redirect to a page after payment process is completed, set `popup : false` when calling `IMP.request_pay`. To avoid pop-up blocking issues in mobile app WebView, use the redirection mode.
+
+    - **1.1.8 and later versions**
+      - PC/mobile: popup is default, set to `popup : false` to enable redirection mode.
+
+    - **1.1.7 and earlier versions (`popup` not supported)**
+      - PC/mobile: popup mode
+
+    **Multiple PG support for identity verification**
+
+    Added support for multiple PG modules in identity verification due to the addition of the `INICIS-Credit card identity verification` method to the existing `Danal-Mobile identity verification` method. You can also get multiple CPIDs, one for each website, for 'Danal-Mobile identity verification', and specify a module via `pg: danal.{Danal CPID}`.
+
+    ```ts title="Danal-mobile identity verification"
+    IMP.certification(
+      {
+        pg: "danal", // danal or danal.{Danal CPID}, other parameters omitted
+        // ...
+      },
+      function (rsp) {
+        if (rsp.success) {
+          // Verification successful, return imp_uid, merchant_uid (rsp.imp_uid, rsp.merchant_uid)
+        } else {
+          // Verification failed, terminate
+        }
+      },
+    );
+    ```
+
+    ```ts title="Inicis-credit card identity verification"
+    // popup : true by default in both PC/mobile
+    // PC : applies popup mode regardless of popup parameter setting (INICIS policy)
+    // Mobile : for redirection mode, set popup : false and m_redirect_url is required
+    IMP.certification({
+      pg: "inicis", //inicis or inicis.{Inicis MID}, other parameters omitted
+      m_redirect_url: "https://shop.yourservice.com/user-certificates/complete",
+      // ...
+    });
+    ```
+
+    ### Bug Fixes <a href="#undefined" id="undefined" />
+
+    **The issue of white screen being displayed when the browser's Back button is pressed while processing payment in redirection mode in Safari on iPhone**
+
+    This is caused by the page being rendered by restoring the DOM element in the state before the page redirection when you return to the previous page with the Back button of the Safari browser (applicable to all PGs that use the redirection mode). The white screen issue is now resolved.
+  </Details.Content>
+</Details>
+
+## Version 1.1.7
+
+<Details>
+  <Details.Summary>Details</Details.Summary>
+
+  <Details.Content>
+    **Added popup mode for PayPal**
+
+    To open the payment window as pop-up, set `popup: true` when calling `IMP.request_pay(param, callback)`. The `callback` function is called after the payment process is completed. Previous versions only support the page redirection mode.
+
+    ```ts title="javascript popup mode"
+    // Set popup : true and callback, other parameters omitted
+    IMP.request_pay(
+      {
+        pg: "paypal",
+        popup: true,
+        // ...
+      },
+      function (rsp) {
+        if (rsp.success) {
+          //Paypal payment successful, execute validation logic
+        } else {
+          //Paypal payment terminated or failed
+        }
+      },
+    );
+    ```
+
+    ```ts title="javascript redirect mode"
+    // Set m_redirect_url (popup : false by default, not set explicitly)
+    IMP.request_pay({
+      pg: "paypal",
+      m_redirect_url: "https://shop.yourservice.com/payments/complete",
+      // ...
+    });
+    ```
+
+    **Added redirection mode for Danal identity verification**
+
+    To redirect to a page after identity verification, set the target page's URL in `m_redirect_url` when calling `IMP.certification`. Previous versions only support the callback mode. For more information about using the redirection mode, refer to the [Mobile identity verification](../../etc/phone/readme) page.
+
+    ```ts title="javascript (popup mode)"
+    // Set popup : true
+    IMP.certification(
+      {
+        merchant_uid: "verification transaction ID",
+        popup: true,
+      },
+      function (rsp) {
+        if (rsp.success) {
+          // Verification successful
+        } else {
+          // Verification failed or terminated (popup closed or Cancel button clicked)
+        }
+      },
+    );
+    ```
+
+    ```ts title="javascript redirect mode"
+    // Set m_redirect_url (popup : false by default, not set explicitly)
+    IMP.certification({
+      merchant_uid: "verification transaction ID",
+      m_redirect_url: "https://shop.yourservice.com/payments/complete",
+    });
+    ```
+
+    ### Bug Fixes <a href="#undefined" id="undefined" />
+
+    **The issue of callback not being invoked when you click the close button (X button) in the identity verification (Danal) pop-up**
+
+    When you close the identity verification pop-up window or click the Cancel button on the page in the pop-up mode, the callback (handler) of `IMP.certification(param, handler)` is invoked. This fix implements the same behavior for when the X button is clicked.
+
+    <img src="https://docs.iamport.kr/static/images/javascript/danal-certi.png" alt="" data-size="original" />
+  </Details.Content>
+</Details>
+
+## Version 1.1.5 and earlier versions
+
+<Details>
+  <Details.Summary>Details</Details.Summary>
+
+  <Details.Content>
+    ### iamport.payment-1.1.5.js <a href="#iamportpayment-115js" id="iamportpayment-115js" />
+
+    ```html
+    <script
+      src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"
+      type="text/javascript"
+    ></script>
+    ```
+
+    **Deployed on 2017-04-03**
+
+    - Added function to redirect to `m_redirect_url` when error occurs before starting the payment process after calling `IMP.request_pay(param)` in mobile.
+
+    **Reasons for failure before starting payment process**
+
+    - Reusing an already used `merchant_uid` (Order ID) for payment.
+    - Invalid payment request parameter.
+
+    **Reasons for failure after starting payment process**
+
+    - Credit card suspended or limit exceeded.
+    - Exceeded number of password errors.
+
+    ### iamport.payment-1.1.4.js <a href="#iamportpayment-114js" id="iamportpayment-114js" />
+
+    ```html
+    <script
+      src="https://cdn.iamport.kr/js/iamport.payment-1.1.4.js"
+      type="text/javascript"
+    ></script>
+    ```
+
+    **Deployed on 2016-11-14**
+
+    - Added Agency-tier feature: `IMP.agency(Merchant ID, Tier Code)` function
+    - Added SMS mobile identity verification feature: `IMP.certification()` function
+
+    ### iamport.payment-1.1.3.js <a href="#iamportpayment-113js" id="iamportpayment-113js" />
+
+    ```html
+    <script
+      src="https://cdn.iamport.kr/js/iamport.payment-1.1.3.js"
+      type="text/javascript"
+    ></script>
+    ```
+
+    **Deployed on 2016-07-13**
+
+    - Code refactored and performance enhanced version of 1.1.2 version.
+
+    ### iamport.payment-1.1.2.js <a href="#iamportpayment-112js" id="iamportpayment-112js" />
+
+    ```html
+    <script
+      src="https://cdn.iamport.kr/js/iamport.payment-1.1.2.js"
+      type="text/javascript"
+    ></script>
+    ```
+
+    **Deployed on 2016-03-09**
+
+    - Enhanced method of calling multiple PG settings.
+
+    ### iamport.payment-1.1.1.js <a href="#iamportpayment-111js" id="iamportpayment-111js" />
+
+    ```html
+    <script
+      src="https://cdn.iamport.kr/js/iamport.payment-1.1.1.js"
+      type="text/javascript"
+    ></script>
+    ```
+
+    **Deployed on 2016-02-19**
+
+    - Extended PG parameter value to allow for PG + MID combination (`pg : '{PG}.{MID}'`).
+
+    ### iamport.payment-1.1.0.js <a href="#iamportpayment-110js" id="iamportpayment-110js" />
+
+    ```html
+    <script
+      src="https://cdn.iamport.kr/js/iamport.payment-1.1.0.js"
+      type="text/javascript"
+    ></script>
+    ```
+
+    **Deployed on 2016-01-19**
+
+    - Added `pg` parameter to allow an account to use multiple PG modules (`pg : '{PG}'`)
+
+    ### iamport.payment-1.0.0.js <a href="#iamportpayment-100js" id="iamportpayment-100js" />
+
+    ```html
+    <script
+      src="https://cdn.iamport.kr/js/iamport.payment-1.0.0.js"
+      type="text/javascript"
+    ></script>
+    ```
+
+    **Deployed on 2014-10-24**
+
+    - Initial stable release (Unversioned release, same as iamport.payment-1.0.0.js)
+
+    ### iamport.payment.js <a href="#iamportpaymentjs" id="iamportpaymentjs" />
+
+    ```html
+    <script
+      src="https://cdn.iamport.kr/js/iamport.payment.js"
+      type="text/javascript"
+    ></script>
+    ```
+  </Details.Content>
+</Details>

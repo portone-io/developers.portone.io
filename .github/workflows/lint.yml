@@ -12,14 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
-        with:
-          version: "9.0.6"
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm typecheck
-      - run: pnpm eslint .
-        env:
-          NODE_OPTIONS: '--loader ts-node/esm'
+      - run: pnpm gen-collections
+      - run: pnpm check

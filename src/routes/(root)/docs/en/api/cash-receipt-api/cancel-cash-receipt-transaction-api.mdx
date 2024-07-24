@@ -1,0 +1,170 @@
+---
+title: Cancel cash receipt transaction API
+description: ''
+---
+
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## Cancels cash receipt transaction processed through i'mport.
+
+<Details>
+  <Details.Summary><strong>Supported PGs</strong></Details.Summary>
+
+  <Details.Content>
+    - **KG INICIS**
+    - **NHN KCP**
+    - **Settle Bank**
+    - **NICE Payments**
+    - **PAYJOA (Daou)**
+    - **KICC**
+  </Details.Content>
+</Details>
+
+<Swagger method="delete" path="/receipts/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Cancels cash receipt transaction processed through i'mport.">
+  <SwaggerDescription>
+    (To cancel cash receipt transactions not related to i'mport, refer to
+
+    [<mark style="color:blue;">**link**</mark>](http://localhost:5000/s/wWX2hlvRZLZrXeH1aacF/api/api-8/api-3)
+
+    <mark style="color:blue;">
+      **.**
+    </mark>
+
+    )
+  </SwaggerDescription>
+
+  ### Parameters
+
+  #### Path
+
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tabs.Tab title="ReceiptResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **Response code**
+
+        0: success, Not 0: check the message
+
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Response message**
+
+        A non-zero code includes a message like 'Invalid payment info'.
+
+        **`response`` `**<mark style="color:red;">**`(ReceiptAnnotation, optional)`**</mark>
+      </Tabs.Tab>
+    </Tabs>
+
+    <Tabs>
+      <Tabs.Tab title="ReceiptAnnotation">
+        **`imp_uid`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+        **`i'mport transaction ID`**
+
+        **`receipt_tid`` `**<mark style="color:green;">**`string`**</mark>
+
+        **`Cash receipt ID issued by PG`**
+
+        **`apply_num`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+        **`Cash receipt ID issued by National Tax Service`**
+
+        **`type`` `**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+        **`Recipient type`**
+
+        - Personal use: `person`
+        - Business use: `company`
+
+        **`amount`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+        **`Cash receipt Amount`**
+
+        **`vat`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+        **`VAT`**
+
+        **`receipt_url`` `**<mark style="color:green;">**`string`**</mark>
+
+        **`Cash receipt URL`**
+
+        **`applied_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+        **Issued at** `UNIX TIMESTAMP`
+
+        **`cancelled_at`` `**<mark style="color:orange;">**`integer`**</mark>
+
+        **`Cancelled at`** `UNIX TIMESTAMP`
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="400: Bad Request" description="Invalid transaction">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+
+  <SwaggerResponse status="500: Internal Server Error" description="Request failed">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+</Swagger>
+
+<Details>
+  <Details.Summary>Response Model Schema</Details.Summary>
+
+  <Details.Content>
+    ```json
+    {
+      "code": 0,
+      "message": "string",
+      "response": {
+        "imp_uid": "string",
+        "receipt_tid": "string",
+        "apply_num": "string",
+        "type": "person",
+        "amount": 0,
+        "vat": 0,
+        "receipt_url": "string",
+        "applied_at": 0,
+        "cancelled_at": 0
+      }
+    }
+    ```
+  </Details.Content>
+</Details>
+
+<Hint style="success">
+  **Swagger Test Link**
+
+  [**https://api.iamport.kr/#!/receipts/revokeReceipt**](https://api.iamport.kr/#!/receipts/revokeReceipt)
+</Hint>

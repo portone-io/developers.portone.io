@@ -33,7 +33,63 @@ declare module "*/_redir.yaml" {
   export default value;
 }
 
-declare module "*?base64" {
-  const base64: string;
-  export default base64;
+declare module "*.mdx" {
+  import type { Component } from "solid-js";
+  const component: Component;
+  export default component;
+}
+
+// supported formats by Sharp (https://sharp.pixelplumbing.com/#formats)
+declare module "*.png" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
+
+declare module "*.jpg" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
+
+declare module "*.jpeg" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
+
+declare module "*.webp" {
+  import type { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
+
+declare module "*.gif" {
+  import type { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
+
+declare module "*.avif" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
+
+declare module "*.tiff" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
+
+declare module "*.tif" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
+}
+
+declare module "*.svg" {
+  import { Picture } from "vite-imagetools";
+  const picture: Picture;
+  export default picture;
 }

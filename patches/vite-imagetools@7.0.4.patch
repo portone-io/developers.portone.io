@@ -1,0 +1,22 @@
+diff --git a/dist/index.js b/dist/index.js
+index 812b53d4e401879101313a8e5197315faab1e354..f1397133a9042ecb7bc8e1291827f6fc194cf80d 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -62,7 +62,7 @@ function imagetools(userOptions = {}) {
+             const lazyLoadImage = () => {
+                 if (lazyImg)
+                     return lazyImg;
+-                return (lazyImg = sharp(pathname));
++                return (lazyImg = sharp(pathname, { animated: true }));
+             };
+             let lazyMetadata;
+             const lazyLoadMetadata = async () => {
+@@ -109,7 +109,7 @@ function imagetools(userOptions = {}) {
+                 let image;
+                 let metadata;
+                 if (cacheOptions.enabled && ((_d = (_c = statSync(`${cacheOptions.dir}/${id}`, { throwIfNoEntry: false })) === null || _c === void 0 ? void 0 : _c.size) !== null && _d !== void 0 ? _d : 0) > 0) {
+-                    metadata = (await sharp(`${cacheOptions.dir}/${id}`).metadata());
++                    metadata = (await sharp(`${cacheOptions.dir}/${id}`, { animated: true }).metadata());
+                     // we set the format on the metadata during transformation using the format directive
+                     // when restoring from the cache, we use sharp to read it from the image and that results in a different value for avif images
+                     // see https://github.com/lovell/sharp/issues/2504 and https://github.com/lovell/sharp/issues/3746

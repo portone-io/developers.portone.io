@@ -1,33 +1,35 @@
 import clsx from "clsx";
-import type React from "preact/compat";
-import type { HTMLAttributes } from "preact/compat";
-
-import { get } from "~/misc/get";
+import { type JSX, type JSXElement, splitProps } from "solid-js";
 
 export interface CardProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
-  title?: React.ReactNode;
+  extends Omit<JSX.HTMLAttributes<HTMLDivElement>, "title"> {
+  title?: JSXElement;
   titleClass?: string;
 }
-export default function Card({ title, titleClass, ...props }: CardProps) {
+export default function Card(props: CardProps) {
+  const [local, rest] = splitProps(props, [
+    "title",
+    "titleClass",
+    "class",
+    "children",
+  ]);
   return (
     <div
-      {...props}
+      {...rest}
       class={clsx(
         "border-slate-2 flex flex-col rounded-lg border",
-        get(props.class),
-        get(props.className),
+        local.class,
       )}
     >
       <div
         class={clsx(
           "border-slate-2 flex h-10 items-center justify-between border-b px-4 font-bold",
-          titleClass,
+          local.titleClass,
         )}
       >
-        {title}
+        {local.title}
       </div>
-      {props.children}
+      {local.children}
     </div>
   );
 }

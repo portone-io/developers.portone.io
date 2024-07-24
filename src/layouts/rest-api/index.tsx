@@ -1,4 +1,4 @@
-import * as React from "preact/compat";
+import { createMemo, type JSXElement, onMount } from "solid-js";
 
 import * as prose from "~/components/prose";
 import { Categories } from "~/layouts/rest-api/category";
@@ -11,51 +11,45 @@ import {
 
 export interface RestApiProps {
   title: string;
-  children?: React.ReactNode;
+  children?: JSXElement;
   basepath: string;
   apiHost: string;
   currentSection: string;
-  sectionDescriptionProps: Record<string, React.ReactNode>;
+  sectionDescriptionProps: Record<string, () => JSXElement>;
   schema: unknown;
 }
-export default function RestApi({
-  title,
-  children,
-  basepath,
-  apiHost,
-  currentSection,
-  sectionDescriptionProps,
-  schema,
-}: RestApiProps) {
-  React.useEffect(() => {
+export default function RestApi(props: RestApiProps) {
+  onMount(() => {
     const id = location.hash
       ? decodeURIComponent(location.hash.slice(1))
-      : currentSection;
+      : props.currentSection;
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-  const everyEndpoints = getEveryEndpoints(schema);
-  const endpointGroups = groupEndpointsByCategory(schema, everyEndpoints);
+  });
+  const everyEndpoints = createMemo(() => getEveryEndpoints(props.schema));
+  const endpointGroups = createMemo(() =>
+    groupEndpointsByCategory(props.schema, everyEndpoints()),
+  );
   return (
     <div class="flex flex-1 justify-center">
       <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-slate-700">
         <section id="overview" class="flex flex-col scroll-mt-5.2rem">
-          <prose.h1>{title}</prose.h1>
-          {children}
+          <prose.h1>{props.title}</prose.h1>
+          {props.children}
           <Hr />
         </section>
         <Categories
-          basepath={basepath}
-          apiHost={apiHost}
-          currentSection={currentSection}
-          sectionDescriptionProps={sectionDescriptionProps}
-          endpointGroups={endpointGroups}
-          schema={schema}
+          basepath={props.basepath}
+          apiHost={props.apiHost}
+          currentSection={props.currentSection}
+          sectionDescriptionProps={props.sectionDescriptionProps}
+          endpointGroups={endpointGroups()}
+          schema={props.schema}
         />
         <TypeDefinitions
-          basepath={basepath}
-          initialExpand={currentSection === "type-def"}
-          endpointGroups={endpointGroups}
-          schema={schema}
+          basepath={props.basepath}
+          initialExpand={props.currentSection === "type-def"}
+          endpointGroups={endpointGroups()}
+          schema={props.schema}
         />
       </article>
     </div>

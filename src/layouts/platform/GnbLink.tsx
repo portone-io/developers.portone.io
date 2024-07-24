@@ -1,22 +1,27 @@
-import type React from "preact/compat";
+import clsx from "clsx";
+import type { JSXElement } from "solid-js";
+
+import { trackEvent } from "../trackers/Trackers";
 
 export interface GnbLinkProps {
   slug: string;
   active: boolean;
-  children?: React.ReactNode;
+  children?: JSXElement;
 }
-function GnbLink({ slug, active, children }: GnbLinkProps) {
+function GnbLink(props: GnbLinkProps) {
   return (
     <a
-      href={`/platform/${slug}`}
-      class={`flex h-full items-center ${
-        active
-          ? "border-b-orange-6 border-b-2 border-t-2 border-t-transparent font-bold"
-          : ""
-      }`}
-      onClick={() => trackEvent("Developers_Platform_Gnb_Click", { slug })}
+      href={`/platform/${props.slug}`}
+      class={clsx(
+        "flex h-full items-center",
+        props.active &&
+          "border-b-orange-6 border-b-2 border-t-2 border-t-transparent font-bold",
+      )}
+      onClick={() =>
+        trackEvent("Developers_Platform_Gnb_Click", { slug: props.slug })
+      }
     >
-      {children}
+      {props.children}
     </a>
   );
 }

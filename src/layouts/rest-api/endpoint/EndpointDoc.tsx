@@ -1,4 +1,4 @@
-import type React from "preact/compat";
+import { createMemo, For, type JSXElement, Show } from "solid-js";
 
 import * as prose from "~/components/prose";
 
@@ -24,72 +24,72 @@ export interface EndpointDocProps {
   endpoint: Endpoint;
   renderRightFn?: RenderRightFn;
 }
-export default function EndpointDoc({
-  basepath,
-  schema,
-  endpoint,
-  renderRightFn,
-}: EndpointDocProps) {
-  const operation = getOperation(schema, endpoint);
-  const { method, path, title, deprecated, unstable } = endpoint;
-  const description =
-    operation["x-portone-description"] || operation.description;
+export default function EndpointDoc(props: EndpointDocProps) {
+  const operation = createMemo(() =>
+    getOperation(props.schema, props.endpoint),
+  );
+  const description = createMemo(
+    () => operation()["x-portone-description"] || operation().description,
+  );
   return (
     <div class="flex flex-col">
       <div class="grid mb-4 items-center gap-y-4 lg:grid-cols-2">
         <div class="flex items-center lg:order-last lg:justify-end">
-          <MethodLine method={method} path={path} />
+          <MethodLine
+            method={props.endpoint.method}
+            path={props.endpoint.path}
+          />
         </div>
         <prose.h3
-          id={getEndpointRepr(endpoint)}
-          class="target:text-orange-5"
-          style={{ marginTop: 0 }}
+          id={getEndpointRepr(props.endpoint)}
+          class="!mt-0 target:text-orange-5"
         >
           <div class="flex items-center gap-2">
-            <span>{title}</span>
-            {deprecated && (
+            <span>{props.endpoint.title}</span>
+            <Show when={props.endpoint.deprecated}>
               <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
                 deprecated
               </span>
-            )}
-            {unstable && (
+            </Show>
+            <Show when={props.endpoint.unstable}>
               <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
                 unstable
               </span>
-            )}
+            </Show>
           </div>
         </prose.h3>
       </div>
       <TwoColumnLayout
         gap={6}
-        left={
+        left={() => (
           <div class="flex flex-col gap-6">
-            {description && (
+            <Show when={description()}>
               <article class="overflow-hidden rounded">
                 <DescriptionArea>
-                  <div
-                    class="p-2 text-sm"
-                    dangerouslySetInnerHTML={{
-                      __html: description,
-                    }}
-                  />
+                  <div class="p-2 text-sm" innerHTML={description()} />
                 </DescriptionArea>
               </article>
-            )}
+            </Show>
             <RequestDoc
-              basepath={basepath}
-              schema={schema}
-              operation={operation}
+              basepath={props.basepath}
+              schema={props.schema}
+              operation={operation()}
             />
             <ResponseDoc
-              basepath={basepath}
-              schema={schema}
-              operation={operation}
+              basepath={props.basepath}
+              schema={props.schema}
+              operation={operation()}
             />
           </div>
-        }
+        )}
         smallRight
-        right={renderRightFn?.({ schema, endpoint, operation })}
+        right={() =>
+          props.renderRightFn?.({
+            schema: () => props.schema,
+            endpoint: () => props.endpoint,
+            operation,
+          })
+        }
       />
     </div>
   );
@@ -99,11 +99,11 @@ export interface MethodLineProps {
   method: string;
   path: string;
 }
-export function MethodLine({ method, path }: MethodLineProps) {
+export function MethodLine(props: MethodLineProps) {
   return (
     <span class="inline-flex items-center self-start gap-1 rounded-full bg-slate-1 pr-2 text-xs opacity-70">
-      <MethodBadge method={method} />
-      <span class="ml-1 font-normal font-mono">{path}</span>
+      <MethodBadge method={props.method} />
+      <span class="ml-1 font-normal font-mono">{props.path}</span>
     </span>
   );
 }
@@ -111,89 +111,98 @@ export function MethodLine({ method, path }: MethodLineProps) {
 interface MethodBadgeProps {
   method: string;
 }
-function MethodBadge({ method }: MethodBadgeProps) {
-  const colorClass =
-    method === "get"
+function MethodBadge(props: MethodBadgeProps) {
+  const colorClass = createMemo(() =>
+    props.method === "get"
       ? "bg-green-2 text-green-7"
-      : method === "post"
+      : props.method === "post"
         ? "bg-blue-2 text-blue-7"
-        : method === "put"
+        : props.method === "put"
           ? "bg-yellow-2 text-yellow-7"
-          : method === "delete"
+          : props.method === "delete"
             ? "bg-red-2 text-red-7"
-            : "bg-slate-2 text-slate-7";
+            : "bg-slate-2 text-slate-7",
+  );
   return (
     <span
-      class={`${colorClass} shrink-0 rounded-full px-2 font-bold uppercase`}
+      class={`${colorClass()} shrink-0 rounded-full px-2 font-bold uppercase`}
     >
-      {method}
+      {props.method}
     </span>
   );
 }
 
 export interface RenderRightConfig {
-  schema: unknown;
-  endpoint: Endpoint;
-  operation: Operation;
+  schema: () => unknown;
+  endpoint: () => Endpoint;
+  operation: () => Operation;
 }
-export type RenderRightFn = (config: RenderRightConfig) => React.ReactNode;
+export type RenderRightFn = (config: RenderRightConfig) => JSXElement;
 
 interface RequestDocProps {
   basepath: string;
   schema: unknown;
   operation: Operation;
 }
-function RequestDoc({ basepath, schema, operation }: RequestDocProps) {
-  const isQueryOrBody = isQueryOrBodyOperation(operation);
-  const pathParameters = getPathParameters(operation);
-  const queryParameters = getQueryParameters(operation, isQueryOrBody);
-  const bodyParameters = getBodyParameters(schema, operation);
-  const showPath = pathParameters.length > 0;
-  const showQuery = queryParameters.length > 0;
-  const showBody = bodyParameters.length > 0;
-  if (showPath || showQuery || showBody) {
-    return (
+function RequestDoc(props: RequestDocProps) {
+  const isQueryOrBody = createMemo(() =>
+    isQueryOrBodyOperation(props.operation),
+  );
+  const pathParameters = createMemo(() => getPathParameters(props.operation));
+  const queryParameters = createMemo(() =>
+    getQueryParameters(props.operation, isQueryOrBody()),
+  );
+  const bodyParameters = createMemo(() =>
+    getBodyParameters(props.schema, props.operation),
+  );
+  const showPath = createMemo(() => pathParameters().length > 0);
+  const showQuery = createMemo(() => queryParameters().length > 0);
+  const showBody = createMemo(() => bodyParameters().length > 0);
+  return (
+    <Show
+      when={showPath || showQuery || showBody}
+      fallback={
+        <div class="text-xs text-slate-5 font-bold">요청 인자 없음</div>
+      }
+    >
       <div class="flex flex-col gap-2">
-        <prose.h4 class="border-b pb-1" style={{ marginTop: 0 }}>
-          Request
-        </prose.h4>
-        {isQueryOrBody && (
+        <prose.h4 class="border-b pb-1 !mt-0">Request</prose.h4>
+        <Show when={isQueryOrBody()}>
           <prose.h5 class="text-slate-5">
             body를 쿼리 문자열에 포함시켜 보낼 수 있습니다.{" "}
             <prose.a href="#get-with-body">자세히 보기</prose.a>
           </prose.h5>
-        )}
-        {showPath && (
+        </Show>
+        <Show when={showPath()}>
           <ReqParameters
-            basepath={basepath}
+            basepath={props.basepath}
             title="Path"
-            parameters={pathParameters}
-            schema={schema}
+            parameters={pathParameters()}
+            schema={props.schema}
             showNested
           />
-        )}
-        {showQuery && (
+        </Show>
+        <Show when={showQuery()}>
           <ReqParameters
-            basepath={basepath}
+            basepath={props.basepath}
             title="Query"
-            parameters={queryParameters}
-            schema={schema}
+            parameters={queryParameters()}
+            schema={props.schema}
             showNested
           />
-        )}
-        {showBody && (
+        </Show>
+        <Show when={showBody()}>
           <ReqParameters
-            basepath={basepath}
+            basepath={props.basepath}
             title="Body"
-            parameters={bodyParameters}
-            schema={schema}
+            parameters={bodyParameters()}
+            schema={props.schema}
             showNested
           />
-        )}
+        </Show>
       </div>
-    );
-  }
-  return <div class="text-xs text-slate-5 font-bold">요청 인자 없음</div>;
+    </Show>
+  );
 }
 
 interface ResponseDocProps {
@@ -201,31 +210,32 @@ interface ResponseDocProps {
   schema: unknown;
   operation: Operation;
 }
-function ResponseDoc({ basepath, schema, operation }: ResponseDocProps) {
-  const responseSchemata = getResponseSchemata(schema, operation);
+function ResponseDoc(props: ResponseDocProps) {
+  const responseSchemata = createMemo(() =>
+    getResponseSchemata(props.schema, props.operation),
+  );
   return (
     <div class="flex flex-col gap-2">
-      <prose.h4 class="border-b pb-1" style={{ marginTop: 0 }}>
-        Response
-      </prose.h4>
-      {responseSchemata.map(
-        ([statusCode, { response, schema: responseSchema }]) => (
+      <prose.h4 class="border-b pb-1 !mt-0">Response</prose.h4>
+      <For each={responseSchemata()}>
+        {([statusCode, schemata]) => (
           <ReqRes
-            key={statusCode}
             title={statusCode}
-            description={response.description}
+            description={schemata.response.description}
           >
             <TypeDefDoc
-              basepath={basepath}
-              schema={schema}
-              typeDef={responseSchema && resolveTypeDef(schema, responseSchema)}
+              basepath={props.basepath}
+              schema={props.schema}
+              typeDef={
+                schemata.schema && resolveTypeDef(props.schema, schemata.schema)
+              }
               bgColor="#f1f5f9"
               nestedBgColor="#fcfdfe"
               showNested
             />
           </ReqRes>
-        ),
-      )}
+        )}
+      </For>
     </div>
   );
 }
@@ -238,21 +248,14 @@ interface ReqParametersProps {
   schema?: unknown;
   showNested?: boolean | undefined;
 }
-function ReqParameters({
-  basepath,
-  title,
-  description,
-  parameters,
-  schema,
-  showNested,
-}: ReqParametersProps) {
+function ReqParameters(props: ReqParametersProps) {
   return (
-    <ReqRes title={title} description={description}>
+    <ReqRes title={props.title} description={props.description}>
       <ReqPropertiesDoc
-        basepath={basepath}
-        properties={parameters}
-        schema={schema}
-        showNested={showNested}
+        basepath={props.basepath}
+        properties={props.parameters}
+        schema={props.schema}
+        showNested={props.showNested}
       />
     </ReqRes>
   );
@@ -261,23 +264,20 @@ function ReqParameters({
 interface ReqResProps {
   title?: string | undefined;
   description?: string | undefined;
-  children: React.ReactNode;
+  children: JSXElement;
 }
-function ReqRes({ title, description, children }: ReqResProps) {
+function ReqRes(props: ReqResProps) {
   return (
     <div>
-      {title && (
+      <Show when={props.title}>
         <div class="mb-1 inline-flex gap-2 text-xs">
-          <h4 class="shrink-0 font-bold uppercase">{title}</h4>
-          {description && (
-            <div
-              class="text-slate-5"
-              dangerouslySetInnerHTML={{ __html: description }}
-            />
-          )}
+          <h4 class="shrink-0 font-bold uppercase">{props.title}</h4>
+          <Show when={props.description}>
+            <div class="text-slate-5" innerHTML={props.description} />
+          </Show>
         </div>
-      )}
-      {children}
+      </Show>
+      {props.children}
     </div>
   );
 }

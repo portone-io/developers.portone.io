@@ -1,29 +1,26 @@
-import { signal, useComputed } from "@preact/signals";
-import * as React from "react";
+import {
+  type Accessor,
+  createMemo,
+  createRenderEffect,
+  createSignal,
+  untrack,
+} from "solid-js";
 
 import { wait } from "~/misc/async";
 import { doublePushAndBack } from "~/misc/history";
 
-export const expandedSectionsSignal = signal<string[]>([]);
+const [expandedSections, setExpandedSections] = createSignal<string[]>([]);
 
-let waitingExpand: (() => void) | undefined;
-export function waitExpand(cb: () => void) {
-  waitingExpand = cb;
-}
-export function expanded() {
-  waitingExpand?.();
-  waitingExpand = undefined;
-}
-
-export function useExpand(id: string, initialState: boolean) {
-  // SSR에서도 제대로 펼쳐서 그리려면 첫 render 전에 effect가 실행될 필요가 있음
-  // 첫 render 전에 effect가 불리도록 하기 위해서 useEffect 대신 useState 사용
-  React.useState(() => expandSection(id, initialState));
-  const expandSignal = useComputed(() =>
-    expandedSectionsSignal.value.includes(id),
-  );
+export function useExpand(id: string, initialState: Accessor<boolean>) {
+  // SSR에서도 제대로 펼쳐서 그리려면 첫 render 전에 실행될 필요가 있음
+  createRenderEffect(() => {
+    untrack(() => {
+      expandSection(id, initialState());
+    });
+  });
+  const expand = createMemo(() => expandedSections().includes(id));
   return {
-    expand: expandSignal.value,
+    expand,
     onToggle: (value: boolean) => {
       expandSection(id, value);
     },
@@ -31,15 +28,15 @@ export function useExpand(id: string, initialState: boolean) {
 }
 
 export function expandSection(id: string, value: boolean, cb?: () => void) {
-  const expandedTags = expandedSectionsSignal.value;
+  const expandedTags = expandedSections();
   const expanded = expandedTags.includes(id);
   if (expanded === value) return cb?.();
   if (value) {
-    expandedSectionsSignal.value = [...expandedTags, id];
+    setExpandedSections((prev) => [...prev, id]);
   } else {
-    expandedSectionsSignal.value = expandedTags.filter((item) => item !== id);
+    setExpandedSections((prev) => prev.filter((item) => item !== id));
   }
-  if (cb) waitExpand(cb);
+  cb?.();
 }
 
 export interface ExpandAndScrollToConfig {

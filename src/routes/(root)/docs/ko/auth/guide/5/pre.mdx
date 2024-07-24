@@ -1,0 +1,33 @@
+---
+title: 결제정보 사전 검증하기
+description: 결제 정보 사전 검증 방법을 안내합니다.
+targetVersions: ["v1"]
+---
+
+import ContentRef from "~/components/gitbook/ContentRef";
+import Tabs from "~/components/gitbook/Tabs";
+
+결제정보 사전 검증은 클라이언트 변조를 원천적으로 차단하기 위한 필수 절차입니다.
+
+결제창을 띄우는 프론트엔드를 보여주기 전에 어떤 주문번호로 얼마만큼의 결제가 이루어져야 하는지를 아래의 API를 사용하여 사전에 등록할 수 있습니다.
+
+<ContentRef slug="/ko/api/payment-api/prepare-payment-api" />
+
+<Tabs>
+  <Tabs.Tab title="Node.js">
+    ```ts
+    // 사용자에게 결제 화면을 보여주기 전에 서버 코드에서
+    await axios({
+      url: "https://api.iamport.kr/payments/prepare",
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      data: {
+        merchant_uid: "...", // 고객사 주문번호
+        amount: 420000, // 결제 예정금액
+      },
+    });
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+`IMP.request_pay`의 인자로 들어온 금액이 위의 API로 사전 등록해둔 금액과 일치하지 않으면 SDK 수준에서 결제 요청이 차단됩니다.

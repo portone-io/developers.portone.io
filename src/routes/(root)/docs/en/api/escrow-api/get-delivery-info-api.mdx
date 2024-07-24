@@ -1,0 +1,137 @@
+---
+title: Get delivery info API
+description: ""
+---
+
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## Gets delivery information for an escrow payment transaction.
+
+<Details>
+  <Details.Summary><strong>Supported PGs</strong></Details.Summary>
+
+  <Details.Content>
+    - KG INICIS
+    - NHN KCP
+    - PAYJOA (Daou)
+  </Details.Content>
+</Details>
+
+<Swagger method="get" path="/escrows/logis/{imp_uid}" baseUrl="https://api.iamport.kr" summary="Gets delivery information for an escrow payment transaction.">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Path
+
+  <SwaggerParameter name="imp_uid" type="String" required="true">
+    <mark style="color:red;">
+      **i'mport transaction ID**
+    </mark>
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tabs.Tab title="EscrowLogisResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **Response code**
+
+        0: success, Not 0: check the message
+
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Response message**
+
+        A non-zero code includes a message like 'Invalid payment info'.
+
+        **`response`**<mark style="color:red;">**`(EscrowLogisAnnotation, optional)`**</mark>
+      </Tabs.Tab>
+    </Tabs>
+
+    <Tabs>
+      <Tabs.Tab title="EscrowLogisAnnotation">
+        **`company`** <mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+        **`Courier code`**
+
+        **`invoice`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+        **`Tracking number`**
+
+        **`sent_at`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+        **`Sent at`** _**UNIX TIMESTAMP**_
+
+        **`applied_at`**_<mark style="color:red;">**`*`**</mark>_<mark style="color:orange;">**`integer`**</mark>
+
+        **`Delivery info created at`** _**UNIX TIMESTAMP**_
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="400: Bad Request" description="Missing parameter (varies by PG) or request not supported by specified PG">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+
+  <SwaggerResponse status="404: Not Found" description="No result found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+
+  <SwaggerResponse status="500: Internal Server Error" description="Server error">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+</Swagger>
+
+<Details>
+  <Details.Summary>Response Model Schema</Details.Summary>
+
+  <Details.Content>
+    ```json
+    {
+      "code": 0,
+      "message": "string",
+      "response": {
+        "company": "string",
+        "invoice": "string",
+        "sent_at": 0,
+        "applied_at": 0
+      }
+    }
+    ```
+  </Details.Content>
+</Details>
+
+<Hint style="success">
+  **Swagger Test Link**
+
+  [**https://api.iamport.kr/#!/escrow.logis/escrow\_logis\_get**](https://api.iamport.kr/#!/escrow.logis/escrow_logis_get)
+</Hint>

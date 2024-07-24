@@ -1,0 +1,300 @@
+---
+title: Payment cancellation (refund)
+description: Learn how to cancel a payment using the i'mport payment cancel API.
+---
+
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## <mark style="color:blue;">**STEP 01.**</mark> Request cancellation
+
+Request a refund to the server with the required refund information. In the case of virtual account
+refund, you need to specify additional parameters for the refund deposit account information. The
+following example requests a refund with the required refund information.\\
+
+<Tabs>
+  <Tabs.Tab title="HTML">
+    ```html title="client-side"
+    <button onclick="cancelPay()">Request Refund</button>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <!-- jQuery CDN --->
+    <script>
+      function cancelPay() {
+        jQuery.ajax({
+          "url": "{URL to receive refund request}", // Example: http://www.myservice.com/payments/cancel
+          "type": "POST",
+          "contentType": "application/json",
+          "data": JSON.stringify({
+            "merchant_uid": "{Order ID}", // Example: ORD20180131-0000011
+                "cancel_request_amount": 2000, // Refund amount
+                "reason": "Testing payment refund" // Reason for the refund
+                "refund_holder": "Jone Doe", // [required for virtual account refund] refund account holder's name
+                "refund_bank": "88" // [required for virtual account refund] refund account bank code (e.g. Shinhan Bank is 88 for KG Inicis)
+                "refund_account": "56211105948400" // [required for virtual account refund] refund account number
+          }),
+          "dataType": "json"
+        });
+      }
+    </script>
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="React.js">
+    ```tsx title="client-side"
+    class CancelPay extends React.Component {
+      cancelPay = () => {
+        axios({
+          url: "{URL to receive refund request}", // Example: http://www.myservice.com/payments/cancel
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          data: {
+            merchant_uid: "mid_" + new Date().getTime(), // Order ID
+            cancel_request_amount: 2000, // Refund amount
+            reason: "Refund for test payment", // Reason for the refund
+            refund_holder: "Jone Doe", // [required for virtual account refund] refund account holder's name
+            refund_bank: "88", // [required for virtual account refund] refund account bank code (e.g. Shinhan Bank is 88 for KG Inicis)
+            refund_account: "56211105948400", // [required for virtual account refund] refund account number
+          },
+        });
+      };
+      render() {
+        return <button onClick={this.cancelPay}>Request Refund</button>;
+      }
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### <mark style="color:blue;">**STEP 02.**</mark> Get payment information
+
+Assume that there is a **`Payments`** table that stores payment information as follows:
+
+```js title="server-side"
+/* ... model/payments.js ... */
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const PaymentsSchema = new Schema({
+  imp_uid: String, // i'mport unique ID (unique key for refund)
+  merchant_uid: String, // order ID (used to query payment information)
+  amount: { type: Number, default: 0 }, // Payment amount (for calculating refundable amount)
+  cancel_amount: { type: Number, default: 0 }, // Total amount refunded (for calculating refundable amount)
+});
+module.exports = mongoose.model("Payments", PaymentsSchema);
+```
+
+Query the payment information of the order from the **`Payments`** table using the order ID (**`merchant_uid`**) received from the client.
+
+```js title="server-side"
+/* ... Omitted ... */
+const Payments = require("./models/payments");
+app.post("/payments/cancel", async (req, res, next) => {
+  try {
+    /* Get access token */
+    /* ... Omitted ... */
+    /* Get payment information */
+    const { body } = req;
+    const { merchant_uid } = body; // Order ID from the client
+    Payments.find({ merchant_uid }, async function (err, payment) {
+      if (err) {
+        return res.json(err);
+      }
+      const paymentData = payment[0]; // Save payment information
+      /* Call i'mport REST API to request refund */
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+```
+
+### <mark style="color:blue;">**STEP 03.**</mark> Request refund to i'mport server
+
+To request a refund, you must first get a [<mark style="color:blue;">**REST API access token**</mark>](../../api/rest-api-access-token). Use the **`access token`** to call the [**i'mport cancel** <mark style="color:blue;">**API**</mark>](../../api/payment-api/cancel-payment-api) to request a refund.
+
+<Hint style="info">
+  **Note - Refunding mobile micropayments**
+
+  - If a refund is **requested on a different month from when the payment is made, a full refund is not allowed**. For example, a payment made on January 31st is not refundable on February 1st.
+</Hint>
+
+**Setting parameters for refund request:**
+
+> **Refund `unique key`**
+>
+> Set `imp_uid` or `merchant_uid` as the `unique key` that identifies the transaction to be
+> refunded. The value of `imp_uid` takes precedence, and if an invalid `imp_uid` value is entered,
+> the refund request will fail regardless of the `merchant_uid` value.
+
+> **Refund amount** (`amount`)
+>
+> Enter the refund amount. **If amount is not specified, the full amount will be refunded**.
+
+> **Refundable amount** (`checksum`)
+>
+> Enter the refundable amount. For example, the `checksum` of a product that costs 10,000 won is
+> 10,000. If this payment has been partially refunded for 1,000 won in the past, the `checksum` is
+> 9000 for the subsequent refund request. The `checksum` is used to check whether the refundable
+> amount is the same between the merchant server and the i'mport server. If they do not match, the
+> refund request will fail. If the `checksum` is not specified, the verification is not performed.
+
+<Hint style="warning">
+  **Reason for entering checksum**
+
+  `checksum` is not required, but it is recommended for **comparing the refundable amount between the merchant server and the i'mport server**.
+
+  For example, consider the case when a partial refund request of 1,000 won for a 10,000 won payment was completed on the i'mport server, but not on the merchant server due to a server or database error. In this case, the checksum of the i'mport server is changed to 9000, but that of the merchant server remains 10,000.
+
+  If you attempt to make a refund request with `checksum(10000)`, the request will fail because the value does not match the `checksum(9000)` of the i'mport server.
+</Hint>
+
+#### The following example requests a refund.
+
+```ts title="Node.js"
+/* ... Omitted ... */
+app.post("/payments/cancel", async (req, res, next) => {
+  try {
+    /* Get access token */
+    /* ... Omitted ... */
+    /* Get payment information */
+    const { body } = req;
+    const { merchant_uid, reason, cancel_request_amount } = body; // Order ID from the client, reason for refund, refund amount
+    Payments.find({ merchant_uid }, async function (err, payment) {
+      /* ... Omitted ... */
+      const paymentData = payment[0]; // Save payment information
+      const { imp_uid, amount, cancel_amount } = paymentData; // Get imp_uid, amount(paid amount), cancel_amount(total refund amount) from payment information
+      const cancelableAmount = amount - cancel_amount; // Refundable amount (= paid amount - total refund amount)
+      if (cancelableAmount <= 0) {
+        // If refundable amount is 0
+        return res
+          .status(400)
+          .json({ message: "This order has already been fully refunded." });
+      }
+      /* Call i'mport REST API to request refund */
+      const getCancelData = await axios({
+        url: "{URL to receive refund request}", // Example: http://www.myservice.com/payments/cancel
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: access_token, // Access token from i'mport server
+        },
+        data: {
+          reason, // Reason for refund from client
+          imp_uid, // Unique key for refund
+          amount: cancel_request_amount, // Requested refund amount
+          checksum: cancelableAmount, // [Recommended] refundable amount
+        },
+      });
+      const { response } = getCancelData.data; // Refund result
+      /* Save refund result */
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+```
+
+### <mark style="color:blue;">**STEP 04.**</mark> Save refund result
+
+After the refund process is completed, save the result in the database as follows:
+
+```ts title="Node.js"
+/* ... Omitted ... */
+app.post("/payments/cancel", async (req, res, next) => {
+  try {
+    /* Get access token */
+    /* ... Omitted ... */
+    /* Get payment information */
+    Payments.find({ merchant_uid }, async function (err, payment) {
+      /* ... Omitted ... */
+      /* Call i'mport REST API to request refund */
+      /* ... Omitted ... */
+      const { response } = getCancelData.data; // Refund result
+      /* Save refund result */
+      const { merchant_uid } = response; // Get order info from refund response
+      Payments.findOneAndUpdate(
+        { merchant_uid },
+        response,
+        { new: true },
+        function (err, payment) {
+          // Get and update payment information for the order
+          if (err) {
+            return res.json(err);
+          }
+          res.json(payment); // Return refund result to the client
+        },
+      );
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+```
+
+<Hint style="warning">
+  **Note - When cancelling a payment**
+
+  Even if a **response code of 200 (OK)** is returned for the REST API ([**POST https://api.iamport.kr/payments/cancel**](https://api.iamport.kr/#!/payments/cancelPayment)) request, a non-zero code in the response body **means that the refund has failed**. You can check the reason for the failure in the message of the body.
+</Hint>
+
+### <mark style="color:blue;">**STEP 04.**</mark> Handle response for refund request
+
+Add the client-side logic to handle the response from the server as follows:
+
+<Tabs>
+  <Tabs.Tab title="HTML">
+    ```html title="client-side"
+    <button onclick="cancelPay()">Request Refund</button>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"
+    ></script>
+    <!-- jQuery CDN --->
+    <script>
+      function cancelPay() {
+        jQuery
+          .ajax({
+            /* ... Omitted ... */
+          })
+          .done(function (result) {
+            // If refund is successful
+            alert("Refund successful");
+          })
+          .fail(function (error) {
+            // If refund fails
+            alert("Refund failed");
+          });
+      }
+    </script>
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="React.js">
+    ```tsx title="client-side"
+    class CancelPay extends React.Component {
+      cancelPay = () => {
+        axios({
+          /* ... Omitted ... */
+        })
+          .then((response) => {
+            // If refund is successful
+            alert("Refund successful");
+          })
+          .catch((error) => {
+            // If refund fails
+            alert("Refund failed");
+          });
+      };
+      render() {
+        return <button onClick={this.cancelPay}>Request Refund</button>;
+      }
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>

@@ -1,0 +1,134 @@
+---
+title: Delete user API
+description: ""
+---
+
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## Deletes a KCP Quick Pay user information.
+
+<Hint style="danger">
+  ### Accept setting is required
+
+  You must specify the Accept setting in the HTTP header as follows:
+
+  **Accept : application/json**
+</Hint>
+
+<Swagger method="delete" path="/kcpquick/members/{member_id}" baseUrl="https://api.iamport.kr" summary="Deletes a KCP Quick Pay user information.">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Path
+
+  <SwaggerParameter name="member_id" type="String">
+    **Member ID**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="site_code" type="String(80)">
+    **KCP Quick Pay site code**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="partner_type" type="String(80)">
+    **KCP Quick Pay partner type**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="partner_subtype" type="String(80)">
+    **KCP Quick Pay partner subtype**
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tabs.Tab title="KcpQuickMemberResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **Response code**
+
+        0: success, Not 0: check the message
+
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Response message**
+
+        A non-zero code includes a message like 'Invalid payment info'.
+
+        **`response`` `**<mark style="color:red;">**`(KcpQuickMemberAnnotation, optional)`**</mark>
+      </Tabs.Tab>
+    </Tabs>
+
+    <Tabs>
+      <Tabs.Tab title="KcpQuickMemberAnnotation">
+        **`member_id`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+        **`Member ID`**
+
+        **`pg_provider`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+        **`PG code`**
+
+        **`pg_id`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+        **`PG Merchant ID`**
+
+        **`inserted`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+        **`User created at (UNIX timestamp)`**
+
+        **`updated`**<mark style="color:red;">**`*`**</mark><mark style="color:orange;">**`integer`**</mark>
+
+        **`User updated at (UNIX timestamp)`**
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+
+  <SwaggerResponse status="404: Not Found" description="Invalid member_id">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+</Swagger>
+
+<Details>
+  <Details.Summary>Response Model Schema</Details.Summary>
+
+  <Details.Content>
+    ```json
+    {
+      "code": 0,
+      "message": "string",
+      "response": {
+        "member_id": "string",
+        "pg_provider": "string",
+        "pg_id": "string",
+        "inserted": 0,
+        "updated": 0
+      }
+    }
+    ```
+  </Details.Content>
+</Details>
+
+<Hint style="success">
+  **Swagger Test Link**
+
+  [**https://api.iamport.kr/#!/kcpquick/member\_delete**](https://api.iamport.kr/#!/kcpquick/member_delete)
+</Hint>

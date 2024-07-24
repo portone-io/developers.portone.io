@@ -1,0 +1,564 @@
+---
+title: Request non-authenticated payment (one-time) API
+description: ''
+---
+
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+Requests payment with credit card information.
+
+<Swagger method="post" path="/onetime" baseUrl="https://api.iamport.kr/subscribe/payments" summary="Requests payment with credit card information without customer authentication.">
+  <SwaggerDescription>
+    If you pass
+
+    **customer\_uid**
+
+    , the billing key used for a successful payment will be saved for future payments. If customer\_uid is not specified, it will not be saved. You cannot reuse the same
+
+    **merchant\_uid**
+
+    for another request.
+  </SwaggerDescription>
+
+  ## Parameters
+
+  ### Body
+
+  <SwaggerParameter name="merchant_uid" type="String" required="true">
+    <mark style="color:red;">
+      **Order ID**
+    </mark>
+  </SwaggerParameter>
+
+  <SwaggerParameter name="currency" type="currency">
+    Currency code
+
+    KRW, USD, VND ...
+  </SwaggerParameter>
+
+  <SwaggerParameter name="amount" type="double" required="true">
+    <mark style="color:red;">
+      **Payment amount**
+    </mark>
+  </SwaggerParameter>
+
+  <SwaggerParameter name="tax_free" type="double">
+    Tax-free amount
+  </SwaggerParameter>
+
+  <SwaggerParameter name="card_number" type="String" required="true">
+    <mark style="color:red;">**Credit card number**</mark>
+
+    **(dddd-dddd-dddd-dddd)**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="expiry" type="String" required="true">
+    <mark style="color:red;">**Credit card expiration**</mark>
+
+    **(YYYY-MM)**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="birth" type="String" required="true">
+    <mark style="color:red;">**6-digit DOB**</mark> **(yymmdd)**
+
+    (For corporate cards, specify 10-digit business registration number)
+  </SwaggerParameter>
+
+  <SwaggerParameter name="pwd_2digit" type="String">
+    First 2-digits of credit card password
+  </SwaggerParameter>
+
+  <SwaggerParameter name="cvc" type="String">
+    CVC code
+
+    (last 3 digits (4 digits for AMEX) of the code at the back of the card). Applicable to **Paymentwall only**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_uid" type="String">
+    Specify this value to save the card information as billing key and use it for future payments.
+  </SwaggerParameter>
+
+  <SwaggerParameter name="pg" type="String" required="true">
+    <mark style="color:red;">
+      **PG code**
+    </mark>
+  </SwaggerParameter>
+
+  <SwaggerParameter name="name" type="String">
+    Product name
+  </SwaggerParameter>
+
+  <SwaggerParameter name="buyer_name" type="String">
+    Customer name
+  </SwaggerParameter>
+
+  <SwaggerParameter name="buyer_email" type="String">
+    Customer email
+  </SwaggerParameter>
+
+  <SwaggerParameter name="buyer_tel" type="String">
+    Customer phone
+  </SwaggerParameter>
+
+  <SwaggerParameter name="buyer_addr" type="String">
+    Customer address
+  </SwaggerParameter>
+
+  <SwaggerParameter name="buyer_postcode" type="String">
+    Customer zip code
+  </SwaggerParameter>
+
+  <SwaggerParameter name="card_quota" type="integer">
+    Number of installment months
+  </SwaggerParameter>
+
+  <SwaggerParameter name="interest_free_by_merchant" type="boolen">
+    Whether or not there are interest-free installments paid by merchants
+  </SwaggerParameter>
+
+  <SwaggerParameter name="custom_data" type="String">
+    Custom data
+  </SwaggerParameter>
+
+  <SwaggerParameter name="notice_url" type="String">
+    Webhook URL for success notification
+  </SwaggerParameter>
+
+  <SwaggerParameter name="browser_ip" type="String">
+    Customer's browser (PC) IP
+  </SwaggerParameter>
+
+  <SwaggerParameter name="secure_3d_charge_id" type="String">
+    (For overseas PG only) Payment ID issued by PG for another payment after 3D secure authentication
+  </SwaggerParameter>
+
+  <SwaggerParameter name="secure_3d_token" type="String">
+    (For overseas PG only) Token issued by PG for another payment after 3D secure authentication
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tabs.Tab title="PaymentResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **Response code**
+
+        0: success, Not 0: check the message
+
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Response message**
+
+        A non-zero code includes a message like 'Invalid payment info'.
+
+        **`response`** <mark style="color:red;">**(PaymentAnnotation, optional)**</mark>
+      </Tabs.Tab>
+    </Tabs>
+
+    <Tabs>
+      <Tabs.Tab title="PaymentAnnotation">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **`Response code`**
+
+        0: success, Not 0: check the message
+
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Response message**
+
+        A non-zero code includes a message like 'Invalid payment info.
+
+        **`imp_uid`** <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
+
+        **i'mport payment transaction UID**
+
+        **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Order ID**
+
+        **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Payment method code**
+
+        **`channel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Payment environment code**
+
+        - pc: (authenticated) PC
+        - mobile: (authenticated) mobile
+        - api: recurring or non-authenticated
+
+        **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **PG code**
+
+        ---
+
+        **`emb_pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Hub-type PG code**
+
+        **`pg_tid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **PG transaction ID**
+
+        **`pg_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **PG MID**
+
+        **`escrow`**   <mark style="color:orange;">**boolean**</mark>
+
+        **Indicates an escrow payment**
+
+        **`apply_num`**   <mark style="color:green;">**string**</mark>
+
+        **Credit card approval number**
+
+        **`bank_code`**   <mark style="color:green;">**string**</mark>
+
+        **Bank code**
+
+        **`bank_name`**   <mark style="color:green;">**string**</mark>
+
+        **Bank name**
+
+        ---
+
+        **`card_code`**   <mark style="color:green;">**string**</mark>
+
+        **Credit card code (KFTC Credit Card Codes:** [<mark style="color:red;">**link**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) )
+
+        **`card_name`**  <mark style="color:green;">**string**</mark>
+
+        **Credit card name**
+
+        **`card_quota`**  <mark style="color:purple;">**integer**</mark>
+
+        **Number of installments (0 means one-off)**
+
+        **`card_number`** <mark style="color:green;">**string**</mark>
+
+        **Masked credit card number**
+
+        ---
+
+        **`card_type`**  <mark style="color:green;">**string**</mark>
+
+        **Credit card type code**
+
+        - 0: credit
+        - 1: check
+
+        **`vbank_code`**  <mark style="color:green;">**string**</mark>
+
+        **Virtual account bank code (refer to image below)**
+
+        ---
+
+        **`vbank_name`**  <mark style="color:green;">**string**</mark>
+
+        **Refund virtual account**
+
+        **`vbank_holder`**  <mark style="color:green;">**string**</mark>
+
+        **Refund virtual account holder**
+
+        **`vbank_date`**  <mark style="color:green;">**string**</mark>
+
+        **Refund virtual account expiration (UNIX timestamp)**
+
+        **`vbank_issued_at`**  <mark style="color:green;">**string**</mark>
+
+        **Refund virtual account created at (UNIX timestamp)**
+
+        **`name`**  <mark style="color:green;">**string**</mark>
+
+        **Product name**
+
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **Order (payment) amount**
+
+        **`cancel_amount`**  <mark style="color:purple;">**integer**</mark>
+
+        **Cancelled amount**
+
+        **`currency`**  <mark style="color:green;">**string**</mark>
+
+        **Currency**
+
+        - USD
+        - KRW
+        - EUR
+
+        ---
+
+        **`buyer_name`**  <mark style="color:green;">**string**</mark>
+
+        **Customer name**
+
+        **`buyer_email`**  <mark style="color:green;">**string**</mark>
+
+        **Customer  email**
+
+        **`buyer_tel`**  <mark style="color:green;">**string**</mark>
+
+        **Customer phone**
+
+        **`buyer_addr`**  <mark style="color:green;">**string**</mark>
+
+        **Customer address**
+
+        **`buyer_postcode`**  <mark style="color:green;">**string**</mark>
+
+        **Customer zip code**
+
+        **`custom_data`**  <mark style="color:green;">**string**</mark>
+
+        **echo data as JSON string**
+
+        **`user_agent`**  <mark style="color:green;">**string**</mark>
+
+        **UserAgent of the device where payment is initiated**
+
+        **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Payment status code**
+
+        - ready
+        - paid
+        - cancelled
+        - failed
+
+        **`started_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Payment started at (UNIX timestamp)**
+
+        **`paid_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Payment completed at (UNIX timestamp)**\\
+
+        **`failed_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Payment failed at (UNIX timestamp)**
+
+        **`cancelled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Payment cancelled at (UNIX timestamp)**
+
+        **`fail_reason`** <mark style="color:green;">**string**</mark>
+
+        **Reason for failure**
+
+        **`cancel_reason`**  <mark style="color:green;">**string**</mark>
+
+        **Reason for cancellation**
+
+        **`receipt_url`**  <mark style="color:green;">**string**</mark>
+
+        **Credit card receipt URL**
+
+        **`cash_receipt_issued`** <mark style="color:orange;">**boolean**</mark>
+
+        **Option to automatically issue cash receipt**
+
+        **`customer_uid`**  <mark style="color:green;">**string**</mark>
+
+        **customer\_uid related to the payment transaction**
+
+        **`customer_uid_usage`**  <mark style="color:green;">**string**</mark>
+
+        **customer\_uid use code**
+
+        - payment.scheduled: scheduled payment
+        - payment: payment
+        - issue: billing key issuance
+
+        **`cancel_history`**  <mark style="color:red;">**(Array\[PaymentCancelAnnotation], optional):**</mark>
+
+        **`Cancellation/partial cancellation history`**
+      </Tabs.Tab>
+    </Tabs>
+
+    <Tabs>
+      <Tabs.Tab title="PaymentCancelAnnotation">
+        **cancel\_history array \[]**
+
+        **`pg_tid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **PG cancellation transaction ID**
+
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **Cancelled amount**
+
+        **`cancelled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Cancelled at (UNIX timestamp)**
+
+        **`reason`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string(256)**</mark>
+
+        **Reason for cancellation**
+
+        **`receipt_url`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string(300)**</mark>
+
+        **Cancellation receipt URL. Availability varies by PG.**
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+</Swagger>
+
+### **Key request parameter description**
+
+> **`merchant_uid`**  <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
+>
+> **Order ID**
+>
+> Must specify a unique value for each payment request
+
+> **`card_numb`**  <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
+>
+> **Credit card number**
+>
+> Use the correct format **(DDDD-DDDD-DDDD-DDDD)**
+
+> **`expiry`**  <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
+>
+> **Credit card expiration**
+>
+> Use the correct format **(YYYY-MM)**
+
+> **`birth`**  <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
+>
+> **DOB**
+>
+> Use the correct format **(YYMMDD)**. For corporate cards, specify the 10-digit **business
+> registration number**
+>
+> (For foreign cards that don't require DOB, you can set this to 000000)
+
+> **`pg`**  <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
+>
+> **PG code**
+>
+> This is required when there are multiple API method non-authenticated PG settings in the Admin
+> console. If <mark style="color:red;">**two MIDs**</mark> are set for the same PG, specify as
+> follows:
+>
+> **\{PG}.\{PG Merchant ID}**
+>
+> If you pass an unspecified or invalid value, the payment will be made using the default PG value.
+>
+> - If there are two PG settings, Nice Payments and JTNet,
+>   set pg parameter to **nice** or **jtnet**.
+>
+> - If you have multiple Merchant IDs from Nice Payments,
+>   set pg parameter to **nice.MID1** or **nice.MID2**.
+
+> **`buyer_name`**  <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
+>
+> **Customer name**
+>
+> When using Paymentwall as PG, you must <mark style="color:red;">**enter a space**</mark> between the first name and last name.
+>
+> #### <mark style="color:green;">**Example:**</mark>  **Michael Jackson**
+
+> **`customer_uid`**  <mark style="color:red;">**\***</mark>  <mark style="color:green;">**string**</mark>
+>
+> **Billing key**
+>
+> If this is specified, the billing key is mapped to this value, and you can only process payments
+> with this customer\_uid value in the future.
+
+<Details>
+  <Details.Summary>Response Model Schema</Details.Summary>
+
+  <Details.Content>
+    ```json
+    {
+      "code": 0,
+      "message": "string",
+      "response": {
+        "imp_uid": "string",
+        "merchant_uid": "string",
+        "pay_method": "string",
+        "channel": "pc",
+        "pg_provider": "string",
+        "emb_pg_provider": "string",
+        "pg_tid": "string",
+        "pg_id": "string",
+        "escrow": true,
+        "apply_num": "string",
+        "bank_code": "string",
+        "bank_name": "string",
+        "card_code": "string",
+        "card_name": "string",
+        "card_quota": 0,
+        "card_number": "string",
+        "card_type": "null",
+        "vbank_code": "string",
+        "vbank_name": "string",
+        "vbank_num": "string",
+        "vbank_holder": "string",
+        "vbank_date": 0,
+        "vbank_issued_at": 0,
+        "name": "string",
+        "amount": 0,
+        "cancel_amount": 0,
+        "currency": "string",
+        "buyer_name": "string",
+        "buyer_email": "string",
+        "buyer_tel": "string",
+        "buyer_addr": "string",
+        "buyer_postcode": "string",
+        "custom_data": "string",
+        "user_agent": "string",
+        "status": "ready",
+        "started_at": 0,
+        "paid_at": 0,
+        "failed_at": 0,
+        "cancelled_at": 0,
+        "fail_reason": "string",
+        "cancel_reason": "string",
+        "receipt_url": "string",
+        "cancel_history": [
+          {
+            "pg_tid": "string",
+            "amount": 0,
+            "cancelled_at": 0,
+            "reason": "string",
+            "receipt_url": "string"
+          }
+        ],
+        "cancel_receipt_urls": ["string"],
+        "cash_receipt_issued": true,
+        "customer_uid": "string",
+        "customer_uid_usage": "issue"
+      }
+    }
+    ```
+  </Details.Content>
+</Details>
+
+<Hint style="success">
+  **Swagger Test Link**
+
+  [**https://api.iamport.kr/#!/subscribe/onetime**](https://api.iamport.kr/#!/subscribe/onetime)
+</Hint>

@@ -1,21 +1,27 @@
-import { type CollectionEntry, getCollection } from "astro:content";
+"use server";
+
+import { cache } from "@solidjs/router";
+
+import { platform } from "#content";
+import type { PlatformEntry } from "~/content/config";
 
 export interface Document {
   slug: string;
-  entry: CollectionEntry<"platform">;
+  entry: PlatformEntry;
 }
 
-export async function getPlatformDocuments() {
-  const docEntries = await getCollection("platform");
+// eslint-disable-next-line @typescript-eslint/require-await
+export const loadPlatformDocuments = cache(async () => {
+  const docEntries = Object.values(platform);
   const usages: Document[] = [];
   const guides: Document[] = [];
-  for (const entry of docEntries) {
-    const slug = entry.slug;
-    if (slug.startsWith("guides")) guides.push({ slug, entry });
-    else if (slug.startsWith("usages")) usages.push({ slug, entry });
+  for (const { slug, frontmatter } of docEntries) {
+    if (slug.startsWith("guides")) guides.push({ slug, entry: frontmatter });
+    else if (slug.startsWith("usages"))
+      usages.push({ slug, entry: frontmatter });
   }
   for (const notes of [usages, guides]) {
-    notes.sort((a, b) => (a.entry.data.no < b.entry.data.no ? -1 : 1));
+    notes.sort((a, b) => (a.entry.no < b.entry.no ? -1 : 1));
   }
   return { usages, guides };
-}
+}, "platform/docs");

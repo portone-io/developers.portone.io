@@ -1,0 +1,558 @@
+---
+title: 현금영수증 관련 API
+description: 현금영수증에 관련된 API 를 확인할 수 있습니다.
+targetVersions: ["v2"]
+---
+
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+
+## ⌨ 현금영수증 조회
+
+<Swagger method="get" path="/payments/{payment_id}/cash-receipt" baseUrl="https://api.portone.io/v2" summary="현금영수증 조회">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Path
+
+  <SwaggerParameter name="payment_id" type="string" required="true">
+    결제 ID
+  </SwaggerParameter>
+
+  #### Query
+
+  <SwaggerParameter name="store_id" type="string" required="false">
+    하위 상점 ID - 값을 넣지 않으면 Merchant 유저의 기본값으로 설정된 상점의 id가 입력됩니다.
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200" description="200 응답">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`receipt`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**object**</mark>
+
+        현금영수증 정보
+
+        <Details>
+          <Details.Summary>CashReceiptDetail</Details.Summary>
+
+          <Details.Content>
+            **`pg_receipt_id`** <mark style="color:green;">**string**</mark>
+
+            PG사 현금영수증 발급 ID
+
+            ---
+
+            **`issue_number`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            현금영수증 승인번호
+
+            ---
+
+            **`type`** <mark style="color:green;">**CashReceiptType**</mark>
+
+            `"PERSONAL"`, `"CORPORATE"`, `"ANONYMOUS"`
+
+            ---
+
+            **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+            금액
+
+            ---
+
+            **`tax_free_amount`** <mark style="color:blue;">**integer**</mark>
+
+            면세금액
+
+            ---
+
+            **`status`** <mark style="color:green;">**CashReceiptStatus**</mark>
+
+            `"ISSUED"`, `"CANCELLED"`
+
+            ---
+
+            **`issued_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            발급일시
+
+            ---
+
+            **`cancelled_at`** <mark style="color:green;">**string**</mark>
+
+            취소일시 (`status`가 `CANCELLED`인 경우 제공)
+
+            ---
+
+            **`receipt_url`** <mark style="color:green;">**string**</mark>
+
+            영수증 url
+
+            ---
+
+            **`merchant_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            고객사 ID
+
+            ---
+
+            **`store_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            하위 상점 ID
+
+            ---
+
+            **`payment_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            결제 ID
+
+            ---
+
+            **`order_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            주문명
+
+            ---
+
+            **`is_manual`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**boolean**</mark>
+
+            수동발급 여부
+
+            ---
+
+            **`currency`** <mark style="color:green;">**Currency**</mark>
+
+            통화
+
+            `"KRW"`, `"USD"`, `"EUR"`, `"JPY"`, `"CNY"`, `"VND"`, `"THB"`, `"SGD"`, `"AUD"`, `"HKD"`, `"AED"`, `"AFN"`, `"ALL"`, `"AMD"`, `"ANG"`, `"AOA"`, `"ARS"`, `"AWG"`, `"AZN"`, `"BAM"`, `"BBD"`, `"BDT"`, `"BGN"`, `"BHD"`, `"BIF"`, `"BMD"`, `"BND"`, `"BOB"`, `"BOV"`, `"BRL"`, `"BSD"`, `"BTN"`, `"BWP"`, `"BYN"`, `"BZD"`, `"CAD"`, `"CDF"`, `"CHE"`, `"CHF"`, `"CHW"`, `"CLF"`, `"CLP"`, `"COP"`, `"COU"`, `"CRC"`, `"CUC"`, `"CUP"`, `"CVE"`, `"CZK"`, `"DJF"`, `"DKK"`, `"DOP"`, `"DZD"`, `"EGP"`, `"ERN"`, `"ETB"`, `"FJD"`, `"FKP"`, `"GBP"`, `"GEL"`, `"GHS"`, `"GIP"`, `"GMD"`, `"GNF"`, `"GTQ"`, `"GYD"`, `"HNL"`, `"HRK"`, `"HTG"`, `"HUF"`, `"IDR"`, `"ILS"`, `"INR"`, `"IQD"`, `"IRR"`, `"ISK"`, `"JMD"`, `"JOD"`, `"KES"`, `"KGS"`, `"KHR"`, `"KMF"`, `"KPW"`, `"KWD"`, `"KYD"`, `"KZT"`, `"LAK"`, `"LBP"`, `"LKR"`, `"LRD"`, `"LSL"`, `"LYD"`, `"MAD"`, `"MDL"`, `"MGA"`, `"MKD"`, `"MMK"`, `"MNT"`, `"MOP"`, `"MRU"`, `"MUR"`, `"MVR"`, `"MWK"`, `"MXN"`, `"MXV"`, `"MYR"`, `"MZN"`, `"NAD"`, `"NGN"`, `"NIO"`, `"NOK"`, `"NPR"`, `"NZD"`, `"OMR"`, `"PAB"`, `"PEN"`, `"PGK"`, `"PHP"`, `"PKR"`, `"PLN"`, `"PYG"`, `"QAR"`, `"RON"`, `"RSD"`, `"RUB"`, `"RWF"`, `"SAR"`, `"SBD"`, `"SCR"`, `"SDG"`, `"SEK"`, `"SHP"`, `"SLE"`, `"SLL"`, `"SOS"`, `"SRD"`, `"SSP"`, `"STN"`, `"SVC"`, `"SYP"`, `"SZL"`, `"TJS"`, `"TMT"`, `"TND"`, `"TOP"`, `"TRY"`, `"TTD"`, `"TWD"`, `"TZS"`, `"UAH"`, `"UGX"`, `"USN"`, `"UYI"`, `"UYU"`, `"UYW"`, `"UZS"`, `"VED"`, `"VES"`, `"VUV"`, `"WST"`, `"XAF"`, `"XAG"`, `"XAU"`, `"XBA"`, `"XBB"`, `"XBC"`, `"XBD"`, `"XCD"`, `"XDR"`, `"XOF"`, `"XPD"`, `"XPF"`, `"XPT"`, `"XSU"`, `"XTS"`, `"XUA"`, `"XXX"`, `"YER"`, `"ZAR"`, `"ZMW"`, `"ZWL"`
+
+            ---
+
+            **`channel`** <mark style="color:red;">**Channel**</mark>
+
+            결제 채널 정보
+
+            ---
+          </Details.Content>
+        </Details>
+
+        ---
+      </Tabs.Tab>
+
+      <Tabs.Tab title="Channel">
+        **`id`** <mark style="color:green;">**string**</mark>
+
+        채널 ID
+
+        ---
+
+        **`name`** <mark style="color:green;">**string**</mark>
+
+        채널 이름
+
+        ---
+
+        **`key`** <mark style="color:green;">**string**</mark>
+
+        채널 키
+
+        ---
+
+        **`type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**ChannelType**</mark>
+
+        채널 유형
+
+        `"LIVE"`, `"TEST"`
+
+        ---
+
+        **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**PgProvider**</mark>
+
+        결제대행사(PG사)
+
+        `"HTML5_INICIS"`, `"PAYPAL"`, `"PAYPAL_V2"`, `"INICIS"`, `"DANAL"`, `"NICE"`, `"DANAL_TPAY"`, `"UPLUS"`, `"NAVERPAY"`, `"SETTLE"`, `"KCP"`, `"MOBILIANS"`, `"KAKAOPAY"`, `"NAVERCO"`, `"KICC"`, `"EXIMBAY"`, `"SMILEPAY"`, `"PAYCO"`, `"KCP_BILLING"`, `"CHAI"`, `"SMARTRO"`, `"SMARTRO_V2"`, `"PAYMENTWALL"`, `"TOSSPAYMENTS"`, `"KCP_QUICK"`, `"DAOU"`, `"GALAXIA"`, `"TOSSPAY"`, `"KCP_DIRECT"`, `"SETTLE_ACC"`, `"SETTLE_FIRM"`, `"INICIS_UNIFIED"`, `"KSNET"`, `"PINPAY"`
+
+        ---
+
+        **`pg_merchant_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        PG사에 등록된 고객사 ID
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401" description="인증 실패">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"UNAUTHORIZED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="404" description="리소스를 찾을 수 없음">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"PAYMENT_NOT_FOUND"`, `"CASH_RECEIPT_NOT_FOUND"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="500" description="내부 서버 오류">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"PORTONE_ERROR"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+</Swagger>
+
+## ⌨ 현금영수증 발급
+
+<Swagger method="post" path="/payments/{payment_id}/cash-receipt" baseUrl="https://api.portone.io/v2" summary="현금영수증 발급">
+  <SwaggerDescription>
+    결제 건에 대한 수동 현금영수증 발급
+  </SwaggerDescription>
+
+  ### Parameters
+
+  #### Path
+
+  <SwaggerParameter name="payment_id" type="string" required="true" />
+
+  #### Body
+
+  <SwaggerParameter name="store_id" type="string" required="false" />
+
+  <SwaggerParameter name="channel_name" type="string" required="true" />
+
+  <SwaggerParameter name="customer_identifier" type="string" required="true" />
+
+  <SwaggerParameter name="type" type="CashReceiptType" required="true">
+    현금영수증 용도. personal = 소득공제용, corporate = 지출증빙용, anonymous = 국세청번호 자동발급 케이스
+  </SwaggerParameter>
+
+  <SwaggerParameter name="order_name" type="string" required="true" />
+
+  <SwaggerParameter name="currency" type="Currency" required="true">
+    화폐
+  </SwaggerParameter>
+
+  <SwaggerParameter name="amount" type="number" required="true" />
+
+  <SwaggerParameter name="tax_free_amount" type="number" required="false">
+    면세 금액 (기본값:
+
+    `"0")`
+  </SwaggerParameter>
+
+  <SwaggerParameter name="product_type" type="ProductType" required="false">
+    상품 유형
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_name" type="string" required="false">
+    고객 성명
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_email" type="string" required="false">
+    고객 이메일
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200" description="현금영수증 발급 성공">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`receipt_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        현금영수증 ID
+
+        ---
+
+        **`pg_tx_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        PG사 거래ID
+
+        ---
+
+        **`issue_number`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        ---
+
+        **`receipt_url`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="400" description="잘못된 요청">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `INVALID_REQUEST`: 파라미터를 포함한 요청을 처리하는 데에 실패했습니다. 올바른 형식의 파라미터를 전송했는지 확인해주세요.\
+        `CASH_RECEIPT_ALREADY_ISSUED`: 이미 발급된 현금영수증입니다.\\
+
+        `"INVALID_REQUEST"`, `"CASH_RECEIPT_ALREADY_ISSUED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 상세 정보를 담은 파라미터 모음
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401" description="인증 실패">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `UNAUTHORIZED`: 권한이 없습니다. 올바른 API Key를 헤더에 제공했는지 확인해주세요.\\
+
+        `"UNAUTHORIZED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 상세 정보를 담은 파라미터 모음
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="403" description="권한 없음">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `PERMISSION_DENIED`: 해당 요청을 수행하기 위한 권한이 없습니다.\\
+
+        `"PERMISSION_DENIED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 상세 정보를 담은 파라미터 모음
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="404" description="하위 상점이나 결제 채널을 찾을 수 없습니다.">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `STORE_NOT_FOUND`: 하위 상점을 찾을 수 없습니다.\
+        `CHANNEL_NOT_FOUND`: 결제 채널을 찾을 수 없습니다.\\
+
+        `"STORE_NOT_FOUND"`, `"CHANNEL_NOT_FOUND"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 상세 정보를 담은 파라미터 모음
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="500" description="내부 서버 에러">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"PORTONE_ERROR"`, `"PG_PROVIDER_ERROR"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 상세 정보를 담은 파라미터 모음
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+</Swagger>
+
+<Tabs>
+  <Tabs.Tab title="CashReceiptType">
+    현금영수증 용도. personal = 소득공제용, corporate = 지출증빙용, anonymous = 국세청번호 자동발급 케이스
+
+    `"PERSONAL"`, `"CORPORATE"`, `"ANONYMOUS"`
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Currency">
+    화폐
+
+    `"KRW"`, `"USD"`, `"EUR"`, `"JPY"`, `"CNY"`, `"VND"`, `"THB"`, `"SGD"`, `"AUD"`, `"HKD"`, `"AED"`, `"AFN"`, `"ALL"`, `"AMD"`, `"ANG"`, `"AOA"`, `"ARS"`, `"AWG"`, `"AZN"`, `"BAM"`, `"BBD"`, `"BDT"`, `"BGN"`, `"BHD"`, `"BIF"`, `"BMD"`, `"BND"`, `"BOB"`, `"BOV"`, `"BRL"`, `"BSD"`, `"BTN"`, `"BWP"`, `"BYN"`, `"BZD"`, `"CAD"`, `"CDF"`, `"CHE"`, `"CHF"`, `"CHW"`, `"CLF"`, `"CLP"`, `"COP"`, `"COU"`, `"CRC"`, `"CUC"`, `"CUP"`, `"CVE"`, `"CZK"`, `"DJF"`, `"DKK"`, `"DOP"`, `"DZD"`, `"EGP"`, `"ERN"`, `"ETB"`, `"FJD"`, `"FKP"`, `"GBP"`, `"GEL"`, `"GHS"`, `"GIP"`, `"GMD"`, `"GNF"`, `"GTQ"`, `"GYD"`, `"HNL"`, `"HRK"`, `"HTG"`, `"HUF"`, `"IDR"`, `"ILS"`, `"INR"`, `"IQD"`, `"IRR"`, `"ISK"`, `"JMD"`, `"JOD"`, `"KES"`, `"KGS"`, `"KHR"`, `"KMF"`, `"KPW"`, `"KWD"`, `"KYD"`, `"KZT"`, `"LAK"`, `"LBP"`, `"LKR"`, `"LRD"`, `"LSL"`, `"LYD"`, `"MAD"`, `"MDL"`, `"MGA"`, `"MKD"`, `"MMK"`, `"MNT"`, `"MOP"`, `"MRU"`, `"MUR"`, `"MVR"`, `"MWK"`, `"MXN"`, `"MXV"`, `"MYR"`, `"MZN"`, `"NAD"`, `"NGN"`, `"NIO"`, `"NOK"`, `"NPR"`, `"NZD"`, `"OMR"`, `"PAB"`, `"PEN"`, `"PGK"`, `"PHP"`, `"PKR"`, `"PLN"`, `"PYG"`, `"QAR"`, `"RON"`, `"RSD"`, `"RUB"`, `"RWF"`, `"SAR"`, `"SBD"`, `"SCR"`, `"SDG"`, `"SEK"`, `"SHP"`, `"SLE"`, `"SLL"`, `"SOS"`, `"SRD"`, `"SSP"`, `"STN"`, `"SVC"`, `"SYP"`, `"SZL"`, `"TJS"`, `"TMT"`, `"TND"`, `"TOP"`, `"TRY"`, `"TTD"`, `"TWD"`, `"TZS"`, `"UAH"`, `"UGX"`, `"USN"`, `"UYI"`, `"UYU"`, `"UYW"`, `"UZS"`, `"VED"`, `"VES"`, `"VUV"`, `"WST"`, `"XAF"`, `"XAG"`, `"XAU"`, `"XBA"`, `"XBB"`, `"XBC"`, `"XBD"`, `"XCD"`, `"XDR"`, `"XOF"`, `"XPD"`, `"XPF"`, `"XPT"`, `"XSU"`, `"XTS"`, `"XUA"`, `"XXX"`, `"YER"`, `"ZAR"`, `"ZMW"`, `"ZWL"`
+  </Tabs.Tab>
+
+  <Tabs.Tab title="ProductType">
+    상품 유형
+
+    `"REAL"`, `"DIGITAL"`
+  </Tabs.Tab>
+</Tabs>
+
+## ⌨ 현금영수증 발급 취소
+
+<Swagger method="delete" path="/payments/{payment_id}/cash-receipt" baseUrl="https://api.portone.io/v2" summary="현금영수증 발급 취소">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Path
+
+  <SwaggerParameter name="payment_id" type="string" required="true">
+    결제 ID
+  </SwaggerParameter>
+
+  #### Query
+
+  <SwaggerParameter name="store_id" type="string" required="false">
+    하위 상점 ID - 값을 넣지 않으면 Merchant 유저의 기본값으로 설정된 상점의 id가 입력됩니다.
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200" description="200 응답">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`cancelled_amount`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+        현금영수증 취소 금액
+
+        ---
+
+        **`cancelled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        현금영수증 취소 시각
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="400" description="400 에러 응답">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"INVALID_REQUEST"`, `"CASH_RECEIPT_NOT_ISSUED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401" description="인증 실패">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"UNAUTHORIZED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="404" description="리소스를 찾을 수 없음">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"PAYMENT_NOT_FOUND"`, `"CASH_RECEIPT_NOT_FOUND"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="500" description="내부 서버 오류">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"PORTONE_ERROR"`, `"PG_PROVIDER_ERROR"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+</Swagger>

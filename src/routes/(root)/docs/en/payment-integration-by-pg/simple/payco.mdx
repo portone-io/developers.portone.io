@@ -1,0 +1,160 @@
+---
+title: PAYCO
+description: PAYCO simple payment integration guide
+---
+
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## 1. Configure PAYCO simple payment PG settings
+
+Refer to the [**PAYCO settings**](../../ready/2-pg/pg/undefined-3) page
+to configure the PG settings.
+
+![](</gitbook-assets/en/screenshot 2022-06-01 6.25.22.png>)
+
+## 2. Request payment
+
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/readme)
+IMP.**request\_pay**(param, callback).
+
+In PC browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+In mobile browsers, the page is redirected to <mark style="color:red;">**m\_redirect\_url**</mark>.
+
+<Tabs>
+  <Tabs.Tab title="General payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "payco",
+        merchant_uid: "{Merchant created Order ID}", //Example: order_no_0001
+        name: "Order name: Test payment",
+        amount: 14000,
+        buyer_email: "iamport@siot.do",
+        buyer_name: "Customer name",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "Samseong-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
+
+    ### Key parameter description
+
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **PG code**
+
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`payco`**.
+
+    **`pay_method`** <mark style="color:green;">**string**</mark>
+
+    **Payment method code**
+
+    <Details>
+      <Details.Summary>Payment method codes</Details.Summary>
+
+      <Details.Content>
+        - `card` (credit card)
+        - `trans`(instant account transfer)
+        - `vbank`(virtual account)
+      </Details.Content>
+    </Details>
+
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **Order ID**
+
+    Must be unique for each request.
+
+    **`buyer_tel`**<mark style="color:red;">**`*`**</mark><mark style="color:green;">**`string`**</mark>
+
+    **Customer phone number**
+
+    <mark style="color:red;">Required</mark>
+
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+    **Payment amount**
+
+    Must be an integer (not string)
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Subscription payment request">
+    To open subscription payment window, specify the **customer\_uid** parameter.
+
+    <Hint style="info">
+      **amount**
+
+      - For display purpose only. No payment approval.
+    </Hint>
+
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "payco",
+        merchant_uid: "{Merchant created Order ID}", // Example: issue_billingkey_monthly_0001
+        name: "Order name: Billing key request test",
+        amount: 0, // For display purpose only
+        customer_uid: "{Unique ID for the card (billing key)}", // Required (Example: gildong_0001_1234)
+        buyer_email: "johndoe@gmail.com",
+        buyer_name: "John Doe",
+        buyer_tel: "02-1234-1234",
+      },
+      function (rsp) {
+        if (rsp.success) {
+          alert("Success");
+        } else {
+          alert("Failed");
+        }
+      },
+    );
+    ```
+
+    ### Key parameter description
+
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **PG code**
+
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`payco`**.
+
+    **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **Credit card billing key**
+
+    Billing key to be mapped 1:1 with the user-entered credit card information.
+
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**Integer**</mark>
+
+    **Payment amount**
+
+    For display purpose only. No payment approval.
+
+    ### Request payment with billing key (customer\_uid)
+
+    After successfully getting the billing key, the billing key is **stored on the i'mport server**
+    mapped 1:1 with the specified `customer_uid`.
+    For security reasons, the server cannot directly access the billing key.
+    Subsequent payments can be requested by calling
+    the [<mark style="color:blue;">**non-authenticated payment request REST API**</mark>](../../api/api/api)
+    with the `customer_uid` as follows:
+
+    ```sh title="sever-side"
+    curl -H "Content-Type: application/json" \
+         -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+         https://api.iamport.kr/subscribe/payments/again
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Subscription payment API request">
+    **Not supported.**
+  </Tabs.Tab>
+</Tabs>

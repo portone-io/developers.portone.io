@@ -1,0 +1,280 @@
+---
+title: Payment request parameters
+description: ""
+---
+
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## Parameters
+
+> **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **PG code**
+>
+> If not specified or invalid, the default PG setting in Admin console is used.
+>
+> [**PG codes**](../../tips/pg-codes)
+
+> **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Payment method code**
+>
+> Varies by PG.
+>
+> [**Payment integration by PG**](../../payment-integration-by-pg/payment-gateways/readme)
+
+<Details>
+  <Details.Summary>Payment method codes</Details.Summary>
+
+  <Details.Content>
+    - `card` (credit card)
+    - `trans`(instant account transfer)
+    - `vbank`(virtual account)
+    - `phone`(mobile micropayment)
+    - `samsung`(Samsung Pay)
+    - `kpay` (KPay app)
+    - `kakaopay`(Kakao Pay)
+    - `payco` ( PAYCO)
+    - `lpay` (LPAY)
+    - `ssgpay`(SSG Pay)
+    - `tosspay`(Toss simple pay)
+    - `cultureland`(Cultureland)
+    - `smartculture`(Smart Culture)
+    - `happymoney`(Happy Money)
+    - `booknlife`(Book culture gift certificate)
+    - `point`(points, e.g., Benepia)
+    - `wechat`(WeChat Pay)
+    - `alipay`(Alipay)
+    - `unionpay`(UnionPay)
+    - `tenpay`(TenPay)
+  </Details.Content>
+</Details>
+
+> **`escrow`** <mark style="color:orange;background-color:yellow;">**boolean**</mark>
+>
+> **Option to open escrow payment window**
+>
+> Supported by only some PGs.
+>
+> - [x] Requires pre-approval from PG
+
+> **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Merchant order ID**
+>
+> - Order ID generated uniquely for each request.
+> - **Up to 40 characters**
+> - If you specify an ID used for already approved transaction, your request will be **rejected**.
+
+> **`name`** <mark style="color:green;">**string**</mark>
+>
+> **Product name**
+>
+> - Up to 40 characters
+
+> **`amount`** <mark style="color:red;">**\***</mark>  <mark style="color:purple;">**number**</mark>
+>
+> **Amount**
+>
+> - Must be numeric
+
+> **`custom_data`** <mark style="color:blue;">**object**</mark>
+>
+> **Custom data**
+>
+> - Can be received as **echo** in the response.
+> - Saved as JSON notation (string).
+> - Use to specify additional order information.
+
+> **`tax_free`** <mark style="color:purple;">**number**</mark>
+>
+> **Tax free amount**
+>
+> - Tax free amount (out of `amount`)
+
+> **`currency`** <mark style="color:green;">**string**</mark>
+>
+> **Currency**
+>
+> - For PayPal, USD is the default value as PayPal does not support KRW
+> - [PayPal Supported Currencies](https://developer.paypal.com/docs/reports/reference/paypal-supported-currencies/%20target=)
+
+<Details>
+  <Details.Summary>Currency codes</Details.Summary>
+
+  <Details.Content>
+    1. KRW
+    2. USD
+    3. EUR
+    4. JPY
+  </Details.Content>
+</Details>
+
+> **`language`** <mark style="color:green;">**string**</mark>
+>
+> **Language for payment window** (Supported by only some PGs.)
+
+<Details>
+  <Details.Summary>Language codes</Details.Summary>
+
+  <Details.Content>
+    - en (English)
+    - ko (Korean)
+  </Details.Content>
+</Details>
+
+> **`buyer_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **Customer name**
+
+> **`buyer_tel`** <mark style="color:green;">**string**</mark>
+>
+> **Customer phone number**
+>
+> - Some PGs throw an error if this is not specified
+
+> **`buyer_email`** <mark style="color:green;">**string**</mark>
+>
+> **Customer email**
+>
+> - Some PGs throw an error if this is not specified (Paymentwall)
+
+> **`buyer_addr`** <mark style="color:green;">**string**</mark>
+>
+> **Customer address**
+
+> **`buyer_postcode`** <mark style="color:green;">**string**</mark>
+>
+> **Customer zip code**
+
+> **`confirm_url`** <mark style="color:green;">**string**</mark>
+>
+> **Merchant endpoint url when using** [**confirm\_process**](../../tips/confirm-process)
+>
+> - Must request for use to [support@iamport.kr](mailto:support@iamport.kr).
+
+> **`notice_url`** <mark style="color:green;">**string**</mark>
+>
+> **Webhook URL**
+>
+> - URL to use instead of Notification URL set in Admin Console (set for each request)
+> - If specified, notification is **not sent** to the URL set in Admin Console.
+
+> **`customer_uid`** <mark style="color:green;">**string**</mark>
+>
+> **Merchant defined billing key**
+>
+> Customer billing key that is mapped 1:1 with the billing key for non-authenticated payment.
+
+## **Additional properties**
+
+> **`digital`** <mark style="color:orange;">**boolean**</mark>
+>
+> **Option to specify the product as digital content**
+>
+> - Required for mobile micropayment
+> - For intangible product, set to true
+> - Note that fees vary depending on this option.
+
+> **`vbank_due`** <mark style="color:green;">**string**</mark>
+>
+> **Virtual account expiration**
+>
+> - For virtual account payment
+> - YYYYMMDDhhmm
+
+> **`m_redirect_url`** <mark style="color:green;">**string**</mark>
+>
+> **EndPoint URL to redirect to after payment is complete**
+>
+> - Required in redirection mode
+> - Required in most mobile payment environments.
+> - If not specified in redirection mode, you cannot receive the payment result.
+
+> **`app_scheme`** <mark style="color:green;">**string**</mark>
+>
+> **URL scheme for returning to the app during mobile app payment**
+>
+> - Required for WebView payment
+> - Used to return to the original app after verifying payment info from ISP/App card app
+
+> **`biz_num`** <mark style="color:green;">**string**</mark>
+>
+> **Business registration number**
+>
+> - Required for Danal-virtual account payment
+
+## Additional functions
+
+<Tabs>
+  <Tabs.Tab title="Installment setting">
+    ```json title="javascript"
+    {
+      "display": {
+        "card_quota": [6] // Display up to 6 months installment plans
+      }
+    }
+    ```
+
+    **Parameters**
+
+    - **card\_quota :**
+      - `[]`: Only immediate pay
+      - `2,3,4,5,6`: immediate, 2, 3, 4, 5, 6 month installment plans
+
+    <Hint style="info">
+      Installment plan option is available only for **KRW 50,000 or more**.
+    </Hint>
+
+    Example of allowing up to <mark style="color:red;">**3 months**</mark> installment plans
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Direct credit card module call">
+    ```json title="javascript"
+    {
+      "card": {
+        "direct": {
+          "code": "367",
+          "quota": 3
+        }
+      }
+    }
+    ```
+
+    **Parameters**
+
+    - **code**: [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (**string**)
+    - **quota**: Installment plan. For immediate, set to 0. (**integer**)
+
+    <Hint style="danger">
+      **Precautions**
+
+      - Currently, direct call to the credit card company's payment window is only supported by 6 PGs: **KG Inicis, KCP, Toss Payments, Nice Payments, KICC, and Danal**.
+      - Some PGs do not support direct call to credit card company's payment windows for all Merchant IDs. You must check your Merchant ID with each PG for direct call support.
+    </Hint>
+
+    Example of direct call to <mark style="color:red;">**Hyundai Card**</mark> module
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Enable specific credit cards">
+    ```json title="javascript"
+    {
+      "card": {
+        "detail": [
+          { "card_code": "*", "enabled": false }, // Disable all credit cards
+          { "card_code": "366", "enabled": true } // Enable specific credit card
+        ]
+      }
+    }
+    ```
+
+    **Parameters**
+
+    - **card\_code:** [<mark style="color:red;">**Credit card code**</mark>](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630) (<mark style="color:green;">**string)**</mark>
+    - **enabled:** Option to enable the credit card (<mark style="color:orange;">**boolean)**</mark>
+
+    **Example of enabling only **<mark style="color:red;">**Shinhan Card**</mark>** payment window**
+  </Tabs.Tab>
+</Tabs>

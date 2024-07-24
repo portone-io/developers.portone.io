@@ -1,0 +1,24 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index 148fb17b3e6cad307928c680e7184c0f698bc3fa..7f7ec2f40f660081507605ad42badc3b9ad11048 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -2158,6 +2158,7 @@ function createPlugin(mdxOptions, namedImports) {
+     },
+     async transform(code, id, ssr) {
+       const [path, query] = id.split("?");
++      if (query?.split('&').includes('raw')) return;
+       if (/\.mdx?$/.test(path)) {
+         if (!transformMdx)
+           throw new Error(
+diff --git a/dist/index.js b/dist/index.js
+index 626f7accae3dea52cbe2996264f3928ea796adff..f65cb1bdaf6e10f12dff0ac8bae2abd117b93f75 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -50,6 +50,7 @@ function createPlugin(mdxOptions, namedImports) {
+         transform(code, id, ssr) {
+             return __awaiter(this, void 0, void 0, function* () {
+                 const [path, query] = id.split("?");
++                if (query.split('&').includes('raw')) return;
+                 if (/\.mdx?$/.test(path)) {
+                     if (!transformMdx)
+                         throw new Error("vite-plugin-mdx: configResolved hook should be called before calling transform hook");

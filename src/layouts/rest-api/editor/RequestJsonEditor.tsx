@@ -23,30 +23,21 @@ export interface RequestJsonEditorProps {
   openapiSchema: unknown;
   requestObjectSchema: unknown;
 }
-export default function RequestJsonEditor({
-  initialValue,
-  part,
-  operation,
-  onEditorInit,
-  onChange,
-  openapiSchema,
-  requestObjectSchema,
-}: RequestJsonEditorProps) {
-  const { operationId } = operation;
+export default function RequestJsonEditor(props: RequestJsonEditorProps) {
   return (
     <MonacoEditor
-      onChange={onChange}
+      onChange={props.onChange}
       init={(monaco, domElement) => {
-        const uri = `inmemory://operation/${operationId}/${part}`;
-        const schemaUri = `inmemory://operation/${operationId}/${part}/schema`;
-        const model = getModel(initialValue, uri);
+        const uri = `inmemory://operation/${props.operation.operationId}/${props.part}`;
+        const schemaUri = `inmemory://operation/${props.operation.operationId}/${props.part}/schema`;
+        const model = getModel(props.initialValue, uri);
         const { jsonDefaults } = monaco.languages.json;
         registerSchema();
         const editor = monaco.editor.create(domElement, {
           ...commonEditorConfig,
           model,
         });
-        onEditorInit?.(editor);
+        props.onEditorInit?.(editor);
         return editor;
         function getModel(value: string, uri: string): ITextModel {
           if (models.has(uri)) return models.get(uri)!;
@@ -60,12 +51,12 @@ export default function RequestJsonEditor({
           schemas.set(schemaUri, {
             uri: schemaUri,
             fileMatch: [uri],
-            schema: requestObjectSchema,
+            schema: props.requestObjectSchema,
           });
           const schemasArray = Array.from(schemas.values());
           schemasArray.push({
             uri: "inmemory://schema",
-            schema: openapiSchema,
+            schema: props.openapiSchema,
           });
           // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
           (diagnosticsOptions as any).schemas = schemasArray;

@@ -1,7 +1,13 @@
-import type React from "preact/compat";
-import { useEffect, useState } from "react";
+import {
+  createEffect,
+  createSignal,
+  For,
+  type JSXElement,
+  mergeProps,
+  Show,
+} from "solid-js";
 
-import { useSystemVersion } from "#state/system-version";
+import { useSystemVersion } from "~/state/system-version";
 
 export interface RightSidebarProps {
   lang: string;
@@ -14,52 +20,55 @@ export interface TocItem {
   text: string;
   children: TocItem[];
 }
-function RightSidebar({
-  lang,
-  slug,
-  editThisPagePrefix = "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
-}: RightSidebarProps) {
-  const [toc, setToc] = useState<Toc | null>(null);
-  const systemVersion = useSystemVersion();
+function RightSidebar(_props: RightSidebarProps) {
+  const props = mergeProps(
+    {
+      editThisPagePrefix:
+        "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
+    },
+    _props,
+  );
 
-  useEffect(() => {
-    setToc(headingsToToc(lang));
-  }, [systemVersion]);
+  const [toc, setToc] = createSignal<Toc | null>(null);
+  const { systemVersion } = useSystemVersion();
+
+  createEffect(() => {
+    void systemVersion();
+    setToc(headingsToToc(props.lang));
+  });
 
   return (
     <div class="hidden min-w-0 w-56 shrink-0 text-slate-7 lg:block">
-      {toc && (
+      <Show when={toc()}>
         <nav class="fixed h-[calc(100%-56px)] w-inherit overflow-y-auto px-2 py-[28px]">
-          <h2 class="mb-2 px-2 font-bold">{t(lang, "toc")}</h2>
+          <h2 class="mb-2 px-2 font-bold">{t(props.lang, "toc")}</h2>
           <ul>
-            {toc.map((item) => (
-              <SidebarItem
-                key={item.slug}
-                href={`#${item.slug}`}
-                label={item.text}
-              >
-                <ul class="pl-2">
-                  {item.children.map((item) => (
-                    <SidebarItem
-                      key={item.slug}
-                      href={`#${item.slug}`}
-                      label={item.text}
-                    />
-                  ))}
-                </ul>
-              </SidebarItem>
-            ))}
+            <For each={toc()}>
+              {(item) => (
+                <SidebarItem href={`#${item.slug}`} label={item.text}>
+                  <ul class="pl-2">
+                    <For each={item.children}>
+                      {(item) => (
+                        <SidebarItem href={`#${item.slug}`} label={item.text} />
+                      )}
+                    </For>
+                  </ul>
+                </SidebarItem>
+              )}
+            </For>
           </ul>
-          <h2 class="mb-2 mt-4 px-2 font-bold">{t(lang, "contribute")}</h2>
+          <h2 class="mb-2 mt-4 px-2 font-bold">
+            {t(props.lang, "contribute")}
+          </h2>
           <ul>
             <SidebarItem
-              href={`${editThisPagePrefix}${slug}.mdx`}
+              href={`${props.editThisPagePrefix}/${props.lang}/${props.slug}.mdx`}
               icon="i-ic-baseline-edit"
-              label={t(lang, "edit-this-page")}
+              label={t(props.lang, "edit-this-page")}
             />
           </ul>
         </nav>
-      )}
+      </Show>
     </div>
   );
 }
@@ -69,32 +78,32 @@ export default RightSidebar;
 interface LinkProps {
   href: string;
   icon?: string;
-  label: React.ReactNode;
-  children?: React.ReactNode;
+  label: JSXElement;
+  children?: JSXElement;
 }
-function SidebarItem({ href, icon, label, children }: LinkProps) {
+function SidebarItem(props: LinkProps) {
   return (
     <li>
       <a
-        href={href}
+        href={props.href}
         onClick={(e) => {
-          if (!href.startsWith("#")) return;
+          if (!props.href.startsWith("#")) return;
           e.preventDefault();
-          const slug = href.slice(1);
-          history.replaceState(null, "", href);
+          const slug = props.href.slice(1);
+          history.replaceState(null, "", props.href);
           document.getElementById(slug)?.scrollIntoView({ behavior: "smooth" });
         }}
       >
         <div class="overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-sm text-slate-5 hover:bg-slate-1">
-          {icon && (
+          <Show when={props.icon}>
             <>
-              <i class={`${icon} inline-block align-top text-lg`}></i>{" "}
+              <i class={`${props.icon} inline-block align-top text-lg`}></i>{" "}
             </>
-          )}
-          {label}
+          </Show>
+          {props.label}
         </div>
       </a>
-      {children}
+      {props.children}
     </li>
   );
 }

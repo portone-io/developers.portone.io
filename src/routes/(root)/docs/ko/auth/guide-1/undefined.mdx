@@ -1,0 +1,158 @@
+---
+title: 빌링키를 이용한 정기결제
+description: customer_uid 로 정기(예약)결제 구현방법을 안내합니다.
+targetVersions: ["v1"]
+---
+
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+**[빌링키 발급](../../api/api-2/api-1) 또는 [비 인증 결제(일회성)](../../api/api-4/api-1) API를 이용하여
+customer\_uid를 획득했다면, 원하는 형태의 정기 또는 예약결제를 이용할 수 있습니다.**
+
+## <mark style="color:blue;">**STEP 01.**</mark> 결제 예약하기
+
+미래 특정 시점에 결제가 진행되도록 결제를 예약할 수 있습니다.
+포트원 <mark style="color:blue;">**결제 예약 API**</mark>를 이용하여
+원하시는 시점에 결제 예약을 손쉽게 등록 할 수 있습니다.
+
+<Tabs>
+  <Tabs.Tab title="server-side">
+    ```ts title="Node.js"
+    // 결제 예약
+    axios({
+      url: `https://api.iamport.kr/subscribe/payments/schedule`,
+      method: "post",
+      headers: { Authorization: access_token },
+      data: {
+        customer_uid: "gildong_0001_1234", // 카드(빌링키)와 1:1로 대응하는 값
+        schedules: [
+          {
+            merchant_uid: "order_monthly_0001", // 주문 번호
+            schedule_at: 1519862400, // 결제 시도 시각 in Unix Time Stamp. 예: 다음 달 1일
+            amount: 8900,
+            name: "월간 이용권 정기결제",
+            buyer_name: "홍길동",
+            buyer_tel: "01012345678",
+            buyer_email: "gildong@gmail.com",
+          },
+        ],
+      },
+    });
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## <mark style="color:blue;">**STEP 02.**</mark> 결제 결과 수신받기
+
+예약한 시간에 결제가 시도되면 Webhook 이벤트가 발생하여 지정한 서버의 callback URL로 결제
+번호(`imp_uid`)와 주문 번호(`merchant_uid`)가 전달됩니다. 웹훅으로 예약결제에 대한 결과를 수신으면
+결제결과 완료 로직 처리를 진행하시면 됩니다.
+
+<Hint style="info">
+  **포트원 Webhook**
+
+  포트원 Webhook의 개념과 URL 설정 방법은 [**포트원 Webhook**](../../result/webhook) 문서를 참고하세요.
+</Hint>
+
+<Tabs>
+  <Tabs.Tab title="Node.js">
+    ```ts title="server-side"
+    // "/iamport-callback/schedule"에 대한 POST 요청을 처리
+    app.post("/iamport-callback/schedule", async (req, res) => {
+      try {
+        const { imp_uid, merchant_uid } = req.body;
+        // 액세스 토큰(access token) 발급 받기
+        const getToken = await axios({
+          url: "https://api.iamport.kr/users/getToken",
+          method: "post", // POST method
+          headers: { "Content-Type": "application/json" },
+          data: {
+            imp_key: "imp_apikey", // REST API 키
+            imp_secret:
+              "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f",
+          },
+        });
+        const { access_token } = getToken.data; // 인증 토큰
+        // imp_uid로 포트원 서버에서 결제 정보 조회
+        const getPaymentData = await axios({
+          url: `https://api.iamport.kr/payments/${imp_uid}`, // imp_uid 전달
+          method: "get", // GET method
+          headers: { Authorization: access_token },
+        });
+        const paymentData = getPaymentData.data; // 조회한 결제 정보
+        const { status } = paymentData;
+        if (status === "paid") {
+          // 결제 성공적으로 완료
+          // DB에 결제 정보 저장
+          await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData }); // Mongoose
+          // ...
+        } else {
+          // 재결제 시도
+        }
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### 반복결제 구현하기
+
+포트원 서버에 결제 예약 요청을 하고 예약한 시간에 결제가 시도되면 지정된 웹훅 URL을 통해서
+서버에 알리는 과정을 반복적으로 수행하여 반복 결제를 구현할 수 있습니다.
+
+![](</gitbook-assets/ko/image (170).png>)
+
+<Tabs>
+  <Tabs.Tab title="Node.js">
+    ```ts title="server-side"
+    // "/iamport-callback/schedule"에 대한 POST 요청을 처리
+    app.post("/iamport-callback/schedule", async (req, res) => {
+      try {
+        const { imp_uid, merchant_uid } = req.body;
+        // 액세스 토큰(access token) 발급 받기
+        /* ...중략 ... */
+        // imp_uid로 포트원 서버에서 결제 정보 조회
+        /* ...중략 ... */
+        const paymentData = getPaymentData.data; // 조회한 결제 정보
+        const { status } = paymentData;
+        if (status === "paid") {
+          // 결제 성공적으로 완료
+          // DB에 결제 정보 저장
+          await Orders.findByIdAndUpdate(merchant_uid, { $set: paymentData });
+          // ...
+          // 새로운 결제 예약
+          axios({
+            url: "{결제예약을 받을 서비스 URL}",
+            method: "post",
+            // 인증 토큰 Authorization header에 추가
+            headers: { Authorization: access_token },
+            data: {
+              customer_uid: "gildong_0001_1234", // 카드(빌링키)와 1:1로 대응하는 값
+              schedules: [
+                {
+                  // 주문 번호
+                  merchant_uid: "order_monthly_0001",
+                  // 결제 시도 시각 in Unix Time Stamp. 예: 다음 달 1일
+                  schedule_at: 1519516800,
+                  amount: 8900,
+                  name: "월간 이용권 정기결제",
+                  // ...
+                },
+              ],
+            },
+          });
+        } else {
+          // 재결제 시도
+        }
+      } catch (e) {
+        res.status(400).send(e);
+      }
+    });
+    ```
+
+    예약된 결제가 시도되었을 때 발생하는 webhook 이벤트를 처리하는 로직에서 예약된 결제가 정상적으로 완료되고 결제 내역이 저장되면 다음 결제를 예약하는 예제입니다.
+  </Tabs.Tab>
+</Tabs>

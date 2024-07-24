@@ -1,0 +1,900 @@
+---
+title: 정기결제 관련 API
+description: 정기결제에 관련된 API 를 확인할 수 있습니다.
+targetVersions: ["v2"]
+---
+
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+
+## ⌨ 정기결제예약 다건 조회
+
+<Swagger method="get" path="/schedules" baseUrl="https://api.portone.io/v2" summary="정기결제예약 다건 조회">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Query
+
+  <SwaggerParameter name="store_id" type="string" required="false">
+    하위 상점 ID - 값을 넣지 않으면 Merchant 유저의 기본값으로 설정된 상점의 id가 입력됩니다.
+  </SwaggerParameter>
+
+  <SwaggerParameter name="start" type="string" required="true">
+    결제예약시각(
+
+    `scheduled_at`
+
+    ) 범위의 시작 - 값을 넣지 않으면 파라미터 end의 90일 전으로 설정됩니다.
+  </SwaggerParameter>
+
+  <SwaggerParameter name="end" type="string" required="true">
+    결제예약시각(
+
+    `scheduled_at`
+
+    ) 범위의 끝 - 값을 넣지 않으면 현재 시각으로 설정됩니다.
+  </SwaggerParameter>
+
+  <SwaggerParameter name="status" type="array" required="false">
+    결제예약 상태 리스트
+  </SwaggerParameter>
+
+  <SwaggerParameter name="page" type="integer" required="false">
+    페이지 - 0부터 시작합니다.
+  </SwaggerParameter>
+
+  <SwaggerParameter name="limit" type="integer" required="false">
+    페이지 크기 (최대 1000까지 허용)
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200" description="200 응답">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`current_page`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+        ---
+
+        **`total_page`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+        ---
+
+        **`total_count`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+        ---
+
+        **`schedules`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**Array\[Schedule]**</mark>
+
+        결제예약정보
+
+        <Details>
+          <Details.Summary>Schedule</Details.Summary>
+
+          <Details.Content>
+            **`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            결제예약 ID
+
+            ---
+
+            **`merchant_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            고객사 ID
+
+            ---
+
+            **`store_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            하위 상점 ID
+
+            ---
+
+            **`billing_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            빌링키
+
+            ---
+
+            **`payment_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            결제 ID
+
+            ---
+
+            **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**ScheduleStatus**</mark>
+
+            예약결제 상태\
+            `SCHEDULED`: 결제 예약\
+            `STARTED`: 결제 실행\
+            `COMPLETED`: 실행 완료\
+            `CANCELLED`: 예약 취소\\
+
+            `"SCHEDULED"`, `"STARTED"`, `"COMPLETED"`, `"CANCELLED"`
+
+            ---
+
+            **`scheduled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            결제 예약 시각
+
+            ---
+
+            **`started_at`** <mark style="color:green;">**string**</mark>
+
+            결제 실행 시각 (`status`가 `STARTED`로 되었을 경우 제공)
+
+            ---
+
+            **`completed_at`** <mark style="color:green;">**string**</mark>
+
+            결제 완료 시각 (`status`가 `COMPLETED`인 경우 제공)
+
+            ---
+
+            **`cancelled_at`** <mark style="color:green;">**string**</mark>
+
+            결제 취소 시각 (`status`가 `CANCELLED`인 경우 제공)
+
+            ---
+
+            **`order_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            주문명
+
+            ---
+
+            **`is_cultural_expense`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**boolean**</mark>
+
+            문화비 지출 여부
+
+            ---
+
+            **`is_escrow`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**boolean**</mark>
+
+            에스크로 결제 여부
+
+            ---
+
+            **`products`** <mark style="color:red;">**Array\[Product]**</mark>
+
+            상품 정보 (에스크로 결제 시 에스크로 상품 정보로 활용됨)
+
+            ---
+
+            **`customer`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**Customer**</mark>
+
+            구매자 정보
+
+            ---
+
+            **`custom_data`** <mark style="color:green;">**string**</mark>
+
+            커스텀 데이터
+
+            ---
+
+            **`total_amount`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+            결제 금액
+
+            ---
+
+            **`tax_free_amount`** <mark style="color:blue;">**integer**</mark>
+
+            면세 금액
+
+            ---
+
+            **`currency`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Currency**</mark>
+
+            통화
+
+            `"KRW"`, `"USD"`, `"EUR"`, `"JPY"`, `"CNY"`, `"VND"`, `"THB"`, `"SGD"`, `"AUD"`, `"HKD"`, `"AED"`, `"AFN"`, `"ALL"`, `"AMD"`, `"ANG"`, `"AOA"`, `"ARS"`, `"AWG"`, `"AZN"`, `"BAM"`, `"BBD"`, `"BDT"`, `"BGN"`, `"BHD"`, `"BIF"`, `"BMD"`, `"BND"`, `"BOB"`, `"BOV"`, `"BRL"`, `"BSD"`, `"BTN"`, `"BWP"`, `"BYN"`, `"BZD"`, `"CAD"`, `"CDF"`, `"CHE"`, `"CHF"`, `"CHW"`, `"CLF"`, `"CLP"`, `"COP"`, `"COU"`, `"CRC"`, `"CUC"`, `"CUP"`, `"CVE"`, `"CZK"`, `"DJF"`, `"DKK"`, `"DOP"`, `"DZD"`, `"EGP"`, `"ERN"`, `"ETB"`, `"FJD"`, `"FKP"`, `"GBP"`, `"GEL"`, `"GHS"`, `"GIP"`, `"GMD"`, `"GNF"`, `"GTQ"`, `"GYD"`, `"HNL"`, `"HRK"`, `"HTG"`, `"HUF"`, `"IDR"`, `"ILS"`, `"INR"`, `"IQD"`, `"IRR"`, `"ISK"`, `"JMD"`, `"JOD"`, `"KES"`, `"KGS"`, `"KHR"`, `"KMF"`, `"KPW"`, `"KWD"`, `"KYD"`, `"KZT"`, `"LAK"`, `"LBP"`, `"LKR"`, `"LRD"`, `"LSL"`, `"LYD"`, `"MAD"`, `"MDL"`, `"MGA"`, `"MKD"`, `"MMK"`, `"MNT"`, `"MOP"`, `"MRU"`, `"MUR"`, `"MVR"`, `"MWK"`, `"MXN"`, `"MXV"`, `"MYR"`, `"MZN"`, `"NAD"`, `"NGN"`, `"NIO"`, `"NOK"`, `"NPR"`, `"NZD"`, `"OMR"`, `"PAB"`, `"PEN"`, `"PGK"`, `"PHP"`, `"PKR"`, `"PLN"`, `"PYG"`, `"QAR"`, `"RON"`, `"RSD"`, `"RUB"`, `"RWF"`, `"SAR"`, `"SBD"`, `"SCR"`, `"SDG"`, `"SEK"`, `"SHP"`, `"SLE"`, `"SLL"`, `"SOS"`, `"SRD"`, `"SSP"`, `"STN"`, `"SVC"`, `"SYP"`, `"SZL"`, `"TJS"`, `"TMT"`, `"TND"`, `"TOP"`, `"TRY"`, `"TTD"`, `"TWD"`, `"TZS"`, `"UAH"`, `"UGX"`, `"USN"`, `"UYI"`, `"UYU"`, `"UYW"`, `"UZS"`, `"VED"`, `"VES"`, `"VUV"`, `"WST"`, `"XAF"`, `"XAG"`, `"XAU"`, `"XBA"`, `"XBB"`, `"XBC"`, `"XBD"`, `"XCD"`, `"XDR"`, `"XOF"`, `"XPD"`, `"XPF"`, `"XPT"`, `"XSU"`, `"XTS"`, `"XUA"`, `"XXX"`, `"YER"`, `"ZAR"`, `"ZMW"`, `"ZWL"`
+
+            ---
+
+            **`origin`** <mark style="color:red;">**Origin**</mark>
+
+            결제를 요청한 근원에 대한 정보
+
+            ---
+
+            **`notice_urls`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[string]**</mark>
+
+            결제 승인/실패 시 요청을 받을 웹훅 주소입니다. 상점에 설정되어 있는 값보다 우선적으로 적용됩니다.
+
+            ---
+
+            **`installment_month`** <mark style="color:blue;">**integer**</mark>
+
+            할부개월
+
+            ---
+          </Details.Content>
+        </Details>
+
+        ---
+      </Tabs.Tab>
+
+      <Tabs.Tab title="Customer">
+        **`id`** <mark style="color:green;">**string**</mark>
+
+        구매자 ID
+
+        ---
+
+        **`name`** <mark style="color:green;">**string**</mark>
+
+        구매자 이름
+
+        ---
+
+        **`birthYear`** <mark style="color:green;">**string**</mark>
+
+        구매자 생년
+
+        ---
+
+        **`gender`** <mark style="color:green;">**Gender**</mark>
+
+        `"MALE"`, `"FEMALE"`, `"OTHER"`
+
+        ---
+
+        **`email`** <mark style="color:green;">**string**</mark>
+
+        구매자 이메일
+
+        ---
+
+        **`phone_number`** <mark style="color:green;">**string**</mark>
+
+        구매자 전화번호
+
+        ---
+
+        **`one_line_address`** <mark style="color:green;">**string**</mark>
+
+        구매자 주소 (한 줄)
+
+        ---
+
+        **`separated_address`** <mark style="color:red;">**SeparatedAddress**</mark>
+
+        구매자 주소 (단위별)
+
+        <Details>
+          <Details.Summary>SeparatedAddress</Details.Summary>
+
+          <Details.Content>
+            **`country`** <mark style="color:green;">**Country**</mark>
+
+            국가
+
+            `"AF"`, `"AX"`, `"AL"`, `"DZ"`, `"AS"`, `"AD"`, `"AO"`, `"AI"`, `"AQ"`, `"AG"`, `"AR"`, `"AM"`, `"AW"`, `"AU"`, `"AT"`, `"AZ"`, `"BH"`, `"BS"`, `"BD"`, `"BB"`, `"BY"`, `"BE"`, `"BZ"`, `"BJ"`, `"BM"`, `"BT"`, `"BO"`, `"BQ"`, `"BA"`, `"BW"`, `"BV"`, `"BR"`, `"IO"`, `"BN"`, `"BG"`, `"BF"`, `"BI"`, `"KH"`, `"CM"`, `"CA"`, `"CV"`, `"KY"`, `"CF"`, `"TD"`, `"CL"`, `"CN"`, `"CX"`, `"CC"`, `"CO"`, `"KM"`, `"CG"`, `"CD"`, `"CK"`, `"CR"`, `"CI"`, `"HR"`, `"CU"`, `"CW"`, `"CY"`, `"CZ"`, `"DK"`, `"DJ"`, `"DM"`, `"DO"`, `"EC"`, `"EG"`, `"SV"`, `"GQ"`, `"ER"`, `"EE"`, `"ET"`, `"FK"`, `"FO"`, `"FJ"`, `"FI"`, `"FR"`, `"GF"`, `"PF"`, `"TF"`, `"GA"`, `"GM"`, `"GE"`, `"DE"`, `"GH"`, `"GI"`, `"GR"`, `"GL"`, `"GD"`, `"GP"`, `"GU"`, `"GT"`, `"GG"`, `"GN"`, `"GW"`, `"GY"`, `"HT"`, `"HM"`, `"VA"`, `"HN"`, `"HK"`, `"HU"`, `"IS"`, `"IN"`, `"ID"`, `"IR"`, `"IQ"`, `"IE"`, `"IM"`, `"IL"`, `"IT"`, `"JM"`, `"JP"`, `"JE"`, `"JO"`, `"KZ"`, `"KE"`, `"KI"`, `"KP"`, `"KR"`, `"KW"`, `"KG"`, `"LA"`, `"LV"`, `"LB"`, `"LS"`, `"LR"`, `"LY"`, `"LI"`, `"LT"`, `"LU"`, `"MO"`, `"MK"`, `"MG"`, `"MW"`, `"MY"`, `"MV"`, `"ML"`, `"MT"`, `"MH"`, `"MQ"`, `"MR"`, `"MU"`, `"YT"`, `"MX"`, `"FM"`, `"MD"`, `"MC"`, `"MN"`, `"ME"`, `"MS"`, `"MA"`, `"MZ"`, `"MM"`, `"NA"`, `"NR"`, `"NP"`, `"NL"`, `"NC"`, `"NZ"`, `"NI"`, `"NE"`, `"NG"`, `"NU"`, `"NF"`, `"MP"`, `"NO"`, `"OM"`, `"PK"`, `"PW"`, `"PS"`, `"PA"`, `"PG"`, `"PY"`, `"PE"`, `"PH"`, `"PN"`, `"PL"`, `"PT"`, `"PR"`, `"QA"`, `"RE"`, `"RO"`, `"RU"`, `"RW"`, `"BL"`, `"SH"`, `"KN"`, `"LC"`, `"MF"`, `"PM"`, `"VC"`, `"WS"`, `"SM"`, `"ST"`, `"SA"`, `"SN"`, `"RS"`, `"SC"`, `"SL"`, `"SG"`, `"SX"`, `"SK"`, `"SI"`, `"SB"`, `"SO"`, `"ZA"`, `"GS"`, `"SS"`, `"ES"`, `"LK"`, `"SD"`, `"SR"`, `"SJ"`, `"SZ"`, `"SE"`, `"CH"`, `"SY"`, `"TW"`, `"TJ"`, `"TZ"`, `"TH"`, `"TL"`, `"TG"`, `"TK"`, `"TO"`, `"TT"`, `"TN"`, `"TR"`, `"TM"`, `"TC"`, `"TV"`, `"UG"`, `"UA"`, `"AE"`, `"GB"`, `"US"`, `"UM"`, `"UY"`, `"UZ"`, `"VU"`, `"VE"`, `"VN"`, `"VG"`, `"VI"`, `"WF"`, `"EH"`, `"YE"`, `"ZM"`, `"ZW"`
+
+            ---
+
+            **`province`** <mark style="color:green;">**string**</mark>
+
+            시/도/구
+
+            ---
+
+            **`city`** <mark style="color:green;">**string**</mark>
+
+            도시
+
+            ---
+
+            **`address_line_1`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            일반 주소
+
+            ---
+
+            **`address_line_2`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            상세 주소
+
+            ---
+          </Details.Content>
+        </Details>
+
+        ---
+
+        **`zipcode`** <mark style="color:green;">**string**</mark>
+
+        구매자 우편번호
+
+        ---
+      </Tabs.Tab>
+
+      <Tabs.Tab title="Origin">
+        **`platform_type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        결제를 요청한 단말의 플랫폼 분류
+
+        `"PC"`, `"MOBILE"`, `"API"`
+
+        ---
+
+        **`user_agent`** <mark style="color:green;">**string**</mark>
+
+        결제근원의 환경 정보 (Http 의 User-Agent header value)
+
+        ---
+
+        **`url`** <mark style="color:green;">**string**</mark>
+
+        결제근원의 페이지 url
+
+        ---
+
+        **`ip_address`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        결제근원의 IP 주소
+
+        ---
+      </Tabs.Tab>
+
+      <Tabs.Tab title="Product">
+        **`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        상품 ID
+
+        ---
+
+        **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        상품명
+
+        ---
+
+        **`tag`** <mark style="color:green;">**string**</mark>
+
+        상품 태그(카테고리)
+
+        ---
+
+        **`code`** <mark style="color:green;">**string**</mark>
+
+        상품 코드
+
+        ---
+
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+        상품 단위가격
+
+        ---
+
+        **`quantity`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+        주문 수량
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401" description="인증 실패">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"UNAUTHORIZED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="500" description="내부 서버 오류">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"PORTONE_ERROR"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+</Swagger>
+
+## ⌨ 빌링키 정기결제예약 취소
+
+<Swagger method="delete" path="/schedules" baseUrl="https://api.portone.io/v2" summary="빌링키 정기결제예약 취소">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Query
+
+  <SwaggerParameter name="store_id" type="string" required="false">
+    하위 상점 ID - 값을 넣지 않으면 Merchant 유저의 기본값으로 설정된 상점의 id가 입력됩니다.
+  </SwaggerParameter>
+
+  <SwaggerParameter name="billing_key" type="string" required="true">
+    정기결제예약 빌링키
+  </SwaggerParameter>
+
+  <SwaggerParameter name="schedule_id" type="array" required="false">
+    삭제할 정기결제예약 아이디 목록, 비어있을 경우 빌링키로 예약한 모든 예약을 취소함
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200" description="200 응답">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`deleted_schedule_ids`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[string]**</mark>
+
+        삭제된 정기결제예약 아이디 목록
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="400" description="400 에러 응답">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"INVALID_REQUEST"`, `"SCHEDULE_ALREADY_PROCESSED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401" description="인증 실패">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"UNAUTHORIZED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="500" description="내부 서버 오류">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"PORTONE_ERROR"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+</Swagger>
+
+## ⌨ 정기결제예약 단건 조회
+
+<Swagger method="get" path="/schedules/{schedule_id}" baseUrl="https://api.portone.io/v2" summary="정기결제예약 단건 조회">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Path
+
+  <SwaggerParameter name="schedule_id" type="string" required="true">
+    정기결제예약 ID
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200" description="200 응답">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`schedule`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**Schedule**</mark>
+
+        결제예약정보
+
+        <Details>
+          <Details.Summary>Schedule</Details.Summary>
+
+          <Details.Content>
+            **`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            결제예약 ID
+
+            ---
+
+            **`merchant_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            고객사 ID
+
+            ---
+
+            **`store_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            하위 상점 ID
+
+            ---
+
+            **`billing_key`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            빌링키
+
+            ---
+
+            **`payment_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            결제 ID
+
+            ---
+
+            **`status`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**ScheduleStatus**</mark>
+
+            예약결제 상태\
+            `SCHEDULED`: 결제 예약\
+            `STARTED`: 결제 실행\
+            `COMPLETED`: 실행 완료\
+            `CANCELLED`: 예약 취소\\
+
+            `"SCHEDULED"`, `"STARTED"`, `"COMPLETED"`, `"CANCELLED"`
+
+            ---
+
+            **`scheduled_at`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            결제 예약 시각
+
+            ---
+
+            **`started_at`** <mark style="color:green;">**string**</mark>
+
+            결제 실행 시각 (`status`가 `STARTED`로 되었을 경우 제공)
+
+            ---
+
+            **`completed_at`** <mark style="color:green;">**string**</mark>
+
+            결제 완료 시각 (`status`가 `COMPLETED`인 경우 제공)
+
+            ---
+
+            **`cancelled_at`** <mark style="color:green;">**string**</mark>
+
+            결제 취소 시각 (`status`가 `CANCELLED`인 경우 제공)
+
+            ---
+
+            **`order_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            주문명
+
+            ---
+
+            **`is_cultural_expense`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**boolean**</mark>
+
+            문화비 지출 여부
+
+            ---
+
+            **`is_escrow`** <mark style="color:red;">**\***</mark> <mark style="color:orange;">**boolean**</mark>
+
+            에스크로 결제 여부
+
+            ---
+
+            **`products`** <mark style="color:red;">**Array\[Product]**</mark>
+
+            상품 정보 (에스크로 결제 시 에스크로 상품 정보로 활용됨)
+
+            ---
+
+            **`customer`** <mark style="color:red;">**\***</mark> <mark style="color:red;">**Customer**</mark>
+
+            구매자 정보
+
+            ---
+
+            **`custom_data`** <mark style="color:green;">**string**</mark>
+
+            커스텀 데이터
+
+            ---
+
+            **`total_amount`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+            결제 금액
+
+            ---
+
+            **`tax_free_amount`** <mark style="color:blue;">**integer**</mark>
+
+            면세 금액
+
+            ---
+
+            **`currency`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Currency**</mark>
+
+            통화
+
+            `"KRW"`, `"USD"`, `"EUR"`, `"JPY"`, `"CNY"`, `"VND"`, `"THB"`, `"SGD"`, `"AUD"`, `"HKD"`, `"AED"`, `"AFN"`, `"ALL"`, `"AMD"`, `"ANG"`, `"AOA"`, `"ARS"`, `"AWG"`, `"AZN"`, `"BAM"`, `"BBD"`, `"BDT"`, `"BGN"`, `"BHD"`, `"BIF"`, `"BMD"`, `"BND"`, `"BOB"`, `"BOV"`, `"BRL"`, `"BSD"`, `"BTN"`, `"BWP"`, `"BYN"`, `"BZD"`, `"CAD"`, `"CDF"`, `"CHE"`, `"CHF"`, `"CHW"`, `"CLF"`, `"CLP"`, `"COP"`, `"COU"`, `"CRC"`, `"CUC"`, `"CUP"`, `"CVE"`, `"CZK"`, `"DJF"`, `"DKK"`, `"DOP"`, `"DZD"`, `"EGP"`, `"ERN"`, `"ETB"`, `"FJD"`, `"FKP"`, `"GBP"`, `"GEL"`, `"GHS"`, `"GIP"`, `"GMD"`, `"GNF"`, `"GTQ"`, `"GYD"`, `"HNL"`, `"HRK"`, `"HTG"`, `"HUF"`, `"IDR"`, `"ILS"`, `"INR"`, `"IQD"`, `"IRR"`, `"ISK"`, `"JMD"`, `"JOD"`, `"KES"`, `"KGS"`, `"KHR"`, `"KMF"`, `"KPW"`, `"KWD"`, `"KYD"`, `"KZT"`, `"LAK"`, `"LBP"`, `"LKR"`, `"LRD"`, `"LSL"`, `"LYD"`, `"MAD"`, `"MDL"`, `"MGA"`, `"MKD"`, `"MMK"`, `"MNT"`, `"MOP"`, `"MRU"`, `"MUR"`, `"MVR"`, `"MWK"`, `"MXN"`, `"MXV"`, `"MYR"`, `"MZN"`, `"NAD"`, `"NGN"`, `"NIO"`, `"NOK"`, `"NPR"`, `"NZD"`, `"OMR"`, `"PAB"`, `"PEN"`, `"PGK"`, `"PHP"`, `"PKR"`, `"PLN"`, `"PYG"`, `"QAR"`, `"RON"`, `"RSD"`, `"RUB"`, `"RWF"`, `"SAR"`, `"SBD"`, `"SCR"`, `"SDG"`, `"SEK"`, `"SHP"`, `"SLE"`, `"SLL"`, `"SOS"`, `"SRD"`, `"SSP"`, `"STN"`, `"SVC"`, `"SYP"`, `"SZL"`, `"TJS"`, `"TMT"`, `"TND"`, `"TOP"`, `"TRY"`, `"TTD"`, `"TWD"`, `"TZS"`, `"UAH"`, `"UGX"`, `"USN"`, `"UYI"`, `"UYU"`, `"UYW"`, `"UZS"`, `"VED"`, `"VES"`, `"VUV"`, `"WST"`, `"XAF"`, `"XAG"`, `"XAU"`, `"XBA"`, `"XBB"`, `"XBC"`, `"XBD"`, `"XCD"`, `"XDR"`, `"XOF"`, `"XPD"`, `"XPF"`, `"XPT"`, `"XSU"`, `"XTS"`, `"XUA"`, `"XXX"`, `"YER"`, `"ZAR"`, `"ZMW"`, `"ZWL"`
+
+            ---
+
+            **`origin`** <mark style="color:red;">**Origin**</mark>
+
+            결제를 요청한 근원에 대한 정보
+
+            ---
+
+            **`notice_urls`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**Array\[string]**</mark>
+
+            결제 승인/실패 시 요청을 받을 웹훅 주소입니다. 상점에 설정되어 있는 값보다 우선적으로 적용됩니다.
+
+            ---
+
+            **`installment_month`** <mark style="color:blue;">**integer**</mark>
+
+            할부개월
+
+            ---
+          </Details.Content>
+        </Details>
+
+        ---
+      </Tabs.Tab>
+
+      <Tabs.Tab title="Customer">
+        **`id`** <mark style="color:green;">**string**</mark>
+
+        구매자 ID
+
+        ---
+
+        **`name`** <mark style="color:green;">**string**</mark>
+
+        구매자 이름
+
+        ---
+
+        **`birthYear`** <mark style="color:green;">**string**</mark>
+
+        구매자 생년
+
+        ---
+
+        **`gender`** <mark style="color:green;">**Gender**</mark>
+
+        `"MALE"`, `"FEMALE"`, `"OTHER"`
+
+        ---
+
+        **`email`** <mark style="color:green;">**string**</mark>
+
+        구매자 이메일
+
+        ---
+
+        **`phone_number`** <mark style="color:green;">**string**</mark>
+
+        구매자 전화번호
+
+        ---
+
+        **`one_line_address`** <mark style="color:green;">**string**</mark>
+
+        구매자 주소 (한 줄)
+
+        ---
+
+        **`separated_address`** <mark style="color:red;">**SeparatedAddress**</mark>
+
+        구매자 주소 (단위별)
+
+        <Details>
+          <Details.Summary>SeparatedAddress</Details.Summary>
+
+          <Details.Content>
+            **`country`** <mark style="color:green;">**Country**</mark>
+
+            국가 코드
+
+            `"AF"`, `"AX"`, `"AL"`, `"DZ"`, `"AS"`, `"AD"`, `"AO"`, `"AI"`, `"AQ"`, `"AG"`, `"AR"`, `"AM"`, `"AW"`, `"AU"`, `"AT"`, `"AZ"`, `"BH"`, `"BS"`, `"BD"`, `"BB"`, `"BY"`, `"BE"`, `"BZ"`, `"BJ"`, `"BM"`, `"BT"`, `"BO"`, `"BQ"`, `"BA"`, `"BW"`, `"BV"`, `"BR"`, `"IO"`, `"BN"`, `"BG"`, `"BF"`, `"BI"`, `"KH"`, `"CM"`, `"CA"`, `"CV"`, `"KY"`, `"CF"`, `"TD"`, `"CL"`, `"CN"`, `"CX"`, `"CC"`, `"CO"`, `"KM"`, `"CG"`, `"CD"`, `"CK"`, `"CR"`, `"CI"`, `"HR"`, `"CU"`, `"CW"`, `"CY"`, `"CZ"`, `"DK"`, `"DJ"`, `"DM"`, `"DO"`, `"EC"`, `"EG"`, `"SV"`, `"GQ"`, `"ER"`, `"EE"`, `"ET"`, `"FK"`, `"FO"`, `"FJ"`, `"FI"`, `"FR"`, `"GF"`, `"PF"`, `"TF"`, `"GA"`, `"GM"`, `"GE"`, `"DE"`, `"GH"`, `"GI"`, `"GR"`, `"GL"`, `"GD"`, `"GP"`, `"GU"`, `"GT"`, `"GG"`, `"GN"`, `"GW"`, `"GY"`, `"HT"`, `"HM"`, `"VA"`, `"HN"`, `"HK"`, `"HU"`, `"IS"`, `"IN"`, `"ID"`, `"IR"`, `"IQ"`, `"IE"`, `"IM"`, `"IL"`, `"IT"`, `"JM"`, `"JP"`, `"JE"`, `"JO"`, `"KZ"`, `"KE"`, `"KI"`, `"KP"`, `"KR"`, `"KW"`, `"KG"`, `"LA"`, `"LV"`, `"LB"`, `"LS"`, `"LR"`, `"LY"`, `"LI"`, `"LT"`, `"LU"`, `"MO"`, `"MK"`, `"MG"`, `"MW"`, `"MY"`, `"MV"`, `"ML"`, `"MT"`, `"MH"`, `"MQ"`, `"MR"`, `"MU"`, `"YT"`, `"MX"`, `"FM"`, `"MD"`, `"MC"`, `"MN"`, `"ME"`, `"MS"`, `"MA"`, `"MZ"`, `"MM"`, `"NA"`, `"NR"`, `"NP"`, `"NL"`, `"NC"`, `"NZ"`, `"NI"`, `"NE"`, `"NG"`, `"NU"`, `"NF"`, `"MP"`, `"NO"`, `"OM"`, `"PK"`, `"PW"`, `"PS"`, `"PA"`, `"PG"`, `"PY"`, `"PE"`, `"PH"`, `"PN"`, `"PL"`, `"PT"`, `"PR"`, `"QA"`, `"RE"`, `"RO"`, `"RU"`, `"RW"`, `"BL"`, `"SH"`, `"KN"`, `"LC"`, `"MF"`, `"PM"`, `"VC"`, `"WS"`, `"SM"`, `"ST"`, `"SA"`, `"SN"`, `"RS"`, `"SC"`, `"SL"`, `"SG"`, `"SX"`, `"SK"`, `"SI"`, `"SB"`, `"SO"`, `"ZA"`, `"GS"`, `"SS"`, `"ES"`, `"LK"`, `"SD"`, `"SR"`, `"SJ"`, `"SZ"`, `"SE"`, `"CH"`, `"SY"`, `"TW"`, `"TJ"`, `"TZ"`, `"TH"`, `"TL"`, `"TG"`, `"TK"`, `"TO"`, `"TT"`, `"TN"`, `"TR"`, `"TM"`, `"TC"`, `"TV"`, `"UG"`, `"UA"`, `"AE"`, `"GB"`, `"US"`, `"UM"`, `"UY"`, `"UZ"`, `"VU"`, `"VE"`, `"VN"`, `"VG"`, `"VI"`, `"WF"`, `"EH"`, `"YE"`, `"ZM"`, `"ZW"`
+
+            ---
+
+            **`province`** <mark style="color:green;">**string**</mark>
+
+            시/도/구
+
+            ---
+
+            **`city`** <mark style="color:green;">**string**</mark>
+
+            도시
+
+            ---
+
+            **`address_line_1`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            일반 주소
+
+            ---
+
+            **`address_line_2`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+            상세 주소
+
+            ---
+          </Details.Content>
+        </Details>
+
+        ---
+
+        **`zipcode`** <mark style="color:green;">**string**</mark>
+
+        구매자 우편번호
+
+        ---
+      </Tabs.Tab>
+
+      <Tabs.Tab title="Origin">
+        **`platform_type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        결제를 요청한 단말의 플랫폼 분류
+
+        `"PC"`, `"MOBILE"`, `"API"`
+
+        ---
+
+        **`user_agent`** <mark style="color:green;">**string**</mark>
+
+        결제근원의 환경 정보 (Http 의 User-Agent header value)
+
+        ---
+
+        **`url`** <mark style="color:green;">**string**</mark>
+
+        결제근원의 페이지 url
+
+        ---
+
+        **`ip_address`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        결제근원의 IP 주소
+
+        ---
+      </Tabs.Tab>
+
+      <Tabs.Tab title="Product">
+        **`id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        상품 ID
+
+        ---
+
+        **`name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        상품명
+
+        ---
+
+        **`tag`** <mark style="color:green;">**string**</mark>
+
+        상품 태그(카테고리)
+
+        ---
+
+        **`code`** <mark style="color:green;">**string**</mark>
+
+        상품 코드
+
+        ---
+
+        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+        상품 단위가격
+
+        ---
+
+        **`quantity`** <mark style="color:red;">**\***</mark> <mark style="color:blue;">**integer**</mark>
+
+        주문 수량
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401" description="인증 실패">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"UNAUTHORIZED"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="404" description="리소스를 찾을 수 없음">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"SCHEDULE_NOT_FOUND"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="500" description="내부 서버 오류">
+    <Tabs>
+      <Tabs.Tab title="Response">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        `"PORTONE_ERROR"`
+
+        ---
+
+        **`params`** <mark style="color:red;">**object**</mark>
+
+        에러 세부사항
+
+        ---
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+</Swagger>

@@ -1,0 +1,261 @@
+---
+title: Request billing key API
+description: ""
+---
+
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## Requests a billing key with credit card information.
+
+<Swagger method="post" path="/subscribe/customer/{customer_uid}" baseUrl="https://api.iamport.kr" summary="Requests a billing key with the customer's credit card information.">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Path
+
+  <SwaggerParameter name="customer_uid" type="String(80)" required="true">
+    <mark style="color:red;">
+      **Billing key**
+    </mark>
+  </SwaggerParameter>
+
+  #### Body
+
+  <SwaggerParameter required="true" name="pg" type="String">
+    **PG code**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="card_numb" type="String" required="true">
+    **Credit card number**
+
+    <mark style="color:red;">**XXXX-XXXX-XXXX-XXXX**</mark>
+  </SwaggerParameter>
+
+  <SwaggerParameter name="expiry" type="String" required="true">
+    **Credit card expiration**
+
+    <mark style="color:red;">**YYYY-MM**</mark>
+  </SwaggerParameter>
+
+  <SwaggerParameter name="birth" type="String" required="false">
+    **6-digit DOB**
+
+    **10-digit business registration number for corporate card**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="pwd_2digit" type="String" required="false">
+    **First 2-digits of credit card password**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="cvc" type="String" required="false">
+    **CVC code**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_name" type="String" required="false">
+    **Card holder**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_tel" type="String" required="false">
+    **Card holder's phone**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_email" type="String" required="false">
+    **Card holder's email**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_addr" type="String" required="false">
+    **Card holder's address**
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_postcode" type="String" required="false">
+    Card holder's zip code
+  </SwaggerParameter>
+
+  <SwaggerParameter name="customer_id" type="String">
+    Customer ID (
+
+    <mark style="color:red;">
+      **For Toss Payments only**
+    </mark>
+
+    )
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tabs.Tab title="CustomerResponse">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **Response code**
+
+        0: success, Not 0: check the message
+
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Response message**
+
+        A non-zero code includes a message like 'Invalid payment info'.
+
+        **`response`** <mark style="color:red;">**(CustomerAnnotation, optional)**</mark>
+      </Tabs.Tab>
+    </Tabs>
+
+    <Tabs>
+      <Tabs.Tab title="CustomerAnnotation">
+        **`code`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **Response code**
+
+        0: success, Not 0: check the message
+
+        **`message`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **Response message**
+
+        A non-zero code includes a message like 'Invalid payment info'.
+
+        **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Customer ID`**
+
+        **`pg_provider`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **PG code for billing key**
+
+        **`pg_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **PG merchant ID (MID) for billing key**
+
+        **`card_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Credit card name`**
+
+        **`card_code`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Credit card code`**
+
+        **`card_number`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Masked card number`**
+
+        **`card_type`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Credit card type`**
+
+        **Not supported in some PGs (returns null)**
+
+        **`customer_name`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Customer name`**
+
+        **`customer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Customer phone`**
+
+        **`customer_email`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Customer email`**
+
+        **`customer_addr`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Customer address`**
+
+        **`customer_postcode`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **`Customer zip code`**
+
+        **`inserted`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **`Billing key issued at`** (UNIX timestamp)
+
+        **`updated`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+        **`Billing key updated at`** (UNIX timestamp)
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+</Swagger>
+
+### **Key request parameter description**
+
+> **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+>
+> **PG code**
+>
+> When using multiple MIDs for the same PG, specify as <mark style="color:red;">**PG code.MID**</mark>.
+>
+> _Example: PG = NHN KCP and site code = IPXC_
+>
+> **kcp.IPXC**
+
+> **`birth`** <mark style="color:red;">\*</mark> <mark style="color:green;">**string**</mark>
+>
+> **DOB**
+>
+> May be omitted for some PGs upon pre-agreement.
+
+> **`customer_id`** <mark style="color:green;">**`string`**</mark>
+>
+> **`Customer ID`**
+>
+> <mark style="color:red;">**For Toss Payments only**</mark>
+
+<Hint style="info">
+  **Using this API requires a pre-agreement with the PG.**
+
+  - You may modify the required card information upon agreement with the PG.
+  - Special attention to security is required due to using sensitive card information.
+  - The `customer_uid` must be unique and issued per **customer-card number** pair.
+</Hint>
+
+<Details>
+  <Details.Summary>Response Model Schema</Details.Summary>
+
+  <Details.Content>
+    ```json
+    {
+      "code": 0,
+      "message": "string",
+      "response": {
+        "customer_uid": "string",
+        "pg_provider": "string",
+        "pg_id": "string",
+        "card_name": "string",
+        "card_code": "string",
+        "card_number": "string",
+        "card_type": "null",
+        "customer_name": "string",
+        "customer_tel": "string",
+        "customer_email": "string",
+        "customer_addr": "string",
+        "customer_postcode": "string",
+        "inserted": 0,
+        "updated": 0
+      }
+    }
+    ```
+  </Details.Content>
+</Details>
+
+<Hint style="success">
+  **Swagger Test Link**
+
+  [**https://api.iamport.kr/#!/subscribe.customer/customer\_save**](https://api.iamport.kr/#!/subscribe.customer/customer_save)
+</Hint>

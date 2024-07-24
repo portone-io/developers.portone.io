@@ -1,0 +1,152 @@
+---
+title: Eximbay
+description: Eximbay payment window integration guide
+---
+
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## 1. Configure Eximbay PG settings
+
+Refer to the [**Eximbay settings**](../../ready/2-pg/payment-gateway-settings/undefined-6) page to
+configure the PG settings.
+
+![](</gitbook-assets/en/screenshot 2022-06-03 3.34.40.png>)
+
+## 2. Request payment
+
+To open the payment window, call [JavaScript SDK](../../sdk/javascript-sdk/readme)
+IMP.**request\_pay**(param, callback).
+
+In PC and mobile browsers, <mark style="color:red;">**callback**</mark> is invoked after calling `IMP.request_pay(param, callback)`.
+
+<Tabs>
+  <Tabs.Tab title="Authenticated payment request">
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        pg: "eximbay",
+        pay_method: "card",
+        merchant_uid: "{Merchant created Order ID}", // Example: order_no_0001
+        name: "Order name: Test payment request",
+        amount: 14.2,
+        currency: "USD",
+        buyer_email: "iamport@siot.do",
+        buyer_name: "John Doe",
+        buyer_tel: "010-1234-5678", // Required
+        buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+        buyer_postcode: "123-456",
+      },
+      function (rsp) {
+        // callback logic
+        //* ...Omitted... *//
+      },
+    );
+    ```
+
+    ### Key parameter description
+
+    **`pg`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **PG code**
+
+    - If not specified and this is the only PG setting that exists, `default PG` is automatically set.
+    - If there are multiple PG settings, set to **`eximbay`**.
+
+    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **Payment method code**
+
+    <Details>
+      <Details.Summary>Payment method codes</Details.Summary>
+
+      <Details.Content>
+        - `card` (credit card)
+        - `wechat`
+        - `card` (foreign credit card)
+        - `unionpay`
+        - `tenpay`
+        - `econtext` (payment via Japanese convenience store)
+      </Details.Content>
+    </Details>
+
+    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **Order ID**
+
+    Must be unique for each request.
+
+    **`buyer_tel`**<mark style="color:red;">**\***</mark><mark style="color:green;">**`string`**</mark>
+
+    **`Customer phone`**
+
+    **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
+
+    **Payment amount**
+
+    Must be an integer (not string)
+
+    **`currency`**<mark style="color:green;">**`string`**</mark>
+
+    **Currency**
+
+    - KRW
+    - USD
+    - EUR
+    - GBP
+    - JPY
+    - THB
+    - SGD
+    - RUB
+    - HKD
+    - CAD
+    - AUD
+
+    **`language`` `**<mark style="color:green;">**`string`**</mark>
+
+    - Korean : ko
+    - English : en
+    - Chinese : zh
+    - Japanese : jp
+  </Tabs.Tab>
+</Tabs>
+
+<Hint style="warning">
+  ### Note
+
+  i'mport does not support Eximbay subscription payment.
+</Hint>
+
+<Details>
+  <Details.Summary>How to test convenience store payment</Details.Summary>
+
+  <Details.Content>
+    ### Convenience store payment method
+
+    As with virtual accounts in Korea, payment is processed at the convenience store counter using the message sent to the customer by e-mail or text message after requesting payment via the payment window.
+
+    - i'mport internally sets pay\_method : vbank
+    - Sends callback and webhook to notify that Econtext has been created (status: ready / vbank\_num is fixed as unknown)
+    - When Econtext confirms payment deposit, i'mport receives a response from Eximbay, changes status to `paid`, and sends a webhook for post-payment processing
+
+    ### **Convenience store payment test procedure**
+
+    As with the virtual account, you need to test the result of the customer's deposit and receive a notification upon deposit.
+
+    1. Set Eximbay test mode to `ON` and proceed with the payment window.
+
+    2. Write down the `pg_tid` value from the callback response (check the value from the PG approval number column in the i'mport Admin console)
+
+    3. Log in from [http://test.econ.ne.jp/site/tuchi\_2/tuchi\_menu\_2.html](http://test.econ.ne.jp/site/tuchi_2/tuchi_menu_2.html) \
+       (ID: ectest / password: #eg0810# )
+
+    4. ShopID : 361301, orderID : `pg_tid` (from step 2)
+
+    5. Click **登録** button at the bottom
+
+    6. On the next page, click **登録** button
+
+    7. Wait 10 minutes and then check that the status is changed to **paid** (at this point, webhook is sent to notify of the deposit)
+  </Details.Content>
+</Details>

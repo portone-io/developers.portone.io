@@ -1,36 +1,33 @@
-import type React from "preact/compat";
+import clsx from "clsx";
+import { type JSXElement, mergeProps, Show } from "solid-js";
 
 export interface ExpandProps {
   title?: string;
-  className?: string;
-  children?: React.ReactNode;
+  class?: string;
+  children?: JSXElement;
   expand?: boolean;
   onToggle?: (expand: boolean) => void;
   onCollapse?: () => void;
 }
-export default function Expand({
-  title = "",
-  className = "",
-  children,
-  expand,
-  onToggle,
-  onCollapse,
-}: ExpandProps) {
-  const expandButton = (
+export default function Expand(_props: ExpandProps) {
+  const props = mergeProps({ title: "" }, _props);
+  const expandButton = () => (
     <ExpandButton
-      title={title}
-      expand={expand}
+      title={props.title}
+      expand={props.expand}
       onClick={() => {
-        onToggle?.(!expand);
-        if (expand) onCollapse?.();
+        props.onToggle?.(!props.expand);
+        if (props.expand) props.onCollapse?.();
       }}
     />
   );
   return (
-    <div class={`flex flex-col gap-20 ${className}`}>
-      {expand && expandButton}
-      {expand && children}
-      {expandButton}
+    <div class={clsx("flex flex-col gap-20", props.class)}>
+      <Show when={props.expand}>
+        {expandButton()}
+        {props.children}
+      </Show>
+      {expandButton()}
     </div>
   );
 }
@@ -40,26 +37,30 @@ interface ExpandButtonProps {
   expand?: boolean | undefined;
   onClick?: () => void;
 }
-function ExpandButton({ title, expand, onClick }: ExpandButtonProps) {
+function ExpandButton(props: ExpandButtonProps) {
   return (
-    <button class="relative w-full" onClick={onClick}>
+    <button class="relative w-full" onClick={props.onClick}>
       <hr class="absolute top-1/2 w-full" />
       <div
-        class={`${
-          expand ? "bg-slate-7 text-white" : "bg-white"
-        } border-slate-3 relative inline-flex justify-center gap-2 rounded-full border py-2 pl-6 pr-4`}
+        class="relative inline-flex justify-center gap-2 border border-slate-3 rounded-full py-2 pl-6 pr-4"
+        classList={{
+          "bg-slate-7": props.expand,
+          "text-white": props.expand,
+          "bg-white": !props.expand,
+        }}
       >
-        {expand ? (
-          <>
-            <span>{title ? `${title} 접기` : "접기"}</span>
-            <i class="i-ic-baseline-keyboard-arrow-up text-2xl" />
-          </>
-        ) : (
-          <>
-            <span>{title ? `${title} 펼치기` : "펼치기"}</span>
-            <i class="i-ic-baseline-keyboard-arrow-down text-2xl" />
-          </>
-        )}
+        <Show
+          when={props.expand}
+          fallback={
+            <>
+              <span>{props.title ? `${props.title} 펼치기` : "펼치기"}</span>
+              <i class="i-ic-baseline-keyboard-arrow-down text-2xl" />
+            </>
+          }
+        >
+          <span>{props.title ? `${props.title} 접기` : "접기"}</span>
+          <i class="i-ic-baseline-keyboard-arrow-up text-2xl" />
+        </Show>
       </div>
     </button>
   );

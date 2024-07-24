@@ -1,0 +1,110 @@
+---
+title: Get account holder API
+description: ''
+---
+
+import Details from "~/components/gitbook/Details";
+import Swagger from "~/components/gitbook/swagger/Swagger";
+import SwaggerDescription from "~/components/gitbook/swagger/SwaggerDescription";
+import SwaggerParameter from "~/components/gitbook/swagger/SwaggerParameter";
+import SwaggerResponse from "~/components/gitbook/swagger/SwaggerResponse";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## Gets the account holder name for a bank account.
+
+<Swagger method="get" path="/vbanks/holder" baseUrl="https://api.iamport.kr" summary="Gets the account holder name for a bank account.">
+  <SwaggerDescription />
+
+  ### Parameters
+
+  #### Query
+
+  <SwaggerParameter name="bank_code" type="String" required="true">
+    <mark style="color:red;">
+      **Bank code**
+    </mark>
+  </SwaggerParameter>
+
+  <SwaggerParameter name="bank_num" type="String" required="true">
+    <mark style="color:red;">**Account number**</mark>
+
+    `Numbers and special characters allowed`
+  </SwaggerParameter>
+
+  ### Responses
+
+  <SwaggerResponse status="200: OK" description="Success">
+    <Tabs>
+      <Tabs.Tab title="VbankHolderResponse">
+        **`code`** <mark style="color:red;"> **\*** </mark> <mark style="color:purple;"> **integer** </mark>
+
+        **Response code**
+
+        0: success, Not 0: check the message
+
+        **`message`** <mark style="color:red;"> **\*** </mark> <mark style="color:green;"> **string** </mark>
+
+        **Response message**
+
+        A non-zero code includes a message like 'Invalid payment info'.
+
+        **`response`** <mark style="color:red;"> **(VbankHolderAnnotation, optional)** </mark>
+      </Tabs.Tab>
+    </Tabs>
+
+    <Tabs>
+      <Tabs.Tab title="VbankHolderAnnotation">
+        **`bank_holder`** <mark style="color:red;"> **`*`** </mark> <mark style="color:green;"> **`string`** </mark>
+
+        **`Account holder name`**
+      </Tabs.Tab>
+    </Tabs>
+  </SwaggerResponse>
+
+  <SwaggerResponse status="400: Bad Request" description="Missing bank_code">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+
+  <SwaggerResponse status="401: Unauthorized" description="Missing or invalid access token">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+
+  <SwaggerResponse status="404: Not Found" description="Request not found">
+    ```ts
+    {
+      // Response
+    }
+    ```
+  </SwaggerResponse>
+</Swagger>
+
+<Details>
+  <Details.Summary>Response Model Schema</Details.Summary>
+
+  <Details.Content>
+    ```json
+    {
+      "code": 0,
+      "message": "string",
+      "response": {
+        "bank_holder": "string"
+      }
+    }
+    ```
+  </Details.Content>
+</Details>
+
+<Hint style="success">
+  **Swagger Test Link**
+
+  [**https://api.iamport.kr/#!/vbanks/queryBankHolder**](https://api.iamport.kr/#!/vbanks/queryBankHolder)
+</Hint>
