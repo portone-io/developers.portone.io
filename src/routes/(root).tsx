@@ -22,7 +22,7 @@ const navAsMenuPaths = ["/platform", "/blog", "/release-notes"];
 export default function Layout(props: Props) {
   const location = useLocation();
   const lang = createMemo(() =>
-    location.pathname.includes("/ko/") ? "ko" : "en",
+    location.pathname.includes("/en/") ? "en" : "ko",
   );
   const docsSlug = createMemo(() => getFullSlug(location.pathname));
   const docData = createAsync(async () => {
