@@ -1,3 +1,4 @@
+import { useIsRouting, useLocation, useSearchParams } from "@solidjs/router";
 import {
   createContext,
   createEffect,
@@ -25,17 +26,21 @@ export function SystemVersionProvider(props: { children: JSXElement }) {
     determineServerSystemVersion,
     { initialValue: defaultSystemVersion, deferStream: true },
   );
+  const location = useLocation();
+  const [params, setParams] = useSearchParams();
+  const isRouting = useIsRouting();
 
   createEffect(() => {
     const v = systemVersion();
     const cookies = new Cookies(null, { path: "/" });
     cookies.set("systemVersion", v);
+
+    void params.v; // subscribe to params
     if (
+      !isRouting() &&
       [/^\/docs\//, /^\/api\//].some((regex) => regex.test(location.pathname))
     ) {
-      const url = new URL(location.href);
-      url.searchParams.set("v", v);
-      history.replaceState(null, "", url);
+      setParams({ v });
     }
   });
 
