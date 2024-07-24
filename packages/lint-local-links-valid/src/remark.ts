@@ -1,28 +1,36 @@
 import path from "node:path";
 
+import fastGlob from "fast-glob";
 import { lintRule, type Node } from "unified-lint-rule";
 import { visit } from "unist-util-visit";
 import * as YAML from "yaml";
 
-import { isLocalLink, isMarkdownExists, resolveRedirect } from "./utils.js";
+import {
+  isFileExists,
+  isLocalLink,
+  resolvePathname,
+  resolveRedirect,
+} from "./utils.js";
 
 interface Options {
   baseDir: string;
   excludePaths: string[];
   redirects: Map<string, string>;
 }
+
+const files = new Set(
+  (
+    await fastGlob("**/*", {
+      cwd: path.join(process.cwd(), "./src/routes/(root)"),
+    })
+  ).map(resolvePathname),
+);
+
 export const remarkLintLocalLinksValid = lintRule(
   "remark-lint:local-links-valid",
-  async (tree, file, options: Partial<Options>) => {
+  (tree, file, options: Partial<Options>) => {
     const workingFile = path.resolve(file.cwd, file.history[0] ?? "");
-    const workingDir = path.dirname(
-      // https://github.com/portone-io/developers.portone.io/issues/453
-      ["index.mdx", "index.md"].includes(path.basename(workingFile))
-        ? path.resolve(workingFile, "..")
-        : workingFile,
-    );
-    const checkLink = initLinter(workingDir, options as Options);
-    const tasks: Promise<void>[] = [];
+    const checkLink = initLinter(workingFile, options as Options);
     visit(tree, (node) => {
       if (node.type === "yaml" && "value" in node) {
         try {
@@ -40,7 +48,7 @@ export const remarkLintLocalLinksValid = lintRule(
                 ) {
                   const link = pair.value.value;
                   const range = pair.value.range;
-                  const task = checkLink(
+                  checkLink(
                     path.isAbsolute(link) ? path.join("/docs", link) : link,
                     (reason) => {
                       if (node.position && range) {
@@ -64,7 +72,6 @@ export const remarkLintLocalLinksValid = lintRule(
                       }
                     },
                   );
-                  tasks.push(task);
                 }
               },
             });
@@ -78,10 +85,9 @@ export const remarkLintLocalLinksValid = lintRule(
         typeof node.url === "string" &&
         node.type === "link"
       ) {
-        const task = checkLink(node.url, (reason) => {
+        checkLink(node.url, (reason) => {
           file.message(reason, node);
         });
-        tasks.push(task);
       }
       if (
         node.type === "mdxJsxFlowElement" &&
@@ -104,49 +110,42 @@ export const remarkLintLocalLinksValid = lintRule(
             "position" in attr
           ) {
             const link = attr.value;
-            const task = checkLink(
+            checkLink(
               path.isAbsolute(link) ? path.join("/docs", link) : link,
               (reason) => {
                 file.message(reason, attr as Node);
               },
             );
-            tasks.push(task);
           }
         }
       }
     });
-    await Promise.all(tasks);
   },
 );
-const initLinter = (workingDir: string, options: Partial<Options>) => {
+const initLinter = (workingFile: string, options: Partial<Options>) => {
   if (!options.baseDir) {
     throw new Error("Missing required option `baseDir`");
   }
   const baseDir = path.resolve(options.baseDir);
-  const excludePaths =
-    options.excludePaths?.map((p) => path.join(baseDir, p)) ?? [];
+  const excludePaths = options.excludePaths ?? [];
   const redirects = new Map(
     Object.entries(options.redirects ?? {}).map(([from, to]) => {
       return [String(from), String(to)].map((link) =>
-        isLocalLink(link) ? path.join(baseDir, link) : link,
+        isLocalLink(link) ? `/${link}` : link,
       );
     }) as [string, string][],
   );
-  return async function checkLink(
+  const workingPath = resolvePathname(
+    path.relative(baseDir, path.dirname(workingFile)),
+  );
+  return function checkLink(
     link: string,
     message: (reason: string) => void,
-  ): Promise<void> {
-    if (!isLocalLink(link)) {
-      return;
-    }
+  ): void {
+    if (!isLocalLink(link)) return;
     const url = link.split(/[#?]/)[0] ?? "";
-    let absPath = "";
-    if (path.isAbsolute(url)) {
-      absPath = path.join(baseDir, url);
-    } else {
-      absPath = path.join(workingDir, url);
-    }
+    const absPath = path.isAbsolute(url) ? url : path.join(workingPath, url);
     const resolvedPath = resolveRedirect(redirects, absPath);
-    return isMarkdownExists(resolvedPath, excludePaths, message);
+    return isFileExists(resolvedPath, excludePaths, files, message);
   };
 };

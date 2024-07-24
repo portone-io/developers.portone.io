@@ -1,9 +1,4 @@
-import {
-  cache,
-  redirect,
-  type RouteDefinition,
-  useLocation,
-} from "@solidjs/router";
+import { cache, type RouteDefinition, useLocation } from "@solidjs/router";
 import { createMemo, createResource, type JSXElement, Show } from "solid-js";
 
 import { NotFoundError } from "~/components/404";

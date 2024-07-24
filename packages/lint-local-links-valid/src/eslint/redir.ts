@@ -1,12 +1,14 @@
+import FastGlob from "fast-glob";
 import path from "path";
 import { match, P } from "ts-pattern";
 import type { AST } from "yaml-eslint-parser";
 
 import {
+  isFileExists,
   isLocalLink,
-  isMarkdownExistsSync,
   isYAMLDocument,
   isYAMLScalar,
+  resolvePathname,
   type RuleModule,
 } from "../utils.js";
 
@@ -45,6 +47,10 @@ export const rule: RuleModule = {
       context.physicalFilename,
     );
     if (filename !== "_redir") return {};
+
+    const files = new Set(
+      FastGlob.sync("**/*", { cwd: baseDir }).map(resolvePathname),
+    );
     let stack: Stack | null = null;
     function downStack(
       node: AST.YAMLSequence | AST.YAMLMapping | AST.YAMLPair,
@@ -129,8 +135,7 @@ export const rule: RuleModule = {
               stack.tasks.push(() => {
                 if (!isLocalLink(toLink)) return;
                 if (stack.redirects.has(toLink)) return;
-                const absPath = path.join(baseDir, toLink);
-                isMarkdownExistsSync(absPath, [], (reason) => {
+                isFileExists(toLink, [], files, (reason) => {
                   context.report({
                     loc: stack.node.loc,
                     message: reason,

@@ -1,12 +1,14 @@
+import FastGlob from "fast-glob";
 import path from "path";
 import type { AST } from "yaml-eslint-parser";
 
 import {
+  isFileExists,
   isLocalLink,
-  isMarkdownExistsSync,
   isYAMLPair,
   isYAMLScalar,
   isYAMLSequence,
+  resolvePathname,
   resolveRedirect,
   type RuleModule,
 } from "../utils.js";
@@ -49,7 +51,11 @@ export const rule: RuleModule = {
       typeof options.redirects === "object"
         ? new Map<string, string>(Object.entries(options.redirects))
         : new Map<string, string>();
+
     if (filename !== "_nav") return {};
+    const files = new Set(
+      FastGlob.sync("**/*", { cwd: baseDir }).map(resolvePathname),
+    );
     return {
       YAMLScalar(node: AST.YAMLScalar) {
         let url: string | null = null;
@@ -75,8 +81,7 @@ export const rule: RuleModule = {
           url = url.split(/[#?]/)[0] ?? "";
           const resolvedUrl = resolveRedirect(redirects, url);
           if (!isLocalLink(resolvedUrl)) return;
-          const absPath = path.join(baseDir, resolvedUrl);
-          isMarkdownExistsSync(absPath, [], (reason) => {
+          isFileExists(resolvedUrl, [], files, (reason) => {
             context.report({
               loc: node.loc,
               message: reason,
