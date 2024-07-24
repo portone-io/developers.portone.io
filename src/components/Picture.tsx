@@ -29,20 +29,13 @@ export default function Picture(props: Props) {
   );
   const [isServerRendered] = createResource(() => isServer);
 
-  const {
-    promise: loadedPromise,
-    resolve,
-    reject,
-  } = (() => {
+  const { promise: loadedPromise, resolve } = (() => {
     let resolve: ((value: boolean) => void) | undefined;
-    let reject: ((reason?: unknown) => void) | undefined;
     return {
-      promise: new Promise<boolean>((res, rej) => {
+      promise: new Promise<boolean>((res) => {
         resolve = res;
-        reject = rej;
       }),
       resolve: resolve!,
-      reject: reject!,
     };
   })();
   const [loaded] = createResource(async () => {
@@ -64,7 +57,7 @@ export default function Picture(props: Props) {
           if (locals.onLoad instanceof Function) locals.onLoad(e);
         }}
         onError={(e) => {
-          reject(false);
+          resolve(false);
           if (locals.onError instanceof Function) locals.onError(e);
         }}
       />
