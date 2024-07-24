@@ -1,6 +1,6 @@
 import { A, useLocation } from "@solidjs/router";
 import { clsx } from "clsx";
-import { createMemo, Show, untrack } from "solid-js";
+import { createMemo, For, Show, untrack } from "solid-js";
 
 import type { DocsEntry } from "~/content/config";
 import { useSidebarContext } from "~/layouts/sidebar/context";
@@ -38,6 +38,21 @@ export default function Gnb(props: Props) {
   const { systemVersion } = useSystemVersion();
   const serverSystemVersion = untrack(systemVersion);
   const sidebarContext = useSidebarContext();
+
+  const navs = [
+    {
+      pathname: "/platform",
+      label: "파트너 정산",
+    },
+    {
+      pathname: "/release-notes",
+      label: "릴리즈 노트",
+    },
+    {
+      pathname: "/blog",
+      label: "기술 블로그",
+    },
+  ];
 
   return (
     <>
@@ -110,38 +125,26 @@ export default function Gnb(props: Props) {
                 </span>
               </Dropdown>
               <Show when={props.lang === "ko"}>
-                <A class="h-full inline-flex items-center" href="/platform">
-                  <span
-                    class={clsx(
-                      location.pathname.startsWith("/platform") &&
-                        styles.navActive,
-                    )}
-                  >
-                    파트너 정산
-                  </span>
-                </A>
-                <A
-                  class="h-full inline-flex items-center"
-                  href="/release-notes"
-                >
-                  <span
-                    class={clsx(
-                      location.pathname.startsWith("/release-notes") &&
-                        styles.navActive,
-                    )}
-                  >
-                    릴리즈 노트
-                  </span>
-                </A>
-                <A class="h-full inline-flex items-center" href="/blog">
-                  <span
-                    class={clsx(
-                      location.pathname.startsWith("/blog") && styles.navActive,
-                    )}
-                  >
-                    기술 블로그
-                  </span>
-                </A>
+                <For each={navs}>
+                  {(nav) => (
+                    <A
+                      class="h-full inline-flex items-center"
+                      href={nav.pathname}
+                      onClick={() => {
+                        if (props.navAsMenu) sidebarContext.set(false);
+                      }}
+                    >
+                      <span
+                        class={clsx(
+                          location.pathname.startsWith(nav.pathname) &&
+                            styles.navActive,
+                        )}
+                      >
+                        {nav.label}
+                      </span>
+                    </A>
+                  )}
+                </For>
               </Show>
             </div>
           </div>
