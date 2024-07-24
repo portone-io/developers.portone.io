@@ -6,7 +6,7 @@ import {
 } from "@kobalte/core/collapsible";
 import { type PolymorphicProps } from "@kobalte/core/polymorphic";
 import clsx from "clsx";
-import { createSignal, onMount, splitProps } from "solid-js";
+import { createSignal, onMount, splitProps, Suspense } from "solid-js";
 
 export default function Details(
   props: PolymorphicProps<"div", CollapsibleRootProps<"div">>,
@@ -68,10 +68,12 @@ Details.Content = function DetailsContent(
 
   return (
     <Collapsible.Content {...others} class={clsx(locals.class)}>
-      <div class="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-l-4 border-l-transparent px-4 pb-2 -mt-2">
-        <div class="h-5 w-5"></div>
-        <div class="w-full">{props.children}</div>
-      </div>
+      <Suspense>
+        <div class="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-l-4 border-l-transparent px-4 pb-2 -mt-2">
+          <div class="h-5 w-5"></div>
+          <div class="w-full">{props.children}</div>
+        </div>
+      </Suspense>
     </Collapsible.Content>
   );
 };
