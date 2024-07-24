@@ -2,6 +2,7 @@ import { A, useLocation } from "@solidjs/router";
 import { clsx } from "clsx";
 import { createMemo, Show, untrack } from "solid-js";
 
+import type { DocsEntry } from "~/content/config";
 import { useSidebarContext } from "~/layouts/sidebar/context";
 import { useSystemVersion } from "~/state/system-version";
 import type { Lang } from "~/type";
@@ -15,6 +16,7 @@ import VersionSwitch from "./VersionSwitch";
 interface Props {
   lang: Lang;
   navAsMenu: boolean;
+  docData?: DocsEntry;
 }
 
 const ko = {
@@ -64,7 +66,7 @@ export default function Gnb(props: Props) {
                 </div>
               </A>
               <div class="mx-6 md:ml-[70px]">
-                <VersionSwitch />
+                <VersionSwitch docData={props.docData} />
               </div>
             </div>
             <div

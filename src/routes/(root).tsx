@@ -1,16 +1,17 @@
 import "~/styles/article.css";
 
 import { Link } from "@solidjs/meta";
-import { useLocation, useParams } from "@solidjs/router";
+import { createAsync, useLocation } from "@solidjs/router";
 import { createMemo, type JSXElement } from "solid-js";
 import { MDXProvider } from "solid-mdx";
 
 import * as prose from "~/components/prose";
+import type { DocsEntry } from "~/content/config";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
+import { getFullSlug, loadDoc } from "~/misc/doc";
 import { SystemVersionProvider } from "~/state/system-version";
-import { Lang } from "~/type";
 
 interface Props {
   children: JSXElement;
@@ -20,8 +21,22 @@ const navAsMenuPaths = ["/platform", "/blog", "/release-notes"];
 
 export default function Layout(props: Props) {
   const location = useLocation();
-  const params = useParams();
-  const lang = createMemo(() => Lang.default("ko").parse(params.lang));
+  const lang = createMemo(() =>
+    location.pathname.includes("/ko/") ? "ko" : "en",
+  );
+  const docsSlug = createMemo(() => getFullSlug(location.pathname));
+  const docData = createAsync(async () => {
+    const slug = docsSlug();
+    if (!slug) return;
+    try {
+      return await loadDoc(slug);
+    } catch (e) {
+      if (e instanceof Error && e.name === "NotFoundError") {
+        return;
+      }
+      throw e;
+    }
+  });
 
   return (
     <SystemVersionProvider>
@@ -37,6 +52,7 @@ export default function Layout(props: Props) {
               navAsMenu={navAsMenuPaths.some((path) =>
                 location.pathname.startsWith(path),
               )}
+              docData={docData()?.frontmatter as DocsEntry}
             />
             <SidebarBackground />
             <main class="min-h-0 flex-1">{props.children}</main>

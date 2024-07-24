@@ -13,34 +13,10 @@ import type { DocsEntry } from "~/content/config";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
 import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
+import { getFullSlug, loadDoc } from "~/misc/doc";
 import { calcNavMenuSystemVersions } from "~/state/nav";
 import { Lang } from "~/type";
 
-const toFullSlug = (pathname: string) => pathname.replace(/^\/docs\/?/, "");
-const loadRedirection = cache(async (slug: string) => {
-  "use server";
-
-  const { default: redirYaml } = await import(
-    "~/routes/(root)/docs/_redir.yaml"
-  );
-  const redir = redirYaml.find(({ old }) => old === slug);
-  if (!redir) return;
-  return redir.new.startsWith("/") ? `/docs${redir.new}` : redir.new;
-}, "docs/redirection");
-
-const loadDoc = cache(async (fullSlug: string) => {
-  "use server";
-
-  if (fullSlug === "") throw redirect("/docs/ko/readme", 302);
-  if (!fullSlug.includes("/")) throw redirect(`/docs/${fullSlug}/readme`, 302);
-
-  const { docs } = await import("#content");
-  const redirection = await loadRedirection(`/${fullSlug}`);
-  if (redirection) throw redirect(redirection, 301);
-  if (!(fullSlug in docs)) throw new NotFoundError();
-
-  return docs[fullSlug as keyof typeof docs];
-}, "docs/content");
 const loadNavMenuSystemVersions = cache(async (lang: Lang) => {
   "use server";
 
@@ -50,7 +26,8 @@ const loadNavMenuSystemVersions = cache(async (lang: Lang) => {
 
 export const route = {
   preload: ({ location }) => {
-    const fullSlug = toFullSlug(location.pathname);
+    const fullSlug = getFullSlug(location.pathname);
+    if (!fullSlug) return;
     const lang = fullSlug.split("/")[0];
 
     void loadDoc(fullSlug);
@@ -60,7 +37,11 @@ export const route = {
 
 export default function Docs(props: { children: JSXElement }) {
   const location = useLocation();
-  const fullSlug = createMemo(() => toFullSlug(location.pathname));
+  const fullSlug = createMemo(() => {
+    const slug = getFullSlug(location.pathname);
+    if (!slug) throw new NotFoundError();
+    return slug;
+  });
   const params = createMemo(() => {
     const [lang, slug] = fullSlug().split("/", 1) as [Lang, string];
     return { lang, slug };

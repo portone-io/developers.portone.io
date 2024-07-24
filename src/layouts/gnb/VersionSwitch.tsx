@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "@solidjs/router";
 import clsx from "clsx";
 import { createEffect, createSignal, startTransition } from "solid-js";
 
+import type { DocsEntry } from "~/content/config";
 import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
 
@@ -14,10 +15,7 @@ const hiddenPaths = ["/release-notes", "/blog", "/platform"];
 
 export interface VersionSwitchProps {
   class?: string;
-  docData?: {
-    versionVariants?: Record<SystemVersion, string>;
-    targetVersions?: SystemVersion[];
-  } | null;
+  docData?: DocsEntry;
 }
 export function VersionSwitch(props: VersionSwitchProps) {
   let popoverRef: HTMLDivElement | undefined;
