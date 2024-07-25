@@ -35,21 +35,25 @@ export default function PlatformDocLayout(props: { children: JSXElement }) {
 
   return (
     <Show when={doc()}>
-      {(doc) => (
-        <>
-          <Metadata title={doc().frontmatter.title} ogType="article" />
-          <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
-            <prose.h1>{doc()?.frontmatter.title}</prose.h1>
-            {props.children}
-          </article>
-          <div class="hidden shrink-10 basis-10 lg:block"></div>
-          <RightSidebar
-            lang="ko"
-            slug={doc()?.slug ?? ""}
-            editThisPagePrefix="https://github.com/portone-io/developers.portone.io/blob/main/src/content/platform/"
-          />
-        </>
-      )}
+      {(doc) => {
+        const { title } = doc().frontmatter;
+
+        return (
+          <>
+            <Metadata title={title} ogType="article" />
+            <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
+              <prose.h1>{title}</prose.h1>
+              {props.children}
+            </article>
+            <div class="hidden shrink-10 basis-10 lg:block"></div>
+            <RightSidebar
+              lang="ko"
+              slug={doc()?.slug ?? ""}
+              editThisPagePrefix="https://github.com/portone-io/developers.portone.io/blob/main/src/content/platform/"
+            />
+          </>
+        );
+      }}
     </Show>
   );
 }

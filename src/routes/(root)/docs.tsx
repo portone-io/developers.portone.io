@@ -1,4 +1,9 @@
-import { cache, type RouteDefinition, useLocation } from "@solidjs/router";
+import {
+  cache,
+  createAsync,
+  type RouteDefinition,
+  useLocation,
+} from "@solidjs/router";
 import { createMemo, createResource, type JSXElement, Show } from "solid-js";
 
 import { NotFoundError } from "~/components/404";
@@ -41,7 +46,7 @@ export default function Docs(props: { children: JSXElement }) {
     const [lang, slug] = fullSlug().split("/", 1) as [Lang, string];
     return { lang, slug };
   });
-  const [doc] = createResource(fullSlug, (slug) => loadDoc(slug), {
+  const doc = createAsync(() => loadDoc(fullSlug()), {
     deferStream: true,
   });
   const [navMenuSystemVersions] = createResource(params, ({ lang }) =>
@@ -54,28 +59,31 @@ export default function Docs(props: { children: JSXElement }) {
         <DocsNavMenu lang={params().lang} slug={params().slug} />
         <div class="min-w-0 flex flex-1 justify-center">
           <Show when={doc()}>
-            {(doc) => (
-              <>
-                <Metadata
-                  title={doc().frontmatter.title}
-                  description={doc().frontmatter.description}
-                  ogType="article"
-                  ogImageSlug={`docs/${params().lang}/${params().slug}.png`}
-                  docsEntry={doc().frontmatter as DocsEntry}
-                />
-                <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
-                  <div class="mb-6">
-                    <prose.h1 id="overview">{doc().frontmatter.title}</prose.h1>
-                    <Show when={doc().frontmatter.description}>
-                      <p class="my-4 text-xl text-gray">
-                        {doc().frontmatter.description}
-                      </p>
-                    </Show>
-                  </div>
-                  {props.children}
-                </article>
-              </>
-            )}
+            {(doc) => {
+              const frontmatter = doc().frontmatter as DocsEntry;
+              const { title, description } = frontmatter;
+
+              return (
+                <>
+                  <Metadata
+                    title={title}
+                    description={description}
+                    ogType="article"
+                    ogImageSlug={`docs/${params().lang}/${params().slug}.png`}
+                    docsEntry={frontmatter}
+                  />
+                  <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
+                    <div class="mb-6">
+                      <prose.h1 id="overview">{title}</prose.h1>
+                      <Show when={description}>
+                        <p class="my-4 text-xl text-gray">{description}</p>
+                      </Show>
+                    </div>
+                    {props.children}
+                  </article>
+                </>
+              );
+            }}
           </Show>
           <div class="hidden shrink-10 basis-10 lg:block"></div>
           <RightSidebar lang={params().lang} slug={params().slug} />
