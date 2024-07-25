@@ -1,8 +1,8 @@
 # 문서 작성 가이드
 
 개발자센터의 문서는 [Markdown]() 문법의 확장인 [MDX](https://mdxjs.com/) 형식으로 작성되어 있습니다.\
-`src/content/docs/[lang]/[...slug].mdx` 경로의 파일을 열어서 수정해주시면 됩니다.\
-`src/content/docs/[lang]/_nav.yaml` 파일을 열어서 좌측 네비게이션 메뉴 항목을 수정할 수 있습니다.
+`src/routes/(root)/docs/[lang]/[...slug].mdx` 경로의 파일을 열어서 수정해주시면 됩니다.\
+`src/routes/(root)/docs/[lang]/_nav.yaml` 파일을 열어서 좌측 네비게이션 메뉴 항목을 수정할 수 있습니다.
 
 ## 에디터 환경 구성하기
 
@@ -21,7 +21,7 @@
 테두리가 씌워진 이미지를 그리는 컴포넌트입니다. 선택적으로 캡션 텍스트를 추가할 수 있습니다.
 
 ```tsx
-import Figure from "~/components/Figure.astro";
+import Figure from "~/components/Figure";
 
 import image from "./_assets/image.png";
 
@@ -39,7 +39,7 @@ import image from "./_assets/image.png";
 유의사항 등을 표현하기 위한 컴포넌트입니다.
 
 ```tsx
-import Hint from "~/components/Hint.astro";
+import Hint from "~/components/Hint";
 
 // style은 info, warning, success, danger를 지원합니다.
 <Hint style="info">Hint 컴포넌트는 이와 같이 활용합니다.</Hint>;
@@ -52,13 +52,12 @@ import Hint from "~/components/Hint.astro";
 탭 형태로 여러 컨텐츠를 정돈해서 표시하기 위한 컴포넌트입니다.
 
 ```tsx
-import Tabs from "~/components/gitbook/tabs/Tabs.astro";
-import Tab from "~/components/gitbook/tabs/Tab.astro";
+import Tabs from "~/components/gitbook/tabs/Tabs";
 
 <Tabs>
-  <Tab title="1번 탭">1번 탭의 본문입니다.</Tab>
-  <Tab title="2번 탭">2번 탭의 본문입니다.</Tab>
-  <Tab title="3번 탭">3번 탭의 본문입니다.</Tab>
+  <Tabs.Tab title="1번 탭">1번 탭의 본문입니다.</Tabs.Tab>
+  <Tabs.Tab title="2번 탭">2번 탭의 본문입니다.</Tabs.Tab>
+  <Tabs.Tab title="3번 탭">3번 탭의 본문입니다.</Tabs.Tab>
 </Tabs>;
 ```
 
@@ -69,12 +68,15 @@ import Tab from "~/components/gitbook/tabs/Tab.astro";
 접고 펼 수 있는 형태로 컨텐츠를 정돈해서 표시하기 위한 컴포넌트입니다.
 
 ```tsx
-import Details from "~/components/gitbook/Details.astro";
+import Details from "~/components/gitbook/Details";
 
 // <Fragment> 외에 <p>나 다른 컴포넌트를 활용할 수도 있습니다.
 <Details>
-  <Fragment slot="summary">접혀 있을 때 보일 내용</Fragment>
-  펼쳐졌을 때 보여질 내용
+  <Details.Summary>접혀 있을 때 보일 내용</Details.Summary>
+
+  <Details.Content>
+    펼쳐졌을 때 보여질 내용
+  </Details.Content>
 </Details>;
 ```
 
@@ -101,7 +103,7 @@ import VersionGate from "~/components/gitbook/VersionGate";
 문서 내에서 타 문서에 대한 블록 스타일의 링크를 간편하게 삽입하기 위한 컴포넌트입니다.
 
 ```tsx
-import ContentRef from "~/components/gitbook/ContentRef.astro";
+import ContentRef from "~/components/gitbook/ContentRef";
 
 // 컴포넌트 내에서 페이지 이름을 자동으로 불러와 표시합니다.
 <ContentRef slug="/ko/ready/readme" />;
@@ -147,18 +149,18 @@ import ContentRef from "~/components/gitbook/ContentRef.astro";
 
 ```tsx
 // 1. <Figure> 컴포넌트 사용하기 (권장)
-import Figure from "~/components/Figure.astro";
+import Figure from "~/components/Figure";
 
 import logo from "./_assets/tosspayments-logo.png";
 
 <Figure src={logo} caption="토스페이먼츠 로고" />;
 
-// 2. <Image> 컴포넌트 직접 사용하기
-import { Image } from "astro:assets";
+// 2. <Picture> 컴포넌트 직접 사용하기
+import Picture from "~/components/Picture";
 
 import logo from "./_assets/tosspayments-logo.png";
 
-<Image src={logo} alt="토스페이먼츠 로고" />;
+<Picture picture={logo} alt="토스페이먼츠 로고" />;
 ```
 
 ### 코드 블럭에 올바른 언어 이름 사용하기
@@ -199,20 +201,6 @@ Prettier의 경우 플러그인을 통해 언어 지원을 추가할 수 있으�
   이 경우 중복/공통된 내용을 별도의 MDX 파일로 분리하여 작성한 후,
   해당 내용을 사용할 파일에서 위 파일을 `import`해서 컴포넌트 형태로 활용해주세요.
 
-  - **주의사항**
-
-    개발자센터에서는 [prose라는 컴포넌트 모음][prose]을 활용해서 MDX에서 렌더링될
-    HTML 요소들의 스타일을 지정하는데, 별도로 분리된 MDX 파일들은
-    페이지 단위 파일들과 달리 해당 컴포넌트들을 다음과 같이 수동으로 세팅해주어야 합니다.
-
-    ```tsx
-    import * as prose from "~/components/prose";
-
-    export const components = prose;
-    ```
-
-    [prose]: https://github.com/portone-io/developers.portone.io/blob/30e5d8a081a948a098d2334016a2ecbacdc0f376/src/components/prose.tsx
-
   - **예시**
 
     V1에서는 토스페이먼츠 구모듈/신모듈별 정보를 모두 보여 주고,
@@ -222,14 +210,14 @@ Prettier의 경우 플러그인을 통해 언어 지원을 추가할 수 있으�
     [여러 번 사용하는 방식][componentify-usage]으로
     중복 내용의 작성을 막을 수 있습니다.
 
-    [componentify-define]: https://github.com/portone-io/developers.portone.io/blob/c859e3cdc35a3751fcff575f7212129bfafcc309/src/content/docs/ko/ready/_components/integration-guide/tosspayments.mdx
-    [componentify-import]: https://github.com/portone-io/developers.portone.io/blob/c859e3cdc35a3751fcff575f7212129bfafcc309/src/content/docs/ko/ready/readme.mdx#L48
-    [componentify-usage]: https://github.com/portone-io/developers.portone.io/blob/c859e3cdc35a3751fcff575f7212129bfafcc309/src/content/docs/ko/ready/readme.mdx#L290-L308
+    [componentify-define]: https://github.com/portone-io/developers.portone.io/blob/1e622773eaf8b7a65bb69fa6de10d80dbaddc970/src/routes/(root)/docs/ko/ready/_components/integration-guide/tosspayments.mdx
+    [componentify-import]: https://github.com/portone-io/developers.portone.io/blob/1e622773eaf8b7a65bb69fa6de10d80dbaddc970/src/routes/(root)/docs/ko/ready/readme.mdx?plain=1#L50
+    [componentify-usage]: https://github.com/portone-io/developers.portone.io/blob/1e622773eaf8b7a65bb69fa6de10d80dbaddc970/src/routes/(root)/docs/ko/ready/readme.mdx?plain=1#L324
 
 ### 기존 문서 제거 시 리다이렉션 설정하기
 
 개발자센터에 대한 죽은 링크가 생기는 것을 방지하기 위해, 기존 문서가 제거되는 경우나
-URL이 변경되는 경우 `src/content/docs/_redir.yaml` 파일에서
+URL이 변경되는 경우 `src/routes/(root)/docs/_redir.yaml` 파일에서
 구-신 주소 간에 리다이렉션을 설정해야 합니다.
 
 - 단순 URL 변경의 경우 파일 내에 적절히 새 리다이렉션 설정을 추가해주세요.
