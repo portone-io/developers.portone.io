@@ -40,7 +40,7 @@ export function SystemVersionProvider(props: { children: JSXElement }) {
       !isRouting() &&
       [/^\/docs\//, /^\/api\//].some((regex) => regex.test(location.pathname))
     ) {
-      setParams({ v });
+      setParams({ v }, { replace: true });
     }
   });
 
