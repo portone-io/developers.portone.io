@@ -59,7 +59,6 @@ export default function NoteList(props: Props) {
                 title={title}
                 path={path}
                 activeSlug={props.activeSlug}
-                client:visible
               >
                 <For each={notes}>
                   {(note) => (
