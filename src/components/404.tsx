@@ -1,3 +1,4 @@
+import { useNavigate } from "@solidjs/router";
 import { HttpStatusCode } from "@solidjs/start";
 import { ErrorBoundary, type JSXElement } from "solid-js";
 
@@ -29,6 +30,8 @@ export function NotFoundBoundary(props: { children: JSXElement }) {
 }
 
 function NotFoundPage() {
+  const navigate = useNavigate();
+
   return (
     <>
       <HttpStatusCode code={404} />
@@ -47,7 +50,7 @@ function NotFoundPage() {
         </div>
         <button
           class="flex items-center gap-1 border border-gray-300 rounded-md bg-[rgb(255_255_255_/_4%)] px-4 py-3 transition-colors active:bg-portone focus:bg-[rgb(255_255_255_/16%)] hover:bg-[rgb(255_255_255_/16%)] active:text-white focus:text-portone hover:text-portone"
-          onClick={() => history.back()}
+          onClick={() => navigate(-1)}
         >
           <i class="i-ic-baseline-arrow-back text-lg"></i>
           <span class="text-sm">뒤로 돌아가기</span>
