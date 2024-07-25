@@ -10,12 +10,12 @@ import SchemaDownloadButton, {
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
-import schema from "~/schema/v2.openapi.json";
+import schema from "~/schema/v1.openapi.json";
 import { useSystemVersion } from "~/state/system-version";
 
 import V1Auth from "./_components/v1auth.mdx";
 
-export default function ApiV2Docs() {
+export default function ApiV1Docs() {
   const { setSystemVersion } = useSystemVersion();
   const params = useParams<{ slug: string }>();
   const [currentSection, setCurrentSection] = createSignal(
@@ -25,7 +25,7 @@ export default function ApiV2Docs() {
     "section:auth": () => <V1Auth />,
   });
 
-  setSystemVersion("v2");
+  setSystemVersion("v1");
 
   return (
     <div class="flex">
