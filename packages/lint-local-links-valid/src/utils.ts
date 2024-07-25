@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import fsPromises from "node:fs/promises";
 import path from "node:path";
 
 import type { Rule } from "eslint";
@@ -31,46 +29,30 @@ export function resolveRedirect(
   return resolved;
 }
 
-export async function isMarkdownExists(
-  mdPath: string,
-  excludePaths: string[],
-  message: (reason: string) => void,
-): Promise<void> {
-  if (!isLocalLink(mdPath)) {
-    return;
-  }
-  if (excludePaths.some((p) => mdPath.startsWith(p))) {
-    return;
-  }
-  if (path.extname(mdPath) !== "") {
-    message("로컬 링크는 확장자를 가질 수 없습니다.");
-    return;
-  }
-  await Promise.any(
-    [".md", ".mdx"].map((ext) => fsPromises.access(mdPath + ext)),
-  ).catch(() => {
-    message(`파일을 찾을 수 없습니다: ${mdPath}`);
-  });
+export function resolvePathname(filePath: string): string {
+  return (
+    "/" +
+    filePath
+      .replace(/\.(?:(?:[cm]?[jt]sx?)|(?:mdx?))$/, "")
+      .replaceAll(/(^|\/)\(.+?\)($|\/)/g, "/")
+      .replace(/\/(?:index)?$/, "")
+  );
 }
 
-export function isMarkdownExistsSync(
-  mdPath: string,
+export function isFileExists(
+  pathname: string,
   excludePaths: string[],
+  files: Set<string>,
   message: (reason: string) => void,
 ): void {
-  if (!isLocalLink(mdPath)) {
-    return;
-  }
-  if (excludePaths.some((p) => mdPath.startsWith(p))) {
-    return;
-  }
-  if (path.extname(mdPath) !== "") {
+  if (!isLocalLink(pathname)) return;
+  if (excludePaths.some((p) => pathname.startsWith(p))) return;
+  if (path.extname(pathname) !== "") {
     message("로컬 링크는 확장자를 가질 수 없습니다.");
     return;
   }
-  const exists = [".md", ".mdx"].some((ext) => fs.existsSync(mdPath + ext));
-  if (!exists) {
-    message(`파일을 찾을 수 없습니다: ${mdPath}`);
+  if (!files.has(pathname)) {
+    message(`파일을 찾을 수 없습니다: ${pathname}`);
   }
 }
 
