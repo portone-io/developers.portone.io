@@ -27,7 +27,7 @@ PortOne 개발자센터 저장소입니다.
 
 ```sh
 pnpm install
-pnpm dev # http://localhost:4321/ 접속
+pnpm dev # http://localhost:3000 접속
 ```
 
 --------
