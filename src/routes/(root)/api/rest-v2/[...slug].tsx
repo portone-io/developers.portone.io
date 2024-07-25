@@ -25,7 +25,7 @@ export default function ApiV2Docs() {
 
   return (
     <div class="flex">
-      <Title>PortOne REST API - V1</Title>
+      <Title>PortOne REST API - V2</Title>
       <NavMenu
         title="REST API - V2"
         basepath="/api/rest-v2"
