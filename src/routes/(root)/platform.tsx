@@ -4,7 +4,7 @@ import { type JSXElement, Show, Suspense } from "solid-js";
 import Nav from "~/layouts/platform/Nav";
 import { loadPlatformDocuments } from "~/misc/platform";
 
-export const routes = {
+export const route = {
   preload: () => {
     void loadPlatformDocuments();
   },
