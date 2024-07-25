@@ -135,9 +135,7 @@ const initLinter = (workingFile: string, options: Partial<Options>) => {
       );
     }) as [string, string][],
   );
-  const workingPath = resolvePathname(
-    path.relative(baseDir, path.dirname(workingFile)),
-  );
+  const workingPath = resolvePathname(path.relative(baseDir, workingFile));
   return function checkLink(
     link: string,
     message: (reason: string) => void,
