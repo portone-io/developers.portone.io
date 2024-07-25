@@ -1,0 +1,150 @@
+---
+title: 프로모션 결제 연동하기
+description: 프로모션 결제 연동 방법을 안내합니다.
+targetVersions: ["v1", "v2"]
+---
+
+import Details from "~/components/gitbook/Details";
+import ParamTree from "~/components/gitbook/ParamTree";
+import VersionGate from "~/components/gitbook/VersionGate";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## 프로모션이란?
+
+고객사가 카드사와 계약하여 사용자에게 즉시 할인을 제공하는 카드 즉시 할인 서비스입니다.
+
+고객사의 매출을 성장시키는데 가장 효율이 좋은 방법 중 하나입니다.
+예를 들어, 포트원의 고객사 중 K사의 경우 카드 프로모션 진행 기간동안 동기간 대비(1일 평균) 전체 거래액이 1.6x 이상 증가하였고,
+프로모션 예산 대비 거래액 ROAS는 평균 1780%, 최대 2270% 로 가장 효율 높은 매출 성장을 이끌어낼 수 있었습니다.
+
+프로모션 도입을 원하시는 고객사의 경우 세일즈팀 메일([sales@portone.io](mailto:sales@portone.io))으로 문의 주시기 바랍니다.
+
+## 프로모션 결제 연동하기
+
+고객사에서 카드사 즉시할인을 쉽게 적용하고 운영 관리하실 수 있도록 프로모션 기능을 제공하고 있습니다.
+포트원 콘솔 내 **프로모션** 메뉴에서 카드사 별 프로모션을 생성 후 결제 요청 시 적용할 수 있으며,
+프로모션에 설정된 예산, 할인방식, 할인금액/할인률에 따라 자동으로 계산되어 결제가 승인됩니다.
+
+<Hint style="info">
+  프로모션 메뉴의 경우 도입 고객사에 한하여 포트원 콘솔 내에서 확인하실 수 있습니다.
+
+  프로모션 결제를 연동하시려면 관리자콘솔에서 프로모션을 먼서 생성해야합니다.
+  프로모션 생성 방법이 궁금하다면 [프로모션 생성 가이드]()를 확인해 보세요.
+</Hint>
+
+<VersionGate v="v1">
+## SDK(결제창) 인증결제 연동하기
+
+### 예제 코드
+
+### 주요 파라미터
+
+### 유의사항
+
+## API 수기(키인)결제 연동하기
+
+### 예제 코드
+
+### 주요 파라미터
+
+### 유의사항
+
+## API 정기결제 연동하기
+
+### 예제 코드
+
+### 주요 파라미터
+
+### 유의사항
+
+</VersionGate>
+
+<VersionGate v="v2">
+## SDK(결제창) 인증결제 연동하기
+
+SDK를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전용 파라미터인 `promotionId`에 지정하여 사용이 가능합니다.
+프로모션 결제의 경우 특정 카드사 결제 시 적용되므로 결제 호출 시 **카드 다이렉트**호출 방식만 지원되며,
+해당 프로모션의 카드사와 다이렉트 호출 카드사가 일치하는 경우에만 프로모션 조건이 적용됩니다.
+만약, 카드사가 일치하지 않는 경우 프로모션이 적용되지 않은채 일반 결제가 진행되오니 유의하시길 바랍니다.
+
+이 외에 다른 결제 기능들은 기존과 동일하게 사용이 가능합니다.
+
+인증결제와 관련된 자세한 내용은 [인증결제 연동하기](/docs/ko/authpay/guide) 문서를 참고하시기 바랍니다.
+
+### 예제 코드
+
+```tsx
+//포트원 인증결제 SDK 호출
+PortOne.requestPayment({
+  storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
+  // 적용할 프로모션 아이디 입력 (Ex. 현대카드 프로모션)
+  promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e"
+  // 카드 다이렉트 호출
+  card : {
+    cardCompany : "HYUNDAI_CARD"
+  },
+  // 기타 인증결제 파라미터 설정
+  channelKey: "channel-key-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+  paymentId: `payment-${crypto.randomUUID()}`,
+  orderName: "나이키 와플 트레이너 2 SD",
+  totalAmount: 1000,
+  currency: "CURRENCY_KRW",
+  payMethod: "CARD",
+  customer: {
+    fullName: "홍길동",
+    phoneNumber: "010-1234-5678",
+    email: "test@test.com",
+  },
+});
+```
+
+### 주요 파라미터
+
+**`promotionId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**프로모션 ID**
+
+- 관리자 콘솔의 \[프모로션] 메뉴에서 확인할 수 있습니다.
+
+- 프로모션 ID 지정 및 카드 다이렉트 방식으로 결제창을 호출하면, 프로모션 내 설정된 할인 조건 및 금액에 따라
+  할인 금액이 적용되어 결제가 진행됩니다.
+
+### 유의사항
+
+<Details>
+  <Details.Summary> 프로모션 생성 시 카드사와 결제 호출 시 카드사가 일치해야 합니다. </Details.Summary>
+
+  <Details.Content>
+    프로모션 생성 시 지정한 카드사와 결제 호출 시 `card.cardCompany`에 지정한 카드사가 일치하지 않는 경우 프로모션 아이디를 입력한 경우더라도
+    프로모션 할인이 적용되지 않습니다.
+
+    결제 요청시 동일한 카드사로 매칭하여 호출해야 합니다.
+  </Details.Content>
+</Details>
+
+<Details>
+  <Details.Summary> 프로모션 적용 결제 완료 건 취소시 예산이 복구됩니다. </Details.Summary>
+
+  <Details.Content>
+    프로모션 할인이 적용된 결제 완료(`status:paid`)건을 취소하는 경우 기본적으로 적용되었던 할인 금액이 프로모션 예산에 복구됩니다.
+  </Details.Content>
+</Details>
+
+## API 수기(키인)결제 연동하기
+
+### 예제 코드
+
+### 주요 파라미터
+
+### 유의사항
+
+## API 정기결제 연동하기
+
+### 예제 코드
+
+### 주요 파라미터
+
+### 유의사항
+
+</VersionGate>
