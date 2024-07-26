@@ -46,6 +46,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   <Details.Content>
     - `DANAL`
+    - `INICIS_UNIFIED`
   </Details.Content>
 </Details>
 
@@ -445,12 +446,12 @@ import ParamTree from "~/components/gitbook/ParamTree";
 <ParamTree>
   - **`danal`** <mark style="color:blue;">**object**</mark>
 
-    다날 bypass 파라미터
+    **다날 bypass 파라미터**
 
     <ParamTree>
       - **`CPTITLE`** <mark style="color:green;">**string**</mark>
 
-        고객사 서비스 URL 혹은 본인확인 기능 사용 경로
+        **고객사 서비스 URL 혹은 본인확인 기능 사용 경로**
 
         - 본인확인 기능을 앱에서만 사용하는 경우 서비스 홈 URL 입력. Ex) `m.login.MarketC.co.kr`
         - 본인확인 기능을 사용하는 웹 페이지가 존재할 경우 해당 URL 입력. Ex) `www.MarketA.co.kr`
@@ -459,18 +460,82 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       - **`AGELIMIT`** <mark style="color:green;">**number**</mark>
 
-        본인인증을 진행할 수 있는 최소 나이
+        **본인인증을 진행할 수 있는 최소 나이**
 
         해당 값을 채워서 요청할 경우 본인인증을 진행할 수 있는 최소 나이를 설정할 수 있습니다.
 
       - **`IsCarrier`** <mark style="color:green;">**string**</mark>
 
-        통신사 정보
+        **통신사 정보**
 
         인증 화면에서 해당 통신사만 활성화시킬 수 있습니다.
 
         가능한 값: `SKT`, `KTF`, `LGT`, `MVNO`
 
         여러 개의 통신사를 활성화시키려면 위 값들을 semicolon(`;`) 으로 이어야 합니다. ex) `SKT;KTF`
+    </ParamTree>
+  - **`inicis`** <mark style="color:blue;">**object**</mark>
+
+    **KG이니시스 bypass 파라미터**
+
+    <ParamTree>
+      - **`reqSvcCd`** <mark style="color:green;">**string**</mark>
+
+        **KG이니시스 통합인증에서 사용할 서비스 코드**
+
+        - 간편인증의 경우 `01` 입력.
+        - 본인확인의 경우 `03` 입력.
+
+      - **`DI_CODE`** <mark style="color:green;">**number**</mark>
+
+        **DI를 생성할 때 사용할 웹사이트 코드**
+
+        본인확인 요청의 경우에 이 값을 채워 넣어서 DI를 생성할 때 전달할 수 있습니다.
+
+      - **`directAgency`** <mark style="color:green;">**string**</mark>
+
+        **단독 노출할 인증 업체 코드**
+
+        인증 업체 선택 화면 없이 설정한 인증 업체를 통해 인증하도록 합니다.
+
+        <Details>
+          <Details.Summary>가능한 인증 업체 코드와 서비스 코드 조합</Details.Summary>
+
+          <Details.Content>
+            | 인증 업체 명칭 | 인증 업체 코드 | `01` (간편인증) | `03` (본인확인) |
+            |:-:|:-:|:-:|:-:|
+            | 페이코 | PAYCO | 지원 | 미지원 |
+            | 패스(통신사) | PASS | 지원 | 미지원 |
+            | 토스 | TOSS | 지원 | 지원 |
+            | 금융결제원 | KTFC | 지원 | 지원 |
+            | 카카오 | KAKAO | 지원 | 미지원 |
+            | 네이버 | NAVER | 지원 | 미지원 |
+            | 삼성패스 | SAMSUNG | 지원 | 미지원 |
+            | 신한은행 | SHINHAN | 지원 | 지원 |
+            | 국민은행 | KB | 지원 | 지원 |
+            | 하나은행 | HANA | 지원 | 지원 |
+            | 우리은행 | WOORI | 지원 | 지원 |
+            | 농협은행 | NH | 지원 | 미지원 |
+            | 카카오뱅크 | KAKAOBANK | 지원 | 미지원 |
+            | 휴대폰 인증 | SMS | 지원 | 지원 |
+          </Details.Content>
+        </Details>
+
+      - **`flgFixedUser`** <mark style="color:green;">**string**</mark>
+
+        **인증 창에서 고객 정보를 미리 채울지 여부**
+
+        `Y`, `N` 중 하나를 입력해주세요.
+
+        `Y`인 경우 구매자 이름, 구매자 연락처, 구매자 출생년도, 구매자 출생월, 구매자 출생일을 필수로 입력해야 합니다.
+
+      - **`logoUrl`** <mark style="color:green;">**string**</mark>
+
+        **인증 창에 표시할 로고 URL**
+
+        인증 창 좌측 상단 KG이니시스 로고 대신 들어갈 로고의 URL입니다.
+
+        HTTPS가 아닐 경우 로고가 표시되지 않을 수 있습니다.
+        
     </ParamTree>
 </ParamTree>
