@@ -64,9 +64,11 @@ import Hint from "~/components/Hint";
 ## SDK(결제창) 인증결제 연동하기
 
 SDK를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전용 파라미터인 `promotionId`에 지정하여 사용이 가능합니다.
+
 프로모션 결제의 경우 특정 카드사 결제 시 적용되므로 결제 호출 시 **카드 다이렉트**호출 방식만 지원되며,
 해당 프로모션의 카드사와 다이렉트 호출 카드사가 일치하는 경우에만 프로모션 조건이 적용됩니다.
-만약, 카드사가 일치하지 않는 경우 프로모션이 적용되지 않은채 일반 결제가 진행되오니 유의하시길 바랍니다.
+
+만약, 카드사가 일치하지 않는 경우 에러가 리턴되며 결제 진행이 불가하오니 유의하시길 바랍니다.
 
 이 외에 다른 결제 기능들은 기존과 동일하게 사용이 가능합니다.
 
@@ -113,38 +115,251 @@ PortOne.requestPayment({
 ### 유의사항
 
 <Details>
-  <Details.Summary> 프로모션 생성 시 카드사와 결제 호출 시 카드사가 일치해야 합니다. </Details.Summary>
+  <Details.Summary> 프로모션 결제를 이용하는 경우 카드 다이렉트 호출 방식으로 결제를 요청해야합니다. </Details.Summary>
 
   <Details.Content>
-    프로모션 생성 시 지정한 카드사와 결제 호출 시 `card.cardCompany`에 지정한 카드사가 일치하지 않는 경우 프로모션 아이디를 입력한 경우더라도
-    프로모션 할인이 적용되지 않습니다.
-
-    결제 요청시 동일한 카드사로 매칭하여 호출해야 합니다.
+    결제 요청 시 프로모션 아이디를 지정했더라도 카드 다이렉트 방식으로 호출하지 않는 경우 에러가 리턴됩니다.
   </Details.Content>
 </Details>
 
 <Details>
-  <Details.Summary> 프로모션 적용 결제 완료 건 취소시 예산이 복구됩니다. </Details.Summary>
+  <Details.Summary> 프로모션 생성시 카드사와 결제 호출시 카드사가 일치해야 합니다. </Details.Summary>
+
+  <Details.Content>
+    프로모션 생성시 지정한 카드사와 결제 호출시 `card.cardCompany`에 지정한 카드사가 일치하지 않는 경우 에러가 리턴됩니다.
+    결제 요청시 동일한 카드사로 매칭하여 호출해야 합니다.
+  </Details.Content>
+</Details>
+
+## API 수기(키인)결제 연동하기
+
+API를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전용 파라미터인 `promotionId`에 지정하여 사용이 가능합니다.
+
+해당 프로모션의 카드사와 수기(키인) 결제 요청 시 입력한 카드의 카드사가 일치하는 경우에만 프로모션 조건이 적용됩니다.
+만약, 카드사가 일치하지 않는 경우 에러가 리턴되며 결제 진행이 불가하오니 유의하시길 바랍니다.
+
+이 외에 다른 결제 기능들은 기존과 동일하게 사용이 가능합니다.
+
+수기(키인)결제와 관련된 자세한 내용은 [수기(키인)결제 연동하기](/docs/ko/v2-payment/key-in) 문서를 참고하시기 바랍니다.
+
+### 예제 코드
+
+    ```ts
+    // 포트원 수기(키인)결제 API 호출
+    const paymentResponse = await fetch(
+      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `PortOne ${PORTONE_API_SECRET}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          channelKey: "channel-key-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+          //적용할 프로모션 아이디 입력
+          promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e",
+          orderName: "1개월 이용권",
+          // 수기 결제 API를 참고해 고객 정보를 채워주세요.
+          customer: {
+            name: {
+              full: "김포트", // 고객 이름을 입력해야 합니다.
+            },
+          },
+          amount: {
+            total: 8900,
+          },
+          currency: "KRW",
+
+          // 수기(키인)결제 API를 참고해 카드 정보를 채워주세요.
+          method: {
+            card: {
+              cardCredintial: {
+                number: "0000123400001234", // 16자리 숫자만 입력해야 합니다.
+                expiryYear: "26", // 연도의 뒤 2자리를 입력해야 합니다.
+                expiryMonth: "12",
+                birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
+                passwordTwoDigits: "00", // 카드 비밀번호 앞 2자리 입력해야 합니다.
+              },
+            },
+          },
+        }),
+      },
+    );
+    if (!paymentResponse.ok)
+      throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
+    ```
+
+### 주요 파라미터
+
+**`promotionId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**프로모션 ID**
+
+- 관리자 콘솔의 \[프모로션] 메뉴에서 확인할 수 있습니다.
+
+- 프로모션 ID 지정 및 카드 다이렉트 방식으로 결제창을 호출하면, 프로모션 내 설정된 할인 조건 및 금액에 따라
+  할인 금액이 적용되어 결제가 진행됩니다.
+
+### 유의사항
+
+<Details>
+  <Details.Summary> 프로모션 생성시 카드사와 결제 요청시 입력된 카드의 카드사가 일치해야 합니다. </Details.Summary>
+
+  <Details.Content>
+    프로모션 생성시 지정한 카드사와 결제 요청시 입력한 카드 정보의 카드사가 일치하지 않는 경우 에러가 리턴되며 결제 실패 처리됩니다.
+  </Details.Content>
+</Details>
+
+## API 정기결제 연동하기
+
+발급된 빌링키를 이용하여 단건 결제 API 또는 예약 결제 API를 이용하는 경우
+API 요청시 생성한 프로모션의 ID를 전용 파라미터인 `promotionId`에 지정하여 사용이 가능합니다.
+
+해당 프로모션의 카드사와 발급된 빌링키의 카드사가 일치하는 경우에만 프로모션 조건이 적용됩니다.
+만약, 카드사가 일치하지 않는 경우 에러가 리턴되며 결제 진행이 불가하오니 유의하시길 바랍니다.
+
+이 외에 다른 결제 기능들은 기존과 동일하게 사용이 가능합니다.
+
+빌링키 결제와 관련된 자세한 내용은 [빌링키 결제 요청하기](/docs/ko/v2-payment/billing-key/2) 및
+[빌링키 예약/반복결제 구현하기](/docs/ko/v2-payment/billing-key/3)문서를 참고하시기 바랍니다.
+
+### 예제 코드
+
+<Tabs>
+  <Tabs.Tab title="빌링키 결제">
+    ```ts
+    const issueResponse = await fetch(
+      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/billing-key`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `PortOne ${PORTONE_API_SECRET}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
+          promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력
+          orderName: "후불 결제",
+          customer: {
+            id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
+            name: {
+              full: "김포트", // 고객 이름을 입력해야 합니다.
+            },
+            phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+            email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
+          },
+          amount: {
+            total: 8900,
+          },
+          currency: "KRW",
+        }),
+      },
+    );
+    if (!issueResponse.ok)
+      throw new Error(`issueResponse: ${await issueResponse.json()}`);
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="빌링키 예약 결제">
+    ```ts
+    const issueResponse = await fetch(
+      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `PortOne ${PORTONE_API_SECRET}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          payment: {
+            billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
+            promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력
+            orderName: "월간 이용권 정기 결제",
+            customer: {
+              id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
+              name: {
+                full: "김포트", // 고객 이름을 입력해야 합니다.
+              },
+              phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+              email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
+            },
+            amount: {
+              total: 8900,
+            },
+            currency: "KRW",
+          },
+          timeToPay: "2024-05-01T00:00:00+09:00", // ISO8601 형식으로 입력해야 합니다.
+        }),
+      },
+    );
+    if (!issueResponse.ok)
+      throw new Error(`issueResponse: ${await issueResponse.json()}`);
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### 주요 파라미터
+
+**`promotionId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+**프로모션 ID**
+
+- 관리자 콘솔의 \[프모로션] 메뉴에서 확인할 수 있습니다.
+
+- 프로모션 ID 지정 및 카드 다이렉트 방식으로 결제창을 호출하면, 프로모션 내 설정된 할인 조건 및 금액에 따라
+  할인 금액이 적용되어 결제가 진행됩니다.
+
+### 유의사항
+
+<Details>
+  <Details.Summary> 프로모션 생성시 카드사와 발급된 빌링키의 카드사가 일치해야 합니다. </Details.Summary>
+
+  <Details.Content>
+    프로모션 생성시 지정한 카드사와 발급된 빌링키의 카드사가 일치하지 않는 경우 에러가 리턴되며 결제 실패 처리됩니다.
+  </Details.Content>
+</Details>
+
+## 공통 유의사항
+
+<Details>
+  <Details.Summary> 프로모션이 진행중이 아닌 경우 할인 적용이 되지 않습니다. </Details.Summary>
+
+  <Details.Content>
+    결제 요청 시 프로모션 아이디를 지정했더라도 프로모션이 **진행중** 상태가 아닌 경우 프로모션 할인 적용 없이
+    일반 결제와 동일한 프로세스로 결제가 진행됩니다.
+  </Details.Content>
+</Details>
+
+<Details>
+  <Details.Summary> 프로모션 결제 완료 건 취소시 예산이 복구됩니다. </Details.Summary>
 
   <Details.Content>
     프로모션 할인이 적용된 결제 완료(`status:paid`)건을 취소하는 경우 기본적으로 적용되었던 할인 금액이 프로모션 예산에 복구됩니다.
   </Details.Content>
 </Details>
 
-## API 수기(키인)결제 연동하기
+<Details>
+  <Details.Summary> 프로모션 할인 적용 시점 안내 </Details.Summary>
 
-### 예제 코드
+  <Details.Content>
+    결제창을 호출하는 시점에 프로모션 예산에서 할인 금액에 대해 선점하고 있기 때문에, 실제 예산이 모두 소진되지 않더라도 선점된 프로모션 금액을 포함하여
+    예산을 초과하는 경우 할인 금액이 적용되지 않습니다.
 
-### 주요 파라미터
+    만약 결제 시도 중 결제 실패 혹은 사용자가 결제 승인 전 취소하는 경우 선점되었던 할인 금액은 즉시 예산금액으로 복원됩니다.
+    이후 결제 요청 고객에게 다시 할인 금액이 적용됩니다.
+  </Details.Content>
+</Details>
 
-### 유의사항
+<Details>
+  <Details.Summary> 프로모션 할인 미적용 케이스 안내 </Details.Summary>
 
-## API 정기결제 연동하기
+  <Details.Content>
+    생성한 프로모션의 최소 결제 금액 조건에 따라 프로모션 할인이 적용되지 않을 수 있습니다.
+    또한 할인 조건에 따라 적용되어야 하는 할인 금액보다 예산이 적은 경우 프로모션 할인이 적용되지 않습니다.
 
-### 예제 코드
-
-### 주요 파라미터
-
-### 유의사항
+    예시) 프로모션 A의 상태가 남은 예산 금액 : 1,000원, 할인율 : 10%일 때,
+    주문 금액이 200,000원인 경우 적용되어야 하는 할인 금액이 2,000원이므로 고객이 결제 요청 시 프로모션 할인이 적용되지 않습니다.
+  </Details.Content>
+</Details>
 
 </VersionGate>
