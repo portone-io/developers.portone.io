@@ -5,8 +5,8 @@ targetVersions: ["v1", "v2"]
 ---
 
 import Details from "~/components/gitbook/Details";
-import VersionGate from "~/components/gitbook/VersionGate";
 import Tabs from "~/components/gitbook/Tabs";
+import VersionGate from "~/components/gitbook/VersionGate";
 import Hint from "~/components/Hint";
 
 ## 프로모션이란?
@@ -44,90 +44,84 @@ SDK를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전
 이 외에 다른 결제 기능들은 기존과 동일하게 사용이 가능합니다.
 
 <VersionGate v="v1">
+  인증결제와 관련된 자세한 내용은 [인증결제 연동하기](/docs/ko/authpay/guide) 및 [결제요청 파라미터](/docs/ko/sdk/javascript-sdk/payrq) 문서를 참고하시기 바랍니다.
 
-인증결제와 관련된 자세한 내용은 [인증결제 연동하기](/docs/ko/authpay/guide) 및 [결제요청 파라미터](/docs/ko/sdk/javascript-sdk/payrq) 문서를 참고하시기 바랍니다.
+  ### 예제 코드
 
-### 예제 코드
-
-```ts
-IMP.request_pay(
-  {
-    isPromotion: true, //프로모션 사용 여부
-    promotion_id : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력 (Ex. 현대카드 프로모션)
-    pg: "kcp", //호출할 PG사 선택
-    pay_method: "card", //결제수단 선택
-    card : {
-      direct : {
-        code : "367", //현대카드 다이렉트 호출
+  ```ts
+  IMP.request_pay(
+    {
+      isPromotion: true, //프로모션 사용 여부
+      promotion_id: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력 (Ex. 현대카드 프로모션)
+      pg: "kcp", //호출할 PG사 선택
+      pay_method: "card", //결제수단 선택
+      card: {
+        direct: {
+          code: "367", //현대카드 다이렉트 호출
+        },
+      },
+      merchant_uid: "ORD20180131-0000011", //고객사 주문번호
+      name: "Norway swivel chair", //주문명
+      amount: 1000, // 결제 금액
+      //고객 정보
+      buyer_email: "gildong@gmail.com",
+      buyer_name: "Hong Gildong",
+      buyer_tel: "010-4242-4242",
+      buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+      buyer_postcode: "01181",
+    },
+    function (rsp) {
+      // callback
+      if (rsp.success) {
+        // Payment is successful
+      } else {
+        // Payment failed
       }
-    }
-    merchant_uid: "ORD20180131-0000011", //고객사 주문번호
-    name: "Norway swivel chair", //주문명
-    amount: 1000, // 결제 금액
-    //고객 정보
-    buyer_email: "gildong@gmail.com",
-    buyer_name: "Hong Gildong",
-    buyer_tel: "010-4242-4242",
-    buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
-    buyer_postcode: "01181",
-  },
-  function (rsp) {
-    // callback
-    if (rsp.success) {
-      // Payment is successful
-    } else {
-      // Payment failed
-    }
-  },
-);
-```
+    },
+  );
+  ```
 
-카드 다이렉트 호출 시 [카드사 코드](/docs/ko/tip/card-code) 문서를 참조하여 프로모션과 동일한 카드사로 지정해야 합니다.
+  카드 다이렉트 호출 시 [카드사 코드](/docs/ko/tip/card-code) 문서를 참조하여 프로모션과 동일한 카드사로 지정해야 합니다.
 </VersionGate>
 
 <VersionGate v="v2">
+  인증결제와 관련된 자세한 내용은 [인증결제 연동하기](/docs/ko/authpay/guide) 및 [결제요청 파라미터](/docs/ko/v2-payment/v2-sdk/payment-request) 문서를 참고하시기 바랍니다.
 
-인증결제와 관련된 자세한 내용은 [인증결제 연동하기](/docs/ko/authpay/guide) 및 [결제요청 파라미터](/docs/ko/v2-payment/v2-sdk/payment-request) 문서를 참고하시기 바랍니다.
+  ### 예제 코드
 
-### 예제 코드
-
-```tsx
-//포트원 인증결제 SDK 호출
-PortOne.requestPayment({
-  storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
-  promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e" //적용할 프로모션 아이디 입력 (Ex. 현대카드 프로모션)
-  //카드 다이렉트 호출
-  card : {
-    cardCompany : "HYUNDAI_CARD"
-  },
-  //기타 인증결제 파라미터 설정
-  channelKey: "channel-key-f042e8e2-92f1-4f68-ad61-cec6ede41529",
-  paymentId: `payment-${crypto.randomUUID()}`,
-  orderName: "나이키 와플 트레이너 2 SD",
-  totalAmount: 1000,
-  currency: "CURRENCY_KRW",
-  payMethod: "CARD",
-  customer: {
-    fullName: "홍길동",
-    phoneNumber: "010-1234-5678",
-    email: "test@test.com",
-  },
-});
-```
+  ```tsx
+  //포트원 인증결제 SDK 호출
+  PortOne.requestPayment({
+    storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
+    promotionId: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력 (Ex. 현대카드 프로모션)
+    //카드 다이렉트 호출
+    card: {
+      cardCompany: "HYUNDAI_CARD",
+    },
+    //기타 인증결제 파라미터 설정
+    channelKey: "channel-key-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+    paymentId: `payment-${crypto.randomUUID()}`,
+    orderName: "나이키 와플 트레이너 2 SD",
+    totalAmount: 1000,
+    currency: "CURRENCY_KRW",
+    payMethod: "CARD",
+    customer: {
+      fullName: "홍길동",
+      phoneNumber: "010-1234-5678",
+      email: "test@test.com",
+    },
+  });
+  ```
 </VersionGate>
 
 ### 주요 파라미터
 
 <VersionGate v="v1">
-
-**`promotion_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
+  **`promotion_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 </VersionGate>
 
 <VersionGate v="v2">
-
-**`promotionId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
+  **`promotionId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 </VersionGate>
 
 **프로모션 ID**
@@ -148,35 +142,35 @@ PortOne.requestPayment({
 </Details>
 
 <VersionGate v="v1">
-<Details>
-  <Details.Summary> 프로모션 생성시 카드사와 결제 호출시 카드사가 일치해야 합니다. </Details.Summary>
+  <Details>
+    <Details.Summary> 프로모션 생성시 카드사와 결제 호출시 카드사가 일치해야 합니다. </Details.Summary>
 
-  <Details.Content>
-    프로모션 생성시 지정한 카드사와 결제 호출시 `card.direct.code`에 지정한 카드사가 일치하지 않는 경우 에러가 리턴됩니다.
-    결제 요청시 동일한 카드사로 매칭하여 호출해야 합니다.
-  </Details.Content>
-</Details>
+    <Details.Content>
+      프로모션 생성시 지정한 카드사와 결제 호출시 `card.direct.code`에 지정한 카드사가 일치하지 않는 경우 에러가 리턴됩니다.
+      결제 요청시 동일한 카드사로 매칭하여 호출해야 합니다.
+    </Details.Content>
+  </Details>
 </VersionGate>
 
 <VersionGate v="v2">
-<Details>
-  <Details.Summary> 프로모션 생성시 카드사와 결제 호출시 카드사가 일치해야 합니다. </Details.Summary>
+  <Details>
+    <Details.Summary> 프로모션 생성시 카드사와 결제 호출시 카드사가 일치해야 합니다. </Details.Summary>
 
-  <Details.Content>
-    프로모션 생성시 지정한 카드사와 결제 호출시 `card.cardCompany`에 지정한 카드사가 일치하지 않는 경우 에러가 리턴됩니다.
-    결제 요청시 동일한 카드사로 매칭하여 호출해야 합니다.
-  </Details.Content>
-</Details>
+    <Details.Content>
+      프로모션 생성시 지정한 카드사와 결제 호출시 `card.cardCompany`에 지정한 카드사가 일치하지 않는 경우 에러가 리턴됩니다.
+      결제 요청시 동일한 카드사로 매칭하여 호출해야 합니다.
+    </Details.Content>
+  </Details>
 </VersionGate>
 
 ## API 수기(키인)결제 연동하기
 
 <VersionGate v="v1">
-API를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전용 파라미터인 `promotion_id`에 지정하여 사용이 가능합니다.
+  API를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전용 파라미터인 `promotion_id`에 지정하여 사용이 가능합니다.
 </VersionGate>
 
 <VersionGate v="v2">
-API를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전용 파라미터인 `promotionId`에 지정하여 사용이 가능합니다.
+  API를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전용 파라미터인 `promotionId`에 지정하여 사용이 가능합니다.
 </VersionGate>
 
 해당 프로모션의 카드사와 수기(키인) 결제 요청 시 입력한 카드의 카드사가 일치하는 경우에만 프로모션 조건이 적용됩니다.
@@ -185,99 +179,94 @@ API를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전
 이 외에 다른 결제 기능들은 기존과 동일하게 사용이 가능합니다.
 
 <VersionGate v="v1">
+  수기(키인)결제와 관련된 자세한 내용은 [비인증결제 연동하기 > 키인결제](/docs/ko/auth/guide-1/readme#키인결제) 문서를 참고하시기 바랍니다.
 
-수기(키인)결제와 관련된 자세한 내용은 [비인증결제 연동하기 > 키인결제](/docs/ko/auth/guide-1/readme#키인결제) 문서를 참고하시기 바랍니다.
+  ### 예제 코드
 
-### 예제 코드
-
-```ts
-// card_number, expiry, birth, pwd_2digit 등 정보를 전달받습니다.
-// 포트원 비인증 결제(일회성) API 호출
-const onetimeResponse = await fetch(
-  "https://api.iamport.kr/subscribe/payments/onetime",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
-      "Content-Type": "application/json",
+  ```ts
+  // card_number, expiry, birth, pwd_2digit 등 정보를 전달받습니다.
+  // 포트원 비인증 결제(일회성) API 호출
+  const onetimeResponse = await fetch(
+    "https://api.iamport.kr/subscribe/payments/onetime",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pg: `${pg_provider}.${pg_mid}`,
+        card_number: "YYYY-YYYY-YYYY-YYYY", // 카드 번호 16자리
+        expiry: "YYYY-MM", // 카드 유효기간
+        birth: "YYMMDD", // 생년 월일. 무기명 법인카드의 경우 사업자 번호 10자리 입력
+        pwd_2digit: "NN", //카드 비밀번호 앞 2자리
+        promotionId: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력
+        // 중략...
+      }),
     },
-    body: JSON.stringify({
-      pg: `${pg_provider}.${pg_mid}`,
-      card_number: "YYYY-YYYY-YYYY-YYYY", // 카드 번호 16자리
-      expiry: "YYYY-MM", // 카드 유효기간
-      birth: "YYMMDD", // 생년 월일. 무기명 법인카드의 경우 사업자 번호 10자리 입력
-      pwd_2digit: "NN", //카드 비밀번호 앞 2자리
-      promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력
-      // 중략...
-    }),
-  },
-);
-```
+  );
+  ```
 </VersionGate>
 
 <VersionGate v="v2">
-수기(키인)결제와 관련된 자세한 내용은 [수기(키인)결제 연동하기](/docs/ko/v2-payment/key-in) 문서를 참고하시기 바랍니다.
+  수기(키인)결제와 관련된 자세한 내용은 [수기(키인)결제 연동하기](/docs/ko/v2-payment/key-in) 문서를 참고하시기 바랍니다.
 
-### 예제 코드
+  ### 예제 코드
 
-    ```ts
-    // 포트원 수기(키인)결제 API 호출
-    const paymentResponse = await fetch(
-      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `PortOne ${PORTONE_API_SECRET}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          channelKey: "channel-key-f042e8e2-92f1-4f68-ad61-cec6ede41529",
-          //적용할 프로모션 아이디 입력
-          promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e",
-          orderName: "1개월 이용권",
-          // 수기 결제 API를 참고해 고객 정보를 채워주세요.
-          customer: {
-            name: {
-              full: "김포트", // 고객 이름을 입력해야 합니다.
-            },
-          },
-          amount: {
-            total: 8900,
-          },
-          currency: "KRW",
-
-          // 수기(키인)결제 API를 참고해 카드 정보를 채워주세요.
-          method: {
-            card: {
-              cardCredintial: {
-                number: "0000123400001234", // 16자리 숫자만 입력해야 합니다.
-                expiryYear: "26", // 연도의 뒤 2자리를 입력해야 합니다.
-                expiryMonth: "12",
-                birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
-                passwordTwoDigits: "00", // 카드 비밀번호 앞 2자리 입력해야 합니다.
-              },
-            },
-          },
-        }),
+  ```ts
+  // 포트원 수기(키인)결제 API 호출
+  const paymentResponse = await fetch(
+    `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `PortOne ${PORTONE_API_SECRET}`,
+        "Content-Type": "application/json",
       },
-    );
-    if (!paymentResponse.ok)
-      throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
-    ```
+      body: JSON.stringify({
+        channelKey: "channel-key-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+        //적용할 프로모션 아이디 입력
+        promotionId: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e",
+        orderName: "1개월 이용권",
+        // 수기 결제 API를 참고해 고객 정보를 채워주세요.
+        customer: {
+          name: {
+            full: "김포트", // 고객 이름을 입력해야 합니다.
+          },
+        },
+        amount: {
+          total: 8900,
+        },
+        currency: "KRW",
+
+        // 수기(키인)결제 API를 참고해 카드 정보를 채워주세요.
+        method: {
+          card: {
+            cardCredintial: {
+              number: "0000123400001234", // 16자리 숫자만 입력해야 합니다.
+              expiryYear: "26", // 연도의 뒤 2자리를 입력해야 합니다.
+              expiryMonth: "12",
+              birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
+              passwordTwoDigits: "00", // 카드 비밀번호 앞 2자리 입력해야 합니다.
+            },
+          },
+        },
+      }),
+    },
+  );
+  if (!paymentResponse.ok)
+    throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
+  ```
 </VersionGate>
 
 ### 주요 파라미터
 
 <VersionGate v="v1">
-
-**`promotion_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
+  **`promotion_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 </VersionGate>
 
 <VersionGate v="v2">
-
-**`promotionId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-
+  **`promotionId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 </VersionGate>
 
 **프로모션 ID**
@@ -300,13 +289,13 @@ const onetimeResponse = await fetch(
 ## API 정기결제 연동하기
 
 <VersionGate v="v1">
-발급된 빌링키를 이용하여 단건 결제 API 또는 예약 결제 API를 이용하는 경우
-API 요청시 생성한 프로모션의 ID를 전용 파라미터인 `promotion_id`에 지정하여 사용이 가능합니다.
+  발급된 빌링키를 이용하여 단건 결제 API 또는 예약 결제 API를 이용하는 경우
+  API 요청시 생성한 프로모션의 ID를 전용 파라미터인 `promotion_id`에 지정하여 사용이 가능합니다.
 </VersionGate>
 
 <VersionGate v="v2">
-발급된 빌링키를 이용하여 단건 결제 API 또는 예약 결제 API를 이용하는 경우
-API 요청시 생성한 프로모션의 ID를 전용 파라미터인 `promotionId`에 지정하여 사용이 가능합니다.
+  발급된 빌링키를 이용하여 단건 결제 API 또는 예약 결제 API를 이용하는 경우
+  API 요청시 생성한 프로모션의 ID를 전용 파라미터인 `promotionId`에 지정하여 사용이 가능합니다.
 </VersionGate>
 
 해당 프로모션의 카드사와 발급된 빌링키의 카드사가 일치하는 경우에만 프로모션 조건이 적용됩니다.
@@ -315,125 +304,90 @@ API 요청시 생성한 프로모션의 ID를 전용 파라미터인 `promotionI
 이 외에 다른 결제 기능들은 기존과 동일하게 사용이 가능합니다.
 
 <VersionGate v="v1">
-빌링키 결제와 관련된 자세한 내용은 [비인증결제 연동하기 > 빌링키결제](/docs/ko/auth/guide-1/readme#빌링키-결제-요청하기) 문서를 참고하시기 바랍니다.
+  빌링키 결제와 관련된 자세한 내용은 [비인증결제 연동하기 > 빌링키결제](/docs/ko/auth/guide-1/readme#빌링키-결제-요청하기) 문서를 참고하시기 바랍니다.
 
-### 예제 코드
+  ### 예제 코드
 
-<Tabs>
-  <Tabs.Tab title="빌링키 결제">
-  ```ts
-  // 포트원 빌링키 결제 API 호출
-  const paymentResponse = await fetch(
-    "https://api.iamport.kr/subscribe/payments/again",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        customer_uid,
-        merchant_uid,
-        name: "월간 이용권 정기결제",
-        // 빌링키 결제 API를 참고해 고객 정보를 채워주세요.
-        amount: {
-          total: 8900,
-        },
-        currency: "KRW",
-        //적용할 프로모션 아이디 입력
-        promotion_id: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e",
-      }),
-    },
-  );
-  if (!paymentResponse.ok)
-  throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
-```
-  </Tabs.Tab>
-
-  <Tabs.Tab>
-  ```ts
-  // 결제 예약
-  axios({
-    url: `https://api.iamport.kr/subscribe/payments/schedule`,
-    method: "post",
-    headers: { Authorization: access_token },
-    data: {
-      customer_uid: "gildong_0001_1234", // 카드(빌링키)와 1:1로 대응하는 값
-      promotion_id: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e" //적용할 프로모션 아이디 값
-      schedules: [
+  <Tabs>
+    <Tabs.Tab title="빌링키 결제">
+      ```ts
+      // 포트원 빌링키 결제 API 호출
+      const paymentResponse = await fetch(
+        "https://api.iamport.kr/subscribe/payments/again",
         {
-          merchant_uid: "order_monthly_0001", // 주문 번호
-          schedule_at: 1519862400, // 결제 시도 시각 in Unix Time Stamp. 예: 다음 달 1일
-          amount: 8900,
-          name: "월간 이용권 정기결제",
-          buyer_name: "홍길동",
-          buyer_tel: "01012345678",
-          buyer_email: "gildong@gmail.com",
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customer_uid,
+            merchant_uid,
+            name: "월간 이용권 정기결제",
+            // 빌링키 결제 API를 참고해 고객 정보를 채워주세요.
+            amount: {
+              total: 8900,
+            },
+            currency: "KRW",
+            //적용할 프로모션 아이디 입력
+            promotion_id: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e",
+          }),
         },
-      ],
-    },
-  });
-  ```
-  </Tabs.Tab>
-</Tabs>
+      );
+      if (!paymentResponse.ok)
+        throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
+      ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+      ```ts
+      // 결제 예약
+      axios({
+        url: `https://api.iamport.kr/subscribe/payments/schedule`,
+        method: "post",
+        headers: { Authorization: access_token },
+        data: {
+          customer_uid: "gildong_0001_1234", // 카드(빌링키)와 1:1로 대응하는 값
+          promotion_id: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 값
+          schedules: [
+            {
+              merchant_uid: "order_monthly_0001", // 주문 번호
+              schedule_at: 1519862400, // 결제 시도 시각 in Unix Time Stamp. 예: 다음 달 1일
+              amount: 8900,
+              name: "월간 이용권 정기결제",
+              buyer_name: "홍길동",
+              buyer_tel: "01012345678",
+              buyer_email: "gildong@gmail.com",
+            },
+          ],
+        },
+      });
+      ```
+    </Tabs.Tab>
+  </Tabs>
 </VersionGate>
 
 <VersionGate v="v2">
-빌링키 결제와 관련된 자세한 내용은 [빌링키 결제 요청하기](/docs/ko/v2-payment/billing-key/2) 및
-[빌링키 예약/반복결제 구현하기](/docs/ko/v2-payment/billing-key/3)문서를 참고하시기 바랍니다.
+  빌링키 결제와 관련된 자세한 내용은 [빌링키 결제 요청하기](/docs/ko/v2-payment/billing-key/2) 및
+  [빌링키 예약/반복결제 구현하기](/docs/ko/v2-payment/billing-key/3)문서를 참고하시기 바랍니다.
 
-### 예제 코드
+  ### 예제 코드
 
-<Tabs>
-  <Tabs.Tab title="빌링키 결제">
-    ```ts
-    const issueResponse = await fetch(
-      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/billing-key`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `PortOne ${PORTONE_API_SECRET}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
-          promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력
-          orderName: "후불 결제",
-          customer: {
-            id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
-            name: {
-              full: "김포트", // 고객 이름을 입력해야 합니다.
-            },
-            phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
-            email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
+  <Tabs>
+    <Tabs.Tab title="빌링키 결제">
+      ```ts
+      const issueResponse = await fetch(
+        `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/billing-key`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `PortOne ${PORTONE_API_SECRET}`,
+            "Content-Type": "application/json",
           },
-          amount: {
-            total: 8900,
-          },
-          currency: "KRW",
-        }),
-      },
-    );
-    if (!issueResponse.ok)
-      throw new Error(`issueResponse: ${await issueResponse.json()}`);
-    ```
-  </Tabs.Tab>
-
-  <Tabs.Tab title="빌링키 예약 결제">
-    ```ts
-    const issueResponse = await fetch(
-      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `PortOne ${PORTONE_API_SECRET}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          payment: {
+          body: JSON.stringify({
             billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
-            promotionId : "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력
-            orderName: "월간 이용권 정기 결제",
+            promotionId: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력
+            orderName: "후불 결제",
             customer: {
               id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
               name: {
@@ -446,16 +400,51 @@ API 요청시 생성한 프로모션의 ID를 전용 파라미터인 `promotionI
               total: 8900,
             },
             currency: "KRW",
+          }),
+        },
+      );
+      if (!issueResponse.ok)
+        throw new Error(`issueResponse: ${await issueResponse.json()}`);
+      ```
+    </Tabs.Tab>
+
+    <Tabs.Tab title="빌링키 예약 결제">
+      ```ts
+      const issueResponse = await fetch(
+        `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `PortOne ${PORTONE_API_SECRET}`,
+            "Content-Type": "application/json",
           },
-          timeToPay: "2024-05-01T00:00:00+09:00", // ISO8601 형식으로 입력해야 합니다.
-        }),
-      },
-    );
-    if (!issueResponse.ok)
-      throw new Error(`issueResponse: ${await issueResponse.json()}`);
-    ```
-  </Tabs.Tab>
-</Tabs>
+          body: JSON.stringify({
+            payment: {
+              billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
+              promotionId: "promotion-id-86e1ff2a-2c3a-451c-bdd3-e5cd1664bc3e", //적용할 프로모션 아이디 입력
+              orderName: "월간 이용권 정기 결제",
+              customer: {
+                id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
+                name: {
+                  full: "김포트", // 고객 이름을 입력해야 합니다.
+                },
+                phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+                email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
+              },
+              amount: {
+                total: 8900,
+              },
+              currency: "KRW",
+            },
+            timeToPay: "2024-05-01T00:00:00+09:00", // ISO8601 형식으로 입력해야 합니다.
+          }),
+        },
+      );
+      if (!issueResponse.ok)
+        throw new Error(`issueResponse: ${await issueResponse.json()}`);
+      ```
+    </Tabs.Tab>
+  </Tabs>
 </VersionGate>
 
 ### 주요 파라미터
@@ -521,4 +510,3 @@ API 요청시 생성한 프로모션의 ID를 전용 파라미터인 `promotionI
     주문 금액이 200,000원인 경우 적용되어야 하는 할인 금액이 2,000원이므로 고객이 결제 요청 시 프로모션 할인이 적용되지 않습니다.
   </Details.Content>
 </Details>
-
