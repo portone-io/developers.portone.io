@@ -12,7 +12,7 @@ import Hint from "~/components/Hint";
 **본인인증 서비스**란 인증 절차를 거쳐 본인 여부와 입력한 정보의 정확성을 확인하여 주는 서비스입니다. 현재 존재하는 대표적인 본인인증 서비스는 아래와 같습니다.
 
 - 다날 휴대폰 본인인증 (V2 모듈에서 지원중)
-- KG 이니시스 통합인증 (V2 모듈에서 미지원, 추후 지원 예정)
+- KG 이니시스 통합인증 (V2 모듈에서 지원중)
 
 ## 휴대폰 본인인증
 
@@ -157,14 +157,31 @@ app.post("/identity-verifications", async (req, res) => {
 조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.
 아래 파라미터들은 모두 본인인증 단건 조회의 결과가 인증 완료 상태일 때 (status = `VERIFIED`) 제공되는 `verifiedCustomer` 필드 내에 존재합니다.
 
-- `ci`: 연계 정보(Connecting Information). 사람마다 고유하고 서비스별로 달라지지 않기 때문에, 서비스 간 연계에 사용할 수 있음.
-- `di`: 중복 가입 확인 정보(Duplication Information). 해당 서비스 안에서만 사람마다 고유함. 이용자의 중복 가입을 확인하는 데 사용할 수 있음.
+- `ci`: 연계 정보(Connecting Information).
+  - 사람마다 고유하고 서비스별로 달라지지 않기 때문에, 서비스 간 연계에 사용할 수 있음.
+  - 다날의 경우 항상 제공.
+  - 이니시스의 경우 카카오를 제외한 인증 업체에서 항상 제공.
+- `ci2`: 백업 `ci`.
+  - 정보 유출 등의 사유로 기존 `ci`를 사용할 수 없을 때 제공되는 연계 정보.
+  - 평상시에는 제공되지 않음.
+  - 다날의 경우 제공되지 않음.
+  - 이니시스의 경우 본인확인(`reqSvcCd` = `03`)에 한해 제공.
+- `di`: 중복 가입 확인 정보(Duplication Information).
+  - 해당 서비스 안에서만 사람마다 고유함.
+  - 이용자의 중복 가입을 확인하는 데 사용할 수 있음.
+  - 다날의 경우 항상 제공.
+  - 이니시스의 경우 본인확인(`reqSvcCd` = `03`)에 한해 제공.
 - `name`: 이름
 - `gender`: 성별
+  - 다날의 경우 항상 제공.
+  - 이니시스의 경우 본인확인(`reqSvcCd` = `03`)에 한해 제공.
 - `birthDate`: 생년월일 (YYYY-MM-DD)
+- `isForeigner`: 외국인 여부.
+  - 다날의 경우 하기 안내를 따라 추가 계약 후 제공.
+  - 이니시스의 경우 본인확인(`reqSvcCd` = `03`)에 한해 제공.
 
 <Hint style="info">
-  위의 정보 외에 외국인(**`isForeigner`**) 여부는 **API 방식** 본인인증에 한하여 **개인정보 제공동의 약관을 사이트에 게재**한 후 <mark style="color:red;">**[cs@portone.io](mailto:cs@portone.io)**</mark>**로 신청**하여 취득할 수 있습니다. 해당 부분은 당사 계약 이후 다날PG사로 요청 후 승인이 완료되면 이용 가능한 점 참고해 주시기 바랍니다.
+  다날의 외국인(**`isForeigner`**) 여부는 **API 방식** 본인인증에 한하여 **개인정보 제공동의 약관을 사이트에 게재**한 후 <mark style="color:red;">**[cs@portone.io](mailto:cs@portone.io)**</mark>**로 신청**하여 취득할 수 있습니다. 해당 부분은 당사 계약 이후 다날PG사로 요청 후 승인이 완료되면 이용 가능한 점 참고해 주시기 바랍니다.
 
   **메일 요청 신청 양식**
 
@@ -191,7 +208,7 @@ app.post("/identity-verifications", async (req, res) => {
     // 인증 토큰 발급 받기
     // identityVerificationId로 인증 정보 조회
 
-    const { ci, di, name, gender, birthDate } =
+    const { ci, ci2, di, name, gender, birthDate } =
       identityVerification.verifiedCustomer;
     // 연령 제한 로직 예시
     if (new Date(birthDate).getFullYear() <= 1999) {
@@ -200,12 +217,16 @@ app.post("/identity-verifications", async (req, res) => {
       // 연령 미달
     }
     // 1인 1계정 허용 로직 예시
-    // DB에서 di 조회 후 가입여부 검사
-    const user = await Users.find({ di });
-    if (user == null) {
-      // 신규 고객
+    if (di == null) {
+      // PG사에서 di를 미제공
     } else {
-      // 이미 가입된 고객
+      // DB에서 di 조회 후 가입여부 검사
+      const user = await Users.find({ di });
+      if (user == null) {
+        // 신규 고객
+      } else {
+        // 이미 가입된 고객
+      }
     }
   } catch (e) {
     console.error(e);
