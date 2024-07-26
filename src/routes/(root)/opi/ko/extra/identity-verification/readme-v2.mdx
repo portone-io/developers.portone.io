@@ -161,21 +161,27 @@ app.post("/identity-verifications", async (req, res) => {
   - 사람마다 고유하고 서비스별로 달라지지 않기 때문에, 서비스 간 연계에 사용할 수 있음.
   - 다날의 경우 항상 제공.
   - 이니시스의 경우 카카오를 제외한 인증 업체에서 항상 제공.
+
 - `ci2`: 백업 `ci`.
   - 정보 유출 등의 사유로 기존 `ci`를 사용할 수 없을 때 제공되는 연계 정보.
   - 평상시에는 제공되지 않음.
   - 다날의 경우 제공되지 않음.
   - 이니시스의 경우 본인확인(`reqSvcCd` = `03`)에 한해 제공.
+
 - `di`: 중복 가입 확인 정보(Duplication Information).
   - 해당 서비스 안에서만 사람마다 고유함.
   - 이용자의 중복 가입을 확인하는 데 사용할 수 있음.
   - 다날의 경우 항상 제공.
   - 이니시스의 경우 본인확인(`reqSvcCd` = `03`)에 한해 제공.
+
 - `name`: 이름
+
 - `gender`: 성별
   - 다날의 경우 항상 제공.
   - 이니시스의 경우 본인확인(`reqSvcCd` = `03`)에 한해 제공.
+
 - `birthDate`: 생년월일 (YYYY-MM-DD)
+
 - `isForeigner`: 외국인 여부.
   - 다날의 경우 하기 안내를 따라 추가 계약 후 제공.
   - 이니시스의 경우 본인확인(`reqSvcCd` = `03`)에 한해 제공.
@@ -208,7 +214,7 @@ app.post("/identity-verifications", async (req, res) => {
     // 인증 토큰 발급 받기
     // identityVerificationId로 인증 정보 조회
 
-    const { ci, ci2, di, name, gender, birthDate } =
+    const { ci, di, name, gender, birthDate } =
       identityVerification.verifiedCustomer;
     // 연령 제한 로직 예시
     if (new Date(birthDate).getFullYear() <= 1999) {
