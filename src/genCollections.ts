@@ -147,6 +147,7 @@ async function generate(watch = false) {
   );
 
   await writeIndex(collections, outDir);
+  await writeThumbnail(collections, path.join(outDir, "client"));
   if (!watch) return () => {};
 
   const subscriptions = await Promise.all(
@@ -240,6 +241,30 @@ ${[...collections.keys()].map((name) => `export { ${name} } from "./${name}";`).
 
   await fs.mkdir(outDir, { recursive: true });
   await fs.writeFile(path.join(outDir, "index.ts"), content);
+}
+
+async function writeThumbnail(
+  collections: Map<string, Collection>,
+  outDir: string,
+) {
+  const thumbnails = [...collections.values()]
+    .flatMap((entry) => [...entry.entries.values()])
+    .flatMap((entry) => entry.frontmatter as { thumbnail: { ident: string } }[])
+    .map(({ thumbnail }) => thumbnail)
+    .filter((thumbnail) => thumbnail && thumbnail.ident);
+  const content = `// @vinxi-ignore-style-collection
+/* eslint-disable */
+
+${[...collections.values()]
+  .flatMap((entry) => [...entry.entries.values()])
+  .flatMap((entry) => [...entry.imports])
+  .filter(({ ident }) => thumbnails.some((t) => t.ident === ident))
+  .map(({ path }) => `import "../${path}";`)
+  .join("\n")}
+`;
+
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.writeFile(path.join(outDir, "thumbnail.ts"), content);
 }
 
 if (process.argv[2] === "watch") {
