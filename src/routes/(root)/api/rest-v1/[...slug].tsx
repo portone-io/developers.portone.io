@@ -58,7 +58,7 @@ export default function ApiV1Docs() {
         <prose.p>
           <SchemaDownloadButton
             label="Swagger JSON 내려받기"
-            href="/api/schema/v1.openapi.json"
+            href="/api/schema/v1/openapi.json"
             download="portone-v1-swagger.json"
           >
             <PostmanGuide href="https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-from-swagger/" />
