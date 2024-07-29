@@ -57,7 +57,7 @@ export default function ApiV2Docs() {
         <prose.p>
           <SchemaDownloadButton
             label="OpenAPI JSON 내려받기"
-            href="/api/schema/v2.openapi.json"
+            href="/api/schema/v2/openapi.json"
             download="portone-v2-openapi.json"
           >
             <PostmanGuide href="https://learning.postman.com/docs/integrations/available-integrations/working-with-openAPI/" />
