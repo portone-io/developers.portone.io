@@ -49,6 +49,7 @@ export default function Docs(props: { children: JSXElement }) {
   const doc = createAsync(() => loadDoc(fullSlug()), {
     deferStream: true,
   });
+  const frontmatter = createMemo(() => doc()?.frontmatter as DocsEntry);
   const [navMenuSystemVersions] = createResource(params, ({ lang }) =>
     loadNavMenuSystemVersions(lang),
   );
@@ -58,32 +59,29 @@ export default function Docs(props: { children: JSXElement }) {
       <div class="flex">
         <DocsNavMenu lang={params().lang} slug={params().slug} />
         <div class="min-w-0 flex flex-1 justify-center">
-          <Show when={doc()}>
-            {(doc) => {
-              const frontmatter = doc().frontmatter as DocsEntry;
-              const { title, description } = frontmatter;
-
-              return (
-                <>
-                  <Metadata
-                    title={title}
-                    description={description}
-                    ogType="article"
-                    ogImageSlug={`docs/${params().lang}/${params().slug}.png`}
-                    docsEntry={frontmatter}
-                  />
-                  <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
-                    <div class="mb-6">
-                      <prose.h1 id="overview">{title}</prose.h1>
-                      <Show when={description}>
-                        <p class="my-4 text-xl text-gray">{description}</p>
-                      </Show>
-                    </div>
-                    {props.children}
-                  </article>
-                </>
-              );
-            }}
+          <Show when={frontmatter()}>
+            {(frontmatter) => (
+              <>
+                <Metadata
+                  title={frontmatter().title}
+                  description={frontmatter().description}
+                  ogType="article"
+                  ogImageSlug={`docs/${params().lang}/${params().slug}.png`}
+                  docsEntry={frontmatter()}
+                />
+                <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
+                  <div class="mb-6">
+                    <prose.h1 id="overview">{frontmatter().title}</prose.h1>
+                    <Show when={frontmatter().description}>
+                      <p class="my-4 text-xl text-gray">
+                        {frontmatter().description}
+                      </p>
+                    </Show>
+                  </div>
+                  {props.children}
+                </article>
+              </>
+            )}
           </Show>
           <div class="hidden shrink-10 basis-10 lg:block"></div>
           <RightSidebar lang={params().lang} slug={params().slug} />
