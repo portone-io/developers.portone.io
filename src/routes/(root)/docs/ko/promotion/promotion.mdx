@@ -5,6 +5,7 @@ targetVersions: ["v1", "v2"]
 ---
 
 import Details from "~/components/gitbook/Details";
+import ParamTree from "~/components/gitbook/ParamTree";
 import Tabs from "~/components/gitbook/Tabs";
 import VersionGate from "~/components/gitbook/VersionGate";
 import Hint from "~/components/Hint";
@@ -86,8 +87,6 @@ SDK를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전
     },
   );
   ```
-
-  카드 다이렉트 호출 시 [카드사 코드](/docs/ko/tip/card-code) 문서를 참조하여 프로모션과 동일한 카드사로 지정해야 합니다.
 </VersionGate>
 
 <VersionGate v="v2">
@@ -123,11 +122,11 @@ SDK를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전
 ### 주요 파라미터
 
 <VersionGate v="v1">
-  **`promotion_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  **`promotion_id`** <mark style="color:green;">**string**</mark>
 </VersionGate>
 
 <VersionGate v="v2">
-  **`promotionId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+  **`promotionId`** <mark style="color:green;">**string**</mark>
 </VersionGate>
 
 **프로모션 ID**
@@ -136,6 +135,44 @@ SDK를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전
 
 - 프로모션 ID 지정 및 카드 다이렉트 방식으로 결제창을 호출하면, 프로모션 내 설정된 할인 조건 및 금액에 따라
   할인 금액이 적용되어 결제가 진행됩니다.
+
+<VersionGate v="v1">
+<ParamTree>
+  **`card`** <mark style="color:blue;">**object**</mark>
+
+  **카드 결제 옵션 설정**
+
+  <ParamTree>
+    - **`direct`** <mark style="color:blue;">**object**</mark>
+
+      **카드 다이렉트 호출**
+
+      <ParamTree>
+        - **`code`** <mark style="color:green;">**string**</mark>
+
+          **카드사 코드**
+
+          카드 다이렉트 호출 시 [카드사 코드](/docs/ko/tip/card-code) 문서를 참조하여 프로모션과 동일한 카드사로 지정해야 합니다.
+      </ParamTree>
+  </ParamTree>
+</ParamTree>
+</VersionGate>
+
+<VersionGate v="v2">
+<ParamTree>
+  **`card`** <mark style="color:blue;">**object**</mark>
+
+  **카드 정보**
+
+  <ParamTree>
+    - **`cardCompany`** <mark style="color:green;">**string**</mark>
+
+      **카드사 다이렉트 호출 시 필요한 카드사 식별 값**
+
+      카드 다이렉트 호출 시 [카드사 식별 값](/docs/ko/v2-payment/v2-sdk/payment-request?v=v2#card-object) 문서를 참조하여 프로모션과 동일한 카드사로 지정해야 합니다.
+  </ParamTree>
+</ParamTree>
+</VersionGate>
 
 ### 유의사항
 
@@ -485,6 +522,10 @@ SDK를 이용하는 경우 결제 호출 시 생성한 프로모션의 ID를 전
 </Details>
 
 ## 공통 유의사항
+
+<Hint style="info">
+  프로모션 서비스에서 제공하는 로직은 내부 사정에 의해 변동될 수 있으며, 변동 시 고객사에 사전 고지될 예정입니다.
+</Hint>
 
 <Details>
   <Details.Summary> 프로모션이 진행중이 아닌 경우 할인 적용이 되지 않습니다. </Details.Summary>
