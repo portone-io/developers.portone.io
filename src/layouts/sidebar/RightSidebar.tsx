@@ -24,7 +24,7 @@ function RightSidebar(_props: RightSidebarProps) {
   const props = mergeProps(
     {
       editThisPagePrefix:
-        "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
+        "https://github.com/portone-io/developers.portone.io/blob/main/src/routes/(root)/docs",
     },
     _props,
   );
