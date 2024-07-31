@@ -86,7 +86,11 @@ export default function Docs(props: { children: JSXElement }) {
             )}
           </Show>
           <div class="hidden shrink-10 basis-10 lg:block"></div>
-          <RightSidebar lang={params().lang} slug={params().slug} />
+          <RightSidebar
+            lang={params().lang}
+            slug={params().slug}
+            file={doc()?.file ?? ""}
+          />
         </div>
       </div>
       <Show when={navMenuSystemVersions.latest}>

@@ -214,6 +214,7 @@ export const ${name} = {
 ${[...collection.entries.values()]
   .map(
     (entry) => `  ${JSON.stringify(entry.slug)}: {
+    file: ${JSON.stringify(entry.file)},
     slug: ${JSON.stringify(entry.slug)},
     frontmatter: ${seroval.serialize(entry.frontmatter).replaceAll(/\{ident:"(import_[0-9a-fA-F]+?)"\}/g, "$1")},
     headings: ${JSON.stringify(entry.headings)},
