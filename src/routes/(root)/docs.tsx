@@ -43,7 +43,9 @@ export default function Docs(props: { children: JSXElement }) {
     return slug;
   });
   const params = createMemo(() => {
-    const [lang, slug] = fullSlug().split("/", 1) as [Lang, string];
+    const parts = fullSlug().split("/");
+    const lang = parts[0] as Lang;
+    const slug = parts.slice(1).join("/");
     return { lang, slug };
   });
   const doc = createAsync(() => loadDoc(fullSlug()), {
@@ -84,7 +86,11 @@ export default function Docs(props: { children: JSXElement }) {
             )}
           </Show>
           <div class="hidden shrink-10 basis-10 lg:block"></div>
-          <RightSidebar lang={params().lang} slug={params().slug} />
+          <RightSidebar
+            lang={params().lang}
+            slug={params().slug}
+            file={doc()?.file ?? ""}
+          />
         </div>
       </div>
       <Show when={navMenuSystemVersions.latest}>

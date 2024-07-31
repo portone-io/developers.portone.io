@@ -12,6 +12,7 @@ import { useSystemVersion } from "~/state/system-version";
 export interface RightSidebarProps {
   lang: string;
   slug: string;
+  file: string;
   editThisPagePrefix?: string;
 }
 export type Toc = TocItem[];
@@ -24,7 +25,7 @@ function RightSidebar(_props: RightSidebarProps) {
   const props = mergeProps(
     {
       editThisPagePrefix:
-        "https://github.com/portone-io/developers.portone.io/blob/main/src/content/docs",
+        "https://github.com/portone-io/developers.portone.io/blob/main",
     },
     _props,
   );
@@ -62,7 +63,7 @@ function RightSidebar(_props: RightSidebarProps) {
           </h2>
           <ul>
             <SidebarItem
-              href={`${props.editThisPagePrefix}/${props.lang}/${props.slug}.mdx`}
+              href={`${props.editThisPagePrefix}/${props.file}`}
               icon="i-ic-baseline-edit"
               label={t(props.lang, "edit-this-page")}
             />
