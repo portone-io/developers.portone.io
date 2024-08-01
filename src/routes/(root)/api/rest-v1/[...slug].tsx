@@ -2,6 +2,7 @@ import { Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
 import { createSignal } from "solid-js";
 
+import Hint from "~/components/Hint";
 import * as prose from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
 import createSectionDescriptionProps from "~/layouts/rest-api/misc/createSectionDescriptionProps";
@@ -51,6 +52,20 @@ export default function ApiV1Docs() {
           <br />
           비인증 결제, 정기 자동결제 등 부가기능을 위한 REST API도 제공합니다.
         </prose.p>
+        <Hint style="danger">
+          2024년 9월 1일부로 포트원 V1 API에 대해 일부 보안 규격이 지원
+          종료됩니다.
+          <br />
+          자세한 사항은
+          <a
+            href="/docs/ko/tip/tls-support?v=v1"
+            style="color:orange"
+            target="_self"
+          >
+            TLS 지원 범위
+          </a>
+          를 참고해주세요.
+        </Hint>
         <prose.p>
           <strong>V1 API hostname: </strong>
           <code>api.iamport.kr</code>
