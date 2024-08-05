@@ -33,11 +33,6 @@ export default defineConfig({
   extensions: ["ts", "tsx", "mdx"],
   vite: () =>
     ({
-      ssr: {
-        optimizeDeps: {
-          include: ["mixpanel-browser"],
-        },
-      },
       plugins: [
         yaml(),
         unocss(),
