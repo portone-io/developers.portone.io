@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import type { JSXElement } from "solid-js";
 
-
 export interface GnbLinkProps {
   slug: string;
   active: boolean;
