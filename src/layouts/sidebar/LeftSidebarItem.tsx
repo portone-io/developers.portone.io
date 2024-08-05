@@ -5,7 +5,6 @@ import { type NavMenuPage } from "~/state/nav";
 import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
 
-import { trackEvent } from "../trackers/Trackers";
 import { useSidebarContext } from "./context";
 
 function LeftSidebarItem(props: NavMenuPage) {
@@ -141,7 +140,6 @@ export function JustLink(props: JustLinkProps) {
         class={getLinkStyle(props.isActive)}
         onClick={() => {
           sidebarOpen.set(false);
-          if (props.event) trackEvent(props.event.name, props.event.props);
         }}
         target={props.isExternal ? "_blank" : undefined}
       >
