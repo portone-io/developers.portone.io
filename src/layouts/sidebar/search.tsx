@@ -54,7 +54,7 @@ export function SearchButton({ lang }: SearchButtonProps) {
 export const searchIndexKo = lazy(() => fetchSearchIndex("ko"));
 export const searchIndexEn = lazy(() => fetchSearchIndex("en"));
 async function fetchSearchIndex(lang: string): Promise<SearchIndex> {
-  const res = await fetch(`/content-index/docs-${lang}.json`);
+  const res = await fetch(`/content-index/opi-${lang}.json`);
   return JSON.parse((await res.text()).normalize("NFKD")) as SearchIndex;
 }
 
@@ -90,7 +90,7 @@ export function SearchScreen(props: SearchScreenProps) {
     const filteredIndex = index
       .filter((item) => {
         const navMenuSystemVersion =
-          props.navMenuSystemVersions[item.slug.replace(/^docs/, "")];
+          props.navMenuSystemVersions[item.slug.replace(/^opi/, "")];
         if (!navMenuSystemVersion) return true;
         return navMenuSystemVersion === systemVersion();
       })
