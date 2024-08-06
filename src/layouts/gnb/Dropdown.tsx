@@ -6,7 +6,7 @@ import type { SystemVersion } from "~/type";
 
 export interface DropdownProps {
   children: JSXElement;
-  link: string | Record<SystemVersion, string>;
+  link?: string | Record<SystemVersion, string>;
   items: DropdownItem[];
   serverSystemVersion: SystemVersion;
 }
@@ -25,16 +25,21 @@ export default function Dropdown(props: DropdownProps) {
       onMouseEnter={() => setShowItems(true)}
       onMouseLeave={() => setShowItems(false)}
     >
-      <A
-        class="h-full inline-flex items-center"
-        href={
-          typeof props.link === "string"
-            ? props.link
-            : props.link[systemVersion()]
-        }
-      >
-        {props.children}
-      </A>
+      {props.link ? (
+        <A
+          class="h-full inline-flex items-center"
+          href={
+            typeof props.link === "string"
+              ? props.link
+              : props.link[systemVersion()]
+          }
+        >
+          {" "}
+          {props.children}{" "}
+        </A>
+      ) : (
+        <div class="h-full inline-flex items-center"> {props.children} </div>
+      )}
       <div class="relative w-full">
         {showItems() && (
           <div class="absolute w-max flex flex-col border bg-white py-2 shadow-lg">

@@ -10,21 +10,21 @@ import type { DocsEntry } from "~/content/config";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
-import { getFullSlug, loadDoc } from "~/misc/doc";
+import { getOpiFullSlug, loadDoc } from "~/misc/opi";
 import { SystemVersionProvider } from "~/state/system-version";
 
 interface Props {
   children: JSXElement;
 }
 
-const navAsMenuPaths = ["/platform", "/blog", "/release-notes"];
+const navAsMenuPaths = ["/opi", "/platform", "/blog", "/release-notes"];
 
 export default function Layout(props: Props) {
   const location = useLocation();
   const lang = createMemo(() =>
     location.pathname.includes("/en/") ? "en" : "ko",
   );
-  const docsSlug = createMemo(() => getFullSlug(location.pathname));
+  const docsSlug = createMemo(() => getOpiFullSlug(location.pathname));
   const docData = createAsync(async () => {
     const slug = docsSlug();
     if (!slug) return;

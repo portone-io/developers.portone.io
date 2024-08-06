@@ -13,7 +13,7 @@ import type { DocsEntry } from "~/content/config";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
 import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
-import { getFullSlug, loadDoc } from "~/misc/doc";
+import { getOpiFullSlug, loadDoc } from "~/misc/opi";
 import { calcNavMenuSystemVersions } from "~/state/nav";
 import { Lang } from "~/type";
 
@@ -22,11 +22,11 @@ const loadNavMenuSystemVersions = cache(async (lang: Lang) => {
 
   const { navMenu } = await import("~/state/server-only/nav");
   return calcNavMenuSystemVersions(navMenu[lang] || []);
-}, "docs/nav-menu-system-versions");
+}, "opi/nav-menu-system-versions");
 
 export const route = {
   preload: ({ location }) => {
-    const fullSlug = getFullSlug(location.pathname);
+    const fullSlug = getOpiFullSlug(location.pathname);
     if (!fullSlug) return;
     const lang = fullSlug.split("/")[0];
 
@@ -38,7 +38,7 @@ export const route = {
 export default function Docs(props: { children: JSXElement }) {
   const location = useLocation();
   const fullSlug = createMemo(() => {
-    const slug = getFullSlug(location.pathname);
+    const slug = getOpiFullSlug(location.pathname);
     if (!slug) throw new NotFoundError();
     return slug;
   });
@@ -68,7 +68,7 @@ export default function Docs(props: { children: JSXElement }) {
                   title={frontmatter().title}
                   description={frontmatter().description}
                   ogType="article"
-                  ogImageSlug={`docs/${params().lang}/${params().slug}.png`}
+                  ogImageSlug={`opi/${params().lang}/${params().slug}.png`}
                   docsEntry={frontmatter()}
                 />
                 <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">

@@ -34,7 +34,7 @@ export default function DocsNavMenu(props: Props) {
           <DropdownLink
             pathname={location.pathname}
             items={[
-              { label: "개발자센터", link: "/docs" },
+              { label: "원 페이먼트 인프라", link: "/opi/ko" },
               { label: "API & SDK", link: "/api/rest-v2" },
               { label: "파트너 정산", link: "/platform" },
               { label: "릴리스 노트", link: "/release-notes" },
