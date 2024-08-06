@@ -49,7 +49,7 @@ export const remarkLintLocalLinksValid = lintRule(
                   const link = pair.value.value;
                   const range = pair.value.range;
                   checkLink(
-                    path.isAbsolute(link) ? path.join("/docs", link) : link,
+                    path.isAbsolute(link) ? path.join("/opi", link) : link,
                     (reason) => {
                       if (node.position && range) {
                         const start = lineCounter.linePos(range[0]);
@@ -111,7 +111,7 @@ export const remarkLintLocalLinksValid = lintRule(
           ) {
             const link = attr.value;
             checkLink(
-              path.isAbsolute(link) ? path.join("/docs", link) : link,
+              path.isAbsolute(link) ? path.join("/opi", link) : link,
               (reason) => {
                 file.message(reason, attr as Node);
               },

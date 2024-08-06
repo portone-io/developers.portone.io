@@ -81,7 +81,7 @@ export default {
             return [prefix(from), prefix(to)];
             function prefix(str) {
               if (str.startsWith("/")) {
-                return "docs" + str;
+                return "opi" + str;
               }
               return str;
             }

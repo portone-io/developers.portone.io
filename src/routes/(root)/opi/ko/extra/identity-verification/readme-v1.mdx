@@ -1,0 +1,854 @@
+---
+title: 본인인증 연동하기
+description: 포트원을 이용하여 간편하게 본인인증을 연동하는 방법을 확인합니다.
+targetVersions: ["v1"]
+versionVariants:
+  v2: /ko/extra/identity-verification/readme-v2
+---
+
+import Figure from "~/components/Figure";
+import Tabs from "~/components/gitbook/Tabs";
+import Hint from "~/components/Hint";
+
+## **휴대폰 본인인증 연동하기**
+
+**휴대폰 본인인증 서비스**란 본인 명의로 개통한 휴대폰을 이용하여 최소한의 개인정보를 입력하는 인증 절차를 거쳐 본인 여부와 입력한 정보의 정확성을 확인하여 주는 서비스입니다.
+
+고객은 웹사이트에 가입, 결제, 또는 성인 인증 등을 위해 본인인증을 시행합니다.
+본인인증은 모바일 기기에 설치된 본인인증 전용 앱을 이용하거나 사용자 본인 정보(**이름, 생년월일, 휴대폰번호**)를 인증요청 페이지에 입력한 후
+문자로 온 인증번호를 기입하는 방식으로 이루어집니다.
+
+<Figure src="/gitbook-assets/ko/image (99).png" caption="휴대폰 본인인증 화면예" />
+
+포트원을 이용한 휴대폰 본인인증의 Flow는 JavaScript SDK 를 이용하여 휴대폰 본인인증을 완료하고
+고객사 서버에서 포트원 REST API를 이용하여 <mark style="color:blue;">**인증완료정보를 획득**</mark>하는 방법으로 진행됩니다.
+
+[**`고객사 식별코드`**](/opi/ko/integration/ready/readme#4-포트원-연동정보-확인하기)를 이용하여 `IMP` 객체를 초기화합니다.
+
+```ts title="client-side"
+IMP.init("{고객사 식별코드}"); // 예: imp00000000
+```
+
+휴대폰 본인인증은 아래 두가지 방법으로 호출할 수 있습니다.
+
+> **팝업**(Default) 방식
+>
+> 휴대폰 본인인증 팝업창이 열리고 본인인증를 완료하면 두 번째 인자로 지정된 `callback` 함수가 실행됩니다.
+
+> **리디렉션**(redirect)방식(**Mobile** 환경에서만 적용)
+>
+> 모바일 환경에서 `param.popup`을 <mark style="color:red;">**`false`**</mark>`(기본값)`로 설정하면 본인인증 페이지로 리디렉션되고 본인인증을 완료하면 `param.m_redirect_url`로 다시 리디렉션됩니다.
+>
+> `param.popup`을 <mark style="color:red;">**`true`**</mark>로 설정하면 팝업(기본) 방식으로 작동합니다.
+>
+> **WebView 등 팝업이 차단되는 환경**에서는 `popup : false`로 설정하는 것을 권장합니다.
+
+<Hint style="warning">
+  **리디렉션 방식**
+
+  포트원 JavaScript **SDK 1.1.7** 버전 이상 부터 지원합니다.
+</Hint>
+
+아래는 휴대폰 본인인증창을 호출하는 예제입니다.
+
+<Tabs>
+  <Tabs.Tab title="JavaScript">
+    ```ts title="client-side"
+    // IMP.certification(param, callback) 호출
+    IMP.certification(
+      {
+        // param
+        // 주문 번호
+        pg: "PG사코드.{CPID}", //본인인증 설정이 2개이상 되어 있는 경우 필
+        merchant_uid: "ORD20180131-0000011",
+        // 모바일환경에서 popup:false(기본값) 인 경우 필수
+        m_redirect_url: "{리디렉션 될 URL}",
+        // PC환경에서는 popup 파라미터가 무시되고 항상 true 로 적용됨
+        popup: false,
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시 로직
+        } else {
+          // 인증 실패 시 로직
+        }
+      },
+    );
+    ```
+
+    휴대폰 본인인증창을 호출하기 위한 [<mark style="color:blue;">**파라미터 목록**</mark>](/opi/ko/integration/sdk/javascript-sdk/cft)을 확인하세요
+  </Tabs.Tab>
+
+  <Tabs.Tab title="JS ES Next">
+    ```ts title="client-side"
+    // IMP.certification(param, callback) 호출
+    IMP.certification(
+      {
+        // param
+        // 주문 번호
+        pg: "PG사코드.{CPID}", //본인인증 설정이 2개이상 되어 있는 경우 필
+        merchant_uid: "ORD20180131-0000011",
+        // 모바일환경에서 popup:false(기본값) 인 경우 필수
+        m_redirect_url: "{리디렉션 될 URL}",
+        // PC환경에서는 popup 파라미터가 무시되고 항상 true 로 적용됨
+        popup: false,
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시 로직
+        } else {
+          // 인증 실패 시 로직
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+인증 프로세스가 완료되면 반환되는 응답 객체(<mark style="color:red;">**`rsp`**</mark>)의 인증 성공 여부에 따라 처리 로직을 **`callback`** 함수에 작성합니다. 요청이 성공했을 경우에 **인증번호(`imp_uid`)를 서버에 전달**하는 로직을 다음 예제를 참고하여 작성합니다. 인증 성공시 [**반환되는 값**](/opi/ko/integration/sdk/javascript-sdk/cft-rt)을 확인하세요
+
+## 1. callback Data 전달 예제
+
+<Tabs>
+  <Tabs.Tab title="JavaScript">
+    ```ts title="client-side"
+    IMP.certification(
+      {
+        /* ...중략... */
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시 jQuery로 HTTP 요청
+          jQuery.ajax({
+            url: "{서버의 인증 정보를 받는 endpoint}",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            data: { imp_uid: rsp.imp_uid },
+          });
+        } else {
+          alert("인증에 실패하였습니다. 에러 내용: " + rsp.error_msg);
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="JS ES Next">
+    ```ts title="client-side"
+    IMP.certification(
+      {
+        /* ...중략... */
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시
+          // axios로 HTTP 요청
+          axios({
+            url: "{서버의 인증 정보를 받는 endpoint}",
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            data: { imp_uid: rsp.imp_uid },
+          });
+        } else {
+          alert(`인증에 실패하였습니다. 에러 내용: ${rsp.error_msg}`);
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 2. 리디렉션 전달 예제
+
+`IMP.`<mark style="color:red;">**`certification`**</mark> 호출 시 설정한 **`m_redirect_url`** 로 인증 정보와 함께 다음과 같이 리디렉션됩니다.
+
+```http title="Query String"
+GET {m_redirect_url}?imp_uid={}&merchant_uid={본인인증 건의 merchant_uid}&success={true 또는 false}
+```
+
+휴대폰 본인인증 완료이후 획득한 `imp_uid`를 이용하여 고객 인증정보를 조회할 수 있습니다.
+
+## <mark style="color:blue;">**STEP 01.**</mark> 인증정보(imp\_uid) 서버단에서 획득하기
+
+아래는 휴대폰 본인인증 앞단에서 넘어온 값을 서버단에서 수신받은 예제 입니다.
+
+<Tabs>
+  <Tabs.Tab title="Node.js(팝업방식)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+    // "/certifications"에 대한 POST 요청을 처리하는 controller
+    app.post("/certifications", async (request, response) => {
+      // request의 body에서 imp_uid 추출
+      const { imp_uid } = request.body;
+    });
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Node.js(리디렉션 방식)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+    // "/certifications/redirect"에 대한 GET 요청을 처리하는 controller
+    app.get("/certifications/redirect", async (request, response) => {
+      const { imp_uid } = request.query; // request의 query에서 imp_uid 추출
+    });
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## <mark style="color:blue;">**STEP 02.**</mark> 인증 정보 조회하기
+
+포트원 서버에서 인증 정보를 조회하기 위해서 먼저 [**REST API access token**](/api/rest-v1/auth?v=v1#post%20%2Fusers%2FgetToken)을 발급받습니다. 발급받은 액세스 토큰(`access_token`)과 인증번호(`imp_uid`)로 <mark style="color:blue;">**본인인증 결과조회 REST API**</mark> 를 호출하여 인증 정보를 조회하는 예제입니다.
+
+```ts title="server-side"
+app.use(bodyParser.json());
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
+  try {
+    // 인증 토큰 발급 받기
+    const getToken = await axios({
+      url: "https://api.iamport.kr/users/getToken",
+      // POST method
+      method: "post",
+      // "Content-Type": "application/json"
+      headers: { "Content-Type": "application/json" },
+      data: {
+        imp_key: "imp_apikey", // REST API키
+        imp_secret:
+          "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+      },
+    });
+    const { access_token } = getToken.data.response; // 인증 토큰
+    // imp_uid로 인증 정보 조회
+    const getCertifications = await axios({
+      // imp_uid 전달
+      url: `https://api.iamport.kr/certifications/${imp_uid}`,
+      // GET method
+      method: "get",
+      // 인증 토큰 Authorization header에 추가
+      headers: { Authorization: access_token },
+    });
+    const certificationsInfo = getCertifications.data; // 조회한 인증 정보
+    // ...
+  } catch (e) {
+    console.error(e);
+  }
+});
+```
+
+## <mark style="color:blue;">**STEP 03.**</mark> 인증 정보 활용하기
+
+조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.
+
+- `name`: 이름
+- `gender`: 성별
+- `birth`: 생년월일
+- `unique_key`: CI 값과 동일. 온라인 주민번호와 같은 개인고유식별키
+- `unique_in_site`: DI 값과 동일. 상점아이디(사이트)별로 할당되는 식별키
+
+<Hint style="info">
+  위의 정보 외에 휴대폰 번호(**`phone`**) 및 통신사(**`carrier`**) 또는 외국인(**`foreigner`**) 여부는 **개인정보 제공동의 약관을 사이트에 게재**한 후 <mark style="color:red;">**[cs@portone.io](mailto:cs@portone.io)**</mark>**로 신청**하여 취득할 수 있습니다. 해당 부분은 당사 계약 이후 다날PG사로 요청 후 승인이 완료되면 이용 가능한 점 참고해 주시기 바랍니다.
+
+  **메일 요청 신청 양식**
+
+  - 상호명 :
+  - 사업자번호 :
+  - 본인인증용 다날 상점ID(CPID) :
+  - 업종 :
+  - 필요사유 :
+  - 개인정보취급방침 url : 앱서비스로 URL형태로 전달이 어려우신 경우 '개인정보취급방침' 경로를 캡쳐하여 전달주시기 바랍니다.
+
+  **참고 - 포트원 이용 고객사의 개인정보처리방침 적용 예시**
+
+  - `(주)마플 : https://marpple.shop/kr/@/privacy`
+  - `(주)브레이브모바일 / 숨고 : https://soomgo.com/terms/privacy`
+  - `(주)마켓잇 : https://static.marketit.asia/static/privacy-terms.pdf`
+</Hint>
+
+```ts title="Node.js"
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
+  try {
+    // 인증 토큰 발급 받기
+    /* ...중략... */
+    // imp_uid로 인증 정보 조회
+    /* ...중략... */
+    const certificationsInfo = getCertifications.data; // 조회한 인증 정보
+    // unique_key: 개인식별 고유 키, unique_in_site: 사이트 별 개인식별 고유 키
+    const { unique_key, unique_in_site, name, gender, birth } =
+      certificationsInfo;
+    // 연령 제한 로직
+    if (new Date(birth).getFullYear() <= 1999) {
+      // 연령 만족
+    } else {
+      // 연령 미달
+    }
+    // 1인 1계정 허용 로직
+    // DB에서 unique_key 조회 후 가입여부 검사
+    Users.find({ certificationKey: unique_key }).then((user) => {
+      if (!user) {
+        // 신규 고객
+      } else {
+        // 이미 가입된 고객
+      }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+```
+
+## **통합인증 연동하기**
+
+## 통합인증 서비스란 ?
+
+카카오톡 인증서, 네이버 인증서 등의 민간 인증서를 통한 인증 절차를 거쳐 본인 여부와 입력한 정보의
+정확성을 확인하여 주는 서비스입니다. 통합인증은 **KG이니시스**를 통해 제공되며 민간 인증서를
+이용하거나 사용자 본인이 가입된 간편인증을 통해 인증요청을 보내고 간편인증 페이지에서 인증처리를
+하는 방식으로 이루어 집니다.
+
+> **이용가능 수단 : 네이버 / PASS / 페이코 / TOSS / 금융인증서 / 카카오 / 신한 / KB모바일 / 삼성패스**
+
+<img src="/gitbook-assets/ko/image (24) (2).png" alt="" data-size="original" />
+
+## 통합인증을 연동할 페이지에 포트원 라이브러리를 추가합니다.
+
+<Hint style="info">
+  신용카드 본인인증 기능은 **포트원 JavaScript v1.1.8**부터 지원합니다.
+</Hint>
+
+```html title="client-side"
+<!-- jQuery -->
+<script
+  type="text/javascript"
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+></script>
+<!-- iamport.payment.js -->
+<script
+  type="text/javascript"
+  src="https://cdn.iamport.kr/js/iamport.payment-{SDK-최신버전}.js"
+></script>
+```
+
+<Hint style="danger">
+  **jQuery 1.0 이상이 설치**되어 있어야 합니다.
+</Hint>
+
+## 본인인증 페이지에 [<mark style="color:blue;">`고객사 식별코드`</mark>](/opi/ko/integration/ready/readme#4-포트원-연동정보-확인하기)를 이용하여 `IMP` 객체를 초기화합니다.
+
+```ts title="client-side"
+IMP.init("{고객사 식별코드}"); // 예: imp00000000
+```
+
+통합인증은 아래 두 가지 방법으로 호출할 수 있습니다.
+
+> **팝업**(**Default**) 방식
+>
+> 통합인증 본인인증 팝업창이 열리고 본인인증를 완료하면 두 번째 인자로 지정된 `callback` 함수가 실행됩니다.
+
+> **리디렉션**(redirect)방식(**Mobile** 환경에서만 적용)
+>
+> 모바일 환경에서 `param.popup`을 <mark style="color:red;">**`false`**</mark>`(기본값)`로 설정하면 본인인증 페이지로 리디렉션되고 본인인증을 완료하면 `param.m_redirect_url`로 다시 리디렉션됩니다.
+>
+> `param.popup`을 <mark style="color:red;">**`true`**</mark>로 설정하면 팝업(기본) 방식으로 작동합니다.
+>
+> **WebView 등 팝업이 차단되는 환경**에서는 `popup : false`로 설정하는 것을 권장합니다
+
+아래는 JavaScript SDK [**IMP.certification**](/opi/ko/integration/sdk/javascript-sdk/cft) 함수를 이용하여 통합인증
+본인인증창을 호출하는 예제입니다.
+
+```ts title="client-side"
+// IMP.certification(param, callback) 호출
+IMP.certification(
+  {
+    // param
+    pg: "inicis_unified.{CPID}", //본인인증 설정이 2개이상 되어 있는 경우 필수
+    merchant_uid: "ORD20180131-0000011", // 주문 번호
+    m_redirect_url: "{리디렉션 될 URL}", // 모바일환경에서 popup:false(기본값) 인 경우 필수, 예: https://www.myservice.com/payments/complete/mobile
+    popup: false, // PC환경에서는 popup 파라미터가 무시되고 항상 true 로 적용됨
+  },
+  function (rsp) {
+    // callback
+    if (rsp.success) {
+      // 인증 성공 시 로직
+    } else {
+      // 인증 실패 시 로직
+    }
+  },
+);
+```
+
+인증 프로세스가 완료되면 반환되는 응답 객체(<mark style="color:red;">**`rsp`**</mark>)의 인증 성공 여부에 따라 처리 로직을 **`callback`** 함수에 작성합니다. 요청이 성공했을 경우에 **인증번호(`imp_uid`)를 서버에 전달**하는 로직을 다음 예제를 참고하여 작성합니다. 인증 성공시 [**반환되는 값**](/opi/ko/integration/sdk/javascript-sdk/cft-rt)을 확인하세요
+
+## 1. callback Data 전달 예제
+
+<Tabs>
+  <Tabs.Tab title="JavaScript">
+    ```ts title="client-side"
+    IMP.certification(
+      {
+        /* ...중략... */
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시
+          // jQuery로 HTTP 요청
+          jQuery.ajax({
+            url: "{서버의 인증 정보를 받는 endpoint}",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            data: { imp_uid: rsp.imp_uid },
+          });
+        } else {
+          alert("인증에 실패하였습니다. 에러 내용: " + rsp.error_msg);
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="JS ES Next">
+    ```ts title="client-side"
+    IMP.certification(
+      {
+        /* ...중략... */
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시 axios로 HTTP 요청
+          axios({
+            url: "{서버의 인증 정보를 받는 endpoint}",
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            data: { imp_uid: rsp.imp_uid },
+          });
+        } else {
+          alert(`인증에 실패하였습니다. 에러 내용: ${rsp.error_msg}`);
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### 2. 리디렉션 전달 예제
+
+`IMP.`<mark style="color:red;">**`certification`**</mark> 호출 시 설정한 **`m_redirect_url`** 로 인증 정보와 함께 다음과 같이 리디렉션됩니다.
+
+```http title="Query String"
+GET {m_redirect_url}?imp_uid={}&merchant_uid={본인인증 건의 merchant_uid}&success={true 또는 false}
+```
+
+통합인증 완료이후 획득한 `imp_uid`를 이용하여 고객 인증정보를 조회할 수 있습니다.
+
+## <mark style="color:blue;">**STEP 01.**</mark> 인증정보(imp\_uid) 서버단에서 획득하기
+
+아래는 본인인증 앞단에서 넘어온 값을 서버단에서 수신받은 예제 입니다.
+
+<Tabs>
+  <Tabs.Tab title="Node.js(팝업방식)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+
+    // "/certifications"에 대한 POST 요청을 처리하는 controller
+    app.post("/certifications", async (request, response) => {
+      // request의 body에서 imp_uid 추출
+      const { imp_uid } = request.body;
+    });
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Node.js(리디렉션 방식)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+
+    // "/certifications/redirect"에 대한 GET 요청을 처리하는 controller
+    app.get("/certifications/redirect", async (request, response) => {
+      // request의 query에서 imp_uid 추출
+      const { imp_uid } = request.query;
+    });
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## <mark style="color:blue;">**STEP 02.**</mark> 인증 정보 조회하기
+
+포트원 서버에서 인증 정보를 조회하기 위해서 먼저 [**REST API access token**](/api/rest-v1/auth?v=v1#post%20%2Fusers%2FgetToken)을 발급받습니다.
+발급받은 액세스 토큰(`access_token`)과 인증번호(`imp_uid`)로 <mark style="color:blue;">**본인인증 결과조회 REST API**</mark> 를 호출하여 인증 정보를 조회하는 예제입니다.
+
+```ts title="server-side(Node.js)"
+app.use(bodyParser.json());
+
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  // request의 body에서 imp_uid 추출
+  const { imp_uid } = request.body;
+  try {
+    // 인증 토큰 발급 받기
+    const getToken = await axios({
+      url: "https://api.iamport.kr/users/getToken",
+      // POST method
+      method: "post",
+      // "Content-Type": "application/json"
+      headers: { "Content-Type": "application/json" },
+      data: {
+        // REST API키
+        imp_key: "imp_apikey",
+        // REST API Secret
+        imp_secret:
+          "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f",
+      },
+    });
+    // 인증 토큰
+    const { access_token } = getToken.data;
+    // imp_uid로 인증 정보 조회
+    const getCertifications = await axios({
+      // imp_uid 전달
+      url: `https://api.iamport.kr/certifications/\${imp_uid}`,
+      // GET method
+      method: "get",
+      // 인증 토큰 Authorization header에 추가
+      headers: { Authorization: access_token },
+    });
+    // 조회한 인증 정보
+    const certificationsInfo = getCertifications.data;
+  } catch (e) {
+    console.error(e);
+  }
+});
+```
+
+## <mark style="color:blue;">**STEP 03.**</mark> 인증 정보 활용하기
+
+조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.\
+필요 시, 예제와 같이 고객 정보를 사용하여 연령 제한을 검사할 수 있습니다.
+
+- `name`: 이름
+- `gender`: 성별
+- `birth`: 생년월일
+- `unique_key`: CI 값과 동일. 온라인 주민번호와 같은 개인고유식별키
+- `phone :`휴대폰 번호
+
+```ts title="Node.js"
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
+  try {
+    // 인증 토큰 발급 받기
+    /* ...중략... */
+    // imp_uid로 인증 정보 조회
+    /* ...중략... */
+    const certificationsInfo = getCertifications.data; // 조회한 인증 정보
+    const { name, birth } = certificationsInfo;
+    // 연령 제한 로직
+    if (new Date(birth).getFullYear() <= 1999) {
+      // 연령 만족
+    } else {
+      // 연령 미달
+    }
+  } catch (e) {
+    console.error(e);
+  }
+});
+```
+
+<Hint style="info">
+  **\<KG이니시스 통합본인인증\_특징(중요)>**
+
+  - 이니시스 통합인증서비스는 **DI 정보는 제공되지 않습니다**.
+  - 이니시스 통합인증서비스는 **카카오 인증의 경우, CI값 제공 가능하나 KG이니시스와 계약시 별도 서류 작성 절차가 필요합니다**.
+</Hint>
+
+## **신용카드 본인인증 연동하기**
+
+<Hint style="info">
+  신용카드본인인증 서비스는 현재 서비스 중단으로 신규계약이 불가합니다.\
+  (기존에 이용중인 고객사는 지속 사용 가능)
+</Hint>
+
+**신용카드 본인인증 서비스란** 신용카드 인증을 통하여 해당 신용카드 소지자의 개인정보(이름, 생년월일, 성별, 외국인여부, KISA 고유식별값)를 확인할 수 있는 서비스입니다.
+
+<Figure src="/gitbook-assets/ko/image (260).png" caption="신용카드 본인인증 화면 예시" />
+
+## 본인인증을 연동할 페이지에 포트원 라이브러리를 추가합니다.
+
+<Hint style="info">
+  신용카드 본인인증 기능은 **포트원 JavaScript v1.1.7**부터 지원합니다.
+</Hint>
+
+```html title="client-side"
+<!-- jQuery -->
+<script
+  type="text/javascript"
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+></script>
+<!-- iamport.payment.js -->
+<script
+  type="text/javascript"
+  src="https://cdn.iamport.kr/js/iamport.payment-{SDK-최신버전}.js"
+></script>
+```
+
+<Hint style="danger">
+  **jQuery 1.0 이상이 설치**되어 있어야 합니다.
+</Hint>
+
+### 본인인증 페이지에 [<mark style="color:blue;">`고객사 식별코드`</mark>](/opi/ko/integration/ready/readme#4-포트원-연동정보-확인하기)를 이용하여 `IMP` 객체를 초기화합니다.
+
+```ts title="client-side"
+IMP.init("{고객사 식별코드}"); // 예: imp00000000
+```
+
+신용카드 본인인증은 아래 두가지 방법으로 호출할 수 있습니다.
+
+> **팝업**(Default) 방식
+>
+> 신용카드 본인인증 팝업창이 열리고 본인인증를 완료하면 두 번째 인자로 지정된 `callback` 함수가 실행됩니다.
+
+> **리디렉션**(redirect)방식(**Mobile** 환경에서만 적용)
+>
+> 모바일 환경에서 `param.popup`을 <mark style="color:red;">**`false`**</mark>`(기본값)`로 설정하면 본인인증 페이지로 리디렉션되고 본인인증을 완료하면 `param.m_redirect_url`로 다시 리디렉션됩니다.
+>
+> `param.popup`을 <mark style="color:red;">**`true`**</mark>로 설정하면 팝업(기본) 방식으로 작동합니다.
+>
+> **WebView 등 팝업이 차단되는 환경**에서는 `popup : false`로 설정하는 것을 권장합니다
+
+아래는 JavaScript SDK [**IMP.certification**](/opi/ko/integration/sdk/javascript-sdk/cft) 함수를 이용하여 신용카드
+본인인증창을 호출하는 예제입니다.
+
+<Tabs>
+  <Tabs.Tab title="JavaScript">
+    ```ts title="client-side"
+    // IMP.certification(param, callback) 호출
+    IMP.certification(
+      {
+        // param
+        merchant_uid: "ORD20180131-0000011", // 주문 번호
+        // 모바일환경에서 popup:false(기본값) 인 경우 필수
+        m_redirect_url: "{리디렉션 될 URL}",
+        popup: false, // PC환경에서는 popup 파라미터가 무시되고 항상 true 로 적용됨
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시 로직
+        } else {
+          // 인증 실패 시 로직
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="ES Next">
+    ```ts title="client-side"
+    // IMP.certification(param, callback) 호출
+    IMP.certification(
+      {
+        // param
+        merchant_uid: "ORD20180131-0000011", // 주문 번호
+        m_redirect_url: "{리디렉션 될 URL}", // 모바일환경에서 popup:false(기본값) 인 경우 필수
+        popup: false, // PC환경에서는 popup 파라미터가 무시되고 항상 true 로 적용됨
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시 로직
+        } else {
+          // 인증 실패 시 로직
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+인증 프로세스가 완료되면 반환되는 응답 객체(<mark style="color:red;">**`rsp`**</mark>)의 인증 성공 여부에 따라 처리 로직을 **`callback`** 함수에 작성합니다. 요청이 성공했을 경우에 **인증번호(`imp_uid`)를 서버에 전달**하는 로직을 다음 예제를 참고하여 작성합니다. 인증 성공시 [**반환되는 값**](/opi/ko/integration/sdk/javascript-sdk/cft-rt)을 확인하세요
+
+## 1. callback Data 전달 예제
+
+<Tabs>
+  <Tabs.Tab title="JavaScript">
+    ```ts title="client-side"
+    IMP.certification(
+      {
+        /* ...중략... */
+      },
+      function (rsp) {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시
+          // jQuery로 HTTP 요청
+          jQuery.ajax({
+            url: "{서버의 인증 정보를 받는 endpoint}",
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            data: { imp_uid: rsp.imp_uid },
+          });
+        } else {
+          alert("인증에 실패하였습니다. 에러 내용: " + rsp.error_msg);
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="JS ES Next">
+    ```ts title="client-side"
+    IMP.certification(
+      {
+        /* ...중략... */
+      },
+      (rsp) => {
+        // callback
+        if (rsp.success) {
+          // 인증 성공 시 axios로 HTTP 요청
+          axios({
+            url: "{서버의 인증 정보를 받는 endpoint}",
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            data: { imp_uid: rsp.imp_uid },
+          });
+        } else {
+          alert(`인증에 실패하였습니다. 에러 내용: ${rsp.error_msg}`);
+        }
+      },
+    );
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## 2. 리디렉션 전달 예제
+
+`IMP.`<mark style="color:red;">**`certification`**</mark> 호출 시 설정한 **`m_redirect_url`** 로 인증 정보와 함께 다음과 같이 리디렉션됩니다.
+
+```http title="Query String"
+GET {m_redirect_url}?imp_uid={}&merchant_uid={본인인증 건의 merchant_uid}&success={true 또는 false}
+```
+
+본인인증 완료이후 획득한 \*\*`imp_uid`\*\*를 이용하여 고객 인증정보를 조회할 수 있습니다.
+
+## <mark style="color:blue;">**STEP 01.**</mark> 인증정보(imp\_uid) 서버단에서 획득하기
+
+아래는 본인인증 앞단에서 넘어온 값을 서버단에서 수신받은 예제 입니다.
+
+<Tabs>
+  <Tabs.Tab title="Node.js(팝업방식)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+    // "/certifications"에 대한 POST 요청을 처리하는 controller
+    app.post("/certifications", async (request, response) => {
+      // request의 body에서 imp_uid 추출
+      const { imp_uid } = request.body;
+    });
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Node.js(리디렉션 방식)">
+    ```ts title="server-side"
+    app.use(bodyParser.json());
+    // "/certifications/redirect"에 대한 GET 요청을 처리하는 controller
+    app.get("/certifications/redirect", async (request, response) => {
+      const { imp_uid } = request.query; // request의 query에서 imp_uid 추출
+    });
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## <mark style="color:blue;">**STEP 02.**</mark> 인증 정보 조회하기
+
+포트원 서버에서 인증 정보를 조회하기 위해서 먼저 [**REST API access token**](/api/rest-v1/auth?v=v1#post%20%2Fusers%2FgetToken)을 발급받습니다. 발급받은 액세스 토큰(`access_token`)과 인증번호(`imp_uid`)로 <mark style="color:blue;">**본인인증 결과조회 REST API**</mark> 를 호출하여 인증 정보를 조회하는 예제입니다.
+
+```ts title="server-side"
+app.use(bodyParser.json());
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
+  try {
+    // 인증 토큰 발급 받기
+    const getToken = await axios({
+      url: "https://api.iamport.kr/users/getToken",
+      // POST method
+      method: "post",
+      // "Content-Type": "application/json"
+      headers: { "Content-Type": "application/json" },
+      data: {
+        imp_key: "imp_apikey", // REST API키
+        imp_secret:
+          "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW3ZGseDA6bkA5lamv9OqDMnxyeB9wqOsuO9W3Mx9YSJ4dTqJ3f", // REST API Secret
+      },
+    });
+    const { access_token } = getToken.data; // 인증 토큰
+    // imp_uid로 인증 정보 조회
+    const getCertifications = await axios({
+      // imp_uid 전달
+      url: `https://api.iamport.kr/certifications/${imp_uid}`,
+      // GET method
+      method: "get",
+      // 인증 토큰 Authorization header에 추가
+      headers: { Authorization: access_token },
+    });
+    const certificationsInfo = getCertifications.data; // 조회한 인증 정보
+    // ...
+  } catch (e) {
+    console.error(e);
+  }
+});
+```
+
+## <mark style="color:blue;">**STEP 03.**</mark> 인증 정보 활용하기
+
+조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.
+
+- `name`: 이름
+- `gender`: 성별
+- `birth`: 생년월일
+- `unique_key`: CI 값과 동일. 온라인 주민번호와 같은 개인고유식별키
+- `unique_in_site`: DI 값과 동일. 상점아이디(사이트)별로 할당되는 식별키
+
+<Hint style="info">
+  **unique\_key와 unique\_in\_site**
+
+  본인인증에 사용된 신용카드가 여러 장이어도 신용카드 소유자가 같다면 매번 `unique_key` 와 `unique_in_site`는 같은 값이 응답됩니다.
+</Hint>
+
+```ts title="Node.js"
+// "/certifications"에 대한 POST 요청을 처리하는 controller
+app.post("/certifications", async (request, response) => {
+  const { imp_uid } = request.body; // request의 body에서 imp_uid 추출
+  try {
+    // 인증 토큰 발급 받기
+    /* ...중략... */
+    // imp_uid로 인증 정보 조회
+    /* ...중략... */
+    const certificationsInfo = getCertifications.data; // 조회한 인증 정보
+    // unique_key: 개인식별 고유 키, unique_in_site: 사이트 별 개인식별 고유 키
+    const { unique_key, unique_in_site, name, gender, birth } =
+      certificationsInfo;
+    // 연령 제한 로직
+    if (new Date(birth).getFullYear() <= 1999) {
+      // 연령 만족
+    } else {
+      // 연령 미달
+    }
+    // 1인 1계정 허용 로직
+    // DB에서 unique_key 조회 후 가입여부 검사
+    Users.find({ certificationKey: unique_key }).then((user) => {
+      if (!user) {
+        // 신규 고객
+      } else {
+        // 이미 가입된 고객
+      }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+```

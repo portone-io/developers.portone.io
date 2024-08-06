@@ -1,5 +1,3 @@
-import { Navigate } from "@solidjs/router";
-
 export default function Index() {
-  return <Navigate href="/docs/ko/readme" />;
+  return <div>소개 페이지</div>;
 }
