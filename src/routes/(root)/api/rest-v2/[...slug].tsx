@@ -34,9 +34,6 @@ export default function ApiV2Docs() {
         onSectionChange={setCurrentSection}
       >
         <hr />
-        <a href="/api/rest-v2-legacy" class="text-slate-4 hover:underline">
-          런칭 이전 V2 API 문서 확인하기
-        </a>
       </NavMenu>
       <RestApi
         title="PortOne REST API - V2"
