@@ -101,7 +101,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       },
     );
     ```
-  </Tabs.Tab >
+  </Tabs.Tab>
 </Tabs>
 
 #### 주요 파라미터
@@ -144,10 +144,9 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
   - **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**integer**</mark>
 
     **결제금액**
-
 </ParamTree>
 
-<br/>
+<br />
 
 #### 기타 파라미터
 
@@ -161,6 +160,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       **할부 개월수**
 
       예시
+
       - `[]`: 일시불만 결제 가능
       - `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능
       - `3`: 일시불을 포함한 2,3개월까지 할부개월 선택 가능
@@ -169,13 +169,13 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     <Tabs>
       <Tabs.Tab title="할부개월수 설정">
-      ```json
-      {
-        "display": {
-          "card_quota": [6] // 할부개월 6개월까지만 활성화
+        ```json
+        {
+          "display": {
+            "card_quota": [6] // 할부개월 6개월까지만 활성화
+          }
         }
-      }
-      ```
+        ```
       </Tabs.Tab>
     </Tabs>
 
@@ -334,10 +334,10 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
     해당 품목에 대한 정보를 전달하기 위해 해당 상품 관련 정보를 추가 파라미터(**`kcpProducts`**)로 전달해야 합니다.
     **`kcpProducts`** 는 다음 4개의 필수 속성으로 구성된 객체배열입니다.
 
-      - orderNumber : 상품주문번호
-      - name : 상품명
-      - quantity : 수량
-      - amount : 상품 가격
+    - orderNumber : 상품주문번호
+    - name : 상품명
+    - quantity : 수량
+    - amount : 상품 가격
 
     **`amount`** 값은 결제 금액(`param.amount`) 값과 관계가 없으며 비교 검증하지 않습니다.
 
@@ -468,17 +468,17 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ### API 수기(키인)결제 요청하기
 
-수기(키인) 결제 요청시 []`POST /subscribe/payments/onetime`](https://developers.portone.io/api/rest-v1/nonAuthPayment?v=v1#post%20%2Fsubscribe%2Fpayments%2Fonetime) API를 호출해야 합니다.
+수기(키인) 결제 요청시 \[]`POST /subscribe/payments/onetime`]\([https://developers.portone.io/api/rest-v1/nonAuthPayment?v=v1#post%20%2Fsubscribe%2Fpayments%2Fonetime](https://developers.portone.io/api/rest-v1/nonAuthPayment?v=v1#post%20%2Fsubscribe%2Fpayments%2Fonetime)) API를 호출해야 합니다.
 
 KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <Tabs>
   <Tabs.Tab title="API 수기(키인) 카드 결제 요청">
-  ```sh
-  curl -H "Content-Type: application/json" \
-         -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
-         https://api.iamport.kr/subscribe/payments/onetime
-  ```
+    ```sh
+    curl -H "Content-Type: application/json" \
+           -X POST -d '{"merchant_uid":"order_id_8237352", "card_number":"1234-1234-1234-1234", "expiry":"2019-01", "birth":"123456", "amount":3000}' \
+           https://api.iamport.kr/subscribe/payments/onetime
+    ```
   </Tabs.Tab>
 </Tabs>
 
@@ -744,73 +744,77 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
     ```
   </Tabs.Tab>
 
-  <Tabs.Tab title="PIN번호 확인">
-    ```ts
-    IMP.request_pay(
-      {
-        pg: "kcp_quick.{사이트코드}",
-        pay_method: "card", //즉시 출금 이용 시 'trans' 입력
-        merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
-        name: "PIN번호 확인 테스트", //주문명
-        amount: 0, //pin번호 확인시 0으로 전달
-        buyer_email: "test@portone.io",
-        buyer_name: "구매자이름",
-        buyer_tel: "010-1234-5678",
-        buyer_addr: "서울특별시 강남구 삼성동",
-        buyer_postcode: "123-456",
-        customer_uid: "use_your_unique_id", //memberId와 동일하게 입력
-        bypass: {
-          kcpQuick: {
-            //KCP퀵페이 설정 정보
-            actionType: "PinCheck", //PIN번호 확인
-            memberCI: "djkDFJ45dFndkl", //결제수단 등록시 입력한 CI 값
-            memeberID: "use_your_unique_id", //사용자에 대한 고유 식별값
+  {/*
+    <Tabs.Tab title="PIN번호 확인">
+      ```ts
+      IMP.request_pay(
+        {
+          pg: "kcp_quick.{사이트코드}",
+          pay_method: "card", //즉시 출금 이용 시 'trans' 입력
+          merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
+          name: "PIN번호 확인 테스트", //주문명
+          amount: 0, //pin번호 확인시 0으로 전달
+          buyer_email: "test@portone.io",
+          buyer_name: "구매자이름",
+          buyer_tel: "010-1234-5678",
+          buyer_addr: "서울특별시 강남구 삼성동",
+          buyer_postcode: "123-456",
+          customer_uid: "use_your_unique_id", //memberId와 동일하게 입력
+          bypass: {
+            kcpQuick: {
+              //KCP퀵페이 설정 정보
+              actionType: "PinCheck", //PIN번호 확인
+              memberCI: "djkDFJ45dFndkl", //결제수단 등록시 입력한 CI 값
+              memeberID: "use_your_unique_id", //사용자에 대한 고유 식별값
+            },
           },
+          m_redirect_url: "https://testtest.test", //결제수단 등록 후 리디렉션될 URL
         },
-        m_redirect_url: "https://testtest.test", //결제수단 등록 후 리디렉션될 URL
-      },
-      function (rsp) {
-        // callback 로직
-        //* ...중략... *//
-      },
-    );
-    ```
-  </Tabs.Tab>
+        function (rsp) {
+          // callback 로직
+          //...중략...
+        },
+      );
+      ```
+    </Tabs.Tab>
+  */}
 </Tabs>
 
 <Tabs>
-  <Tabs.Tab title="사용자만 등록">
-    ```ts
-    IMP.request_pay(
-      {
-        pg: "kcp_quick.{사이트코드}",
-        pay_method: "card", //즉시 출금 이용 시 'trans' 입력
-        merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
-        name: "사용자 등록 테스트", //주문명
-        amount: 0, //사용자만 등록시 0으로 전달
-        buyer_email: "test@portone.io",
-        buyer_name: "구매자이름",
-        buyer_tel: "010-1234-5678",
-        buyer_addr: "서울특별시 강남구 삼성동",
-        buyer_postcode: "123-456",
-        customer_uid: "use_your_unique_id", //memberId와 동일하게 입력
-        bypass: {
-          kcpQuick: {
-            //KCP퀵페이 설정 정보
-            actionType: "UserRegister", //결제수단 등록 없이 사용자만 등록
-            memberCI: "djkDFJ45dFndkl", //본인인증 후 전달된 CI 값
-            memeberID: "use_your_unique_id", //사용자에 대한 고유 식별값
+  {/*
+    <Tabs.Tab title="사용자만 등록">
+      ```ts
+      IMP.request_pay(
+        {
+          pg: "kcp_quick.{사이트코드}",
+          pay_method: "card", //즉시 출금 이용 시 'trans' 입력
+          merchant_uid: "order_no_0001", //상점에서 생성한 고유 주문번호
+          name: "사용자 등록 테스트", //주문명
+          amount: 0, //사용자만 등록시 0으로 전달
+          buyer_email: "test@portone.io",
+          buyer_name: "구매자이름",
+          buyer_tel: "010-1234-5678",
+          buyer_addr: "서울특별시 강남구 삼성동",
+          buyer_postcode: "123-456",
+          customer_uid: "use_your_unique_id", //memberId와 동일하게 입력
+          bypass: {
+            kcpQuick: {
+              //KCP퀵페이 설정 정보
+              actionType: "UserRegister", //결제수단 등록 없이 사용자만 등록
+              memberCI: "djkDFJ45dFndkl", //본인인증 후 전달된 CI 값
+              memeberID: "use_your_unique_id", //사용자에 대한 고유 식별값
+            },
           },
+          m_redirect_url: "https://testtest.test", //결제수단 등록 후 리디렉션될 URL
         },
-        m_redirect_url: "https://testtest.test", //결제수단 등록 후 리디렉션될 URL
-      },
-      function (rsp) {
-        // callback 로직
-        //* ...중략... *//
-      },
-    );
-    ```
-  </Tabs.Tab>
+        function (rsp) {
+          //callback 로직
+          //...중략...
+        },
+      );
+      ```
+    </Tabs.Tab>
+  */}
 
   <Tabs.Tab title="등록된 전화번호 변경">
     ```ts
@@ -882,12 +886,12 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
 </Tabs>
 
 <Hint style="info">
-  퀵페이의 경우 m_redirect_url시 다음과 같이 4개의 파라미터가 Query String으로 전달됩니다.
+  퀵페이의 경우 m\_redirect\_url시 다음과 같이 4개의 파라미터가 Query String으로 전달됩니다.
 
   - `imp_uid`
   - `merchant_uid`
   - `imp_status` : true 또는 false
-  - `kcp_action` : Register Ehsms Dregister 또는 Pay
+  - `kcp_action` : Register 또는 Dregister 또는 Pay
 
   `kcp_action`이 Register 이고 `imp_status`가 true인 경우 결제수단 등록에 성공하였다는 것을 의미합니다.
 </Hint>
@@ -946,8 +950,6 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
         - Pay : 결제
         - PinChange : PIN번호 변경
         - PinReset : PIN번호 초기화
-        - PinCheck : PIN번호 확인
-        - UserRegister : 사용자 등록 (결제수단 미등록)
         - PhoneChange : 전화번호 변경
         - Terminate : 결제 수단 해지
 
@@ -1033,6 +1035,7 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
   </Details.Content>
 </Details>
 
+{/*
 <Details>
   <Details.Summary>PIN번호 체크 기능은 사전 협의 후 사용 가능합니다.</Details.Summary>
 
@@ -1041,7 +1044,9 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
     해당 기능 사용을 원하시는 경우 KCP와 사전에 협의가 필요합니다.
   </Details.Content>
 </Details>
+*/}
 
+{/*
 <Details>
   <Details.Summary>사용자 등록 기능은 사전 협의 후 사용 가능합니다.</Details.Summary>
 
@@ -1050,6 +1055,7 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
     해당 기능 사용을 원하시는 경우 KCP와 사전에 협의가 필요합니다.
   </Details.Content>
 </Details>
+*/}
 
 <Details>
   <Details.Summary>등록된 전화번호 변경 기능은 사전 협의 후 사용 가능합니다.</Details.Summary>
