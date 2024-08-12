@@ -1,5 +1,5 @@
 import { A } from "@solidjs/router";
-import { createSignal, For, type JSXElement } from "solid-js";
+import { createMemo, createSignal, For, type JSXElement } from "solid-js";
 
 import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
@@ -39,18 +39,24 @@ export default function Dropdown(props: DropdownProps) {
         {showItems() && (
           <div class="absolute w-max flex flex-col border bg-white py-2 shadow-lg">
             <For each={props.items}>
-              {(item) => (
-                <A
-                  class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
-                  data-system-version={systemVersion}
-                  href={item.link}
-                >
-                  {item.label}
-                  {item.link.startsWith("https://") && (
-                    <i class="i-ic-baseline-launch opacity-40" />
-                  )}
-                </A>
-              )}
+              {(item) => {
+                const isExternalLink = createMemo(() =>
+                  item.link.startsWith("https://"),
+                );
+                return (
+                  <A
+                    class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
+                    data-system-version={systemVersion}
+                    href={item.link}
+                    target={isExternalLink() ? "_blank" : "_self"}
+                  >
+                    {item.label}
+                    {isExternalLink() && (
+                      <i class="i-ic-baseline-launch opacity-40" />
+                    )}
+                  </A>
+                );
+              }}
             </For>
           </div>
         )}
