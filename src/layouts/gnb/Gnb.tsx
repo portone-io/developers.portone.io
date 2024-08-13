@@ -67,7 +67,10 @@ export default function Gnb(props: Props) {
         >
           <div class="h-full flex flex-grow items-center pl-4 md:pl-6">
             <div class="h-full flex flex-grow items-center bg-white z-gnb-body md:flex-grow-0">
-              <A class="h-full inline-flex items-center" href={`/`}>
+              <A
+                class="h-full inline-flex items-center"
+                href={`/opi/${props.lang}`}
+              >
                 <div class="flex items-center gap-2">
                   <Logo class="w-22" />
                   <span class="break-keep">{t()["developers"]}</span>
@@ -79,7 +82,7 @@ export default function Gnb(props: Props) {
             </div>
             <div
               class={clsx(
-                "flex gap-6 md:h-full items-center mx-6 md:ml-[70px]",
+                "flex gap-6 md:h-full items-center",
                 props.navAsMenu
                   ? "<md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white)"
                   : "<md:hidden",
