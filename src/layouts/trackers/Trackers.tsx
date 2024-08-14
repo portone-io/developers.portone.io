@@ -20,7 +20,7 @@ export default function Trackers() {
       })();
       const targetIsSelf = !a.target || a.target === "_self";
       const specialBehavior = e.ctrlKey || e.metaKey || e.button !== 0;
-      if (isExternalLink && targetIsSelf && !specialBehavior) {
+      if (!isExternalLink && targetIsSelf && !specialBehavior) {
         e.preventDefault();
       }
     });
