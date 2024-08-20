@@ -48,7 +48,7 @@ export default function Dropdown(props: DropdownProps) {
                     class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
                     data-system-version={systemVersion}
                     href={item.link}
-                    target={isExternalLink() ? "_blank" : "_self"}
+                    target={isExternalLink() ? "_blank" : undefined} // _self 로 설정하면 라우터가 먹히지 않음
                   >
                     {item.label}
                     {isExternalLink() && (
