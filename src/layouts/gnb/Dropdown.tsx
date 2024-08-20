@@ -1,5 +1,5 @@
 import { A } from "@solidjs/router";
-import { createMemo, createSignal, For, type JSXElement } from "solid-js";
+import { createMemo, createSignal, For, type JSXElement, Show } from "solid-js";
 
 import { useSystemVersion } from "~/state/system-version";
 import type { SystemVersion } from "~/type";
@@ -18,6 +18,11 @@ export interface DropdownItem {
 export default function Dropdown(props: DropdownProps) {
   const [showItems, setShowItems] = createSignal(false);
   const { systemVersion } = useSystemVersion();
+  const link = createMemo(() => {
+    if (!props.link) return null;
+    if (typeof props.link === "string") return props.link;
+    return props.link[systemVersion()];
+  });
 
   return (
     <div
@@ -25,21 +30,17 @@ export default function Dropdown(props: DropdownProps) {
       onMouseEnter={() => setShowItems(true)}
       onMouseLeave={() => setShowItems(false)}
     >
-      {props.link ? (
-        <A
-          class="h-full inline-flex items-center"
-          href={
-            typeof props.link === "string"
-              ? props.link
-              : props.link[systemVersion()]
-          }
-        >
+      <Show
+        when={link()}
+        fallback={
+          <div class="h-full inline-flex items-center"> {props.children} </div>
+        }
+      >
+        <A class="h-full inline-flex items-center" href={link()!}>
           {" "}
           {props.children}{" "}
         </A>
-      ) : (
-        <div class="h-full inline-flex items-center"> {props.children} </div>
-      )}
+      </Show>
       <div class="relative w-full">
         {showItems() && (
           <div class="absolute w-max flex flex-col border bg-white py-2 shadow-lg">
