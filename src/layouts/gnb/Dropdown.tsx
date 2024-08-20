@@ -36,10 +36,12 @@ export default function Dropdown(props: DropdownProps) {
           <div class="h-full inline-flex items-center"> {props.children} </div>
         }
       >
-        <A class="h-full inline-flex items-center" href={link()!}>
-          {" "}
-          {props.children}{" "}
-        </A>
+        {(link) => (
+          <A class="h-full inline-flex items-center" href={link()}>
+            {" "}
+            {props.children}{" "}
+          </A>
+        )}
       </Show>
       <div class="relative w-full">
         {showItems() && (
