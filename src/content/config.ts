@@ -104,8 +104,8 @@ const PlatformEntry = z.object({
 export type PlatformEntry = z.infer<typeof PlatformEntry>;
 
 export const config = {
-  docs: {
-    path: "src/routes/(root)/docs",
+  opi: {
+    path: "src/routes/(root)/opi",
     entrySchema: DocsEntry,
   },
   releaseNotes: {
