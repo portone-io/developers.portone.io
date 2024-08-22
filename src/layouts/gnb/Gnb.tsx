@@ -41,12 +41,16 @@ export default function Gnb(props: Props) {
 
   const navs = [
     {
-      pathname: "/opi/ko",
-      label: "원 페이먼트 인프라",
-    },
-    {
       pathname: "/platform",
       label: "파트너 정산",
+    },
+    {
+      pathname: "/release-notes",
+      label: "릴리즈 노트",
+    },
+    {
+      pathname: "/blog",
+      label: "기술 블로그",
     },
   ];
 
@@ -69,7 +73,7 @@ export default function Gnb(props: Props) {
             <div class="h-full flex flex-grow items-center bg-white z-gnb-body md:flex-grow-0">
               <A
                 class="h-full inline-flex items-center"
-                href={`/opi/${props.lang}`}
+                href={`/docs/${props.lang}`}
               >
                 <div class="flex items-center gap-2">
                   <Logo class="w-22" />
@@ -91,28 +95,6 @@ export default function Gnb(props: Props) {
                   "<md:(translate-y-full shadow-lg)",
               )}
             >
-              <Show when={props.lang === "ko"}>
-                <For each={navs}>
-                  {(nav) => (
-                    <A
-                      class="h-full inline-flex items-center"
-                      href={nav.pathname}
-                      onClick={() => {
-                        if (props.navAsMenu) sidebarContext.set(false);
-                      }}
-                    >
-                      <span
-                        class={clsx(
-                          location.pathname.startsWith(nav.pathname) &&
-                            styles.navActive,
-                        )}
-                      >
-                        {nav.label}
-                      </span>
-                    </A>
-                  )}
-                </For>
-              </Show>
               <Dropdown
                 serverSystemVersion={serverSystemVersion}
                 link={{ v1: "/api/rest-v1", v2: "/api/rest-v2" }}
@@ -142,30 +124,28 @@ export default function Gnb(props: Props) {
                   API & SDK
                 </span>
               </Dropdown>
-              <Dropdown
-                serverSystemVersion={serverSystemVersion}
-                link={undefined}
-                items={[
-                  {
-                    label: "릴리즈 노트",
-                    link: "/release-notes",
-                    systemVersion: undefined,
-                  },
-                  {
-                    label: "기술 블로그",
-                    link: "/blog",
-                    systemVersion: undefined,
-                  },
-                ]}
-              >
-                <span
-                  class={clsx(
-                    location.pathname.startsWith("/api") && "nav-active",
+              <Show when={props.lang === "ko"}>
+                <For each={navs}>
+                  {(nav) => (
+                    <A
+                      class="h-full inline-flex items-center"
+                      href={nav.pathname}
+                      onClick={() => {
+                        if (props.navAsMenu) sidebarContext.set(false);
+                      }}
+                    >
+                      <span
+                        class={clsx(
+                          location.pathname.startsWith(nav.pathname) &&
+                            styles.navActive,
+                        )}
+                      >
+                        {nav.label}
+                      </span>
+                    </A>
                   )}
-                >
-                  리소스
-                </span>
-              </Dropdown>
+                </For>
+              </Show>
             </div>
           </div>
           <div class="hidden h-full items-center gap-4 pr-6 md:flex">

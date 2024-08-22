@@ -2,9 +2,9 @@ import "#server-only";
 
 import * as path from "node:path";
 
-import { opi } from "#content";
+import { docs } from "#content";
 import navYamlEn from "~/routes/(root)/docs/en/_nav.yaml";
-import navYamlKo from "~/routes/(root)/opi/ko/_nav.yaml";
+import navYamlKo from "~/routes/(root)/docs/ko/_nav.yaml";
 import type { NavMenuItem, NavMenuPage } from "~/state/nav";
 import type { SystemVersion, YamlNavMenuToplevelItem } from "~/type";
 
@@ -13,7 +13,7 @@ type Frontmatter = {
 };
 type Frontmatters = Record<string, Frontmatter>;
 
-const frontmatters: Frontmatters = Object.values(opi)
+const frontmatters: Frontmatters = Object.values(docs)
   .map((entry) => {
     const absSlug = path.posix.join("/", entry.slug);
     const frontmatter = entry.frontmatter || {};
