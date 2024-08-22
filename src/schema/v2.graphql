@@ -21,6 +21,9 @@ scalar Date
 scalar DateTime
 scalar Long
 
+"대사 서비스 이용약관 동의 결과"
+union AgreeReconciliationTermsAndConditionsOutput = InvalidRequestError | ForbiddenError | ExternalSystemError | AgreeReconciliationTermsAndConditionsPayload | UnauthorizedError | InternalError
+
 "평균 거래액 현황 조회 결과"
 union AnalyticsAverageAmountChartOutput = AnalyticsAverageAmountChart | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
@@ -87,6 +90,9 @@ union ArchivePlatformDiscountSharePolicyOutput = ArchivePlatformDiscountSharePol
 "파트너 보관 결과"
 union ArchivePlatformPartnerOutput = ArchivePlatformPartnerPayload | PlatformNotEnabledError | UnauthorizedError | ForbiddenError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformCannotArchiveScheduledPartnerError | InternalError
 
+"개인 / 법인 사업자 정보"
+union BusinessLicenseOcrClassification = BusinessLicenseOcrClassificationCorporation | BusinessLicenseOcrClassificationSoleProprietorship
+
 "추가 수수료 정책 예약 업데이트 취소 결과"
 union CancelPlatformAdditionalFeePolicyScheduleOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | CancelPlatformAdditionalFeePolicySchedulePayload | PlatformNotEnabledError | ForbiddenError | InternalError
 
@@ -124,11 +130,11 @@ union ChannelsOutput = ChannelsPayload | InvalidRequestError | UnauthorizedError
 
 union CreateChannelGroupOutput = CreateChannelGroupPayload | InvalidRequestError | ChannelNotFoundError | LimitExceededError | UnauthorizedError | ForbiddenError | StoreNotFoundError | ChannelGroupDuplicateNameError | InternalError
 
-union CreateManualTransferOutput = CreateManualTransferPayload | UnauthorizedError | PlatformUnavailableSettlementDateError | ForbiddenError | InvalidRequestError | PlatformNotEnabledError | PlatformPartnerNotFoundError | InternalError
+union CreateManualTransferOutput = CreateManualTransferPayload | UnauthorizedError | ForbiddenError | PlatformUserDefinedPropertyNotFoundError | InvalidRequestError | PlatformNotEnabledError | PlatformPartnerNotFoundError | InternalError
 
-union CreateOrderCancelTransferOutput = PlatformProductIdNotFoundError | PlatformCancellableDiscountAmountExceededError | PlatformCancellationAndPaymentTypeMismatchedError | CreateOrderCancelTransferPayload | UnauthorizedError | ForbiddenError | PlatformDiscountSharePolicyIdDuplicatedError | PlatformProductIdDuplicatedError | PlatformDiscountCancelExceededOrderCancelAmountError | PlatformTransferAlreadyExistsError | PlatformOrderDetailMismatchedError | PlatformTaxFreeAmountOverFlowError | PlatformCancellableAmountExceededError | PlatformTransferDiscountSharePolicyNotFoundError | PlatformSettlementCancelAmountExceededPortOneCancelError | InvalidRequestError | PlatformNotEnabledError | PlatformCannotSpecifyTransferError | PlatformPaymentNotFoundError | PlatformCancellableProductQuantityExceededError | PlatformOrderTransferAlreadyCancelledError | PlatformTransferNotFoundError | PlatformCancellationNotFoundError | InternalError
+union CreateOrderCancelTransferOutput = PlatformProductIdNotFoundError | PlatformCancellableDiscountAmountExceededError | PlatformSettlementAmountExceededError | CreateOrderCancelTransferPayload | UnauthorizedError | PlatformCannotSpecifyTransferError | PlatformDiscountSharePolicyIdDuplicatedError | PlatformCancellableDiscountTaxFreeAmountExceededError | PlatformOrderTransferAlreadyCancelledError | PlatformTransferAlreadyExistsError | PlatformOrderDetailMismatchedError | ForbiddenError | PlatformCancellableAmountExceededError | PlatformTransferDiscountSharePolicyNotFoundError | PlatformCancellationAndPaymentTypeMismatchedError | InvalidRequestError | PlatformNotEnabledError | PlatformSettlementCancelAmountExceededPortOneCancelError | PlatformPaymentNotFoundError | PlatformProductIdDuplicatedError | PlatformCancellableProductQuantityExceededError | PlatformTransferNotFoundError | PlatformCancellationNotFoundError | PlatformUserDefinedPropertyNotFoundError | InternalError
 
-union CreateOrderTransferOutput = PlatformAdditionalFeePoliciesNotFoundError | PlatformDiscountSharePoliciesNotFoundError | PlatformDiscountExceededOrderAmountError | PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError | PlatformCurrencyNotSupportedError | CreateOrderTransferPayload | UnauthorizedError | PlatformProductIdDuplicatedError | PlatformSettlementTaxFreeAmountExceededPortOnePaymentError | ForbiddenError | PlatformContractNotFoundError | PlatformPaymentNotFoundError | InvalidRequestError | PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformTransferAlreadyExistsError | PlatformSettlementPaymentAmountExceededPortOnePaymentError | PlatformTaxFreeAmountOverFlowError | PlatformNotEnabledError | PlatformPartnerNotFoundError | InternalError
+union CreateOrderTransferOutput = PlatformContractNotFoundError | PlatformPaymentNotFoundError | InvalidRequestError | PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError | PlatformSettlementPaymentAmountExceededPortOnePaymentError | PlatformSettlementTaxFreeAmountExceededPortOnePaymentError | PlatformUserDefinedPropertyNotFoundError | PlatformNotEnabledError | PlatformPartnerNotFoundError | PlatformSettlementParameterNotFoundError | PlatformAdditionalFeePoliciesNotFoundError | PlatformDiscountSharePoliciesNotFoundError | PlatformProductIdDuplicatedError | PlatformSettlementAmountExceededError | PlatformCurrencyNotSupportedError | PlatformTransferAlreadyExistsError | PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError | ForbiddenError | CreateOrderTransferPayload | UnauthorizedError | InternalError
 
 "추가 수수료 정책 생성 결과"
 union CreatePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyAlreadyExistsError | UnauthorizedError | CreatePlatformAdditionalFeePayload | PlatformNotEnabledError | ForbiddenError | InternalError
@@ -143,10 +149,21 @@ union CreatePlatformContractOutput = InvalidRequestError | PlatformContractAlrea
 union CreatePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyAlreadyExistsError | UnauthorizedError | CreatePlatformDiscountSharePayload | PlatformNotEnabledError | ForbiddenError | InternalError
 
 "파트너 생성 결과"
-union CreatePlatformPartnerOutput = PlatformContractNotFoundError | PlatformAccountVerificationFailedError | PlatformCurrencyNotSupportedError | CreatePlatformPartnerPayload | PlatformNotEnabledError | ForbiddenError | UnauthorizedError | PlatformAccountVerificationNotFoundError | PlatformAccountVerificationAlreadyUsedError | InvalidRequestError | PlatformPartnerIdAlreadyExistsError | InternalError
+union CreatePlatformPartnerOutput = PlatformContractNotFoundError | PlatformAccountVerificationFailedError | PlatformCurrencyNotSupportedError | CreatePlatformPartnerPayload | PlatformNotEnabledError | ForbiddenError | UnauthorizedError | PlatformAccountVerificationNotFoundError | PlatformAccountVerificationAlreadyUsedError | InvalidRequestError | PlatformPartnerIdAlreadyExistsError | PlatformUserDefinedPropertyNotFoundError | InternalError
 
 "파트너 다건 생성 결과"
-union CreatePlatformPartnersOutput = InvalidRequestError | PlatformPartnerIdsAlreadyExistError | UnauthorizedError | PlatformCurrencyNotSupportedError | ForbiddenError | CreatePlatformPartnersPayload | PlatformNotEnabledError | PlatformContractsNotFoundError | PlatformPartnerIdsDuplicatedError | InternalError
+union CreatePlatformPartnersOutput = InvalidRequestError | PlatformPartnerIdsAlreadyExistError | UnauthorizedError | PlatformCurrencyNotSupportedError | ForbiddenError | PlatformContractsNotFoundError | PlatformPartnerIdsDuplicatedError | PlatformUserDefinedPropertyNotFoundError | CreatePlatformPartnersPayload | PlatformNotEnabledError | InternalError
+
+"정산 파라미터 생성 결과"
+union CreatePlatformSettlementParameterOutput = CreatePlatformSettlementParameterPayload | UnauthorizedError | PlatformSettlementParameterKeyAlreadyExistsError | PlatformSettlementParameterCountLimitExceededError | InvalidRequestError | PlatformNotEnabledError | ForbiddenError | InternalError
+
+"사용자 정의 속성 생성 결과"
+union CreatePlatformUserDefinedPropertyOutput = CreatePlatformUserDefinedPropertyPayload | UnauthorizedError | PlatformUserDefinedPropertiesMaxCountsExceededError | PlatformUserDefinedPropertyKeyAlreadyExistsError | InvalidRequestError | PlatformNotEnabledError | ForbiddenError | InternalError
+
+"프로모션 생성 결과"
+union CreatePromotionOutput = UnauthorizedError | ForbiddenError | DuplicatePromotionNameError | CreatePromotionPayload | InvalidRequestError | InternalError
+
+union CreateStoreOutput = CreateStorePayload | UnauthorizedError | DuplicatedTierCodeError | DuplicatedStoreNameError | InvalidRequestError | ForbiddenError | RequiredTermDisagreedError | InternalError
 
 union DeleteChannelGroupOutput = UnauthorizedError | ForbiddenError | ChannelGroupNotFoundError | DeleteChannelGroupPayload | InvalidRequestError | InternalError
 
@@ -156,6 +173,8 @@ union DeletePaymentRecoverySettingOutput = DeletePaymentRecoverySettingPayload |
 
 "정산건 삭제 결과"
 union DeletePlatformTransferOutput = DeletePlatformTransferPayload | PlatformTransferNotFoundError | InvalidRequestError | UnauthorizedError | PlatformCancelOrderTransfersExistsError | PlatformTransferNonDeletableStatusError | PlatformNotEnabledError | ForbiddenError | InternalError
+
+union DeleteStoreOutput = InvalidRequestError | ForbiddenError | StoreNotFoundError | DeleteStorePayload | UnauthorizedError | RepresentativeStoreCannotBeDeletedError | InternalError
 
 union DeleteV2ApiSecretOutput = ForbiddenError | V2ApiSecretNotFoundError | StoreNotFoundError | DeleteV2ApiSecretPayload | UnauthorizedError | InternalError
 
@@ -168,8 +187,20 @@ union ExpireStoreWebhookSecretOutput = InvalidRequestError | StoreNotFoundError 
 "지급 건 생성 결과"
 union GeneratePlatformPayoutsOutput = PlatformNotEnabledError | InvalidRequestError | PlatformNoSelectedPartnerSettlementsError | PlatformNegativePayoutAmountPartnersError | ForbiddenError | GeneratePlatformPayoutsPayload | UnauthorizedError | PlatformBulkPayoutNotFoundError | PlatformPayoutsAlreadyGeneratedError | InternalError
 
+"송금 전자 서명용 문서 생성 결과"
+union GeneratePlatformRemitDocumentContentOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformExternalApiTemporarilyFailedError | PlatformVirtualAccountNotAllocatedError | PlatformCurrencyNotSupportedError | PlatformExternalApiFailedError | PlatformNotEnoughAccountBalanceError | GeneratePlatformRemitDocumentContentPayload | UnauthorizedError | InternalError
+
 "예금주 조회 결과"
 union GetPlatformAccountHolderOutput = PlatformAccountHolder | PlatformNotEnabledError | PlatformExternalApiFailedError | PlatformNotSupportedBankError | InvalidRequestError | UnauthorizedError | PlatformExternalApiTemporarilyFailedError | ForbiddenError | InternalError
+
+"사용자 정의 속성 조회 결과"
+union GetPlatformUserDefinedPropertiesOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | FetchPlatformUserDefinedPropertiesPayload | UnauthorizedError | InternalError
+
+"다운로드 Pre-Signed URL 정보 결과"
+union IssueStoreFileDownloadUrlOutput = ForbiddenError | InvalidRequestError | StoreFileNotFoundError | IssueStoreFileDownloadUrlPayload | UnauthorizedError | InternalError
+
+"Pre-Signed URL 정보"
+union IssueStoreFileUploadUrlOutput = ForbiddenError | InvalidRequestError | StoreNotFoundError | IssueStoreFileUploadUrlPayload | UnauthorizedError | InternalError
 
 "웹훅 시크릿 발급 결과"
 union IssueStoreWebhookSecretOutput = InvalidRequestError | StoreNotFoundError | ForbiddenError | IssueStoreWebhookSecretPayload | UnauthorizedError | TooManyWebhookSecretsError | InternalError
@@ -179,8 +210,28 @@ union IssueV2ApiSecretOutput = IssueV2ApiSecretPayload | UnauthorizedError | For
 "API secret 로그인 결과"
 union LoginViaApiSecretOutput = LoginViaApiSecretPayload | UnauthorizedError | InternalError
 
+"고객사의 청구서 담당자 결과"
+union MerchantBillingManagerOutput = MerchantBillingManager | UnauthorizedError | ForbiddenError | MerchantBillingManagerNotFoundError | InternalError
+
+"고객사의 서비스 과금을 위한 카드 리스트 결과"
+union MerchantBillingMethodCardsOutput = MerchantBillingMethodCardsPayload | UnauthorizedError | ForbiddenError | InternalError
+
 "고객사 정보 조회 결과"
 union MerchantOutput = Merchant | UnauthorizedError | InternalError
+
+"고객사 약관 동의정보 조회 결과"
+union MerchantTermsOutput = MerchantTerms | UnauthorizedError | ForbiddenError | InvalidRequestError | InternalError
+
+"프로모션 일시중지 결과"
+union PausePromotionOutput = UnauthorizedError | ForbiddenError | PromotionNotFoundError | PausePromotionPayload | InvalidRequestError | PromotionTerminatedError | InternalError
+
+union PaymentReconciliationPaymentCurrenciesOutput = PaymentReconciliationPaymentCurrenciesPayload | UnauthorizedError | InvalidRequestError | ForbiddenError | InternalError
+
+union PaymentReconciliationSettlementCurrenciesOutput = PaymentReconciliationSettlementCurrenciesPayload | UnauthorizedError | InvalidRequestError | ForbiddenError | InternalError
+
+union PaymentReconciliationSettlementStatisticsOutput = PaymentReconciliationSettlementStatisticsPayload | UnauthorizedError | InvalidRequestError | ForbiddenError | InternalError
+
+union PaymentReconciliationTransactionStatisticsOutput = PaymentReconciliationTransactionStatisticsPayload | UnauthorizedError | InvalidRequestError | ForbiddenError | InternalError
 
 "빌링 결제 리커버리 최근 실행 내역 조회 결과"
 union PaymentRecoveryLogOutput = UnauthorizedError | ForbiddenError | PaymentRecoveryLogNotFoundError | PaymentRecoveryLog | InvalidRequestError | InternalError
@@ -204,6 +255,9 @@ union PgCompanyUsageByPaymentSchedulesOutput = PgCompanyUsageByPaymentSchedulesP
 "결제 건이 존재하는 PG사 조회 결과"
 union PgCompanyUsageByPaymentsOutput = PgCompanyUsageByPaymentsPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
+"이체 내역 다건 조회 결과"
+union PlatformAccountTransfersOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformAccountTransfersPayload | UnauthorizedError | InternalError
+
 "추가 수수료 정책 다건 조회 결과"
 union PlatformAdditionalFeePoliciesOutput = InvalidRequestError | UnauthorizedError | ForbiddenError | PlatformAdditionalFeePoliciesPayload | PlatformNotEnabledError | InternalError
 
@@ -223,7 +277,7 @@ union PlatformAdditionalFeePolicyScheduleOutput = InvalidRequestError | Platform
 union PlatformAdditionalFeePolicySummariesOutput = InvalidRequestError | UnauthorizedError | ForbiddenError | PlatformAdditionalFeePolicySummaries | PlatformNotEnabledError | InternalError
 
 "일괄 지급 전자 서명용 문서 생성 결과"
-union PlatformBulkPayoutDocumentOutput = PlatformBulkPayoutDocument | UnauthorizedError | PlatformPayoutsNotGeneratedError | PlatformPayoutMethodNotAgencyError | InvalidRequestError | PlatformNotEnabledError | PlatformBulkPayoutNotFoundError | ForbiddenError | InternalError
+union PlatformBulkPayoutDocumentContentOutput = PlatformElectronicDocumentContent | UnauthorizedError | PlatformPayoutsNotGeneratedError | PlatformPayoutMethodNotAgencyError | InvalidRequestError | PlatformNotEnabledError | PlatformBulkPayoutNotFoundError | ForbiddenError | InternalError
 
 "일괄 지급 조회 결과"
 union PlatformBulkPayoutOutput = InvalidRequestError | PlatformNotEnabledError | PlatformBulkPayoutNotFoundError | PlatformBulkPayout | UnauthorizedError | ForbiddenError | InternalError
@@ -315,6 +369,9 @@ union PlatformPartnerSettlementDashboardOutput = PlatformNotEnabledError | Inval
 "정산일 리스트 조회 결과"
 union PlatformPartnerSettlementDatesOutput = PlatformNotEnabledError | InvalidRequestError | ForbiddenError | PlatformPartnerSettlementDatesPayload | UnauthorizedError | InternalError
 
+"정산내역 조회 결과"
+union PlatformPartnerSettlementOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformPartnerOrderSettlement | PlatformPartnerOrderCancelSettlement | PlatformPartnerManualSettlement | UnauthorizedError | PlatformPartnerSettlementNotFoundError | InternalError
+
 "정산내역 다건 조회 결과"
 union PlatformPartnerSettlementsOutput = PlatformNotEnabledError | InvalidRequestError | ForbiddenError | PlatformPartnerSettlementsPayload | UnauthorizedError | InternalError
 
@@ -325,7 +382,7 @@ union PlatformPartnerSummariesOutput = InvalidRequestError | UnauthorizedError |
 union PlatformPartnerTagsOutput = InvalidRequestError | UnauthorizedError | ForbiddenError | PlatformPartnerTagsPayload | PlatformNotEnabledError | InternalError
 
 "파트너 유형별 추가 정보"
-union PlatformPartnerType = PlatformPartnerTypeBusiness | PlatformPartnerTypeWhtPayer
+union PlatformPartnerType = PlatformPartnerTypeBusiness | PlatformPartnerTypeNonWhtPayer | PlatformPartnerTypeWhtPayer
 
 "파트너 다건 조회 결과"
 union PlatformPartnersOutput = InvalidRequestError | UnauthorizedError | ForbiddenError | PlatformPartnersPayload | PlatformNotEnabledError | InternalError
@@ -356,6 +413,9 @@ union PlatformSettlementFormulaError = PlatformSettlementFormulaInvalidFunction 
 "플랫폼 계산식 검증 응답"
 union PlatformSettlementFormulaValidationOutput = PlatformSettlementFormulaValidation | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError | InternalError
 
+"정산 파라미터 다건 조회 결과"
+union PlatformSettlementParametersOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformSettlementParametersPayload | UnauthorizedError | InternalError
+
 "정산내역 대시보드 조회 결과"
 union PlatformTransferDashboardOutput = PlatformNotEnabledError | InvalidRequestError | ForbiddenError | PlatformTransferDashboard | UnauthorizedError | InternalError
 
@@ -368,6 +428,23 @@ union PlatformTransferSummariesOutput = InvalidRequestError | UnauthorizedError 
 
 "가상계좌 정보 조회 결과"
 union PlatformVirtualAccountOutput = PlatformVirtualAccount | PlatformNotEnabledError | PlatformExternalApiFailedError | PlatformVirtualAccountNotAllocatedError | InvalidRequestError | UnauthorizedError | PlatformExternalApiTemporarilyFailedError | ForbiddenError | InternalError
+
+union PromotionDiscount = PromotionAmountDiscount | PromotionPercentDiscount
+
+"프로모션 아이디 리스트 조회 결과"
+union PromotionIdsOutput = PromotionIdsPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+"프로모션 통계 조회 결과"
+union PromotionStatisticsOutput = PromotionStatisticsPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+union ReconciliationEasyPayMethod = ReconciliationPaymentMethodCard | ReconciliationPaymentMethodCharge | ReconciliationPaymentMethodEtc | ReconciliationPaymentMethodMobile | ReconciliationPaymentMethodTransfer | ReconciliationPaymentMethodVirtualAccount
+
+union ReconciliationPaymentMethod = ReconciliationPaymentMethodArs | ReconciliationPaymentMethodCard | ReconciliationPaymentMethodCharge | ReconciliationPaymentMethodEasyPay | ReconciliationPaymentMethodEtc | ReconciliationPaymentMethodGiftCertificate | ReconciliationPaymentMethodMobile | ReconciliationPaymentMethodTransfer | ReconciliationPaymentMethodVirtualAccount
+
+union ReconciliationPgSpecifiersOutput = ReconciliationPgSpecifiersPayload | ForbiddenError | UnauthorizedError | InternalError
+
+"대사 서비스 이용약관 동의 여부 조회 결과"
+union ReconciliationTermsAndConditionsOutput = ReconciliationTermsAndConditions | UnauthorizedError | InvalidRequestError | ForbiddenError | InternalError
 
 "추가 수수료 정책 복원 결과"
 union RecoverPlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | RecoverPlatformAdditionalFeePolicyPayload | PlatformNotEnabledError | ForbiddenError | InternalError
@@ -384,8 +461,20 @@ union RecoverPlatformPartnerOutput = InvalidRequestError | PlatformPartnerNotFou
 "토큰 재발급 결과"
 union RefreshTokenOutput = RefreshTokenPayload | UnauthorizedError | InternalError
 
+"고객사의 서비스 과금을 위한 카드 등록 결과"
+union RegisterMerchantBillingMethodCardOutput = ForbiddenError | InvalidRequestError | PgProviderError | RegisterMerchantBillingMethodCardPayload | UnauthorizedError | InternalError
+
+"상점 비즈니스 인증정보 등록 결과"
+union RegisterStoreBusinessInfoOutput = ForbiddenError | InvalidRequestError | StoreNotFoundError | RegisterStoreBusinessInfoPayload | UnauthorizedError | StoreBusinessInfoAlreadyRegisteredError | InternalError
+
+"개인 / 법인 사업자 정보"
+union RegisteredBusinessLicenseClassification = RegisteredBusinessLicenseClassificationCorporation | RegisteredBusinessLicenseClassificationSoleProprietorship
+
 "파트너 상태 승인 거절 변경 결과"
 union RejectPlatformPartnerOutput = RejectPlatformPartnerPayload | PlatformNotEnabledError | UnauthorizedError | ForbiddenError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformArchivedPartnerError | InternalError
+
+"가상계좌 송금 결과"
+union RemitPlatformVirtualAccountOutput = RemitPlatformVirtualAccountPayload | UnauthorizedError | PlatformVirtualAccountBalanceCheckFailedError | PlatformSignatureVerificationFailedError | PlatformCurrencyNotSupportedError | PlatformExternalApiFailedError | PlatformNotEnoughAccountBalanceError | PlatformNotSupportedBankError | InvalidRequestError | PlatformNotEnabledError | PlatformBrnNotRegisteredError | PlatformDocumentHashMismatchedError | ForbiddenError | PlatformExternalApiTemporarilyFailedError | PlatformVirtualAccountNotAllocatedError | InternalError
 
 "추가 수수료 정책 예약 업데이트 재설정 결과"
 union ReschedulePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | ReschedulePlatformAdditionalFeePayload | PlatformNotEnabledError | ForbiddenError | InternalError
@@ -399,11 +488,23 @@ union ReschedulePlatformDiscountSharePolicyOutput = InvalidRequestError | Platfo
 "파트너 예약 업데이트 재설정 결과"
 union ReschedulePlatformPartnerOutput = ReschedulePlatformPartnerPayload | PlatformNotEnabledError | PlatformContractNotFoundError | ForbiddenError | InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | InternalError
 
+"프로모션 재개 결과"
+union ResumePromotionOutput = UnauthorizedError | ForbiddenError | PromotionNotFoundError | ResumePromotionPayload | InvalidRequestError | PromotionTerminatedError | InternalError
+
 "재시도 요청 결과"
 union RetryPaymentScheduleOutput = PaymentScheduleNotRevokedOrFailedError | BillingKeyAlreadyDeletedError | PaymentScheduleAlreadyExistsError | RetryPaymentSchedulePayload | InvalidRequestError | PgProviderError | PaymentScheduleNotFoundError | ChannelNotFoundError | AlreadyPaidOrWaitingError | UnauthorizedError | ForbiddenError | InternalError
 
 "결제 예약 건 취소 요청 결과"
 union RevokePaymentScheduleOutput = UnauthorizedError | ForbiddenError | PaymentScheduleNotFoundError | RevokePaymentSchedulePayload | InvalidRequestError | PaymentScheduleNotScheduledError | InternalError
+
+"고객사의 청구서 담당자 저장 결과"
+union SaveMerchantBillingManagerOutput = InvalidRequestError | ForbiddenError | RequiredTermDisagreedError | SaveMerchantBillingManagerPayload | UnauthorizedError | InternalError
+
+"고객사 약관정보 저장 결과"
+union SaveMerchantTermsOutput = SaveMerchantTermsPayload | UnauthorizedError | ForbiddenError | InvalidRequestError | InternalError
+
+"상점 비즈니스 인증정보 임시저장 결과"
+union SaveTemporaryStoreBusinessInfoOutput = ForbiddenError | InvalidRequestError | StoreNotFoundError | SaveTemporaryStoreBusinessInfoPayload | UnauthorizedError | StoreBusinessInfoAlreadyRegisteredError | InternalError
 
 "추가 수수료 정책 업데이트 예약 결과"
 union SchedulePlatformAdditionalFeePolicyOutput = SchedulePlatformAdditionalFeePayload | PlatformNotEnabledError | PlatformArchivedAdditionalFeePolicyError | UnauthorizedError | InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | PlatformAdditionalFeePolicyScheduleAlreadyExistsError | ForbiddenError | InternalError
@@ -415,25 +516,49 @@ union SchedulePlatformContractOutput = SchedulePlatformContractPayload | Platfor
 union SchedulePlatformDiscountSharePolicyOutput = SchedulePlatformDiscountSharePayload | PlatformNotEnabledError | UnauthorizedError | ForbiddenError | InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | PlatformDiscountSharePolicyScheduleAlreadyExistsError | InternalError
 
 "파트너 업데이트 예약 결과"
-union SchedulePlatformPartnerOutput = PlatformPartnerScheduleAlreadyExistsError | PlatformArchivedPartnerError | PlatformAccountVerificationFailedError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformInsufficientDataToChangePartnerTypeError | ForbiddenError | UnauthorizedError | PlatformContractNotFoundError | PlatformAccountVerificationNotFoundError | SchedulePlatformPartnerPayload | PlatformNotEnabledError | PlatformAccountVerificationAlreadyUsedError | InternalError
+union SchedulePlatformPartnerOutput = PlatformPartnerScheduleAlreadyExistsError | PlatformArchivedPartnerError | PlatformAccountVerificationFailedError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformInsufficientDataToChangePartnerTypeError | ForbiddenError | SchedulePlatformPartnerPayload | PlatformNotEnabledError | PlatformAccountVerificationAlreadyUsedError | PlatformUserDefinedPropertyNotFoundError | UnauthorizedError | PlatformContractNotFoundError | PlatformAccountVerificationNotFoundError | InternalError
 
 "파트너 예약 업데이트 결과"
-union SchedulePlatformPartnersOutput = SchedulePlatformPartnersPayload | UnauthorizedError | PlatformContractNotFoundError | PlatformArchivedPartnersCannotBeScheduledError | InvalidRequestError | PlatformNotEnabledError | PlatformPartnerSchedulesAlreadyExistError | ForbiddenError | InternalError
+union SchedulePlatformPartnersOutput = InvalidRequestError | PlatformNotEnabledError | PlatformPartnerSchedulesAlreadyExistError | ForbiddenError | PlatformUserDefinedPropertyNotFoundError | SchedulePlatformPartnersPayload | UnauthorizedError | PlatformContractNotFoundError | PlatformArchivedPartnersCannotBeScheduledError | InternalError
 
 union SetPaymentRecoverySettingOutput = UnauthorizedError | ForbiddenError | PaymentRecoverySettingNotFoundError | PaymentRecoverySetting | InvalidRequestError | InternalError
+
+union SignUpOutput = SignUpPayload | UnauthorizedError | EmailAlreadyExistsError | InvalidPasswordFormatError | InvalidRequestError | ForbiddenError | RequiredTermDisagreedError | PasswordContainsPersonalInfoError | InternalError
+
+union SignUpViaAgencyOutput = InvalidRequestError | ForbiddenError | RequiredTermDisagreedError | AgencyCodeNotFoundError | PasswordContainsPersonalInfoError | SignUpViaAgencyPayload | UnauthorizedError | EmailAlreadyExistsError | InvalidPasswordFormatError | InternalError
 
 "일괄 지급 중단 결과"
 union StopPlatformBulkPayoutOutput = PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | StopPlatformBulkPayoutPayload | UnauthorizedError | PlatformBulkPayoutNonStoppableStatusError | InternalError
 
+"사업자 등록증 OCR 결과"
+union StoreBusinessLicenseOcrOutput = ForbiddenError | InvalidRequestError | StoreFileNotFoundError | BusinessLicenseOcr | UnauthorizedError | OcrFailedError | InternalError
+
+"상점 사업자 등록증 조회 결과"
+union StoreBusinessLicenseOutput = UnauthorizedError | ForbiddenError | BusinessLicenseNotFoundError | TemporaryBusinessLicense | RegisteredBusinessLicense | InvalidRequestError | InternalError
+
+"상점 파일 목록 조회 결과"
+union StoreFilesOutput = StoreFilesPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
 union StoreOutput = Store | UnauthorizedError | StoreNotFoundError | ForbiddenError | InternalError
+
+"상점 대표자 목록 조회 결과"
+union StoreRepresentativesOutput = StoreRepresentativesPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
+
+union StoreV1InfoOutput = StoreV1Info | InternalError
 
 "웹훅 설정 조회 결과"
 union StoreWebhookSettingOutput = InvalidRequestError | StoreNotFoundError | ForbiddenError | StoreWebhookSetting | UnauthorizedError | InternalError
 
 union StoresOutput = StoresPayload | UnauthorizedError | StoreNotFoundError | ForbiddenError | InternalError
 
+"개인 / 법인 사업자 정보"
+union TemporaryBusinessLicenseClassification = TemporaryBusinessLicenseClassificationCorporation | TemporaryBusinessLicenseClassificationSoleProprietorship
+
+"프로모션 중단 결과"
+union TerminatePromotionOutput = UnauthorizedError | ForbiddenError | PromotionNotFoundError | TerminatePromotionPayload | InvalidRequestError | InternalError
+
 "웹훅 호출 테스트 결과"
-union TestWebhookOutput = InvalidRequestError | ForbiddenError | StoreWebhookUrlNotSetError | TestWebhookPayload | UnauthorizedError | WebhookTestFailedError | InternalError
+union TestWebhookOutput = TestWebhookPayload | UnauthorizedError | StoreWebhookUrlNotSetError | WebhookTestFailedError | InvalidRequestError | ForbiddenError | StoreNotFoundError | InternalError
 
 "일괄지급 정산 건 토글 결과"
 union TogglePlatformBulkPayoutPartnerSettlementsOutput = TogglePlatformBulkPayoutPartnerSettlementsPayload | UnauthorizedError | PlatformPayoutsAlreadyGeneratedError | ForbiddenError | PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | InternalError
@@ -453,7 +578,7 @@ union UpdatePlatformDiscountSharePolicyOutput = UpdatePlatformDiscountSharePaylo
 union UpdatePlatformOutput = PlatformInvalidSettlementFormulaError | InvalidRequestError | UnauthorizedError | UpdatePlatformPayload | PlatformNotEnabledError | ForbiddenError | InternalError
 
 "파트너 업데이트 결과"
-union UpdatePlatformPartnerOutput = PlatformContractNotFoundError | PlatformArchivedPartnerError | PlatformAccountVerificationAlreadyUsedError | UpdatePlatformPartnerPayload | PlatformNotEnabledError | ForbiddenError | UnauthorizedError | PlatformAccountVerificationFailedError | PlatformAccountVerificationNotFoundError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformInsufficientDataToChangePartnerTypeError | InternalError
+union UpdatePlatformPartnerOutput = UnauthorizedError | PlatformAccountVerificationFailedError | PlatformAccountVerificationNotFoundError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformInsufficientDataToChangePartnerTypeError | PlatformUserDefinedPropertyNotFoundError | PlatformContractNotFoundError | PlatformArchivedPartnerError | PlatformAccountVerificationAlreadyUsedError | UpdatePlatformPartnerPayload | PlatformNotEnabledError | ForbiddenError | InternalError
 
 "정산내역 상태 업데이트 결과"
 union UpdatePlatformPartnerSettlementStatusOutput = PlatformNotEnabledError | InvalidRequestError | PlatformNonUpdatableStatusError | UpdatePlatformPartnerSettlementStatusPayload | UnauthorizedError | PlatformPartnerSettlementNotFoundError | InternalError
@@ -464,6 +589,17 @@ union UpdatePlatformPayoutOutput = UpdatePlatformPayoutPayload | UnauthorizedErr
 "지급 건 일괄 업데이트 결과"
 union UpdatePlatformPayoutsOutput = UpdatePlatformPayoutsPayload | UnauthorizedError | PlatformBulkPayoutStatusNotPreparingError | ForbiddenError | PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | InternalError
 
+"정산 파라미터 수정 결과"
+union UpdatePlatformSettlementParameterOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | UpdatePlatformSettlementParameterPayload | UnauthorizedError | PlatformSettlementParameterNotFoundError | InternalError
+
+"사용자 정의 속성 업데이트 결과"
+union UpdatePlatformUserDefinedPropertyOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | UpdatePlatformUserDefinedPropertyPayload | UnauthorizedError | PlatformUserDefinedPropertyNotFoundError | InternalError
+
+"프로모션 정보 업데이트 결과"
+union UpdatePromotionOutput = UnauthorizedError | ForbiddenError | PromotionNotFoundError | UpdatePromotionPayload | InvalidRequestError | DuplicatePromotionNameError | InternalError
+
+union UpdateStoreOutput = InvalidRequestError | ForbiddenError | StoreNotFoundError | UpdateStorePayload | UnauthorizedError | DuplicatedStoreNameError | InternalError
+
 "웹훅 설정 저장 결과"
 union UpdateStoreWebhookSettingOutput = InvalidRequestError | StoreNotFoundError | ForbiddenError | UpdateStoreWebhookSettingPayload | UnauthorizedError | InvalidWebhookUrlError | InternalError
 
@@ -471,6 +607,17 @@ union UpdateStoreWebhookSettingOutput = InvalidRequestError | StoreNotFoundError
 union UsedCurrenciesForPaymentScheduleOutput = UsedCurrenciesForPaymentSchedulePayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
 union V2ApiSecretInfosOutput = V2ApiSecretInfosPayload | UnauthorizedError | StoreNotFoundError | ForbiddenError | InternalError
+
+enum AmountExceededType {
+  "할인금액이 주문금액을 초과"
+  DISCOUNT_THAN_ORDER
+  "면세 할인금액이 할인금액을 초과"
+  DISCOUNT_TAX_FREE_THAN_DISCOUNT
+  "면세 할인금액이 면세 주문금액을 초과"
+  DISCOUNT_TAX_FREE_THAN_ORDER_TAX_FREE
+  "면세 결제금액이 결제금액을 초과"
+  PAYMENT_TAX_FREE_THAN_PAYMENT
+}
 
 "은행"
 enum Bank {
@@ -496,7 +643,7 @@ enum Bank {
   STANDARD_CHARTERED
   "한국씨티은행"
   CITI
-  "iM뱅크"
+  "아이엠뱅크"
   DAEGU
   "부산은행"
   BUSAN
@@ -568,6 +715,16 @@ enum Bank {
   YUANTA_SECURITIES
   "KB증권"
   KB_SECURITIES
+  "상상인증권"
+  SANGSANGIN_SECURITIES
+  "한양증권"
+  HANYANG_SECURITIES
+  "리딩투자증권"
+  LEADING_SECURITIES
+  "BNK투자증권"
+  BNK_SECURITIES
+  "IBK투자증권"
+  IBK_SECURITIES
   "다올투자증권"
   DAOL_SECURITIES
   "미래에셋증권"
@@ -592,8 +749,6 @@ enum Bank {
   SK_SECURITIES
   "대신증권"
   DAISHIN_SECURITIES
-  "메리츠증권"
-  MERITZ_SECURITIES
   "한화투자증권"
   HANHWA_SECURITIES
   "하나증권"
@@ -606,6 +761,8 @@ enum Bank {
   DB_SECURITIES
   "유진투자증권"
   EUGENE_SECURITIES
+  "메리츠증권"
+  MERITZ_SECURITIES
   "카카오페이증권"
   KAKAO_PAY_SECURITIES
   "부국증권"
@@ -614,8 +771,12 @@ enum Bank {
   SHINYOUNG_SECURITIES
   "케이프투자증권"
   CAPE_SECURITIES
+  "한국증권금융"
+  KOREA_SECURITIES_FINANCE
   "한국포스증권"
   KOREA_FOSS_SECURITIES
+  "우리종합금융"
+  WOORI_INVESTMENT_BANK
 }
 
 "빌링키 결제 수단"
@@ -678,6 +839,144 @@ enum CardCompany {
   KOOKMIN_CARD
   "해외카드"
   UNIDENTIFIED_GLOBAL_CARD
+  "차이뱅크"
+  CHAI_CARD
+  "아맥스카드"
+  AMEX_CARD
+  "러시아 미르카드"
+  MIR_CARD
+  "은련카드"
+  UNION_CARD
+  "JCB카드"
+  JCB_CARD
+  "VISA카드"
+  VISA_CARD
+  "MASTER카드"
+  MASTER_CARD
+  "DINERS카드"
+  DINERS_CARD
+  "DISCOVER카드"
+  DISCOVER_CARD
+  "IBK기업은행"
+  IBK
+  "NH농협은행"
+  NH_BANK
+  "대구은행"
+  DAEGU_CARD
+  "부산은행"
+  BUSAN_CARD
+  "SC제일은행"
+  SC_BANK
+  "경남은행"
+  KYONGNAM_CARD
+  "우리은행"
+  WOORI_BANK
+  "중국은행"
+  CHINA_BANK
+  "산림조합중앙회"
+  NFCF
+  "KB증권"
+  KB_SECURITIES
+  "유안타증권"
+  YUANTA_SECURITIES
+  "NH투자증권"
+  NH_SECURITIES
+  "DB금융투자"
+  DB_SECURITIES
+  "SK증권"
+  SK_SECURITIES
+  "유진투자증권"
+  EUGENE_SECURITIES
+  "교보증권"
+  KYOBO_SECURITIES
+  "미래에셋증권"
+  MIRAE_ASSET_SECURITIES
+  "한국투자증권"
+  KOREA_SECURITIES
+  "한화투자증권"
+  HANHWA_SECURITIES
+  "SSG카드"
+  SSG
+  "코나아이"
+  KONA_I
+  "차이코퍼레이션"
+  CHAI
+  "토스카드"
+  TOSS_CARD
+  "페이코"
+  PAYCO
+  "지머니트랜스"
+  GMONEY_TRANS
+  "디셈버앤컴퍼니"
+  FINT
+  "KG모빌리언스"
+  KG_MOBILIANS
+  "한패스"
+  HANPASS
+  "핀샷"
+  FINSHOT
+  "비즈플레이"
+  BIZPLAY
+  "나이스정보통신"
+  NICE
+  "다날"
+  DANAL
+  "섹타나인"
+  SECTA
+  "글로벌머니익스프레스"
+  GME
+  "로드시스템"
+  LORD_SYSTEM
+  "네이버페이"
+  NAVERPAY
+  "카카오페이"
+  KAKAOPAY
+  "KCB산은캐피탈"
+  KDBC
+  "틴캐쉬"
+  TEEN_CASH
+  "에그머니"
+  EGG_MONEY
+  "온캐쉬"
+  ON_CASH
+  "갤럭시아 머니트리"
+  GALAXIA_MONEY_TREE
+  "레몬트리 퍼핀"
+  FIRFIN
+}
+
+"카드 소유주 유형"
+enum CardOwnerType {
+  "개인"
+  PERSONAL
+  "법인"
+  CORPORATE
+}
+
+"카드 유형"
+enum CardType {
+  "신용카드"
+  CREDIT
+  "체크카드"
+  DEBIT
+  "기프트카드"
+  GIFT
+}
+
+"통신사"
+enum Carrier {
+  "SKT"
+  SKT
+  "KT"
+  KT
+  "LG 유플러스"
+  LGU
+  "SKT 알뜰폰"
+  SKT_MVNO
+  "KT 알뜰폰"
+  KT_MVNO
+  "LGU 알뜰폰"
+  LGU_MVNO
 }
 
 "채널 그룹 유형"
@@ -1615,6 +1914,28 @@ enum Gender {
   OTHER
 }
 
+"상품권 타입"
+enum GiftCertificateType {
+  "도서문화 상품권"
+  BOOKNLIFE
+  "스마트 문화상품권"
+  SMART_MUNSANG
+  "컬쳐랜드 상품권"
+  CULTURELAND
+  "해피머니"
+  HAPPYMONEY
+  "문화상품권"
+  CULTURE_GIFT
+}
+
+"고객사의 과금 결제수단 상태"
+enum MerchantBillingMethodStatus {
+  "활성화"
+  ACTIVE
+  "비활성화"
+  INACTIVE
+}
+
 "결제가 발생한 클라이언트 환경"
 enum PaymentClientType {
   SDK_MOBILE
@@ -1629,6 +1950,46 @@ enum PaymentMethodType {
   GIFT_CERTIFICATE
   MOBILE
   EASY_PAY
+}
+
+"거래상태"
+enum PaymentReconciliationActionType {
+  "결제 승인"
+  APPROVAL
+  "전체 취소"
+  FULL_CANCEL
+  "부분 취소"
+  PARTIAL_CANCEL
+  "상태 모르는 취소"
+  UNCLASSIFIED_CANCEL
+}
+
+"거래대사 매치 실패 사유"
+enum PaymentReconciliationNotMatchedReason {
+  "결제 금액 불일치"
+  PAYMENT_AMOUNT_NOT_MATCHED
+  "면세 금액 불일치"
+  TAX_FREE_AMOUNT_NOT_MATCHED
+  "부가세 금액 불일치"
+  VAT_AMOUNT_NOT_MATCHED
+  "에스크로 여부 불일치"
+  ESCROW_NOT_MATCHED
+  "할부 개월 수 불일치"
+  INSTALLMENT_MONTH_NOT_MATCHED
+  "결제일자 불일치"
+  PAYMENT_DATE_NOT_MATCHED
+}
+
+"결제 건의 대사 상태"
+enum PaymentReconciliationStatus {
+  "대사 매칭 성공 상태"
+  MATCHED
+  "대사 매칭 실패 상태"
+  NOT_MATCHED
+  "대사 불가능 상태"
+  INCOMPARABLE
+  "PG사 결제 정보가 수집되지 않은 상태"
+  NOT_COLLECTED
 }
 
 "빌링키 간편결제 상세 결제 수단"
@@ -1808,6 +2169,16 @@ enum PlatformAccountStatus {
   UNKNOWN
 }
 
+"계좌 이체 유형"
+enum PlatformAccountTransferType {
+  "충전"
+  DEPOSIT
+  "파트너 정산 송금"
+  WITHDRAWAL_PARTNER_PAYOUT
+  "송금"
+  WITHDRAWAL_REMIT
+}
+
 enum PlatformBulkPayoutStatus {
   PREPARING
   PREPARED
@@ -1934,6 +2305,10 @@ enum PlatformPermission {
   PARTNER_SETTLEMENT_READ
   PARTNER_SETTLEMENT_WRITE
   EXCEL_DOWNLOAD
+  ACCOUNT_TRANSFER_READ
+  ACCOUNT_TRANSFER_WRITE
+  USER_DEFINED_PROPERTY_READ
+  USER_DEFINED_PROPERTY_WRITE
 }
 
 "금액 타입"
@@ -1994,16 +2369,173 @@ enum PlatformTransferStatus {
   PAID_OUT
 }
 
+"파트너 유형"
+enum PlatformTransferSummaryPartnerType {
+  "사업자"
+  BUSINESS
+  "원천징수 대상자"
+  WHT_PAYER
+  "원천징수 비대상자"
+  NON_WHT_PAYER
+}
+
 enum PlatformTransferType {
   ORDER
   ORDER_CANCEL
   MANUAL
 }
 
+enum PlatformUserDefinedPropertyObjectType {
+  PARTNER
+  TRANSFER
+}
+
 "포트원 버전"
 enum PortOneVersion {
   V1
   V2
+}
+
+"프로모션 적용 가능한 카드사"
+enum PromotionCardCompany {
+  "우리카드"
+  WOORI_CARD
+  "BC카드"
+  BC_CARD
+  "삼성카드"
+  SAMSUNG_CARD
+  "신한카드"
+  SHINHAN_CARD
+  "현대카드"
+  HYUNDAI_CARD
+  "롯데카드"
+  LOTTE_CARD
+  "NH카드"
+  NH_CARD
+  "하나카드"
+  HANA_CARD
+  "국민카드"
+  KOOKMIN_CARD
+}
+
+enum PromotionStatus {
+  "예정됨"
+  SCHEDULED
+  "진행중"
+  IN_PROGRESS
+  "일시 중지됨"
+  PAUSED
+  "예산 소진됨"
+  BUDGET_EXHAUSTED
+  "중단됨"
+  TERMINATED
+  "완료됨"
+  COMPLETED
+}
+
+enum PromotionTimeRangeField {
+  "프로모션 생성 시각"
+  CREATED_AT
+  "프로모션 시작 시각"
+  START_AT
+}
+
+"대사용 간편 결제 PG사"
+enum ReconciliationEasyPayProvider {
+  PAYCO
+  SAMSUNGPAY
+  SSGPAY
+  KAKAOPAY
+  NAVERPAY
+  CHAI
+  LPAY
+  KPAY
+  TOSSPAY
+  TOSS_BRANDPAY
+  LGPAY
+  APPLEPAY
+  PINPAY
+  SKPAY
+  WECHATPAY
+  PAYPAL
+  ALIPAY
+  KB_APP
+  TMONEYPAY
+}
+
+"대사용 결제수단 목록"
+enum ReconciliationPaymentMethodType {
+  "카드"
+  CARD
+  "간편결제 충전"
+  CHARGE
+  "계좌이체"
+  TRANSFER
+  "ARS"
+  ARS
+  "상품권"
+  GIFT_CERTIFICATE
+  "모바일"
+  MOBILE
+  "가상계좌"
+  VIRTUAL_ACCOUNT
+  "기타 결제수단"
+  ETC
+  "기타 간편결제"
+  EASY_PAY_ETC
+  "페이코 간편결제"
+  EASY_PAY_PAYCO
+  "삼성페이 간편결제"
+  EASY_PAY_SAMSUNGPAY
+  "SSG페이 간편결제"
+  EASY_PAY_SSGPAY
+  "카카오페이 간편결제"
+  EASY_PAY_KAKAOPAY
+  "네이버페이 간편결제"
+  EASY_PAY_NAVERPAY
+  "차이페이 간편결제"
+  EASY_PAY_CHAI
+  "엘페이 간편결제"
+  EASY_PAY_LPAY
+  "케이페이 간편결제"
+  EASY_PAY_KPAY
+  "토스페이 간편결제"
+  EASY_PAY_TOSSPAY
+  "엘지페이 간편결제"
+  EASY_PAY_LGPAY
+  "애플페이 간편결제"
+  EASY_PAY_APPLEPAY
+  "핀페이 간편결제"
+  EASY_PAY_PINPAY
+  "에스케이페이 간편결제"
+  EASY_PAY_SKPAY
+  "위챗페이 간편결제"
+  EASY_PAY_WECHATPAY
+  "페이팔 간편결제"
+  EASY_PAY_PAYPAL
+  "알리페이 간편결제"
+  EASY_PAY_ALIPAY
+  "토스브랜드페이 간편결제"
+  EASY_PAY_TOSS_BRANDPAY
+  "케이비앱 간편결제"
+  EASY_PAY_KB_APP
+  "티머니페이 간편결제"
+  EASY_PAY_TMONEYPAY
+}
+
+enum ReconciliationPgProvider {
+  KAKAOPAY
+  NICEPAY
+  NAVERPAY
+  UPLUS
+  TOSSPAYMENTS
+  TOSSPAY
+  PAYCO
+  KCP
+  DANAL
+  EXIMBAY
+  INICIS
+  HECTO
 }
 
 "채널 타입"
@@ -2020,6 +2552,36 @@ enum SortOrder {
   DESC
   "오름차순"
   ASC
+}
+
+"파일 유형"
+enum StoreFileCategory {
+  "사업자 등록증"
+  BUSINESS_LICENSE
+}
+
+"상점 월 예상 거래액"
+enum StoreServiceMonthlySalesEstimation {
+  "1억원 미만"
+  LESS_THAN_ONE_HUNDRED_MILLION_WON
+  "1억원 ~ 3억원 미만"
+  LESS_THAN_THREE_HUNDRED_MILLION_WON
+  "3억원 ~ 10억원 미만"
+  LESS_THAN_ONE_BILLION_WON
+  "10억원 ~ 50억원 미만"
+  LESS_THAN_FIVE_BILLION_WON
+  "50억원 이상"
+  MORE_THAN_FIVE_BILLION_WON
+}
+
+"상점 서비스 형태"
+enum StoreServiceType {
+  "웹 서비스"
+  WEB
+  "앱 서비스"
+  APP
+  "웹 및 앱 서비스"
+  WEB_AND_APP
 }
 
 "웹훅 발송 시의 Content-Type"
@@ -2242,6 +2804,8 @@ input CreatePlatformManualTransferInput {
 기본값은 false 입니다.
 """
   isForTest: Boolean
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValueInput!]
 }
 
 "할인 정보"
@@ -2250,6 +2814,8 @@ input CreatePlatformOrderCancelTransferDiscountInput {
   sharePolicyPlainId: String!
   "할인 금액"
   amount: Long!
+  "면세 할인 금액"
+  taxFreeAmount: Long
 }
 
 "외부 결제 상세 정보"
@@ -2300,8 +2866,8 @@ input CreatePlatformOrderCancelTransferInput {
 기본값은 false 입니다.
 """
   isForTest: Boolean
-  "정산 파라미터 (실험기능)"
-  parameters: [PlatformTransferParameterInput!]
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValueInput!]
 }
 
 "전체 금액 취소"
@@ -2346,6 +2912,8 @@ input CreatePlatformOrderTransferDiscountInput {
   sharePolicyPlainId: String!
   "할인 금액"
   amount: Long!
+  "면세 할인 금액"
+  taxFreeAmount: Long
 }
 
 "외부 결제 상세 정보"
@@ -2406,6 +2974,8 @@ input CreatePlatformOrderTransferInput {
   isForTest: Boolean
   "정산 파라미터 (실험기능)"
   parameters: [PlatformTransferParameterInput!]
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValueInput!]
 }
 
 """
@@ -2509,9 +3079,11 @@ input CreatePlatformPartnerInput {
 """
 파트너 유형별 추가 정보
 
-사업자/원천징수대상자 중 추가할 파트너의 유형에 따른 정보를 입력해야 합니다.
+사업자/원천징수 대상자 중 추가할 파트너의 유형에 따른 정보를 입력해야 합니다.
 """
   type: CreatePlatformPartnerTypeInput!
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValueInput!]
 }
 
 input CreatePlatformPartnerTypeBusinessInput {
@@ -2539,19 +3111,96 @@ input CreatePlatformPartnerTypeBusinessInput {
 input CreatePlatformPartnerTypeInput {
   "사업자 추가 정보"
   business: CreatePlatformPartnerTypeBusinessInput
-  "원천징수대상자 추가 정보"
+  "원천징수 대상자 추가 정보"
   whtPayer: CreatePlatformPartnerTypeWhtPayerInput
+  "원천징수 비대상자 추가 정보"
+  nonWhtPayer: CreatePlatformPartnerTypeNonWhtPayerInput
+}
+
+input CreatePlatformPartnerTypeNonWhtPayerInput {
+  "생년월일"
+  birthdate: Date
 }
 
 input CreatePlatformPartnerTypeWhtPayerInput {
   "생년월일"
-  birthdate: String
+  birthdate: Date
 }
 
 "파트너 다건 생성을 위한 입력 정보"
 input CreatePlatformPartnersInput {
   "생성할 파트너 리스트 정보"
   partners: [CreatePlatformPartnerInput!]!
+}
+
+input CreatePlatformSettlementParameterInput {
+"""
+정산 파라미터 키
+
+수식에 사용되는 파라미터 식별자입니다.
+"""
+  key: String!
+  "이름"
+  name: String!
+  "기본 값"
+  defaultValue: PlatformSettlementParameterValueInput!
+}
+
+"사용자 정의 속성 생성을 위한 입력 정보"
+input CreatePlatformUserDefinedPropertyInput {
+  isForTest: Boolean!
+  key: String!
+  name: String!
+  objectType: PlatformUserDefinedPropertyObjectType!
+  isSecret: Boolean!
+}
+
+input CreatePromotionInput {
+  "프로모션을 생성할 하위 상점"
+  storeId: ID!
+  "프로모션 정보"
+  data: PromotionInput!
+}
+
+input CreateStoreInput {
+  "하위상점명"
+  name: String!
+  "티어 코드"
+  tierCode: String!
+  "상점 관리자"
+  manager: CreateStoreManagerInput
+"""
+URL 목록
+
+고객사가 제공하는 서비스 웹사이트 & 앱스토어 다운로드 url 목록을 의미합니다. 없는 경우 필드를 명시하지 않고 요청해도 무관합니다.
+"""
+  urls: [String!]
+  "하위상점 약관 동의 정보"
+  terms: CreateStoreTermsInput!
+}
+
+input CreateStoreManagerInput {
+  "이름"
+  name: String
+"""
+핸드폰번호
+
+핸드폰번호는 `-`, 공백 등의 특수기호 없이 숫자만 포함됩니다.
+"""
+  phoneNumber: String
+"""
+이메일
+
+상점 관리자의 이메일, 전자결제 진행상황 및 포트원에서 알림을 수신받는 이메일
+"""
+  email: String
+}
+
+input CreateStoreTermsInput {
+  "개인정보 수집 동의 여부"
+  collectionOfPersonalInformation: Boolean!
+  "고객사 상점 정보 조회 동의 여부"
+  provisionOfStoreInformationToMerchant: Boolean!
 }
 
 input DateRangeInput {
@@ -2581,6 +3230,11 @@ input DeletePlatformTransferInput {
   id: ID!
 }
 
+input DeleteStoreInput {
+  "상점 아이디"
+  id: ID!
+}
+
 input DeleteV2ApiSecretInput {
   "삭제할 시크릿의 상점 아이디"
   storeId: ID!
@@ -2605,9 +3259,44 @@ input ExpireStoreWebhookSecretInput {
   secret: String!
 }
 
+"사용자 정의 속성 다건 조회를 위한 입력 정보"
+input FetchPlatformUserDefinedPropertiesInput {
+  isForTest: Boolean!
+  objectType: PlatformUserDefinedPropertyObjectType!
+}
+
 input GeneratePlatformPayoutsInput {
   bulkPayoutId: ID!
   isForTest: Boolean
+}
+
+input GeneratePlatformRemitDocumentContentInput {
+  input: PlatformRemitInput!
+  isForTest: Boolean!
+}
+
+"파일 다운로드 URL을 발급받기 위해 필요한 입력정보"
+input IssueStoreFileDownloadUrlInput {
+  "상점 ID"
+  storeId: ID!
+  "상점 ID"
+  fileId: ID!
+}
+
+"파일 업로드 URL을 발급받기 위해 필요한 입력정보"
+input IssueStoreFileUploadUrlInput {
+  "상점 ID"
+  storeId: ID!
+"""
+업로드 대상 파일의 유형을 나타냅니다
+
+파일의 유형은 확장자를 나타내는게 아니라, 어떠한 정보를 나타내기 위한 파일인지를 설명합니다(ex. 사업자 등록증)
+"""
+  category: StoreFileCategory!
+  "파일명"
+  name: String!
+  "확장자"
+  extension: String!
 }
 
 input IssueStoreWebhookSecretInput {
@@ -2648,6 +3337,102 @@ input PageInput {
   number: Int
   "각 페이지 당 포함할 객체 수"
   size: Int
+}
+
+input PausePromotionInput {
+  "프로모션을 일시중지할 하위 상점"
+  storeId: ID!
+  "일시중지할 프로모션 아이디"
+  promotionId: ID!
+}
+
+"""
+거래대사 조회시 적용가능한 필터 목록
+
+필드 중복으로 적용됩니다.
+"""
+input PaymentReconciliationFilterInput {
+  "거래대사 하위 가맹점 아이디 필터"
+  storeIds: [ID]
+  "거래대사 결제사(PG) 식별자 필터"
+  pgSpecifiers: [ReconciliationPgSpecifierInput!]
+  "거래대사 결제 수단 필터"
+  paymentMethodTypes: [ReconciliationPaymentMethodType!]
+  "거래대사 대사 상태 필터"
+  paymentReconciliationStatuses: [PaymentReconciliationStatus!]
+  "거래대사 결제 상태 필터"
+  actionTypes: [PaymentReconciliationActionType!]
+  "거래대사 결제 통화 필터"
+  transactionCurrencies: [Currency!]
+  "거래대사 정산 통화 필터"
+  settlementCurrencies: [Currency!]
+}
+
+"""
+거래대사 거래 건 별 조회 정렬 조건
+
+필드중 하나만 명시하여야 합니다
+"""
+input PaymentReconciliationOrderInput {
+  "정산일 기준 정렬"
+  settlementDate: SortOrder
+  "결제일 기준 정렬"
+  transactionDate: SortOrder
+  "결제 금액 기준 정렬"
+  transactionAmount: SortOrder
+  "거래이상 금액 기준 정렬"
+  anomalyAmount: SortOrder
+  "정산 금액 기준 정렬"
+  settlementAmount: SortOrder
+}
+
+"""
+거래대사 거래내역 검색용 필드
+
+각 필드 중 하나만 적용 됩니다.
+"""
+input PaymentReconciliationSearchConditionInput {
+  "고객사 거래 아이디 필드"
+  paymentPlainId: String
+  "포트원 결제 아이디 필드"
+  transactionPlainId: String
+  "PG사 거래 아이디 필드"
+  pgTxId: String
+  "주문명 필드"
+  orderName: String
+}
+
+"거래대사 정산 통계 필터"
+input PaymentReconciliationSettlementStatisticsFilterInput {
+  "PG사 가맹점 식별자 필터"
+  pgSpecifiers: [ReconciliationPgSpecifierInput!]
+  "하위 상점 아이디 필터"
+  storeIds: [ID]
+}
+
+"거래대사 정산 요약 내역 필터"
+input PaymentReconciliationSettlementSummaryFilterInput {
+  "PG사 가맹점 식별자 필터"
+  pgSpecifiers: [ReconciliationPgSpecifierInput!]
+  "하위 상점 아이디 필터"
+  storeIds: [ID]
+}
+
+input PaymentReconciliationTransactionStatisticsFilterInput {
+  "대사용 PG사 가맹점 식별자 필터"
+  pgSpecifiers: [ReconciliationPgSpecifierInput!]
+  "하위 상점 아이디 필터"
+  storeIds: [ID]
+}
+
+"거래대사 거래내역 필터"
+input PaymentReconciliationTransactionSummaryFilterInput {
+  "대사 상태 필터"
+  reconciliationStatuses: [PaymentReconciliationStatus!]
+  "대사용 PG사 가맹점 식별자 필터"
+  pgSpecifiers: [ReconciliationPgSpecifierInput!]
+  "하위 상점 아이디 필터"
+  storeIds: [ID]
 }
 
 "결제 예약 캘린더 조회를 위한 입력 정보"
@@ -2758,6 +3543,10 @@ input PlatformAccountHolderIdentifierInput {
   businessRegistrationNumber: String
 }
 
+input PlatformAccountTransferFilterInput {
+  types: [PlatformAccountTransferType!]
+}
+
 "추가 수수료 정책 다건 조회를 위한 필터 조건"
 input PlatformAdditionalFeePolicyFilterInput {
 """
@@ -2830,6 +3619,13 @@ input PlatformContractFilterKeywordInput {
   id: String
   "해당 값이 포함된 name 을 가진 계약만 조회합니다."
   name: String
+}
+
+input PlatformDigitalSignatureInput {
+  "전자 서명 문서(서명 원본 문서 형식 : [document hash]@[ISO8601 timestamp])"
+  signature: String!
+  "전사 서명이 함께 전달된 VID RANDOM"
+  vidRandom: String!
 }
 
 "할인 분담 정책 다건 조회를 위한 필터 조건"
@@ -3007,6 +3803,26 @@ input PlatformPayoutUpdateInput {
   onlyEmpty: Boolean!
 }
 
+"송금 요청을 위한 입력 정보"
+input PlatformRemitInput {
+"""
+통화
+
+현재는 KRW만 지원합니다.
+"""
+  currency: Currency!
+  "금액"
+  amount: Long!
+  "입금 은행"
+  depositBank: Bank!
+  "입금 계좌 번호"
+  depositAccountNumber: String!
+  "입금 적요"
+  depositMemo: String
+  "출금 적요"
+  withdrawalMemo: String
+}
+
 "플랫폼 정산 주기 입력 정보"
 input PlatformSettlementCycleInput {
 """
@@ -3165,6 +3981,87 @@ input PlatformTransferParameterInput {
   value: PlatformSettlementParameterValueInput!
 }
 
+"사용자 정의 속성"
+input PlatformUserDefinedPropertyKeyValueInput {
+  "사용자 정의 속성 키"
+  key: String!
+  "사용자 정의 속성 값"
+  value: PlatformUserDefinedPropertyValueInput!
+}
+
+input PlatformUserDefinedPropertyValueInput {
+  string: String!
+}
+
+"카드 프로모션 관련 정보"
+input PromotionCardInput {
+  cardCompany: PromotionCardCompany!
+}
+
+input PromotionFilterInput {
+  "시각 범위"
+  dateTimeRange: DateTimeRangeInput
+  "시각 범위를 적용할 필드"
+  dateTimeRangeField: PromotionTimeRangeField
+  "프로모션 상태 리스트"
+  statuses: [PromotionStatus!]!
+  "카드사 리스트"
+  cardCompanies: [PromotionCardCompany!]!
+  "프로모션 아이디"
+  plainId: String
+  "프로모션 이름의 앞부분"
+  nameStartsWith: String
+}
+
+"프로모션 생성 및 수정을 위한 입력 정보"
+input PromotionInput {
+  "프로모션 이름"
+  name: String!
+  "(정액 할인 시) 할인 금액"
+  discountAmount: Long
+  "(정률 할인 시) 할인률"
+  discountPercent: Int
+  "총 예산"
+  totalBudget: Long!
+  "최소 결제 금액"
+  minPaymentAmount: Long
+  "최대 할인 금액"
+  maxDiscountAmount: Long
+  "금액 화폐"
+  currency: Currency!
+  "프로모션 시작 시각"
+  startAt: DateTime!
+  "프로모션 종료 시각"
+  endAt: DateTime!
+  "프로모션 유형별 정보"
+  type: PromotionTypeInput!
+}
+
+input PromotionTypeInput {
+  "(카드 프로모션일 경우) 카드 관련 정보"
+  card: PromotionCardInput!
+}
+
+"""
+거래 대사 날짜 범위 조회 필드
+
+필드 중 하나만 적용됩니다.
+"""
+input ReconciliationDateConditionInput {
+  "정산일 범위"
+  settlementDateRange: DateRangeInput
+  "결제일 범위"
+  transactionDateRange: DateRangeInput
+}
+
+"대사용 PG사 가맹점 식별자"
+input ReconciliationPgSpecifierInput {
+  "PG사 가맹점 식별 아이디"
+  pgMerchantId: String!
+  "PG사"
+  pgProvider: ReconciliationPgProvider!
+}
+
 "추가 수수료 정책을 복원하기 위한 입력 정보"
 input RecoverPlatformAdditionalFeePolicyInput {
   "추가 수수료 정책 아이디"
@@ -3195,12 +4092,152 @@ input RefreshTokenInput {
   refreshToken: String!
 }
 
+"법인 사업자 정보"
+input RegisterBusinessLicenseClassificationCorporationInput {
+"""
+법인 사업자 등록번호
+
+사업자 등록번호와 별개의 개념으로 , 법인 설립 시 등기소에서 부여하는 부동산 등기용 등록 번호
+"""
+  corporationNumber: String!
+  "대표 이름 목록"
+  representativeNames: [RegisterBusinessLicenseRepresentativeNameInput!]!
+}
+
+"개인 / 법인 사업자 정보"
+input RegisterBusinessLicenseClassificationInput {
+  "개인 사업자 등록증 정보"
+  soleProprietorship: RegisterBusinessLicenseClassificationSoleProprietorshipInput
+  "법인 사업자 정보"
+  corporation: RegisterBusinessLicenseClassificationCorporationInput
+}
+
+"개인 사업자 등록증 정보"
+input RegisterBusinessLicenseClassificationSoleProprietorshipInput {
+  "대표자 이름 정보"
+  representativeName: RegisterBusinessLicenseRepresentativeNameInput!
+  "공동 대표자 이름 정보"
+  coRepresentativeName: RegisterBusinessLicenseRepresentativeNameInput
+}
+
+"상점의 사업자 등록증 등록에 필요한 입력정보"
+input RegisterBusinessLicenseInput {
+  "사업자 등록번호"
+  registrationNumber: String!
+  "주소지 정보"
+  location: RegisterBusinessLicenseLocationInput!
+  "우편번호"
+  postalCode: String!
+  "사업자 업태 목록"
+  types: [String!]!
+  "사업자 종목 목록"
+  items: [String!]!
+  "회사명"
+  companyName: String!
+  "개인 / 법인 사업자 정보"
+  classification: RegisterBusinessLicenseClassificationInput!
+}
+
+"주소지 정보"
+input RegisterBusinessLicenseLocationInput {
+  "주소"
+  address: String!
+  "상세 주소"
+  detail: String!
+}
+
+"대표자 이름 정보"
+input RegisterBusinessLicenseRepresentativeNameInput {
+  "한글명"
+  ko: String!
+  "영문명"
+  en: String!
+}
+
+input RegisterMerchantBillingCardInput {
+  "카드 번호 (숫자만)"
+  number: String!
+  "유효 기간 만료 연도 (2자리)"
+  expiryYear: String!
+  "유효 기간 만료 월 (2자리)"
+  expiryMonth: String!
+  "생년월일 (yyMMdd) 또는 사업자 등록 번호 (10자리, 숫자만)"
+  birthOrBusinessRegistrationNumber: String!
+  "비밀번호 앞 2자리"
+  passwordTwoDigits: String!
+  "카드 소유자 이메일"
+  email: String!
+}
+
+"비즈니스 인증에 필요한 입력정보"
+input RegisterStoreBusinessInfoInput {
+  storeId: ID!
+  "상점의 사업자 등록증 등록에 필요한 입력정보"
+  businessLicense: RegisterBusinessLicenseInput!
+  "상점 대표자 등록에 필요한 입력정보"
+  representatives: [RegisterStoreRepresentativeInput!]!
+  "상점 서비스 정보 등록에 필요한 입력정보"
+  service: RegisterStoreServiceInput!
+  "상점 관리자 정보 등록에 필요한 입력정보"
+  manager: RegisterStoreManagerInput!
+}
+
+input RegisterStoreManagerInput {
+  "이름"
+  name: String!
+"""
+핸드폰번호
+
+핸드폰번호는 `-`, 공백 등의 특수기호 없이 숫자만 포함됩니다.
+"""
+  phoneNumber: String!
+"""
+이메일
+
+상점 관리자의 이메일, 전자결제 진행상황 및 포트원에서 알림을 수신받는 이메일
+"""
+  email: String!
+}
+
+"상점 대표자 등록에 필요한 입력정보"
+input RegisterStoreRepresentativeInput {
+  "이름"
+  name: String!
+  "휴대폰번호"
+  phoneNumber: String!
+  "이메일"
+  email: String!
+  "생년월일"
+  birthdate: Date!
+}
+
+input RegisterStoreServiceInput {
+  "판매 품목"
+  salesItems: [String!]!
+  "상점 서비스 형태"
+  type: StoreServiceType!
+  "상점 월 예상 거래액"
+  monthlySalesEstimation: StoreServiceMonthlySalesEstimation!
+  "서비스 url 목록"
+  urls: [String!]!
+  "서비스 준비 중"
+  isPreparing: Boolean!
+  "고객사 요청 메모"
+  requestMemo: String
+}
+
 "파트너 상태를 승인 거절로 변경하기 위한 입력 정보"
 input RejectPlatformPartnerInput {
   "파트너 아이디"
   id: ID!
   "파트너 메모. 값이 명시되지 않은 경우 업데이트하지 않습니다."
   memo: String
+}
+
+input RemitPlatformVirtualAccountInput {
+  remit: PlatformRemitInput!
+  signature: PlatformDigitalSignatureInput!
+  isForTest: Boolean!
 }
 
 "추가 수수료 정책 예약 업데이트 재설정을 위한 입력 정보"
@@ -3233,6 +4270,13 @@ input ReschedulePlatformPartnerInput {
   update: UpdatePlatformPartnerInput!
   "업데이트 적용 시점"
   appliedAt: DateTime!
+}
+
+input ResumePromotionInput {
+  "프로모션을 재개할 하위 상점"
+  storeId: ID!
+  "재개할 프로모션 아이디"
+  promotionId: ID!
 }
 
 input RetryPaymentScheduleInput {
@@ -3279,6 +4323,154 @@ input RetryPaymentScheduleOptionScheduleInput {
 input RevokePaymentScheduleInput {
   "결제 예약 건 아이디"
   id: ID!
+}
+
+"고객사의 청구서 담당자 입력 정보"
+input SaveMerchantBillingManagerInput {
+  "이메일"
+  email: String!
+  "이름"
+  name: String
+  "핸드폰번호"
+  phoneNumber: String
+}
+
+"""
+고객사 약관 저장 입력정보
+
+merchantId 외에 약관 입력정보들은 입력한 정보들만 true or false로 저장하고, 나머지는 수정하지 않습니다
+"""
+input SaveMerchantTermsInput {
+  "개인정보 수집 및 이용"
+  collectionOfPersonalInformation: Boolean
+  "서비스 이용"
+  termsOfService: Boolean
+  "CRM Onboarding 관련 이메일 수신"
+  onboarding: Boolean
+  "마케팅 수신"
+  marketing: Boolean
+  "개인정보 제 3자 제공"
+  provisionOfPersonalInformationToThirdParties: Boolean
+  "결제 / 청구 정보 등록을 위한 개인정보 이용 동의"
+  usageOfPersonalInformationForBilling: Boolean
+}
+
+"법인 사업자 정보"
+input SaveTemporaryBusinessLicenseClassificationCorporationInput {
+"""
+법인 사업자 등록번호
+
+사업자 등록번호와 별개의 개념으로 , 법인 설립 시 등기소에서 부여하는 부동산 등기용 등록 번호
+"""
+  corporationNumber: String
+  "대표 이름 목록"
+  representativeNames: [SaveTemporaryBusinessLicenseRepresentativeNameInput!]
+}
+
+"개인 / 법인 사업자 정보"
+input SaveTemporaryBusinessLicenseClassificationInput {
+  "개인 사업자 등록증 정보"
+  soleProprietorship: SaveTemporaryBusinessLicenseClassificationSoleProprietorshipInput
+  "법인 사업자 정보"
+  corporation: SaveTemporaryBusinessLicenseClassificationCorporationInput
+}
+
+"개인 사업자 등록증 정보"
+input SaveTemporaryBusinessLicenseClassificationSoleProprietorshipInput {
+  "대표자 이름 정보"
+  representativeName: SaveTemporaryBusinessLicenseRepresentativeNameInput!
+  "공동 대표자 이름 정보"
+  coRepresentativeName: SaveTemporaryBusinessLicenseRepresentativeNameInput
+}
+
+"사업자 등록증 임시저장에 필요한 입력정보"
+input SaveTemporaryBusinessLicenseInput {
+  "사업자 등록번호"
+  registrationNumber: String
+  "주소지 정보"
+  location: SaveTemporaryBusinessLicenseLocationInput
+  "우편번호"
+  postalCode: String
+  "사업자 업태 목록"
+  types: [String!]
+  "사업자 종목 목록"
+  items: [String!]
+  "회사명"
+  companyName: String
+  "개인 / 법인 사업자 정보"
+  classification: SaveTemporaryBusinessLicenseClassificationInput!
+}
+
+"주소지 정보"
+input SaveTemporaryBusinessLicenseLocationInput {
+  "주소"
+  address: String
+  "상세 주소"
+  detail: String
+}
+
+"대표자 이름 정보"
+input SaveTemporaryBusinessLicenseRepresentativeNameInput {
+  "한글명"
+  ko: String
+  "영문명"
+  en: String
+}
+
+"비즈니스 인증 정보 임시저장에 필요한 입력정보"
+input SaveTemporaryStoreBusinessInfoInput {
+  storeId: ID!
+  "사업자 등록증 임시저장에 필요한 입력정보"
+  businessLicense: SaveTemporaryBusinessLicenseInput
+  "상점 대표자 임시저장에 필요한 입력정보"
+  representatives: [SaveTemporaryStoreRepresentativeInput!]
+  "상점 서비스 정보 임시저장에 필요한 입력정보"
+  service: SaveTemporaryStoreServiceInput
+  "상점 관리자 정보 임시저장에 필요한 입력정보"
+  manager: SaveTemporaryStoreManagerInput
+}
+
+input SaveTemporaryStoreManagerInput {
+  "이름"
+  name: String
+"""
+핸드폰번호
+
+핸드폰번호는 `-`, 공백 등의 특수기호 없이 숫자만 포함됩니다.
+"""
+  phoneNumber: String
+"""
+이메일
+
+상점 관리자의 이메일, 전자결제 진행상황 및 포트원에서 알림을 수신받는 이메일
+"""
+  email: String
+}
+
+input SaveTemporaryStoreRepresentativeInput {
+  "이름"
+  name: String
+  "휴대폰번호"
+  phoneNumber: String
+  "이메일"
+  email: String
+  "생년월일"
+  birthdate: String
+}
+
+input SaveTemporaryStoreServiceInput {
+  "판매 품목"
+  salesItems: [String!]
+  "상점 서비스 형태"
+  type: StoreServiceType
+  "상점 월 예상 거래액"
+  monthlySalesEstimation: StoreServiceMonthlySalesEstimation
+  "서비스 url 목록"
+  urls: [String!]
+  "서비스 준비 중"
+  isPreparing: Boolean
+  "고객사 요청 메모"
+  requestMemo: String
 }
 
 "추가 수수료 정책 업데이트 예약을 위한 입력 정보"
@@ -3351,6 +4543,7 @@ input SchedulePlatformPartnersUpdateInput {
   defaultContractPlainId: String
   memo: String
   tags: [String!]
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValueInput!]
 }
 
 input SchedulePlatformPartnersUpdateTypeBusinessInput {
@@ -3379,13 +4572,20 @@ input SchedulePlatformPartnersUpdateTypeBusinessInput {
 input SchedulePlatformPartnersUpdateTypeInput {
   "사업자 추가 정보"
   business: SchedulePlatformPartnersUpdateTypeBusinessInput
-  "원천징수대상자 추가 정보"
+  "원천징수 대상자 추가 정보"
   whtPayer: SchedulePlatformPartnersUpdateTypeWhtPayerInput
+  "원천징수 비대상자 추가 정보"
+  nonWhtPayer: SchedulePlatformPartnersUpdateTypeNonWhtPayerInput
+}
+
+input SchedulePlatformPartnersUpdateTypeNonWhtPayerInput {
+  "생년월일"
+  birthdate: Date
 }
 
 input SchedulePlatformPartnersUpdateTypeWhtPayerInput {
   "생년월일"
-  birthdate: String
+  birthdate: Date
 }
 
 input SetPaymentRecoverySettingInput {
@@ -3396,9 +4596,66 @@ input SetPaymentRecoverySettingInput {
   applyAfter: DateTime
 }
 
+input SignUpInput {
+  "유저 이메일"
+  email: String!
+  "입력값은 대문자, 소문자, 숫자를 포함한 8자리 이상 해야합니다."
+  password: String!
+  "상점 월 예상 거래액"
+  monthlySalesEstimation: StoreServiceMonthlySalesEstimation!
+  "회원가입 약관 정보"
+  terms: SignUpTermsInput!
+"""
+아웃바운드 여부
+
+아웃바운드 회원가입은 고객지원팀을 통해 진행됩니다.
+"""
+  isOutbound: Boolean!
+}
+
+input SignUpTermsInput {
+  "포트원 이용약관 동의 여부"
+  portoneService: Boolean!
+  "개인정보 수집 동의 여부"
+  collectionOfPersonalInformation: Boolean!
+  "마케팅 동의 여부"
+  marketing: Boolean!
+}
+
+input SignUpViaAgencyInput {
+  "유저 이메일"
+  email: String!
+"""
+유저 비밀번호
+
+입력값은 대문자, 소문자, 숫자를 포함한 8자리 이상 해야합니다.
+"""
+  password: String!
+  "영업대행사 코드"
+  agencyCode: String!
+  "회원가입 약관 정보"
+  terms: SignUpViaAgencyTermsInput!
+}
+
+input SignUpViaAgencyTermsInput {
+  "포트원 이용약관 동의 여부"
+  portoneService: Boolean!
+  "개인정보 수집 동의 여부"
+  collectionOfPersonalInformation: Boolean!
+  "마케팅 동의 여부"
+  marketing: Boolean!
+}
+
 input StopPlatformBulkPayoutInput {
   bulkPayoutId: ID!
   isForTest: Boolean
+}
+
+input TerminatePromotionInput {
+  "프로모션을 중단할 하위 상점"
+  storeId: ID!
+  "중단할 프로모션 아이디"
+  promotionId: ID!
 }
 
 "웹훅 호출 테스트를 위한 입력 정보"
@@ -3409,6 +4666,18 @@ input TestWebhookInput {
   portOneVersion: PortOneVersion!
   "웹훅 호출을 진행하고자 하는 환경"
   environment: WebhookEnvironment!
+"""
+웹훅 발송에 사용할 정보
+
+명시된 필드 정보를 기존 웹훅 설정보다 우선하여 테스트 웹훅 발송에 사용합니다.
+"""
+  override: TestWebhookOverrideInput
+}
+
+input TestWebhookOverrideInput {
+  url: String
+  contentType: WebhookContentType
+  version: WebhookVersion
 }
 
 input TogglePlatformBulkPayoutPartnerSettlementsInput {
@@ -3555,6 +4824,8 @@ input UpdatePlatformPartnerInput {
   tags: [String!]
   "파트너 유형별 정보"
   type: UpdatePlatformPartnerTypeInput
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValueInput!]
 }
 
 input UpdatePlatformPartnerSettlementStatusInput {
@@ -3589,13 +4860,20 @@ input UpdatePlatformPartnerTypeBusinessInput {
 input UpdatePlatformPartnerTypeInput {
   "사업자 추가 정보"
   business: UpdatePlatformPartnerTypeBusinessInput
-  "원천징수대상자 추가 정보"
+  "원천징수 대상자 추가 정보"
   whtPayer: UpdatePlatformPartnerTypeWhtPayerInput
+  "원천징수 비대상자 추가 정보"
+  nonWhtPayer: UpdatePlatformPartnerTypeNonWhtPayerInput
+}
+
+input UpdatePlatformPartnerTypeNonWhtPayerInput {
+  "생년월일"
+  birthdate: Date
 }
 
 input UpdatePlatformPartnerTypeWhtPayerInput {
   "생년월일"
-  birthdate: String
+  birthdate: Date
 }
 
 input UpdatePlatformPayoutInput {
@@ -3622,6 +4900,19 @@ input UpdatePlatformSettlementFormulaInput {
   additionalFee: String
 }
 
+input UpdatePlatformSettlementParameterInput {
+"""
+정산 파라미터 키
+
+수식에 사용되는 파라미터 식별자입니다.
+"""
+  key: String!
+  "이름"
+  name: String
+  "기본 값"
+  defaultValue: PlatformSettlementParameterValueInput
+}
+
 """
 플랫폼 업데이트 시 변경할 정산 규칙 정보
 
@@ -3632,6 +4923,57 @@ input UpdatePlatformSettlementRuleInput {
   supportsMultipleOrderTransfersPerPartner: Boolean
   "정산일이 정산시작일보다 작거나 같을 경우 공휴일 후 영업일로 정산일 다시 계산 여부"
   adjustSettlementDateAfterHolidayIfEarlier: Boolean
+  "지급 금액에서 원천징수세 차감 여부"
+  subtractWhtInPayoutAmount: Boolean
+}
+
+input UpdatePlatformUserDefinedPropertyInput {
+  id: ID!
+  name: String
+  isSecret: Boolean
+}
+
+input UpdatePromotionInput {
+  "프로모션을 생성할 하위 상점"
+  storeId: ID!
+  "업데이트할 프로모션 아이디"
+  promotionId: ID!
+  "업데이트할 프로모션 정보"
+  data: PromotionInput!
+}
+
+"값이 명시되지 않은 필드는 업데이트되지 않습니다."
+input UpdateStoreInput {
+  "상점 아이디"
+  id: ID!
+  "하위상점명"
+  name: String
+  "상점 관리자"
+  manager: UpdateStoreManagerInput
+"""
+URL 목록
+
+고객사가 제공하는 서비스 웹사이트 & 앱스토어 다운로드 url 목록을 의미합니다.
+"""
+  urls: [String!]
+}
+
+"값이 명시되지 않은 필드는 업데이트되지 않습니다."
+input UpdateStoreManagerInput {
+  "이름"
+  name: String
+"""
+핸드폰번호
+
+핸드폰번호는 `-`, 공백 등의 특수기호 없이 숫자만 포함됩니다.
+"""
+  phoneNumber: String
+"""
+이메일
+
+상점 관리자의 이메일, 전자결제 진행상황 및 포트원에서 알림을 수신받는 이메일
+"""
+  email: String
 }
 
 input UpdateStoreWebhookSettingInput {
@@ -3663,6 +5005,38 @@ interface Address {
   oneLine: String!
 }
 
+"사업자 등록증 정보"
+interface BusinessLicense {
+  "회사명"
+  companyName: String
+  id: ID!
+  "사업자 종목 목록"
+  items: [String!]!
+  plainId: String!
+  "우편번호"
+  postalCode: String
+  "사업자 등록번호"
+  registrationNumber: String
+  "사업자 업태 목록"
+  types: [String!]!
+}
+
+"주소지 정보"
+interface BusinessLicenseLocation {
+  "주소"
+  address: String
+  "상세 주소"
+  detail: String
+}
+
+"대표자 이름 정보"
+interface BusinessLicenseRepresentativeName {
+  "영문명"
+  en: String
+  "한글명"
+  ko: String
+}
+
 "PortOne Public API 요청이 실패했을 때 발생하는 에러를 의미합니다."
 interface Error {
   message: String
@@ -3677,6 +5051,36 @@ interface Node {
   id: ID!
   "포트원 도메인 내에서 사용되는 식별자로, GraphQL 을 제외한 모든 곳 (REST API, SDK, etc...) 에서 사용되며 String 타입을 가집니다."
   plainId: String!
+}
+
+interface PaymentReconciliation {
+  actionType: PaymentReconciliationActionType!
+  id: ID!
+  "에스크로 여부"
+  isEscrow: Boolean
+  merchantId: ID!
+  "고객사 아이디"
+  merchantPlainId: String!
+  "결제일"
+  paidAt: DateTime!
+  "결제 금액"
+  paymentAmount: Long!
+  "결제 통화"
+  paymentCurrency: Currency!
+  "결제수단 상세 정보"
+  paymentMethod: ReconciliationPaymentMethod!
+  "대사용 PG사 가맹점 식별자"
+  pgSpecifier: ReconciliationPgSpecifier!
+  "거래대사 아이디"
+  plainId: String!
+  "거래건의 정산 정보"
+  settlement: PaymentReconciliationSettlement
+  "공급가액"
+  supplyAmount: Long!
+  "면세가액"
+  taxFreeAmount: Long!
+  "부가세"
+  vatAmount: Long!
 }
 
 "결제 예약 건"
@@ -3735,6 +5139,27 @@ interface PaymentScheduleEvent {
   timestamp: DateTime!
 }
 
+"""
+계좌 이체
+
+송금 대행을 통해 일어난 정산 금액 지급, 인출 목적의 계좌 이체 결과 정보입니다.
+"""
+interface PlatformAccountTransfer {
+  "금액"
+  amount: Long!
+  "생성 일자"
+  createdAt: DateTime!
+  "통화"
+  currency: Currency!
+  "입금 계좌 적요"
+  depositMemo: String
+  isForTest: Boolean!
+  "계좌 이체 아이디"
+  plainId: String!
+  "수정 일자"
+  updatedAt: DateTime!
+}
+
 interface PlatformPartnerSettlement {
   id: ID!
   "테스트 모드 여부"
@@ -3791,17 +5216,21 @@ interface PlatformTransfer {
   settlementDate: Date!
   "정산 상태"
   status: PlatformTransferStatus!
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
 }
 
 interface PlatformTransferSummary {
   isForTest: Boolean!
   memo: String
   partner: PlatformTransferSummaryPartner!
+  partnerUserDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
   settlementCurrency: Currency!
   settlementDate: Date!
   status: PlatformTransferStatus!
   transferId: ID!
   transferPlainId: String!
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
 }
 
 interface PlatformTransferSummaryPayment {
@@ -3809,6 +5238,69 @@ interface PlatformTransferSummaryPayment {
   methodType: PaymentMethodType
   orderName: String
   paymentPlainId: String!
+}
+
+"프로모션"
+interface Promotion {
+  "프로모션 생성 시각"
+  createdAt: DateTime!
+  "금액 화폐"
+  currency: Currency!
+  "할인 유형"
+  discountType: PromotionDiscount!
+  "프로모션 종료 시각"
+  endAt: DateTime!
+  "프로모션 아이디"
+  id: ID!
+  "최대 할인 금액"
+  maxDiscountAmount: Long
+  "최소 결제 금액"
+  minPaymentAmount: Long
+  "프로모션 이름"
+  name: String!
+  "프로모션 아이디"
+  plainId: String!
+  "소진 금액"
+  spentAmount: Long!
+  "프로모션 시작 시각"
+  startAt: DateTime!
+  "프로모션 상태"
+  status: PromotionStatus!
+  "상점 아이디"
+  storeId: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "프로모션 중단 시각"
+  terminatedAt: DateTime
+  "총 예산"
+  totalBudget: Long!
+}
+
+"""
+상점의 대표자 정보
+
+상점 사업체의 대표자의 이름, 연락처 등 기본 정보들을 담고 있습니다
+"""
+interface StoreRepresentative {
+  "생년월일"
+  birthdate: Date
+  "이메일"
+  email: String
+  "이름"
+  name: String
+  "휴대폰번호"
+  phoneNumber: String
+}
+
+"요청한 영업대행사 코드가 존재하지 않는 경우"
+type AgencyCodeNotFoundError implements Error {
+  message: String
+}
+
+"대사 서비스 이용약관 동의 성공 응답 정보"
+type AgreeReconciliationTermsAndConditionsPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
 }
 
 "결제가 이미 완료된 경우"
@@ -4287,6 +5779,54 @@ type BillingKeyNotIssuedError implements Error {
   message: String
 }
 
+"요청한 사업자 등록증이 존재하지 않는 경우"
+type BusinessLicenseNotFoundError implements Error {
+  message: String
+}
+
+"OCR을 통한 사업자 등록증 파일 텍스트 추출 결과"
+type BusinessLicenseOcr {
+  "주소지 정보"
+  location: String
+  "사업자 업태 목록"
+  types: [String!]
+  "사업자 종목 목록"
+  items: [String!]
+  "사업자 등록번호"
+  registrationNumber: String
+  "회사명"
+  companyName: String
+  "개인 / 법인 사업자 정보"
+  classification: BusinessLicenseOcrClassification!
+}
+
+"법인 사업자 정보"
+type BusinessLicenseOcrClassificationCorporation {
+"""
+법인 사업자 등록번호
+
+사업자 등록번호와 별개의 개념으로 , 법인 설립 시 등기소에서 부여하는 부동산 등기용 등록 번호
+"""
+  corporationNumber: String
+  "대표 이름 목록"
+  representativeNames: [BusinessLicenseOcrRepresentativeName!]
+}
+
+"개인 사업자 등록증 정보"
+type BusinessLicenseOcrClassificationSoleProprietorship {
+  "대표자 이름 정보"
+  representativeName: BusinessLicenseOcrRepresentativeName
+  "공동 대표자 이름 정보"
+  coRepresentativeKoName: String
+}
+
+type BusinessLicenseOcrRepresentativeName {
+  "한글명"
+  ko: String
+  "영문명"
+  en: String
+}
+
 "결제 취소 금액이 취소 가능 금액을 초과한 경우"
 type CancelAmountExceedsCancellableAmountError implements Error {
   message: String
@@ -4334,6 +5874,44 @@ type CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError implements Error {
 "취소 가능 잔액 검증에 실패한 경우"
 type CancellableAmountConsistencyBrokenError implements Error {
   message: String
+}
+
+"카드 프로모션"
+type CardPromotion implements Promotion & Node {
+  "프로모션 아이디"
+  plainId: String!
+  "프로모션 아이디"
+  id: ID!
+  "상점 아이디"
+  storePlainId: String!
+  "상점 아이디"
+  storeId: ID!
+  "프로모션 이름"
+  name: String!
+  "할인 유형"
+  discountType: PromotionDiscount!
+  "총 예산"
+  totalBudget: Long!
+  "최소 결제 금액"
+  minPaymentAmount: Long
+  "최대 할인 금액"
+  maxDiscountAmount: Long
+  "소진 금액"
+  spentAmount: Long!
+  "금액 화폐"
+  currency: Currency!
+  "프로모션 시작 시각"
+  startAt: DateTime!
+  "프로모션 종료 시각"
+  endAt: DateTime!
+  "프로모션 중단 시각"
+  terminatedAt: DateTime
+  "프로모션 카드사"
+  cardCompany: PromotionCardCompany!
+  "프로모션 상태"
+  status: PromotionStatus!
+  "프로모션 생성 시각"
+  createdAt: DateTime!
 }
 
 "현금영수증이 이미 발급된 경우"
@@ -4534,6 +6112,33 @@ type CreatePlatformPartnersPayload {
   partners: [PlatformPartner!]!
 }
 
+type CreatePlatformSettlementParameterPayload {
+  settlementParameter: PlatformSettlementParameter!
+}
+
+"사용자 정의 속성 생성 성공 응답"
+type CreatePlatformUserDefinedPropertyPayload {
+  property: PlatformUserDefinedProperty!
+}
+
+"프로모션 생성 성공 응답"
+type CreatePromotionPayload {
+  "생성된 프로모션"
+  promotion: Promotion!
+}
+
+type CreateStorePayload {
+  store: Store!
+}
+
+"커서 기반 페이지 정보"
+type CursorPageInfo {
+  startCursor: String!
+  endCursor: String!
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
+}
+
 "고객 정보"
 type Customer {
 """
@@ -4584,9 +6189,39 @@ type DeletePlatformTransferPayload {
   _: Boolean
 }
 
+type DeleteStorePayload {
+  "상점 아이디"
+  storeId: ID!
+}
+
 type DeleteV2ApiSecretPayload {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
+}
+
+"프로모션 할인 금액이 결제 시도 금액 이상인 경우"
+type DiscountAmountExceedsTotalAmountError implements Error {
+  message: String
+}
+
+"동일한 이름의 프로모션이 이미 존재하는 경우"
+type DuplicatePromotionNameError implements Error {
+  message: String
+}
+
+"고객사 내에 같은 하위상점의 이름이 중복되는 경우"
+type DuplicatedStoreNameError implements Error {
+  message: String
+}
+
+"고객사 내에 같은 하위상점의 티어코드가 중복되는 경우"
+type DuplicatedTierCodeError implements Error {
+  message: String
+}
+
+"요청한 이메일이 이미 존재하는 경우"
+type EmailAlreadyExistsError implements Error {
+  message: String
 }
 
 "일괄 지급 실행 결과"
@@ -4599,8 +6234,13 @@ type ExpireStoreWebhookSecretPayload {
   _: Boolean
 }
 
+"외부 시스템에서 오류를 전달한 경우"
+type ExternalSystemError implements Error {
+  message: String
+}
+
 "결제 실패 상태"
-type FailedPaymentSchedule implements Node & PaymentSchedule {
+type FailedPaymentSchedule implements PaymentSchedule & Node {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -4659,6 +6299,11 @@ type FailedPaymentSchedule implements Node & PaymentSchedule {
   events: PaymentScheduleEvents!
 }
 
+"사용자 정의 속성 다건 조회 성공 응답"
+type FetchPlatformUserDefinedPropertiesPayload {
+  properties: [PlatformUserDefinedProperty!]!
+}
+
 "요청이 거절된 경우"
 type ForbiddenError implements Error {
   message: String
@@ -4667,6 +6312,11 @@ type ForbiddenError implements Error {
 "지급 건 생성 결과"
 type GeneratePlatformPayoutsPayload {
   bulkPayout: PlatformBulkPayout!
+}
+
+"송금 전자 서명용 문서 생성 결과"
+type GeneratePlatformRemitDocumentContentPayload {
+  documentContent: PlatformElectronicDocumentContent!
 }
 
 "본인인증 건이 이미 API로 요청된 상태인 경우"
@@ -4694,6 +6344,11 @@ type InternalError implements Error {
   message: String
 }
 
+"요청한 패스워드 형식이 올바르지 않는 경우"
+type InvalidPasswordFormatError implements Error {
+  message: String
+}
+
 """
 요청된 입력 정보가 유효하지 않은 경우
 
@@ -4706,6 +6361,26 @@ type InvalidRequestError implements Error {
 "올바르지 않은 웹훅 URL 이 요청으로 주어진 경우"
 type InvalidWebhookUrlError implements Error {
   message: String
+}
+
+"""
+파일 다운로드 URL 정보
+
+발급 후 10분간 요청한 파일을 다운로드 받을 수 있는 URL 정보입니다. 참고 정보 - https://docs.aws.amazon.com/ko_kr/sdk-for-java/latest/developer-guide/examples-s3-presign.html
+"""
+type IssueStoreFileDownloadUrlPayload {
+  "url"
+  url: String!
+}
+
+"파일 업로드 URL 정보"
+type IssueStoreFileUploadUrlPayload {
+  "파일 ID"
+  filePlainId: String!
+  "파일 ID"
+  fileId: ID!
+  "pre-signed url"
+  url: String!
 }
 
 type IssueStoreWebhookSecretPayload {
@@ -4758,6 +6433,8 @@ id 가 주어지는 경우 해당 아이디를 가진 하위 상점을 조회하
 하위 상점들을 조회합니다.
 """
   stores: StoresOutput! @hidden @unstable
+  "고객사의 과금 정보"
+  billing: MerchantBilling! @hidden @unstable
 """
 고객사의 플랫폼 정보를 조회합니다.
 요청된 Authorization header 를 통해 자동으로 요청자의 고객사를 특정합니다.
@@ -4801,6 +6478,87 @@ id 가 주어지는 경우 해당 아이디를 가진 하위 상점을 조회하
   usedCurrenciesForPaymentSchedule: UsedCurrenciesForPaymentScheduleOutput! @hidden @unstable
   channelGroupUsage: ChannelGroupUsage! @hidden @unstable
   pgCompanyUsage: PgCompanyUsage! @hidden @unstable
+"""
+가맹점의 대사 관련 정보
+
+가맹점의 대사 관련 정보를 조회합니다.
+"""
+  reconciliation: Reconciliation! @hidden @unstable
+  "고객사 약관정보 조회"
+  terms: MerchantTermsOutput! @hidden @unstable
+}
+
+type MerchantBilling {
+  "고객사의 서비스 과금을 위한 카드 리스트를 조회합니다."
+  cards: MerchantBillingMethodCardsOutput! @hidden @unstable
+  "고객사의 청구서 담당자를 조회합니다."
+  manager: MerchantBillingManagerOutput! @hidden @unstable
+}
+
+type MerchantBillingCard {
+  "마스킹된 카드 번호"
+  number: String
+  "카드 상품명"
+  name: String
+  "카드 유형"
+  type: CardType
+  "카드 소유주 유형"
+  ownerType: CardOwnerType
+}
+
+"포트원 서비스에 대한 청구서를 수신하고 담당하는 관리자 정보"
+type MerchantBillingManager implements Node {
+  plainId: String!
+  id: ID!
+  "청구서 담당자 이메일"
+  email: String!
+  "청구서 담당자 이름"
+  name: String
+  "청구서 담당자 연락처"
+  phoneNumber: String
+}
+
+"고객사의 청구 담당자가 존재하지 않는경우"
+type MerchantBillingManagerNotFoundError implements Error {
+  message: String
+}
+
+type MerchantBillingMethodCard implements Node {
+  "고객사의 결제수단 아이디"
+  plainId: String!
+  id: ID!
+  "카드 별칭"
+  alias: String
+  "카드 상세"
+  card: MerchantBillingCard!
+  "결제 수단 상태"
+  status: MerchantBillingMethodStatus!
+}
+
+"고객사의 서비스 과금을 위한 카드 리스트 조회 성공 응답 정보"
+type MerchantBillingMethodCardsPayload {
+  items: [MerchantBillingMethodCard!]!
+}
+
+"요청한 고객사가 존재하지 않는 경우"
+type MerchantNotFoundError implements Error {
+  message: String
+}
+
+"고객사 약관동의 정보"
+type MerchantTerms {
+  "개인정보 수집 및 이용"
+  collectionOfPersonalInformation: TermState
+  "서비스 이용"
+  termsOfService: TermState
+  "CRM Onboarding 관련 이메일 수신"
+  onboarding: TermState
+  "마케팅 수신"
+  marketing: TermState
+  "개인정보 제 3자 제공"
+  provisionOfPersonalInformationToThirdParties: TermState
+  "결제 / 청구 정보 등록을 위한 개인정보 이용 동의"
+  usageOfPersonalInformationForBilling: TermState
 }
 
 "월 및 일자 정보"
@@ -4810,6 +6568,16 @@ type MonthDay {
 }
 
 type Mutation {
+  "고객사 유저 회원가입"
+  signUp(input: SignUpInput!): SignUpOutput! @hidden @unstable
+  "영업대행사를 통한 회원가입"
+  signUpViaAgency(input: SignUpViaAgencyInput!): SignUpViaAgencyOutput! @hidden @unstable
+  "하위 상점 생성"
+  createStore(input: CreateStoreInput!): CreateStoreOutput! @hidden @unstable
+  "하위 상점 수정"
+  updateStore(input: UpdateStoreInput!): UpdateStoreOutput! @hidden @unstable
+  "상점 삭제"
+  deleteStore(input: DeleteStoreInput!): DeleteStoreOutput! @hidden @unstable
 """
 API secret 를 사용한 토큰 발급
 
@@ -4943,6 +6711,10 @@ API secret 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   executePlatformBulkPayout(input: ExecutePlatformBulkPayoutInput!): ExecutePlatformBulkPayoutOutput! @hidden @unstable
   stopPlatformBulkPayout(input: StopPlatformBulkPayoutInput!): StopPlatformBulkPayoutOutput! @hidden @unstable
   updatePlatformPayout(input: UpdatePlatformPayoutInput!): UpdatePlatformPayoutOutput! @hidden @unstable
+  generatePlatformRemitDocumentContent(input: GeneratePlatformRemitDocumentContentInput!): GeneratePlatformRemitDocumentContentOutput! @hidden @unstable
+  remitPlatformVirtualAccount(input: RemitPlatformVirtualAccountInput!): RemitPlatformVirtualAccountOutput! @hidden @unstable
+  createPlatformSettlementParameter(input: CreatePlatformSettlementParameterInput!): CreatePlatformSettlementParameterOutput! @hidden
+  updatePlatformSettlementParameter(input: UpdatePlatformSettlementParameterInput!): UpdatePlatformSettlementParameterOutput! @hidden
 """
 채널 그룹 생성
 
@@ -4967,10 +6739,85 @@ API secret 를 통해 API 인증에 사용할 토큰을 가져옵니다.
 채널 그룹 정보를 수정하기로 예약한 것을 취소합니다.
 """
   deleteChannelGroupScheduledSession(input: DeleteChannelGroupScheduledSessionInput!): DeleteChannelGroupScheduledSessionOutput!
+"""
+상점 비즈니스 인증 등록
+
+상점별 비즈니스 인증에 필요한 사업자 / 담당자 / 서비스 정보를 등록합니다. 등록 이후에는 수정할 수 없습니다.
+"""
+  registerStoreBusinessInfo(input: RegisterStoreBusinessInfoInput!): RegisterStoreBusinessInfoOutput! @hidden @unstable
+"""
+상점 비즈니스 인증 임시저장
+
+상점별 비즈니스 인증에 필요한 사업자 / 담당자 / 서비스 정보를 임시로 저장합니다. 이미 등록이 완료 되었다면 임시저장을 할 수 없습니다.
+"""
+  saveTemporaryStoreBusinessInfo(input: SaveTemporaryStoreBusinessInfoInput!): SaveTemporaryStoreBusinessInfoOutput! @hidden @unstable
+"""
+파일 업로드를 하기 위해 필요한 파일 업로드 URL 발급
+
+presigned-url과 파일 정보를 조회할 수 있는 ID(식별자) 정보가 반환됩니다. 해당 URL로 파일을 업로드 하실 수 있습니다
+"""
+  issueStoreFileUploadUrl(input: IssueStoreFileUploadUrlInput!): IssueStoreFileUploadUrlOutput!
+"""
+파일 다운로드 임시 URL 발급
+
+임시로 사용할 수 있는 pre-signed url이 반환됩니다. 해당 URL로 파일을 다운로드 하실 수 있습니다
+"""
+  issueStoreFileDownloadUrl(input: IssueStoreFileDownloadUrlInput!): IssueStoreFileDownloadUrlOutput!
+"""
+고객사 약관정보 저장
+
+약관 정보 중 입력한 정보만 저장합니다
+"""
+  saveMerchantTerms(input: SaveMerchantTermsInput!): SaveMerchantTermsOutput!
+"""
+대사 서비스 이용약관 동의
+
+대사 서비스 이용약관 동의 정보를 전송합니다.
+"""
+  agreeReconciliationTermsAndConditions: AgreeReconciliationTermsAndConditionsOutput! @hidden @unstable
+"""
+프로모션 생성
+
+프로모션을 생성합니다.
+"""
+  createPromotion(input: CreatePromotionInput!): CreatePromotionOutput! @hidden @unstable
+"""
+프로모션 정보 업데이트
+
+프로모션 정보를 업데이트합니다.
+"""
+  updatePromotion(input: UpdatePromotionInput!): UpdatePromotionOutput! @hidden @unstable
+"""
+프로모션 중단
+
+프로모션을 중단합니다.
+"""
+  terminatePromotion(input: TerminatePromotionInput!): TerminatePromotionOutput! @hidden @unstable
+"""
+프로모션 일시중지
+
+프로모션을 일시중지합니다.
+"""
+  pausePromotion(input: PausePromotionInput!): PausePromotionOutput! @hidden @unstable
+"""
+프로모션 재개
+
+일시중지되었던 프로모션을 재개합니다.
+"""
+  resumePromotion(input: ResumePromotionInput!): ResumePromotionOutput! @hidden @unstable
+  createPlatformUserDefinedProperty(input: CreatePlatformUserDefinedPropertyInput!): CreatePlatformUserDefinedPropertyOutput! @hidden @unstable
+  updatePlatformUserDefinedProperty(input: UpdatePlatformUserDefinedPropertyInput!): UpdatePlatformUserDefinedPropertyOutput! @hidden @unstable
+  registerMerchantBillingCard(input: RegisterMerchantBillingCardInput!): RegisterMerchantBillingMethodCardOutput! @hidden @unstable
+  saveMerchantBillingManager(input: SaveMerchantBillingManagerInput!): SaveMerchantBillingManagerOutput! @hidden @unstable
 }
 
 "예약된 세션이 없는 경우"
 type NoScheduledSessionError implements Error {
+  message: String
+}
+
+"OCR 도중 에러가 발생한 경우"
+type OcrFailedError implements Error {
   message: String
 }
 
@@ -4992,6 +6839,17 @@ type PageInfo {
   size: Int!
   "실제 반환된 객체 수"
   totalCount: Int!
+}
+
+"요청한 패스워드에 개인정보가 포함되어있는 경우"
+type PasswordContainsPersonalInfoError implements Error {
+  message: String
+}
+
+"프로모션 일시 중지 성공 응답"
+type PausePromotionPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
 }
 
 "결제가 이미 취소된 경우"
@@ -5036,6 +6894,380 @@ type PaymentProduct {
   amount: Long!
   "주문 수량"
   quantity: Int!
+}
+
+"거래대사 정산내역 일자별 통계"
+type PaymentReconciliationDailySettlementStatistics {
+  date: Date!
+  statistics: [PaymentReconciliationSettlementStatistics!]!
+}
+
+"거래대사 거래내역 일자별 통계"
+type PaymentReconciliationDailyTransactionStatistics {
+  date: Date!
+  statistics: [PaymentReconciliationTransactionStatistic!]!
+}
+
+type PaymentReconciliationEdge {
+  node: PaymentReconciliation!
+  cursor: String!
+}
+
+type PaymentReconciliationIncomparable implements Node & PaymentReconciliation {
+  "거래대사 아이디"
+  plainId: String!
+  id: ID!
+  actionType: PaymentReconciliationActionType!
+  "대사용 PG사 가맹점 식별자"
+  pgSpecifier: ReconciliationPgSpecifier!
+  "고객사 아이디"
+  merchantPlainId: String!
+  merchantId: ID!
+  "결제 금액"
+  paymentAmount: Long!
+  "면세가액"
+  taxFreeAmount: Long!
+  "부가세"
+  vatAmount: Long!
+  "공급가액"
+  supplyAmount: Long!
+  "거래이상 금액"
+  anomalyAmount: Long!
+  "결제일"
+  paidAt: DateTime!
+  "에스크로 여부"
+  isEscrow: Boolean
+  "결제 통화"
+  paymentCurrency: Currency!
+  "결제수단 상세 정보"
+  paymentMethod: ReconciliationPaymentMethod!
+  "PG사 거래 아이디"
+  pgTxId: String!
+  "거래건의 정산 정보"
+  settlement: PaymentReconciliationSettlement
+}
+
+type PaymentReconciliationMatched implements Node & PaymentReconciliation {
+  "거래대사 아이디"
+  plainId: String!
+  id: ID!
+  actionType: PaymentReconciliationActionType!
+  "대사용 PG사 가맹점 식별자"
+  pgSpecifier: ReconciliationPgSpecifier!
+  "고객사 아이디"
+  merchantPlainId: String!
+  merchantId: ID!
+  "결제 금액"
+  paymentAmount: Long!
+  "면세가액"
+  taxFreeAmount: Long!
+  "부가세"
+  vatAmount: Long!
+  "공급가액"
+  supplyAmount: Long!
+  "결제일"
+  paidAt: DateTime!
+  "에스크로 여부"
+  isEscrow: Boolean
+  "결제 통화"
+  paymentCurrency: Currency!
+  "결제수단 상세 정보"
+  paymentMethod: ReconciliationPaymentMethod!
+  "PG사 거래 아이디"
+  pgTxId: String!
+  "거래건의 정산 정보"
+  settlement: PaymentReconciliationSettlement
+  "포트원 결제 아이디"
+  transactionPlainId: String!
+  "고객사 결제 아이디"
+  paymentPlainId: String!
+  "주문명"
+  orderName: String!
+  "하위 가맹점 아이디"
+  storePlainId: String!
+  storeId: ID!
+}
+
+type PaymentReconciliationNotCollected implements Node & PaymentReconciliation {
+  "거래대사 아이디"
+  plainId: String!
+  id: ID!
+  actionType: PaymentReconciliationActionType!
+  "대사용 PG사 가맹점 식별자"
+  pgSpecifier: ReconciliationPgSpecifier!
+  "고객사 아이디"
+  merchantPlainId: String!
+  merchantId: ID!
+  "결제 금액"
+  paymentAmount: Long!
+  "면세가액"
+  taxFreeAmount: Long!
+  "부가세"
+  vatAmount: Long!
+  "공급가액"
+  supplyAmount: Long!
+  "거래이상 금액"
+  anomalyAmount: Long!
+  "결제일"
+  paidAt: DateTime!
+  "에스크로 여부"
+  isEscrow: Boolean
+  "결제 통화"
+  paymentCurrency: Currency!
+  "결제수단 상세 정보"
+  paymentMethod: ReconciliationPaymentMethod!
+  "PG사 거래 아이디"
+  pgTxIdOptional: String
+  "거래건의 정산 정보"
+  settlement: PaymentReconciliationSettlement
+  "포트원 결제 아이디"
+  transactionPlainIdOptional: String
+  "고객사 결제 아이디"
+  paymentPlainIdOptional: String
+  "주문명"
+  orderNameOptional: String
+  "하위 가맹점 아이디"
+  storePlainIdOptional: String
+  storeIdOptional: ID
+}
+
+"거래 대사건이 존재하지 않는 경우"
+type PaymentReconciliationNotFoundError implements Error {
+  message: String
+}
+
+type PaymentReconciliationNotMatched implements Node & PaymentReconciliation {
+  "거래대사 아이디"
+  plainId: String!
+  id: ID!
+  actionType: PaymentReconciliationActionType!
+  "대사용 PG사 가맹점 식별자"
+  pgSpecifier: ReconciliationPgSpecifier!
+  "고객사 아이디"
+  merchantPlainId: String!
+  merchantId: ID!
+  "결제 금액"
+  paymentAmount: Long!
+  "면세가액"
+  taxFreeAmount: Long!
+  "부가세"
+  vatAmount: Long!
+  "공급가액"
+  supplyAmount: Long!
+  "거래이상 금액"
+  anomalyAmount: Long!
+  "결제일"
+  paidAt: DateTime!
+  "에스크로 여부"
+  isEscrow: Boolean
+  "결제 통화"
+  paymentCurrency: Currency!
+  "결제수단 상세 정보"
+  paymentMethod: ReconciliationPaymentMethod!
+  "포트원 결제 아이디"
+  transactionPlainId: String!
+  "고객사 결제 아이디"
+  paymentPlainId: String!
+  "PG사 거래 아이디"
+  pgTxId: String!
+  "거래건의 정산 정보"
+  settlement: PaymentReconciliationSettlement
+  "거래대사 불일치 사유"
+  notMatchedReasons: [PaymentReconciliationNotMatchedReason!]!
+  "주문명"
+  orderName: String!
+  "하위 가맹점 아이디"
+  storePlainId: String!
+  storeId: ID!
+}
+
+type PaymentReconciliationPaymentCurrenciesPayload {
+  currencies: [Currency!]!
+}
+
+"정산 정보"
+type PaymentReconciliationSettlement {
+  "PG 수수료 요금"
+  feeAmount: Long!
+  "PG 수수료 부가세"
+  feeVatAmount: Long!
+  "정산 금액"
+  settlementAmount: Long!
+  "정산 통화"
+  settlementCurrency: Currency!
+  "정산일"
+  settlementDate: Date!
+}
+
+type PaymentReconciliationSettlementCurrenciesPayload {
+  currencies: [Currency!]!
+}
+
+"거래대사 정산 통계 데이터"
+type PaymentReconciliationSettlementStatistics {
+  amount: Long!
+  count: Long!
+  currency: Currency!
+}
+
+type PaymentReconciliationSettlementStatisticsPayload {
+  "검색 구간내 합산 데이터"
+  rangeTotalStatistics: [PaymentReconciliationSettlementStatistics!]!
+  "일별 정산 통계 내역"
+  dailyStatistics: [PaymentReconciliationDailySettlementStatistics!]!
+}
+
+type PaymentReconciliationSettlementSummariesPayload {
+  edges: [PaymentReconciliationSettlementSummaryEdge!]!
+  pageInfo: CursorPageInfo!
+}
+
+"거래대사 정산내역 일별 요약"
+type PaymentReconciliationSettlementSummary {
+  "정산일"
+  date: Date!
+  "정산 통화"
+  settlementCurrency: Currency!
+  "결제 통화"
+  transactionCurrency: Currency!
+  "정산내역 합산 데이터"
+  aggregate: PaymentReconciliationSettlementSummaryAggregate!
+  "정산내역 일별 상세 데이터 목록"
+  details: [PaymentReconciliationSettlementSummaryDetail!]!
+}
+
+type PaymentReconciliationSettlementSummaryAggregate {
+  "정산 금액"
+  settlementAmount: Long!
+  "정산 건 수"
+  settlementCount: Long!
+  "PG 수수료"
+  feeAmount: Long!
+  "PG 수수료 부가세"
+  feeVatAmount: Long!
+  "취소 금액"
+  cancelAmount: Long!
+  "취소 건 수"
+  cancelCount: Long!
+  "거래 합계 금액"
+  transactionAmount: Long!
+}
+
+type PaymentReconciliationSettlementSummaryDetail {
+  "상점 ID"
+  storePlainId: String
+  storeId: ID
+  "대사용 PG사 가맹점 식별자"
+  pgSpecifier: ReconciliationPgSpecifier!
+  "정산 금액"
+  settlementAmount: Long!
+  "정산 건 수"
+  settlementCount: Long!
+  "PG 수수료"
+  feeAmount: Long!
+  "PG 수수료 부가세"
+  feeVatAmount: Long!
+  "취소 금액"
+  cancelAmount: Long!
+  "취소 건 수"
+  cancelCount: Long!
+  "거래 합계 금액"
+  transactionAmount: Long!
+}
+
+type PaymentReconciliationSettlementSummaryEdge {
+  node: PaymentReconciliationSettlementSummary!
+  cursor: String!
+}
+
+"거래대사 거래 통계 데이터"
+type PaymentReconciliationTransactionStatistic {
+  "총 거래 금액"
+  totalAmount: Long!
+  "총 거래 건수"
+  totalCount: Long!
+  "거래이상 금액"
+  anomalyAmount: Long!
+  "거래이상 건수"
+  anomalyCount: Long!
+  currency: Currency!
+}
+
+type PaymentReconciliationTransactionStatisticsPayload {
+  "검색 구간내 합산 데이터"
+  rangeTotalStatistics: [PaymentReconciliationTransactionStatistic!]!
+  "일별 거래 통계의 총합"
+  dailyStatistics: [PaymentReconciliationDailyTransactionStatistics!]!
+}
+
+type PaymentReconciliationTransactionSummariesPayload {
+  edges: [PaymentReconciliationTransactionSummaryEdge!]!
+  pageInfo: CursorPageInfo!
+}
+
+"거래대사 거래내역 일별 요약"
+type PaymentReconciliationTransactionSummary {
+  "거래일"
+  date: Date!
+  "거래 통화"
+  currency: Currency!
+  "거래내역 합산 데이터"
+  aggregate: PaymentReconciliationTransactionSummaryAggregate!
+  "거래내역 상세 데이터 목록"
+  details: [PaymentReconciliationTransactionSummaryDetail!]!
+}
+
+type PaymentReconciliationTransactionSummaryAggregate {
+  "거래 금액"
+  transactionAmount: Long!
+  "거래 건 수"
+  transactionCount: Long!
+  "거래 취소 금액"
+  cancelAmount: Long!
+  "거래 취소 건 수"
+  cancelCount: Long!
+  "거래 이상 금액"
+  anomalyAmount: Long!
+  "거래 이상 건 수"
+  anomalyCount: Long!
+  "대사불일치 건 수"
+  notMatchedCount: Long!
+  "대사불능 건 수"
+  incomparableCount: Long!
+}
+
+type PaymentReconciliationTransactionSummaryDetail {
+  "상점 ID"
+  storePlainId: String
+  storeId: ID
+  "대사용 PG사 가맹점 식별자"
+  pgSpecifier: ReconciliationPgSpecifier!
+  "거래 금액"
+  transactionAmount: Long!
+  "거래 건 수"
+  transactionCount: Long!
+  "거래 취소 금액"
+  cancelAmount: Long!
+  "거래 취소 건 수"
+  cancelCount: Long!
+  "거래 이상 금액"
+  anomalyAmount: Long!
+  "거래 이상 건 수"
+  anomalyCount: Long!
+  "대사불일치 건 수"
+  notMatchedCount: Long!
+  "대사불능 건 수"
+  incomparableCount: Long!
+}
+
+type PaymentReconciliationTransactionSummaryEdge {
+  node: PaymentReconciliationTransactionSummary!
+  cursor: String!
+}
+
+type PaymentReconciliationsPayload {
+  edges: [PaymentReconciliationEdge!]!
+  pageInfo: CursorPageInfo!
 }
 
 "빌링 결제 리커버리 최근 실행 내역"
@@ -5267,7 +7499,7 @@ type PaymentSchedulesPayload {
 }
 
 "결제 대기 상태"
-type PendingPaymentSchedule implements Node & PaymentSchedule {
+type PendingPaymentSchedule implements PaymentSchedule & Node {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -5435,6 +7667,11 @@ true 이면 isForTest 가 true 인 파트너들을 조회하고, false 이면 is
   holidays(year: Int!): PlatformHolidaysOutput!
   "유저가 보유한 사용 권한을 조회합니다."
   userPermissions: PlatformPermissionsOutput! @hidden @unstable
+  userDefinedProperties(input: FetchPlatformUserDefinedPropertiesInput!): GetPlatformUserDefinedPropertiesOutput! @hidden @unstable
+  partnerSettlement(id: ID!): PlatformPartnerSettlementOutput! @hidden @unstable
+  "정산 파라미터 다건 조회"
+  settlementParameters: PlatformSettlementParametersOutput! @hidden @unstable
+  accountTransfers(isForTest: Boolean, page: PageInput, filter: PlatformAccountTransferFilterInput): PlatformAccountTransfersOutput! @hidden @unstable
 }
 
 """
@@ -5461,6 +7698,14 @@ type PlatformAccountHolder {
   holderName: String!
   "계좌 검증 아이디"
   accountVerificationId: String!
+}
+
+"이체내역 다건 조회 성공 응답 정보"
+type PlatformAccountTransfersPayload {
+  "조회된 이체내역 리스트"
+  items: [PlatformAccountTransfer!]!
+  "조회된 페이지 정보"
+  page: PageInfo!
 }
 
 "파트너 계좌 검증 아이디를 이미 사용한 경우"
@@ -5626,22 +7871,10 @@ type PlatformBulkPayout implements Node {
   payoutStats: PlatformBulkPayoutStats!
   partnerSettlements(filter: PlatformBulkPayoutPartnerSettlementsFilterInput, page: PageInput): PlatformBulkPayoutPartnerSettlementsOutput! @hidden @unstable
   "일괄 지급 전자 서명용 문서를 생성합니다. 전자 서명 시에만 사용하시길 바랍니다."
-  document: PlatformBulkPayoutDocumentOutput! @hidden @unstable
+  documentContent: PlatformBulkPayoutDocumentContentOutput! @hidden @unstable
   statusUpdatedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type PlatformBulkPayoutDocument {
-  title: String!
-  summaries: [PlatformBulkPayoutDocumentSummary!]!
-  content: String!
-  hash: String!
-}
-
-type PlatformBulkPayoutDocumentSummary {
-  label: String!
-  value: String!
 }
 
 "일괄 지급이 취소 가능한 상태가 아닌 경우"
@@ -5709,6 +7942,7 @@ type PlatformCancelOrderTransfersExistsError implements Error {
 "취소 가능한 금액이 초과한 경우"
 type PlatformCancellableAmountExceededError implements Error {
   cancellableAmount: Long!
+  requestAmount: Long!
   amountType: PlatformCancellableAmountType!
   message: String
 }
@@ -5717,6 +7951,16 @@ type PlatformCancellableDiscountAmountExceededError implements Error {
   discountSharePolicyPlainId: String!
   discountSharePolicyId: ID!
   cancellableAmount: Long!
+  requestAmount: Long!
+  productPlainId: String
+  message: String
+}
+
+type PlatformCancellableDiscountTaxFreeAmountExceededError implements Error {
+  discountSharePolicyPlainId: String!
+  discountSharePolicyId: ID!
+  cancellableAmount: Long!
+  requestAmount: Long!
   productPlainId: String
   message: String
 }
@@ -5904,12 +8148,22 @@ type PlatformCurrencyNotSupportedForAgencyMethodError implements Error {
   message: String
 }
 
-type PlatformDiscountCancelExceededOrderCancelAmountError implements Error {
-  message: String
-}
-
-type PlatformDiscountExceededOrderAmountError implements Error {
-  message: String
+type PlatformDepositAccountTransfer implements PlatformAccountTransfer {
+  "계좌 이체 아이디"
+  plainId: String!
+  "통화"
+  currency: Currency!
+  "금액"
+  amount: Long!
+  "입금 계좌 적요"
+  depositMemo: String
+  isForTest: Boolean!
+  "생성 일자"
+  createdAt: DateTime!
+  "수정 일자"
+  updatedAt: DateTime!
+  "입금자명"
+  depositorName: String!
 }
 
 type PlatformDiscountSharePoliciesNotFoundError implements Error {
@@ -6012,6 +8266,18 @@ type PlatformDocumentHashMismatchedError implements Error {
   message: String
 }
 
+type PlatformElectronicDocumentContent {
+  title: String!
+  summaries: [PlatformElectronicDocumentSummary!]!
+  body: String!
+  hash: String!
+}
+
+type PlatformElectronicDocumentSummary {
+  label: String!
+  value: String!
+}
+
 "외부 api 오류"
 type PlatformExternalApiFailedError implements Error {
   message: String
@@ -6105,6 +8371,8 @@ type PlatformManualTransfer implements Node & PlatformTransfer {
   payoutId: ID
   "테스트 모드 여부"
   isForTest: Boolean!
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
   "정산 금액"
   settlementAmount: Long!
 }
@@ -6118,6 +8386,8 @@ type PlatformManualTransferSummary implements PlatformTransferSummary {
   settlementDate: Date!
   settlementCurrency: Currency!
   isForTest: Boolean!
+  partnerUserDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
   settlementAmount: Long!
 }
 
@@ -6179,6 +8449,8 @@ type PlatformOrderCancelTransfer implements Node & PlatformTransfer {
   payoutId: ID
   "테스트 모드 여부"
   isForTest: Boolean!
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
   "정산 금액 정보"
   amount: PlatformOrderSettlementAmount!
   "계약"
@@ -6209,6 +8481,8 @@ type PlatformOrderCancelTransferSummary implements PlatformTransferSummary {
   settlementDate: Date!
   settlementCurrency: Currency!
   isForTest: Boolean!
+  partnerUserDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
   amount: PlatformOrderSettlementAmount!
   payment: PlatformTransferSummaryPayment!
   settlementStartDate: Date!
@@ -6236,12 +8510,26 @@ type PlatformOrderSettlementAmount {
 참조된 계약의 결제 금액 부가세 감액 여부에 따라 false인 경우 0원, true인 경우 결제 금액 부가세입니다.
 """
   paymentVatBurden: Long!
-  "면세 금액"
+"""
+결제 면세 금액
+
+해당 필드는 deprecated되어 9월까지만 유지되고 이후 삭제될 예정입니다. 대신 paymentTaxFree 필드를 사용해주세요.
+"""
   taxFree: Long!
-  "공급가액"
+"""
+결제 공급가액
+
+해당 필드는 deprecated되어 9월까지만 유지되고 이후 삭제될 예정입니다. 대신 paymentSupply 필드를 사용해주세요.
+"""
   supply: Long!
+  "결제 면세 금액"
+  paymentTaxFree: Long!
+  "결제 공급가액"
+  paymentSupply: Long!
   "주문 금액"
   order: Long!
+  "면세 주문 금액"
+  orderTaxFree: Long!
   "중개 수수료"
   platformFee: Long!
   "중개 수수료 부가세"
@@ -6252,8 +8540,12 @@ type PlatformOrderSettlementAmount {
   additionalFeeVat: Long!
   "할인 금액"
   discount: Long!
+  "면세 할인 금액"
+  discountTaxFree: Long!
   "할인 분담 금액"
   discountShare: Long!
+  "면세 할인 분담 금액"
+  discountShareTaxFree: Long!
 }
 
 "주문 정산건"
@@ -6275,6 +8567,8 @@ type PlatformOrderTransfer implements Node & PlatformTransfer {
   payoutId: ID
   "테스트 모드 여부"
   isForTest: Boolean!
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
   "정산 금액 정보"
   amount: PlatformOrderSettlementAmount!
   "계약"
@@ -6321,8 +8615,12 @@ type PlatformOrderTransferDiscount {
   sharePolicy: PlatformDiscountSharePolicy!
   "할인 금액"
   amount: Long!
+  "면세 할인 금액"
+  taxFreeAmount: Long!
   "할인 분담 금액"
   shareAmount: Long!
+  "면세 할인 분담 금액"
+  shareTaxFreeAmount: Long!
 }
 
 "주문 항목"
@@ -6363,6 +8661,8 @@ type PlatformOrderTransferSummary implements PlatformTransferSummary {
   settlementDate: Date!
   settlementCurrency: Currency!
   isForTest: Boolean!
+  partnerUserDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
   amount: PlatformOrderSettlementAmount!
   payment: PlatformTransferSummaryPayment!
   settlementStartDate: Date!
@@ -6398,6 +8698,8 @@ type PlatformPartner implements Node {
   isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
 }
 
 type PlatformPartnerAlreadyExistsError implements Error {
@@ -6481,7 +8783,7 @@ type PlatformPartnerIdsDuplicatedError implements Error {
   message: String
 }
 
-type PlatformPartnerManualSettlement implements PlatformPartnerSettlement {
+type PlatformPartnerManualSettlement implements Node & PlatformPartnerSettlement {
   "정산내역 아이디"
   plainId: String!
   id: ID!
@@ -6505,7 +8807,7 @@ type PlatformPartnerNotFoundError implements Error {
   message: String
 }
 
-type PlatformPartnerOrderCancelSettlement implements PlatformPartnerSettlement {
+type PlatformPartnerOrderCancelSettlement implements Node & PlatformPartnerSettlement {
   "정산내역 아이디"
   plainId: String!
   id: ID!
@@ -6529,7 +8831,7 @@ type PlatformPartnerOrderCancelSettlement implements PlatformPartnerSettlement {
   isForTest: Boolean!
 }
 
-type PlatformPartnerOrderSettlement implements PlatformPartnerSettlement {
+type PlatformPartnerOrderSettlement implements Node & PlatformPartnerSettlement {
   "정산내역 아이디"
   plainId: String!
   id: ID!
@@ -6551,6 +8853,43 @@ type PlatformPartnerOrderSettlement implements PlatformPartnerSettlement {
   amount: PlatformOrderSettlementAmount!
   "테스트 모드 여부"
   isForTest: Boolean!
+}
+
+type PlatformPartnerPayoutAccountTransfer implements PlatformAccountTransfer {
+  "계좌 이체 아이디"
+  plainId: String!
+  "거래 일련번호"
+  sequenceNumber: Int!
+  "통화"
+  currency: Currency!
+  "입금 계좌 은행"
+  depositBank: Bank!
+  "입금 계좌 번호"
+  depositAccountNumber: String!
+  "금액"
+  amount: Long!
+  "출금 계좌 적요"
+  withdrawalMemo: String
+  "입금 계좌 적요"
+  depositMemo: String
+  "잔액"
+  balance: Long
+  "실패 사유"
+  failReason: String
+  isForTest: Boolean!
+  "생성 일자"
+  createdAt: DateTime!
+  "수정 일자"
+  updatedAt: DateTime!
+  "파트너 고유 아이디"
+  partnerPlainId: String!
+  partnerId: ID!
+  "일괄 지급 고유 아이디"
+  bulkPayoutPlainId: String!
+  bulkPayoutId: ID!
+  "지급 고유 아이디"
+  payoutPlainId: String!
+  payoutId: ID!
 }
 
 "파트너의 예약된 업데이트 정보"
@@ -6579,6 +8918,8 @@ type PlatformPartnerSchedule {
   isArchived: Boolean!
   "변경 적용 시점"
   appliedAt: DateTime!
+  "사용자 정의 속성"
+  userDefinedProperties: [PlatformUserDefinedPropertyKeyValue!]!
 }
 
 type PlatformPartnerScheduleAlreadyExistsError implements Error {
@@ -6693,13 +9034,23 @@ type PlatformPartnerTypeBusiness {
 }
 
 """
-원천징수대상자 파트너 정보
+원천징수 비대상자 파트너 정보
+
+비사업자 유형의 파트너 추가 정보 입니다.
+"""
+type PlatformPartnerTypeNonWhtPayer {
+  "생년월일"
+  birthdate: Date
+}
+
+"""
+원천징수 대상자 파트너 정보
 
 비사업자 유형의 파트너 추가 정보 입니다.
 """
 type PlatformPartnerTypeWhtPayer {
   "생년월일"
-  birthdate: String
+  birthdate: Date
 }
 
 "파트너 다건 조회 성공 응답 정보"
@@ -6773,6 +9124,7 @@ type PlatformPaymentNotFoundError implements Error {
 }
 
 type PlatformPayout implements Node {
+  "지급 고유 아이디"
   plainId: String!
   id: ID!
   method: PlatformPayoutMethod!
@@ -6783,6 +9135,9 @@ type PlatformPayout implements Node {
   account: PlatformPayoutAccount!
   currency: Currency!
   amount: Long!
+  settlementAmount: Long!
+  incomeTaxAmount: Long!
+  localIncomeTaxAmount: Long!
   withdrawalMemo: String
   depositMemo: String
   createdAt: DateTime!
@@ -6884,9 +9239,56 @@ type PlatformProductIdNotFoundError implements Error {
   message: String
 }
 
+type PlatformRemitAccountTransfer implements PlatformAccountTransfer {
+  "계좌 이체 아이디"
+  plainId: String!
+  "거래 일련번호"
+  sequenceNumber: Int!
+  "통화"
+  currency: Currency!
+  "입금 계좌 은행"
+  depositBank: Bank!
+  "입금 계좌 번호"
+  depositAccountNumber: String!
+  "금액"
+  amount: Long!
+  "출금 계좌 적요"
+  withdrawalMemo: String
+  "입금 계좌 적요"
+  depositMemo: String
+  "잔액"
+  balance: Long
+  "실패 사유"
+  failReason: String
+  isForTest: Boolean!
+  "생성 일자"
+  createdAt: DateTime!
+  "수정 일자"
+  updatedAt: DateTime!
+  "전자서명 아이디"
+  documentPlainId: String!
+}
+
 "송금 api 요청에 실패한 경우"
 type PlatformRemitRequestFailedError implements Error {
   message: String
+}
+
+"정산 가능한 금액을 초과한 경우"
+type PlatformSettlementAmountExceededError implements Error {
+  message: String
+"""
+상품 아이디
+
+주문 항목의 상품 아이디입니다.
+"""
+  productId: String
+  "요청 받은 금액"
+  requestedAmount: Long!
+  "초과한 금액"
+  allowedAmount: Long!
+  "요청 받은 금액과 초과한 금액 타입"
+  type: AmountExceededType!
 }
 
 "정산 취소 요청 금액이 포트원 결제 취소 내역의 취소 금액을 초과한 경우"
@@ -7001,6 +9403,39 @@ type PlatformSettlementFormulaValidation {
   error: PlatformInvalidSettlementFormulaError
 }
 
+"플랫폼 정산 파라미터"
+type PlatformSettlementParameter {
+"""
+정산 파라미터 키
+
+수식에 사용되는 파라미터 식별자입니다.
+"""
+  key: String!
+  "이름"
+  name: String!
+  "기본 값"
+  defaultValue: PlatformSettlementParameterValue!
+  "생성 일시"
+  createdAt: DateTime!
+  "수정 일시"
+  updatedAt: DateTime!
+}
+
+"정산 파라미터의 생성 허용 갯수를 초과한 경우"
+type PlatformSettlementParameterCountLimitExceededError implements Error {
+  message: String
+}
+
+"정산 파라미터의 키가 이미 존재하는 경우"
+type PlatformSettlementParameterKeyAlreadyExistsError implements Error {
+  message: String
+}
+
+"정산 파라미터가 존재하지 않는 경우"
+type PlatformSettlementParameterNotFoundError implements Error {
+  message: String
+}
+
 "플랫폼 정산 파라미터 값"
 type PlatformSettlementParameterValue {
   "크기가 조정되지 않은 숫자"
@@ -7012,6 +9447,10 @@ type PlatformSettlementParameterValue {
 입력 가능한 법위는 0 ~ 5 입니다.
 """
   decimalScale: Int
+}
+
+type PlatformSettlementParametersPayload {
+  items: [PlatformSettlementParameter!]!
 }
 
 "정산 요청 결제 금액이 포트원 결제 내역의 결제 금액을 초과한 경우"
@@ -7028,6 +9467,8 @@ type PlatformSettlementRule {
   supportsMultipleOrderTransfersPerPartner: Boolean!
   "정산일이 정산시작일보다 작거나 같을 경우 공휴일 후 영업일로 정산일 다시 계산 여부"
   adjustSettlementDateAfterHolidayIfEarlier: Boolean!
+  "지급 금액에서 원천징수세 차감 여부"
+  subtractWhtInPayoutAmount: Boolean!
 }
 
 "정산 요청 공급대가가 포트원 결제 내역의 공급대가를 초과한 경우"
@@ -7048,11 +9489,6 @@ type PlatformSettlementTaxFreeAmountExceededPortOnePaymentError implements Error
 
 "전자서명에 대한 유효성 검증에 실패한 경우"
 type PlatformSignatureVerificationFailedError implements Error {
-  message: String
-}
-
-"면세 금액이 결제금액을 초과한 경우"
-type PlatformTaxFreeAmountOverFlowError implements Error {
   message: String
 }
 
@@ -7116,6 +9552,8 @@ type PlatformTransferSummaryPartner {
   partnerPlainId: String!
   partnerId: ID!
   name: String!
+  type: PlatformTransferSummaryPartnerType!
+  taxationType: PlatformPartnerTaxationType
 }
 
 type PlatformTransferSummaryPortOnePayment implements PlatformTransferSummaryPayment {
@@ -7125,14 +9563,43 @@ type PlatformTransferSummaryPortOnePayment implements PlatformTransferSummaryPay
   methodType: PaymentMethodType
 }
 
-"""
-사용할 수 없는 정산일이 요청된 경우
-
-요청한 정산일에 이체되지 않은 주문 정산 건이 없을 때 발생합니다.
-"""
-type PlatformUnavailableSettlementDateError implements Error {
-  settlementDate: Date!
+"사용자 정의 속성 생성 허용 개수를 초과한 경우"
+type PlatformUserDefinedPropertiesMaxCountsExceededError implements Error {
   message: String
+}
+
+"사용자 정의 속성"
+type PlatformUserDefinedProperty {
+  key: String!
+  id: ID!
+  name: String!
+  objectType: PlatformUserDefinedPropertyObjectType!
+  isForTest: Boolean!
+  isSecret: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"사용자 정의 속성의 키가 이미 존재하는 경우"
+type PlatformUserDefinedPropertyKeyAlreadyExistsError implements Error {
+  message: String
+}
+
+"사용자 정의 속성"
+type PlatformUserDefinedPropertyKeyValue {
+  "사용자 정의 속성 키"
+  key: String!
+  "사용자 정의 속성 값"
+  value: PlatformUserDefinedPropertyValue!
+}
+
+"사용자 정의 속성이 존재 하지 않는 경우"
+type PlatformUserDefinedPropertyNotFoundError implements Error {
+  message: String
+}
+
+type PlatformUserDefinedPropertyValue {
+  string: String!
 }
 
 "사용자가 존재하지 않는 경우"
@@ -7160,6 +9627,61 @@ type PlatformVirtualAccountNotAllocatedError implements Error {
   message: String
 }
 
+type PromotionAmountDiscount {
+  amount: Long!
+}
+
+type PromotionEdge {
+  node: Promotion!
+  cursor: String!
+}
+
+"프로모션 아이디 리스트 조회 성공 응답 정보"
+type PromotionIdsPayload {
+  promotionIds: [String!]!
+}
+
+"프로모션이 존재하지 않는 경우"
+type PromotionNotFoundError implements Error {
+  message: String
+}
+
+"결제수단이 프로모션에 지정된 것과 일치하지 않는 경우"
+type PromotionPayMethodDoesNotMatchError implements Error {
+  message: String
+}
+
+type PromotionPercentDiscount {
+  percent: Int!
+}
+
+"프로모션 통계 조회 성공 응답 정보"
+type PromotionStatisticsPayload {
+  "총 프로모션 개수"
+  totalCount: Int!
+  "진행 중인 프로모션 개수"
+  inProgressCount: Int!
+  "진행 예정인 프로모션 개수"
+  scheduledCount: Int!
+  "일시 중지된 프로모션 개수"
+  pausedCount: Int!
+  "종료된 프로모션 갯수"
+  terminatedCount: Int!
+  "예산 소진된 프로모션 갯수"
+  budgetExhaustedCount: Int!
+}
+
+"프로모션이 중단된 상태인 경우"
+type PromotionTerminatedError implements Error {
+  message: String
+}
+
+"프로모션 다건 조회 성공 응답 정보"
+type PromotionsPayload {
+  edges: [PromotionEdge!]!
+  pageInfo: CursorPageInfo!
+}
+
 type Query {
   "요청된 ID 에 대응되는 객체를 반환합니다 (Global Object Identification)."
   node(id: ID!): Node
@@ -7168,6 +9690,151 @@ type Query {
 요청된 Authorization header 를 통해 자동으로 요청자의 고객사를 특정합니다.
 """
   merchant: MerchantOutput!
+}
+
+"가맹점의 대사 관련 정보"
+type Reconciliation {
+"""
+거래 대사 거래 건별 조회
+
+고객사 내 모든 하위 상점의 거래대사 거래 건별 내역을 조회합니다.
+"""
+  paymentReconciliations(dateCondition: ReconciliationDateConditionInput!, searchCondition: PaymentReconciliationSearchConditionInput, filter: PaymentReconciliationFilterInput, order: PaymentReconciliationOrderInput, "조회할 건 수" first: Int!, "이전 페이지의 마지막 커서" after: String): PaymentReconciliationsPayload @hidden @unstable
+"""
+대사용 PG사 가맹점 식별자 목록 조회
+
+고객사 내 대사용 PG사 가맹점 식별자 목록을 가져옵니다.
+"""
+  pgSpecifiers: ReconciliationPgSpecifiersOutput! @hidden @unstable
+"""
+거래대사 거래 요약 정보 조회
+
+고객사 내 모든 하위 상점의 거래대사 거래 요약 정보를 일별 조회 합니다
+"""
+  paymentReconciliationTransactionSummaries("거래일 범위" dateRange: DateRangeInput!, filter: PaymentReconciliationTransactionSummaryFilterInput, "조회할 건 수" first: Int!, "이전 페이지의 마지막 커서" after: String): PaymentReconciliationTransactionSummariesPayload @hidden @unstable
+"""
+거래대사 거래 통계 조회
+
+고객사 내 모든 하위 상점의 거래대사 거래 통계를 조회 합니다
+"""
+  paymentReconciliationTransactionStatistics(dateCondition: ReconciliationDateConditionInput!, filter: PaymentReconciliationTransactionStatisticsFilterInput): PaymentReconciliationTransactionStatisticsOutput! @hidden @unstable
+"""
+거래대사 정산 요약 정보 조회
+
+고객사 내 모든 하위 상점의 거래대사 정산 요약 정보를 일별 조회 합니다
+"""
+  paymentReconciliationSettlementSummaries("정산일 범위" dateRange: DateRangeInput!, filter: PaymentReconciliationSettlementSummaryFilterInput, "조회할 건 수" first: Int!, "이전 페이지의 마지막 커서" after: String): PaymentReconciliationSettlementSummariesPayload @hidden @unstable
+"""
+거래대사 정산 통계 조회
+
+고객사 내 모든 하위 상점의 거래대사 정산 통계를 조회 합니다
+"""
+  paymentReconciliationSettlementStatistics("정산일 범위" dateRange: DateRangeInput!, filter: PaymentReconciliationSettlementStatisticsFilterInput): PaymentReconciliationSettlementStatisticsOutput! @hidden @unstable
+"""
+대사 서비스 이용약관 동의 여부
+
+대사 서비스 이용약관 동의 여부를 조회합니다.
+"""
+  termsAndConditions: ReconciliationTermsAndConditionsOutput! @hidden @unstable
+"""
+거래 대사 거래통화 목록 조회
+
+사용된 거래통화 목록을 조회합니다.
+"""
+  paymentReconciliationPaymentCurrencies: PaymentReconciliationPaymentCurrenciesOutput! @hidden @unstable
+"""
+거래 대사 정산통화 목록 조회
+
+사용된 정산통화 목록을 조회합니다.
+"""
+  paymentReconciliationSettlementCurrencies: PaymentReconciliationSettlementCurrenciesOutput! @hidden @unstable
+}
+
+"ARS 결제"
+type ReconciliationPaymentMethodArs {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+"카드 결제"
+type ReconciliationPaymentMethodCard {
+  "카드 발급사"
+  issuer: CardCompany
+  "카드 매입사"
+  acquirer: CardCompany
+  "카드 승인 번호"
+  approvalNumber: String
+  "카드 할부 개월 수"
+  installmentMonth: Int
+}
+
+"간편결제 충전"
+type ReconciliationPaymentMethodCharge {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+"간편 결제"
+type ReconciliationPaymentMethodEasyPay {
+  "간편 결제 PG사"
+  provider: ReconciliationEasyPayProvider
+  "간편 결제 결제 수단"
+  method: ReconciliationEasyPayMethod
+  paymentMethodType: ReconciliationPaymentMethodType!
+}
+
+"기타 결제"
+type ReconciliationPaymentMethodEtc {
+  "기타 결제 이름"
+  name: String!
+}
+
+"상품권 결제"
+type ReconciliationPaymentMethodGiftCertificate {
+  "상품권 승인 번호"
+  approvalNumber: String
+  "상품권 종류"
+  giftCertificateType: GiftCertificateType
+}
+
+"모바일 결제"
+type ReconciliationPaymentMethodMobile {
+  "통신사"
+  carrier: Carrier
+}
+
+"계좌이체"
+type ReconciliationPaymentMethodTransfer {
+  "계좌 이체 은행"
+  bank: Bank
+  "계좌 이체 승인 번호"
+  approvalNumber: String
+}
+
+"가상계좌 결제"
+type ReconciliationPaymentMethodVirtualAccount {
+  "가상계좌  은행"
+  bank: Bank
+  "가상계좌 은행"
+  approvalNumber: String
+}
+
+"대사용 PG사 가맹점 식별자"
+type ReconciliationPgSpecifier {
+  "PG사 가맹점 식별 아이디"
+  pgMerchantId: String!
+  "PG사"
+  pgProvider: ReconciliationPgProvider!
+}
+
+type ReconciliationPgSpecifiersPayload {
+  pgSpecifiers: [ReconciliationPgSpecifier!]!
+}
+
+"대사 서비스 이용약관 동의 여부 조회 정보"
+type ReconciliationTermsAndConditions {
+  isAgreeing: Boolean!
+  agreedAt: DateTime
 }
 
 "추가 수수료 정책 복원 성공 응답"
@@ -7210,10 +9877,115 @@ type RefreshTokenPayload {
   refreshToken: String!
 }
 
+"고객사의 서비스 과금을 위한 카드 등록 성공 응답"
+type RegisterMerchantBillingMethodCardPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+type RegisterStoreBusinessInfoPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+"""
+사업자 등록증 정보
+
+개인 / 법인 사업자로 분류가 나뉘며, 해당 분류에 따라 입력 정보가 조금씩 다릅니다. 회사명, 사업자 등록번호, 주소지 등의 일반적인 정보들은 공통 필드로 입력 받습니다.
+"""
+type RegisteredBusinessLicense implements Node & BusinessLicense {
+  id: ID!
+  plainId: String!
+  "우편번호"
+  postalCode: String!
+  "사업자 업태 목록"
+  types: [String!]!
+  "사업자 종목 목록"
+  items: [String!]!
+  "사업자 등록번호"
+  registrationNumber: String!
+  "회사명"
+  companyName: String!
+  "주소지 정보"
+  location: RegisteredBusinessLicenseLocation!
+  "개인 / 법인 사업자 정보"
+  classification: RegisteredBusinessLicenseClassification!
+}
+
+"법인 사업자 정보"
+type RegisteredBusinessLicenseClassificationCorporation {
+"""
+법인 사업자 등록번호
+
+사업자 등록번호와 별개의 개념으로 , 법인 설립 시 등기소에서 부여하는 부동산 등기용 등록 번호
+"""
+  corporationNumber: String
+  "대표 이름 목록"
+  representativeNames: [RegisteredBusinessLicenseRepresentativeName!]
+}
+
+"개인 사업자 등록증 정보"
+type RegisteredBusinessLicenseClassificationSoleProprietorship {
+  "대표자 이름 정보"
+  representativeName: RegisteredBusinessLicenseRepresentativeName!
+  "공동 대표자 이름 정보"
+  coRepresentativeName: RegisteredBusinessLicenseRepresentativeName
+}
+
+type RegisteredBusinessLicenseLocation implements BusinessLicenseLocation {
+  "주소"
+  address: String!
+  "상세 주소"
+  detail: String!
+}
+
+type RegisteredBusinessLicenseRepresentativeName implements BusinessLicenseRepresentativeName {
+  "한글명"
+  ko: String!
+  "영문명"
+  en: String!
+}
+
+"등록이 완료된 상점의 대표자 정보"
+type RegisteredStoreRepresentative implements StoreRepresentative {
+  "이름"
+  name: String!
+  "휴대폰번호"
+  phoneNumber: String!
+  "이메일"
+  email: String!
+  "생년월일"
+  birthdate: Date!
+}
+
 "파트너 거절 성공 응답"
 type RejectPlatformPartnerPayload {
   "거절된 파트너"
   partner: PlatformPartner!
+}
+
+"부분 취소 시, 취소하게 될 경우 남은 금액이 프로모션의 최소 결제 금액보다 작아지는 경우"
+type RemainedAmountLessThanPromotionMinPaymentAmountError implements Error {
+  message: String
+}
+
+"가상계좌 송금 결과"
+type RemitPlatformVirtualAccountPayload {
+  accountTransfer: PlatformAccountTransfer!
+}
+
+"""
+삭제하고자 하는 상점이 대표상점인 경우
+
+대표상점은 삭제가 불가능합니다.
+"""
+type RepresentativeStoreCannotBeDeletedError implements Error {
+  message: String
+}
+
+"필수 약관에 동의하지 않는 경우"
+type RequiredTermDisagreedError implements Error {
+  message: String
 }
 
 "추가 수수료 정책 예약 업데이트 재설정 성공 응답"
@@ -7240,6 +10012,12 @@ type ReschedulePlatformPartnerPayload {
   scheduledPartner: PlatformPartnerSchedule!
 }
 
+"프로모션 재개 성공 응답"
+type ResumePromotionPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
 "예약 결제 실패 후 재시도 성공 응답"
 type RetryPaymentSchedulePayload {
   schedule: PaymentSchedule!
@@ -7261,7 +10039,7 @@ type RevokePaymentSchedulePayload {
 }
 
 "결제 예약 취소 상태"
-type RevokedPaymentSchedule implements Node & PaymentSchedule {
+type RevokedPaymentSchedule implements PaymentSchedule & Node {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -7314,6 +10092,21 @@ type RevokedPaymentSchedule implements Node & PaymentSchedule {
   events: PaymentScheduleEvents!
 }
 
+"고객사의 청구서 담당자 저장 성공 응답 정보"
+type SaveMerchantBillingManagerPayload {
+  manager: MerchantBillingManager!
+}
+
+type SaveMerchantTermsPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
+type SaveTemporaryStoreBusinessInfoPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
+}
+
 "추가 수수료 정책 업데이트 예약 성공 응답"
 type SchedulePlatformAdditionalFeePayload {
   "예약된 추가 수수료 정책"
@@ -7344,7 +10137,7 @@ type SchedulePlatformPartnersPayload {
 }
 
 "결제 예약 완료 상태"
-type ScheduledPaymentSchedule implements Node & PaymentSchedule {
+type ScheduledPaymentSchedule implements PaymentSchedule & Node {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -7432,8 +10225,30 @@ type SeparatedAddress implements Address {
   country: Country
 }
 
+type SignUpPayload {
+  "유저 이메일"
+  email: String!
+"""
+인증 이메일 전송시 사용되는 토큰
+
+하루의 유효기간을 가지고 있습니다.
+"""
+  emailAuthToken: String!
+}
+
+type SignUpViaAgencyPayload {
+  "유저 이메일"
+  email: String!
+"""
+인증 이메일 전송시 사용되는 토큰
+
+하루의 유효기간을 가지고 있습니다.
+"""
+  emailAuthToken: String!
+}
+
 "결제 시작 상태"
-type StartedPaymentSchedule implements Node & PaymentSchedule {
+type StartedPaymentSchedule implements PaymentSchedule & Node {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -7493,14 +10308,34 @@ type StopPlatformBulkPayoutPayload {
 
 type Store implements Node {
   id: ID!
+  "상점 아이디"
   plainId: String!
+  "하위상점명"
   name: String!
+  "상점 관리자"
+  manager: StoreManager
+"""
+URL 목록
+
+고객사가 제공하는 서비스 웹사이트 & 앱스토어 다운로드 url 목록을 의미합니다.
+"""
+  urls: [String!]!
+  "대표상점 여부"
+  isRepresentative: Boolean!
+  "상점 V1 관련 정보"
+  v1Info: StoreV1InfoOutput!
 """
 API Secret 정보 목록
 
 하위 상점의 API Secret 정보들을 조회합니다
 """
   v2ApiSecrets: V2ApiSecretInfosOutput!
+  "상점 서비스 정보"
+  service: StoreService
+  "요청사항 메모"
+  requestMemo: String
+  "비즈니스 인증 여부"
+  isCertifiedBusinessInfo: Boolean!
   "하위 상점 설정 정보"
   settings: StoreSettings! @hidden @unstable
 """
@@ -7551,6 +10386,84 @@ API Secret 정보 목록
   paymentRecoveryLog: PaymentRecoveryLogOutput! @hidden @unstable
   channelGroupUsage: ChannelGroupUsage! @hidden @unstable
   pgCompanyUsage: PgCompanyUsage! @hidden @unstable
+"""
+프로모션 다건 조회
+
+프로모션 설정 내역을 조회합니다.
+"""
+  promotions("조회할 프로모션 조건" filter: PromotionFilterInput!, "조회할 건수" first: Int!, "이전 페이지의 마지막 커서" after: String): PromotionsPayload
+"""
+프로모션 아이디 리스트 조회
+
+특정 기간 내에 존재하는 모든 프로모션의 아이디 리스트를 조회합니다.
+"""
+  promotionIds("시각 범위" dateTimeRange: DateTimeRangeInput, "시각 범위를 적용할 필드" dateTimeRangeField: PromotionTimeRangeField): PromotionIdsOutput!
+"""
+프로모션 통계 조회
+
+특정 기간에 존재하는 프로모션의 통계값을 조회합니다.
+"""
+  promotionStatistics("조회할 프로모션 조건" filter: PromotionFilterInput!): PromotionStatisticsOutput!
+  businessLicenseOcr(fileId: ID!): StoreBusinessLicenseOcrOutput! @hidden @unstable
+  businessLicense: StoreBusinessLicenseOutput! @hidden @unstable
+  "상점의 파일 목록 조회"
+  files(category: StoreFileCategory!): StoreFilesOutput! @hidden @unstable
+  "상점의 대표자 목록 조회"
+  representatives: StoreRepresentativesOutput! @hidden @unstable
+}
+
+"""
+상점의 사업자 인증정보가 이미 등록되어 편집이 불가능한 경우
+
+한번 등록된 사업자 인증정보는 추가 편집이 불가능합니다
+"""
+type StoreBusinessInfoAlreadyRegisteredError implements Error {
+  message: String
+}
+
+"상점 파일 정보"
+type StoreFile implements Node {
+  id: ID!
+  plainId: String!
+  "상점 ID"
+  storeId: String!
+  "파일명"
+  name: String
+"""
+파일 유형
+
+어떠한 도메인에 연관된 파일인지 나타냅니다.
+"""
+  category: StoreFileCategory!
+  "확장자"
+  extension: String
+}
+
+"요청한 상점에 관련된 파일이 존재하지 않는 경우"
+type StoreFileNotFoundError implements Error {
+  message: String
+}
+
+type StoreFilesPayload {
+  files: [StoreFile!]!
+}
+
+"상점 관리자"
+type StoreManager {
+  "이름"
+  name: String
+"""
+핸드폰번호
+
+핸드폰번호는 `-`, 공백 등의 특수기호 없이 숫자만 포함됩니다.
+"""
+  phoneNumber: String
+"""
+이메일
+
+상점 관리자의 이메일, 전자결제 진행상황 및 포트원에서 알림을 수신받는 이메일
+"""
+  email: String
 }
 
 "요청된 상점이 존재하지 않는 경우"
@@ -7558,11 +10471,43 @@ type StoreNotFoundError implements Error {
   message: String
 }
 
+type StoreRepresentativesPayload {
+  representatives: [StoreRepresentative!]!
+}
+
+"상점 서비스 정보"
+type StoreService {
+  "판매 품목"
+  salesItems: [String!]!
+  "상점 서비스 형태"
+  type: StoreServiceType
+  "상점 월 예상 거래액"
+  monthlySalesEstimation: StoreServiceMonthlySalesEstimation
+  "서비스 url 목록"
+  urls: [String!]!
+  "서비스 준비 중"
+  isPreparing: Boolean
+}
+
 type StoreSettings {
   "웹훅 설정"
   webhook(portOneVersion: PortOneVersion!, environment: WebhookEnvironment!): StoreWebhookSettingOutput! @hidden @unstable
   "빌링결제 리커버리 설정"
   paymentRecovery: PaymentRecoverySettingOutput! @hidden @unstable
+}
+
+"상점 v1 정보"
+type StoreV1Info {
+  "v1 유저 아이디"
+  v1UserId: Int!
+  "v1 가맹점 식별코드"
+  userCode: String!
+"""
+티어 코드
+
+v1 결제시 사용하는 코드입니다. 대문자 3글자만 가능합니다. ex) ABC
+"""
+  tierCode: String
 }
 
 type StoreWebhookSetting {
@@ -7583,7 +10528,7 @@ type StoresPayload {
 }
 
 "결제 성공 상태"
-type SucceededPaymentSchedule implements Node & PaymentSchedule {
+type SucceededPaymentSchedule implements PaymentSchedule & Node {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -7650,6 +10595,90 @@ type SumOfPartsExceedsCancelAmountError implements Error {
 "면세 금액 등 하위 항목들의 합이 전체 결제 금액을 초과한 경우"
 type SumOfPartsExceedsTotalAmountError implements Error {
   message: String
+}
+
+"""
+임시저장된 사업자 등록증 정보
+
+개인 / 법인 사업자로 분류가 나뉘며, 해당 분류에 따라 입력 정보가 조금씩 다릅니다. 회사명, 사업자 등록번호, 주소지 등의 일반적인 정보들은 공통 필드로 입력 받습니다.
+"""
+type TemporaryBusinessLicense implements Node & BusinessLicense {
+  id: ID!
+  plainId: String!
+  "우편번호"
+  postalCode: String
+  "사업자 업태 목록"
+  types: [String!]!
+  "사업자 종목 목록"
+  items: [String!]!
+  "사업자 등록번호"
+  registrationNumber: String
+  "회사명"
+  companyName: String
+  "주소지 정보"
+  location: TemporaryBusinessLicenseLocation
+  "개인 / 법인 사업자 정보"
+  classification: TemporaryBusinessLicenseClassification!
+}
+
+"법인 사업자 정보"
+type TemporaryBusinessLicenseClassificationCorporation {
+"""
+법인 사업자 등록번호
+
+사업자 등록번호와 별개의 개념으로 , 법인 설립 시 등기소에서 부여하는 부동산 등기용 등록 번호
+"""
+  corporationNumber: String
+  "대표 이름 목록"
+  representativeNames: [TemporaryBusinessLicenseRepresentativeName!]
+}
+
+"개인 사업자 등록증 정보"
+type TemporaryBusinessLicenseClassificationSoleProprietorship {
+  "대표자 이름 정보"
+  representativeName: TemporaryBusinessLicenseRepresentativeName
+  "공동 대표자 이름 정보"
+  coRepresentativeName: TemporaryBusinessLicenseRepresentativeName
+}
+
+type TemporaryBusinessLicenseLocation implements BusinessLicenseLocation {
+  "주소"
+  address: String
+  "상세 주소"
+  detail: String
+}
+
+type TemporaryBusinessLicenseRepresentativeName implements BusinessLicenseRepresentativeName {
+  "한글명"
+  ko: String
+  "영문명"
+  en: String
+}
+
+"임시저장 되어있는 상점의 대표자 정보"
+type TemporaryStoreRepresentative implements StoreRepresentative {
+  "이름"
+  name: String
+  "휴대폰번호"
+  phoneNumber: String
+  "이메일"
+  email: String
+  "생년월일"
+  birthdate: Date
+}
+
+"약관 동의 상태"
+type TermState {
+  "동의 여부"
+  isAgreeing: Boolean!
+  "동의 일시"
+  createdAt: DateTime!
+}
+
+"프로모션 중단 성공 응답"
+type TerminatePromotionPayload {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
 }
 
 type TestWebhookPayload {
@@ -7722,6 +10751,26 @@ type UpdatePlatformPayoutPayload {
 type UpdatePlatformPayoutsPayload {
   "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
   _: Boolean
+}
+
+type UpdatePlatformSettlementParameterPayload {
+  settlementParameter: PlatformSettlementParameter!
+}
+
+"사용자 정의 속성 업데이트 성공 응답"
+type UpdatePlatformUserDefinedPropertyPayload {
+  "업데이트 된 사용자 정의 속성"
+  property: PlatformUserDefinedProperty!
+}
+
+"프로모션 업데이트 성공 응답"
+type UpdatePromotionPayload {
+  "업데이트된 프로모션"
+  promotion: Promotion!
+}
+
+type UpdateStorePayload {
+  store: Store!
 }
 
 type UpdateStoreWebhookSettingPayload {
