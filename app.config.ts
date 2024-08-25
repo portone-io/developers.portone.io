@@ -29,6 +29,9 @@ export default defineConfig({
         "/blog/rss.xml",
       ],
     },
+    rollupConfig: {
+      external: ["monaco-editor"],
+    },
   },
   extensions: ["ts", "tsx", "mdx"],
   vite: () =>
