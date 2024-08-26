@@ -87,12 +87,17 @@ export function SearchScreen(props: SearchScreenProps) {
   const fuse = createMemo(() => {
     const index = searchIndex.latest;
     if (!index) return;
-    const filteredIndex = index.filter((item) => {
-      const navMenuSystemVersion =
-        props.navMenuSystemVersions[item.slug.replace(/^docs/, "")];
-      if (!navMenuSystemVersion) return true;
-      return navMenuSystemVersion === systemVersion();
-    });
+    const filteredIndex = index
+      .filter((item) => {
+        const navMenuSystemVersion =
+          props.navMenuSystemVersions[item.slug.replace(/^docs/, "")];
+        if (!navMenuSystemVersion) return true;
+        return navMenuSystemVersion === systemVersion();
+      })
+      .map((item) => {
+        const slug = item.slug.replace(/\/index$/, "");
+        return { ...item, slug };
+      });
     return new Fuse(filteredIndex, { keys: ["title", "description", "text"] });
   });
   const searchResult = createMemo(() => {
