@@ -9,7 +9,7 @@ const loadRedirection = cache(async (slug: string) => {
     );
   const redir = redirYaml.find(({ old }) => old === slug);
   if (!redir) return;
-  return redir.new
+  return `/${redir.new}`
 }, "docs/redirection");
 
 export default function Redirect() {

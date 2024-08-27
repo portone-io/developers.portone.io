@@ -9,7 +9,6 @@ import {
   isYAMLScalar,
   isYAMLSequence,
   resolvePathname,
-  resolveRedirect,
   type RuleModule,
 } from "../utils.js";
 
@@ -41,17 +40,8 @@ export const rule: RuleModule = {
   },
   create(context) {
     const { name: filename, dir } = path.parse(context.physicalFilename);
-    const baseDir = path.resolve(dir, "..");
-    const options = context.options[0] as unknown;
-    const redirects: Map<string, string> =
-      options &&
-      typeof options === "object" &&
-      "redirects" in options &&
-      options.redirects &&
-      typeof options.redirects === "object"
-        ? new Map<string, string>(Object.entries(options.redirects))
-        : new Map<string, string>();
 
+    const baseDir = path.resolve(dir, "..");
     if (filename !== "_nav") return {};
     const files = new Set(
       FastGlob.sync("**/*", { cwd: baseDir }).map(resolvePathname),
@@ -79,9 +69,7 @@ export const rule: RuleModule = {
         }
         if (url && isLocalLink(url)) {
           url = url.split(/[#?]/)[0] ?? "";
-          const resolvedUrl = resolveRedirect(redirects, url);
-          if (!isLocalLink(resolvedUrl)) return;
-          isFileExists(resolvedUrl, [], files, (reason) => {
+          isFileExists(url, [], files, (reason) => {
             context.report({
               loc: node.loc,
               message: reason,
