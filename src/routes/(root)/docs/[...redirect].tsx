@@ -24,6 +24,4 @@ export default function Redirect() {
 
   if (!destination) throw new NotFoundError();
   else return <Navigate href={destination} />
-
-
 }
