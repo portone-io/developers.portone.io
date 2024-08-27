@@ -133,14 +133,7 @@ export default [
     },
     rules: {
       "redir/local-links-valid": "error",
-      "nav/local-links-valid": [
-        "error",
-        {
-          redirects: Object.fromEntries(
-            redirects.map(({ old: from, new: to }) => [from, to]),
-          ),
-        },
-      ],
+      "nav/local-links-valid": "error",
     },
   },
 ];
