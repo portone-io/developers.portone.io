@@ -40,7 +40,7 @@ const tsTypeCheckedRules = {
 
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
-  { ignores: ["dist", ".vercel"] },
+  { ignores: ["dist", ".vercel", "**/docs/**/*"] },
   {
     ...eslint.configs.recommended,
     ignores: ["scripts/**/*.ts", "**/*.mdx/*"],
@@ -133,14 +133,7 @@ export default [
     },
     rules: {
       "redir/local-links-valid": "error",
-      "nav/local-links-valid": [
-        "error",
-        {
-          redirects: Object.fromEntries(
-            redirects.map(({ old: from, new: to }) => [from, to]),
-          ),
-        },
-      ],
+      "nav/local-links-valid": "error",
     },
   },
 ];

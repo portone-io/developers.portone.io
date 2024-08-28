@@ -38,7 +38,9 @@ export function SystemVersionProvider(props: { children: JSXElement }) {
     void params.v; // subscribe to params
     if (
       !isRouting() &&
-      [/^\/docs\//, /^\/api\//].some((regex) => regex.test(location.pathname))
+      [/^\/docs\//, /^\/api\//, /^\/opi\//].some((regex) =>
+        regex.test(location.pathname),
+      )
     ) {
       setParams({ v }, { replace: true });
     }

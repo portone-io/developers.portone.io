@@ -78,7 +78,7 @@ export default {
         redirects: Object.fromEntries(
           redirects.map((redir) => {
             const { old: from, new: to } = redir;
-            return [prefix(from), prefix(to)];
+            return [prefix(from), to];
             function prefix(str) {
               if (str.startsWith("/")) {
                 return "docs" + str;

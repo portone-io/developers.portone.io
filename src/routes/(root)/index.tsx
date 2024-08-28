@@ -1,5 +1,5 @@
 import { Navigate } from "@solidjs/router";
 
 export default function Index() {
-  return <Navigate href="/docs/ko/readme" />;
+  return <Navigate href="/opi/ko/readme" />;
 }
