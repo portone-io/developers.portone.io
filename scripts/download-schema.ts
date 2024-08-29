@@ -89,11 +89,6 @@ export function processV2Openapi(schema: any): any {
     }
     delete node["x-portone-fields"];
   });
-  traverseEveryProperty(schema, (node, property) => {
-    if (typeof node[property] !== "string") return;
-    if (!mdProperties.has(property)) return;
-    node[property] = renderGfm(node[property]);
-  });
   return schema;
 }
 
