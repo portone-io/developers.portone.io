@@ -32,13 +32,26 @@ import Hint from "~/components/Hint";
   수기결제처럼 API 호출만으로 진행하는 본인인증도 지원하고 있습니다. REST API 문서의 해당 부분 설명을 참고해 주세요.
 </Hint>
 
-## 1. 포트원 SDK 설치
+## 통합인증
 
-본인인증창을 이용해 빌링키를 발급할 때는 포트원 SDK를 이용합니다.
+통합인증 서비스란 카카오톡 인증서, 네이버 인증서 등의 민간 인증서를 통한 인증 절차를 거쳐 본인 여부와 입력한 정보의
+정확성을 확인하여 주는 서비스입니다. 통합인증은 **KG이니시스**를 통해 제공되며 민간 인증서를
+이용하거나 사용자 본인이 가입된 간편인증을 통해 인증요청을 보내고 간편인증 페이지에서 인증처리를
+하는 방식으로 이루어집니다.
+
+> **이용가능 수단 : 네이버 / PASS / 페이코 / TOSS / 금융인증서 / 카카오 / 신한 / KB모바일 / 삼성패스**
+
+<Figure src="/gitbook-assets/ko/image (24) (2).png" caption="휴대폰 본인인증 화면 예시" width="280px" />
+
+## SDK를 사용한 본인인증
+
+포트원을 이용한 본인인증의 Flow는 휴대폰 본인인증, 통합인증 모두 JavaScript SDK를 이용하여 본인인증을 완료하고 고객사 서버에서 포트원 REST API를 이용하여 <mark style="color:blue;">**인증완료정보를 획득**</mark>하는 방법으로 진행됩니다.
+
+### 1. 포트원 SDK 설치
 
 포트원 SDK를 설치하는 방법은 [인증 결제 연동하기](/opi/ko/integration/start/v2/checkout) 문서를 참고하세요.
 
-## 2. 본인인증 요청하기
+### 2. 본인인증 요청하기
 
 SDK의 `PortOne.requestIdentityVerification()` 함수를 호출하여 본인인증창을 열 수 있습니다.
 
@@ -60,7 +73,7 @@ PortOne.requestIdentityVerification({
 같은 identityVerificationId에 대해 여러 번의 본인인증 시도가 가능하나, 최종적으로 인증에 성공하는
 것은 단 한 번만 가능합니다.
 
-## 3. 본인인증 완료 처리 (브라우저)
+### 3. 본인인증 완료 처리 (브라우저)
 
 `PortOne.requestIdentityVerification()` 함수의 반환값을 통해 본인인증 요청의 결과를 확인합니다.
 
@@ -94,7 +107,7 @@ const verificationResult = await fetch("{서버의 인증 정보를 받는 endpo
 |code                  |오류 코드     |실패 시|
 |message               |오류 문구     |실패 시|
 
-### 3-1. redirect 방식의 경우
+#### 3-1. redirect 방식의 경우
 
 모바일 환경에서의 본인인증은 대부분 redirect 방식으로 이루어집니다. redirect 방식에서는 브라우저가
 본인인증창으로 리다이렉트되었다가, 인증창에서의 작업이 끝나면 지정한 `redirectUrl`로 다시
@@ -121,7 +134,7 @@ PortOne.requestIdentityVerification({
 `https://example.com/identity-verification-redirect?identityVerificationId=identity-verification-39ecfa97`로
 리다이렉트됩니다.
 
-## 4. 인증 완료 처리 (서버)
+### 4. 인증 완료 처리 (서버)
 
 본인인증 완료 이후 획득한 `identityVerificationId`를 이용하여 고객 인증정보를 조회할 수 있습니다.
 
@@ -152,7 +165,7 @@ app.post("/identity-verifications", async (req, res) => {
 });
 ```
 
-### 인증 정보 활용하기
+#### 인증 정보 활용하기
 
 조회한 인증 정보에서 다음의 고객 정보를 추출하는 서비스 코드 예제입니다.
 아래 파라미터들은 모두 본인인증 단건 조회의 결과가 인증 완료 상태일 때 (status = `VERIFIED`) 제공되는 `verifiedCustomer` 필드 내에 존재합니다.
