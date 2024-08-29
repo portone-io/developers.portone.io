@@ -10,6 +10,7 @@ import {
 } from "solid-js";
 
 import * as prose from "~/components/prose";
+import { toHtml } from "~/misc/md";
 import { expandAndScrollTo, useExpand } from "~/state/rest-api/expand-section";
 
 import { interleave } from "..";
@@ -528,9 +529,13 @@ interface DescriptionDocProps {
   showNested?: boolean | undefined;
 }
 function DescriptionDoc(props: DescriptionDocProps) {
-  const description = createMemo(
+  const rawDescription = createMemo(
     () => props.typeDef["x-portone-description"] ?? props.typeDef.description,
   );
+  const description = createMemo(() => {
+    const markdown = rawDescription();
+    return markdown == null ? markdown : toHtml(markdown);
+  });
   const summary = createMemo(
     () => props.typeDef["x-portone-summary"] ?? props.typeDef.summary,
   );

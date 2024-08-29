@@ -1,6 +1,7 @@
 import { createMemo, For, type JSXElement, Show } from "solid-js";
 
 import * as prose from "~/components/prose";
+import { toHtml } from "~/misc/md";
 
 import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";
 import DescriptionArea from "../DescriptionArea";
@@ -267,13 +268,17 @@ interface ReqResProps {
   children: JSXElement;
 }
 function ReqRes(props: ReqResProps) {
+  const description = createMemo(() => {
+    const markdown = props.description;
+    return markdown == null ? markdown : toHtml(markdown);
+  });
   return (
     <div>
       <Show when={props.title}>
         <div class="mb-1 inline-flex gap-2 text-xs">
           <h4 class="shrink-0 font-bold uppercase">{props.title}</h4>
-          <Show when={props.description}>
-            <div class="text-slate-5" innerHTML={props.description} />
+          <Show when={description()}>
+            <div class="text-slate-5" innerHTML={description()} />
           </Show>
         </div>
       </Show>
