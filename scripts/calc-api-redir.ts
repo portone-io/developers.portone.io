@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run -A
 
-import { walkSync } from "https://deno.land/std@0.202.0/fs/walk.ts";
-import { stringify } from "https://deno.land/std@0.202.0/yaml/mod.ts";
+import { walkSync } from "jsr:@std/fs@1.0.2/walk";
+import { stringify } from "jsr:@std/yaml@1.0.4";
 import schema from "../src/schema/v1.openapi.json" with { type: "json" };
 
 const redirList = [];
