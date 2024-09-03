@@ -17,7 +17,7 @@ interface Props {
   children: JSXElement;
 }
 
-const navAsMenuPaths = ["/opi", "/platform", "/blog", "/release-notes"];
+const navAsMenuPaths = ["/platform", "/blog", "/release-notes"];
 
 export default function Layout(props: Props) {
   const location = useLocation();
