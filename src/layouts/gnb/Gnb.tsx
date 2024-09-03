@@ -80,93 +80,95 @@ export default function Gnb(props: Props) {
                 <VersionSwitch docData={props.docData} />
               </div>
             </div>
-            <div
-              class={clsx(
-                "flex gap-6 md:h-full items-center",
-                props.navAsMenu
-                  ? "<md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white)"
-                  : "<md:hidden",
-                props.navAsMenu &&
-                  sidebarContext.get() &&
-                  "<md:(translate-y-full shadow-lg)",
-              )}
-            >
-              <Show when={props.lang === "ko"}>
-                <For each={navs}>
-                  {(nav) => (
-                    <A
-                      class="h-full inline-flex items-center"
-                      href={nav.pathname}
-                      onClick={() => {
-                        if (props.navAsMenu) sidebarContext.set(false);
-                      }}
-                    >
-                      <span
-                        class={clsx(
-                          location.pathname.startsWith(nav.pathname) &&
-                            styles.navActive,
-                        )}
+            <Show when={location.pathname.startsWith("/opi") === false}>
+              <div
+                class={clsx(
+                  "flex gap-6 md:h-full items-center",
+                  props.navAsMenu
+                    ? "<md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white)"
+                    : "<md:hidden",
+                  props.navAsMenu &&
+                    sidebarContext.get() &&
+                    "<md:(translate-y-full shadow-lg)",
+                )}
+              >
+                <Show when={props.lang === "ko"}>
+                  <For each={navs}>
+                    {(nav) => (
+                      <A
+                        class="h-full inline-flex items-center"
+                        href={nav.pathname}
+                        onClick={() => {
+                          if (props.navAsMenu) sidebarContext.set(false);
+                        }}
                       >
-                        {nav.label}
-                      </span>
-                    </A>
-                  )}
-                </For>
-              </Show>
-              <Dropdown
-                serverSystemVersion={serverSystemVersion}
-                link={{ v1: "/api/rest-v1", v2: "/api/rest-v2" }}
-                items={[
-                  {
-                    label: "REST API V1",
-                    link: "/api/rest-v1",
-                    systemVersion: "v1",
-                  },
-                  {
-                    label: "REST API V2",
-                    link: "/api/rest-v2",
-                    systemVersion: "v2",
-                  },
-                  // { label: "GraphQL API", link: "/api/graphql" },
-                  {
-                    label: t()["sdk-playground"],
-                    link: "https://sdk-playground.portone.io/",
-                  },
-                ]}
-              >
-                <span
-                  class={clsx(
-                    location.pathname.startsWith("/api") && "nav-active",
-                  )}
+                        <span
+                          class={clsx(
+                            location.pathname.startsWith(nav.pathname) &&
+                              styles.navActive,
+                          )}
+                        >
+                          {nav.label}
+                        </span>
+                      </A>
+                    )}
+                  </For>
+                </Show>
+                <Dropdown
+                  serverSystemVersion={serverSystemVersion}
+                  link={{ v1: "/api/rest-v1", v2: "/api/rest-v2" }}
+                  items={[
+                    {
+                      label: "REST API V1",
+                      link: "/api/rest-v1",
+                      systemVersion: "v1",
+                    },
+                    {
+                      label: "REST API V2",
+                      link: "/api/rest-v2",
+                      systemVersion: "v2",
+                    },
+                    // { label: "GraphQL API", link: "/api/graphql" },
+                    {
+                      label: t()["sdk-playground"],
+                      link: "https://sdk-playground.portone.io/",
+                    },
+                  ]}
                 >
-                  API & SDK
-                </span>
-              </Dropdown>
-              <Dropdown
-                serverSystemVersion={serverSystemVersion}
-                link={undefined}
-                items={[
-                  {
-                    label: "릴리즈 노트",
-                    link: "/release-notes",
-                    systemVersion: undefined,
-                  },
-                  {
-                    label: "기술 블로그",
-                    link: "/blog",
-                    systemVersion: undefined,
-                  },
-                ]}
-              >
-                <span
-                  class={clsx(
-                    location.pathname.startsWith("/api") && "nav-active",
-                  )}
+                  <span
+                    class={clsx(
+                      location.pathname.startsWith("/api") && "nav-active",
+                    )}
+                  >
+                    API & SDK
+                  </span>
+                </Dropdown>
+                <Dropdown
+                  serverSystemVersion={serverSystemVersion}
+                  link={undefined}
+                  items={[
+                    {
+                      label: "릴리즈 노트",
+                      link: "/release-notes",
+                      systemVersion: undefined,
+                    },
+                    {
+                      label: "기술 블로그",
+                      link: "/blog",
+                      systemVersion: undefined,
+                    },
+                  ]}
                 >
-                  리소스
-                </span>
-              </Dropdown>
-            </div>
+                  <span
+                    class={clsx(
+                      location.pathname.startsWith("/api") && "nav-active",
+                    )}
+                  >
+                    리소스
+                  </span>
+                </Dropdown>
+              </div>
+            </Show>
           </div>
           <div class="hidden h-full items-center gap-4 pr-6 md:flex">
             <a
