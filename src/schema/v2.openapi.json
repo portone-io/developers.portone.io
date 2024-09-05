@@ -5309,7 +5309,6 @@
                     "gender": "FEMALE",
                     "isForeigner": false,
                     "ci": "ci-value",
-                    "ci2": "ci2-value",
                     "di": "di-value"
                   },
                   "customData": "your-custom-data-string",
@@ -7125,7 +7124,7 @@
       "post": {
         "summary": "빌링키 결제",
         "description": "빌링키 결제\n\n빌링키로 결제를 진행합니다.",
-        "operationId": "PayWithBillingKey",
+        "operationId": "payWithBillingKey",
         "parameters": [
           {
             "name": "paymentId",
@@ -7241,7 +7240,7 @@
       "post": {
         "summary": "수기 결제",
         "description": "수기 결제\n\n수기 결제를 진행합니다.",
-        "operationId": "PayInstantly",
+        "operationId": "payInstantly",
         "parameters": [
           {
             "name": "paymentId",
@@ -12476,7 +12475,7 @@
       "get": {
         "summary": "카카오페이 주문 조회 API",
         "description": "카카오페이 주문 조회 API\n\n주어진 아이디에 대응되는 카카오페이 주문 건을 조회합니다.\n해당 API 사용이 필요한 경우 포트원 기술지원팀으로 문의 주시길 바랍니다.",
-        "operationId": "GetKakaopayPaymentOrder",
+        "operationId": "getKakaopayPaymentOrder",
         "parameters": [
           {
             "name": "pgTxId",
@@ -14261,7 +14260,7 @@
           "brn": {
             "type": "string",
             "title": "사업자등록번호",
-            "description": "- 없이 숫자 10자리로 구성됩니다."
+            "description": "`-` 없이 숫자 10자리로 구성됩니다."
           },
           "documentKey": {
             "type": "string",
@@ -14798,7 +14797,7 @@
           "brn": {
             "type": "string",
             "title": "사업자등록번호",
-            "description": "- 없이 숫자로만 구성됩니다."
+            "description": "`-` 없이 숫자로만 구성됩니다."
           },
           "name": {
             "type": "string",
@@ -15291,7 +15290,7 @@
           "brn": {
             "type": "string",
             "title": "사업자등록번호",
-            "description": "- 를 제외한 10자리"
+            "description": "`-`를 제외한 10자리"
           },
           "taxRegistrationId": {
             "type": "string",
@@ -24735,7 +24734,8 @@
           "requestedCustomer",
           "requestedAt",
           "updatedAt",
-          "statusChangedAt"
+          "statusChangedAt",
+          "failure"
         ],
         "properties": {
           "status": {
@@ -24772,6 +24772,10 @@
             "type": "string",
             "format": "date-time",
             "title": "상태 업데이트 시점"
+          },
+          "failure": {
+            "$ref": "#/components/schemas/IdentityVerificationFailure",
+            "title": "본인인증 실패 정보"
           }
         },
         "x-portone-title": "실패한 본인인증 내역"
@@ -24794,7 +24798,8 @@
           "amount",
           "currency",
           "customer",
-          "failedAt"
+          "failedAt",
+          "failure"
         ],
         "properties": {
           "status": {
@@ -24919,6 +24924,10 @@
             "type": "string",
             "format": "date-time",
             "title": "결제 실패 시점"
+          },
+          "failure": {
+            "$ref": "#/components/schemas/PaymentFailure",
+            "title": "결제 실패 정보"
           }
         },
         "x-portone-title": "결제 실패 상태 건"
@@ -29114,6 +29123,26 @@
         "x-portone-title": "본인인증 건이 이미 인증 완료된 상태인 경우",
         "x-portone-status-code": 409
       },
+      "IdentityVerificationFailure": {
+        "title": "본인인증 실패 정보",
+        "description": "본인인증 실패 정보",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "실패 사유"
+          },
+          "pgCode": {
+            "type": "string",
+            "title": "PG사 실패 코드"
+          },
+          "pgMessage": {
+            "type": "string",
+            "title": "PG사 실패 메시지"
+          }
+        },
+        "x-portone-title": "본인인증 실패 정보"
+      },
       "IdentityVerificationMethod": {
         "title": "본인인증 방식",
         "description": "본인인증 방식",
@@ -29255,27 +29284,22 @@
           "gender": {
             "$ref": "#/components/schemas/Gender",
             "title": "성별",
-            "description": "다날: 항상 제공합니다.\nKG이니시스: 본인확인에서 제공합니다."
+            "description": "다날: 항상 제공합니다.\nKG이니시스: 항상 제공합니다."
           },
           "isForeigner": {
             "type": "boolean",
             "title": "외국인 여부",
-            "description": "다날: 별도 계약이 필요합니다.\nKG이니시스: 본인확인에서만 제공합니다."
+            "description": "다날: 별도 계약이 필요합니다.\nKG이니시스: 항상 제공합니다."
           },
           "ci": {
             "type": "string",
             "title": "CI (개인 고유 식별키)",
             "description": "개인을 식별하기 위한 고유 정보입니다.\n다날: 항상 제공합니다.\nKG이니시스: 카카오를 제외한 인증사에서 제공합니다."
           },
-          "ci2": {
-            "type": "string",
-            "title": "CI2 (개인 고유 백업 식별키)",
-            "description": "기존 CI가 유출 등의 이유로 사용할 수 없는 경우에 사용됩니다. 평상시에는 제공되지 않습니다.\n다날: 제공하지 않습니다.\nKG이니시스: 본인확인에서 제공합니다."
-          },
           "di": {
             "type": "string",
             "title": "DI (사이트별 개인 고유 식별키)",
-            "description": "중복 가입을 방지하기 위해 개인을 식별하는 사이트별 고유 정보입니다.\n다날: 항상 제공합니다.\nKG이니시스: 본인확인에서 제공합니다."
+            "description": "중복 가입을 방지하기 위해 개인을 식별하는 사이트별 고유 정보입니다.\n다날: 항상 제공합니다.\nKG이니시스: 제공하지 않습니다."
           }
         },
         "x-portone-title": "인증된 고객 정보"
@@ -31538,6 +31562,26 @@
           }
         },
         "x-portone-title": "에스크로 발송자 정보"
+      },
+      "PaymentFailure": {
+        "title": "결제 실패 정보",
+        "description": "결제 실패 정보",
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "실패 사유"
+          },
+          "pgCode": {
+            "type": "string",
+            "title": "PG사 실패 코드"
+          },
+          "pgMessage": {
+            "type": "string",
+            "title": "PG사 실패 메시지"
+          }
+        },
+        "x-portone-title": "결제 실패 정보"
       },
       "PaymentFilterInput": {
         "title": "결제 건 다건 조회를 위한 입력 정보",
