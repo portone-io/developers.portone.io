@@ -19,7 +19,7 @@ import image03 from "./_assets/channel3.png";
 import image04 from "./_assets/channel4.png";
 import image05 from "./_assets/channel5.png";
 import image06 from "./_assets/channel6.png";
-import image3 from "./_assets/email_auth.png"
+import image3 from "./_assets/email_auth.png";
 import image1 from "./_assets/login.png";
 import image15 from "./_assets/pg/inicis.png";
 import image16 from "./_assets/pg/kcp1.png";
@@ -43,11 +43,11 @@ import image9 from "./_assets/pg/welcome.png";
 import image10 from "./_assets/pg/welcome1.png";
 import image2 from "./_assets/signup.png";
 import storeid from "./_assets/storeid.png";
-import IntegrationHyphen from './_components/integration-guide/hyphen.mdx';
-import IntegrationInicis from './_components/integration-guide/inicis.mdx';
+import IntegrationHyphen from "./_components/integration-guide/hyphen.mdx";
+import IntegrationInicis from "./_components/integration-guide/inicis.mdx";
 import IntegrationKcpV2 from "./_components/integration-guide/kcp-v2.mdx";
-import IntegrationPaypalV2 from './_components/integration-guide/paypal-v2.mdx';
-import IntegrationTosspayments from './_components/integration-guide/tosspayments.mdx';
+import IntegrationPaypalV2 from "./_components/integration-guide/paypal-v2.mdx";
+import IntegrationTosspayments from "./_components/integration-guide/tosspayments.mdx";
 
 ## <span id="registration">1. 포트원 회원가입 하기</span>
 
@@ -65,9 +65,7 @@ import IntegrationTosspayments from './_components/integration-guide/tosspayment
 
 <Figure src={image3} width={480} caption="인증 메일 내용 예시" />
 
-<Hint style="info">
-  메일을 받지 못하신 경우 스팸메일함을 확인해주세요.
-</Hint>
+<Hint style="info">메일을 받지 못하신 경우 스팸메일함을 확인해주세요.</Hint>
 
 <br />
 
@@ -86,7 +84,8 @@ import IntegrationTosspayments from './_components/integration-guide/tosspayment
 **아직 전자결제 신청 전이라면 상세 가이드를 참고하여 전자결제를 신청해보세요!** [→ 전자결제 신청 상세 가이드 바로가기](http://help.portone.io/category/procedure/pg-application)
 
 <Hint style="info">
-  전자결제 신청 전 테스트를 하고싶으신 분은 아래 결제대행사 채널 설정하기를 참고하신 후 테스트 환경으로 채널 추가하여 테스트를 진행하실 수 있습니다.
+  전자결제 신청 전 테스트를 하고싶으신 분은 아래 결제대행사 채널 설정하기를
+  참고하신 후 테스트 환경으로 채널 추가하여 테스트를 진행하실 수 있습니다.
 </Hint>
 
 ## <span id="channel-config">3. 결제대행사 채널 설정하기</span>
@@ -399,7 +398,15 @@ import IntegrationTosspayments from './_components/integration-guide/tosspayment
     </VersionGate>
 
     <VersionGate v="v2">
-      <IntegrationInicis />
+      <Tabs>
+        <Tabs.Tab title="결제창 일반/정기 결제">
+          <IntegrationInicis />
+        </Tabs.Tab>
+
+        <Tabs.Tab title="통합 본인인증">
+          포트원 콘솔에서 채널 추가 시 계약 완료 후 이니시스로부터 전달받은 \[MID]와 \[apikey]를 입력한 후 `저장`을 클릭합니다.
+        </Tabs.Tab>
+      </Tabs>
     </VersionGate>
   </Details.Content>
 </Details>
@@ -676,6 +683,8 @@ import IntegrationTosspayments from './_components/integration-guide/tosspayment
 <VersionGate v="v1">
   - 관리자 콘솔 화면에서 \[결제 연동] → \[연동 관리] → \[식별코드·API Keys] 메뉴에서 \[V1 API]를 선택하여 고객사 식별코드, REST API Key, REST API Secret을 확인할 수 있습니다.
 
+  {" "}
+
   <Figure src={image07} />
 
   <Hint style="info">
@@ -703,23 +712,27 @@ import IntegrationTosspayments from './_components/integration-guide/tosspayment
 
   포트원을 이용한 결제 연동 시 필요한 스토어 아이디(Store ID)를 복사할 수 있습니다.
 
+  {" "}
+
   <Figure src={storeid} />
 
   - 관리자 콘솔 화면에서 \[결제 연동] → \[연동 관리] 화면에서 스토어 아이디를 복사할 수 있습니다.
 
-  <Hint style="info">
-    **스토어 아이디(Store ID)란?**
+    <Hint style="info">
+      **스토어 아이디(Store ID)란?**
 
-    - 포트원 가입 시 \[대표 상점]이 생성되며, 자동으로 생성되는 고유값 입니다.
-    - 추가로 하위 상점을 생성하는 경우 **상점마다 고유하게 부여**됩니다.
-    - 결제창 연동 시 사용되며, 결제 호출 시 `storeId` 파라미터에 해당 값을 넣어야 합니다.
-    - **기술 문의 시 해당 값을 공유**해 주시면 빠르게 문제 해결을 도와드릴 수 있습니다.
-  </Hint>
+      - 포트원 가입 시 \[대표 상점]이 생성되며, 자동으로 생성되는 고유값 입니다.
+      - 추가로 하위 상점을 생성하는 경우 **상점마다 고유하게 부여**됩니다.
+      - 결제창 연동 시 사용되며, 결제 호출 시 `storeId` 파라미터에 해당 값을 넣어야 합니다.
+      - **기술 문의 시 해당 값을 공유**해 주시면 빠르게 문제 해결을 도와드릴 수 있습니다.
+    </Hint>
 
   ### 4-2. V2 API Secret 발급하기
 
   V2 API를 연동하기 위해서는 V2 API Secret을 별도로 발급한 후 사용이 가능합니다.
   V2 API Secret 은 **Owner, Admin** 계정에서만 발급 및 삭제가 가능합니다.
+
+  {" "}
 
   <Figure src={apiVerV2} />
 
@@ -728,9 +741,12 @@ import IntegrationTosspayments from './_components/integration-guide/tosspayment
   - Secret 목록에 표시될 `Secret 이름`을 입력하고 `만료 기한`을 선택한 후 `생성`을 클릭합니다.
   - 생성된 Secret을 복사합니다. `API Secret을 확인했습니다`를 누른 후엔 Secret 값을 확인할 수 없으니 주의해 주세요.
 
+  {" "}
+
   <Hint style="danger">
-    API Secret 발급 직후에만 값을 확인할 수 있습니다. 페이지를 벗어나면 API Secret 확인이 불가하오니 복사한 후 임의의 장소에 저장하여 사용하세요.
-    만약, API Secret 값을 잊어버리신 경우 새로 발급받아 사용해야 합니다.
+    API Secret 발급 직후에만 값을 확인할 수 있습니다. 페이지를 벗어나면 API Secret
+    확인이 불가하오니 복사한 후 임의의 장소에 저장하여 사용하세요. 만약, API
+    Secret 값을 잊어버리신 경우 새로 발급받아 사용해야 합니다.
   </Hint>
 
   <Hint style="info">

@@ -33,9 +33,9 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
 `pgProvider` 파라미터가 없는 경우에 필수로 존재해야 합니다. 두 파라미터가 모두 존재하는 경우 `channelKey`를 적용하니 둘 중 하나만 제공해주세요.
 
-### **`pgProvider`** <mark style="color:green;">**string**</mark>
+### **`pgProvider`** <mark style="color:green;">**string**</mark> <mark style="color:gray;">(Deprecated 예정)</mark>
 
-**PG사 구분코드**
+**PG사 구분코드** (2024년 09월 30일부터 사용이 불가능한 파라미터 입니다.)
 
 `channelKey` 파라미터가 없는 경우에 필수로 존재해야 합니다.
 
@@ -46,12 +46,13 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   <Details.Content>
     - `DANAL`
+    - `INICIS_UNIFIED`
   </Details.Content>
 </Details>
 
-### **`isTestChannel`** <mark style="color:orange;">**boolean**</mark>
+### **`isTestChannel`** <mark style="color:orange;">**boolean**</mark> <mark style="color:gray;">(Deprecated 예정)</mark>
 
-**테스트 채널 정보로 결제할지 여부**
+**테스트 채널 정보로 결제할지 여부** (2024년 09월 30일부터 사용이 불가능한 파라미터 입니다.)
 
 미입력 시 기본값은 `false`입니다.
 
@@ -445,12 +446,12 @@ import ParamTree from "~/components/gitbook/ParamTree";
 <ParamTree>
   - **`danal`** <mark style="color:blue;">**object**</mark>
 
-    다날 bypass 파라미터
+    **다날 bypass 파라미터**
 
     <ParamTree>
       - **`CPTITLE`** <mark style="color:green;">**string**</mark>
 
-        고객사 서비스 URL 혹은 본인확인 기능 사용 경로
+        **고객사 서비스 URL 혹은 본인확인 기능 사용 경로**
 
         - 본인확인 기능을 앱에서만 사용하는 경우 서비스 홈 URL 입력. Ex) `m.login.MarketC.co.kr`
         - 본인확인 기능을 사용하는 웹 페이지가 존재할 경우 해당 URL 입력. Ex) `www.MarketA.co.kr`
@@ -459,18 +460,69 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       - **`AGELIMIT`** <mark style="color:green;">**number**</mark>
 
-        본인인증을 진행할 수 있는 최소 나이
+        **본인인증을 진행할 수 있는 최소 나이**
 
         해당 값을 채워서 요청할 경우 본인인증을 진행할 수 있는 최소 나이를 설정할 수 있습니다.
 
       - **`IsCarrier`** <mark style="color:green;">**string**</mark>
 
-        통신사 정보
+        **통신사 정보**
 
         인증 화면에서 해당 통신사만 활성화시킬 수 있습니다.
 
         가능한 값: `SKT`, `KTF`, `LGT`, `MVNO`
 
         여러 개의 통신사를 활성화시키려면 위 값들을 semicolon(`;`) 으로 이어야 합니다. ex) `SKT;KTF`
+    </ParamTree>
+
+  - **`inicis`** <mark style="color:blue;">**object**</mark>
+
+    **KG이니시스 bypass 파라미터**
+
+    <ParamTree>
+      - **`directAgency`** <mark style="color:green;">**string**</mark>
+
+        **단독 노출할 인증 업체 코드**
+
+        인증 업체 선택 화면 없이 설정한 인증 업체를 통해 인증하도록 합니다.
+
+        <Details>
+          <Details.Summary>인증 업체 코드 확인하기</Details.Summary>
+
+          <Details.Content>
+            - PAYCO(페이코)
+            - PASS(패스 (통신사))
+            - TOSS(토스)
+            - KFTC(금융결제원)
+            - KAKAO(카카오)
+            - NAVER(네이버)
+            - SAMSUNG(삼성패스)
+            - SHINHAN(신한은행)
+            - KB(국민은행)
+            - HANA(하나은행)
+            - WOORI(우리은행)
+            - NH(농협은행)
+            - KAKAOBANK(카카오뱅크)
+            - SMS(휴대폰 인증, 별도 계약 필요)
+          </Details.Content>
+        </Details>
+
+      - **`flgFixedUser`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+        **인증 창에서 고객 정보를 미리 채울지 여부**
+
+        `Y`, `N` 중 하나를 입력해주세요.
+
+        `Y`인 경우 이름, 연락처, 출생년도, 출생월, 출생일을 필수로 입력해야 합니다.
+
+      - **`logoUrl`** <mark style="color:green;">**string**</mark>
+
+        **인증 창에 표시할 로고 URL**
+
+        인증 창 좌측 상단 이니시스 로고 대신 들어갈 로고의 URL입니다.
+        최적 크기는 가로 164px, 세로 28px입니다.
+
+        HTTP URL인 경우 로고가 표시되지 않을 수 있습니다.
+        
     </ParamTree>
 </ParamTree>
