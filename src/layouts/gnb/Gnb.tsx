@@ -46,7 +46,7 @@ export default function Gnb(props: Props) {
     },
     {
       pathname: "/platform",
-      label: "파트너 정산",
+      label: "파트너 정산 자동화",
     },
   ];
 
