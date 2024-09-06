@@ -1,16 +1,16 @@
 #!/usr/bin/env -S deno run -A
 
-import { ensureFile } from "https://deno.land/std@0.197.0/fs/ensure_file.ts";
-import { parse as parseYaml } from "https://deno.land/std@0.197.0/yaml/mod.ts";
-import { Input } from "https://deno.land/x/cliffy@v1.0.0-rc.3/prompt/input.ts";
+import { ensureFile } from "jsr:@std/fs@1.0.2/ensure-file";
+import { parse as parseYaml } from "jsr:@std/yaml@1.0.4";
+import { Input } from "jsr:@cliffy/prompt@1.0.0-rc.5/input";
 import {
   pollToken,
   requestCode,
   writeGhHosts,
-} from "https://deno.land/x/pbkit@v0.0.61/misc/github/auth.ts";
-import { getToken } from "https://deno.land/x/pbkit@v0.0.61/misc/github/index.ts";
-import { open } from "https://deno.land/x/pbkit@v0.0.61/misc/browser.ts";
-import { render as renderGfm } from "https://deno.land/x/gfm@0.2.5/mod.ts";
+} from "https://deno.land/x/pbkit@v0.0.70/misc/github/auth.ts";
+import { getToken } from "https://deno.land/x/pbkit@v0.0.70/misc/github/index.ts";
+import { open } from "https://deno.land/x/pbkit@v0.0.70/misc/browser.ts";
+import { render as renderGfm } from "jsr:@deno/gfm@0.9.0";
 
 const mdProperties = new Set([
   "summary",
@@ -88,11 +88,6 @@ export function processV2Openapi(schema: any): any {
       );
     }
     delete node["x-portone-fields"];
-  });
-  traverseEveryProperty(schema, (node, property) => {
-    if (typeof node[property] !== "string") return;
-    if (!mdProperties.has(property)) return;
-    node[property] = renderGfm(node[property]);
   });
   return schema;
 }

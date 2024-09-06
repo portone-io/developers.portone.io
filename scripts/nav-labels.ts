@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
 
-import { parse as parseYaml } from "https://deno.land/std@0.197.0/yaml/mod.ts";
+import { parse as parseYaml } from "jsr:@std/yaml@1.0.4";
 
 run("ko");
 
