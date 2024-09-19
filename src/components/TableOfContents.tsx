@@ -93,7 +93,7 @@ export default function TableOfContents(props: Props) {
   const activeId = useActiveId(() => props.headings, childActiveId);
 
   return (
-    <ul class="m-0 flex flex-col list-none gap-6px p-0">
+    <ul class="m-0 flex flex-col list-none gap-1 p-0">
       <For each={props.headings}>
         {(heading) => (
           <Item
@@ -126,7 +126,7 @@ function Item(props: {
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "py-6px block break-keep text-sm font-semibold",
+          "py-1 block break-keep text-.8125rem leading-5 font-500",
           props.isActive ? "text-slate-8" : "text-slate-4",
         )}
       >
@@ -168,14 +168,14 @@ function SubItem(props: {
   return (
     <li
       class={clsx(
-        "text-sm transition-colors duration-300",
+        "text-.8125rem leading-5 transition-colors duration-300",
         // props.isActive && "bg-slate-100",
       )}
     >
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "py-6px block break-keep font-medium text-sm transition-[padding-top,padding-bottom] duration-300",
+          "py-1 block break-keep font-medium text-.8125rem leading-5 transition-[padding-top,padding-bottom] duration-300 hover:text-portone",
           props.isActive
             ? "text-portone py-8px"
             : props.isParentActive

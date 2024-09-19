@@ -43,12 +43,15 @@ function RightSidebar(_props: RightSidebarProps) {
     <div class="hidden min-w-0 w-56 shrink-0 text-slate-7 lg:block">
       <Show when={toc()}>
         <nav class="fixed h-[calc(100%-56px)] w-inherit overflow-y-auto px-2 py-[28px]">
-          <h2 class="mb-2 px-2 font-bold">{t(props.lang, "toc")}</h2>
+          <h2 class="mb-2 px-2 font-500">{t(props.lang, "toc")}</h2>
           <ul>
             <For each={toc()}>
               {(item) => (
-                <SidebarItem href={`#${item.slug}`} label={item.text}>
-                  <ul class="pl-2">
+                <SidebarItem
+                  href={`#${item.slug}`}
+                  label={<span class="font-500">{item.text}</span>}
+                >
+                  <ul class="pl-3">
                     <For each={item.children}>
                       {(item) => (
                         <SidebarItem href={`#${item.slug}`} label={item.text} />
@@ -96,7 +99,7 @@ function SidebarItem(props: LinkProps) {
           document.getElementById(slug)?.scrollIntoView({ behavior: "smooth" });
         }}
       >
-        <div class="overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-sm text-slate-5 hover:bg-slate-1">
+        <div class="overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-.8125rem text-slate-4 leading-5 hover:bg-slate-1 hover:text-portone">
           <Show when={props.icon}>
             <>
               <i class={`${props.icon} inline-block align-top text-lg`}></i>{" "}

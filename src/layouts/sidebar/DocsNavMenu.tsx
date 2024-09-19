@@ -52,7 +52,7 @@ export default function DocsNavMenu(props: Props) {
         <SearchButton lang={props.lang} />
       </div>
       <nav id="nav-menu" class="relative flex-1 overflow-y-scroll">
-        <ul class="flex flex-col gap-1 px-2 pb-4">
+        <ul class="flex flex-col gap-1 px-4 pb-4">
           <For each={navMenuItems()}>
             {(item) => {
               if (item.type === "group") {
@@ -65,7 +65,7 @@ export default function DocsNavMenu(props: Props) {
                   >
                     <li class="[&:not(:last-child)]:mb-4">
                       <h4 class="p-2 text-lg font-bold first:mt-0">
-                        <span>{item.label}</span>
+                        <span class="font-500">{item.label}</span>
                       </h4>
                       <ul class="flex flex-col gap-1">
                         <For each={item.items}>

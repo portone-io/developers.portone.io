@@ -92,6 +92,7 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
           </button>
         </div>
         <div class="pl-2" classList={{ block: isOpen(), hidden: !isOpen() }}>
+          {/* TODO: 각 Depth마다 선택된 항목에 대해 브랜드 컬러 border를 적용하도록 수정 */}
           <ul class="flex flex-col gap-1 border-l pl-2">
             <For each={props.items}>
               {(item) => (
@@ -156,7 +157,7 @@ export function JustLink(props: JustLinkProps) {
 export function getLinkStyle(isActive: boolean): string {
   return `px-2 block text-sm rounded ${
     isActive
-      ? "font-bold text-orange-600 bg-orange-1"
+      ? "font-500 text-portone bg-orange-1"
       : "text-slate-500 hover:bg-slate-1"
   }`;
 }
