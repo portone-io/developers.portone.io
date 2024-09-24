@@ -144,7 +144,11 @@ export function SearchScreen(props: SearchScreenProps) {
               <ul>
                 <For each={searchResult()}>
                   {({ item }) => (
-                    <A href={`/${item.slug}`} tabIndex={0}>
+                    <A
+                      href={`/${item.slug}`}
+                      tabIndex={0}
+                      onClick={closeSearchScreen}
+                    >
                       <li class="px-4 py-2 hover:bg-slate-1">
                         <div class="text-sm">{item.title}</div>
                         <Show when={item.description}>
