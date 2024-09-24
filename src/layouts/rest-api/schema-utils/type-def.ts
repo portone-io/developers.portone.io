@@ -15,6 +15,7 @@ export interface TypeDef {
   items?: TypeDef | undefined;
   required?: string[] | undefined;
   properties?: Properties | undefined;
+  additionalProperties?: Property | undefined;
   /**
    * @deprecated use `x-portone-title`
    */
@@ -84,6 +85,9 @@ export function bakeProperties(
   }
   const resolvedDef = resolveTypeDef(schema, typeDef, true);
   const properties = Object.entries(resolvedDef.properties || {});
+  if (resolvedDef.additionalProperties) {
+    properties.push(["[key: string]", resolvedDef.additionalProperties]);
+  }
   return properties.map(([name, property]) => {
     const $ref = property.$ref;
     const resolvedProperty = resolveTypeDef(schema, property);
