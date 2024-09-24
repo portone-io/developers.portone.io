@@ -124,7 +124,8 @@ function narrowResponseSchema(
   const [statusCode, pair] = responseSchema;
   if (!pair.schema) return responseSchema;
   const responseTypeDef = followRef(schema, pair.schema);
-  if (!("discriminator" in responseTypeDef)) return responseSchema;
+  if (!("discriminator" in responseTypeDef && responseTypeDef.discriminator))
+    return responseSchema;
   const refs = Object.values(responseTypeDef.discriminator.mapping);
   const matches = refs
     .map((ref) => {
