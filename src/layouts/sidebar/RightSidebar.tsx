@@ -35,6 +35,7 @@ function RightSidebar(_props: RightSidebarProps) {
 
   createEffect(() => {
     void systemVersion();
+    void props.slug;
     setToc(headingsToToc(props.lang));
   });
 
