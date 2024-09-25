@@ -67,7 +67,7 @@ export function h5(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h5
       {...others}
       class={clsx(
-        "text-.875rem font-500 my-3 leading-[1.7] tracking-[-.006em]",
+        "text-.875rem font-medium my-3 leading-[1.7] tracking-[-.006em]",
         locals.class,
       )}
     >
@@ -82,7 +82,7 @@ export function h6(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h6
       {...others}
       class={clsx(
-        "text-.875rem font-500 my-3 leading-[1.7] tracking-[-.006em]",
+        "text-.875rem font-medium my-3 leading-[1.7] tracking-[-.006em]",
         locals.class,
       )}
     >

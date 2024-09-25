@@ -68,7 +68,7 @@ export function h5(props: JSX.IntrinsicElements["h5"]) {
     <h5
       {...rest}
       class={clsx(
-        "text-.875rem mt-8px mb-8px font-500 leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
+        "text-.875rem mt-8px mb-8px font-medium leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
         local.class,
       )}
     >
@@ -83,7 +83,7 @@ export function h6(props: JSX.IntrinsicElements["h6"]) {
     <h6
       {...rest}
       class={clsx(
-        "text-.875rem mt-8px mb-8px font-500 leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
+        "text-.875rem mt-8px mb-8px font-medium leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
         local.class,
       )}
     >

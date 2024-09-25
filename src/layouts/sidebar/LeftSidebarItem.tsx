@@ -157,7 +157,7 @@ export function JustLink(props: JustLinkProps) {
 export function getLinkStyle(isActive: boolean): string {
   return `px-2 block text-sm rounded ${
     isActive
-      ? "font-500 text-portone bg-orange-1"
+      ? "font-medium text-portone bg-orange-1"
       : "text-slate-500 hover:bg-slate-1"
   }`;
 }

@@ -4,6 +4,7 @@ import {
   createEffect,
   createSignal,
   For,
+  type JSXElement,
   onCleanup,
   Show,
   untrack,
@@ -12,6 +13,7 @@ import {
 import type { Heading } from "~/genCollections";
 
 interface Props {
+  children?: JSXElement;
   theme: "aside" | "island";
   headings: Heading[];
 }
@@ -126,7 +128,7 @@ function Item(props: {
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "py-1 block break-keep text-.8125rem leading-5 font-500",
+          "py-1 block break-keep text-.8125rem leading-5 font-medium",
           props.isActive ? "text-slate-8" : "text-slate-4",
         )}
       >

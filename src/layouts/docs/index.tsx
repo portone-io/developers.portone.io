@@ -74,7 +74,7 @@ export function Docs(props: { children: JSXElement }) {
                   ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
                   docsEntry={frontmatter()}
                 />
-                <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
+                <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-7">
                   <div class="mb-6">
                     <prose.h1 id="overview">{frontmatter().title}</prose.h1>
                     <Show when={frontmatter().description}>
@@ -91,8 +91,8 @@ export function Docs(props: { children: JSXElement }) {
           <div class="hidden shrink-10 basis-10 lg:block"></div>
           <RightSidebar
             lang={params().lang}
-            slug={params().slug}
             file={doc()?.file ?? ""}
+            headings={doc()?.headings ?? []}
           />
         </div>
       </div>

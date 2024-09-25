@@ -65,7 +65,7 @@ export default function DocsNavMenu(props: Props) {
                   >
                     <li class="[&:not(:last-child)]:mb-4">
                       <h4 class="p-2 text-lg font-bold first:mt-0">
-                        <span class="font-500">{item.label}</span>
+                        <span class="font-medium">{item.label}</span>
                       </h4>
                       <ul class="flex flex-col gap-1">
                         <For each={item.items}>
