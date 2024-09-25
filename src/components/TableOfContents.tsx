@@ -26,6 +26,10 @@ function useActiveId(
   const [activeId, setActiveId] = createSignal(headings()[0]?.id ?? null);
 
   createEffect(() => {
+    setActiveId(headings()[0]?.id ?? null);
+  });
+
+  createEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const currentHeadings = untrack(headings);
@@ -94,7 +98,7 @@ function useActiveId(
 export default function TableOfContents(props: Props) {
   const [childActiveId, setChildActiveId] = createSignal<string | null>(null);
   const [headings, setHeadings] = createSignal<Heading[]>([]);
-  const activeId = useActiveId(() => headings(), childActiveId);
+  const activeId = useActiveId(headings, childActiveId);
   const { systemVersion } = useSystemVersion();
 
   createEffect(() => {
