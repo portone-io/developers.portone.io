@@ -76,9 +76,7 @@ export default function Gnb(props: Props) {
                   <span class="break-keep">{t()["developers"]}</span>
                 </div>
               </A>
-              <div class="mx-6 md:ml-[70px]">
-                <VersionSwitch docData={props.docData} />
-              </div>
+              <div class="mx-6 md:ml-[70px]"></div>
             </div>
             <div
               class={clsx(
@@ -186,6 +184,7 @@ export default function Gnb(props: Props) {
             </div>
           </div>
           <div class="hidden h-full items-center gap-4 pr-6 md:flex">
+            <VersionSwitch docData={props.docData} />
             <a
               class="inline-flex items-center gap-1"
               href="https://admin.portone.io/"
