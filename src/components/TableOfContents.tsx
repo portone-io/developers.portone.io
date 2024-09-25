@@ -11,6 +11,7 @@ import {
 } from "solid-js";
 
 import type { Heading } from "~/genCollections";
+import { useSystemVersion } from "~/state/system-version";
 
 interface Props {
   children?: JSXElement;
@@ -92,11 +93,23 @@ function useActiveId(
 
 export default function TableOfContents(props: Props) {
   const [childActiveId, setChildActiveId] = createSignal<string | null>(null);
-  const activeId = useActiveId(() => props.headings, childActiveId);
+  const [headings, setHeadings] = createSignal<Heading[]>([]);
+  const activeId = useActiveId(() => headings(), childActiveId);
+  const { systemVersion } = useSystemVersion();
+
+  createEffect(() => {
+    void systemVersion();
+    setHeadings(
+      filterHeadingsById(
+        props.headings,
+        [...document.querySelectorAll("article :is(h2, h3)")].map((h) => h.id),
+      ),
+    );
+  });
 
   return (
     <ul class="m-0 flex flex-col list-none gap-1 p-0">
-      <For each={props.headings}>
+      <For each={headings()}>
         {(heading) => (
           <Item
             heading={heading}
@@ -213,4 +226,13 @@ function SubItem(props: {
       </Show>
     </li>
   );
+}
+
+function filterHeadingsById(headings: Heading[], ids: string[]): Heading[] {
+  return headings
+    .filter((heading) => ids.some((id) => id === heading.id))
+    .map((heading) => ({
+      ...heading,
+      children: filterHeadingsById(heading.children, ids),
+    }));
 }
