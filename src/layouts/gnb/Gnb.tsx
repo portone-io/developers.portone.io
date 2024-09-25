@@ -11,7 +11,7 @@ import Dropdown from "./Dropdown";
 import Logo from "./Logo";
 import styles from "./mobile-nav.module.css";
 import MobileMenuButton from "./MobileMenuButton";
-import VersionSwitch from "./VersionSwitch";
+import { VersionSwitch } from "./VersionSwitch";
 
 interface Props {
   lang: Lang;
