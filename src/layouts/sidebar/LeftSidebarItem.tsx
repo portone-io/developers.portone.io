@@ -1,4 +1,5 @@
 import { A, useLocation } from "@solidjs/router";
+import clsx from "clsx";
 import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 
 import { type NavMenuPage } from "~/state/nav";
@@ -92,8 +93,7 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
           </button>
         </div>
         <div class="pl-2" classList={{ block: isOpen(), hidden: !isOpen() }}>
-          {/* TODO: 각 Depth마다 선택된 항목에 대해 브랜드 컬러 border를 적용하도록 수정 */}
-          <ul class="flex flex-col gap-1 border-l pl-2">
+          <ul class="flex flex-col gap-1 border-l">
             <For each={props.items}>
               {(item) => (
                 <Show
@@ -102,7 +102,24 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
                     systemVersion() === item.systemVersion
                   }
                 >
-                  <LeftSidebarItem {...item} />
+                  {(_) => {
+                    const isActive = createMemo(
+                      () => location.pathname === `/opi${item.path}`,
+                    );
+                    return (
+                      <li class="relative">
+                        <div
+                          class={clsx(
+                            "pl-2",
+                            isActive() &&
+                              "before:pointer-events-none before:absolute before:inset-y-0 before:right-0 before:block before:w-[1px] before:bg-portone before:content-[''] before:-left-[1px]",
+                          )}
+                        >
+                          <LeftSidebarItem {...item} />
+                        </div>
+                      </li>
+                    );
+                  }}
                 </Show>
               )}
             </For>
@@ -157,7 +174,7 @@ export function JustLink(props: JustLinkProps) {
 export function getLinkStyle(isActive: boolean): string {
   return `px-2 block text-sm rounded ${
     isActive
-      ? "font-medium text-portone bg-orange-1"
+      ? "font-medium text-portone hover:bg-orange-1"
       : "text-slate-500 hover:bg-slate-1"
   }`;
 }
