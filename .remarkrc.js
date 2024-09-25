@@ -3,6 +3,7 @@
 import { readFileSync } from "node:fs";
 
 import { remarkLintLocalLinksValid } from "@portone-io/lint-local-links-valid";
+import { remarkLintNoJamo } from "@portone-io/lint-no-jamo";
 import { load } from "js-yaml";
 import stringWidth from "string-width";
 
@@ -89,6 +90,7 @@ export default {
         ),
       },
     ],
+    [remarkLintNoJamo],
   ],
   settings: {
     bullet: "-",
