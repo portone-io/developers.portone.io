@@ -8,7 +8,7 @@ export function h1(props: JSX.IntrinsicElements["h1"]) {
     <h1
       {...rest}
       class={clsx(
-        "text-1.875rem mt-12px mb-12px font-600 leading-[1.15] tracking-[-.021em] first:mt-0 last:mb-0",
+        "text-[24px] mt-12px mb-12px font-500 leading-[28.8px] tracking-[-.021em] first:mt-0 last:mb-0",
         local.class,
       )}
     >
@@ -23,7 +23,7 @@ export function h2(props: JSX.IntrinsicElements["h2"]) {
     <h2
       {...rest}
       class={clsx(
-        "text-1.625rem mt-12px mb-12px font-600 leading-[1.22] tracking-[-.02em] first:mt-0 last:mb-0",
+        "text-[20px] mt-12px mb-12px font-500 leading-[24px] tracking-[-.02em] first:mt-0 last:mb-0",
         local.class,
       )}
     >
@@ -38,7 +38,7 @@ export function h3(props: JSX.IntrinsicElements["h3"]) {
     <h3
       {...rest}
       class={clsx(
-        "text-1.375rem mt-12px mb-12px font-600 leading-[1.25] tracking-[-.018em] first:mt-0 last:mb-0",
+        "text-[18px] mt-12px mb-12px font-500 leading-[22px] tracking-[-.018em] first:mt-0 last:mb-0",
         local.class,
       )}
     >
@@ -53,7 +53,7 @@ export function h4(props: JSX.IntrinsicElements["h4"]) {
     <h4
       {...rest}
       class={clsx(
-        "text-1.125rem mt-8px mb-8px font-600 leading-[1.35] tracking-[-.014em] first:mt-0 last:mb-0",
+        "text-[15px] mt-8px mb-8px font-500 leading-[20px] tracking-[-.014em] first:mt-0 last:mb-0",
         local.class,
       )}
     >
@@ -98,7 +98,7 @@ export function p(props: JSX.IntrinsicElements["p"]) {
     <p
       {...rest}
       class={clsx(
-        "mt-8px mb-8px leading-[1.5] first:mt-0 last:mb-0",
+        "mt-8px mb-8px text-[15px] leading-[20px] font-400 first:mt-0 last:mb-0",
         local.class,
       )}
     >

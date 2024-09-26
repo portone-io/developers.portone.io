@@ -78,7 +78,7 @@ export function Docs(props: { children: JSXElement }) {
                   <div class="mb-6">
                     <prose.h1 id="overview">{frontmatter().title}</prose.h1>
                     <Show when={frontmatter().description}>
-                      <p class="my-4 text-xl text-gray">
+                      <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
                         {frontmatter().description}
                       </p>
                     </Show>
