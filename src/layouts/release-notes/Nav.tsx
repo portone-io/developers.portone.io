@@ -27,7 +27,7 @@ export default function Nav(props: Props) {
         />
         <NoteList
           notes={props.apiSdkNotes}
-          title="API / SDK"
+          title="원 페이먼트 인프라"
           activeSlug={activeSlug()}
         />
         <NoteList

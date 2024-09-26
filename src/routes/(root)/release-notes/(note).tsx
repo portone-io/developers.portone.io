@@ -53,7 +53,7 @@ export default function NoteLayout(props: { children: JSXElement }) {
   );
   const label = createMemo(() => {
     return {
-      apiSdkNotes: "API / SDK",
+      apiSdkNotes: "원 페이먼트 인프라",
       consoleNotes: "관리자콘솔",
       platformNotes: "파트너 정산 자동화",
     }[type()];
