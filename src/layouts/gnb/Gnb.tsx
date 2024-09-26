@@ -1,15 +1,14 @@
-import { A, useLocation } from "@solidjs/router";
+import { A } from "@solidjs/router";
 import { clsx } from "clsx";
-import { createMemo, For, Show, untrack } from "solid-js";
+import { createMemo, For, untrack } from "solid-js";
 
 import type { DocsEntry } from "~/content/config";
 import { useSidebarContext } from "~/layouts/sidebar/context";
 import { useSystemVersion } from "~/state/system-version";
-import type { Lang } from "~/type";
+import type { Lang, SystemVersion } from "~/type";
 
-import Dropdown from "./Dropdown";
+import Dropdown, { type DropdownItem } from "./Dropdown";
 import Logo from "./Logo";
-import styles from "./mobile-nav.module.css";
 import MobileMenuButton from "./MobileMenuButton";
 import { VersionSwitch } from "./VersionSwitch";
 
@@ -32,21 +31,97 @@ const en: typeof ko = {
   language: "Language",
 };
 
+type Nav = {
+  link?: string | Record<SystemVersion, string>;
+  label: string;
+  dropdownItems?: DropdownItem[];
+};
+
 export default function Gnb(props: Props) {
-  const location = useLocation();
   const t = createMemo(() => (props.lang === "ko" ? ko : en));
   const { systemVersion } = useSystemVersion();
   const serverSystemVersion = untrack(systemVersion);
   const sidebarContext = useSidebarContext();
 
-  const navs = [
+  const navs: Nav[] = [
     {
-      pathname: "/opi/ko",
+      link: "/opi/ko",
       label: "원 페이먼트 인프라",
+      dropdownItems: [
+        {
+          label: "퀵 가이드",
+        },
+        {
+          label: "연동하기",
+        },
+        {
+          label: "부가기능",
+        },
+      ],
     },
     {
-      pathname: "/platform",
+      link: "/platform",
       label: "파트너 정산 자동화",
+      dropdownItems: [
+        {
+          label: "서비스 가이드",
+        },
+        {
+          label: "사용 예시",
+        },
+      ],
+    },
+    {
+      label: "API & SDK",
+      link: { v1: "/api/rest-v1", v2: "/api/rest-v2" },
+      dropdownItems: [
+        {
+          label: "REST API V1",
+          link: "/api/rest-v1",
+          systemVersion: "v1",
+        },
+        {
+          label: "REST API V2",
+          link: "/api/rest-v2",
+          systemVersion: "v2",
+        },
+        {
+          label: "브라우저 SDK",
+          link: {
+            v1: "/sdk/ko/v1-sdk/javascript-sdk/readme",
+            v2: "/sdk/ko/v2-sdk/readme",
+          },
+        },
+        {
+          label: "모바일 SDK",
+          link: {
+            v1: "/sdk/ko/v1-mobile-sdk/readme",
+            v2: "/sdk/ko/v2-mobile-sdk/readme",
+          },
+        },
+        {
+          label: "서버 SDK",
+          link: "/sdk/ko/v2-server-sdk/readme",
+          systemVersion: "v2",
+        },
+        {
+          label: t()["sdk-playground"],
+          link: "https://sdk-playground.portone.io/",
+        },
+      ],
+    },
+    {
+      label: "리소스",
+      dropdownItems: [
+        {
+          label: "릴리즈 노트",
+          link: "/release-notes",
+        },
+        {
+          label: "기술 블로그",
+          link: "/blog",
+        },
+      ],
     },
   ];
 
@@ -89,98 +164,19 @@ export default function Gnb(props: Props) {
                   "<md:(translate-y-full shadow-lg)",
               )}
             >
-              <Show when={props.lang === "ko"}>
-                <For each={navs}>
-                  {(nav) => (
-                    <A
-                      class="h-full inline-flex items-center"
-                      href={nav.pathname}
-                      onClick={() => {
-                        if (props.navAsMenu) sidebarContext.set(false);
-                      }}
+              <For each={navs}>
+                {(nav) => {
+                  return (
+                    <Dropdown
+                      serverSystemVersion={serverSystemVersion}
+                      items={nav.dropdownItems}
+                      link={nav.link}
                     >
-                      <span
-                        class={clsx(
-                          location.pathname.startsWith(nav.pathname) &&
-                            styles.navActive,
-                        )}
-                      >
-                        {nav.label}
-                      </span>
-                    </A>
-                  )}
-                </For>
-              </Show>
-              <Dropdown
-                serverSystemVersion={serverSystemVersion}
-                link={{ v1: "/api/rest-v1", v2: "/api/rest-v2" }}
-                items={[
-                  {
-                    label: "REST API V1",
-                    link: "/api/rest-v1",
-                    systemVersion: "v1",
-                  },
-                  {
-                    label: "REST API V2",
-                    link: "/api/rest-v2",
-                    systemVersion: "v2",
-                  },
-                  {
-                    label: "브라우저 SDK",
-                    link: {
-                      v1: "/sdk/ko/v1-sdk/javascript-sdk/readme",
-                      v2: "/sdk/ko/v2-sdk/readme",
-                    },
-                  },
-                  {
-                    label: "모바일 SDK",
-                    link: {
-                      v1: "/sdk/ko/v1-mobile-sdk/readme",
-                      v2: "/sdk/ko/v2-mobile-sdk/readme",
-                    },
-                  },
-                  {
-                    label: "서버 SDK",
-                    link: "/sdk/ko/v2-server-sdk/readme",
-                  },
-                  {
-                    label: t()["sdk-playground"],
-                    link: "https://sdk-playground.portone.io/",
-                  },
-                ]}
-              >
-                <span
-                  class={clsx(
-                    location.pathname.startsWith("/api") && "nav-active",
-                  )}
-                >
-                  API & SDK
-                </span>
-              </Dropdown>
-              <Dropdown
-                serverSystemVersion={serverSystemVersion}
-                link={undefined}
-                items={[
-                  {
-                    label: "릴리즈 노트",
-                    link: "/release-notes",
-                    systemVersion: undefined,
-                  },
-                  {
-                    label: "기술 블로그",
-                    link: "/blog",
-                    systemVersion: undefined,
-                  },
-                ]}
-              >
-                <span
-                  class={clsx(
-                    location.pathname.startsWith("/api") && "nav-active",
-                  )}
-                >
-                  리소스
-                </span>
-              </Dropdown>
+                      <span>{nav.label}</span>
+                    </Dropdown>
+                  );
+                }}
+              </For>
             </div>
           </div>
           <div class="hidden h-full items-center gap-4 pr-6 md:flex">

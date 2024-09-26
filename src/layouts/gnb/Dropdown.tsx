@@ -7,12 +7,12 @@ import type { SystemVersion } from "~/type";
 export interface DropdownProps {
   children: JSXElement;
   link?: string | Record<SystemVersion, string>;
-  items: DropdownItem[];
+  items?: DropdownItem[];
   serverSystemVersion: SystemVersion;
 }
 export interface DropdownItem {
   label: JSXElement;
-  link: string | Record<SystemVersion, string>;
+  link?: string | Record<SystemVersion, string>;
   systemVersion?: SystemVersion;
 }
 export default function Dropdown(props: DropdownProps) {
@@ -43,12 +43,13 @@ export default function Dropdown(props: DropdownProps) {
           </A>
         )}
       </Show>
-      <div class="relative w-full">
-        {showItems() && (
+      <Show when={showItems() && props.items}>
+        <div class="relative w-full">
           <div class="absolute w-max flex flex-col border bg-white py-2 shadow-lg">
             <For each={props.items}>
               {(item) => {
                 const link = createMemo(() => {
+                  if (!item.link) return "";
                   if (typeof item.link === "string") return item.link;
                   return item.link[item.systemVersion ?? systemVersion()];
                 });
@@ -71,8 +72,8 @@ export default function Dropdown(props: DropdownProps) {
               }}
             </For>
           </div>
-        )}
-      </div>
+        </div>
+      </Show>
     </div>
   );
 }
