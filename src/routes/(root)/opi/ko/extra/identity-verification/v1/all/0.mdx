@@ -4,32 +4,31 @@ description: 통합인증 연동을 시작하기 위한 준비작업을 소개�
 targetVersions: ["v1"]
 ---
 
-import Hint from "~/components/Hint";
+import VersionGate from "~/components/gitbook/VersionGate";
+import Youtube from "~/components/gitbook/Youtube";
 
-## 통합인증을 연동할 페이지에 포트원 라이브러리를 추가합니다.
+## 1. 포트원 SDK 설치하기 <span id="sdk-installation" />
 
-<Hint style="info">
-  신용카드 본인인증 기능은 **포트원 JavaScript v1.1.8**부터 지원합니다.
-</Hint>
+포트원은 다양한 PG의 본인인증창을 통일된 방법으로 호출할 수 있도록 자바스크립트 SDK를 제공합니다.
+브라우저에서 포트원 SDK를 호출하여 본인인증을 진행하게 됩니다.
 
-```html title="client-side"
-<!-- jQuery -->
-<script
-  type="text/javascript"
-  src="https://code.jquery.com/jquery-1.12.4.min.js"
-></script>
-<!-- iamport.payment.js -->
-<script
-  type="text/javascript"
-  src="https://cdn.iamport.kr/js/iamport.payment-{SDK-최신버전}.js"
-></script>
-```
+<VersionGate v="v1">
+  결제창 연동을 진행할 주문 페이지에 아래 JS 라이브러리를 추가합니다.
 
-<Hint style="danger">
-  **jQuery 1.0 이상이 설치**되어 있어야 합니다.
-</Hint>
+  ```html
+  <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+  ```
 
-## 본인인증 페이지에 [<mark style="color:blue;">`고객사 식별코드`</mark>](/opi/ko/integration/ready/readme#4-포트원-연동정보-확인하기)를 이용하여 `IMP` 객체를 초기화합니다.
+  <Youtube videoId="FLyOmbtnr48" caption="포트원 라이브러리 추가하기" />
+</VersionGate>
+
+## 2. SDK 초기화하기 <span id="sdk-installation" />
+
+포트원 SDK를 사용하여 결제창을 호출하려면, 먼저 포트원 SDK를 초기화하여야 합니다.
+
+먼저, 관리자 콘솔의 결제 연동 페이지에서 **고객사 식별코드**를 확인해 주세요.
+
+그리고 결제창을 호출할 페이지에서 다음과 같이 포트원 SDK를 초기화합니다.
 
 ```ts title="client-side"
 IMP.init("{고객사 식별코드}"); // 예: imp00000000
