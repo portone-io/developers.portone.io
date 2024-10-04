@@ -7,7 +7,6 @@ import type { Lang } from "~/type";
 import DropdownLink from "./DropdownLink";
 import LeftSidebar from "./LeftSidebar";
 import LeftSidebarItem from "./LeftSidebarItem";
-import { SearchButton } from "./search";
 
 interface Props {
   nav: string;
@@ -32,7 +31,7 @@ export default function DocsNavMenu(props: Props) {
 
   return (
     <LeftSidebar>
-      <div class="pt-5">
+      <div class="pr-4 pt-5">
         <div class="md:hidden">
           <DropdownLink
             pathname={location.pathname}
@@ -48,11 +47,8 @@ export default function DocsNavMenu(props: Props) {
           <div class="my-4 h-1px bg-neutral-200"></div>
         </div>
       </div>
-      <div class="relative flex flex-col gap-2 px-2 pb-4">
-        <SearchButton lang={props.lang} />
-      </div>
       <nav id="nav-menu" class="relative flex-1 overflow-y-scroll">
-        <ul class="flex flex-col gap-1 pb-4">
+        <ul class="flex flex-col gap-1 pb-4 pr-4">
           <For each={navMenuItems()}>
             {(item) => {
               if (item.type === "group") {

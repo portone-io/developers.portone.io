@@ -39,14 +39,25 @@ export interface SearchButtonProps {
 }
 export function SearchButton({ lang }: SearchButtonProps) {
   const { setOpen } = useSearchContext();
+  const ctrlKey = createMemo(() =>
+    typeof navigator !== "undefined" &&
+    navigator.platform &&
+    /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)
+      ? "⌘"
+      : "Ctrl",
+  );
 
   return (
     <button
-      class="mx-2 flex flex-1 gap-2 border-1 border-slate-3 rounded-6px bg-slate-1 p-2 text-slate-4"
+      class="max-w-100 flex flex-1 items-center gap-1.5 border-1 border-slate-3 rounded-6px px-3 py-1.5 text-slate-4"
       onClick={() => setOpen(true)}
     >
       <i class="i-ic-baseline-search text-2xl"></i>
       <span>{t(lang, "search")}</span>
+      <kbd class="ml-auto flex gap-.5 border border-slate-2 rounded-6px px-1.5 py-.5">
+        <kbd class="text-sm">{ctrlKey()}</kbd>
+        <kbd class="text-sm">K</kbd>
+      </kbd>
     </button>
   );
 }

@@ -7,6 +7,7 @@ import { useSidebarContext } from "~/layouts/sidebar/context";
 import { useSystemVersion } from "~/state/system-version";
 import type { Lang, SystemVersion } from "~/type";
 
+import { SearchButton } from "../sidebar/search";
 import Dropdown, { type DropdownItem } from "./Dropdown";
 import Logo from "./Logo";
 import MobileMenuButton from "./MobileMenuButton";
@@ -139,49 +140,21 @@ export default function Gnb(props: Props) {
         <div class="fixed h-inherit w-full">
           <header
             data-selected-system-version={systemVersion()}
-            class="mx-auto h-inherit max-w-350 w-full flex items-center justify-between border-b bg-white z-gnb"
+            class="max-w-8xl grid grid-cols-2 mx-auto h-inherit w-full items-center gap-6 border-b bg-white px-10 z-gnb md:grid-cols-[auto_1fr_auto]"
           >
-            <div class="h-full flex flex-grow items-center pl-[env(safe-area-inset-left)]">
-              <div class="h-full flex flex-grow items-center bg-white z-gnb-body md:flex-grow-0">
-                <A
-                  class="h-full inline-flex items-center"
-                  href={`/opi/${props.lang}`}
-                >
-                  <div class="flex items-center gap-2">
-                    <Logo class="w-22" />
-                    <span class="break-keep">{t()["developers"]}</span>
-                  </div>
-                </A>
-                <div class="mx-6 md:ml-[70px]"></div>
+            <A
+              class="h-full inline-flex items-center"
+              href={`/opi/${props.lang}`}
+            >
+              <div class="flex items-center gap-2">
+                <Logo class="w-22" />
+                <span class="break-keep">{t()["developers"]}</span>
               </div>
-              <div
-                class={clsx(
-                  "flex gap-6 md:h-full items-center",
-                  props.navAsMenu
-                    ? "<md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white)"
-                    : "<md:hidden",
-                  props.navAsMenu &&
-                    sidebarContext.get() &&
-                    "<md:(translate-y-full shadow-lg)",
-                )}
-              >
-                <For each={navs}>
-                  {(nav) => {
-                    return (
-                      <Dropdown
-                        serverSystemVersion={serverSystemVersion}
-                        items={nav.dropdownItems}
-                        link={nav.link}
-                      >
-                        <span>{nav.label}</span>
-                      </Dropdown>
-                    );
-                  }}
-                </For>
-              </div>
+            </A>
+            <div class="hidden justify-center md:flex">
+              <SearchButton lang={props.lang} />
             </div>
             <div class="hidden h-full items-center gap-4 pr-[env(safe-area-inset-right)] md:flex">
-              <VersionSwitch docData={props.docData} />
               <a
                 class="inline-flex items-center gap-1"
                 href="https://admin.portone.io/"
