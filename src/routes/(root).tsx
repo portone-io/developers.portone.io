@@ -56,7 +56,9 @@ export default function Layout(props: Props) {
               docData={docData()?.frontmatter as DocsEntry}
             />
             <SidebarBackground />
-            <main class="min-h-0 flex-1">{props.children}</main>
+            <main class="mx-auto max-w-8xl min-h-0 w-full flex-1 px-10">
+              {props.children}
+            </main>
           </div>
         </MDXProvider>
       </SidebarProvider>

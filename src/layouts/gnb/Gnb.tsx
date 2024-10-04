@@ -1,6 +1,6 @@
 import { A } from "@solidjs/router";
-import { clsx } from "clsx";
-import { createMemo, For, untrack } from "solid-js";
+import clsx from "clsx";
+import { createMemo, For, Show, untrack } from "solid-js";
 
 import type { DocsEntry } from "~/content/config";
 import { useSidebarContext } from "~/layouts/sidebar/context";
@@ -113,7 +113,7 @@ export default function Gnb(props: Props) {
     },
   ];
 
-  const mainNavs: Nav[] = [
+  const topNavs = [
     {
       label: "릴리즈 노트",
       link: "/release-notes",
@@ -142,9 +142,9 @@ export default function Gnb(props: Props) {
         <div class="fixed h-inherit w-full bg-white z-gnb">
           <header
             data-selected-system-version={systemVersion()}
-            class="max-w-8xl mx-auto h-inherit w-full flex flex-col px-10"
+            class="mx-auto h-inherit max-w-8xl w-full flex flex-col px-10"
           >
-            <div class="grid grid-cols-2 h-14 items-center gap-6 border-b md:grid-cols-[auto_1fr_auto]">
+            <div class="grid grid-cols-2 h-14 items-center gap-6 border-b bg-white z-gnb-body md:grid-cols-[auto_1fr_auto]">
               <A
                 class="h-full inline-flex items-center"
                 href={`/opi/${props.lang}`}
@@ -158,7 +158,7 @@ export default function Gnb(props: Props) {
                 <SearchButton lang={props.lang} />
               </div>
               <div class="hidden h-full items-center md:flex">
-                <For each={mainNavs}>
+                <For each={topNavs}>
                   {(nav) => (
                     <Dropdown
                       serverSystemVersion={serverSystemVersion}
@@ -171,7 +171,7 @@ export default function Gnb(props: Props) {
               </div>
               <MobileMenuButton />
             </div>
-            <div class="hidden h-12 items-center gap-5 border-b md:flex">
+            <div class="hidden h-12 items-center gap-5 border-b bg-white z-gnb-body md:flex">
               <div class="h-full items-center">
                 <For each={subNavs}>
                   {(nav) => (
@@ -187,6 +187,41 @@ export default function Gnb(props: Props) {
               </div>
               <VersionSwitch docData={props.docData} />
             </div>
+            <Show when={props.navAsMenu}>
+              {(_) => {
+                const navs = createMemo<Nav[]>(() => [
+                  ...subNavs,
+                  {
+                    label: "리소스",
+                    dropdownItems: topNavs.map((nav) => ({
+                      label: nav.label,
+                      link: nav.link,
+                    })),
+                  },
+                ]);
+                return (
+                  <div
+                    class={clsx(
+                      "flex gap-6 absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white md:hidden",
+                      sidebarContext.get() && "translate-y-full shadow-lg",
+                    )}
+                  >
+                    <For each={navs()}>
+                      {(nav) => (
+                        <Dropdown
+                          serverSystemVersion={serverSystemVersion}
+                          link={nav.link}
+                          items={nav.dropdownItems}
+                        >
+                          <span>{nav.label}</span>
+                        </Dropdown>
+                      )}
+                    </For>
+                    <VersionSwitch docData={props.docData} />
+                  </div>
+                );
+              }}
+            </Show>
           </header>
         </div>
       </div>
