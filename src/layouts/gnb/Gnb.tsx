@@ -44,7 +44,7 @@ export default function Gnb(props: Props) {
   const serverSystemVersion = untrack(systemVersion);
   const sidebarContext = useSidebarContext();
 
-  const navs: Nav[] = [
+  const subNavs: Nav[] = [
     {
       link: "/opi/ko",
       label: "원 페이먼트 인프라",
@@ -111,18 +111,20 @@ export default function Gnb(props: Props) {
         },
       ],
     },
+  ];
+
+  const mainNavs: Nav[] = [
     {
-      label: "리소스",
-      dropdownItems: [
-        {
-          label: "릴리즈 노트",
-          link: "/release-notes",
-        },
-        {
-          label: "기술 블로그",
-          link: "/blog",
-        },
-      ],
+      label: "릴리즈 노트",
+      link: "/release-notes",
+    },
+    {
+      label: "기술 블로그",
+      link: "/blog",
+    },
+    {
+      label: t()["console"],
+      link: "https://admin.portone.io/",
     },
   ];
 
@@ -136,37 +138,55 @@ export default function Gnb(props: Props) {
         }
         `}
       </style>
-      <div class="h-14">
+      <div class="h-14 md:h-26">
         <div class="fixed h-inherit w-full">
           <header
             data-selected-system-version={systemVersion()}
-            class="max-w-8xl grid grid-cols-2 mx-auto h-inherit w-full items-center gap-6 border-b bg-white px-10 z-gnb md:grid-cols-[auto_1fr_auto]"
+            class="max-w-8xl mx-auto h-inherit w-full flex flex-col bg-white px-10 z-gnb"
           >
-            <A
-              class="h-full inline-flex items-center"
-              href={`/opi/${props.lang}`}
-            >
-              <div class="flex items-center gap-2">
-                <Logo class="w-22" />
-                <span class="break-keep">{t()["developers"]}</span>
-              </div>
-            </A>
-            <div class="hidden justify-center md:flex">
-              <SearchButton lang={props.lang} />
-            </div>
-            <div class="hidden h-full items-center gap-4 pr-[env(safe-area-inset-right)] md:flex">
-              <a
-                class="inline-flex items-center gap-1"
-                href="https://admin.portone.io/"
+            <div class="grid grid-cols-2 h-14 items-center gap-6 border-b md:grid-cols-[auto_1fr_auto]">
+              <A
+                class="h-full inline-flex items-center"
+                href={`/opi/${props.lang}`}
               >
-                <span>{t()["console"]}</span>
-                <i class="i-ic-baseline-launch"></i>
-              </a>
-              {/* <a href={`/docs/${lang === "ko" ? "en" : "ko"}`}>
-              {lang === "ko" ? "🇺🇸 English" : "🇰🇷 한국어"}
-            </a> */}
+                <div class="flex items-center gap-2">
+                  <Logo class="w-22" />
+                  <span class="break-keep">{t()["developers"]}</span>
+                </div>
+              </A>
+              <div class="hidden justify-center md:flex">
+                <SearchButton lang={props.lang} />
+              </div>
+              <div class="hidden h-full items-center md:flex">
+                <For each={mainNavs}>
+                  {(nav) => (
+                    <Dropdown
+                      serverSystemVersion={serverSystemVersion}
+                      link={nav.link}
+                    >
+                      <span class="p-2">{nav.label}</span>
+                    </Dropdown>
+                  )}
+                </For>
+              </div>
+              <MobileMenuButton />
             </div>
-            <MobileMenuButton />
+            <div class="hidden h-12 items-center gap-5 border-b md:flex">
+              <div class="h-full items-center">
+                <For each={subNavs}>
+                  {(nav) => (
+                    <Dropdown
+                      serverSystemVersion={serverSystemVersion}
+                      link={nav.link}
+                      items={nav.dropdownItems}
+                    >
+                      <span class="p-2">{nav.label}</span>
+                    </Dropdown>
+                  )}
+                </For>
+              </div>
+              <VersionSwitch docData={props.docData} />
+            </div>
           </header>
         </div>
       </div>
