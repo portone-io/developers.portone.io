@@ -61,9 +61,9 @@ export function Docs(props: { children: JSXElement }) {
 
   return (
     <SearchProvider>
-      <div class="flex">
+      <div class="mx-auto max-w-350 flex gap-5">
         <DocsNavMenu nav={contentName()} lang={params().lang} slug={params().slug} />
-        <div class="min-w-0 flex flex-1 justify-center">
+        <div class="min-w-0 flex flex-1 justify-center gap-5">
           <Show when={frontmatter()}>
             {(frontmatter) => (
               <>
@@ -88,7 +88,6 @@ export function Docs(props: { children: JSXElement }) {
               </>
             )}
           </Show>
-          <div class="hidden shrink-10 basis-10 lg:block"></div>
           <RightSidebar
             lang={params().lang}
             file={doc()?.file ?? ""}

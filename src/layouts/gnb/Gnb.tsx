@@ -136,64 +136,66 @@ export default function Gnb(props: Props) {
         `}
       </style>
       <div class="h-14">
-        <header
-          data-selected-system-version={systemVersion()}
-          class="fixed h-inherit w-full flex items-center justify-between border-b bg-white z-gnb"
-        >
-          <div class="h-full flex flex-grow items-center pl-4 md:pl-6">
-            <div class="h-full flex flex-grow items-center bg-white z-gnb-body md:flex-grow-0">
-              <A
-                class="h-full inline-flex items-center"
-                href={`/opi/${props.lang}`}
+        <div class="fixed h-inherit w-full">
+          <header
+            data-selected-system-version={systemVersion()}
+            class="mx-auto h-inherit max-w-350 w-full flex items-center justify-between border-b bg-white z-gnb"
+          >
+            <div class="h-full flex flex-grow items-center pl-[env(safe-area-inset-left)]">
+              <div class="h-full flex flex-grow items-center bg-white z-gnb-body md:flex-grow-0">
+                <A
+                  class="h-full inline-flex items-center"
+                  href={`/opi/${props.lang}`}
+                >
+                  <div class="flex items-center gap-2">
+                    <Logo class="w-22" />
+                    <span class="break-keep">{t()["developers"]}</span>
+                  </div>
+                </A>
+                <div class="mx-6 md:ml-[70px]"></div>
+              </div>
+              <div
+                class={clsx(
+                  "flex gap-6 md:h-full items-center",
+                  props.navAsMenu
+                    ? "<md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white)"
+                    : "<md:hidden",
+                  props.navAsMenu &&
+                    sidebarContext.get() &&
+                    "<md:(translate-y-full shadow-lg)",
+                )}
               >
-                <div class="flex items-center gap-2">
-                  <Logo class="w-22" />
-                  <span class="break-keep">{t()["developers"]}</span>
-                </div>
-              </A>
-              <div class="mx-6 md:ml-[70px]"></div>
+                <For each={navs}>
+                  {(nav) => {
+                    return (
+                      <Dropdown
+                        serverSystemVersion={serverSystemVersion}
+                        items={nav.dropdownItems}
+                        link={nav.link}
+                      >
+                        <span>{nav.label}</span>
+                      </Dropdown>
+                    );
+                  }}
+                </For>
+              </div>
             </div>
-            <div
-              class={clsx(
-                "flex gap-6 md:h-full items-center",
-                props.navAsMenu
-                  ? "<md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white)"
-                  : "<md:hidden",
-                props.navAsMenu &&
-                  sidebarContext.get() &&
-                  "<md:(translate-y-full shadow-lg)",
-              )}
-            >
-              <For each={navs}>
-                {(nav) => {
-                  return (
-                    <Dropdown
-                      serverSystemVersion={serverSystemVersion}
-                      items={nav.dropdownItems}
-                      link={nav.link}
-                    >
-                      <span>{nav.label}</span>
-                    </Dropdown>
-                  );
-                }}
-              </For>
-            </div>
-          </div>
-          <div class="hidden h-full items-center gap-4 pr-6 md:flex">
-            <VersionSwitch docData={props.docData} />
-            <a
-              class="inline-flex items-center gap-1"
-              href="https://admin.portone.io/"
-            >
-              <span>{t()["console"]}</span>
-              <i class="i-ic-baseline-launch"></i>
-            </a>
-            {/* <a href={`/docs/${lang === "ko" ? "en" : "ko"}`}>
+            <div class="hidden h-full items-center gap-4 pr-[env(safe-area-inset-right)] md:flex">
+              <VersionSwitch docData={props.docData} />
+              <a
+                class="inline-flex items-center gap-1"
+                href="https://admin.portone.io/"
+              >
+                <span>{t()["console"]}</span>
+                <i class="i-ic-baseline-launch"></i>
+              </a>
+              {/* <a href={`/docs/${lang === "ko" ? "en" : "ko"}`}>
               {lang === "ko" ? "🇺🇸 English" : "🇰🇷 한국어"}
             </a> */}
-          </div>
-          <MobileMenuButton />
-        </header>
+            </div>
+            <MobileMenuButton />
+          </header>
+        </div>
       </div>
     </>
   );

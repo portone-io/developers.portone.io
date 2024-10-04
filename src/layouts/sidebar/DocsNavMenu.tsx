@@ -32,7 +32,7 @@ export default function DocsNavMenu(props: Props) {
 
   return (
     <LeftSidebar>
-      <div class="px-4 pt-28px">
+      <div class="pt-5">
         <div class="md:hidden">
           <DropdownLink
             pathname={location.pathname}
@@ -52,7 +52,7 @@ export default function DocsNavMenu(props: Props) {
         <SearchButton lang={props.lang} />
       </div>
       <nav id="nav-menu" class="relative flex-1 overflow-y-scroll">
-        <ul class="flex flex-col gap-1 px-4 pb-4">
+        <ul class="flex flex-col gap-1 pb-4">
           <For each={navMenuItems()}>
             {(item) => {
               if (item.type === "group") {
