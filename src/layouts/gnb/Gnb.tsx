@@ -139,10 +139,10 @@ export default function Gnb(props: Props) {
         `}
       </style>
       <div class="h-14 md:h-26">
-        <div class="fixed h-inherit w-full">
+        <div class="fixed h-inherit w-full bg-white z-gnb">
           <header
             data-selected-system-version={systemVersion()}
-            class="max-w-8xl mx-auto h-inherit w-full flex flex-col bg-white px-10 z-gnb"
+            class="max-w-8xl mx-auto h-inherit w-full flex flex-col px-10"
           >
             <div class="grid grid-cols-2 h-14 items-center gap-6 border-b md:grid-cols-[auto_1fr_auto]">
               <A
