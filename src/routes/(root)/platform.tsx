@@ -17,7 +17,7 @@ export default function PlatformLayout(props: { children: JSXElement }) {
     <div class="flex">
       <aside
         id="left-sidebar"
-        class="relative hidden w-65 shrink-0 text-slate-700 md:block"
+        class="relative hidden w-65 shrink-0 text-slate-7 md:block"
       >
         <div class="fixed h-[calc(100%-3.5rem)] w-inherit overflow-y-scroll border-r bg-white">
           <Suspense>

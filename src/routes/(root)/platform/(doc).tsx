@@ -46,7 +46,11 @@ export default function PlatformDocLayout(props: { children: JSXElement }) {
               {props.children}
             </article>
             <div class="hidden shrink-10 basis-10 lg:block"></div>
-            <RightSidebar lang="ko" file={doc().file} slug={slug()} />
+            <RightSidebar
+              lang="ko"
+              file={doc().file}
+              headings={doc().headings}
+            />
           </>
         );
       }}
