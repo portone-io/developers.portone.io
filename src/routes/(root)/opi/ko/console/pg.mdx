@@ -23,30 +23,24 @@ import image1 from "./_assets/multi-pg-guide-1.png";
 
 ## 특정 PG사의 결제창 열기 <a href="#pg" id="pg" />
 
-결제창을 호출하기 위한 [**JavaScript SDK**](/opi/ko/integration/sdk/javascript-sdk-old/readme) `IMP.request_pay`를
-호출할 때 `param.pg` 속성에 미리 등록한 PG사를 지정하여 해당 PG사의 결제창을 호출할 수 있습니다.
-`pg` 속성에는 다음과 같은 형태로 [PG 값](https://docs.iamport.kr/sdk/javascript-sdk?lang=ko#request_pay-pg)을
-지정할 수 있습니다.
-
-- **\{ PG사 코드값 }**
-- **\{ PG사 코드값 }.\{ PG사 상점아이디 }**
+결제창을 호출하기 위한 [**JavaScript SDK**](/opi/ko/integration/sdk/javascript-sdk/readme) `IMP.request_pay`를
+호출할 때 `channelKey` 속성에 PG사의 채널키를 지정하여 해당 PG사의 결제창을 호출할 수 있습니다.
 
 만약 포트원 관리자 콘솔 PG사 등록 현황이 아래와 같이 **3개의 PG설정**을 등록했다고 가정해 보면,
 
-|          PG사         |상점아이디 (예시)|       용도      |
-|:---------------------:|:---------------:|:---------------:|
-|**(신) 나이스페이먼츠**|      MID-a      | **인증 결제용** |
-|**(신) 나이스페이먼츠**|      MID-b      |**비인증 결제용**|
-|       카카오페이      |      MID-c      |   인증 결제용   |
+|          PG사         |상점아이디 (예시)|       용도      |                     채널키                     |
+|:---------------------:|:---------------:|:---------------:|:----------------------------------------------:|
+|**(신) 나이스페이먼츠**|      MID-a      | **인증 결제용** |channel-key-12345678-1234-5678-9012-123456789012|
+|**(신) 나이스페이먼츠**|      MID-b      |**비인증 결제용**|channel-key-abcdefgh-abcd-efgh-ijkl-abcdefghijkl|
+|       카카오페이      |      MID-c      |   인증 결제용   |channel-key-98765432-9876-5432-1098-987654321098|
 
-위에서 등록한 PG 설정 중 **\{ PG사 코드값 }** 으로만 구분할 수 있는 PG사는 **카카오페이**입니다.
-다음과 같이 `pg` 속성에 `kakaopay`를 지정하면 등록한 카카오페이 설정으로 결제창이 호출됩니다
+다음과 같이 `channelKey` 속성에 `channel-key-98765432-9876-5432-1098-987654321098`를 지정하면 등록한 카카오페이 설정으로 결제창이 호출됩니다
 
 <Tabs>
   <Tabs.Tab title="카카오페이 호출">
     ```ts
     IMP.request_pay({
-      pg: "kakaopay", // 카카오페이 결제창 호출
+      channelKey: "channel-key-98765432-9876-5432-1098-987654321098", // 카카오페이 채널키
       amount: 1000,
       name: "테스트 주문",
       buyer_name: "구매자",
@@ -56,13 +50,13 @@ import image1 from "./_assets/multi-pg-guide-1.png";
   </Tabs.Tab>
 </Tabs>
 
-위에서 등록한 PG 설정 중 **(신) 나이스페이먼츠 (인증 결제용)** 와 **(신) 나이스페이먼츠 (비인증 결제용)** 의 경우 <mark style="color:red;">**PG사 코드값이 동일**</mark>하기 때문에 `pg` 속성을 코드값과 상점아이디를 조합한 값 **\{ PG사 코드값 }.\{ PG사 상점아이디 }** 으로 설정해서 구분해야 합니다.
+위에서 등록한 PG 설정 중 **(신) 나이스페이먼츠 (인증 결제용)** 와 **(신) 나이스페이먼츠 (비인증 결제용)** 의 경우 <mark style="color:red;">**PG사 코드값이 동일**</mark>하지만, `channelKey` 파라미터를 통해 구분이 가능합니다.
 
 <Tabs>
   <Tabs.Tab title="(신) 나이스페이먼츠 인증 결제용 호출">
     ```ts
     IMP.request_pay({
-      pg: "nice_v2.MID-a", // (신) 나이스페이먼츠 인증 결제용 호출 (상점아이디 MID-a 적용)
+      channelKey: "channel-key-12345678-1234-5678-9012-123456789012", // (신) 나이스페이먼츠 인증 결제용 채널키
       amount: 1000,
       name: "테스트 주문",
       buyer_name: "구매자",
@@ -74,7 +68,7 @@ import image1 from "./_assets/multi-pg-guide-1.png";
   <Tabs.Tab title="(신) 나이스페이먼츠 비인증 결제용 호출">
     ```ts
     IMP.request_pay({
-      pg: "nice_v2.MID-b", // (신) 나이스페이먼츠 인증 결제용 호출 (상점아이디 MID-b 적용)
+      channelKey: "channel-key-abcdefgh-abcd-efgh-ijkl-abcdefghijkl", // (신) 나이스페이먼츠 비인증 결제용 채널키
       amount: 1000,
       name: "테스트 주문",
       buyer_name: "구매자",
@@ -84,8 +78,8 @@ import image1 from "./_assets/multi-pg-guide-1.png";
   </Tabs.Tab>
 </Tabs>
 
-<Hint style="info">
-  **pg 속성 매칭 우선순위**
-
-  관리자 콘솔에서 PG 설정을 저장한 순서(오래된순)대로 pg 속성의 조건과 일치하는 설정을 찾습니다.
+<Hint style="warning">
+  기존에 사용되던 `pg` 파라미터는 지원 중단 예정입니다. 
+  
+  JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 PG사 구분을 대체해주세요.
 </Hint>
