@@ -11,7 +11,7 @@ import Hint from "~/components/Hint";
 
 import image1 from "./_assets/webhook_intro.png";
 import image2 from "./_assets/webhook-secret-1.png";
-import image3 from "./_assets/webhook-secret-2.png"
+import image3 from "./_assets/webhook-secret-2.png";
 import image0 from "./_assets/webhook-setting.png";
 
 <Figure src={image1} />
@@ -220,23 +220,33 @@ PortOne.requestPayment({
 현재 제공되고 있는 서버 SDK 목록은 아래와 같습니다.
 
 - JVM (코틀린, 자바 등)
-  - [Maven Central](http://central.sonatype.com/artifact/io.portone/server-sdk)
+  - [Maven Central](https://central.sonatype.com/artifact/io.portone/server-sdk)
     - groupId: `id.portone`, artifactId: `server-sdk`
 
-  - [GitHub](http://github.com/portone-io/server-sdk-jvm)
+  - [GitHub](https://github.com/portone-io/server-sdk-jvm)
 
-  - [Javadoc](http://javadoc.io/doc/io.portone/server-sdk/latest/-port-one%20-server%20-s-d-k%20for%20-j-v-m/io.portone.sdk.server.webhook/-webhook-verifier/index.html)
+  - [Javadoc](https://javadoc.io/doc/io.portone/server-sdk/latest/-port-one%20-server%20-s-d-k%20for%20-j-v-m/io.portone.sdk.server.webhook/-webhook-verifier/index.html)
 
 - JS (자바스크립트)
-  - [npm](http://www.npmjs.com/package/@portone/server-sdk)
+  - [npm](https://www.npmjs.com/package/@portone/server-sdk)
     - @portone/server-sdk
 
-  - [GitHub](http://github.com/portone-io/server-sdk-js)
+  - [GitHub](https://github.com/portone-io/server-sdk-js)
 
-  - [Express 예시 코드](http://github.com/portone-io/server-sdk-js/blob/main/examples/express/index.js)
+  - [Express 예시 코드](https://github.com/portone-io/portone-sample/blob/main/express-react/server/index.js)
+
+- Python (파이썬)
+  - [PyPI](https://pypi.org/project/portone-server-sdk/)
+    - portone-server-sdk
+
+  - [GitHub](https://github.com/portone-io/server-sdk-py)
+
+  - [FastAPI 예시 코드](https://github.com/portone-io/portone-sample/blob/main/fastapi-react/server/__init__.py)
+
+  - [Flask 예시 코드](https://github.com/portone-io/portone-sample/blob/main/flask-react/server/__init__.py)
 
 Server SDK 사용을 원치 않으시거나 SDK가 지원되지 않는 언어를 이용중이시라면 메시지 검증 코드를 직접 작성하실 수 있습니다.
-포트원의 웹훅 검증 절차는 [Standard Webhooks](http://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md) 스펙을
+포트원의 웹훅 검증 절차는 [Standard Webhooks](https://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md) 스펙을
 준수하고 있으므로, 해당 스펙에서 안내된 대로 검증 코드를 작성하시면 됩니다. 해당 저장소에는 여러 언어로 레퍼런스 구현도 작성되어 있습니다.
 
 ### 3. 무중단으로 시크릿 교체하기
@@ -261,59 +271,52 @@ Server SDK 사용을 원치 않으시거나 SDK가 지원되지 않는 언어를
 
 ```ts title="Express"
 import * as PortOne from "@portone/server-sdk";
+import bodyParser from "body-parser";
 import express from "express";
 
 const app = express();
+const portone = PortOne.PortOneClient(process.env.PORTONE_API_SECRET);
 
-// 요청 본문을 plaintext로 읽기 위한 middleware
-function rawBody(req, res, next) {
-  req.setEncoding("utf8");
-  req.rawBody = "";
-  req.on("data", (chunk) => (req.rawBody += chunk));
-  req.on("end", () => next());
-}
-
-// Content-Type을 application/json으로 설정한 경우
-app.use(express.json());
+// 웹훅 검증 시 텍스트로 된 body가 필요합니다.
+app.use(
+  "/portone-webhook",
+  bodyParser.text({
+    type: "application/json",
+  }),
+);
 
 // POST 요청을 받는 /portone-webhook
-app.post(
-  "/portone-webhook",
-  rawBody, // plaintext 본문이 필요하므로 위에서 정의한 middleware를 사용합니다.
-  async (req, res, next) => {
+app.post("/portone-webhook", async (req, res, next) => {
+  try {
     try {
-      try {
-        // 웹훅 메시지를 검증합니다.
-        // 시그니처 불일치 등 검증에 실패할 경우 PortOne.Webhook.WebhookVerificationError가 발생합니다.
-        await PortOne.Webhook.verify(
-          process.env.PORTONE_WEBHOOK_SECRET,
-          req.rawBody,
-          req.headers,
-        );
-      } catch (err) {
-        if (err instanceof PortOne.WebhookVerificationError) {
-          // 결제 검증에 실패했습니다.
-          res.status(400).send(e);
-          return;
-        }
-        throw e;
+      // 웹훅 메시지를 검증합니다.
+      // 시그니처 불일치 등 검증에 실패할 경우 PortOne.Errors.WebhookVerificationError가 발생합니다.
+      await PortOne.Webhook.verify(
+        process.env.PORTONE_WEBHOOK_SECRET,
+        req.body,
+        req.headers,
+      );
+    } catch (e) {
+      if (e instanceof PortOne.Webhook.WebhookVerificationError)
+        // 결제 검증에 실패했습니다.
+        return res.status(400).end();
+      throw e;
+    }
+
+    const { type, data } = JSON.parse(req.body);
+
+    // 결제 관련 정보일 경우만 처리합니다.
+    if (type.startsWith("Transaction.")) {
+      const { paymentId } = data;
+      // 1. 포트원 결제내역 단건조회 API 호출
+      const paymentResponse = await portone.payment.getPayment(paymentId);
+
+      if (paymentResponse === null) {
+        // 웹훅 정보와 일치하는 결제건이 실제로는 존재하지 않는 경우
+        return res.status(200).end();
       }
 
-      const { paymentId } = req.body;
-
-      // 1. 포트원 결제내역 단건조회 API 호출
-      const paymentResponse = await fetch(
-        `https://api.portone.io/payments/${encodeURIComponent(paymentId)}`,
-        {
-          headers: {
-            Authorization: `PortOne ${PORTONE_API_SECRET}`,
-          },
-        },
-      );
-      if (!paymentResponse.ok)
-        throw new Error(`signinResponse: ${await paymentResponse.json()}`);
-      const { id, status, amount, method } = await paymentResponse.json();
-
+      const { id, status, amount, method } = paymentResponse;
       // 2. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
       const order = await OrderService.findById(id);
       if (order.amount === amount.total) {
@@ -331,11 +334,12 @@ app.post(
       } else {
         // 결제 금액이 불일치하여 위/변조 시도가 의심됩니다.
       }
-    } catch (err) {
-      next(err);
     }
-  },
-);
+    res.status(200).end();
+  } catch (e) {
+    next(e);
+  }
+});
 ```
 
 <Hint style="info">
