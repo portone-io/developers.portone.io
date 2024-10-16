@@ -90,6 +90,9 @@ union ArchivePlatformDiscountSharePolicyOutput = ArchivePlatformDiscountSharePol
 "파트너 보관 결과"
 union ArchivePlatformPartnerOutput = ArchivePlatformPartnerPayload | PlatformNotEnabledError | UnauthorizedError | ForbiddenError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformCannotArchiveScheduledPartnerError | InternalError
 
+"플랫폼 정산건 일괄 등록 결과"
+union BulkCreatePlatformTransferOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformMissingRequiredColumnsError | PlatformExternalApiFailedError | BulkCreatePlatformTransferPayload | UnauthorizedError | PlatformFileNotFoundError | PlatformInvalidSheetError | InternalError
+
 "개인 / 법인 사업자 정보"
 union BusinessLicenseOcrClassification = BusinessLicenseOcrClassificationCorporation | BusinessLicenseOcrClassificationSoleProprietorship
 
@@ -98,6 +101,9 @@ union CancelPlatformAdditionalFeePolicyScheduleOutput = InvalidRequestError | Pl
 
 "일괄 지급 취소 결과"
 union CancelPlatformBulkPayoutOutput = PlatformNotEnabledError | InvalidRequestError | PlatformBulkPayoutNotFoundError | CancelPlatformBulkPayoutPayload | UnauthorizedError | PlatformBulkPayoutNonCancellableStatusError | InternalError
+
+"플랫폼 일괄 작업 취소 결과"
+union CancelPlatformBulkTaskOutput = CancelPlatformBulkTaskPayload | UnauthorizedError | PlatformBulkTaskNotFoundError | PlatformBulkTaskNonCancellableStatusError | InvalidRequestError | PlatformNotEnabledError | ForbiddenError | InternalError
 
 "계약 예약 업데이트 취소 결과"
 union CancelPlatformContractScheduleOutput = InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError | CancelPlatformContractSchedulePayload | PlatformNotEnabledError | ForbiddenError | InternalError
@@ -148,6 +154,9 @@ union CreatePlatformContractOutput = InvalidRequestError | PlatformContractAlrea
 "할인 분담 정책 생성 결과"
 union CreatePlatformDiscountSharePolicyOutput = InvalidRequestError | PlatformDiscountSharePolicyAlreadyExistsError | UnauthorizedError | CreatePlatformDiscountSharePayload | PlatformNotEnabledError | ForbiddenError | InternalError
 
+"플랫폼 파일 업로드 url 생성 결과"
+union CreatePlatformFileUploadUrlOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | CreatePlatformFileUploadUrlPayload | UnauthorizedError | InternalError
+
 "파트너 생성 결과"
 union CreatePlatformPartnerOutput = PlatformContractNotFoundError | PlatformAccountVerificationFailedError | PlatformCurrencyNotSupportedError | CreatePlatformPartnerPayload | PlatformNotEnabledError | ForbiddenError | UnauthorizedError | PlatformAccountVerificationNotFoundError | PlatformAccountVerificationAlreadyUsedError | InvalidRequestError | PlatformPartnerIdAlreadyExistsError | PlatformUserDefinedPropertyNotFoundError | InternalError
 
@@ -179,7 +188,7 @@ union DeleteStoreOutput = InvalidRequestError | ForbiddenError | StoreNotFoundEr
 union DeleteV2ApiSecretOutput = ForbiddenError | V2ApiSecretNotFoundError | StoreNotFoundError | DeleteV2ApiSecretPayload | UnauthorizedError | InternalError
 
 "일괄 지급 실행 결과"
-union ExecutePlatformBulkPayoutOutput = ExecutePlatformBulkPayoutPayload | UnauthorizedError | PlatformVirtualAccountBalanceCheckFailedError | PlatformSignatureVerificationFailedError | PlatformPayoutMethodNotAgencyError | PlatformNotEnoughAccountBalanceError | PlatformVirtualAccountNotAllocatedError | PlatformRemitRequestFailedError | PlatformNotEnabledError | InvalidRequestError | PlatformBrnNotRegisteredError | PlatformDocumentHashMismatchedError | PlatformBulkPayoutNotFoundError | PlatformBulkPayoutStatusNotPreparingError | ForbiddenError | InternalError
+union ExecutePlatformBulkPayoutOutput = PlatformNotEnabledError | InvalidRequestError | PlatformBrnNotRegisteredError | PlatformDocumentHashMismatchedError | PlatformBulkPayoutNotFoundError | PlatformBulkPayoutStatusNotPreparingError | ForbiddenError | PlatformCannotScheduledBankMaintenanceTimedError | PlatformNonSchedulableTimeError | PlatformPayoutMethodNotAgencyError | PlatformNotEnoughAccountBalanceError | PlatformVirtualAccountNotAllocatedError | PlatformRemitRequestFailedError | PlatformScheduleNotAllowedPastTimeError | ExecutePlatformBulkPayoutPayload | UnauthorizedError | PlatformVirtualAccountBalanceCheckFailedError | PlatformSignatureVerificationFailedError | InternalError
 
 "웹훅 시크릿 만료 결과"
 union ExpireStoreWebhookSecretOutput = InvalidRequestError | StoreNotFoundError | ForbiddenError | ExpireStoreWebhookSecretPayload | UnauthorizedError | WebhookSecretNotFoundError | InternalError
@@ -290,6 +299,12 @@ union PlatformBulkPayoutPartnerSettlementsOutput = InvalidRequestError | Platfor
 
 "플랫폼 다건 조회 결과"
 union PlatformBulkPayoutsOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformBulkPayoutsPayload | UnauthorizedError | InternalError
+
+"플랫폼 일괄 작업 조회 결과"
+union PlatformBulkTaskOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformBulkTask | UnauthorizedError | PlatformBulkTaskNotFoundError | InternalError
+
+"플랫폼 일괄 작업 다건 조회 결과"
+union PlatformBulkTasksOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformBulkTasksPayload | UnauthorizedError | InternalError
 
 "계약 아이디 조회 결과"
 union PlatformContractIdOutput = InvalidRequestError | UnauthorizedError | ForbiddenError | PlatformContractId | PlatformNotEnabledError | InternalError
@@ -478,6 +493,9 @@ union RemitPlatformVirtualAccountOutput = RemitPlatformVirtualAccountPayload | U
 
 "추가 수수료 정책 예약 업데이트 재설정 결과"
 union ReschedulePlatformAdditionalFeePolicyOutput = InvalidRequestError | PlatformAdditionalFeePolicyNotFoundError | UnauthorizedError | ReschedulePlatformAdditionalFeePayload | PlatformNotEnabledError | ForbiddenError | InternalError
+
+"일괄 지급 예약 변경 결과"
+union ReschedulePlatformBulkPayoutOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformCannotScheduledBankMaintenanceTimedError | PlatformNonSchedulableTimeError | PlatformBulkPayoutNotFoundError | PlatformBulkPayoutStatusNotScheduledError | PlatformScheduleNotAllowedPastTimeError | ReschedulePlatformBulkPayoutPayload | UnauthorizedError | InternalError
 
 "계약 예약 업데이트 재설정 결과"
 union ReschedulePlatformContractOutput = InvalidRequestError | PlatformContractNotFoundError | UnauthorizedError | ReschedulePlatformContractPayload | PlatformNotEnabledError | InternalError
@@ -1902,6 +1920,7 @@ enum EasyPayProvider {
   KB_APP
   ALIPAY
   HYPHEN
+  TMONEY
 }
 
 "성별"
@@ -2180,12 +2199,24 @@ enum PlatformAccountTransferType {
 }
 
 enum PlatformBulkPayoutStatus {
+  SCHEDULED
   PREPARING
   PREPARED
   ONGOING
   CANCELLED
   STOPPED
   COMPLETED
+}
+
+enum PlatformBulkTaskStatus {
+  PREPARED
+  PROCESSING
+  COMPLETED
+  CANCELED
+}
+
+enum PlatformBulkTaskType {
+  CREATE_TRANSFERS
 }
 
 "금액 타입"
@@ -2220,6 +2251,8 @@ enum PlatformPartnerBusinessStatus {
 
 "정산 상태"
 enum PlatformPartnerSettlementStatus {
+  "지급 예약"
+  PAYOUT_SCHEDULED
   "지급 예정"
   PAYOUT_PREPARED
   "지급 보류"
@@ -2288,6 +2321,7 @@ enum PlatformPayoutStatus {
   PROCESSING
   SUCCEEDED
   FAILED
+  SCHEDULED
 }
 
 enum PlatformPermission {
@@ -2309,6 +2343,7 @@ enum PlatformPermission {
   ACCOUNT_TRANSFER_WRITE
   USER_DEFINED_PROPERTY_READ
   USER_DEFINED_PROPERTY_WRITE
+  FILE_UPLOAD
 }
 
 "금액 타입"
@@ -2461,6 +2496,7 @@ enum ReconciliationEasyPayProvider {
   ALIPAY
   KB_APP
   TMONEYPAY
+  HYPHEN
 }
 
 "대사용 결제수단 목록"
@@ -2521,6 +2557,8 @@ enum ReconciliationPaymentMethodType {
   EASY_PAY_KB_APP
   "티머니페이 간편결제"
   EASY_PAY_TMONEYPAY
+  "하이픈 간편결제"
+  EASY_PAY_HYPHEN
 }
 
 enum ReconciliationPgProvider {
@@ -2536,6 +2574,9 @@ enum ReconciliationPgProvider {
   EXIMBAY
   INICIS
   HECTO
+  KSNET
+  KPN
+  HYPHEN
 }
 
 "채널 타입"
@@ -3248,6 +3289,14 @@ input ExecutePlatformBulkPayoutInput {
   signature: String!
   "전사 서명이 함께 전달된 VID RANDOM"
   vidRandom: String!
+"""
+예약 시간
+
+예약 시간이 있을 경우 예약 실행, 없을 경우 즉시 실행됩니다.
+23:00 ~ 01:00은 은행 점검시간으로 예약시간으로 지정하실 수 없습니다.
+예약 시간은 30분 단위로 지정 가능합니다.
+"""
+  scheduledAt: DateTime
 }
 
 input ExpireStoreWebhookSecretInput {
@@ -3589,6 +3638,10 @@ input PlatformBulkPayoutFilterInput {
 input PlatformBulkPayoutPartnerSettlementsFilterInput {
   partnerIds: [ID!]!
   statuses: [PlatformPartnerSettlementStatus!]!
+}
+
+input PlatformBulkTaskFilterInput {
+  statuses: [PlatformBulkTaskStatus!]
 }
 
 "계약 다건 조회를 위한 필터 조건"
@@ -4246,6 +4299,17 @@ input ReschedulePlatformAdditionalFeePolicyInput {
   update: UpdatePlatformAdditionalFeePolicyInput!
   "업데이트 적용 시점"
   appliedAt: DateTime!
+}
+
+input ReschedulePlatformBulkPayoutInput {
+  bulkPayoutId: ID!
+"""
+예약 시간
+
+23:00 ~ 01:00은 은행 점검시간으로 예약시간으로 지정하실 수 없습니다.
+예약 시간은 30분 단위로 지정 가능합니다.
+"""
+  scheduledAt: DateTime!
 }
 
 "계약 예약 업데이트 재설정을 위한 입력 정보"
@@ -5779,6 +5843,10 @@ type BillingKeyNotIssuedError implements Error {
   message: String
 }
 
+type BulkCreatePlatformTransferPayload {
+  bulkTask: PlatformBulkTask!
+}
+
 "요청한 사업자 등록증이 존재하지 않는 경우"
 type BusinessLicenseNotFoundError implements Error {
   message: String
@@ -5841,6 +5909,10 @@ type CancelPlatformAdditionalFeePolicySchedulePayload {
 "일괄 지급 취소 결과"
 type CancelPlatformBulkPayoutPayload {
   bulkPayout: PlatformBulkPayout!
+}
+
+type CancelPlatformBulkTaskPayload {
+  bulkTask: PlatformBulkTask!
 }
 
 "계약 예약 업데이트 취소 성공 응답"
@@ -6100,6 +6172,11 @@ type CreatePlatformDiscountSharePayload {
   discountSharePolicy: PlatformDiscountSharePolicy!
 }
 
+type CreatePlatformFileUploadUrlPayload {
+  url: String!
+  fileId: String!
+}
+
 "파트너 생성 성공 응답"
 type CreatePlatformPartnerPayload {
   "생성된 파트너"
@@ -6240,7 +6317,7 @@ type ExternalSystemError implements Error {
 }
 
 "결제 실패 상태"
-type FailedPaymentSchedule implements PaymentSchedule & Node {
+type FailedPaymentSchedule implements Node & PaymentSchedule {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -6413,6 +6490,16 @@ type LoginViaApiSecretPayload {
 일주일의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.
 """
   refreshToken: String!
+}
+
+"결제 혹은 본인인증 시도 횟수가 최대에 도달한 경우"
+type MaxTransactionCountReachedError implements Error {
+  message: String
+}
+
+"동일한 webhook id에 대한 수동 재시도 횟수가 최대에 도달한 경우"
+type MaxWebhookRetryCountReachedError implements Error {
+  message: String
 }
 
 "고객사 정보"
@@ -6671,6 +6758,7 @@ API secret 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   createPlatformOrderTransfer(input: CreatePlatformOrderTransferInput!): CreateOrderTransferOutput!
   createPlatformOrderCancelTransfer(input: CreatePlatformOrderCancelTransferInput!): CreateOrderCancelTransferOutput!
   createPlatformManualTransfer(input: CreatePlatformManualTransferInput!): CreateManualTransferOutput!
+  bulkCreatePlatformTransfer(fileId: String!, isForTest: Boolean): BulkCreatePlatformTransferOutput!
   deletePlatformTransfer(input: DeletePlatformTransferInput!): DeletePlatformTransferOutput!
   createPlatformBulkPayout(input: CreatePlatformBulkPayoutInput!): CreatePlatformBulkPayoutOutput! @hidden @unstable
 """
@@ -6710,11 +6798,14 @@ API secret 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   cancelPlatformBulkPayout(input: CancelPlatformBulkPayoutInput!): CancelPlatformBulkPayoutOutput! @hidden @unstable
   executePlatformBulkPayout(input: ExecutePlatformBulkPayoutInput!): ExecutePlatformBulkPayoutOutput! @hidden @unstable
   stopPlatformBulkPayout(input: StopPlatformBulkPayoutInput!): StopPlatformBulkPayoutOutput! @hidden @unstable
+  reschedulePlatformBulkPayout(input: ReschedulePlatformBulkPayoutInput!): ReschedulePlatformBulkPayoutOutput! @hidden @unstable
   updatePlatformPayout(input: UpdatePlatformPayoutInput!): UpdatePlatformPayoutOutput! @hidden @unstable
+  cancelPlatformBulkTask(id: ID!): CancelPlatformBulkTaskOutput! @hidden @unstable
   generatePlatformRemitDocumentContent(input: GeneratePlatformRemitDocumentContentInput!): GeneratePlatformRemitDocumentContentOutput! @hidden @unstable
   remitPlatformVirtualAccount(input: RemitPlatformVirtualAccountInput!): RemitPlatformVirtualAccountOutput! @hidden @unstable
   createPlatformSettlementParameter(input: CreatePlatformSettlementParameterInput!): CreatePlatformSettlementParameterOutput! @hidden
   updatePlatformSettlementParameter(input: UpdatePlatformSettlementParameterInput!): UpdatePlatformSettlementParameterOutput! @hidden
+  createPlatformFileUploadUrl(isForTest: Boolean): CreatePlatformFileUploadUrlOutput! @hidden @unstable
 """
 채널 그룹 생성
 
@@ -6913,7 +7004,7 @@ type PaymentReconciliationEdge {
   cursor: String!
 }
 
-type PaymentReconciliationIncomparable implements Node & PaymentReconciliation {
+type PaymentReconciliationIncomparable implements PaymentReconciliation & Node {
   "거래대사 아이디"
   plainId: String!
   id: ID!
@@ -6947,7 +7038,7 @@ type PaymentReconciliationIncomparable implements Node & PaymentReconciliation {
   settlement: PaymentReconciliationSettlement
 }
 
-type PaymentReconciliationMatched implements Node & PaymentReconciliation {
+type PaymentReconciliationMatched implements PaymentReconciliation & Node {
   "거래대사 아이디"
   plainId: String!
   id: ID!
@@ -6988,7 +7079,7 @@ type PaymentReconciliationMatched implements Node & PaymentReconciliation {
   storeId: ID!
 }
 
-type PaymentReconciliationNotCollected implements Node & PaymentReconciliation {
+type PaymentReconciliationNotCollected implements PaymentReconciliation & Node {
   "거래대사 아이디"
   plainId: String!
   id: ID!
@@ -7036,7 +7127,7 @@ type PaymentReconciliationNotFoundError implements Error {
   message: String
 }
 
-type PaymentReconciliationNotMatched implements Node & PaymentReconciliation {
+type PaymentReconciliationNotMatched implements PaymentReconciliation & Node {
   "거래대사 아이디"
   plainId: String!
   id: ID!
@@ -7498,8 +7589,8 @@ type PaymentSchedulesPayload {
   page: PageInfo!
 }
 
-"결제 대기 상태"
-type PendingPaymentSchedule implements PaymentSchedule & Node {
+"결제 완료 대기 상태"
+type PendingPaymentSchedule implements Node & PaymentSchedule {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -7672,6 +7763,8 @@ true 이면 isForTest 가 true 인 파트너들을 조회하고, false 이면 is
   "정산 파라미터 다건 조회"
   settlementParameters: PlatformSettlementParametersOutput! @hidden @unstable
   accountTransfers(isForTest: Boolean, page: PageInput, filter: PlatformAccountTransferFilterInput): PlatformAccountTransfersOutput! @hidden @unstable
+  bulkTask(id: ID!): PlatformBulkTaskOutput! @hidden @unstable
+  bulkTasks(filter: PlatformBulkTaskFilterInput, page: PageInput, isForTest: Boolean): PlatformBulkTasksOutput! @hidden @unstable
 }
 
 """
@@ -7875,6 +7968,7 @@ type PlatformBulkPayout implements Node {
   statusUpdatedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
+  scheduledAt: DateTime
 }
 
 "일괄 지급이 취소 가능한 상태가 아닌 경우"
@@ -7920,7 +8014,13 @@ type PlatformBulkPayoutStatusNotPreparingError implements Error {
   message: String
 }
 
+"일괄 지급이 예약 상태가 아닌 경우"
+type PlatformBulkPayoutStatusNotScheduledError implements Error {
+  message: String
+}
+
 type PlatformBulkPayoutStatusStats {
+  scheduled: Long!
   preparing: Long!
   prepared: Long!
   ongoing: Long!
@@ -7933,6 +8033,41 @@ type PlatformBulkPayoutsPayload {
   items: [PlatformBulkPayout!]!
   page: PageInfo!
   counts: PlatformBulkPayoutStatusStats!
+}
+
+type PlatformBulkTask implements Node {
+  plainId: String!
+  id: ID!
+  status: PlatformBulkTaskStatus!
+  type: PlatformBulkTaskType!
+  progressStats: PlatformBulkTaskProgressStats!
+  isForTest: Boolean!
+  statusUpdatedAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"일괄 작업이 취소 가능한 상태가 아닌 경우"
+type PlatformBulkTaskNonCancellableStatusError implements Error {
+  message: String
+}
+
+"일괄 작업이 존재하지 않는 경우"
+type PlatformBulkTaskNotFoundError implements Error {
+  message: String
+}
+
+type PlatformBulkTaskProgressStats {
+  preparedCount: Long!
+  processingCount: Long!
+  succeededCount: Long!
+  failedCount: Long!
+  canceledCount: Long!
+}
+
+type PlatformBulkTasksPayload {
+  items: [PlatformBulkTask!]!
+  page: PageInfo!
 }
 
 type PlatformCancelOrderTransfersExistsError implements Error {
@@ -7996,6 +8131,11 @@ type PlatformCannotArchiveScheduledDiscountSharePolicyError implements Error {
 
 "예약된 업데이트가 있는 파트너를 보관하려고 하는 경우"
 type PlatformCannotArchiveScheduledPartnerError implements Error {
+  message: String
+}
+
+"은행 점검시간을 예약 시간으로 지정하려는 경우"
+type PlatformCannotScheduledBankMaintenanceTimedError implements Error {
   message: String
 }
 
@@ -8302,6 +8442,11 @@ type PlatformExternalPayment implements PlatformPayment {
   paidAt: DateTime
 }
 
+"파일이 존재하지 않는 경우"
+type PlatformFileNotFoundError implements Error {
+  message: String
+}
+
 """
 정액 수수료
 
@@ -8352,6 +8497,18 @@ type PlatformInvalidSettlementFormulaError implements Error {
   message: String
 }
 
+type PlatformInvalidSheetCell {
+  column: String!
+  row: Int!
+  rules: [String!]!
+}
+
+"파일에 잘못된 내용이 포함되어 있는 경우"
+type PlatformInvalidSheetError implements Error {
+  cells: [PlatformInvalidSheetCell!]!
+  message: String
+}
+
 "수기 정산건"
 type PlatformManualTransfer implements Node & PlatformTransfer {
   "정산건 아이디"
@@ -8391,6 +8548,12 @@ type PlatformManualTransferSummary implements PlatformTransferSummary {
   settlementAmount: Long!
 }
 
+"파일에 필수 컬럼이 존재하지 않는 경우"
+type PlatformMissingRequiredColumnsError implements Error {
+  columns: [String!]!
+  message: String
+}
+
 "지급 금액의 총합이 음수인 파트너가 존재하는 경우"
 type PlatformNegativePayoutAmountPartnersError implements Error {
   message: String
@@ -8407,6 +8570,11 @@ type PlatformNoSelectedPartnerSettlementsError implements Error {
 
 "지급할 수 없는 정산 상태 값을 선택한 경우"
 type PlatformNonPayablePartnerSettlementStatusError implements Error {
+  message: String
+}
+
+"예약이 불가능한 시간인 경우"
+type PlatformNonSchedulableTimeError implements Error {
   message: String
 }
 
@@ -8974,6 +9142,7 @@ type PlatformPartnerSettlementNotFoundError implements Error {
 }
 
 type PlatformPartnerSettlementStatusStats {
+  payoutScheduled: Long!
   payoutPrepared: Long!
   payoutWithheld: Long!
   payoutFailed: Long!
@@ -9141,6 +9310,7 @@ type PlatformPayout implements Node {
   withdrawalMemo: String
   depositMemo: String
   createdAt: DateTime!
+  scheduledAt: DateTime
 }
 
 type PlatformPayoutAccount {
@@ -9187,6 +9357,7 @@ type PlatformPayoutStatusStats {
   processing: Long!
   succeeded: Long!
   failed: Long!
+  scheduled: Long!
 }
 
 "일괄 지급의 지급 내역이 이미 생성된 경우"
@@ -9271,6 +9442,11 @@ type PlatformRemitAccountTransfer implements PlatformAccountTransfer {
 
 "송금 api 요청에 실패한 경우"
 type PlatformRemitRequestFailedError implements Error {
+  message: String
+}
+
+"과거 시간을 예약 시간으로 지정하려는 경우"
+type PlatformScheduleNotAllowedPastTimeError implements Error {
   message: String
 }
 
@@ -9994,6 +10170,11 @@ type ReschedulePlatformAdditionalFeePayload {
   scheduledAdditionalFeePolicy: PlatformAdditionalFeePolicySchedule!
 }
 
+"일괄 지급 예약 변경 결과"
+type ReschedulePlatformBulkPayoutPayload {
+  bulkPayout: PlatformBulkPayout!
+}
+
 "계약 예약 업데이트 재설정 성공 응답"
 type ReschedulePlatformContractPayload {
   "예약된 계약 정보"
@@ -10039,7 +10220,7 @@ type RevokePaymentSchedulePayload {
 }
 
 "결제 예약 취소 상태"
-type RevokedPaymentSchedule implements PaymentSchedule & Node {
+type RevokedPaymentSchedule implements Node & PaymentSchedule {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -10137,7 +10318,7 @@ type SchedulePlatformPartnersPayload {
 }
 
 "결제 예약 완료 상태"
-type ScheduledPaymentSchedule implements PaymentSchedule & Node {
+type ScheduledPaymentSchedule implements Node & PaymentSchedule {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -10248,7 +10429,7 @@ type SignUpViaAgencyPayload {
 }
 
 "결제 시작 상태"
-type StartedPaymentSchedule implements PaymentSchedule & Node {
+type StartedPaymentSchedule implements Node & PaymentSchedule {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
@@ -10528,7 +10709,7 @@ type StoresPayload {
 }
 
 "결제 성공 상태"
-type SucceededPaymentSchedule implements PaymentSchedule & Node {
+type SucceededPaymentSchedule implements Node & PaymentSchedule {
   "결제 예약 건 아이디"
   plainId: String!
   "결제 예약 건 아이디"
