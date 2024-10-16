@@ -23,6 +23,9 @@ export default defineConfig({
     colors: {
       portone: "#FC6B2D",
     },
+    maxWidth: {
+      "8xl": "90rem",
+    },
     zIndex,
   },
   blocklist: [

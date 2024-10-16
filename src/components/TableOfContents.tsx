@@ -4,14 +4,17 @@ import {
   createEffect,
   createSignal,
   For,
+  type JSXElement,
   onCleanup,
   Show,
   untrack,
 } from "solid-js";
 
 import type { Heading } from "~/genCollections";
+import { useSystemVersion } from "~/state/system-version";
 
 interface Props {
+  children?: JSXElement;
   theme: "aside" | "island";
   headings: Heading[];
 }
@@ -21,6 +24,10 @@ function useActiveId(
   childActiveId: Accessor<string | null> = () => null,
 ) {
   const [activeId, setActiveId] = createSignal(headings()[0]?.id ?? null);
+
+  createEffect(() => {
+    setActiveId(headings()[0]?.id ?? null);
+  });
 
   createEffect(() => {
     const observer = new IntersectionObserver(
@@ -90,11 +97,23 @@ function useActiveId(
 
 export default function TableOfContents(props: Props) {
   const [childActiveId, setChildActiveId] = createSignal<string | null>(null);
-  const activeId = useActiveId(() => props.headings, childActiveId);
+  const [headings, setHeadings] = createSignal<Heading[]>([]);
+  const activeId = useActiveId(headings, childActiveId);
+  const { systemVersion } = useSystemVersion();
+
+  createEffect(() => {
+    void systemVersion();
+    setHeadings(
+      filterHeadingsById(
+        props.headings,
+        [...document.querySelectorAll("article :is(h2, h3)")].map((h) => h.id),
+      ),
+    );
+  });
 
   return (
-    <ul class="m-0 flex flex-col list-none gap-6px p-0">
-      <For each={props.headings}>
+    <ul class="m-0 flex flex-col list-none gap-1 p-0">
+      <For each={headings()}>
         {(heading) => (
           <Item
             heading={heading}
@@ -126,7 +145,7 @@ function Item(props: {
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "py-6px block break-keep text-sm font-semibold",
+          "py-1 block break-keep text-[14px] leading-5 font-medium",
           props.isActive ? "text-slate-8" : "text-slate-4",
         )}
       >
@@ -168,14 +187,14 @@ function SubItem(props: {
   return (
     <li
       class={clsx(
-        "text-sm transition-colors duration-300",
+        "text-[14px] leading-5 transition-colors duration-300",
         // props.isActive && "bg-slate-100",
       )}
     >
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "py-6px block break-keep font-medium text-sm transition-[padding-top,padding-bottom] duration-300",
+          "py-1 block break-keep font-medium text-[14px] leading-5 transition-[padding-top,padding-bottom] duration-300 hover:text-portone",
           props.isActive
             ? "text-portone py-8px"
             : props.isParentActive
@@ -211,4 +230,13 @@ function SubItem(props: {
       </Show>
     </li>
   );
+}
+
+function filterHeadingsById(headings: Heading[], ids: string[]): Heading[] {
+  return headings
+    .filter((heading) => ids.some((id) => id === heading.id))
+    .map((heading) => ({
+      ...heading,
+      children: filterHeadingsById(heading.children, ids),
+    }));
 }
