@@ -7,6 +7,7 @@ export interface Category {
   id: string;
   title: string;
   description?: string;
+  invisible?: boolean;
   children?: Category[];
 }
 
@@ -27,9 +28,12 @@ export function getCategories(schema: unknown): Category[] {
     tags?: Tag[];
   };
 
+  const filterInvisible = (categories: Category[] | undefined) =>
+    categories?.filter((category) => !category.invisible);
+
   return (
-    s["x-portone-categories"] ||
-    s.info?.["x-portone-categories"] ||
+    filterInvisible(s["x-portone-categories"]) ||
+    filterInvisible(s.info?.["x-portone-categories"]) ||
     tagsToCategories(s.tags || [])
   );
 }
