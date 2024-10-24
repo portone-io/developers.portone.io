@@ -70,7 +70,7 @@ export default function NoteLayout(props: { children: JSXElement }) {
         <>
           <Metadata title={title()!} ogType="article" />
           <prose.h1>{title()}</prose.h1>
-          <p class="my-4 text-xl text-gray">
+          <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
             {format(note().frontmatter.releasedAt, "yyyy년 M월 d일")} {label()}{" "}
             업데이트 소식을 안내드립니다.
           </p>
