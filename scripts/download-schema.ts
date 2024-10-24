@@ -1,16 +1,16 @@
 #!/usr/bin/env -S deno run -A
 
-import { ensureFile } from "jsr:@std/fs@1.0.2/ensure-file";
-import { parse as parseYaml } from "jsr:@std/yaml@1.0.4";
-import { Input } from "jsr:@cliffy/prompt@1.0.0-rc.5/input";
+import { open } from "https://deno.land/x/pbkit@v0.0.70/misc/browser.ts";
 import {
   pollToken,
   requestCode,
   writeGhHosts,
 } from "https://deno.land/x/pbkit@v0.0.70/misc/github/auth.ts";
 import { getToken } from "https://deno.land/x/pbkit@v0.0.70/misc/github/index.ts";
-import { open } from "https://deno.land/x/pbkit@v0.0.70/misc/browser.ts";
+import { Input } from "jsr:@cliffy/prompt@1.0.0-rc.5/input";
 import { render as renderGfm } from "jsr:@deno/gfm@0.9.0";
+import { ensureFile } from "jsr:@std/fs@1.0.2/ensure-file";
+import { parse as parseYaml } from "jsr:@std/yaml@1.0.4";
 
 const mdProperties = new Set([
   "summary",
@@ -74,9 +74,21 @@ export function processV2Openapi(schema: any): any {
   schema.servers = (schema.servers as { url: string }[]).filter((server) =>
     !server.url.endsWith(".iamport.co")
   );
+  schema["x-portone-categories"] = filterCategories(
+    schema["x-portone-categories"],
+  );
+  const categories = collectCategoryIds(schema["x-portone-categories"]);
   traverseEveryProperty(schema, (node, property) => {
     if (!node[property]) return;
-    if (node[property]["x-portone-hidden"]) delete node[property];
+    if (node[property]["x-portone-hidden"]) {
+      delete node[property];
+      return;
+    }
+    const category = node[property]["x-portone-category"];
+    if (typeof category === "string" && !categories.has(category)) {
+      delete node[property];
+      return;
+    }
   });
   traverseEveryProperty(schema, (node, property) => {
     if (property !== "x-portone-fields") return;
@@ -89,6 +101,11 @@ export function processV2Openapi(schema: any): any {
     }
     delete node["x-portone-fields"];
   });
+  for (const [key, value] of Object.entries(schema.paths)) {
+    if (value == null || Object.keys(value).length === 0) {
+      delete schema.paths[key];
+    }
+  }
   return schema;
 }
 
@@ -177,4 +194,33 @@ export function traverseEveryProperty(
       traverseEveryProperty(object[property], fn, subcontext);
     }
   }
+}
+
+function filterCategories(
+  list: any[],
+): any[] {
+  return list.filter((object) => object.invisible !== true).map((object) => {
+    if (Array.isArray(object.children)) {
+      return {
+        ...object,
+        children: filterCategories(object.children),
+      };
+    }
+    return object;
+  });
+}
+
+function collectCategoryIds(
+  object: any,
+  list = new Set<string>(),
+): Set<string> {
+  if (typeof object === "object") {
+    if (Array.isArray(object)) {
+      for (const item of object) collectCategoryIds(item, list);
+    } else {
+      list.add(object.id);
+      collectCategoryIds(object.children, list);
+    }
+  }
+  return list;
 }
