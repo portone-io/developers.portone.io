@@ -341,6 +341,44 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 - 카카오페이 사용을 원하실 경우 앱 또는 웹 하단에 대표자명, 주소, 전화번호와 같은 상점정보를 필수로 입력해야합니다.
 
+### 간편결제 다이렉트
+
+- KSNET 간편결제 다이렉트는 아래의 결제 방식을 지원합니다.
+  - 네이버페이 카드
+  - 카카오페이 카드 및 머니
+  - 페이코
+  - L페이 카드
+
+- 네이버페이 머니·포인트의 경우 현재 KSNET에서는 다이렉트 호출을 지원하지 않습니다.
+
+- 간편결제 다이렉트를 사용하기 위해서는 `bypass.ksnet.easyPayDirect`를 `true`로 설정하고, `payMethod`를 `EASY_PAY`, `easyPay.easyPayProvider`를 `NAVERPAY`, `KAKAOPAY`, `PAYCO`, `LPAY` 중 하나로 지정합니다.
+
+- 구매자 이름(`customer.fullName`)을 입력해야 합니다.
+
+- 네이버페이의 경우
+  - 현재 카드 결제만 가능
+  - 상점명(`storeDetails.businessName`) 필수
+  - `customer.email`, `customer.phoneNumber` 선택
+  - 할부 개월 수 표시 설정 가능
+  - 이용 가능 카드사 설정 가능 (신한, BC, 국민, 농협, 롯데, 삼성, 시티, 우리, 하나, 현대)
+
+- 카카오페이의 경우
+  - 상점 대표자명(`storeDetails.ceoFullName`) 필수
+  - 상점 주소(`storeDetails.address`) 필수
+  - 상점 전화번호(`storeDetails.phoneNumber`) 필수
+  - `customer.email`, `customer.phoneNumber` 필수
+  - `easyPay.availablePayMethods`로 결제 유형 한정 가능(`["CARD"]`로 지정할 경우 카드만, `["MONEY"]`로 지정할 경우 머니만)
+  - 할부 개월 수 표시 설정 가능
+  - 이용 가능 카드사 설정 가능 (신한, BC, 국민, 농협, 롯데, 삼성, 시티, 우리, 하나, 현대)
+
+- 페이코의 경우
+  - 상점명(`storeDetails.businessName`) 필수
+  - 사업자등록번호(`storeDetails.businessRegistrationNumber`) 필수
+  - `customer.email`, `customer.phoneNumber` 필수
+
+- L페이의 경우
+  - `customer.email`, `customer.phoneNumber` 선택
+
 ### 계좌이체
 
 - SDK로 계좌이체 결제 요청 시 결제창 내에서 현금영수증 발급을 위한 정보 입력 시 휴대폰 번호 및 사업자번호는 숫자만 입력해야 합니다.
