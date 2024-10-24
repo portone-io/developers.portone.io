@@ -219,7 +219,7 @@ function collectCategoryIds(
       for (const item of object) collectCategoryIds(item, list);
     } else {
       list.add(object.id);
-      collectCategoryIds(object.children);
+      collectCategoryIds(object.children, list);
     }
   }
   return list;

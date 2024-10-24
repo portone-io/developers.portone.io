@@ -341,6 +341,370 @@
         "x-portone-unstable": true
       }
     },
+    "/platform/discount-share-policies": {
+      "get": {
+        "summary": "할인 분담 정책 다건 조회",
+        "description": "할인 분담 정책 다건 조회\n\n여러 할인 분담을 조회합니다.",
+        "operationId": "getPlatformDiscountSharePolicies",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePoliciesBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformDiscountSharePoliciesBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 할인 분담 정책 리스트와 페이지 정보가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePoliciesResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 할인 분담 정책 리스트와 페이지 정보가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePoliciesError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePoliciesError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePoliciesError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "할인 분담 정책 다건 조회",
+        "x-portone-description": "여러 할인 분담을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformDiscountSharePoliciesError"
+        }
+      },
+      "post": {
+        "summary": "할인 분담 정책 생성",
+        "description": "할인 분담 정책 생성\n\n새로운 할인 분담을 생성합니다.",
+        "operationId": "createPlatformDiscountSharePolicy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformDiscountSharePolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 생성된 할인 분담 정책이 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformDiscountSharePolicyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 생성된 할인 분담 정책이 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformDiscountSharePolicyAlreadyExistsError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "할인 분담 정책 생성",
+        "x-portone-description": "새로운 할인 분담을 생성합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePlatformDiscountSharePolicyError"
+        }
+      }
+    },
+    "/platform/discount-share-policies/{id}": {
+      "get": {
+        "summary": "할인 분담 정책 조회",
+        "description": "할인 분담 정책 조회\n\n주어진 아이디에 대응되는 할인 분담을 조회합니다.",
+        "operationId": "getPlatformDiscountSharePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "조회할 할인 분담 정책 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회할 할인 분담 정책 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 할인 분담 정책을 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformDiscountSharePolicy"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 할인 분담 정책을 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformDiscountSharePolicyNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "할인 분담 정책 조회",
+        "x-portone-description": "주어진 아이디에 대응되는 할인 분담을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformDiscountSharePolicyError"
+        }
+      },
+      "patch": {
+        "summary": "할인 분담 정책 수정",
+        "description": "할인 분담 정책 수정\n\n주어진 아이디에 대응되는 할인 분담을 업데이트합니다.",
+        "operationId": "updatePlatformDiscountSharePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "업데이트할 할인 분담 정책 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "업데이트할 할인 분담 정책 아이디"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlatformDiscountSharePolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 업데이트된 할인 분담 정책을 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformDiscountSharePolicyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 업데이트된 할인 분담 정책을 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformDiscountSharePolicyNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformArchivedDiscountSharePolicyError`: 보관된 할인 분담 정책을 업데이트하려고 하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "할인 분담 정책 수정",
+        "x-portone-description": "주어진 아이디에 대응되는 할인 분담을 업데이트합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdatePlatformDiscountSharePolicyError"
+        }
+      }
+    },
     "/platform/discount-share-policies/{id}/schedule": {
       "get": {
         "description": "주어진 아이디에 대응되는 할인 분담의 예약 업데이트를 조회합니다.",
@@ -701,6 +1065,552 @@
         "x-portone-unstable": true
       }
     },
+    "/platform/discount-share-policies/{id}/archive": {
+      "post": {
+        "summary": "할인 분담 정책 보관",
+        "description": "할인 분담 정책 보관\n\n주어진 아이디에 대응되는 할인 분담을 보관합니다.",
+        "operationId": "archivePlatformDiscountSharePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "할인 분담 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "할인 분담 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 보관된 할인 분담 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformDiscountSharePolicyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 보관된 할인 분담 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformDiscountSharePolicyNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformCannotArchiveScheduledDiscountSharePolicyError`: 예약된 업데이트가 있는 할인 분담 정책을 보관하려고 하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "할인 분담 정책 보관",
+        "x-portone-description": "주어진 아이디에 대응되는 할인 분담을 보관합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ArchivePlatformDiscountSharePolicyError"
+        }
+      }
+    },
+    "/platform/discount-share-policies/{id}/recover": {
+      "post": {
+        "summary": "할인 분담 정책 복원",
+        "description": "할인 분담 정책 복원\n\n주어진 아이디에 대응되는 할인 분담을 복원합니다.",
+        "operationId": "recoverPlatformDiscountSharePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "할인 분담 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "할인 분담 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 복원된 할인 분담 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformDiscountSharePolicyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 복원된 할인 분담 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformDiscountSharePolicyNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformDiscountSharePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "할인 분담 정책 복원",
+        "x-portone-description": "주어진 아이디에 대응되는 할인 분담을 복원합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/RecoverPlatformDiscountSharePolicyError"
+        }
+      }
+    },
+    "/platform/additional-fee-policies": {
+      "get": {
+        "summary": "추가 수수료 정책 다건 조회",
+        "description": "추가 수수료 정책 다건 조회\n\n여러 추가 수수료 정책을 조회합니다.",
+        "operationId": "getPlatformAdditionalFeePolicies",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePoliciesBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformAdditionalFeePoliciesBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 추가 수수료 정책 리스트와 페이지 정보를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePoliciesResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 추가 수수료 정책 리스트와 페이지 정보를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePoliciesError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePoliciesError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePoliciesError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "추가 수수료 정책 다건 조회",
+        "x-portone-description": "여러 추가 수수료 정책을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformAdditionalFeePoliciesError"
+        }
+      },
+      "post": {
+        "summary": "추가 수수료 정책 생성",
+        "description": "추가 수수료 정책 생성\n\n새로운 추가 수수료 정책을 생성합니다.",
+        "operationId": "createPlatformAdditionalFeePolicy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformAdditionalFeePolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformAdditionalFeePolicyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformAdditionalFeePolicyAlreadyExistsError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "추가 수수료 정책 생성",
+        "x-portone-description": "새로운 추가 수수료 정책을 생성합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePlatformAdditionalFeePolicyError"
+        }
+      }
+    },
+    "/platform/additional-fee-policies/{id}": {
+      "get": {
+        "summary": "추가 수수료 정책 조회",
+        "description": "추가 수수료 정책 조회\n\n주어진 아이디에 대응되는 추가 수수료 정책을 조회합니다.",
+        "operationId": "getPlatformAdditionalFeePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "조회할 추가 수수료 정책 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회할 추가 수수료 정책 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 추가 수수료 정책을 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformAdditionalFeePolicy"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 추가 수수료 정책을 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformAdditionalFeePolicyNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "추가 수수료 정책 조회",
+        "x-portone-description": "주어진 아이디에 대응되는 추가 수수료 정책을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformAdditionalFeePolicyError"
+        }
+      },
+      "patch": {
+        "summary": "추가 수수료 정책 수정",
+        "description": "추가 수수료 정책 수정\n\n주어진 아이디에 대응되는 추가 수수료 정책을 업데이트합니다.",
+        "operationId": "updatePlatformAdditionalFeePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "업데이트할 추가 수수료 정책 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "업데이트할 추가 수수료 정책 아이디"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlatformAdditionalFeePolicyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 업데이트된 추가 수수료 정책이 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformAdditionalFeePolicyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 업데이트된 추가 수수료 정책이 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformAdditionalFeePolicyNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformArchivedAdditionalFeePolicyError`: 보관된 추가 수수료 정책을 업데이트하려고 하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "추가 수수료 정책 수정",
+        "x-portone-description": "주어진 아이디에 대응되는 추가 수수료 정책을 업데이트합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdatePlatformAdditionalFeePolicyError"
+        }
+      }
+    },
     "/platform/additional-fee-policies/{id}/schedule": {
       "get": {
         "description": "주어진 아이디에 대응되는 추가 수수료 정책의 예약 업데이트를 조회합니다.",
@@ -1059,6 +1969,188 @@
         "x-portone-unstable": true
       }
     },
+    "/platform/additional-fee-policies/{id}/archive": {
+      "post": {
+        "summary": "추가 수수료 정책 보관",
+        "description": "추가 수수료 정책 보관\n\n주어진 아이디에 대응되는 추가 수수료 정책을 보관합니다.",
+        "operationId": "archivePlatformAdditionalFeePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "추가 수수료 정책 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "추가 수수료 정책 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 보관된 추가 수수료 정책 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformAdditionalFeePolicyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 보관된 추가 수수료 정책 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformAdditionalFeePolicyNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformCannotArchiveScheduledAdditionalFeePolicyError`: 예약된 업데이트가 있는 추가 수수료 정책을 보관하려고 하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "추가 수수료 정책 보관",
+        "x-portone-description": "주어진 아이디에 대응되는 추가 수수료 정책을 보관합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ArchivePlatformAdditionalFeePolicyError"
+        }
+      }
+    },
+    "/platform/additional-fee-policies/{id}/recover": {
+      "post": {
+        "summary": "추가 수수료 정책 복원",
+        "description": "추가 수수료 정책 복원\n\n주어진 아이디에 대응되는 추가 수수료 정책을 복원합니다.",
+        "operationId": "recoverPlatformAdditionalFeePolicy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "추가 수수료 정책 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "추가 수수료 정책 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 복원된 추가 수수료 정책 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformAdditionalFeePolicyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 복원된 추가 수수료 정책 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformAdditionalFeePolicyNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformAdditionalFeePolicyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "추가 수수료 정책 복원",
+        "x-portone-description": "주어진 아이디에 대응되는 추가 수수료 정책을 복원합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/RecoverPlatformAdditionalFeePolicyError"
+        }
+      }
+    },
     "/platform/partner-filter-options": {
       "get": {
         "description": "파트너 다건 조회 시 필요한 필터 옵션을 조회합니다.",
@@ -1132,6 +2224,474 @@
           "$ref": "#/components/schemas/GetPlatformPartnerFilterOptionsError"
         },
         "x-portone-unstable": true
+      }
+    },
+    "/platform/partners": {
+      "get": {
+        "summary": "파트너 다건 조회",
+        "description": "파트너 다건 조회\n\n여러 파트너를 조회합니다.",
+        "operationId": "getPlatformPartners",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnersBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformPartnersBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 파트너 리스트와 페이지 정보가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnersResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 파트너 리스트와 페이지 정보가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnersError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnersError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnersError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 다건 조회",
+        "x-portone-description": "여러 파트너를 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformPartnersError"
+        }
+      },
+      "post": {
+        "summary": "파트너 생성",
+        "description": "파트너 생성\n\n새로운 파트너를 생성합니다.",
+        "operationId": "createPlatformPartner",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformPartnerBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 생성된 파트너 객체가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnerResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 생성된 파트너 객체가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformAccountVerificationFailedError`: 파트너 계좌 인증이 실패한 경우\n* `PlatformCurrencyNotSupportedError`: 지원 되지 않는 통화를 선택한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformContractNotFoundError`\n* `PlatformAccountVerificationNotFoundError`: 파트너 계좌 검증 아이디를 찾을 수 없는 경우\n* `PlatformUserDefinedPropertyNotFoundError`: 사용자 정의 속성이 존재 하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformPartnerIdAlreadyExistsError`\n* `PlatformAccountVerificationAlreadyUsedError`: 파트너 계좌 검증 아이디를 이미 사용한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 생성",
+        "x-portone-description": "새로운 파트너를 생성합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePlatformPartnerError"
+        }
+      }
+    },
+    "/platform/partners/{id}": {
+      "get": {
+        "summary": "파트너 조회",
+        "description": "파트너 조회\n\n파트너 객체를 조회합니다.",
+        "operationId": "getPlatformPartner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "조회하고 싶은 파트너 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회하고 싶은 파트너 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 파트너 객체가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformPartner"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 파트너 객체가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 조회",
+        "x-portone-description": "파트너 객체를 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformPartnerError"
+        }
+      },
+      "patch": {
+        "summary": "파트너 수정",
+        "description": "파트너 수정\n\n주어진 아이디에 대응되는 파트너 정보를 업데이트합니다.",
+        "operationId": "updatePlatformPartner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "업데이트할 파트너 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "업데이트할 파트너 아이디"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlatformPartnerBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 업데이트된 파트너 객체가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformPartnerResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 업데이트된 파트너 객체가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformAccountVerificationFailedError`: 파트너 계좌 인증이 실패한 경우\n* `PlatformInsufficientDataToChangePartnerTypeError`: 파트너 타입 수정에 필요한 데이터가 부족한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`\n* `PlatformContractNotFoundError`\n* `PlatformAccountVerificationNotFoundError`: 파트너 계좌 검증 아이디를 찾을 수 없는 경우\n* `PlatformUserDefinedPropertyNotFoundError`: 사용자 정의 속성이 존재 하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformArchivedPartnerError`: 보관된 파트너를 업데이트하려고 하는 경우\n* `PlatformAccountVerificationAlreadyUsedError`: 파트너 계좌 검증 아이디를 이미 사용한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformPartnerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 수정",
+        "x-portone-description": "주어진 아이디에 대응되는 파트너 정보를 업데이트합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdatePlatformPartnerError"
+        }
+      }
+    },
+    "/platform/partners/batch": {
+      "post": {
+        "summary": "파트너 다건 생성",
+        "description": "파트너 다건 생성\n\n새로운 파트너를 다건 생성합니다.",
+        "operationId": "createPlatformPartners",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformPartnersBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnersResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformPartnerIdsDuplicatedError`\n* `PlatformCurrencyNotSupportedError`: 지원 되지 않는 통화를 선택한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnersError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnersError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnersError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformContractsNotFoundError`\n* `PlatformUserDefinedPropertyNotFoundError`: 사용자 정의 속성이 존재 하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnersError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformPartnerIdsAlreadyExistError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformPartnersError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 다건 생성",
+        "x-portone-description": "새로운 파트너를 다건 생성합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePlatformPartnersError"
+        }
       }
     },
     "/platform/partners/{id}/schedule": {
@@ -1583,6 +3143,552 @@
         "x-portone-unstable": true
       }
     },
+    "/platform/partners/{id}/archive": {
+      "post": {
+        "summary": "파트너 복원",
+        "description": "파트너 복원\n\n주어진 아이디에 대응되는 파트너를 보관합니다.",
+        "operationId": "archivePlatformPartner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "파트너 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "파트너 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 보관된 파트너 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformPartnerResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 보관된 파트너 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformPartnerError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformCannotArchiveScheduledPartnerError`: 예약된 업데이트가 있는 파트너를 보관하려고 하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformPartnerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 복원",
+        "x-portone-description": "주어진 아이디에 대응되는 파트너를 보관합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ArchivePlatformPartnerError"
+        }
+      }
+    },
+    "/platform/partners/{id}/recover": {
+      "post": {
+        "summary": "파트너 복원",
+        "description": "파트너 복원\n\n주어진 아이디에 대응되는 파트너를 복원합니다.",
+        "operationId": "recoverPlatformPartner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "파트너 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "파트너 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 복원된 파트너 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformPartnerResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 복원된 파트너 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformPartnerError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformPartnerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformPartnerError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformPartnerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 복원",
+        "x-portone-description": "주어진 아이디에 대응되는 파트너를 복원합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/RecoverPlatformPartnerError"
+        }
+      }
+    },
+    "/platform/contracts": {
+      "get": {
+        "summary": "계약 다건 조회",
+        "description": "계약 다건 조회\n\n여러 계약을 조회합니다.",
+        "operationId": "getPlatformContracts",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractsBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformContractsBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 계약 리스트와 페이지 정보를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractsResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 계약 리스트와 페이지 정보를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "계약 다건 조회",
+        "x-portone-description": "여러 계약을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformContractsError"
+        }
+      },
+      "post": {
+        "summary": "계약 생성",
+        "description": "계약 생성\n\n새로운 계약을 생성합니다.",
+        "operationId": "createPlatformContract",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformContractBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 생성된 계약 객체가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformContractResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 생성된 계약 객체가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformContractError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformContractError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformContractAlreadyExistsError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "계약 생성",
+        "x-portone-description": "새로운 계약을 생성합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePlatformContractError"
+        }
+      }
+    },
+    "/platform/contracts/{id}": {
+      "get": {
+        "summary": "계약 조회",
+        "description": "계약 조회\n\n주어진 아이디에 대응되는 계약을 조회합니다.",
+        "operationId": "getPlatformContract",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "조회할 계약 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회할 계약 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 계약 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformContract"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 계약 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformContractNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "계약 조회",
+        "x-portone-description": "주어진 아이디에 대응되는 계약을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformContractError"
+        }
+      },
+      "patch": {
+        "summary": "계약 수정",
+        "description": "계약 수정\n\n주어진 아이디에 대응되는 계약을 업데이트합니다.",
+        "operationId": "updatePlatformContract",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "업데이트할 계약 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "업데이트할 계약 아이디"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlatformContractBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 업데이트된 계약 객체가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformContractResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 업데이트된 계약 객체가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformContractError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformContractError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformContractNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformContractError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformArchivedContractError`: 보관된 계약을 업데이트하려고 하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePlatformContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "계약 수정",
+        "x-portone-description": "주어진 아이디에 대응되는 계약을 업데이트합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdatePlatformContractError"
+        }
+      }
+    },
     "/platform/contracts/{id}/schedule": {
       "get": {
         "description": "주어진 아이디에 대응되는 계약의 예약 업데이트를 조회합니다.",
@@ -1941,6 +4047,1192 @@
           "$ref": "#/components/schemas/CancelPlatformContractScheduleError"
         },
         "x-portone-unstable": true
+      }
+    },
+    "/platform/contracts/{id}/archive": {
+      "post": {
+        "summary": "계약 보관",
+        "description": "계약 보관\n\n주어진 아이디에 대응되는 계약을 보관합니다.",
+        "operationId": "archivePlatformContract",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "계약 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "계약 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 보관된 계약 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformContractResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 보관된 계약 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformContractError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformContractError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformContractNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformContractError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformCannotArchiveScheduledContractError`: 예약된 업데이트가 있는 계약을 보관하려고 하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArchivePlatformContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "계약 보관",
+        "x-portone-description": "주어진 아이디에 대응되는 계약을 보관합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ArchivePlatformContractError"
+        }
+      }
+    },
+    "/platform/contracts/{id}/recover": {
+      "post": {
+        "summary": "계약 복원",
+        "description": "계약 복원\n\n주어진 아이디에 대응되는 계약을 복원합니다.",
+        "operationId": "recoverPlatformContract",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "계약 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "계약 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 복원된 계약 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformContractResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 복원된 계약 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformContractError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformContractError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformContractNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoverPlatformContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.policy",
+        "x-portone-title": "계약 복원",
+        "x-portone-description": "주어진 아이디에 대응되는 계약을 복원합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/RecoverPlatformContractError"
+        }
+      }
+    },
+    "/platform/transfers/{id}": {
+      "get": {
+        "summary": "정산건 조회",
+        "description": "정산건 조회\n\n정산건을 조회합니다.",
+        "operationId": "getPlatformTransfer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "조회하고 싶은 정산건 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회하고 싶은 정산건 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 정산건 객체가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformTransfer"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 정산건 객체가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformTransferNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.transfer",
+        "x-portone-title": "정산건 조회",
+        "x-portone-description": "정산건을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformTransferError"
+        }
+      },
+      "delete": {
+        "summary": "정산건 삭제",
+        "description": "정산건 삭제\n\nscheduled, in_process 상태의 정산건만 삭제가능합니다.",
+        "operationId": "deletePlatformTransfer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "정산건 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "정산건 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletePlatformTransferResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `PlatformCancelOrderTransfersExistsError`\n* `PlatformTransferNonDeletableStatusError`\n* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletePlatformTransferError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletePlatformTransferError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletePlatformTransferError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformTransferNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletePlatformTransferError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.transfer",
+        "x-portone-title": "정산건 삭제",
+        "x-portone-description": "scheduled, in_process 상태의 정산건만 삭제가능합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DeletePlatformTransferError"
+        }
+      }
+    },
+    "/platform/transfer-summaries": {
+      "get": {
+        "summary": "정산건 다건 조회",
+        "description": "정산건 다건 조회\n\n성공 응답으로 조회된 정산건 요약 리스트와 페이지 정보가 반환됩니다.",
+        "operationId": "getPlatformTransferSummaries",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferSummariesBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformTransferSummariesBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferSummariesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferSummariesError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferSummariesError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformTransferSummariesError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.transfer",
+        "x-portone-title": "정산건 다건 조회",
+        "x-portone-description": "성공 응답으로 조회된 정산건 요약 리스트와 페이지 정보가 반환됩니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformTransferSummariesError"
+        }
+      }
+    },
+    "/platform/transfers/order": {
+      "post": {
+        "summary": "주문 정산건 생성",
+        "description": "주문 정산건 생성\n\n성공 응답으로 생성된 주문 정산건 객체가 반환됩니다.",
+        "operationId": "createPlatformOrderTransfer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformOrderTransferBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateOrderTransferResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformProductIdDuplicatedError`\n* `PlatformSettlementPaymentAmountExceededPortOnePaymentError`: 정산 요청 결제 금액이 포트원 결제 내역의 결제 금액을 초과한 경우\n* `PlatformSettlementTaxFreeAmountExceededPortOnePaymentError`: 정산 요청 면세 금액이 포트원 결제 내역의 면세 금액을 초과한 경우\n* `PlatformSettlementSupplyWithVatAmountExceededPortOnePaymentError`: 정산 요청 공급대가가 포트원 결제 내역의 공급대가를 초과한 경우\n* `PlatformSettlementAmountExceededError`: 정산 가능한 금액을 초과한 경우\n* `PlatformContractPlatformFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError`\n* `PlatformAdditionalFixedAmountFeeCurrencyAndSettlementCurrencyMismatchedError`\n* `PlatformCurrencyNotSupportedError`: 지원 되지 않는 통화를 선택한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderTransferError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderTransferError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderTransferError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`\n* `PlatformContractNotFoundError`\n* `PlatformAdditionalFeePoliciesNotFoundError`\n* `PlatformDiscountSharePoliciesNotFoundError`\n* `PlatformPaymentNotFoundError`\n* `PlatformUserDefinedPropertyNotFoundError`: 사용자 정의 속성이 존재 하지 않는 경우\n* `PlatformSettlementParameterNotFoundError`: 정산 파라미터가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderTransferError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformTransferAlreadyExistsError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderTransferError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.transfer",
+        "x-portone-title": "주문 정산건 생성",
+        "x-portone-description": "성공 응답으로 생성된 주문 정산건 객체가 반환됩니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePlatformOrderTransferError"
+        }
+      }
+    },
+    "/platform/transfers/order-cancel": {
+      "post": {
+        "summary": "주문 취소 정산건 생성",
+        "description": "주문 취소 정산건 생성\n\n성공 응답으로 생성된 주문 취소 정산건 객체가 반환됩니다.",
+        "operationId": "createPlatformOrderCancelTransfer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformOrderCancelTransferBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateOrderCancelTransferResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformOrderDetailMismatchedError`\n* `PlatformDiscountSharePolicyIdDuplicatedError`\n* `PlatformCancellableAmountExceededError`: 취소 가능한 금액이 초과한 경우\n* `PlatformCancellableDiscountAmountExceededError`\n* `PlatformCancellableDiscountTaxFreeAmountExceededError`\n* `PlatformProductIdDuplicatedError`\n* `PlatformCancellableProductQuantityExceededError`\n* `PlatformOrderTransferAlreadyCancelledError`\n* `PlatformSettlementAmountExceededError`: 정산 가능한 금액을 초과한 경우\n* `PlatformCancellationAndPaymentTypeMismatchedError`\n* `PlatformSettlementCancelAmountExceededPortOneCancelError`: 정산 취소 요청 금액이 포트원 결제 취소 내역의 취소 금액을 초과한 경우\n* `PlatformCannotSpecifyTransferError`: 정산 건 식별에 실패한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderCancelTransferError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderCancelTransferError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderCancelTransferError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformTransferNotFoundError`\n* `PlatformCancellationNotFoundError`\n* `PlatformPaymentNotFoundError`\n* `PlatformProductIdNotFoundError`\n* `PlatformTransferDiscountSharePolicyNotFoundError`\n* `PlatformUserDefinedPropertyNotFoundError`: 사용자 정의 속성이 존재 하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderCancelTransferError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformTransferAlreadyExistsError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformOrderCancelTransferError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.transfer",
+        "x-portone-title": "주문 취소 정산건 생성",
+        "x-portone-description": "성공 응답으로 생성된 주문 취소 정산건 객체가 반환됩니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePlatformOrderCancelTransferError"
+        }
+      }
+    },
+    "/platform/transfers/manual": {
+      "post": {
+        "summary": "수기 정산건 생성",
+        "description": "수기 정산건 생성\n\n성공 응답으로 생성된 수기 정산건 객체가 반환됩니다.",
+        "operationId": "createPlatformManualTransfer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformManualTransferBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateManualTransferResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformManualTransferError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformManualTransferError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformManualTransferError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`\n* `PlatformUserDefinedPropertyNotFoundError`: 사용자 정의 속성이 존재 하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePlatformManualTransferError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.transfer",
+        "x-portone-title": "수기 정산건 생성",
+        "x-portone-description": "성공 응답으로 생성된 수기 정산건 객체가 반환됩니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePlatformManualTransferError"
+        }
+      }
+    },
+    "/platform/transfer-summaries/sheet-file": {
+      "get": {
+        "summary": "정산 상세 내역 다운로드",
+        "description": "정산 상세 내역 다운로드\n\n정산 상세 내역을 csv 파일로 다운로드 합니다.",
+        "operationId": "downloadPlatformTransferSheet",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadPlatformTransferSheetBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": true
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadPlatformTransferSheetBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadPlatformTransferSheetError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadPlatformTransferSheetError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.transfer",
+        "x-portone-title": "정산 상세 내역 다운로드",
+        "x-portone-description": "정산 상세 내역을 csv 파일로 다운로드 합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DownloadPlatformTransferSheetError"
+        }
+      }
+    },
+    "/platform/partner-settlements": {
+      "get": {
+        "summary": "정산 내역 다건 조회",
+        "description": "정산 내역 다건 조회\n\n여러 정산 내역을 조회합니다.",
+        "operationId": "getPlatformPartnerSettlements",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerSettlementsBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformPartnerSettlementsBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 정산 내역 리스트와 페이지 정보 및 상태 별 개수 정보를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerSettlementsResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 정산 내역 리스트와 페이지 정보 및 상태 별 개수 정보를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerSettlementsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerSettlementsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPartnerSettlementsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partnerSettlement",
+        "x-portone-title": "정산 내역 다건 조회",
+        "x-portone-description": "여러 정산 내역을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformPartnerSettlementsError"
+        }
+      }
+    },
+    "/platform/payouts": {
+      "get": {
+        "summary": "지급 내역 다건 조회",
+        "description": "지급 내역 다건 조회\n\n여러 지급 내역을 조회합니다.",
+        "operationId": "getPlatformPayouts",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPayoutsBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformPayoutsBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 지급 내역 리스트와 페이지 정보 및 상태 별 개수 정보를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPayoutsResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 지급 내역 리스트와 페이지 정보 및 상태 별 개수 정보를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPayoutsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPayoutsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformPayoutsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.payout",
+        "x-portone-title": "지급 내역 다건 조회",
+        "x-portone-description": "여러 지급 내역을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformPayoutsError"
+        }
+      }
+    },
+    "/platform/bulk-payouts": {
+      "get": {
+        "summary": "일괄 지급 내역 다건 조회",
+        "description": "일괄 지급 내역 다건 조회\n\n성공 응답으로 조회된 일괄 지급 내역 리스트와 페이지 정보 및 상태 별 개수 정보를 반환합니다.",
+        "operationId": "getPlatformBulkPayouts",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkPayoutsBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformBulkPayoutsBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkPayoutsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkPayoutsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkPayoutsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkPayoutsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.bulkPayout",
+        "x-portone-title": "일괄 지급 내역 다건 조회",
+        "x-portone-description": "성공 응답으로 조회된 일괄 지급 내역 리스트와 페이지 정보 및 상태 별 개수 정보를 반환합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformBulkPayoutsError"
+        }
+      }
+    },
+    "/platform/bank-accounts/{bank}/{accountNumber}/holder": {
+      "get": {
+        "summary": "예금주 조회",
+        "description": "예금주 조회\n\n계좌의 예금주를 조회합니다.",
+        "operationId": "getPlatformAccountHolder",
+        "parameters": [
+          {
+            "name": "bank",
+            "in": "path",
+            "description": "은행",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Bank"
+            },
+            "x-portone-title": "은행"
+          },
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "description": "'-'를 제외한 계좌 번호",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "'-'를 제외한 계좌 번호"
+          },
+          {
+            "name": "birthdate",
+            "in": "query",
+            "description": "생년월일\n\n실명 조회를 위해 추가로 보낼 수 있습니다. birthdate과 businessRegistrationNumber 중 하나만 사용해야 합니다.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "생년월일",
+            "x-portone-description": "실명 조회를 위해 추가로 보낼 수 있습니다. birthdate과 businessRegistrationNumber 중 하나만 사용해야 합니다."
+          },
+          {
+            "name": "businessRegistrationNumber",
+            "in": "query",
+            "description": "사업자등록번호\n\n실명 조회를 위해 추가로 보낼 수 있습니다. birthdate과 businessRegistrationNumber 중 하나만 사용해야 합니다.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호",
+            "x-portone-description": "실명 조회를 위해 추가로 보낼 수 있습니다. birthdate과 businessRegistrationNumber 중 하나만 사용해야 합니다."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 예금주 명이 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformAccountHolder"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 예금주 명이 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformNotSupportedBankError`: 지원하지 않는 은행인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAccountHolderError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAccountHolderError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAccountHolderError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "* `PlatformExternalApiTemporarilyFailedError`: 외부 api의 일시적인 오류\n* `PlatformExternalApiFailedError`: 외부 api 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAccountHolderError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.account",
+        "x-portone-title": "예금주 조회",
+        "x-portone-description": "계좌의 예금주를 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformAccountHolderError"
+        }
       }
     },
     "/identity-verifications/{identityVerificationId}": {
@@ -2517,6 +5809,499 @@
         }
       }
     },
+    "/billing-keys/{billingKey}": {
+      "get": {
+        "summary": "빌링키 단건 조회",
+        "description": "빌링키 단건 조회\n\n주어진 빌링키에 대응되는 빌링키 정보를 조회합니다.",
+        "operationId": "getBillingKeyInfo",
+        "parameters": [
+          {
+            "name": "billingKey",
+            "in": "path",
+            "description": "조회할 빌링키",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회할 빌링키"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "상점 아이디\n\n접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 빌링키 정보를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingKeyInfo"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 빌링키 정보를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfoError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfoError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfoError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `BillingKeyNotFoundError`: 빌링키가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfoError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.billingKey",
+        "x-portone-title": "빌링키 단건 조회",
+        "x-portone-description": "주어진 빌링키에 대응되는 빌링키 정보를 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetBillingKeyInfoError"
+        }
+      },
+      "delete": {
+        "summary": "빌링키 삭제",
+        "description": "빌링키 삭제\n\n빌링키를 삭제합니다.",
+        "operationId": "deleteBillingKey",
+        "parameters": [
+          {
+            "name": "billingKey",
+            "in": "path",
+            "description": "삭제할 빌링키",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "삭제할 빌링키"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "상점 아이디\n\n접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `BillingKeyNotIssuedError`\n* `BillingKeyNotFoundError`: 빌링키가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `BillingKeyAlreadyDeletedError`: 빌링키가 이미 삭제된 경우\n* `PaymentScheduleAlreadyExistsError`: 결제 예약건이 이미 존재하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `PgProviderError`: PG사에서 오류를 전달한 경우\n* `ChannelSpecificError`: 여러 채널을 지정한 요청에서, 채널 각각에서 오류가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBillingKeyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.billingKey",
+        "x-portone-title": "빌링키 삭제",
+        "x-portone-description": "빌링키를 삭제합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DeleteBillingKeyError"
+        }
+      }
+    },
+    "/billing-keys": {
+      "get": {
+        "summary": "빌링키 다건 조회",
+        "description": "빌링키 다건 조회\n\n주어진 조건에 맞는 빌링키들을 페이지 기반으로 조회합니다.",
+        "operationId": "getBillingKeyInfos",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetBillingKeyInfosBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 빌링키 리스트와 페이지 정보가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답으로 조회된 빌링키 리스트와 페이지 정보가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBillingKeyInfosError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.billingKey",
+        "x-portone-title": "빌링키 다건 조회",
+        "x-portone-description": "주어진 조건에 맞는 빌링키들을 페이지 기반으로 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetBillingKeyInfosError"
+        }
+      },
+      "post": {
+        "summary": "빌링키 발급",
+        "description": "빌링키 발급\n\n빌링키 발급을 요청합니다.",
+        "operationId": "issueBillingKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueBillingKeyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `ChannelNotFoundError`: 요청된 채널이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `PgProviderError`: PG사에서 오류를 전달한 경우\n* `ChannelSpecificError`: 여러 채널을 지정한 요청에서, 채널 각각에서 오류가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueBillingKeyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.billingKey",
+        "x-portone-title": "빌링키 발급",
+        "x-portone-description": "빌링키 발급을 요청합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/IssueBillingKeyError"
+        }
+      }
+    },
+    "/payments/{paymentId}/cash-receipt": {
+      "get": {
+        "summary": "현금 영수증 단건 조회",
+        "description": "현금 영수증 단건 조회\n\n주어진 결제 아이디에 대응되는 현금 영수증 내역을 조회합니다.",
+        "operationId": "getCashReceiptByPaymentId",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "결제 건 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "결제 건 아이디"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "상점 아이디\n\n접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 현금 영수증 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashReceipt"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 현금 영수증 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCashReceiptError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCashReceiptError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCashReceiptError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `CashReceiptNotFoundError`: 현금영수증이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCashReceiptError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.cashReceipt",
+        "x-portone-title": "현금 영수증 단건 조회",
+        "x-portone-description": "주어진 결제 아이디에 대응되는 현금 영수증 내역을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetCashReceiptError"
+        }
+      }
+    },
     "/payments/{paymentId}": {
       "get": {
         "summary": "결제 단건 조회",
@@ -2796,6 +6581,411 @@
           "$ref": "#/components/schemas/GetAllPaymentsError"
         },
         "x-portone-unstable": true
+      }
+    },
+    "/payment-schedules/{paymentScheduleId}": {
+      "get": {
+        "summary": "결제 예약 단건 조회",
+        "description": "결제 예약 단건 조회\n\n주어진 아이디에 대응되는 결제 예약 건을 조회합니다.",
+        "operationId": "getPaymentSchedule",
+        "parameters": [
+          {
+            "name": "paymentScheduleId",
+            "in": "path",
+            "description": "조회할 결제 예약 건 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회할 결제 예약 건 아이디"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "상점 아이디\n\n접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 결제 예약 건 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentSchedule"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답으로 결제 예약 건 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentScheduleError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentScheduleError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentScheduleError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PaymentScheduleNotFoundError`: 결제 예약건이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentScheduleError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.paymentSchedule",
+        "x-portone-title": "결제 예약 단건 조회",
+        "x-portone-description": "주어진 아이디에 대응되는 결제 예약 건을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPaymentScheduleError"
+        }
+      }
+    },
+    "/payment-schedules": {
+      "get": {
+        "summary": "결제 예약 다건 조회",
+        "description": "결제 예약 다건 조회\n\n주어진 조건에 맞는 결제 예약 건들을 조회합니다.\n`filter.from`, `filter.until` 파라미터의 기본값이 결제 시점 기준 지난 90일에 속하는 건을 조회하도록 되어 있으니, 미래 예약 상태의 건을 조회하기 위해서는 해당 파라미터를 직접 설정해 주셔야 합니다.",
+        "operationId": "getPaymentSchedules",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPaymentSchedulesBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 예약 결제 건 리스트가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 예약 결제 건 리스트가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentSchedulesError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.paymentSchedule",
+        "x-portone-title": "결제 예약 다건 조회",
+        "x-portone-description": "주어진 조건에 맞는 결제 예약 건들을 조회합니다.\n`filter.from`, `filter.until` 파라미터의 기본값이 결제 시점 기준 지난 90일에 속하는 건을 조회하도록 되어 있으니, 미래 예약 상태의 건을 조회하기 위해서는 해당 파라미터를 직접 설정해 주셔야 합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPaymentSchedulesError"
+        }
+      },
+      "delete": {
+        "summary": "결제 예약 취소",
+        "description": "결제 예약 취소\n\n결제 예약 건을 취소합니다.\nbillingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -> 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -> 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -> 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 단, 예약한 빌링키가 입력된 빌링키와 일치하지 않으면 실패합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.",
+        "operationId": "revokePaymentSchedules",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokePaymentSchedulesBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": true
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevokePaymentSchedulesBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokePaymentSchedulesResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokePaymentSchedulesError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokePaymentSchedulesError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokePaymentSchedulesError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PaymentScheduleNotFoundError`: 결제 예약건이 존재하지 않는 경우\n* `BillingKeyNotFoundError`: 빌링키가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokePaymentSchedulesError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PaymentScheduleAlreadyProcessedError`: 결제 예약건이 이미 처리된 경우\n* `PaymentScheduleAlreadyRevokedError`: 결제 예약건이 이미 취소된 경우\n* `BillingKeyAlreadyDeletedError`: 빌링키가 이미 삭제된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokePaymentSchedulesError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.paymentSchedule",
+        "x-portone-title": "결제 예약 취소",
+        "x-portone-description": "결제 예약 건을 취소합니다.\nbillingKey, scheduleIds 중 하나 이상은 필수로 입력합니다.\nbillingKey 만 입력된 경우 -> 해당 빌링키로 예약된 모든 결제 예약 건들이 취소됩니다.\nscheduleIds 만 입력된 경우 -> 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다.\nbillingKey, scheduleIds 모두 입력된 경우 -> 입력된 결제 예약 건 아이디에 해당하는 예약 건들이 취소됩니다. 단, 예약한 빌링키가 입력된 빌링키와 일치하지 않으면 실패합니다.\n위 정책에 따라 선택된 결제 예약 건들 중 하나라도 취소에 실패할 경우, 모든 취소 요청이 실패합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/RevokePaymentSchedulesError"
+        }
+      }
+    },
+    "/payments/{paymentId}/schedule": {
+      "post": {
+        "summary": "결제 예약",
+        "description": "결제 예약\n\n결제를 예약합니다.",
+        "operationId": "createPaymentSchedule",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "결제 건 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "결제 건 아이디"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentScheduleBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePaymentScheduleResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePaymentScheduleError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePaymentScheduleError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePaymentScheduleError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `BillingKeyNotFoundError`: 빌링키가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePaymentScheduleError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `AlreadyPaidOrWaitingError`: 결제가 이미 완료되었거나 대기중인 경우\n* `SumOfPartsExceedsTotalAmountError`: 면세 금액 등 하위 항목들의 합이 전체 결제 금액을 초과한 경우\n* `BillingKeyAlreadyDeletedError`: 빌링키가 이미 삭제된 경우\n* `PaymentScheduleAlreadyExistsError`: 결제 예약건이 이미 존재하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePaymentScheduleError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.paymentSchedule",
+        "x-portone-title": "결제 예약",
+        "x-portone-description": "결제를 예약합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreatePaymentScheduleError"
+        }
       }
     },
     "/payments/{paymentId}/cancel": {
@@ -3143,6 +7333,217 @@
         "x-portone-description": "수기 결제를 진행합니다.",
         "x-portone-error": {
           "$ref": "#/components/schemas/PayInstantlyError"
+        }
+      }
+    },
+    "/cash-receipts": {
+      "post": {
+        "summary": "현금 영수증 수동 발급",
+        "description": "현금 영수증 수동 발급\n\n현금 영수증 발급을 요청합니다.",
+        "operationId": "issueCashReceipt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueCashReceiptBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `ChannelNotFoundError`: 요청된 채널이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `CashReceiptAlreadyIssuedError`: 현금영수증이 이미 발급된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `PgProviderError`: PG사에서 오류를 전달한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssueCashReceiptError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.cashReceipt",
+        "x-portone-title": "현금 영수증 수동 발급",
+        "x-portone-description": "현금 영수증 발급을 요청합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/IssueCashReceiptError"
+        }
+      }
+    },
+    "/payments/{paymentId}/cash-receipt/cancel": {
+      "post": {
+        "summary": "현금 영수증 취소",
+        "description": "현금 영수증 취소\n\n현금 영수증 취소를 요청합니다.",
+        "operationId": "cancelCashReceiptByPaymentId",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "결제 건 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "결제 건 아이디"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "상점 아이디\n\n접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `CashReceiptNotIssuedError`: 현금영수증이 발급되지 않은 경우\n* `CashReceiptNotFoundError`: 현금영수증이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `PgProviderError`: PG사에서 오류를 전달한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelCashReceiptError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.cashReceipt",
+        "x-portone-title": "현금 영수증 취소",
+        "x-portone-description": "현금 영수증 취소를 요청합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CancelCashReceiptError"
         }
       }
     },
@@ -3895,6 +8296,185 @@
         "x-portone-error": {
           "$ref": "#/components/schemas/RegisterStoreReceiptError"
         }
+      }
+    },
+    "/promotions/{promotionId}": {
+      "get": {
+        "summary": "프로모션 단건 조회",
+        "description": "프로모션 단건 조회\n\n주어진 아이디에 대응되는 프로모션을 조회합니다.",
+        "operationId": "getPromotion",
+        "parameters": [
+          {
+            "name": "promotionId",
+            "in": "path",
+            "description": "조회할 프로모션 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회할 프로모션 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 프로모션 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promotion"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답으로 프로모션 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPromotionError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPromotionError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPromotionError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PromotionNotFoundError`: 프로모션이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPromotionError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment.promotion",
+        "x-portone-title": "프로모션 단건 조회",
+        "x-portone-description": "주어진 아이디에 대응되는 프로모션을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPromotionError"
+        }
+      }
+    },
+    "/platform/account-transfers": {
+      "get": {
+        "summary": "이체 내역 다건 조회",
+        "description": "이체 내역 다건 조회\n\n여러 이체 내역을 조회합니다.",
+        "operationId": "getPlatformAccountTransfers",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAccountTransfersBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAccountTransfersBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 이체 내역과 페이지 정보를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAccountTransfersResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 이체 내역과 페이지 정보를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAccountTransfersError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAccountTransfersError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformAccountTransfersError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.accountTransfer",
+        "x-portone-title": "이체 내역 다건 조회",
+        "x-portone-description": "여러 이체 내역을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformAccountTransfersError"
+        },
+        "x-portone-unstable": true
       }
     }
   },
