@@ -28,12 +28,9 @@ export function getCategories(schema: unknown): Category[] {
     tags?: Tag[];
   };
 
-  const filterInvisible = (categories: Category[] | undefined) =>
-    categories?.filter((category) => !category.invisible);
-
   return (
-    filterInvisible(s["x-portone-categories"]) ||
-    filterInvisible(s.info?.["x-portone-categories"]) ||
+    s["x-portone-categories"] ||
+    s.info?.["x-portone-categories"] ||
     tagsToCategories(s.tags || [])
   );
 }
