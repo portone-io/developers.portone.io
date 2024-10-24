@@ -101,6 +101,11 @@ export function processV2Openapi(schema: any): any {
     }
     delete node["x-portone-fields"];
   });
+  for (const [key, value] of Object.entries(schema.paths)) {
+    if (value == null || Object.keys(value).length === 0) {
+      delete schema.paths[key];
+    }
+  }
   return schema;
 }
 
