@@ -48,30 +48,27 @@ export const remarkLintLocalLinksValid = lintRule(
                 ) {
                   const link = pair.value.value;
                   const range = pair.value.range;
-                  checkLink(
-                    path.isAbsolute(link) ? path.join("/opi", link) : link,
-                    (reason) => {
-                      if (node.position && range) {
-                        const start = lineCounter.linePos(range[0]);
-                        const end = lineCounter.linePos(range[1]);
-                        file.message(reason, {
-                          ...node,
-                          position: {
-                            start: {
-                              line: node.position.start.line + start.line,
-                              column: start.col,
-                            },
-                            end: {
-                              line: node.position.start.line + end.line,
-                              column: end.col,
-                            },
+                  checkLink(link, (reason) => {
+                    if (node.position && range) {
+                      const start = lineCounter.linePos(range[0]);
+                      const end = lineCounter.linePos(range[1]);
+                      file.message(reason, {
+                        ...node,
+                        position: {
+                          start: {
+                            line: node.position.start.line + start.line,
+                            column: start.col,
                           },
-                        });
-                      } else {
-                        file.message(reason, node);
-                      }
-                    },
-                  );
+                          end: {
+                            line: node.position.start.line + end.line,
+                            column: end.col,
+                          },
+                        },
+                      });
+                    } else {
+                      file.message(reason, node);
+                    }
+                  });
                 }
               },
             });
@@ -110,14 +107,9 @@ export const remarkLintLocalLinksValid = lintRule(
             "position" in attr
           ) {
             const link = attr.value;
-            checkLink(
-              path.isAbsolute(link) && !link.startsWith("/api")
-                ? path.join("/opi", link)
-                : link,
-              (reason) => {
-                file.message(reason, attr as Node);
-              },
-            );
+            checkLink(link, (reason) => {
+              file.message(reason, attr as Node);
+            });
           }
         }
       }

@@ -106,7 +106,7 @@ import VersionGate from "~/components/gitbook/VersionGate";
 import ContentRef from "~/components/gitbook/ContentRef";
 
 // 컴포넌트 내에서 페이지 이름을 자동으로 불러와 표시합니다.
-<ContentRef slug="/ko/ready/readme" />;
+<ContentRef slug="/opi/ko/ready/readme" />;
 ```
 
 ### 문서화되지 않은 컴포넌트들
@@ -217,7 +217,7 @@ Prettier의 경우 플러그인을 통해 언어 지원을 추가할 수 있으�
 ### 기존 문서 제거 시 리다이렉션 설정하기
 
 개발자센터에 대한 죽은 링크가 생기는 것을 방지하기 위해, 기존 문서가 제거되는 경우나
-URL이 변경되는 경우 `src/routes/(root)/docs/_redir.yaml` 파일에서
+URL이 변경되는 경우 `src/routes/(root)/_redir.yaml` 파일에서
 구-신 주소 간에 리다이렉션을 설정해야 합니다.
 
 - 단순 URL 변경의 경우 파일 내에 적절히 새 리다이렉션 설정을 추가해주세요.

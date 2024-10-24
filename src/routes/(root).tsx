@@ -10,7 +10,7 @@ import type { DocsEntry } from "~/content/config";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
-import { getOpiFullSlug, loadDoc } from "~/misc/opi";
+import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import { SystemVersionProvider } from "~/state/system-version";
 
 interface Props {
@@ -24,12 +24,13 @@ export default function Layout(props: Props) {
   const lang = createMemo(() =>
     location.pathname.includes("/en/") ? "en" : "ko",
   );
-  const docsSlug = createMemo(() => getOpiFullSlug(location.pathname));
+  const docsSlug = createMemo(() => parseDocsFullSlug(location.pathname));
   const docData = createAsync(async () => {
-    const slug = docsSlug();
-    if (!slug) return;
+    const parsedSlug = docsSlug();
+    if (!parsedSlug) return;
+    const [contentName, slug] = parsedSlug;
     try {
-      return await loadDoc(slug);
+      return await loadDoc(contentName, slug);
     } catch (e) {
       if (e instanceof Error && e.name === "NotFoundError") {
         return;
