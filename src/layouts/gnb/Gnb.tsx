@@ -127,7 +127,17 @@ export default function Gnb(props: Props) {
                     link: "/api/rest-v2",
                     systemVersion: "v2",
                   },
-                  // { label: "GraphQL API", link: "/api/graphql" },
+                  {
+                    label: "Client SDKs",
+                    link: {
+                      v1: "/sdk/ko/v1-mobile-sdk/readme",
+                      v2: "/sdk/ko/v2-mobile-sdk/readme",
+                    },
+                  },
+                  {
+                    label: "Server SDKs",
+                    link: "/sdk/ko/v2-mobile-sdk/readme",
+                  },
                   {
                     label: t()["sdk-playground"],
                     link: "https://sdk-playground.portone.io/",

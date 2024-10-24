@@ -237,7 +237,13 @@ async function writeIndex(
 
 import "#server-only";
 
-${[...collections.keys()].map((name) => `export { ${name} } from "./${name}";`).join("\n")}
+${[...collections.keys()].map((name) => `import { ${name} } from "./${name}";`).join("\n")}
+
+export { ${[...collections.keys()].join(", ")} };
+
+export type Contents = {
+${[...collections.keys()].map((name) => `  ${name}: typeof ${name};`).join("\n")}
+};
 `;
 
   await fs.mkdir(outDir, { recursive: true });

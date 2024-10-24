@@ -2,9 +2,10 @@ import "#server-only";
 
 import * as path from "node:path";
 
-import { opi } from "#content";
+import { opi, sdk } from "#content";
 import navYamlEn from "~/routes/(root)/docs/en/_nav.yaml";
 import navYamlKo from "~/routes/(root)/opi/ko/_nav.yaml";
+import navYamlSdk from "~/routes/(root)/sdk/ko/_nav.yaml";
 import type { NavMenuItem, NavMenuPage } from "~/state/nav";
 import type { SystemVersion, YamlNavMenuToplevelItem } from "~/type";
 
@@ -13,28 +14,45 @@ type Frontmatter = {
 };
 type Frontmatters = Record<string, Frontmatter>;
 
-const frontmatters: Frontmatters = Object.values(opi)
-  .map((entry) => {
-    const absSlug = path.posix.join("/", entry.slug);
-    const frontmatter = entry.frontmatter || {};
-    return { absSlug, frontmatter };
-  })
-  .reduce((acc, { absSlug, frontmatter }) => {
-    acc[absSlug] = frontmatter;
-    return acc;
-  }, {} as Frontmatters);
+const getFrontmatters = (
+  contents: Record<string, { slug: string; frontmatter: Frontmatter }>,
+): Frontmatters =>
+  Object.values(contents)
+    .map((entry) => {
+      const absSlug = path.posix.join("/", entry.slug);
+      const frontmatter = entry.frontmatter || {};
+      return { absSlug, frontmatter };
+    })
+    .reduce((acc, { absSlug, frontmatter }) => {
+      acc[absSlug] = frontmatter;
+      return acc;
+    }, {} as Frontmatters);
 
-export const navMenuItemsEn = toNavMenuItems(
+const opiFrontmatters = getFrontmatters(opi);
+const sdkFrontmatters = getFrontmatters(sdk);
+
+const navMenuItemsEn = toNavMenuItems(
+  "opi",
   navYamlEn as YamlNavMenuToplevelItem[],
-  frontmatters,
+  opiFrontmatters,
 );
-export const navMenuItemsKo = toNavMenuItems(
+const navMenuItemsKo = toNavMenuItems(
+  "opi",
   navYamlKo as YamlNavMenuToplevelItem[],
-  frontmatters,
+  opiFrontmatters,
 );
-export const navMenu = { en: navMenuItemsEn, ko: navMenuItemsKo };
+const navMenuItemsSdk = toNavMenuItems(
+  "sdk",
+  navYamlSdk as YamlNavMenuToplevelItem[],
+  sdkFrontmatters,
+);
+export const navMenu = {
+  opi: { en: navMenuItemsEn, ko: navMenuItemsKo },
+  sdk: { en: [] satisfies NavMenuItem[], ko: navMenuItemsSdk },
+} as const;
 
 function toNavMenuItems(
+  baseDir: string,
   yaml: YamlNavMenuToplevelItem[],
   frontmatters: Frontmatters,
   systemVersion?: SystemVersion,
@@ -43,7 +61,7 @@ function toNavMenuItems(
     if (typeof item === "string") {
       return {
         type: "page",
-        path: item,
+        path: `/${baseDir}${item}`,
         title: frontmatters[item]?.["title"] || "",
         items: [],
         systemVersion,
@@ -52,10 +70,11 @@ function toNavMenuItems(
       const _systemVersion = item.systemVersion || systemVersion;
       return {
         type: "page",
-        path: item.slug,
+        path: `/${baseDir}${item.slug}`,
         title: frontmatters[item.slug]?.["title"] || "",
         items: item.items
           ? (toNavMenuItems(
+              baseDir,
               item.items,
               frontmatters,
               _systemVersion,
@@ -67,10 +86,11 @@ function toNavMenuItems(
       const _systemVersion = item.systemVersion || systemVersion;
       return {
         type: "page",
-        path: item.href,
+        path: `/${baseDir}${item.href}`,
         title: item.label,
         items: item.items
           ? (toNavMenuItems(
+              baseDir,
               item.items,
               frontmatters,
               _systemVersion,
@@ -84,6 +104,7 @@ function toNavMenuItems(
         type: "group",
         label: item.label,
         items: toNavMenuItems(
+          baseDir,
           item.items,
           frontmatters,
           _systemVersion,
