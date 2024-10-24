@@ -10,12 +10,12 @@ import { useSidebarContext } from "./context";
 function LeftSidebarItem(props: NavMenuPage) {
   const { systemVersion } = useSystemVersion();
   const location = useLocation();
-  const isActive = createMemo(() => location.pathname === `/opi${props.path}`);
+  const isActive = createMemo(() => location.pathname === props.path);
   const path = createMemo(() => {
     try {
       return { href: new URL(props.path).toString(), isExternal: true };
     } catch (e) {
-      return { href: `/opi${props.path}`, isExternal: false };
+      return { href: props.path, isExternal: false };
     }
   });
 
@@ -42,7 +42,7 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
   const location = useLocation();
   const [isOpen, setIsOpen] = createSignal(
     props.isActive ||
-      props.items.some((item) => location.pathname === `/opi${item.path}`),
+      props.items.some((item) => location.pathname === item.path),
   );
   let anchorRef: HTMLDivElement | undefined;
 
@@ -64,7 +64,7 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
         <div class={`flex ${getLinkStyle(props.isActive)} pr-0`}>
           <A
             href={[
-              "/opi",
+              "",
               props.path,
               props.systemVersion && `?v=${props.systemVersion}`,
             ]

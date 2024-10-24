@@ -120,6 +120,10 @@ export const config = {
     path: "src/routes/(root)/platform/(doc)",
     entrySchema: PlatformEntry,
   },
+  sdk: {
+    path: "src/routes/(root)/sdk",
+    entrySchema: DocsEntry,
+  },
 } satisfies Record<string, CollectionConfig>;
 
 export type CollectionConfig = {

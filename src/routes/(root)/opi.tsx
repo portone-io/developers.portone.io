@@ -13,7 +13,7 @@ import type { DocsEntry } from "~/content/config";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
 import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
-import { getOpiFullSlug, loadDoc } from "~/misc/opi";
+import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import { calcNavMenuSystemVersions } from "~/state/nav";
 import { Lang } from "~/type";
 
@@ -21,34 +21,36 @@ const loadNavMenuSystemVersions = cache(async (lang: Lang) => {
   "use server";
 
   const { navMenu } = await import("~/state/server-only/nav");
-  return calcNavMenuSystemVersions(navMenu[lang] || []);
+  return calcNavMenuSystemVersions(navMenu["opi"][lang] || []);
 }, "opi/nav-menu-system-versions");
 
 export const route = {
   preload: ({ location }) => {
-    const fullSlug = getOpiFullSlug(location.pathname);
-    if (!fullSlug) return;
+    const parsedFullSlug = parseDocsFullSlug(location.pathname);
+    if (!parsedFullSlug) return;
+    const [, fullSlug] = parsedFullSlug;
     const lang = fullSlug.split("/")[0];
 
-    void loadDoc(fullSlug);
+    void loadDoc("opi", fullSlug);
     void loadNavMenuSystemVersions(lang as Lang);
   },
 } satisfies RouteDefinition;
 
 export default function Docs(props: { children: JSXElement }) {
   const location = useLocation();
-  const fullSlug = createMemo(() => {
-    const slug = getOpiFullSlug(location.pathname);
-    if (!slug) throw new NotFoundError();
-    return slug;
+  const parsedFullSlug = createMemo(() => {
+    const parsedFullSlug = parseDocsFullSlug(location.pathname);
+    if (!parsedFullSlug) throw new NotFoundError();
+    return parsedFullSlug;
   });
+  const fullSlug = createMemo(() => parsedFullSlug()[1]);
   const params = createMemo(() => {
     const parts = fullSlug().split("/");
     const lang = parts[0] as Lang;
     const slug = parts.slice(1).join("/");
     return { lang, slug };
   });
-  const doc = createAsync(() => loadDoc(fullSlug()), {
+  const doc = createAsync(() => loadDoc("opi", fullSlug()), {
     deferStream: true,
   });
   const frontmatter = createMemo(() => doc()?.frontmatter as DocsEntry);
@@ -59,7 +61,7 @@ export default function Docs(props: { children: JSXElement }) {
   return (
     <SearchProvider>
       <div class="flex">
-        <DocsNavMenu lang={params().lang} slug={params().slug} />
+        <DocsNavMenu nav="opi" lang={params().lang} slug={params().slug} />
         <div class="min-w-0 flex flex-1 justify-center">
           <Show when={frontmatter()}>
             {(frontmatter) => (

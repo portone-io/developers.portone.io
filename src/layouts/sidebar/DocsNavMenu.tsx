@@ -10,22 +10,25 @@ import LeftSidebarItem from "./LeftSidebarItem";
 import { SearchButton } from "./search";
 
 interface Props {
+  nav: string;
   lang: Lang;
   slug: string;
 }
 
-const getNavMenuItems = cache(async (lang: Lang) => {
+const getNavMenuItems = cache(async (nav: string, lang: Lang) => {
   "use server";
 
   const { navMenu } = await import("~/state/server-only/nav");
-  return navMenu[lang] || [];
+  return navMenu[nav as keyof typeof navMenu][lang] || [];
 }, "nav/menu-items");
 
 export default function DocsNavMenu(props: Props) {
   const { systemVersion } = useSystemVersion();
   const location = useLocation();
   const memoizedLang = createMemo(() => props.lang);
-  const navMenuItems = createAsync(() => getNavMenuItems(memoizedLang()));
+  const navMenuItems = createAsync(() =>
+    getNavMenuItems(props.nav, memoizedLang()),
+  );
 
   return (
     <LeftSidebar>

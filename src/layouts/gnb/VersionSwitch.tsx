@@ -90,9 +90,14 @@ export function VersionSwitch(props: VersionSwitchProps) {
                 location.pathname.startsWith(from),
               )?.[1] ??
               (props.docData?.versionVariants?.[newVersion] &&
-                `/opi${props.docData.versionVariants[newVersion]}`);
+                props.docData.versionVariants[newVersion]);
             if (mappedPath) navigate(mappedPath);
-            else if (location.pathname.startsWith("/opi/")) return;
+            else if (
+              ["/opi/", "/sdk/"].some((path) =>
+                location.pathname.startsWith(path),
+              )
+            )
+              return;
             else navigate("/");
           }}
           class={clsx(
