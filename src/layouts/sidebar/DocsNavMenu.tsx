@@ -1,14 +1,17 @@
 import { cache, createAsync, useLocation } from "@solidjs/router";
 import { createMemo, For, Show } from "solid-js";
 
+import type { DocsEntry } from "~/content/config";
 import { useSystemVersion } from "~/state/system-version";
 import type { Lang } from "~/type";
 
+import { VersionSwitch } from "../gnb/VersionSwitch";
 import DropdownLink from "./DropdownLink";
 import LeftSidebar from "./LeftSidebar";
 import LeftSidebarItem from "./LeftSidebarItem";
 
 interface Props {
+  docData: Pick<DocsEntry, "versionVariants" | "targetVersions">;
   nav: string;
   lang: Lang;
   slug: string;
@@ -44,13 +47,16 @@ export default function DocsNavMenu(props: Props) {
               { label: "기술 블로그", link: "/blog" },
             ]}
           />
-          <div class="my-4 h-1px bg-neutral-200"></div>
+          <div class="my-4 h-1px bg-slate-200"></div>
         </div>
       </div>
       <nav
         id="nav-menu"
         class="scrollbar-thin relative flex-1 overflow-y-scroll"
       >
+        <div class="pb-1 pl-2 pr-6">
+          <VersionSwitch docData={props.docData} />
+        </div>
         <ul class="flex flex-col gap-1 pb-4 pr-4">
           <For each={navMenuItems()}>
             {(item) => {

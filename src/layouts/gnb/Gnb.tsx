@@ -2,7 +2,6 @@ import { A } from "@solidjs/router";
 import clsx from "clsx";
 import { createMemo, For, Show, untrack } from "solid-js";
 
-import type { DocsEntry } from "~/content/config";
 import { useSidebarContext } from "~/layouts/sidebar/context";
 import { useSystemVersion } from "~/state/system-version";
 import type { Lang, SystemVersion } from "~/type";
@@ -11,12 +10,10 @@ import { SearchButton } from "../sidebar/search";
 import Dropdown, { type DropdownItem } from "./Dropdown";
 import Logo from "./Logo";
 import MobileMenuButton from "./MobileMenuButton";
-import { VersionSwitch } from "./VersionSwitch";
 
 interface Props {
   lang: Lang;
   navAsMenu: boolean;
-  docData?: DocsEntry;
 }
 
 const ko = {
@@ -185,7 +182,6 @@ export default function Gnb(props: Props) {
                   )}
                 </For>
               </div>
-              <VersionSwitch docData={props.docData} />
             </div>
             <Show when={props.navAsMenu}>
               {(_) => {
@@ -217,7 +213,6 @@ export default function Gnb(props: Props) {
                         </Dropdown>
                       )}
                     </For>
-                    <VersionSwitch docData={props.docData} />
                   </div>
                 );
               }}

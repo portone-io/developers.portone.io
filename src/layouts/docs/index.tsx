@@ -39,7 +39,7 @@ export function Docs(props: { children: JSXElement }) {
       <Show when={params()}>
         {(params) => (
           <>
-            <DocsNavMenu nav={contentName()} lang={params().lang} slug={params().slug} />
+            <DocsNavMenu docData={doc()?.frontmatter as DocsEntry} nav={contentName()} lang={params().lang} slug={params().slug} />
             <div class="min-w-0 flex flex-1 justify-center gap-5">
               <Show when={frontmatter()}>
                 {(frontmatter) => (
