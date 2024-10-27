@@ -49,6 +49,8 @@ export const defaultVisitor = {
   visitTypeDef(typeDef: TypeDef) {
     if (typeDef.oneOf) this.visitUnion(typeDef);
     if (typeDef.properties) this.visitObject(typeDef);
+    if (typeDef.additionalProperties)
+      this.visitProperty("additionalProperties", typeDef.additionalProperties);
   },
   visitUnion(typeDef: TypeDef) {
     for (const item of typeDef.oneOf!) {
