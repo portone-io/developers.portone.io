@@ -104,7 +104,7 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
                 >
                   {(_) => {
                     const isActive = createMemo(
-                      () => location.pathname === `/opi${item.path}`,
+                      () => location.pathname === item.path,
                     );
                     return (
                       <li class="relative">
