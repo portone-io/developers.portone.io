@@ -25,7 +25,7 @@ interface Props {
   children: JSXElement;
 }
 
-const navAsMenuPaths = ["/platform", "/blog", "/release-notes"];
+const navAsMenuPaths = ["/blog", "/release-notes"];
 
 export const route = {
   preload: ({ location }) => {

@@ -44,7 +44,7 @@ export default function Dropdown(props: DropdownProps) {
         )}
       </Show>
       <Show when={showItems() && props.items}>
-        <div class="relative w-full">
+        <div class="relative w-full <md:hidden">
           <div class="absolute w-max flex flex-col border bg-white py-2 shadow-lg">
             <For each={props.items}>
               {(item) => {
