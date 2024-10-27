@@ -150,7 +150,7 @@ export default function Gnb(props: Props) {
                 href={`/opi/${props.lang}`}
               >
                 <div class="flex items-center gap-2">
-                  <Logo class="w-22" />
+                  <Logo class="w-22" width={88} />
                   <span class="break-keep">{t()["developers"]}</span>
                 </div>
               </A>
