@@ -66,6 +66,12 @@ export default function Layout(props: Props) {
       throw e;
     }
   });
+  const searchIndex = createMemo(() => {
+    if (location.pathname.startsWith("/blog")) {
+      return "blog";
+    }
+    return lang();
+  });
   const [navMenuSystemVersions] = createResource(() => {
     return loadNavMenuSystemVersions(lang());
   });
@@ -95,7 +101,7 @@ export default function Layout(props: Props) {
             <Show when={navMenuSystemVersions.latest}>
               {(versions) => (
                 <SearchScreen
-                  searchIndex={lang()}
+                  searchIndex={searchIndex()}
                   navMenuSystemVersions={versions()}
                 />
               )}
