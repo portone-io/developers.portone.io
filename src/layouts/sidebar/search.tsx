@@ -2,6 +2,7 @@ import { A } from "@solidjs/router";
 import Fuse from "fuse.js";
 import {
   createContext,
+  createEffect,
   createMemo,
   createResource,
   createSignal,
@@ -48,6 +49,17 @@ export function SearchButton({ lang }: SearchButtonProps) {
       ? "⌘"
       : "Ctrl",
   );
+
+  createEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen(true);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  });
 
   return (
     <button
