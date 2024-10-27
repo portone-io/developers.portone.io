@@ -45,10 +45,13 @@ const loadSdkDoc = async (fullSlug: string) => {
 const loadPlatformDoc = async (fullSlug: string) => {
   "use server";
 
-  if (fullSlug === "") throw redirect("/platform/ko/guides/intro", 302);
+  if (fullSlug === "") throw redirect("/platform/ko/readme", 302);
   // Redirect old URLs
   if (["guides/", "usages/"].some((old) => fullSlug.startsWith(old))) {
     throw redirect(`/platform/ko/${fullSlug}`, 302);
+  }
+  if (fullSlug.startsWith("ko/guides/intro")) {
+    throw redirect("/platform/ko/readme", 302);
   }
   if (!fullSlug.includes("/"))
     throw redirect(`/platform/${fullSlug}/readme`, 302);
