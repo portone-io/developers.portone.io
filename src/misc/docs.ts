@@ -4,9 +4,11 @@ import { match } from "ts-pattern";
 import type { Contents } from "#content";
 import { NotFoundError } from "~/components/404";
 
+export type DocsContentName = "opi" | "sdk";
+
 export const parseDocsFullSlug = (
   pathname: string,
-): [keyof Contents, string] | null => {
+): [DocsContentName, string] | null => {
   for (const [contentName, regex] of [
     ["opi", /^\/opi\/?/],
     ["sdk", /^\/sdk\/?/],
