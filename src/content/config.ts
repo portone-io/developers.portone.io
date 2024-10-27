@@ -97,12 +97,6 @@ export type ApiSectionDescriptionEntry = z.infer<
   typeof ApiSectionDescriptionEntry
 >;
 
-const PlatformEntry = z.object({
-  title: z.string(),
-  no: z.number(),
-});
-export type PlatformEntry = z.infer<typeof PlatformEntry>;
-
 export const config = {
   opi: {
     path: "src/routes/(root)/opi",
@@ -117,8 +111,8 @@ export const config = {
     entrySchema: BlogEntry,
   },
   platform: {
-    path: "src/routes/(root)/platform/(doc)",
-    entrySchema: PlatformEntry,
+    path: "src/routes/(root)/platform",
+    entrySchema: DocsEntry,
   },
   sdk: {
     path: "src/routes/(root)/sdk",

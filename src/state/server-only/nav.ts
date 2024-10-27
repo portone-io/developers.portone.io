@@ -2,10 +2,12 @@ import "#server-only";
 
 import * as path from "node:path";
 
-import { opi, sdk } from "#content";
-import navYamlEn from "~/routes/(root)/docs/en/_nav.yaml";
-import navYamlKo from "~/routes/(root)/opi/ko/_nav.yaml";
-import navYamlSdk from "~/routes/(root)/sdk/ko/_nav.yaml";
+import { opi, platform, sdk } from "#content";
+import type { DocsContentName } from "~/misc/docs";
+import navYamlDocsEn from "~/routes/(root)/docs/en/_nav.yaml";
+import navYamlOpiKo from "~/routes/(root)/opi/ko/_nav.yaml";
+import navYamlPlatformKo from "~/routes/(root)/platform/ko/_nav.yaml";
+import navYamlSdkKo from "~/routes/(root)/sdk/ko/_nav.yaml";
 import type { NavMenuItem, NavMenuPage } from "~/state/nav";
 import type { Lang, SystemVersion, YamlNavMenuToplevelItem } from "~/type";
 
@@ -30,32 +32,40 @@ const getFrontmatters = (
 
 const opiFrontmatters = getFrontmatters(opi);
 const sdkFrontmatters = getFrontmatters(sdk);
+const platformFrontmatters = getFrontmatters(platform);
 
-const navMenuItemsEn = toNavMenuItems(
+const navMenuItemsOpiEn = toNavMenuItems(
   "opi",
-  navYamlEn as YamlNavMenuToplevelItem[],
+  navYamlDocsEn as YamlNavMenuToplevelItem[],
   opiFrontmatters,
 );
-const navMenuItemsKo = toNavMenuItems(
+const navMenuItemsOpiKo = toNavMenuItems(
   "opi",
-  navYamlKo as YamlNavMenuToplevelItem[],
+  navYamlOpiKo as YamlNavMenuToplevelItem[],
   opiFrontmatters,
 );
-const navMenuItemsSdk = toNavMenuItems(
+const navMenuItemsSdkKo = toNavMenuItems(
   "sdk",
-  navYamlSdk as YamlNavMenuToplevelItem[],
+  navYamlSdkKo as YamlNavMenuToplevelItem[],
   sdkFrontmatters,
+);
+const navMenuItemsPlatformKo = toNavMenuItems(
+  "platform",
+  navYamlPlatformKo as YamlNavMenuToplevelItem[],
+  platformFrontmatters,
 );
 export const navMenu = {
   ko: {
-    opi: navMenuItemsKo,
-    sdk: navMenuItemsSdk,
+    opi: navMenuItemsOpiKo,
+    sdk: navMenuItemsSdkKo,
+    platform: navMenuItemsPlatformKo,
   },
   en: {
-    opi: navMenuItemsEn,
+    opi: navMenuItemsOpiEn,
     sdk: [] as NavMenuItem[],
+    platform: [] as NavMenuItem[],
   },
-} as const satisfies Record<Lang, Record<string, NavMenuItem[]>>;
+} as const satisfies Record<Lang, Record<DocsContentName, NavMenuItem[]>>;
 
 function toNavMenuItems(
   baseDir: string,
