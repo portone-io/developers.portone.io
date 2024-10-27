@@ -47,7 +47,10 @@ export default function DocsNavMenu(props: Props) {
           <div class="my-4 h-1px bg-neutral-200"></div>
         </div>
       </div>
-      <nav id="nav-menu" class="relative flex-1 overflow-y-scroll">
+      <nav
+        id="nav-menu"
+        class="scrollbar-thin relative flex-1 overflow-y-scroll"
+      >
         <ul class="flex flex-col gap-1 pb-4 pr-4">
           <For each={navMenuItems()}>
             {(item) => {
