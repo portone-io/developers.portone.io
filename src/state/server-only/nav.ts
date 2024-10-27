@@ -7,7 +7,7 @@ import navYamlEn from "~/routes/(root)/docs/en/_nav.yaml";
 import navYamlKo from "~/routes/(root)/opi/ko/_nav.yaml";
 import navYamlSdk from "~/routes/(root)/sdk/ko/_nav.yaml";
 import type { NavMenuItem, NavMenuPage } from "~/state/nav";
-import type { SystemVersion, YamlNavMenuToplevelItem } from "~/type";
+import type { Lang, SystemVersion, YamlNavMenuToplevelItem } from "~/type";
 
 type Frontmatter = {
   title?: string;
@@ -47,9 +47,15 @@ const navMenuItemsSdk = toNavMenuItems(
   sdkFrontmatters,
 );
 export const navMenu = {
-  opi: { en: navMenuItemsEn, ko: navMenuItemsKo },
-  sdk: { en: [] satisfies NavMenuItem[], ko: navMenuItemsSdk },
-} as const;
+  ko: {
+    opi: navMenuItemsKo,
+    sdk: navMenuItemsSdk,
+  },
+  en: {
+    opi: navMenuItemsEn,
+    sdk: [] as NavMenuItem[],
+  },
+} as const satisfies Record<Lang, Record<string, NavMenuItem[]>>;
 
 function toNavMenuItems(
   baseDir: string,

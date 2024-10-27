@@ -16,7 +16,7 @@ import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
-import { type DocsContentName, loadDoc, parseDocsFullSlug } from "~/misc/docs";
+import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import { calcNavMenuSystemVersions } from "~/state/nav";
 import { SystemVersionProvider } from "~/state/system-version";
 import type { Lang } from "~/type";
@@ -35,20 +35,17 @@ export const route = {
 
     const lang = location.pathname.includes("/en/") ? "en" : "ko";
 
-    void loadNavMenuSystemVersions(contentName, lang);
+    void loadNavMenuSystemVersions(lang);
     void loadDoc(contentName, fullSlug);
   },
 } satisfies RouteDefinition;
 
-const loadNavMenuSystemVersions = cache(
-  async (contentName: DocsContentName, lang: Lang) => {
-    "use server";
+const loadNavMenuSystemVersions = cache(async (lang: Lang) => {
+  "use server";
 
-    const { navMenu } = await import("~/state/server-only/nav");
-    return calcNavMenuSystemVersions(navMenu[contentName][lang] || []);
-  },
-  "nav-menu-system-versions",
-);
+  const { navMenu } = await import("~/state/server-only/nav");
+  return calcNavMenuSystemVersions(Object.values(navMenu[lang]).flat());
+}, "nav-menu-system-versions");
 
 export default function Layout(props: Props) {
   const location = useLocation();
@@ -70,11 +67,7 @@ export default function Layout(props: Props) {
     }
   });
   const [navMenuSystemVersions] = createResource(() => {
-    const parsedSlug = docsSlug();
-    if (!parsedSlug) return;
-    const [contentName] = parsedSlug;
-
-    return loadNavMenuSystemVersions(contentName, lang());
+    return loadNavMenuSystemVersions(lang());
   });
 
   return (

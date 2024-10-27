@@ -14,11 +14,11 @@ interface Props {
   slug: string;
 }
 
-const getNavMenuItems = cache(async (nav: string, lang: Lang) => {
+const getNavMenuItems = cache(async (lang: Lang, nav: string) => {
   "use server";
 
   const { navMenu } = await import("~/state/server-only/nav");
-  return navMenu[nav as keyof typeof navMenu][lang] || [];
+  return navMenu[lang][nav as keyof (typeof navMenu)[Lang]] || [];
 }, "nav/menu-items");
 
 export default function DocsNavMenu(props: Props) {
@@ -26,7 +26,7 @@ export default function DocsNavMenu(props: Props) {
   const location = useLocation();
   const memoizedLang = createMemo(() => props.lang);
   const navMenuItems = createAsync(() =>
-    getNavMenuItems(props.nav, memoizedLang()),
+    getNavMenuItems(memoizedLang(), props.nav),
   );
 
   return (

@@ -1,49 +1,26 @@
 import type { APIEvent } from "@solidjs/start/server";
 import * as yaml from "js-yaml";
+import { z } from "zod";
 
-import { type IndexFileName, indexFilesMapping } from "~/misc/contentIndex";
+import { indexFilesMapping as _indexFilesMapping } from "~/misc/contentIndex";
 import { toPlainText } from "~/misc/mdx";
 
 export async function GET({ params }: APIEvent) {
-  const fileName = params.fileName?.replace(".json", "");
-  const slug =
-    fileName &&
-    fileName in indexFilesMapping &&
-    indexFilesMapping[fileName as IndexFileName];
-  if (!slug) return new Response(null, { status: 404 });
+  const fileName = z
+    .enum(["ko", "en", "blog"])
+    .safeParse(params.fileName?.replace(".json", "")).data;
+  if (!fileName) return new Response(null, { status: 404 });
+  const indexFilesMapping = _indexFilesMapping[fileName];
   const entryMap = import.meta.glob("~/routes/**/*.mdx", {
     query: "?raw",
   });
   const mdxTable = Object.fromEntries(
-    (
-      await Promise.all(
-        Object.entries(entryMap).map(async ([path, importEntry]) => {
-          const match = path.match(/\/routes\/\(root\)\/(.+)\.mdx$/);
-          if (!match) return;
-          if (typeof slug === "string" && !match[1]?.startsWith(slug)) return;
-          if (Array.isArray(slug) && !slug.some((s) => match[1]?.startsWith(s)))
-            return;
-          const entry = await importEntry();
-          if (
-            !entry ||
-            typeof entry !== "object" ||
-            !("default" in entry) ||
-            typeof entry.default !== "string"
-          )
-            return;
-
-          const { frontmatter, md } = cutFrontmatter(entry.default);
-          if (!frontmatter || typeof frontmatter !== "object") return;
-          const entrySlug = String(
-            "slug" in frontmatter ? frontmatter.slug : match[1],
-          );
-          return [
-            entrySlug,
-            { ...frontmatter, slug: entrySlug, text: toPlainText(md) },
-          ] as const;
-        }),
-      )
-    ).filter(Boolean),
+    await Promise.all(
+      Object.entries(indexFilesMapping).map(
+        async ([title, slug]) =>
+          [title, await generateMdxTable(entryMap, slug)] as const,
+      ),
+    ),
   );
   return new Response(JSON.stringify(Object.values(mdxTable)), {
     headers: {
@@ -56,6 +33,39 @@ interface CutFrontmatterResult {
   frontmatter: unknown;
   md: string;
 }
+async function generateMdxTable(
+  entryMap: Record<string, () => Promise<unknown>>,
+  slug: string,
+) {
+  return (
+    await Promise.all(
+      Object.entries(entryMap).map(async ([path, importEntry]) => {
+        const match = path.match(/\/routes\/\(root\)\/(.+)\.mdx$/);
+        if (!match || !match[1]?.startsWith(slug)) return;
+        const entry = await importEntry();
+        if (
+          !entry ||
+          typeof entry !== "object" ||
+          !("default" in entry) ||
+          typeof entry.default !== "string"
+        )
+          return;
+
+        const { frontmatter, md } = cutFrontmatter(entry.default);
+        if (!frontmatter || typeof frontmatter !== "object") return;
+        const entrySlug = String(
+          "slug" in frontmatter ? frontmatter.slug : match[1],
+        );
+        return {
+          ...frontmatter,
+          slug: entrySlug,
+          text: toPlainText(md),
+        } as const;
+      }),
+    )
+  ).filter(Boolean);
+}
+
 function cutFrontmatter(md: string): CutFrontmatterResult {
   const match = md.match(
     /^---\r?\n((?:.|\r|\n)*?)\r?\n---\r?\n((?:.|\r|\n)*)$/,

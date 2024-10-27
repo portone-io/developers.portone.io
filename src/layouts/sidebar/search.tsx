@@ -12,8 +12,10 @@ import {
   Switch,
   useContext,
 } from "solid-js";
+import { match } from "ts-pattern";
 
 import { lazy } from "~/misc/async";
+import type { IndexFilesMapping } from "~/misc/contentIndex";
 import type { NavMenuSystemVersions } from "~/state/nav";
 import { useSystemVersion } from "~/state/system-version";
 
@@ -64,12 +66,15 @@ export function SearchButton({ lang }: SearchButtonProps) {
 
 export const searchIndexKo = lazy(() => fetchSearchIndex("ko"));
 export const searchIndexEn = lazy(() => fetchSearchIndex("en"));
-async function fetchSearchIndex(lang: string): Promise<SearchIndex> {
-  const res = await fetch(`/content-index/opi-${lang}.json`);
+export const searchIndexBlog = lazy(() => fetchSearchIndex("blog"));
+async function fetchSearchIndex(
+  fileName: keyof IndexFilesMapping,
+): Promise<SearchIndex> {
+  const res = await fetch(`/content-index/${fileName}.json`);
   return JSON.parse((await res.text()).normalize("NFKD")) as SearchIndex;
 }
 
-export type SearchIndex = SearchIndexItem[];
+export type SearchIndex = Record<string, SearchIndexItem[]>;
 export interface SearchIndexItem {
   slug: string;
   title?: string;
@@ -78,7 +83,7 @@ export interface SearchIndexItem {
 }
 
 export interface SearchScreenProps {
-  lang: string;
+  searchIndex: keyof IndexFilesMapping;
   navMenuSystemVersions: NavMenuSystemVersions;
 }
 export function SearchScreen(props: SearchScreenProps) {
@@ -88,25 +93,33 @@ export function SearchScreen(props: SearchScreenProps) {
 
   const [searchText, setSearchText] = createSignal("");
   const [searchIndex] = createResource(
-    () => open() && props.lang,
-    async (lang) => {
+    () => open() && props.searchIndex,
+    async (searchIndex) => {
       inputRef?.focus();
-      return await (lang === "ko" ? searchIndexKo : searchIndexEn);
+      return await match(searchIndex)
+        .with("ko", () => searchIndexKo)
+        .with("en", () => searchIndexEn)
+        .with("blog", () => searchIndexBlog)
+        .exhaustive();
     },
     { initialValue: undefined },
   );
   const fuse = createMemo(() => {
     const index = searchIndex.latest;
     if (!index) return;
-    const filteredIndex = index
+    const filteredIndex = Object.values(index)
+      .flat()
       .filter((item) => {
         const navMenuSystemVersion =
-          props.navMenuSystemVersions[item.slug.replace(/^opi/, "")];
+          props.navMenuSystemVersions[`/${item.slug}`];
         if (!navMenuSystemVersion) return true;
         return navMenuSystemVersion === systemVersion();
       })
       .map((item) => {
-        const slug = item.slug.replace(/\/index$/, "");
+        const slug = item.slug
+          .replace(/\/index$/, "")
+          // /foo/(bar)/baz -> /foo/baz
+          .replace(/\/\([\w\d]+\)/, "");
         return { ...item, slug };
       });
     return new Fuse(filteredIndex, { keys: ["title", "description", "text"] });
@@ -138,7 +151,7 @@ export function SearchScreen(props: SearchScreenProps) {
           <input
             class="flex-1 bg-transparent p-4"
             ref={inputRef}
-            placeholder={t(props.lang, "searchContent")}
+            placeholder={t(props.searchIndex, "searchContent")}
             value={searchText()}
             onInput={(e) => setSearchText(e.currentTarget.value)}
             onKeyDown={(e) => {
@@ -174,7 +187,7 @@ export function SearchScreen(props: SearchScreenProps) {
               </ul>
             </Match>
             <Match when={fuse()}>
-              <Empty lang={props.lang} />
+              <Empty lang={props.searchIndex} />
             </Match>
           </Switch>
         </div>
