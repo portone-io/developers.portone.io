@@ -10,6 +10,7 @@ import {
   Show,
 } from "solid-js";
 
+import { VersionSwitch } from "~/layouts/gnb/VersionSwitch";
 import LeftSidebar from "~/layouts/sidebar/LeftSidebar";
 
 import NavMenuLink from "./NavMenuLink";
@@ -109,11 +110,14 @@ export default function NavMenu(props: Props) {
 
   return (
     <LeftSidebar>
-      <div class="px-4 pb-2 pt-[28px] text-lg font-bold">{props.title}</div>
+      <div class="pb-1 pl-2 pr-6 pt-4">
+        <VersionSwitch />
+      </div>
+      <div class="px-2 pb-2 pt-3 text-lg font-bold">{props.title}</div>
       <hr class="mx-4" />
       <nav
         id="nav-menu"
-        class="flex flex-1 flex-col gap-2 overflow-y-scroll p-4 text-sm text-slate-6"
+        class="scrollbar-thin flex flex-1 flex-col gap-2 overflow-y-scroll p-2 text-sm text-slate-6"
       >
         <For each={items()}>
           {(item) => (
