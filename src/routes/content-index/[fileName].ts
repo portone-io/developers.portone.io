@@ -4,6 +4,11 @@ import { z } from "zod";
 
 import { indexFilesMapping as _indexFilesMapping } from "~/misc/contentIndex";
 import { toPlainText } from "~/misc/mdx";
+import {
+  getReleaseNoteDescription,
+  getReleaseNoteTitle,
+  makeReleaseNoteFrontmatter,
+} from "~/misc/releaseNote";
 
 export async function GET({ params }: APIEvent) {
   const fileName = z
@@ -56,10 +61,15 @@ async function generateMdxTable(
         const entrySlug = String(
           "slug" in frontmatter ? frontmatter.slug : match[1],
         );
+        const releaseNoteFrontmatter =
+          "releasedAt" in frontmatter && frontmatter.releasedAt instanceof Date
+            ? makeReleaseNoteFrontmatter(frontmatter.releasedAt, entrySlug)
+            : {};
         return {
           ...frontmatter,
           slug: entrySlug,
           text: toPlainText(md),
+          ...releaseNoteFrontmatter,
         } as const;
       }),
     )
