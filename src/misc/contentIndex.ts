@@ -1,7 +1,6 @@
 export const indexFilesMapping = {
   blog: "blog/",
-  "opi-ko": "opi/ko/",
+  "opi-ko": ["opi/ko/", "sdk/ko/"],
   "release-notes": "release-notes/(note)/",
-  sdk: "sdk/",
-} as const satisfies Record<string, string>;
+} as const satisfies Record<string, string | string[]>;
 export type IndexFileName = keyof typeof indexFilesMapping;
