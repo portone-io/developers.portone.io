@@ -62,14 +62,18 @@ export function Docs(props: { children: JSXElement }) {
                       </div>
                       {props.children}
                     </article>
+                    <div id="docs-right-sidebar">
+                      <Show when={frontmatter().rightSidebar}>
+                        <RightSidebar
+                          lang={params().lang}
+                          file={doc()?.file ?? ""}
+                          headings={doc()?.headings ?? []}
+                        />
+                      </Show>
+                    </div>
                   </>
                 )}
               </Show>
-              <RightSidebar
-                lang={params().lang}
-                file={doc()?.file ?? ""}
-                headings={doc()?.headings ?? []}
-              />
             </div>
           </>
         )}
