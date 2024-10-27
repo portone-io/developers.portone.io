@@ -136,7 +136,7 @@ export default function Gnb(props: Props) {
                   },
                   {
                     label: "Server SDKs",
-                    link: "/sdk/ko/v2-mobile-sdk/readme",
+                    link: "/sdk/ko/v2-server-sdk/readme",
                   },
                   {
                     label: t()["sdk-playground"],
