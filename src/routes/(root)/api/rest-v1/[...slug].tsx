@@ -30,7 +30,7 @@ export default function ApiV1Docs() {
   setSystemVersion("v1");
 
   return (
-    <div class="flex">
+    <div class="flex gap-5">
       <Title>PortOne REST API - V1</Title>
       <NavMenu
         title="REST API - V1"
