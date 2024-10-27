@@ -44,34 +44,37 @@ async function generateMdxTable(
 ) {
   return (
     await Promise.all(
-      Object.entries(entryMap).map(async ([path, importEntry]) => {
-        const match = path.match(/\/routes\/\(root\)\/(.+)\.mdx$/);
-        if (!match || !match[1]?.startsWith(slug)) return;
-        const entry = await importEntry();
-        if (
-          !entry ||
-          typeof entry !== "object" ||
-          !("default" in entry) ||
-          typeof entry.default !== "string"
-        )
-          return;
+      Object.entries(entryMap)
+        .filter(([path]) => !path.includes("_components"))
+        .map(async ([path, importEntry]) => {
+          const match = path.match(/\/routes\/\(root\)\/(.+)\.mdx$/);
+          if (!match || !match[1]?.startsWith(slug)) return;
+          const entry = await importEntry();
+          if (
+            !entry ||
+            typeof entry !== "object" ||
+            !("default" in entry) ||
+            typeof entry.default !== "string"
+          )
+            return;
 
-        const { frontmatter, md } = cutFrontmatter(entry.default);
-        if (!frontmatter || typeof frontmatter !== "object") return;
-        const entrySlug = String(
-          "slug" in frontmatter ? frontmatter.slug : match[1],
-        );
-        const releaseNoteFrontmatter =
-          "releasedAt" in frontmatter && frontmatter.releasedAt instanceof Date
-            ? makeReleaseNoteFrontmatter(frontmatter.releasedAt, entrySlug)
-            : {};
-        return {
-          ...frontmatter,
-          slug: entrySlug,
-          text: toPlainText(md),
-          ...releaseNoteFrontmatter,
-        } as const;
-      }),
+          const { frontmatter, md } = cutFrontmatter(entry.default);
+          if (!frontmatter || typeof frontmatter !== "object") return;
+          const entrySlug = String(
+            "slug" in frontmatter ? frontmatter.slug : match[1],
+          );
+          const releaseNoteFrontmatter =
+            "releasedAt" in frontmatter &&
+            frontmatter.releasedAt instanceof Date
+              ? makeReleaseNoteFrontmatter(frontmatter.releasedAt, entrySlug)
+              : {};
+          return {
+            ...frontmatter,
+            slug: entrySlug,
+            text: toPlainText(md),
+            ...releaseNoteFrontmatter,
+          } as const;
+        }),
     )
   ).filter(Boolean);
 }
