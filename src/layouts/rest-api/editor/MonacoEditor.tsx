@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from "solid-js";
+import { createEffect, createSignal, on, onCleanup, onMount } from "solid-js";
 
 import once from "./misc/once";
 
@@ -15,9 +15,11 @@ const doCreateTheme = once();
 export interface MonacoEditorProps {
   init: (monaco: monaco, domElement: HTMLElement) => IStandaloneCodeEditor;
   onChange?: ((value: string) => void) | undefined;
+  value?: string;
 }
 export default function MonacoEditor(props: MonacoEditorProps) {
   let divRef: HTMLDivElement | undefined;
+  const [editor, setEditor] = createSignal<IStandaloneCodeEditor>();
   onMount(() => {
     const p = Promise.all([
       import("monaco-editor"),
@@ -41,6 +43,7 @@ export default function MonacoEditor(props: MonacoEditorProps) {
       // 스크롤이 끝났다고 판단됐을 때 monaco editor를 초기화한다.
       await scrollFinished();
       const editor = props.init(monaco, divRef!);
+      setEditor(() => editor);
       const changeEventListener = editor.onDidChangeModelContent(() =>
         props.onChange?.(editor.getValue()),
       );
@@ -51,6 +54,16 @@ export default function MonacoEditor(props: MonacoEditorProps) {
     });
     onCleanup(() => void p.then((dispose) => dispose()));
   });
+  createEffect(
+    on(
+      [() => props.value, editor],
+      ([value, editor]) => {
+        if (!editor || value === undefined) return;
+        editor.setValue(value);
+      },
+      { defer: true },
+    ),
+  );
   return (
     <div class="relative h-full w-full">
       <div ref={divRef} class="absolute h-full w-full" />
