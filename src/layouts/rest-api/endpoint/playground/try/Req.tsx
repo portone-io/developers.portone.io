@@ -227,7 +227,10 @@ function createUrl(
   if (queryObject) {
     for (const [key, value] of Object.entries(queryObject)) {
       if (value === undefined) continue;
-      result.searchParams.append(key, JSON.stringify(value));
+      result.searchParams.append(
+        key,
+        typeof value === "string" ? value : JSON.stringify(value),
+      );
     }
   }
   return result;
