@@ -110,18 +110,15 @@ export default function ReqSample(props: ReqSampleProps) {
       >
         {(snippet) => (
           <MonacoEditor
-            init={(monaco, domElement) => {
-              const instance = monaco.editor.create(domElement, {
+            value={snippet()}
+            init={(monaco, domElement) =>
+              monaco.editor.create(domElement, {
                 ...commonEditorConfig,
-                value: snippet() || "",
+                value: snippet(),
                 language: targetInfo()?.language ?? "plaintext",
                 readOnly: true,
-              });
-              createEffect(() => {
-                instance.setValue(snippet() || "");
-              });
-              return instance;
-            }}
+              })
+            }
             onChange={(value) => setSnippet(value)}
           />
         )}
