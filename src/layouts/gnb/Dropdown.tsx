@@ -12,7 +12,7 @@ export interface DropdownProps {
 }
 export interface DropdownItem {
   label: JSXElement;
-  link: string;
+  link: string | Record<SystemVersion, string>;
   systemVersion?: SystemVersion;
 }
 export default function Dropdown(props: DropdownProps) {
@@ -48,14 +48,18 @@ export default function Dropdown(props: DropdownProps) {
           <div class="absolute w-max flex flex-col border bg-white py-2 shadow-lg">
             <For each={props.items}>
               {(item) => {
+                const link = createMemo(() => {
+                  if (typeof item.link === "string") return item.link;
+                  return item.link[item.systemVersion ?? systemVersion()];
+                });
                 const isExternalLink = createMemo(() =>
-                  item.link.startsWith("https://"),
+                  link().startsWith("https://"),
                 );
                 return (
                   <A
                     class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
                     data-system-version={systemVersion}
-                    href={item.link}
+                    href={link()}
                     target={isExternalLink() ? "_blank" : undefined} // _self 로 설정하면 라우터가 먹히지 않음
                   >
                     {item.label}

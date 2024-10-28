@@ -19,7 +19,10 @@ export async function GET({ params }: APIEvent) {
       await Promise.all(
         Object.entries(entryMap).map(async ([path, importEntry]) => {
           const match = path.match(/\/routes\/\(root\)\/(.+)\.mdx$/);
-          if (!match || !match[1]?.startsWith(slug)) return;
+          if (!match) return;
+          if (typeof slug === "string" && !match[1]?.startsWith(slug)) return;
+          if (Array.isArray(slug) && !slug.some((s) => match[1]?.startsWith(s)))
+            return;
           const entry = await importEntry();
           if (
             !entry ||
