@@ -38,7 +38,8 @@ export default function DocsNavMenu(props: Props) {
             pathname={location.pathname}
             items={[
               { label: "원 페이먼트 인프라", link: "/opi/ko" },
-              { label: "API & SDK", link: "/api/rest-v2" },
+              { label: "REST API", link: "/api/rest-v2" },
+              { label: "포트원 SDK", link: "/sdk/ko" },
               { label: "파트너 정산 자동화", link: "/platform" },
               { label: "릴리스 노트", link: "/release-notes" },
               { label: "기술 블로그", link: "/blog" },
