@@ -128,14 +128,21 @@ export default function Gnb(props: Props) {
                     systemVersion: "v2",
                   },
                   {
-                    label: "Client SDKs",
+                    label: "브라우저 SDK",
+                    link: {
+                      v1: "/sdk/ko/v1-sdk/javascript-sdk/readme",
+                      v2: "/sdk/ko/v2-sdk/readme",
+                    },
+                  },
+                  {
+                    label: "모바일 SDK",
                     link: {
                       v1: "/sdk/ko/v1-mobile-sdk/readme",
                       v2: "/sdk/ko/v2-mobile-sdk/readme",
                     },
                   },
                   {
-                    label: "Server SDKs",
+                    label: "서버 SDK",
                     link: "/sdk/ko/v2-server-sdk/readme",
                   },
                   {
