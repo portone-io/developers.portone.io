@@ -6,7 +6,7 @@ export default function LeftSidebar(props: { children: JSXElement }) {
   const sidebarOpen = useSidebarContext();
 
   return (
-    <aside class="pointer-events-none absolute left-0 w-70 shrink-0 text-slate-7 z-left-sidebar md:relative md:block">
+    <aside class="pointer-events-none absolute left-0 w-65 shrink-0 text-slate-7 z-left-sidebar md:relative md:block">
       <div
         style={{
           transform: sidebarOpen.get() ? "none" : "translateX(-100%)",

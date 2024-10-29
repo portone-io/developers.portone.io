@@ -19,7 +19,7 @@ function RightSidebar(_props: RightSidebarProps) {
   );
 
   return (
-    <div class="hidden min-w-0 w-56 shrink-0 text-slate-7 lg:block">
+    <div class="hidden min-w-0 w-55 shrink-0 text-slate-7 lg:block">
       <Show when={true}>
         <nav class="fixed h-[calc(100%-56px)] w-inherit overflow-y-auto px-2 py-[28px]">
           <h2 class="my-2 text-sm text-slate-8 font-medium">
