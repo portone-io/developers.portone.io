@@ -1,8 +1,8 @@
-import { For } from "solid-js";
+import { createSignal, For, type Signal } from "solid-js";
 
 export interface Kv {
-  key: string;
-  value: string;
+  key: Signal<string>;
+  value: Signal<string>;
 }
 export type KvList = Kv[];
 export interface RequestHeaderEditorProps {
@@ -10,13 +10,11 @@ export interface RequestHeaderEditorProps {
   onChange: (reqHeader: KvList) => void;
 }
 export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
-  function updateReqHeader(index: number, kv: Partial<Kv>) {
-    const newReqHeader = props.reqHeader.slice();
-    newReqHeader[index] = { ...newReqHeader[index]!, ...kv };
-    props.onChange(newReqHeader);
-  }
   function addReqHeader() {
-    props.onChange([...props.reqHeader, { key: "", value: "" }]);
+    props.onChange([
+      ...props.reqHeader,
+      { key: createSignal(""), value: createSignal("") },
+    ]);
   }
   function delReqHeader(index: number) {
     const newReqHeader = props.reqHeader.slice();
@@ -31,21 +29,19 @@ export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
         <div />
       </div>
       <For each={props.reqHeader}>
-        {(header, index) => (
+        {({ key: [key, setKey], value: [value, setValue] }, index) => (
           <div class="grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
             <input
               class="w-full border border-slate-2 px-2 py-1"
-              value={header.key}
-              onInput={(e) =>
-                updateReqHeader(index(), { key: e.currentTarget.value })
-              }
+              value={key()}
+              onInput={(e) => {
+                setKey(e.currentTarget.value);
+              }}
             />
             <input
               class="w-full border border-slate-2 px-2 py-1"
-              value={header.value}
-              onInput={(e) =>
-                updateReqHeader(index(), { value: e.currentTarget.value })
-              }
+              value={value()}
+              onInput={(e) => setValue(e.currentTarget.value)}
             />
             <button
               class="inline-flex items-center text-lg text-slate-3 hover:text-slate-7"
@@ -68,10 +64,13 @@ export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
 
 export function kvListToObject(kvList: KvList): Record<string, string> {
   const result: Record<string, string> = {};
-  for (const { key, value } of kvList) {
-    const _key = key.trim();
+  for (const {
+    key: [key],
+    value: [value],
+  } of kvList) {
+    const _key = key().trim();
     if (!_key) continue;
-    result[_key] = value;
+    result[_key] = value();
   }
   return result;
 }

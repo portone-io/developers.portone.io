@@ -37,7 +37,10 @@ export interface ReqProps {
 }
 export default function Req(props: ReqProps) {
   const [reqHeader, setReqHeader] = createSignal<KvList>([
-    { key: "Content-Type", value: "application/json" },
+    {
+      key: createSignal("Content-Type"),
+      value: createSignal("application/json"),
+    },
   ]);
   const isQueryOrBody = createMemo(() =>
     isQueryOrBodyOperation(props.operation),
