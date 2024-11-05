@@ -1,22 +1,9 @@
-import { type JSXElement } from "solid-js";
-import { Portal } from "solid-js/web";
-
-interface Props {
-  children?: JSXElement;
-}
-
-export type CodeForPreview<FileName extends string, Sections extends string> = {
-  fileName: FileName;
+type CodeForPreview<Sections extends string> = {
   code: string;
   sections: Partial<Record<Sections, Section>>;
 };
 
-declare const __phantom: unique symbol;
-export type FileDefinition<T> = {
-  fileName: string;
-} & { [__phantom]: T };
-
-export type Section = {
+type Section = {
   startLine: number;
   endLine: number;
 };
@@ -28,12 +15,14 @@ type Interpolation<Params extends object, Sections extends string> =
   | Primitive
   | Interpolation<Params, Sections>[];
 
-type CodeResult<Sections extends string> = Partial<{
+export type CodeResult<Sections extends string> = Partial<{
   code: string;
   sections: Partial<Record<Sections, Section>>;
 }>;
 
-type CodeFunction<Params extends object, Result> = (params: Params) => Result;
+export type CodeFunction<Params extends object, Result> = (
+  params: Params,
+) => Result;
 
 type CodeTemplateFunction<Params extends object, Sections extends string> = (
   codes: TemplateStringsArray,
@@ -150,17 +139,6 @@ class CodeGenerator<Params extends object, Sections extends string> {
   }
 }
 
-function code<Params extends object, Sections extends string>(
-  codes: TemplateStringsArray,
-  ...interpolations: Interpolation<Params, Sections>[]
-): CodeFunction<Params, CodeResult<Sections>> {
-  return (params) => {
-    const generator = new CodeGenerator<Params, Sections>(params);
-    generator.generate(codes, interpolations);
-    return { code: generator.codeString, sections: generator.sections };
-  };
-}
-
 function trimCodes(codes: TemplateStringsArray): readonly string[] {
   const [first, ...rest] = codes;
   const last = rest.pop();
@@ -170,38 +148,13 @@ function trimCodes(codes: TemplateStringsArray): readonly string[] {
   return [first?.trim() ?? "", ...rest];
 }
 
-export function createPreviewFile<
-  T extends { params: object; sections: string },
-  Params extends T["params"],
-  Sections extends T["sections"],
->(
-  fileDef: FileDefinition<T>,
-): (
+export function code<T extends { params: object; sections: string }>(
   codes: TemplateStringsArray,
-  ...interpolations: Interpolation<Params, Sections>[]
-) => CodeFunction<
-  Params,
-  CodeForPreview<FileDefinition<T>["fileName"], Sections>
-> {
-  return (codes, ...interpolations) =>
-    (params) => {
-      const result = code<Params, Sections>(codes, ...interpolations)(params);
-      return {
-        code: result?.code ?? "",
-        fileName: fileDef.fileName,
-        sections: result?.sections ?? {},
-      };
-    };
-}
-
-export default function CodePreview(props: Props) {
-  const ref: HTMLDivElement | undefined = undefined;
-  return (
-    <>
-      <div>{props.children}</div>
-      <Portal mount={document.getElementById("docs-right-sidebar")!} ref={ref}>
-        <div class="w-133">todo</div>
-      </Portal>
-    </>
-  );
+  ...interpolations: Interpolation<T["params"], T["sections"]>[]
+): CodeFunction<Partial<T["params"]>, CodeForPreview<T["sections"]>> {
+  return (params) => {
+    const generator = new CodeGenerator<T["params"], T["sections"]>(params);
+    generator.generate(codes, interpolations);
+    return { code: generator.codeString, sections: generator.sections };
+  };
 }
