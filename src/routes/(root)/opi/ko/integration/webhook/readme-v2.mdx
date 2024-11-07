@@ -291,49 +291,46 @@ app.post("/portone-webhook", async (req, res, next) => {
     try {
       // 웹훅 메시지를 검증합니다.
       // 시그니처 불일치 등 검증에 실패할 경우 PortOne.Errors.WebhookVerificationError가 발생합니다.
-      await PortOne.Webhook.verify(
+      const webhook = await PortOne.Webhook.verify(
         process.env.PORTONE_WEBHOOK_SECRET,
         req.body,
         req.headers,
       );
+      // 결제 관련 정보일 경우만 처리합니다.
+      if ("paymentId" in webhook.data) {
+        const { paymentId } = webhook.data;
+        // 1. 포트원 결제내역 단건조회 API 호출
+        const paymentResponse = await portone.payment.getPayment(paymentId);
+
+        if (paymentResponse === null) {
+          // 웹훅 정보와 일치하는 결제건이 실제로는 존재하지 않는 경우
+          return res.status(200).end();
+        }
+
+        const { id, status, amount, method } = paymentResponse;
+        // 2. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
+        const order = await OrderService.findById(id);
+        if (order.amount === amount.total) {
+          switch (status) {
+            case "VIRTUAL_ACCOUNT_ISSUED": {
+              // 가상 계좌가 발급된 상태입니다.
+              // method에 들어 있는 계좌 정보를 이용해 원하는 로직을 구성하세요.
+              break;
+            }
+            case "PAID": {
+              // 모든 금액을 지불했습니다! 완료 시 원하는 로직을 구성하세요.
+              break;
+            }
+          }
+        } else {
+          // 결제 금액이 불일치하여 위/변조 시도가 의심됩니다.
+        }
+      }
     } catch (e) {
       if (e instanceof PortOne.Webhook.WebhookVerificationError)
         // 결제 검증에 실패했습니다.
         return res.status(400).end();
       throw e;
-    }
-
-    const { type, data } = JSON.parse(req.body);
-
-    // 결제 관련 정보일 경우만 처리합니다.
-    if (type.startsWith("Transaction.")) {
-      const { paymentId } = data;
-      // 1. 포트원 결제내역 단건조회 API 호출
-      const paymentResponse = await portone.payment.getPayment(paymentId);
-
-      if (paymentResponse === null) {
-        // 웹훅 정보와 일치하는 결제건이 실제로는 존재하지 않는 경우
-        return res.status(200).end();
-      }
-
-      const { id, status, amount, method } = paymentResponse;
-      // 2. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교합니다.
-      const order = await OrderService.findById(id);
-      if (order.amount === amount.total) {
-        switch (status) {
-          case "VIRTUAL_ACCOUNT_ISSUED": {
-            // 가상 계좌가 발급된 상태입니다.
-            // method에 들어 있는 계좌 정보를 이용해 원하는 로직을 구성하세요.
-            break;
-          }
-          case "PAID": {
-            // 모든 금액을 지불했습니다! 완료 시 원하는 로직을 구성하세요.
-            break;
-          }
-        }
-      } else {
-        // 결제 금액이 불일치하여 위/변조 시도가 의심됩니다.
-      }
     }
     res.status(200).end();
   } catch (e) {
