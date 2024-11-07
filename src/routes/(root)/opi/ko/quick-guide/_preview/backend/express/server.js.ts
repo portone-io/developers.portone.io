@@ -1,6 +1,6 @@
-import { code } from "~/components/code-preview";
+import { code } from "~/components/interactive-docs/index.jsx";
 
-import type { Params, Sections } from "./index.js";
+import type { Params, Sections } from "../../type";
 
 export default code<{
   params: Params;

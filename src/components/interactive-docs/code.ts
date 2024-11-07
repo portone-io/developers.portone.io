@@ -3,7 +3,7 @@ type CodeForPreview<Sections extends string> = {
   sections: Partial<Record<Sections, Section>>;
 };
 
-type Section = {
+export type Section = {
   startLine: number;
   endLine: number;
 };
@@ -148,10 +148,15 @@ function trimCodes(codes: TemplateStringsArray): readonly string[] {
   return [first?.trim() ?? "", ...rest];
 }
 
+export type Code<Params extends object, Sections extends string> = CodeFunction<
+  Params,
+  CodeForPreview<Sections>
+>;
+
 export function code<T extends { params: object; sections: string }>(
   codes: TemplateStringsArray,
   ...interpolations: Interpolation<T["params"], T["sections"]>[]
-): CodeFunction<Partial<T["params"]>, CodeForPreview<T["sections"]>> {
+): Code<T["params"], T["sections"]> {
   return (params) => {
     const generator = new CodeGenerator<T["params"], T["sections"]>(params);
     generator.generate(codes, interpolations);

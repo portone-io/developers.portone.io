@@ -1,5 +1,1 @@
-import { tabs as reactTabs } from "./react";
-
-export const react = {
-  tabs: reactTabs,
-} as const;
+export { files as react } from "./react";

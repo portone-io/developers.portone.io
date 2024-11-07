@@ -1,5 +1,1 @@
-import { tabs as expressTabs } from "./express";
-
-export const express = {
-  tabs: expressTabs,
-} as const;
+export { files as express } from "./express";

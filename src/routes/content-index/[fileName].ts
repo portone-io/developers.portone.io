@@ -4,11 +4,7 @@ import { z } from "zod";
 
 import { indexFilesMapping as _indexFilesMapping } from "~/misc/contentIndex";
 import { toPlainText } from "~/misc/mdx";
-import {
-  getReleaseNoteDescription,
-  getReleaseNoteTitle,
-  makeReleaseNoteFrontmatter,
-} from "~/misc/releaseNote";
+import { makeReleaseNoteFrontmatter } from "~/misc/releaseNote";
 
 export async function GET({ params }: APIEvent) {
   const fileName = z

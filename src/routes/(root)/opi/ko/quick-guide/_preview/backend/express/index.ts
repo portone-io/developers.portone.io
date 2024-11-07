@@ -1,11 +1,8 @@
-import type { Tab } from "~/components/code-preview/index.jsx";
+import type { CodeExample } from "~/components/interactive-docs/index.jsx";
 
-import type { Params } from "../../type.js";
+import type { Params, Sections } from "../../type.js";
 import server from "./server.js";
 
-export type { Params };
-export type Sections = "server:import-portone-sdk";
-
-export const tabs = [
+export const files = [
   { fileName: "server.js", code: server },
-] as const satisfies Tab<Params, Sections>[];
+] as const satisfies CodeExample<Params, Sections>[];

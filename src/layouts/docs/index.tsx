@@ -1,8 +1,12 @@
+import { createAsync, useLocation } from "@solidjs/router";
 import {
-  createAsync,
-  useLocation,
-} from "@solidjs/router";
-import { createMemo, type JSXElement, Show } from "solid-js";
+  createMemo,
+  type JSXElement,
+  Match,
+  type ParentProps,
+  Show,
+  Switch,
+} from "solid-js";
 
 import { NotFoundError } from "~/components/404";
 import Metadata from "~/components/Metadata";
@@ -12,6 +16,8 @@ import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
 import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import { Lang } from "~/type";
+
+import { InteractiveDocs } from "./InteractiveDocs";
 
 export function Docs(props: { children: JSXElement }) {
   const location = useLocation();
@@ -35,49 +41,76 @@ export function Docs(props: { children: JSXElement }) {
   const frontmatter = createMemo(() => doc()?.frontmatter as DocsEntry);
 
   return (
-    <div class="flex gap-5">
+    <div class="flex">
       <Show when={params()}>
         {(params) => (
           <>
-            <DocsNavMenu docData={doc()?.frontmatter as DocsEntry} nav={contentName()} lang={params().lang} slug={params().slug} />
-            <div class="min-w-0 flex flex-1 justify-center gap-5">
-              <Show when={frontmatter()}>
-                {(frontmatter) => (
-                  <>
-                    <Metadata
-                      title={frontmatter().title}
-                      description={frontmatter().description}
-                      ogType="article"
-                      ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
-                      docsEntry={frontmatter()}
-                    />
-                    <article class="mt-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-7">
-                      <div class="mb-6">
-                        <prose.h1 id="overview">{frontmatter().title}</prose.h1>
-                        <Show when={frontmatter().description}>
-                          <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
-                            {frontmatter().description}
-                          </p>
-                        </Show>
-                      </div>
-                      {props.children}
-                    </article>
-                    <div id="docs-right-sidebar">
-                      <Show when={frontmatter().rightSidebar}>
-                        <RightSidebar
-                          lang={params().lang}
-                          file={doc()?.file ?? ""}
-                          headings={doc()?.headings ?? []}
-                        />
-                      </Show>
-                    </div>
-                  </>
-                )}
-              </Show>
-            </div>
+            <DocsNavMenu
+              docData={doc()?.frontmatter as DocsEntry}
+              nav={contentName()}
+              lang={params().lang}
+              slug={params().slug}
+            />
+            <Show when={frontmatter()}>
+              {(frontmatter) => (
+                <>
+                  <Metadata
+                    title={frontmatter().title}
+                    description={frontmatter().description}
+                    ogType="article"
+                    ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
+                    docsEntry={frontmatter()}
+                  />
+                  <Switch
+                    fallback={
+                      <DefaultLayout
+                        frontmatter={frontmatter()}
+                        params={params()}
+                        doc={doc()}
+                      />
+                    }
+                  >
+                    <Match
+                      when={frontmatter().customLayout === "InteractiveDocs"}
+                    >
+                      <InteractiveDocs />
+                    </Match>
+                  </Switch>
+                </>
+              )}
+            </Show>
           </>
         )}
       </Show>
     </div>
   );
 }
+
+const DefaultLayout = (
+  props: ParentProps<{
+    frontmatter: DocsEntry;
+    params: { lang: Lang; slug: string };
+    doc: Awaited<ReturnType<typeof loadDoc> | undefined>;
+  }>,
+) => {
+  return (
+    <div class="min-w-0 flex flex-1 justify-center gap-5">
+      <article class="mb-40 mt-4 min-w-0 flex shrink-1 basis-200 flex-col pl-5 text-slate-7">
+        <div class="mb-6">
+          <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
+          <Show when={props.frontmatter.description}>
+            <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
+              {props.frontmatter.description}
+            </p>
+          </Show>
+        </div>
+        {props.children}
+      </article>
+      <RightSidebar
+        lang={props.params.lang}
+        file={props.doc?.file ?? ""}
+        headings={props.doc?.headings ?? []}
+      />
+    </div>
+  );
+};

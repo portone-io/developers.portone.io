@@ -72,7 +72,7 @@ const DocsEntry = z.object({
   description: z.string(),
   targetVersions: z.array(SystemVersion).optional(),
   versionVariants: z.record(SystemVersion, z.string()).optional(),
-  rightSidebar: z.boolean().optional().default(true),
+  customLayout: z.enum(["InteractiveDocs"]).optional(),
 });
 export type DocsEntry = z.infer<typeof DocsEntry>;
 
