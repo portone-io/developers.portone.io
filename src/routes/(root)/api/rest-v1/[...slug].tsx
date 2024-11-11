@@ -57,7 +57,7 @@ export default function ApiV1Docs() {
           종료됩니다.
           <br />
           자세한 사항은
-          <a href="/docs/ko/tip/tls-support?v=v1" style="color:orange">
+          <a href="/opi/ko/support/tls-support?v=v1" style="color:orange">
             TLS 지원 범위
           </a>
           를 참고해주세요.
