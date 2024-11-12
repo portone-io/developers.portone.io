@@ -8,7 +8,6 @@ import {
   type ParentProps,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { Portal } from "solid-js/web";
 
 import { useInteractiveDocs } from "~/state/interactive-docs";
 
@@ -157,9 +156,9 @@ export function createInteractiveDoc<
     return (
       <Provider>
         {props.children}
-        <Portal mount={document.getElementById("docs-right-sidebar")!}>
+        {/* <Portal mount={document.getElementById("docs-right-sidebar")!}>
           <div class="w-133">todo</div>
-        </Portal>
+        </Portal> */}
       </Provider>
     );
   };
