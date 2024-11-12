@@ -47,7 +47,6 @@ export function PgSelect<V extends keyof typeof PgOptions>(
     <Select
       value={props.value}
       onChange={props.onChange}
-      class="px-4 py-2"
       options={props.options}
       placeholder="PG사 선택"
       disallowEmptySelection

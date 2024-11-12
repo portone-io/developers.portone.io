@@ -87,7 +87,9 @@ class CodeGenerator<Params extends object, Sections extends string> {
   processInterpolation(interpolation: Interpolation<Params, Sections>) {
     if (typeof interpolation === "function") {
       const { code, sections } = interpolation(this.getHelpers())(this.params);
-      code && this.append(code);
+      if (code) {
+        this.append(code);
+      }
       Object.assign(this.sections, sections);
     } else if (Array.isArray(interpolation)) {
       for (const item of interpolation) {
