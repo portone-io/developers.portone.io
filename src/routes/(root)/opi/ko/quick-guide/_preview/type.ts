@@ -1,5 +1,8 @@
+export const PgOptions = ["hyphen"] as const;
+
 export type Params = {
   smartRouting: boolean;
+  pg: (typeof PgOptions)[number];
 };
 
 export type Sections =

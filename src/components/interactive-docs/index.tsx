@@ -4,14 +4,16 @@ import { createContextProvider } from "@solid-primitives/context";
 import {
   createMemo,
   createSignal,
-  type JSXElement,
   type ParentComponent,
   type ParentProps,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Portal } from "solid-js/web";
 
+import { useInteractiveDocs } from "~/state/interactive-docs";
+
 import type { Code, Section } from "./code";
+import type { PgOptions } from "./PgSelect";
 
 export type CodeExample<Params extends object, Sections extends string> = {
   fileName: string;
@@ -32,19 +34,25 @@ export function createInteractiveDoc<
   FrontendLanguage extends string,
   BackendLanguage extends string,
   HybridLanguage extends string,
->(
+>({
+  codeExamples,
+  pgOptions,
+  initialParams,
+  initialSelectedExample,
+}: {
   codeExamples: {
     frontend: CodeExmapleMap<Params, Sections, FrontendLanguage>;
     backend: CodeExmapleMap<Params, Sections, BackendLanguage>;
     hybrid?: CodeExmapleMap<Params, Sections, HybridLanguage>;
-  },
-  initialParams: Params,
+  };
+  pgOptions: readonly [PgOptions, ...PgOptions[]];
+  initialParams: Params;
   initialSelectedExample:
     | [frontend: FrontendLanguage, backend: BackendLanguage]
     | HybridLanguage
-    | null,
-): {
-  InteractiveDoc: (props: ParentProps) => JSXElement;
+    | null;
+}): {
+  InteractiveDoc: ParentComponent;
   Section: ParentComponent<{ section: Sections }>;
   Language: ParentComponent<{
     language:
@@ -116,7 +124,6 @@ export function createInteractiveDoc<
         console.error(`Section "${section}" is not defined`);
         return;
       }
-      console.log(sectionInfo);
     };
     return {
       params,
@@ -128,14 +135,18 @@ export function createInteractiveDoc<
       highlightSection,
     };
   });
-  const InteractiveDoc = (props: ParentProps) => (
-    <Provider>
-      {props.children}
-      <Portal mount={document.getElementById("docs-right-sidebar")!}>
-        <div class="w-133">todo</div>
-      </Portal>
-    </Provider>
-  );
+  const InteractiveDoc: ParentComponent = (props) => {
+    const { setPgOptions } = useInteractiveDocs();
+    setPgOptions([...pgOptions]);
+    return (
+      <Provider>
+        {props.children}
+        <Portal mount={document.getElementById("docs-right-sidebar")!}>
+          <div class="w-133">todo</div>
+        </Portal>
+      </Provider>
+    );
+  };
   const Section = (props: ParentProps<{ section: Sections }>) => {
     const { highlightSection } = useProvider()!;
     return (
