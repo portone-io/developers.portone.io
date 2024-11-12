@@ -1,7 +1,7 @@
 import { createAsync, useLocation } from "@solidjs/router";
 import {
+  children,
   createMemo,
-  type JSXElement,
   Match,
   type ParentProps,
   Show,
@@ -19,7 +19,7 @@ import { Lang } from "~/type";
 
 import { InteractiveDocs } from "./InteractiveDocs";
 
-export function Docs(props: { children: JSXElement }) {
+export function Docs(props: ParentProps) {
   const location = useLocation();
   const parsedFullSlug = createMemo(() => {
     const parsedFullSlug = parseDocsFullSlug(location.pathname);
@@ -39,6 +39,7 @@ export function Docs(props: { children: JSXElement }) {
     deferStream: true,
   });
   const frontmatter = createMemo(() => doc()?.frontmatter as DocsEntry);
+  const _children = children(() => props.children);
 
   return (
     <div class="flex">
@@ -67,13 +68,21 @@ export function Docs(props: { children: JSXElement }) {
                         frontmatter={frontmatter()}
                         params={params()}
                         doc={doc()}
-                      />
+                      >
+                        {_children()}
+                      </DefaultLayout>
                     }
                   >
                     <Match
                       when={frontmatter().customLayout === "InteractiveDocs"}
                     >
-                      <InteractiveDocs />
+                      <InteractiveDocs
+                        frontmatter={frontmatter()}
+                        params={params()}
+                        doc={doc()}
+                      >
+                        {_children()}
+                      </InteractiveDocs>
                     </Match>
                   </Switch>
                 </>
