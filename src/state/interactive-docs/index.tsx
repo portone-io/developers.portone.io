@@ -24,6 +24,9 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     const [selectedLanguage, setSelectedLanguage] = createSignal<
       [frontend: string, backend: string] | string
     >(["react", "node"]);
+    createEffect(() => {
+      setSelectedLanguage([languages().frontend[0], languages().backend[0]]);
+    });
 
     return {
       pgOptions,

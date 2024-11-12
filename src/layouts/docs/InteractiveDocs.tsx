@@ -1,13 +1,16 @@
-import { createMemo, type ParentProps, Show } from "solid-js";
+import { createMemo, lazy, type ParentProps, Show } from "solid-js";
 
 import { CodePanel } from "~/components/interactive-docs/CodePanel";
-import { LanguageSelect } from "~/components/interactive-docs/LanguageSelect";
 import { PgSelect } from "~/components/interactive-docs/PgSelect";
 import * as prose from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
 import type { loadDoc } from "~/misc/docs";
 import { useInteractiveDocs } from "~/state/interactive-docs";
 import type { Lang } from "~/type";
+
+const LanguageSelect = lazy(
+  () => import("~/components/interactive-docs/LanguageSelect"),
+);
 
 export function InteractiveDocs(
   props: ParentProps<{

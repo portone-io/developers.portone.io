@@ -8,7 +8,7 @@ interface LanguageSelectProps {
   onChange: (language: string) => void;
 }
 
-export function LanguageSelect(props: LanguageSelectProps) {
+export default function LanguageSelect(props: LanguageSelectProps) {
   return (
     <ul class="flex items-center gap-1">
       <li class="rounded-md bg-[#E5E7EB] px-2.5 py-.75 text-xs color-slate-5 font-medium">

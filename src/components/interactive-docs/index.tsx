@@ -136,8 +136,24 @@ export function createInteractiveDoc<
     };
   });
   const InteractiveDoc: ParentComponent = (props) => {
-    const { setPgOptions } = useInteractiveDocs();
+    const { setPgOptions, setLanguages } = useInteractiveDocs();
     setPgOptions([...pgOptions]);
+    setLanguages({
+      frontend: Object.keys(codeExamples.frontend) as [
+        FrontendLanguage,
+        ...FrontendLanguage[],
+      ],
+      backend: Object.keys(codeExamples.backend) as [
+        BackendLanguage,
+        ...BackendLanguage[],
+      ],
+      hybrid: codeExamples.hybrid
+        ? (Object.keys(codeExamples.hybrid) as [
+            HybridLanguage,
+            ...HybridLanguage[],
+          ])
+        : [],
+    });
     return (
       <Provider>
         {props.children}
