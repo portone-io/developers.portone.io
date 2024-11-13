@@ -24,8 +24,6 @@ const highlighterInstance = createHighlighterCore({
     import("shiki/langs/javascript.mjs"),
     import("shiki/langs/html.mjs"),
     import("shiki/langs/css.mjs"),
-    import("shiki/langs/json.mjs"),
-    import("shiki/langs/jsx.mjs"),
   ],
   engine: createOnigurumaEngine(import("shiki/wasm")),
 });
