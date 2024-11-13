@@ -4,7 +4,7 @@ description: 결제연동 퀵 가이드
 customLayout: InteractiveDocs
 ---
 
-import {Condition, InteractiveDoc, Section} from "./_preview";
+import {Condition, InteractiveDoc, Section, Toggle} from "./_preview";
 
 {/* client:import-portone-sdk
 client:request-payment
@@ -26,7 +26,17 @@ client:handle-payment-status:paid */}
     ## 결제 요청
 
     결제 요청을 위한 코드입니다.
+
+    <Toggle param="smartRouting" label="스마트 라우팅 사용" />
   </Section>
+
+  <Condition when={({smartRouting}) => smartRouting === true}>
+    <Section section="client:smart-routing:channel-group-id">
+      ## `channelGroupId` 설정
+
+      스마트라우팅 기능을 사용하기 위해 `channelGroupId`를 설정하는 코드입니다.
+    </Section>
+  </Condition>
 
   <Section section="client:payment-id-description">
     ## Payment ID 설명
@@ -45,14 +55,6 @@ client:handle-payment-status:paid */}
       ## 토스 카드 결제 조건 테스트
 
       토스 카드 결제 조건 테스트
-    </Section>
-  </Condition>
-
-  <Condition when={({smartRouting}) => smartRouting === true}>
-    <Section section="client:smart-routing:channel-group-id">
-      ## `channelGroupId` 설정
-
-      스마트라우팅 기능을 사용하기 위해 `channelGroupId`를 설정하는 코드입니다.
     </Section>
   </Condition>
 
