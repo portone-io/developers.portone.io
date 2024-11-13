@@ -14,5 +14,5 @@ export const { Language, Section, InteractiveDoc } = createInteractiveDoc({
     smartRouting: false,
     pg: "hyphen",
   },
-  initialSelectedExample: ["react", "express"],
+  initialSelectedExample: ["react", "node"],
 });
