@@ -11,6 +11,7 @@ import SchemaDownloadButton, {
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
+import BackwardCompatibilityContent from "~/routes/(root)/api/backward-compatibility";
 import schema from "~/schema/v1.openapi.json";
 import { useSystemVersion } from "~/state/system-version";
 
@@ -75,6 +76,8 @@ export default function ApiV1Docs() {
             <PostmanGuide href="https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-from-swagger/" />
           </SchemaDownloadButton>
         </prose.p>
+        <br />
+        <BackwardCompatibilityContent version="v1" />
       </RestApi>
     </div>
   );
