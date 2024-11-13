@@ -1,6 +1,7 @@
 export { code } from "./code";
 
 import {
+  type JSXElement,
   type ParentComponent,
   type ParentProps,
   startTransition,
@@ -33,6 +34,7 @@ export function createInteractiveDoc<
   pgOptions,
   initialParams,
   initialSelectedExample,
+  preview,
 }: {
   codeExamples: {
     frontend: CodeExmapleMap<Params, Sections, FrontendLanguage>;
@@ -44,6 +46,7 @@ export function createInteractiveDoc<
   initialSelectedExample:
     | [frontend: FrontendLanguage, backend: BackendLanguage]
     | HybridLanguage;
+  preview: JSXElement;
 }): {
   InteractiveDoc: ParentComponent;
   Section: ParentComponent<{ section: Sections }>;
@@ -61,6 +64,7 @@ export function createInteractiveDoc<
       setParams,
       setCodeExamples,
       setSelectedLanguage,
+      setPreview,
     } = useInteractiveDocs();
     void startTransition(() => {
       setPgOptions(pgOptions);
@@ -98,6 +102,7 @@ export function createInteractiveDoc<
         },
       );
       setSelectedLanguage(initialSelectedExample as [string, string] | string);
+      setPreview(preview);
     });
 
     return <>{props.children}</>;
