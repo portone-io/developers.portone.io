@@ -19,18 +19,8 @@ export function InteractiveDocs(
     doc: Awaited<ReturnType<typeof loadDoc> | undefined>;
   }>,
 ) {
-  const { languages, selectedLanguage, setSelectedLanguage } =
-    useInteractiveDocs();
-  const frontendLanguages = createMemo(() => [
-    ...languages().frontend,
-    ...languages().hybrid,
-  ]);
-  const isHybridSelected = createMemo(() => {
-    if (Array.isArray(selectedLanguage())) {
-      return false;
-    }
-    return true;
-  });
+  const { selectedLanguage } = useInteractiveDocs();
+  const isHybridSelected = createMemo(() => !Array.isArray(selectedLanguage()));
   return (
     <div class="grid grid-cols-[1fr_1.2fr] grid-rows-[auto_1fr] flex-1 gap-y-2">
       <div class="sticky top-26 col-span-2 flex items-center gap-4 from-white bg-gradient-to-r px-6 py-2">
@@ -38,46 +28,9 @@ export function InteractiveDocs(
           결제대행사
         </div>
         <PgSelect />
-        <LanguageSelect
-          languages={frontendLanguages()}
-          title="Frontend"
-          selectedLanguage={
-            isHybridSelected()
-              ? (selectedLanguage() as string)
-              : selectedLanguage()[0]
-          }
-          onChange={(language) => {
-            if (languages().hybrid.includes(language)) {
-              setSelectedLanguage(language);
-              return;
-            }
-            setSelectedLanguage((prev) => {
-              if (Array.isArray(prev)) {
-                return [language, prev[1]];
-              }
-              return [language, languages().backend[0]];
-            });
-          }}
-        />
+        <LanguageSelect languages={["frontend", "hybrid"]} title="Frontend" />
         <Show when={isHybridSelected() === false}>
-          {(_) => {
-            const backendLanguages = createMemo(() => [...languages().backend]);
-            return (
-              <LanguageSelect
-                languages={backendLanguages()}
-                title="Backend"
-                selectedLanguage={selectedLanguage()[1]}
-                onChange={(language) => {
-                  setSelectedLanguage((prev) => {
-                    if (Array.isArray(prev)) {
-                      return [prev[0], language];
-                    }
-                    return prev;
-                  });
-                }}
-              />
-            );
-          }}
+          <LanguageSelect languages={"backend"} title="Backend" />
         </Show>
       </div>
       <article class="mb-40 mt-4 min-w-0 flex shrink-1 basis-200 flex-col text-slate-7">
