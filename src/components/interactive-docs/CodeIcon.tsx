@@ -11,7 +11,6 @@ export function CodeIcon(props: CodeIconProps) {
     return props.fileName.split(".").pop();
   });
   const icon = createMemo(() => {
-    console.log(ext());
     switch (ext()) {
       case "tsx":
       case "jsx":
