@@ -18,7 +18,7 @@ export type Tab = {
   code: string;
 };
 
-export const highlighter = await createHighlighterCore({
+const highlighterInstance = createHighlighterCore({
   themes: [import("shiki/themes/one-dark-pro.mjs")],
   langs: [
     import("shiki/langs/javascript.mjs"),
@@ -120,6 +120,9 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
         return;
       }
     };
+    const [highlighter, setHighlighter] =
+      createSignal<Awaited<ReturnType<typeof createHighlighterCore>>>();
+    void highlighterInstance.then(setHighlighter);
 
     return {
       pgOptions,
@@ -138,6 +141,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
       highlightSection,
       selectedTab,
       setSelectedTab,
+      highlighter,
     };
   },
   {
@@ -161,6 +165,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     highlightSection: (_) => {},
     selectedTab: () => null,
     setSelectedTab: (_) => {},
+    highlighter: () => undefined,
   },
 );
 

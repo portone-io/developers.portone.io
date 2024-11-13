@@ -1,15 +1,15 @@
 import { writeClipboard } from "@solid-primitives/clipboard";
 import { createMemo, createResource, untrack } from "solid-js";
 
-import { highlighter, useInteractiveDocs } from "~/state/interactive-docs";
+import { useInteractiveDocs } from "~/state/interactive-docs";
 
 import { CodeTabs } from "./CodeTabs";
 
 export default function CodeViewer() {
-  const { selectedTab } = useInteractiveDocs();
+  const { selectedTab, highlighter } = useInteractiveDocs();
   const code = createMemo(
     () => {
-      return highlighter.codeToHtml(selectedTab()?.code ?? "", {
+      return highlighter()?.codeToHtml(selectedTab()?.code ?? "", {
         theme: "one-dark-pro",
         lang: "javascript",
         colorReplacements: {
