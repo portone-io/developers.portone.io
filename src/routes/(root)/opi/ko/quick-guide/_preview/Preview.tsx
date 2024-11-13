@@ -1,4 +1,5 @@
 import * as PortOne from "@portone/browser-sdk/v2";
+import { trackStore } from "@solid-primitives/deep";
 import {
   createEffect,
   createSignal,
@@ -28,10 +29,9 @@ export function Preview(props: CodePreviewProps) {
     PortOne.PaymentResponse | undefined
   >(undefined);
 
-  // 재시도를 누르거나 PG사, 결제 수단이 변경될 때마다 초기화
+  // 재시도를 누르거나 파라미터가 변경될 때마다 초기화
   createEffect(() => {
-    void params.pg.name;
-    void params.pg.payMethods;
+    void trackStore(params);
     void props.renderId;
 
     void startTransition(() => {
