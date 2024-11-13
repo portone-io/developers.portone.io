@@ -62,7 +62,12 @@ export function App() {
       orderName: item.name,
       totalAmount: item.price,
       currency: item.currency,
-      payMethod: "CARD",
+      ${({ when }) => when(({ pg }) => pg.payMethods === "card")`
+      payMethod: "CARD", 
+      `}
+      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+      payMethod: "VIRTUAL_ACCOUNT", 
+      `}
       customData: {
         item: item.id,
       },

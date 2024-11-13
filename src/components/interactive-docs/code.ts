@@ -1,3 +1,5 @@
+import type { PayMethod, Pg } from "~/state/interactive-docs";
+
 type CodeForPreview<Sections extends string> = {
   code: string;
   sections: Partial<Record<Sections, Section>>;
@@ -8,9 +10,16 @@ export type Section = {
   endLine: number;
 };
 
+export type DefaultParams = {
+  pg: {
+    name: Pg;
+    payMethods: PayMethod;
+  };
+};
+
 type Primitive = string | number | boolean | null | undefined;
 
-type Interpolation<Params extends object, Sections extends string> =
+type Interpolation<Params extends DefaultParams, Sections extends string> =
   | GenerateCode<Params, Sections>
   | Primitive
   | Interpolation<Params, Sections>[];
@@ -20,23 +29,26 @@ export type CodeResult<Sections extends string> = Partial<{
   sections: Partial<Record<Sections, Section>>;
 }>;
 
-export type CodeFunction<Params extends object, Result> = (
+export type CodeFunction<Params extends DefaultParams, Result> = (
   params: Params,
 ) => Result;
 
-type CodeTemplateFunction<Params extends object, Sections extends string> = (
+type CodeTemplateFunction<
+  Params extends DefaultParams,
+  Sections extends string,
+> = (
   codes: TemplateStringsArray,
   ...interpolations: Interpolation<Params, Sections>[]
 ) => CodeFunction<Params, CodeResult<Sections>>;
 
-type CodeHelpers<Params extends object, Sections extends string> = {
+type CodeHelpers<Params extends DefaultParams, Sections extends string> = {
   section: (sectionName: Sections) => CodeTemplateFunction<Params, Sections>;
   when: (
     predicate: (params: Params) => boolean,
   ) => CodeTemplateFunction<Params, Sections>;
 };
 
-type GenerateCode<Params extends object, Sections extends string> = (
+type GenerateCode<Params extends DefaultParams, Sections extends string> = (
   helpers: CodeHelpers<Params, Sections>,
 ) => CodeFunction<Params, CodeResult<Sections>>;
 
@@ -44,7 +56,7 @@ function countLines(text: string): number {
   return (text.match(/\n/g)?.length ?? 0) + 1;
 }
 
-class CodeGenerator<Params extends object, Sections extends string> {
+class CodeGenerator<Params extends DefaultParams, Sections extends string> {
   codeString = "";
   sections: Partial<Record<Sections, Section>> = {};
   currentLine = 1;
@@ -150,12 +162,12 @@ function trimCodes(codes: TemplateStringsArray): readonly string[] {
   return [first?.trim() ?? "", ...rest];
 }
 
-export type Code<Params extends object, Sections extends string> = CodeFunction<
-  Params,
-  CodeForPreview<Sections>
->;
+export type Code<
+  Params extends DefaultParams,
+  Sections extends string,
+> = CodeFunction<Params, CodeForPreview<Sections>>;
 
-export function code<T extends { params: object; sections: string }>(
+export function code<T extends { params: DefaultParams; sections: string }>(
   codes: TemplateStringsArray,
   ...interpolations: Interpolation<T["params"], T["sections"]>[]
 ): Code<T["params"], T["sections"]> {

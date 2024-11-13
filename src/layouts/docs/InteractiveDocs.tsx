@@ -19,14 +19,8 @@ export function InteractiveDocs(
     doc: Awaited<ReturnType<typeof loadDoc> | undefined>;
   }>,
 ) {
-  const {
-    pgOptions,
-    selectedPg,
-    setSelectedPg,
-    languages,
-    selectedLanguage,
-    setSelectedLanguage,
-  } = useInteractiveDocs();
+  const { languages, selectedLanguage, setSelectedLanguage } =
+    useInteractiveDocs();
   const frontendLanguages = createMemo(() => [
     ...languages().frontend,
     ...languages().hybrid,
@@ -43,11 +37,7 @@ export function InteractiveDocs(
         <div class="rounded-md bg-[#E5E7EB] px-2.5 py-.75 text-xs color-slate-5 font-medium">
           결제대행사
         </div>
-        <PgSelect
-          options={pgOptions()}
-          value={selectedPg()}
-          onChange={setSelectedPg}
-        />
+        <PgSelect />
         <LanguageSelect
           languages={frontendLanguages()}
           title="Frontend"

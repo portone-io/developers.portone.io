@@ -1,13 +1,19 @@
 import { createContextProvider } from "@solid-primitives/context";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
-import { createEffect, createMemo, createSignal } from "solid-js";
+import { createEffect, createMemo, createSignal, untrack } from "solid-js";
 import { createStore } from "solid-js/store";
 
-import type { Code, Section } from "~/components/interactive-docs/code";
-import { PgOptions } from "~/components/interactive-docs/PgSelect";
+import type {
+  Code,
+  DefaultParams,
+  Section,
+} from "~/components/interactive-docs/code";
 
-export type CodeExample<Params extends object, Sections extends string> = {
+export type CodeExample<
+  Params extends DefaultParams,
+  Sections extends string,
+> = {
   fileName: string;
   code: Code<Params, Sections>;
 };
@@ -16,6 +22,40 @@ export type Tab = {
   fileName: string;
   sections: Record<string, Section>;
   code: string;
+};
+
+export type PayMethod = "card" | "virtualAccount";
+export type Pg =
+  | "nice"
+  | "smatro"
+  | "toss"
+  | "kpn"
+  | "inicis"
+  | "ksnet"
+  | "kcp"
+  | "kakao"
+  | "naver"
+  | "tosspay"
+  | "hyphen";
+
+export type ConvertToPgParam<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends Partial<Record<O, any>>,
+  O extends Pg = Pg,
+  KeyName extends string = "name",
+  ValueName extends string = "payMethods",
+> = {
+  [K in keyof T]: {
+    [P in KeyName]: K;
+  } & {
+    [M in ValueName]: T[K][ValueName][number];
+  };
+}[keyof T];
+
+export type PgOptions = {
+  [key in Pg]?: {
+    payMethods: PayMethod[];
+  };
 };
 
 const highlighterInstance = createHighlighterCore({
@@ -30,12 +70,27 @@ const highlighterInstance = createHighlighterCore({
 
 const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
   () => {
-    const [pgOptions, setPgOptions] = createSignal<[PgOptions, ...PgOptions[]]>(
-      Object.keys(PgOptions) as [PgOptions, ...PgOptions[]],
-    );
-    const [selectedPg, setSelectedPg] = createSignal<PgOptions>(pgOptions()[0]);
+    type Params = DefaultParams & object;
+    const [params, setParams] = createStore<Params>({
+      pg: {
+        name: "inicis",
+        payMethods: "card",
+      },
+    });
+    const [pgOptions, setPgOptions] = createSignal<PgOptions>({
+      inicis: {
+        payMethods: ["card"],
+      },
+    });
     createEffect(() => {
-      setSelectedPg(pgOptions()[0]);
+      const pg = Object.keys(pgOptions())[0] as Pg | undefined;
+      if (!pg) return;
+      const pgOption = pgOptions()[pg];
+      if (!pgOption) return;
+      setParams("pg", {
+        name: pg,
+        payMethods: pgOption.payMethods[0],
+      });
     });
     const [languages, setLanguages] = createSignal<{
       frontend: [string, ...string[]];
@@ -52,17 +107,17 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     createEffect(() => {
       setSelectedLanguage([languages().frontend[0], languages().backend[0]]);
     });
-    const [params, setParams] = createStore<object>({});
     const [codeExamples, setCodeExamples] = createSignal<{
-      frontend: Record<string, CodeExample<object, string>[]>;
-      backend: Record<string, CodeExample<object, string>[]>;
-      hybrid?: Record<string, CodeExample<object, string>[]>;
+      frontend: Record<string, CodeExample<Params, string>[]>;
+      backend: Record<string, CodeExample<Params, string>[]>;
+      hybrid?: Record<string, CodeExample<Params, string>[]>;
     }>({
       frontend: {},
       backend: {},
     });
-    const tabs = createMemo<Tab[]>(() => {
-      const resolveCode = (example: CodeExample<object, string>): Tab => {
+    const [tabs, setTabs] = createSignal<Tab[]>([]);
+    createEffect(() => {
+      const resolveCode = (example: CodeExample<Params, string>): Tab => {
         const { code, sections } = example.code(params);
         return {
           fileName: example.fileName,
@@ -74,15 +129,21 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
       if (_selectedLanguage === null) return [];
       if (Array.isArray(_selectedLanguage)) {
         const [frontend, backend] = _selectedLanguage;
-        return [
-          ...(codeExamples()["frontend"][frontend] ?? []),
-          ...(codeExamples()["backend"][backend] ?? []),
-        ].map(resolveCode);
+        return setTabs(
+          [
+            ...(codeExamples()["frontend"][frontend] ?? []),
+            ...(codeExamples()["backend"][backend] ?? []),
+          ].map(resolveCode),
+        );
       }
       const hybrid = codeExamples()["hybrid"];
-      return hybrid ? (hybrid[_selectedLanguage] ?? []).map(resolveCode) : [];
+      return setTabs(
+        hybrid ? (hybrid[_selectedLanguage] ?? []).map(resolveCode) : [],
+      );
     });
-    const [selectedTab, setSelectedTab] = createSignal(tabs()[0] ?? null);
+    const [selectedTab, setSelectedTab] = createSignal<string | null>(
+      tabs()[0]?.fileName ?? null,
+    );
     const sections = createMemo<Record<string, { fileName: string } & Section>>(
       () => {
         const result = tabs().reduce(
@@ -117,19 +178,26 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
       if (!section) return;
       const tab = tabs().find((tab) => tab.fileName === section.fileName);
       if (tab) {
-        setSelectedTab(tab);
+        setSelectedTab(tab.fileName);
       }
     });
-
     const [highlighter, setHighlighter] =
       createSignal<Awaited<ReturnType<typeof createHighlighterCore>>>();
     void highlighterInstance.then(setHighlighter);
 
+    // PG사 변경 시 payMethods 초기화
+    createEffect(() => {
+      const pg = params.pg.name;
+      setParams(
+        "pg",
+        "payMethods",
+        untrack(() => pgOptions()[pg]!.payMethods[0]!),
+      );
+    });
+
     return {
       pgOptions,
       setPgOptions,
-      selectedPg,
-      setSelectedPg,
       languages,
       setLanguages,
       selectedLanguage,
@@ -147,10 +215,12 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     };
   },
   {
-    pgOptions: () => Object.keys(PgOptions) as [PgOptions, ...PgOptions[]],
+    pgOptions: () => ({
+      inicis: {
+        payMethods: ["card"],
+      },
+    }),
     setPgOptions: (_) => {},
-    selectedPg: () => "inicis",
-    setSelectedPg: (_) => {},
     languages: () => ({
       frontend: ["react", "html"],
       backend: ["node", "python"],
@@ -159,7 +229,12 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     setLanguages: (_) => {},
     selectedLanguage: () => ["react", "node"],
     setSelectedLanguage: (_) => {},
-    params: () => ({}),
+    params: {
+      pg: {
+        name: "inicis",
+        payMethods: "card",
+      },
+    },
     setParams: () => {},
     setCodeExamples: (_) => {},
     tabs: () => [],

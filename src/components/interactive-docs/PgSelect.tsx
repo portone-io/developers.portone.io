@@ -13,13 +13,14 @@ import niceLogo from "~/assets/pg-circle/nice.png";
 import smatroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
 import Picture from "~/components/Picture";
+import { type Pg, useInteractiveDocs } from "~/state/interactive-docs";
 
 export type PgSelectOption = {
   label: string;
   icon: VitePicture;
 };
 
-export const PgOptions = {
+const PgOptions = {
   nice: { label: "나이스페이먼츠", icon: niceLogo },
   smatro: { label: "스마트로", icon: smatroLogo },
   toss: { label: "토스페이먼츠", icon: tossLogo },
@@ -31,58 +32,57 @@ export const PgOptions = {
   naver: { label: "네이버페이", icon: naverLogo },
   tosspay: { label: "토스페이", icon: tossLogo },
   hyphen: { label: "하이픈", icon: hyphenLogo },
-} as const;
-export type PgOptions = keyof typeof PgOptions;
+} as const satisfies Record<Pg, PgSelectOption>;
 
-interface PgSelectProps<V extends keyof typeof PgOptions> {
-  options: V[];
-  value: V;
-  onChange: (value: V) => void;
-}
-
-export function PgSelect<V extends keyof typeof PgOptions>(
-  props: PgSelectProps<V>,
-) {
+export function PgSelect() {
+  const { params, setParams, pgOptions } = useInteractiveDocs();
+  const options = createMemo(
+    () => Object.keys(pgOptions()) as (keyof ReturnType<typeof pgOptions>)[],
+  );
+  const handleChange = (value: Pg) => {
+    setParams("pg", "name", value);
+  };
   return (
     <Select
-      value={props.value}
-      onChange={props.onChange}
-      options={props.options}
+      value={params.pg.name}
+      onChange={handleChange}
+      options={options()}
       placeholder="PG사 선택"
       disallowEmptySelection
-      itemComponent={(props) => (
-        <Select.Item
-          class="flex cursor-default gap-1.5 rounded-md px-1 py-1.5 text-[#09090B] data-[disabled]:text-slate-5 [&:not([data-disabled])]:hover:bg-[#F3F4F6]"
-          item={props.item}
-        >
-          <div class="w-5 flex items-center">
-            <Select.ItemIndicator class="flex">
-              <i class="i-ic-round-check inline-block" />
-            </Select.ItemIndicator>
-          </div>
-          <Picture
-            picture={PgOptions[props.item.rawValue].icon}
-            alt={PgOptions[props.item.rawValue].label}
-            class="h-5 w-5"
-          />
-          <Select.ItemLabel class="text-sm font-medium">
-            {PgOptions[props.item.rawValue].label}
-          </Select.ItemLabel>
-        </Select.Item>
-      )}
+      itemComponent={(props) => {
+        const optionInfo = createMemo(() => PgOptions[props.item.rawValue]);
+        return (
+          <Select.Item
+            class="flex cursor-default gap-1.5 rounded-md px-1 py-1.5 text-[#09090B] data-[disabled]:text-slate-5 [&:not([data-disabled])]:hover:bg-[#F3F4F6]"
+            item={props.item}
+          >
+            <div class="w-5 flex items-center">
+              <Select.ItemIndicator class="flex">
+                <i class="i-ic-round-check inline-block" />
+              </Select.ItemIndicator>
+            </div>
+            <Picture
+              picture={optionInfo().icon}
+              alt={optionInfo().label}
+              class="h-5 w-5"
+            />
+            <Select.ItemLabel class="text-sm font-medium">
+              {optionInfo().label}
+            </Select.ItemLabel>
+          </Select.Item>
+        );
+      }}
     >
       <Select.Trigger
         class="flex items-center gap-1"
         aria-label="Payment Gateway"
       >
         <Select.Value<
-          PgOptions | undefined
+          Pg | undefined
         > class="text-sm text-[#09090B] font-medium">
           {(state) => {
             const selectedOption = createMemo(
-              () =>
-                state.selectedOption() ??
-                (Object.keys(PgOptions)[0] as PgOptions),
+              () => state.selectedOption() ?? (Object.keys(PgOptions)[0] as Pg),
             );
             return (
               <div class="flex gap-1.5">

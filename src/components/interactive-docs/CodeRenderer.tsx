@@ -7,12 +7,16 @@ import { useInteractiveDocs } from "~/state/interactive-docs";
 import { CodeTabs } from "./CodeTabs";
 
 export function CodeRenderer() {
-  const { selectedTab, highlighter, highlightSection } = useInteractiveDocs();
+  const { selectedTab, tabs, highlighter, highlightSection } =
+    useInteractiveDocs();
+  const currentTab = createMemo(() =>
+    tabs().find((tab) => tab.fileName === selectedTab()),
+  );
   const code = createMemo(
     () => {
       const section = highlightSection();
       const lineHighlighter: ShikiTransformer | undefined =
-        section && section.fileName === selectedTab()?.fileName
+        section && section.fileName === selectedTab()
           ? {
               line(hast, line) {
                 this.addClassToHast(hast, "inline-flex w-full");
@@ -23,7 +27,9 @@ export function CodeRenderer() {
               },
             }
           : undefined;
-      return highlighter()?.codeToHtml(selectedTab()?.code ?? "", {
+      const code = currentTab()?.code;
+      if (!code) return;
+      return highlighter()?.codeToHtml(code, {
         theme: "one-dark-pro",
         lang: "javascript",
         colorReplacements: {
@@ -58,7 +64,7 @@ export function CodeRenderer() {
           class="flex rounded-md px-2 py-1 text-slate-4 hover:bg-slate-5 hover:text-slate-3"
           type="button"
           onClick={() => {
-            const code = selectedTab()?.code;
+            const code = currentTab()?.code;
             if (code) {
               void writeClipboard(code);
             }

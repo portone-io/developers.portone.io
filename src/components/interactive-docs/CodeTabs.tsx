@@ -12,12 +12,12 @@ export function CodeTabs() {
   const handleTabChange = (fileName: string) => {
     const tab = untrack(() => tabs()).find((tab) => tab.fileName === fileName);
     if (tab) {
-      setSelectedTab(tab);
+      setSelectedTab(tab.fileName);
     }
   };
   return (
     <Tabs
-      value={selectedTab()?.fileName}
+      value={selectedTab() ?? undefined}
       onChange={handleTabChange}
       class="w-full flex overflow-x-hidden"
     >
@@ -25,9 +25,7 @@ export function CodeTabs() {
         <For each={tabs()}>
           {(tab) => {
             let tabRef: HTMLElement;
-            const isSelected = createMemo(
-              () => tab.fileName === selectedTab()?.fileName,
-            );
+            const isSelected = createMemo(() => tab.fileName === selectedTab());
             createEffect(() => {
               if (isSelected()) {
                 tabRef.scrollBy();

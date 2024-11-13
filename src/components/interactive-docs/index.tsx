@@ -6,12 +6,16 @@ import {
   startTransition,
 } from "solid-js";
 
-import { type CodeExample, useInteractiveDocs } from "~/state/interactive-docs";
+import {
+  type CodeExample,
+  type PgOptions,
+  useInteractiveDocs,
+} from "~/state/interactive-docs";
 
-import type { PgOptions } from "./PgSelect";
+import type { DefaultParams } from "./code";
 
 export type CodeExmapleMap<
-  Params extends object,
+  Params extends DefaultParams,
   Sections extends string,
   T extends string,
 > = {
@@ -19,7 +23,7 @@ export type CodeExmapleMap<
 };
 
 export function createInteractiveDoc<
-  Params extends object,
+  Params extends DefaultParams,
   Sections extends string,
   FrontendLanguage extends string,
   BackendLanguage extends string,
@@ -35,7 +39,7 @@ export function createInteractiveDoc<
     backend: CodeExmapleMap<Params, Sections, BackendLanguage>;
     hybrid?: CodeExmapleMap<Params, Sections, HybridLanguage>;
   };
-  pgOptions: readonly [PgOptions, ...PgOptions[]];
+  pgOptions: PgOptions;
   initialParams: Params;
   initialSelectedExample:
     | [frontend: FrontendLanguage, backend: BackendLanguage]
@@ -59,7 +63,7 @@ export function createInteractiveDoc<
       setSelectedLanguage,
     } = useInteractiveDocs();
     void startTransition(() => {
-      setPgOptions([...pgOptions]);
+      setPgOptions(pgOptions);
       setLanguages({
         frontend: Object.keys(codeExamples.frontend) as [
           FrontendLanguage,
@@ -79,9 +83,18 @@ export function createInteractiveDoc<
       setParams(initialParams);
       setCodeExamples(
         codeExamples as unknown as {
-          frontend: Record<string, CodeExample<object, string>[]>;
-          backend: Record<string, CodeExample<object, string>[]>;
-          hybrid?: Record<string, CodeExample<object, string>[]>;
+          frontend: Record<
+            string,
+            CodeExample<DefaultParams & object, string>[]
+          >;
+          backend: Record<
+            string,
+            CodeExample<DefaultParams & object, string>[]
+          >;
+          hybrid?: Record<
+            string,
+            CodeExample<DefaultParams & object, string>[]
+          >;
         },
       );
       setSelectedLanguage(initialSelectedExample as [string, string] | string);

@@ -1,8 +1,17 @@
-export const PgOptions = ["hyphen"] as const;
+import type { ConvertToPgParam, PgOptions } from "~/state/interactive-docs";
+
+export const pgOptions = {
+  hyphen: {
+    payMethods: ["card", "virtualAccount"],
+  },
+  inicis: {
+    payMethods: ["virtualAccount"],
+  },
+} as const satisfies PgOptions;
 
 export type Params = {
   smartRouting: boolean;
-  pg: (typeof PgOptions)[number];
+  pg: ConvertToPgParam<typeof pgOptions>;
 };
 
 export type Sections =

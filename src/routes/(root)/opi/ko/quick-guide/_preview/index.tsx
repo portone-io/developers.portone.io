@@ -2,17 +2,17 @@ import { createInteractiveDoc } from "~/components/interactive-docs";
 
 import * as backend from "./backend";
 import * as frontend from "./frontend";
-import { PgOptions } from "./type";
+import { pgOptions } from "./type";
 
 export const { Language, Section, InteractiveDoc } = createInteractiveDoc({
   codeExamples: {
     frontend,
     backend,
   },
-  pgOptions: PgOptions,
+  pgOptions,
   initialParams: {
     smartRouting: false,
-    pg: "hyphen",
+    pg: { name: "hyphen", payMethods: "card" },
   },
   initialSelectedExample: ["react", "node"],
 });
