@@ -4,6 +4,7 @@ import {
   type Component,
   type ParentComponent,
   type ParentProps,
+  Show,
   startTransition,
 } from "solid-js";
 
@@ -51,6 +52,7 @@ export function createInteractiveDoc<
 }): {
   InteractiveDoc: ParentComponent;
   Section: ParentComponent<{ section: Sections }>;
+  Condition: ParentComponent<{ when: (params: Params) => boolean }>;
   Language: ParentComponent<{
     language:
       | `frontend/${FrontendLanguage}`
@@ -110,11 +112,21 @@ export function createInteractiveDoc<
   };
   const Section = (props: ParentProps<{ section: Sections }>) => {
     return <div>{props.children}</div>;
+  const Condition = (
+    props: ParentProps<{ when: (params: Params) => boolean }>,
+  ) => {
+    const { params } = useInteractiveDocs();
+    return (
+      <Show when={props.when(params as Params)}>
+        <div>{props.children}</div>{" "}
+      </Show>
+    );
   };
   const Language = (props: ParentProps) => <div>{props.children}</div>;
   return {
     InteractiveDoc,
     Section,
     Language,
+    Condition,
   };
 }
