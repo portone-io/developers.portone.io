@@ -1,4 +1,5 @@
-import { createMemo } from "solid-js";
+import { writeClipboard } from "@solid-primitives/clipboard";
+import { createMemo, createResource, untrack } from "solid-js";
 
 import { highlighter, useInteractiveDocs } from "~/state/interactive-docs";
 
@@ -18,8 +19,13 @@ export default function CodeViewer() {
         },
       });
     },
-    { initialValue: undefined, deferStream: true },
+    { deferStream: true },
   );
+  const [, { refetch: copyToClipboard }] = createResource(() => {
+    const _selectedTab = selectedTab();
+    if (!_selectedTab) return;
+    return writeClipboard(untrack(() => _selectedTab.code));
+  });
 
   return (
     <div class="grid grid-rows-[min-content_1fr] gap-y-2 rounded-t-xl bg-slate-8 p-2">
@@ -28,6 +34,7 @@ export default function CodeViewer() {
         <button
           class="flex rounded-md px-2 py-1 text-slate-4 hover:bg-slate-5 hover:text-slate-3"
           type="button"
+          onClick={() => void copyToClipboard()}
         >
           <i class="i-material-symbols-content-copy-outline inline-block text-xl" />
         </button>
