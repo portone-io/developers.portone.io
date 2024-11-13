@@ -2,10 +2,10 @@ import { createContextProvider } from "@solid-primitives/context";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import {
+  type Component,
   createEffect,
   createMemo,
   createSignal,
-  type JSXElement,
   type Setter,
   untrack,
 } from "solid-js";
@@ -16,6 +16,7 @@ import type {
   DefaultParams,
   Section,
 } from "~/components/interactive-docs/code";
+import type { CodePreviewProps } from "~/components/interactive-docs/CodePreview";
 
 export type CodeExample<
   Params extends DefaultParams,
@@ -84,7 +85,9 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
         payMethods: "card",
       },
     });
-    const [preview, setPreview] = createSignal<JSXElement | null>(null);
+    const [preview, setPreview] = createSignal<
+      Component<CodePreviewProps> | undefined
+    >(undefined);
     const [pgOptions, setPgOptions] = createSignal<PgOptions>({
       inicis: {
         payMethods: ["card"],
@@ -254,8 +257,8 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     highlighter: () => undefined,
     highlightSection: () => null,
     setHighlightSection: (_) => {},
-    preview: () => <></>,
-    setPreview: ((_) => {}) as Setter<JSXElement | null>,
+    preview: () => undefined,
+    setPreview: ((_) => {}) as Setter<Component<CodePreviewProps> | undefined>,
   },
 );
 

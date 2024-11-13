@@ -13,8 +13,8 @@ export const { Language, Section, InteractiveDoc } = createInteractiveDoc({
   pgOptions,
   initialParams: {
     smartRouting: false,
-    pg: { name: "hyphen", payMethods: "card" },
+    pg: { name: "toss", payMethods: "card" },
   },
   initialSelectedExample: ["react", "node"],
-  preview: <Preview />,
+  preview: Preview,
 });

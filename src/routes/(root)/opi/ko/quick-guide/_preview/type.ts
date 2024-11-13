@@ -1,11 +1,11 @@
 import type { ConvertToPgParam, PgOptions } from "~/state/interactive-docs";
 
 export const pgOptions = {
-  hyphen: {
+  toss: {
     payMethods: ["card", "virtualAccount"],
   },
-  inicis: {
-    payMethods: ["virtualAccount"],
+  nice: {
+    payMethods: ["card", "virtualAccount"],
   },
 } as const satisfies PgOptions;
 
