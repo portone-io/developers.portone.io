@@ -17,12 +17,12 @@ export function CodeTabs(props: CodeTabsProps) {
       onChange={props.onChange}
       class="w-full flex overflow-x-hidden"
     >
-      <Tabs.List class="flex flex-nowrap gap-2 overflow-x-scroll whitespace-nowrap">
+      <Tabs.List class="w-full flex flex-nowrap gap-2 overflow-x-auto whitespace-nowrap">
         <For each={props.tabs}>
           {(tab) => (
             <Tabs.Trigger
               class={clsx(
-                "flex flex-1 items-center gap-1 rounded-md px-3 py-1",
+                "flex items-center gap-1 rounded-md px-3 py-1",
                 tab === props.selectedTab
                   ? "bg-slate-2 text-slate-9"
                   : "hover:bg-slate-5 text-slate-4 hover:text-slate-3",
