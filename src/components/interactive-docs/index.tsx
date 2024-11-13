@@ -51,7 +51,7 @@ export function createInteractiveDoc<
   preview: Component<CodePreviewProps>;
 }): {
   InteractiveDoc: ParentComponent;
-  Section: ParentComponent<{ section: Sections }>;
+  Section: ParentComponent<{ section?: Sections }>;
   Condition: ParentComponent<{ when: (params: Params) => boolean }>;
   Language: ParentComponent<{
     language:
@@ -110,8 +110,17 @@ export function createInteractiveDoc<
 
     return <>{props.children}</>;
   };
-  const Section = (props: ParentProps<{ section: Sections }>) => {
-    return <div>{props.children}</div>;
+  const Section = (props: ParentProps<{ section?: Sections }>) => {
+    const { setCurrentSection } = useInteractiveDocs();
+    return (
+      <div
+        onClick={() => setCurrentSection(() => props.section ?? null)}
+        class="cursor-pointer border-b border-l-5 border-slate-2 px-[19px] py-4"
+      >
+        {props.children}
+      </div>
+    );
+  };
   const Condition = (
     props: ParentProps<{ when: (params: Params) => boolean }>,
   ) => {

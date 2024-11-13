@@ -33,14 +33,9 @@ export function InteractiveDocs(
           <LanguageSelect languages={"backend"} title="Backend" />
         </Show>
       </div>
-      <article class="mb-40 mt-4 min-w-0 flex shrink-1 basis-200 flex-col text-slate-7">
+      <article class="mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-7">
         <div class="mb-6 ml-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
-          <Show when={props.frontmatter.description}>
-            <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
-              {props.frontmatter.description}
-            </p>
-          </Show>
         </div>
         {props.children}
       </article>

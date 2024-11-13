@@ -181,9 +181,18 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
         return result;
       },
     );
-    const [highlightSection, setHighlightSection] = createSignal<
+    const [currentSection, setCurrentSection] = createSignal<string | null>(
+      null,
+    );
+    const highlightSection = createMemo<
       ({ fileName: string } & Section) | null
-    >(null);
+    >(() => {
+      const section = currentSection();
+      if (!section) return null;
+      return sections()[section] ?? null;
+    });
+
+    // Section 변경 시 Tab 이동
     createEffect(() => {
       const section = highlightSection();
       if (!section) return;
@@ -217,12 +226,13 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
       setParams,
       setCodeExamples,
       sections,
+      currentSection,
+      setCurrentSection,
       tabs,
       selectedTab,
       setSelectedTab,
       highlighter,
       highlightSection,
-      setHighlightSection,
       preview,
       setPreview,
     };
@@ -252,11 +262,12 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     setCodeExamples: (_) => {},
     tabs: () => [],
     sections: () => ({}),
+    currentSection: () => null,
+    setCurrentSection: (_) => {},
     selectedTab: () => null,
     setSelectedTab: (_) => {},
     highlighter: () => undefined,
     highlightSection: () => null,
-    setHighlightSection: (_) => {},
     preview: () => undefined,
     setPreview: ((_) => {}) as Setter<Component<CodePreviewProps> | undefined>,
   },

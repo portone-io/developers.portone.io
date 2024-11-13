@@ -50,7 +50,10 @@ export function CodeRenderer() {
       const owner = getOwner();
       setTimeout(() => {
         runWithOwner(owner, () => {
-          rendererRef.scrollTop = section.startLine * 16;
+          rendererRef.scrollTo({
+            top: Math.max(section.startLine - 1, 0) * 16,
+            behavior: "smooth",
+          });
         });
       }, 0);
     }),
