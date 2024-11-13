@@ -3,7 +3,7 @@ import { createMemo } from "solid-js";
 
 import { type PayMethod, useInteractiveDocs } from "~/state/interactive-docs";
 
-export type PaymentSelectOption = {
+export type PayMethodSelectOption = {
   label: string;
 };
 
@@ -12,11 +12,11 @@ const PaymentOptions = {
   virtualAccount: { label: "가상계좌" },
 } as const satisfies Record<PayMethod, { label: string }>;
 
-interface PaymentSelectProps {
+interface PayMethodSelectProps {
   class?: string;
 }
 
-export function PaymentSelect(props: PaymentSelectProps) {
+export function PayMethodSelect(props: PayMethodSelectProps) {
   const { params, setParams, pgOptions } = useInteractiveDocs();
   const options = createMemo(() => {
     return pgOptions()[params.pg.name]?.payMethods ?? [];

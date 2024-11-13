@@ -3,7 +3,7 @@ import { Dynamic } from "solid-js/web";
 
 import { useInteractiveDocs } from "~/state/interactive-docs";
 
-import { PaymentSelect } from "./PaymentSelect";
+import { PayMethodSelect } from "./PayMethodSelect";
 
 export interface CodePreviewProps {
   renderId: string;
@@ -32,7 +32,7 @@ export function CodePreview() {
         <span class="text-sm text-white font-medium leading-[18.2px]">
           결제수단
         </span>
-        <PaymentSelect class="w-full border rounded-md bg-white px-3 py-2.5" />
+        <PayMethodSelect class="w-full border rounded-md bg-white px-3 py-2.5" />
       </div>
       <Dynamic component={preview()} renderId={renderId()} />
     </div>
