@@ -15,7 +15,7 @@ function LeftSidebarItem(props: NavMenuPage) {
   const path = createMemo(() => {
     try {
       return { href: new URL(props.path).toString(), isExternal: true };
-    } catch (e) {
+    } catch {
       return { href: props.path, isExternal: false };
     }
   });

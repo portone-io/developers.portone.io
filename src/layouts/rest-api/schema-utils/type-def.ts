@@ -58,7 +58,7 @@ export interface Property {
 }
 
 export type TypeDefKind = "object" | "union" | "enum";
-export function getTypeDefKind(typeDef?: TypeDef | undefined): TypeDefKind {
+export function getTypeDefKind(typeDef?: TypeDef): TypeDefKind {
   if (typeDef?.discriminator) return "union";
   if (typeDef?.enum) return "enum";
   return "object";
@@ -118,8 +118,8 @@ export function mergeAllOf(schema: unknown, typeDef: TypeDef): TypeDef {
   const properties: Properties = {};
   for (const _item of typeDef.allOf) {
     const item = followRef(schema, _item);
-    item.required && required.push(...item.required);
-    item.properties && Object.assign(properties, item.properties);
+    if (item.required) required.push(...item.required);
+    if (item.properties) Object.assign(properties, item.properties);
   }
   const result: TypeDef = { required, properties };
   Object.assign(result, typeDef);
@@ -173,7 +173,9 @@ export function crawlRefs(
   const rootPropertyRefsCrawler: Visitor = {
     ...defaultVisitor,
     visitUnion(typeDef) {
-      for (const item of typeDef.oneOf!) item.$ref && result.add(item.$ref);
+      for (const item of typeDef.oneOf!) {
+        if (item.$ref) result.add(item.$ref);
+      }
       defaultVisitor.visitUnion.call(this, typeDef);
     },
     visitProperty(_name, property) {
@@ -228,7 +230,7 @@ export function crawlRefs(
     },
   };
   const queue = Array.from(result);
-  function push(ref?: string | undefined) {
+  function push(ref?: string) {
     if (!ref) return;
     if (result.has(ref)) return;
     result.add(ref);

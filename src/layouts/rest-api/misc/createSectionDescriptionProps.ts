@@ -4,7 +4,6 @@ type SectionDescriptionProps<T extends Record<string, unknown>> = {
   [K in keyof T & `section:${string}` as K extends `section:${infer U}`
     ? U
     : never]: T[K];
-  // eslint-disable-next-line @typescript-eslint/ban-types -- to show expanded types on hover
 } & {};
 
 export default function createSectionDescriptionProps<

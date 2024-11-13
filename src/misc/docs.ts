@@ -21,8 +21,8 @@ export const parseDocsFullSlug = (
 const loadOpiDoc = async (fullSlug: string) => {
   "use server";
 
-  if (fullSlug === "") throw redirect("/opi/ko/readme", 302);
-  if (!fullSlug.includes("/")) throw redirect(`/opi/${fullSlug}/readme`, 302);
+  if (fullSlug === "") return redirect("/opi/ko/readme", 302);
+  if (!fullSlug.includes("/")) return redirect(`/opi/${fullSlug}/readme`, 302);
 
   const { opi } = await import("#content");
   if (!(fullSlug in opi)) throw new NotFoundError();
@@ -33,8 +33,8 @@ const loadOpiDoc = async (fullSlug: string) => {
 const loadSdkDoc = async (fullSlug: string) => {
   "use server";
 
-  if (fullSlug === "") throw redirect("/sdk/ko/readme", 302);
-  if (!fullSlug.includes("/")) throw redirect(`/sdk/${fullSlug}/readme`, 302);
+  if (fullSlug === "") return redirect("/sdk/ko/readme", 302);
+  if (!fullSlug.includes("/")) return redirect(`/sdk/${fullSlug}/readme`, 302);
 
   const { sdk } = await import("#content");
   if (!(fullSlug in sdk)) throw new NotFoundError();
@@ -45,16 +45,16 @@ const loadSdkDoc = async (fullSlug: string) => {
 const loadPlatformDoc = async (fullSlug: string) => {
   "use server";
 
-  if (fullSlug === "") throw redirect("/platform/ko/readme", 302);
+  if (fullSlug === "") return redirect("/platform/ko/readme", 302);
   // Redirect old URLs
   if (["guides/", "usages/"].some((old) => fullSlug.startsWith(old))) {
-    throw redirect(`/platform/ko/${fullSlug}`, 302);
+    return redirect(`/platform/ko/${fullSlug}`, 302);
   }
   if (fullSlug.startsWith("ko/guides/intro")) {
-    throw redirect("/platform/ko/readme", 302);
+    return redirect("/platform/ko/readme", 302);
   }
   if (!fullSlug.includes("/"))
-    throw redirect(`/platform/${fullSlug}/readme`, 302);
+    return redirect(`/platform/${fullSlug}/readme`, 302);
 
   const { platform } = await import("#content");
   if (!(fullSlug in platform)) throw new NotFoundError();
