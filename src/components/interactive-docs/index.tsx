@@ -2,10 +2,12 @@ export { code } from "./code";
 
 import {
   type Component,
+  createEffect,
   type ParentComponent,
   type ParentProps,
   Show,
   startTransition,
+  untrack,
 } from "solid-js";
 
 import {
@@ -111,11 +113,24 @@ export function createInteractiveDoc<
     return <>{props.children}</>;
   };
   const Section = (props: ParentProps<{ section?: Sections }>) => {
-    const { setCurrentSection } = useInteractiveDocs();
+    const { setCurrentSection, currentSection } = useInteractiveDocs();
+    let ref: HTMLDivElement;
+    createEffect(() => {
+      if (props.section === currentSection()) {
+        ref.dataset.active = "";
+      } else {
+        delete ref.dataset.active;
+      }
+    });
+    const handleClick = () => {
+      setCurrentSection(() => untrack(() => props.section) ?? null);
+      ref.scrollBy();
+    };
     return (
       <div
-        onClick={() => setCurrentSection(() => props.section ?? null)}
-        class="cursor-pointer border-b border-l-5 border-slate-2 px-[19px] py-4"
+        ref={ref!}
+        onClick={handleClick}
+        class="cursor-pointer border-b border-l-5 border-white px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF2EC] [&:not([data-active])]:hover:border-slate-2"
       >
         {props.children}
       </div>
