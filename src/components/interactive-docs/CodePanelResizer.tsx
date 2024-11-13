@@ -3,7 +3,7 @@ import { untrack } from "solid-js";
 interface CodePanelResizerProps {
   topHeightPercent: number;
   onChange: (percent: number) => void;
-  containerRef: HTMLDivElement;
+  containerRef: HTMLElement;
 }
 
 export function CodePanelResizer(props: CodePanelResizerProps) {

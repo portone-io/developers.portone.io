@@ -1,15 +1,15 @@
 import { createSignal } from "solid-js";
 
 import { CodePanelResizer } from "./CodePanelResizer";
-import CodeViewer from "./CodeViewer";
+import CodeRenderer from "./CodeRenderer";
 import Preview from "./Preview";
 
 export function CodePanel() {
-  let ref: HTMLDivElement;
+  let ref: HTMLElement;
   const [topHeightPercent, setTopHeightPercent] = createSignal(50); // 초기값은 50%
 
   return (
-    <div
+    <nav
       ref={ref!}
       class="sticky top-38 grid mb-2 h-[calc(100dvh-144px-16px)] rounded-xl bg-[#334155]"
       style={{
@@ -18,13 +18,13 @@ export function CodePanel() {
         }%`,
       }}
     >
-      <CodeViewer />
+      <CodeRenderer />
       <CodePanelResizer
         topHeightPercent={topHeightPercent()}
         onChange={setTopHeightPercent}
         containerRef={ref!}
       />
       <Preview />
-    </div>
+    </nav>
   );
 }

@@ -38,7 +38,7 @@ export function InteractiveDocs(
     return true;
   });
   return (
-    <div class="grid grid-cols-[1.2fr_1fr] grid-rows-[auto_1fr] flex-1 gap-y-2">
+    <div class="grid grid-cols-[1fr_1.2fr] grid-rows-[auto_1fr] flex-1 gap-y-2">
       <div class="sticky top-26 col-span-2 flex items-center gap-4 from-white bg-gradient-to-r px-6 py-2">
         <div class="rounded-md bg-[#E5E7EB] px-2.5 py-.75 text-xs color-slate-5 font-medium">
           결제대행사
