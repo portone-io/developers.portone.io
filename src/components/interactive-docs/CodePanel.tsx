@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
 
 import { CodePanelResizer } from "./CodePanelResizer";
-import CodeRenderer from "./CodeRenderer";
-import Preview from "./Preview";
+import { CodePreview } from "./CodePreview";
+import { CodeRenderer } from "./CodeRenderer";
 
 export function CodePanel() {
   let ref: HTMLElement;
@@ -24,7 +24,7 @@ export function CodePanel() {
         onChange={setTopHeightPercent}
         containerRef={ref!}
       />
-      <Preview />
+      <CodePreview />
     </nav>
   );
 }

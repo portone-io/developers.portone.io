@@ -5,7 +5,7 @@ import { useInteractiveDocs } from "~/state/interactive-docs";
 
 import { CodeTabs } from "./CodeTabs";
 
-export default function CodeViewer() {
+export function CodeRenderer() {
   const { selectedTab, highlighter } = useInteractiveDocs();
   const code = createMemo(
     () => {
