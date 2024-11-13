@@ -1,7 +1,7 @@
 import { createContextProvider } from "@solid-primitives/context";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
-import { createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { createEffect, createMemo, createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 
 import type { Code, Section } from "~/components/interactive-docs/code";
@@ -109,15 +109,18 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
         return result;
       },
     );
-    const highlightSection = (section: string) => {
+    const [highlightSection, setHighlightSection] = createSignal<
+      ({ fileName: string } & Section) | null
+    >(null);
+    createEffect(() => {
+      const section = highlightSection();
       if (!section) return;
-      const _sections = untrack(() => sections());
-      const sectionInfo = _sections[section];
-      if (!sectionInfo) {
-        console.error(`Section "${section}" is not defined`);
-        return;
+      const tab = tabs().find((tab) => tab.fileName === section.fileName);
+      if (tab) {
+        setSelectedTab(tab);
       }
-    };
+    });
+
     const [highlighter, setHighlighter] =
       createSignal<Awaited<ReturnType<typeof createHighlighterCore>>>();
     void highlighterInstance.then(setHighlighter);
@@ -136,10 +139,11 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
       setCodeExamples,
       sections,
       tabs,
-      highlightSection,
       selectedTab,
       setSelectedTab,
       highlighter,
+      highlightSection,
+      setHighlightSection,
     };
   },
   {
@@ -160,10 +164,11 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     setCodeExamples: (_) => {},
     tabs: () => [],
     sections: () => ({}),
-    highlightSection: (_) => {},
     selectedTab: () => null,
     setSelectedTab: (_) => {},
     highlighter: () => undefined,
+    highlightSection: () => null,
+    setHighlightSection: (_) => {},
   },
 );
 

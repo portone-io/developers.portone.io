@@ -1,6 +1,6 @@
 import { Tabs } from "@kobalte/core/tabs";
 import clsx from "clsx";
-import { createMemo, For, untrack } from "solid-js";
+import { createEffect, createMemo, For, untrack } from "solid-js";
 
 import { useInteractiveDocs } from "~/state/interactive-docs";
 
@@ -12,7 +12,7 @@ export function CodeTabs() {
   const handleTabChange = (fileName: string) => {
     const tab = untrack(() => tabs()).find((tab) => tab.fileName === fileName);
     if (tab) {
-      untrack(() => setSelectedTab(tab));
+      setSelectedTab(tab);
     }
   };
   return (
@@ -24,11 +24,18 @@ export function CodeTabs() {
       <Tabs.List class="w-full flex flex-nowrap gap-2 overflow-x-auto whitespace-nowrap">
         <For each={tabs()}>
           {(tab) => {
+            let tabRef: HTMLElement;
             const isSelected = createMemo(
               () => tab.fileName === selectedTab()?.fileName,
             );
+            createEffect(() => {
+              if (isSelected()) {
+                tabRef.scrollBy();
+              }
+            });
             return (
               <Tabs.Trigger
+                ref={tabRef!}
                 class={clsx(
                   "flex items-center gap-1 rounded-md px-3 py-1",
                   isSelected()
