@@ -3,12 +3,14 @@ export { code } from "./code";
 import {
   type Component,
   createEffect,
+  createMemo,
   type ParentComponent,
   type ParentProps,
   Show,
   startTransition,
   untrack,
 } from "solid-js";
+import { match, P } from "ts-pattern";
 
 import {
   type CodeExample,
@@ -54,9 +56,9 @@ export function createInteractiveDoc<
 }): {
   InteractiveDoc: ParentComponent;
   Section: ParentComponent<{ section?: Sections }>;
-  Condition: ParentComponent<{ when: (params: Params) => boolean }>;
-  Language: ParentComponent<{
-    language:
+  Condition: ParentComponent<{
+    when?: (params: Params) => boolean;
+    language?:
       | `frontend/${FrontendLanguage}`
       | `backend/${BackendLanguage}`
       | `hybrid/${HybridLanguage}`;
@@ -137,20 +139,42 @@ export function createInteractiveDoc<
     );
   };
   const Condition = (
-    props: ParentProps<{ when: (params: Params) => boolean }>,
+    props: ParentProps<{
+      when?: (params: Params) => boolean;
+      language?:
+        | `frontend/${FrontendLanguage}`
+        | `backend/${BackendLanguage}`
+        | `hybrid/${HybridLanguage}`;
+    }>,
   ) => {
-    const { params } = useInteractiveDocs();
+    const { params, selectedLanguage } = useInteractiveDocs();
+    const show = createMemo(() => {
+      const whenResolver = (when: Required<typeof props>["when"]) =>
+        when(params as Params);
+      const languageResolver = (language: Required<typeof props>["language"]) =>
+        match(selectedLanguage())
+          .with(
+            [P.string, P.string],
+            ([frontend, backend]) =>
+              `frontend/${frontend}` === language ||
+              `backend/${backend}` === language,
+          )
+          .with(P.string, (hybrid) => `hybrid/${hybrid}` === language)
+          .exhaustive();
+      return (
+        (props.when ? whenResolver(props.when) : true) &&
+        (props.language ? languageResolver(props.language) : true)
+      );
+    });
     return (
-      <Show when={props.when(params as Params)}>
+      <Show when={show()}>
         <div>{props.children}</div>{" "}
       </Show>
     );
   };
-  const Language = (props: ParentProps) => <div>{props.children}</div>;
   return {
     InteractiveDoc,
     Section,
-    Language,
     Condition,
   };
 }

@@ -5,17 +5,16 @@ import * as frontend from "./frontend";
 import { Preview } from "./Preview";
 import { pgOptions } from "./type";
 
-export const { Language, Section, InteractiveDoc, Condition } =
-  createInteractiveDoc({
-    codeExamples: {
-      frontend,
-      backend,
-    },
-    pgOptions,
-    initialParams: {
-      smartRouting: false,
-      pg: { name: "toss", payMethods: "card" },
-    },
-    initialSelectedExample: ["react", "node"],
-    preview: Preview,
-  });
+export const { Section, InteractiveDoc, Condition } = createInteractiveDoc({
+  codeExamples: {
+    frontend,
+    backend,
+  },
+  pgOptions,
+  initialParams: {
+    smartRouting: false,
+    pg: { name: "toss", payMethods: "card" },
+  },
+  initialSelectedExample: ["react", "node"],
+  preview: Preview,
+});
