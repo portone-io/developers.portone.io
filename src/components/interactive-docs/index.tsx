@@ -268,7 +268,7 @@ export function createInteractiveDoc<
           }
         >
           <Switch.Input />
-          <Switch.Control class="h-6 w-11 inline-flex items-center border border-[hsl(240_5%_84%)] rounded-xl bg-[hsl(240_6%_90%)] px-.5 transition-[background-color] transition-duration-250 data-[checked]:border-[hsl(200_98%_39%)] data-[checked]:bg-[hsl(200_98%_39%)]">
+          <Switch.Control class="h-6 w-11 inline-flex items-center border border-[hsl(240_5%_84%)] rounded-xl bg-[hsl(240_6%_90%)] px-.5 transition-[background-color] transition-duration-250 data-[checked]:border-portone data-[checked]:bg-portone">
             <Switch.Thumb class="h-5 w-5 rounded-2.5 bg-white transition-transform transition-duration-250 data-[checked]:transform-translate-x-[calc(100%-1px)]" />
           </Switch.Control>
           <Switch.Label class="ml-2 select-none text-[17px] font-medium leading-[30.6px] tracking-[-0.001em]">
