@@ -10,6 +10,7 @@ import SchemaDownloadButton, {
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
+import BackwardCompatibilityContent from "~/routes/(root)/api/backward-compatibility";
 import schema from "~/schema/v2.openapi.json";
 import { useSystemVersion } from "~/state/system-version";
 
@@ -61,12 +62,7 @@ export default function ApiV2Docs() {
           </SchemaDownloadButton>
         </prose.p>
         <prose.h3>요청 및 응답 형식</prose.h3>
-        <prose.p>
-          요청과 응답의 본문은 JSON 형식입니다.
-          <br />
-          API 응답에 포함된 필드는 별도 안내 없이 추가될 수 있으니, 알지 못하는
-          필드가 있는 경우에는 무시하도록 개발해 주세요.
-        </prose.p>
+        <prose.p>요청과 응답의 본문은 JSON 형식입니다.</prose.p>
         <prose.p>
           API 매개 변수 중 URL 경로에 들어가는 문자열 값이 있는 경우, URL 경로에
           들어갈 수 없는 문자열은 이스케이프하여야 합니다. 자바스크립트의{" "}
@@ -75,36 +71,32 @@ export default function ApiV2Docs() {
         </prose.p>
         <prose.h3 id="auth">인증 방식</prose.h3>
         <prose.p>
-          V2 API를 사용하기 위해서는 V2 API Secret이 필요하며, 포트원 콘솔 내
-          결제연동 탭에서 발급받을 수 있습니다.
+          V2 API를 사용하기 위해서는 V2 API Secret이 필요하며, 포트원 관리자콘솔
+          내 결제연동 탭에서 발급받으실 수 있습니다.
         </prose.p>
         <prose.p>
           인증 관련 API를 제외한 모든 API는 HTTP <code>Authorization</code>{" "}
-          헤더로 인증 정보를 전달해 주셔야 합니다. Authorization 헤더에 전달하는
-          형식은 두 가지 중 하나입니다.
+          헤더로 아래 형식의 인증 정보를 전달해주셔야 합니다.
         </prose.p>
         <ul>
           <li>
-            API Secret 직접 사용 (간편)
-            <br />
-            Authorization: PortOne <i>MY_API_SECRET</i>
-          </li>
-          <li>
-            액세스 토큰 사용
-            <br />
-            Authorization: Bearer <i>MY_ACCESS_TOKEN</i>
+            <code>
+              Authorization: PortOne <i>MY_API_SECRET</i>
+            </code>
           </li>
         </ul>
-        액세스 토큰을 사용한 인증을 원하는 경우, 인증 관련 API를 이용해 주세요.
-        <prose.h3 id="get-with-body">GET 요청 시 Body 대신 Query 사용</prose.h3>
+        <prose.h3 id="get-with-body">
+          GET 요청 시 Body 대신 Query 사용하기
+        </prose.h3>
         <prose.p>
-          GET 요청 시에 Body를 사용해야 하는 경우, Body 대신 Query를 사용할 수
+          GET 요청 시에 Body를 전달해야 하는 경우, Body 대신 Query를 사용할 수
           있습니다.
         </prose.p>
         <prose.p>
           이 경우, Body 객체를 <code>requestBody</code> Query 필드에 넣어주시면
           됩니다.
         </prose.p>
+        <BackwardCompatibilityContent version="v2" />
       </RestApi>
     </div>
   );
