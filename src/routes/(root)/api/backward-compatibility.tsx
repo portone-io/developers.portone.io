@@ -10,7 +10,7 @@ export default function BackwardCompatibilityContent(props: {
     <>
       <prose.h3 id="backward-compatibility">하위호환성</prose.h3>
       <prose.p>
-        포트원이 제공하는 모든 Stable API 에 대해 아래와 같은 하위호환성이
+        포트원이 제공하는 모든 Stable API에 대해 아래와 같은 하위호환성이
         보장됩니다.
       </prose.p>
       <ol>
@@ -66,7 +66,7 @@ export default function BackwardCompatibilityContent(props: {
               </prose.p>
               <ul>
                 <li>
-                  알지 못하는 필드 및 값이 주어지더라도 crash 가 발생하지 않도록
+                  알지 못하는 필드 및 값이 주어지더라도 crash가 발생하지 않도록
                   유의하여 개발해주세요.
                 </li>
                 <Show when={props.version == "v1"}>
@@ -81,7 +81,7 @@ export default function BackwardCompatibilityContent(props: {
         </li>
       </ol>
       <prose.p>
-        <code>UNSTABLE</code> 이 표기된 일부 API 의 경우, 위 하위호환성 정책과
+        <code>UNSTABLE</code>이 표기된 일부 API의 경우, 위 하위호환성 정책과
         무관하게 변경 및 지원 종료될 수 있으니 이용에 유의하세요.
       </prose.p>
     </>

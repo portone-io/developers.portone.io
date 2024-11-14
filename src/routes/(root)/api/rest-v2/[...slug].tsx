@@ -71,11 +71,11 @@ export default function ApiV2Docs() {
         </prose.p>
         <prose.h3 id="auth">인증 방식</prose.h3>
         <prose.p>
-          V2 API 를 사용하기 위해서는 V2 API Secret 이 필요하며, 포트원
-          관리자콘솔 내 결제연동 탭에서 발급받으실 수 있습니다.
+          V2 API를 사용하기 위해서는 V2 API Secret이 필요하며, 포트원 관리자콘솔
+          내 결제연동 탭에서 발급받으실 수 있습니다.
         </prose.p>
         <prose.p>
-          인증 관련 API 를 제외한 모든 API 는 HTTP <code>Authorization</code>{" "}
+          인증 관련 API를 제외한 모든 API는 HTTP <code>Authorization</code>{" "}
           헤더로 아래 형식의 인증 정보를 전달해주셔야 합니다.
         </prose.p>
         <ul>
@@ -89,7 +89,7 @@ export default function ApiV2Docs() {
           GET 요청 시 Body 대신 Query 사용하기
         </prose.h3>
         <prose.p>
-          GET 요청 시에 Body 를 전달해야 하는 경우, Body 대신 Query 를 사용할 수
+          GET 요청 시에 Body를 전달해야 하는 경우, Body 대신 Query를 사용할 수
           있습니다.
         </prose.p>
         <prose.p>
