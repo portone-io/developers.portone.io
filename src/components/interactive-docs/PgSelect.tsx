@@ -12,7 +12,6 @@ import naverLogo from "~/assets/pg-circle/naver.png";
 import niceLogo from "~/assets/pg-circle/nice.png";
 import smatroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
-import Picture from "~/components/Picture";
 import { type Pg, useInteractiveDocs } from "~/state/interactive-docs";
 
 export type PgSelectOption = {
@@ -61,8 +60,8 @@ export function PgSelect() {
                 <i class="i-ic-round-check inline-block" />
               </Select.ItemIndicator>
             </div>
-            <Picture
-              picture={optionInfo().icon}
+            <img
+              src={optionInfo().icon.img.src}
               alt={optionInfo().label}
               class="h-5 w-5"
             />
@@ -86,8 +85,8 @@ export function PgSelect() {
             );
             return (
               <div class="flex gap-1.5">
-                <Picture
-                  picture={PgOptions[selectedOption()].icon}
+                <img
+                  src={PgOptions[selectedOption()].icon.img.src}
                   alt={PgOptions[selectedOption()].label}
                   class="h-5 w-5"
                 />
