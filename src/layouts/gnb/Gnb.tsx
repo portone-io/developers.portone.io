@@ -33,6 +33,7 @@ type Nav = {
   link?: string | Record<SystemVersion, string>;
   label: string;
   dropdownItems?: DropdownItem[];
+  activeLink?: string[];
 };
 
 export default function Gnb(props: Props) {
@@ -72,6 +73,7 @@ export default function Gnb(props: Props) {
     {
       label: "API & SDK",
       link: { v1: "/api/rest-v1", v2: "/api/rest-v2" },
+      activeLink: ["/sdk/ko"],
       dropdownItems: [
         {
           label: "REST API V1",
@@ -123,7 +125,7 @@ export default function Gnb(props: Props) {
       label: t()["console"],
       link: "https://admin.portone.io/",
     },
-  ];
+  ] satisfies Nav[] as Nav[];
 
   return (
     <>
@@ -160,6 +162,7 @@ export default function Gnb(props: Props) {
                     <Dropdown
                       serverSystemVersion={serverSystemVersion}
                       link={nav.link}
+                      activeLink={nav.activeLink}
                     >
                       <span class="p-2">{nav.label}</span>
                     </Dropdown>
@@ -169,13 +172,14 @@ export default function Gnb(props: Props) {
               <MobileMenuButton />
             </div>
             <div class="hidden h-12 items-center gap-5 border-b bg-white z-gnb-body md:flex">
-              <div class="h-full items-center">
+              <div class="flex items-center gap-.5">
                 <For each={subNavs}>
                   {(nav) => (
                     <Dropdown
                       serverSystemVersion={serverSystemVersion}
                       link={nav.link}
                       items={nav.dropdownItems}
+                      activeLink={nav.activeLink}
                     >
                       <span class="p-2">{nav.label}</span>
                     </Dropdown>
@@ -208,6 +212,7 @@ export default function Gnb(props: Props) {
                           serverSystemVersion={serverSystemVersion}
                           link={nav.link}
                           items={nav.dropdownItems}
+                          activeLink={nav.activeLink}
                         >
                           <span>{nav.label}</span>
                         </Dropdown>
