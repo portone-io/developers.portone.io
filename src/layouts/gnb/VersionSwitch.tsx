@@ -52,7 +52,7 @@ export function VersionSwitch(props: VersionSwitchProps) {
             else navigate("/");
           }}
           class={clsx(
-            "bg-slate-1 border-slate-2 text-12px text-slate-4 p-1px border-1 flex cursor-pointer select-none overflow-hidden whitespace-pre rounded-[6px] text-center font-bold",
+            "bg-slate-1 border-slate-2 text-[13px] leading-[15.6px] text-slate-5 p-1 <md:p-.5 border-1 flex cursor-pointer select-none overflow-hidden whitespace-pre rounded-md text-center font-medium",
             props.class,
           )}
         >
@@ -68,9 +68,7 @@ function getVersionClass(
   thisVersion: SystemVersion,
   systemVersion: SystemVersion,
 ) {
-  return `py-.5 rounded-[4px] ${
-    systemVersion === thisVersion
-      ? "bg-slate-6 flex-1 text-white px-2"
-      : "flex-1 px-2"
+  return `px-2 py-1 <md:py-.5 <md:px-2 flex-1 rounded-[4px] ${
+    systemVersion === thisVersion ? "bg-portone text-white" : ""
   }`;
 }
