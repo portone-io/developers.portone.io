@@ -23,7 +23,7 @@ export async function GET({ params }: APIEvent) {
       ),
     ),
   );
-  return new Response(JSON.stringify(Object.values(mdxTable)), {
+  return new Response(JSON.stringify(mdxTable), {
     headers: {
       "Content-Type": "application/json",
     },
