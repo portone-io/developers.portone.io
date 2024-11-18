@@ -2,6 +2,7 @@ import { A } from "@solidjs/router";
 import Fuse from "fuse.js";
 import {
   createContext,
+  createEffect,
   createMemo,
   createResource,
   createSignal,
@@ -12,8 +13,10 @@ import {
   Switch,
   useContext,
 } from "solid-js";
+import { match } from "ts-pattern";
 
 import { lazy } from "~/misc/async";
+import type { IndexFilesMapping } from "~/misc/contentIndex";
 import type { NavMenuSystemVersions } from "~/state/nav";
 import { useSystemVersion } from "~/state/system-version";
 
@@ -39,26 +42,51 @@ export interface SearchButtonProps {
 }
 export function SearchButton({ lang }: SearchButtonProps) {
   const { setOpen } = useSearchContext();
+  const ctrlKey = createMemo(() =>
+    typeof navigator !== "undefined" &&
+    navigator.platform &&
+    /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)
+      ? "⌘"
+      : "Ctrl",
+  );
+
+  createEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen(true);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  });
 
   return (
     <button
-      class="mx-2 flex flex-1 gap-2 border-1 border-slate-3 rounded-6px bg-slate-1 p-2 text-slate-4"
+      class="max-w-100 flex flex-1 items-center gap-1.5 border-1 border-slate-3 rounded-6px px-3 py-1.5 text-slate-4"
       onClick={() => setOpen(true)}
     >
       <i class="i-ic-baseline-search text-2xl"></i>
       <span>{t(lang, "search")}</span>
+      <kbd class="ml-auto flex gap-.5 border border-slate-2 rounded-6px px-1.5 py-.5">
+        <kbd class="text-sm">{ctrlKey()}</kbd>
+        <kbd class="text-sm">K</kbd>
+      </kbd>
     </button>
   );
 }
 
 export const searchIndexKo = lazy(() => fetchSearchIndex("ko"));
 export const searchIndexEn = lazy(() => fetchSearchIndex("en"));
-async function fetchSearchIndex(lang: string): Promise<SearchIndex> {
-  const res = await fetch(`/content-index/opi-${lang}.json`);
+export const searchIndexBlog = lazy(() => fetchSearchIndex("blog"));
+async function fetchSearchIndex(
+  fileName: keyof IndexFilesMapping,
+): Promise<SearchIndex> {
+  const res = await fetch(`/content-index/${fileName}.json`);
   return JSON.parse((await res.text()).normalize("NFKD")) as SearchIndex;
 }
 
-export type SearchIndex = SearchIndexItem[];
+export type SearchIndex = Record<string, SearchIndexItem[]>;
 export interface SearchIndexItem {
   slug: string;
   title?: string;
@@ -67,7 +95,7 @@ export interface SearchIndexItem {
 }
 
 export interface SearchScreenProps {
-  lang: string;
+  searchIndex: keyof IndexFilesMapping;
   navMenuSystemVersions: NavMenuSystemVersions;
 }
 export function SearchScreen(props: SearchScreenProps) {
@@ -77,25 +105,33 @@ export function SearchScreen(props: SearchScreenProps) {
 
   const [searchText, setSearchText] = createSignal("");
   const [searchIndex] = createResource(
-    () => open() && props.lang,
-    async (lang) => {
+    () => open() && props.searchIndex,
+    async (searchIndex) => {
       inputRef?.focus();
-      return await (lang === "ko" ? searchIndexKo : searchIndexEn);
+      return await match(searchIndex)
+        .with("ko", () => searchIndexKo)
+        .with("en", () => searchIndexEn)
+        .with("blog", () => searchIndexBlog)
+        .exhaustive();
     },
     { initialValue: undefined },
   );
   const fuse = createMemo(() => {
     const index = searchIndex.latest;
     if (!index) return;
-    const filteredIndex = index
+    const filteredIndex = Object.values(index)
+      .flat()
       .filter((item) => {
         const navMenuSystemVersion =
-          props.navMenuSystemVersions[item.slug.replace(/^opi/, "")];
+          props.navMenuSystemVersions[`/${item.slug}`];
         if (!navMenuSystemVersion) return true;
         return navMenuSystemVersion === systemVersion();
       })
       .map((item) => {
-        const slug = item.slug.replace(/\/index$/, "");
+        const slug = item.slug
+          .replace(/\/index$/, "")
+          // /foo/(bar)/baz -> /foo/baz
+          .replace(/\/\([\w\d]+\)/, "");
         return { ...item, slug };
       });
     return new Fuse(filteredIndex, { keys: ["title", "description", "text"] });
@@ -127,7 +163,7 @@ export function SearchScreen(props: SearchScreenProps) {
           <input
             class="flex-1 bg-transparent p-4"
             ref={inputRef}
-            placeholder={t(props.lang, "searchContent")}
+            placeholder={t(props.searchIndex, "searchContent")}
             value={searchText()}
             onInput={(e) => setSearchText(e.currentTarget.value)}
             onKeyDown={(e) => {
@@ -163,7 +199,7 @@ export function SearchScreen(props: SearchScreenProps) {
               </ul>
             </Match>
             <Match when={fuse()}>
-              <Empty lang={props.lang} />
+              <Empty lang={props.searchIndex} />
             </Match>
           </Switch>
         </div>
