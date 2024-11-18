@@ -60,7 +60,7 @@ export function CodeRenderer() {
   );
 
   return (
-    <div class="grid grid-rows-[min-content_1fr] gap-y-2 rounded-t-xl bg-slate-8 p-2">
+    <div class="grid grid-rows-[min-content_1fr] gap-y-2 overflow-auto rounded-t-xl bg-slate-8 pb-2">
       <div class="grid grid-cols-[1fr_min-content] h-12 items-center gap-2 rounded-lg bg-slate-7 p-2">
         <CodeTabs />
         <button

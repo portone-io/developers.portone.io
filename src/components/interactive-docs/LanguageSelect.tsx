@@ -64,11 +64,11 @@ export default function LanguageSelect(props: LanguageSelectProps) {
   };
   return (
     <ToggleGroup
-      class="flex items-center gap-1"
+      class="flex items-center gap-2"
       value={value()}
       onChange={handleChange}
     >
-      <div class="rounded-md bg-[#E5E7EB] px-2.5 py-.75 text-xs color-slate-5 font-medium">
+      <div class="rounded-md text-xs text-slate-5 font-medium">
         {props.title}
       </div>
       <For each={languagesValue()}>

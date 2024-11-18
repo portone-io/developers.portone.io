@@ -33,7 +33,11 @@ const PgOptions = {
   hyphen: { label: "하이픈", icon: hyphenLogo },
 } as const satisfies Record<Pg, PgSelectOption>;
 
-export function PgSelect() {
+interface PgSelectProps {
+  class?: string;
+}
+
+export function PgSelect(props: PgSelectProps) {
   const { params, setParams, pgOptions } = useInteractiveDocs();
   const options = createMemo(
     () => Object.keys(pgOptions()) as (keyof ReturnType<typeof pgOptions>)[],
@@ -43,6 +47,7 @@ export function PgSelect() {
   };
   return (
     <Select
+      class={props.class}
       value={params.pg.name}
       onChange={handleChange}
       options={options()}
