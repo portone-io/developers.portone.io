@@ -43,6 +43,7 @@ export function CodeRenderer() {
     { deferStream: true },
   );
   let rendererRef: HTMLDivElement;
+  let copyButtonRef: HTMLButtonElement;
   // highlightSection이 변경될 때만 Section으로 스크롤 하도록 구현
   createEffect(
     on(highlightSection, (section) => {
@@ -64,17 +65,21 @@ export function CodeRenderer() {
       <div class="grid grid-cols-[1fr_min-content] h-12 items-center gap-2 rounded-lg bg-slate-7 p-2">
         <CodeTabs />
         <button
-          class="flex rounded-md px-2 py-1 text-slate-4 hover:bg-slate-5 hover:text-slate-3"
+          ref={copyButtonRef!}
+          class="i-mdi-content-copy data-[copied]:i-mdi-check h-5 w-5 rounded-md p-1 text-xl text-slate-4 data-[copied]:text-green-5 [&:not([data-copied])]:hover:text-slate-1"
+          onPointerLeave={() => {
+            delete copyButtonRef.dataset.copied;
+          }}
           type="button"
           onClick={() => {
             const code = currentTab()?.code;
             if (code) {
-              void writeClipboard(code);
+              void writeClipboard(code).then(() => {
+                copyButtonRef.dataset.copied = "true";
+              });
             }
           }}
-        >
-          <i class="i-material-symbols-content-copy-outline inline-block text-xl" />
-        </button>
+        />
       </div>
       <div
         ref={rendererRef!}

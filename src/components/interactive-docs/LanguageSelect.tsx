@@ -75,7 +75,7 @@ export default function LanguageSelect(props: LanguageSelectProps) {
         {(language) => (
           <ToggleGroup.Item
             value={language}
-            class="cursor-pointer border border-slate-3 rounded-md px-2.5 py-.75 text-xs text-slate-9 font-medium data-[pressed]:border-portone data-[pressed]:text-portone [&::not([data-pressed])]:hover:border-slate-4 [&::not([data-pressed])]:hover:bg-slate-4"
+            class="cursor-pointer border border-slate-3 rounded-md px-2.5 py-.75 text-xs text-slate-9 font-medium data-[pressed]:border-portone data-[pressed]:text-portone [&:not([data-pressed])]:hover:border-slate-4 [&:not([data-pressed])]:hover:bg-slate-4"
           >
             {language}
           </ToggleGroup.Item>
