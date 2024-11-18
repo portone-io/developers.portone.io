@@ -104,7 +104,7 @@ const DefaultLayout = (
 ) => {
   return (
     <div class="min-w-0 flex flex-1 justify-center gap-5">
-      <article class="mb-40 mt-4 min-w-0 flex shrink-1 basis-200 flex-col pl-5 text-slate-7">
+      <article class="mb-40 mt-4 min-w-0 flex shrink-1 basis-200 flex-col pl-5 text-slate-7 <lg:pl-4 <lg:pr-4">
         <div class="mb-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
           <Show when={props.frontmatter.description}>
