@@ -46,29 +46,31 @@ export default function Gnb(props: Props) {
     {
       link: "/opi/ko",
       label: "원 페이먼트 인프라",
-      dropdownItems: [
-        {
-          label: "퀵 가이드",
-        },
-        {
-          label: "연동하기",
-        },
-        {
-          label: "부가기능",
-        },
-      ],
+      // TODO: Phase 2
+      // dropdownItems: [
+      //   {
+      //     label: "퀵 가이드",
+      //   },
+      //   {
+      //     label: "연동하기",
+      //   },
+      //   {
+      //     label: "부가기능",
+      //   },
+      // ],
     },
     {
       link: "/platform",
       label: "파트너 정산 자동화",
-      dropdownItems: [
-        {
-          label: "서비스 가이드",
-        },
-        {
-          label: "사용 예시",
-        },
-      ],
+      // TODO: Phase 2
+      // dropdownItems: [
+      //   {
+      //     label: "서비스 가이드",
+      //   },
+      //   {
+      //     label: "사용 예시",
+      //   },
+      // ],
     },
     {
       label: "API & SDK",
