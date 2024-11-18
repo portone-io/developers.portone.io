@@ -25,7 +25,6 @@ import {
 } from "~/state/interactive-docs";
 
 import type { DefaultParams } from "./code";
-import type { CodePreviewProps } from "./CodePreview";
 
 export type CodeExmapleMap<
   Params extends DefaultParams,
@@ -58,7 +57,7 @@ export function createInteractiveDoc<
   initialSelectedExample:
     | [frontend: FrontendLanguage, backend: BackendLanguage]
     | HybridLanguage;
-  preview: Component<CodePreviewProps>;
+  preview: Component;
 }): {
   InteractiveDoc: ParentComponent;
   Section: ParentComponent<{ section?: Sections }>;
@@ -205,7 +204,7 @@ export function createInteractiveDoc<
         id={props.section}
         ref={ref!}
         onClick={handleClick}
-        class="cursor-pointer border-b border-l-5 border-white px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF2EC] [&:not([data-active])]:hover:border-slate-2"
+        class="cursor-pointer border-l-5 border-white rounded px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF2EC] [&:not([data-active])]:hover:border-slate-2"
       >
         {props.children}
       </div>
