@@ -5,7 +5,7 @@ export const indexFilesMapping = {
     "원 페이먼트 인프라": "opi/ko/",
     "파트너 정산 자동화": "platform/ko/",
     "릴리즈 노트": "release-notes/(note)/",
-    "SDK 문서": "sdk/ko/",
+    "API & SDK": "sdk/ko/",
   },
   en: {
     docs: "docs/en/",

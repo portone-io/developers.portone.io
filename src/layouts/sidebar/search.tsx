@@ -20,6 +20,8 @@ import type { IndexFilesMapping } from "~/misc/contentIndex";
 import type { NavMenuSystemVersions } from "~/state/nav";
 import { useSystemVersion } from "~/state/system-version";
 
+const BEFORE_KEYWORD_TEXT_LENGTH = 50;
+
 const SearchContext = createContext({
   open: (): boolean => false,
   setOpen: (_: boolean): void => {},
@@ -37,18 +39,18 @@ export function SearchProvider(props: { children: JSXElement }) {
 
 export const useSearchContext = () => useContext(SearchContext);
 
+const ctrlKey = () =>
+  typeof navigator !== "undefined" &&
+  navigator.platform &&
+  /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)
+    ? "⌘"
+    : "Ctrl";
+
 export interface SearchButtonProps {
   lang: string;
 }
 export function SearchButton({ lang }: SearchButtonProps) {
   const { setOpen } = useSearchContext();
-  const ctrlKey = createMemo(() =>
-    typeof navigator !== "undefined" &&
-    navigator.platform &&
-    /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)
-      ? "⌘"
-      : "Ctrl",
-  );
 
   createEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -119,8 +121,8 @@ export function SearchScreen(props: SearchScreenProps) {
   const fuse = createMemo(() => {
     const index = searchIndex.latest;
     if (!index) return;
-    const filteredIndex = Object.values(index)
-      .flat()
+    const filteredIndex = Object.entries(index)
+      .flatMap(([key, value]) => value.map((item) => ({ ...item, key })))
       .filter((item) => {
         const navMenuSystemVersion =
           props.navMenuSystemVersions[`/${item.slug}`];
@@ -134,14 +136,44 @@ export function SearchScreen(props: SearchScreenProps) {
           .replace(/\/\([\w\d]+\)/, "");
         return { ...item, slug };
       });
-    return new Fuse(filteredIndex, { keys: ["title", "description", "text"] });
+    return new Fuse(filteredIndex, {
+      keys: [
+        {
+          name: "title",
+          weight: 3,
+        },
+        {
+          name: "description",
+          weight: 2,
+        },
+        {
+          name: "text",
+          weight: 1,
+        },
+      ],
+      minMatchCharLength: 2,
+      includeMatches: true,
+      distance: 600,
+    });
   });
   const searchResult = createMemo(() => {
     const text = searchText();
     const f = fuse();
     if (!text || !f) return [];
-    return f.search(text.normalize("NFKD"));
+    return Map.groupBy(f.search(text.normalize("NFKD")), ({ item }) => item.key)
+      .entries()
+      .toArray();
   });
+
+  const highlightedRegex = createMemo(
+    () =>
+      new RegExp(
+        `([${searchText()}]${
+          searchText().length > 1 ? `{2,${searchText().length}}` : ""
+        })`,
+        "i",
+      ),
+  );
 
   const closeSearchScreen = () => {
     setOpen(false);
@@ -156,12 +188,16 @@ export function SearchScreen(props: SearchScreenProps) {
       onClick={closeSearchScreen}
     >
       <div
-        class="mx-auto h-full w-full flex flex-col border bg-white sm:mt-18 sm:max-h-1/2 sm:min-h-80 sm:w-150 sm:rounded-lg"
+        class="mx-auto h-full w-full flex flex-col gap-3 border bg-white p-3 sm:mt-18 sm:max-h-1/2 sm:min-h-80 sm:w-150 sm:rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div class="flex">
+        <div
+          class="flex items-center gap-1.5 border-1 border-slate-3 rounded-5 rounded-6px px-3 py-1.5 text-[15px] text-slate-4 shadow-sm"
+          onClick={() => setOpen(true)}
+        >
+          <i class="i-ic-baseline-search text-xl"></i>
           <input
-            class="flex-1 bg-transparent p-4"
+            class="flex-1 bg-transparent px-2"
             ref={inputRef}
             placeholder={t(props.searchIndex, "searchContent")}
             value={searchText()}
@@ -170,33 +206,87 @@ export function SearchScreen(props: SearchScreenProps) {
               if (e.key === "Escape") closeSearchScreen();
             }}
           />
-          <button class="px-4 sm:hidden" onClick={closeSearchScreen}>
-            <i class="i-ic-baseline-close block text-2xl"></i>
-          </button>
         </div>
-        <div class="flex flex-1 flex-col overflow-y-auto border-t">
+        <div class="flex flex-1 flex-col gap-1 overflow-y-auto">
           <Switch fallback={<Waiting />}>
             <Match when={searchResult().length > 0}>
-              <ul>
-                <For each={searchResult()}>
-                  {({ item }) => (
-                    <A
-                      href={`/${item.slug}`}
-                      tabIndex={0}
-                      onClick={closeSearchScreen}
-                    >
-                      <li class="px-4 py-2 hover:bg-slate-1">
-                        <div class="text-sm">{item.title}</div>
-                        <Show when={item.description}>
-                          <div class="text-xs text-slate-4">
-                            {item.description}
-                          </div>
-                        </Show>
-                      </li>
-                    </A>
-                  )}
-                </For>
-              </ul>
+              <For each={searchResult()}>
+                {([key, value]) => (
+                  <div>
+                    <span class="text-sm text-slate-5 font-medium leading-4.5">
+                      {key}
+                    </span>
+                    <ul>
+                      <For each={value.slice(0, 3)}>
+                        {({ item }) => {
+                          const normalizedText = createMemo(() =>
+                            item.text.normalize("NFKC"),
+                          );
+                          const keywordFirstIndex = createMemo(() =>
+                            Math.max(normalizedText().indexOf(searchText()), 0),
+                          );
+                          const textStartIndex = createMemo(() =>
+                            keywordFirstIndex() >= BEFORE_KEYWORD_TEXT_LENGTH
+                              ? keywordFirstIndex() - BEFORE_KEYWORD_TEXT_LENGTH
+                              : 0,
+                          );
+                          const contentDescription = createMemo(() =>
+                            normalizedText().slice(
+                              textStartIndex(),
+                              textStartIndex() + 300,
+                            ),
+                          );
+                          return (
+                            <A
+                              href={`/${item.slug}`}
+                              tabIndex={0}
+                              onClick={closeSearchScreen}
+                            >
+                              <li class="px-2 py-2 hover:bg-slate-1">
+                                <div class="grid grid-cols-[max-content_1fr] items-center gap-.5 overflow-hidden">
+                                  <span class="text-sm text-slate-9 font-medium">
+                                    {item.title}
+                                  </span>
+                                  <Show when={item.description}>
+                                    <span class="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-4 leading-4">
+                                      {item.description}
+                                    </span>
+                                  </Show>
+                                </div>
+                                <div class="line-clamp-1 text-ellipsis">
+                                  <For
+                                    each={contentDescription().split(
+                                      highlightedRegex(),
+                                    )}
+                                  >
+                                    {(text) => (
+                                      <Switch
+                                        fallback={
+                                          <span class="text-xs text-slate-4">
+                                            {text}
+                                          </span>
+                                        }
+                                      >
+                                        <Match
+                                          when={highlightedRegex().test(text)}
+                                        >
+                                          <span class="text-xs text-portone">
+                                            {text}
+                                          </span>
+                                        </Match>
+                                      </Switch>
+                                    )}
+                                  </For>
+                                </div>
+                              </li>
+                            </A>
+                          );
+                        }}
+                      </For>
+                    </ul>
+                  </div>
+                )}
+              </For>
             </Match>
             <Match when={fuse()}>
               <Empty lang={props.searchIndex} />
