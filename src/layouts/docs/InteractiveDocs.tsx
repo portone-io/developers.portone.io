@@ -28,11 +28,11 @@ export function InteractiveDocs(
         <div class="rounded-md text-xs text-slate-5 font-medium">
           결제대행사 선택
         </div>
-        <PgSelect class="px-3 py-2" />
+        <PgSelect />
         <div class="rounded-md text-xs text-slate-5 font-medium">
           결제수단 선택
         </div>
-        <PayMethodSelect class="px-3 py-2" />
+        <PayMethodSelect />
         <LanguageSelect languages={["frontend", "hybrid"]} title="Frontend" />
         <Show when={isHybridSelected() === false}>
           <LanguageSelect languages={"backend"} title="Backend" />

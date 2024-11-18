@@ -49,7 +49,7 @@ export function PayMethodSelect(props: PayMethodSelectProps) {
       )}
     >
       <Select.Trigger
-        class="w-full flex items-center justify-between gap-1"
+        class="w-full flex items-center justify-between gap-1 px-3 py-2"
         aria-label="Payment Gateway"
       >
         <Select.Value<
@@ -68,12 +68,10 @@ export function PayMethodSelect(props: PayMethodSelectProps) {
             );
           }}
         </Select.Value>
-        <Select.Icon class="flex items-center">
-          <i class="i-ic-baseline-keyboard-arrow-down inline-block text-xl" />
-        </Select.Icon>
+        <Select.Icon class="data-[closed]:i-ic-baseline-keyboard-arrow-down data-[expanded]:i-ic-baseline-keyboard-arrow-up flex items-center text-xl"></Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Content class="border rounded-md bg-white p-1.5 shadow-md">
+        <Select.Content class="border rounded-md bg-white p-3 shadow-md">
           <Select.Listbox class="flex flex-col gap-.5" />
         </Select.Content>
       </Select.Portal>

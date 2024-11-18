@@ -78,7 +78,7 @@ export function PgSelect(props: PgSelectProps) {
       }}
     >
       <Select.Trigger
-        class="flex items-center gap-1"
+        class="flex items-center gap-1 px-3 py-2"
         aria-label="Payment Gateway"
       >
         <Select.Value<
