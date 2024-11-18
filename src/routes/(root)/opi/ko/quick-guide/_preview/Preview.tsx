@@ -152,10 +152,16 @@ export function Preview() {
         <Switch fallback={<Checkout />}>
           <Match when={paymentStatus().status === "PENDING"}>결제 중...</Match>
           <Match when={paymentStatus().status === "PAID"}>
-            결제가 완료되었습니다.
+            <div class="h-12 w-12 flex items-center justify-center rounded-full bg-green-5">
+              <i class="i-mdi-check-bold text-2xl text-white" />
+            </div>
+            <span class="text-lg font-semibold">결제가 완료되었습니다.</span>
           </Match>
           <Match when={paymentStatus().status === "FAILED"}>
-            결제에 실패했습니다.
+            <div class="h-12 w-12 flex items-center justify-center rounded-full bg-red-5">
+              <i class="i-mdi-close-bold text-2xl text-white" />
+            </div>
+            <span class="text-lg font-semibold">결제에 실패했습니다.</span>
           </Match>
         </Switch>
       </div>
