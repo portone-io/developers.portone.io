@@ -16,7 +16,6 @@ import type {
   DefaultParams,
   Section,
 } from "~/components/interactive-docs/code";
-import type { CodePreviewProps } from "~/components/interactive-docs/CodePreview";
 
 export type CodeExample<
   Params extends DefaultParams,
@@ -85,9 +84,9 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
         payMethods: "card",
       },
     });
-    const [preview, setPreview] = createSignal<
-      Component<CodePreviewProps> | undefined
-    >(undefined);
+    const [preview, setPreview] = createSignal<Component | undefined>(
+      undefined,
+    );
     const [pgOptions, setPgOptions] = createSignal<PgOptions>({
       inicis: {
         payMethods: ["card"],
@@ -269,7 +268,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     highlighter: () => undefined,
     highlightSection: () => null,
     preview: () => undefined,
-    setPreview: ((_) => {}) as Setter<Component<CodePreviewProps> | undefined>,
+    setPreview: ((_) => {}) as Setter<Component | undefined>,
   },
 );
 
