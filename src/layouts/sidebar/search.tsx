@@ -70,9 +70,9 @@ export function SearchButton({ lang }: SearchButtonProps) {
     >
       <i class="i-ic-baseline-search text-2xl"></i>
       <span>{t(lang, "search")}</span>
-      <kbd class="ml-auto flex gap-.5 border border-slate-2 rounded-6px px-1.5 py-.5">
-        <kbd class="text-sm">{ctrlKey()}</kbd>
-        <kbd class="text-sm">K</kbd>
+      <kbd class="ml-auto flex gap-1 border border-slate-2 rounded-6px px-1.5 py-.5">
+        <kbd class="text-xs">{ctrlKey()}</kbd>
+        <kbd class="text-xs">K</kbd>
       </kbd>
     </button>
   );
