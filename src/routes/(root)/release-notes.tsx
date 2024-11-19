@@ -23,7 +23,7 @@ export default function ReleaseNotesLayout(props: Props) {
         id="left-sidebar"
         class="relative hidden w-65 shrink-0 text-slate-7 md:block"
       >
-        <div class="fixed h-[calc(100%-3.5rem)] w-inherit overflow-y-scroll border-r bg-white">
+        <div class="fixed h-[calc(100%-6.5rem)] w-inherit overflow-y-scroll border-r bg-white">
           <Show when={notes()}>
             {(notes) => (
               <Nav
