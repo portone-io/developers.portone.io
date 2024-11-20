@@ -53,10 +53,10 @@ export function createInteractiveDoc<
     hybrid?: CodeExmapleMap<Params, Sections, HybridLanguage>;
   };
   pgOptions: PgOptions;
-  initialParams: Params;
-  initialSelectedExample:
-    | [frontend: FrontendLanguage, backend: BackendLanguage]
-    | HybridLanguage;
+  initialParams: NoInfer<Params>;
+  initialSelectedExample: NoInfer<
+    [frontend: FrontendLanguage, backend: BackendLanguage] | HybridLanguage
+  >;
   preview: Component;
 }): {
   InteractiveDoc: ParentComponent;
