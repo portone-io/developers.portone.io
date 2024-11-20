@@ -1,10 +1,12 @@
+import { createAsync, useLocation } from "@solidjs/router";
 import {
-  cache,
-  createAsync,
-  type RouteDefinition,
-  useLocation,
-} from "@solidjs/router";
-import { createMemo, createResource, type JSXElement, Show } from "solid-js";
+  children,
+  createMemo,
+  Match,
+  type ParentProps,
+  Show,
+  Switch,
+} from "solid-js";
 
 import { NotFoundError } from "~/components/404";
 import Metadata from "~/components/Metadata";
@@ -12,31 +14,12 @@ import * as prose from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
-import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
-import { loadDoc, parseDocsFullSlug, type DocsContentName } from "~/misc/docs";
-import { calcNavMenuSystemVersions } from "~/state/nav";
+import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import { Lang } from "~/type";
 
-const loadNavMenuSystemVersions = cache(async (contentName: DocsContentName, lang: Lang) => {
-  "use server";
+import { InteractiveDocs } from "./InteractiveDocs";
 
-  const { navMenu } = await import("~/state/server-only/nav");
-  return calcNavMenuSystemVersions(navMenu[contentName][lang] || []);
-}, "docs/nav-menu-system-versions");
-
-export const route = {
-  preload: ({ location }) => {
-    const parsedFullSlug = parseDocsFullSlug(location.pathname);
-    if (!parsedFullSlug) return;
-    const [contentName, fullSlug] = parsedFullSlug;
-    const lang = fullSlug.split("/")[0] ?? "ko";
-
-    void loadDoc(contentName, fullSlug);
-    void loadNavMenuSystemVersions(contentName, lang as Lang);
-  },
-} satisfies RouteDefinition;
-
-export function Docs(props: { children: JSXElement }) {
+export function Docs(props: ParentProps) {
   const location = useLocation();
   const parsedFullSlug = createMemo(() => {
     const parsedFullSlug = parseDocsFullSlug(location.pathname);
@@ -47,7 +30,8 @@ export function Docs(props: { children: JSXElement }) {
   const contentName = createMemo(() => parsedFullSlug()[0]);
   const params = createMemo(() => {
     const parts = fullSlug().split("/");
-    const lang = parts[0] as Lang;
+    const lang = Lang.safeParse(parts[0]).data;
+    if (!lang) return null;
     const slug = parts.slice(1).join("/");
     return { lang, slug };
   });
@@ -55,55 +39,87 @@ export function Docs(props: { children: JSXElement }) {
     deferStream: true,
   });
   const frontmatter = createMemo(() => doc()?.frontmatter as DocsEntry);
-  const [navMenuSystemVersions] = createResource(params, ({ lang }) =>
-    loadNavMenuSystemVersions(contentName(), lang),
-  );
+  const _children = children(() => props.children);
 
   return (
-    <SearchProvider>
-      <div class="flex">
-        <DocsNavMenu nav={contentName()} lang={params().lang} slug={params().slug} />
-        <div class="min-w-0 flex flex-1 justify-center">
-          <Show when={frontmatter()}>
-            {(frontmatter) => (
-              <>
-                <Metadata
-                  title={frontmatter().title}
-                  description={frontmatter().description}
-                  ogType="article"
-                  ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
-                  docsEntry={frontmatter()}
-                />
-                <article class="m-4 mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-700">
-                  <div class="mb-6">
-                    <prose.h1 id="overview">{frontmatter().title}</prose.h1>
-                    <Show when={frontmatter().description}>
-                      <p class="my-4 text-xl text-gray">
-                        {frontmatter().description}
-                      </p>
-                    </Show>
-                  </div>
-                  {props.children}
-                </article>
-              </>
-            )}
-          </Show>
-          <div class="hidden shrink-10 basis-10 lg:block"></div>
-          <RightSidebar
-            lang={params().lang}
-            slug={params().slug}
-            file={doc()?.file ?? ""}
-          />
-        </div>
-      </div>
-      <Show when={navMenuSystemVersions.latest}>
-        {(versions) => (
-          <SearchScreen
-            lang={params().lang}
-            navMenuSystemVersions={versions()}
-          />
+    <div class="flex">
+      <Show when={params()}>
+        {(params) => (
+          <>
+            <DocsNavMenu
+              docData={doc()?.frontmatter as DocsEntry}
+              nav={contentName()}
+              lang={params().lang}
+              slug={params().slug}
+            />
+            <Show when={frontmatter()}>
+              {(frontmatter) => (
+                <>
+                  <Metadata
+                    title={frontmatter().title}
+                    description={frontmatter().description}
+                    ogType="article"
+                    ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
+                    docsEntry={frontmatter()}
+                  />
+                  <Switch
+                    fallback={
+                      <DefaultLayout
+                        frontmatter={frontmatter()}
+                        params={params()}
+                        doc={doc()}
+                      >
+                        {_children()}
+                      </DefaultLayout>
+                    }
+                  >
+                    <Match
+                      when={frontmatter().customLayout === "InteractiveDocs"}
+                    >
+                      <InteractiveDocs
+                        frontmatter={frontmatter()}
+                        params={params()}
+                        doc={doc()}
+                      >
+                        {_children()}
+                      </InteractiveDocs>
+                    </Match>
+                  </Switch>
+                </>
+              )}
+            </Show>
+          </>
         )}
       </Show>
-    </SearchProvider>
+    </div>
   );
 }
+
+const DefaultLayout = (
+  props: ParentProps<{
+    frontmatter: DocsEntry;
+    params: { lang: Lang; slug: string };
+    doc: Awaited<ReturnType<typeof loadDoc> | undefined>;
+  }>,
+) => {
+  return (
+    <div class="min-w-0 flex flex-1 justify-center gap-5">
+      <article class="mb-40 mt-4 min-w-0 flex shrink-1 basis-200 flex-col pl-5 text-slate-7 <lg:pl-4 <lg:pr-4">
+        <div class="mb-6">
+          <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
+          <Show when={props.frontmatter.description}>
+            <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
+              {props.frontmatter.description}
+            </p>
+          </Show>
+        </div>
+        {props.children}
+      </article>
+      <RightSidebar
+        lang={props.params.lang}
+        file={props.doc?.file ?? ""}
+        headings={props.doc?.headings ?? []}
+      />
+    </div>
+  );
+};

@@ -74,6 +74,7 @@ export async function generate({
         },
       ],
     },
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
   ).catch((e) => (console.log(e), Promise.reject(e)));
   return await sharp(Buffer.from(svg)).toBuffer();
 }

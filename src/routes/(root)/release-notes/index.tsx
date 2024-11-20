@@ -20,7 +20,7 @@ export default function ReleaseNoteIndex() {
     <>
       <Metadata title="포트원 릴리즈노트" />
       <prose.h1>포트원 릴리즈노트</prose.h1>
-      <p class="my-4 text-xl text-gray">
+      <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
         포트원의 업데이트 소식을 전해드립니다.
       </p>
       <Banner />

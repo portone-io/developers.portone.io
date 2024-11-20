@@ -31,7 +31,7 @@ export default function RestApi(props: RestApiProps) {
   );
   return (
     <div class="flex flex-1 justify-center">
-      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-slate-700">
+      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-slate-7">
         <section id="overview" class="flex flex-col scroll-mt-5.2rem">
           <prose.h1>{props.title}</prose.h1>
           {props.children}

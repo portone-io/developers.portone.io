@@ -11,6 +11,7 @@ import SchemaDownloadButton, {
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
+import BackwardCompatibilityContent from "~/routes/(root)/api/backward-compatibility";
 import schema from "~/schema/v1.openapi.json";
 import { useSystemVersion } from "~/state/system-version";
 
@@ -29,7 +30,7 @@ export default function ApiV1Docs() {
   setSystemVersion("v1");
 
   return (
-    <div class="flex">
+    <div class="flex gap-5">
       <Title>PortOne REST API - V1</Title>
       <NavMenu
         title="REST API - V1"
@@ -57,7 +58,7 @@ export default function ApiV1Docs() {
           종료됩니다.
           <br />
           자세한 사항은
-          <a href="/docs/ko/tip/tls-support?v=v1" style="color:orange">
+          <a href="/opi/ko/support/tls-support?v=v1" style="color:orange">
             TLS 지원 범위
           </a>
           를 참고해주세요.
@@ -75,6 +76,8 @@ export default function ApiV1Docs() {
             <PostmanGuide href="https://learning.postman.com/docs/getting-started/importing-and-exporting/importing-from-swagger/" />
           </SchemaDownloadButton>
         </prose.p>
+        <br />
+        <BackwardCompatibilityContent version="v1" />
       </RestApi>
     </div>
   );

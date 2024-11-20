@@ -45,4 +45,5 @@ export default function TwoColumnLayout(_props: TwoColumnLayoutProps) {
 }
 
 // Ensure tailwind compilation
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 ("gap-2 gap-4 gap-6 md:grid-cols-2 md:grid-cols-[3fr_2fr] lg:grid-cols-2 lg:grid-cols-[3fr_2fr]");

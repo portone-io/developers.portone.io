@@ -1,22 +1,19 @@
-import { A, useLocation } from "@solidjs/router";
-import { clsx } from "clsx";
+import { A } from "@solidjs/router";
+import clsx from "clsx";
 import { createMemo, For, Show, untrack } from "solid-js";
 
-import type { DocsEntry } from "~/content/config";
 import { useSidebarContext } from "~/layouts/sidebar/context";
 import { useSystemVersion } from "~/state/system-version";
-import type { Lang } from "~/type";
+import type { Lang, SystemVersion } from "~/type";
 
-import Dropdown from "./Dropdown";
+import { SearchButton } from "../sidebar/search";
+import Dropdown, { type DropdownItem } from "./Dropdown";
 import Logo from "./Logo";
-import styles from "./mobile-nav.module.css";
 import MobileMenuButton from "./MobileMenuButton";
-import { VersionSwitch } from "./VersionSwitch";
 
 interface Props {
   lang: Lang;
   navAsMenu: boolean;
-  docData?: DocsEntry;
 }
 
 const ko = {
@@ -32,23 +29,105 @@ const en: typeof ko = {
   language: "Language",
 };
 
+type Nav = {
+  link?: string | Record<SystemVersion, string>;
+  label: string;
+  dropdownItems?: DropdownItem[];
+  activeLink?: string[];
+};
+
 export default function Gnb(props: Props) {
-  const location = useLocation();
   const t = createMemo(() => (props.lang === "ko" ? ko : en));
   const { systemVersion } = useSystemVersion();
   const serverSystemVersion = untrack(systemVersion);
   const sidebarContext = useSidebarContext();
 
-  const navs = [
+  const subNavs: Nav[] = [
     {
-      pathname: "/opi/ko",
+      link: "/opi/ko",
       label: "원 페이먼트 인프라",
+      // TODO: Phase 2
+      // dropdownItems: [
+      //   {
+      //     label: "퀵 가이드",
+      //   },
+      //   {
+      //     label: "연동하기",
+      //   },
+      //   {
+      //     label: "부가기능",
+      //   },
+      // ],
     },
     {
-      pathname: "/platform",
+      link: "/platform",
       label: "파트너 정산 자동화",
+      // TODO: Phase 2
+      // dropdownItems: [
+      //   {
+      //     label: "서비스 가이드",
+      //   },
+      //   {
+      //     label: "사용 예시",
+      //   },
+      // ],
+    },
+    {
+      label: "API & SDK",
+      link: { v1: "/api/rest-v1", v2: "/api/rest-v2" },
+      activeLink: ["/sdk/ko"],
+      dropdownItems: [
+        {
+          label: "REST API V1",
+          link: "/api/rest-v1",
+          systemVersion: "v1",
+        },
+        {
+          label: "REST API V2",
+          link: "/api/rest-v2",
+          systemVersion: "v2",
+        },
+        {
+          label: "브라우저 SDK",
+          link: {
+            v1: "/sdk/ko/v1-sdk/javascript-sdk/readme",
+            v2: "/sdk/ko/v2-sdk/readme",
+          },
+        },
+        {
+          label: "모바일 SDK",
+          link: {
+            v1: "/sdk/ko/v1-mobile-sdk/readme",
+            v2: "/sdk/ko/v2-mobile-sdk/readme",
+          },
+        },
+        {
+          label: "서버 SDK",
+          link: "/sdk/ko/v2-server-sdk/readme",
+          systemVersion: "v2",
+        },
+        {
+          label: t()["sdk-playground"],
+          link: "https://sdk-playground.portone.io/",
+        },
+      ],
     },
   ];
+
+  const topNavs = [
+    {
+      label: "릴리즈 노트",
+      link: "/release-notes",
+    },
+    {
+      label: "기술 블로그",
+      link: "/blog",
+    },
+    {
+      label: t()["console"],
+      link: "https://admin.portone.io/",
+    },
+  ] satisfies Nav[] as Nav[];
 
   return (
     <>
@@ -60,145 +139,93 @@ export default function Gnb(props: Props) {
         }
         `}
       </style>
-      <div class="h-14">
-        <header
-          data-selected-system-version={systemVersion()}
-          class="fixed h-inherit w-full flex items-center justify-between border-b bg-white z-gnb"
-        >
-          <div class="h-full flex flex-grow items-center pl-4 md:pl-6">
-            <div class="h-full flex flex-grow items-center bg-white z-gnb-body md:flex-grow-0">
+      <div class="h-14 md:h-26">
+        <div class="fixed h-inherit w-full bg-white z-gnb">
+          <header
+            data-selected-system-version={systemVersion()}
+            class="mx-auto h-inherit max-w-8xl w-full flex flex-col px-4 lg:px-10 md:px-8 sm:px-6"
+          >
+            <div class="grid grid-cols-2 h-14 items-center gap-6 border-b bg-white z-gnb-body md:grid-cols-[auto_1fr_auto]">
               <A
                 class="h-full inline-flex items-center"
                 href={`/opi/${props.lang}`}
               >
                 <div class="flex items-center gap-2">
-                  <Logo class="w-22" />
+                  <Logo class="w-22" width={88} />
                   <span class="break-keep">{t()["developers"]}</span>
                 </div>
               </A>
-              <div class="mx-6 md:ml-[70px]">
-                <VersionSwitch docData={props.docData} />
+              <div class="hidden justify-center md:flex">
+                <SearchButton lang={props.lang} />
               </div>
-            </div>
-            <div
-              class={clsx(
-                "flex gap-6 md:h-full items-center",
-                props.navAsMenu
-                  ? "<md:(absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white)"
-                  : "<md:hidden",
-                props.navAsMenu &&
-                  sidebarContext.get() &&
-                  "<md:(translate-y-full shadow-lg)",
-              )}
-            >
-              <Show when={props.lang === "ko"}>
-                <For each={navs}>
+              <div class="hidden h-full items-center md:flex">
+                <For each={topNavs}>
                   {(nav) => (
-                    <A
-                      class="h-full inline-flex items-center"
-                      href={nav.pathname}
-                      onClick={() => {
-                        if (props.navAsMenu) sidebarContext.set(false);
-                      }}
+                    <Dropdown
+                      serverSystemVersion={serverSystemVersion}
+                      link={nav.link}
+                      activeLink={nav.activeLink}
                     >
-                      <span
-                        class={clsx(
-                          location.pathname.startsWith(nav.pathname) &&
-                            styles.navActive,
-                        )}
-                      >
-                        {nav.label}
-                      </span>
-                    </A>
+                      <span class="p-2">{nav.label}</span>
+                    </Dropdown>
                   )}
                 </For>
-              </Show>
-              <Dropdown
-                serverSystemVersion={serverSystemVersion}
-                link={{ v1: "/api/rest-v1", v2: "/api/rest-v2" }}
-                items={[
-                  {
-                    label: "REST API V1",
-                    link: "/api/rest-v1",
-                    systemVersion: "v1",
-                  },
-                  {
-                    label: "REST API V2",
-                    link: "/api/rest-v2",
-                    systemVersion: "v2",
-                  },
-                  {
-                    label: "브라우저 SDK",
-                    link: {
-                      v1: "/sdk/ko/v1-sdk/javascript-sdk/readme",
-                      v2: "/sdk/ko/v2-sdk/readme",
-                    },
-                  },
-                  {
-                    label: "모바일 SDK",
-                    link: {
-                      v1: "/sdk/ko/v1-mobile-sdk/readme",
-                      v2: "/sdk/ko/v2-mobile-sdk/readme",
-                    },
-                  },
-                  {
-                    label: "서버 SDK",
-                    link: "/sdk/ko/v2-server-sdk/readme",
-                  },
-                  {
-                    label: t()["sdk-playground"],
-                    link: "https://sdk-playground.portone.io/",
-                  },
-                ]}
-              >
-                <span
-                  class={clsx(
-                    location.pathname.startsWith("/api") && "nav-active",
-                  )}
-                >
-                  API & SDK
-                </span>
-              </Dropdown>
-              <Dropdown
-                serverSystemVersion={serverSystemVersion}
-                link={undefined}
-                items={[
-                  {
-                    label: "릴리즈 노트",
-                    link: "/release-notes",
-                    systemVersion: undefined,
-                  },
-                  {
-                    label: "기술 블로그",
-                    link: "/blog",
-                    systemVersion: undefined,
-                  },
-                ]}
-              >
-                <span
-                  class={clsx(
-                    location.pathname.startsWith("/api") && "nav-active",
-                  )}
-                >
-                  리소스
-                </span>
-              </Dropdown>
+              </div>
+              <MobileMenuButton />
             </div>
-          </div>
-          <div class="hidden h-full items-center gap-4 pr-6 md:flex">
-            <a
-              class="inline-flex items-center gap-1"
-              href="https://admin.portone.io/"
-            >
-              <span>{t()["console"]}</span>
-              <i class="i-ic-baseline-launch"></i>
-            </a>
-            {/* <a href={`/docs/${lang === "ko" ? "en" : "ko"}`}>
-              {lang === "ko" ? "🇺🇸 English" : "🇰🇷 한국어"}
-            </a> */}
-          </div>
-          <MobileMenuButton />
-        </header>
+            <div class="hidden h-12 items-center gap-5 border-b bg-white z-gnb-body md:flex">
+              <div class="flex items-center gap-.5">
+                <For each={subNavs}>
+                  {(nav) => (
+                    <Dropdown
+                      serverSystemVersion={serverSystemVersion}
+                      link={nav.link}
+                      items={nav.dropdownItems}
+                      activeLink={nav.activeLink}
+                    >
+                      <span class="p-2">{nav.label}</span>
+                    </Dropdown>
+                  )}
+                </For>
+              </div>
+            </div>
+            <Show when={props.navAsMenu}>
+              {(_) => {
+                const navs = createMemo<Nav[]>(() => [
+                  ...subNavs,
+                  {
+                    label: "리소스",
+                    dropdownItems: topNavs.map((nav) => ({
+                      label: nav.label,
+                      link: nav.link,
+                    })),
+                  },
+                ]);
+                return (
+                  <div
+                    class={clsx(
+                      "flex gap-6 absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white md:hidden",
+                      sidebarContext.get() && "translate-y-full shadow-lg",
+                    )}
+                  >
+                    <For each={navs()}>
+                      {(nav) => (
+                        <Dropdown
+                          serverSystemVersion={serverSystemVersion}
+                          link={nav.link}
+                          items={nav.dropdownItems}
+                          activeLink={nav.activeLink}
+                        >
+                          <span>{nav.label}</span>
+                        </Dropdown>
+                      )}
+                    </For>
+                  </div>
+                );
+              }}
+            </Show>
+          </header>
+        </div>
       </div>
     </>
   );

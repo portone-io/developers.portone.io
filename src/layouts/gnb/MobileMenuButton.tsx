@@ -6,7 +6,7 @@ const MobileMenuButton = () => {
   const { get: sidebarOpen, set: setSidebarOpen } = useSidebarContext();
 
   return (
-    <div class="h-full flex md:hidden">
+    <div class="h-full flex justify-end md:hidden">
       <button
         class="px-4"
         onClick={() => setSidebarOpen(!untrack(sidebarOpen))}

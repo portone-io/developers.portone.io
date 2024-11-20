@@ -1,19 +1,17 @@
 import { cache, redirect } from "@solidjs/router";
 import { match } from "ts-pattern";
 
-import type { Contents } from "#content";
 import { NotFoundError } from "~/components/404";
 
-export type DocsContentName = "opi" | "sdk";
+export const DocsContentName = ["opi", "sdk", "platform"] as const;
+export type DocsContentName = (typeof DocsContentName)[number];
 
 export const parseDocsFullSlug = (
   pathname: string,
 ): [DocsContentName, string] | null => {
-  for (const [contentName, regex] of [
-    ["opi", /^\/opi\/?/],
-    ["sdk", /^\/sdk\/?/],
-  ] as const) {
-    if (pathname.startsWith(`/${contentName}/`)) {
+  for (const contentName of DocsContentName) {
+    const regex = new RegExp(`^/${contentName}/?`);
+    if (pathname.startsWith(`/${contentName}`)) {
       return [contentName, pathname.replace(regex, "")];
     }
   }
@@ -23,8 +21,8 @@ export const parseDocsFullSlug = (
 const loadOpiDoc = async (fullSlug: string) => {
   "use server";
 
-  if (fullSlug === "") throw redirect("/opi/ko/readme", 302);
-  if (!fullSlug.includes("/")) throw redirect(`/opi/${fullSlug}/readme`, 302);
+  if (fullSlug === "") return redirect("/opi/ko/readme", 302);
+  if (!fullSlug.includes("/")) return redirect(`/opi/${fullSlug}/readme`, 302);
 
   const { opi } = await import("#content");
   if (!(fullSlug in opi)) throw new NotFoundError();
@@ -35,8 +33,8 @@ const loadOpiDoc = async (fullSlug: string) => {
 const loadSdkDoc = async (fullSlug: string) => {
   "use server";
 
-  if (fullSlug === "") throw redirect("/sdk/ko/readme", 302);
-  if (!fullSlug.includes("/")) throw redirect(`/sdk/${fullSlug}/readme`, 302);
+  if (fullSlug === "") return redirect("/sdk/ko/readme", 302);
+  if (!fullSlug.includes("/")) return redirect(`/sdk/${fullSlug}/readme`, 302);
 
   const { sdk } = await import("#content");
   if (!(fullSlug in sdk)) throw new NotFoundError();
@@ -44,16 +42,35 @@ const loadSdkDoc = async (fullSlug: string) => {
   return sdk[fullSlug as keyof typeof sdk];
 };
 
+const loadPlatformDoc = async (fullSlug: string) => {
+  "use server";
+
+  if (fullSlug === "") return redirect("/platform/ko/readme", 302);
+  // Redirect old URLs
+  if (["guides/", "usages/"].some((old) => fullSlug.startsWith(old))) {
+    return redirect(`/platform/ko/${fullSlug}`, 302);
+  }
+  if (fullSlug.startsWith("ko/guides/intro")) {
+    return redirect("/platform/ko/readme", 302);
+  }
+  if (!fullSlug.includes("/"))
+    return redirect(`/platform/${fullSlug}/readme`, 302);
+
+  const { platform } = await import("#content");
+  if (!(fullSlug in platform)) throw new NotFoundError();
+
+  return platform[fullSlug as keyof typeof platform];
+};
+
 export const loadDoc = cache(
-  async (contentName: keyof Contents, fullSlug: string) => {
+  async (contentName: DocsContentName, fullSlug: string) => {
     "use server";
 
     return match(contentName)
       .with("opi", () => loadOpiDoc(fullSlug))
       .with("sdk", () => loadSdkDoc(fullSlug))
-      .otherwise(() => {
-        throw new NotFoundError();
-      });
+      .with("platform", () => loadPlatformDoc(fullSlug))
+      .exhaustive();
   },
   "docs/content",
 );

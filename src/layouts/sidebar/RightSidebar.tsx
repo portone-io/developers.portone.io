@@ -1,25 +1,13 @@
-import {
-  createEffect,
-  createSignal,
-  For,
-  type JSXElement,
-  mergeProps,
-  Show,
-} from "solid-js";
+import { type JSXElement, mergeProps, Show } from "solid-js";
 
-import { useSystemVersion } from "~/state/system-version";
+import TableOfContents from "~/components/TableOfContents";
+import type { Heading } from "~/genCollections";
 
 export interface RightSidebarProps {
   lang: string;
-  slug: string;
   file: string;
+  headings: Heading[];
   editThisPagePrefix?: string;
-}
-export type Toc = TocItem[];
-export interface TocItem {
-  slug: string;
-  text: string;
-  children: TocItem[];
 }
 function RightSidebar(_props: RightSidebarProps) {
   const props = mergeProps(
@@ -30,36 +18,15 @@ function RightSidebar(_props: RightSidebarProps) {
     _props,
   );
 
-  const [toc, setToc] = createSignal<Toc | null>(null);
-  const { systemVersion } = useSystemVersion();
-
-  createEffect(() => {
-    void systemVersion();
-    void props.slug;
-    setToc(headingsToToc(props.lang));
-  });
-
   return (
-    <div class="hidden min-w-0 w-56 shrink-0 text-slate-7 lg:block">
-      <Show when={toc()}>
+    <div class="hidden min-w-0 w-55 shrink-0 text-slate-7 lg:block">
+      <Show when={true}>
         <nav class="fixed h-[calc(100%-56px)] w-inherit overflow-y-auto px-2 py-[28px]">
-          <h2 class="mb-2 px-2 font-bold">{t(props.lang, "toc")}</h2>
-          <ul>
-            <For each={toc()}>
-              {(item) => (
-                <SidebarItem href={`#${item.slug}`} label={item.text}>
-                  <ul class="pl-2">
-                    <For each={item.children}>
-                      {(item) => (
-                        <SidebarItem href={`#${item.slug}`} label={item.text} />
-                      )}
-                    </For>
-                  </ul>
-                </SidebarItem>
-              )}
-            </For>
-          </ul>
-          <h2 class="mb-2 mt-4 px-2 font-bold">
+          <h2 class="my-2 text-sm text-slate-8 font-medium">
+            {t(props.lang, "toc")}
+          </h2>
+          <TableOfContents theme="aside" headings={props.headings} />
+          <h2 class="my-2 mt-4 text-sm text-slate-8 font-medium">
             {t(props.lang, "contribute")}
           </h2>
           <ul>
@@ -96,7 +63,7 @@ function SidebarItem(props: LinkProps) {
           document.getElementById(slug)?.scrollIntoView({ behavior: "smooth" });
         }}
       >
-        <div class="overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-sm text-slate-5 hover:bg-slate-1">
+        <div class="overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-.8125rem text-slate-4 leading-5 hover:text-portone">
           <Show when={props.icon}>
             <>
               <i class={`${props.icon} inline-block align-top text-lg`}></i>{" "}
@@ -108,33 +75,6 @@ function SidebarItem(props: LinkProps) {
       {props.children}
     </li>
   );
-}
-
-export interface Heading {
-  depth: number;
-  slug: string;
-  text: string;
-}
-
-export function headingsToToc(lang: string): Toc {
-  const result: Toc = [
-    { slug: "overview", text: t(lang, "overview"), children: [] },
-  ];
-  let recent2: TocItem | undefined;
-  const headings: Heading[] = [
-    ...document.querySelectorAll("article :is(h2, h3)"),
-  ].map((el) => ({
-    depth: Number(el.tagName.slice(1)),
-    slug: el.id,
-    text: el.textContent ?? "",
-  }));
-  for (const h of headings.filter((h) => h.depth === 2 || h.depth === 3)) {
-    const item = { ...h, children: [] };
-    if (recent2 && item.depth === 3) recent2.children.push(item);
-    else result.push(item);
-    if (item.depth === 2) recent2 = item;
-  }
-  return result;
 }
 
 const ko = {
