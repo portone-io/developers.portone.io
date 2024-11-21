@@ -49,6 +49,17 @@ export function Preview() {
       .toString(16)
       .padStart(8, "0");
 
+    const cardPayment = {
+      payMethod: "CARD",
+    } satisfies Partial<PortOne.PaymentRequest>;
+    const virtualAccountPayment = {
+      payMethod: "VIRTUAL_ACCOUNT",
+      virtualAccount: {
+        accountExpiry: {
+          validHours: 1,
+        },
+      },
+    } satisfies Partial<PortOne.PaymentRequest>;
     const createPayment: (
       overrides: Partial<PortOne.PaymentRequest> &
         Pick<PortOne.PaymentRequest, "channelKey" | "payMethod">,
@@ -68,41 +79,31 @@ export function Preview() {
       .with({ pg: { name: "toss", payMethods: "card" } }, () =>
         createPayment({
           channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
-          payMethod: "CARD",
+          ...cardPayment,
         }),
       )
       .with({ pg: { name: "toss", payMethods: "virtualAccount" } }, () =>
         createPayment({
           channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
-          payMethod: "VIRTUAL_ACCOUNT",
-          virtualAccount: {
-            accountExpiry: {
-              validHours: 1,
-            },
-          },
+          ...virtualAccountPayment,
         }),
       )
       .with({ pg: { name: "nice", payMethods: "card" } }, () =>
         createPayment({
           channelKey: "channel-key-4ca6a942-3ee0-48fb-93ef-f4294b876d28",
-          payMethod: "CARD",
+          ...cardPayment,
         }),
       )
       .with({ pg: { name: "nice", payMethods: "virtualAccount" } }, () =>
         createPayment({
           channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
-          payMethod: "VIRTUAL_ACCOUNT",
-          virtualAccount: {
-            accountExpiry: {
-              validHours: 1,
-            },
-          },
+          ...virtualAccountPayment,
         }),
       )
       .with({ pg: { name: "smartro", payMethods: "card" } }, () =>
         createPayment({
           channelKey: "channel-key-c4a4b281-a1e5-40c9-8140-f055262bcefd",
-          payMethod: "CARD",
+          ...cardPayment,
           customer: {
             phoneNumber: "01012341234",
           },
@@ -111,12 +112,7 @@ export function Preview() {
       .with({ pg: { name: "smartro", payMethods: "virtualAccount" } }, () =>
         createPayment({
           channelKey: "channel-key-c4a4b281-a1e5-40c9-8140-f055262bcefd",
-          payMethod: "VIRTUAL_ACCOUNT",
-          virtualAccount: {
-            accountExpiry: {
-              validHours: 1,
-            },
-          },
+          ...virtualAccountPayment,
           customer: {
             phoneNumber: "01012341234",
           },
@@ -125,7 +121,7 @@ export function Preview() {
       .with({ pg: { name: "inicis", payMethods: "card" } }, () =>
         createPayment({
           channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
-          payMethod: "CARD",
+          ...cardPayment,
           customer: {
             fullName: "포트원",
             email: "example@portone.io",
@@ -136,12 +132,7 @@ export function Preview() {
       .with({ pg: { name: "inicis", payMethods: "virtualAccount" } }, () =>
         createPayment({
           channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
-          payMethod: "VIRTUAL_ACCOUNT",
-          virtualAccount: {
-            accountExpiry: {
-              validHours: 1,
-            },
-          },
+          ...virtualAccountPayment,
           customer: {
             fullName: "포트원",
             email: "example@portone.io",
@@ -152,41 +143,31 @@ export function Preview() {
       .with({ pg: { name: "kcp", payMethods: "card" } }, () =>
         createPayment({
           channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
-          payMethod: "CARD",
+          ...cardPayment,
         }),
       )
       .with({ pg: { name: "kcp", payMethods: "virtualAccount" } }, () =>
         createPayment({
           channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
-          payMethod: "VIRTUAL_ACCOUNT",
-          virtualAccount: {
-            accountExpiry: {
-              validHours: 1,
-            },
-          },
+          ...virtualAccountPayment,
         }),
       )
       .with({ pg: { name: "kpn", payMethods: "card" } }, () =>
         createPayment({
           channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
-          payMethod: "CARD",
+          ...cardPayment,
         }),
       )
       .with({ pg: { name: "kpn", payMethods: "virtualAccount" } }, () =>
         createPayment({
           channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
-          payMethod: "VIRTUAL_ACCOUNT",
-          virtualAccount: {
-            accountExpiry: {
-              validHours: 1,
-            },
-          },
+          ...virtualAccountPayment,
         }),
       )
       .with({ pg: { name: "ksnet", payMethods: "card" } }, () =>
         createPayment({
           channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
-          payMethod: "CARD",
+          ...cardPayment,
           customer: {
             fullName: "포트원",
           },
@@ -195,12 +176,7 @@ export function Preview() {
       .with({ pg: { name: "ksnet", payMethods: "virtualAccount" } }, () =>
         createPayment({
           channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
-          payMethod: "VIRTUAL_ACCOUNT",
-          virtualAccount: {
-            accountExpiry: {
-              validHours: 1,
-            },
-          },
+          ...virtualAccountPayment,
           customer: {
             fullName: "포트원",
           },
