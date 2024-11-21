@@ -44,15 +44,19 @@ export function Preview() {
 
   const requestPayment = async () => {
     if (paymentStatus().status === "PENDING") return undefined;
+    const paymentId = crypto
+      .getRandomValues(new Uint32Array(1))[0]!
+      .toString(16)
+      .padStart(8, "0");
     const request = match(untrack(() => params))
       .with(
         { pg: { name: "toss", payMethods: "card" } },
         () =>
           ({
             storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-            paymentId: crypto.randomUUID(),
-            orderName: "테스트 결제",
-            totalAmount: 100,
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
             currency: "CURRENCY_KRW",
             channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
             payMethod: "CARD",
@@ -64,9 +68,9 @@ export function Preview() {
         () =>
           ({
             storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-            paymentId: crypto.randomUUID(),
-            orderName: "테스트 결제",
-            totalAmount: 100,
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
             currency: "CURRENCY_KRW",
             channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
             payMethod: "VIRTUAL_ACCOUNT",
@@ -82,9 +86,9 @@ export function Preview() {
         () =>
           ({
             storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-            paymentId: crypto.randomUUID(),
-            orderName: "테스트 결제",
-            totalAmount: 100,
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
             currency: "CURRENCY_KRW",
             channelKey: "channel-key-4ca6a942-3ee0-48fb-93ef-f4294b876d28",
             payMethod: "CARD",
@@ -97,9 +101,9 @@ export function Preview() {
         () =>
           ({
             storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-            paymentId: crypto.randomUUID(),
-            orderName: "테스트 결제",
-            totalAmount: 100,
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
             currency: "CURRENCY_KRW",
             channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
             payMethod: "VIRTUAL_ACCOUNT",
@@ -107,6 +111,198 @@ export function Preview() {
               accountExpiry: {
                 validHours: 1,
               },
+            },
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "smartro", payMethods: "card" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-c4a4b281-a1e5-40c9-8140-f055262bcefd",
+            payMethod: "CARD",
+            card: {},
+            redirectUrl: "https://sdk-playground.portone.io/",
+            customer: {
+              phoneNumber: "01012341234",
+            },
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "smartro", payMethods: "virtualAccount" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-c4a4b281-a1e5-40c9-8140-f055262bcefd",
+            payMethod: "VIRTUAL_ACCOUNT",
+            virtualAccount: {
+              accountExpiry: {
+                validHours: 1,
+              },
+            },
+            customer: {
+              phoneNumber: "01012341234",
+            },
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "inicis", payMethods: "card" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
+            payMethod: "CARD",
+            card: {},
+            customer: {
+              fullName: "포트원",
+              email: "example@portone.io",
+              phoneNumber: "01012341234",
+            },
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "inicis", payMethods: "virtualAccount" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
+            payMethod: "VIRTUAL_ACCOUNT",
+            virtualAccount: {
+              accountExpiry: {
+                validHours: 1,
+              },
+            },
+            customer: {
+              fullName: "포트원",
+              email: "example@portone.io",
+              phoneNumber: "01012341234",
+            },
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "kcp", payMethods: "card" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
+            payMethod: "CARD",
+            card: {},
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "kcp", payMethods: "virtualAccount" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
+            payMethod: "VIRTUAL_ACCOUNT",
+            virtualAccount: {
+              accountExpiry: {
+                validHours: 1,
+              },
+            },
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "kpn", payMethods: "card" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
+            payMethod: "CARD",
+            card: {},
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "kpn", payMethods: "virtualAccount" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
+            payMethod: "VIRTUAL_ACCOUNT",
+            virtualAccount: {
+              accountExpiry: {
+                validHours: 1,
+              },
+            },
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "ksnet", payMethods: "card" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
+            payMethod: "CARD",
+            card: {},
+            customer: {
+              fullName: "포트원",
+            },
+            redirectUrl: "https://sdk-playground.portone.io/",
+          }) satisfies PortOne.PaymentRequest,
+      )
+      .with(
+        { pg: { name: "ksnet", payMethods: "virtualAccount" } },
+        () =>
+          ({
+            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
+            paymentId,
+            orderName: "나이키 멘즈 조이라이드 플라이니트",
+            totalAmount: 1000,
+            currency: "CURRENCY_KRW",
+            channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
+            payMethod: "VIRTUAL_ACCOUNT",
+            virtualAccount: {
+              accountExpiry: {
+                validHours: 1,
+              },
+            },
+            customer: {
+              fullName: "포트원",
             },
             redirectUrl: "https://sdk-playground.portone.io/",
           }) satisfies PortOne.PaymentRequest,
@@ -123,7 +319,7 @@ export function Preview() {
         .with({ code: P.nonNullable }, () => {
           setPaymentStatus({ status: "FAILED" });
         })
-        .with({ code: P.nullish }, () => {
+        .with(P.not({ code: P.nonNullable }), () => {
           setPaymentStatus({ status: "PAID" });
         })
         .exhaustive(),

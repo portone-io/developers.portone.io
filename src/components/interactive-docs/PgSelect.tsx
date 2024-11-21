@@ -10,7 +10,7 @@ import kpnLogo from "~/assets/pg-circle/kpn.png";
 import ksnetLogo from "~/assets/pg-circle/ksnet.png";
 import naverLogo from "~/assets/pg-circle/naver.png";
 import niceLogo from "~/assets/pg-circle/nice.png";
-import smatroLogo from "~/assets/pg-circle/smartro.png";
+import smartroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
 import { type Pg, useInteractiveDocs } from "~/state/interactive-docs";
 
@@ -21,7 +21,7 @@ export type PgSelectOption = {
 
 const PgOptions = {
   nice: { label: "나이스페이먼츠", icon: niceLogo },
-  smatro: { label: "스마트로", icon: smatroLogo },
+  smartro: { label: "스마트로", icon: smartroLogo },
   toss: { label: "토스페이먼츠", icon: tossLogo },
   kpn: { label: "한국결제네트웍스", icon: kpnLogo },
   inicis: { label: "이니시스", icon: inicisLogo },

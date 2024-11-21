@@ -1,6 +1,27 @@
 import { code } from "~/components/interactive-docs/index.jsx";
+import type { Pg } from "~/state/interactive-docs";
 
 import type { Params, Sections } from "../../type";
+
+function isCustomerRequired(params: Params) {
+  return (
+    isCustomerPhoneNumberRequired(params) || isCustomerEmailRequired(params)
+  );
+}
+
+function isCustomerNameRequired(params: Params) {
+  return (["ksnet", "inicis"] satisfies Pg[] as Pg[]).includes(params.pg.name);
+}
+
+function isCustomerPhoneNumberRequired(params: Params) {
+  return (["smartro", "inicis"] satisfies Pg[] as Pg[]).includes(
+    params.pg.name,
+  );
+}
+
+function isCustomerEmailRequired(params: Params) {
+  return (["inicis"] satisfies Pg[] as Pg[]).includes(params.pg.name);
+}
 
 export default code<{
   params: Params;
@@ -24,6 +45,7 @@ export function App() {
     status: "IDLE",
   })
 
+  ${({ section }) => section("client:fetch-item")`
   useEffect(() => {
     async function loadItem() {
       const response = await fetch("/api/item")
@@ -32,6 +54,7 @@ export function App() {
 
     loadItem().catch((error) => console.error(error))
   }, [])
+  `}
 
   if (item == null) {
     return (
@@ -45,19 +68,12 @@ export function App() {
     e.preventDefault()
     setPaymentStatus({ status: "PENDING" })
     ${({ section }) => section("client:request-payment")`
-    ${({ section }) => section("client:payment-id-description")`
+    ${({ section }) => section("client:payment-id")`
     const paymentId = randomId()
     `}
     const payment = await PortOne.requestPayment({
       storeId: VITE_STORE_ID,
-      ${({ when }) => when(({ smartRouting }) => smartRouting === false)`
       channelKey: VITE_CHANNEL_KEY,
-      `}
-      ${({ when }) => when(({ smartRouting }) => smartRouting === true)`
-        ${({ section }) => section("client:smart-routing:channel-group-id")`
-      channelGroupId: VITE_CHANNEL_GROUP_ID,
-        `}
-      `}
       paymentId,
       orderName: item.name,
       totalAmount: item.price,
@@ -68,13 +84,30 @@ export function App() {
       ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
       payMethod: "VIRTUAL_ACCOUNT", 
       `}
+      ${({ when }) => when(isCustomerRequired)`
+        ${({ section }) => section("client:customer-data")`
+       customer: {
+         ${({ when }) => when(isCustomerNameRequired)`
+         fullName: '포트원',
+         `}
+         ${({ when }) => when(isCustomerPhoneNumberRequired)`
+         phoneNumber: '01012341234',
+         `}
+         ${({ when }) => when(isCustomerEmailRequired)`
+         email: 'example@portone.io',
+         `}
+       },
+        `}
+      `}
+      ${({ section }) => section("client:custom-data")`
       customData: {
         item: item.id,
       },
+      `}
     })
     `}
     ${({ section }) => section("client:handle-payment-error")`
-    if (payment.code != null) {
+    if (payment.code !== undefined) {
       setPaymentStatus({
         status: "FAILED",
         message: payment.message,
@@ -93,15 +126,19 @@ export function App() {
       }),
     })
     if (completeResponse.ok) {
+      ${({ section }) => section("client:handle-payment-status:paid")`
       const paymentComplete = await completeResponse.json()
       setPaymentStatus({
         status: paymentComplete.status,
       })
+      `}
     } else {
+      ${({ section }) => section("client:handle-payment-status:failed")`
       setPaymentStatus({
         status: "FAILED",
         message: await completeResponse.text(),
       })
+      `}
     }
     `}
   }
@@ -141,7 +178,6 @@ export function App() {
           </button>
         </form>
       </main>
-      ${({ section }) => section("client:handle-payment-status:failed")`
       {paymentStatus.status === "FAILED" && (
         <dialog open>
           <header>
@@ -153,8 +189,6 @@ export function App() {
           </button>
         </dialog>
       )}
-      `}
-      ${({ section }) => section("client:handle-payment-status:paid")`
       <dialog open={paymentStatus.status === "PAID"}>
         <header>
           <h1>결제 성공</h1>
@@ -164,10 +198,10 @@ export function App() {
           닫기
         </button>
       </dialog>
-      `}
-      ${({ section }) => section(
-        "client:handle-payment-status:virtual-account-issued",
-      )`
+      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+        ${({ section }) => section(
+          "client:handle-payment-status:virtual-account-issued",
+        )`
       <dialog open={paymentStatus.status === "VIRTUAL_ACCOUNT_ISSUED"}>
         <header>
           <h1>가상계좌 발급 완료</h1>
@@ -176,7 +210,8 @@ export function App() {
         <button type="button" onClick={handleClose}>
           닫기
         </button>
-      </dialog>
+      </dialog> 
+        `}
       `}
     </>
   )

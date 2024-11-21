@@ -35,7 +35,7 @@ export type Tab = {
 export type PayMethod = "card" | "virtualAccount";
 export type Pg =
   | "nice"
-  | "smatro"
+  | "smartro"
   | "toss"
   | "kpn"
   | "inicis"
@@ -298,10 +298,10 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     }),
     languages: () => ({
       frontend: ["react", "html"],
-      backend: ["node", "python"],
+      backend: ["express", "fastapi", "flask"],
       hybrid: ["nextjs"],
     }),
-    selectedLanguage: () => ["react", "node"],
+    selectedLanguage: () => ["react", "express"],
     setSelectedLanguage: (_) => {},
     params: {
       pg: {

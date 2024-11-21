@@ -12,8 +12,9 @@ ${({ section }) => section("server:import-portone-sdk")`
 const PortOne = require("@portone/server-sdk")
 `}
 
-const portOne = PortOne.PortOneClient(process.env.V2_API_SECRET)
+const portone = PortOne.PortOneClient(process.env.V2_API_SECRET)
 
+${({ section }) => section("server:complete-payment:verify-payment")`
 function verifyPayment(payment) {
   if (payment.customData == null) return false
   const customData = JSON.parse(payment.customData)
@@ -25,6 +26,7 @@ function verifyPayment(payment) {
     payment.currency === item.currency
   )
 }
+`}
 
 const paymentStore = new Map()
 async function syncPayment(paymentId) {
@@ -34,14 +36,16 @@ async function syncPayment(paymentId) {
     })
   }
   const payment = paymentStore.get(paymentId)
+  ${({ section }) => section("server:complete-payment:get-payment")`
   let actualPayment
   try {
-    actualPayment = await portOne.payment.getPayment(paymentId)
+    actualPayment = await portone.payment.getPayment(paymentId)
   } catch (e) {
     if (e instanceof PortOne.Errors.PortOneError) return false
     throw e
   }
   if (actualPayment == null) return false
+  `}
   switch (actualPayment.status) {
     case "PAID":
       if (!verifyPayment(actualPayment)) return false
@@ -49,9 +53,11 @@ async function syncPayment(paymentId) {
       payment.status = "PAID"
       console.info("결제 성공", actualPayment)
       break
+    ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
     case "VIRTUAL_ACCOUNT_ISSUED":
       payment.status = "VIRTUAL_ACCOUNT_ISSUED"
       break
+    `}
     default:
       return false
   }
@@ -60,12 +66,14 @@ async function syncPayment(paymentId) {
 
 const app = express()
 
+${({ section }) => section("server:webhook:raw-body")`
 app.use(
   "/api/payment/webhook",
   bodyParser.text({
     type: "application/json",
   }),
 )
+`}
 app.use(bodyParser.json())
 
 const items = new Map([
@@ -87,6 +95,7 @@ app.get("/api/item", (req, res) => {
   })
 })
 
+${({ section }) => section("server:complete-payment")`
 app.post("/api/payment/complete", async (req, res, next) => {
   try {
     const { paymentId } = req.body
@@ -101,11 +110,15 @@ app.post("/api/payment/complete", async (req, res, next) => {
     next(e)
   }
 })
+`}
 
+${({ section }) => section("server:webhook")`
 app.post("/api/payment/webhook", async (req, res, next) => {
   try {
+    ${({ section }) => section("server:webhook:verify")`
+    let webhook
     try {
-      await PortOne.Webhook.verify(
+      webhook = await PortOne.Webhook.verify(
         process.env.V2_WEBHOOK_SECRET,
         req.body,
         req.headers,
@@ -115,16 +128,17 @@ app.post("/api/payment/webhook", async (req, res, next) => {
         return res.status(400).end()
       throw e
     }
-    const {
-      type,
-      data: { paymentId },
-    } = JSON.parse(req.body)
-    if (type.startsWith("Transaction.")) await syncPayment(paymentId)
+    `}
+    ${({ section }) => section("server:webhook:complete-payment")`
+    if ('data' in webhook && 'paymentId' in webhook.data)
+      await syncPayment(webhook.data.paymentId)
+    `}
     res.status(200).end()
   } catch (e) {
     next(e)
   }
 })
+`}
 
 const server = app.listen(8080, "localhost", () => {
   console.log("server is running on", server.address())

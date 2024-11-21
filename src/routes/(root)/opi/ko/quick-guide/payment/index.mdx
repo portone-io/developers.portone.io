@@ -7,7 +7,9 @@ versionVariants:
   v1: /opi/ko/integration/ready/readme?v=v1
 ---
 
-import {Condition, InteractiveDoc, Section, Toggle} from "./_preview";
+import Hint from "~/components/Hint";
+
+import { Condition, InteractiveDoc, Section } from "./_preview";
 
 {/* client:import-portone-sdk
 client:request-payment
@@ -20,68 +22,124 @@ client:handle-payment-status:paid */}
 
 <InteractiveDoc>
   <Section section="client:import-portone-sdk">
-    ## PortOne SDK 불러오기
+    ## 포트원 브라우저 SDK 불러오기
 
-    PortOne SDK를 불러오기 위한 코드입니다.
+    포트원 브라우저 SDK를 불러옵니다.
+  </Section>
+
+  <Section section="client:fetch-item">
+    ## 상품 정보 불러오기
+
+    서버로부터 결제할 상품의 정보를 불러옵니다.
   </Section>
 
   <Section section="client:request-payment">
     ## 결제 요청
 
-    결제 요청을 위한 코드입니다.
-
-    <Toggle param="smartRouting" label="스마트 라우팅 사용">
-      <Condition when={({smartRouting}) => smartRouting === true}>
-        <Section section="client:smart-routing:channel-group-id">
-          ## `channelGroupId` 설정
-
-          스마트라우팅 기능을 사용하기 위해 `channelGroupId`를 설정하는 코드입니다.
-        </Section>
-      </Condition>
-    </Toggle>
+    포트원 브라우저 SDK를 사용하여 결제를 요청합니다.
   </Section>
 
-  <Section section="client:payment-id-description">
-    ## Payment ID 설명
+  <Section section="client:payment-id">
+    ## Payment ID 설정
 
-    Payment ID는 결제 요청 시 사용하는 고유한 ID입니다.
+    Payment ID는 결제 요청 시 사용하는 고유한 ID입니다. 포트원에서 제공하지 않고 수동으로 생성해야 합니다.
+
+    <Hint style='warning'>
+      결제대행사에 따라 Payment ID의 형식에 제한이 있을 수 있습니다.
+    </Hint>
+  </Section>
+
+  <Condition when={({ pg: { name } }) => ['ksnet', 'inicis', 'smartro'].includes(name)}>
+    <Section section="client:customer-data">
+      ## 고객 정보 설정
+
+      결제 시 요구되는 고객 정보를 입력합니다.
+    </Section>
+  </Condition>
+
+  <Section section="client:custom-data">
+    ## Custom Data 설정
+
+    Custom Data에는 임의의 데이터를 저장할 수 있습니다. 서버에서 결제건 조회 시에 확인할 수 있으며, 상품 정보를 전달하여 서버가 인식한 상품 정보와 일치하는지 확인할 수 있습니다.
   </Section>
 
   <Section section="client:handle-payment-error">
     ## 결제 오류 처리
 
-    결제 오류를 처리하는 코드입니다.
+    결제 중 오류가 발생하여 결제가 완료되지 않은 경우를 처리합니다.
   </Section>
-
-  <Condition when={({pg}) => pg.name === "toss" && pg.payMethods === "card"}>
-    <Section>
-      ## 토스 카드 결제 조건 테스트
-
-      토스 카드 결제 조건 테스트
-    </Section>
-  </Condition>
 
   <Section section="client:request-server-side-verification">
-    ## 서버 측 검증 요청
+    ## 서버 측으로 결제 완료 요청
 
-    서버 측 검증 요청을 위한 코드입니다.
-  </Section>
-
-  <Section section="client:handle-payment-status:failed">
-    ## 결제 실패 상태 처리
-
-    결제 실패 상태를 처리하는 코드입니다.
+    완료된 결제의 Payment ID를 서버로 전송하여 결제 상태를 반영합니다.
   </Section>
 
   <Section section="client:handle-payment-status:paid">
     ## 결제 완료 상태 처리
 
-    결제 완료 상태를 처리하는 코드입니다.
+    서버로부터 검증 후 결제가 완료된 경우를 처리합니다.
   </Section>
 
-  <Section section="server:import-portone-sdk">
-    ## PortOne 서버 SDK 불러오기
+  <Section section="client:handle-payment-status:failed">
+    ## 결제 실패 상태 처리
 
-    PortOne 서버 SDK를 불러오기 위한 코드입니다.
+    서버로부터 검증 결과를 획득하여, 결제가 최종적으로 실패한 경우를 처리합니다.
+  </Section>
+
+  <Condition when={({ pg }) => pg.payMethods === "virtualAccount" }>
+    <Section section="client:handle-payment-status:virtual-account-issued">
+      ## 가상계좌 발급 상태 처리
+
+      서버로부터 검증 후 가상계좌가 발급된 경우를 처리합니다.
+    </Section>
+  </Condition>
+
+  <Section section="server:import-portone-sdk">
+    ## 포트원 서버 SDK 불러오기
+
+    포트원 서버 SDK를 불러옵니다.
+  </Section>
+
+  <Section section="server:complete-payment">
+    ## 결제 완료 요청
+
+    완료된 결제의 실제 상태를 조회해 시스템에 반영합니다. 브라우저 SDK를 통해 결제하는 경우 모든 결제 과정이 브라우저에서 진행되므로 결제가 조작되는 것을 막기 위해 서버에서 검증이 필요합니다.
+  </Section>
+
+  <Section section="server:complete-payment:get-payment">
+    ## 결제 정보 조회
+
+    브라우저에서 전송한 Payment ID를 통해 실제 결제 상태를 조회합니다.
+  </Section>
+
+  <Section section="server:complete-payment:verify-payment">
+    ## 결제 정보 일치 검증
+
+    포트원에 전달한 Custom Data로 조회한 상품 정보와 결제 정보가 일치하는지 검증합니다.
+  </Section>
+
+  <Section section="server:webhook">
+    ## 웹훅 수신
+
+    결제 상태의 변화를 실시간으로 확인해야 한다면 웹훅을 사용할 수 있습니다.
+  </Section>
+
+  <Section section="server:webhook:raw-body">
+    ## HTTP Body 수신 설정
+    
+    웹훅 내용을 검증하기 위해서는 HTTP Body를 문자열 형태로 수신해야 합니다.
+  </Section>
+
+  <Section section="server:webhook:verify">
+    ## 웹훅 검증
+
+    수신한 웹훅이 위조되지 않았는지 포트원 서버 SDK를 사용하여 검증합니다.
+  </Section>
+
+  <Section section="server:webhook:complete-payment">
+    ## 결제 상태 업데이트
+
+    검증된 웹훅 결과를 바탕으로 결제 상태를 업데이트합니다.
   </Section>
 </InteractiveDoc>
