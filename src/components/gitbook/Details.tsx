@@ -31,7 +31,7 @@ export default function Details(
       open={open()}
       onOpenChange={setOpen}
       class={clsx(
-        "group/details my-4 border rounded [&[data-expanded]>button>.chevron]:(transform-origin-c transform-rotate-90) hover:border-orange",
+        "group/details my-4 border rounded-md [&[data-expanded]>button>.chevron]:(transform-origin-c transform-rotate-90) hover:border-orange",
         locals.class,
       )}
     >
