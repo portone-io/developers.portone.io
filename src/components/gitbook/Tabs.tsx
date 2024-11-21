@@ -42,7 +42,7 @@ export default function Tabs(
   return (
     <TabsImpl
       {...others}
-      class={clsx("my-4 flex flex-col", locals.class)}
+      class={clsx("my-4 flex flex-col rounded-md", locals.class)}
       defaultValue={untrack(childrenTitles)[0]}
     >
       <TabsImpl.List class="flex -mb-px">
@@ -65,7 +65,7 @@ export default function Tabs(
         {(title) => (
           <TabsImpl.Content
             value={title}
-            class="border rounded rounded-tl-none px-6 py-4"
+            class="border rounded-md rounded-tl-none px-6 py-4"
           >
             {children.get(title)?.()}
           </TabsImpl.Content>
