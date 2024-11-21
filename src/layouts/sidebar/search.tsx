@@ -197,7 +197,7 @@ export function SearchScreen(props: SearchScreenProps) {
         >
           <i class="i-ic-baseline-search text-xl"></i>
           <input
-            class="flex-1 bg-transparent px-2"
+            class="flex-1 bg-transparent px-2 outline-none"
             ref={inputRef}
             placeholder={t(props.searchIndex, "searchContent")}
             value={searchText()}
@@ -242,18 +242,18 @@ export function SearchScreen(props: SearchScreenProps) {
                               tabIndex={0}
                               onClick={closeSearchScreen}
                             >
-                              <li class="px-2 py-2 hover:bg-slate-1">
-                                <div class="grid grid-cols-[max-content_1fr] items-center gap-.5 overflow-hidden">
+                              <li class="flex flex-col gap-.5 px-2 py-2 hover:bg-slate-1">
+                                <div class="grid grid-cols-[max-content_1fr] items-center gap-1.5 overflow-hidden">
                                   <span class="text-sm text-slate-9 font-medium">
                                     {item.title}
                                   </span>
                                   <Show when={item.description}>
-                                    <span class="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-slate-4 leading-4">
+                                    <span class="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-slate-5 leading-4">
                                       {item.description}
                                     </span>
                                   </Show>
                                 </div>
-                                <div class="line-clamp-1 text-ellipsis">
+                                <div class="line-clamp-2 text-ellipsis leading-[1.2]">
                                   <For
                                     each={contentDescription().split(
                                       highlightedRegex(),
@@ -262,7 +262,7 @@ export function SearchScreen(props: SearchScreenProps) {
                                     {(text) => (
                                       <Switch
                                         fallback={
-                                          <span class="text-xs text-slate-4">
+                                          <span class="text-[13px] text-slate-4">
                                             {text}
                                           </span>
                                         }
@@ -270,7 +270,7 @@ export function SearchScreen(props: SearchScreenProps) {
                                         <Match
                                           when={highlightedRegex().test(text)}
                                         >
-                                          <span class="text-xs text-portone">
+                                          <span class="text-[13px] text-portone">
                                             {text}
                                           </span>
                                         </Match>
