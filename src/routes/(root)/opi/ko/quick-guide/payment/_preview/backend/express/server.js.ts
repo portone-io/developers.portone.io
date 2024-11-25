@@ -12,7 +12,9 @@ ${({ section }) => section("server:import-portone-sdk")`
 const PortOne = require("@portone/server-sdk")
 `}
 
+${({ section }) => section("server:portone-api-secret")`
 const portone = PortOne.PortOneClient(process.env.V2_API_SECRET)
+`}
 
 ${({ section }) => section("server:complete-payment:verify-payment")`
 function verifyPayment(payment) {

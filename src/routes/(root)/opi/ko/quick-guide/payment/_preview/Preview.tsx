@@ -15,6 +15,7 @@ import dummyImg from "~/assets/dummy/5653e4f30f22b1afcadaa75ca5873e2f.png";
 import Picture from "~/components/Picture";
 import { useInteractiveDocs } from "~/state/interactive-docs";
 
+import { createPaymentRequest } from "./request";
 import type { Params } from "./type";
 
 export function Preview() {
@@ -49,140 +50,10 @@ export function Preview() {
       .toString(16)
       .padStart(8, "0");
 
-    const cardPayment = {
-      payMethod: "CARD",
-    } satisfies Partial<PortOne.PaymentRequest>;
-    const virtualAccountPayment = {
-      payMethod: "VIRTUAL_ACCOUNT",
-      virtualAccount: {
-        accountExpiry: {
-          validHours: 1,
-        },
-      },
-    } satisfies Partial<PortOne.PaymentRequest>;
-    const createPayment: (
-      overrides: Partial<PortOne.PaymentRequest> &
-        Pick<PortOne.PaymentRequest, "channelKey" | "payMethod">,
-    ) => PortOne.PaymentRequest = (overrides) => {
-      return {
-        paymentId,
-        storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-        orderName: "신발",
-        totalAmount: 1000,
-        currency: "CURRENCY_KRW",
-        redirectUrl: "https://sdk-playground.portone.io/",
-        ...overrides,
-      } satisfies PortOne.PaymentRequest;
-    };
-
-    const request = match(untrack(() => params))
-      .with({ pg: { name: "toss", payMethods: "card" } }, () =>
-        createPayment({
-          channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
-          ...cardPayment,
-        }),
-      )
-      .with({ pg: { name: "toss", payMethods: "virtualAccount" } }, () =>
-        createPayment({
-          channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
-          ...virtualAccountPayment,
-        }),
-      )
-      .with({ pg: { name: "nice", payMethods: "card" } }, () =>
-        createPayment({
-          channelKey: "channel-key-4ca6a942-3ee0-48fb-93ef-f4294b876d28",
-          ...cardPayment,
-        }),
-      )
-      .with({ pg: { name: "nice", payMethods: "virtualAccount" } }, () =>
-        createPayment({
-          channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
-          ...virtualAccountPayment,
-        }),
-      )
-      .with({ pg: { name: "smartro", payMethods: "card" } }, () =>
-        createPayment({
-          channelKey: "channel-key-c4a4b281-a1e5-40c9-8140-f055262bcefd",
-          ...cardPayment,
-          customer: {
-            phoneNumber: "01012341234",
-          },
-        }),
-      )
-      .with({ pg: { name: "smartro", payMethods: "virtualAccount" } }, () =>
-        createPayment({
-          channelKey: "channel-key-c4a4b281-a1e5-40c9-8140-f055262bcefd",
-          ...virtualAccountPayment,
-          customer: {
-            phoneNumber: "01012341234",
-          },
-        }),
-      )
-      .with({ pg: { name: "inicis", payMethods: "card" } }, () =>
-        createPayment({
-          channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
-          ...cardPayment,
-          customer: {
-            fullName: "포트원",
-            email: "example@portone.io",
-            phoneNumber: "01012341234",
-          },
-        }),
-      )
-      .with({ pg: { name: "inicis", payMethods: "virtualAccount" } }, () =>
-        createPayment({
-          channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
-          ...virtualAccountPayment,
-          customer: {
-            fullName: "포트원",
-            email: "example@portone.io",
-            phoneNumber: "01012341234",
-          },
-        }),
-      )
-      .with({ pg: { name: "kcp", payMethods: "card" } }, () =>
-        createPayment({
-          channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
-          ...cardPayment,
-        }),
-      )
-      .with({ pg: { name: "kcp", payMethods: "virtualAccount" } }, () =>
-        createPayment({
-          channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
-          ...virtualAccountPayment,
-        }),
-      )
-      .with({ pg: { name: "kpn", payMethods: "card" } }, () =>
-        createPayment({
-          channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
-          ...cardPayment,
-        }),
-      )
-      .with({ pg: { name: "kpn", payMethods: "virtualAccount" } }, () =>
-        createPayment({
-          channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
-          ...virtualAccountPayment,
-        }),
-      )
-      .with({ pg: { name: "ksnet", payMethods: "card" } }, () =>
-        createPayment({
-          channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
-          ...cardPayment,
-          customer: {
-            fullName: "포트원",
-          },
-        }),
-      )
-      .with({ pg: { name: "ksnet", payMethods: "virtualAccount" } }, () =>
-        createPayment({
-          channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
-          ...virtualAccountPayment,
-          customer: {
-            fullName: "포트원",
-          },
-        }),
-      )
-      .exhaustive();
+    const request = createPaymentRequest(
+      untrack(() => params),
+      paymentId,
+    );
 
     setPaymentStatus({ status: "PENDING" });
     setPayment(await PortOne.requestPayment(request));

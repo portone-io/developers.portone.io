@@ -1,6 +1,7 @@
 import { code } from "~/components/interactive-docs/index.jsx";
 import type { Pg } from "~/state/interactive-docs";
 
+import { createPaymentRequest } from "../../request";
 import type { Params, Sections } from "../../type";
 
 function isCustomerRequired(params: Params) {
@@ -32,12 +33,6 @@ import PortOne from "@portone/browser-sdk/v2"
 `}
 import { useEffect, useState } from "react"
 import { randomId } from "./random"
-
-const {
-  VITE_STORE_ID,
-  ${({ when }) => when(({ smartRouting }) => smartRouting === false)`VITE_CHANNEL_KEY,`}
-  ${({ when }) => when(({ smartRouting }) => smartRouting === true)`VITE_CHANNEL_GROUP_ID,`}
-} = import.meta.env
 
 export function App() {
   const [item, setItem] = useState(null)
@@ -72,18 +67,13 @@ export function App() {
     const paymentId = randomId()
     `}
     const payment = await PortOne.requestPayment({
-      storeId: VITE_STORE_ID,
-      channelKey: VITE_CHANNEL_KEY,
+      storeId: ${({ params }) => code`"${createPaymentRequest(params, "").storeId}"`},
+      channelKey: ${({ params }) => code`"${createPaymentRequest(params, "").channelKey}"`},
       paymentId,
       orderName: item.name,
       totalAmount: item.price,
       currency: item.currency,
-      ${({ when }) => when(({ pg }) => pg.payMethods === "card")`
-      payMethod: "CARD", 
-      `}
-      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
-      payMethod: "VIRTUAL_ACCOUNT", 
-      `}
+      paymethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`}
       ${({ when }) => when(isCustomerRequired)`
         ${({ section }) => section("client:customer-data")`
        customer: {

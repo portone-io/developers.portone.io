@@ -42,6 +42,7 @@ export type Sections =
   | "client:handle-payment-status:paid"
   | "client:handle-payment-status:virtual-account-issued"
   | "server:import-portone-sdk"
+  | "server:portone-api-secret"
   | "server:complete-payment"
   | "server:complete-payment:get-payment"
   | "server:complete-payment:verify-payment"
