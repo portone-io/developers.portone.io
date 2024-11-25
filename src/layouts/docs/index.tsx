@@ -1,4 +1,8 @@
-import { createAsync, useLocation } from "@solidjs/router";
+import {
+  createAsync,
+  type RouteDefinition,
+  useLocation,
+} from "@solidjs/router";
 import {
   children,
   createMemo,
@@ -18,6 +22,14 @@ import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import { Lang } from "~/type";
 
 import { InteractiveDocs } from "./InteractiveDocs";
+
+export const preload: RouteDefinition["preload"] = ({ location }) => {
+  const parsedFullSlug = parseDocsFullSlug(location.pathname);
+  if (!parsedFullSlug) return;
+  const [contentName, fullSlug] = parsedFullSlug;
+
+  void loadDoc(contentName, fullSlug);
+};
 
 export function Docs(props: ParentProps) {
   const location = useLocation();

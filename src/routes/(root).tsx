@@ -10,7 +10,6 @@ import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
-import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import { InteractiveDocsProvider } from "~/state/interactive-docs";
 import { calcNavMenuSystemVersions } from "~/state/nav";
 import { SystemVersionProvider } from "~/state/system-version";
@@ -24,14 +23,9 @@ const navAsMenuPaths = ["/blog", "/release-notes"];
 
 export const route = {
   preload: ({ location }) => {
-    const parsedFullSlug = parseDocsFullSlug(location.pathname);
-    if (!parsedFullSlug) return;
-    const [contentName, fullSlug] = parsedFullSlug;
-
     const lang = location.pathname.includes("/en/") ? "en" : "ko";
 
     void loadNavMenuSystemVersions(lang);
-    void loadDoc(contentName, fullSlug);
   },
 } satisfies RouteDefinition;
 

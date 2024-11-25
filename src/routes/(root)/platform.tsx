@@ -1,6 +1,10 @@
 import { type JSXElement } from "solid-js";
 
-import { Docs } from "~/layouts/docs/index";
+import { Docs, preload } from "~/layouts/docs/index";
+
+export const route = {
+  preload,
+};
 
 export default function Platform(props: { children: JSXElement }) {
   return <Docs>{props.children}</Docs>;
