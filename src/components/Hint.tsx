@@ -38,7 +38,7 @@ export default function Hint(props: Props) {
   return (
     <div class={cls()}>
       <i class={iconCls()}></i>
-      <div>{props.children}</div>
+      <div class="grid">{props.children}</div>
     </div>
   );
 }
