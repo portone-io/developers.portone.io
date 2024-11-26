@@ -75,23 +75,44 @@ const highlighterInstance = createHighlighterCore({
   engine: createOnigurumaEngine(import("shiki/wasm")),
 });
 
+type Params = DefaultParams & object;
+export type InteractiveDocsInit = {
+  pgOptions: PgOptions;
+  languages: {
+    frontend: [string, ...string[]];
+    backend: [string, ...string[]];
+    hybrid: string[];
+  };
+  params: DefaultParams & object;
+};
+
 const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
-  () => {
-    type Params = DefaultParams & object;
-    const [params, setParams] = createStore<Params>({
-      pg: {
-        name: "inicis",
-        payMethods: "card",
-      },
-    });
+  (props: { initial?: InteractiveDocsInit }) => {
+    const initial = createMemo<InteractiveDocsInit>(
+      () =>
+        props.initial ??
+        ({
+          pgOptions: {
+            hyphen: { payMethods: ["card"] },
+          },
+          languages: {
+            frontend: ["react"],
+            backend: ["node"],
+            hybrid: ["nextjs"],
+          },
+          params: {
+            pg: {
+              name: "hyphen",
+              payMethods: "card",
+            },
+          },
+        } satisfies InteractiveDocsInit),
+    );
+    const [params, setParams] = createStore<Params>(initial().params);
     const [preview, setPreview] = createSignal<Component | undefined>(
       undefined,
     );
-    const [pgOptions, setPgOptions] = createSignal<PgOptions>({
-      inicis: {
-        payMethods: ["card"],
-      },
-    });
+    const pgOptions = createMemo(() => initial().pgOptions);
     createEffect(() => {
       const pg = Object.keys(pgOptions())[0] as Pg | undefined;
       if (!pg) return;
@@ -102,18 +123,10 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
         payMethods: pgOption.payMethods[0],
       });
     });
-    const [languages, setLanguages] = createSignal<{
-      frontend: [string, ...string[]];
-      backend: [string, ...string[]];
-      hybrid: string[];
-    }>({
-      frontend: ["react", "html"],
-      backend: ["node", "python"],
-      hybrid: ["nextjs"],
-    });
+    const languages = createMemo(() => initial().languages);
     const [selectedLanguage, setSelectedLanguage] = createSignal<
       [frontend: string, backend: string] | string
-    >(["react", "node"]);
+    >([initial().languages.frontend[0], initial().languages.backend[0]]);
     createEffect(() => {
       setSelectedLanguage([languages().frontend[0], languages().backend[0]]);
     });
@@ -216,9 +229,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
 
     return {
       pgOptions,
-      setPgOptions,
       languages,
-      setLanguages,
       selectedLanguage,
       setSelectedLanguage,
       params,
@@ -242,13 +253,11 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
         payMethods: ["card"],
       },
     }),
-    setPgOptions: (_) => {},
     languages: () => ({
       frontend: ["react", "html"],
       backend: ["node", "python"],
       hybrid: ["nextjs"],
     }),
-    setLanguages: (_) => {},
     selectedLanguage: () => ["react", "node"],
     setSelectedLanguage: (_) => {},
     params: {

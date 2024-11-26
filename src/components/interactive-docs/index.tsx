@@ -20,6 +20,7 @@ import { match, P } from "ts-pattern";
 
 import {
   type CodeExample,
+  type InteractiveDocsInit,
   type PgOptions,
   useInteractiveDocs,
 } from "~/state/interactive-docs";
@@ -74,12 +75,10 @@ export function createInteractiveDoc<
     }[keyof Params];
     label: string;
   }>;
+  preload: InteractiveDocsInit;
 } {
   const InteractiveDoc: ParentComponent = (props) => {
     const {
-      setPgOptions,
-      setLanguages,
-      setParams,
       setCodeExamples,
       setSelectedLanguage,
       setPreview,
@@ -88,24 +87,6 @@ export function createInteractiveDoc<
       selectedLanguage,
     } = useInteractiveDocs();
     void startTransition(() => {
-      setPgOptions(pgOptions);
-      setLanguages({
-        frontend: Object.keys(codeExamples.frontend) as [
-          FrontendLanguage,
-          ...FrontendLanguage[],
-        ],
-        backend: Object.keys(codeExamples.backend) as [
-          BackendLanguage,
-          ...BackendLanguage[],
-        ],
-        hybrid: codeExamples.hybrid
-          ? (Object.keys(codeExamples.hybrid) as [
-              HybridLanguage,
-              ...HybridLanguage[],
-            ])
-          : [],
-      });
-      setParams(initialParams);
       setCodeExamples(
         codeExamples as unknown as {
           frontend: Record<
@@ -283,5 +264,20 @@ export function createInteractiveDoc<
     Section,
     Condition,
     Toggle,
+    preload: {
+      pgOptions,
+      languages: {
+        frontend: Object.keys(codeExamples.frontend) as [
+          FrontendLanguage,
+          ...FrontendLanguage[],
+        ],
+        backend: Object.keys(codeExamples.backend) as [
+          BackendLanguage,
+          ...BackendLanguage[],
+        ],
+        hybrid: codeExamples.hybrid ? Object.keys(codeExamples.hybrid) : [],
+      },
+      params: initialParams,
+    },
   };
 }
