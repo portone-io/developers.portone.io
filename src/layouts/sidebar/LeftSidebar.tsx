@@ -11,7 +11,7 @@ export default function LeftSidebar(props: { children: JSXElement }) {
         style={{
           transform: sidebarOpen.get() ? "none" : "translateX(-100%)",
         }}
-        class="pointer-events-auto fixed h-[calc(100vh-6.5rem)] w-inherit flex flex-col border-r bg-white transition-transform <md:h-[calc(100vh-3.5rem)] <md:pl-6 md:!transform-none"
+        class="pointer-events-auto fixed h-[calc(100dvh-6.5rem)] w-inherit flex flex-col border-r bg-white transition-transform <md:h-[calc(100dvh-3.5rem)] <md:pl-6 md:!transform-none"
       >
         {props.children}
       </div>
