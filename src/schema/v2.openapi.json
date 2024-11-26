@@ -5235,6 +5235,102 @@
         }
       }
     },
+    "/platform/companies/{businessRegistrationNumber}/state": {
+      "get": {
+        "summary": "사업자 조회",
+        "description": "사업자 조회\n\n사업자 정보를 조회합니다. 포트원 서비스에 연동 및 등록되지 않은 사업자도 조회 가능합니다.",
+        "operationId": "getPlatformCompanyState",
+        "parameters": [
+          {
+            "name": "businessRegistrationNumber",
+            "in": "path",
+            "description": "사업자등록번호",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 사업자 상태가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformCompanyState"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 사업자 상태가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformCompanyNotFoundError`: 사업자 정보를 찾을 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "* `PlatformExternalApiFailedError`: 외부 api 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.company",
+        "x-portone-title": "사업자 조회",
+        "x-portone-description": "사업자 정보를 조회합니다. 포트원 서비스에 연동 및 등록되지 않은 사업자도 조회 가능합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+        }
+      }
+    },
     "/identity-verifications/{identityVerificationId}": {
       "get": {
         "summary": "본인인증 단건 조회",
@@ -42429,6 +42525,11 @@
           "id": "platform.accountTransfer",
           "title": "이체 내역 관련 API",
           "description": "파트너 정산 서비스의 이체 내역과 관련된 API 입니다."
+        },
+        {
+          "id": "platform.company",
+          "title": "사업자 관련 API",
+          "description": "파트너 정산 서비스의 사업자와 관련된 API 입니다."
         }
       ]
     },
