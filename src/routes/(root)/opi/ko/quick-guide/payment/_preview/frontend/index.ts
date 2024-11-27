@@ -1,2 +1,2 @@
-export { files as html } from "./html";
-export { files as react } from "./react";
+export { files as HTML } from "./html";
+export { files as React } from "./react";
