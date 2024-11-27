@@ -89,17 +89,13 @@ client:handle-payment-status:paid */}
     완료된 결제의 Payment ID를 서버로 전송하여 결제 상태를 반영합니다.
   </Section>
 
-  <Section section="client:handle-payment-status:paid">
-    ## 결제 완료 상태 처리
+  <Condition when={({ pg }) => pg.payMethods !== "virtualAccount" }>
+    <Section section="client:handle-payment-status:paid">
+      ## 결제 완료 상태 처리
 
-    서버로부터 검증 후 결제가 완료된 경우를 처리합니다.
-  </Section>
-
-  <Section section="client:handle-payment-status:failed">
-    ## 결제 실패 상태 처리
-
-    서버로부터 검증 결과를 획득하여, 결제가 최종적으로 실패한 경우를 처리합니다.
-  </Section>
+      서버로부터 검증 후 결제가 완료된 경우를 처리합니다.
+    </Section>
+  </Condition>
 
   <Condition when={({ pg }) => pg.payMethods === "virtualAccount" }>
     <Section section="client:handle-payment-status:virtual-account-issued">
@@ -108,6 +104,12 @@ client:handle-payment-status:paid */}
       서버로부터 검증 후 가상계좌가 발급된 경우를 처리합니다.
     </Section>
   </Condition>
+
+  <Section section="client:handle-payment-status:failed">
+    ## 결제 실패 상태 처리
+
+    서버로부터 검증 결과를 획득하여, 결제가 최종적으로 실패한 경우를 처리합니다.
+  </Section>
 
   <Section section="server:import-portone-sdk">
     ## 포트원 서버 SDK 불러오기
@@ -119,6 +121,30 @@ client:handle-payment-status:paid */}
 
       ```shell
       npm install @portone/server-sdk
+      ```
+    </Condition>
+
+    <Condition language="backend/FastAPI">
+      아래 명령어로 서버 SDK를 설치합니다.
+
+      ```shell
+      pip install portone-server-sdk
+      ```
+    </Condition>
+
+    <Condition language="backend/Flask">
+      아래 명령어로 서버 SDK를 설치합니다.
+
+      ```shell
+      pip install portone-server-sdk
+      ```
+    </Condition>
+
+    <Condition language="backend/Spring_Kotlin">
+      Maven Central을 통해 서버 SDK를 설치합니다.
+
+      ```kotlin
+      implementation("io.portone:server-sdk:x.x.x")
       ```
     </Condition>
   </Section>

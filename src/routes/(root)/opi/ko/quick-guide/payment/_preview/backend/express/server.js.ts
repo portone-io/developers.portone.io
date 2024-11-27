@@ -46,22 +46,21 @@ async function syncPayment(paymentId) {
     if (e instanceof PortOne.Errors.PortOneError) return false
     throw e
   }
-  if (actualPayment == null) return false
   `}
-  switch (actualPayment.status) {
-    case "PAID":
-      if (!verifyPayment(actualPayment)) return false
-      if (payment.status === "PAID") return payment
-      payment.status = "PAID"
-      console.info("결제 성공", actualPayment)
-      break
-    ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
-    case "VIRTUAL_ACCOUNT_ISSUED":
-      payment.status = "VIRTUAL_ACCOUNT_ISSUED"
-      break
-    `}
-    default:
-      return false
+  ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+  if (actualPayment.status === "PAID") {
+    if (!verifyPayment(actualPayment)) return false
+    if (payment.status === "PAID") return payment
+    payment.status = "PAID"
+    console.info("결제 성공", actualPayment)
+  } else {
+  `}
+  ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+  if (actualPayment.status === "VIRTUAL_ACCOUNT_ISSUED") {
+    payment.status = "VIRTUAL_ACCOUNT_ISSUED"
+  } else {
+  `}
+    return false
   }
   return payment
 }
@@ -82,7 +81,7 @@ const items = new Map([
   [
     "shoes",
     {
-      name: "나이키 멘즈 조이라이드 플라이니트",
+      name: "신발",
       price: 1000,
       currency: "KRW",
     },
@@ -145,4 +144,5 @@ app.post("/api/payment/webhook", async (req, res, next) => {
 const server = app.listen(8080, "localhost", () => {
   console.log("server is running on", server.address())
 })
+
 `;

@@ -31,7 +31,7 @@ export function CodeRenderer() {
       if (!code) return;
       return highlighter()?.codeToHtml(code, {
         theme: "one-dark-pro",
-        lang: "javascript",
+        lang: currentTab()?.language ?? "javascript",
         colorReplacements: {
           "one-dark-pro": {
             "#282c34": "#1e293b",

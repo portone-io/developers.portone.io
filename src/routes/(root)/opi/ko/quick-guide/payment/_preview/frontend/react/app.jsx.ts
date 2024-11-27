@@ -1,30 +1,13 @@
 import { code } from "~/components/interactive-docs/index.jsx";
-import type { Pg } from "~/state/interactive-docs";
 
-import { createPaymentRequest } from "../../request";
+import {
+  createPaymentRequest,
+  isCustomerEmailRequired,
+  isCustomerNameRequired,
+  isCustomerPhoneNumberRequired,
+  isCustomerRequired,
+} from "../../request";
 import type { Params, Sections } from "../../type";
-
-function isCustomerRequired(params: Params) {
-  return (
-    isCustomerNameRequired(params) ||
-    isCustomerPhoneNumberRequired(params) ||
-    isCustomerEmailRequired(params)
-  );
-}
-
-function isCustomerNameRequired(params: Params) {
-  return (["ksnet", "inicis"] satisfies Pg[] as Pg[]).includes(params.pg.name);
-}
-
-function isCustomerPhoneNumberRequired(params: Params) {
-  return (["smartro", "inicis"] satisfies Pg[] as Pg[]).includes(
-    params.pg.name,
-  );
-}
-
-function isCustomerEmailRequired(params: Params) {
-  return (["inicis"] satisfies Pg[] as Pg[]).includes(params.pg.name);
-}
 
 export default code<{
   params: Params;
@@ -118,11 +101,23 @@ export function App() {
       }),
     })
     if (completeResponse.ok) {
-      ${({ section }) => section("client:handle-payment-status:paid")`
+      ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+        ${({ section }) => section("client:handle-payment-status:paid")`
       const paymentComplete = await completeResponse.json()
       setPaymentStatus({
         status: paymentComplete.status,
       })
+        `}
+      `}
+      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+        ${({ section }) => section(
+          "client:handle-payment-status:virtual-account-issued",
+        )`
+      const paymentComplete = await completeResponse.json()
+      setPaymentStatus({
+        status: paymentComplete.status,
+      })
+        `}
       `}
     } else {
       ${({ section }) => section("client:handle-payment-status:failed")`
@@ -181,6 +176,7 @@ export function App() {
           </button>
         </dialog>
       )}
+      ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
       <dialog open={paymentStatus.status === "PAID"}>
         <header>
           <h1>결제 성공</h1>
@@ -190,10 +186,8 @@ export function App() {
           닫기
         </button>
       </dialog>
+      `}
       ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
-        ${({ section }) => section(
-          "client:handle-payment-status:virtual-account-issued",
-        )`
       <dialog open={paymentStatus.status === "VIRTUAL_ACCOUNT_ISSUED"}>
         <header>
           <h1>가상계좌 발급 완료</h1>
@@ -203,9 +197,9 @@ export function App() {
           닫기
         </button>
       </dialog> 
-        `}
       `}
     </>
   )
 }
+
 `;

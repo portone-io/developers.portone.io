@@ -1,6 +1,8 @@
 import * as PortOne from "@portone/browser-sdk/v2";
 import { match } from "ts-pattern";
 
+import type { Pg } from "~/state/interactive-docs";
+
 import type { Params } from "./type";
 
 const cardPayment = {
@@ -170,4 +172,26 @@ export function createPaymentRequest(params: Params, paymentId: string) {
       templatedPayment(paymentId, overrides.ksnet.virtualAccount),
     )
     .exhaustive();
+}
+
+export function isCustomerRequired(params: Params) {
+  return (
+    isCustomerNameRequired(params) ||
+    isCustomerPhoneNumberRequired(params) ||
+    isCustomerEmailRequired(params)
+  );
+}
+
+export function isCustomerNameRequired(params: Params) {
+  return (["ksnet", "inicis"] satisfies Pg[] as Pg[]).includes(params.pg.name);
+}
+
+export function isCustomerPhoneNumberRequired(params: Params) {
+  return (["smartro", "inicis"] satisfies Pg[] as Pg[]).includes(
+    params.pg.name,
+  );
+}
+
+export function isCustomerEmailRequired(params: Params) {
+  return (["inicis"] satisfies Pg[] as Pg[]).includes(params.pg.name);
 }

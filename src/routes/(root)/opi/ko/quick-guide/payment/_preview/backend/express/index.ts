@@ -4,5 +4,5 @@ import type { Params, Sections } from "../../type.js";
 import server from "./server.js.js";
 
 export const files = [
-  { fileName: "server.js", code: server },
+  { fileName: "server.js", code: server, language: "javascript" },
 ] as const satisfies CodeExample<Params, Sections>[];

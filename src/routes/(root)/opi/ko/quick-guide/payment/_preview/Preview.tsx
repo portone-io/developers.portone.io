@@ -79,7 +79,7 @@ export function Preview() {
       </div>
       <div class="flex flex-col">
         <span class="text-[17px] text-slate-6 font-medium leading-[30.6px]">
-          나이키 멘즈 조이라이드 플라이니트
+          신발
         </span>
         <span class="text-[18px] text-slate-6 font-medium leading-[27px]">
           1,000원
