@@ -297,20 +297,20 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
   },
   {
     pgOptions: () => ({
-      inicis: {
+      toss: {
         payMethods: ["card"],
       },
     }),
     languages: () => ({
       frontend: ["react", "html"],
-      backend: ["express", "fastapi", "flask"],
-      hybrid: ["nextjs"],
+      backend: ["express", "FastAPI", "Flask", "Spring_Kotlin"],
+      hybrid: [],
     }),
     selectedLanguage: () => ["react", "express"],
     setSelectedLanguage: (_) => {},
     params: {
       pg: {
-        name: "inicis",
+        name: "toss",
         payMethods: "card",
       },
     },
