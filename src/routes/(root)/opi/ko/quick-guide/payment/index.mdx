@@ -56,6 +56,18 @@ client:handle-payment-status:paid */}
       ## 고객 정보 설정
 
       결제 시 요구되는 고객 정보를 입력합니다.
+
+      <Condition when={({ pg: { name }}) => name === 'ksnet'}>
+        KSNET 결제 시 구매자 이름을 필수로 입력해야 합니다.
+      </Condition>
+
+      <Condition when={({ pg: { name }}) => name === 'inicis'}>
+        KG이니시스 결제 시 구매자 이름, 연락처, 이메일을 필수로 입력해야 합니다.
+      </Condition>
+
+      <Condition when={({ pg: { name }}) => name === 'smartro'}>
+        스마트로 결제 시 구매자 연락처를 필수로 입력해야 합니다.
+      </Condition>
     </Section>
   </Condition>
 
@@ -144,7 +156,7 @@ client:handle-payment-status:paid */}
 
   <Section section="server:webhook:raw-body">
     ## HTTP Body 수신 설정
-    
+
     웹훅 내용을 검증하기 위해서는 HTTP Body를 문자열 형태로 수신해야 합니다.
   </Section>
 

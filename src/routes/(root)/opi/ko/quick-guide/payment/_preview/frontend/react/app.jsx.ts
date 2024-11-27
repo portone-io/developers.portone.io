@@ -6,7 +6,9 @@ import type { Params, Sections } from "../../type";
 
 function isCustomerRequired(params: Params) {
   return (
-    isCustomerPhoneNumberRequired(params) || isCustomerEmailRequired(params)
+    isCustomerNameRequired(params) ||
+    isCustomerPhoneNumberRequired(params) ||
+    isCustomerEmailRequired(params)
   );
 }
 
@@ -76,17 +78,17 @@ export function App() {
       paymethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`}
       ${({ when }) => when(isCustomerRequired)`
         ${({ section }) => section("client:customer-data")`
-       customer: {
+      customer: {
          ${({ when }) => when(isCustomerNameRequired)`
-         fullName: '포트원',
+        fullName: '포트원',
          `}
          ${({ when }) => when(isCustomerPhoneNumberRequired)`
-         phoneNumber: '01012341234',
+        phoneNumber: '01012341234',
          `}
          ${({ when }) => when(isCustomerEmailRequired)`
-         email: 'example@portone.io',
+        email: 'example@portone.io',
          `}
-       },
+      },
         `}
       `}
       ${({ section }) => section("client:custom-data")`
