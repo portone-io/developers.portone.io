@@ -40,7 +40,15 @@ const tsTypeCheckedRules = {
 
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
-  { ignores: ["dist", ".vercel", "**/routes/(root)/docs/**/*"] },
+  {
+    ignores: [
+      "dist",
+      ".vercel",
+      "**/routes/(root)/docs/**/*",
+      ".vinxi",
+      ".output",
+    ],
+  },
   {
     ...eslint.configs.recommended,
     ignores: ["scripts/**/*.ts", "**/*.mdx/*"],
