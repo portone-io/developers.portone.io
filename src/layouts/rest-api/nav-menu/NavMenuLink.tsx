@@ -18,8 +18,9 @@ export default function NavMenuLink(props: Props) {
       onClick={() => {
         sidebarOpen.set(false);
         const el = document.getElementById(props.id);
+        const heading = el?.querySelector("h2, h3, h4, h5, h6");
         requestAnimationFrame(() =>
-          el?.scrollIntoView({ behavior: "smooth", block: "center" }),
+          heading?.scrollIntoView({ behavior: "smooth" }),
         );
       }}
     >

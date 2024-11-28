@@ -89,7 +89,7 @@ export default function NavMenu(props: Props) {
         }
       },
       {
-        rootMargin: "-56px 0px 0px 0px", // gnb height
+        rootMargin: "-104px 0px 0px 0px", // gnb height
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
       },
     );
