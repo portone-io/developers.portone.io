@@ -1,16 +1,11 @@
 export { code } from "./code";
 import { Switch } from "@kobalte/core/switch";
-import { trackStore } from "@solid-primitives/deep";
-import { createIntersectionObserver } from "@solid-primitives/intersection-observer";
 import {
   type Component,
   createEffect,
   createMemo,
-  createSignal,
-  getOwner,
   type ParentComponent,
   type ParentProps,
-  runWithOwner,
   Show,
   startTransition,
   untrack,
@@ -78,14 +73,8 @@ export function createInteractiveDoc<
   preload: InteractiveDocsInit;
 } {
   const InteractiveDoc: ParentComponent = (props) => {
-    const {
-      setCodeExamples,
-      setSelectedLanguage,
-      setPreview,
-      setCurrentSection,
-      params,
-      selectedLanguage,
-    } = useInteractiveDocs();
+    const { setCodeExamples, setSelectedLanguage, setPreview } =
+      useInteractiveDocs();
     void startTransition(() => {
       setCodeExamples(
         codeExamples as unknown as {
@@ -105,59 +94,6 @@ export function createInteractiveDoc<
       );
       setSelectedLanguage(initialSelectedExample as [string, string] | string);
       setPreview(() => preview);
-    });
-    const [sections, setSections] = createSignal<Element[]>([]);
-    const intersectingEntriesMap = new Map<
-      HTMLElement,
-      IntersectionObserverEntry
-    >();
-
-    createIntersectionObserver(
-      sections,
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            intersectingEntriesMap.set(entry.target as HTMLElement, entry);
-          } else {
-            intersectingEntriesMap.delete(entry.target as HTMLElement);
-          }
-        });
-
-        if (intersectingEntriesMap.size === 0) return;
-
-        const intersectingSections = [...intersectingEntriesMap.entries()]
-          .filter(([, data]) => data.isIntersecting)
-          .sort(([, a], [, b]) => {
-            const aRatio = a.intersectionRatio;
-            const bRatio = b.intersectionRatio;
-            if (aRatio !== bRatio) return bRatio - aRatio;
-            const aTop = (a.target as HTMLElement).offsetTop;
-            const bTop = (b.target as HTMLElement).offsetTop;
-            return aTop - bTop;
-          });
-
-        const newSection = intersectingSections[0]?.[0].dataset.section;
-        if (newSection) {
-          setCurrentSection(() => newSection);
-        }
-      },
-      {
-        rootMargin: "-120px 0px 0px 0px",
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-      },
-    );
-
-    createEffect(() => {
-      void trackStore(params);
-      void selectedLanguage;
-      const owner = getOwner();
-      setTimeout(() => {
-        runWithOwner(owner, () => {
-          setSections(() =>
-            Array.from(document.querySelectorAll("[data-section]")),
-          );
-        });
-      }, 0);
     });
 
     return <>{props.children}</>;
