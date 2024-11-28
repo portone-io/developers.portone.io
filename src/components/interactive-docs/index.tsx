@@ -2,6 +2,7 @@ export { code } from "./code";
 import { Switch } from "@kobalte/core/switch";
 import {
   batch,
+  children,
   type Component,
   createEffect,
   createMemo,
@@ -112,7 +113,8 @@ export function createInteractiveDoc<
       });
     });
 
-    return <>{props.children}</>;
+    const childrenMemo = children(() => props.children);
+    return <>{childrenMemo()}</>;
   };
   const Section = (props: ParentProps<{ section?: Sections }>) => {
     const { setCurrentSection, currentSection } = useInteractiveDocs();
