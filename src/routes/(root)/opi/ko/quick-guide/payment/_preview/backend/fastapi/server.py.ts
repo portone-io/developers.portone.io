@@ -37,20 +37,13 @@ ${({ section }) => section("server:portone-api-secret")`
 portone_client = portone.PortOneClient(secret=os.environ["V2_API_SECRET"])
 `}
 
-
-${({ section }) => section("server:complete-payment:verify-payment")`
-def verify_payment(payment):
-  if payment.custom_data is None:
-    return False
-  custom_data = json.loads(payment.custom_data)
-  if "item" not in custom_data or custom_data["item"] not in items:
-    return False
-  item = items[custom_data["item"]]
-  return (
-    payment.order_name == item.name
-    and payment.amount.total == item.price
-    and payment.currency == item.currency
-  )
+${({ section }) => section("server:complete-payment")`
+@app.post("/api/payment/complete")
+def complete_payment(payment_id: Annotated[str, Body(embed=True, alias="paymentId")]):
+  payment = sync_payment(payment_id)
+  if payment is None:
+    return "결제 동기화에 실패했습니다.", 400
+  return payment
 `}
 
 payment_store = {}
@@ -83,20 +76,26 @@ def sync_payment(payment_id):
     return None
   return payment
 
+  
+${({ section }) => section("server:complete-payment:verify-payment")`
+def verify_payment(payment):
+  if payment.custom_data is None:
+    return False
+  custom_data = json.loads(payment.custom_data)
+  if "item" not in custom_data or custom_data["item"] not in items:
+    return False
+  item = items[custom_data["item"]]
+  return (
+    payment.order_name == item.name
+    and payment.amount.total == item.price
+    and payment.currency == item.currency
+  )
+`}
+
 
 @app.get("/api/item")
 def get_item():
   return items["shoes"]
-
-
-${({ section }) => section("server:complete-payment")`
-@app.post("/api/payment/complete")
-def complete_payment(payment_id: Annotated[str, Body(embed=True, alias="paymentId")]):
-  payment = sync_payment(payment_id)
-  if payment is None:
-    return "결제 동기화에 실패했습니다.", 400
-  return payment
-`}
 
 
 ${({ section }) => section("server:webhook:raw-body")`

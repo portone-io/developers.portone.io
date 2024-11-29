@@ -78,32 +78,6 @@ class PaymentController(secret: PortOneSecretProperties) {
   ): Payment = syncPayment(completeRequest.paymentId)
   `}
 
-  ${({ section }) => section("server:webhook")`
-  @PostMapping("/api/payment/webhook")
-  suspend fun handleWebhook(
-    ${({ section }) => section("server:webhook:raw-body")`
-    @RequestBody body: String,
-    `}
-    @RequestHeader("webhook-id") webhookId: String,
-    @RequestHeader("webhook-timestamp") webhookTimestamp: String,
-    @RequestHeader("webhook-signature") webhookSignature: String,
-  ) {
-    ${({ section }) => section("server:webhook:verify")`
-    val webhook =
-      try {
-        portoneWebhook.verify(body, webhookId, webhookTimestamp, webhookSignature)
-      } catch (_: Exception) {
-        throw SyncPaymentException()
-      }
-    `}
-    ${({ section }) => section("server:webhook:complete-payment")`
-    if (webhook is WebhookTransaction) {
-      syncPayment(webhook.data.paymentId)
-    }
-    `}
-  }
-  `}
-
   suspend fun syncPayment(paymentId: String): ExamplePayment {
     val payment =
       paymentStore.getOrPut(paymentId) {
@@ -149,6 +123,32 @@ class PaymentController(secret: PortOneSecretProperties) {
           payment.currency.value == it.currency
       }
     } == true
+  `}
+
+  ${({ section }) => section("server:webhook")`
+  @PostMapping("/api/payment/webhook")
+  suspend fun handleWebhook(
+    ${({ section }) => section("server:webhook:raw-body")`
+    @RequestBody body: String,
+    `}
+    @RequestHeader("webhook-id") webhookId: String,
+    @RequestHeader("webhook-timestamp") webhookTimestamp: String,
+    @RequestHeader("webhook-signature") webhookSignature: String,
+  ) {
+    ${({ section }) => section("server:webhook:verify")`
+    val webhook =
+      try {
+        portoneWebhook.verify(body, webhookId, webhookTimestamp, webhookSignature)
+      } catch (_: Exception) {
+        throw SyncPaymentException()
+      }
+    `}
+    ${({ section }) => section("server:webhook:complete-payment")`
+    if (webhook is WebhookTransaction) {
+      syncPayment(webhook.data.paymentId)
+    }
+    `}
+  }
   `}
 }
 

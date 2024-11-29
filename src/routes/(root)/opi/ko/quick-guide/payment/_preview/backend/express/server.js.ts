@@ -16,55 +16,6 @@ ${({ section }) => section("server:portone-api-secret")`
 const portone = PortOne.PortOneClient(process.env.V2_API_SECRET)
 `}
 
-${({ section }) => section("server:complete-payment:verify-payment")`
-function verifyPayment(payment) {
-  if (payment.customData == null) return false
-  const customData = JSON.parse(payment.customData)
-  const item = items.get(customData.item)
-  if (item == null) return false
-  return (
-    payment.orderName === item.name &&
-    payment.amount.total === item.price &&
-    payment.currency === item.currency
-  )
-}
-`}
-
-const paymentStore = new Map()
-async function syncPayment(paymentId) {
-  if (!paymentStore.has(paymentId)) {
-    paymentStore.set(paymentId, {
-      status: "PENDING",
-    })
-  }
-  const payment = paymentStore.get(paymentId)
-  ${({ section }) => section("server:complete-payment:get-payment")`
-  let actualPayment
-  try {
-    actualPayment = await portone.payment.getPayment(paymentId)
-  } catch (e) {
-    if (e instanceof PortOne.Errors.PortOneError) return false
-    throw e
-  }
-  `}
-  ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
-  if (actualPayment.status === "PAID") {
-    if (!verifyPayment(actualPayment)) return false
-    if (payment.status === "PAID") return payment
-    payment.status = "PAID"
-    console.info("결제 성공", actualPayment)
-  } else {
-  `}
-  ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
-  if (actualPayment.status === "VIRTUAL_ACCOUNT_ISSUED") {
-    payment.status = "VIRTUAL_ACCOUNT_ISSUED"
-  } else {
-  `}
-    return false
-  }
-  return payment
-}
-
 const app = express()
 
 ${({ section }) => section("server:webhook:raw-body")`
@@ -111,6 +62,55 @@ app.post("/api/payment/complete", async (req, res, next) => {
     next(e)
   }
 })
+`}
+
+const paymentStore = new Map()
+async function syncPayment(paymentId) {
+  if (!paymentStore.has(paymentId)) {
+    paymentStore.set(paymentId, {
+      status: "PENDING",
+    })
+  }
+  const payment = paymentStore.get(paymentId)
+  ${({ section }) => section("server:complete-payment:get-payment")`
+  let actualPayment
+  try {
+    actualPayment = await portone.payment.getPayment(paymentId)
+  } catch (e) {
+    if (e instanceof PortOne.Errors.PortOneError) return false
+    throw e
+  }
+  `}
+  ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+  if (actualPayment.status === "PAID") {
+    if (!verifyPayment(actualPayment)) return false
+    if (payment.status === "PAID") return payment
+    payment.status = "PAID"
+    console.info("결제 성공", actualPayment)
+  } else {
+  `}
+  ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+  if (actualPayment.status === "VIRTUAL_ACCOUNT_ISSUED") {
+    payment.status = "VIRTUAL_ACCOUNT_ISSUED"
+  } else {
+  `}
+    return false
+  }
+  return payment
+}
+
+${({ section }) => section("server:complete-payment:verify-payment")`
+function verifyPayment(payment) {
+  if (payment.customData == null) return false
+  const customData = JSON.parse(payment.customData)
+  const item = items.get(customData.item)
+  if (item == null) return false
+  return (
+    payment.orderName === item.name &&
+    payment.amount.total === item.price &&
+    payment.currency === item.currency
+  )
+}
 `}
 
 ${({ section }) => section("server:webhook")`

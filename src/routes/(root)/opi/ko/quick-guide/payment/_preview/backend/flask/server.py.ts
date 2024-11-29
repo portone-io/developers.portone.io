@@ -37,50 +37,6 @@ def create_app():
   portone_client = portone.PortOneClient(secret=os.environ["V2_API_SECRET"])
   `}
 
-  ${({ section }) => section("server:complete-payment:verify-payment")`
-  def verify_payment(payment):
-    if payment.custom_data is None:
-      return False
-    custom_data = json.loads(payment.custom_data)
-    if "item" not in custom_data or custom_data["item"] not in items:
-      return False
-    item = items[custom_data["item"]]
-    return (
-      payment.order_name == item.name
-      and payment.amount.total == item.price
-      and payment.currency == item.currency
-    )
-  `}
-
-  payment_store = {}
-
-  def sync_payment(payment_id):
-    if payment_id not in payment_store:
-      payment_store[payment_id] = Payment("PENDING")
-    payment = payment_store[payment_id]
-    ${({ section }) => section("server:complete-payment:get-payment")`
-    try:
-      actual_payment = portone_client.get_payment(payment_id=payment_id)
-    except portone.payment.GetPaymentError:
-      return None
-    `}
-    ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
-    if isinstance(actual_payment, portone.payment.PaidPayment):
-      if not verify_payment(actual_payment):
-        return None
-      if payment.status == "PAID":
-        return payment
-      payment.status = "PAID"
-      app.logger.info("결제 성공", extra={"actual_payment": actual_payment})
-    `}
-    ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
-    if isinstance(actual_payment, portone.payment.VirtualAccountIssuedPayment):
-      payment.status = "VIRTUAL_ACCOUNT_ISSUED"
-    `}
-    else:
-      return None
-    return payment
-
   @app.get("/api/item")
   def get_item():
     return jsonify(items["shoes"])
@@ -121,6 +77,51 @@ def create_app():
     return "OK", 200
 
   return app
+  `}
+
+payment_store = {}
+
+def sync_payment(payment_id):
+  if payment_id not in payment_store:
+    payment_store[payment_id] = Payment("PENDING")
+  payment = payment_store[payment_id]
+  ${({ section }) => section("server:complete-payment:get-payment")`
+  try:
+    actual_payment = portone_client.get_payment(payment_id=payment_id)
+  except portone.payment.GetPaymentError:
+    return None
+  `}
+  ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+  if isinstance(actual_payment, portone.payment.PaidPayment):
+    if not verify_payment(actual_payment):
+      return None
+    if payment.status == "PAID":
+      return payment
+    payment.status = "PAID"
+    app.logger.info("결제 성공", extra={"actual_payment": actual_payment})
+  `}
+  ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+  if isinstance(actual_payment, portone.payment.VirtualAccountIssuedPayment):
+    payment.status = "VIRTUAL_ACCOUNT_ISSUED"
+  `}
+  else:
+    return None
+  return payment
+
+
+  ${({ section }) => section("server:complete-payment:verify-payment")`
+  def verify_payment(payment):
+    if payment.custom_data is None:
+      return False
+    custom_data = json.loads(payment.custom_data)
+    if "item" not in custom_data or custom_data["item"] not in items:
+      return False
+    item = items[custom_data["item"]]
+    return (
+      payment.order_name == item.name
+      and payment.amount.total == item.price
+      and payment.currency == item.currency
+    )
   `}
 
 `;

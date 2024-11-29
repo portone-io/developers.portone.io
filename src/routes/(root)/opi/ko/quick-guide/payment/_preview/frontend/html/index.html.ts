@@ -151,7 +151,7 @@ export default code<{
             })
             `}
             ${({ section }) => section("client:handle-payment-error")`
-            if (payment.code != null) {
+            if (payment.code !== undefined) {
               this.setWaitingPayment(false)
               console.log(payment)
               this.openFailDialog(payment.message)
