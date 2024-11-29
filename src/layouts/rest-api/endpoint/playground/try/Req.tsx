@@ -299,7 +299,7 @@ function createHarRequest(
 
     return {
       url: createUrl(apiHost, path, pathValue, queryValue).toString(),
-      method,
+      method: method.toUpperCase(),
       headers: Object.entries(headers()).map(([name, value]) => ({
         name,
         value,
