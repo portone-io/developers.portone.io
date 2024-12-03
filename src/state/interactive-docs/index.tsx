@@ -6,8 +6,8 @@ import {
   createEffect,
   createMemo,
   createSignal,
+  on,
   type Setter,
-  untrack,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 
@@ -112,6 +112,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     const [preview, setPreview] = createSignal<Component | undefined>(
       undefined,
     );
+    const pgName = createMemo(() => params.pg.name);
     const pgOptions = createMemo(() => initial().pgOptions);
     createEffect(() => {
       const pg = Object.keys(pgOptions())[0] as Pg | undefined;
@@ -218,14 +219,19 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     void highlighterInstance.then(setHighlighter);
 
     // PG사 변경 시 payMethods 초기화
-    createEffect(() => {
-      const pg = params.pg.name;
-      setParams(
-        "pg",
-        "payMethods",
-        untrack(() => pgOptions()[pg]!.payMethods[0]!),
-      );
-    });
+    createEffect(
+      on([pgName, pgOptions], ([pgName, pgOptions]) => {
+        const pgOption = pgOptions[pgName];
+        if (!pgOption) return;
+
+        const payMethod = pgOption.payMethods.find(
+          (method) => method === params.pg.payMethods,
+        );
+        if (payMethod === undefined && pgOption.payMethods[0]) {
+          setParams("pg", "payMethods", pgOption.payMethods[0]);
+        }
+      }),
+    );
 
     return {
       pgOptions,
