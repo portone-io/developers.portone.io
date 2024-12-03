@@ -102,9 +102,6 @@ export function createInteractiveDoc<
     const { setCurrentSection, currentSection } = useInteractiveDocs();
     let ref: HTMLDivElement;
     createEffect(() => {
-      ref.dataset.section = props.section;
-    });
-    createEffect(() => {
       if (props.section === currentSection()) {
         ref.dataset.active = "";
       } else {
@@ -121,6 +118,7 @@ export function createInteractiveDoc<
         id={props.section}
         ref={ref!}
         onClick={handleClick}
+        data-section={props.section}
         class="cursor-pointer border-l-5 border-white rounded px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF2EC] [&:not([data-active])]:hover:border-slate-2"
       >
         {props.children}
@@ -155,11 +153,7 @@ export function createInteractiveDoc<
         (props.language ? languageResolver(props.language) : true)
       );
     });
-    return (
-      <Show when={show()}>
-        <div>{props.children}</div>{" "}
-      </Show>
-    );
+    return <Show when={show()}>{props.children}</Show>;
   };
   const Toggle = (
     props: ParentProps<{
@@ -191,7 +185,7 @@ export function createInteractiveDoc<
             {props.label}
           </Switch.Label>
         </Switch>
-        <div class="">{props.children}</div>
+        {props.children}
       </div>
     );
   };

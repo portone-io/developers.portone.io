@@ -35,8 +35,8 @@ export function InteractiveDocs(
           <LanguageSelect languages={"backend"} title="Backend" />
         </Show>
       </div>
-      <article class="mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-7">
-        <div class="mb-6 ml-6">
+      <article class="mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-7 [&>*:not([data-section])]:ml-6">
+        <div class="mb-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
         </div>
         {props.children}
