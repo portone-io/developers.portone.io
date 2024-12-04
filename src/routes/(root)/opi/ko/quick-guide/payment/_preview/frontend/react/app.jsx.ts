@@ -17,7 +17,6 @@ ${({ section }) => section("client:import-portone-sdk")`
 import PortOne from "@portone/browser-sdk/v2"
 `}
 import { useEffect, useState } from "react"
-import { randomId } from "./random"
 
 export function App() {
   const [item, setItem] = useState(null)
@@ -42,6 +41,12 @@ export function App() {
         <article aria-busy>결제 정보를 불러오는 중입니다.</article>
       </dialog>
     )
+  }
+
+  function randomId() {
+    return [...crypto.getRandomValues(new Uint32Array(2))]
+      .map((word) => word.toString(16).padStart(8, "0"))
+      .join("")
   }
 
   const handleSubmit = async (e) => {

@@ -112,6 +112,13 @@ export default code<{
           window.checkoutDialog.onsubmit = async (e) => {
             e.preventDefault()
             this.setWaitingPayment(true)
+
+            function randomId() {
+              return [...crypto.getRandomValues(new Uint32Array(2))]
+                .map((word) => word.toString(16).padStart(8, "0"))
+                .join("")
+            }
+
             ${({ section }) => section("client:request-payment")`
               ${({ section }) => section("client:request-payment:payment-id")`
             const paymentId = randomId()
@@ -226,11 +233,6 @@ export default code<{
           window.virtualAccountDialog.open = true
         }
         `}
-        function randomId() {
-          return [...crypto.getRandomValues(new Uint32Array(2))]
-            .map((word) => word.toString(16).padStart(8, "0"))
-            .join("")
-        }
       }
     </script>
   </body>
