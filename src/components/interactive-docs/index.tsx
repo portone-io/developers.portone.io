@@ -1,9 +1,11 @@
 export { code } from "./code";
 import { Switch } from "@kobalte/core/switch";
 import {
+  batch,
   type Component,
   createEffect,
   createMemo,
+  onCleanup,
   type ParentComponent,
   type ParentProps,
   Show,
@@ -73,9 +75,13 @@ export function createInteractiveDoc<
   preload: InteractiveDocsInit;
 } {
   const InteractiveDoc: ParentComponent = (props) => {
-    const { setCodeExamples, setSelectedLanguage, setPreview } =
+    const { setCodeExamples, setSelectedLanguage, setPreview, setParams } =
       useInteractiveDocs();
     void startTransition(() => {
+      setPreview(() => preview);
+    });
+    batch(() => {
+      setParams(() => initialParams);
       setCodeExamples(
         codeExamples as unknown as {
           frontend: Record<
@@ -93,7 +99,17 @@ export function createInteractiveDoc<
         },
       );
       setSelectedLanguage(initialSelectedExample as [string, string] | string);
-      setPreview(() => preview);
+    });
+
+    onCleanup(() => {
+      batch(() => {
+        setCodeExamples({
+          frontend: {},
+          backend: {},
+        });
+        setSelectedLanguage(null);
+        setPreview(undefined);
+      });
     });
 
     return <>{props.children}</>;
@@ -147,6 +163,7 @@ export function createInteractiveDoc<
               `backend/${backend}` === language,
           )
           .with(P.string, (hybrid) => `hybrid/${hybrid}` === language)
+          .with(P.nullish, () => false)
           .exhaustive();
       return (
         (props.when ? whenResolver(props.when) : true) &&

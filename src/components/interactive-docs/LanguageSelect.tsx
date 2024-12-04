@@ -16,6 +16,7 @@ export default function LanguageSelect(props: LanguageSelectProps) {
   const value = createMemo(() => {
     const selected = selectedLanguage();
     return match([props.languages, selected])
+      .with([P._, P.nullish], () => undefined)
       .with(
         [
           ["frontend", "hybrid"],
@@ -47,13 +48,20 @@ export default function LanguageSelect(props: LanguageSelectProps) {
     }
     setSelectedLanguage((prev) => {
       return match([props.languages, prev])
-        .with([["frontend", "hybrid"], P.array()], () => {
-          return [language, prev[1]] satisfies [string, string];
-        })
+        .with([P._, P.nullish], () => null)
+        .with(
+          [
+            ["frontend", "hybrid"],
+            [P.string, P.nonNullable],
+          ],
+          ([, prev]) => {
+            return [language, prev[1]] satisfies [string, string];
+          },
+        )
         .with([["frontend", "hybrid"], P.string], () => {
           return [language, backend[0]] satisfies [string, string];
         })
-        .with(["backend", P.array()], () => {
+        .with(["backend", P.nonNullable], ([, prev]) => {
           return [prev[0], language] satisfies [string, string];
         })
         .with(["backend", P.string], () => {
