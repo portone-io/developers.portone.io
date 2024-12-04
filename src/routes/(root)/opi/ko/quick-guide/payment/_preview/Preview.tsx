@@ -74,7 +74,7 @@ export function Preview() {
 
   const Checkout = () => (
     <>
-      <div class="h-20 w-20 flex rounded-md rounded-md bg-slate-1 p-3">
+      <div class="h-20 w-20 flex rounded-md bg-slate-1 p-3">
         <Picture picture={dummyImg} alt="상품 이미지" />
       </div>
       <div class="flex flex-col">
@@ -89,7 +89,7 @@ export function Preview() {
   );
 
   return (
-    <div class="flex flex-col gap-2 rounded-lg bg-slate-1 p-2">
+    <div class="flex flex-col gap-2 rounded-b-lg bg-slate-1 p-2">
       <div class="flex items-center gap-3 rounded-lg bg-slate-50">
         <Switch fallback={<Checkout />}>
           <Match when={paymentStatus().status === "PENDING"}>결제 중...</Match>
