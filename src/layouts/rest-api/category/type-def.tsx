@@ -66,6 +66,8 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
                 class="underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
                 href={href}
                 onClick={(e) => {
+                  if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0)
+                    return;
                   e.preventDefault();
                   expandAndScrollTo({
                     section: "type-def",
@@ -510,6 +512,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
           class="inline-block text-green-6 font-bold underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
           href={href()}
           onClick={(e) => {
+            if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
             e.preventDefault();
             expandAndScrollTo({
               section: "type-def",
