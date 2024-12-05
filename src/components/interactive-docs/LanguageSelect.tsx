@@ -1,6 +1,5 @@
 import { ToggleGroup } from "@kobalte/core/toggle-group";
-import { createMemo, untrack } from "solid-js";
-import { For } from "solid-js";
+import { createMemo, For, untrack } from "solid-js";
 import { match, P } from "ts-pattern";
 
 import { useInteractiveDocs } from "~/state/interactive-docs";
@@ -85,7 +84,7 @@ export default function LanguageSelect(props: LanguageSelectProps) {
             value={language}
             class="cursor-pointer border border-slate-3 rounded-md px-2.5 py-.75 text-xs text-slate-9 font-medium data-[pressed]:border-portone data-[pressed]:text-portone [&:not([data-pressed])]:hover:border-slate-4 [&:not([data-pressed])]:hover:bg-slate-4"
           >
-            {language}
+            {language.replaceAll("_", " ")}
           </ToggleGroup.Item>
         )}
       </For>

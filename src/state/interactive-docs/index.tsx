@@ -24,18 +24,20 @@ export type CodeExample<
 > = {
   fileName: string;
   code: Code<Params, Sections>;
+  language: string;
 };
 
 export type Tab = {
   fileName: string;
   sections: Record<string, Section>;
   code: string;
+  language: string;
 };
 
 export type PayMethod = "card" | "virtualAccount";
 export type Pg =
   | "nice"
-  | "smatro"
+  | "smartro"
   | "toss"
   | "kpn"
   | "inicis"
@@ -72,6 +74,8 @@ const highlighterInstance = createHighlighterCore({
     import("shiki/langs/javascript.mjs"),
     import("shiki/langs/html.mjs"),
     import("shiki/langs/css.mjs"),
+    import("shiki/langs/python.mjs"),
+    import("shiki/langs/kotlin.mjs"),
   ],
   engine: createOnigurumaEngine(import("shiki/wasm")),
 });
@@ -189,6 +193,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
               fileName: example.fileName,
               code,
               sections: sections as Record<string, Section>,
+              language: example.language,
             };
           };
           if (selectedLanguage === null) return [];
@@ -292,20 +297,20 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
   },
   {
     pgOptions: () => ({
-      inicis: {
+      toss: {
         payMethods: ["card"],
       },
     }),
     languages: () => ({
-      frontend: ["react", "html"],
-      backend: ["node", "python"],
-      hybrid: ["nextjs"],
+      frontend: ["React", "HTML"],
+      backend: ["Express", "FastAPI", "Flask", "Spring_Kotlin"],
+      hybrid: [],
     }),
-    selectedLanguage: () => ["react", "node"],
+    selectedLanguage: () => ["react", "express"],
     setSelectedLanguage: (_) => {},
     params: {
       pg: {
-        name: "inicis",
+        name: "toss",
         payMethods: "card",
       },
     },

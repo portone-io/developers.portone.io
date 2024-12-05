@@ -1,5 +1,12 @@
 import { code } from "~/components/interactive-docs/index.jsx";
 
+import {
+  createPaymentRequest,
+  isCustomerEmailRequired,
+  isCustomerNameRequired,
+  isCustomerPhoneNumberRequired,
+  isCustomerRequired,
+} from "../../request";
 import type { Params, Sections } from "../../type";
 
 export default code<{
@@ -10,13 +17,6 @@ ${({ section }) => section("client:import-portone-sdk")`
 import PortOne from "@portone/browser-sdk/v2"
 `}
 import { useEffect, useState } from "react"
-import { randomId } from "./random"
-
-const {
-  VITE_STORE_ID,
-  ${({ when }) => when(({ smartRouting }) => smartRouting === false)`VITE_CHANNEL_KEY,`}
-  ${({ when }) => when(({ smartRouting }) => smartRouting === true)`VITE_CHANNEL_GROUP_ID,`}
-} = import.meta.env
 
 export function App() {
   const [item, setItem] = useState(null)
@@ -24,6 +24,7 @@ export function App() {
     status: "IDLE",
   })
 
+  ${({ section }) => section("client:fetch-item")`
   useEffect(() => {
     async function loadItem() {
       const response = await fetch("/api/item")
@@ -32,6 +33,7 @@ export function App() {
 
     loadItem().catch((error) => console.error(error))
   }, [])
+  `}
 
   if (item == null) {
     return (
@@ -41,40 +43,53 @@ export function App() {
     )
   }
 
+  function randomId() {
+    return [...crypto.getRandomValues(new Uint32Array(2))]
+      .map((word) => word.toString(16).padStart(8, "0"))
+      .join("")
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setPaymentStatus({ status: "PENDING" })
     ${({ section }) => section("client:request-payment")`
-    ${({ section }) => section("client:payment-id-description")`
+    ${({ section }) => section("client:request-payment:payment-id")`
     const paymentId = randomId()
     `}
     const payment = await PortOne.requestPayment({
-      storeId: VITE_STORE_ID,
-      ${({ when }) => when(({ smartRouting }) => smartRouting === false)`
-      channelKey: VITE_CHANNEL_KEY,
-      `}
-      ${({ when }) => when(({ smartRouting }) => smartRouting === true)`
-        ${({ section }) => section("client:smart-routing:channel-group-id")`
-      channelGroupId: VITE_CHANNEL_GROUP_ID,
-        `}
+      ${({ section }) => section("client:request-payment:channel-key")`
+      storeId: ${({ params }) => code`"${createPaymentRequest(params, "").storeId}"`},
+      channelKey: ${({ params }) => code`"${createPaymentRequest(params, "").channelKey}"`},
       `}
       paymentId,
       orderName: item.name,
       totalAmount: item.price,
       currency: item.currency,
-      ${({ when }) => when(({ pg }) => pg.payMethods === "card")`
-      payMethod: "CARD", 
+      paymethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`}
+      ${({ when }) => when(isCustomerRequired)`
+        ${({ section }) => section("client:request-payment:customer-data")`
+      customer: {
+         ${({ when }) => when(isCustomerNameRequired)`
+        fullName: '포트원',
+         `}
+         ${({ when }) => when(isCustomerPhoneNumberRequired)`
+        phoneNumber: '01012341234',
+         `}
+         ${({ when }) => when(isCustomerEmailRequired)`
+        email: 'example@portone.io',
+         `}
+      },
+        `}
       `}
-      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
-      payMethod: "VIRTUAL_ACCOUNT", 
-      `}
+      ${({ section }) => section("client:request-payment:custom-data")`
       customData: {
         item: item.id,
       },
+      `}
     })
     `}
     ${({ section }) => section("client:handle-payment-error")`
-    if (payment.code != null) {
+    if (payment.code !== undefined) {
       setPaymentStatus({
         status: "FAILED",
         message: payment.message,
@@ -93,15 +108,31 @@ export function App() {
       }),
     })
     if (completeResponse.ok) {
+      ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+        ${({ section }) => section("client:handle-payment-status:paid")`
       const paymentComplete = await completeResponse.json()
       setPaymentStatus({
         status: paymentComplete.status,
       })
+        `}
+      `}
+      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+        ${({ section }) => section(
+          "client:handle-payment-status:virtual-account-issued",
+        )`
+      const paymentComplete = await completeResponse.json()
+      setPaymentStatus({
+        status: paymentComplete.status,
+      })
+        `}
+      `}
     } else {
+      ${({ section }) => section("client:handle-payment-status:failed")`
       setPaymentStatus({
         status: "FAILED",
         message: await completeResponse.text(),
       })
+      `}
     }
     `}
   }
@@ -141,7 +172,6 @@ export function App() {
           </button>
         </form>
       </main>
-      ${({ section }) => section("client:handle-payment-status:failed")`
       {paymentStatus.status === "FAILED" && (
         <dialog open>
           <header>
@@ -153,8 +183,7 @@ export function App() {
           </button>
         </dialog>
       )}
-      `}
-      ${({ section }) => section("client:handle-payment-status:paid")`
+      ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
       <dialog open={paymentStatus.status === "PAID"}>
         <header>
           <h1>결제 성공</h1>
@@ -165,9 +194,7 @@ export function App() {
         </button>
       </dialog>
       `}
-      ${({ section }) => section(
-        "client:handle-payment-status:virtual-account-issued",
-      )`
+      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
       <dialog open={paymentStatus.status === "VIRTUAL_ACCOUNT_ISSUED"}>
         <header>
           <h1>가상계좌 발급 완료</h1>
@@ -176,9 +203,10 @@ export function App() {
         <button type="button" onClick={handleClose}>
           닫기
         </button>
-      </dialog>
+      </dialog> 
       `}
     </>
   )
 }
+
 `;

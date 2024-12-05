@@ -46,6 +46,7 @@ type CodeHelpers<Params extends DefaultParams, Sections extends string> = {
   when: (
     predicate: (params: Params) => boolean,
   ) => CodeTemplateFunction<Params, Sections>;
+  params: Params;
 };
 
 type GenerateCode<Params extends DefaultParams, Sections extends string> = (
@@ -116,6 +117,7 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
     return {
       section: this.sectionResolver(),
       when: this.whenResolver(),
+      params: this.params,
     };
   }
 

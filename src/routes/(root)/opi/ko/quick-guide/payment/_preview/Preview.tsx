@@ -15,6 +15,7 @@ import dummyImg from "~/assets/dummy/5653e4f30f22b1afcadaa75ca5873e2f.png";
 import Picture from "~/components/Picture";
 import { useInteractiveDocs } from "~/state/interactive-docs";
 
+import { createPaymentRequest } from "./request";
 import type { Params } from "./type";
 
 export function Preview() {
@@ -44,74 +45,15 @@ export function Preview() {
 
   const requestPayment = async () => {
     if (paymentStatus().status === "PENDING") return undefined;
-    const request = match(untrack(() => params))
-      .with(
-        { pg: { name: "toss", payMethods: "card" } },
-        () =>
-          ({
-            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-            paymentId: crypto.randomUUID(),
-            orderName: "테스트 결제",
-            totalAmount: 100,
-            currency: "CURRENCY_KRW",
-            channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
-            payMethod: "CARD",
-            card: {},
-          }) satisfies PortOne.PaymentRequest,
-      )
-      .with(
-        { pg: { name: "toss", payMethods: "virtualAccount" } },
-        () =>
-          ({
-            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-            paymentId: crypto.randomUUID(),
-            orderName: "테스트 결제",
-            totalAmount: 100,
-            currency: "CURRENCY_KRW",
-            channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
-            payMethod: "VIRTUAL_ACCOUNT",
-            virtualAccount: {
-              accountExpiry: {
-                validHours: 1,
-              },
-            },
-          }) satisfies PortOne.PaymentRequest,
-      )
-      .with(
-        { pg: { name: "nice", payMethods: "card" } },
-        () =>
-          ({
-            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-            paymentId: crypto.randomUUID(),
-            orderName: "테스트 결제",
-            totalAmount: 100,
-            currency: "CURRENCY_KRW",
-            channelKey: "channel-key-4ca6a942-3ee0-48fb-93ef-f4294b876d28",
-            payMethod: "CARD",
-            card: {},
-            redirectUrl: "https://sdk-playground.portone.io/",
-          }) satisfies PortOne.PaymentRequest,
-      )
-      .with(
-        { pg: { name: "nice", payMethods: "virtualAccount" } },
-        () =>
-          ({
-            storeId: "store-e4038486-8d83-41a5-acf1-844a009e0d94",
-            paymentId: crypto.randomUUID(),
-            orderName: "테스트 결제",
-            totalAmount: 100,
-            currency: "CURRENCY_KRW",
-            channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
-            payMethod: "VIRTUAL_ACCOUNT",
-            virtualAccount: {
-              accountExpiry: {
-                validHours: 1,
-              },
-            },
-            redirectUrl: "https://sdk-playground.portone.io/",
-          }) satisfies PortOne.PaymentRequest,
-      )
-      .exhaustive();
+    const paymentId = crypto
+      .getRandomValues(new Uint32Array(1))[0]!
+      .toString(16)
+      .padStart(8, "0");
+
+    const request = createPaymentRequest(
+      untrack(() => params),
+      paymentId,
+    );
 
     setPaymentStatus({ status: "PENDING" });
     setPayment(await PortOne.requestPayment(request));
@@ -123,7 +65,7 @@ export function Preview() {
         .with({ code: P.nonNullable }, () => {
           setPaymentStatus({ status: "FAILED" });
         })
-        .with({ code: P.nullish }, () => {
+        .with(P.not({ code: P.nonNullable }), () => {
           setPaymentStatus({ status: "PAID" });
         })
         .exhaustive(),
@@ -132,12 +74,12 @@ export function Preview() {
 
   const Checkout = () => (
     <>
-      <div class="h-20 w-20 flex rounded-md rounded-md bg-slate-1 p-3">
+      <div class="h-20 w-20 flex rounded-md bg-slate-1 p-3">
         <Picture picture={dummyImg} alt="상품 이미지" />
       </div>
       <div class="flex flex-col">
         <span class="text-[17px] text-slate-6 font-medium leading-[30.6px]">
-          나이키 멘즈 조이라이드 플라이니트
+          신발
         </span>
         <span class="text-[18px] text-slate-6 font-medium leading-[27px]">
           1,000원
@@ -147,7 +89,7 @@ export function Preview() {
   );
 
   return (
-    <div class="flex flex-col gap-2 rounded-lg bg-slate-1 p-2">
+    <div class="flex flex-col gap-2 rounded-b-lg bg-slate-1 p-2">
       <div class="flex items-center gap-3 rounded-lg bg-slate-50">
         <Switch fallback={<Checkout />}>
           <Match when={paymentStatus().status === "PENDING"}>결제 중...</Match>

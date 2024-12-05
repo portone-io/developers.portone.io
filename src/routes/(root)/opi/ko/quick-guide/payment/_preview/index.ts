@@ -16,6 +16,6 @@ export const { Section, InteractiveDoc, Condition, Toggle, preload } =
       smartRouting: false,
       pg: { name: "toss", payMethods: "card" },
     },
-    initialSelectedExample: ["react", "node"],
+    initialSelectedExample: ["React", "Express"],
     preview: Preview,
   });
