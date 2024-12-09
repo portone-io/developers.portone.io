@@ -145,6 +145,7 @@ export function TypeDefDoc(props: TypeDefDocProps) {
       <Match when={kind() === "enum"}>
         <EnumDoc
           basepath={props.basepath}
+          enum={props.typeDef!["enum"]}
           xPortoneEnum={props.typeDef!["x-portone-enum"]}
           bgColor={props.bgColor}
         />
@@ -262,16 +263,21 @@ function UnionDoc(props: UnionDocProps) {
 
 interface EnumDocProps {
   basepath: string;
+  enum: TypeDef["enum"];
   xPortoneEnum: TypeDef["x-portone-enum"];
   bgColor: string;
 }
 function EnumDoc(props: EnumDocProps) {
+  const xPortoneEnum = createMemo(() => props.xPortoneEnum || {});
   return (
     <div class="flex flex-col gap-2">
-      <For each={Object.entries(props.xPortoneEnum || {})}>
-        {([enumValue, enumCase]) => {
+      <For each={props.enum}>
+        {(enumValue) => {
+          const enumCase = createMemo(
+            () => xPortoneEnum()[enumValue] || { title: "" },
+          );
           const title = createMemo(
-            () => enumCase["x-portone-title"] || enumCase.title || "",
+            () => enumCase()["x-portone-title"] || enumCase().title || "",
           );
           return (
             <div
@@ -284,7 +290,7 @@ function EnumDoc(props: EnumDocProps) {
               </div>
               <DescriptionDoc
                 basepath={props.basepath}
-                typeDef={enumCase}
+                typeDef={enumCase()}
                 bgColor={props.bgColor}
               />
             </div>

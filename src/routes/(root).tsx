@@ -1,7 +1,12 @@
 import "~/styles/article.css";
 
 import { Link } from "@solidjs/meta";
-import { cache, type RouteDefinition, useLocation } from "@solidjs/router";
+import {
+  cache,
+  createAsync,
+  type RouteDefinition,
+  useLocation,
+} from "@solidjs/router";
 import { createMemo, createResource, type JSXElement, Show } from "solid-js";
 import { MDXProvider } from "solid-mdx";
 
@@ -11,6 +16,7 @@ import SidebarProvider from "~/layouts/sidebar/context";
 import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
 import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
+import { getInteractiveDocs } from "~/misc/interactiveDocs";
 import { InteractiveDocsProvider } from "~/state/interactive-docs";
 import { calcNavMenuSystemVersions } from "~/state/nav";
 import { SystemVersionProvider } from "~/state/system-version";
@@ -32,8 +38,16 @@ export const route = {
 
     void loadNavMenuSystemVersions(lang);
     void loadDoc(contentName, fullSlug);
+    void loadInteractiveDocs(location.pathname);
   },
 } satisfies RouteDefinition;
+
+const loadInteractiveDocs = async (pathname: string) => {
+  const parsedFullSlug = parseDocsFullSlug(pathname);
+  if (!parsedFullSlug) return;
+  const [contentName, fullSlug] = parsedFullSlug;
+  return getInteractiveDocs(contentName, fullSlug);
+};
 
 const loadNavMenuSystemVersions = cache(async (lang: Lang) => {
   "use server";
@@ -44,6 +58,9 @@ const loadNavMenuSystemVersions = cache(async (lang: Lang) => {
 
 export default function Layout(props: Props) {
   const location = useLocation();
+  const interactiveDocs = createAsync(() =>
+    loadInteractiveDocs(location.pathname),
+  );
   const lang = createMemo(() =>
     location.pathname.includes("/en/") ? "en" : "ko",
   );
@@ -64,7 +81,7 @@ export default function Layout(props: Props) {
         href={`https://developers.portone.io${location.pathname}`}
       />
       <SidebarProvider>
-        <InteractiveDocsProvider>
+        <InteractiveDocsProvider initial={interactiveDocs()}>
           <MDXProvider components={prose}>
             <SearchProvider>
               <div class="h-full flex flex-col">

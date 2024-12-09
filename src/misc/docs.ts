@@ -8,7 +8,7 @@ export type DocsContentName = (typeof DocsContentName)[number];
 
 export const parseDocsFullSlug = (
   pathname: string,
-): [DocsContentName, string] | null => {
+): [contentName: DocsContentName, fullSlug: string] | null => {
   for (const contentName of DocsContentName) {
     const regex = new RegExp(`^/${contentName}/?`);
     if (pathname.startsWith(`/${contentName}`)) {

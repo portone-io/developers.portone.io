@@ -25,6 +25,10 @@ export function CodeIcon(props: CodeIconProps) {
         return "i-vscode-icons-file-type-css";
       case "html":
         return "i-vscode-icons-file-type-html";
+      case "py":
+        return "i-vscode-icons-file-type-python";
+      case "kt":
+        return "i-vscode-icons-file-type-kotlin";
       default:
         return "i-vscode-icons-default-file";
     }

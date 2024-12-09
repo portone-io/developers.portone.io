@@ -65,7 +65,8 @@ export default function Tabs(
         {(title) => (
           <TabsImpl.Content
             value={title}
-            class="border rounded-md rounded-tl-none px-6 py-4"
+            class="border rounded-md rounded-tl-none px-6 py-4 [&:not([data-selected])]:hidden"
+            forceMount
           >
             {children.get(title)?.()}
           </TabsImpl.Content>

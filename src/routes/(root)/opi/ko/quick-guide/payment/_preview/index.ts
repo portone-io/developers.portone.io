@@ -5,7 +5,7 @@ import * as frontend from "./frontend";
 import { Preview } from "./Preview";
 import { pgOptions } from "./type";
 
-export const { Section, InteractiveDoc, Condition, Toggle } =
+export const { Section, InteractiveDoc, Condition, Toggle, preload } =
   createInteractiveDoc({
     codeExamples: {
       frontend,
@@ -16,6 +16,6 @@ export const { Section, InteractiveDoc, Condition, Toggle } =
       smartRouting: false,
       pg: { name: "toss", payMethods: "card" },
     },
-    initialSelectedExample: ["react", "node"],
+    initialSelectedExample: ["React", "Express"],
     preview: Preview,
   });

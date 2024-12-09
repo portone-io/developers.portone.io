@@ -1,8 +1,8 @@
 import type { CodeExample } from "~/state/interactive-docs/index.jsx";
 
 import type { Params, Sections } from "../../type.js";
-import server from "./server.js.js";
+import app from "./app.jsx";
 
 export const files = [
-  { fileName: "server.js", code: server },
+  { fileName: "app.jsx", code: app, language: "javascript" },
 ] as const satisfies CodeExample<Params, Sections>[];

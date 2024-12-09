@@ -1,16 +1,14 @@
 export { code } from "./code";
 import { Switch } from "@kobalte/core/switch";
-import { trackStore } from "@solid-primitives/deep";
-import { createIntersectionObserver } from "@solid-primitives/intersection-observer";
 import {
+  batch,
+  children,
   type Component,
   createEffect,
   createMemo,
-  createSignal,
-  getOwner,
+  onCleanup,
   type ParentComponent,
   type ParentProps,
-  runWithOwner,
   Show,
   startTransition,
   untrack,
@@ -20,6 +18,7 @@ import { match, P } from "ts-pattern";
 
 import {
   type CodeExample,
+  type InteractiveDocsInit,
   type PgOptions,
   useInteractiveDocs,
 } from "~/state/interactive-docs";
@@ -74,38 +73,16 @@ export function createInteractiveDoc<
     }[keyof Params];
     label: string;
   }>;
+  preload: InteractiveDocsInit;
 } {
   const InteractiveDoc: ParentComponent = (props) => {
-    const {
-      setPgOptions,
-      setLanguages,
-      setParams,
-      setCodeExamples,
-      setSelectedLanguage,
-      setPreview,
-      setCurrentSection,
-      params,
-      selectedLanguage,
-    } = useInteractiveDocs();
+    const { setCodeExamples, setSelectedLanguage, setPreview, setParams } =
+      useInteractiveDocs();
     void startTransition(() => {
-      setPgOptions(pgOptions);
-      setLanguages({
-        frontend: Object.keys(codeExamples.frontend) as [
-          FrontendLanguage,
-          ...FrontendLanguage[],
-        ],
-        backend: Object.keys(codeExamples.backend) as [
-          BackendLanguage,
-          ...BackendLanguage[],
-        ],
-        hybrid: codeExamples.hybrid
-          ? (Object.keys(codeExamples.hybrid) as [
-              HybridLanguage,
-              ...HybridLanguage[],
-            ])
-          : [],
-      });
-      setParams(initialParams);
+      setPreview(() => preview);
+    });
+    batch(() => {
+      setParams(() => initialParams);
       setCodeExamples(
         codeExamples as unknown as {
           frontend: Record<
@@ -123,70 +100,25 @@ export function createInteractiveDoc<
         },
       );
       setSelectedLanguage(initialSelectedExample as [string, string] | string);
-      setPreview(() => preview);
-    });
-    const [sections, setSections] = createSignal<Element[]>([]);
-    const intersectingEntriesMap = new Map<
-      HTMLElement,
-      IntersectionObserverEntry
-    >();
-
-    createIntersectionObserver(
-      sections,
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            intersectingEntriesMap.set(entry.target as HTMLElement, entry);
-          } else {
-            intersectingEntriesMap.delete(entry.target as HTMLElement);
-          }
-        });
-
-        if (intersectingEntriesMap.size === 0) return;
-
-        const intersectingSections = [...intersectingEntriesMap.entries()]
-          .filter(([, data]) => data.isIntersecting)
-          .sort(([, a], [, b]) => {
-            const aRatio = a.intersectionRatio;
-            const bRatio = b.intersectionRatio;
-            if (aRatio !== bRatio) return bRatio - aRatio;
-            const aTop = (a.target as HTMLElement).offsetTop;
-            const bTop = (b.target as HTMLElement).offsetTop;
-            return aTop - bTop;
-          });
-
-        const newSection = intersectingSections[0]?.[0].dataset.section;
-        if (newSection) {
-          setCurrentSection(() => newSection);
-        }
-      },
-      {
-        rootMargin: "-120px 0px 0px 0px",
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-      },
-    );
-
-    createEffect(() => {
-      void trackStore(params);
-      void selectedLanguage;
-      const owner = getOwner();
-      setTimeout(() => {
-        runWithOwner(owner, () => {
-          setSections(() =>
-            Array.from(document.querySelectorAll("[data-section]")),
-          );
-        });
-      }, 0);
     });
 
-    return <>{props.children}</>;
+    onCleanup(() => {
+      batch(() => {
+        setCodeExamples({
+          frontend: {},
+          backend: {},
+        });
+        setSelectedLanguage(null);
+        setPreview(undefined);
+      });
+    });
+
+    const childrenMemo = children(() => props.children);
+    return <>{childrenMemo()}</>;
   };
   const Section = (props: ParentProps<{ section?: Sections }>) => {
     const { setCurrentSection, currentSection } = useInteractiveDocs();
     let ref: HTMLDivElement;
-    createEffect(() => {
-      ref.dataset.section = props.section;
-    });
     createEffect(() => {
       if (props.section === currentSection()) {
         ref.dataset.active = "";
@@ -204,6 +136,7 @@ export function createInteractiveDoc<
         id={props.section}
         ref={ref!}
         onClick={handleClick}
+        data-section={props.section}
         class="cursor-pointer border-l-5 border-white rounded px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF2EC] [&:not([data-active])]:hover:border-slate-2"
       >
         {props.children}
@@ -232,17 +165,14 @@ export function createInteractiveDoc<
               `backend/${backend}` === language,
           )
           .with(P.string, (hybrid) => `hybrid/${hybrid}` === language)
+          .with(P.nullish, () => false)
           .exhaustive();
       return (
         (props.when ? whenResolver(props.when) : true) &&
         (props.language ? languageResolver(props.language) : true)
       );
     });
-    return (
-      <Show when={show()}>
-        <div>{props.children}</div>{" "}
-      </Show>
-    );
+    return <Show when={show()}>{props.children}</Show>;
   };
   const Toggle = (
     props: ParentProps<{
@@ -274,7 +204,7 @@ export function createInteractiveDoc<
             {props.label}
           </Switch.Label>
         </Switch>
-        <div class="">{props.children}</div>
+        {props.children}
       </div>
     );
   };
@@ -283,5 +213,20 @@ export function createInteractiveDoc<
     Section,
     Condition,
     Toggle,
+    preload: {
+      pgOptions,
+      languages: {
+        frontend: Object.keys(codeExamples.frontend) as [
+          FrontendLanguage,
+          ...FrontendLanguage[],
+        ],
+        backend: Object.keys(codeExamples.backend) as [
+          BackendLanguage,
+          ...BackendLanguage[],
+        ],
+        hybrid: codeExamples.hybrid ? Object.keys(codeExamples.hybrid) : [],
+      },
+      params: initialParams,
+    },
   };
 }

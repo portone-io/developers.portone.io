@@ -1,0 +1,433 @@
+---
+title: 퀵 가이드
+description: 결제연동 퀵 가이드
+customLayout: InteractiveDocs
+targetVersion: ["v2"]
+versionVariants:
+  v1: /opi/ko/integration/ready/readme?v=v1
+---
+
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
+
+import { Condition, InteractiveDoc, Section } from "./_preview";
+
+<InteractiveDoc>
+  퀵 가이드 내용을 포함한 포트원 결제 연동 샘플 프로젝트를 [GitHub 저장소](https://github.com/portone-io/portone-sample)에서 추가로 확인하실 수 있습니다.
+
+  ## 브라우저 측
+
+  <Section section="client:import-portone-sdk">
+    ### 포트원 브라우저 SDK 불러오기
+
+    포트원 브라우저 SDK를 불러옵니다.
+
+    <Condition language="frontend/React">
+      아래 명령어로 브라우저 SDK를 설치합니다.
+
+      <Tabs>
+        <Tabs.Tab title="npm">
+          ```shell
+          npm install --save @portone/browser-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="yarn">
+          ```shell
+          yarn add @portone/browser-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="pnpm">
+          ```shell
+          pnpm add @portone/browser-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="bun">
+          ```shell
+          bun add @portone/browser-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="deno">
+          ```shell
+          deno add npm:@portone/browser-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="ni">
+          ```shell
+          ni @portone/browser-sdk
+          ```
+        </Tabs.Tab>
+      </Tabs>
+    </Condition>
+  </Section>
+
+  <Section section="client:fetch-item">
+    ### 상품 정보 불러오기
+
+    서버로부터 결제할 상품의 정보를 불러옵니다.
+  </Section>
+
+  <Section section="client:request-payment">
+    ### 결제 요청
+
+    포트원 브라우저 SDK를 사용하여 결제를 요청합니다.
+
+    <Section section="client:request-payment:payment-id">
+      #### paymentId 설정
+
+      paymentId는 결제 요청 시 사용하는 고유한 ID입니다. 포트원에서 제공하지 않고 수동으로 생성해야 합니다.
+    </Section>
+
+    <Section section="client:request-payment:channel-key">
+      #### 채널 정보 설정
+
+      포트원 관리자콘솔의 [결제 연동 > 연동 정보 > 채널 관리](https://admin.portone.io/integration-v2/manage/channel) 메뉴에서 상점아이디와 채널키를 찾아 입력합니다.
+    </Section>
+
+    <Condition when={({ pg: { name } }) => ['ksnet', 'inicis', 'smartro'].includes(name)}>
+      <Section section="client:request-payment:customer-data">
+        #### 고객 정보 설정
+
+        결제 시 요구되는 고객 정보를 입력합니다.
+
+        <Condition when={({ pg: { name }}) => name === 'ksnet'}>
+          KSNET 결제 시 구매자 이름을 필수로 입력해야 합니다.
+        </Condition>
+
+        <Condition when={({ pg: { name }}) => name === 'inicis'}>
+          KG이니시스 결제 시 구매자 이름, 연락처, 이메일을 필수로 입력해야 합니다.
+        </Condition>
+
+        <Condition when={({ pg: { name }}) => name === 'smartro'}>
+          스마트로 결제 시 구매자 연락처를 필수로 입력해야 합니다.
+        </Condition>
+      </Section>
+    </Condition>
+
+    <Section section="client:request-payment:custom-data">
+      #### customData 설정
+
+      customData에는 임의의 데이터를 저장할 수 있습니다. 서버에서 결제건 조회 시에 확인할 수 있으며, 상품 정보를 전달하여 서버가 인식한 상품 정보와 일치하는지 확인할 수 있습니다.
+    </Section>
+  </Section>
+
+  <Section section="client:handle-payment-error">
+    ### 결제 오류 처리
+
+    결제 중 오류가 발생하여 결제가 완료되지 않은 경우를 처리합니다.
+  </Section>
+
+  <Section section="client:request-server-side-verification">
+    ### 서버 측으로 결제 완료 요청
+
+    완료된 결제의 paymentId를 서버로 전송하여 결제 상태를 반영합니다.
+
+    <Condition when={({ pg }) => pg.payMethods !== "virtualAccount" }>
+      <Section section="client:handle-payment-status:paid">
+        ### 결제 완료 상태 처리
+
+        서버로부터 검증 후 결제가 완료된 경우를 처리합니다.
+      </Section>
+    </Condition>
+
+    <Condition when={({ pg }) => pg.payMethods === "virtualAccount" }>
+      <Section section="client:handle-payment-status:virtual-account-issued">
+        ### 가상계좌 발급 상태 처리
+
+        서버로부터 검증 후 가상계좌가 발급된 경우를 처리합니다.
+      </Section>
+    </Condition>
+
+    <Section section="client:handle-payment-status:failed">
+      ### 결제 실패 상태 처리
+
+      서버로부터 검증 결과를 획득하여, 결제가 최종적으로 실패한 경우를 처리합니다.
+    </Section>
+  </Section>
+
+  ## 서버 측
+
+  <Section section="server:import-portone-sdk">
+    ### 포트원 서버 SDK 불러오기
+
+    포트원 서버 SDK를 불러옵니다.
+
+    <Condition language="backend/Express">
+      아래 명령어로 서버 SDK를 설치합니다.
+
+      <Tabs>
+        <Tabs.Tab title="npm">
+          ```shell
+          npm install --save @portone/server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="yarn">
+          ```shell
+          yarn add @portone/server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="pnpm">
+          ```shell
+          pnpm add @portone/server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="bun">
+          ```shell
+          bun add @portone/server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="deno">
+          ```shell
+          deno add jsr:@portone/server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="ni">
+          ```shell
+          ni @portone/server-sdk
+          ```
+        </Tabs.Tab>
+      </Tabs>
+
+      Node.js의 경우 v20 이상에서 정상 동작하며, v20 미만 버전은 폴리필이 필요합니다.
+
+      <Details>
+        <Details.Summary>폴리필 방법</Details.Summary>
+
+        <Details.Content>
+          <Tabs>
+            <Tabs.Tab title="Node.js v18 이상 v20 미만">
+              애플리케이션 코드 시작 부분에 아래 코드를 삽입해 주세요.
+
+              ```javascript title="CommonJS"
+              globalThis.crypto = require("node:crypto").webcrypto;
+              ```
+
+              ```javascript title="ESM"
+              import { webcrypto } from "node:crypto";
+              globalThis.crypto = webcrypto;
+              ```
+            </Tabs.Tab>
+
+            <Tabs.Tab title="Node.js v18 미만">
+              [@whatwg-node/fetch](https://www.npmjs.com/package/@whatwg-node/fetch) 패키지를 의존성에 추가해 주세요.
+
+              애플리케이션 코드 시작 부분에 아래 코드를 삽입해 주세요.
+
+              ```javascript title="CommonJS"
+              const { fetch, crypto } = require("@whatwg-node/fetch");
+              globalThis.fetch = fetch;
+              globalThis.crypto = crypto;
+              ```
+
+              ```javascript title="ESM"
+              import { crypto, fetch } from "@whatwg-node/fetch";
+              globalThis.fetch = fetch;
+              globalThis.crypto = crypto;
+              ```
+            </Tabs.Tab>
+          </Tabs>
+        </Details.Content>
+      </Details>
+    </Condition>
+
+    <Condition language="backend/FastAPI">
+      아래 명령어로 서버 SDK를 설치합니다.
+
+      <Tabs>
+        <Tabs.Tab title="uv">
+          ```shell
+          uv add portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="poetry">
+          ```shell
+          poetry add portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="rye">
+          ```shell
+          rye add portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="pipenv">
+          ```shell
+          pipenv install portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="Conda">
+          ```shell
+          conda install portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="Hatch">
+          ```toml title="pyproject.toml"
+          [project]
+          dependencies = [
+            "portone-server-sdk~=x.x.x"
+          ]
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="PDM">
+          ```shell
+          pdm add portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="pip requirements">
+          ```shell title="requirements.txt"
+          portone-server-sdk ~= x.x.x
+          ```
+        </Tabs.Tab>
+      </Tabs>
+    </Condition>
+
+    <Condition language="backend/Flask">
+      아래 명령어로 서버 SDK를 설치합니다.
+
+      <Tabs>
+        <Tabs.Tab title="uv">
+          ```shell
+          uv add portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="poetry">
+          ```shell
+          poetry add portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="rye">
+          ```shell
+          rye add portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="pipenv">
+          ```shell
+          pipenv install portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="Conda">
+          ```shell
+          conda install portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="Hatch">
+          ```toml title="pyproject.toml"
+          [project]
+          dependencies = [
+            "portone-server-sdk~=x.x.x"
+          ]
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="PDM">
+          ```shell
+          pdm add portone-server-sdk
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="pip requirements">
+          ```shell title="requirements.txt"
+          portone-server-sdk ~= x.x.x
+          ```
+        </Tabs.Tab>
+      </Tabs>
+    </Condition>
+
+    <Condition language="backend/Spring_Kotlin">
+      Maven Central을 통해 서버 SDK를 설치합니다.
+
+      <Tabs>
+        <Tabs.Tab title="Apache Maven">
+          ```xml
+          <dependency>
+            <groupId>io.portone</groupId>
+            <artifactId>server-sdk</artifactId>
+            <version>x.x.x</version>
+          </dependency>
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="Gradle (Kotlin)">
+          ```kotlin
+          implementation("io.portone:server-sdk:x.x.x")
+          ```
+        </Tabs.Tab>
+
+        <Tabs.Tab title="Gradle (Groovy)">
+          ```groovy
+          implementation 'io.portone:server-sdk:x.x.x'
+          ```
+        </Tabs.Tab>
+      </Tabs>
+    </Condition>
+  </Section>
+
+  <Section section="server:portone-api-secret">
+    ### 포트원 API Secret 설정
+
+    서버 SDK를 사용하기 위해 포트원 V2 API Secret을 설정합니다.
+    API Secret은 포트원 관리자콘솔의 [결제 연동 > 연동 정보 > 식별코드 ・ API Keys > V2 API](https://admin.portone.io/integration-v2/manage/api-keys?version=v2)에서 발급받으실 수 있습니다.
+  </Section>
+
+  <Section section="server:complete-payment">
+    ### 결제 완료 요청
+
+    완료된 결제의 실제 상태를 조회해 시스템에 반영합니다. 브라우저 SDK를 통해 결제하는 경우 모든 결제 과정이 브라우저에서 진행되므로 결제가 조작되는 것을 막기 위해 서버에서 검증이 필요합니다.
+  </Section>
+
+  <Section section="server:complete-payment:get-payment">
+    ### 결제 정보 조회
+
+    브라우저에서 전송한 paymentId를 통해 실제 결제 상태를 조회합니다.
+  </Section>
+
+  <Section section="server:complete-payment:verify-payment">
+    ### 결제 정보 일치 검증
+
+    포트원에 전달한 customData로 조회한 상품 정보와 결제 정보가 일치하는지 검증합니다.
+  </Section>
+
+  <Section section="server:webhook">
+    ### 웹훅 수신
+
+    결제 상태의 변화를 실시간으로 확인해야 한다면 웹훅을 사용할 수 있습니다.
+
+    <Section section="server:webhook:raw-body">
+      ### HTTP Body 수신 설정
+
+      웹훅 내용을 검증하기 위해서는 HTTP Body를 문자열 형태로 수신해야 합니다.
+    </Section>
+
+    <Section section="server:webhook:verify">
+      ### 웹훅 검증
+
+      수신한 웹훅이 위조되지 않았는지 포트원 서버 SDK를 사용하여 검증합니다.
+    </Section>
+
+    <Section section="server:webhook:complete-payment">
+      ### 결제 상태 업데이트
+
+      검증된 웹훅 결과를 바탕으로 결제 상태를 업데이트합니다.
+    </Section>
+  </Section>
+</InteractiveDoc>

@@ -2,12 +2,13 @@ import { createContextProvider } from "@solid-primitives/context";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import {
+  batch,
   type Component,
   createEffect,
   createMemo,
   createSignal,
+  on,
   type Setter,
-  untrack,
 } from "solid-js";
 import { createStore } from "solid-js/store";
 
@@ -23,18 +24,20 @@ export type CodeExample<
 > = {
   fileName: string;
   code: Code<Params, Sections>;
+  language: string;
 };
 
 export type Tab = {
   fileName: string;
   sections: Record<string, Section>;
   code: string;
+  language: string;
 };
 
 export type PayMethod = "card" | "virtualAccount";
 export type Pg =
   | "nice"
-  | "smatro"
+  | "smartro"
   | "toss"
   | "kpn"
   | "inicis"
@@ -71,52 +74,106 @@ const highlighterInstance = createHighlighterCore({
     import("shiki/langs/javascript.mjs"),
     import("shiki/langs/html.mjs"),
     import("shiki/langs/css.mjs"),
+    import("shiki/langs/python.mjs"),
+    import("shiki/langs/kotlin.mjs"),
   ],
   engine: createOnigurumaEngine(import("shiki/wasm")),
 });
 
+type Params = DefaultParams & object;
+export type InteractiveDocsInit = {
+  pgOptions: PgOptions;
+  languages: {
+    frontend: [string, ...string[]];
+    backend: [string, ...string[]];
+    hybrid: string[];
+  };
+  params: DefaultParams & object;
+};
+
 const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
-  () => {
-    type Params = DefaultParams & object;
-    const [params, setParams] = createStore<Params>({
-      pg: {
-        name: "inicis",
-        payMethods: "card",
+  (props: { initial?: InteractiveDocsInit }) => {
+    const defaultInitial: InteractiveDocsInit = {
+      pgOptions: {
+        hyphen: { payMethods: ["card"] },
       },
-    });
+      languages: {
+        frontend: ["react"],
+        backend: ["node"],
+        hybrid: ["nextjs"],
+      },
+      params: {
+        pg: {
+          name: "hyphen",
+          payMethods: "card",
+        },
+      },
+    };
+    const initial = createMemo(() => props.initial ?? defaultInitial);
+    const [params, setParams] = createStore<Params>(initial().params);
+    // initial 변경 시 DefaultParams 값 초기화
+    createEffect(
+      on(initial, (initial) => {
+        setParams(initial.params);
+      }),
+    );
+
     const [preview, setPreview] = createSignal<Component | undefined>(
       undefined,
     );
-    const [pgOptions, setPgOptions] = createSignal<PgOptions>({
-      inicis: {
-        payMethods: ["card"],
-      },
-    });
-    createEffect(() => {
-      const pg = Object.keys(pgOptions())[0] as Pg | undefined;
-      if (!pg) return;
-      const pgOption = pgOptions()[pg];
-      if (!pgOption) return;
-      setParams("pg", {
-        name: pg,
-        payMethods: pgOption.payMethods[0],
-      });
-    });
-    const [languages, setLanguages] = createSignal<{
-      frontend: [string, ...string[]];
-      backend: [string, ...string[]];
-      hybrid: string[];
-    }>({
-      frontend: ["react", "html"],
-      backend: ["node", "python"],
-      hybrid: ["nextjs"],
-    });
+    const pgName = createMemo(() => params.pg.name);
+    const pgOptions = createMemo(() => initial().pgOptions);
+    // PG사 변경 시 처리
+    createEffect(
+      on([pgName, pgOptions], ([pgName, pgOptions]) => {
+        const pgOption = pgOptions[pgName];
+        if (pgOption === undefined) {
+          const firstPgName = Object.keys(pgOptions)[0];
+          if (firstPgName) {
+            setParams("pg", "name", firstPgName as Pg);
+          }
+        } else {
+          const payMethod = pgOption.payMethods.find(
+            (method) => method === params.pg.payMethods,
+          );
+          if (!payMethod && pgOption.payMethods[0]) {
+            setParams("pg", "payMethods", pgOption.payMethods[0]);
+          }
+        }
+      }),
+    );
+
+    const languages = createMemo(() => initial().languages);
     const [selectedLanguage, setSelectedLanguage] = createSignal<
-      [frontend: string, backend: string] | string
-    >(["react", "node"]);
-    createEffect(() => {
-      setSelectedLanguage([languages().frontend[0], languages().backend[0]]);
-    });
+      [frontend: string, backend: string] | string | null
+    >([languages().frontend[0], languages().backend[0]]);
+    // 언어 변경 시 처리
+    createEffect(
+      on([selectedLanguage, languages], ([selectedLanguage, languages]) => {
+        if (selectedLanguage === null) return;
+        if (Array.isArray(selectedLanguage)) {
+          const [frontend, backend] = selectedLanguage;
+          batch(() => {
+            if (!languages.frontend.includes(frontend)) {
+              setSelectedLanguage([languages.frontend[0], backend]);
+            }
+            if (!languages.backend.includes(backend)) {
+              setSelectedLanguage([frontend, languages.backend[0]]);
+            }
+          });
+        } else {
+          if (!languages.hybrid.includes(selectedLanguage)) {
+            setSelectedLanguage(
+              languages.hybrid[0] ?? [
+                languages.frontend[0],
+                languages.backend[0],
+              ],
+            );
+          }
+        }
+      }),
+    );
+
     const [codeExamples, setCodeExamples] = createSignal<{
       frontend: Record<string, CodeExample<Params, string>[]>;
       backend: Record<string, CodeExample<Params, string>[]>;
@@ -126,33 +183,46 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
       backend: {},
     });
     const [tabs, setTabs] = createSignal<Tab[]>([]);
-    createEffect(() => {
-      const resolveCode = (example: CodeExample<Params, string>): Tab => {
-        const { code, sections } = example.code(params);
-        return {
-          fileName: example.fileName,
-          code,
-          sections: sections as Record<string, Section>,
-        };
-      };
-      const _selectedLanguage = selectedLanguage();
-      if (_selectedLanguage === null) return [];
-      if (Array.isArray(_selectedLanguage)) {
-        const [frontend, backend] = _selectedLanguage;
-        return setTabs(
-          [
-            ...(codeExamples()["frontend"][frontend] ?? []),
-            ...(codeExamples()["backend"][backend] ?? []),
-          ].map(resolveCode),
-        );
-      }
-      const hybrid = codeExamples()["hybrid"];
-      return setTabs(
-        hybrid ? (hybrid[_selectedLanguage] ?? []).map(resolveCode) : [],
-      );
-    });
+    createEffect(
+      on(
+        [selectedLanguage, codeExamples],
+        ([selectedLanguage, codeExamples]) => {
+          const resolveCode = (example: CodeExample<Params, string>): Tab => {
+            const { code, sections } = example.code(params);
+            return {
+              fileName: example.fileName,
+              code,
+              sections: sections as Record<string, Section>,
+              language: example.language,
+            };
+          };
+          if (selectedLanguage === null) return [];
+          if (Array.isArray(selectedLanguage)) {
+            const [frontend, backend] = selectedLanguage;
+            return setTabs(
+              [
+                ...(codeExamples["frontend"][frontend] ?? []),
+                ...(codeExamples["backend"][backend] ?? []),
+              ].map(resolveCode),
+            );
+          }
+          const hybrid = codeExamples["hybrid"];
+          return setTabs(
+            hybrid ? (hybrid[selectedLanguage] ?? []).map(resolveCode) : [],
+          );
+        },
+      ),
+    );
     const [selectedTab, setSelectedTab] = createSignal<string | null>(
       tabs()[0]?.fileName ?? null,
+    );
+    createEffect(
+      on([tabs, selectedTab], ([tabs, selectedTab]) => {
+        const tab = tabs.find((tab) => tab.fileName === selectedTab);
+        if (!tab) {
+          setSelectedTab(tabs[0]?.fileName ?? null);
+        }
+      }),
     );
     const sections = createMemo<Record<string, { fileName: string } & Section>>(
       () => {
@@ -190,35 +260,24 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
       if (!section) return null;
       return sections()[section] ?? null;
     });
-
     // Section 변경 시 Tab 이동
-    createEffect(() => {
-      const section = highlightSection();
-      if (!section) return;
-      const tab = tabs().find((tab) => tab.fileName === section.fileName);
-      if (tab) {
-        setSelectedTab(tab.fileName);
-      }
-    });
+    createEffect(
+      on([highlightSection, tabs], ([section, tabs]) => {
+        if (!section) return;
+        const tab = tabs.find((tab) => tab.fileName === section.fileName);
+        if (tab) {
+          setSelectedTab(tab?.fileName);
+        }
+      }),
+    );
+
     const [highlighter, setHighlighter] =
       createSignal<Awaited<ReturnType<typeof createHighlighterCore>>>();
     void highlighterInstance.then(setHighlighter);
 
-    // PG사 변경 시 payMethods 초기화
-    createEffect(() => {
-      const pg = params.pg.name;
-      setParams(
-        "pg",
-        "payMethods",
-        untrack(() => pgOptions()[pg]!.payMethods[0]!),
-      );
-    });
-
     return {
       pgOptions,
-      setPgOptions,
       languages,
-      setLanguages,
       selectedLanguage,
       setSelectedLanguage,
       params,
@@ -238,22 +297,20 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
   },
   {
     pgOptions: () => ({
-      inicis: {
+      toss: {
         payMethods: ["card"],
       },
     }),
-    setPgOptions: (_) => {},
     languages: () => ({
-      frontend: ["react", "html"],
-      backend: ["node", "python"],
-      hybrid: ["nextjs"],
+      frontend: ["React", "HTML"],
+      backend: ["Express", "FastAPI", "Flask", "Spring_Kotlin"],
+      hybrid: [],
     }),
-    setLanguages: (_) => {},
-    selectedLanguage: () => ["react", "node"],
+    selectedLanguage: () => ["react", "express"],
     setSelectedLanguage: (_) => {},
     params: {
       pg: {
-        name: "inicis",
+        name: "toss",
         payMethods: "card",
       },
     },
