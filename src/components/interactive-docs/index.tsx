@@ -1,11 +1,13 @@
 export { code } from "./code";
 import { Switch } from "@kobalte/core/switch";
+import { trackStore } from "@solid-primitives/deep";
 import {
   batch,
   children,
   type Component,
   createEffect,
   createMemo,
+  on,
   onCleanup,
   type ParentComponent,
   type ParentProps,
@@ -153,25 +155,32 @@ export function createInteractiveDoc<
     }>,
   ) => {
     const { params, selectedLanguage } = useInteractiveDocs();
-    const show = createMemo(() => {
-      const whenResolver = (when: Required<typeof props>["when"]) =>
-        when(params as Params);
-      const languageResolver = (language: Required<typeof props>["language"]) =>
-        match(selectedLanguage())
-          .with(
-            [P.string, P.string],
-            ([frontend, backend]) =>
-              `frontend/${frontend}` === language ||
-              `backend/${backend}` === language,
-          )
-          .with(P.string, (hybrid) => `hybrid/${hybrid}` === language)
-          .with(P.nullish, () => false)
-          .exhaustive();
-      return (
-        (props.when ? whenResolver(props.when) : true) &&
-        (props.language ? languageResolver(props.language) : true)
-      );
-    });
+    const show = createMemo(
+      on(
+        [() => trackStore(params), selectedLanguage],
+        ([params, selectedLanguage]) => {
+          const whenResolver = (when: Required<typeof props>["when"]) =>
+            when(params as Params);
+          const languageResolver = (
+            language: Required<typeof props>["language"],
+          ) =>
+            match(selectedLanguage)
+              .with(
+                [P.string, P.string],
+                ([frontend, backend]) =>
+                  `frontend/${frontend}` === language ||
+                  `backend/${backend}` === language,
+              )
+              .with(P.string, (hybrid) => `hybrid/${hybrid}` === language)
+              .with(P.nullish, () => false)
+              .exhaustive();
+          return (
+            (props.when ? whenResolver(props.when) : true) &&
+            (props.language ? languageResolver(props.language) : true)
+          );
+        },
+      ),
+    );
     return <Show when={show()}>{props.children}</Show>;
   };
   const Toggle = (
