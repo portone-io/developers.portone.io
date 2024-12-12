@@ -36,7 +36,7 @@ export function Preview() {
     });
   };
 
-  // 재시도를 누르거나 파라미터가 변경될 때마다 초기화
+  // 파라미터가 변경될 때마다 초기화
   createEffect(on(() => trackStore(params), reload));
 
   const requestPayment = async () => {
