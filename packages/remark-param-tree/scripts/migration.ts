@@ -4,7 +4,13 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import fastGlob from "fast-glob";
-import type { Paragraph, Root } from "mdast";
+import type {
+  Heading,
+  ListItem,
+  Paragraph,
+  PhrasingContent,
+  Root,
+} from "mdast";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { toString } from "mdast-util-to-string";
 import remarkFrontmatter from "remark-frontmatter";
@@ -16,7 +22,6 @@ import stringWidth from "string-width";
 import { match, P } from "ts-pattern";
 import { unified } from "unified";
 import { SKIP, visit } from "unist-util-visit";
-import type { VFile } from "vfile";
 
 type TypeDefinition = {
   name: string;
@@ -25,28 +30,21 @@ type TypeDefinition = {
 };
 
 function migration() {
-  return function (tree: Root, file: VFile) {
+  return function (tree: Root) {
     visit(tree, "mdxJsxFlowElement", (node) => {
       if (node.name === "ParamTree") {
-        visit(node, "listItem", (listItem) => {
-          if (listItem.children[0]?.type !== "paragraph") {
-            return;
-          }
-          listItem.children[0].children = listItem.children[0].children.filter(
-            (child) =>
-              match(child)
-                .with(
-                  {
-                    type: "text",
-                    value: P.when((value) => value.trim() === ""),
-                  },
-                  () => false,
-                )
-                .otherwise(() => true),
-          );
-          const typeDefinition: TypeDefinition | null = match(
-            listItem.children[0],
-          )
+        const isNonEmptyTextNode = (child: PhrasingContent) =>
+          match(child)
+            .with(
+              {
+                type: "text",
+                value: P.when((value) => value.trim() === ""),
+              },
+              () => false,
+            )
+            .otherwise(() => true);
+        const generateTypeDefinition = (node: Paragraph | Heading) =>
+          match(node)
             .with(
               {
                 children: [
@@ -100,14 +98,42 @@ function migration() {
               // console.log(workingFile, toString(listItem.children[0]));
               return null;
             });
-
-          if (typeDefinition) {
-            listItem.children[0] = fromMarkdown(
-              `${typeDefinition.name}${typeDefinition.optional ? "?" : ""}: ${typeDefinition.type}`,
-              "utf-8",
-            ).children[0] as Paragraph;
+        const transformNode = (node: ListItem | Heading) => {
+          match(node)
+            .with(
+              {
+                type: "listItem",
+                children: [{ type: "paragraph" }, ...P.array()],
+              },
+              (node) => {
+                node.children[0].children =
+                  node.children[0].children.filter(isNonEmptyTextNode);
+                const typeDefinition = generateTypeDefinition(node.children[0]);
+                if (typeDefinition) {
+                  node.children[0] = fromMarkdown(
+                    `${typeDefinition.name}${typeDefinition.optional ? "?" : ""}: ${typeDefinition.type}`,
+                    "utf-8",
+                  ).children[0] as Paragraph;
+                }
+              },
+            )
+            .with({ type: "heading" }, (node) => {
+              node.children = node.children.filter(isNonEmptyTextNode);
+              const typeDefinition = generateTypeDefinition(node);
+              if (typeDefinition) {
+                node.children = fromMarkdown(
+                  `${typeDefinition.name}${typeDefinition.optional ? "?" : ""}: ${typeDefinition.type}`,
+                  "utf-8",
+                ).children as PhrasingContent[];
+              }
+            })
+            .otherwise(() => null);
+          if (!node) {
+            return;
           }
-        });
+        };
+        visit(node, "listItem", transformNode);
+        visit(node, "heading", transformNode);
         return SKIP;
       }
       return;
