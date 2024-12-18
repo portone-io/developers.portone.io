@@ -1,4 +1,5 @@
 import { createContextProvider } from "@solid-primitives/context";
+import { trackStore } from "@solid-primitives/deep";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import {
@@ -185,8 +186,8 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     const [tabs, setTabs] = createSignal<Tab[]>([]);
     createEffect(
       on(
-        [selectedLanguage, codeExamples],
-        ([selectedLanguage, codeExamples]) => {
+        [() => trackStore(params), selectedLanguage, codeExamples],
+        ([params, selectedLanguage, codeExamples]) => {
           const resolveCode = (example: CodeExample<Params, string>): Tab => {
             const { code, sections } = example.code(params);
             return {
