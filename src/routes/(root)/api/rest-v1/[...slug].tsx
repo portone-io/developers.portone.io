@@ -54,14 +54,9 @@ export default function ApiV1Docs() {
           비인증 결제, 정기 자동결제 등 부가기능을 위한 REST API도 제공합니다.
         </prose.p>
         <Hint style="danger">
-          2024년 9월 1일부로 포트원 V1 API에 대해 일부 보안 규격이 지원
-          종료됩니다.
-          <br />
-          자세한 사항은
-          <a href="/opi/ko/support/tls-support?v=v1" style="color:orange">
-            TLS 지원 범위
-          </a>
-          를 참고해주세요.
+          2024년 9월 1일부로 포트원 V1 API에 대해 일부 보안 규격이 지원 종료됩니다.
+      
+          자세한 사항은 [TLS 지원 범위](/opi/ko/support/tls-support?v=v1)를 참고해주세요.
         </Hint>
         <prose.p>
           <strong>V1 API hostname: </strong>
