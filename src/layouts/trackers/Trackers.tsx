@@ -3,7 +3,7 @@ import { onMount } from "solid-js";
 import GoogleTagManager from "./GoogleTagManager";
 import NaverAdvertiseAnalytics from "./NaverAdvertiseAnalytics";
 
-const isProd = import.meta.env.VERCEL_ENV === "production";
+const isProd = import.meta.env.VITE_VERCEL_ENV === "production";
 
 export default function Trackers() {
   onMount(() => {
