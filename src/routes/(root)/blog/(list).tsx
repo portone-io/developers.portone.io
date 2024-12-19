@@ -14,7 +14,7 @@ export const loadLatestPosts = cache(async () => {
       (entry) =>
         !entry.frontmatter.draft ||
         import.meta.env.DEV ||
-        import.meta.env.VERCEL_ENV === "preview",
+        import.meta.env.VITE_VERCEL_ENV === "preview",
     )
     .map((entry) => ({
       slug: entry.slug,
