@@ -34,7 +34,7 @@ app = FastAPI()
 
 items = {item.id: item for item in [Item("shoes", "신발", 1000, "KRW")]}
 ${({ section }) => section("server:portone-api-secret")`
-portone_client = portone.PortOneClient(secret=os.environ["V2_API_SECRET"])
+portone_client = portone.PaymentClient(secret=os.environ["V2_API_SECRET"])
 `}
 
 ${({ section }) => section("server:complete-payment")`
