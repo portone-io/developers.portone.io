@@ -1,7 +1,7 @@
 ---
 title: 스마트 라우팅 - 연동하기
 description: 멀티PG 환경을 클릭 한 번으로 쉽게 만들 수 있는 결제 트래픽 분산 자동화 서비스 입니다.
-targetVersions: ["v2"]
+targetVersions: ["v1", "v2"]
 ---
 
 import Details from "~/components/gitbook/Details";
@@ -26,17 +26,46 @@ SDK를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
 <VersionGate v="v1">
   인증결제와 관련된 자세한 내용은 [인증 결제 연동하기](/opi/ko/integration/start/v1/auth) 문서를 참고하시기 바랍니다.
+
+### 예제 코드
+
+```ts
+IMP.request_pay(
+{
+  // 결제대행사를 지정할 때 사용한 channelKey, pg 대신
+  // channelGroupId 파라미터에 스마트 라우팅 그룹 ID를 설정합니다.
+  channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+  pay_method: "card", //결제수단 선택
+  merchant_uid: "ORD20180131-0000011", //고객사 주문번호
+  name: "Norway swivel chair", //주문명
+  amount: 1000, // 결제 금액
+  //고객 정보
+  buyer_email: "gildong@gmail.com",
+  buyer_name: "Hong Gildong",
+  buyer_tel: "010-4242-4242",
+  buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+  buyer_postcode: "01181",
+},
+function (rsp) {
+// callback
+if (rsp.success) {
+// Payment is successful
+} else {
+// Payment failed
+}
+},
+);
+```
 </VersionGate>
 
 <VersionGate v="v2">
   인증결제와 관련된 자세한 내용은 [인증 결제 연동하기](/opi/ko/integration/start/v2/checkout) 문서를 참고하시기 바랍니다.
-</VersionGate>
 
-### 예제 코드
+  ### 예제 코드
 
-```tsx
-//포트원 인증결제 SDK 호출
-PortOne.requestPayment({
+  ```tsx
+  //포트원 인증결제 SDK 호출
+  PortOne.requestPayment({
   storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
 
   // 결제대행사를 지정할 때 사용한 channelKey 대신
@@ -52,12 +81,13 @@ PortOne.requestPayment({
 
   // 스마트 라우팅 사용 시 필수 파라미터 추가 설정
   customer: {
-    fullName: "홍길동",
-    phoneNumber: "010-1234-5678",
-    email: "test@test.com",
-  },
+  fullName: "홍길동",
+  phoneNumber: "010-1234-5678",
+  email: "test@test.com",
+},
 });
-```
+  ```
+</VersionGate>
 
 ### 주요 파라미터
 
@@ -68,10 +98,79 @@ PortOne.requestPayment({
 - 관리자 콘솔의 \[연동 관리] → \[스마트 라우팅] 메뉴에서 확인할 수 있습니다.
 
 - 스마트 라우팅 그룹 ID를 지정하여 결제창을 호출하면, 스마트 라우팅 그룹 내 설정된 채널 비율에 따라
-  확률 기반으로 하나의 결제대행사가 호출됩니다.
+확률 기반으로 하나의 결제대행사가 호출됩니다.
 
 ### 필수 파라미터
 
+<VersionGate v="v1">
+각 파라미터에 대한 상세한 설명은 [결제요청 파라미터](/sdk/ko/v1-sdk/javascript-sdk/payrq) 문서를 참고하시기 바랍니다.
+<ParamTree>
+  - **`merchant_uid`** <mark style="color:green;">**string**</mark>
+
+    **고객사 주문번호**
+
+  - **`name`** <mark style="color:green;">**string**</mark>
+
+    **주문명**
+
+  - **`amount`** <mark style="color:purple;">**number**</mark>
+
+    **결제금액**
+
+  - **`pay_method`** <mark style="color:green;">**string**</mark>
+
+    **결제수단 구분코드**
+
+  - **`custom_data`** <mark style="color:blue;">**object**</mark>
+
+    **사용자 정의 데이터**
+
+    - 결제 응답시 **echo** 로 받아보실 수 있는 필드 입니다.
+    - JSON notation(string)으로 저장됩니다.
+    - 주문 건에 대해 부가정보를 저장할 공간이 필요할 때 사용합니다
+
+  - **`tax_free`** <mark style="color:purple;">**number**</mark>
+
+    **면세금액**
+
+    결제금액 중 면세금액에 해당하는 금액을 입력합니다.
+
+  - **`vat_amount`**: <mark style="color:purple;">**number**</mark>
+
+    **부가세**
+
+    결제금액 중 부가세에 해당하는 금액을 입력합니다. (기본값: null)
+
+  - **`vbank_due`** <mark style="color:green;">**string**</mark>
+
+    **가상계좌 입금기한**
+
+    스마트 라우팅을 이용한 가상계좌 결제 사용 시 필수 입력해야 합니다.
+
+    다음과 같은 형식으로 설정이 가능합니다 :
+    - `YYYY-MM-DD`
+    - `YYYYMMDD`
+    - `YYYY-MM-DD HH:mm:ss`
+    - `YYYYMMDDHHmmss`
+
+  - **`buyer_tel`** <mark style="color:green;">**string**</mark>
+
+    **주문자 연락처**
+
+    일부 PG사에서 해당 필드 누락시 오류 발생
+
+  - **`buyer_email`** <mark style="color:green;">**string**</mark>
+
+    **주문자 이메일**
+
+    일부 PG사에서 해당 필드 누락시 오류 발생(페이먼트월)
+
+</ParamTree>
+
+기타 파라미터는 [결제요청 파라미터](/sdk/ko/v1-sdk/javascript-sdk/payrq) 문서를 참고하시길 바랍니다.
+</VersionGate>
+
+<VersionGate v="v2">
 각 파라미터에 대한 상세한 설명은 [결제요청 파라미터](/sdk/ko/v2-sdk/payment-request) 문서를 참고하시기 바랍니다.
 
 <ParamTree>
@@ -160,7 +259,8 @@ PortOne.requestPayment({
     </ParamTree>
 </ParamTree>
 
-기타 파라미터는 [결제요청 파라미터](/sdk/ko/v2-sdk/payment-request) 문서를 참고하시길 바립니다.
+기타 파라미터는 [결제요청 파라미터](/opi/ko/integration/v2-sdk/payment-request) 문서를 참고하시길 바립니다.
+</VersionGate>
 
 ### 유의사항
 
@@ -203,7 +303,33 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 </VersionGate>
 
 ### 예제 코드
+<VersionGate v="v1">
 
+  ```ts title="server-side"
+  // card_number, expiry, birth, pwd_2digit 등 정보를 전달받습니다.
+  // 포트원 비인증 결제(일회성) API 호출
+  const onetimeResponse = await fetch(
+  "https://api.iamport.kr/subscribe/payments/onetime",
+  {
+    method: "POST",
+    headers: {
+    Authorization: `Bearer ${ACCESS_TOKEN}`,
+    "Content-Type": "application/json",
+  },
+    body: JSON.stringify({
+    channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+    card_number: "YYYY-YYYY-YYYY-YYYY", // 카드 번호 16자리
+    expiry: "YYYY-MM", // 카드 유효기간
+    birth: "YYMMDD", // 생년 월일. 무기명 법인카드의 경우 사업자 번호 10자리 입력
+    pwd_2digit: "NN", //카드 비밀번호 앞 2자리
+    // 중략...
+  }),
+  },
+  );
+  ```
+</VersionGate>
+
+<VersionGate v="v2">
 <Tabs>
   <Tabs.Tab title="카드 결제">
     ```ts
@@ -305,6 +431,7 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     ```
   </Tabs.Tab>
 </Tabs>
+</VersionGate>
 
 ### 주요 파라미터
 
@@ -319,6 +446,31 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
 ### 필수 파라미터
 
+<VersionGate v="v1">
+<ParamTree>
+  - **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **고객사 거래 고유번호**
+
+  - **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
+
+    **주문 금액**
+
+  - **`card_number`**<mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **카드번호**
+
+    (dddd-dddd-dddd-dddd) 기재 양식을 유의하세요.
+
+  - **`expiry`**<mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+
+    **카드 유효기간**
+
+    (YYYY-MM) 기재 양식을 유의하세요.
+</ParamTree>
+</VersionGate>
+
+<VersionGate v="v2">
 <ParamTree>
   - **`paymentId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
@@ -472,6 +624,7 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
     스마트로로 가상계좌 발급시에만 정보가 유효합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
 </ParamTree>
+</VersionGate>
 
 ### 유의사항
 
@@ -480,7 +633,8 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
   <Details.Content>
     실제로 결제를 요청하여 결제 승인, 실패된 경우 결제대행사 정보를 확인할 수 있습니다.
-    결제대행사 정보는 콘솔 결제내역 또는 결제 조회 API의 `channel` 파라미터에서 확인 가능합니다.
+    <VersionGate v="v1">결제대행사 정보는 콘솔 결제내역 또는 결제 조회 API의 `pg_provider` 파라미터에서 확인 가능합니다.</VersionGate>
+    <VersionGate v="v2">결제대행사 정보는 콘솔 결제내역 또는 결제 조회 API의 `channel` 파라미터에서 확인 가능합니다.</VersionGate>
   </Details.Content>
 </Details>
 
@@ -494,6 +648,7 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
   </Details.Content>
 </Details>
 
+<VersionGate v="v2">
 <Details>
   <Details.Summary> 가상계좌 발급 이용 시 고정식 가상계좌 사용을 권장하지 않습니다.</Details.Summary>
 
@@ -513,7 +668,9 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     정상적으로 가상계좌 발급이 불가능할 수 있습니다.
   </Details.Content>
 </Details>
+</VersionGate>
 
+<VersionGate v="v2">
 ## API 빌링키 발급 및 정기결제 연동하기
 
 빌링키 발급 API 호출 시 생성한 스마트 라우팅 그룹의 ID를 전용 파라미터인 `channelGroupId`에
@@ -987,3 +1144,4 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
     그룹 설정 변경 시 유의하시기 바랍니다.
   </Details.Content>
 </Details>
+</VersionGate>
