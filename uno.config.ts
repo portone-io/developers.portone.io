@@ -14,6 +14,7 @@ const zIndex = {
   "left-sidebar": 8,
   "overlay-dim": 2,
   "selected-tab": 1,
+  "sticky-layout": 3,
 };
 
 export default defineConfig({
