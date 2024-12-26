@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import remarkParamTree from "@portone-io/remark-param-tree";
 import yaml from "@rollup/plugin-yaml";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
@@ -44,7 +45,7 @@ export default defineConfig({
           jsx: true,
           jsxImportSource: "solid-js",
           providerImportSource: "solid-mdx",
-          remarkPlugins: [remarkFrontmatter, remarkGfm],
+          remarkPlugins: [remarkFrontmatter, remarkGfm, remarkParamTree],
           rehypePlugins: [
             rehypeSlug,
             [

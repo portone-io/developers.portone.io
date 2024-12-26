@@ -2,6 +2,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 
 import { subscribe } from "@parcel/watcher";
+import remarkParamTree from "@portone-io/remark-param-tree";
 import fastGlob from "fast-glob";
 import Slugger from "github-slugger";
 import jsYaml from "js-yaml";
@@ -97,6 +98,7 @@ async function parseMdx(
     .use(remarkMdx)
     .use(remarkGfm)
     .use(remarkFrontmatter)
+    .use(remarkParamTree)
     .use(remarkHeadings)
     .use(function () {
       return function (_, file) {
