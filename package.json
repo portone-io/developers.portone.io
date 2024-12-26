@@ -5,15 +5,17 @@
 	"license": "AGPL-3.0-or-later",
 	"repository": "https://github.com/portone-io/developers.portone.io",
 	"scripts": {
-		"dev": "pnpm --filter @portone-io/remark-param-tree build && concurrently -k \"vinxi dev\" \"pnpm gen-collections watch\"",
-		"build": "pnpm gen-collections && pnpm --filter @portone-io/remark-param-tree build && vinxi build",
+		"dev": "pnpm build:deps && concurrently -k \"vinxi dev\" \"pnpm gen-collections watch\"",
+		"build": "pnpm gen-collections && pnpm build:deps && vinxi build",
+		"build:deps": "pnpm --filter @portone-io/remark-param-tree build",
 		"start": "vinxi start",
 		"version": "vinxi version",
 		"check": "pnpm lint",
 		"gen-collections": "tsx src/genCollections.ts",
 		"lint:fix": "NODE_OPTIONS=\"$NODE_OPTIONS --loader ts-node/esm\" eslint --fix .",
 		"lint": "NODE_OPTIONS=\"$NODE_OPTIONS --loader ts-node/esm\" eslint .",
-		"eslint": "NODE_OPTIONS=\"$NODE_OPTIONS --loader ts-node/esm\" eslint"
+		"eslint": "NODE_OPTIONS=\"$NODE_OPTIONS --loader ts-node/esm\" eslint",
+		"postinstall": "pnpm build:deps"
 	},
 	"imports": {
 		"#content": "./src/content/__generated__/index.ts",
