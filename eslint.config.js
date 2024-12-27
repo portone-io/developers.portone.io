@@ -47,6 +47,7 @@ export default [
       "**/routes/(root)/docs/**/*",
       ".vinxi",
       ".output",
+      "packages/**/dist",
     ],
   },
   {
