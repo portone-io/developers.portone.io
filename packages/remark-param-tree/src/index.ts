@@ -43,7 +43,7 @@ export default function remarkParamTreePlugin() {
           const [typeNode, typeStr] = result;
 
           const exec =
-            /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$]*)(?<optional>\?)?:\s*(?<type>.+)$/.exec(
+            /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$]*)(?<optional>\?)?:\s*(?<type>[a-zA-Z0-9_$<>[\]{}|&?()\s]+)$/.exec(
               typeStr,
             );
           if (exec === null) {
