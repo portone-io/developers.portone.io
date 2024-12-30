@@ -7,6 +7,7 @@ versionVariants:
 ---
 
 import Details from "~/components/gitbook/Details";
+import ParamTree from "~/components/gitbook/ParamTree";
 import Tabs from "~/components/gitbook/Tabs";
 
 ## 채널 설정하기
@@ -59,14 +60,18 @@ import Tabs from "~/components/gitbook/Tabs";
 
 ### 주요 파라미터
 
-- `storeId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 포트원 계정에 생성된 상점을 식별하는 고유한 값으로 관리자 콘솔에서 확인할 수 있습니다.
+<ParamTree>
+  - storeId: string
 
-- `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다.
+    포트원 계정에 생성된 상점을 식별하는 고유한 값으로 관리자 콘솔에서 확인할 수 있습니다.
 
-- `orderName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 주문명으로 고객사에서 **40Byte** 이내로 자유롭게 입력합니다.
+  - paymentId: string
+
+    고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다.
+
+  - orderName: string
+
+    주문명으로 고객사에서 **40Byte** 이내로 자유롭게 입력합니다.
 
     <mark style="color:red;">**\***</mark>**특수문자 유의사항**
 
@@ -74,55 +79,68 @@ import Tabs from "~/components/gitbook/Tabs";
     - 사용 불가 : **% & | $ - + = \[ ]**
     - 사용 가능하나 권장하지 않음 : **( )**
 
-- `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키로 호출하고자 하는 채널을 지정합니다.
+  - channelKey: string
 
-- `totalAmount` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
-  - 결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+    콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키로 호출하고자 하는 채널을 지정합니다.
 
-- `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 결제통화로 원화 결제 시 `KRW`로 입력해야 합니다. 나이스페이먼츠의 경우 `KRW`와 `USD`를 지원합니다.
+  - totalAmount: number
 
-- `payMethod` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 결제수단으로 결제하고자 하는 결제수단의 값을 입력해야 합니다.
+    결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
 
-- `taxFreeAmount` <mark style="color:purple;">**number**</mark>
-  - 면세금액으로 나이스페이먼츠와 상점아이디 계약시 지정금액 혹은 복합과세 방식으로 계약한 경우 면세 처리를 위해 면세금액을 반드시 입력해야 합니다.
+  - currency: string
 
-면세금액 미 입력 시 면세금액은 0원으로 자동 처리되며, 결제 요청 금액은 모두 과세 처리 되오니 이 점 유의하시기 바랍니다.
+    결제통화로 원화 결제 시 `KRW`로 입력해야 합니다. 나이스페이먼츠의 경우 `KRW`와 `USD`를 지원합니다.
+
+  - payMethod: string
+
+    결제수단으로 결제하고자 하는 결제수단의 값을 입력해야 합니다.
+
+  - taxFreeAmount?: number
+
+    면세금액으로 나이스페이먼츠와 상점아이디 계약시 지정금액 혹은 복합과세 방식으로 계약한 경우 면세 처리를 위해 면세금액을 반드시 입력해야 합니다.
+
+    면세금액 미 입력 시 면세금액은 0원으로 자동 처리되며, 결제 요청 금액은 모두 과세 처리 되오니 이 점 유의하시기 바랍니다.
+</ParamTree>
 
 ### 유의할 파라미터
 
 - `virtualAccount.accountExpiry`
-  - 가상계좌 발급 시 입금 기한은 필수로 입력해야 합니다.
+
+  가상계좌 발급 시 입금 기한은 필수로 입력해야 합니다.
 
 - `card.installment.monthOption.fixedMonth`
-  - 나이스페이먼츠는 **카드사 다이렉트 호출시 고정 할부 개월수를 필수로 입력**해야 합니다. 결제
-    금액이 할부 지원 금액 미만(대부분 50,000원이상 할부지원이나 카드사에 따라 상이함)인 경우 **할부
-    개월수를 0(일시불)으로 전달**해야 합니다.
+
+  나이스페이먼츠는 **카드사 다이렉트 호출시 고정 할부 개월수를 필수로 입력**해야 합니다. 결제
+  금액이 할부 지원 금액 미만(대부분 50,000원이상 할부지원이나 카드사에 따라 상이함)인 경우 **할부
+  개월수를 0(일시불)으로 전달**해야 합니다.
 
 - `productType`
-  - 휴대폰 소액 결제 시 실물/컨텐츠 여부(`productType`) 파라미터는 필수 입력입니다. 입력하지 않는
-    경우 "나이스페이 V2 휴대폰 소액결제시 상품 유형 파라미터는 필수 입력입니다." 라는 에러 메시지가
-    리턴되면서 결제창 호출에 실패하오니 유의하시기 바랍니다. 또한 상점아이디 설정과 실물/컨텐츠
-    여부가 불일치할 경우 "CPID미설정 오류입나다."라는 메시지가 리턴되며 결제창 호출에 실패하니
-    유의하시기 바랍니다.
+
+  휴대폰 소액 결제 시 실물/컨텐츠 여부(`productType`) 파라미터는 필수 입력입니다. 입력하지 않는
+  경우 "나이스페이 V2 휴대폰 소액결제시 상품 유형 파라미터는 필수 입력입니다." 라는 에러 메시지가
+  리턴되면서 결제창 호출에 실패하오니 유의하시기 바랍니다. 또한 상점아이디 설정과 실물/컨텐츠
+  여부가 불일치할 경우 "CPID미설정 오류입나다."라는 메시지가 리턴되며 결제창 호출에 실패하니
+  유의하시기 바랍니다.
 
 - `giftCertificate.certificateType`
-  - 나이스페이먼츠는 컬쳐랜드만 지원하므로 상품권 결제시 항상 `CULTURELAND`로 지정해주어야 합니다.
+
+  나이스페이먼츠는 컬쳐랜드만 지원하므로 상품권 결제시 항상 `CULTURELAND`로 지정해주어야 합니다.
 
 - `bypass.nice_v2.MallUserID`
-  - 나이스페이먼츠 상품권 결제시 고객사 구매자 ID를 의미하는 MalluserID는 필수로 입력해주어야 합니다.
+
+  나이스페이먼츠 상품권 결제시 고객사 구매자 ID를 의미하는 MalluserID는 필수로 입력해주어야 합니다.
 
 - `easyPay.availablePayMethods`
-  - 나이스페이먼츠를 통한 간편결제 결제 요청 시 다른 간편결제 수단과 다르게 네이버페이와 SSG페이의
-    경우 어떤 방식으로 결제하느냐에 따라 availablePayMethods을 입력해야 합니다..
-    - 네이버페이의 경우 카드 결제인 경우 `CARD`, 포인트 혹은 머니 결제인 경우 `CHARGE` 로 입력해야
-      합니다.
 
-    - SSG페이의 경우 계좌 결제인 경우 `TRANSFER`로 입력해야 하며, SSG페이는 계좌 결제 시에만
-      다이렉트 호출이 가능합니다. 카드 혹은 머니 결제를 이용하시는 경우 `availablePayMethods`를
-      제외한채 호출하시길 바랍니다.
+  나이스페이먼츠를 통한 간편결제 결제 요청 시 다른 간편결제 수단과 다르게 네이버페이와 SSG페이의
+  경우 어떤 방식으로 결제하느냐에 따라 availablePayMethods을 입력해야 합니다.
+
+  - 네이버페이의 경우 카드 결제인 경우 `CARD`, 포인트 혹은 머니 결제인 경우 `CHARGE` 로 입력해야
+    합니다.
+
+  - SSG페이의 경우 계좌 결제인 경우 `TRANSFER`로 입력해야 하며, SSG페이는 계좌 결제 시에만
+    다이렉트 호출이 가능합니다. 카드 혹은 머니 결제를 이용하시는 경우 `availablePayMethods`를
+    제외한채 호출하시길 바랍니다.
 
 ## API 수기(키인)결제 요청하기
 
@@ -173,67 +191,88 @@ import Tabs from "~/components/gitbook/Tabs";
 
 ### 주요 파라미터
 
-- `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 하며, URL path에 포함돼야 합니다.
+<ParamTree>
+  - paymentId: string
 
-- `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키로 호출하고자 하는 채널을 지정합니다.
+    고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 하며, URL path에 포함돼야 합니다.
 
-- `orderName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 주문명으로 고객사에서 자유롭게 입력합니다.
+  - channelKey: string
 
-- `amount` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-  - 결제 금액에 대한 정보를 담고있는 객체입니다.
+    콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키로 호출하고자 하는 채널을 지정합니다.
 
-  - `total` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
-    - 결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+  - orderName: string
 
-  - `taxFree` <mark style="color:purple;">**number**</mark>
-    - 면세 금액으로 나이스페이먼츠과 상점아이디 계약시 지정금액 혹은 복합과세 방식으로 계약한 경우 면세 처리를 위해 면세금액을 반드시 입력해야 합니다.
+    주문명으로 고객사에서 자유롭게 입력합니다.
+
+  - amount: object
+
+    결제 금액에 대한 정보를 담고있는 객체입니다.
+
+    - total: number
+
+      결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+
+    - taxFree?: number
+
+      면세 금액으로 나이스페이먼츠과 상점아이디 계약시 지정금액 혹은 복합과세 방식으로 계약한 경우 면세 처리를 위해 면세금액을 반드시 입력해야 합니다.
       면세금액 미 입력 시 면세금액은 0원으로 자동 처리되며, 결제 요청 금액은 모두 과세 처리 되오니 이 점 유의하시기 바랍니다.
 
-- `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 결제통화로 원화 결제를 원할 시 `KRW`로 입력해야 합니다.
+    - currency: string
 
-- `method` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-  - 결제 수단에 대한 정보를 담고있는 객체입니다.
+      결제통화로 원화 결제를 원할 시 `KRW`로 입력해야 합니다.
 
-  - `card` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-    - `credential` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-      - `number` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드번호로 10자리 이상 20자리 이하의 숫자만 입력해야 합니다.
+  - method: object
 
-      - `expiryMonth` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드 유효기간의 월로 2자리 숫자만 입력해야 합니다.
+    결제 수단에 대한 정보를 담고있는 객체입니다.
 
-      - `expiryYear` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드 유효기간의 년도로 2자리 숫자만 입력해야 합니다.
+    - card: object
+      - credential: object
+        - number: string
 
-      - `birthOrBusinessRegistrationNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드 소지자의 생년월일 혹은 사업자 등록번호로 6자리 숫자만 입력해야 합니다.
+          카드번호로 10자리 이상 20자리 이하의 숫자만 입력해야 합니다.
 
-      - `passwordTwoDigits` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드 비밀번호 앞 2자리로 2자리 숫자만 입력해야 합니다.
+        - expiryMonth: string
 
-    - `installmentMonth` <mark style="color:purple;">**number**</mark>
-      - 카드 할부 개월수로 0(일시불) 혹은 2\~12개월까지의 숫자만 입력해야 합니다.
+          카드 유효기간의 월로 2자리 숫자만 입력해야 합니다.
 
-    - `useFreeInterestFromMerchant` <mark style="color:orange;">**boolean**</mark>
-      - 고객사 부담 무이자 설정으로 `true` 혹은 `false`만 입력
+        - expiryYear: string
 
-    - `useCardPoint` <mark style="color:orange;">**boolean**</mark>
-      - 카드 포인트 사용 설정으로 `true` 혹은 `false`만 입력
+          카드 유효기간의 년도로 2자리 숫자만 입력해야 합니다.
+
+        - birthOrBusinessRegistrationNumber: string
+
+          카드 소지자의 생년월일 혹은 사업자 등록번호로 6자리 숫자만 입력해야 합니다.
+
+        - passwordTwoDigits: string
+
+          카드 비밀번호 앞 2자리로 2자리 숫자만 입력해야 합니다.
+
+      - installmentMonth?: number
+
+        카드 할부 개월수로 0(일시불) 혹은 2\~12개월까지의 숫자만 입력해야 합니다.
+
+      - useFreeInterestFromMerchant?: boolean
+
+        고객사 부담 무이자 설정으로 `true` 혹은 `false`만 입력
+
+      - useCardPoint?: boolean
+
+        카드 포인트 사용 설정으로 `true` 혹은 `false`만 입력
+</ParamTree>
 
 ### 유의할 파라미터
 
 - `method.card.InstallmentMonth`
-  - 카드 할부 개월수로 0(일시불) 혹은 2\~12개월까지의 숫자만 입력해야 합니다. 입력하지 않은 경우 일시불로 처리됩니다.
+
+  카드 할부 개월수로 0(일시불) 혹은 2\~12개월까지의 숫자만 입력해야 합니다. 입력하지 않은 경우 일시불로 처리됩니다.
 
 - `method.useFreeInterestFromMerchant`
-  - 고객사 부담 무이자 설정으로 `true` 혹은 `false`만 입력.
+
+  고객사 부담 무이자 설정으로 `true` 혹은 `false`만 입력.
 
 - `method.card.useCardPoint`
-  - 카드 할부 개월수로 0(일시불) 혹은 2\~12개월까지의 숫자만 입력해야 합니다. 입력하지 않은 경우 일시불로 처리됩니다.
+
+  카드 할부 개월수로 0(일시불) 혹은 2\~12개월까지의 숫자만 입력해야 합니다. 입력하지 않은 경우 일시불로 처리됩니다.
 
 ## API 빌링키 발급 및 예약/반복 결제 요청하기
 
@@ -300,58 +339,78 @@ import Tabs from "~/components/gitbook/Tabs";
 
 ### 빌링키 발급 주요 파라미터
 
-- `channelKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키로 호출하고자 하는 채널을 지정합니다.
+<ParamTree>
+  - channelKey: string
 
-- `method` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-  - 결제 수단에 대한 정보를 담고있는 객체입니다.
+    콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키로 호출하고자 하는 채널을 지정합니다.
 
-  - `card` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-    - `credential` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-      - `number` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드번호로 10자리 이상 20자리 이하의 숫자만 입력해야 합니다.
+  - method: object
 
-      - `expiryMonth` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드 유효기간의 월로 2자리 숫자만 입력해야 합니다.
+    결제 수단에 대한 정보를 담고있는 객체입니다.
 
-      - `expiryYear` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드 유효기간의 년도로 2자리 숫자만 입력해야 합니다.
+    - card: object
+      - credential: object
+        - number: string
 
-      - `birthOrBusinessRegistrationNumber` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드 소지자의 생년월일 혹은 사업자 등록번호로 6자리 숫자만 입력해야 합니다.
+          카드번호로 10자리 이상 20자리 이하의 숫자만 입력해야 합니다.
 
-      - `passwordTwoDigits` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-        - 카드 비밀번호 앞 2자리로 2자리 숫자만 입력해야 합니다.
+        - expiryMonth: string
+
+          카드 유효기간의 월로 2자리 숫자만 입력해야 합니다.
+
+        - expiryYear: string
+
+          카드 유효기간의 년도로 2자리 숫자만 입력해야 합니다.
+
+        - birthOrBusinessRegistrationNumber: string
+
+          카드 소지자의 생년월일 혹은 사업자 등록번호로 6자리 숫자만 입력해야 합니다.
+
+        - passwordTwoDigits: string
+
+          카드 비밀번호 앞 2자리로 2자리 숫자만 입력해야 합니다.
+</ParamTree>
 
 ### API 예약/반복 결제 주요 파라미터
 
-- `paymentId` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 하며, URL path에 포함돼야 합니다.
+<ParamTree>
+  - paymentId: string
 
-- `payment` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-  - 결제 정보를 담고있는 객체입니다.
+    고객사에서 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 하며, URL path에 포함돼야 합니다.
 
-  - `bilingKey` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-    - 결제를 진행할 빌링키
+  - payment: object
 
-  - `orderName` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-    - 주문명
+    결제 정보를 담고있는 객체입니다.
 
-  - `amount` <mark style="color:red;">**\***</mark> <mark style="color:blue;">**object**</mark>
-    - 결제 금액에 대한 정보를 담고있는 객체입니다.
+    - bilingKey: string
 
-    - `total` <mark style="color:red;">**\***</mark> <mark style="color:purple;">**number**</mark>
-      - 결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+      결제를 진행할 빌링키
 
-    - `taxFree` <mark style="color:purple;">**number**</mark>
-      - 면세 금액으로 (신)나이스페이먼츠과 상점아이디 계약시 지정금액 혹은 복합과세 방식으로 계약한 경우 면세 처리를 위해 면세금액을 반드시 입력해야 합니다.
+    - orderName: string
+
+      주문명
+
+    - amount: object
+
+      결제 금액에 대한 정보를 담고있는 객체입니다.
+
+      - total: number
+
+        결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+
+      - taxFree?: number
+
+        면세 금액으로 (신)나이스페이먼츠과 상점아이디 계약시 지정금액 혹은 복합과세 방식으로 계약한 경우 면세 처리를 위해 면세금액을 반드시 입력해야 합니다.
         면세금액 미 입력 시 면세금액은 0원으로 자동 처리되며, 결제 요청 금액은 모두 과세 처리 되오니 이 점 유의하시기 바랍니다.
 
-  - `currency` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-    - 결제통화로 원화 결제를 원할 시 `KRW`로 입력해야 합니다. (신)나이스페이먼츠의 경우 빌링키로 결제시 `KRW`만 지원합니다.
+    - currency: string
 
-- `timeToPay` <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
-  - 결제를 시도할 시각으로 ISO8601 형식으로 입력해야 합니다.
+      결제통화로 원화 결제를 원할 시 `KRW`로 입력해야 합니다. (신)나이스페이먼츠의 경우 빌링키로 결제시 `KRW`만 지원합니다.
+
+  - timeToPay: string
+
+    결제를 시도할 시각으로 ISO8601 형식으로 입력해야 합니다.
+</ParamTree>
 
 ## 연동 유의사항
 

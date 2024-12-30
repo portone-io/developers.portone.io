@@ -5,15 +5,17 @@
 	"license": "AGPL-3.0-or-later",
 	"repository": "https://github.com/portone-io/developers.portone.io",
 	"scripts": {
-		"dev": "concurrently -k \"vinxi dev\" \"pnpm gen-collections watch\"",
-		"build": "pnpm gen-collections && vinxi build",
+		"dev": "pnpm build:deps && concurrently -k \"vinxi dev\" \"pnpm gen-collections watch\"",
+		"build": "pnpm gen-collections && pnpm build:deps && vinxi build",
+		"build:deps": "pnpm --filter @portone-io/remark-param-tree build",
 		"start": "vinxi start",
 		"version": "vinxi version",
 		"check": "pnpm lint",
 		"gen-collections": "tsx src/genCollections.ts",
 		"lint:fix": "NODE_OPTIONS=\"$NODE_OPTIONS --loader ts-node/esm\" eslint --fix .",
 		"lint": "NODE_OPTIONS=\"$NODE_OPTIONS --loader ts-node/esm\" eslint .",
-		"eslint": "NODE_OPTIONS=\"$NODE_OPTIONS --loader ts-node/esm\" eslint"
+		"eslint": "NODE_OPTIONS=\"$NODE_OPTIONS --loader ts-node/esm\" eslint",
+		"postinstall": "pnpm build:deps"
 	},
 	"imports": {
 		"#content": "./src/content/__generated__/index.ts",
@@ -35,6 +37,7 @@
 		"@parcel/watcher": "^2.4.1",
 		"@portone-io/lint-local-links-valid": "workspace:^",
 		"@portone-io/lint-no-jamo": "workspace:^",
+		"@portone-io/remark-param-tree": "workspace:^",
 		"@portone/browser-sdk": "^0.0.10",
 		"@rollup/plugin-yaml": "^4.1.2",
 		"@shikijs/rehype": "^1.11.0",
