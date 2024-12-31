@@ -35,7 +35,13 @@ export type Tab = {
   language: string;
 };
 
-export type PayMethod = "card" | "virtualAccount";
+export type PayMethod =
+  | "card"
+  | "virtualAccount"
+  | "transfer"
+  | "mobile"
+  | "giftCertificate"
+  | "easyPay";
 export type Pg =
   | "nice"
   | "smartro"

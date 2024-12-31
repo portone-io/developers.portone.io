@@ -53,21 +53,16 @@ export function App() {
     e.preventDefault()
     setPaymentStatus({ status: "PENDING" })
     ${({ section }) => section("client:request-payment")`
-    ${({ section }) => section("client:request-payment:payment-id")`
     const paymentId = randomId()
-    `}
     const payment = await PortOne.requestPayment({
-      ${({ section }) => section("client:request-payment:channel-key")`
       storeId: ${({ params }) => code`"${createPaymentRequest(params, "").storeId}"`},
       channelKey: ${({ params }) => code`"${createPaymentRequest(params, "").channelKey}"`},
-      `}
       paymentId,
       orderName: item.name,
       totalAmount: item.price,
       currency: item.currency,
       payMethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`}
       ${({ when }) => when(isCustomerRequired)`
-        ${({ section }) => section("client:request-payment:customer-data")`
       customer: {
          ${({ when }) => when(isCustomerNameRequired)`
         fullName: '포트원',
@@ -79,13 +74,10 @@ export function App() {
         email: 'example@portone.io',
          `}
       },
-        `}
       `}
-      ${({ section }) => section("client:request-payment:custom-data")`
       customData: {
         item: item.id,
       },
-      `}
     })
     `}
     ${({ section }) => section("client:handle-payment-error")`

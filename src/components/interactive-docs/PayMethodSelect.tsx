@@ -10,6 +10,10 @@ export type PayMethodSelectOption = {
 const PaymentOptions = {
   card: { label: "카드결제" },
   virtualAccount: { label: "가상계좌" },
+  transfer: { label: "계좌이체" },
+  mobile: { label: "휴대폰 소액결제" },
+  giftCertificate: { label: "상품권" },
+  easyPay: { label: "간편결제" },
 } as const satisfies Record<PayMethod, { label: string }>;
 
 interface PayMethodSelectProps {
