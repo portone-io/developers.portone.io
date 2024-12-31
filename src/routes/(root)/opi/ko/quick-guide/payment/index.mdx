@@ -113,11 +113,22 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
       주문명으로 자유롭게 입력합니다.
 
+      <Condition when={({ pg: { name } }) => name === 'nice'}>
+        <Hint style="warning">
+          나이스페이먼츠의 경우 최대 40바이트까지 입력할 수 있으며, 사용 가능한 특수문자는 아래와 같습니다.
+
+          - 사용 가능: `_`
+          - 사용 불가: `% & | $ - + = [ ]`
+          - 사용 가능하나 권장하지 않음: `( )`
+        </Hint>
+      </Condition>
+
       #### totalAmount: number
 
       **결제 금액**
 
       결제를 원하는 통화(`currency`)별 scale factor(소수점 아래 몇 번째 자리까지 유효한지)를 고려한 정수값만 허용됩니다.
+      scale factor는 [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html)에서의 `minor unit`에 해당하며, `KRW`는 0, `USD`는 2입니다.
 
       - 1000 만큼 원화(KRW) 결제를 하는 경우, scale factor가 0이기 때문에 **1000 \* (10의 0제곱) = 1000**을 전달해야 합니다.
       - 1.50 만큼 달러(USD) 결제를 하는 경우, scale factor가 2이기 때문에 **1.50 \* (10의 2제곱) = 150**을 전달해야 합니다.
@@ -127,11 +138,47 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
       **결제 통화**
 
-      [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html)에 의해 표준화된 통화 코드를 입력합니다.
+      [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html)에 의해 표준화된 알파벳 통화 코드를 입력합니다.
 
       <Condition when={({ pg: { name } }) => name === 'toss'}>
         <Hint style="warning">
           토스페이먼츠는 `KRW`만을 지원합니다.
+        </Hint>
+      </Condition>
+
+      <Condition when={({ pg: { name } }) => name === 'nice'}>
+        <Hint style="warning">
+          나이스페이먼츠는 `KRW`만을 지원합니다.
+        </Hint>
+      </Condition>
+
+      <Condition when={({ pg: { name } }) => name === 'smartro'}>
+        <Hint style="warning">
+          스마트로는 `KRW`와 `USD`만을 지원합니다. 상점 아이디의 설정에 따라 결제 통화가 고정되어 `currency`와 일치하지 않을 수 있습니다.
+        </Hint>
+      </Condition>
+
+      <Condition when={({ pg: { name } }) => name === 'kpn'}>
+        <Hint style="warning">
+          한국결제네트웍스는 `KRW`와 `USD`만을 지원합니다.
+        </Hint>
+      </Condition>
+
+      <Condition when={({ pg: { name } }) => name === 'inicis'}>
+        <Hint style="warning">
+          KG이니시스는 `KRW`와 `USD`만을 지원합니다. `USD`의 경우 카드 결제만 지원합니다.
+        </Hint>
+      </Condition>
+
+      <Condition when={({ pg: { name } }) => name === 'ksnet'}>
+        <Hint style="warning">
+          KSNET은 `KRW`와 `USD`만을 지원합니다.
+        </Hint>
+      </Condition>
+
+      <Condition when={({ pg: { name } }) => name === 'kcp'}>
+        <Hint style="warning">
+          KCP는 `KRW`와 `USD`만을 지원합니다. `USD`의 경우 별도 계약이 필요합니다.
         </Hint>
       </Condition>
 
@@ -141,18 +188,33 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
       사용할 결제 수단에 맞는 값을 입력합니다.
 
-      <Condition when={({ pg: { name }}) => name === 'toss'}>
-        - 카드: `CARD`
-        - 실시간 계좌이체: `TRANSFER`
-        - 가상계좌: `VIRTUAL_ACCOUNT`
-        - 휴대폰 소액결제: `MOBILE`
-        - 간편결제: `EASY_PAY`
-        - 상품권: `GIFT_CERTIFICATE`
+      <Details>
+        <Details.Summary>지원 결제 수단 코드</Details.Summary>
 
-        <Hint style="warning">
-          간편결제와 상품권 결제는 별도 계약이 필요합니다.
-        </Hint>
-      </Condition>
+        <Details.Content>
+          <Condition when={({ pg: { name }}) => name === 'toss'}>
+            - 카드: `CARD`
+            - 실시간 계좌이체: `TRANSFER`
+            - 가상계좌: `VIRTUAL_ACCOUNT`
+            - 휴대폰 소액결제: `MOBILE`
+            - 간편결제: `EASY_PAY`
+            - 상품권: `GIFT_CERTIFICATE`
+
+            <Hint style="warning">
+              간편결제와 상품권 결제는 별도 계약이 필요합니다.
+            </Hint>
+          </Condition>
+
+          <Condition when={({ pg: { name }}) => name === 'nice'}>
+            - 카드: `CARD`
+            - 실시간 계좌이체: `TRANSFER`
+            - 가상계좌: `VIRTUAL_ACCOUNT`
+            - 휴대폰 소액결제: `MOBILE`
+            - 간편결제: `EASY_PAY`
+            - 상품권: `GIFT_CERTIFICATE`
+          </Condition>
+        </Details.Content>
+      </Details>
 
       <Condition when={({ pg: { payMethods }}) => payMethods === "card"}>
         #### card?: object
@@ -174,6 +236,13 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
               </Hint>
             </Condition>
 
+            <Condition when={({ pg: { name } }) => name === 'nice'}>
+              <Hint style="warning">
+                나이스페이먼츠의 경우 카드사 단독 노출 시 `card.installment.monthOption.fixedMonth`를 필수로 지정해야 합니다.
+                결제 금액이 할부 지원 금액 미만인 경우 할부 개월 수를 `0`으로 전달해야 합니다.
+              </Hint>
+            </Condition>
+
             <Details>
               <Details.Summary>지원 카드사 코드 목록</Details.Summary>
 
@@ -183,6 +252,31 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   - `KFCC` (새마을금고 카드)
                   - `SHINHYUP` (신협 카드)
                   - `EPOST`(우체국 카드)
+                  - `SAVINGS_BANK_KOREA` (저축은행 카드)
+                  - `KAKAO_BANK` (카카오뱅크 카드)
+                  - `WOORI_CARD` (우리카드)
+                  - `BC_CARD` (BC카드)
+                  - `GWANGJU_CARD` (광주카드)
+                  - `SAMSUNG_CARD` (삼성카드)
+                  - `SHINHAN_CARD` (신한카드)
+                  - `HYUNDAI_CARD` (현대카드)
+                  - `LOTTE_CARD` (롯데카드)
+                  - `SUHYUP_CARD` (수협카드)
+                  - `CITI_CARD` (씨티카드)
+                  - `NH_CARD` (NH농협카드)
+                  - `JEONBUK_CARD` (전북카드)
+                  - `JEJU_CARD` (제주카드)
+                  - `HANA_CARD` (하나카드)
+                  - `KOOKMIN_CARD` (국민카드)
+                  - `K_BANK` (케이뱅크 카드)
+                  - `TOSS_BANK` (토스뱅크 카드)
+                </Condition>
+
+                <Condition when={({ pg: { name } }) => ['nice', 'smartro', 'kpn', 'inicis', 'ksnet', 'kcp'].includes(name)}>
+                  - `KOREA_DEVELOPMENT_BANK` (KDB산업은행 카드)
+                  - `KFCC` (새마을금고 카드)
+                  - `SHINHYUP` (신협 카드)
+                  - `EPOST` (우체국 카드)
                   - `SAVINGS_BANK_KOREA` (저축은행 카드)
                   - `KAKAO_BANK` (카카오뱅크 카드)
                   - `WOORI_CARD` (우리카드)
@@ -281,6 +375,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
               </Hint>
             </Condition>
 
+            <Condition when={({ pg: { name } }) => name === 'nice'}>
+              <Hint style="warning">
+                나이스페이먼츠의 경우 카드사 포인트 사용 시 별도 계약이 필요합니다.
+              </Hint>
+            </Condition>
+
           - useAppCardOnly?: boolean
 
             **앱 카드만 허용할지 여부**
@@ -354,6 +454,87 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   - `EPOST` (우체국)
                   - `HANA_BANK` (하나은행)
                 </Condition>
+
+                <Condition when={({ pg: { name } }) => name === 'nice'}>
+                  - `INDUSTRIAL_BANK_OF_KOREA` (기업은행)
+                  - `KOOKMIN_BANK` (국민은행)
+                  - `NH_NONGHYUP_BANK` (NH농협은행)
+                  - `WOORI_BANK` (우리은행)
+                  - `SC_BANK_KOREA` (SC제일은행)
+                  - `DAEGU_BANK` (대구은행)
+                  - `BUSAN_BANK` (부산은행)
+                  - `GWANGJU_BANK` (광주은행)
+                  - `EPOST` (우체국)
+                  - `HANA_BANK` (하나은행)
+                  - `SHINHAN_BANK` (신한은행)
+                  - `K_BANK` (케이뱅크)
+                </Condition>
+
+                <Condition when={({ pg: { name } }) => name === 'smartro'}>
+                  - `INDUSTRIAL_BANK_OF_KOREA` (기업은행)
+                  - `KOOKMIN_BANK` (국민은행)
+                  - `NH_NONGHYUP_BANK` (NH농협은행)
+                  - `WOORI_BANK` (우리은행)
+                  - `SC_BANK_KOREA` (SC제일은행)
+                  - `DAEGU_BANK` (대구은행)
+                  - `BUSAN_BANK` (부산은행)
+                  - `GWANGJU_BANK` (광주은행)
+                  - `EPOST` (우체국)
+                  - `HANA_BANK` (하나은행)
+                  - `SHINHAN_BANK` (신한은행)
+                  - `K_BANK` (케이뱅크)
+                  - `SUHYUP_BANK` (수협은행)
+                  - `JEONBUK_BANK` (전북은행)
+                  - `KYONGNAM_BANK` (경남은행)
+                </Condition>
+
+                <Condition when={({ pg: { name } }) => name === 'kpn'}>
+                  - `INDUSTRIAL_BANK_OF_KOREA` (기업은행)
+                  - `KOOKMIN_BANK` (국민은행)
+                  - `NH_NONGHYUP_BANK` (NH농협은행)
+                  - `WOORI_BANK` (우리은행)
+                  - `SC_BANK_KOREA` (SC제일은행)
+                  - `CITI_BANK_KOREA` (한국씨티은행)
+                  - `DAEGU_BANK` (대구은행)
+                  - `BUSAN_BANK` (부산은행)
+                  - `GWANGJU_BANK` (광주은행)
+                  - `EPOST` (우체국)
+                  - `HANA_BANK` (하나은행)
+                  - `SHINHAN_BANK` (신한은행)
+                  - `KYONGNAM_BANK` (경남은행)
+                </Condition>
+
+                <Condition when={({ pg: { name } }) => name === 'ksnet'}>
+                  - `INDUSTRIAL_BANK_OF_KOREA` (기업은행)
+                  - `KOOKMIN_BANK` (국민은행)
+                  - `NH_NONGHYUP_BANK` (NH농협은행)
+                  - `WOORI_BANK` (우리은행)
+                  - `SC_BANK_KOREA` (SC제일은행)
+                  - `DAEGU_BANK` (대구은행)
+                  - `BUSAN_BANK` (부산은행)
+                  - `GWANGJU_BANK` (광주은행)
+                  - `EPOST` (우체국)
+                  - `HANA_BANK` (하나은행)
+                  - `SHINHAN_BANK` (신한은행)
+                  - `JEONBUK_BANK` (전북은행)
+                  - `KYONGNAM_BANK` (경남은행)
+                </Condition>
+
+                <Condition when={({ pg: { name } }) => name === 'kcp'}>
+                  - `INDUSTRIAL_BANK_OF_KOREA` (기업은행)
+                  - `KOOKMIN_BANK` (국민은행)
+                  - `NH_NONGHYUP_BANK` (NH농협은행)
+                  - `WOORI_BANK` (우리은행)
+                  - `SC_BANK_KOREA` (SC제일은행)
+                  - `DAEGU_BANK` (대구은행)
+                  - `BUSAN_BANK` (부산은행)
+                  - `GWANGJU_BANK` (광주은행)
+                  - `EPOST` (우체국)
+                  - `HANA_BANK` (하나은행)
+                  - `SHINHAN_BANK` (신한은행)
+                  - `SUHYUP_BANK` (수협은행)
+                  - `KYONGNAM_BANK` (경남은행)
+                </Condition>
               </Details.Content>
             </Details>
 
@@ -362,6 +543,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
             **가상계좌 입금 만료기한**
 
             `validHours`와 `dueDate` 중 하나만 입력해주세요.
+
+            <Condition when={({ pg: { name } }) => name === 'nice'}>
+              <Hint style="warning">
+                나이스페이먼츠의 경우 입금 만료기한을 필수로 입력해야 합니다.
+              </Hint>
+            </Condition>
 
             <ParamTree>
               - validHours?: number
@@ -476,9 +663,21 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
             **상품권 유형**
 
-            - \`BOOKNLIFE₩ (도서문화상품권)
-            - `SMART_MUNSANG` (스마트문상, (구)게임문화상품권)
-            - `CULTURELAND` (문화상품권)
+            <Details>
+              <Details.Summary>지원 상품권 유형 코드</Details.Summary>
+
+              <Details.Content>
+                <Condition when={({ pg: { name }}) => name === "toss"}>
+                  - `BOOKNLIFE` (도서문화상품권)
+                  - `SMART_MUNSANG` (스마트문상, (구)게임문화상품권)
+                  - `CULTURELAND` (문화상품권)
+                </Condition>
+
+                <Condition when={({ pg: { name }}) => name === "nice"}>
+                  - `CULTURELAND` (문화상품권)
+                </Condition>
+              </Details.Content>
+            </Details>
         </ParamTree>
       </Condition>
 
@@ -551,12 +750,43 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   - `K_BANK` (케이뱅크 카드)
                   - `TOSS_BANK` (토스뱅크 카드)
                 </Condition>
+
+                <Condition when={({ pg: { name } }) => ['nice', 'smartro', 'kpn', 'inicis', 'ksnet', 'kcp'].includes(name)}>
+                  - `KOREA_DEVELOPMENT_BANK` (KDB산업은행 카드)
+                  - `KFCC` (새마을금고 카드)
+                  - `SHINHYUP` (신협 카드)
+                  - `EPOST` (우체국 카드)
+                  - `SAVINGS_BANK_KOREA` (저축은행 카드)
+                  - `KAKAO_BANK` (카카오뱅크 카드)
+                  - `WOORI_CARD` (우리카드)
+                  - `BC_CARD` (BC카드)
+                  - `GWANGJU_CARD` (광주카드)
+                  - `SAMSUNG_CARD` (삼성카드)
+                  - `SHINHAN_CARD` (신한카드)
+                  - `HYUNDAI_CARD` (현대카드)
+                  - `LOTTE_CARD` (롯데카드)
+                  - `SUHYUP_CARD` (수협카드)
+                  - `CITI_CARD` (씨티카드)
+                  - `NH_CARD` (NH농협카드)
+                  - `JEONBUK_CARD` (전북카드)
+                  - `JEJU_CARD` (제주카드)
+                  - `HANA_CARD` (하나카드)
+                  - `KOOKMIN_CARD` (국민카드)
+                  - `K_BANK` (케이뱅크 카드)
+                  - `TOSS_BANK` (토스뱅크 카드)
+                </Condition>
               </Details.Content>
             </Details>
 
           - installment?: object
 
             **할부 설정**
+
+            <Condition when={({ pg: { name } }) => name === 'nice'}>
+              <Hint style="warning">
+                나이스페이먼츠의 경우 할부 사용 시 별도 계약이 필요합니다.
+              </Hint>
+            </Condition>
 
             <ParamTree>
               - freeInstallmentPlans?: object\[]
@@ -615,6 +845,24 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           - customerIdentifier?: string
 
             **현금영수증 발행 대상 식별 정보**
+
+          - availablePayMethods?: string\[]
+
+            **노출할 간편결제 방식**
+
+            - `CARD` (카드 결제)
+            - `CHARGE` (포인트 충전 및 적립 결제)
+            - `MONEY` (토스페이 머니 결제)
+            - `TRANSFER` (계좌 결제)
+
+            <Condition when={({ pg: {name}}) => name === "nice"}>
+              <Hint style="warning">
+                나이스페이먼츠의 경우 일부 간편결제 수단에 대해 `availablePayMethods`가 필수입니다.
+
+                - 네이버페이: 카드 결제인 경우 `CARD`, 포인트 혹은 머니 결제인 경우 `CHARGE`를 입력합니다.
+                - SSG페이: 계좌 결제를 노출하는 `TRANSFER`만 유효하며, 카드 혹은 머니 결제인 경우 `availablePayMethods`를 생략해야 합니다.
+              </Hint>
+            </Condition>
         </ParamTree>
       </Condition>
 
@@ -630,6 +878,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
       <Condition when={({ pg: { name } }) => name === 'toss'}>
         <Hint style="warning">
           토스페이먼츠의 경우 면세 및 복합과세 이용 시 별도 계약이 필요합니다.
+        </Hint>
+      </Condition>
+
+      <Condition when={({ pg: { name } }) => name === 'nice'}>
+        <Hint style="warning">
+          나이스페이먼츠와 계약 시 지정된 면세금액을 반드시 입력해야 합니다.
         </Hint>
       </Condition>
 
@@ -777,6 +1031,124 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 - `true`로 설정하면 해외 카드로만 결제를 허용합니다.
             </ParamTree>
         </Condition>
+
+        <Condition when={({ pg: { name }}) => name === "nice"}>
+          - nice\_v2?: object
+
+            <ParamTree>
+              - LogoImage?: string
+
+                **결제창 로고 이미지 URL**
+
+              - NPDisableScroll?: string
+
+                **PC환경 결제창 스크롤 미사용 여부**
+
+                기본값은 `N`입니다.
+
+                - `Y`: 미사용
+                - `N`: 사용
+
+              - SkinType?: string
+
+                **결제창 스킨 색상**
+
+                `red`, `green`, `purple`, `gray`, `dark` 중 하나를 입력해주세요.
+
+              - UserCI?: string
+
+                **문화상품권 결제 시 구매자 CI 정보**
+
+                아이디/비밀번호 외 추가로 CI 인증이 필요한 경우 사용합니다.
+
+                <Hint style="warning">
+                  나이스페이먼츠와 별도 계약이 필요합니다.
+                </Hint>
+
+              - MallUserID?: string
+
+                **구매자 식별 번호**
+
+                <Hint style="warning">
+                  문화 상품권 결제 시 필수 입력입니다.
+                </Hint>
+
+              - DirectCouponYN?: string
+
+                **신용카드 쿠폰 자동 적용 여부**
+
+                기본값은 `N`입니다.
+
+                - `Y`: 사전 등록된 선 할인 쿠폰을 자동 적용
+                - `N`: 쿠폰 미적용
+
+                <Hint style="warning">
+                  나이스페이먼츠와 별도 계약이 필요합니다.
+                </Hint>
+
+              - DirectShowOpt?: string
+
+                **다이렉트 호출 결제 수단**
+
+                - `BANK`: 계좌이체
+                - `CELLPHONE`: 휴대폰 소액결제
+
+              - CardShowOpt?: string
+
+                **카드사별 호출 방식**
+
+                `카드 코드:노출 유형` 값의 목록을 `|`로 구분하여 입력해주세요.
+
+                - 카드 코드
+                  - `02` (국민)
+                  - `04` (삼성)
+                  - `06` (신한)
+                  - `07` (현대)
+                  - `08` (롯데)
+                  - `12` (NH)
+                  - `15` (우리)
+
+                - 노출 유형
+                  - `1` (안심클릭)
+                  - `2` (간편결제)
+                  - `3` (앱카드 직접 호출)
+
+                - `08:3|02:3`의 경우 롯데카드와 국민카드 선택시 앱카드를 직접 호출합니다.
+
+              - PaycoClientId?: string
+
+                **페이코에서 고객사에 발급한 Client Id**
+
+                페이코 계정 자동 로그인 기능을 사용하는 경우 입력합니다.
+
+                <Hint style="warning">
+                  나이스페이먼츠와 별도 계약이 필요합니다.
+                </Hint>
+
+              - PaycoAccessToken?: string
+
+                **페이코 접속 토큰**
+
+                페이코 계정 자동 로그인 기능을 사용하는 경우 입력합니다.
+
+                <Hint style="warning">
+                  나이스페이먼츠와 별도 계약이 필요합니다.
+                </Hint>
+
+              - SamsungPayType?: string
+
+                **삼성페이 고객사 유형**
+
+                기본값은 `99`입니다.
+
+                - `01`: 삼성페이 내 쇼핑
+                - `99`: 기타
+
+                <Hint style="warning">
+                  나이스페이먼츠와 별도 계약이 필요합니다.
+                </Hint>
+            </ParamTree>
+        </Condition>
       </ParamTree>
 
       #### redirectUrl?: string
@@ -811,6 +1183,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
       - 실물 상품: `PRODUCT_TYPE_REAL`
       - 디지털 상품: `PRODUCT_TYPE_DIGITAL`
+
+      <Condition when={({ pg: { name, payMethods }}) => name === "nice" && payMethods === 'mobile'}>
+        <Hint style="warning">
+          나이스페이먼츠 휴대폰 소액결제 시 `productType`는 필수 입력이며, 상점에 설정된 상품 유형과 입력된 상품 유형이 다른 경우 결제가 실패합니다.
+        </Hint>
+      </Condition>
 
       #### offerPeriod?: oneof object
 
@@ -915,7 +1293,15 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
       `true`로 설정하면 에스크로를 사용합니다.
 
       <Condition when={({ pg: { name }}) => name === "toss"}>
-        - 에스크로를 사용하기 위해서는 토스페이먼츠와 별도 계약이 필요합니다.
+        <Hint style="warning">
+          토스페이먼츠의 경우 에스크로 사용 시 별도 계약이 필요합니다.
+        </Hint>
+      </Condition>
+
+      <Condition when={({ pg: { name } }) => name === 'nice'}>
+        <Hint style="warning">
+          나이스페이먼츠의 경우 에스크로 사용 시 별도 계약이 필요합니다.
+        </Hint>
       </Condition>
 
       <Condition when={({ pg: { name }}) => Array().includes(name)}>
