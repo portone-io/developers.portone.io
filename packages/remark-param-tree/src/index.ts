@@ -94,7 +94,7 @@ export default function remarkParamTreePlugin() {
               ],
             },
             { type: "text", value: " " },
-            typeDefinition.optional === true && {
+            typeDefinition.optional === false && {
               type: "mdxJsxTextElement",
               name: "mark",
               attributes: [
@@ -111,7 +111,7 @@ export default function remarkParamTreePlugin() {
                 },
               ],
             },
-            typeDefinition.optional === true && { type: "text", value: " " },
+            typeDefinition.optional === false && { type: "text", value: " " },
             {
               type: "mdxJsxTextElement",
               name: "mark",
