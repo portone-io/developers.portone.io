@@ -13,7 +13,7 @@ const PortOne = require("@portone/server-sdk")
 `}
 
 ${({ section }) => section("server:portone-api-secret")`
-const portone = PortOne.PortOneClient(process.env.V2_API_SECRET)
+const portone = PortOne.PortOneClient({ secret: process.env.V2_API_SECRET })
 `}
 
 const app = express()
