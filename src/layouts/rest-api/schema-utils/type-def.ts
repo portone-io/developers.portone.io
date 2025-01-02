@@ -207,6 +207,15 @@ export function crawlRefs(
       result.add(ref);
       rootPropertyRefsCrawler.visitTypeDef(typeDef);
     },
+    visitResponseProperties(properties: Record<string, any>) {
+      for (const [_, value] of Object.entries(properties)) {
+        if (value.$ref) {
+          this.visitResponseRef(value.$ref || "");
+        } else if (value.properties) {
+          this.visitResponseProperties(value.properties);
+        }
+      }
+    },
   };
   for (const group of endpointGroups) {
     for (const { path, method } of group.endpoints) {

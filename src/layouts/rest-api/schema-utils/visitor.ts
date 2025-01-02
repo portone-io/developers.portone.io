@@ -37,12 +37,19 @@ export const defaultVisitor = {
   visitRequestRef(_ref: string) {},
   visitResponse(_statusCode: string, response: Response) {
     if (response.schema) {
-      this.visitResponseRef(response.schema.$ref || "");
-    } else if (response.content?.["application/json"]?.schema.$ref) {
+      if (response.schema.$ref) {
+        this.visitResponseRef(response.schema.$ref || "" );
+      } else if (response.schema.properties) { // schema 하위 properties가 있는 경우 처리
+        this.visitResponseProperties(response.schema.properties);
+      }
+    } else if (response.content?.["application/json"]?.schema) {
+      const schema = response.content["application/json"].schema;
       // TODO: handle others (e.g. "text/csv")
-      this.visitResponseRef(
-        response.content["application/json"].schema.$ref || "",
-      );
+      if (schema.$ref) {
+        this.visitResponseRef(schema.$ref || "" );
+      } else if (schema.properties) {
+        this.visitResponseProperties(schema.properties);
+      }
     }
   },
   visitResponseRef(_ref: string) {},
@@ -63,4 +70,5 @@ export const defaultVisitor = {
     }
   },
   visitProperty(_name: string, _property: Property) {},
+  visitResponseProperties(_properties: Record<string, any>) {},
 } as const;
