@@ -132,7 +132,7 @@ export default code<{
               orderName: item.name,
               totalAmount: item.price,
               currency: item.currency,
-              paymethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`}
+              payMethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`}
               ${({ when }) => when(isCustomerRequired)`
                 ${({ section }) => section(
                   "client:request-payment:customer-data",
