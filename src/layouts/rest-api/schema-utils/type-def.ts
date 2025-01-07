@@ -57,6 +57,11 @@ export interface Property {
     | undefined;
 }
 
+export interface ResponseProperty {
+  $ref?: string;
+  properties?: Record<string, ResponseProperty>;
+}
+
 export type TypeDefKind = "object" | "union" | "enum";
 export function getTypeDefKind(typeDef?: TypeDef): TypeDefKind {
   if (typeDef?.discriminator) return "union";
@@ -206,6 +211,15 @@ export function crawlRefs(
       const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, ref));
       result.add(ref);
       rootPropertyRefsCrawler.visitTypeDef(typeDef);
+    },
+    visitResponseProperties(properties: Record<string, ResponseProperty>) {
+      for (const [_, value] of Object.entries(properties)) {
+        if (value.$ref) {
+          this.visitResponseRef(value.$ref || "");
+        } else if (value.properties) {
+          this.visitResponseProperties(value.properties);
+        }
+      }
     },
   };
   for (const group of endpointGroups) {

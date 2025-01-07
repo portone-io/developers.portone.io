@@ -71,7 +71,7 @@
           "benepia"
         ],
         "summary": "포인트 단건조회 API",
-        "description": "API를 통해 베네피아 포인트(복지포인트)조회합니다.<br>\n     사용자로부터 베네피아 계정 아이디, 비밀번호를 전달받아 보유중인 베네피아 포인트를 조회할 수 있습니다.<br>\n     KCP를 통해서만 진행되므로 KCP사이트코드 발급이 필요합니다.",
+        "description": "API를 통해 베네피아 포인트(복지포인트)조회합니다.<br>\n    사용자로부터 베네피아 계정 아이디, 비밀번호를 전달받아 보유중인 베네피아 포인트를 조회할 수 있습니다.<br>\n    KCP를 통해서만 진행되므로 KCP사이트코드 발급이 필요합니다.",
         "operationId": "queryBenepiaPoint",
         "consumes": [
           "application/json",
@@ -135,7 +135,7 @@
           "benepia"
         ],
         "summary": "포인트 결제 요청 API",
-        "description": "API를 통해 베네피아 포인트(복지포인트)사용 결제요청합니다.<br>\n     사용자로부터 전달받은 베네피아 계정 아이디, 비밀번호와 함께 결제정보를 요청하여 베네피아 포인트 사용처리합니다. <br>\n     KCP를 통해서만 진행되므로 KCP사이트코드 발급이 필요합니다.",
+        "description": "API를 통해 베네피아 포인트(복지포인트)사용 결제요청합니다.<br>\n      사용자로부터 전달받은 베네피아 계정 아이디, 비밀번호와 함께 결제정보를 요청하여 베네피아 포인트 사용처리합니다. <br>\n      KCP를 통해서만 진행되므로 KCP사이트코드 발급이 필요합니다.",
         "operationId": "payBenepiaPoint",
         "consumes": [
           "application/json",
@@ -162,6 +162,15 @@
             "type": "string",
             "x-portone-name": "계정 비밀번호",
             "x-portone-description": "<p>베네피아 계정 비밀번호</p>\n"
+          },
+          {
+            "name": "benepia_member_code",
+            "in": "formData",
+            "description": "베네피아 기관에서 부여한 회원사 코드(미입력시, 테스트 결제 처리됨)",
+            "required": false,
+            "type": "string",
+            "x-portone-name": "회원사 코드",
+            "x-portone-description": "<p>베네피아 기관에서 부여한 회원사 코드(미입력시, 테스트 결제 처리됨)</p>\n"
           },
           {
             "name": "merchant_uid",
@@ -616,13 +625,13 @@
         ],
         "responses": {
           "200": {
-            "description": "요청된 모든 customer_uid 에 대한 빌키정보 응답완료",
+            "description": "요청된 모든 customer_uid 에 대한 빌키정보 응답완료. 조회된 빌링키에 따라 일반 빌링키(CustomerAnnotation)와 슈퍼 빌링키(SuperBillingKeyAnnotation)를 포함할 수 있습니다.",
             "schema": {
               "$ref": "#/definitions/MultipleCustomersResponse"
             }
           },
           "207": {
-            "description": "요청된 customer_uid 중 일부 빌키정보 조회 실패(ex. 접근권한없음 또는 존재하지 않는 customer_uid)",
+            "description": "요청된 customer_uid 중 일부 빌키정보 조회 실패(ex. 접근권한없음 또는 존재하지 않는 customer_uid). 조회된 빌링키에 따라 일반 빌링키(CustomerAnnotation)와 슈퍼 빌링키(SuperBillingKeyAnnotation)를 포함할 수 있습니다.",
             "schema": {
               "$ref": "#/definitions/MultipleCustomersResponse"
             }
@@ -697,9 +706,16 @@
         ],
         "responses": {
           "200": {
-            "description": "정상 조회",
+            "description": "정상 조회 시, 일반 빌링키 조회는 CustomerResponse를 반환하며, 슈퍼 빌링키 조회는 SuperBillingKeyResponse를 반환합니다.",
             "schema": {
-              "$ref": "#/definitions/CustomerResponse"
+              "properties": {
+                "CustomerResponse": {
+                  "$ref": "#/definitions/CustomerResponse"
+                },
+                "SuperBillingKeyResponse": {
+                  "$ref": "#/definitions/SuperBillingKeyResponse"
+                }
+              }
             }
           },
           "401": {
@@ -913,13 +929,30 @@
             "maxLength": 8,
             "x-portone-name": "카드소유자 우편번호",
             "x-portone-description": "<p>고객(카드소지자) 우편번호</p>\n"
+          },
+          {
+            "name": "channelGroupId",
+            "in": "formData",
+            "description": "<ul><li>관리자 콘솔의 [연동관리] -> [스마트 라우팅] 메뉴에서 확인할 수 있습니다.</li> <li> 스마트 라우팅 그룹 ID를 지정하여 결제를 요청하면, 스마트 라우팅 그룹 내 활성화 된 모든 채널로 빌링키 발급 요청을 합니다. <br>이때, pg 파라메터는 무시됩니다.</li></ul>",
+            "required": false,
+            "type": "string",
+            "maxLength": 55,
+            "x-portone-name": "스마트 라우팅 그룹 ID",
+            "x-portone-description": "<p>스마트 라우팅 그룹 내 활성화 된 모든 채널로 빌링키 발급 요청을 합니다.</p>\n"
           }
         ],
         "responses": {
           "200": {
-            "description": "정상 등록",
+            "description": "정상 등록 시, 일반 빌링키 발급은 CustomerResponse를 반환하며, channelGroupId를 이용한 슈퍼 빌링키 발급은 SuperBillingKeyResponse를 반환합니다.",
             "schema": {
-              "$ref": "#/definitions/CustomerResponse"
+              "properties": {
+                "CustomerResponse": {
+                  "$ref": "#/definitions/CustomerResponse"
+                },
+                "SuperBillingKeyResponse": {
+                  "$ref": "#/definitions/SuperBillingKeyResponse"
+                }
+              }
             }
           },
           "401": {
@@ -988,9 +1021,16 @@
         ],
         "responses": {
           "200": {
-            "description": "정상 삭제",
+            "description": "정상 삭제 시, 일반 빌링키 삭제는 CustomerResponse를 반환하며, 슈퍼 빌링키 삭제는 SuperBillingKeyResponse를 반환합니다.",
             "schema": {
-              "$ref": "#/definitions/CustomerResponse"
+              "properties": {
+                "CustomerResponse": {
+                  "$ref": "#/definitions/CustomerResponse"
+                },
+                "SuperBillingKeyResponse": {
+                  "$ref": "#/definitions/SuperBillingKeyResponse"
+                }
+              }
             }
           },
           "401": {
@@ -4096,6 +4136,15 @@
             "type": "number",
             "x-portone-name": "결제 예정금액",
             "x-portone-description": "<p>수정 할 결제건의 결제예정금액</p>\n"
+          },
+          {
+            "name": "currency",
+            "in": "formData",
+            "description": "결제예정통화.(ex. KRW, USD, JPY) null일 경우 통화 검증을 하지 않습니다. (default=null)",
+            "required": false,
+            "type": "string",
+            "x-portone-name": "결제예정통화",
+            "x-portone-description": "<p>사전 등록할 결제예정통화. null일 경우 통화 검증을 하지 않습니다.</p>\n"
           }
         ],
         "responses": {
@@ -4119,7 +4168,7 @@
           "payments.validation"
         ],
         "summary": "결제금액 사전등록 API",
-        "description": "(포트원 javascript사용)인증방식의 결제를 진행할 때 결제금액 위변조시 결제진행자체를 block하기 위해 결제예정금액을 사전등록하는 기능입니다.\n     <br>이 API를 통해 사전등록된 고객사 주문번호(merchant_uid)에 대해, IMP.request_pay()에 전달된 merchant_uid가 일치하는 주문의 결제금액이 다른 경우 PG사 결제창 호출이 중단됩니다.",
+        "description": "(포트원 javascript사용)인증방식의 결제를 진행할 때 결제금액 위변조시 결제진행자체를 block하기 위해 결제예정금액을 사전등록하는 기능입니다.\n     * <br>이 API를 통해 사전등록된 고객사 주문번호(merchant_uid)에 대해, IMP.request_pay()에 전달된 merchant_uid가 일치하는 주문의 결제금액이 다른 경우 PG사 결제창 호출이 중단됩니다.",
         "operationId": "preparePayment",
         "consumes": [
           "application/json",
@@ -4147,6 +4196,15 @@
             "type": "number",
             "x-portone-name": "결제예정금액",
             "x-portone-description": "<p>사전 등록할 결제예정금액</p>\n"
+          },
+          {
+            "name": "currency",
+            "in": "formData",
+            "description": "결제예정통화.(ex. KRW, USD, JPY) null일 경우 통화 검증을 하지 않습니다. (default=null)",
+            "required": false,
+            "type": "string",
+            "x-portone-name": "결제예정통화",
+            "x-portone-description": "<p>사전 등록할 결제예정통화. null일 경우 통화 검증을 하지 않습니다.</p>\n"
           }
         ],
         "responses": {
@@ -6223,6 +6281,16 @@
             "type": "string",
             "x-portone-name": "프로모션 아이디",
             "x-portone-description": "<p><code>promotion-id-</code>로 시작하며, 프로모션 아이디에 설정된 할인 내용을 적용하여 결제합니다. 비인증 결제 경우 빌링키 발급시 저장된 마스킹된 카드번호를 통해 프로모션 적용 여부가 결정됩니다.</p>\n"
+          },
+          {
+            "name": "channelKey",
+            "in": "formData",
+            "description": "<ul><li>관리자 콘솔의 [연동관리] -> [연동 정보] 메뉴에서 확인할 수 있습니다.</li><li>슈퍼 빌링키 결제시, 결제 채널을 특정하고 싶을 때 명시할 수 있습니다.</li></ul>",
+            "required": false,
+            "type": "string",
+            "maxLength": 55,
+            "x-portone-name": "채널 키",
+            "x-portone-description": "<p>다수 채널에 대해 발급된 빌링키에 대해, 결제 채널을 특정하고 싶을 때 명시</p>\n"
           }
         ],
         "responses": {
@@ -6396,7 +6464,7 @@
           "subscribe"
         ],
         "summary": "결제 예약 API",
-        "description": "customer__uid를 이용하여 비인증 결제 요청을 예약할 수 있는 API입니다.<br>비 인증 결제(빌링키) API를 포트원이 대신 수행하는 개념)<br>\n     결제 요청에 대한 결과는 notice_url에 설정한 EndPoint URL로 웹훅을 통해 수신(POST request)받을 수 있습니다.<br><br>\n     <ul> <li>기존에 빌링키가 등록된 customer_uid가 존재하는 경우 해당 customer_uid와 해당되는 빌링키로 schedule정보가 예약됩니다.(카드정보 선택사항)</li>\n     <li>등록된 customer_uid가 없는 경우 빌링키 신규 발급을 먼저 진행한 후 schedule정보를 예약합니다.(카드정보 필수사항)</li>\n     <li>예약건 별로 고유의 merchant_uid를 전달해주셔야 합니다.</li>\n     <li>schedules의 상세정보(선택정보) <b> buyer_name, buyer_email, buyer_tel, buyer_addr, buyer_postcode</b> 누락시,<br>\n     <b>customer_uid</b>에 해당되는 <b>customer_name, customer_email, customer_tel, customer_addr, customer_postcode</b> 정보로 대체됩니다.(둘 다 입력시 buyer_* 정보를 우선합니다)</li></ul>",
+        "description": "customer__uid를 이용하여 비인증 결제 요청을 예약할 수 있는 API입니다.<br>비 인증 결제(빌링키) API를 포트원이 대신 수행하는 개념)<br>\n     결제 요청에 대한 결과는 notice_url에 설정한 EndPoint URL로 웹훅을 통해 수신(POST request)받을 수 있습니다.<br><br>\n     <ul> <li>기존에 빌링키가 등록된 customer_uid가 존재하는 경우 해당 customer_uid와 해당되는 빌링키로 schedule정보가 예약됩니다.(카드정보 선택사항)</li>\n     <li>등록된 customer_uid가 없는 경우 빌링키 신규 발급을 먼저 진행한 후 schedule정보를 예약합니다.(카드정보 필수사항)</li>\n     <li>예약건 별로 고유의 merchant_uid를 전달해주셔야 합니다.</li>\n     <li>schedules의 상세정보(선택정보) <b> buyer_name, buyer_email, buyer_tel, buyer_addr, buyer_postcode</b> 누락시,<br>\n     <b>customer_uid</b>에 해당되는 <b>customer_name, customer_email, customer_tel, customer_addr, customer_postcode</b> 정보로 대체됩니다.(둘 다 입력시 buyer_* 정보를 우선합니다)</li>\n     <li>슈퍼빌링키의 customer_uid로 요청하는 경우, 결제 시점 해당 스마트 라우팅 그룹 내 채널 비율 설정에 따라 결제를 요청합니다.\n     특정 빌링키로 결제를 요청하려면 channelKey에 결제를 희망하는 빌링키의 채널 키를 입력해 주세요.</li></ul>",
         "operationId": "schedule",
         "consumes": [
           "application/json",
@@ -6549,6 +6617,16 @@
             "x-portone-name": "pg 구분코드",
             "x-portone-summary": "<p>결제 예약을 요청할 PG사 구분코드</p>\n",
             "x-portone-description": "<p>신규 customer_uid를 등록하는 경우에만 유효합니다.(기존에 등록된 customer_uid로만 schedule 하는 경우에는 pg파라메터 적용되지 않습니다.)</p>\n<p>API 방식 비인증 PG설정이 2개 이상인 경우, 결제가 진행되길 원하는 PG사를 지정하실 수 있습니다. pg 파라메터는 <strong>{PG사}</strong> 혹은 <strong>{PG사}.{PG상점아이디}</strong> 형태의 문자열입니다.</p>\n<p>지정하지 않거나 유효하지 않은 값이 전달되면 기본PG설정된 값을 이용해 결제하게 됩니다.</p>\n<ul>\n<li>나이스페이먼츠, KCP 2가지 PG설정이 되어있다면, pg 파라메터로 <strong>nice</strong> 또는 <strong>kcp</strong>로 구분 가능</li>\n<li>나이스페이먼츠로부터 2개 이상의 상점아이디를 발급받았다면, <strong>nice.MID1</strong> 또는 <strong>nice.MID2</strong>로 구분 가능</li>\n</ul>\n"
+          },
+          {
+            "name": "channelKey",
+            "in": "formData",
+            "description": "<ul><li>관리자 콘솔의 [연동관리] -> [연동 정보] 메뉴에서 확인할 수 있습니다.</li><li>슈퍼 빌링키 결제시, 결제 채널을 특정하고 싶을 때 명시할 수 있습니다.</li></ul>",
+            "required": false,
+            "type": "string",
+            "maxLength": 55,
+            "x-portone-name": "채널 키",
+            "x-portone-description": "<p>다수 채널에 대해 발급된 빌링키에 대해, 결제 채널을 특정하고 싶을 때 명시</p>\n"
           },
           {
             "name": "schedules",
@@ -8335,12 +8413,12 @@
       }
     },
     "CustomerResponse": {
+      "description": "일반 빌링키 응답",
       "allOf": [
         {
           "$ref": "#/definitions/ResponseAnnotation"
         },
         {
-          "description": "등록된 구매자고객의 빌링키 정보. 바로 아래 Customer structure를 확인하세요",
           "properties": {
             "response": {
               "$ref": "#/definitions/CustomerAnnotation"
@@ -9986,6 +10064,12 @@
           "type": "number",
           "x-portone-name": "결제 예정 금액",
           "x-portone-description": "<p>사전 등록한 결제 예정 금액</p>\n"
+        },
+        "currency": {
+          "description": "결제 예정 통화",
+          "type": "string",
+          "x-portone-name": "결제 예정 통화",
+          "x-portone-description": "<p>사전 등록한 결제 예정 통화</p>\n"
         }
       }
     },
@@ -10688,6 +10772,22 @@
           "x-portone-summary": "<p>예약 결제건의 포트원 거래고유번호</p>\n",
           "x-portone-description": "<p>예약된 결제가 실행 전 철회되거나 아직 실행 전 예약 상태에 있으면 imp_uid는 null입니다.</p>\n"
         },
+        "pg_provider": {
+          "description": "PG사 구분코드<br> 슈퍼빌링키 예약결제 실행 시 라우팅된 결제를 실행한 PG사의 구분코드입니다.",
+          "type": "string",
+          "maxLength": 16,
+          "x-portone-name": "PG사 구분코드",
+          "x-portone-summary": "<p>결제 실행에 사용된 PG사 구분코드</p>\n",
+          "x-portone-description": "<p>슈퍼빌링키 예약결제 실행 시 라우팅된 결제를 실행한 PG사의 구분코드입니다.</p>\n"
+        },
+        "pg_id": {
+          "description": "PG사 상점아이디<br>슈퍼빌링키 예약결제 실행 시 라우팅된 결제를 실행한 PG사의 상점아이디입니다.",
+          "type": "string",
+          "maxLength": 64,
+          "x-portone-name": "PG사 상점아이디",
+          "x-portone-summary": "<p>결제 실행에 사용된 PG사 상점아이디</p>\n",
+          "x-portone-description": "<p>슈퍼빌링키 예약결제 실행 시 라우팅된 결제를 실행한 PG사의 상점아이디입니다.</p>\n"
+        },
         "customer_id": {
           "description": "구매자 ID",
           "type": "string",
@@ -10902,6 +11002,246 @@
           }
         }
       }
+    },
+    "SuperBillingKeyAnnotation": {
+      "required": [
+        "customer_uid",
+        "channelGroupId"
+      ],
+      "properties": {
+        "customer_uid": {
+          "description": "빌링키와 매핑되며 고객사에서 채번하는 구매자의 결제 수단 식별 고유번호",
+          "type": "string",
+          "maxLength": "80",
+          "x-portone-name": "구매자의 결제 수단 식별 고유번호",
+          "x-portone-description": "<p>빌링키와 매핑되며 고객사에서 채번하는 구매자의 결제 수단 식별 고유번호</p>\n"
+        },
+        "channelGroupId": {
+          "description": "스마트 라우팅 그룹 내 활성화 된 모든 채널로 빌링키 발급 요청을 합니다.",
+          "type": "string",
+          "maxLength": "80",
+          "x-portone-name": "스마트 라우팅 그룹 ID",
+          "x-portone-description": "<p>스마트 라우팅 그룹 내 활성화 된 모든 채널로 빌링키 발급 요청을 합니다.</p>\n"
+        },
+        "customer_id": {
+          "description": "구매자 ID",
+          "type": "string",
+          "x-portone-name": "구매자 ID",
+          "x-portone-description": "<p>구매자 식별 고유 번호</p>\n"
+        },
+        "customer_name": {
+          "description": "고객(카드소지자) 성함",
+          "type": "string",
+          "maxLength": "20",
+          "x-portone-name": "고객 성함",
+          "x-portone-description": "<p>빌링키 발급 한 고객(카드소지자)의 성함</p>\n"
+        },
+        "customer_tel": {
+          "description": "고객(카드소지자) 전화번호",
+          "type": "string",
+          "maxLength": "20",
+          "x-portone-name": "전화번호",
+          "x-portone-description": "<p>빌링키 발급 한 고객(카드소지자)의 전화번호</p>\n"
+        },
+        "customer_email": {
+          "description": "고객(카드소지자) Email 주소",
+          "type": "string",
+          "maxLength": "200",
+          "x-portone-name": "Email 주소",
+          "x-portone-description": "<p>빌링키 발급 한 고객(카드소지자)의 Email 주소</p>\n"
+        },
+        "customer_addr": {
+          "description": "고객(카드소지자) 주소",
+          "type": "string",
+          "maxLength": "200",
+          "x-portone-name": "주소",
+          "x-portone-description": "<p>빌링키 발급 한 고객(카드소지자)의 주소</p>\n"
+        },
+        "customer_postcode": {
+          "description": "고객(카드소지자) 우편번호",
+          "type": "string",
+          "maxLength": "8",
+          "x-portone-name": "우편번호",
+          "x-portone-description": "<p>빌링키 발급 한 고객(카드소지자)의 우편번호</p>\n"
+        },
+        "succeededChannels": {
+          "description": "빌링키가 발급된 각 채널의 PG사별 고유 정보를 담은 배열",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SucceededChannelAnnotation"
+          },
+          "x-portone-name": "채널별발급정보",
+          "x-portone-description": "<p>빌링키가 발급된 각 채널의 PG사별 고유 정보를 담은 배열</p>\n"
+        },
+        "failedChannels": {
+          "description": "빌링키 발급에 실패한 채널의 정보와 실패 사유를 포함한 배열",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FailedChannelAnnotation"
+          },
+          "x-portone-name": "채널별실패정보",
+          "x-portone-description": "<p>빌링키 발급에 실패한 채널의 정보와 실패 사유를 포함한 배열</p>\n"
+        }
+      }
+    },
+    "SucceededChannelAnnotation": {
+      "required": [
+        "pg_provider",
+        "pg_id",
+        "inserted",
+        "update"
+      ],
+      "properties": {
+        "pg_provider": {
+          "description": "빌링키가 등록된 PG사 구분코드",
+          "type": "string",
+          "maxLength": "16",
+          "x-portone-name": "PG사 구분코드",
+          "x-portone-description": "<p>빌링키가 등록된 PG사 구분코드</p>\n"
+        },
+        "pg_id": {
+          "description": "빌링키가 등록된 PG사 상점아이디(MID)",
+          "type": "string",
+          "maxLength": "80",
+          "x-portone-name": "상점아이디(MID)",
+          "x-portone-description": "<p>빌링키가 등록된 PG사 상점아이디(MID)</p>\n"
+        },
+        "card_name": {
+          "description": "카드사명",
+          "type": "string",
+          "x-portone-name": "카드명",
+          "x-portone-description": "<p>빌링키 발급 한 카드명</p>\n"
+        },
+        "card_code": {
+          "description": "카드사 코드(금융결제원 표준코드번호)\n    <a href='https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630'>링크보기</a>",
+          "type": "string",
+          "x-portone-name": "카드사 코드",
+          "x-portone-description": "<p><a href=\"https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630\" rel=\"noopener noreferrer\">카드사 코드 확인하기</a></p>\n"
+        },
+        "card_issuer_code": {
+          "description": "카드 발급사 코드(금융결제원 표준코드번호) <br>\n    발급사 코드 지원 pg사\n    <ul><li>(신) 토스페이먼츠\n    </li><li>KSNET\n    </li><li>페이팔 RT\n    </li><li>(신) 스마트로\n    </li><li>(신) 나이스페이먼츠\n    </li><li>웰컴페이먼츠\n    </li><li>(신) 토스페이",
+          "type": "string",
+          "x-portone-name": "카드 발급사 코드",
+          "x-portone-description": "<p>카드 발급사 코드번호 (금융결제원 표준코드 번호)</p>\n<pre><code>발급사 코드 지원 pg사\n- (신) 토스페이먼츠\n- KSNET\n- 페이팔 RT\n- (신) 스마트로\n- (신) 나이스페이먼츠\n- 웰컴페이먼츠\n- (신) 토스페이</code></pre>",
+          "x-portone-supported-pgs": [
+            "tosspayments",
+            "ksnet",
+            "paypal_v2",
+            "smartro_v2",
+            "nice_v2",
+            "welcome",
+            "tosspay_v2"
+          ]
+        },
+        "card_issuer_name": {
+          "description": "카드 발급사명으로 발급사 코드를 지원하는 pg사에 한해 제공됩니다.",
+          "type": "string",
+          "x-portone-name": "카드 발급사명",
+          "x-portone-description": "<p>빌링키 발급 한 카드의 발급사명</p>\n<pre><code>발급사 코드를 지원하는 pg사에 한해 제공됩니다.</code></pre>"
+        },
+        "card_publisher_code": {
+          "description": "카드 발행사 코드(금융결제원 표준코드번호) <br>\n    발행사 코드 지원 pg사\n    <ul><li>(신) 토스페이먼츠\n    </li><li>KSNET\n    </li><li>페이팔 RT\n    </li><li>(신) 스마트로\n    </li><li>(신) 나이스페이먼츠\n    </li><li>웰컴페이먼츠\n    </li><li>(신) 토스페이",
+          "type": "string",
+          "x-portone-name": "카드 발행사 코드",
+          "x-portone-description": "<p>카드 발행사 코드번호 (금융결제원 표준코드 번호)</p>\n<pre><code>발행사 코드 지원 pg사\n- (신) 토스페이먼츠\n- KSNET사\n- 페이팔 RT\n- (신) 스마트로\n- (신) 나이스페이먼츠\n- 웰컴페이먼츠\n- (신) 토스페이</code></pre>",
+          "x-portone-supported-pgs": [
+            "tosspayments",
+            "ksnet",
+            "paypal_v2",
+            "smartro_v2",
+            "nice_v2",
+            "welcome",
+            "tosspay_v2"
+          ]
+        },
+        "card_publisher_name": {
+          "description": "카드 발행사명으로 발행사 코드를 지원하는 pg사에 한해 제공됩니다.",
+          "type": "string",
+          "x-portone-name": "카드 발행사명",
+          "x-portone-description": "<p>빌링키 발급 한 카드의 발행사명</p>\n<pre><code>발행사 코드를 지원하는 pg사에 한해 제공됩니다.</code></pre>"
+        },
+        "card_number": {
+          "description": "마스킹 카드번호",
+          "type": "string",
+          "x-portone-name": "마스킹 카드번호",
+          "x-portone-description": "<p>빌링키 발급 한 카드의 마스킹된 카드번호</p>\n"
+        },
+        "card_type": {
+          "description": "카드유형 <br>\n    (주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)\n    <ul><li> 0 : 신용카드\n    </li><li> 1 : 체크카드 </li></ul>",
+          "type": "integer",
+          "x-portone-name": "카드유형",
+          "x-portone-summary": "<p>빌링키 발급 한 카드의 유형</p>\n",
+          "x-portone-description": "<p><strong>주의 : 해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답</strong>됩니다.(ex. 이니시스-빌링)</p>\n<ul>\n<li>0 : 신용카드<ul>\n<li>1 : 체크카드</li>\n</ul>\n</li>\n</ul>\n"
+        },
+        "inserted": {
+          "description": "빌링키가 등록된 시각 UNIX timestamp",
+          "type": "integer",
+          "x-portone-name": "발급 시각",
+          "x-portone-description": "<p>빌링키가 발급된 시각 UNIX timestamp</p>\n"
+        },
+        "updated": {
+          "description": "빌링키가 업데이트된 시각 UNIX timestamp",
+          "type": "integer",
+          "x-portone-name": "업데이트 시각",
+          "x-portone-description": "<p>빌링키가 업데이트된 시각 UNIX timestamp</p>\n"
+        }
+      }
+    },
+    "FailedChannelAnnotation": {
+      "required": [
+        "type",
+        "message",
+        "pg_provider",
+        "pg_id"
+      ],
+      "properties": {
+        "type": {
+          "description": "빌링키 발급 실패 유형\n    <ul><li>INVALID_REQUEST (요청된 입력 정보가 유효하지 않은 경우)</li>\n    <li>PG_PROVIDER (PG사에서 오류를 전달한 경우)</li>\n    <li>DB_FAILED(DB CRUD에 실패한 경우)</li></ul>",
+          "type": "string",
+          "x-portone-name": "실패 유형",
+          "x-portone-description": "<p>빌링키 발급 실패 유형</p>\n",
+          "x-portone-enum": [
+            "INVALID_REQUEST",
+            "PG_PROVIDER",
+            "DB_FAILED"
+          ]
+        },
+        "message": {
+          "description": "빌링키 발급 실패에 대한 구체적인 실패 메세지",
+          "type": "string",
+          "x-portone-name": "실패 메세지",
+          "x-portone-description": "<p>빌링키 발급 실패에 대한 구체적인 실패 메세지</p>\n"
+        },
+        "pg_provider": {
+          "description": "빌링키 발급에 실패한 PG사 구분코드",
+          "type": "string",
+          "maxLength": "16",
+          "x-portone-name": "PG사 구분코드",
+          "x-portone-description": "<p>빌링키 발급에 실패한 PG사 구분코드</p>\n"
+        },
+        "pg_id": {
+          "description": "빌링키 발급에 실패한 PG사 상점아이디(MID)",
+          "type": "string",
+          "maxLength": "80",
+          "x-portone-name": "상점아이디(MID)",
+          "x-portone-description": "<p>빌링키 발급에 실패한 PG사 상점아이디(MID)</p>\n"
+        }
+      }
+    },
+    "SuperBillingKeyResponse": {
+      "description": "슈퍼 빌링키 응답",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResponseAnnotation"
+        },
+        {
+          "properties": {
+            "response": {
+              "$ref": "#/definitions/SuperBillingKeyAnnotation"
+            }
+          }
+        }
+      ]
     },
     "TierAnnotation": {
       "required": [

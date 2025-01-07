@@ -1,7 +1,7 @@
 ---
 title: 스마트 라우팅 - 연동하기
 description: 멀티PG 환경을 클릭 한 번으로 쉽게 만들 수 있는 결제 트래픽 분산 자동화 서비스 입니다.
-targetVersions: ["v2"]
+targetVersions: ["v1", "v2"]
 ---
 
 import Details from "~/components/gitbook/Details";
@@ -26,38 +26,68 @@ SDK를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
 <VersionGate v="v1">
   인증결제와 관련된 자세한 내용은 [인증 결제 연동하기](/opi/ko/integration/start/v1/auth) 문서를 참고하시기 바랍니다.
+
+  ### 예제 코드
+
+  ```ts
+  IMP.request_pay(
+    {
+      // 결제대행사를 지정할 때 사용한 channelKey, pg 대신
+      // channelGroupId 파라미터에 스마트 라우팅 그룹 ID를 설정합니다.
+      channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+      pay_method: "card", //결제수단 선택
+      merchant_uid: "ORD20180131-0000011", //고객사 주문번호
+      name: "Norway swivel chair", //주문명
+      amount: 1000, // 결제 금액
+      //고객 정보
+      buyer_email: "gildong@gmail.com",
+      buyer_name: "Hong Gildong",
+      buyer_tel: "010-4242-4242",
+      buyer_addr: "Shinsa-dong, Gangnam-gu, Seoul",
+      buyer_postcode: "01181",
+    },
+    function (rsp) {
+      // callback
+      if (rsp.success) {
+        // Payment is successful
+      } else {
+        // Payment failed
+      }
+    },
+  );
+  ```
 </VersionGate>
 
 <VersionGate v="v2">
   인증결제와 관련된 자세한 내용은 [인증 결제 연동하기](/opi/ko/integration/start/v2/checkout) 문서를 참고하시기 바랍니다.
+
+  ### 예제 코드
+
+  ```tsx
+  //포트원 인증결제 SDK 호출
+  PortOne.requestPayment({
+    storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
+
+    // 결제대행사를 지정할 때 사용한 channelKey 대신
+    // channelGroupId 파라미터에 스마트 라우팅 그룹 ID를 설정합니다.
+    channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+
+    // 기타 인증결제 파라미터 설정
+    paymentId: `payment-${crypto.randomUUID()}`,
+    orderName: "나이키 와플 트레이너 2 SD",
+    totalAmount: 1000,
+    currency: "CURRENCY_KRW",
+    payMethod: "CARD",
+
+    // 스마트 라우팅 사용 시 필수 파라미터 추가 설정
+    customer: {
+      fullName: "홍길동",
+      phoneNumber: "010-1234-5678",
+      email: "test@test.com",
+    },
+  });
+  ```
 </VersionGate>
-
-### 예제 코드
-
-```tsx
-//포트원 인증결제 SDK 호출
-PortOne.requestPayment({
-  storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
-
-  // 결제대행사를 지정할 때 사용한 channelKey 대신
-  // channelGroupId 파라미터에 스마트 라우팅 그룹 ID를 설정합니다.
-  channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
-
-  // 기타 인증결제 파라미터 설정
-  paymentId: `payment-${crypto.randomUUID()}`,
-  orderName: "나이키 와플 트레이너 2 SD",
-  totalAmount: 1000,
-  currency: "CURRENCY_KRW",
-  payMethod: "CARD",
-
-  // 스마트 라우팅 사용 시 필수 파라미터 추가 설정
-  customer: {
-    fullName: "홍길동",
-    phoneNumber: "010-1234-5678",
-    email: "test@test.com",
-  },
-});
-```
 
 ### 주요 파라미터
 
@@ -72,56 +102,131 @@ PortOne.requestPayment({
 
 ### 필수 파라미터
 
-각 파라미터에 대한 상세한 설명은 [결제요청 파라미터](/sdk/ko/v2-sdk/payment-request) 문서를 참고하시기 바랍니다.
+<VersionGate v="v1">
+  각 파라미터에 대한 상세한 설명은 [결제요청 파라미터](/sdk/ko/v1-sdk/javascript-sdk/payrq) 문서를 참고하시기 바랍니다.
 
-<ParamTree>
-  - storeId: string
+  <ParamTree>
+    - merchant\_uid: string
 
-    **고객사 ID**
+    **고객사 주문번호**
 
-  - paymentId: string
-
-    **고객사 주문 고유 번호**
-
-  - orderName: string
+    - name: string
 
     **주문명**
 
-  - totalAmount: number
+    - amount: number
 
-    **결제 금액**
+    **결제금액**
 
-  - currency: string
-
-    **결제 통화**
-
-  - payMethod: string
+    - pay\_method: string
 
     **결제수단 구분코드**
 
-  - virtualAccount?: object
+    - custom\_data: object
+
+    **사용자 정의 데이터**
+
+    결제 응답시 **echo** 로 받아보실 수 있는 필드 입니다.
+
+    JSON notation(string)으로 저장됩니다.
+
+    주문 건에 대해 부가정보를 저장할 공간이 필요할 때 사용합니다
+
+    - tax\_free: number
+
+    **면세금액**
+
+    결제금액 중 면세금액에 해당하는 금액을 입력합니다.
+
+    - vat\_amount: number
+
+    **부가세**
+
+    결제금액 중 부가세에 해당하는 금액을 입력합니다. (기본값: null)
+
+    - vbank\_due: string
+
+    **가상계좌 입금기한**
+
+    스마트 라우팅을 이용한 가상계좌 결제 사용 시 필수 입력해야 합니다.
+
+    다음과 같은 형식으로 설정이 가능합니다 :
+
+    `YYYY-MM-DD`
+
+    `YYYYMMDD`
+
+    `YYYY-MM-DD HH:mm:ss`
+
+    `YYYYMMDDHHmmss`
+
+    - buyer\_tel: string
+
+    **주문자 연락처**
+
+    일부 PG사에서 해당 필드 누락시 오류 발생
+
+    - buyer\_email: string
+
+    **주문자 이메일**
+
+    일부 PG사에서 해당 필드 누락시 오류 발생(페이먼트월)
+  </ParamTree>
+
+  기타 파라미터는 [결제요청 파라미터](/sdk/ko/v1-sdk/javascript-sdk/payrq) 문서를 참고하시길 바랍니다.
+</VersionGate>
+
+<VersionGate v="v2">
+  각 파라미터에 대한 상세한 설명은 [결제요청 파라미터](/sdk/ko/v2-sdk/payment-request) 문서를 참고하시기 바랍니다.
+
+  <ParamTree>
+    - storeId: string
+
+    **고객사 ID**
+
+    - paymentId: string
+
+    **고객사 주문 고유 번호**
+
+    - orderName: string
+
+    **주문명**
+
+    - totalAmount: number
+
+    **결제 금액**
+
+    - currency: string
+
+    **결제 통화**
+
+    - payMethod: string
+
+    **결제수단 구분코드**
+
+    - virtualAccount?: object
 
     가상계좌 결제 사용 시 필요한 파라미터입니다.
 
     <ParamTree>
       - accountExpiry: object
 
-        **가상계좌 입금 만료기한**
+      **가상계좌 입금 만료기한**
 
-        스마트 라우팅을 이용한 가상계좌 결제 사용 시 필수 입력해야 합니다.
+      스마트 라우팅을 이용한 가상계좌 결제 사용 시 필수 입력해야 합니다.
 
-        <ParamTree>
-          - validHours?: number
+      <ParamTree>
+        - validHours?: number
 
-            **가상계좌 입금 유효 시간**
+        **가상계좌 입금 유효 시간**
 
-          - dueDate?: string
+        - dueDate?: string
 
-            **가상계좌 입금 유효 시각**
-        </ParamTree>
+        **가상계좌 입금 유효 시각**
+      </ParamTree>
     </ParamTree>
 
-  - easyPay?: object
+    - easyPay?: object
 
     **간편결제 정보**
 
@@ -130,37 +235,38 @@ PortOne.requestPayment({
     <ParamTree>
       - easyPayProvider?: string
 
-        **간편결제 수단**
+      **간편결제 수단**
     </ParamTree>
 
-  - productType: string
+    - productType: string
 
     **상품 유형**
 
     스마트 라우팅을 이용한 휴대폰 소액결제 사용 시 필수 입력해야 합니다.
 
-  - customer: object
+    - customer: object
 
     **구매자 정보**
 
     <ParamTree>
       - fullName: string
 
-        **구매자 전체 이름**
+      **구매자 전체 이름**
 
-        `fullName` 파라미터 대신 `firstName`과 `lastName` 파라미터를 사용해도 됩니다.
+      `fullName` 파라미터 대신 `firstName`과 `lastName` 파라미터를 사용해도 됩니다.
 
       - phoneNumber: string
 
-        **구매자 연락처**
+      **구매자 연락처**
 
       - email: string
 
-        **구매자 이메일 주소**
+      **구매자 이메일 주소**
     </ParamTree>
-</ParamTree>
+  </ParamTree>
 
-기타 파라미터는 [결제요청 파라미터](/sdk/ko/v2-sdk/payment-request) 문서를 참고하시길 바립니다.
+  기타 파라미터는 \[결제요청 파라미터]\(/sdk/ko/v2-sdk/payment-request 문서를 참고하시길 바립니다.
+</VersionGate>
 
 ### 유의사항
 
@@ -204,107 +310,134 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
 ### 예제 코드
 
-<Tabs>
-  <Tabs.Tab title="카드 결제">
-    ```ts
-    // 포트원 수기(키인)결제 API 호출
-    const paymentResponse = await fetch(
-      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `PortOne ${PORTONE_API_SECRET}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          // channelGroupId 파라미터에 스마트 라우팅 그룹 ID를 설정합니다.
-          channelGroupId: "channel-group-test-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
-          orderName: "월간 이용권 정기결제",
-          // 수기 결제 API를 참고해 고객 정보를 채워주세요.
-          customer: {
-            name: {
-              full: "김포트", // 고객 이름을 입력해야 합니다.
-            },
-          },
-          amount: {
-            total: 8900,
-          },
-          currency: "KRW",
-
-          // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
-          method: {
-            card: {
-              credential: {
-                number: "0000123400001234", // 16자리 숫자만 입력해야 합니다.
-                expiryYear: "26", // 연도의 뒤 2자리를 입력해야 합니다.
-                expiryMonth: "12",
-                birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
-                passwordTwoDigits: "00", // 카드 비밀번호 앞 2자리 입력해야 합니다.
-              },
-            },
-          },
-          productType: "PHYSICAL", // 상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
-        }),
+<VersionGate v="v1">
+  ```ts title="server-side"
+  // card_number, expiry, birth, pwd_2digit 등 정보를 전달받습니다.
+  // 포트원 비인증 결제(일회성) API 호출
+  const onetimeResponse = await fetch(
+    "https://api.iamport.kr/subscribe/payments/onetime",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
       },
-    );
-    if (!paymentResponse.ok)
-      throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
-    ```
-  </Tabs.Tab>
+      body: JSON.stringify({
+        channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+        card_number: "YYYY-YYYY-YYYY-YYYY", // 카드 번호 16자리
+        expiry: "YYYY-MM", // 카드 유효기간
+        birth: "YYMMDD", // 생년 월일. 무기명 법인카드의 경우 사업자 번호 10자리 입력
+        pwd_2digit: "NN", //카드 비밀번호 앞 2자리
+        // 중략...
+      }),
+    },
+  );
+  ```
+</VersionGate>
 
-  <Tabs.Tab title="가상계좌 결제">
-    ```ts
-    // 포트원 수기(키인)결제 API 호출
-    const paymentResponse = await fetch(
-      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `PortOne ${PORTONE_API_SECRET}`,
-          "Content-Type": "application/json",
+<VersionGate v="v2">
+  <Tabs>
+    <Tabs.Tab title="카드 결제">
+      ```ts
+      // 포트원 수기(키인)결제 API 호출
+      const paymentResponse = await fetch(
+        `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `PortOne ${PORTONE_API_SECRET}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            // channelGroupId 파라미터에 스마트 라우팅 그룹 ID를 설정합니다.
+            channelGroupId: "channel-group-test-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
+            orderName: "월간 이용권 정기결제",
+            // 수기 결제 API를 참고해 고객 정보를 채워주세요.
+            customer: {
+              name: {
+                full: "김포트", // 고객 이름을 입력해야 합니다.
+              },
+            },
+            amount: {
+              total: 8900,
+            },
+            currency: "KRW",
+
+            // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
+            method: {
+              card: {
+                credential: {
+                  number: "0000123400001234", // 16자리 숫자만 입력해야 합니다.
+                  expiryYear: "26", // 연도의 뒤 2자리를 입력해야 합니다.
+                  expiryMonth: "12",
+                  birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
+                  passwordTwoDigits: "00", // 카드 비밀번호 앞 2자리 입력해야 합니다.
+                },
+              },
+            },
+            productType: "PHYSICAL", // 상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
+          }),
         },
-        body: JSON.stringify({
-          channelGroupId: "channel-group-live-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
-          orderName: "월간 이용권 정기결제",
-          // 수기 결제 API를 참고해 고객 정보를 채워주세요.
-          customer: {
-            name: {
-              full: "김포트", // 고객 이름을 입력해야 합니다.
-            },
-            phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
-            email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
-          },
-          amount: {
-            total: 8900,
-          },
-          currency: "KRW",
+      );
+      if (!paymentResponse.ok)
+        throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
+      ```
+    </Tabs.Tab>
 
-          // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
-          method: {
-            virtaulAccount: {
-              bank: "KOOKMIN", // 은행별 enum 확인 후 발급할 은행 값을 입력해야 합니다.
-              expiry: {
-                dueDate: "2023-12-21T00:00:00+09:00", // RFC 3339 형식으로 입력해야 합니다.
-              },
-              option: {
-                type: "NORMAL", // 일반 가상계좌 (회전식)인 경우 `NORMAL`로 입력해야 합니다.
-              },
-              cashReceipt: {
-                type: "PERSONAL", // 소득공제용인 경우 `PERSONAL`, 지출증빙용인 경우 `CORPORATE`로 입력해야 합니다.
-                customerIdentityNumber: "01000001234", // 현금영수증 발급 번호
-              },
-              remitteeName: "포트원", // 가상계좌 예금주명을 입력해야 합니다.
-            },
-            productCount: 1, // 상품 개수를 입력해야 합니다.
+    <Tabs.Tab title="가상계좌 결제">
+      ```ts
+      // 포트원 수기(키인)결제 API 호출
+      const paymentResponse = await fetch(
+        `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/instant`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `PortOne ${PORTONE_API_SECRET}`,
+            "Content-Type": "application/json",
           },
-        }),
-      },
-    );
-    if (!paymentResponse.ok)
-      throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
-    ```
-  </Tabs.Tab>
-</Tabs>
+          body: JSON.stringify({
+            channelGroupId: "channel-group-live-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
+            orderName: "월간 이용권 정기결제",
+            // 수기 결제 API를 참고해 고객 정보를 채워주세요.
+            customer: {
+              name: {
+                full: "김포트", // 고객 이름을 입력해야 합니다.
+              },
+              phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+              email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
+            },
+            amount: {
+              total: 8900,
+            },
+            currency: "KRW",
+
+            // 수기(키인)결제 API를 참고해 카드 / 가상계좌 정보를 채워주세요.
+            method: {
+              virtaulAccount: {
+                bank: "KOOKMIN", // 은행별 enum 확인 후 발급할 은행 값을 입력해야 합니다.
+                expiry: {
+                  dueDate: "2023-12-21T00:00:00+09:00", // RFC 3339 형식으로 입력해야 합니다.
+                },
+                option: {
+                  type: "NORMAL", // 일반 가상계좌 (회전식)인 경우 `NORMAL`로 입력해야 합니다.
+                },
+                cashReceipt: {
+                  type: "PERSONAL", // 소득공제용인 경우 `PERSONAL`, 지출증빙용인 경우 `CORPORATE`로 입력해야 합니다.
+                  customerIdentityNumber: "01000001234", // 현금영수증 발급 번호
+                },
+                remitteeName: "포트원", // 가상계좌 예금주명을 입력해야 합니다.
+              },
+              productCount: 1, // 상품 개수를 입력해야 합니다.
+            },
+          }),
+        },
+      );
+      if (!paymentResponse.ok)
+        throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
+      ```
+    </Tabs.Tab>
+  </Tabs>
+</VersionGate>
 
 ### 주요 파라미터
 
@@ -319,159 +452,185 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
 ### 필수 파라미터
 
-<ParamTree>
-  - paymentId: string
+<VersionGate v="v1">
+  <ParamTree>
+    - merchant\_uid: string
+
+    **고객사 거래 고유번호**
+
+    - amount: number
+
+    **주문 금액**
+
+    - card\_number: string
+
+    **카드번호**
+
+    (dddd-dddd-dddd-dddd) 기재 양식을 유의하세요.
+
+    - expiry: string
+
+    **카드 유효기간**
+
+    (YYYY-MM) 기재 양식을 유의하세요.
+  </ParamTree>
+</VersionGate>
+
+<VersionGate v="v2">
+  <ParamTree>
+    - paymentId: string
 
     **고객사 주문 고유 번호**
 
-  - orderName: string
+    - orderName: string
 
     **주문명**
 
-  - amount: object
+    - amount: object
 
     **주문 금액**
 
     <ParamTree>
       - total: number
 
-        **결제 금액**
+      **결제 금액**
     </ParamTree>
 
-  - currency: string
+    - currency: string
 
     **결제 통화**
 
-  - customer: object
+    - customer: object
 
     **구매자 정보**
 
     <ParamTree>
       - name: object
 
-        **구매자 이름**
+      **구매자 이름**
 
-        <ParamTree>
-          - full: string
+      <ParamTree>
+        - full: string
 
-            **구매자 전체 이름**
+        **구매자 전체 이름**
 
-            `full` 파라미터 대신 `separated.first` 와 `separated.last` 파라미터로 사용해도 됩니다.
-        </ParamTree>
+        `full` 파라미터 대신 `separated.first` 와 `separated.last` 파라미터로 사용해도 됩니다.
+      </ParamTree>
 
       - phoneNumber: string
 
-        **구매자 연락처**
+      **구매자 연락처**
 
-        가상계좌 발급 시 필수 입력해야 합니다.
+      가상계좌 발급 시 필수 입력해야 합니다.
 
       - email: string
 
-        **구매자 이메일 주소**
+      **구매자 이메일 주소**
 
-        가상계좌 발급 시 필수 입력해야 합니다.
+      가상계좌 발급 시 필수 입력해야 합니다.
     </ParamTree>
 
-  - method: object
+    - method: object
 
     **결제 수단**
 
     <ParamTree>
       - card: object
 
-        **카드 결제**
+      **카드 결제**
+
+      <ParamTree>
+        - credential: object
+
+        **카드 정보**
 
         <ParamTree>
-          - credential: object
+          - number: string
 
-            **카드 정보**
+          **카드 번호**
 
-            <ParamTree>
-              - number: string
+          - expiryYear: string
 
-                **카드 번호**
+          **카드 유효기간 중 연도**
 
-              - expiryYear: string
+          - expiryMonth: string
 
-                **카드 유효기간 중 연도**
+          **카드 유효기간 중 월**
 
-              - expiryMonth: string
+          - birthOrBusinessRegistrationNumber: string
 
-                **카드 유효기간 중 월**
+          **생년월일 또는 사업자번호**
 
-              - birthOrBusinessRegistrationNumber: string
+          - passwordTwoDigits: string
 
-                **생년월일 또는 사업자번호**
-
-              - passwordTwoDigits: string
-
-                **카드 비밀번호 앞 2자리**
-            </ParamTree>
+          **카드 비밀번호 앞 2자리**
         </ParamTree>
+      </ParamTree>
 
       - virtualAccount: object
 
-        **가상 계좌**
+      **가상 계좌**
+
+      <ParamTree>
+        - bank: object
+
+        **은행 정보**
+
+        - expiry: object
+
+        **만료 기한**
 
         <ParamTree>
-          - bank: object
+          - dueDate: string
 
-            **은행 정보**
-
-          - expiry: object
-
-            **만료 기한**
-
-            <ParamTree>
-              - dueDate: string
-
-                **만료 시점**
-            </ParamTree>
-
-          - option: object
-
-            **가상계좌 발급 방식**
-
-            <ParamTree>
-              - type: string
-
-                **가상계좌 발급 유형**
-
-                일반 가상계좌 (회전식)인 경우 `NOMAL`를 입력해야 합니다.
-            </ParamTree>
-
-          - cashReceipt: object
-
-            **현금영수증 정보**
-
-            <ParamTree>
-              - type: string
-
-                **현금영수증 발급 유형**
-
-              - customerIdentityNumber: string
-
-                **현금영수증 발급 식별 정보**
-            </ParamTree>
-
-          - remitteeName: string
-
-            **가상계좌 예금주명**
+          **만료 시점**
         </ParamTree>
+
+        - option: object
+
+        **가상계좌 발급 방식**
+
+        <ParamTree>
+          - type: string
+
+          **가상계좌 발급 유형**
+
+          일반 가상계좌 (회전식)인 경우 `NOMAL`를 입력해야 합니다.
+        </ParamTree>
+
+        - cashReceipt: object
+
+        **현금영수증 정보**
+
+        <ParamTree>
+          - type: string
+
+          **현금영수증 발급 유형**
+
+          - customerIdentityNumber: string
+
+          **현금영수증 발급 식별 정보**
+        </ParamTree>
+
+        - remitteeName: string
+
+        **가상계좌 예금주명**
+      </ParamTree>
     </ParamTree>
 
-  - productType: string
+    - productType: string
 
     **상품 유형**
 
     KSNET로 카드 결제시에만 MID 설정 정보와 검증을 진행합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
 
-  - productCount: string
+    - productCount: string
 
     **상품 개수**
 
     스마트로로 가상계좌 발급시에만 정보가 유효합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
-</ParamTree>
+  </ParamTree>
+</VersionGate>
 
 ### 유의사항
 
@@ -480,7 +639,8 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
   <Details.Content>
     실제로 결제를 요청하여 결제 승인, 실패된 경우 결제대행사 정보를 확인할 수 있습니다.
-    결제대행사 정보는 콘솔 결제내역 또는 결제 조회 API의 `channel` 파라미터에서 확인 가능합니다.
+    <VersionGate v="v1">결제대행사 정보는 콘솔 결제내역 또는 결제 조회 API의 `pg_provider` 파라미터에서 확인 가능합니다.</VersionGate>
+    <VersionGate v="v2">결제대행사 정보는 콘솔 결제내역 또는 결제 조회 API의 `channel` 파라미터에서 확인 가능합니다.</VersionGate>
   </Details.Content>
 </Details>
 
@@ -494,25 +654,27 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
   </Details.Content>
 </Details>
 
-<Details>
-  <Details.Summary> 가상계좌 발급 이용 시 고정식 가상계좌 사용을 권장하지 않습니다.</Details.Summary>
+<VersionGate v="v2">
+  <Details>
+    <Details.Summary> 가상계좌 발급 이용 시 고정식 가상계좌 사용을 권장하지 않습니다.</Details.Summary>
 
-  <Details.Content>
-    고정식 가상계좌의 경우 결제대행사별로 발급 유형이 다르므로 스마트 라우팅 이용 시 가상계좌 발급이
-    올바르지 않을 수 있습니다.
-    가상계좌 발급을 이용하시는 경우 일반(회전식) 가상계좌를 이용하시길 권장드립니다.
-  </Details.Content>
-</Details>
+    <Details.Content>
+      고정식 가상계좌의 경우 결제대행사별로 발급 유형이 다르므로 스마트 라우팅 이용 시 가상계좌 발급이
+      올바르지 않을 수 있습니다.
+      가상계좌 발급을 이용하시는 경우 일반(회전식) 가상계좌를 이용하시길 권장드립니다.
+    </Details.Content>
+  </Details>
 
-<Details>
-  <Details.Summary> 가상계좌 발급 이용 시 `virtualAccount.expiry.validHours` 사용을 권장하지 않습니다.</Details.Summary>
+  <Details>
+    <Details.Summary> 가상계좌 발급 이용 시 `virtualAccount.expiry.validHours` 사용을 권장하지 않습니다.</Details.Summary>
 
-  <Details.Content>
-    스마트 라우팅 이용 시 가상계좌 만료시간 파라미터 중 `virtualAccount.expiry.validHours` 사용을 권장하지 않습니다.
-    해당 파라미터의 경우 지원하는 PG사가 한정적이기 때문에 해당 파라미터를 사용하는 경우 일부 PG사에 한하여
-    정상적으로 가상계좌 발급이 불가능할 수 있습니다.
-  </Details.Content>
-</Details>
+    <Details.Content>
+      스마트 라우팅 이용 시 가상계좌 만료시간 파라미터 중 `virtualAccount.expiry.validHours` 사용을 권장하지 않습니다.
+      해당 파라미터의 경우 지원하는 PG사가 한정적이기 때문에 해당 파라미터를 사용하는 경우 일부 PG사에 한하여
+      정상적으로 가상계좌 발급이 불가능할 수 있습니다.
+    </Details.Content>
+  </Details>
+</VersionGate>
 
 ## API 빌링키 발급 및 정기결제 연동하기
 
@@ -544,67 +706,46 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 
 <Tabs>
   <Tabs.Tab title="빌링키 발급">
-    ```ts
-    const issueResponse = await fetch("https://api.portone.io/billing-keys", {
-      method: "POST",
-      headers: {
-        Authorization: `PortOne ${PORTONE_API_SECRET}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        chanenlGroupId: "channel-group-live-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
-        customer: {
-          id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
-          name: {
-            full: "김포트", // 고객 이름을 입력해야 합니다.
+    <VersionGate v="v1">
+      ```ts
+      const issueResponse = await fetch(
+        `https://api.iamport.kr/subscribe/customers/${customer_uid}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Content-Type": "application/json",
           },
-          phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
-          email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
+          body: JSON.stringify({
+            channelGroupId: "channel-group-live-f042e8e2-92f1-4f68-ad61-cec6ede41529",
+            customer_id: customer_id, //고객 식별 정보로 고객사에서 기입
+            card_number: "YYYY-YYYY-YYYY-YYYY", // 카드 번호 16자리
+            expiry: "YYYY-MM", // 카드 유효기간
+            birth: "YYMMDD", // 생년 월일. 무기명 법인카드의 경우 사업자 번호 10자리 입력
+            pwd_2digit: "NN", //카드 비밀번호 앞 2자리
+            // 중략...
+          }),
         },
-        method: {
-          card: {
-            credential: {
-              number: "0000123400001234", // 16자리 숫자만 입력해야 합니다.
-              expiryYear: "26", // 연도의 뒤 2자리를 입력해야 합니다.
-              expiryMonth: "12",
-              birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
-              passwordTwoDigits: "00", // 카드 비밀번호 앞 2자리 입력해야 합니다.
-            },
-          },
-        },
-      }),
-    });
-    if (!issueResponse.ok)
-      throw new Error(`issueResponse: ${await issueResponse.json()}`);
+      );
+      if (!issueResponse.ok)
+        throw new Error(`issueResponse: ${await issueResponse.json()}`);
+      const {
+        billingKeyInfo: { customer_uid },
+      } = await issueResponse.json();
+      // 빌링키가 발급되었습니다! 빌링키를 저장하거나 결제하는 로직을 구성하세요.
+      ```
+    </VersionGate>
 
-    const {
-      billingKeyInfo: { billingKey, channels },
-      channelSpecificFailures,
-    } = await issueResponse.json();
-
-    // `channels` 필드에 사용 가능한 채널 여러 개가 포함된 것을 확인할 수 있습니다.
-    // 이 필드는 빌링키 조회에서도 확인 가능합니다.
-    console.log(`빌링키: ${billingKey}`);
-    console.log(`발급 성공한 채널: ${channels}`);
-
-    if (channelSpecificFailures.length !== 0)
-      console.log(`발급에 실패한 채널이 있습니다: ${channelSpecificFailures}`);
-    ```
-  </Tabs.Tab>
-
-  <Tabs.Tab title="빌링키 결제">
-    ```ts
-    const issueResponse = await fetch(
-      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/billing-key`,
-      {
+    <VersionGate v="v2">
+      ```ts
+      const issueResponse = await fetch("https://api.portone.io/billing-keys", {
         method: "POST",
         headers: {
           Authorization: `PortOne ${PORTONE_API_SECRET}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
-          orderName: "후불 결제",
+          chanenlGroupId: "channel-group-live-94ab2b51-b7e1-4b74-9a9c-9fb6e117a6ac",
           customer: {
             id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
             name: {
@@ -613,34 +754,80 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
             phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
             email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
           },
-          amount: {
-            total: 8900,
+          method: {
+            card: {
+              credential: {
+                number: "0000123400001234", // 16자리 숫자만 입력해야 합니다.
+                expiryYear: "26", // 연도의 뒤 2자리를 입력해야 합니다.
+                expiryMonth: "12",
+                birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자 등록번호 10자리를 입력해야 합니다.
+                passwordTwoDigits: "00", // 카드 비밀번호 앞 2자리 입력해야 합니다.
+              },
+            },
           },
-          currency: "KRW",
-          productType: "PHYSICAL", // 상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
-          productCount: 1, // 상품 개수를 입력해야 합니다.
         }),
-      },
-    );
-    if (!issueResponse.ok)
-      throw new Error(`issueResponse: ${await issueResponse.json()}`);
-    ```
+      });
+      if (!issueResponse.ok)
+        throw new Error(`issueResponse: ${await issueResponse.json()}`);
+
+      const {
+        billingKeyInfo: { billingKey, channels },
+        channelSpecificFailures,
+      } = await issueResponse.json();
+
+      // `channels` 필드에 사용 가능한 채널 여러 개가 포함된 것을 확인할 수 있습니다.
+      // 이 필드는 빌링키 조회에서도 확인 가능합니다.
+      console.log(`빌링키: ${billingKey}`);
+      console.log(`발급 성공한 채널: ${channels}`);
+
+      if (channelSpecificFailures.length !== 0)
+        console.log(`발급에 실패한 채널이 있습니다: ${channelSpecificFailures}`);
+      ```
+    </VersionGate>
   </Tabs.Tab>
 
-  <Tabs.Tab title="빌링키 예약 결제">
-    ```ts
-    const issueResponse = await fetch(
-      `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `PortOne ${PORTONE_API_SECRET}`,
-          "Content-Type": "application/json",
+  <Tabs.Tab title="빌링키 결제">
+    <VersionGate v="v1">
+      ```ts
+      // 포트원 빌링키 결제 API 호출
+      const paymentResponse = await fetch(
+        "https://api.iamport.kr/subscribe/payments/again",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customer_uid: "customer_uid", // 슈퍼 빌링키
+            merchant_uid: "merchant_uid",
+            name: "월간 이용권 정기결제",
+            // 빌링키 결제 API를 참고해 고객 정보를 채워주세요.
+            amount: {
+              total: 8900,
+            },
+            currency: "KRW",
+          }),
         },
-        body: JSON.stringify({
-          payment: {
+      );
+      if (!paymentResponse.ok)
+        throw new Error(`paymentResponse: ${await paymentResponse.json()}`);
+      ```
+    </VersionGate>
+
+    <VersionGate v="v2">
+      ```ts
+      const issueResponse = await fetch(
+        `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/billing-key`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `PortOne ${PORTONE_API_SECRET}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
             billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
-            orderName: "월간 이용권 정기 결제",
+            orderName: "후불 결제",
             customer: {
               id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
               name: {
@@ -655,14 +842,84 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
             currency: "KRW",
             productType: "PHYSICAL", // 상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
             productCount: 1, // 상품 개수를 입력해야 합니다.
+          }),
+        },
+      );
+      if (!issueResponse.ok)
+        throw new Error(`issueResponse: ${await issueResponse.json()}`);
+      ```
+    </VersionGate>
+  </Tabs.Tab>
+
+  <Tabs.Tab title="빌링키 예약 결제">
+    <VersionGate v="v1">
+      ```ts title="server-side"
+      // 결제 예약
+      const paymentResponse = await fetch(
+        "https://api.iamport.kr/subscribe/payments/schedule",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${ACCESS_TOKEN}`,
+            "Content-Type": "application/json",
           },
-          timeToPay: "2024-05-01T00:00:00+09:00", // ISO8601 형식으로 입력해야 합니다.
-        }),
-      },
-    );
-    if (!issueResponse.ok)
-      throw new Error(`issueResponse: ${await issueResponse.json()}`);
-    ```
+          body: JSON.stringify({
+            customer_uid: "gildong_0001_1234", // 슈퍼 빌링키
+            schedules: [
+              {
+                merchant_uid: "order_monthly_0001", // 주문 번호
+                schedule_at: 1519862400, // 결제 시도 시각 in Unix Time Stamp. 예: 다음 달 1일
+                amount: 8900,
+                name: "월간 이용권 정기결제",
+                buyer_name: "홍길동",
+                buyer_tel: "01012345678",
+                buyer_email: "gildong@gmail.com",
+                // 중략...
+              },
+            ],
+          }),
+        },
+      );
+      ```
+    </VersionGate>
+
+    <VersionGate v="v2">
+      ```ts
+      const issueResponse = await fetch(
+        `https://api.portone.io/payments/${encodeURIComponent(UNIQUE_PAYMENT_ID)}/schedule`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `PortOne ${PORTONE_API_SECRET}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            payment: {
+              billingKey: "billing-key-018fa367-cdd9-d8fd-2256-c43ce0e475d6", // 발급된 빌링키 값을 입력해야 합니다.
+              orderName: "월간 이용권 정기 결제",
+              customer: {
+                id: "customerId_2333", // 고객사가 지정한 고객 식별정보를 입력해야 합니다.
+                name: {
+                  full: "김포트", // 고객 이름을 입력해야 합니다.
+                },
+                phoneNumber: "01000001234", // 고객 전화번호를 입력해야 합니다.
+                email: "port@portone.io", // 고객 이메일을 입력해야 합니다.
+              },
+              amount: {
+                total: 8900,
+              },
+              currency: "KRW",
+              productType: "PHYSICAL", // 상품이 실물인 경우 `PHYSICAL`, 디지털인 경우 `DIGITAL` 입력해야 합니다.
+              productCount: 1, // 상품 개수를 입력해야 합니다.
+            },
+            timeToPay: "2024-05-01T00:00:00+09:00", // ISO8601 형식으로 입력해야 합니다.
+          }),
+        },
+      );
+      if (!issueResponse.ok)
+        throw new Error(`issueResponse: ${await issueResponse.json()}`);
+      ```
+    </VersionGate>
   </Tabs.Tab>
 </Tabs>
 
@@ -677,244 +934,322 @@ API를 이용하는 경우 결제 호출 시 생성한 스마트 라우팅 그�
 - 스마트 라우팅 그룹 ID를 지정하여 결제창을 호출하면, 스마트 라우팅 그룹 내 설정된 채널 비율에 따라
   확률 기반으로 하나의 결제대행사가 호출됩니다.
 
+<VersionGate v="v1">
+  스마트 라우팅 그룹 ID를 지정하여 빌링키 발급 API를 호출하면, 스마트 라우팅 그룹 내 활성화 된 채널들에 대해 빌링키 발급을 시도합니다.
+</VersionGate>
+
 ### 필수 파라미터
 
 <Tabs>
   <Tabs.Tab title="빌링키 발급">
     <ParamTree>
-      - paymentId: string
+      <VersionGate v="v1">
+        - customer\_uid: string
+
+        **구매자의 결제 수단 식별 고유번호**
+
+        - card\_number: string
+
+        **카드번호**
+
+        (dddd-dddd-dddd-dddd) 기재 양식을 유의하세요.
+
+        - expiry: string
+
+        **카드 유효기간**
+
+        (YYYY-MM) 기재 양식을 유의하세요.
+      </VersionGate>
+
+      <VersionGate v="v2">
+        - paymentId: string
 
         **고객사 주문 고유 번호**
 
-      - customer: object
+        - customer: object
 
         **구매자 정보**
 
         <ParamTree>
           - id: string
 
-            **구매자 식별정보**
+          **구매자 식별정보**
 
           - name: object
 
-            **구매자 이름**
+          **구매자 이름**
 
-            <ParamTree>
-              - full: string
+          <ParamTree>
+            - full: string
 
-                **구매자 전체 이름**
+            **구매자 전체 이름**
 
-                `full` 파라미터 대신 `separated.first` 와 `separated.last` 파라미터로 사용해도 됩니다.
-            </ParamTree>
+            `full` 파라미터 대신 `separated.first` 와 `separated.last` 파라미터로 사용해도 됩니다.
+          </ParamTree>
 
           - phoneNumber: string
 
-            **구매자 연락처**
+          **구매자 연락처**
 
-            가상계좌 발급 시 필수 입력해야 합니다.
+          가상계좌 발급 시 필수 입력해야 합니다.
 
           - email: string
 
-            **구매자 이메일 주소**
+          **구매자 이메일 주소**
 
-            가상계좌 발급 시 필수 입력해야 합니다.
+          가상계좌 발급 시 필수 입력해야 합니다.
         </ParamTree>
 
-      - method: object
+        - method: object
 
         **결제 수단**
 
         <ParamTree>
           - card: object
 
-            **카드 결제**
+          **카드 결제**
+
+          <ParamTree>
+            - credential: object
+
+            **카드 정보**
 
             <ParamTree>
-              - credential: object
+              - number: string
 
-                **카드 정보**
+              **카드 번호**
 
-                <ParamTree>
-                  - number: string
+              - expiryYear: string
 
-                    **카드 번호**
+              **카드 유효기간 중 연도**
 
-                  - expiryYear: string
+              - expiryMonth: string
 
-                    **카드 유효기간 중 연도**
+              **카드 유효기간 중 월**
 
-                  - expiryMonth: string
+              - birthOrBusinessRegistrationNumber: string
 
-                    **카드 유효기간 중 월**
+              **생년월일 또는 사업자번호**
 
-                  - birthOrBusinessRegistrationNumber: string
+              - passwordTwoDigits: string
 
-                    **생년월일 또는 사업자번호**
-
-                  - passwordTwoDigits: string
-
-                    **카드 비밀번호 앞 2자리**
-                </ParamTree>
+              **카드 비밀번호 앞 2자리**
             </ParamTree>
+          </ParamTree>
         </ParamTree>
+      </VersionGate>
     </ParamTree>
   </Tabs.Tab>
 
   <Tabs.Tab title="빌링키 결제">
     <ParamTree>
-      - paymentId: string
+      <VersionGate v="v1">
+        - customer\_uid: string
+
+        **구매자의 결제 수단 식별 고유번호**
+
+        - merchant\_uid: string
+
+        **고객사 주문번호**
+
+        동일한 주문 번호로 중복 결제가 불가하며, 스마트로 신모듈의 경우 특수문자 포함이 불가능합니다.
+
+        - amount: number
+
+        **결제금액**
+
+        - name: string
+
+        **제품명**
+      </VersionGate>
+
+      <VersionGate v="v2">
+        - **`paymentId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">string\*\*</mark>
 
         **고객사 주문 고유 번호**
 
-      - orderName: string
+        - orderName: string
 
         **주문명**
 
-      - amount: object
+        - amount: object
 
         **주문 금액**
 
         <ParamTree>
           - total: number
 
-            **결제 금액**
+          **결제 금액**
         </ParamTree>
 
-      - currency: string
+        - currency: string
 
         **결제 통화**
 
-      - customer: object
+        - customer: object
 
         **구매자 정보**
 
         <ParamTree>
           - id: string
 
-            **구매자 식별정보**
+          **구매자 식별정보**
 
           - name: object
 
-            **구매자 이름**
+          **구매자 이름**
 
-            <ParamTree>
-              - full: string
+          <ParamTree>
+            - full: string
 
-                **구매자 전체 이름**
+            **구매자 전체 이름**
 
-                `full` 파라미터 대신 `separated.first` 와 `separated.last` 파라미터로 사용해도 됩니다.
-            </ParamTree>
+            `full` 파라미터 대신 `separated.first` 와 `separated.last` 파라미터로 사용해도 됩니다.
+          </ParamTree>
 
           - phoneNumber: string
 
-            **구매자 연락처**
+          **구매자 연락처**
 
-            가상계좌 발급 시 필수 입력해야 합니다.
+          가상계좌 발급 시 필수 입력해야 합니다.
 
           - email: string
 
-            **구매자 이메일 주소**
+          **구매자 이메일 주소**
 
-            가상계좌 발급 시 필수 입력해야 합니다.
+          가상계좌 발급 시 필수 입력해야 합니다.
         </ParamTree>
 
-      - productType: string
+        - productType: string
 
         **상품 유형**
 
         KSNET로 카드 결제시에만 MID 설정 정보와 검증을 진행합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
 
-      - productCount: string
+        - productCount: string
 
         **상품 개수**
 
         스마트로로 가상계좌 발급시에만 정보가 유효합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
+      </VersionGate>
     </ParamTree>
   </Tabs.Tab>
 
   <Tabs.Tab title="빌링키 예약 결제">
     <ParamTree>
-      - paymentId: string
+      <VersionGate v="v1">
+        - customer\_uid: string
+
+        **구매자의 결제 수단 식별 고유번호**
+
+        - `schedules.merchant_uid`: string
+
+        **고객사의 주문번호**
+
+        동일한 주문 번호로 중복 결제가 불가하며, 스마트로 신모듈의 경우 특수문자 포함이 불가능합니다.
+
+        - `schedules.schedule_at`: integer
+
+        **예약시각**
+
+        - `schedules.currency`: string
+
+        **결제 통화**
+
+        e.g) KRW, USD 등 (단, 페이팔 신모듈의 경우 KRW 결제가 불가능하므로 반드시 유효한 값을 필수로 입력해야합니다.)
+
+        - `schedules.amount`: number
+
+        **결제금액**
+
+        - \`schedules.name: string
+
+        **주문명**
+      </VersionGate>
+
+      <VersionGate v="v2">
+        - **`paymentId`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
 
         **고객사 주문 고유 번호**
 
-      - payment: object
+        - payment: object
 
         **결제 정보**
 
         <ParamTree>
           - billingKey: string
 
-            **빌링키**
+          **빌링키**
 
           - orderName: string
 
-            **주문명**
+          **주문명**
 
           - amount: object
 
-            **주문 금액**
+          **주문 금액**
 
-            <ParamTree>
-              - total: number
+          <ParamTree>
+            - total: number
 
-                **결제 금액**
-            </ParamTree>
+            **결제 금액**
+          </ParamTree>
 
           - currency: string
 
-            **결제 통화**
+          **결제 통화**
 
           - customer: object
 
-            **구매자 정보**
+          **구매자 정보**
+
+          <ParamTree>
+            - id: string
+
+            **구매자 식별정보**
+
+            - name: object
+
+            **구매자 이름**
 
             <ParamTree>
-              - id: string
+              - full: string
 
-                **구매자 식별정보**
+              **구매자 전체 이름**
 
-              - name: object
-
-                **구매자 이름**
-
-                <ParamTree>
-                  - full: string
-
-                    **구매자 전체 이름**
-
-                    `full` 파라미터 대신 `separated.first` 와 `separated.last` 파라미터로 사용해도 됩니다.
-                </ParamTree>
-
-              - phoneNumber: string
-
-                **구매자 연락처**
-
-                가상계좌 발급 시 필수 입력해야 합니다.
-
-              - email: string
-
-                **구매자 이메일 주소**
-
-                가상계좌 발급 시 필수 입력해야 합니다.
+              `full` 파라미터 대신 `separated.first` 와 `separated.last` 파라미터로 사용해도 됩니다.
             </ParamTree>
+
+            - phoneNumber: string
+
+            **구매자 연락처**
+
+            가상계좌 발급 시 필수 입력해야 합니다.
+
+            - email: string
+
+            **구매자 이메일 주소**
+
+            가상계좌 발급 시 필수 입력해야 합니다.
+          </ParamTree>
 
           - productType: string
 
-            **상품 유형**
+          **상품 유형**
 
-            KSNET로 카드 결제시에만 MID 설정 정보와 검증을 진행합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
+          KSNET로 카드 결제시에만 MID 설정 정보와 검증을 진행합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
 
           - productCount: string
 
-            **상품 개수**
+          **상품 개수**
 
-            스마트로로 가상계좌 발급시에만 정보가 유효합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
+          스마트로로 가상계좌 발급시에만 정보가 유효합니다. 다른 PG사 결제 요청시에는 별도로 검증하지 않습니다.
         </ParamTree>
 
-      - timeToPay: string
+        - timeToPay: string
 
         **결제 예정 시점**
+      </VersionGate>
     </ParamTree>
   </Tabs.Tab>
 </Tabs>
