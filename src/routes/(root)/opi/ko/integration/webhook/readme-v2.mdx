@@ -7,6 +7,8 @@ versionVariants:
 ---
 
 import Figure from "~/components/Figure";
+import Details from "~/components/gitbook/Details";
+import Tabs from "~/components/gitbook/Tabs";
 import Hint from "~/components/Hint";
 
 import image1 from "./_assets/webhook_intro.png";
@@ -224,31 +226,204 @@ PortOne.requestPayment({
 포트원에서 제공하는 서버 SDK를 이용하면 고객사 서버에서 웹훅을 수신할 때 시그니처가 유효한지 손쉽게 검증할 수 있습니다.
 현재 제공되고 있는 서버 SDK 목록은 아래와 같습니다.
 
-- JVM (코틀린, 자바 등)
-  - [Maven Central](https://central.sonatype.com/artifact/io.portone/server-sdk)
-    - groupId: `id.portone`, artifactId: `server-sdk`
+#### JavaScript
 
-  - [GitHub](https://github.com/portone-io/server-sdk-jvm)
+![NPM Version](https://img.shields.io/npm/v/%40portone%2Fserver-sdk)
 
-  - [Javadoc](https://javadoc.io/doc/io.portone/server-sdk/latest/-port-one%20-server%20-s-d-k%20for%20-j-v-m/io.portone.sdk.server.webhook/-webhook-verifier/index.html)
+![JSR Version](https://img.shields.io/jsr/v/%40portone/server-sdk)
 
-- JS (자바스크립트)
-  - [npm](https://www.npmjs.com/package/@portone/server-sdk)
-    - @portone/server-sdk
+- [GitHub 저장소](https://github.com/portone-io/server-sdk/tree/main/javascript)
+- [API 레퍼런스](https://portone-io.github.io/server-sdk/js)
 
-  - [GitHub](https://github.com/portone-io/server-sdk-js)
+JavaScript 및 TypeScript에서 사용 가능한 JavaScript SDK는 [npm](https://www.npmjs.com/package/@portone/server-sdk)과 [jsr](https://jsr.io/@portone/server-sdk)을 통해 배포되고 있습니다.
+`@portone/server-sdk` 패키지를 의존성에 추가하여 사용하실 수 있습니다.
 
-  - [Express 예시 코드](https://github.com/portone-io/portone-sample/blob/main/express-react/server/index.js)
+<Tabs>
+  <Tabs.Tab title="npm">
+    ```shell
+    npm install --save @portone/server-sdk
+    ```
+  </Tabs.Tab>
 
-- Python (파이썬)
-  - [PyPI](https://pypi.org/project/portone-server-sdk/)
-    - portone-server-sdk
+  <Tabs.Tab title="yarn">
+    ```shell
+    yarn add @portone/server-sdk
+    ```
+  </Tabs.Tab>
 
-  - [GitHub](https://github.com/portone-io/server-sdk-py)
+  <Tabs.Tab title="pnpm">
+    ```shell
+    pnpm add @portone/server-sdk
+    ```
+  </Tabs.Tab>
 
-  - [FastAPI 예시 코드](https://github.com/portone-io/portone-sample/blob/main/fastapi-react/server/__init__.py)
+  <Tabs.Tab title="bun">
+    ```shell
+    bun add @portone/server-sdk
+    ```
+  </Tabs.Tab>
 
-  - [Flask 예시 코드](https://github.com/portone-io/portone-sample/blob/main/flask-react/server/__init__.py)
+  <Tabs.Tab title="deno">
+    ```shell
+    deno add jsr:@portone/server-sdk
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="ni">
+    ```shell
+    ni @portone/server-sdk
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+Node.js의 경우 v20 이상에서 정상 동작하며, v20 미만 버전은 폴리필이 필요합니다.
+
+<Details>
+  <Details.Summary>폴리필 방법</Details.Summary>
+
+  <Details.Content>
+    <Tabs>
+      <Tabs.Tab title="Node.js v18 이상 v20 미만">
+        애플리케이션 코드 시작 부분에 아래 코드를 삽입해 주세요.
+
+        ```javascript title="CommonJS"
+        globalThis.crypto = require("node:crypto").webcrypto;
+        ```
+
+        ```javascript title="ESM"
+        import { webcrypto } from "node:crypto";
+        globalThis.crypto = webcrypto;
+        ```
+      </Tabs.Tab>
+
+      <Tabs.Tab title="Node.js v18 미만">
+        [@whatwg-node/fetch](https://www.npmjs.com/package/@whatwg-node/fetch) 패키지를 의존성에 추가해 주세요.
+
+        애플리케이션 코드 시작 부분에 아래 코드를 삽입해 주세요.
+
+        ```javascript title="CommonJS"
+        const { fetch, crypto } = require("@whatwg-node/fetch");
+        globalThis.fetch = fetch;
+        globalThis.crypto = crypto;
+        ```
+
+        ```javascript title="ESM"
+        import { crypto, fetch } from "@whatwg-node/fetch";
+        globalThis.fetch = fetch;
+        globalThis.crypto = crypto;
+        ```
+      </Tabs.Tab>
+    </Tabs>
+  </Details.Content>
+</Details>
+
+#### Python
+
+![PyPI - Version](https://img.shields.io/pypi/v/portone-server-sdk)
+
+- [GitHub 저장소](https://github.com/portone-io/server-sdk/tree/main/python)
+- [API 레퍼런스](https://portone-io.github.io/server-sdk/py)
+
+Python SDK는 [PyPI](https://pypi.org/project/portone-server-sdk)를 통해 배포되고 있습니다.
+`portone-server-sdk` 패키지를 의존성에 추가하여 사용하실 수 있습니다.
+
+<Tabs>
+  <Tabs.Tab title="uv">
+    ```shell
+    uv add portone-server-sdk
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="poetry">
+    ```shell
+    poetry add portone-server-sdk
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="rye">
+    ```shell
+    rye add portone-server-sdk
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="pipenv">
+    ```shell
+    pipenv install portone-server-sdk
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Conda">
+    ```shell
+    conda install portone-server-sdk
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Hatch">
+    ```toml title="pyproject.toml"
+    [project]
+    dependencies = [
+      "portone-server-sdk~=x.x.x"
+    ]
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="PDM">
+    ```shell
+    pdm add portone-server-sdk
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="pip requirements">
+    ```shell title="requirements.txt"
+    portone-server-sdk ~= x.x.x
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+Python 3.9 이상에서 정상 동작합니다.
+
+#### JVM
+
+[![Maven Central Version](https://img.shields.io/maven-central/v/io.portone/server-sdk)](https://central.sonatype.com/artifact/io.portone/server-sdk)
+
+[![javadoc](https://javadoc.io/badge2/io.portone/server-sdk/javadoc.svg)](https://javadoc.io/doc/io.portone/server-sdk)
+
+- [GitHub 저장소](https://github.com/portone-io/server-sdk/tree/main/jvm)
+- [API 레퍼런스](https://portone-io.github.io/server-sdk/jvm)
+
+Java, Kotlin, Scala 등에서 사용 가능한 JVM SDK는 [Maven](https://central.sonatype.com/artifact/io.portone/server-sdk)을 통해 배포되고 있습니다.
+
+`io.portone:server-sdk` 패키지를 의존성에 추가하여 사용하실 수 있습니다.
+
+<Tabs>
+  <Tabs.Tab title="Apache Maven">
+    ```xml
+    <dependency>
+      <groupId>io.portone</groupId>
+      <artifactId>server-sdk</artifactId>
+      <version>x.x.x</version>
+    </dependency>
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Gradle (Kotlin)">
+    ```kotlin
+    implementation("io.portone:server-sdk:x.x.x")
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="Gradle (Groovy)">
+    ```groovy
+    implementation 'io.portone:server-sdk:x.x.x'
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="sbt">
+    ```scala
+    libraryDependencies += "io.portone" % "server-sdk" % "x.x.x"
+    ```
+  </Tabs.Tab>
+</Tabs>
 
 Server SDK 사용을 원치 않으시거나 SDK가 지원되지 않는 언어를 이용중이시라면 메시지 검증 코드를 직접 작성하실 수 있습니다.
 포트원의 웹훅 검증 절차는 [Standard Webhooks](https://github.com/standard-webhooks/standard-webhooks/blob/main/spec/standard-webhooks.md) 스펙을
