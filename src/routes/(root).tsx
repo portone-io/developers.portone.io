@@ -34,9 +34,7 @@ export const route = {
     if (!parsedFullSlug) return;
     const [contentName, fullSlug] = parsedFullSlug;
 
-    const lang = location.pathname.includes("/en/") ? "en" : "ko";
-
-    void loadNavMenuSystemVersions(lang);
+    void loadNavMenuSystemVersions("ko");
     void loadDoc(contentName, fullSlug);
     void loadInteractiveDocs(location.pathname);
   },
@@ -61,9 +59,7 @@ export default function Layout(props: Props) {
   const interactiveDocs = createAsync(() =>
     loadInteractiveDocs(location.pathname),
   );
-  const lang = createMemo(() =>
-    location.pathname.includes("/en/") ? "en" : "ko",
-  );
+  const lang = createMemo<"ko">(() => "ko");
   const searchIndex = createMemo(() => {
     if (location.pathname.startsWith("/blog")) {
       return "blog";

@@ -4,7 +4,6 @@ import * as path from "node:path";
 
 import { opi, platform, sdk } from "#content";
 import type { DocsContentName } from "~/misc/docs";
-import navYamlDocsEn from "~/routes/(root)/docs/en/_nav.yaml";
 import navYamlOpiKo from "~/routes/(root)/opi/ko/_nav.yaml";
 import navYamlPlatformKo from "~/routes/(root)/platform/ko/_nav.yaml";
 import navYamlSdkKo from "~/routes/(root)/sdk/ko/_nav.yaml";
@@ -34,11 +33,6 @@ const opiFrontmatters = getFrontmatters(opi);
 const sdkFrontmatters = getFrontmatters(sdk);
 const platformFrontmatters = getFrontmatters(platform);
 
-const navMenuItemsOpiEn = toNavMenuItems(
-  "opi",
-  navYamlDocsEn as YamlNavMenuToplevelItem[],
-  opiFrontmatters,
-);
 const navMenuItemsOpiKo = toNavMenuItems(
   "opi",
   navYamlOpiKo as YamlNavMenuToplevelItem[],
@@ -59,11 +53,6 @@ export const navMenu = {
     opi: navMenuItemsOpiKo,
     sdk: navMenuItemsSdkKo,
     platform: navMenuItemsPlatformKo,
-  },
-  en: {
-    opi: navMenuItemsOpiEn,
-    sdk: [] as NavMenuItem[],
-    platform: [] as NavMenuItem[],
   },
 } as const satisfies Record<Lang, Record<DocsContentName, NavMenuItem[]>>;
 
