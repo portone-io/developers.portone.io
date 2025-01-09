@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import { XMLBuilder } from "fast-xml-parser";
@@ -13,7 +12,6 @@ export function GET() {
     suppressEmptyNode: true,
     suppressBooleanAttributes: false,
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const root: any = { "?xml": { "@_version": "1.0", "@_encoding": "UTF-8" } };
   root.rss = { "@_version": "2.0" };
   root.rss.channel = {

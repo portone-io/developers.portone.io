@@ -40,7 +40,6 @@ export default defineConfig({
       plugins: [
         yaml(),
         unocss(),
-        // eslint-disable-next-line
         vinxiMdx.withImports({})({
           jsx: true,
           jsxImportSource: "solid-js",
