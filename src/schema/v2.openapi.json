@@ -2384,7 +2384,7 @@
             }
           },
           "409": {
-            "description": "* `PlatformPartnerIdAlreadyExistsError`\n* `PlatformAccountVerificationAlreadyUsedError`: 파트너 계좌 검증 아이디를 이미 사용한 경우",
+            "description": "* `PlatformPartnerIdAlreadyExistsError`\n* `PlatformAccountVerificationAlreadyUsedError`: 파트너 계좌 검증 아이디를 이미 사용한 경우\n* `PlatformCompanyVerificationAlreadyUsedError`: 파트너 사업자 검증 아이디를 이미 사용한 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -2574,7 +2574,7 @@
             }
           },
           "409": {
-            "description": "* `PlatformArchivedPartnerError`: 보관된 파트너를 업데이트하려고 하는 경우\n* `PlatformAccountVerificationAlreadyUsedError`: 파트너 계좌 검증 아이디를 이미 사용한 경우\n* `PlatformConnectedPartnerBrnUnchangeableError`: 연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우\n* `PlatformConnectedPartnerTypeUnchangeableError`: 연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
+            "description": "* `PlatformArchivedPartnerError`: 보관된 파트너를 업데이트하려고 하는 경우\n* `PlatformAccountVerificationAlreadyUsedError`: 파트너 계좌 검증 아이디를 이미 사용한 경우\n* `PlatformMemberCompanyConnectedPartnerBrnUnchangeableError`: 연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우\n* `PlatformCompanyVerificationAlreadyUsedError`: 파트너 사업자 검증 아이디를 이미 사용한 경우\n* `PlatformMemberCompanyConnectedPartnerTypeUnchangeableError`: 연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -2853,6 +2853,16 @@
                 }
               }
             }
+          },
+          "409": {
+            "description": "* `PlatformMemberCompanyConnectedPartnerCannotBeScheduledError`: 연동 사업자로 연동된 파트너를 예약 수정하려고 시도한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReschedulePartnerError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -2947,7 +2957,7 @@
             }
           },
           "409": {
-            "description": "* `PlatformPartnerScheduleAlreadyExistsError`\n* `PlatformArchivedPartnerError`: 보관된 파트너를 업데이트하려고 하는 경우\n* `PlatformAccountVerificationAlreadyUsedError`: 파트너 계좌 검증 아이디를 이미 사용한 경우\n* `PlatformConnectedPartnerBrnUnchangeableError`: 연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우\n* `PlatformConnectedPartnerTypeUnchangeableError`: 연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
+            "description": "* `PlatformPartnerScheduleAlreadyExistsError`\n* `PlatformArchivedPartnerError`: 보관된 파트너를 업데이트하려고 하는 경우\n* `PlatformAccountVerificationAlreadyUsedError`: 파트너 계좌 검증 아이디를 이미 사용한 경우\n* `PlatformMemberCompanyConnectedPartnerBrnUnchangeableError`: 연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우\n* `PlatformMemberCompanyConnectedPartnerTypeUnchangeableError`: 연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우\n* `PlatformCompanyVerificationAlreadyUsedError`: 파트너 사업자 검증 아이디를 이미 사용한 경우\n* `PlatformMemberCompanyConnectedPartnerCannotBeScheduledError`: 연동 사업자로 연동된 파트너를 예약 수정하려고 시도한 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -3119,7 +3129,7 @@
             }
           },
           "409": {
-            "description": "* `PlatformPartnerSchedulesAlreadyExistError`\n* `PlatformArchivedPartnersCannotBeScheduledError`: 보관된 파트너들을 예약 업데이트하려고 하는 경우",
+            "description": "* `PlatformPartnerSchedulesAlreadyExistError`\n* `PlatformArchivedPartnersCannotBeScheduledError`: 보관된 파트너들을 예약 업데이트하려고 하는 경우\n* `PlatformMemberCompanyConnectedPartnersCannotBeScheduledError`: 연동 사업자로 연동된 파트너들을 예약 수정하려고 시도한 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -5235,6 +5245,102 @@
         }
       }
     },
+    "/platform/companies/{businessRegistrationNumber}/state": {
+      "get": {
+        "summary": "사업자 조회",
+        "description": "사업자 조회\n\n사업자 정보를 조회합니다. 포트원 서비스에 연동 및 등록되지 않은 사업자도 조회 가능합니다.",
+        "operationId": "getPlatformCompanyState",
+        "parameters": [
+          {
+            "name": "businessRegistrationNumber",
+            "in": "path",
+            "description": "사업자등록번호",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 사업자 상태가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStatePayload"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 조회된 사업자 상태가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformCompanyNotFoundError`: 사업자 정보를 찾을 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "* `PlatformExternalApiFailedError`: 외부 api 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.company",
+        "x-portone-title": "사업자 조회",
+        "x-portone-description": "사업자 정보를 조회합니다. 포트원 서비스에 연동 및 등록되지 않은 사업자도 조회 가능합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformCompanyStateError"
+        }
+      }
+    },
     "/platform/setting": {
       "get": {
         "summary": "플랫폼 설정 조회",
@@ -6064,6 +6170,17 @@
             },
             "x-portone-title": "상점 아이디",
             "x-portone-description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다."
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "description": "사유\n\n네이버페이: 자동결제 해지 사유입니다. 명시가 필요합니다.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사유",
+            "x-portone-description": "네이버페이: 자동결제 해지 사유입니다. 명시가 필요합니다."
           }
         ],
         "responses": {
@@ -6530,6 +6647,103 @@
         "x-portone-error": {
           "$ref": "#/components/schemas/GetPaymentError"
         }
+      }
+    },
+    "/payments/{paymentId}/transactions": {
+      "get": {
+        "summary": "결제 시도 내역 조회",
+        "description": "결제 시도 내역 조회\n\n주어진 아이디에 대응되는 결제 건의 결제 시도 내역을 조회합니다.",
+        "operationId": "getPaymentTransactions",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "조회할 결제 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "조회할 결제 아이디"
+          },
+          {
+            "name": "storeId",
+            "in": "query",
+            "description": "상점 아이디",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "상점 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 결제 시도 이력을 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentTransactionsResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답으로 결제 시도 이력을 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentTransactionsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentTransactionsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentTransactionsError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PaymentNotFoundError`: 결제 건이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentTransactionsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment",
+        "x-portone-title": "결제 시도 내역 조회",
+        "x-portone-description": "주어진 아이디에 대응되는 결제 건의 결제 시도 내역을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPaymentTransactionsError"
+        },
+        "x-portone-unstable": true
       }
     },
     "/payments": {
@@ -10591,7 +10805,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "title": "아이디(사업자등록번호)"
+            "title": "사업자 고유 아이디"
           },
           "graphqlId": {
             "type": "string"
@@ -11524,21 +11738,6 @@
           }
         }
       },
-      "B2bTaxInvoiceModificationUpdateBody": {
-        "title": "임시 저장된 수정 세금계산서 업데이트 입력 정보",
-        "description": "임시 저장된 수정 세금계산서 업데이트 입력 정보",
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/B2bTaxInvoiceModificationType",
-            "title": "수정 사유"
-          }
-        },
-        "x-portone-title": "임시 저장된 수정 세금계산서 업데이트 입력 정보"
-      },
       "B2bTaxInvoiceNoRecipientDocumentKeyError": {
         "title": "세금계산서에 공급받는자 문서 번호가 기입되지 않은 경우",
         "description": "세금계산서에 공급받는자 문서 번호가 기입되지 않은 경우",
@@ -11994,6 +12193,32 @@
           "FREE": {
             "title": "면세"
           }
+        }
+      },
+      "B2bTaxInvoiceWebhookEventType": {
+        "title": "이벤트 유형",
+        "description": "이벤트 유형",
+        "type": "string",
+        "enum": [
+          "Issue",
+          "CLOSEDOWN",
+          "OPEN",
+          "CancelRequest",
+          "CancelIssue",
+          "NTS",
+          "Request",
+          "Refuse"
+        ],
+        "x-portone-title": "이벤트 유형",
+        "x-portone-enum": {
+          "Request": {},
+          "CLOSEDOWN": {},
+          "CancelRequest": {},
+          "CancelIssue": {},
+          "NTS": {},
+          "Refuse": {},
+          "OPEN": {},
+          "Issue": {}
         }
       },
       "Bank": {
@@ -14036,6 +14261,179 @@
           }
         },
         "x-portone-title": "거래 취소"
+      },
+      "CancelledPaymentTransaction": {
+        "title": "결제 취소 상태 건",
+        "description": "결제 취소 상태 건",
+        "type": "object",
+        "required": [
+          "status",
+          "id",
+          "paymentId",
+          "merchantId",
+          "storeId",
+          "channel",
+          "version",
+          "requestedAt",
+          "updatedAt",
+          "statusChangedAt",
+          "orderName",
+          "amount",
+          "currency",
+          "customer",
+          "cancellations",
+          "cancelledAt"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 시도 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 시도 아이디 (transactionId)",
+            "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "title": "결제수단 정보"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "결제 채널"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "결제 채널 그룹 정보"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          },
+          "scheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디",
+            "description": "결제 예약을 이용한 경우에만 존재"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "결제 시 사용된 빌링키",
+            "description": "빌링키 결제인 경우에만 존재"
+          },
+          "webhooks": {
+            "title": "웹훅 발송 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentWebhook"
+            }
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 요청 시점"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "업데이트 시점"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 시점"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmount",
+            "title": "결제 금액 관련 세부 정보"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "구매자 정보"
+          },
+          "promotionId": {
+            "type": "string",
+            "title": "프로모션 아이디"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "escrow": {
+            "$ref": "#/components/schemas/PaymentEscrow",
+            "title": "에스크로 결제 정보",
+            "description": "에스크로 결제인 경우 존재합니다."
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32",
+            "title": "상품 갯수"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country",
+            "title": "국가 코드"
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 완료 시점"
+          },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
+          },
+          "cashReceipt": {
+            "$ref": "#/components/schemas/PaymentCashReceipt",
+            "title": "현금영수증"
+          },
+          "receiptUrl": {
+            "type": "string",
+            "title": "거래 영수증 URL"
+          },
+          "cancellations": {
+            "title": "결제 취소 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentCancellation"
+            }
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 취소 시점"
+          }
+        },
+        "x-portone-title": "결제 취소 상태 건"
       },
       "Card": {
         "title": "카드 상세 정보",
@@ -17540,6 +17938,10 @@
           "businessClass": {
             "type": "string",
             "title": "업종"
+          },
+          "companyVerificationId": {
+            "type": "string",
+            "title": "사업자 조회 검증 아이디"
           }
         }
       },
@@ -17586,6 +17988,9 @@
             "$ref": "#/components/schemas/PlatformAccountVerificationNotFoundError"
           },
           {
+            "$ref": "#/components/schemas/PlatformCompanyVerificationAlreadyUsedError"
+          },
+          {
             "$ref": "#/components/schemas/PlatformContractNotFoundError"
           },
           {
@@ -17612,6 +18017,7 @@
             "PLATFORM_ACCOUNT_VERIFICATION_ALREADY_USED": "#/components/schemas/PlatformAccountVerificationAlreadyUsedError",
             "PLATFORM_ACCOUNT_VERIFICATION_FAILED": "#/components/schemas/PlatformAccountVerificationFailedError",
             "PLATFORM_ACCOUNT_VERIFICATION_NOT_FOUND": "#/components/schemas/PlatformAccountVerificationNotFoundError",
+            "PLATFORM_COMPANY_VERIFICATION_ALREADY_USED": "#/components/schemas/PlatformCompanyVerificationAlreadyUsedError",
             "PLATFORM_CONTRACT_NOT_FOUND": "#/components/schemas/PlatformContractNotFoundError",
             "PLATFORM_CURRENCY_NOT_SUPPORTED": "#/components/schemas/PlatformCurrencyNotSupportedError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
@@ -19964,6 +20370,158 @@
           }
         },
         "x-portone-title": "결제 실패 상태"
+      },
+      "FailedPaymentTransaction": {
+        "title": "결제 실패 상태 건",
+        "description": "결제 실패 상태 건",
+        "type": "object",
+        "required": [
+          "status",
+          "id",
+          "paymentId",
+          "merchantId",
+          "storeId",
+          "version",
+          "requestedAt",
+          "updatedAt",
+          "statusChangedAt",
+          "orderName",
+          "amount",
+          "currency",
+          "customer",
+          "failedAt",
+          "failure"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 시도 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 시도 아이디 (transactionId)",
+            "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "title": "결제수단 정보"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "결제 채널"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "결제 채널 그룹 정보"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          },
+          "scheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디",
+            "description": "결제 예약을 이용한 경우에만 존재"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "결제 시 사용된 빌링키",
+            "description": "빌링키 결제인 경우에만 존재"
+          },
+          "webhooks": {
+            "title": "웹훅 발송 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentWebhook"
+            }
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 요청 시점"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "업데이트 시점"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 시점"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmount",
+            "title": "결제 금액 관련 세부 정보"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "구매자 정보"
+          },
+          "promotionId": {
+            "type": "string",
+            "title": "프로모션 아이디"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "escrow": {
+            "$ref": "#/components/schemas/PaymentEscrow",
+            "title": "에스크로 결제 정보",
+            "description": "에스크로 결제인 경우 존재합니다."
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32",
+            "title": "상품 갯수"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country",
+            "title": "국가 코드"
+          },
+          "failedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 실패 시점"
+          },
+          "failure": {
+            "$ref": "#/components/schemas/PaymentFailure",
+            "title": "결제 실패 정보"
+          }
+        },
+        "x-portone-title": "결제 실패 상태 건"
       },
       "FailedPgBillingKeyIssueResponse": {
         "title": "빌링키 발급 실패 채널 응답",
@@ -22611,6 +23169,50 @@
           }
         }
       },
+      "GetPaymentTransactionsError": {
+        "title": "GetPaymentTransactionsError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PAYMENT_NOT_FOUND": "#/components/schemas/PaymentNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetPaymentTransactionsResponse": {
+        "title": "결제 시도 내역 조회 응답 정보",
+        "description": "결제 시도 내역 조회 응답 정보",
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "properties": {
+          "items": {
+            "title": "결제 시도 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentTransaction"
+            }
+          }
+        },
+        "x-portone-title": "결제 시도 내역 조회 응답 정보"
+      },
       "GetPaymentsBody": {
         "title": "GetPaymentsBody",
         "description": "결제 건 다건 조회를 위한 입력 정보",
@@ -23125,6 +23727,26 @@
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }
         }
+      },
+      "GetPlatformCompanyStatePayload": {
+        "title": "사업자 조회 성공 응답 정보",
+        "description": "사업자 조회 성공 응답 정보",
+        "type": "object",
+        "required": [
+          "companyState",
+          "companyVerificationId"
+        ],
+        "properties": {
+          "companyState": {
+            "$ref": "#/components/schemas/PlatformCompanyState",
+            "title": "사업자 정보"
+          },
+          "companyVerificationId": {
+            "type": "string",
+            "title": "사업자 검증 아이디"
+          }
+        },
+        "x-portone-title": "사업자 조회 성공 응답 정보"
       },
       "GetPlatformContractError": {
         "title": "GetPlatformContractError",
@@ -26071,6 +26693,170 @@
         },
         "x-portone-title": "결제 완료 상태 건"
       },
+      "PaidPaymentTransaction": {
+        "title": "결제 완료 상태 건",
+        "description": "결제 완료 상태 건",
+        "type": "object",
+        "required": [
+          "status",
+          "id",
+          "paymentId",
+          "merchantId",
+          "storeId",
+          "channel",
+          "version",
+          "requestedAt",
+          "updatedAt",
+          "statusChangedAt",
+          "orderName",
+          "amount",
+          "currency",
+          "customer",
+          "paidAt"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 시도 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 시도 아이디 (transactionId)",
+            "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "title": "결제수단 정보"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "결제 채널"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "결제 채널 그룹 정보"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          },
+          "scheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디",
+            "description": "결제 예약을 이용한 경우에만 존재"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "결제 시 사용된 빌링키",
+            "description": "빌링키 결제인 경우에만 존재"
+          },
+          "webhooks": {
+            "title": "웹훅 발송 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentWebhook"
+            }
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 요청 시점"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "업데이트 시점"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 시점"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmount",
+            "title": "결제 금액 관련 세부 정보"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "구매자 정보"
+          },
+          "promotionId": {
+            "type": "string",
+            "title": "프로모션 아이디"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "escrow": {
+            "$ref": "#/components/schemas/PaymentEscrow",
+            "title": "에스크로 결제 정보",
+            "description": "에스크로 결제인 경우 존재합니다."
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32",
+            "title": "상품 갯수"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country",
+            "title": "국가 코드"
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 완료 시점"
+          },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
+          },
+          "pgResponse": {
+            "type": "string",
+            "title": "PG사 거래 응답 본문"
+          },
+          "cashReceipt": {
+            "$ref": "#/components/schemas/PaymentCashReceipt",
+            "title": "현금영수증"
+          },
+          "receiptUrl": {
+            "type": "string",
+            "title": "거래 영수증 URL"
+          }
+        },
+        "x-portone-title": "결제 완료 상태 건"
+      },
       "PartialCancelledPayment": {
         "title": "결제 부분 취소 상태 건",
         "description": "결제 부분 취소 상태 건",
@@ -26106,6 +26892,179 @@
             "type": "string",
             "title": "결제 건 포트원 채번 아이디",
             "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "title": "결제수단 정보"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "결제 채널"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "결제 채널 그룹 정보"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          },
+          "scheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디",
+            "description": "결제 예약을 이용한 경우에만 존재"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "결제 시 사용된 빌링키",
+            "description": "빌링키 결제인 경우에만 존재"
+          },
+          "webhooks": {
+            "title": "웹훅 발송 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentWebhook"
+            }
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 요청 시점"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "업데이트 시점"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 시점"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmount",
+            "title": "결제 금액 관련 세부 정보"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "구매자 정보"
+          },
+          "promotionId": {
+            "type": "string",
+            "title": "프로모션 아이디"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "escrow": {
+            "$ref": "#/components/schemas/PaymentEscrow",
+            "title": "에스크로 결제 정보",
+            "description": "에스크로 결제인 경우 존재합니다."
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32",
+            "title": "상품 갯수"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country",
+            "title": "국가 코드"
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 완료 시점"
+          },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
+          },
+          "cashReceipt": {
+            "$ref": "#/components/schemas/PaymentCashReceipt",
+            "title": "현금영수증"
+          },
+          "receiptUrl": {
+            "type": "string",
+            "title": "거래 영수증 URL"
+          },
+          "cancellations": {
+            "title": "결제 취소 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentCancellation"
+            }
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 취소 시점"
+          }
+        },
+        "x-portone-title": "결제 부분 취소 상태 건"
+      },
+      "PartialCancelledPaymentTransaction": {
+        "title": "결제 부분 취소 상태 건",
+        "description": "결제 부분 취소 상태 건",
+        "type": "object",
+        "required": [
+          "status",
+          "id",
+          "paymentId",
+          "merchantId",
+          "storeId",
+          "channel",
+          "version",
+          "requestedAt",
+          "updatedAt",
+          "statusChangedAt",
+          "orderName",
+          "amount",
+          "currency",
+          "customer",
+          "cancellations",
+          "cancelledAt"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 시도 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 시도 아이디 (transactionId)",
+            "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
           },
           "merchantId": {
             "type": "string",
@@ -26320,6 +27279,7 @@
         "required": [
           "status",
           "id",
+          "transactionId",
           "merchantId",
           "storeId",
           "channel",
@@ -26338,6 +27298,157 @@
             "title": "결제 건 상태"
           },
           "id": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "transactionId": {
+            "type": "string",
+            "title": "결제 건 포트원 채번 아이디",
+            "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "title": "결제수단 정보"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "결제 채널"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "결제 채널 그룹 정보"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          },
+          "scheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디",
+            "description": "결제 예약을 이용한 경우에만 존재"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "결제 시 사용된 빌링키",
+            "description": "빌링키 결제인 경우에만 존재"
+          },
+          "webhooks": {
+            "title": "웹훅 발송 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentWebhook"
+            }
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 요청 시점"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "업데이트 시점"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 시점"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmount",
+            "title": "결제 금액 관련 세부 정보"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "구매자 정보"
+          },
+          "promotionId": {
+            "type": "string",
+            "title": "프로모션 아이디"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "escrow": {
+            "$ref": "#/components/schemas/PaymentEscrow",
+            "title": "에스크로 결제 정보",
+            "description": "에스크로 결제인 경우 존재합니다."
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32",
+            "title": "상품 갯수"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country",
+            "title": "국가 코드"
+          },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
+          }
+        },
+        "x-portone-title": "결제 완료 대기 상태 건"
+      },
+      "PayPendingPaymentTransaction": {
+        "title": "결제 완료 대기 상태 건",
+        "description": "결제 완료 대기 상태 건",
+        "type": "object",
+        "required": [
+          "status",
+          "id",
+          "paymentId",
+          "merchantId",
+          "storeId",
+          "channel",
+          "version",
+          "requestedAt",
+          "updatedAt",
+          "statusChangedAt",
+          "orderName",
+          "amount",
+          "currency",
+          "customer"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 시도 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 시도 아이디 (transactionId)",
+            "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "paymentId": {
             "type": "string",
             "title": "결제 건 아이디"
           },
@@ -29718,6 +30829,69 @@
           }
         }
       },
+      "PaymentTransaction": {
+        "title": "결제 시도",
+        "description": "결제 시도",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CancelledPaymentTransaction"
+          },
+          {
+            "$ref": "#/components/schemas/FailedPaymentTransaction"
+          },
+          {
+            "$ref": "#/components/schemas/PaidPaymentTransaction"
+          },
+          {
+            "$ref": "#/components/schemas/PartialCancelledPaymentTransaction"
+          },
+          {
+            "$ref": "#/components/schemas/PayPendingPaymentTransaction"
+          },
+          {
+            "$ref": "#/components/schemas/ReadyPaymentTransaction"
+          },
+          {
+            "$ref": "#/components/schemas/VirtualAccountIssuedPaymentTransaction"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "status",
+          "mapping": {
+            "CANCELLED": "#/components/schemas/CancelledPaymentTransaction",
+            "FAILED": "#/components/schemas/FailedPaymentTransaction",
+            "PAID": "#/components/schemas/PaidPaymentTransaction",
+            "PARTIAL_CANCELLED": "#/components/schemas/PartialCancelledPaymentTransaction",
+            "PAY_PENDING": "#/components/schemas/PayPendingPaymentTransaction",
+            "READY": "#/components/schemas/ReadyPaymentTransaction",
+            "VIRTUAL_ACCOUNT_ISSUED": "#/components/schemas/VirtualAccountIssuedPaymentTransaction"
+          }
+        },
+        "x-portone-title": "결제 시도",
+        "x-portone-discriminator": {
+          "VIRTUAL_ACCOUNT_ISSUED": {
+            "title": "가상계좌 발급 완료"
+          },
+          "PAID": {
+            "title": "결제 완료"
+          },
+          "READY": {
+            "title": "결제 준비"
+          },
+          "FAILED": {
+            "title": "결제 실패"
+          },
+          "PAY_PENDING": {
+            "title": "결제 완료 대기"
+          },
+          "CANCELLED": {
+            "title": "결제 취소"
+          },
+          "PARTIAL_CANCELLED": {
+            "title": "결제 부분 취소"
+          }
+        }
+      },
       "PaymentWebhook": {
         "title": "성공 웹훅 내역",
         "description": "성공 웹훅 내역",
@@ -31486,8 +32660,7 @@
         "x-portone-status-code": 404
       },
       "PlatformCompanyState": {
-        "title": "사업자 조회 성공 응답 정보",
-        "description": "사업자 조회 성공 응답 정보",
+        "title": "PlatformCompanyState",
         "type": "object",
         "required": [
           "taxationType",
@@ -31510,12 +32683,11 @@
             "type": "string",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           }
-        },
-        "x-portone-title": "사업자 조회 성공 응답 정보"
+        }
       },
-      "PlatformConnectedPartnerBrnUnchangeableError": {
-        "title": "연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우",
-        "description": "연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우",
+      "PlatformCompanyVerificationAlreadyUsedError": {
+        "title": "파트너 사업자 검증 아이디를 이미 사용한 경우",
+        "description": "파트너 사업자 검증 아이디를 이미 사용한 경우",
         "type": "object",
         "required": [
           "type"
@@ -31528,25 +32700,7 @@
             "type": "string"
           }
         },
-        "x-portone-title": "연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우",
-        "x-portone-status-code": 409
-      },
-      "PlatformConnectedPartnerTypeUnchangeableError": {
-        "title": "연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
-        "description": "연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "x-portone-title": "연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
+        "x-portone-title": "파트너 사업자 검증 아이디를 이미 사용한 경우",
         "x-portone-status-code": 409
       },
       "PlatformContact": {
@@ -32451,6 +33605,92 @@
             "format": "int64"
           }
         }
+      },
+      "PlatformMemberCompanyConnectedPartnerBrnUnchangeableError": {
+        "title": "연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우",
+        "description": "연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "연동 사업자로 연동된 파트너의 사업자등록번호를 변경하려고 시도한 경우",
+        "x-portone-status-code": 409
+      },
+      "PlatformMemberCompanyConnectedPartnerCannotBeScheduledError": {
+        "title": "연동 사업자로 연동된 파트너를 예약 수정하려고 시도한 경우",
+        "description": "연동 사업자로 연동된 파트너를 예약 수정하려고 시도한 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "연동 사업자로 연동된 파트너를 예약 수정하려고 시도한 경우",
+        "x-portone-status-code": 409
+      },
+      "PlatformMemberCompanyConnectedPartnerTypeUnchangeableError": {
+        "title": "연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
+        "description": "연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "연동 사업자로 연동된 파트너의 파트너 유형을 변경하려고 시도한 경우",
+        "x-portone-status-code": 409
+      },
+      "PlatformMemberCompanyConnectedPartnersCannotBeScheduledError": {
+        "title": "연동 사업자로 연동된 파트너들을 예약 수정하려고 시도한 경우",
+        "description": "연동 사업자로 연동된 파트너들을 예약 수정하려고 시도한 경우",
+        "type": "object",
+        "required": [
+          "type",
+          "ids",
+          "graphqlIds"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "graphqlIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "연동 사업자로 연동된 파트너들을 예약 수정하려고 시도한 경우",
+        "x-portone-status-code": 409
       },
       "PlatformNonUpdatableStatusError": {
         "title": "업데이트 불가능한 상태를 업데이트하려는 경우",
@@ -37694,8 +38934,8 @@
         "x-portone-title": "준비 상태의 본인인증 내역"
       },
       "ReadyPayment": {
-        "title": "준비 상태의 결제 건",
-        "description": "준비 상태의 결제 건",
+        "title": "준비 상태 건",
+        "description": "준비 상태 건",
         "type": "object",
         "required": [
           "status",
@@ -37832,7 +39072,148 @@
             "title": "국가 코드"
           }
         },
-        "x-portone-title": "준비 상태의 결제 건"
+        "x-portone-title": "준비 상태 건"
+      },
+      "ReadyPaymentTransaction": {
+        "title": "준비 상태 건",
+        "description": "준비 상태 건",
+        "type": "object",
+        "required": [
+          "status",
+          "id",
+          "paymentId",
+          "merchantId",
+          "storeId",
+          "version",
+          "requestedAt",
+          "updatedAt",
+          "statusChangedAt",
+          "orderName",
+          "amount",
+          "currency",
+          "customer"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 시도 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 시도 아이디 (transactionId)",
+            "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "title": "결제수단 정보"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "결제 채널"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "결제 채널 그룹 정보"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          },
+          "scheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디",
+            "description": "결제 예약을 이용한 경우에만 존재"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "결제 시 사용된 빌링키",
+            "description": "빌링키 결제인 경우에만 존재"
+          },
+          "webhooks": {
+            "title": "웹훅 발송 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentWebhook"
+            }
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 요청 시점"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "업데이트 시점"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 시점"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmount",
+            "title": "결제 금액 관련 세부 정보"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "구매자 정보"
+          },
+          "promotionId": {
+            "type": "string",
+            "title": "프로모션 아이디"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "escrow": {
+            "$ref": "#/components/schemas/PaymentEscrow",
+            "title": "에스크로 결제의 배송 정보",
+            "description": "에스크로 결제인 경우 존재합니다."
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32",
+            "title": "상품 갯수"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country",
+            "title": "국가 코드"
+          }
+        },
+        "x-portone-title": "준비 상태 건"
       },
       "ReconciliationDateConditionInput": {
         "title": "거래 대사 날짜 범위 조회 필드",
@@ -38718,6 +40099,10 @@
           "company"
         ],
         "properties": {
+          "id": {
+            "type": "string",
+            "title": "연동 사업자 아이디"
+          },
           "company": {
             "$ref": "#/components/schemas/B2bMemberCompanyInput",
             "title": "사업자 정보"
@@ -39389,6 +40774,9 @@
             "$ref": "#/components/schemas/PlatformContractNotFoundError"
           },
           {
+            "$ref": "#/components/schemas/PlatformMemberCompanyConnectedPartnerCannotBeScheduledError"
+          },
+          {
             "$ref": "#/components/schemas/PlatformNotEnabledError"
           },
           {
@@ -39404,6 +40792,7 @@
             "FORBIDDEN": "#/components/schemas/ForbiddenError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "PLATFORM_CONTRACT_NOT_FOUND": "#/components/schemas/PlatformContractNotFoundError",
+            "PLATFORM_MEMBER_COMPANY_CONNECTED_PARTNER_CANNOT_BE_SCHEDULED": "#/components/schemas/PlatformMemberCompanyConnectedPartnerCannotBeScheduledError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
@@ -40013,16 +41402,22 @@
             "$ref": "#/components/schemas/PlatformArchivedPartnerError"
           },
           {
-            "$ref": "#/components/schemas/PlatformConnectedPartnerBrnUnchangeableError"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformConnectedPartnerTypeUnchangeableError"
+            "$ref": "#/components/schemas/PlatformCompanyVerificationAlreadyUsedError"
           },
           {
             "$ref": "#/components/schemas/PlatformContractNotFoundError"
           },
           {
             "$ref": "#/components/schemas/PlatformInsufficientDataToChangePartnerTypeError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformMemberCompanyConnectedPartnerBrnUnchangeableError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformMemberCompanyConnectedPartnerCannotBeScheduledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformMemberCompanyConnectedPartnerTypeUnchangeableError"
           },
           {
             "$ref": "#/components/schemas/PlatformNotEnabledError"
@@ -40049,10 +41444,12 @@
             "PLATFORM_ACCOUNT_VERIFICATION_FAILED": "#/components/schemas/PlatformAccountVerificationFailedError",
             "PLATFORM_ACCOUNT_VERIFICATION_NOT_FOUND": "#/components/schemas/PlatformAccountVerificationNotFoundError",
             "PLATFORM_ARCHIVED_PARTNER": "#/components/schemas/PlatformArchivedPartnerError",
-            "PLATFORM_CONNECTED_PARTNER_BRN_UNCHANGEABLE": "#/components/schemas/PlatformConnectedPartnerBrnUnchangeableError",
-            "PLATFORM_CONNECTED_PARTNER_TYPE_UNCHANGEABLE": "#/components/schemas/PlatformConnectedPartnerTypeUnchangeableError",
+            "PLATFORM_COMPANY_VERIFICATION_ALREADY_USED": "#/components/schemas/PlatformCompanyVerificationAlreadyUsedError",
             "PLATFORM_CONTRACT_NOT_FOUND": "#/components/schemas/PlatformContractNotFoundError",
             "PLATFORM_INSUFFICIENT_DATA_TO_CHANGE_PARTNER_TYPE": "#/components/schemas/PlatformInsufficientDataToChangePartnerTypeError",
+            "PLATFORM_MEMBER_COMPANY_CONNECTED_PARTNER_BRN_UNCHANGEABLE": "#/components/schemas/PlatformMemberCompanyConnectedPartnerBrnUnchangeableError",
+            "PLATFORM_MEMBER_COMPANY_CONNECTED_PARTNER_CANNOT_BE_SCHEDULED": "#/components/schemas/PlatformMemberCompanyConnectedPartnerCannotBeScheduledError",
+            "PLATFORM_MEMBER_COMPANY_CONNECTED_PARTNER_TYPE_UNCHANGEABLE": "#/components/schemas/PlatformMemberCompanyConnectedPartnerTypeUnchangeableError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
             "PLATFORM_PARTNER_SCHEDULE_ALREADY_EXISTS": "#/components/schemas/PlatformPartnerScheduleAlreadyExistsError",
@@ -40364,6 +41761,10 @@
           "businessClass": {
             "type": "string",
             "title": "업종"
+          },
+          "companyVerificationId": {
+            "type": "string",
+            "title": "사업자 조회 검증 아이디"
           }
         }
       },
@@ -40407,6 +41808,9 @@
             "$ref": "#/components/schemas/PlatformContractNotFoundError"
           },
           {
+            "$ref": "#/components/schemas/PlatformMemberCompanyConnectedPartnersCannotBeScheduledError"
+          },
+          {
             "$ref": "#/components/schemas/PlatformNotEnabledError"
           },
           {
@@ -40426,6 +41830,7 @@
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "PLATFORM_ARCHIVED_PARTNERS_CANNOT_BE_SCHEDULED": "#/components/schemas/PlatformArchivedPartnersCannotBeScheduledError",
             "PLATFORM_CONTRACT_NOT_FOUND": "#/components/schemas/PlatformContractNotFoundError",
+            "PLATFORM_MEMBER_COMPANY_CONNECTED_PARTNERS_CANNOT_BE_SCHEDULED": "#/components/schemas/PlatformMemberCompanyConnectedPartnersCannotBeScheduledError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "PLATFORM_PARTNER_SCHEDULES_ALREADY_EXIST": "#/components/schemas/PlatformPartnerSchedulesAlreadyExistError",
             "PLATFORM_USER_DEFINED_PROPERTY_NOT_FOUND": "#/components/schemas/PlatformUserDefinedPropertyNotFoundError",
@@ -41302,11 +42707,19 @@
         "description": "세금계산서 웹훅 정보",
         "type": "object",
         "required": [
-          "itemKey"
+          "itemKey",
+          "eventDT",
+          "eventType"
         ],
         "properties": {
           "itemKey": {
             "type": "string"
+          },
+          "eventDT": {
+            "type": "string"
+          },
+          "eventType": {
+            "$ref": "#/components/schemas/B2bTaxInvoiceWebhookEventType"
           }
         },
         "x-portone-title": "세금계산서 웹훅 정보"
@@ -41601,10 +43014,6 @@
           "taxInvoice": {
             "$ref": "#/components/schemas/B2bTaxInvoiceInput",
             "title": "세금계산서 임시저장 수정 정보"
-          },
-          "modification": {
-            "$ref": "#/components/schemas/B2bTaxInvoiceModificationUpdateBody",
-            "title": "수정 세금계산서 입력 정보"
           },
           "memo": {
             "type": "string",
@@ -42176,6 +43585,10 @@
           "businessClass": {
             "type": "string",
             "title": "업종"
+          },
+          "companyVerificationId": {
+            "type": "string",
+            "title": "사업자 조회 검증 아이디"
           }
         }
       },
@@ -42225,16 +43638,19 @@
             "$ref": "#/components/schemas/PlatformArchivedPartnerError"
           },
           {
-            "$ref": "#/components/schemas/PlatformConnectedPartnerBrnUnchangeableError"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformConnectedPartnerTypeUnchangeableError"
+            "$ref": "#/components/schemas/PlatformCompanyVerificationAlreadyUsedError"
           },
           {
             "$ref": "#/components/schemas/PlatformContractNotFoundError"
           },
           {
             "$ref": "#/components/schemas/PlatformInsufficientDataToChangePartnerTypeError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformMemberCompanyConnectedPartnerBrnUnchangeableError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformMemberCompanyConnectedPartnerTypeUnchangeableError"
           },
           {
             "$ref": "#/components/schemas/PlatformNotEnabledError"
@@ -42258,10 +43674,11 @@
             "PLATFORM_ACCOUNT_VERIFICATION_FAILED": "#/components/schemas/PlatformAccountVerificationFailedError",
             "PLATFORM_ACCOUNT_VERIFICATION_NOT_FOUND": "#/components/schemas/PlatformAccountVerificationNotFoundError",
             "PLATFORM_ARCHIVED_PARTNER": "#/components/schemas/PlatformArchivedPartnerError",
-            "PLATFORM_CONNECTED_PARTNER_BRN_UNCHANGEABLE": "#/components/schemas/PlatformConnectedPartnerBrnUnchangeableError",
-            "PLATFORM_CONNECTED_PARTNER_TYPE_UNCHANGEABLE": "#/components/schemas/PlatformConnectedPartnerTypeUnchangeableError",
+            "PLATFORM_COMPANY_VERIFICATION_ALREADY_USED": "#/components/schemas/PlatformCompanyVerificationAlreadyUsedError",
             "PLATFORM_CONTRACT_NOT_FOUND": "#/components/schemas/PlatformContractNotFoundError",
             "PLATFORM_INSUFFICIENT_DATA_TO_CHANGE_PARTNER_TYPE": "#/components/schemas/PlatformInsufficientDataToChangePartnerTypeError",
+            "PLATFORM_MEMBER_COMPANY_CONNECTED_PARTNER_BRN_UNCHANGEABLE": "#/components/schemas/PlatformMemberCompanyConnectedPartnerBrnUnchangeableError",
+            "PLATFORM_MEMBER_COMPANY_CONNECTED_PARTNER_TYPE_UNCHANGEABLE": "#/components/schemas/PlatformMemberCompanyConnectedPartnerTypeUnchangeableError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
             "PLATFORM_USER_DEFINED_PROPERTY_NOT_FOUND": "#/components/schemas/PlatformUserDefinedPropertyNotFoundError",
@@ -42654,6 +44071,152 @@
         },
         "x-portone-title": "가상계좌 발급 완료 상태 건"
       },
+      "VirtualAccountIssuedPaymentTransaction": {
+        "title": "가상계좌 발급 완료 상태 건",
+        "description": "가상계좌 발급 완료 상태 건",
+        "type": "object",
+        "required": [
+          "status",
+          "id",
+          "paymentId",
+          "merchantId",
+          "storeId",
+          "channel",
+          "version",
+          "requestedAt",
+          "updatedAt",
+          "statusChangedAt",
+          "orderName",
+          "amount",
+          "currency",
+          "customer"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "결제 시도 상태"
+          },
+          "id": {
+            "type": "string",
+            "title": "결제 시도 아이디 (transactionId)",
+            "description": "V1 결제 건의 경우 imp_uid에 해당합니다."
+          },
+          "paymentId": {
+            "type": "string",
+            "title": "결제 건 아이디"
+          },
+          "merchantId": {
+            "type": "string",
+            "title": "고객사 아이디"
+          },
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디"
+          },
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod",
+            "title": "결제수단 정보"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/SelectedChannel",
+            "title": "결제 채널"
+          },
+          "channelGroup": {
+            "$ref": "#/components/schemas/ChannelGroupSummary",
+            "title": "결제 채널 그룹 정보"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
+          },
+          "scheduleId": {
+            "type": "string",
+            "title": "결제 예약 건 아이디",
+            "description": "결제 예약을 이용한 경우에만 존재"
+          },
+          "billingKey": {
+            "type": "string",
+            "title": "결제 시 사용된 빌링키",
+            "description": "빌링키 결제인 경우에만 존재"
+          },
+          "webhooks": {
+            "title": "웹훅 발송 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentWebhook"
+            }
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 요청 시점"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "업데이트 시점"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 시점"
+          },
+          "orderName": {
+            "type": "string",
+            "title": "주문명"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/PaymentAmount",
+            "title": "결제 금액 관련 세부 정보"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency",
+            "title": "통화"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "title": "구매자 정보"
+          },
+          "promotionId": {
+            "type": "string",
+            "title": "프로모션 아이디"
+          },
+          "isCulturalExpense": {
+            "type": "boolean",
+            "title": "문화비 지출 여부"
+          },
+          "escrow": {
+            "$ref": "#/components/schemas/PaymentEscrow",
+            "title": "에스크로 결제 정보",
+            "description": "에스크로 결제인 경우 존재합니다."
+          },
+          "products": {
+            "title": "상품 정보",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentProduct"
+            }
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32",
+            "title": "상품 갯수"
+          },
+          "customData": {
+            "type": "string",
+            "title": "사용자 지정 데이터"
+          },
+          "country": {
+            "$ref": "#/components/schemas/Country",
+            "title": "국가 코드"
+          },
+          "pgTxId": {
+            "type": "string",
+            "title": "PG사 거래 아이디"
+          }
+        },
+        "x-portone-title": "가상계좌 발급 완료 상태 건"
+      },
       "WebhookNotFoundError": {
         "title": "웹훅 내역이 존재하지 않는 경우",
         "description": "웹훅 내역이 존재하지 않는 경우",
@@ -42826,6 +44389,11 @@
           "id": "platform.accountTransfer",
           "title": "이체 내역 관련 API",
           "description": "파트너 정산 서비스의 이체 내역과 관련된 API 입니다."
+        },
+        {
+          "id": "platform.company",
+          "title": "사업자 관련 API",
+          "description": "파트너 정산 서비스의 사업자와 관련된 API 입니다."
         }
       ]
     },
