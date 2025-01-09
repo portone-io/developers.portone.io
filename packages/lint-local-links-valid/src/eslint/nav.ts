@@ -10,7 +10,7 @@ import {
   isYAMLSequence,
   resolvePathname,
   type RuleModule,
-} from "../utils.js";
+} from "../utils.ts";
 
 export const rule: RuleModule = {
   meta: {

@@ -10,7 +10,7 @@ import {
   isYAMLScalar,
   resolvePathname,
   type RuleModule,
-} from "../utils.js";
+} from "../utils.ts";
 
 type Stack = {
   upper: Stack | null;

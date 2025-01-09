@@ -1,2 +1,2 @@
-export { default as navLintLocalLinksValid } from "./nav.js";
-export { default as redirLintLocalLinksValid } from "./redir.js";
+export { default as navLintLocalLinksValid } from "./nav.ts";
+export { default as redirLintLocalLinksValid } from "./redir.ts";
