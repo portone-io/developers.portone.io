@@ -10,7 +10,7 @@ import {
   isLocalLink,
   resolvePathname,
   resolveRedirect,
-} from "./utils.js";
+} from "./utils.ts";
 
 interface Options {
   baseDir: string;

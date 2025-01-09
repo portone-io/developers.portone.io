@@ -1,1 +1,1 @@
-export { remarkLintNoJamo } from "./remark.js";
+export { remarkLintNoJamo } from "./remark.ts";
