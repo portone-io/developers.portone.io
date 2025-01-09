@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const Lang = z.enum(["ko", "en"]);
+export const Lang = z.enum(["ko"]);
 export type Lang = z.infer<typeof Lang>;
 
 export const isLang = (v: unknown) => Lang.safeParse(v).success;

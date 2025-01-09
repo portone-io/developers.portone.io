@@ -7,9 +7,6 @@ export const indexFilesMapping = {
     "릴리즈 노트": "release-notes/(note)/",
     "API & SDK": "sdk/ko/",
   },
-  en: {
-    docs: "docs/en/",
-  },
   blog: {
     "기술 블로그": "blog/",
   },

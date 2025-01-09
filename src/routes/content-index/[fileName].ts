@@ -8,7 +8,7 @@ import { makeReleaseNoteFrontmatter } from "~/misc/releaseNote";
 
 export async function GET({ params }: APIEvent) {
   const fileName = z
-    .enum(["ko", "en", "blog"])
+    .enum(["ko", "blog"])
     .safeParse(params.fileName?.replace(".json", "")).data;
   if (!fileName) return new Response(null, { status: 404 });
   const indexFilesMapping = _indexFilesMapping[fileName];

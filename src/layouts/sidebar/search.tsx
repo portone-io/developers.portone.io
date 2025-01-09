@@ -79,7 +79,6 @@ export function SearchButton({ lang }: SearchButtonProps) {
 }
 
 export const searchIndexKo = lazy(() => fetchSearchIndex("ko"));
-export const searchIndexEn = lazy(() => fetchSearchIndex("en"));
 export const searchIndexBlog = lazy(() => fetchSearchIndex("blog"));
 async function fetchSearchIndex(
   fileName: keyof IndexFilesMapping,
@@ -112,7 +111,6 @@ export function SearchScreen(props: SearchScreenProps) {
       inputRef?.focus();
       return await match(searchIndex)
         .with("ko", () => searchIndexKo)
-        .with("en", () => searchIndexEn)
         .with("blog", () => searchIndexBlog)
         .exhaustive();
     },
