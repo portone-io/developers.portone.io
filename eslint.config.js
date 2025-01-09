@@ -145,4 +145,10 @@ export default [
       "nav/local-links-valid": "error",
     },
   },
+  {
+    files: ["**/__generated__/**/*"],
+    linterOptions: {
+      reportUnusedDisableDirectives: "off",
+    },
+  },
 ];
