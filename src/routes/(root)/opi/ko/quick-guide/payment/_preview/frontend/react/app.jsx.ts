@@ -61,7 +61,7 @@ export function App() {
       orderName: item.name,
       totalAmount: item.price,
       currency: item.currency,
-      payMethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`}
+      payMethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`},
       ${({ when }) => when(isCustomerRequired)`
       customer: {
          ${({ when }) => when(isCustomerNameRequired)`
