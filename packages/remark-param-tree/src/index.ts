@@ -5,6 +5,7 @@ import type {
   PhrasingContent,
   Root,
 } from "mdast";
+import { type MdxJsxTextElement } from "mdast-util-mdx";
 import { toString } from "mdast-util-to-string";
 import { match, P } from "ts-pattern";
 import { type BuildVisitor, SKIP, visit } from "unist-util-visit";
@@ -21,9 +22,7 @@ export default function remarkParamTreePlugin() {
       if (node.name === "ParamTree") {
         const generateTypeDefinition = (
           node: ListItem | Heading,
-        ):
-          | [node: Heading | Paragraph, typeDefinition: TypeDefinition]
-          | null => {
+        ): [node: MdxJsxTextElement, typeDefinition: TypeDefinition] | null => {
           const result = match(node)
             .with(
               {
@@ -40,7 +39,7 @@ export default function remarkParamTreePlugin() {
             )
             .otherwise(() => null);
           if (result === null) return null;
-          const [typeNode, typeStr] = result;
+          const [_, typeStr] = result;
 
           const exec =
             /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$]*)(?<optional>\?)?:\s*(?<type>[a-zA-Z0-9_$<>[\]{}|&?()\s]+)$/.exec(
@@ -59,14 +58,22 @@ export default function remarkParamTreePlugin() {
               },
               ({ name, type, optional }) =>
                 [
-                  typeNode,
+                  {
+                    type: "mdxJsxTextElement",
+                    name: "ParamTree.Parameter",
+                    attributes: [
+                      { type: "mdxJsxAttribute", name: "ident", value: name },
+                      { type: "mdxJsxAttribute", name: "type", value: type },
+                    ],
+                    children: [],
+                  },
                   {
                     name,
                     type,
                     optional: Boolean(optional),
                   },
                 ] satisfies [
-                  node: Heading | Paragraph,
+                  node: MdxJsxTextElement,
                   typeDefinition: TypeDefinition,
                 ],
             )
@@ -82,52 +89,8 @@ export default function remarkParamTreePlugin() {
           if (parent === undefined) return;
           const _typeDefinition = generateTypeDefinition(node);
           if (_typeDefinition === null) return;
-          const [, typeDefinition] = _typeDefinition;
-          const typeMdast = [
-            {
-              type: "text",
-              value: `${typeDefinition.name}${typeDefinition.optional === true ? "?" : ""}: `,
-            },
-            {
-              type: "mdxJsxTextElement",
-              name: "mark",
-              attributes: [
-                {
-                  type: "mdxJsxAttribute",
-                  name: "style",
-                  value: "color:#1e293b;",
-                },
-              ],
-              children: [
-                {
-                  type: "strong",
-                  children: [{ type: "text", value: typeDefinition.type }],
-                },
-              ],
-            },
-          ];
-          match(node)
-            .with(
-              {
-                type: "heading",
-              },
-              (node) => {
-                node.children = typeMdast as PhrasingContent[];
-              },
-            )
-            .with(
-              {
-                type: "listItem",
-                children: [{ type: "paragraph" }, ...P.array()],
-              },
-              (node) => {
-                node.children[0] = {
-                  type: "paragraph",
-                  children: typeMdast as PhrasingContent[],
-                };
-              },
-            )
-            .otherwise(() => {});
+          const [_node, typeDefinition] = _typeDefinition;
+          parent.children.splice(index, 1, _node);
         };
         visit(node, "listItem", transformNode);
         visit(node, "heading", transformNode);
