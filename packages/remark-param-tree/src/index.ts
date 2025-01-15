@@ -85,33 +85,9 @@ export default function remarkParamTreePlugin() {
           const [, typeDefinition] = _typeDefinition;
           const typeMdast = [
             {
-              type: "strong",
-              children: [
-                {
-                  type: "inlineCode",
-                  value: typeDefinition.name,
-                },
-              ],
+              type: "text",
+              value: `${typeDefinition.name}${typeDefinition.optional === true ? "?" : ""}: `,
             },
-            { type: "text", value: " " },
-            typeDefinition.optional === false && {
-              type: "mdxJsxTextElement",
-              name: "mark",
-              attributes: [
-                {
-                  type: "mdxJsxAttribute",
-                  name: "style",
-                  value: "color:red;",
-                },
-              ],
-              children: [
-                {
-                  type: "strong",
-                  children: [{ type: "text", value: "*" }],
-                },
-              ],
-            },
-            typeDefinition.optional === false && { type: "text", value: " " },
             {
               type: "mdxJsxTextElement",
               name: "mark",
@@ -129,7 +105,7 @@ export default function remarkParamTreePlugin() {
                 },
               ],
             },
-          ].filter((node) => node !== false);
+          ];
           match(node)
             .with(
               {
