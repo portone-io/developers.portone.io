@@ -28,18 +28,19 @@ export default function remarkParamTreePlugin() {
               {
                 type: "heading",
               },
-              (node) => [node, toString(node)] as const,
+              (node) => [null, toString(node)] as const,
             )
             .with(
               {
                 type: "listItem",
                 children: [{ type: "paragraph" }, ...P.array()],
               },
-              (node) => [node.children[0], toString(node.children[0])] as const,
+              (node) =>
+                [node.children.slice(1), toString(node.children[0])] as const,
             )
             .otherwise(() => null);
           if (result === null) return null;
-          const [_, typeStr] = result;
+          const [children, typeStr] = result;
 
           const exec =
             /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$]*)(?<optional>\?)?:\s*(?<type>[a-zA-Z0-9_$<>[\]{}|&?()\s]+)$/.exec(
@@ -65,7 +66,8 @@ export default function remarkParamTreePlugin() {
                       { type: "mdxJsxAttribute", name: "ident", value: name },
                       { type: "mdxJsxAttribute", name: "type", value: type },
                     ],
-                    children: [],
+                    children: children !== null ? children : [],
+                    // children: [],
                   },
                   {
                     name,
