@@ -7,7 +7,7 @@ interface ParameterProps {
 
 export default function Parameter(props: ParameterProps) {
   return (
-    <div class="ml-1 b-l b-l-[#ddd] pl-4.5 text-sm text-slate-5 space-y-2">
+    <div class="ml-1 b-l pl-4.5 text-sm text-slate-5 space-y-2">
       {props.children}
     </div>
   );
@@ -24,11 +24,11 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
   return (
     <Collapsible defaultOpen as="div" class="text-sm">
       <div class="h-0 w-0">
-        <button class="h-4 w-4 bg-white p-.5 -ml-7">
+        <Collapsible.Trigger as="button" class="h-4 w-4 bg-white p-.5 -ml-7">
           <i class="i-ic-sharp-chevron-right inline-block h-4 w-4 transform-rotate-90"></i>
-        </button>
+        </Collapsible.Trigger>
       </div>
-      <Collapsible.Trigger as="div" class="cursor-default text-slate-7">
+      <div class="cursor-default text-slate-7">
         <span class="whitespace-normal font-medium font-mono">
           {props.ident}
         </span>
@@ -39,7 +39,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
         <span class="whitespace-normal text-green-5 font-mono">
           {props.type}
         </span>
-      </Collapsible.Trigger>
+      </div>
       <div class="text-slate-5">{props.children}</div>
     </Collapsible>
   );
