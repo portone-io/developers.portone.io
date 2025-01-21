@@ -83,13 +83,15 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
       </Show>
       <div class="grid col-start-2 row-start-1 row-end-3 grid-rows-subgrid">
         <div class="row-start-1 text-slate-7">
-          <span class="whitespace-normal font-medium font-mono">
-            {props.ident}
-          </span>
-          <span class="font-mono">
-            {props.optional ? "?" : ""}
-            {": "}
-          </span>
+          <Show when={props.ident}>
+            <span class="whitespace-normal font-medium font-mono">
+              {props.ident}
+            </span>
+            <span class="font-mono">
+              {props.optional ? "?" : ""}
+              {": "}
+            </span>
+          </Show>
           <span class="whitespace-normal text-green-5 font-mono">
             {props.type}
           </span>
