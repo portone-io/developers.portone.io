@@ -39,17 +39,13 @@ function groupItemsByType(
   return [...chunk, ...groupItemsByType(node, items.slice(chunk.length))];
 }
 
-type Visitor = BuildVisitor<MdxJsxFlowElement, "list">;
-
 export default function remarkParamTreePlugin() {
   return function (tree: Root) {
     visit(tree, "mdxJsxFlowElement", (node) => {
       if (node.name === "Parameter") {
-        const transformNode: (...params: Parameters<Visitor>) => void = (
-          node,
-          index,
-          parent,
-        ) => {
+        const transformNode: (
+          ...params: Parameters<BuildVisitor<MdxJsxFlowElement, "list">>
+        ) => void = (node, index, parent) => {
           if (node.children.every((child) => child.type === "listItem")) {
             return;
           }

@@ -54,6 +54,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
 
   const detailKeyArray = createMemo(() => [...details.keys()]);
   const isFlatten = createMemo(() => flatten);
+  const isExpandable = createMemo(() => details.size > 0);
 
   return (
     <Collapsible
@@ -102,24 +103,21 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
           <div class="text-slate-5">{props.children}</div>
         </TypeDefContext.Provider>
       </div>
-      <Collapsible.Content
-        as="div"
-        class={clsx(
-          "grid row-start-3 col-end-3 grid-cols-subgrid",
-          isFlatten() ? "col-start-2" : "col-start-1 b-l",
-        )}
-      >
-        <div class="col-start-2">
+      <Show when={isExpandable()}>
+        <Collapsible.Content
+          as="div"
+          class="grid col-start-2 row-start-3 col-end-3 mt-2 b-l"
+        >
           <For each={detailKeyArray()}>
             {(key) => <>{details.get(key)?.()}</>}
           </For>
-        </div>
-      </Collapsible.Content>
+        </Collapsible.Content>
+      </Show>
     </Collapsible>
   );
 };
 
-Parameter.Object = function Object(props: ParentProps) {
+Parameter.Details = function Details(props: ParentProps) {
   const { register, unregister } = useContext(TypeDefContext);
 
   const uniqueId = createUniqueId();
