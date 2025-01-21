@@ -1,10 +1,13 @@
 import { Collapsible } from "@kobalte/core/collapsible";
-import { ReactiveSet } from "@solid-primitives/set";
+import { ReactiveMap } from "@solid-primitives/map";
 import clsx from "clsx";
 import {
   createContext,
+  createEffect,
+  createMemo,
   createSignal,
   createUniqueId,
+  For,
   type JSXElement,
   onCleanup,
   onMount,
@@ -24,12 +27,7 @@ const ParameterContext = createContext({
 
 export default function Parameter(props: ParameterProps) {
   return (
-    <div
-      class={clsx(
-        "text-sm text-slate-5 space-y-2",
-        !props.flatten && "b-l pl-4",
-      )}
-    >
+    <div class="text-sm text-slate-5 space-y-2">
       <ParameterContext.Provider value={{ flatten: Boolean(props.flatten) }}>
         {props.children}
       </ParameterContext.Provider>
@@ -45,38 +43,44 @@ interface TypeDefProps {
 }
 
 const TypeDefContext = createContext({
-  register: (_: string) => {},
+  register: (_: string, __: () => JSXElement) => {},
   unregister: (_: string) => {},
 });
 
 Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
   const { flatten } = useContext(ParameterContext);
-  const children = new ReactiveSet<string>();
+  const details = new ReactiveMap<string, () => JSXElement>();
   const [expaneded, setExpanded] = createSignal(true);
+
+  const detailKeyArray = createMemo(() => [...details.keys()]);
+  const isFlatten = createMemo(() => flatten);
+
   return (
     <Collapsible
       open={expaneded()}
       onOpenChange={(isOpen) => {
-        if (!flatten) {
+        if (isFlatten() === false) {
           setExpanded(isOpen);
         }
       }}
       as="div"
-      class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] text-sm"
+      class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-center text-sm"
     >
-      <Show when={flatten === false && children.size > 0}>
-        <div class="grid items-center">
-          <Collapsible.Trigger as="button" class="h-4 w-4">
-            <i
-              class={clsx(
-                "i-ic-sharp-chevron-right inline-block h-4 w-4",
-                expaneded() && "transform-rotate-90",
-              )}
-            ></i>
-          </Collapsible.Trigger>
+      <Show when={isFlatten() === false}>
+        <div class="col-start-1 row-start-1 h-4 w-4">
+          <Show when={details.size > 0}>
+            <Collapsible.Trigger as="button" class="h-4 w-4">
+              <i
+                class={clsx(
+                  "i-ic-sharp-chevron-right inline-block h-4 w-4",
+                  expaneded() && "transform-rotate-90",
+                )}
+              ></i>
+            </Collapsible.Trigger>
+          </Show>
         </div>
       </Show>
-      <div class="grid row-span-2 col-start-2 grid-rows-subgrid">
+      <div class="grid col-start-2 row-start-1 row-end-3 grid-rows-subgrid">
         <div class="row-start-1 text-slate-7">
           <span class="whitespace-normal font-medium font-mono">
             {props.ident}
@@ -91,13 +95,26 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
         </div>
         <TypeDefContext.Provider
           value={{
-            register: (id: string) => children.add(id),
-            unregister: (id: string) => children.delete(id),
+            register: (id, el) => details.set(id, el),
+            unregister: (id) => details.delete(id),
           }}
         >
           <div class="text-slate-5">{props.children}</div>
         </TypeDefContext.Provider>
       </div>
+      <Collapsible.Content
+        as="div"
+        class={clsx(
+          "grid row-start-3 col-end-3 grid-cols-subgrid",
+          isFlatten() ? "col-start-2" : "col-start-1 b-l",
+        )}
+      >
+        <div class="col-start-2">
+          <For each={detailKeyArray()}>
+            {(key) => <>{details.get(key)?.()}</>}
+          </For>
+        </div>
+      </Collapsible.Content>
     </Collapsible>
   );
 };
@@ -107,10 +124,12 @@ Parameter.Object = function Object(props: ParentProps) {
 
   const uniqueId = createUniqueId();
 
-  onMount(() => register(uniqueId));
+  createEffect(() => {
+    onMount(() =>
+      register(uniqueId, () => <Parameter>{props.children}</Parameter>),
+    );
+  });
   onCleanup(() => unregister(uniqueId));
 
-  return (
-    <Collapsible.Content as={Parameter}>{props.children}</Collapsible.Content>
-  );
+  return null;
 };
