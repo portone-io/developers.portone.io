@@ -14,6 +14,7 @@ import { transformListItemToTypeDef } from "./transform/typeDef.ts";
  * => [JSX, JSX, List[ListItem, ListItem, ListItem], JSX]
  */
 function groupItemsByType(
+  node: List,
   items: (MdxJsxFlowElement | ListItem)[],
 ): (MdxJsxFlowElement | List)[] {
   if (items.length === 0) {
@@ -29,33 +30,36 @@ function groupItemsByType(
     .with(P.array({ type: "mdxJsxFlowElement" }), (chunk) => chunk)
     .with(P.array({ type: "listItem" }), (children) => [
       {
-        type: "list",
-        ordered: false,
-        spread: false,
+        ...node,
         children,
       } satisfies List,
     ])
     .otherwise(() => []);
 
-  return [...chunk, ...groupItemsByType(items.slice(chunk.length))];
+  return [...chunk, ...groupItemsByType(node, items.slice(chunk.length))];
 }
+
+type Visitor = BuildVisitor<MdxJsxFlowElement, "list">;
 
 export default function remarkParamTreePlugin() {
   return function (tree: Root) {
     visit(tree, "mdxJsxFlowElement", (node) => {
       if (node.name === "Parameter") {
-        const transformNode: (
-          ...params: Parameters<BuildVisitor<typeof node, "list">>
-        ) => void = (node, index, parent) => {
-          const typeDefs = groupItemsByType(
-            node.children.map(transformListItemToTypeDef),
-          );
-          if (parent && index) {
-            parent.children.splice(index, 1, ...typeDefs);
-            return [SKIP, index + typeDefs.length];
+        const transformNode: (...params: Parameters<Visitor>) => void = (
+          node,
+          index,
+          parent,
+        ) => {
+          if (node.children.every((child) => child.type === "listItem")) {
+            return;
           }
-          return;
+          parent?.children.splice(
+            index ?? 0,
+            1,
+            ...groupItemsByType(node, node.children),
+          );
         };
+        visit(node, "listItem", transformListItemToTypeDef);
         visit(node, "list", transformNode);
         return SKIP;
       }

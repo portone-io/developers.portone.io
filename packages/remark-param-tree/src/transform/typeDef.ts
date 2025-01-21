@@ -1,7 +1,7 @@
-import type { ListItem } from "mdast";
-import type { MdxJsxFlowElement } from "mdast-util-mdx";
+import type { List, ListItem } from "mdast";
 import { toString } from "mdast-util-to-string";
 import { match, P } from "ts-pattern";
+import type { VisitorResult } from "unist-util-visit";
 
 const TypeDefRegExp =
   /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$]*)(?<optional>\?)?:\s*(?<type>[a-zA-Z0-9_$<>[\]{}|&?()\s]+)$/;
@@ -39,8 +39,10 @@ function parseTypeDef(str: string): TypeDef | null {
 
 export function transformListItemToTypeDef(
   node: ListItem,
-): MdxJsxFlowElement | ListItem {
-  return match(node)
+  index: number | undefined,
+  parent: List | undefined,
+): VisitorResult {
+  match(node)
     .with(
       {
         type: "listItem",
@@ -51,10 +53,10 @@ export function transformListItemToTypeDef(
         const typeDefText = toString(paragraph);
 
         const parsed = parseTypeDef(typeDefText);
-        if (!parsed) return node;
+        if (!parsed) return;
 
         const { name, type, optional } = parsed;
-        return {
+        parent?.children.splice(index ?? 0, 1, {
           type: "mdxJsxFlowElement",
           name: "Parameter.TypeDef",
           attributes: (
@@ -70,8 +72,8 @@ export function transformListItemToTypeDef(
             ] as const
           ).filter((x) => x !== false),
           children: restChildren,
-        } satisfies MdxJsxFlowElement;
+        } as unknown as ListItem);
       },
     )
-    .otherwise(() => node);
+    .otherwise(() => {});
 }

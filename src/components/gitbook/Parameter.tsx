@@ -9,11 +9,12 @@ import {
   onCleanup,
   onMount,
   type ParentProps,
+  Show,
   useContext,
 } from "solid-js";
 
 interface ParameterProps {
-  flat?: boolean;
+  flatten?: boolean;
   children?: JSXElement;
 }
 
@@ -26,10 +27,10 @@ export default function Parameter(props: ParameterProps) {
     <div
       class={clsx(
         "text-sm text-slate-5 space-y-2",
-        !props.flat && "ml-1 b-l pl-4.5",
+        !props.flatten && "b-l pl-4",
       )}
     >
-      <ParameterContext.Provider value={{ flatten: Boolean(props.flat) }}>
+      <ParameterContext.Provider value={{ flatten: Boolean(props.flatten) }}>
         {props.children}
       </ParameterContext.Provider>
     </div>
@@ -49,56 +50,54 @@ const TypeDefContext = createContext({
 });
 
 Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
-  const { flatten: flat } = useContext(ParameterContext);
+  const { flatten } = useContext(ParameterContext);
   const children = new ReactiveSet<string>();
   const [expaneded, setExpanded] = createSignal(true);
   return (
     <Collapsible
       open={expaneded()}
       onOpenChange={(isOpen) => {
-        if (!flat) {
+        if (!flatten) {
           setExpanded(isOpen);
         }
       }}
       as="div"
-      class="text-sm"
+      class="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] text-sm"
     >
-      <div class="h-0 w-0">
-        <Collapsible.Trigger
-          as="button"
-          class={clsx(
-            "h-4 w-4 bg-white p-.5 -ml-7",
-            !flat && children.size > 0 ? "block" : "hidden",
-          )}
+      <Show when={flatten === false && children.size > 0}>
+        <div class="grid items-center">
+          <Collapsible.Trigger as="button" class="h-4 w-4">
+            <i
+              class={clsx(
+                "i-ic-sharp-chevron-right inline-block h-4 w-4",
+                expaneded() && "transform-rotate-90",
+              )}
+            ></i>
+          </Collapsible.Trigger>
+        </div>
+      </Show>
+      <div class="grid row-span-2 col-start-2 grid-rows-subgrid">
+        <div class="row-start-1 text-slate-7">
+          <span class="whitespace-normal font-medium font-mono">
+            {props.ident}
+          </span>
+          <span class="font-mono">
+            {props.optional ? "?" : ""}
+            {": "}
+          </span>
+          <span class="whitespace-normal text-green-5 font-mono">
+            {props.type}
+          </span>
+        </div>
+        <TypeDefContext.Provider
+          value={{
+            register: (id: string) => children.add(id),
+            unregister: (id: string) => children.delete(id),
+          }}
         >
-          <i
-            class={clsx(
-              "i-ic-sharp-chevron-right inline-block h-4 w-4",
-              expaneded() && "transform-rotate-90",
-            )}
-          ></i>
-        </Collapsible.Trigger>
+          <div class="text-slate-5">{props.children}</div>
+        </TypeDefContext.Provider>
       </div>
-      <div class="text-slate-7">
-        <span class="whitespace-normal font-medium font-mono">
-          {props.ident}
-        </span>
-        <span class="font-mono">
-          {props.optional ? "?" : ""}
-          {": "}
-        </span>
-        <span class="whitespace-normal text-green-5 font-mono">
-          {props.type}
-        </span>
-      </div>
-      <TypeDefContext.Provider
-        value={{
-          register: (id: string) => children.add(id),
-          unregister: (id: string) => children.delete(id),
-        }}
-      >
-        <div class="text-slate-5">{props.children}</div>
-      </TypeDefContext.Provider>
     </Collapsible>
   );
 };
