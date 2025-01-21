@@ -13,13 +13,25 @@ import {
 } from "solid-js";
 
 interface ParameterProps {
+  flat?: boolean;
   children?: JSXElement;
 }
 
+const ParameterContext = createContext({
+  flatten: false,
+});
+
 export default function Parameter(props: ParameterProps) {
   return (
-    <div class="ml-1 b-l pl-4.5 text-sm text-slate-5 space-y-2">
-      {props.children}
+    <div
+      class={clsx(
+        "text-sm text-slate-5 space-y-2",
+        !props.flat && "ml-1 b-l pl-4.5",
+      )}
+    >
+      <ParameterContext.Provider value={{ flatten: Boolean(props.flat) }}>
+        {props.children}
+      </ParameterContext.Provider>
     </div>
   );
 }
@@ -37,12 +49,17 @@ const TypeDefContext = createContext({
 });
 
 Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
+  const { flatten: flat } = useContext(ParameterContext);
   const children = new ReactiveSet<string>();
   const [expaneded, setExpanded] = createSignal(true);
   return (
     <Collapsible
       open={expaneded()}
-      onOpenChange={setExpanded}
+      onOpenChange={(isOpen) => {
+        if (!flat) {
+          setExpanded(isOpen);
+        }
+      }}
       as="div"
       class="text-sm"
     >
@@ -51,7 +68,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
           as="button"
           class={clsx(
             "h-4 w-4 bg-white p-.5 -ml-7",
-            children.size > 0 ? "block" : "hidden",
+            !flat && children.size > 0 ? "block" : "hidden",
           )}
         >
           <i
@@ -62,7 +79,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
           ></i>
         </Collapsible.Trigger>
       </div>
-      <div class="cursor-default text-slate-7">
+      <div class="text-slate-7">
         <span class="whitespace-normal font-medium font-mono">
           {props.ident}
         </span>

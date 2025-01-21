@@ -8,47 +8,10 @@ versionVariants:
 
 import Details from "~/components/gitbook/Details";
 import Parameter from "~/components/gitbook/Parameter";
-import ParamTree from "~/components/gitbook/ParamTree";
 
 ## 결제요청 파라미터 정의
 
-<Parameter>
-  <Parameter.TypeDef ident="storeId" type="string">
-    **스토어 아이디**
-
-    - 포트원 계정에 생성된 상점을 식별하는 고유한 값으로 관리자 콘솔에서 확인할 수 있습니다.
-  </Parameter.TypeDef>
-
-  <Parameter.TypeDef ident="tosspayments" type="object" optional>
-    토스페이먼츠 bypass 파라미터
-
-    <Parameter.Object>
-      <Parameter.TypeDef ident="discountCode" type="string" optional>
-        토스페이먼츠 \<-> 고객사 계약에 따라 프로모션 적용이 가능한 코드
-      </Parameter.TypeDef>
-
-      <Parameter.TypeDef ident="useInternationalCardOnly" type="boolean" optional>
-        해외 카드로만 결제가 가능하도록 할 지 여부
-      </Parameter.TypeDef>
-      
-      <Parameter.TypeDef ident="tosspayments" type="object" optional>
-        토스페이먼츠 bypass 파라미터
-
-        <Parameter.Object>
-          <Parameter.TypeDef ident="discountCode" type="string" optional>
-            토스페이먼츠 \<-> 고객사 계약에 따라 프로모션 적용이 가능한 코드
-          </Parameter.TypeDef>
-
-          <Parameter.TypeDef ident="useInternationalCardOnly" type="boolean" optional>
-            해외 카드로만 결제가 가능하도록 할 지 여부
-          </Parameter.TypeDef>
-        </Parameter.Object>
-      </Parameter.TypeDef>
-    </Parameter.Object>
-  </Parameter.TypeDef>
-</Parameter>
-
-<ParamTree>
+<Parameter flatten>
 
 - storeId: string
 
@@ -321,7 +284,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   **고객 정보**
 
-  <ParamTree>
+  <Parameter.Object>
     - customerId?: string
 
       **구매자 고유 ID**
@@ -359,7 +322,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       **구매자 주소**
 
-      <ParamTree>
+      <Parameter.Object>
         - country?: string
 
           **국가**
@@ -635,7 +598,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
         - province?: string
 
           **주, 도, 시**
-      </ParamTree>
+      </Parameter.Object>
 
     - zipcode?: string
 
@@ -664,7 +627,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
       **구매자 출생일**
 
       ex. `"25"`, `"08"` 같은 형식으로 입력해주세요.
-  </ParamTree>
+  </Parameter.Object>
 
 - windowType?: object
 
@@ -676,7 +639,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
     - 미입력 시, 해당 PG사의 기본 결제창 방식을 따릅니다.
   </div>
 
-  <ParamTree>
+  <Parameter.Object>
     - pc?: string
 
       **PC에서의 결제창 유형** `IFRAME`, `REDIRECTION`, `POPUP` 중 하나를 입력해주세요.
@@ -684,7 +647,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
     - mobile?: string
 
       **모바일에서의 결제창 유형** `IFRAME`, `REDIRECTION`, `POPUP` 중 하나를 입력해주세요.
-  </ParamTree>
+  </Parameter.Object>
 
 - redirectUrl?: string
 
@@ -732,7 +695,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   **구매 상품 상세 정보**
 
-  <ParamTree>
+  <Parameter.Object>
     - id: string
 
       **상품 ID**
@@ -765,7 +728,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
     - tag?: string
 
       **상품 태그**
-  </ParamTree>
+  </Parameter.Object>
 
 - isCulturalExpense?: boolean
 
@@ -794,22 +757,22 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   **결제창이 팝업 방식일 경우 결제창에 적용할 속성**
 
-  <ParamTree>
+  <Parameter.Object>
     - center?: boolean
 
       `true`로 설정하면 결제창이 브라우저 화면의 정중앙에 표시됩니다.
-  </ParamTree>
+  </Parameter.Object>
 
 - bypass?: oneof object
 
   **PG사 결제창 호출 시 PG사로 그대로 bypass할 값들의 모음**
 
-  <ParamTree>
+  <Parameter.Object>
     - tosspayments?: object
 
       토스페이먼츠 bypass 파라미터
 
-      <ParamTree>
+      <Parameter.Object>
         - discountCode?: string
 
           토스페이먼츠 \<-> 고객사 계약에 따라 프로모션 적용이 가능한 코드
@@ -817,23 +780,23 @@ import ParamTree from "~/components/gitbook/ParamTree";
         - useInternationalCardOnly?: boolean
 
           해외 카드로만 결제가 가능하도록 할 지 여부
-      </ParamTree>
+      </Parameter.Object>
 
     - kakaopay?: object
 
       카카오페이 bypass 파라미터
 
-      <ParamTree>
+      <Parameter.Object>
         - custom\_message?: string
 
           카카오페이 결제창에 띄워줄 사용자 정의 문구
-      </ParamTree>
+      </Parameter.Object>
 
     - smartro\_v2?: object
 
       스마트로 V2 bypass 파라미터
 
-      <ParamTree>
+      <Parameter.Object>
         - GoodsCnt?: number
 
           결제 상품 품목 개수
@@ -849,13 +812,13 @@ import ParamTree from "~/components/gitbook/ParamTree";
           해외 카드만 결제를 허용할지 여부(기본값: `"KR"`)
 
           `"KR"`, `"EN"` 중 하나의 값으로 입력해주세요.
-      </ParamTree>
+      </Parameter.Object>
 
     - naverpay?: object
 
       네이버페이 bypass 파라미터
 
-      <ParamTree>
+      <Parameter.Object>
         - useCfmYmdt?: string
 
           이용완료일 (YYYYMMDD)
@@ -864,7 +827,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
           상품 정보
 
-          <ParamTree>
+          <Parameter.Object>
             - categoryType: string
 
               결제 상품 유형
@@ -917,18 +880,18 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - count: string
 
               결제 상품 개수
-          </ParamTree>
+          </Parameter.Object>
 
         - deliveryFee?: number
 
           배송비
-      </ParamTree>
+      </Parameter.Object>
 
     - nice\_v2?: object
 
       (신)나이스페이먼츠 bypass 파라미터
 
-      <ParamTree>
+      <Parameter.Object>
         - LogoImage?: string
 
           결제창 로고 이미지 URL
@@ -981,7 +944,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
         - SamsungPayType?: string
 
           삼성페이 고객사 유형 (01: 삼성페이 內 쇼핑 / 99: 기타 (기본값))
-      </ParamTree>
+      </Parameter.Object>
 
     - inicis\_v2?: object
 
@@ -991,7 +954,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       **PC용 파라미터**
 
-      <ParamTree>
+      <Parameter.Object>
         - logo\_url?: string
 
           결제창에 삽입할 메인 로고 url
@@ -1025,7 +988,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
           아래 string 중 원하는 옵션들을 골라 array 형태로 입력합니다.
 
-          <ParamTree>
+          <Parameter.Object>
             - SKIN($\{string})?: string
 
               결제창 색상
@@ -1067,12 +1030,12 @@ import ParamTree from "~/components/gitbook/ParamTree";
               `string` 부분에는 `카드코드:카드코드` 와 같은 형식으로 입력합니다. (ex. `mallpoint(11:34)`)
               카드사 코드는 [이니시스 통합 코드](https://manual.inicis.com/pay/code.html) 페이지에서
               "결제요청 시 카드코드" 섹션을 참고하시기 바랍니다.
-          </ParamTree>
-      </ParamTree>
+          </Parameter.Object>
+      </Parameter.Object>
 
       **모바일용 파라미터**
 
-      <ParamTree>
+      <Parameter.Object>
         - P\_CARD\_OPTION?: string
 
           신용카드 우선선택 옵션
@@ -1087,35 +1050,36 @@ import ParamTree from "~/components/gitbook/ParamTree";
         - P\_RESERVED?: string\[]
 
           추가 옵션
+          아래 string 중 원하는 옵션들을 골라 array 형태로 입력합니다.
 
           - `below1000=Y`: (카드결제 & 간편결제 시) 1000원 미만 결제 허용 옵션
           - `noeasypay=Y`: (카드결제 시) 간편결제 미노출 옵션
           - `global_visa3d=Y`: 해외카드 노출 옵션
           - `apprun_check=Y`?: (android의 경우) custom url scheme 대신 intent schema(intent://) 호출
-      </ParamTree>
+      </Parameter.Object>
 
     - kpn?: object
 
       KPN bypass 파라미터
 
-      <ParamTree>
+      <Parameter.Object>
         - CardSelect?: enum\[]
 
           - 해외카드 (VISA + MASTER + JCB) : `GLOBAL`
           - 구인증 : `LEGACY_AUTH`
           - 키인 : `KEY_IN`
-      </ParamTree>
+      </Parameter.Object>
     
     - eximbay\_v2?: object
 
       EXIMBAY bypass 파라미터
 
-      <ParamTree>
+      <Parameter.Object>
         - payment?: object
 
           **결제 정보**
 
-          <ParamTree>
+          <Parameter.Object>
             - payment\_method?: string
 
               **단독 노출 결제수단**
@@ -1131,13 +1095,13 @@ import ParamTree from "~/components/gitbook/ParamTree";
               지정한 일부 결제수단만을 목록에 노출할 수 있습니다.
 
               결제수단 코드는 [EXIMBAY Docs](https://developer.eximbay.com/eximbay/api_sdk/code-organization.html#paymentCode)에서 확인하실 수 있습니다.
-          </ParamTree>
+          </Parameter.Object>
 
         - merchant?: object
 
           **상점 정보**
 
-          <ParamTree>
+          <Parameter.Object>
             - shop?: string
 
               **상점명**
@@ -1147,7 +1111,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - partner\_code?: string
 
               **파트너 코드**
-          </ParamTree>
+          </Parameter.Object>
 
         - tax?: object
 
@@ -1155,7 +1119,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
           네이버페이 포인트로 결제를 진행하는 경우 모든 파라미터를 입력해야 합니다.
 
-          <ParamTree>
+          <Parameter.Object>
             - receipt\_status?: string
 
               **현금영수증 발급 여부**
@@ -1170,7 +1134,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
               **봉사료**
 
               전체 결제 금액 중 봉사료입니다.
-          </ParamTree>
+          </Parameter.Object>
 
         - surcharge?: object\[]
 
@@ -1178,7 +1142,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
           쿠폰 할인 및 배송비를 표시하는 용도로 사용할 수 있습니다. 최대 3개 입력 가능합니다.
 
-          <ParamTree>
+          <Parameter.Object>
             - name?: string
 
               **상품명**
@@ -1194,13 +1158,13 @@ import ParamTree from "~/components/gitbook/ParamTree";
               **단가**
 
               음수가 가능합니다.
-          </ParamTree>
+          </Parameter.Object>
 
         - ship\_to?: object
 
           **배송지 정보**
 
-          <ParamTree>
+          <Parameter.Object>
             - city?: string
 
               **도시**
@@ -1236,13 +1200,13 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - street1?: string
 
               **상세 주소**
-          </ParamTree>
+          </Parameter.Object>
 
         - bill\_to?: object
 
           **청구지 정보**
 
-          <ParamTree>
+          <Parameter.Object>
             - city?: string
 
               **도시**
@@ -1278,13 +1242,13 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - street1?: string
 
               **상세 주소**
-          </ParamTree>
+          </Parameter.Object>
 
         - settings?: object
 
           **결제창 설정**
 
-          <ParamTree>
+          <Parameter.Object>
             - call\_from\_app?: string
 
               **인앱 웹뷰 환경 여부**
@@ -1295,16 +1259,15 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - issuer\_country?: string
 
               해외 결제 가맹점에서 국내 결제를 사용할 경우 `KR`을 입력합니다.
-          </ParamTree>
+          </Parameter.Object>
 
         - virtualaccount\_expiry\_date?: string
 
           **가상계좌 만료 일자**
 
           `yyyyMMddHH` 형식으로 입력합니다.
-      </ParamTree>
-    </ParamTree>
-</ParamTree>
+      </Parameter.Object>
+  </Parameter.Object>
 
 - country?: string
 
@@ -1572,18 +1535,18 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   `"PRODUCT_TYPE_REAL"`, `"PRODUCT_TYPE_DIGITAL"` 중 하나의 값을 입력해주세요.
 
-- offerPeriod?: string
+- offerPeriod?: object
 
   서비스 제공 기간
 
   range(기간 범위)와 interval(제공 주기) 중 하나를 입력해주세요.
 
-  <ParamTree>
+  <Parameter.Object>
     - range?: object
 
       기간 범위
 
-      <ParamTree>
+      <Parameter.Object>
         - from?: string
 
           시작 시점
@@ -1591,18 +1554,18 @@ import ParamTree from "~/components/gitbook/ParamTree";
         - to?: string
 
           종료 시점
-      </ParamTree>
+      </Parameter.Object>
 
     - interval?: string
 
       제공 주기 (`${number}d | ${number}m | ${number}y` 형태로 입력할 수 있습니다.)
-  </ParamTree>
+  </Parameter.Object>
 
 - storeDetails?: object
 
   상점 정보
 
-  <ParamTree>
+  <Parameter.Object>
     - ceoFullName?: string
 
       상점 대표자 이름
@@ -1618,7 +1581,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
     - zipcode?: string
 
       상점 우편번호
-  </ParamTree>
+  </Parameter.Object>
 
 - card?: object
 
@@ -1628,7 +1591,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   카드 결제 시, 카드 결제에 대한 세부 정보
 
-  <ParamTree>
+  <Parameter.Object>
     - cardCompany?: string
 
       **카드사 다이렉트 호출 시 필요한 카드사 식별 값**
@@ -1676,14 +1639,14 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       **할부 설정**
 
-      <ParamTree>
+      <Parameter.Object>
         - freeInstallmentPlans?: object\[]
 
           **무이자 할부 설정**
 
           고객사가 부담하는 무이자 할부 설정입니다.
 
-          <ParamTree>
+          <Parameter.Object>
             - cardCompany: string
 
               **무이자 할부를 제공하는 카드사 식별 값**
@@ -1693,7 +1656,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - months: number\[]
 
               **무이자 할부를 제공하는 개월 수**
-          </ParamTree>
+          </Parameter.Object>
 
         - monthOption?: object
 
@@ -1703,7 +1666,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
           `fixedMonth`와 `availableMonthList` 중 하나만 제공해주세요.
 
-          <ParamTree>
+          <Parameter.Object>
             - fixedMonth: number
 
               **구매자가 선택할 수 없도록 고정된 할부 개월수**
@@ -1713,8 +1676,8 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - availableMonthList: number\[]
 
               **구매자가 선택할 수 있는 할부 개월수 리스트**
-          </ParamTree>
-      </ParamTree>
+          </Parameter.Object>
+      </Parameter.Object>
 
     - useCardPoint?: boolean
 
@@ -1723,7 +1686,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
     - useAppCardOnly?: boolean
 
       **앱 카드만 허용할지 여부**
-  </ParamTree>
+  </Parameter.Object>
 
 - virtualAccount?: object
 
@@ -1733,7 +1696,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   가상계좌 발급시 가상계좌 상세 옵션
 
-  <ParamTree>
+  <Parameter.Object>
     - cashReceiptType?: string
 
       **결제창에서 발급 가능한 현금영수증 발급 유형(소득공제용, 지출증빙용, 미발행)**
@@ -1756,7 +1719,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       **고정식 가상계좌 설정**
 
-      <ParamTree>
+      <Parameter.Object>
         - pgAccountId?: string
 
           PG사로부터 사전에 가상계좌에 대한 ID를 발급받아 사용하는 경우의 가상계좌 ID
@@ -1764,7 +1727,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
         - accountNumber?: string
 
           고정식으로 사용할 가상계좌 번호
-      </ParamTree>
+      </Parameter.Object>
 
     - bankCode?: string
 
@@ -1855,7 +1818,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       `validHours`와 `dueDate` 중 하나만 입력해주세요.
 
-      <ParamTree>
+      <Parameter.Object>
         - validHours?: number
 
           **가상계좌 입금 유효 시간**
@@ -1872,8 +1835,8 @@ import ParamTree from "~/components/gitbook/ParamTree";
           - YYYYMMDDHHmmss
           - YYYY-MM-DD
           - YYYY-MM-DD HH:mm:ss
-      </ParamTree>
-  </ParamTree>
+      </Parameter.Object>
+  </Parameter.Object>
 
 - transfer?: object
 
@@ -1883,7 +1846,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   가상계좌 발급시 가상계좌 상세 옵션
 
-  <ParamTree>
+  <Parameter.Object>
     - cashReceiptType?: string
 
       **결제창에서 발급 가능한 현금영수증 발급 유형(소득공제용, 지출증빙용, 미발행)**
@@ -1984,7 +1947,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
           - SK\_SECURITIES(SK증권)
         </Details.Content>
       </Details>
-  </ParamTree>
+  </Parameter.Object>
 
 - mobile?: object
 
@@ -1994,7 +1957,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   휴대폰 소액결제시 휴대폰 소액결제 상세 옵션
 
-  <ParamTree>
+  <Parameter.Object>
     - carrier?: string
 
       **휴대폰 소액결제 통신사 바로 호출을 위한 통신사 구분 값**
@@ -2016,7 +1979,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       **일부 통신사만 노출 설정**
       일부 통신사만을 선택 가능하게 하고 싶은 경우 사용하는 옵션입니다. 상단의 통신사 구분 값 항목을 참고해주세요.
-  </ParamTree>
+  </Parameter.Object>
 
 - giftCertificate?: object
 
@@ -2026,7 +1989,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   상품권 결제시 상품권 결제 상세 옵션
 
-  <ParamTree>
+  <Parameter.Object>
     - giftCertificateType?: string
 
       **상품권 결제시, 상품권을 특정할 수 있는 값**
@@ -2040,7 +2003,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
           - CULTURELAND (문화상품권)
         </Details.Content>
       </Details>
-  </ParamTree>
+  </Parameter.Object>
 
 - easyPay?: object
 
@@ -2050,7 +2013,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
   간편결제시, 간편 결제에 대한 세부 정보
 
-  <ParamTree>
+  <Parameter.Object>
     - easyPayProvider?: string
 
       **간편결제 수단**
@@ -2091,14 +2054,14 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
       **할부 설정**
 
-      <ParamTree>
+      <Parameter.Object>
         - freeInstallmentPlans?: object\[]
 
           **무이자 할부 설정**
 
           고객사가 부담하는 무이자 할부 설정입니다.
 
-          <ParamTree>
+          <Parameter.Object>
             - cardCompany: string
 
               **무이자 할부를 제공하는 카드사 식별 값**
@@ -2108,7 +2071,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - months: number\[]
 
               **무이자 할부를 제공하는 개월 수**
-          </ParamTree>
+          </Parameter.Object>
 
         - monthOption?: object
 
@@ -2118,7 +2081,7 @@ import ParamTree from "~/components/gitbook/ParamTree";
 
           `fixedMonth`와 `availableMonthList` 중 하나만 제공해주세요.
 
-          <ParamTree>
+          <Parameter.Object>
             - fixedMonth: number
 
               **구매자가 선택할 수 없도록 고정된 할부 개월수**
@@ -2128,8 +2091,8 @@ import ParamTree from "~/components/gitbook/ParamTree";
             - availableMonthList: number\[]
 
               **구매자가 선택할 수 있는 할부 개월수 리스트**
-          </ParamTree>
-      </ParamTree>
+          </Parameter.Object>
+      </Parameter.Object>
 
     - cashReceiptType?: string
 
@@ -2140,5 +2103,5 @@ import ParamTree from "~/components/gitbook/ParamTree";
     - customerIdentifier?: string
 
       **현금영수증 발행 대상 식별 정보**
-  </ParamTree>
-</ParamTree>
+  </Parameter.Object>
+</Parameter>
