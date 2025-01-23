@@ -9,7 +9,7 @@ import { createMemo, type JSXElement, Show } from "solid-js";
 
 import { NotFoundError } from "~/components/404";
 import Metadata from "~/components/Metadata";
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import Banner from "~/components/release-note/Banner";
 import Footer from "~/components/release-note/Footer";
 import {

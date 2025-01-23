@@ -1,6 +1,6 @@
 import { Show } from "solid-js";
 
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import type { SystemVersion } from "~/type";
 
 export default function BackwardCompatibilityContent(props: {

@@ -3,7 +3,7 @@ import { useParams } from "@solidjs/router";
 import { createSignal } from "solid-js";
 
 import Hint from "~/components/Hint";
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
 import createSectionDescriptionProps from "~/layouts/rest-api/misc/createSectionDescriptionProps";
 import SchemaDownloadButton, {

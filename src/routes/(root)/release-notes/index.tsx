@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { For, Show } from "solid-js";
 
 import Metadata from "~/components/Metadata";
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import Banner from "~/components/release-note/Banner";
 import { getReleaseNotes } from "~/misc/releaseNote";
 

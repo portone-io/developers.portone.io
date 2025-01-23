@@ -1,6 +1,6 @@
 import { createMemo, For, type JSXElement, Show } from "solid-js";
 
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import { expandAndScrollTo, useExpand } from "~/state/rest-api/expand-section";
 
 import { Hr } from "..";

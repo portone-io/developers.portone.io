@@ -10,7 +10,7 @@ import {
 import { createMemo, createResource, type JSXElement, Show } from "solid-js";
 import { MDXProvider } from "solid-mdx";
 
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";

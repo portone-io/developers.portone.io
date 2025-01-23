@@ -13,7 +13,7 @@ import { match, P } from "ts-pattern";
 import { NotFoundError } from "~/components/404";
 import PostList from "~/components/blog/PostList/PostList";
 import ProfileImage from "~/components/blog/ProfileImage";
-import * as prose from "~/components/blog/prose";
+import { prose } from "~/components/blog/prose";
 import TagList from "~/components/blog/TagList";
 import Metadata from "~/components/Metadata";
 import TableOfContents from "~/components/TableOfContents";
