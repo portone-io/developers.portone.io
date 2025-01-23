@@ -16,8 +16,11 @@ import {
   useContext,
 } from "solid-js";
 
+import { ProseContext } from "../prose";
+
 interface ParameterProps {
   flatten?: boolean;
+  heading?: unknown;
   children?: JSXElement;
 }
 
@@ -25,12 +28,36 @@ const ParameterContext = createContext({
   flatten: false,
 });
 
+const proseStyles: typeof ProseContext.defaultValue.styles = {
+  h4: {
+    "margin-top": "4px",
+    "margin-bottom": "4px",
+  },
+  h5: {
+    "margin-top": "4px",
+    "margin-bottom": "4px",
+  },
+  h6: {
+    "margin-top": "4px",
+    "margin-bottom": "4px",
+  },
+  p: {
+    "margin-top": "4px",
+    "margin-bottom": "4px",
+  },
+  ul: {
+    gap: "4px",
+  },
+};
+
 export default function Parameter(props: ParameterProps) {
   return (
-    <div class="text-sm text-slate-5 space-y-2">
-      <ParameterContext.Provider value={{ flatten: Boolean(props.flatten) }}>
-        {props.children}
-      </ParameterContext.Provider>
+    <div class="text-sm text-slate-4 space-y-3">
+      <ProseContext.Provider value={{ styles: proseStyles }}>
+        <ParameterContext.Provider value={{ flatten: Boolean(props.flatten) }}>
+          {props.children}
+        </ParameterContext.Provider>
+      </ProseContext.Provider>
     </div>
   );
 }
@@ -102,13 +129,13 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
             unregister: (id) => details.delete(id),
           }}
         >
-          <div class="text-slate-5">{props.children}</div>
+          <div>{props.children}</div>
         </TypeDefContext.Provider>
       </div>
       <Show when={isExpandable()}>
         <Collapsible.Content
           as="div"
-          class="grid col-start-2 row-start-3 col-end-3 mt-2 b-l"
+          class="grid col-start-2 row-start-3 col-end-3 mt-3 b-l"
         >
           <For each={detailKeyArray()}>
             {(key) => <>{details.get(key)?.()}</>}
