@@ -9,13 +9,20 @@ targetVersions: ["v2"]
 - [결제대행사 채널 설정하기](/opi/ko/integration/ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 - V2 결제 모듈을 사용하시려면 엑심베이 신모듈로 연동하셔야 합니다.
 
+## 결제 창 호출
+
+브라우저 SDK의 `PortOne.requestPayment` 함수를 사용해 결제창을 호출합니다.
+엑심베이 연동만을 위한 파라미터는 [브라우저 SDK 파라미터 목록](/sdk/ko/v2-sdk/payment-request?v=v2#bypass-oneof-object)의 `bypass.eximbay_v2` 항목을 참조해 주세요.
+
 ## 가능한 결제수단
 
-MID에 설정된 기본 결제수단을 전부 표시하려면 `bypass.eximbay_v2.payment`를 생략해야 합니다.
-특정 결제수단을 단독으로 표시하려면 `bypass.eximbay_v2.payment.payment_method`를 설정합니다.
-일부 결제수단만을 표시하려면 `bypass.eximbay_v2.payment.multi_payment_method`에 결제수단 목록을 전달합니다.
+엑심베이의 경우 포트원의 결제수단 구분과 상관없이 여러 결제수단을 표시할 수 있습니다.
+따라서 항상 `payMethod`는 `CARD`로 설정하고, `bypass.eximbay_v2`를 사용해 결제수단을 설정해야 합니다.
 
-엑심베이의 결제수단 코드는 포트원 코드와 상이하므로, [EXIMBAY Docs](https://developer.eximbay.com/eximbay/api_sdk/code-organization.html#paymentCode)에서 확인 후 입력해야 합니다.
+- MID에 설정된 기본 결제수단을 전부 표시하려면 `bypass.eximbay_v2.payment`를 생략해야 합니다.
+- 특정 결제수단을 단독으로 표시하려면 `bypass.eximbay_v2.payment.payment_method`를 설정합니다.
+- 일부 결제수단만을 표시하려면 `bypass.eximbay_v2.payment.multi_payment_method`에 결제수단 목록을 전달합니다.
+- 엑심베이의 결제수단 코드는 포트원 코드와 상이하므로, [EXIMBAY Docs](https://developer.eximbay.com/eximbay/api_sdk/code-organization.html#paymentCode)에서 확인 후 입력해야 합니다.
 
 ## 유의사항
 
