@@ -86,28 +86,24 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
   return (
     <Collapsible
       open={expaneded()}
-      onOpenChange={(isOpen) => {
-        if (isFlatten() === false) {
-          setExpanded(isOpen);
-        }
-      }}
+      onOpenChange={setExpanded}
       as="div"
       class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-center text-sm"
     >
-      <Show when={isFlatten() === false}>
-        <div class="col-start-1 row-start-1 h-4 w-4">
-          <Show when={details.size > 0}>
-            <Collapsible.Trigger as="button" class="h-4 w-4">
-              <i
-                class={clsx(
-                  "i-ic-sharp-chevron-right inline-block h-4 w-4",
-                  expaneded() && "transform-rotate-90",
-                )}
-              ></i>
-            </Collapsible.Trigger>
-          </Show>
-        </div>
-      </Show>
+      <div
+        class={clsx("col-start-1 row-start-1 h-4 w-4", isFlatten() && "-ml-4")}
+      >
+        <Show when={details.size > 0}>
+          <Collapsible.Trigger as="button" class="h-4 w-4">
+            <i
+              class={clsx(
+                "i-ic-sharp-chevron-right inline-block h-4 w-4",
+                expaneded() && "transform-rotate-90",
+              )}
+            ></i>
+          </Collapsible.Trigger>
+        </Show>
+      </div>
       <div class="grid col-start-2 row-start-1 row-end-3 grid-rows-subgrid">
         <div class="row-start-1 text-slate-7">
           <Show when={props.ident}>
