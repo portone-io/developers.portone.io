@@ -52,7 +52,7 @@ const proseStyles: typeof ProseContext.defaultValue.styles = {
 
 export default function Parameter(props: ParameterProps) {
   return (
-    <div class="text-sm text-slate-4 space-y-3">
+    <div class="text-sm text-slate-5 space-y-3">
       <ProseContext.Provider value={{ styles: proseStyles }}>
         <ParameterContext.Provider value={{ flatten: Boolean(props.flatten) }}>
           {props.children}

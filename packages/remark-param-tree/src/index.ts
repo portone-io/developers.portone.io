@@ -1,5 +1,6 @@
 import { takeWhile } from "es-toolkit";
-import type { List, ListItem, Root } from "mdast";
+import Slugger from "github-slugger";
+import type { Heading, List, ListItem, Root } from "mdast";
 import { type MdxJsxFlowElement } from "mdast-util-mdx";
 import { match, P } from "ts-pattern";
 import { type BuildVisitor, SKIP, visit } from "unist-util-visit";
@@ -41,6 +42,7 @@ function groupItemsByType(
 
 export default function remarkParamTreePlugin() {
   return function (tree: Root) {
+    const slugger = new Slugger();
     visit(tree, "mdxJsxFlowElement", (node) => {
       if (node.name === "Parameter") {
         const transformNode: (
@@ -57,6 +59,35 @@ export default function remarkParamTreePlugin() {
         };
         visit(node, "listItem", transformListItemToTypeDef);
         visit(node, "list", transformNode);
+        const heading = Number(
+          node.attributes.find(
+            (attr) =>
+              attr.type === "mdxJsxAttribute" && attr.name === "heading",
+          ),
+        );
+        match(heading).with(P.union(1, 2, 3, 4, 5, 6), (depth) => {
+          node.children = node.children.flatMap((child) => {
+            if (
+              child.type === "mdxJsxFlowElement" &&
+              child.name === "Parameter.TypeDef"
+            ) {
+              return [
+                {
+                  type: "mdxJsxFlowElement",
+                  name: `h${depth}` as const,
+                  attributes: [
+                    {
+                      type: "mdxJsxAttribute",
+                      name: "id",
+                      value: slugger.slug(toString(child)),
+                    },
+                  ],
+                } satisfies MdxJsxFlowElement,
+              ];
+            }
+            return [child];
+          });
+        });
         return SKIP;
       }
       return;
