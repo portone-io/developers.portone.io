@@ -4,7 +4,7 @@ import { match, P } from "ts-pattern";
 import type { VisitorResult } from "unist-util-visit";
 
 const TypeDefRegExp =
-  /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$(){}=]*)(?<optional>\?)?:\s*(?<type>[a-zA-Z0-9_$<>[\]{}|&?()\s]+)$/;
+  /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$(){}=.]*)(?<optional>\?)?:\s*(?<type>[a-zA-Z0-9_$<>[\]{}|&?()\s]+)$/;
 
 type TypeDef = {
   name: string;
@@ -56,6 +56,31 @@ export function transformListItemToTypeDef(
         if (!parsed) return;
 
         const { name, type, optional } = parsed;
+
+        const wrappedRestChildren = restChildren.map((child) => {
+          if (child.type === "list") {
+            // list 내부의 listItem들의 paragraph가 모두 TypeDef로 파싱된다면, 해당 list는 중첩 타입 정의용으로 간주함.
+            const qualifies = child.children.every((listItem) => {
+              if (listItem.type !== "listItem") return false;
+              if (!listItem.children || listItem.children.length === 0)
+                return false;
+              const firstChild = listItem.children[0];
+              if (firstChild?.type !== "paragraph") return false;
+              const text = toString(firstChild);
+              return parseTypeDef(text) !== null;
+            });
+            if (qualifies) {
+              return {
+                type: "mdxJsxFlowElement",
+                name: "Parameter.Details",
+                attributes: [],
+                children: child.children,
+              };
+            }
+          }
+          return child;
+        });
+
         parent?.children.splice(index ?? 0, 1, {
           type: "mdxJsxFlowElement",
           name: "Parameter.TypeDef",
@@ -71,7 +96,7 @@ export function transformListItemToTypeDef(
                 } as const),
             ] as const
           ).filter((x) => x !== false),
-          children: restChildren,
+          children: wrappedRestChildren,
         } as unknown as ListItem);
       },
     )
