@@ -1,6 +1,6 @@
 import { createMemo, For, type JSXElement, Show } from "solid-js";
 
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import { toHtml } from "~/misc/md";
 
 import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";

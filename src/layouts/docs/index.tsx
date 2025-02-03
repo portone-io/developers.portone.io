@@ -10,7 +10,7 @@ import {
 
 import { NotFoundError } from "~/components/404";
 import Metadata from "~/components/Metadata";
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";

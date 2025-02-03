@@ -9,7 +9,7 @@ import {
   Switch,
 } from "solid-js";
 
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import { toHtml } from "~/misc/md";
 import { expandAndScrollTo, useExpand } from "~/state/rest-api/expand-section";
 

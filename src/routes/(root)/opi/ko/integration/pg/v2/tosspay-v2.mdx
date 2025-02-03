@@ -7,7 +7,7 @@ versionVariants:
 ---
 
 import Details from "~/components/gitbook/Details";
-import ParamTree from "~/components/gitbook/ParamTree";
+import Parameter from "~/components/gitbook/Parameter";
 
 ## 채널 설정하기
 
@@ -51,7 +51,7 @@ function requestPayment() {
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - storeId: string
 
     **스토어 아이디**
@@ -100,12 +100,12 @@ function requestPayment() {
 
     **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
-    <ParamTree>
+    <Parameter.Details>
       - tosspay\_v2?: object
 
         **토스페이에서 제공하는 파라미터**
 
-        <ParamTree>
+        <Parameter.Details>
           - expiredTime?: string
 
             **결제 만료 기한**
@@ -121,9 +121,9 @@ function requestPayment() {
             전달하지 않을경우, 기본값은 GENERAL 입니다.
 
             일반 (default) : `GENERAL` / 문화비 : `CULTURE` / 교통비 : `PUBLIC_TP`
-        </ParamTree>
-    </ParamTree>
-</ParamTree>
+        </Parameter.Details>
+    </Parameter.Details>
+</Parameter>
 
 ### 유의사항
 
@@ -173,7 +173,7 @@ function requestIssueBillingKey() {
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - storeId: string
 
     **스토어 아이디**
@@ -196,20 +196,20 @@ function requestIssueBillingKey() {
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - customerId?: string
 
         **구매자 고유 ID**
 
         - 토스페이의 경우 구매자 ID를 필수로 입력해야 합니다.
-    </ParamTree>
+    </Parameter.Details>
 
   - redirectUrl: string
 
     **빌링키 발급 후 이동할 URL**
 
     모바일 환경의 경우, 필수 입력입니다.
-</ParamTree>
+</Parameter>
 
 ### 유의사항
 
@@ -271,7 +271,7 @@ const response = await axios({
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - paymentId: string
 
     **결제 주문 번호**
@@ -291,13 +291,13 @@ const response = await axios({
 
     **결제 금액**
 
-    <ParamTree>
+    <Parameter.Details>
       - total: number
 
         **총 결제 금액**
 
       결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-    </ParamTree>
+    </Parameter.Details>
 
   - currency: string
 
@@ -309,12 +309,12 @@ const response = await axios({
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - name?: object
 
         **고객 이름**
 
-        <ParamTree>
+        <Parameter.Details>
           - full?: string
 
             **한 줄 이름 형식 (ex. 김포트)**
@@ -323,7 +323,7 @@ const response = await axios({
 
             **분리된 이름**
 
-            <ParamTree>
+            <Parameter.Details>
               - first?: string
 
                 **이름**
@@ -331,8 +331,8 @@ const response = await axios({
               - last?: string
 
                 **성**
-            </ParamTree>
-        </ParamTree>
+            </Parameter.Details>
+        </Parameter.Details>
 
       - phoneNumber?: string
 
@@ -341,8 +341,8 @@ const response = await axios({
       - email?: string
 
         **구매자 이메일**
-    </ParamTree>
-</ParamTree>
+    </Parameter.Details>
+</Parameter>
 
 ## API 빌링키 예약/반복 결제 요청하기
 
@@ -375,7 +375,7 @@ const response = await axios({
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - paymentId: string
 
     **결제 주문 번호**
@@ -387,7 +387,7 @@ const response = await axios({
 
     **빌링키 결제 요청 입력정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - billingKey: string
 
         **빌링키 결제에 사용할 빌링키**
@@ -400,7 +400,7 @@ const response = await axios({
 
         **결제 금액**
 
-        <ParamTree>
+        <Parameter.Details>
           - total: number
 
             **총 결제 금액**
@@ -412,14 +412,14 @@ const response = await axios({
             **면세액**
 
             결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-        </ParamTree>
+        </Parameter.Details>
 
       - currency: string
 
         **결제 통화**
 
         결제통화로 원화 결제 시 `KRW`로 입력해야 합니다.
-    </ParamTree>
+    </Parameter.Details>
 
   - timeToPay: string
 
@@ -429,14 +429,14 @@ const response = await axios({
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - name: object
 
         **고객 이름**
 
         - 토스페이의 경우 full 혹은 separated를 필수로 입력해야 합니다.
 
-          <ParamTree>
+          <Parameter.Details>
             - full?: string
 
               **한 줄 이름 형식 (ex. 김포트)**
@@ -445,7 +445,7 @@ const response = await axios({
 
               **분리된 이름**
 
-              <ParamTree>
+              <Parameter.Details>
                 - first?: string
 
                   **이름**
@@ -453,8 +453,8 @@ const response = await axios({
                 - last?: string
 
                   **성**
-              </ParamTree>
-          </ParamTree>
+              </Parameter.Details>
+          </Parameter.Details>
 
       - phoneNumber?: string
 
@@ -463,5 +463,5 @@ const response = await axios({
       - email?: string
 
         **구매자 이메일**
-    </ParamTree>
-</ParamTree>
+    </Parameter.Details>
+</Parameter>

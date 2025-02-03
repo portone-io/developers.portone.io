@@ -1,6 +1,6 @@
 import { createMemo, type JSXElement, onMount } from "solid-js";
 
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import { Categories } from "~/layouts/rest-api/category";
 import { TypeDefinitions } from "~/layouts/rest-api/category/type-def";
 

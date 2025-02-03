@@ -5,7 +5,7 @@ targetVersions: ["v2"]
 ---
 
 import Details from "~/components/gitbook/Details";
-import ParamTree from "~/components/gitbook/ParamTree";
+import Parameter from "~/components/gitbook/Parameter";
 
 ## 채널 설정하기
 
@@ -87,7 +87,7 @@ function requestPayment() {
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - storeId: string
 
     **스토어 아이디**
@@ -140,12 +140,12 @@ function requestPayment() {
 
     **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
-    <ParamTree>
+    <Parameter.Details>
       - kpn?: object
 
         **한국결제네트웍스(KPN)에서 제공하는 파라미터**
 
-        <ParamTree>
+        <Parameter.Details>
           - CardSelect?: enum\[]
 
             **일부 렌더링할 결제방식 목록**
@@ -155,9 +155,9 @@ function requestPayment() {
             - 해외카드 (VISA + MASTER + JCB) : `GLOBAL`
             - 구인증 : `LEGACY_AUTH`
             - 키인 : `KEY_IN`
-        </ParamTree>
-    </ParamTree>
-</ParamTree>
+        </Parameter.Details>
+    </Parameter.Details>
+</Parameter>
 
 ### 유의사항
 
@@ -457,7 +457,7 @@ function requestIssueBillingKey() {
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - storeId: string
 
     **스토어 아이디**
@@ -480,7 +480,7 @@ function requestIssueBillingKey() {
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - customerId?: string
 
         **구매자 고유 ID**
@@ -504,8 +504,8 @@ function requestIssueBillingKey() {
         **구매자 성**
 
         - 한국결제네트웍스(KPN)의 경우 `fullName` 혹은 (`firstName` + `lastName`)을 필수로 입력해야 합니다.
-    </ParamTree>
-</ParamTree>
+    </Parameter.Details>
+</Parameter>
 
 ### 유의사항
 
@@ -584,7 +584,7 @@ const issueResponse = await axios({
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - paymentId: string
 
     **고객사 주문 고유 번호**
@@ -607,7 +607,7 @@ const issueResponse = await axios({
 
     **결제 금액**
 
-    <ParamTree>
+    <Parameter.Details>
       - total: number
 
         **총 결제 금액**
@@ -619,7 +619,7 @@ const issueResponse = await axios({
         **면세액**
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-    </ParamTree>
+    </Parameter.Details>
 
   - currency: string
 
@@ -631,12 +631,12 @@ const issueResponse = await axios({
 
     **결제수단 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - virtualAccount?: object
 
         **가상계좌 결제 시 파라미터**
 
-        <ParamTree>
+        <Parameter.Details>
           - bank: string
 
             **발급 은행**
@@ -648,7 +648,7 @@ const issueResponse = await axios({
 
             **입금 만료 기한**
 
-            <ParamTree>
+            <Parameter.Details>
               - validHours?: integer
 
                 **유효 시간**
@@ -658,13 +658,13 @@ const issueResponse = await axios({
                 **만료 시점**
 
                 시간은 ISO8601 형식으로 입력해야 합니다.
-            </ParamTree>
+            </Parameter.Details>
 
           - option: object
 
             **가상계좌 발급 방식**
 
-            <ParamTree>
+            <Parameter.Details>
               - type: string
 
                 **가상계좌 발급 유형**
@@ -676,13 +676,13 @@ const issueResponse = await axios({
                 한국결제네트웍스(KPN)의 경우 **회전식 가상계좌**(`NORMAL`)만 지원합니다.
 
                 회전식 가상계좌는 일반적으로 사용되는 방식이며 PG사에서 직접 채번한 가상계좌번호를 사용합니다.
-            </ParamTree>
+            </Parameter.Details>
 
           - cashReceipt: object
 
             **현금영수증 정보**
 
-            <ParamTree>
+            <Parameter.Details>
               - type: string
 
                 **발급 유형**
@@ -699,24 +699,24 @@ const issueResponse = await axios({
 
                 - 소득공제인 경우 주민등록번호 혹은 휴대폰 번호를 입력해야 합니다.
                 - 지출증빙인 경우 사업자등록번호를 입력해야 합니다.
-            </ParamTree>
-        </ParamTree>
+            </Parameter.Details>
+        </Parameter.Details>
 
       - card?: object
 
         **카드 결제 시 파라미터**
 
-        <ParamTree>
-          - credential: string
+        <Parameter.Details>
+          - credential: object
 
             **인증 관련 정보**
 
-            <ParamTree>
-              - number: object
+            <Parameter.Details>
+              - number: string
 
                 **카드 번호**
 
-              - expiryYear: object
+              - expiryYear: string
 
                 **유효 기간 만료 연도 (YY 형식 ex. 24)**
 
@@ -731,19 +731,19 @@ const issueResponse = await axios({
               - passwordTwoDigits?: string
 
                 **비밀번호 앞 두자리**
-            </ParamTree>
-        </ParamTree>
+            </Parameter.Details>
+        </Parameter.Details>
 
       - customer?: object
 
         **고객 정보**
 
-        <ParamTree>
+        <Parameter.Details>
           - name?: object
 
             **고객 이름**
 
-            <ParamTree>
+            <Parameter.Details>
               - full?: string
 
                 **한 줄 이름 형식 (ex. 김포트)**
@@ -752,7 +752,7 @@ const issueResponse = await axios({
 
                 **분리된 이름**
 
-                <ParamTree>
+                <Parameter.Details>
                   - first: string
 
                     **이름**
@@ -760,15 +760,15 @@ const issueResponse = await axios({
                   - last: string
 
                     **성**
-                </ParamTree>
-            </ParamTree>
+                </Parameter.Details>
+            </Parameter.Details>
 
           - phoneNumber?: string
 
             **구매자 연락처**
-        </ParamTree>
-    </ParamTree>
-</ParamTree>
+        </Parameter.Details>
+    </Parameter.Details>
+</Parameter>
 
 ### 유의사항
 
@@ -846,7 +846,7 @@ const issueResponse = await axios({
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - channelKey: string
 
     **채널 키**
@@ -861,17 +861,17 @@ const issueResponse = await axios({
 
       **카드 빌링키 발급 시 파라미터**
 
-      <ParamTree>
-        - credential: string
+      <Parameter.Details>
+        - credential: object
 
           **인증 관련 정보**
 
-          <ParamTree>
-            - number: object
+          <Parameter.Details>
+            - number: string
 
               **카드 번호**
 
-            - expiryYear: object
+            - expiryYear: string
 
               **유효 기간 만료 연도 (YY 형식 ex. 24)**
 
@@ -886,45 +886,45 @@ const issueResponse = await axios({
             - passwordTwoDigits: string
 
               **비밀번호 앞 두자리**
-          </ParamTree>
-      </ParamTree>
+          </Parameter.Details>
+      </Parameter.Details>
 
   - customer: object
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - name: object
 
         **고객 이름**
 
         - 한국결제네트웍스(KPN)의 경우 full 혹은 separated를 필수로 입력해야 합니다.
 
-          <ParamTree>
-            - full?: string
+        <Parameter.Details>
+          - full?: string
 
-              **한 줄 이름 형식 (ex. 김포트)**
+            **한 줄 이름 형식 (ex. 김포트)**
 
-            - separated?: object
+          - separated?: object
 
-              **분리된 이름**
+            **분리된 이름**
 
-              <ParamTree>
-                - first?: string
+            <Parameter.Details>
+              - first?: string
 
-                  **이름**
+                **이름**
 
-                - last?: string
+              - last?: string
 
-                  **성**
-              </ParamTree>
-          </ParamTree>
+                **성**
+            </Parameter.Details>
+        </Parameter.Details>
 
       - phoneNumber?: string
 
         **구매자 연락처**
-    </ParamTree>
-</ParamTree>
+    </Parameter.Details>
+</Parameter>
 
 ### 유의사항
 
@@ -970,7 +970,7 @@ const response = await axios({
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - paymentId: string
 
     **결제 주문 번호**
@@ -990,7 +990,7 @@ const response = await axios({
 
     **결제 금액**
 
-    <ParamTree>
+    <Parameter.Details>
       - total: number
 
         **총 결제 금액**
@@ -1002,7 +1002,7 @@ const response = await axios({
         **면세액**
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-    </ParamTree>
+    </Parameter.Details>
 
   - currency: string
 
@@ -1014,12 +1014,12 @@ const response = await axios({
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - name?: object
 
         **고객 이름**
 
-        <ParamTree>
+        <Parameter.Details>
           - full?: string
 
             **한 줄 이름 형식 (ex. 김포트)**
@@ -1028,7 +1028,7 @@ const response = await axios({
 
             **분리된 이름**
 
-            <ParamTree>
+            <Parameter.Details>
               - first?: string
 
                 **이름**
@@ -1036,8 +1036,8 @@ const response = await axios({
               - last?: string
 
                 **성**
-            </ParamTree>
-        </ParamTree>
+            </Parameter.Details>
+        </Parameter.Details>
 
       - phoneNumber?: string
 
@@ -1046,8 +1046,8 @@ const response = await axios({
       - email?: string
 
         **구매자 이메일**
-    </ParamTree>
-</ParamTree>
+    </Parameter.Details>
+</Parameter>
 
 ## API 빌링키 예약/반복 결제 요청하기
 
@@ -1080,7 +1080,7 @@ const response = await axios({
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - paymentId: string
 
     **결제 주문 번호**
@@ -1092,7 +1092,7 @@ const response = await axios({
 
     **빌링키 결제 요청 입력정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - billingKey: string
 
         **빌링키 결제에 사용할 빌링키**
@@ -1105,7 +1105,7 @@ const response = await axios({
 
         **결제 금액**
 
-        <ParamTree>
+        <Parameter.Details>
           - total: number
 
             **총 결제 금액**
@@ -1117,14 +1117,14 @@ const response = await axios({
             **면세액**
 
             결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-        </ParamTree>
+        </Parameter.Details>
 
       - currency: string
 
         **결제 통화**
 
         결제통화로 원화 결제 시 `KRW`로 입력해야 합니다.
-    </ParamTree>
+    </Parameter.Details>
 
   - timeToPay: string
 
@@ -1134,32 +1134,32 @@ const response = await axios({
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - name: object
 
         **고객 이름**
 
         - 한국결제네트웍스(KPN)의 경우 full 혹은 separated를 필수로 입력해야 합니다.
 
-          <ParamTree>
-            - full?: string
+        <Parameter.Details>
+          - full?: string
 
-              **한 줄 이름 형식 (ex. 김포트)**
+            **한 줄 이름 형식 (ex. 김포트)**
 
-            - separated?: object
+          - separated?: object
 
-              **분리된 이름**
+            **분리된 이름**
 
-              <ParamTree>
-                - first?: string
+            <Parameter.Details>
+              - first?: string
 
-                  **이름**
+                **이름**
 
-                - last?: string
+              - last?: string
 
-                  **성**
-              </ParamTree>
-          </ParamTree>
+                **성**
+            </Parameter.Details>
+        </Parameter.Details>
 
       - phoneNumber?: string
 
@@ -1168,8 +1168,8 @@ const response = await axios({
       - email?: string
 
         **구매자 이메일**
-    </ParamTree>
-</ParamTree>
+    </Parameter.Details>
+</Parameter>
 
 ## 공통 유의사항
 

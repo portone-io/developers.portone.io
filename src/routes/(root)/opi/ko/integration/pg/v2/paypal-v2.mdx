@@ -8,7 +8,7 @@ versionVariants:
 
 import Figure from "~/components/Figure";
 import Details from "~/components/gitbook/Details";
-import ParamTree from '~/components/gitbook/ParamTree';
+import Parameter from '~/components/gitbook/Parameter';
 import Hint from "~/components/Hint";
 
 import image2 from "../_assets/paypal/paypal-v2-rt-flow.png";
@@ -656,7 +656,7 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
   <Details.Summary>파라미터 사용 시 유의사항</Details.Summary>
 
   <Details.Content>
-    <ParamTree>
+    <Parameter flatten>
       - orderName: string
 
         **주문명**
@@ -691,27 +691,6 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
         **구매 상품 상세 정보**
 
-        <ParamTree>
-          - name: string
-
-            **상품명**
-
-          - amount: number
-
-            **상품 단위 가격**
-
-            - 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-            - 1000 만큼 원화(KRW) 결제를 하는 경우, scale factor가 0이기 때문에 **1000 \* (10의 0승) = 1000**을 전달해야 합니다.
-            - 1.50 만큼 달러(USD) 결제를 하는 경우, scale factor가 2이기 때문에 **1.50 \* (10의 2승) = 150**을 전달해야 합니다.
-            - 이렇게 전달 된 값은 실제로 PG사에 결제를 요청할때 currency에 따라 올바른 값으로 변환되기 때문에 반드시 currency값을 필수로 입력해야 합니다.
-
-          - quantity: number
-
-            상품 수량
-        </ParamTree>
-
-        **유의사항**
-
         - `products.name`(상품명), `products.quantity`(상품 수량), `products.amount`(상품 단위 가격) 정보만 결제창에 표기됩니다.
         - 각 상품의 수량과 단위 가격을 계산했을 때, 총 주문 금액과 **반드시 일치해야**합니다. 일치하지 않는 경우 에러 메시지가 리턴되면서 결제창이 호출되지 않습니다.
         - 예를 들어 17달러인 상품 2개와 23달러인 상품 3개에 대한 구매 상품 정보를 기입한 경우 총 주문금액(`totalAmount`)을 `10300`로 입력해야 결제창이 정상적으로 호출됩니다.
@@ -745,6 +724,25 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
         <Figure src={image11} width="360" caption="예시) 결제창 내 구매 상품 상세 정보 화면" />
 
+        <Parameter.Details>
+          - name: string
+
+            **상품명**
+
+          - amount: number
+
+            **상품 단위 가격**
+
+            - 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+            - 1000 만큼 원화(KRW) 결제를 하는 경우, scale factor가 0이기 때문에 **1000 \* (10의 0승) = 1000**을 전달해야 합니다.
+            - 1.50 만큼 달러(USD) 결제를 하는 경우, scale factor가 2이기 때문에 **1.50 \* (10의 2승) = 150**을 전달해야 합니다.
+            - 이렇게 전달 된 값은 실제로 PG사에 결제를 요청할때 currency에 따라 올바른 값으로 변환되기 때문에 반드시 currency값을 필수로 입력해야 합니다.
+
+          - quantity: number
+
+            상품 수량
+        </Parameter.Details>
+
       - currency: string
 
         **결제 통화**
@@ -757,7 +755,12 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
         **고객 정보**
 
-        <ParamTree>
+        - 페이팔 결제창 내에서 비회원으로 결제 시 `customer.firstName`과 `customer.lastName`의 정보가 청구인의 이름과 성으로 자동 입력됩니다. `customer.fullName`으로 결제창을 호출하는 경우 자동입력되지 않으니 유의하시기 바랍니다.
+        - 회원으로 결제시에는 **회원 가입시 입력한 이름 정보가 자동으로 입력**되며 결제창 호출 시 입력한 정보로 override 되지 않습니다.
+
+        <Figure src="/gitbook-assets/ko/image (13).png" />
+
+        <Parameter.Details>
           - fullName?: string
 
             **구매자 전체 이름**
@@ -775,32 +778,25 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
             **구매자 성**
 
             `lastName`을 입력하는 경우 `firstName`도 필수로 입력해야 합니다.
-        </ParamTree>
-
-        **유의사항**
-
-        - 페이팔 결제창 내에서 비회원으로 결제 시 `customer.firstName`과 `customer.lastName`의 정보가 청구인의 이름과 성으로 자동 입력됩니다. `customer.fullName`으로 결제창을 호출하는 경우 자동입력되지 않으니 유의하시기 바랍니다.
-        - 회원으로 결제시에는 **회원 가입시 입력한 이름 정보가 자동으로 입력**되며 결제창 호출 시 입력한 정보로 override 되지 않습니다.
-
-        <Figure src="/gitbook-assets/ko/image (13).png" />
+        </Parameter.Details>
 
       - bypass?: oneof object
 
         **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
-        <ParamTree>
+        <Parameter.Details>
           - paypal\_v2?: object
 
             **페이팔에서 제공하는 파라미터 모음**
 
-            <ParamTree>
-              - style?: string
+            <Parameter.Details>
+              - style?: object
 
                 **페이팔 버튼 커스텀마이징**
 
                 페이팔 결제 버튼을 커스텀마이징 할 경우 자세한 내용은 페이팔에서 제공하는 문서([https://developer.paypal.com/sdk/js/reference/#link-style](http://developer.paypal.com/sdk/js/reference/#link-style))를 참고하세요.
 
-                <ParamTree>
+                <Parameter.Details>
                   - layout?: string
 
                     **페이팔 버튼 렌더링 방향**
@@ -868,7 +864,7 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
                     **페이팔 버튼에 제공되는 추가 설명**
 
                     해당 파라미터를 사용하시기 위해서는 `layout` 파라미터를 `horizontal`로 지정해야 사용하실 수 있습니다.
-                </ParamTree>
+                </Parameter.Details>
 
               - enable-funding?: string
 
@@ -919,23 +915,313 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
                 - 각각의 element에 배송 정보를 담을 수 있습니다.
                 - 포트원을 통해 페이팔을 연동하는 고객사는 **`purchase_units`의 길이가 항상 0 또는 1이어야** 합니다.
 
-              - shipping?: object
+                <Parameter.Details>
+                  - shipping?: object
 
-                **상품 배송지 정보**
+                    **상품 배송지 정보**
 
-                <ParamTree>
+                    <Parameter.Details>
+                      - address?: object
+
+                        **상품 수령 주소**
+
+                        <div>
+                          - 결제창 호출 시 기본적으로 구매자가 페이팔에 가입할 때 입력한 배송주소를 렌더링합니다.
+                          - `purchase_units\[]`에 입력 된 배송 정보는 결제창에 호출 시 대체로 자동 완성되지만, 페이팔 회원으로 결제할 때와 비회원으로 결제할 때 각각 다른 정책이 적용됩니다.
+                          - 주문할 때 입력한 주소로 override하고 싶을 때 `purchase_units\[].shipping.address`에 override할 주소를 입력한 후 결제 요청해야 합니다. 단, **주소가 유효하지 않거나 address\_line\_1을 입력하지 않은 경우엔 override가 되지 않을 수 있습니다.**
+                        </div>
+
+                        <Details>
+                          <Details.Summary>예시 1) 페이팔 회원으로 결제 시 `shipping.address` 정보를 입력하지 않은 경우 </Details.Summary>
+
+                          <Details.Content>
+                            <Figure src="/gitbook-assets/ko/image (16) (1).png" caption="bypass.paypal\_v2.purchase\_units\[\].shipping 미입력 → 가입시 설정한 배송 주소로 자동 입력된 화면" />
+                          </Details.Content>
+                        </Details>
+
+                        <Details>
+                          <Details.Summary>예시 2) 페이팔 회원으로 결제 시 `shipping.address` 정보를 입력한 경우 </Details.Summary>
+
+                          <Details.Content>
+                            ```ts
+                            PortOne.loadPaymentUI(
+                              {
+                                bypass: {
+                                  paypal_v2: {
+                                    // ...중략
+                                    purchase_units: [
+                                      {
+                                        shipping: {
+                                          address: {
+                                            // 상품 수령 주소
+                                            address_line_1: "세종대로 110", // 도로명 주소
+                                            address_line_2: "서울특별시청", // 아파트 동 호수
+                                            admin_area_1: "서울특별시", // 주(CA, NY)
+                                            admin_area_2: "중구", // 시(Los Angeles, New York)
+                                            postal_code: "04524", // 상품 수령지 우편번호
+                                            country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+                                          },
+                                          name: {
+                                            full_name: "홍길동", // 상품 수령인 이름
+                                          },
+                                        },
+                                      },
+                                    ],
+                                  },
+                                },
+                              }, // 콜백 함수
+                            );
+                            ```
+
+                            <Figure src="/gitbook-assets/ko/image (21).png" caption="bypass.paypal\_v2.purchase\_units\[\].shipping 입력 → 입력한 배송 주소로 override 된 화면" />
+                          </Details.Content>
+                        </Details>
+
+                        <Details>
+                          <Details.Summary>예시 3) `shipping.address`의 국가 정보와 구매자의 접속 국가가 일치하지 않은 경우</Details.Summary>
+
+                          <Details.Content>
+                            페이팔 결제창에 렌더링 되는 주소 형식은 구매자의 접속 국가에 따라 결정됩니다. 배송 주소의 국가와 구매자의 접속 국가를 다른 경우, 국가 간 주소 체계가 달라 정상적으로 자동입력 되지 않을 수 있습니다.
+
+                            <Figure src="/gitbook-assets/ko/image (24) (1).png" caption="접속 국가 : 미국, payer 및 shipping 정보를 한국 주소 체계로 전달한 화면" />
+                          </Details.Content>
+                        </Details>
+
+                        <Parameter.Details>
+                          - address\_line\_1: string
+
+                            **도로명 주소, ex) `200 N Spring St`**
+
+                          - address\_line\_2?: string
+
+                            **번지 혹은 건물 호수, ex) `Los Angeles City Hall 1`**
+
+                          - admin\_area\_1?: string
+
+                            **주와 같은 큰 단위의 주소, ex) `CA`, `NY`**
+
+                            - country(UK)
+                            - state(US)
+                            - province(Canada)
+                            - 특별시/광역시/도(Korea)
+
+                          - admin\_area\_2?: string
+
+                            **도시, 마을 등 중간 단위의 주소, ex) `Los Angeles`**
+
+                          - postal\_code?: string
+
+                            **우편 번호**
+
+                          - country\_code: string
+
+                            **국가 코드, ex) `KR`**
+                        </Parameter.Details>
+                    </Parameter.Details>
+                </Parameter.Details>
+
+              - payer?: object
+
+                **구매자 상세정보**
+
+                <Parameter.Details>
+                  - tax\_info?: object
+
+                    **구매자 세금 정보**
+
+                    <Parameter.Details>
+                      - tax\_id?: string
+
+                        **구매자 세금 ID**
+
+                      - tax\_id\_type?: string
+
+                        **구매자 세금 유형**
+
+                        브라질(에서 접속한 또는 브라질 계정으로 로그인 한) 구매자인 경우 `bypass.paypal_v2.payer.tax_info` 정보를 필수로 입력해야 합니다.
+
+                        ```ts title="예시 코드"
+                        _({
+                          tax_info: {
+                            tax_id: "examplestring",
+                            tax_id_type: "BR_CPF",
+                          },
+                        });
+                        ```
+                    </Parameter.Details>
+
                   - address?: object
 
-                    **상품 수령 주소**
+                    **구매자의 결제 금액 청구지 주소 정보(billing address)**
 
-                    <div>
-                      - 결제창 호출 시 기본적으로 구매자가 페이팔에 가입할 때 입력한 배송주소를 렌더링합니다.
-                      - `purchase_units\[]`에 입력 된 배송 정보는 결제창에 호출 시 대체로 자동 완성되지만, 페이팔 회원으로 결제할 때와 비회원으로 결제할 때 각각 다른 정책이 적용됩니다.
-                      - 주문할 때 입력한 주소로 override하고 싶을 때 `purchase_units\[].shipping.address`에 override할 주소를 입력한 후 결제 요청해야 합니다. 단, **주소가 유효하지 않거나 address\_line\_1을 입력하지 않은 경우엔 override가 되지 않을 수 있습니다.**
-                    </div>
+                    페이팔 비회원 결제 시 페이팔 결제창 내 청구지 주소(billing address) 정보로 사용됩니다. 회원으로 결제하는 경우 회원 가입 시 입력한 billing address가 자동 입력되며 해당 파라미터의 정보는 무시됩니다.
 
-                    <ParamTree>
-                      - address\_line\_1: string
+                    <Details>
+                      <Details.Summary>예시 1) 페이팔 회원으로 결제 시 `payer.address` 정보를 입력한 경우</Details.Summary>
+
+                      <Details.Content>
+                        입력된 정보는 무시되고 페이팔 가입 시 기입한 구매자의 청구 주소가 자동 입력됩니다.
+
+                        ```ts title="예시 코드"
+                        _({
+                          bypass: {
+                            paypal_v2: {
+                              // ...중략
+                              payer: {
+                                address: {
+                                  address_line_1: "200 N Spring St", // 도로명 주소
+                                  address_line_2: "Los Angeles City Hall", // 아파트 동 호수
+                                  admin_area_1: "CA", // 주(CA, NY)
+                                  admin_area_2: "Los Angeles", // 시(Los Angeles, New York)
+                                  postal_code: "90012", // 상품 수령지 우편번호
+                                  country_code: "US", // [필수 입력] 상품 수령지 국가 코드
+                                },
+                              },
+                            },
+                          },
+                        });
+                        ```
+
+                        <Figure src="/gitbook-assets/ko/image (3) (3).png" caption="`payer.address`입력했음에도 페이팔 가입 시 기입한 정보로 자동 입력된 화면" />
+                      </Details.Content>
+                    </Details>
+
+                    <Details>
+                      <Details.Summary>예시 2) 페이팔 비회원으로 결제 시 `payer.address` 정보를 입력한 경우</Details.Summary>
+
+                      <Details.Content>
+                        입력된 정보가 구매자의 청구 주소지란에 자동 입력됩니다.
+
+                        ```ts title="예시 코드"
+                        _({
+                          bypass: {
+                            paypal_v2: {
+                              // ...중략
+                              payer: {
+                                address: {
+                                  address_line_1: "200 N Spring St", // 도로명 주소
+                                  address_line_2: "Los Angeles City Hall", // 아파트 동 호수
+                                  admin_area_1: "CA", // 주(CA, NY)
+                                  admin_area_2: "Los Angeles", // 시(Los Angeles, New York)
+                                  postal_code: "90012", // 상품 수령지 우편번호
+                                  country_code: "US", // [필수 입력] 상품 수령지 국가 코드
+                                },
+                              },
+                            },
+                          },
+                        });
+                        ```
+
+                        <Figure src="/gitbook-assets/ko/image (14).png" caption="`payer.address`에 입력한 정보로 자동 입력된 화면" />
+                      </Details.Content>
+                    </Details>
+
+                    <Details>
+                      <Details.Summary>예시 3) 페이팔 비회원으로 결제 시 `payer.address` 정보 미 입력 상태이면서 `shipping.address` 정보를 입력한 경우 </Details.Summary>
+
+                      <Details.Content>
+                        구매자의 청구 주소(`bypass.paypal_v2.payer.address`)를 입력하지 않고 배송 주소(`bypass.paypal_v2.pusrchase_units\[].shipping.address`)만 입력한 경우 청구 주소란에 배송 주소가 자동으로 입력됩니다.
+
+                        ```ts title="예시 코드"
+                        _({
+                          bypass: {
+                            paypal_v2: {
+                              // ...중략
+                              purchase_units: [
+                                {
+                                  shipping: {
+                                    address: {
+                                      // 상품 수령 주소
+                                      address_line_1: "세종대로 110", // 도로명 주소
+                                      address_line_2: "서울특별시청", // 아파트 동 호수
+                                      admin_area_1: "서울특별시", // 주(CA, NY)
+                                      admin_area_2: "중구", // 시(Los Angeles, New York)
+                                      postal_code: "04524", // 상품 수령지 우편번호
+                                      country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+                                    },
+                                    name: {
+                                      full_name: "홍길동", // 상품 수령인 이름
+                                    },
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        });
+                        ```
+
+                        <div class="items-end gap-2 md:flex">
+                          <Figure src="/gitbook-assets/ko/image (11) (1).png" caption="예시) 체크박스 선택 시 청구 주소에 shipping 정보가 자동 입력된 화면" />
+
+                          <Figure src="/gitbook-assets/ko/image (5) (3).png" caption="예시) 체크박스 선택 해제 시 청구 주소와 배송 주소에 모두 shipping 정보가 자동 입력된 화면" />
+                        </div>
+                      </Details.Content>
+                    </Details>
+
+                    <Details>
+                      <Details.Summary>예시 4) 페이팔 비회원으로 결제 시 `payer.address` 정보와 `shipping.address` 정보를 모두 입력한 경우 </Details.Summary>
+
+                      <Details.Content>
+                        구매자의 청구 주소(`bypass.paypal_v2.payer.address`)와 배송 주소(`bypass.paypal_v2.shipping.address`)를 모두 입력한 경우엔, **청구 주소와 동일한 배송주소** 체크박스를 해제했을 때 하단에 렌더링 되는 배송 정보란에 배송 주소가 자동 입력됩니다.
+
+                        ```ts title="예시 코드"
+                        _({
+                          bypass: {
+                            paypal_v2: {
+                              // ...중략
+                              purchase_units: [
+                                {
+                                  shipping: {
+                                    address: {
+                                      // 상품 수령 주소
+                                      address_line_1: "세종대로 110", // 도로명 주소
+                                      address_line_2: "서울특별시청", // 아파트 동 호수
+                                      admin_area_1: "서울특별시", // 주(CA, NY)
+                                      admin_area_2: "중구", // 시(Los Angeles, New York)
+                                      postal_code: "04524", // 상품 수령지 우편번호
+                                      country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+                                    },
+                                    name: {
+                                      full_name: "홍길동", // 상품 수령인 이름
+                                    },
+                                  },
+                                },
+                              ],
+                              payer: {
+                                address: {
+                                  address_line_1: "고산자로 270", // 도로명 주소
+                                  address_line_2: "성동구청", // 아파트 동 호수
+                                  admin_area_1: "서울특별시", // 주(CA, NY)
+                                  admin_area_2: "성동구", // 시(Los Angeles, New York)
+                                  postal_code: "04750", // 상품 수령지 우편번호
+                                  country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+                                },
+                              },
+                            },
+                          },
+                        });
+                        ```
+
+                        <div class="items-end gap-2 md:flex">
+                          <Figure src="/gitbook-assets/ko/image (45).png" caption="예시) 체크박스 선택 시 청구 주소란에 payer 정보가 자동 입력된 화면" />
+
+                          <Figure src="/gitbook-assets/ko/image (68).png" caption="예시) 체크박스 해제 시 payer 정보는 청구 주소란에 shipping 정보는 배송 주소란에 정상적으로 자동 입력된 경우" />
+                        </div>
+                      </Details.Content>
+                    </Details>
+
+                    <Details>
+                      <Details.Summary>예시 5) `payer.address`의 국가 정보와 구매자의 접속 국가가 일치하지 않은 경우 </Details.Summary>
+
+                      <Details.Content>
+                        페이팔 결제창에 렌더링 되는 주소 형식은 구매자의 접속 국가에 따라 결정됩니다. 청구 주소의 국가와 구매자의 접속 국가를 다른 경우, 국가 간 주소 체계가 달라 정상적으로 자동입력 되지 않을 수 있습니다.
+
+                        <Figure src="/gitbook-assets/ko/image (59).png" caption="접속 국가 : 미국, `payer.address`정보를 한국 주소 체계로 전달한 화면" />
+                      </Details.Content>
+                    </Details>
+
+                    <Parameter.Details>
+                      - address\_line\_1?: string
 
                         **도로명 주소, ex) `200 N Spring St`**
 
@@ -963,295 +1249,11 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
                       - country\_code: string
 
                         **국가 코드, ex) `KR`**
-                    </ParamTree>
-
-                    <Details>
-                      <Details.Summary>예시 1) 페이팔 회원으로 결제 시 `shipping.address` 정보를 입력하지 않은 경우 </Details.Summary>
-
-                      <Details.Content>
-                        <Figure src="/gitbook-assets/ko/image (16) (1).png" caption="bypass.paypal\_v2.purchase\_units\[\].shipping 미입력 → 가입시 설정한 배송 주소로 자동 입력된 화면" />
-                      </Details.Content>
-                    </Details>
-
-                    <Details>
-                      <Details.Summary>예시 2) 페이팔 회원으로 결제 시 `shipping.address` 정보를 입력한 경우 </Details.Summary>
-
-                      <Details.Content>
-                        ```ts
-                        PortOne.loadPaymentUI(
-                          {
-                            bypass: {
-                              paypal_v2: {
-                                // ...중략
-                                purchase_units: [
-                                  {
-                                    shipping: {
-                                      address: {
-                                        // 상품 수령 주소
-                                        address_line_1: "세종대로 110", // 도로명 주소
-                                        address_line_2: "서울특별시청", // 아파트 동 호수
-                                        admin_area_1: "서울특별시", // 주(CA, NY)
-                                        admin_area_2: "중구", // 시(Los Angeles, New York)
-                                        postal_code: "04524", // 상품 수령지 우편번호
-                                        country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-                                      },
-                                      name: {
-                                        full_name: "홍길동", // 상품 수령인 이름
-                                      },
-                                    },
-                                  },
-                                ],
-                              },
-                            },
-                          }, // 콜백 함수
-                        );
-                        ```
-
-                        <Figure src="/gitbook-assets/ko/image (21).png" caption="bypass.paypal\_v2.purchase\_units\[\].shipping 입력 → 입력한 배송 주소로 override 된 화면" />
-                      </Details.Content>
-                    </Details>
-
-                    <Details>
-                      <Details.Summary>예시 3) `shipping.address`의 국가 정보와 구매자의 접속 국가가 일치하지 않은 경우</Details.Summary>
-
-                      <Details.Content>
-                        페이팔 결제창에 렌더링 되는 주소 형식은 구매자의 접속 국가에 따라 결정됩니다. 배송 주소의 국가와 구매자의 접속 국가를 다른 경우, 국가 간 주소 체계가 달라 정상적으로 자동입력 되지 않을 수 있습니다.
-
-                        <Figure src="/gitbook-assets/ko/image (24) (1).png" caption="접속 국가 : 미국, payer 및 shipping 정보를 한국 주소 체계로 전달한 화면" />
-                      </Details.Content>
-                    </Details>
-                </ParamTree>
-
-              - payer?: object
-
-                **구매자 상세정보**
-
-              - tax\_info?: object
-
-                **구매자 세금 정보**
-
-              - tax\_id?: string
-
-                **구매자 세금 ID**
-
-              - tax\_id\_type?: string
-
-                **구매자 세금 유형**
-
-                브라질(에서 접속한 또는 브라질 계정으로 로그인 한) 구매자인 경우 `bypass.paypal_v2.payer.tax_info` 정보를 필수로 입력해야 합니다.
-
-                ```ts title="예시 코드"
-                _({
-                  tax_info: {
-                    tax_id: "examplestring",
-                    tax_id_type: "BR_CPF",
-                  },
-                });
-                ```
-
-              - address?: object
-
-                **구매자의 결제 금액 청구지 주소 정보(billing address)**
-
-                <ParamTree>
-                  - address\_line\_1?: string
-
-                    **도로명 주소, ex) `200 N Spring St`**
-
-                  - address\_line\_2?: string
-
-                    **번지 혹은 건물 호수, ex) `Los Angeles City Hall 1`**
-
-                  - admin\_area\_1?: string
-
-                    **주와 같은 큰 단위의 주소, ex) `CA`, `NY`**
-
-                    - country(UK)
-                    - state(US)
-                    - province(Canada)
-                    - 특별시/광역시/도(Korea)
-
-                  - admin\_area\_2?: string
-
-                    **도시, 마을 등 중간 단위의 주소, ex) `Los Angeles`**
-
-                  - postal\_code?: string
-
-                    **우편 번호**
-
-                  - country\_code: string
-
-                    **국가 코드, ex) `KR`**
-                </ParamTree>
-
-                페이팔 비회원 결제 시 페이팔 결제창 내 청구지 주소(billing address) 정보로 사용됩니다. 회원으로 결제하는 경우 회원 가입 시 입력한 billing address가 자동 입력되며 해당 파라미터의 정보는 무시됩니다.
-
-                <Details>
-                  <Details.Summary>예시 1) 페이팔 회원으로 결제 시 `payer.address` 정보를 입력한 경우</Details.Summary>
-
-                  <Details.Content>
-                    입력된 정보는 무시되고 페이팔 가입 시 기입한 구매자의 청구 주소가 자동 입력됩니다.
-
-                    ```ts title="예시 코드"
-                    _({
-                      bypass: {
-                        paypal_v2: {
-                          // ...중략
-                          payer: {
-                            address: {
-                              address_line_1: "200 N Spring St", // 도로명 주소
-                              address_line_2: "Los Angeles City Hall", // 아파트 동 호수
-                              admin_area_1: "CA", // 주(CA, NY)
-                              admin_area_2: "Los Angeles", // 시(Los Angeles, New York)
-                              postal_code: "90012", // 상품 수령지 우편번호
-                              country_code: "US", // [필수 입력] 상품 수령지 국가 코드
-                            },
-                          },
-                        },
-                      },
-                    });
-                    ```
-
-                    <Figure src="/gitbook-assets/ko/image (3) (3).png" caption="`payer.address`입력했음에도 페이팔 가입 시 기입한 정보로 자동 입력된 화면" />
-                  </Details.Content>
-                </Details>
-
-                <Details>
-                  <Details.Summary>예시 2) 페이팔 비회원으로 결제 시 `payer.address` 정보를 입력한 경우</Details.Summary>
-
-                  <Details.Content>
-                    입력된 정보가 구매자의 청구 주소지란에 자동 입력됩니다.
-
-                    ```ts title="예시 코드"
-                    _({
-                      bypass: {
-                        paypal_v2: {
-                          // ...중략
-                          payer: {
-                            address: {
-                              address_line_1: "200 N Spring St", // 도로명 주소
-                              address_line_2: "Los Angeles City Hall", // 아파트 동 호수
-                              admin_area_1: "CA", // 주(CA, NY)
-                              admin_area_2: "Los Angeles", // 시(Los Angeles, New York)
-                              postal_code: "90012", // 상품 수령지 우편번호
-                              country_code: "US", // [필수 입력] 상품 수령지 국가 코드
-                            },
-                          },
-                        },
-                      },
-                    });
-                    ```
-
-                    <Figure src="/gitbook-assets/ko/image (14).png" caption="`payer.address`에 입력한 정보로 자동 입력된 화면" />
-                  </Details.Content>
-                </Details>
-
-                <Details>
-                  <Details.Summary>예시 3) 페이팔 비회원으로 결제 시 `payer.address` 정보 미 입력 상태이면서 `shipping.address` 정보를 입력한 경우 </Details.Summary>
-
-                  <Details.Content>
-                    구매자의 청구 주소(`bypass.paypal_v2.payer.address`)를 입력하지 않고 배송 주소(`bypass.paypal_v2.pusrchase_units\[].shipping.address`)만 입력한 경우 청구 주소란에 배송 주소가 자동으로 입력됩니다.
-
-                    ```ts title="예시 코드"
-                    _({
-                      bypass: {
-                        paypal_v2: {
-                          // ...중략
-                          purchase_units: [
-                            {
-                              shipping: {
-                                address: {
-                                  // 상품 수령 주소
-                                  address_line_1: "세종대로 110", // 도로명 주소
-                                  address_line_2: "서울특별시청", // 아파트 동 호수
-                                  admin_area_1: "서울특별시", // 주(CA, NY)
-                                  admin_area_2: "중구", // 시(Los Angeles, New York)
-                                  postal_code: "04524", // 상품 수령지 우편번호
-                                  country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-                                },
-                                name: {
-                                  full_name: "홍길동", // 상품 수령인 이름
-                                },
-                              },
-                            },
-                          ],
-                        },
-                      },
-                    });
-                    ```
-
-                    <div class="items-end gap-2 md:flex">
-                      <Figure src="/gitbook-assets/ko/image (11) (1).png" caption="예시) 체크박스 선택 시 청구 주소에 shipping 정보가 자동 입력된 화면" />
-
-                      <Figure src="/gitbook-assets/ko/image (5) (3).png" caption="예시) 체크박스 선택 해제 시 청구 주소와 배송 주소에 모두 shipping 정보가 자동 입력된 화면" />
-                    </div>
-                  </Details.Content>
-                </Details>
-
-                <Details>
-                  <Details.Summary>예시 4) 페이팔 비회원으로 결제 시 `payer.address` 정보와 `shipping.address` 정보를 모두 입력한 경우 </Details.Summary>
-
-                  <Details.Content>
-                    구매자의 청구 주소(`bypass.paypal_v2.payer.address`)와 배송 주소(`bypass.paypal_v2.shipping.address`)를 모두 입력한 경우엔, **청구 주소와 동일한 배송주소** 체크박스를 해제했을 때 하단에 렌더링 되는 배송 정보란에 배송 주소가 자동 입력됩니다.
-
-                    ```ts title="예시 코드"
-                    _({
-                      bypass: {
-                        paypal_v2: {
-                          // ...중략
-                          purchase_units: [
-                            {
-                              shipping: {
-                                address: {
-                                  // 상품 수령 주소
-                                  address_line_1: "세종대로 110", // 도로명 주소
-                                  address_line_2: "서울특별시청", // 아파트 동 호수
-                                  admin_area_1: "서울특별시", // 주(CA, NY)
-                                  admin_area_2: "중구", // 시(Los Angeles, New York)
-                                  postal_code: "04524", // 상품 수령지 우편번호
-                                  country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-                                },
-                                name: {
-                                  full_name: "홍길동", // 상품 수령인 이름
-                                },
-                              },
-                            },
-                          ],
-                          payer: {
-                            address: {
-                              address_line_1: "고산자로 270", // 도로명 주소
-                              address_line_2: "성동구청", // 아파트 동 호수
-                              admin_area_1: "서울특별시", // 주(CA, NY)
-                              admin_area_2: "성동구", // 시(Los Angeles, New York)
-                              postal_code: "04750", // 상품 수령지 우편번호
-                              country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-                            },
-                          },
-                        },
-                      },
-                    });
-                    ```
-
-                    <div class="items-end gap-2 md:flex">
-                      <Figure src="/gitbook-assets/ko/image (45).png" caption="예시) 체크박스 선택 시 청구 주소란에 payer 정보가 자동 입력된 화면" />
-
-                      <Figure src="/gitbook-assets/ko/image (68).png" caption="예시) 체크박스 해제 시 payer 정보는 청구 주소란에 shipping 정보는 배송 주소란에 정상적으로 자동 입력된 경우" />
-                    </div>
-                  </Details.Content>
-                </Details>
-
-                <Details>
-                  <Details.Summary>예시 5) `payer.address`의 국가 정보와 구매자의 접속 국가가 일치하지 않은 경우 </Details.Summary>
-
-                  <Details.Content>
-                    페이팔 결제창에 렌더링 되는 주소 형식은 구매자의 접속 국가에 따라 결정됩니다. 청구 주소의 국가와 구매자의 접속 국가를 다른 경우, 국가 간 주소 체계가 달라 정상적으로 자동입력 되지 않을 수 있습니다.
-
-                    <Figure src="/gitbook-assets/ko/image (59).png" caption="접속 국가 : 미국, `payer.address`정보를 한국 주소 체계로 전달한 화면" />
-                  </Details.Content>
-                </Details>
-            </ParamTree>
-        </ParamTree>
-    </ParamTree>
+                    </Parameter.Details>
+                </Parameter.Details>
+            </Parameter.Details>
+        </Parameter.Details>
+    </Parameter>
   </Details.Content>
 </Details>
 
@@ -1259,7 +1261,7 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
   <Details.Summary>미지원 파라미터</Details.Summary>
 
   <Details.Content>
-    <ParamTree>
+    <Parameter flatten>
       - taxFreeAmount?: number
 
         **면세 금액**
@@ -1278,14 +1280,14 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
         **고객 정보**
 
-        <ParamTree>
+        <Parameter.Details>
           - address?: object
 
             **구매자 주소**
 
             - 페이팔의 경우 사용되는 주소 체계가 달라 구매자 주소 정보는 `customer.address`이 아닌 **`bypass.paypal_v2.payer.address` 혹은 `bypass.paypal_v2.purchase_units\[].shipping.address`를 사용**해야 합니다.
             - `bypass.paypal_v2.payer.address`, `bypass.paypal_v2.purchase_units\[].shipping.address` 파라미터에 대한 자세한 사항은 **파라미터 사용 시 유의사항** 을 참고하시기 바랍니다.
-        </ParamTree>
+        </Parameter.Details>
 
       - redirectUrl?: string
 
@@ -1364,7 +1366,7 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
         **간편결제 결제에 대한 상세 옵션**
 
         페이팔의 경우 결제 요청 시 결제 수단은 항상 `paypal`로 지정되며, 간편결제 결제 시 사용되는 옵션 설정을 지원하지 않아 해당 파라미터를 사용할 수 없습니다.
-    </ParamTree>
+    </Parameter>
   </Details.Content>
 </Details>
 
@@ -1393,11 +1395,11 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
     페이팔은 **구매자가 접속한 나라에 따라 이용 가능한 결제 수단**이 달라 접속 국가에 따라 렌더링되는 버튼의 종류와 개수가 달라집니다.
 
     <div class="items-center gap-2 md:flex">
-      <Figure src="/gitbook-assets/ko/image (3) (1).png" width="480" height="360" caption="예시 1" />
+      <Figure src="/gitbook-assets/ko/image (3) (1).png" width="480" caption="예시 1" />
     </div>
 
     <div class="items-center gap-2 md:flex">
-      <Figure src="/gitbook-assets/ko/image (47).png" width="480" height="360" caption="예시 2" />
+      <Figure src="/gitbook-assets/ko/image (47).png" width="480" caption="예시 2" />
     </div>
   </Details.Content>
 </Details>
@@ -1557,7 +1559,7 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
   <Details.Summary>파라미터 사용 시 유의사항</Details.Summary>
 
   <Details.Content>
-    <ParamTree>
+    <Parameter flatten>
       - orderName: string
 
         **주문명**
@@ -1570,12 +1572,39 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
         **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
-        <ParamTree>
+        <Parameter.Details>
           - paypal\_v2?: object
 
             **페이팔에서 제공하는 파라미터 모음**
+            
+            ```ts title="예시 코드"
+            PortOne.loadPaymentUI(
+              {
+                bypass: {
+                  paypal_v2: {
+                    shipping_address: {
+                      // 상품 수령 주소
+                      recipient_name: "홍길동", // 수령인 이름
+                      line1: "세종대로 110", // 도로명 주소
+                      line2: "서울특별시청", // 아파트 동 호수
+                      city: "중구", // 시(Los Angeles, New York)
+                      state: "서울특별시", // 주(CA, NY)
+                      postal_code: "04524", // 상품 수령지 우편번호
+                      country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
+                    },
+                  },
+                },
+              }, // 콜백 함수
+            );
+            ```
 
-            <ParamTree>
+            <div class="items-center gap-2 md:flex">
+              <Figure src="/gitbook-assets/ko/paypal-rt/paypal-rt-no-shipping-address.png" caption="shipping_address를 전달하지 않은 경우 구매자 정보로 설정된 화면" />
+
+              <Figure src="/gitbook-assets/ko/paypal-rt/paypal-rt-shipping-address.png" caption="shipping_address에 수령인 이름과 배송 정보를 전달한 경우 수령인 이름과 배송 정보가 override된 화면" />
+            </div>
+
+            <Parameter.Details>
               - style?: string
 
                 **페이팔 버튼 커스텀마이징**
@@ -1654,7 +1683,10 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
                 **주문 상품의 배송 주소**
 
-                <ParamTree>
+                - 배송 정보 중 `line1`, `city` 그리고 `country_code`는 필수 입력해야 합니다. 전달하지
+                  않을 경우 에러가 리턴되며 빌링키 발급창이 호출되지 않습니다.
+
+                <Parameter.Details>
                   - recipient\_name?: string
 
                     **수령인 이름**
@@ -1689,40 +1721,10 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
                     **국가 코드, ex) `KR`**
 
                     - 페이팔의 경우 빌링키 발급창에 기본적으로 구매자가 페이팔에 가입할 때 입력한 배송 정보가 자동으로 입력됩니다. 만약 이 배송 정보를 override하고 싶다면 `shipping_address` 파라미터에 override할 주소를 입력하고 `shipping_address.recipient_name`에 override할 수령인 이름을 입력하신 후 호출하시면 됩니다.
-                </ParamTree>
-
-              - 배송 정보 중 `line1`, `city` 그리고 `country_code`는 필수 입력해야 합니다. 전달하지
-                않을 경우 에러가 리턴되며 빌링키 발급창이 호출되지 않습니다.
-
-              ```ts title="예시 코드"
-              PortOne.loadPaymentUI(
-                {
-                  bypass: {
-                    paypal_v2: {
-                      shipping_address: {
-                        // 상품 수령 주소
-                        recipient_name: "홍길동", // 수령인 이름
-                        line1: "세종대로 110", // 도로명 주소
-                        line2: "서울특별시청", // 아파트 동 호수
-                        city: "중구", // 시(Los Angeles, New York)
-                        state: "서울특별시", // 주(CA, NY)
-                        postal_code: "04524", // 상품 수령지 우편번호
-                        country_code: "KR", // [필수 입력] 상품 수령지 국가 코드
-                      },
-                    },
-                  },
-                }, // 콜백 함수
-              );
-              ```
-
-              <div class="items-center gap-2 md:flex">
-                <Figure src="/gitbook-assets/ko/paypal-rt/paypal-rt-no-shipping-address.png" caption="shipping_address를 전달하지 않은 경우 구매자 정보로 설정된 화면" />
-
-                <Figure src="/gitbook-assets/ko/paypal-rt/paypal-rt-shipping-address.png" caption="shipping_address에 수령인 이름과 배송 정보를 전달한 경우 수령인 이름과 배송 정보가 override된 화면" />
-              </div>
-            </ParamTree>
-        </ParamTree>
-    </ParamTree>
+                </Parameter.Details>
+            </Parameter.Details>
+        </Parameter.Details>
+    </Parameter>
   </Details.Content>
 </Details>
 
@@ -1730,7 +1732,7 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
   <Details.Summary>미지원 파라미터</Details.Summary>
 
   <Details.Content>
-    <ParamTree>
+    <Parameter flatten>
       - totalAmount?: number
 
         **총 결제 금액**
@@ -1761,14 +1763,14 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
         **고객 정보**
 
-        <ParamTree>
+        <Parameter.Details>
           - address?: object
 
             **구매자 주소**
 
             - 페이팔의 경우 사용되는 주소 체계가 달라 구매자 주소 정보는 `customer.address`이 아닌 **`bypass.paypal_v2.shipping_address`를 사용**해야 합니다.
             - `bypass.paypal_v2.shipping_address` 파라미터에 대한 자세한 사항은 **파라미터 사용 시 유의사항** 을 참고하시기 바랍니다.
-        </ParamTree>
+        </Parameter.Details>
 
       - redirectUrl?: string
 
@@ -1811,7 +1813,7 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
         **상점 정보**
 
         페이팔은 상점 세부 정보를 지원하지 않아 해당 파라미터가 무시됩니다.
-    </ParamTree>
+    </Parameter>
   </Details.Content>
 </Details>
 

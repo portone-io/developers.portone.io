@@ -7,7 +7,7 @@ versionVariants:
 ---
 
 import Details from "~/components/gitbook/Details";
-import ParamTree from "~/components/gitbook/ParamTree";
+import Parameter from "~/components/gitbook/Parameter";
 import Tabs from "~/components/gitbook/Tabs";
 
 ## 채널 설정하기
@@ -98,7 +98,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - storeId: string
 
     **스토어 아이디**
@@ -153,7 +153,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - fullName?: string
 
         **구매자 전체 이름**
@@ -173,18 +173,18 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       - email?: string
 
         **구매자 이메일**
-    </ParamTree>
+    </Parameter.Details>
 
   - bypass?: oneof object
 
     **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
-    <ParamTree>
+    <Parameter.Details>
       - kcp\_v2?: object
 
         **KCP에서 제공하는 파라미터 모음**
 
-        <ParamTree>
+        <Parameter.Details>
           - site\_logo?: string
 
             **결제창에 삽입할 메인 로고 url**
@@ -235,9 +235,9 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
             - 에스크로 결제 시, 결제 상품의 예상 배송 소요일입니다. KCP측에서 에스크로 결제 사용 시 입력을 권장하고 있습니다.
             - 미입력 시 '00'으로 입력됩니다.
             - 입력 형식은 두 자리 수로 입력되어야 합니다. ex. 예상 배송 소요기간이 3일인 경우,`03`으로 입력
-        </ParamTree>
-    </ParamTree>
-</ParamTree>
+        </Parameter.Details>
+    </Parameter.Details>
+</Parameter>
 
 #### 예제
 
@@ -538,7 +538,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 <br />
 
-<ParamTree>
+<Parameter flatten>
   - storeId: string
 
     **스토어 아이디**
@@ -574,7 +574,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - fullName?: string
 
         **구매자 전체 이름**
@@ -594,7 +594,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       - email?: string
 
         **구매자 이메일**
-    </ParamTree>
+    </Parameter.Details>
 
   - offerPeriod?: object
 
@@ -604,21 +604,21 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
 
-    <ParamTree>
+    <Parameter.Details>
       - kcp\_v2?: object
 
         **KCP에서 제공하는 파라미터 모음**
 
-        <ParamTree>
-          - batch\_soc\_choice?: 'percard' | 'cocard'
-
+        <Parameter.Details>
+          <Parameter.TypeDef ident="batch_soc_choice" type="'percard' | 'cocard'" optional>
             **결제창에서 주민번호/사업자 번호 고정여부 설정**
 
             - S: 주민번호만 표시
             - C: 사업자번호만 표시
-        </ParamTree>
-    </ParamTree>
-</ParamTree>
+          </Parameter.TypeDef>
+        </Parameter.Details>
+    </Parameter.Details>
+</Parameter>
 
 ### SDK 빌링키 발급 - 유의사항
 
@@ -726,7 +726,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - paymentId: string
 
     **고객사 주문 고유 번호**
@@ -751,7 +751,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **결제 금액**
 
-    <ParamTree>
+    <Parameter.Details>
       - total: number
 
         **총 결제 금액**
@@ -763,7 +763,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
         **면세액**
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-    </ParamTree>
+    </Parameter.Details>
 
   - currency: string
 
@@ -775,12 +775,12 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **결제수단 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - virtualAccount?: object
 
         **가상계좌 결제 시 파라미터**
 
-        <ParamTree>
+        <Parameter.Details>
           - bank: string
 
             **발급 은행**
@@ -793,7 +793,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
             **입금 만료 기한**
             `validHours` 또는 `dueDate` 필드 중 하나를 지정합니다.
 
-            <ParamTree>
+            <Parameter.Details>
               - validHours?: integer
 
                 **유효 시간**
@@ -803,24 +803,24 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
                 **만료 시점**
 
                 시간은 RFC 3339 date-time 형식으로 입력해야 합니다.
-            </ParamTree>
+            </Parameter.Details>
 
           - option: object
 
             **가상계좌 발급 방식**
 
-            <ParamTree>
+            <Parameter.Details>
               - type: string
 
                 **가상계좌 발급 유형**
                 회전식 가상계좌만 지원하므로 `NORMAL`로 입력합니다.
-            </ParamTree>
+            </Parameter.Details>
 
           - cashReceipt: object
 
             **현금영수증 정보**
 
-            <ParamTree>
+            <Parameter.Details>
               - type: string
 
                 **발급 유형**
@@ -835,24 +835,24 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
                 - 소득공제인 경우 주민등록번호 혹은 휴대폰 번호를 입력해야 합니다.
                 - 지출증빙인 경우 사업자등록번호를 입력해야 합니다.
-            </ParamTree>
-        </ParamTree>
+            </Parameter.Details>
+        </Parameter.Details>
 
       - card?: object
 
         **카드 결제 시 파라미터**
 
-        <ParamTree>
-          - credential: string
+        <Parameter.Details>
+          - credential: object
 
             **인증 관련 정보**
 
-            <ParamTree>
-              - number: object
+            <Parameter.Details>
+              - number: string
 
                 **카드 번호**
 
-              - expiryYear: object
+              - expiryYear: string
 
                 **유효 기간 만료 연도 (YY 형식 ex. 24)**
 
@@ -867,40 +867,38 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
               - passwordTwoDigits: string
 
                 **비밀번호 앞 두자리**
-            </ParamTree>
-        </ParamTree>
-    </ParamTree>
+            </Parameter.Details>
+        </Parameter.Details>
+    </Parameter.Details>
 
   - customer?: object
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - name?: object
 
         **고객 이름**
 
-        - full 또는 separated 중 하나를 입력할 수 있습니다.
+        <Parameter.Details>
+          - full?: string
 
-          <ParamTree>
-            - full?: string
+            **한 줄 이름 형식 (ex. 김포트)**
 
-              **한 줄 이름 형식 (ex. 김포트)**
+          - separated?: object
 
-            - separated?: object
+            **분리된 이름**
 
-              **분리된 이름**
+            <Parameter.Details>
+              - first: string
 
-              <ParamTree>
-                - first: string
+                **이름**
 
-                  **이름**
+              - last: string
 
-                - last: string
-
-                  **성**
-              </ParamTree>
-          </ParamTree>
+                **성**
+            </Parameter.Details>
+        </Parameter.Details>
 
       - phoneNumber?: string
 
@@ -909,8 +907,8 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       - email?: string
 
         **구매자 이메일**
-    </ParamTree>
-</ParamTree>
+    </Parameter.Details>
+</Parameter>
 
 ### 유의사항
 
@@ -1001,7 +999,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - channelKey: string
 
     **채널 키**
@@ -1012,50 +1010,52 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **결제수단 정보**
 
-    - card?: object
+    <Parameter.Details>
+      - card?: object
 
-      **카드 빌링키 발급 시 파라미터**
+        **카드 빌링키 발급 시 파라미터**
 
-      <ParamTree>
-        - credential?: string
+        <Parameter.Details>
+          - credential: object
 
-          **인증 관련 정보**
+            **인증 관련 정보**
 
-          <ParamTree>
-            - number: object
+            <Parameter.Details>
+              - number: string
 
-              **카드 번호**
+                **카드 번호**
 
-            - expiryYear: object
+              - expiryYear: string
 
-              **유효 기간 만료 연도 (YY 형식 ex. 24)**
+                **유효 기간 만료 연도 (YY 형식 ex. 24)**
 
-            - expiryMonth: string
+              - expiryMonth: string
 
-              **유효기간 만료 월 (MM 형식 ex. 05)**
+                **유효기간 만료 월 (MM 형식 ex. 05)**
 
-            - birthOrBusinessRegistrationNumber?: string
+              - birthOrBusinessRegistrationNumber?: string
 
-            - KCP의 경우 필수로 입력해야 합니다.
+                - KCP의 경우 필수로 입력해야 합니다.
 
-            - passwordTwoDigits?: string
+              - passwordTwoDigits?: string
 
-              **비밀번호 앞 두자리**
+                **비밀번호 앞 두자리**
 
-            - KCP의 경우 필수로 입력해야 합니다.
-          </ParamTree>
-      </ParamTree>
+                - KCP의 경우 필수로 입력해야 합니다.
+            </Parameter.Details>
+        </Parameter.Details>
+    </Parameter.Details>
 
   - customer: object
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - name: object
 
         **고객 이름**
 
-        <ParamTree>
+        <Parameter.Details>
           - full?: string
 
             **한 줄 이름 형식 (ex. 김포트)**
@@ -1064,7 +1064,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
             **분리된 이름**
 
-            <ParamTree>
+            <Parameter.Details>
               - first: string
 
                 **이름**
@@ -1072,8 +1072,8 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
               - last: string
 
                 **성**
-            </ParamTree>
-        </ParamTree>
+            </Parameter.Details>
+        </Parameter.Details>
 
       - phoneNumber: string
 
@@ -1082,8 +1082,8 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       - email: string
 
         **구매자 이메일**
-    </ParamTree>
-</ParamTree>
+    </Parameter.Details>
+</Parameter>
 
 ## API 빌링키 단건 결제 요청하기
 
@@ -1120,7 +1120,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - paymentId: string
 
     **결제 주문 번호**
@@ -1140,7 +1140,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **결제 금액**
 
-    <ParamTree>
+    <Parameter.Details>
       - total: number
 
         **총 결제 금액**
@@ -1152,7 +1152,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
         **면세액**
 
         결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-    </ParamTree>
+    </Parameter.Details>
 
   - currency: string
 
@@ -1164,12 +1164,12 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **고객 정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - name: object
 
         **고객 이름**
 
-        <ParamTree>
+        <Parameter.Details>
           - full?: string
 
             **한 줄 이름 형식 (ex. 김포트)**
@@ -1178,7 +1178,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
             **분리된 이름**
 
-            <ParamTree>
+            <Parameter.Details>
               - first: string
 
                 **이름**
@@ -1186,8 +1186,8 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
               - last: string
 
                 **성**
-            </ParamTree>
-        </ParamTree>
+            </Parameter.Details>
+        </Parameter.Details>
 
       - phoneNumber: string
 
@@ -1196,12 +1196,12 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
       - email: string
 
         **구매자 이메일**
-    </ParamTree>
+    </Parameter.Details>
 
   - productCount?: integer
 
     **상품 개수**
-</ParamTree>
+</Parameter>
 
 ## API 빌링키 예약/반복 결제 요청하기
 
@@ -1237,7 +1237,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ### 주요 파라미터
 
-<ParamTree>
+<Parameter flatten>
   - paymentId: string
 
     **결제 주문 번호**
@@ -1249,7 +1249,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
     **빌링키 결제 요청 입력정보**
 
-    <ParamTree>
+    <Parameter.Details>
       - billingKey: string
 
         **빌링키 결제에 사용할 빌링키**
@@ -1262,7 +1262,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
         **결제 금액**
 
-        <ParamTree>
+        <Parameter.Details>
           - total: number
 
             **총 결제 금액**
@@ -1274,7 +1274,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
             **면세액**
 
             결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
-        </ParamTree>
+        </Parameter.Details>
 
       - currency: string
 
@@ -1286,12 +1286,12 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
         **고객 정보**
 
-        <ParamTree>
+        <Parameter.Details>
           - name: object
 
             **고객 이름**
 
-            <ParamTree>
+            <Parameter.Details>
               - full?: string
 
                 **한 줄 이름 형식 (ex. 김포트)**
@@ -1300,7 +1300,7 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 
                 **분리된 이름**
 
-                <ParamTree>
+                <Parameter.Details>
                   - first: string
 
                     **이름**
@@ -1308,8 +1308,8 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
                   - last: string
 
                     **성**
-                </ParamTree>
-            </ParamTree>
+                </Parameter.Details>
+            </Parameter.Details>
 
           - phoneNumber: string
 
@@ -1318,10 +1318,10 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
           - email: string
 
             **구매자 이메일**
-        </ParamTree>
-    </ParamTree>
+        </Parameter.Details>
+    </Parameter.Details>
 
   - timeToPay: string
 
     **결제 예정 시점**
-</ParamTree>
+</Parameter>

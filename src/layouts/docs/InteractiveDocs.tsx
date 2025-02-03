@@ -4,7 +4,7 @@ import { CodePanel } from "~/components/interactive-docs/CodePanel";
 import LanguageSelect from "~/components/interactive-docs/LanguageSelect";
 import { PayMethodSelect } from "~/components/interactive-docs/PayMethodSelect";
 import { PgSelect } from "~/components/interactive-docs/PgSelect";
-import * as prose from "~/components/prose";
+import { prose } from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
 import { type loadDoc } from "~/misc/docs";
 import { useInteractiveDocs } from "~/state/interactive-docs";

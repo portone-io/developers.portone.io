@@ -111,7 +111,7 @@ import ContentRef from "~/components/gitbook/ContentRef";
 
 ### 문서화되지 않은 컴포넌트들
 
-`<ParamTree>`, `<Youtube>`, `<Swagger>` 등
+`<Parameter>`, `<Youtube>`, `<Swagger>` 등
 이 문서에 설명되지 않은 컴포넌트들은 다양한 이유로 인해 사용이 권장되지 않습니다.
 (레거시 컴포넌트, 테스트 중인 컴포넌트, ...)
 포트원 크루이실 경우 사용(기존 코드 복사 포함)을 원하실 때

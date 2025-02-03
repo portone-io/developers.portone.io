@@ -1,7 +1,9 @@
 import presetIcons from "@unocss/preset-icons";
+import { presetWebFonts } from "@unocss/preset-web-fonts";
 import presetWind from "@unocss/preset-wind";
 import {
   defineConfig,
+  type Preset,
   transformerDirectives,
   transformerVariantGroup,
 } from "unocss";
@@ -18,7 +20,16 @@ const zIndex = {
 };
 
 export default defineConfig({
-  presets: [presetIcons(), presetWind()],
+  presets: [
+    presetIcons(),
+    presetWind(),
+    presetWebFonts({
+      provider: "none",
+      fonts: {
+        mono: "GeistMono",
+      },
+    }) as Preset<object>,
+  ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {
     colors: {
