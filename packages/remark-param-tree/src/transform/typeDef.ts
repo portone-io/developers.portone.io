@@ -4,7 +4,7 @@ import { match, P } from "ts-pattern";
 import type { VisitorResult } from "unist-util-visit";
 
 const TypeDefRegExp =
-  /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$(){}=]*)(?<optional>\?)?:\s*(?<type>[a-zA-Z0-9_$<>[\]{}|&?()\s]+)$/;
+  /^(?<name>[a-zA-Z_$][a-zA-Z0-9_$(){}=.-]*)(?<optional>\?)?:\s*(?<type>[a-zA-Z0-9_$<>[\]{}|&?()\s]+)$/;
 
 type TypeDef = {
   name: string;
