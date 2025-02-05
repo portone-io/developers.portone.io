@@ -156,6 +156,7 @@ const processor = unified()
     bullet: "-",
     rule: "-",
     emphasis: "_",
+    bulletOther: "-",
   });
 
 await Promise.all(
