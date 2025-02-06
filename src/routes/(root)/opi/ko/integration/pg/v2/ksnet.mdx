@@ -221,65 +221,121 @@ KSNET 기준으로 작성한 예시 코드는 아래와 같습니다.
 
 ### SDK 결제/빌링키 발급 공통
 
-- `windowType`
+<Parameter flatten>
+  - windowType?: string
 
-  - KSNET의 경우 PC는 `IFRAME`, mobile은 `REDIRECTION`만 지원되며 이외의 다른 방식으로 결제창을 호출할 경우 에러를 리턴합니다.
+    - KSNET의 경우 PC는 `IFRAME`, mobile은 `REDIRECTION`만 지원되며 이외의 다른 방식으로 결제창을 호출할 경우 에러를 리턴합니다.
 
-  - `windowType` 파라미터를 채우지 않을 경우 자동으로 아래와 같이 세팅됩니다.
+    - `windowType` 파라미터를 채우지 않을 경우 자동으로 아래와 같이 세팅됩니다.
 
-    ```json
-    {
-      "pc": "IFRAME",
-      "mobile": "REDIRECTION"
-    }
-    ```
+      ```json
+      {
+        "pc": "IFRAME",
+        "mobile": "REDIRECTION"
+      }
+      ```
 
-- `locale`
+  - locale?: string
 
-  - KSNET의 경우 `KO_KR`만 지원합니다. 이외의 값을 넣어도 무시됩니다.
+    - KSNET의 경우 `KO_KR`만 지원합니다. 이외의 값을 넣어도 무시됩니다.
 
-- `redirectUrl`
-  - 모바일 환경에서 결제 요청 시 `REDIRECTION` 타입이므로, 필수로 입력해야 합니다.
+  - redirectUrl?: string
+
+    - 모바일 환경에서 결제 요청 시 `REDIRECTION` 타입이므로, 필수로 입력해야 합니다.
+</Parameter>
 
 ### API 결제
 
-- `productType`
-  - 판매 상품에 대한 상품 유형 파라미터로 API 결제 시 필수로 입력해야 합니다.
-  - `PHYSICAL`: 실물 상품
-  - `DIGITAL` : 디지털 상품
+<Parameter flatten>
+  - productType: string
+
+    판매 상품에 대한 상품 유형 파라미터로 API 결제 시 필수로 입력해야 합니다.
+    - `PHYSICAL`: 실물 상품
+    - `DIGITAL` : 디지털 상품
+</Parameter>
 
 ### SDK 결제 (`requestPayment`)
 
-- `productType`
-  - 휴대폰 결제인 경우 필수로 입력해야 하며, KSNET의 상점아이디에 설정된 상품 유형과 일치해야합니다.
+<Parameter flatten>
+  - productType?: string
+
+    휴대폰 결제인 경우 필수로 입력해야 하며, KSNET의 상점아이디에 설정된 상품 유형과 일치해야합니다.
     디지털 상품유형으로 설정된 경우 항상 `PRODUCT_TYPE_DIGITAL`로 입력해야 합니다.
 
-  - `PRODUCT_TYPE_REAL`: 실물 상품
+    - `PRODUCT_TYPE_REAL`: 실물 상품
+    - `PRODUCT_TYPE_DIGITAL` : 디지털 상품
 
-  - `PRODUCT_TYPE_DIGITAL` : 디지털 상품
-
-- `bypass.ksnet.sndQpayType` <mark style="color:green;">**string**</mark>
-  - 카드 결제 시 결제창에 간편 결제 수단 표시 여부를 설정할 수 있습니다.
-  - `0` : 간편결제 수단 표시 하지 않음
-  - `1` : 간편결제 수단 표시함
+  - bypass?: object
+  
+    <Parameter.Details>
+      - ksnet?: object
+        
+        <Parameter.Details>
+          - sndQpayType?: string
+            
+            카드 결제 시 결제창에 간편 결제 수단 표시 여부를 설정할 수 있습니다.
+            - `0` : 간편결제 수단 표시 하지 않음
+            - `1` : 간편결제 수단 표시함
+        </Parameter.Details>
+    </Parameter.Details>
+</Parameter>
 
 ### 카드 다이렉트 호출
 
-- `customer.fullName`
-  - KSNET을 통한 카드사 다이렉트 호출 시, 구매자명 파라미터는 필수 입력입니다.
+<Parameter flatten>
+  - customer?: object
 
-- `bypass.ksnet.tcode`, `customer.phoneNumber`
-  - 모바일 환경에서 **BC카드, 수협카드, 전북카드, 광주카드, 카카오뱅크카드** 를 다이렉트 호출하는 경우, 필수 입력입니다.
-  - 통신사에 따라 LG는 lgt, KT는 ktf, SKT는 skt로 입력해야 하며, 통신사 구분이 어려우신 경우 임의의 값을 입력하여 요청해도 무방합니다.
+    <Parameter.Details>
+      - fullName?: string
 
-- `bypass.ksnet.url`
-  - **우리카드, 하나카드, 농협카드, 삼성카드, 현대카드, 롯데카드, 신한카드, 씨티카드** 를 다이렉트 호출하는 경우 필수 입력입니다.
+        - KSNET을 통한 카드사 다이렉트 호출 시, 구매자명 파라미터는 필수 입력입니다.
 
-- `storeDetails.businessName`, `storeDetails.businessRegistrationNumber`
-  - **국민카드, 우리카드, 하나카드, 농협카드, 삼성카드, 현대카드, 롯데카드, 신한카드, 씨티카드** 를 다이렉트 호출하는 경우, 필수 입력입니다.
+      - phoneNumber?: string
 
-- `installment.monthOption.availableMonthList`
-  - **우리카드, 하나카드, 농협카드, 삼성카드, 현대카드, 롯데카드, 신한카드, 씨티카드** 를 다이렉트 호출하는 경우, 렌더링할 할부개월 리스트를 지정할 수 없습니다.
+        - 모바일 환경에서 **BC카드, 수협카드, 전북카드, 광주카드, 카카오뱅크카드** 를 다이렉트 호출하는 경우, 필수 입력입니다.
+    </Parameter.Details>
+
+  - bypass?: object
+  
+    <Parameter.Details>
+      - ksnet?: object
+
+        <Parameter.Details>
+          - tcode?: string
+            
+            - 모바일 환경에서 **BC카드, 수협카드, 전북카드, 광주카드, 카카오뱅크카드** 를 다이렉트 호출하는 경우, 필수 입력입니다.
+            - 통신사에 따라 LG는 lgt, KT는 ktf, SKT는 skt로 입력해야 하며, 통신사 구분이 어려우신 경우 임의의 값을 입력하여 요청해도 무방합니다.
+
+          - url?: string
+
+            - **우리카드, 하나카드, 농협카드, 삼성카드, 현대카드, 롯데카드, 신한카드, 씨티카드** 를 다이렉트 호출하는 경우 필수 입력입니다.
+        </Parameter.Details>
+    </Parameter.Details>
+
+  - storeDetails?: object
+
+    <Parameter.Details>
+      - businessName?: string
+
+        - **국민카드, 우리카드, 하나카드, 농협카드, 삼성카드, 현대카드, 롯데카드, 신한카드, 씨티카드** 를 다이렉트 호출하는 경우, 필수 입력입니다.
+
+      - businessRegistrationNumber?: string
+
+        - **국민카드, 우리카드, 하나카드, 농협카드, 삼성카드, 현대카드, 롯데카드, 신한카드, 씨티카드** 를 다이렉트 호출하는 경우, 필수 입력입니다.
+    </Parameter.Details>    
+
+  - installments?: object
+
+    <Parameter.Details>
+      - monthOption?: object
+
+        <Parameter.Details>
+          - availableMonthList?: number\[]
+
+            - **국민카드, 우리카드, 하나카드, 농협카드, 삼성카드, 현대카드, 롯데카드, 신한카드, 씨티카드** 를 다이렉트 호출하는 경우, 렌더링할 할부개월 리스트를 지정할 수 있습니다.
+        </Parameter.Details>
+    </Parameter.Details>
+</Parameter>
 
 ## 연동 유의사항
 
