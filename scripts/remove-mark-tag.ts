@@ -14,21 +14,20 @@ import stringWidth from "string-width";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
-type TypeDefinition = {
-  name: string;
-  type: string;
-  optional: boolean;
-};
-
 function migration() {
   return function (tree: Root) {
     visit(tree, "mdxJsxFlowElement", (node, index, parent) => {
-      if (node.name === "mark" && parent && index) {
+      if (node.name === "mark" && parent !== undefined && index !== undefined) {
         parent.children.splice(index, 1, ...node.children);
       }
     });
     visit(tree, "mdxJsxTextElement", (node, index, parent) => {
-      if (node.name === "mark" && parent && index) {
+      if(node.name === "mark") {
+        console.log("node", node);
+        console.log("parent", parent);
+        console.log("index", index);
+      }
+      if (node.name === "mark" && parent !== undefined && index !== undefined) {
         parent.children.splice(index, 1, ...node.children);
       }
     });
@@ -46,7 +45,7 @@ const processor = unified()
   .use(remarkFrontmatter)
   .use(remarkMdx)
   .use(remarkGfm, { tableCellPadding: false, stringLength: stringWidth })
-  // .use(migration)
+  .use(migration)
   .use(remarkStringify)
   .data("settings", {
     bullet: "-",
