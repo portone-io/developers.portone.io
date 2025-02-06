@@ -8,6 +8,7 @@ versionVariants:
 
 import Figure from "~/components/Figure";
 import Details from "~/components/gitbook/Details";
+import Parameter from "~/components/gitbook/Parameter";
 import Tabs from "~/components/gitbook/Tabs";
 import Hint from "~/components/Hint";
 
@@ -70,82 +71,90 @@ import Hint from "~/components/Hint";
       <Details.Summary><strong>주요 파라미터 설명</strong></Details.Summary>
 
       <Details.Content>
-        **`channelKey` \*** <mark style="color:green;">**string**</mark>
+        <Parameter flatten>
+          - channelKey: string
 
-        **채널키**
+            **채널키**
 
-        결제를 진행할 채널을 지정합니다.
+            결제를 진행할 채널을 지정합니다.
 
-        포트원 콘솔 내 \[결제 연동] - \[연동 정보] - \[채널 관리] 에서 확인 가능합니다.
+            포트원 콘솔 내 \[결제 연동] - \[연동 정보] - \[채널 관리] 에서 확인 가능합니다.
 
-        (최신 JavaScript SDK 버전부터 사용 가능합니다.)
+            (최신 JavaScript SDK 버전부터 사용 가능합니다.)
 
-        **`pg` (deprecated)** <mark style="color:green;">**string**</mark>
+          - pg(deprecated)?: string
 
-        **PG사 구분코드**
+            **PG사 구분코드**
 
-        `smartro_v2` 로 지정하면 됩니다.
+            `smartro_v2` 로 지정하면 됩니다.
 
-        <Hint style="warning">
-          `pg` 파라미터는 지원 중단 예정입니다.
+            <Hint style="warning">
+              `pg` 파라미터는 지원 중단 예정입니다.
 
-          JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
-        </Hint>
+              JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
+            </Hint>
 
-        **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - pay\_method: string
 
-        **결제수단 구분코드**
+            **결제수단 구분코드**
 
-        - card (신용카드)
-        - trans (실시간 계좌이체)
-        - vbank(가상계좌)
-        - phone (휴대폰소액결제)
-        - lpay (LPAY)
-        - kakaopay (카카오페이)
-        - naverpay (네이버페이)
-        - payco (페이코)
-        - pinpay (핀페이)
+            - card (신용카드)
+            - trans (실시간 계좌이체)
+            - vbank(가상계좌)
+            - phone (휴대폰소액결제)
+            - lpay (LPAY)
+            - kakaopay (카카오페이)
+            - naverpay (네이버페이)
+            - payco (페이코)
+            - pinpay (핀페이)
 
-        **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - merchant\_uid: string
 
-        **주문번호**
+            **주문번호**
 
-        매번 고유하게 채번되어야 합니다.
-        주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
+            매번 고유하게 채번되어야 합니다.
+            주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
 
-        **`amount`** <mark style="color:red;">**\***</mark> <mark style="color:purple;">**`integer`**</mark>
+          - amount: number
 
-        **결제금액**
+            **결제금액**
 
-        <mark style="color:green;">**string**</mark> 이 아닌점에 유의하세요
+            **string** 이 아닌점에 유의하세요
 
-        소수점 두번째 자리까지 허용합니다.
+            소수점 두번째 자리까지 허용합니다.
 
-        **`buyer_tel`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - buyer\_tel: string
 
-        **구매자 전화번호**
+            **구매자 전화번호**
 
-        주의: 스마트로 일반 결제시 필수 입력
+            주의: 스마트로 일반 결제시 필수 입력
 
-        **`vbank_due`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - vbank\_due: string
 
-        **가상계좌 입금기한 (YYYY-MM-DD)**
+            **가상계좌 입금기한 (YYYY-MM-DD)**
 
-        스마트로의 경우 필수 입력이며 날짜는 무조건 23:59:59로 설정 됨
+            스마트로의 경우 필수 입력이며 날짜는 무조건 23:59:59로 설정 됨
 
-        **`escrow`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**boolean**</mark>
+          - escrow: boolean
 
-        **에스크로 결제 여부**
+            **에스크로 결제 여부**
 
-        **`period`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**array**</mark>
+          - period?: object
 
-        **서비스 제공 기간**
+            **서비스 제공 기간**
 
-        날짜만 입력이 가능하며(시간은 무시) 시작 날짜와 종료 날짜를 모두 입력해야 합니다.
+            날짜만 입력이 가능하며(시간은 무시) 시작 날짜와 종료 날짜를 모두 입력해야 합니다.
 
-        **`from`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+            <Parameter.Details>
+              - from: string
 
-        **`to`** <mark style="color:orange;">**`: YYYYMMDD`**</mark>
+                **YYYYMMDD**
+
+              - to: string
+
+                **YYYYMMDD**
+            </Parameter.Details>
+        </Parameter>
       </Details.Content>
     </Details>
 
@@ -197,61 +206,63 @@ import Hint from "~/components/Hint";
       <Details.Summary><strong>주요 파라미터 설명</strong></Details.Summary>
 
       <Details.Content>
-        **`channelKey` \*** <mark style="color:green;">**string**</mark>
+        <Parameter flatten>
+          - channelKey: string
 
-        **채널키**
+            **채널키**
 
-        결제를 진행할 채널을 지정합니다.
+            결제를 진행할 채널을 지정합니다.
 
-        포트원 콘솔 내 \[결제 연동] - \[연동 정보] - \[채널 관리] 에서 확인 가능합니다.
+            포트원 콘솔 내 \[결제 연동] - \[연동 정보] - \[채널 관리] 에서 확인 가능합니다.
 
-        (최신 JavaScript SDK 버전부터 사용 가능합니다.)
+            (최신 JavaScript SDK 버전부터 사용 가능합니다.)
 
-        **`pg` (deprecated)** <mark style="color:green;">**string**</mark>
+          - pg(deprecated)?: string
 
-        **PG사 구분코드**
+            **PG사 구분코드**
 
-        `smartro_v2` 로 지정하면 됩니다.
+            `smartro_v2` 로 지정하면 됩니다.
 
-        <Hint style="warning">
-          `pg` 파라미터는 지원 중단 예정입니다.
+            <Hint style="warning">
+              `pg` 파라미터는 지원 중단 예정입니다.
 
-          JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
-        </Hint>
+              JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
+            </Hint>
 
-        **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - pay\_method: string
 
-        **결제수단 구분코드**
+            **결제수단 구분코드**
 
-        - card (신용카드)
+            - card (신용카드)
 
-        **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - merchant\_uid: string
 
-        **주문번호**
+            **주문번호**
 
-        매번 고유하게 채번되어야 합니다.
+            매번 고유하게 채번되어야 합니다.
 
-        주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
+            주의: 스마트로 일반결제시 주문 번호에 특수문자 사용 불가
 
-        **`customer_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - customer\_uid: string
 
-        **`빌링키 발급을 위한 결제 수단을 특정하는 고유 번호`**
+            **빌링키 발급을 위한 결제 수단을 특정하는 고유 번호**
 
-        빌링키 발급시 필수 입력
+            빌링키 발급시 필수 입력
 
-        **`customer_id`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - customer\_id: string
 
-        **`구매자 식별자`**
+            **구매자 식별자**
 
-        주의: 스마트로 빌링키 발급시 필수 입력으로 입력 길이는 **20자**로 제한됩니다.
+            주의: 스마트로 빌링키 발급시 필수 입력으로 입력 길이는 **20자**로 제한됩니다.
 
-        **`m_redirect_url`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+          - m\_redirect\_url: string
 
-        **`리다이렉트 URL`**
+            **리다이렉트 URL**
 
-        리디렉션 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 고객사 URL
+            리디렉션 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 고객사 URL
 
-        스마트로의 경우 모바일 환경에서 **리디렉션 방식으로 빌링키 발급창이 렌더링 되기 때문에 필수입력입니다.**
+            스마트로의 경우 모바일 환경에서 **리디렉션 방식으로 빌링키 발급창이 렌더링 되기 때문에 필수입력입니다.**
+        </Parameter>
       </Details.Content>
     </Details>
   </Tabs.Tab>

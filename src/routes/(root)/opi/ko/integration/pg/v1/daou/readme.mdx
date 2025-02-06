@@ -6,6 +6,7 @@ targetVersions: ["v1"]
 
 import Figure from "~/components/Figure";
 import ContentRef from "~/components/gitbook/ContentRef";
+import Parameter from "~/components/gitbook/Parameter";
 import Tabs from "~/components/gitbook/Tabs";
 import Hint from "~/components/Hint";
 
@@ -57,81 +58,82 @@ import Hint from "~/components/Hint";
 
     **주요 파라미터 설명**
 
-    **`channelKey` \*** <mark style="color:green;">**string**</mark>
+    <Parameter flatten>
+      - channelKey: string
 
-    **채널키**
+        **채널키**
 
-    결제를 진행할 채널을 지정합니다.
+        결제를 진행할 채널을 지정합니다.
 
-    포트원 콘솔 내 \[결제 연동] - \[연동 정보] - \[채널 관리] 에서 확인 가능합니다.
+        포트원 콘솔 내 \[결제 연동] - \[연동 정보] - \[채널 관리] 에서 확인 가능합니다.
 
-    (최신 JavaScript SDK 버전부터 사용 가능합니다.)
+        (최신 JavaScript SDK 버전부터 사용 가능합니다.)
 
-    **`pg` (deprecated)** <mark style="color:green;">**string**</mark>
+      - pg(deprecated)?: string
 
-    **PG사 구분코드**
+        **PG사 구분코드**
 
-    `daou` 로 지정하면 됩니다.
+        `daou` 로 지정하면 됩니다.
 
-    <Hint style="warning">
-      `pg` 파라미터는 지원 중단 예정입니다.
+        <Hint style="warning">
+          `pg` 파라미터는 지원 중단 예정입니다.
 
-      JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
-    </Hint>
+          JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
+        </Hint>
 
-    **`pay_method`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - pay_method: string
 
-    **결제수단 구분코드**
+        **결제수단 구분코드**
 
-    - card(신용카드)
-    - trans(실시간 계좌이체)
-    - vbank(가상계좌)
+        - card(신용카드)
+        - trans(실시간 계좌이체)
+        - vbank(가상계좌)
 
-    **`merchant_uid`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**string**</mark>
+      - merchant_uid: string
 
-    **주문번호**
+        **주문번호**
 
-    매번 고유하게 채번되어야 합니다.
+        매번 고유하게 채번되어야 합니다.
 
-    **`digital`** <mark style="color:red;">**\***</mark> <mark style="color:green;">**`string`**</mark>
+      - digital: string
 
-    **디지털 컨텐츠 여부**
+        **디지털 컨텐츠 여부**
 
-    고객사 \<-> 페이조아간 계약 상태에 따라 정해진 올바른 값을 넣어야 함. 그렇지 않은 경우 결제 진행 불가
+        고객사 \<-> 페이조아간 계약 상태에 따라 정해진 올바른 값을 넣어야 함. 그렇지 않은 경우 결제 진행 불가
 
-    **`bypass.daou.PRODUCTCODE`** <mark style="color:green;">**`string`**</mark>
+      - bypass.daou.PRODUCTCODE?: string
 
-    **결제 상품 고유 번호**
+        **결제 상품 고유 번호**
 
-    값에 대해 정해진 규격이 없고 보내지 않을 경우 포트원에서 기본값(iamport)을 설정해 페이조아 측으로 전달
+        값에 대해 정해진 규격이 없고 보내지 않을 경우 포트원에서 기본값(iamport)을 설정해 페이조아 측으로 전달
 
-    **`bypass.daou.CASHRECEIPTFLAG`** <mark style="color:green;">**\`\`**</mark><mark style="color:purple;">**`number`**</mark>
+      - bypass.daou.CASHRECEIPTFLAG?: number
 
-    **현금영수증 발급 구분코드**
+        **현금영수증 발급 구분코드**
 
-    비 신용결제(계좌,가상)시 페이조아에서 자동발급 여부 구분코드
+        비 신용결제(계좌,가상)시 페이조아에서 자동발급 여부 구분코드
 
-    **`1`: 허용**
+        - `1`: 허용
+        - `0`: 차단
 
-    **`0`: 차단**
+      - app_scheme?: string
 
-    **`app_scheme`** <mark style="color:green;">**`string`**</mark>
+        **모바일 앱 URL Scheme**
 
-    **모바일 앱 URL Scheme**
+        모바일 앱 환경에서 결제시 필수 파라미터
 
-    모바일 앱 환경에서 결제시 필수 파라미터
+      - amount: number
 
-    **`amount` \***<mark style="color:purple;">**number**</mark>
+        **결제금액**
 
-    **결제금액**
+        **string** 이 아닌 점에 유의하세요.
 
-    **string** 이 아닌 점에 유의하세요.
+      - escrow?: boolean
 
-    **`escrow`** <mark style="color:orange;">**`boolean`**</mark>
+        **에스크로 설정여부**
 
-    **에스크로 설정여부**
-
-    계좌이체,가상계좌만 지원됩니다.
+        계좌이체,가상계좌만 지원됩니다.
+    </Parameter>
   </Tabs.Tab>
 
   <Tabs.Tab title="비 인증 API 요청">
@@ -199,9 +201,23 @@ import Hint from "~/components/Hint";
 
     **파라미터 설명**
 
-    - **`card_quota` :**
-      - `[]`: 일시불만 결제 가능
-      - `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능
+    <Parameter flatten>
+      - display?: object
+
+        **결제창에 렌더링될 카드 할부 개월수 리스트 설정값**
+
+        <Parameter.Details>
+          - card\_quota: number[]
+
+            **할부 개월수**
+
+            예시
+
+            - `[]`: 일시불만 결제 가능
+            - `2,3,4,5,6`: 일시불을 포함한 2, 3, 4, 5, 6개월까지 할부개월 선택 가능
+            - `3`: 일시불을 포함한 2,3개월까지 할부개월 선택 가능
+        </Parameter.Details>
+    </Parameter>
 
     <Hint style="info">
       할부결제는 **5만원 이상 결제 요청시**에만 이용 가능합니다.
@@ -222,8 +238,27 @@ import Hint from "~/components/Hint";
 
     **파라미터 설명**
 
-    - **`code`** : 카드사 금융결제원 표준 코드. [**링크**](/opi/ko/support/code-info/card-code) 참조 (**string**)
-    - **`quota`** : 할부 개월 수. 일시불일 시 0으로 지정 (**number**)
+    <Parameter flatten>
+      - card?: object
+
+        <Parameter.Details>
+          - direct?: object
+
+            <Parameter.Details>
+              - code?: string
+
+                **카드사 금융결제원 표준 코드**
+
+                [카드사 코드](/opi/ko/support/code-info/card-code) 참조
+
+              - quota?: number
+
+                **할부 개월 수**
+
+                일시불일 시 0 으로 설정됩니다.
+            </Parameter.Details>
+        </Parameter.Details>
+    </Parameter>
   </Tabs.Tab>
 
   <Tabs.Tab title="에스크로 결제">
