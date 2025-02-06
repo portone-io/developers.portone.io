@@ -125,7 +125,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
             unregister: (id) => details.delete(id),
           }}
         >
-          <div>{props.children}</div>
+          <div class="overflow-x-auto">{props.children}</div>
         </TypeDefContext.Provider>
       </div>
       <Show when={isExpandable()}>
