@@ -125,6 +125,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
+        <Condition when={({ pg: { name } }) => name === 'inicis'}>
+          <Hint style="warning">
+            KG이니시스의 경우 ASCII 문자만 허용되며, 40자 이하로 입력합니다. 
+          </Hint>
+        </Condition>
+
       - orderName: string
 
         **주문명**
@@ -156,6 +162,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
         <Condition when={({ pg: { name } }) => name === 'kpn'}>
           <Hint style="warning">
             한국결제네트웍스의 경우 최대 256바이트까지 입력할 수 있습니다.
+          </Hint>
+        </Condition>
+        
+        <Condition when={({ pg: { name } }) => name === 'inicis'}>
+          <Hint style="warning">
+            KG이니시스의 경우 최대 40바이트까지 입력할 수 있으며, 40바이트 초과시 37바이트에서 잘리고 "..."가 추가됩니다.
           </Hint>
         </Condition>
 
@@ -202,12 +214,6 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
-        <Condition when={({ pg: { name } }) => name === 'inicis'}>
-          <Hint style="warning">
-            KG이니시스는 `KRW`와 `USD`만을 지원합니다. `USD`의 경우 카드 결제만 지원합니다.
-          </Hint>
-        </Condition>
-
         <Condition when={({ pg: { name } }) => name === 'ksnet'}>
           <Hint style="warning">
             KSNET은 `KRW`와 `USD`만을 지원합니다.
@@ -217,6 +223,18 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
         <Condition when={({ pg: { name } }) => name === 'kcp'}>
           <Hint style="warning">
             KCP는 `KRW`와 `USD`만을 지원합니다. `USD`의 경우 별도 계약이 필요합니다.
+          </Hint>
+        </Condition>
+
+        <Condition when={({ pg: { name, payMethods } }) => name === 'inicis' && payMethods === 'card'}>
+          <Hint style="warning">
+            KG이니시스 카드 결제는 `KRW`와 `USD`만을 지원합니다.
+          </Hint>
+        </Condition>
+
+        <Condition when={({ pg: { name, payMethods } }) => name === 'inicis' && payMethods !== 'card'}>
+          <Hint style="warning">
+            카드 결제를 제외한 KG이니시스는 `KRW`만을 지원합니다.
           </Hint>
         </Condition>
 
@@ -267,33 +285,33 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
               - 휴대폰 소액결제: `MOBILE`
               - 간편결제: `EASY_PAY`
             </Condition>
+
+            <Condition when={({ pg: { name }}) => name === 'inicis'}>
+              - 카드: `CARD`
+              - 실시간 계좌이체: `TRANSFER`
+              - 가상계좌: `VIRTUAL_ACCOUNT`
+              - 휴대폰 소액결제: `MOBILE`
+              - 간편결제: `EASY_PAY`
+              - 상품권: `GIFT_CERTIFICATE`
+            </Condition>
+
+            <Condition when={({ pg: { name }}) => name === 'ksnet'}>
+              - 카드: `CARD`
+              - 실시간 계좌이체: `TRANSFER`
+              - 가상계좌: `VIRTUAL_ACCOUNT`
+              - 휴대폰 소액결제: `MOBILE`
+              - 간편결제: `EASY_PAY`
+            </Condition>
+
+            <Condition when={({ pg: { name }}) => name === 'kcp'}>
+              - 카드: `CARD`
+              - 실시간 계좌이체: `TRANSFER`
+              - 가상계좌: `VIRTUAL_ACCOUNT`
+              - 휴대폰 소액결제: `MOBILE`
+              - 간편결제: `EASY_PAY`
+              - 상품권: `GIFT_CERTIFICATE`
+            </Condition>
           </Details.Content>
-
-          <Condition when={({ pg: { name }}) => name === 'inicis'}>
-            - 카드: `CARD`
-            - 실시간 계좌이체: `TRANSFER`
-            - 가상계좌: `VIRTUAL_ACCOUNT`
-            - 휴대폰 소액결제: `MOBILE`
-            - 간편결제: `EASY_PAY`
-            - 상품권: `GIFT_CERTIFICATE`
-          </Condition>
-
-          <Condition when={({ pg: { name }}) => name === 'ksnet'}>
-            - 카드: `CARD`
-            - 실시간 계좌이체: `TRANSFER`
-            - 가상계좌: `VIRTUAL_ACCOUNT`
-            - 휴대폰 소액결제: `MOBILE`
-            - 간편결제: `EASY_PAY`
-          </Condition>
-
-          <Condition when={({ pg: { name }}) => name === 'kcp'}>
-            - 카드: `CARD`
-            - 실시간 계좌이체: `TRANSFER`
-            - 가상계좌: `VIRTUAL_ACCOUNT`
-            - 휴대폰 소액결제: `MOBILE`
-            - 간편결제: `EASY_PAY`
-            - 상품권: `GIFT_CERTIFICATE`
-          </Condition>
         </Details>
 
       <Condition when={({ pg: { payMethods }}) => payMethods === "card"}>
@@ -337,16 +355,22 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
               </Condition>
 
               <Condition when={({ pg: { name } }) => name === 'kpn'}>
-                  <Hint style="warning">
-                    한국결제네트웍스의 경우 카드사 단독 노출 시에 아래 3가지 약관 동의 절차가 고객사 페이지 내에 있어야 합니다.
+                <Hint style="warning">
+                  한국결제네트웍스의 경우 카드사 단독 노출 시에 아래 3가지 약관 동의 절차가 고객사 페이지 내에 있어야 합니다.
 
-                    - `https://www.firstpay.co.kr/jsp/common/agreementPopup.jsp?type=1` (전자금융거래 이용약관)
-                    - `https://www.firstpay.co.kr/jsp/common/agreementPopup.jsp?type=3` (개인정보 수집 및 이용처리 동의)
-                    - `https://www.firstpay.co.kr/jsp/common/agreementPopup.jsp?type=4` (개인정보 제3자 제공 동의)
+                  - `https://www.firstpay.co.kr/jsp/common/agreementPopup.jsp?type=1` (전자금융거래 이용약관)
+                  - `https://www.firstpay.co.kr/jsp/common/agreementPopup.jsp?type=3` (개인정보 수집 및 이용처리 동의)
+                  - `https://www.firstpay.co.kr/jsp/common/agreementPopup.jsp?type=4` (개인정보 제3자 제공 동의)
 
-                    영어 약관이 필요한 경우 URL 뒤에 `&langType=ENG`을 추가하여 사용할 수 있습니다.
-                  </Hint>
-                </Condition>
+                  영어 약관이 필요한 경우 URL 뒤에 `&langType=ENG`을 추가하여 사용할 수 있습니다.
+                </Hint>
+              </Condition>
+
+              <Condition when={({ pg: { name } }) => name === 'inicis'}>
+                <Hint style="warning">
+                  KG이니시스의 경우 카드사 단독 노출 시 별도 계약이 필요합니다.
+                </Hint>
+              </Condition>
 
               <Details>
                 <Details.Summary>지원 카드사 코드 목록</Details.Summary>
@@ -410,7 +434,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
               지정한 일부 카드사만을 목록에 노출할 수 있습니다. 상단의 카드사 식별 값 항목을 참고해주세요.
 
-            <Condition when={({ pg: { name }}) => !['kcp', 'kpn'].includes(name)}>
+            <Condition when={({ pg: { name }}) => !['kcp', 'kpn', 'inicis'].includes(name)}>
               - useFreeInterestFromMall?: boolean
 
                 **상점 분담 무이자 활성화 여부**
@@ -422,7 +446,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 </Condition>
             </Condition>
 
-            <Condition when={({ pg: { name }}) => name !== 'kcp'}>
+            <Condition when={({ pg: { name }}) => !['kcp', 'inicis'].includes(name)}>
               - useInstallment?: boolean
 
                 **할부 사용 여부**
@@ -463,6 +487,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                     </Hint>
                   </Condition>
 
+                  <Condition when={({ pg: { name } }) => name === 'inicis'}>
+                    <Hint style="warning">
+                      KG이니시스의 경우 상점 부담 무이자 할부 이용 시 별도 계약이 필요합니다.
+                    </Hint>
+                  </Condition>
+
                   <Parameter.Details>
                     - cardCompany: string
 
@@ -492,7 +522,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
                       구매자가 할부 개월 수를 선택할 수 있도록 하려면 `availableMonthList`를 사용해주세요.
 
-                    <Condition when={({ pg: { name }}) => !['kcp', 'smartro'].includes(name)}>
+                    <Condition when={({ pg: { name }}) => !['kcp', 'smartro', 'inicis'].includes(name)}>
                       - availableMonthList: number\[]
 
                         **구매자가 선택할 수 있는 할부 개월 수 목록**
@@ -516,9 +546,15 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                     나이스페이먼츠의 경우 카드사 포인트 사용 시 별도 계약이 필요합니다.
                   </Hint>
                 </Condition>
+
+                <Condition when={({ pg: { name } }) => name === 'inicis'}>
+                  <Hint style="warning">
+                    KG이니시스의 경우 카드사 포인트 사용 시 별도 계약이 필요합니다.
+                  </Hint>
+                </Condition>
             </Condition>
 
-            <Condition when={({ pg: { name } }) => name !== 'kpn'}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'inicis'].includes(name)}>
               - useAppCardOnly?: boolean
 
                 **앱 카드만 허용할지 여부**
@@ -848,6 +884,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 </Hint>
               </Condition>
 
+              <Condition when={({ pg: { name } }) => name === 'inicis'}>
+                <Hint style="warning">
+                  KG이니시스의 경우 간편결제 수단 설정 시 별도 계약이 필요합니다.
+                </Hint>
+              </Condition>
+
               <Details>
                 <Details.Summary>지원 간편결제 코드</Details.Summary>
 
@@ -866,6 +908,17 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   <Condition when={({ pg: { name }}) => name === 'kpn'}>
                     - `KAKAOPAY` (카카오페이)
                     - `SAMSUNGPAY` (삼성페이)
+                    - `TOSSPAY` (토스페이)
+                    - `PAYCO` (페이코)
+                  </Condition>
+                  
+                  <Condition when={({ pg: { name }}) => name === 'inicis'}>
+                    - `KAKAOPAY` (카카오페이)
+                    - `NAVERPAY` (네이버페이)
+                    - `SAMSUNGPAY` (삼성페이)
+                    - `SSGPAY` (SSG페이)
+                    - `APPLEPAY` (애플페이)
+                    - `LPAY` (L페이)
                     - `TOSSPAY` (토스페이)
                     - `PAYCO` (페이코)
                   </Condition>
@@ -1102,6 +1155,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
+        <Condition when={({ pg: { name } }) => name === 'inicis'}>
+          <Hint style="warning">
+            KG이니시스의 경우 면세 금액을 직접 지정하기 위해서는 별도 계약이 필요합니다.
+          </Hint>
+        </Condition>
+
       - vatAmount?: number
 
         **부가세**
@@ -1118,6 +1177,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
+        <Condition when={({ pg: { name } }) => name === 'inicis'}>
+          <Hint style="warning">
+            KG이니시스의 경우 부가세 금액을 직접 지정하기 위해서는 별도 계약이 필요합니다.
+          </Hint>
+        </Condition>
+
       - customer?: object
 
         **구매자 정보**
@@ -1130,7 +1195,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
         <Condition when={({ pg: { name }}) => name === 'inicis'}>
           <Hint style="warning">
-            KG이니시스 결제 시 구매자 이름, 연락처, 이메일을 필수로 입력해야 합니다.
+            KG이니시스 결제 시 PC 환경에서는 구매자 이름, 연락처, 이메일을 필수로 입력해야 합니다.
           </Hint>
         </Condition>
 
@@ -1172,6 +1237,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           - email?: string
 
             **구매자 이메일 주소**
+
+            <Condition when={({ pg: { name } }) => name === 'inicis'}>
+              <Hint style="warning">
+                KG이니시스의 경우 특수문자는 `@`와 `.`만 허용됩니다.
+              </Hint>
+            </Condition>
 
           - address?: object
 
@@ -1660,13 +1731,31 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
-        <Condition when={({ pg: { name }}) => ['kcp', 'kpn'].includes(name)}>
+        <Condition when={({ pg: { name } }) => name === 'inicis'}>
+          <Hint style="warning">
+            KG이니시스의 경우 에스크로 사용 시 별도 계약이 필요합니다.
+          </Hint>
+        </Condition>
+
+        <Condition when={({ pg: { name }}) => ['kcp', 'kpn', 'inicis'].includes(name)}>
           #### locale?: string
 
           **결제창 언어**
+        
+          <Condition when={({ pg: { name } }) => ['kcp', 'kpn'].includes(name)}>
+            - 한국어: `KO_KR`
+            - 영어: `EN_US`
+          </Condition>
 
-          - `KO_KR`: 한국어
-          - `EN_US`: 영어
+          <Condition when={({ pg: { name } }) => name === 'inicis'}>
+            - 한국어: `KO_KR`
+            - 영어: `EN_US`
+            - 중국어(간체): `ZH_CN`
+
+            <Hint style="warning">
+              KG이니시스의 경우 중국어(간체)는 PC 결제 시에만 지원됩니다.
+            </Hint>
+          </Condition>
         </Condition>
 
       - country?: string
