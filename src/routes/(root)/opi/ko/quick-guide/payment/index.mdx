@@ -113,6 +113,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
+        <Condition when={({ pg: { name } }) => name === 'smartro'}>
+          <Hint style="warning">
+            스마트로의 경우 영문 대소문자, 숫자만 허용되며, 40자 이하로 입력합니다.
+          </Hint>
+        </Condition>
+
       - orderName: string
 
         **주문명**
@@ -132,6 +138,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
         <Condition when={({ pg: { name } }) => name === 'kcp'}>
           <Hint style="warning">
             KCP의 경우 최대 100바이트까지 입력할 수 있습니다.
+          </Hint>
+        </Condition>
+
+        <Condition when={({ pg: { name } }) => name === 'smartro'}>
+          <Hint style="warning">
+            스마트로의 경우 최대 40바이트까지 입력할 수 있습니다.
           </Hint>
         </Condition>
 
@@ -359,6 +371,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                     - `K_BANK` (케이뱅크 카드)
                     - `TOSS_BANK` (토스뱅크 카드)
                   </Condition>
+
+                  <Condition when={({ pg: { name } }) => name === 'smartro'}>
+                    <Hint style="warning">
+                      스마트로의 경우 전북카드, 카카오뱅크 카드는 Windows에서만 단독 노출이 가능합니다.
+                    </Hint>
+                  </Condition>
                 </Details.Content>
               </Details>
 
@@ -396,12 +414,24 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 </Hint>
               </Condition>
 
+              <Condition when={({ pg: { name } }) => name === 'smartro'}>
+                <Hint style="warning">
+                  스마트로의 경우 신용카드 할부 이용 시 별도 계약이 필요합니다.
+                </Hint>
+              </Condition>
+
               <Parameter.Details>
                 - freeInstallmentPlans?: object\[]
 
                   **무이자 할부 설정**
 
                   고객사가 부담하는 무이자 할부 설정입니다.
+
+                  <Condition when={({ pg: { name } }) => name === 'smartro'}>
+                    <Hint style="warning">
+                      스마트로의 경우 상점 부담 무이자 할부 이용 시 별도 계약이 필요합니다.
+                    </Hint>
+                  </Condition>
 
                   <Parameter.Details>
                     - cardCompany: string
@@ -432,7 +462,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
                       구매자가 할부 개월 수를 선택할 수 있도록 하려면 `availableMonthList`를 사용해주세요.
 
-                    <Condition when={({ pg: { name }}) => name !== 'kcp'}>
+                    <Condition when={({ pg: { name }}) => !['kcp', 'smartro'].includes(name)}>
                       - availableMonthList: number\[]
 
                         **구매자가 선택할 수 있는 할부 개월 수 목록**
@@ -440,7 +470,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   </Parameter.Details>
               </Parameter.Details>
 
-            <Condition when={({ pg: { name }}) => name !== 'kcp'}>
+            <Condition when={({ pg: { name }}) => !['kcp', 'smartro'].includes(name)}>
               - useCardPoint?: boolean
 
                 **카드사 포인트 사용 여부**
@@ -486,12 +516,26 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 - `PERSONAL` (소득공제용)
                 - `CORPORATE` (지출증빙용)
                 - `ANONYMOUS` (미발행(국세청번호 자동발급))
+                
+                <Condition when={({ pg: { name } }) => name === 'smartro'}>
+                  <Hint style="warning">
+                    스마트로의 경우 `cashReceiptType`과 `bankCode`를 같이 사용해야 합니다.
+                  </Hint>
+                </Condition>
             </Condition>
 
             <Condition when={({ pg: {name }}) => name !== 'kcp'}>
               - customerIdentifier?: string
 
                 **현금영수증 발행 대상 식별 정보**
+
+                소득공제용(`PERSONAL`)의 경우 전화번호를, 지출증빙용(`CORPORATE`)의 경우 사업자번호를 입력하며, 미발행(`ANONYMOUS`)의 경우 무시됩니다.
+
+                <Condition when={({ pg: { name } }) => name === 'smartro'}>
+                  <Hint style="warning">
+                    스마트로의 경우 `cashReceiptType`에 `ANONYMOUS` 외의 값이 설정되면 올바른 `customerIdentifier`를 반드시 입력해야 합니다.
+                  </Hint>
+                </Condition>
             </Condition>
 
             <Condition when={({ pg: {name }}) => name !== 'kcp'}>
@@ -1368,6 +1412,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
+        <Condition when={({ pg: { name, payMethods } }) => name === 'smartro' && payMethods === 'mobile'}>
+          <Hint style="warning">
+            스마트로 휴대폰 소액결제 시 `productType`는 필수 입력이며, 상점에 설정된 상품 유형과 입력된 상품 유형이 다른 경우 결제가 실패합니다.
+          </Hint>
+        </Condition>
+
       - offerPeriod?: oneof object
 
         **서비스 제공 기간**
@@ -1387,6 +1437,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
               - to?: string
 
                 **종료 시점**
+
+              <Condition when={({ pg: { name } }) => name === 'smartro'}>
+                <Hint style="warning">
+                  스마트로의 경우 `from`과 `to`를 동시에 입력해야 합니다.
+                </Hint>
+              </Condition>
             </Parameter.Details>
 
           - interval?: string
