@@ -13,18 +13,25 @@ import {
   onMount,
   type ParentProps,
   Show,
+  splitProps,
   useContext,
 } from "solid-js";
 
 import { ProseContext } from "../prose";
+import { ParameterDeclaration } from "./ParameterDeclaration";
+import { ParameterHover } from "./ParameterHover";
 
 interface ParameterProps {
   flatten?: boolean;
   heading?: unknown;
   children?: JSXElement;
+  forceDepth?: number;
 }
 
-const ParameterContext = createContext({
+const ParameterContext = createContext<{
+  flatten: boolean;
+  forceDepth?: number;
+}>({
   flatten: false,
 });
 
@@ -51,10 +58,21 @@ const proseStyles: typeof ProseContext.defaultValue.styles = {
 };
 
 export default function Parameter(props: ParameterProps) {
+  const { forceDepth: _forceDepth } = useContext(ParameterContext);
+
+  const forceDepth = createMemo(() => {
+    if (props.forceDepth !== undefined) {
+      return props.forceDepth - 1;
+    }
+    return _forceDepth !== undefined ? _forceDepth - 1 : undefined;
+  });
+
   return (
     <div class="text-sm text-slate-5 space-y-3">
       <ProseContext.Provider value={{ styles: proseStyles }}>
-        <ParameterContext.Provider value={{ flatten: Boolean(props.flatten) }}>
+        <ParameterContext.Provider
+          value={{ flatten: Boolean(props.flatten), forceDepth: forceDepth() }}
+        >
           {props.children}
         </ParameterContext.Provider>
       </ProseContext.Provider>
@@ -75,13 +93,19 @@ const TypeDefContext = createContext({
 });
 
 Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
-  const { flatten } = useContext(ParameterContext);
+  const { flatten, forceDepth } = useContext(ParameterContext);
+  const [locals, others] = splitProps(props, ["children"]);
   const details = new ReactiveMap<string, () => JSXElement>();
   const [expaneded, setExpanded] = createSignal(true);
 
   const detailKeyArray = createMemo(() => [...details.keys()]);
   const isFlatten = createMemo(() => flatten);
-  const isExpandable = createMemo(() => details.size > 0);
+  const depthLimitExceeded = createMemo(
+    () => forceDepth !== undefined && forceDepth <= 0,
+  );
+  const isExpandable = createMemo(
+    () => depthLimitExceeded() === false && details.size > 0,
+  );
 
   return (
     <Collapsible
@@ -93,7 +117,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
       <div
         class={clsx("col-start-1 row-start-1 h-4 w-4", isFlatten() && "-ml-4")}
       >
-        <Show when={details.size > 0}>
+        <Show when={forceDepth === undefined && isExpandable()}>
           <Collapsible.Trigger as="button" class="h-4 w-4">
             <i
               class={clsx(
@@ -105,27 +129,25 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
         </Show>
       </div>
       <div class="grid col-start-2 row-start-1 row-end-3 grid-rows-subgrid">
-        <div class="row-start-1 text-slate-7">
-          <Show when={props.ident}>
-            <span class="whitespace-normal font-medium font-mono">
-              {props.ident}
-            </span>
-            <span class="font-mono">
-              {props.optional ? "?" : ""}
-              {": "}
-            </span>
-          </Show>
-          <span class="whitespace-normal text-green-5 font-mono">
-            {props.type}
-          </span>
-        </div>
+        <ParameterHover
+          content={
+            <Parameter.TypeDef {...others}>{locals.children}</Parameter.TypeDef>
+          }
+        >
+          <ParameterDeclaration
+            class="row-start-1"
+            ident={others.ident}
+            type={others.type}
+            optional={others.optional}
+          />
+        </ParameterHover>
         <TypeDefContext.Provider
           value={{
             register: (id, el) => details.set(id, el),
             unregister: (id) => details.delete(id),
           }}
         >
-          <div class="overflow-x-auto">{props.children}</div>
+          <div class="overflow-x-auto">{locals.children}</div>
         </TypeDefContext.Provider>
       </div>
       <Show when={isExpandable()}>
