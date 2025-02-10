@@ -24,7 +24,7 @@ const PgOptions = {
   smartro: { label: "스마트로", icon: smartroLogo },
   toss: { label: "토스페이먼츠", icon: tossLogo },
   kpn: { label: "한국결제네트웍스", icon: kpnLogo },
-  inicis: { label: "이니시스", icon: inicisLogo },
+  inicis: { label: "KG이니시스", icon: inicisLogo },
   ksnet: { label: "KSNET", icon: ksnetLogo },
   kcp: { label: "NHN KCP", icon: kcpLogo },
   kakao: { label: "카카오페이", icon: kakaoLogo },
