@@ -23,11 +23,13 @@ function generateDescription({
     fs.mkdirSync(path.dirname(file), { recursive: true });
   }
   fs.writeFileSync(file, description);
-  const componentName = `${path
-    .relative(basePath, filePath)
-    .split("/")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("")}Description`;
+  const componentName = pascalCase(
+    `${path
+      .relative(basePath, filePath)
+      .split("/")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join("")}Description`,
+  );
 
   imports.add(
     `import ${componentName} from "./${path.relative(basePath, file)}";`,
