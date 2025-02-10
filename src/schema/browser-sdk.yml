@@ -1569,6 +1569,16 @@ resources:
         **결제 통화**
 
         - 원화 결제 시 `KRW`로 입력해주세요.
+    Popup:
+      type: object
+      description: |
+        **결제창이 팝업 방식일 경우 결제창에 적용할 속성**
+      properties:
+        center:
+          type: boolean
+          optional: true
+          description: |
+            `true`로 설정하면 결제창이 브라우저 화면의 정중앙에 표시됩니다.
     bypass:
       identityVerification:
         Danal:
@@ -1664,7 +1674,7 @@ resources:
               description: |
                 **인증 창에 표시할 로고 URL**
 
-                인증 창 좌측 상단 이니시스 로고 대신 들어갈 로고의 URL입니다.
+                인증 창 좌측 상단 KG이니시스 로고 대신 들어갈 로고의 URL입니다.
                 최적 크기는 가로 164px, 세로 28px입니다.
 
                 HTTP URL인 경우 로고가 표시되지 않을 수 있습니다.
@@ -2680,7 +2690,7 @@ resources:
           description: |
             KG이니시스 bypass 파라미터
 
-            이니시스는 PC 결제 모듈과 모바일 결제 모듈이 분리되어 있기 때문에 bypass 파라미터 또한 PC용과 모바일용이 분리되어 있습니다.
+            KG이니시스는 PC 결제 모듈과 모바일 결제 모듈이 분리되어 있기 때문에 bypass 파라미터 또한 PC용과 모바일용이 분리되어 있습니다.
           name: InicisV2Bypass
           properties:
             logo_url:
@@ -2764,7 +2774,7 @@ resources:
                   부분 무이자 설정 (별도 계약시 이용 가능)
                   
                   `string` 부분에는 `코드-개월:개월^코드-개월:개월` 와 같은 형식으로 입력합니다. (ex. `slimquota(11-2:3^34-2:3)`)
-                  카드사 코드는 [이니시스 통합 코드](https://manual.inicis.com/pay/code.html) 페이지에서
+                  카드사 코드는 [KG이니시스 통합 코드](https://manual.inicis.com/pay/code.html) 페이지에서
                   "결제요청 시 카드코드" 섹션을 참고하시기 바랍니다.
 
                 - **mallpoint(카드코드:카드코드)**
@@ -2772,7 +2782,7 @@ resources:
                   몰포인트 (별도 계약시 이용 가능)
 
                   `string` 부분에는 `카드코드:카드코드` 와 같은 형식으로 입력합니다. (ex. `mallpoint(11:34)`)
-                  카드사 코드는 [이니시스 통합 코드](https://manual.inicis.com/pay/code.html) 페이지에서
+                  카드사 코드는 [KG이니시스 통합 코드](https://manual.inicis.com/pay/code.html) 페이지에서
                   "결제요청 시 카드코드" 섹션을 참고하시기 바랍니다.
               optional: true
             P_CARD_OPTION:
@@ -3514,6 +3524,10 @@ resources:
           type: resourceRef
           $ref: "#/resources/entity/bypass/IdentityVerificationBypass"
           optional: true
+        popup:
+          optional: true
+          type: resourceRef
+          $ref: "#/resources/entity/Popup"
     IssueBillingKeyRequest:
       type: intersection
       types:
@@ -3595,6 +3609,10 @@ resources:
               optional: true
               type: resourceRef
               $ref: "#/resources/entity/bypass/IssueBillingKeyBypass"
+            popup:
+              optional: true
+              type: resourceRef
+              $ref: "#/resources/entity/Popup"
         - type: discriminatedUnion
           types:
             CARD:
@@ -3729,6 +3747,10 @@ resources:
               optional: true
               type: resourceRef
               $ref: "#/resources/entity/bypass/IssueBillingKeyAndPayBypass"
+            popup:
+              optional: true
+              type: resourceRef
+              $ref: "#/resources/entity/Popup"
         - type: discriminatedUnion
           discriminator: billingKeyAndPayMethod
           types:
@@ -3893,6 +3915,10 @@ resources:
               type: string
               description: |
                 프로모션 아이디
+            popup:
+              optional: true
+              type: resourceRef
+              $ref: "#/resources/entity/Popup"
         - type: discriminatedUnion
           discriminator: payMethod
           types:
@@ -4128,8 +4154,8 @@ resources:
         프로세스 종료 후, 콜백 함수로 전달 될 빌링키 발급 정보 데이터
       properties:
         transactionType:
-          type: resourceRef
-          $ref: "#/resources/entity/TransactionType"
+          type: stringLiteral
+          value: ISSUE_BILLING_KEY
           description: |
             `ISSUE_BILLING_KEY`
         billingKey:
@@ -4166,8 +4192,8 @@ resources:
         프로세스 종료 후, 콜백 함수로 전달 될 결제 정보 데이터
       properties:
         transactionType:
-          type: resourceRef
-          $ref: "#/resources/entity/TransactionType"
+          type: stringLiteral
+          value: PAYMENT
           description: |
             **트랜잭션 유형**
 
@@ -4210,8 +4236,8 @@ resources:
       type: object
       properties:
         transactionType:
-          type: resourceRef
-          $ref: "#/resources/entity/TransactionType"
+          type: stringLiteral
+          value: ISSUE_BILLING_KEY_AND_PAY
           description: |
             `ISSUE_BILLING_KEY_AND_PAY`
         txId:
@@ -4254,8 +4280,8 @@ resources:
       type: object
       properties:
         transactionType:
-          type: resourceRef
-          $ref: "#/resources/entity/TransactionType"
+          type: stringLiteral
+          value: IDENTITY_VERIFICATION
           description: |
             **트랜잭션 유형**
 
