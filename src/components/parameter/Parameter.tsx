@@ -15,6 +15,7 @@ import {
   splitProps,
   useContext,
 } from "solid-js";
+import { match, P } from "ts-pattern";
 
 import { ProseContext } from "../prose";
 import { ParameterDeclaration } from "./ParameterDeclaration";
@@ -115,13 +116,20 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
   const isExpandable = createMemo(
     () => depthLimitExceeded() === false && details.size > 0,
   );
-  const [expaneded, setExpanded] = createSignal(
-    others.defaultExpanded === false ? false : isExpandable() === true,
+  const [expanded, setExpanded] = createSignal(
+    match([isExpandable(), forceDepth, others.defaultExpanded])
+      .with([true, undefined, P.select(P.boolean)], (expanded) => expanded)
+      .with([true, undefined, undefined], () => true)
+      .with([true, 1, P._], () => true)
+      .with([true, P.number.gt(1), P.select(P.boolean)], (expanded) => expanded)
+      .with([true, P.number, P._], () => false)
+      .with([false, P._, P._], () => false)
+      .exhaustive(),
   );
 
   return (
     <Collapsible
-      open={expaneded()}
+      open={expanded()}
       onOpenChange={setExpanded}
       as="div"
       class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-center text-sm"
@@ -135,7 +143,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
             <i
               class={clsx(
                 "i-ic-sharp-chevron-right inline-block h-4 w-4",
-                expaneded() && "transform-rotate-90",
+                expanded() && "transform-rotate-90",
               )}
             ></i>
           </Collapsible.Trigger>
