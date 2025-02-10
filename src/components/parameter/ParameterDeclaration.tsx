@@ -7,7 +7,7 @@ import { ParameterType } from "./ParameterType";
 type ParameterDeclarationProps = {
   class?: string;
   ident?: JSXElement;
-  type?: JSXElement;
+  type: JSXElement;
   optional?: boolean;
 } & ParentProps;
 
@@ -21,9 +21,7 @@ export function ParameterDeclaration(props: ParameterDeclarationProps) {
           {": "}
         </span>
       </Show>
-      <Show when={props.type}>
-        <ParameterType>{props.type}</ParameterType>
-      </Show>
+      <ParameterType>{props.type}</ParameterType>
     </span>
   );
 }

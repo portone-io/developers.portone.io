@@ -44,7 +44,8 @@ export default [
     ignores: [
       "dist",
       ".vercel",
-      "**/routes/(root)/docs/**/*",
+      "src/routes/(root)/docs/**/*",
+      "src/components/parameter/__generated__/**/*",
       ".vinxi",
       ".output",
       "packages/**/dist",

@@ -77,7 +77,10 @@ export function ParameterHover(props: ParameterHoverProps) {
       >
         <HoverCard.Trigger
           as="span"
-          class={clsx("justify-self-start", props.class)}
+          class={clsx(
+            "justify-self-start data-[expanded]:bg-blue-1",
+            props.class,
+          )}
         >
           {props.children}
         </HoverCard.Trigger>
