@@ -74,6 +74,13 @@ function generateIndex(
     );
     writer.outdent();
     writer.writeLine("),");
+    writer.writeLine("description: lazy(() =>");
+    writer.indent();
+    writer.writeLine(
+      `import("${relativePath}").then(({ Description }) => ({ default: Description })),`,
+    );
+    writer.outdent();
+    writer.writeLine("),");
     writer.outdent();
     writer.writeLine("},");
   }

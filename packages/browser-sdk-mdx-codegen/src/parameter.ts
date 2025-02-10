@@ -88,15 +88,46 @@ function generateTypeDef({
   writer.outdent();
   writer.writeLine(">");
   writer.indent();
-  if (parameter.description !== undefined) {
-    const description = generateDescription({
-      imports,
-      basePath,
-      filePath: parameterPath,
-      description: parameter.description,
-    });
-    writer.writeLine(`<${description.componentName} />`);
-  }
+  match(parameter)
+    .with({ description: P.string }, (parameter) => {
+      const description = generateDescription({
+        imports,
+        basePath,
+        filePath: parameterPath,
+        description: parameter.description,
+      });
+      writer.writeLine(`<${description.componentName} />`);
+    })
+    .with(
+      {
+        description: P.nullish,
+        type: "array",
+        items: { description: P.string },
+      },
+      (parameter) => {
+        const description = generateDescription({
+          imports,
+          basePath,
+          filePath: parameterPath,
+          description: parameter.items.description,
+        });
+        writer.writeLine(`<${description.componentName} />`);
+      },
+    )
+    .with(
+      {
+        type: "array",
+        items: { type: "resourceRef" },
+      },
+      (parameter) => {
+        const componentName = `${pascalCase(getResourceRef(parameter.items.$ref).replaceAll("/", "_"))}Description`;
+        imports.add(
+          `import { Description as ${componentName} } from "~/components/parameter/__generated__/${getResourceRef(parameter.items.$ref)}/index.ts";`,
+        );
+        writer.writeLine(`<${componentName} />`);
+      },
+    )
+    .otherwise(() => {});
   writer.writeLine(
     generateTypeDetails({ parameter, imports, basePath, parameterPath }),
   );
@@ -416,7 +447,6 @@ export function generateParameter({
   parameterPath,
   parameter,
 }: GenerateParameterParams) {
-  // Create parameter directory if it doesn't exist
   fs.mkdirSync(parameterPath, { recursive: true });
 
   const baseName = path.basename(parameterPath);
@@ -429,7 +459,6 @@ export function generateParameter({
     'import { ParameterType } from "~/components/parameter/ParameterType";',
   );
 
-  // Write TypeDef props interface
   writer.writeLine("interface TypeDefProps {");
   writer.indent();
   writer.writeLine("ident?: string;");
@@ -438,7 +467,6 @@ export function generateParameter({
   writer.writeLine("}");
   writer.writeLine("");
 
-  // Write TypeDef component
   writer.writeLine("export function TypeDef(props: TypeDefProps) {");
   writer.indent();
   writer.writeLine("return (");
@@ -466,15 +494,7 @@ export function generateParameter({
     writer.outdent();
     writer.writeLine(">");
     writer.indent();
-    if (parameter.description !== undefined) {
-      const description = generateDescription({
-        imports,
-        basePath: parameterPath,
-        filePath: path.join(parameterPath, baseName),
-        description: parameter.description,
-      });
-      writer.writeLine(`<${description.componentName} />`);
-    }
+    writer.writeLine("<Description />");
     writer.writeLine("<Details {...props} />");
     writer.outdent();
     writer.writeLine("</Parameter.TypeDef>");
@@ -519,6 +539,23 @@ export function generateParameter({
   writer.writeLine(");");
   writer.outdent();
   writer.writeLine("}");
+
+  writer.writeLine("export function Description() {");
+  writer.indent();
+  if (parameter.description !== undefined) {
+    const description = generateDescription({
+      imports,
+      basePath: parameterPath,
+      filePath: path.join(parameterPath, baseName),
+      description: parameter.description,
+    });
+    writer.writeLine(`return <${description.componentName} />;`);
+  } else {
+    writer.writeLine("return null;");
+  }
+  writer.outdent();
+  writer.writeLine("}");
+  writer.writeLine("");
 
   writer.writeLine("export function Details(props: TypeDefProps) {");
   writer.indent();
