@@ -85,7 +85,7 @@ export function ParameterHover(props: ParameterHoverProps) {
           {props.children}
         </HoverCard.Trigger>
         <HoverCard.Portal mount={document.querySelector("article")!}>
-          <HoverCard.Content class="z-parameter-hover grid max-h-xs max-w-sm overflow-auto border rounded-md bg-white p-4 shadow-sm [&::-webkit-scrollbar]:hidden">
+          <HoverCard.Content class="grid max-h-xs max-w-sm overflow-auto border rounded-md bg-white p-4 shadow-sm z-parameter-hover [&::-webkit-scrollbar]:hidden">
             <Parameter flatten forceDepth={2}>
               {props.content}
             </Parameter>
