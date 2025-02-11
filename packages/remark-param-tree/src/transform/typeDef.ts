@@ -1,4 +1,5 @@
 import type { List, ListItem } from "mdast";
+import type { MdxJsxAttributeValueExpression } from "mdast-util-mdx";
 import { toString } from "mdast-util-to-string";
 import { match, P } from "ts-pattern";
 import type { VisitorResult } from "unist-util-visit";
@@ -62,7 +63,66 @@ export function transformListItemToTypeDef(
           attributes: (
             [
               { type: "mdxJsxAttribute", name: "ident", value: name },
-              { type: "mdxJsxAttribute", name: "type", value: type },
+              {
+                type: "mdxJsxAttribute",
+                name: "type",
+                value: {
+                  type: "mdxJsxAttributeValueExpression",
+                  value: `<Parameter.Type>${type}</Parameter.Type>`,
+                  data: {
+                    estree: {
+                      type: "Program",
+                      body: [
+                        {
+                          type: "ExpressionStatement",
+                          expression: {
+                            type: "JSXElement",
+                            openingElement: {
+                              type: "JSXOpeningElement",
+                              attributes: [],
+                              name: {
+                                type: "JSXMemberExpression",
+                                object: {
+                                  type: "JSXIdentifier",
+                                  name: "Parameter",
+                                },
+                                property: {
+                                  type: "JSXIdentifier",
+                                  name: "Type",
+                                },
+                              },
+                              selfClosing: false,
+                            },
+                            closingElement: {
+                              type: "JSXClosingElement",
+                              name: {
+                                type: "JSXMemberExpression",
+                                object: {
+                                  type: "JSXIdentifier",
+                                  name: "Parameter",
+                                },
+                                property: {
+                                  type: "JSXIdentifier",
+                                  name: "Type",
+                                },
+                              },
+                            },
+                            children: [
+                              {
+                                type: "JSXText",
+                                value: type,
+                                raw: type,
+                              },
+                            ],
+                          },
+                        },
+                      ],
+                      sourceType: "module",
+                      comments: [],
+                    },
+                  },
+                } satisfies MdxJsxAttributeValueExpression,
+              },
               optional &&
                 ({
                   type: "mdxJsxAttribute",

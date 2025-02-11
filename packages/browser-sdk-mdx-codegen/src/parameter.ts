@@ -75,7 +75,9 @@ function generateTypeDef({
   }
   writer.writeLine("<Parameter.TypeDef");
   writer.indent();
-  writer.writeLine(`type={<>${generateInlineType({ parameter, imports })}</>}`);
+  writer.writeLine(
+    `type={<Parameter.Type>${generateInlineType({ parameter, imports })}</Parameter.Type>}`,
+  );
   if (parameter.optional === true) {
     writer.writeLine("optional");
   }
@@ -209,7 +211,9 @@ function generateTypeDetails({
       writer.indent();
       for (const [variantName, variant] of Object.entries(parameter.variants)) {
         if (variant.description !== undefined) {
-          writer.writeLine(`<Parameter.TypeDef type='"${variantName}"'>`);
+          writer.writeLine(
+            `<Parameter.TypeDef type={<Parameter.Type>"${variantName}"</Parameter.Type>}>`,
+          );
           writer.indent();
           const description = generateDescription({
             imports,
@@ -221,7 +225,9 @@ function generateTypeDetails({
           writer.outdent();
           writer.writeLine("</Parameter.TypeDef>");
         } else {
-          writer.writeLine(`<Parameter.TypeDef type="${variantName}" />`);
+          writer.writeLine(
+            `<Parameter.TypeDef type={<Parameter.Type>"${variantName}"</Parameter.Type>} />`,
+          );
         }
       }
       writer.outdent();
@@ -305,17 +311,13 @@ function generateInlineType({
           emptyObject: "{}",
           json: "json",
         };
-        writer.writeLine(
-          `<ParameterType>{"${typeMap[param.type]}"}</ParameterType>`,
-        );
+        writer.writeLine(`{"${typeMap[param.type]}"}`);
       },
     )
     .with({ type: "stringLiteral" }, ({ value }) => {
-      writer.writeLine(`<ParameterType>"${value}"</ParameterType>`);
+      writer.writeLine(`"${value}"`);
     })
     .with({ type: "array" }, (parameter) => {
-      writer.writeLine("<ParameterType>");
-      writer.indent();
       writer.writeLine(`<span class="text-purple-5">Array</span>`);
       writer.writeLine(`<span class="text-slate-5">&lt;</span>`);
       writer.writeLine(
@@ -325,12 +327,8 @@ function generateInlineType({
         }),
       );
       writer.writeLine(`<span class="text-slate-5">&gt;</span>`);
-      writer.outdent();
-      writer.writeLine("</ParameterType>");
     })
     .with({ type: "object" }, (parameter) => {
-      writer.writeLine("<ParameterType>");
-      writer.indent();
       writer.writeLine("<span class='text-purple-5'>&#123; </span>");
       writer.writeLine(
         Object.keys(parameter.properties)
@@ -344,13 +342,11 @@ function generateInlineType({
         writer.writeLine(`<span class="text-slate-5">{", ..."}</span>`);
       }
       writer.writeLine("<span class='text-purple-5'> &#125;</span>");
-      writer.outdent();
-      writer.writeLine("</ParameterType>");
     })
     .with({ type: "enum" }, (parameter) => {
       const variantNames = Object.keys(parameter.variants)
         .slice(0, 3)
-        .map((v) => `<ParameterType>"${v}"</ParameterType>`)
+        .map((v) => `<Parameter.Type>"${v}"</Parameter.Type>`)
         .join(`<span class="text-slate-5">|</span>`);
       writer.writeLine(`<span class="space-x-1">`);
       writer.indent();
@@ -363,8 +359,6 @@ function generateInlineType({
       writer.writeLine("</span>");
     })
     .with({ type: "oneOf" }, (parameter) => {
-      writer.writeLine("<ParameterType>");
-      writer.indent();
       writer.writeLine(`<span class="text-purple-5">oneOf</span>`);
       writer.writeLine(`<span class="text-slate-5">&#123;</span>`);
       const props = Object.keys(parameter.properties).slice(0, 3);
@@ -373,12 +367,8 @@ function generateInlineType({
         writer.writeLine(`<span class="text-slate-5">...</span>`);
       }
       writer.writeLine(`<span class="text-slate-5">&#125;</span>`);
-      writer.outdent();
-      writer.writeLine("</ParameterType>");
     })
     .with({ type: "union" }, (parameter) => {
-      writer.writeLine("<ParameterType>");
-      writer.indent();
       const unionTypes = parameter.types
         .slice(0, 3)
         .map((type) => generateInlineType({ imports, parameter: type }))
@@ -387,12 +377,8 @@ function generateInlineType({
       if (parameter.types.length > 3) {
         writer.writeLine(`<span class="text-slate-5"> | ...</span>`);
       }
-      writer.outdent();
-      writer.writeLine("</ParameterType>");
     })
     .with({ type: "intersection" }, (parameter) => {
-      writer.writeLine("<ParameterType>");
-      writer.indent();
       const intersectionTypes = parameter.types
         .slice(0, 3)
         .map((type) => generateInlineType({ imports, parameter: type }))
@@ -401,12 +387,8 @@ function generateInlineType({
       if (parameter.types.length > 3) {
         writer.writeLine(`<span class="text-slate-5"> & ...</span>`);
       }
-      writer.outdent();
-      writer.writeLine("</ParameterType>");
     })
     .with({ type: "discriminatedUnion" }, (parameter) => {
-      writer.writeLine("<ParameterType>");
-      writer.indent();
       const typeNames = [
         parameter.discriminator,
         Object.keys(parameter.types).slice(0, 2),
@@ -417,8 +399,6 @@ function generateInlineType({
         writer.writeLine(`<span class="text-slate-5"> | ...</span>`);
       }
       writer.writeLine(`<span class="text-slate-5">&#125;</span>`);
-      writer.outdent();
-      writer.writeLine("</ParameterType>");
     })
     .with({ type: "resourceRef" }, ({ $ref }) => {
       const componentName = `${pascalCase(getResourceRef($ref).replaceAll("/", "_"))}Type`;
@@ -428,11 +408,7 @@ function generateInlineType({
       writer.writeLine(`<${componentName} />`);
     })
     .with({ type: "error" }, () => {
-      writer.writeLine("<ParameterType>");
-      writer.indent();
       writer.writeLine(`<span class="text-purple-5">error</span>`);
-      writer.outdent();
-      writer.writeLine("</ParameterType>");
     })
     .exhaustive();
   return writer.content;
@@ -450,14 +426,12 @@ export function generateParameter({
   fs.mkdirSync(parameterPath, { recursive: true });
 
   const baseName = path.basename(parameterPath);
+  const parameterName = parameter.name ?? baseName;
 
   const imports = new Set<string>();
   const writer = TypescriptWriter();
 
   imports.add('import Parameter from "~/components/parameter/Parameter.tsx";');
-  imports.add(
-    'import { ParameterType } from "~/components/parameter/ParameterType.tsx";',
-  );
 
   writer.writeLine("interface TypeDefProps {");
   writer.indent();
@@ -520,20 +494,21 @@ export function generateParameter({
       { type: "union" },
       { type: "array" },
       () => {
-        imports.add(
-          'import { ParameterHover } from "~/components/parameter/ParameterHover.tsx";',
-        );
-        writer.writeLine("<ParameterHover content={<TypeDef {...props} />}>");
+        writer.writeLine("<Parameter.Hover content={<TypeDef {...props} />}>");
         writer.indent();
-        writer.writeLine("<ParameterType>");
-        writer.writeLine(`<span class="text-purple-5">${baseName}</span>`);
-        writer.writeLine("</ParameterType>");
+        writer.writeLine("<Parameter.Type>");
+        writer.writeLine(`<span class="text-purple-5">${parameterName}</span>`);
+        writer.writeLine("</Parameter.Type>");
         writer.outdent();
-        writer.writeLine("</ParameterHover>");
+        writer.writeLine("</Parameter.Hover>");
       },
     )
     .otherwise((parameter) => {
+      writer.writeLine("<Parameter.Type>");
+      writer.indent();
       writer.writeLine(generateInlineType({ parameter, imports }));
+      writer.outdent();
+      writer.writeLine("</Parameter.Type>");
     });
   writer.outdent();
   writer.writeLine(");");
@@ -546,7 +521,7 @@ export function generateParameter({
     const description = generateDescription({
       imports,
       basePath: parameterPath,
-      filePath: path.join(parameterPath, baseName),
+      filePath: path.join(parameterPath, parameterName),
       description: parameter.description,
     });
     writer.writeLine(`return <${description.componentName} />;`);
@@ -584,9 +559,9 @@ export function generateParameter({
     writer.content;
 
   // Write file
-  fs.writeFileSync(path.join(parameterPath, `${baseName}.tsx`), content);
+  fs.writeFileSync(path.join(parameterPath, `${parameterName}.tsx`), content);
   fs.writeFileSync(
     path.join(parameterPath, `index.ts`),
-    `export * from "./${baseName}.tsx";`,
+    `export * from "./${parameterName}.tsx";`,
   );
 }

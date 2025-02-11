@@ -19,6 +19,9 @@ import { match, P } from "ts-pattern";
 
 import { ProseContext } from "../prose";
 import { ParameterDeclaration } from "./ParameterDeclaration";
+import { ParameterHover } from "./ParameterHover";
+import { ParameterIdent } from "./ParameterIdent";
+import { ParameterType } from "./ParameterType";
 
 interface ParameterProps {
   flatten?: boolean;
@@ -162,7 +165,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
         class="grid col-start-2 row-start-3 col-end-3 mt-3 b-l"
       >
         <For each={detailKeyArray()}>
-          {(key) => <>{details.get(key)?.()}</>}
+          {(key) => <Parameter>{details.get(key)?.()}</Parameter>}
         </For>
       </Collapsible.Content>
     </Collapsible>
@@ -174,10 +177,18 @@ Parameter.Details = function Details(props: ParentProps) {
 
   const uniqueId = createUniqueId();
 
-  register(uniqueId, () => <Parameter>{props.children}</Parameter>);
+  register(uniqueId, () => props.children);
   createEffect(() => {
     onCleanup(() => unregister(uniqueId));
   });
 
   return null;
 };
+
+Parameter.Ident = ParameterIdent;
+
+Parameter.Type = ParameterType;
+
+Parameter.Declaration = ParameterDeclaration;
+
+Parameter.Hover = ParameterHover;
