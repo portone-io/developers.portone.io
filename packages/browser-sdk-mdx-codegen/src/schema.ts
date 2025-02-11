@@ -47,7 +47,7 @@ export type ParameterType =
       transactionType?: string;
       properties: Record<string, Parameter>;
     }
-  | { type: "unknown" };
+  | { type: "json" };
 
 export interface EnumVariant {
   description?: string;

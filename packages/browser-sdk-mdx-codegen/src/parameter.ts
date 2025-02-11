@@ -274,7 +274,7 @@ function generateTypeDetails({
       { type: "integer" },
       { type: "boolean" },
       { type: "emptyObject" },
-      { type: "unknown" },
+      { type: "json" },
       () => {},
     )
     .exhaustive();
@@ -296,17 +296,17 @@ function generateInlineType({
       { type: "integer" },
       { type: "boolean" },
       { type: "emptyObject" },
-      { type: "unknown" },
+      { type: "json" },
       (param) => {
         const typeMap = {
           string: "string",
           integer: "number",
           boolean: "boolean",
-          emptyObject: "object",
-          unknown: "any",
+          emptyObject: "{}",
+          json: "json",
         };
         writer.writeLine(
-          `<ParameterType>${typeMap[param.type]}</ParameterType>`,
+          `<ParameterType>{"${typeMap[param.type]}"}</ParameterType>`,
         );
       },
     )
@@ -454,9 +454,9 @@ export function generateParameter({
   const imports = new Set<string>();
   const writer = TypescriptWriter();
 
-  imports.add('import Parameter from "~/components/parameter/Parameter";');
+  imports.add('import Parameter from "~/components/parameter/Parameter.tsx";');
   imports.add(
-    'import { ParameterType } from "~/components/parameter/ParameterType";',
+    'import { ParameterType } from "~/components/parameter/ParameterType.tsx";',
   );
 
   writer.writeLine("interface TypeDefProps {");
@@ -521,7 +521,7 @@ export function generateParameter({
       { type: "array" },
       () => {
         imports.add(
-          'import { ParameterHover } from "~/components/parameter/ParameterHover";',
+          'import { ParameterHover } from "~/components/parameter/ParameterHover.tsx";',
         );
         writer.writeLine("<ParameterHover content={<TypeDef {...props} />}>");
         writer.indent();
