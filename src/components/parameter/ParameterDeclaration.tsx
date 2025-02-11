@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { type JSXElement, type ParentProps, Show } from "solid-js";
 
 import { ParameterIdent } from "./ParameterIdent";
-import { ParameterType } from "./ParameterType";
 
 type ParameterDeclarationProps = {
   class?: string;
@@ -21,7 +20,7 @@ export function ParameterDeclaration(props: ParameterDeclarationProps) {
           {": "}
         </span>
       </Show>
-      <ParameterType>{props.type}</ParameterType>
+      {props.type}
     </span>
   );
 }

@@ -48,8 +48,7 @@ function generateIndex(
 
   for (const [key, _] of Object.entries(resourceMap)) {
     const resourcePath = key;
-    const componentName = path.basename(resourcePath);
-    const relativePath = `./${resourcePath}/${componentName}`;
+    const relativePath = `./${path.join(resourcePath, "index.ts")}`;
 
     writer.writeLine(`"#/resources/${resourcePath}": {`);
     writer.indent();

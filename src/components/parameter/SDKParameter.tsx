@@ -17,19 +17,19 @@ interface SDKParameterProps {
 }
 
 export function SDKParameter(props: SDKParameterProps) {
-  const component = createMemo(() => {
+  const option = createMemo(() => {
     if (props.mode === undefined || props.mode === "full") {
-      return browserSdk[props.path].typeDef;
+      return "typeDef";
     }
     if (props.mode === "details-only") {
-      return browserSdk[props.path].details;
+      return "details";
     }
-    return browserSdk[props.path].type;
+    return "type";
   });
 
   return (
     <Dynamic
-      component={component()}
+      component={browserSdk[props.path][option()]}
       ident={props.ident}
       optional={props.optional}
     />
