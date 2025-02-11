@@ -1227,7 +1227,17 @@ resources:
         EN_US:
           description: 영어
         ZH_CN:
-          description: 중국어
+          description: 중국어 (중국 본토)
+        ZH_TW:
+          description: 중국어 (대만)
+        JA_JP:
+          description: 일본어
+        RU_RU:
+          description: 러시아어
+        TH_TH:
+          description: 타이어
+        VI_VN:
+          description: 베트남어
       description: |
         **결제창 언어** (지원되지 않은 일부 PG사 존재)
     OfferPeriod:
@@ -1377,6 +1387,7 @@ resources:
         KPN: {}
         KCP_V2: {}
         HYPHEN: {}
+        EXIMBAY_V2: {}
     IsTestChannel:
       type: boolean
       deprecated: true
@@ -1438,6 +1449,10 @@ resources:
           type: string
           optional: true
           description: "**상품 태그**"
+        link:
+          type: string
+          optional: true
+          description: "**상품 판매 URL**"
     ProductType:
       type: enum
       variants:
@@ -2921,10 +2936,207 @@ resources:
         Hyphen:
           type: object
           description: "하이픈 bypass 파라미터"
-          name: HyphenPaymentBypass
+          name: HyphenBypass
           properties:
             designCd:
               type: string
+              optional: true
+        EximbayV2:
+          type: object
+          description: "엑심베이 V2 bypass 파라미터"
+          name: EximbayV2Bypass
+          properties:
+            payment:
+              type: object
+              description: |
+                결제 정보
+              optional: true
+              properties:
+                payment_method:
+                  type: string
+                  description: |
+                    결제수단 다이렉트
+                  optional: true
+                multi_payment_method:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    결제수단 다이렉트 목록
+                  optional: true
+            merchant:
+              type: object
+              description: |
+                상점 정보
+              optional: true
+              properties:
+                shop:
+                  type: string
+                  description: |
+                    상점명
+                  optional: true
+                partner_code:
+                  type: string
+                  description: |
+                    파트너 코드
+                  optional: true
+            tax:
+              type: object
+              description: |
+                세금 정보
+              optional: true
+              properties:
+                receipt_status:
+                  type: enum
+                  variants:
+                    Y: {}
+                    N: {}
+                  description: |
+                    현금영수증 발급 여부
+                  optional: true
+                amount_service_fee:
+                  type: string
+                  description: |
+                    봉사료
+                  optional: true
+            surcharge:
+              type: array
+              description: |
+                최대 3개의 추가 비용 목록
+              optional: true
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: |
+                      항목명
+                    optional: true
+                  quantity:
+                    type: string
+                    description: |
+                      수량
+                    optional: true
+                  unit_price:
+                    type: string
+                    description: |
+                      단가 (음수 가능)
+                    optional: true
+            ship_to:
+              type: object
+              description: |
+                배송지 정보
+              optional: true
+              properties:
+                city:
+                  type: string
+                  description: |
+                    배송지 도시
+                  optional: true
+                country:
+                  type: string
+                  description: |
+                    배송지 국가 (ISO 3166 두 자리 국가 코드)
+                  optional: true
+                first_name:
+                  type: string
+                  description: |
+                    수신인의 성을 제외한 이름
+                  optional: true
+                last_name:
+                  type: string
+                  description: |
+                    수신인의 성
+                  optional: true
+                phone_number:
+                  type: string
+                  description: |
+                    수신인 전화번호
+                  optional: true
+                postal_code:
+                  type: string
+                  description: |
+                    배송지 우편번호
+                  optional: true
+                state:
+                  type: string
+                  description: |
+                    배송지가 미국 혹은 캐나다인 경우, 배송지 주 정보
+                  optional: true
+                street1:
+                  type: string
+                  description: |
+                    배송지 상세 주소
+                  optional: true
+            bill_to:
+              type: object
+              description: |
+                청구지 정보
+              optional: true
+              properties:
+                city:
+                  type: string
+                  description: |
+                    청구지 도시
+                  optional: true
+                country:
+                  type: string
+                  description: |
+                    청구지 국가 (ISO 3166 두 자리 국가 코드)
+                  optional: true
+                first_name:
+                  type: string
+                  description: |
+                    청구 카드 명의자의 성을 제외한 이름
+                  optional: true
+                last_name:
+                  type: string
+                  description: |
+                    청구 카드 명의자의 성
+                  optional: true
+                phone_number:
+                  type: string
+                  description: |
+                    청구 카드 명의자의 전화번호
+                  optional: true
+                postal_code:
+                  type: string
+                  description: |
+                    청구지 우편번호
+                  optional: true
+                state:
+                  type: string
+                  description: |
+                    청구지가 미국 혹은 캐나다인 경우, 청구지 주 정보
+                  optional: true
+                street1:
+                  type: string
+                  description: |
+                    청구지 상세 주소
+                  optional: true
+            settings:
+              type: object
+              description: |
+                설정 정보
+              optional: true
+              properties:
+                call_from_app:
+                  type: enum
+                  variants:
+                    Y: {}
+                    N: {}
+                  description: |
+                    인앱 웹뷰 여부
+                  optional: true
+                issuer_country:
+                  type: string
+                  description: |
+                    해외 결제 가맹점에서 국내 결제를 사용할 경우 `KR`
+                  optional: true
+            virtualaccount_expiry_date:
+              type: string
+              description: |
+                입금 만료 일자 (yyyyMMddHH)
               optional: true
       PaymentBypass:
         type: object
@@ -2983,6 +3195,10 @@ resources:
             type: resourceRef
             optional: true
             $ref: "#/resources/entity/bypass/payment/Hyphen"
+          eximbay_v2:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/payment/EximbayV2"
   exception:
     CheckoutServiceErrorCode:
       type: enum
@@ -3508,6 +3724,13 @@ resources:
           type: string
           description: |
             프로모션 그룹 ID
+        promotionIds:
+          optional: true
+          type: array
+          items:
+            type: string
+          description: |
+            프로모션 ID 목록
     IdentityVerificationRequest:
       type: object
       properties:
