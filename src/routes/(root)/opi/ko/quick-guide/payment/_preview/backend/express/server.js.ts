@@ -75,7 +75,7 @@ async function syncPayment(paymentId) {
   ${({ section }) => section("server:complete-payment:get-payment")`
   let actualPayment
   try {
-    actualPayment = await portone.payment.getPayment(paymentId)
+    actualPayment = await portone.payment.getPayment({ paymentId })
   } catch (e) {
     if (e instanceof PortOne.Errors.PortOneError) return false
     throw e
