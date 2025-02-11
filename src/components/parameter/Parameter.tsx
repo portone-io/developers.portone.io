@@ -133,7 +133,6 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
       onOpenChange={setExpanded}
       as="div"
       class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-center text-sm"
-      forceMount
     >
       <div
         class={clsx("col-start-1 row-start-1 h-4 w-4", isFlatten() && "-ml-4")}
@@ -160,7 +159,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
       </div>
       <Collapsible.Content
         as="div"
-        class="grid col-start-2 row-start-3 col-end-3 mt-3 b-l [&:not([data-expanded])]:hidden"
+        class="grid col-start-2 row-start-3 col-end-3 mt-3 b-l"
       >
         <For each={detailKeyArray()}>
           {(key) => <>{details.get(key)?.()}</>}
