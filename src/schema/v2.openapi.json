@@ -222,7 +222,7 @@
             "x-portone-title": "성공 응답"
           },
           "400": {
-            "description": "* `PlatformInvalidSettlementFormulaError`\n* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -8860,6 +8860,406 @@
           "$ref": "#/components/schemas/GetBankInfosError"
         }
       }
+    },
+    "/platform/partners/member-company-connect/{id}": {
+      "post": {
+        "summary": "파트너 연동 사업자 연동",
+        "description": "파트너 연동 사업자 연동\n\n파트너를 연동 사업자로 연동합니다.",
+        "operationId": "connectPartnerMemberCompany",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "파트너 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "파트너 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 파트너 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 파트너 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformPartnerTypeIsNotBusinessError`: 파트너 유형이 사업자가 아닌 경우\n* `PlatformPartnerTaxationTypeIsSimpleError`: 파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우\n* `PlatformMemberCompanyNotConnectableStatusError`: 파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우\n* `PlatformBtxNotEnabledError`: BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformPartnerScheduleExistsError`: 파트너 수정 예약 건이 존재하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "* `PlatformExternalApiFailedError`: 외부 api 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 연동 사업자 연동",
+        "x-portone-description": "파트너를 연동 사업자로 연동합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+        }
+      }
+    },
+    "/platform/partners/member-company-disconnect/{id}": {
+      "post": {
+        "summary": "파트너 연동 사업자 연동 해제",
+        "description": "파트너 연동 사업자 연동 해제\n\n파트너를 연동 사업자에서 연동 해제합니다.",
+        "operationId": "disconnectPartnerMemberCompany",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "파트너 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "파트너 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 파트너 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 파트너 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformPartnerTypeIsNotBusinessError`: 파트너 유형이 사업자가 아닌 경우\n* `PlatformPartnerTaxationTypeIsSimpleError`: 파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우\n* `PlatformMemberCompanyNotConnectedError`: 파트너가 연동 사업자로 연동 되어있지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우\n* `PlatformBtxNotEnabledError`: BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PlatformOngoingTaxInvoiceExistsError`: 진행 중인 세금계산서가 존재하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "* `PlatformExternalApiFailedError`: 외부 api 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 연동 사업자 연동 해제",
+        "x-portone-description": "파트너를 연동 사업자에서 연동 해제합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+        }
+      }
+    },
+    "/platform/partners/member-company-connect": {
+      "post": {
+        "summary": "파트너 연동 사업자 일괄 연동",
+        "description": "파트너 연동 사업자 일괄 연동\n\n파트너들을 연동 사업자로 일괄 연동합니다.",
+        "operationId": "connectBulkPartnerMemberCompany",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 일괄 작업 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 일괄 작업 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우\n* `PlatformBtxNotEnabledError`: BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`\n* `PlatformTargetPartnerNotFoundError`: 처리 대상 파트너가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "* `PlatformExternalApiFailedError`: 외부 api 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 연동 사업자 일괄 연동",
+        "x-portone-description": "파트너들을 연동 사업자로 일괄 연동합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+        }
+      }
+    },
+    "/platform/partners/member-company-disconnect": {
+      "post": {
+        "summary": "파트너 연동 사업자 일괄 연동 해제",
+        "description": "파트너 연동 사업자 일괄 연동 해제\n\n파트너들을 연동 사업자에서 일괄 연동 해제합니다.",
+        "operationId": "disconnectBulkPartnerMemberCompany",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 일괄 작업 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 일괄 작업 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우\n* `PlatformBtxNotEnabledError`: BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PlatformPartnerNotFoundError`\n* `PlatformTargetPartnerNotFoundError`: 처리 대상 파트너가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "* `PlatformExternalApiFailedError`: 외부 api 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.partner",
+        "x-portone-title": "파트너 연동 사업자 일괄 연동 해제",
+        "x-portone-description": "파트너들을 연동 사업자에서 일괄 연동 해제합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+        }
+      }
     }
   },
   "components": {
@@ -8928,30 +9328,6 @@
         },
         "x-portone-title": "결제가 이미 완료되었거나 대기중인 경우",
         "x-portone-status-code": 409
-      },
-      "AmountExceededType": {
-        "title": "AmountExceededType",
-        "type": "string",
-        "enum": [
-          "DISCOUNT_THAN_ORDER",
-          "DISCOUNT_TAX_FREE_THAN_DISCOUNT",
-          "DISCOUNT_TAX_FREE_THAN_ORDER_TAX_FREE",
-          "PAYMENT_TAX_FREE_THAN_PAYMENT"
-        ],
-        "x-portone-enum": {
-          "DISCOUNT_THAN_ORDER": {
-            "title": "할인금액이 주문금액을 초과"
-          },
-          "DISCOUNT_TAX_FREE_THAN_DISCOUNT": {
-            "title": "면세 할인금액이 할인금액을 초과"
-          },
-          "DISCOUNT_TAX_FREE_THAN_ORDER_TAX_FREE": {
-            "title": "면세 할인금액이 면세 주문금액을 초과"
-          },
-          "PAYMENT_TAX_FREE_THAN_PAYMENT": {
-            "title": "면세 결제금액이 결제금액을 초과"
-          }
-        }
       },
       "Analytics": {
         "title": "Analytics",
@@ -10809,6 +11185,10 @@
           },
           "graphqlId": {
             "type": "string"
+          },
+          "externalId": {
+            "type": "string",
+            "title": "외부 공개용 아이디"
           },
           "brn": {
             "type": "string",
@@ -15241,6 +15621,24 @@
         },
         "x-portone-title": "채널 정보"
       },
+      "ChannelDuplicateNameError": {
+        "title": "이름 중복이 허용되지 않는데 이름이 겹치는 대상이 있는 경우",
+        "description": "이름 중복이 허용되지 않는데 이름이 겹치는 대상이 있는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "이름 중복이 허용되지 않는데 이름이 겹치는 대상이 있는 경우",
+        "x-portone-status-code": 409
+      },
       "ChannelGroupSummary": {
         "title": "채널 그룹 정보",
         "description": "채널 그룹 정보",
@@ -15646,6 +16044,143 @@
           }
         },
         "x-portone-title": "구매 확정"
+      },
+      "ConnectBulkPartnerMemberCompanyBody": {
+        "title": "파트너 연동 사업자 일괄 연동 요청 정보",
+        "description": "파트너 연동 사업자 일괄 연동 요청 정보\n\n파트너들을 연동 사업자로 일괄 연동합니다.",
+        "type": "object",
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/PlatformPartnerFilterInput",
+            "title": "연동 사업자로 일괄 연동할 파트너 조건 필터"
+          }
+        },
+        "x-portone-title": "파트너 연동 사업자 일괄 연동 요청 정보",
+        "x-portone-description": "파트너들을 연동 사업자로 일괄 연동합니다."
+      },
+      "ConnectBulkPartnerMemberCompanyError": {
+        "title": "ConnectBulkPartnerMemberCompanyError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformBtxNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformExternalApiFailedError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformTargetPartnerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PLATFORM_BTX_NOT_ENABLED": "#/components/schemas/PlatformBtxNotEnabledError",
+            "PLATFORM_EXTERNAL_API_FAILED": "#/components/schemas/PlatformExternalApiFailedError",
+            "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
+            "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
+            "PLATFORM_TARGET_PARTNER_NOT_FOUND": "#/components/schemas/PlatformTargetPartnerNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ConnectBulkPartnerMemberCompanyResponse": {
+        "title": "파트너 연동 사업자 일괄 연동 요청 응답",
+        "description": "파트너 연동 사업자 일괄 연동 요청 응답",
+        "type": "object",
+        "required": [
+          "bulkTask"
+        ],
+        "properties": {
+          "bulkTask": {
+            "$ref": "#/components/schemas/PlatformBulkTask"
+          }
+        },
+        "x-portone-title": "파트너 연동 사업자 일괄 연동 요청 응답"
+      },
+      "ConnectPartnerMemberCompanyError": {
+        "title": "ConnectPartnerMemberCompanyError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformBtxNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformExternalApiFailedError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformMemberCompanyNotConnectableStatusError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerScheduleExistsError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerTaxationTypeIsSimpleError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerTypeIsNotBusinessError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PLATFORM_BTX_NOT_ENABLED": "#/components/schemas/PlatformBtxNotEnabledError",
+            "PLATFORM_EXTERNAL_API_FAILED": "#/components/schemas/PlatformExternalApiFailedError",
+            "PLATFORM_MEMBER_COMPANY_NOT_CONNECTABLE_STATUS": "#/components/schemas/PlatformMemberCompanyNotConnectableStatusError",
+            "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
+            "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
+            "PLATFORM_PARTNER_SCHEDULE_EXISTS": "#/components/schemas/PlatformPartnerScheduleExistsError",
+            "PLATFORM_PARTNER_TAXATION_TYPE_IS_SIMPLE": "#/components/schemas/PlatformPartnerTaxationTypeIsSimpleError",
+            "PLATFORM_PARTNER_TYPE_IS_NOT_BUSINESS": "#/components/schemas/PlatformPartnerTypeIsNotBusinessError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ConnectPartnerMemberCompanyResponse": {
+        "title": "파트너 연동 사업자 연동 요청 응답",
+        "description": "파트너 연동 사업자 연동 요청 응답",
+        "type": "object",
+        "required": [
+          "partner"
+        ],
+        "properties": {
+          "partner": {
+            "$ref": "#/components/schemas/PlatformPartner"
+          }
+        },
+        "x-portone-title": "파트너 연동 사업자 연동 요청 응답"
       },
       "Country": {
         "title": "국가",
@@ -16751,6 +17286,48 @@
         "properties": {
           "transfer": {
             "$ref": "#/components/schemas/PlatformOrderTransfer"
+          }
+        }
+      },
+      "CreatePaymentReconciliationChannelError": {
+        "title": "CreatePaymentReconciliationChannelError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ChannelDuplicateNameError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/NotAllowedPgMerchantIdError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "DUPLICATE_CHANNEL_NAME": "#/components/schemas/ChannelDuplicateNameError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "NOT_ALLOWED_PG_MERCHANT_ID": "#/components/schemas/NotAllowedPgMerchantIdError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "CreatePaymentReconciliationChannelResponse": {
+        "title": "CreatePaymentReconciliationChannelResponse",
+        "type": "object",
+        "required": [
+          "channel"
+        ],
+        "properties": {
+          "channel": {
+            "$ref": "#/components/schemas/PaymentReconciliationChannel"
           }
         }
       },
@@ -19268,6 +19845,40 @@
         },
         "x-portone-title": "빌링키 삭제 성공 응답"
       },
+      "DeletePaymentReconciliationChannelError": {
+        "title": "DeletePaymentReconciliationChannelError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ChannelNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/IncludedInChannelGroupError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "CHANNEL_NOT_FOUND": "#/components/schemas/ChannelNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INCLUDED_IN_CHANNEL_GROUP": "#/components/schemas/IncludedInChannelGroupError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "DeletePaymentReconciliationChannelResponse": {
+        "title": "DeletePaymentReconciliationChannelResponse",
+        "type": "object"
+      },
       "DeletePlatformTransferError": {
         "title": "DeletePlatformTransferError",
         "oneOf": [
@@ -19437,6 +20048,143 @@
           }
         },
         "x-portone-title": "배송 완료"
+      },
+      "DisconnectBulkPartnerMemberCompanyBody": {
+        "title": "파트너 연동 사업자 일괄 연동 해제 요청 정보",
+        "description": "파트너 연동 사업자 일괄 연동 해제 요청 정보\n\n파트너들을 연동 사업자에서 일괄 연동 해제합니다.",
+        "type": "object",
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/PlatformPartnerFilterInput",
+            "title": "연동 사업자에서 일괄 연동 해제할 파트너 조건 필터"
+          }
+        },
+        "x-portone-title": "파트너 연동 사업자 일괄 연동 해제 요청 정보",
+        "x-portone-description": "파트너들을 연동 사업자에서 일괄 연동 해제합니다."
+      },
+      "DisconnectBulkPartnerMemberCompanyError": {
+        "title": "DisconnectBulkPartnerMemberCompanyError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformBtxNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformExternalApiFailedError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformTargetPartnerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PLATFORM_BTX_NOT_ENABLED": "#/components/schemas/PlatformBtxNotEnabledError",
+            "PLATFORM_EXTERNAL_API_FAILED": "#/components/schemas/PlatformExternalApiFailedError",
+            "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
+            "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
+            "PLATFORM_TARGET_PARTNER_NOT_FOUND": "#/components/schemas/PlatformTargetPartnerNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "DisconnectBulkPartnerMemberCompanyResponse": {
+        "title": "파트너 연동 사업자 일괄 연동 해제 요청 응답",
+        "description": "파트너 연동 사업자 일괄 연동 해제 요청 응답",
+        "type": "object",
+        "required": [
+          "bulkTask"
+        ],
+        "properties": {
+          "bulkTask": {
+            "$ref": "#/components/schemas/PlatformBulkTask"
+          }
+        },
+        "x-portone-title": "파트너 연동 사업자 일괄 연동 해제 요청 응답"
+      },
+      "DisconnectPartnerMemberCompanyError": {
+        "title": "DisconnectPartnerMemberCompanyError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformBtxNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformExternalApiFailedError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformMemberCompanyNotConnectedError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformOngoingTaxInvoiceExistsError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerTaxationTypeIsSimpleError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformPartnerTypeIsNotBusinessError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PLATFORM_BTX_NOT_ENABLED": "#/components/schemas/PlatformBtxNotEnabledError",
+            "PLATFORM_EXTERNAL_API_FAILED": "#/components/schemas/PlatformExternalApiFailedError",
+            "PLATFORM_MEMBER_COMPANY_NOT_CONNECTED": "#/components/schemas/PlatformMemberCompanyNotConnectedError",
+            "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
+            "PLATFORM_ONGOING_TAX_INVOICE_EXISTS": "#/components/schemas/PlatformOngoingTaxInvoiceExistsError",
+            "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
+            "PLATFORM_PARTNER_TAXATION_TYPE_IS_SIMPLE": "#/components/schemas/PlatformPartnerTaxationTypeIsSimpleError",
+            "PLATFORM_PARTNER_TYPE_IS_NOT_BUSINESS": "#/components/schemas/PlatformPartnerTypeIsNotBusinessError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "DisconnectPartnerMemberCompanyResponse": {
+        "title": "파트너 연동 사업자 연동 해제 요청 응답",
+        "description": "파트너 연동 사업자 연동 해제 요청 응답",
+        "type": "object",
+        "required": [
+          "partner"
+        ],
+        "properties": {
+          "partner": {
+            "$ref": "#/components/schemas/PlatformPartner"
+          }
+        },
+        "x-portone-title": "파트너 연동 사업자 연동 해제 요청 응답"
       },
       "DiscountAmountExceedsTotalAmountError": {
         "title": "프로모션 할인 금액이 결제 시도 금액 이상인 경우",
@@ -19943,28 +20691,48 @@
           "KB_APP",
           "ALIPAY",
           "HYPHEN",
-          "TMONEY"
+          "TMONEY",
+          "PAYPAL",
+          "SMILEPAY",
+          "MIR",
+          "WECHAT",
+          "LINEPAY",
+          "KLARNA",
+          "GRABPAY",
+          "SHOPEEPAY",
+          "JKOPAY",
+          "PAYPAY"
         ],
         "x-portone-title": "간편 결제사",
         "x-portone-enum": {
+          "MIR": {},
           "KB_APP": {},
-          "PAYCO": {},
+          "SMILEPAY": {},
+          "KLARNA": {},
           "NAVERPAY": {},
           "CHAI": {},
+          "GRABPAY": {},
           "TOSS_BRANDPAY": {},
+          "PAYPAL": {},
           "LGPAY": {},
+          "JKOPAY": {},
           "SAMSUNGPAY": {},
           "KPAY": {},
+          "SHOPEEPAY": {},
           "SKPAY": {},
-          "KAKAOPAY": {},
           "ALIPAY": {},
           "LPAY": {},
+          "LINEPAY": {},
+          "PAYCO": {},
           "PINPAY": {},
+          "WECHAT": {},
           "TMONEY": {},
           "TOSSPAY": {},
           "SSGPAY": {},
           "APPLEPAY": {},
-          "HYPHEN": {}
+          "HYPHEN": {},
+          "PAYPAY": {},
+          "KAKAOPAY": {}
         }
       },
       "FailedIdentityVerification": {
@@ -22581,6 +23349,44 @@
           }
         }
       },
+      "GetPaymentReconciliationChannelError": {
+        "title": "GetPaymentReconciliationChannelError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ChannelNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "CHANNEL_NOT_FOUND": "#/components/schemas/ChannelNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetPaymentReconciliationChannelResponse": {
+        "title": "GetPaymentReconciliationChannelResponse",
+        "type": "object",
+        "required": [
+          "channel"
+        ],
+        "properties": {
+          "channel": {
+            "$ref": "#/components/schemas/PaymentReconciliationChannel"
+          }
+        }
+      },
       "GetPaymentReconciliationSettlementSummariesBody": {
         "title": "GetPaymentReconciliationSettlementSummariesBody",
         "type": "object",
@@ -22887,6 +23693,12 @@
         "properties": {
           "dateCondition": {
             "$ref": "#/components/schemas/ReconciliationDateConditionInput"
+          },
+          "searchCondition": {
+            "$ref": "#/components/schemas/PaymentReconciliationSearchConditionInput"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/PaymentReconciliationFilterInput"
           },
           "size": {
             "type": "integer",
@@ -25192,16 +26004,35 @@
         },
         "x-portone-title": "인증된 고객 정보"
       },
+      "IncludedInChannelGroupError": {
+        "title": "삭제하려는 채널이 채널 그룹에 포함되어 있는 경우",
+        "description": "삭제하려는 채널이 채널 그룹에 포함되어 있는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "삭제하려는 채널이 채널 그룹에 포함되어 있는 경우",
+        "x-portone-status-code": 409
+      },
       "InstantBillingKeyPaymentMethodInput": {
         "title": "빌링키 발급 시 결제 수단 입력 양식",
-        "description": "빌링키 발급 시 결제 수단 입력 양식",
+        "description": "빌링키 발급 시 결제 수단 입력 양식\n\n`card`를 반드시 입력해 주세요.",
         "type": "object",
         "properties": {
           "card": {
             "$ref": "#/components/schemas/InstantBillingKeyPaymentMethodInputCard"
           }
         },
-        "x-portone-title": "빌링키 발급 시 결제 수단 입력 양식"
+        "x-portone-title": "빌링키 발급 시 결제 수단 입력 양식",
+        "x-portone-description": "`card`를 반드시 입력해 주세요."
       },
       "InstantBillingKeyPaymentMethodInputCard": {
         "title": "카드 수단 정보 입력 양식",
@@ -26490,6 +27321,24 @@
         },
         "x-portone-title": "프로모션에 의해 조정된 취소 금액이 음수인 경우",
         "x-portone-status-code": 400
+      },
+      "NotAllowedPgMerchantIdError": {
+        "title": "포트원에서 허용되지 않는 PG 상점 아이디로 채널 등록을 시도했을 경우",
+        "description": "포트원에서 허용되지 않는 PG 상점 아이디로 채널 등록을 시도했을 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "포트원에서 허용되지 않는 PG 상점 아이디로 채널 등록을 시도했을 경우",
+        "x-portone-status-code": 409
       },
       "OneLineAddress": {
         "title": "한 줄 형식 주소",
@@ -28415,6 +29264,9 @@
             "$ref": "#/components/schemas/PaymentMethodCard"
           },
           {
+            "$ref": "#/components/schemas/PaymentMethodConvenienceStore"
+          },
+          {
             "$ref": "#/components/schemas/PaymentMethodEasyPay"
           },
           {
@@ -28434,6 +29286,7 @@
           "propertyName": "type",
           "mapping": {
             "PaymentMethodCard": "#/components/schemas/PaymentMethodCard",
+            "PaymentMethodConvenienceStore": "#/components/schemas/PaymentMethodConvenienceStore",
             "PaymentMethodEasyPay": "#/components/schemas/PaymentMethodEasyPay",
             "PaymentMethodGiftCertificate": "#/components/schemas/PaymentMethodGiftCertificate",
             "PaymentMethodMobile": "#/components/schemas/PaymentMethodMobile",
@@ -28445,6 +29298,9 @@
         "x-portone-discriminator": {
           "PaymentMethodCard": {
             "title": "결제수단 카드 정보"
+          },
+          "PaymentMethodConvenienceStore": {
+            "title": "편의점 결제 상세 정보"
           },
           "PaymentMethodEasyPay": {
             "title": "간편 결제 상세 정보"
@@ -28492,6 +29348,20 @@
           }
         },
         "x-portone-title": "결제수단 카드 정보"
+      },
+      "PaymentMethodConvenienceStore": {
+        "title": "편의점 결제 상세 정보",
+        "description": "편의점 결제 상세 정보",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "편의점 결제 상세 정보"
       },
       "PaymentMethodEasyPay": {
         "title": "간편 결제 상세 정보",
@@ -28660,9 +29530,11 @@
           "VIRTUAL_ACCOUNT",
           "GIFT_CERTIFICATE",
           "MOBILE",
-          "EASY_PAY"
+          "EASY_PAY",
+          "CONVENIENCE_STORE"
         ],
         "x-portone-enum": {
+          "CONVENIENCE_STORE": {},
           "GIFT_CERTIFICATE": {},
           "VIRTUAL_ACCOUNT": {},
           "MOBILE": {},
@@ -28856,6 +29728,10 @@
             "type": "integer",
             "format": "int32",
             "title": "주문 수량"
+          },
+          "link": {
+            "type": "string",
+            "title": "판매 링크"
           }
         },
         "x-portone-title": "상품 정보"
@@ -28943,6 +29819,156 @@
           },
           "POST_CORRECTION": {
             "title": "후보정"
+          }
+        }
+      },
+      "PaymentReconciliationChannel": {
+        "title": "거래대사용 채널",
+        "description": "거래대사용 채널",
+        "type": "object",
+        "required": [
+          "channelKey",
+          "channelName",
+          "pgMerchantId",
+          "credential"
+        ],
+        "properties": {
+          "channelKey": {
+            "type": "string",
+            "title": "채널 키"
+          },
+          "channelName": {
+            "type": "string",
+            "title": "채널 이름"
+          },
+          "pgMerchantId": {
+            "type": "string",
+            "title": "PG사 상점 아이디"
+          },
+          "credential": {
+            "$ref": "#/components/schemas/PaymentReconciliationChannelCredential",
+            "title": "PG사별 크레덴셜"
+          },
+          "taxationType": {
+            "$ref": "#/components/schemas/TaxationType",
+            "title": "과세 구분"
+          }
+        },
+        "x-portone-title": "거래대사용 채널"
+      },
+      "PaymentReconciliationChannelCredential": {
+        "title": "PG사별 크레덴셜",
+        "description": "PG사별 크레덴셜",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationDanalCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationEximbayCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationHectoCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationHyphenCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationInicisCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationKakaopayCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationKcpCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationKpnCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationKsnetCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationNaverpayCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationNicepayCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationPaycoCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationTosspayCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationTosspaymentsCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationUplusCredential"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "pgCompany",
+          "mapping": {
+            "DANAL": "#/components/schemas/PaymentReconciliationDanalCredential",
+            "EXIMBAY": "#/components/schemas/PaymentReconciliationEximbayCredential",
+            "HECTO": "#/components/schemas/PaymentReconciliationHectoCredential",
+            "HYPHEN": "#/components/schemas/PaymentReconciliationHyphenCredential",
+            "INICIS": "#/components/schemas/PaymentReconciliationInicisCredential",
+            "KAKAOPAY": "#/components/schemas/PaymentReconciliationKakaopayCredential",
+            "KCP": "#/components/schemas/PaymentReconciliationKcpCredential",
+            "KPN": "#/components/schemas/PaymentReconciliationKpnCredential",
+            "KSNET": "#/components/schemas/PaymentReconciliationKsnetCredential",
+            "NAVERPAY": "#/components/schemas/PaymentReconciliationNaverpayCredential",
+            "NICEPAY": "#/components/schemas/PaymentReconciliationNicepayCredential",
+            "PAYCO": "#/components/schemas/PaymentReconciliationPaycoCredential",
+            "TOSSPAY": "#/components/schemas/PaymentReconciliationTosspayCredential",
+            "TOSSPAYMENTS": "#/components/schemas/PaymentReconciliationTosspaymentsCredential",
+            "UPLUS": "#/components/schemas/PaymentReconciliationUplusCredential"
+          }
+        },
+        "x-portone-title": "PG사별 크레덴셜",
+        "x-portone-discriminator": {
+          "PAYCO": {},
+          "NAVERPAY": {},
+          "HECTO": {},
+          "TOSSPAY": {},
+          "INICIS": {},
+          "KPN": {},
+          "DANAL": {},
+          "NICEPAY": {},
+          "TOSSPAYMENTS": {},
+          "KAKAOPAY": {},
+          "EXIMBAY": {},
+          "UPLUS": {},
+          "HYPHEN": {},
+          "KSNET": {},
+          "KCP": {}
+        }
+      },
+      "PaymentReconciliationChannelInput": {
+        "title": "PaymentReconciliationChannelInput",
+        "type": "object",
+        "required": [
+          "channelName",
+          "pgMerchantId",
+          "credential"
+        ],
+        "properties": {
+          "channelName": {
+            "type": "string",
+            "title": "채널 이름"
+          },
+          "pgMerchantId": {
+            "type": "string",
+            "title": "PG사 상점 아이디"
+          },
+          "credential": {
+            "$ref": "#/components/schemas/PaymentReconciliationChannelCredential",
+            "title": "PG사별 크레덴셜"
+          },
+          "taxationType": {
+            "$ref": "#/components/schemas/TaxationType",
+            "title": "과세 구분"
           }
         }
       },
@@ -29101,6 +30127,19 @@
           }
         }
       },
+      "PaymentReconciliationDanalCredential": {
+        "title": "PaymentReconciliationDanalCredential",
+        "type": "object",
+        "required": [
+          "pgCompany"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          }
+        }
+      },
       "PaymentReconciliationExcelFileFilterInput": {
         "title": "거래대사 엑셀 파일 다운로드 필터 목록",
         "description": "거래대사 엑셀 파일 다운로드 필터 목록\n\n필드 중복으로 적용됩니다.",
@@ -29159,6 +30198,111 @@
         },
         "x-portone-title": "거래대사 엑셀 파일 다운로드 필터 목록",
         "x-portone-description": "필드 중복으로 적용됩니다."
+      },
+      "PaymentReconciliationEximbayCredential": {
+        "title": "PaymentReconciliationEximbayCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "secretKey"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "secretKey": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentReconciliationFilterInput": {
+        "title": "거래대사 조회시 적용가능한 필터 목록",
+        "description": "거래대사 조회시 적용가능한 필터 목록\n\n필드 중복으로 적용됩니다.",
+        "type": "object",
+        "properties": {
+          "storeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "거래대사 하위 가맹점 아이디 필터"
+          },
+          "pgSpecifiers": {
+            "title": "거래대사 결제사(PG) 식별자 필터",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationPgSpecifier"
+            }
+          },
+          "paymentMethodTypes": {
+            "title": "거래대사 결제 수단 필터",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationPaymentMethodType"
+            }
+          },
+          "paymentReconciliationStatuses": {
+            "title": "거래대사 대사 상태 필터",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentReconciliationStatus"
+            }
+          },
+          "actionTypes": {
+            "title": "거래대사 결제 상태 필터",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentReconciliationActionType"
+            }
+          },
+          "transactionCurrencies": {
+            "title": "거래대사 결제 통화 필터",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Currency"
+            }
+          },
+          "settlementCurrencies": {
+            "title": "거래대사 정산 통화 필터",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Currency"
+            }
+          }
+        },
+        "x-portone-title": "거래대사 조회시 적용가능한 필터 목록",
+        "x-portone-description": "필드 중복으로 적용됩니다."
+      },
+      "PaymentReconciliationHectoCredential": {
+        "title": "PaymentReconciliationHectoCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "authKey"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "authKey": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentReconciliationHyphenCredential": {
+        "title": "PaymentReconciliationHyphenCredential",
+        "type": "object",
+        "required": [
+          "pgCompany"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          }
+        }
       },
       "PaymentReconciliationIncomparable": {
         "title": "PaymentReconciliationIncomparable",
@@ -29255,6 +30399,79 @@
           "settlement": {
             "$ref": "#/components/schemas/Settlement",
             "title": "거래건의 정산 정보"
+          }
+        }
+      },
+      "PaymentReconciliationInicisCredential": {
+        "title": "PaymentReconciliationInicisCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "reconciliationPassword"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "reconciliationPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentReconciliationKakaopayCredential": {
+        "title": "PaymentReconciliationKakaopayCredential",
+        "type": "object",
+        "required": [
+          "pgCompany"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          }
+        }
+      },
+      "PaymentReconciliationKcpCredential": {
+        "title": "PaymentReconciliationKcpCredential",
+        "type": "object",
+        "required": [
+          "pgCompany"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          }
+        }
+      },
+      "PaymentReconciliationKpnCredential": {
+        "title": "PaymentReconciliationKpnCredential",
+        "type": "object",
+        "required": [
+          "pgCompany"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          }
+        }
+      },
+      "PaymentReconciliationKsnetCredential": {
+        "title": "PaymentReconciliationKsnetCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "reconciliationApiKey"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "reconciliationApiKey": {
+            "type": "string"
           }
         }
       },
@@ -29370,6 +30587,59 @@
             "title": "하위 가맹점 아이디"
           },
           "storeGraphqlId": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentReconciliationNaverpayCredential": {
+        "title": "PaymentReconciliationNaverpayCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "chainId",
+          "clientId",
+          "clientSecret",
+          "apiKeys"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "chainId": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "clientSecret": {
+            "type": "string"
+          },
+          "apiKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PaymentReconciliationNicepayCredential": {
+        "title": "PaymentReconciliationNicepayCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "sftpUsername",
+          "sftpPassword"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "sftpUsername": {
+            "type": "string"
+          },
+          "sftpPassword": {
             "type": "string"
           }
         }
@@ -29682,6 +30952,19 @@
         },
         "x-portone-title": "거래대사 거래 건 별 조회 정렬 조건",
         "x-portone-description": "필드중 하나만 명시하여야 합니다"
+      },
+      "PaymentReconciliationPaycoCredential": {
+        "title": "PaymentReconciliationPaycoCredential",
+        "type": "object",
+        "required": [
+          "pgCompany"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          }
+        }
       },
       "PaymentReconciliationPostCorrection": {
         "title": "PaymentReconciliationPostCorrection",
@@ -30146,6 +31429,40 @@
           }
         }
       },
+      "PaymentReconciliationTosspayCredential": {
+        "title": "PaymentReconciliationTosspayCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "apiKey"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "apiKey": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentReconciliationTosspaymentsCredential": {
+        "title": "PaymentReconciliationTosspaymentsCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "secretKey"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "secretKey": {
+            "type": "string"
+          }
+        }
+      },
       "PaymentReconciliationTransactionSummary": {
         "title": "거래대사 거래내역 일별 요약",
         "description": "거래대사 거래내역 일별 요약",
@@ -30427,6 +31744,23 @@
             "$ref": "#/components/schemas/PaymentReconciliationTransactionSummary"
           },
           "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentReconciliationUplusCredential": {
+        "title": "PaymentReconciliationUplusCredential",
+        "type": "object",
+        "required": [
+          "pgCompany",
+          "mertKey"
+        ],
+        "properties": {
+          "pgCompany": {
+            "type": "string",
+            "title": "PG사"
+          },
+          "mertKey": {
             "type": "string"
           }
         }
@@ -31087,15 +32421,19 @@
           "ASYNC_CANCEL_APPROVED",
           "ASYNC_CANCEL_FAILED",
           "ASYNC_PAY_APPROVED",
-          "ASYNC_PAY_FAILED"
+          "ASYNC_PAY_FAILED",
+          "DISPUTE_CREATED",
+          "DISPUTE_RESOLVED"
         ],
         "x-portone-title": "웹훅 실행 트리거",
         "x-portone-description": "수동 웹훅 재발송, 가상계좌 입금, 비동기 취소 승인 시 발생한 웹훅일 때 필드의 값이 존재합니다.",
         "x-portone-enum": {
           "ASYNC_CANCEL_APPROVED": {},
-          "VIRTUAL_ACCOUNT_DEPOSIT": {},
+          "DISPUTE_CREATED": {},
           "ASYNC_CANCEL_FAILED": {},
           "MANUAL": {},
+          "DISPUTE_RESOLVED": {},
+          "VIRTUAL_ACCOUNT_DEPOSIT": {},
           "ASYNC_PAY_FAILED": {},
           "ASYNC_PAY_APPROVED": {}
         }
@@ -31417,7 +32755,8 @@
           "INICIS_V2",
           "KPN",
           "KCP_V2",
-          "HYPHEN"
+          "HYPHEN",
+          "EXIMBAY_V2"
         ],
         "x-portone-title": "PG사 결제 모듈",
         "x-portone-enum": {
@@ -31426,7 +32765,6 @@
           "PAYCO": {},
           "KCP_BILLING": {},
           "SMARTRO_V2": {},
-          "NAVERPAY": {},
           "CHAI": {},
           "NICE_V2": {},
           "PAYPAL_V2": {},
@@ -31441,6 +32779,8 @@
           "SMARTRO": {},
           "SMILEPAY": {},
           "PAYMENTWALL": {},
+          "NAVERPAY": {},
+          "EXIMBAY_V2": {},
           "KCP_QUICK": {},
           "NAVERCO": {},
           "DAOU": {},
@@ -31504,8 +32844,6 @@
         "required": [
           "merchantId",
           "graphqlId",
-          "roundType",
-          "settlementFormula",
           "settlementRule"
         ],
         "properties": {
@@ -31515,14 +32853,6 @@
           },
           "graphqlId": {
             "type": "string"
-          },
-          "roundType": {
-            "$ref": "#/components/schemas/PlatformRoundType",
-            "title": "파트너 정산금액의 소수점 처리 방식"
-          },
-          "settlementFormula": {
-            "$ref": "#/components/schemas/PlatformSettlementFormula",
-            "title": "수수료 및 할인 분담 정책 관련 계산식"
           },
           "settlementRule": {
             "$ref": "#/components/schemas/PlatformSettlementRule",
@@ -31942,6 +33272,30 @@
         },
         "x-portone-status-code": 400
       },
+      "PlatformAmountExceededType": {
+        "title": "PlatformAmountExceededType",
+        "type": "string",
+        "enum": [
+          "DISCOUNT_THAN_ORDER",
+          "DISCOUNT_TAX_FREE_THAN_DISCOUNT",
+          "DISCOUNT_TAX_FREE_THAN_ORDER_TAX_FREE",
+          "PAYMENT_TAX_FREE_THAN_PAYMENT"
+        ],
+        "x-portone-enum": {
+          "DISCOUNT_THAN_ORDER": {
+            "title": "할인금액이 주문금액을 초과"
+          },
+          "DISCOUNT_TAX_FREE_THAN_DISCOUNT": {
+            "title": "면세 할인금액이 할인금액을 초과"
+          },
+          "DISCOUNT_TAX_FREE_THAN_ORDER_TAX_FREE": {
+            "title": "면세 할인금액이 면세 주문금액을 초과"
+          },
+          "PAYMENT_TAX_FREE_THAN_PAYMENT": {
+            "title": "면세 결제금액이 결제금액을 초과"
+          }
+        }
+      },
       "PlatformArchivedAdditionalFeePolicyError": {
         "title": "보관된 추가 수수료 정책을 업데이트하려고 하는 경우",
         "description": "보관된 추가 수수료 정책을 업데이트하려고 하는 경우",
@@ -32031,6 +33385,24 @@
         },
         "x-portone-title": "보관된 파트너들을 예약 업데이트하려고 하는 경우",
         "x-portone-status-code": 409
+      },
+      "PlatformBtxNotEnabledError": {
+        "title": "BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
+        "description": "BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
+        "x-portone-status-code": 403
       },
       "PlatformBulkPayout": {
         "title": "PlatformBulkPayout",
@@ -32357,6 +33729,118 @@
           "PAYOUT_CANCELLED_COUNT": {
             "title": "지급 취소 건수"
           }
+        }
+      },
+      "PlatformBulkTask": {
+        "title": "PlatformBulkTask",
+        "type": "object",
+        "required": [
+          "id",
+          "graphqlId",
+          "status",
+          "type",
+          "progressStats",
+          "isForTest",
+          "statusUpdatedAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "graphqlId": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlatformBulkTaskStatus"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PlatformBulkTaskType"
+          },
+          "progressStats": {
+            "$ref": "#/components/schemas/PlatformBulkTaskProgressStats"
+          },
+          "isForTest": {
+            "type": "boolean"
+          },
+          "statusUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PlatformBulkTaskProgressStats": {
+        "title": "PlatformBulkTaskProgressStats",
+        "type": "object",
+        "required": [
+          "preparedCount",
+          "processingCount",
+          "succeededCount",
+          "failedCount",
+          "canceledCount"
+        ],
+        "properties": {
+          "preparedCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "processingCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "succeededCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "failedCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "canceledCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PlatformBulkTaskStatus": {
+        "title": "PlatformBulkTaskStatus",
+        "type": "string",
+        "enum": [
+          "PREPARED",
+          "PROCESSING",
+          "COMPLETED",
+          "CANCELED"
+        ],
+        "x-portone-enum": {
+          "PREPARED": {},
+          "PROCESSING": {},
+          "COMPLETED": {},
+          "CANCELED": {}
+        }
+      },
+      "PlatformBulkTaskType": {
+        "title": "PlatformBulkTaskType",
+        "type": "string",
+        "enum": [
+          "CREATE_TRANSFERS",
+          "CREATE_PARTNERS",
+          "CONNECT_MEMBER_COMPANIES",
+          "DISCONNECT_MEMBER_COMPANIES"
+        ],
+        "x-portone-enum": {
+          "CREATE_TRANSFERS": {},
+          "CREATE_PARTNERS": {},
+          "CONNECT_MEMBER_COMPANIES": {},
+          "DISCONNECT_MEMBER_COMPANIES": {}
         }
       },
       "PlatformBusinessStatus": {
@@ -33469,31 +34953,6 @@
         "x-portone-title": "파트너 타입 수정에 필요한 데이터가 부족한 경우",
         "x-portone-status-code": 400
       },
-      "PlatformInvalidSettlementFormulaError": {
-        "title": "PlatformInvalidSettlementFormulaError",
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "platformFee": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaError"
-          },
-          "discountShare": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaError"
-          },
-          "additionalFee": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaError"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "x-portone-status-code": 400
-      },
       "PlatformManualTransfer": {
         "title": "수기 정산건",
         "description": "수기 정산건",
@@ -33720,6 +35179,42 @@
         "x-portone-title": "연동 사업자로 연동된 파트너들을 예약 수정하려고 시도한 경우",
         "x-portone-status-code": 409
       },
+      "PlatformMemberCompanyNotConnectableStatusError": {
+        "title": "파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우",
+        "description": "파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우",
+        "x-portone-status-code": 400
+      },
+      "PlatformMemberCompanyNotConnectedError": {
+        "title": "파트너가 연동 사업자로 연동 되어있지 않은 경우",
+        "description": "파트너가 연동 사업자로 연동 되어있지 않은 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너가 연동 사업자로 연동 되어있지 않은 경우",
+        "x-portone-status-code": 400
+      },
       "PlatformNonUpdatableStatusError": {
         "title": "업데이트 불가능한 상태를 업데이트하려는 경우",
         "description": "업데이트 불가능한 상태를 업데이트하려는 경우",
@@ -33773,6 +35268,24 @@
         },
         "x-portone-title": "지원하지 않는 은행인 경우",
         "x-portone-status-code": 400
+      },
+      "PlatformOngoingTaxInvoiceExistsError": {
+        "title": "진행 중인 세금계산서가 존재하는 경우",
+        "description": "진행 중인 세금계산서가 존재하는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "진행 중인 세금계산서가 존재하는 경우",
+        "x-portone-status-code": 409
       },
       "PlatformOrderCancelTransfer": {
         "title": "주문 취소 정산건",
@@ -34015,7 +35528,8 @@
           "discount",
           "discountTaxFree",
           "discountShare",
-          "discountShareTaxFree"
+          "discountShareTaxFree",
+          "userDefinedFormulas"
         ],
         "properties": {
           "settlement": {
@@ -34110,6 +35624,10 @@
             "type": "integer",
             "format": "int64",
             "title": "면세 할인 분담 금액"
+          },
+          "userDefinedFormulas": {
+            "$ref": "#/components/schemas/PlatformUserDefinedFormulaResults",
+            "title": "사용자 정의 수식 결과"
           }
         },
         "x-portone-title": "정산 금액 정보",
@@ -35270,6 +36788,24 @@
         },
         "x-portone-status-code": 409
       },
+      "PlatformPartnerScheduleExistsError": {
+        "title": "파트너 수정 예약 건이 존재하는 경우",
+        "description": "파트너 수정 예약 건이 존재하는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너 수정 예약 건이 존재하는 경우",
+        "x-portone-status-code": 409
+      },
       "PlatformPartnerSchedulesAlreadyExistError": {
         "title": "PlatformPartnerSchedulesAlreadyExistError",
         "type": "object",
@@ -35774,6 +37310,24 @@
           }
         }
       },
+      "PlatformPartnerTaxationTypeIsSimpleError": {
+        "title": "파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우",
+        "description": "파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우",
+        "x-portone-status-code": 400
+      },
       "PlatformPartnerType": {
         "title": "파트너 유형별 추가 정보",
         "description": "파트너 유형별 추가 정보",
@@ -35869,6 +37423,24 @@
         },
         "x-portone-title": "사업자 파트너 정보",
         "x-portone-description": "사업자 유형의 파트너 추가 정보 입니다."
+      },
+      "PlatformPartnerTypeIsNotBusinessError": {
+        "title": "파트너 유형이 사업자가 아닌 경우",
+        "description": "파트너 유형이 사업자가 아닌 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너 유형이 사업자가 아닌 경우",
+        "x-portone-status-code": 400
       },
       "PlatformPartnerTypeName": {
         "title": "플랫폼 파트너 유형 이름",
@@ -36812,28 +38384,6 @@
           }
         }
       },
-      "PlatformRoundType": {
-        "title": "금액에 대한 소수점 처리 방식",
-        "description": "금액에 대한 소수점 처리 방식",
-        "type": "string",
-        "enum": [
-          "OFF",
-          "DOWN",
-          "UP"
-        ],
-        "x-portone-title": "금액에 대한 소수점 처리 방식",
-        "x-portone-enum": {
-          "OFF": {
-            "title": "소수점 반올림"
-          },
-          "DOWN": {
-            "title": "소수점 내림"
-          },
-          "UP": {
-            "title": "소수점 올림"
-          }
-        }
-      },
       "PlatformSetting": {
         "title": "플랫폼 설정",
         "description": "플랫폼 설정",
@@ -36862,7 +38412,7 @@
         ],
         "properties": {
           "type": {
-            "$ref": "#/components/schemas/AmountExceededType"
+            "$ref": "#/components/schemas/PlatformAmountExceededType"
           },
           "message": {
             "type": "string"
@@ -37225,248 +38775,6 @@
           }
         }
       },
-      "PlatformSettlementFormula": {
-        "title": "플랫폼 내 발생하는 여러 수수료 및 할인 분담에 관한 계산식 정보",
-        "description": "플랫폼 내 발생하는 여러 수수료 및 할인 분담에 관한 계산식 정보",
-        "type": "object",
-        "required": [
-          "platformFee",
-          "discountShare",
-          "additionalFee"
-        ],
-        "properties": {
-          "platformFee": {
-            "type": "string",
-            "title": "플랫폼 수수료 계산식"
-          },
-          "discountShare": {
-            "type": "string",
-            "title": "할인 분담액 계산식"
-          },
-          "additionalFee": {
-            "type": "string",
-            "title": "추가 수수료 계산식"
-          }
-        },
-        "x-portone-title": "플랫폼 내 발생하는 여러 수수료 및 할인 분담에 관한 계산식 정보"
-      },
-      "PlatformSettlementFormulaError": {
-        "title": "PlatformSettlementFormulaError",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaInvalidFunction"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaInvalidOperator"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaInvalidSyntax"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaInvalidVariable"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaUnexpectedFunctionArguments"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaUnknownError"
-          },
-          {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaUnsupportedVariable"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "INVALID_FUNCTION": "#/components/schemas/PlatformSettlementFormulaInvalidFunction",
-            "INVALID_OPERATOR": "#/components/schemas/PlatformSettlementFormulaInvalidOperator",
-            "INVALID_SYNTAX": "#/components/schemas/PlatformSettlementFormulaInvalidSyntax",
-            "INVALID_VARIABLE": "#/components/schemas/PlatformSettlementFormulaInvalidVariable",
-            "UNEXPECTED_FUNCTION_ARGUMENTS": "#/components/schemas/PlatformSettlementFormulaUnexpectedFunctionArguments",
-            "UNKNOWN_ERROR": "#/components/schemas/PlatformSettlementFormulaUnknownError",
-            "UNSUPPORTED_VARIABLE": "#/components/schemas/PlatformSettlementFormulaUnsupportedVariable"
-          }
-        },
-        "x-portone-discriminator": {
-          "UNKNOWN_ERROR": {},
-          "UNEXPECTED_FUNCTION_ARGUMENTS": {},
-          "INVALID_FUNCTION": {},
-          "UNSUPPORTED_VARIABLE": {},
-          "INVALID_OPERATOR": {},
-          "INVALID_SYNTAX": {},
-          "INVALID_VARIABLE": {}
-        }
-      },
-      "PlatformSettlementFormulaInvalidFunction": {
-        "title": "PlatformSettlementFormulaInvalidFunction",
-        "type": "object",
-        "required": [
-          "type",
-          "name",
-          "position"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "position": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaPosition"
-          }
-        }
-      },
-      "PlatformSettlementFormulaInvalidOperator": {
-        "title": "PlatformSettlementFormulaInvalidOperator",
-        "type": "object",
-        "required": [
-          "type",
-          "operator",
-          "position"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "operator": {
-            "type": "string"
-          },
-          "position": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaPosition"
-          }
-        }
-      },
-      "PlatformSettlementFormulaInvalidSyntax": {
-        "title": "PlatformSettlementFormulaInvalidSyntax",
-        "type": "object",
-        "required": [
-          "type",
-          "syntax",
-          "position"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "syntax": {
-            "type": "string"
-          },
-          "position": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaPosition"
-          }
-        }
-      },
-      "PlatformSettlementFormulaInvalidVariable": {
-        "title": "PlatformSettlementFormulaInvalidVariable",
-        "type": "object",
-        "required": [
-          "type",
-          "name",
-          "position"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "position": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaPosition"
-          }
-        }
-      },
-      "PlatformSettlementFormulaPosition": {
-        "title": "PlatformSettlementFormulaPosition",
-        "type": "object",
-        "required": [
-          "startLine",
-          "startIndex",
-          "endLine",
-          "endIndex"
-        ],
-        "properties": {
-          "startLine": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "startIndex": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "endLine": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "endIndex": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "PlatformSettlementFormulaUnexpectedFunctionArguments": {
-        "title": "PlatformSettlementFormulaUnexpectedFunctionArguments",
-        "type": "object",
-        "required": [
-          "type",
-          "functionName",
-          "expectedCount",
-          "currentCount",
-          "position"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "functionName": {
-            "type": "string"
-          },
-          "expectedCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "currentCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "position": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaPosition"
-          }
-        }
-      },
-      "PlatformSettlementFormulaUnknownError": {
-        "title": "PlatformSettlementFormulaUnknownError",
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          }
-        }
-      },
-      "PlatformSettlementFormulaUnsupportedVariable": {
-        "title": "PlatformSettlementFormulaUnsupportedVariable",
-        "type": "object",
-        "required": [
-          "type",
-          "name",
-          "position"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "position": {
-            "$ref": "#/components/schemas/PlatformSettlementFormulaPosition"
-          }
-        }
-      },
       "PlatformSettlementParameterNotFoundError": {
         "title": "정산 파라미터가 존재하지 않는 경우",
         "description": "정산 파라미터가 존재하지 않는 경우",
@@ -37630,6 +38938,24 @@
         },
         "x-portone-title": "정산 요청 면세 금액이 포트원 결제 내역의 면세 금액을 초과한 경우",
         "x-portone-status-code": 400
+      },
+      "PlatformTargetPartnerNotFoundError": {
+        "title": "처리 대상 파트너가 존재하지 않는 경우",
+        "description": "처리 대상 파트너가 존재하지 않는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "처리 대상 파트너가 존재하지 않는 경우",
+        "x-portone-status-code": 404
       },
       "PlatformTaxationType": {
         "title": "플랫폼 과세 유형",
@@ -38320,6 +39646,14 @@
           "ORDER": {},
           "ORDER_CANCEL": {},
           "MANUAL": {}
+        }
+      },
+      "PlatformUserDefinedFormulaResults": {
+        "title": "PlatformUserDefinedFormulaResults",
+        "type": "object",
+        "additionalProperties": {
+          "type": "integer",
+          "format": "int64"
         }
       },
       "PlatformUserDefinedPropertyKeyValue": {
@@ -39338,17 +40672,19 @@
           "ALIPAY",
           "KB_APP",
           "TMONEYPAY",
-          "HYPHEN"
+          "HYPHEN",
+          "OK_CASHBAG",
+          "BENEPIA"
         ],
         "x-portone-title": "대사용 간편 결제 PG사",
         "x-portone-enum": {
           "KB_APP": {},
+          "BENEPIA": {},
           "NAVERPAY": {},
           "CHAI": {},
           "PINPAY": {},
           "TOSS_BRANDPAY": {},
           "PAYPAL": {},
-          "LGPAY": {},
           "SAMSUNGPAY": {},
           "KPAY": {},
           "WECHATPAY": {},
@@ -39360,6 +40696,8 @@
           "PAYCO": {},
           "TOSSPAY": {},
           "SSGPAY": {},
+          "OK_CASHBAG": {},
+          "LGPAY": {},
           "APPLEPAY": {},
           "HYPHEN": {}
         }
@@ -39642,7 +40980,9 @@
           "EASY_PAY_TOSS_BRANDPAY",
           "EASY_PAY_KB_APP",
           "EASY_PAY_TMONEYPAY",
-          "EASY_PAY_HYPHEN"
+          "EASY_PAY_HYPHEN",
+          "EASY_PAY_OK_CASHBAG",
+          "EASY_PAY_BENEPIA"
         ],
         "x-portone-title": "대사용 결제수단 목록",
         "x-portone-enum": {
@@ -39663,12 +41003,6 @@
           },
           "VIRTUAL_ACCOUNT": {
             "title": "가상계좌"
-          },
-          "EASY_PAY_NAVERPAY": {
-            "title": "네이버페이 간편결제"
-          },
-          "CHARGE": {
-            "title": "간편결제 충전"
           },
           "ETC": {
             "title": "기타 결제수단"
@@ -39702,6 +41036,18 @@
           },
           "EASY_PAY_TMONEYPAY": {
             "title": "티머니페이 간편결제"
+          },
+          "EASY_PAY_NAVERPAY": {
+            "title": "네이버페이 간편결제"
+          },
+          "EASY_PAY_BENEPIA": {
+            "title": "베네피아 간편결제"
+          },
+          "EASY_PAY_OK_CASHBAG": {
+            "title": "OK캐시백 간편결제"
+          },
+          "CHARGE": {
+            "title": "간편결제 충전"
           },
           "EASY_PAY_PAYPAL": {
             "title": "페이팔 간편결제"
@@ -42888,6 +44234,18 @@
           }
         }
       },
+      "TaxationType": {
+        "title": "TaxationType",
+        "type": "string",
+        "enum": [
+          "TAXABLE",
+          "NON_TAXABLE"
+        ],
+        "x-portone-enum": {
+          "TAXABLE": {},
+          "NON_TAXABLE": {}
+        }
+      },
       "TransferParameters": {
         "title": "TransferParameters",
         "type": "object",
@@ -43142,6 +44500,52 @@
         },
         "x-portone-title": "세금계산서 임시저장 수정 응답"
       },
+      "UpdatePaymentReconciliationChannelError": {
+        "title": "UpdatePaymentReconciliationChannelError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ChannelDuplicateNameError"
+          },
+          {
+            "$ref": "#/components/schemas/ChannelNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/NotAllowedPgMerchantIdError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "CHANNEL_NOT_FOUND": "#/components/schemas/ChannelNotFoundError",
+            "DUPLICATE_CHANNEL_NAME": "#/components/schemas/ChannelDuplicateNameError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "NOT_ALLOWED_PG_MERCHANT_ID": "#/components/schemas/NotAllowedPgMerchantIdError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "UpdatePaymentReconciliationChannelResponse": {
+        "title": "UpdatePaymentReconciliationChannelResponse",
+        "type": "object",
+        "required": [
+          "channel"
+        ],
+        "properties": {
+          "channel": {
+            "$ref": "#/components/schemas/PaymentReconciliationChannel"
+          }
+        }
+      },
       "UpdatePlatformAdditionalFeePolicyBody": {
         "title": "추가 수수료 정책 업데이트를 위한 입력 정보",
         "description": "추가 수수료 정책 업데이트를 위한 입력 정보\n\n값이 명시하지 않은 필드는 업데이트되지 않습니다.",
@@ -43221,41 +44625,12 @@
         "description": "플랫폼 업데이트를 위한 입력 정보\n\n값이 명시되지 않은 필드는 업데이트하지 않습니다.",
         "type": "object",
         "properties": {
-          "roundType": {
-            "$ref": "#/components/schemas/PlatformRoundType",
-            "title": "파트너 정산금액의 소수점 처리 방식"
-          },
-          "settlementFormula": {
-            "$ref": "#/components/schemas/UpdatePlatformBodySettlementFormula",
-            "title": "수수료 및 할인 분담 정책 관련 계산식"
-          },
           "settlementRule": {
             "$ref": "#/components/schemas/UpdatePlatformBodySettlementRule",
             "title": "정산 규칙"
           }
         },
         "x-portone-title": "플랫폼 업데이트를 위한 입력 정보",
-        "x-portone-description": "값이 명시되지 않은 필드는 업데이트하지 않습니다."
-      },
-      "UpdatePlatformBodySettlementFormula": {
-        "title": "플랫폼 업데이트 시 변경할 계산식 정보",
-        "description": "플랫폼 업데이트 시 변경할 계산식 정보\n\n값이 명시되지 않은 필드는 업데이트하지 않습니다.",
-        "type": "object",
-        "properties": {
-          "platformFee": {
-            "type": "string",
-            "title": "플랫폼 수수료 계산식"
-          },
-          "discountShare": {
-            "type": "string",
-            "title": "할인 분담액 계산식"
-          },
-          "additionalFee": {
-            "type": "string",
-            "title": "추가 수수료 계산식"
-          }
-        },
-        "x-portone-title": "플랫폼 업데이트 시 변경할 계산식 정보",
         "x-portone-description": "값이 명시되지 않은 필드는 업데이트하지 않습니다."
       },
       "UpdatePlatformBodySettlementRule": {
@@ -43443,9 +44818,6 @@
             "$ref": "#/components/schemas/InvalidRequestError"
           },
           {
-            "$ref": "#/components/schemas/PlatformInvalidSettlementFormulaError"
-          },
-          {
             "$ref": "#/components/schemas/PlatformNotEnabledError"
           },
           {
@@ -43457,7 +44829,6 @@
           "mapping": {
             "FORBIDDEN": "#/components/schemas/ForbiddenError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
-            "PLATFORM_INVALID_SETTLEMENT_FORMULA": "#/components/schemas/PlatformInvalidSettlementFormulaError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
           }

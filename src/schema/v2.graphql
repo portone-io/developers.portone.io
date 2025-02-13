@@ -167,8 +167,8 @@ union ChannelsOutput = ChannelsPayload | InvalidRequestError | UnauthorizedError
 "파트너 연동 사업자 일괄 연동 결과"
 union ConnectBulkPartnerMemberCompanyOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | PlatformTargetPartnerNotFoundError | PlatformBtxNotEnabledError | ConnectBulkPartnerMemberCompanyPayload | PlatformNotEnabledError | ForbiddenError | PlatformExternalApiFailedError | InternalError
 
-"연동 사업자 연동 결과"
-union ConnectPartnerMemberCompanyOutput = ForbiddenError | PlatformPartnerTypeIsNotBusinessError | PlatformMemberCompanyNotConnectableStatusError | ConnectPartnerMemberCompanyPayload | PlatformNotEnabledError | PlatformBtxNotEnabledError | UnauthorizedError | PlatformPartnerScheduleExistsError | PlatformExternalApiFailedError | InvalidRequestError | PlatformPartnerNotFoundError | InternalError
+"파트너 연동 사업자 연동 결과"
+union ConnectPartnerMemberCompanyOutput = ForbiddenError | PlatformPartnerTypeIsNotBusinessError | PlatformExternalApiFailedError | ConnectPartnerMemberCompanyPayload | PlatformNotEnabledError | PlatformMemberCompanyNotConnectableStatusError | UnauthorizedError | PlatformPartnerTaxationTypeIsSimpleError | PlatformPartnerScheduleExistsError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformBtxNotEnabledError | InternalError
 
 "파일 업로드 URL 생성 요청 결과"
 union CreateB2bFileUploadUrlOutput = InvalidRequestError | B2bNotEnabledError | ForbiddenError | CreateB2bFileUploadUrlPayload | UnauthorizedError | B2bExternalServiceError | InternalError
@@ -209,7 +209,7 @@ union CreatePlatformPartnerOutput = UnauthorizedError | PlatformAccountVerificat
 union CreatePlatformPartnersOutput = InvalidRequestError | PlatformPartnerIdsAlreadyExistError | UnauthorizedError | PlatformCurrencyNotSupportedError | ForbiddenError | PlatformContractsNotFoundError | PlatformPartnerIdsDuplicatedError | PlatformUserDefinedPropertyNotFoundError | CreatePlatformPartnersPayload | PlatformNotEnabledError | InternalError
 
 "정산 파라미터 생성 결과"
-union CreatePlatformSettlementParameterOutput = CreatePlatformSettlementParameterPayload | UnauthorizedError | PlatformSettlementParameterKeyAlreadyExistsError | PlatformSettlementParameterCountLimitExceededError | InvalidRequestError | PlatformNotEnabledError | ForbiddenError | InternalError
+union CreatePlatformSettlementParameterOutput = CreatePlatformSettlementParameterPayload | UnauthorizedError | PlatformSettlementParameterKeyAlreadyExistsError | PlatformSettlementParameterCountLimitExceededError | InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformSettlementParameterKeyConflictUserDefinedFormulaError | InternalError
 
 "사용자 정의 속성 생성 결과"
 union CreatePlatformUserDefinedPropertyOutput = CreatePlatformUserDefinedPropertyPayload | UnauthorizedError | PlatformUserDefinedPropertiesMaxCountsExceededError | PlatformUserDefinedPropertyKeyAlreadyExistsError | InvalidRequestError | PlatformNotEnabledError | ForbiddenError | InternalError
@@ -234,6 +234,9 @@ union DeleteChannelGroupScheduledSessionOutput = UnauthorizedError | ForbiddenEr
 
 union DeletePaymentRecoverySettingOutput = DeletePaymentRecoverySettingPayload | InvalidRequestError | UnauthorizedError | ForbiddenError | InternalError
 
+"플랫폼 정산 계산기 삭제 결과"
+union DeletePlatformSettlementCalculatorOutput = PlatformSettlementCalculator | UnauthorizedError | PlatformVersionNotFoundError | PlatformNonDeletableVersionError | InvalidRequestError | PlatformNotEnabledError | ForbiddenError | InternalError
+
 "정산건 삭제 결과"
 union DeletePlatformTransferOutput = DeletePlatformTransferPayload | PlatformTransferNotFoundError | InvalidRequestError | UnauthorizedError | PlatformCancelOrderTransfersExistsError | PlatformTransferNonDeletableStatusError | PlatformNotEnabledError | ForbiddenError | InternalError
 
@@ -247,8 +250,8 @@ union DeleteV2ApiSecretOutput = ForbiddenError | V2ApiSecretNotFoundError | Stor
 "파트너 연동 사업자 일괄 연동 해제 결과"
 union DisconnectBulkPartnerMemberCompanyOutput = InvalidRequestError | PlatformPartnerNotFoundError | UnauthorizedError | PlatformTargetPartnerNotFoundError | PlatformBtxNotEnabledError | DisconnectBulkPartnerMemberCompanyPayload | PlatformNotEnabledError | ForbiddenError | PlatformExternalApiFailedError | InternalError
 
-"연동 사업자 연동 해제 결과"
-union DisconnectPartnerMemberCompanyOutput = ForbiddenError | PlatformPartnerTypeIsNotBusinessError | PlatformExternalApiFailedError | DisconnectPartnerMemberCompanyPayload | PlatformNotEnabledError | PlatformBtxNotEnabledError | UnauthorizedError | PlatformMemberCompanyNotConnectedError | PlatformOngoingTaxInvoiceExistsError | InvalidRequestError | PlatformPartnerNotFoundError | InternalError
+"파트너 연동 사업자 연동 해제 결과"
+union DisconnectPartnerMemberCompanyOutput = ForbiddenError | PlatformPartnerTypeIsNotBusinessError | PlatformOngoingTaxInvoiceExistsError | DisconnectPartnerMemberCompanyPayload | PlatformNotEnabledError | PlatformExternalApiFailedError | UnauthorizedError | PlatformPartnerTaxationTypeIsSimpleError | PlatformMemberCompanyNotConnectedError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformBtxNotEnabledError | InternalError
 
 "세금 계산서 임시저장 요청 결과"
 union DraftB2bTaxInvoiceOutput = DraftB2bTaxInvoicePayload | UnauthorizedError | B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError | B2BCannotChangeTaxTypeError | B2bExternalServiceError | B2bSupplierNotFoundError | B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError | B2BTaxInvoiceStatusNotSendingCompletedError | InvalidRequestError | B2bNotEnabledError | B2bOriginalTaxInvoiceNotFoundError | B2bModificationNotProvidedError | ForbiddenError | B2bRecipientNotFoundError | B2bIdAlreadyExistsError | B2bTaxInvoiceNotFoundError | InternalError
@@ -515,13 +518,16 @@ union PlatformPermissionsOutput = PlatformPermissions | UnauthorizedError | Inva
 "플랫폼 설정 정보 조회 결과"
 union PlatformSettingOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformSetting | UnauthorizedError | InternalError
 
+"플랫폼 정산 계산기 조회 결과"
+union PlatformSettlementCalculatorOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformSettlementCalculator | UnauthorizedError | InternalError
+
+"플랫폼 정산 계산기 버전 이력 조회 결과"
+union PlatformSettlementCalculatorVersionsOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformSettlementCalculatorVersionsPayload | UnauthorizedError | InternalError
+
 "플랫폼 정산 주기 계산 방식"
 union PlatformSettlementCycleMethod = PlatformSettlementCycleMethodDaily | PlatformSettlementCycleMethodManualDates | PlatformSettlementCycleMethodMonthly | PlatformSettlementCycleMethodWeekly
 
-union PlatformSettlementFormulaError = PlatformSettlementFormulaInvalidFunction | PlatformSettlementFormulaInvalidOperator | PlatformSettlementFormulaInvalidSyntax | PlatformSettlementFormulaInvalidVariable | PlatformSettlementFormulaUnexpectedFunctionArguments | PlatformSettlementFormulaUnknownError | PlatformSettlementFormulaUnsupportedVariable
-
-"플랫폼 계산식 검증 응답"
-union PlatformSettlementFormulaValidationOutput = PlatformSettlementFormulaValidation | UnauthorizedError | InvalidRequestError | PlatformNotEnabledError | InternalError
+union PlatformSettlementFormulaError = PlatformSettlementFormulaInvalidFunction | PlatformSettlementFormulaInvalidOperator | PlatformSettlementFormulaInvalidSyntax | PlatformSettlementFormulaInvalidVariable | PlatformSettlementFormulaMissingExpectedToken | PlatformSettlementFormulaMissingLeftOperand | PlatformSettlementFormulaMissingOperator | PlatformSettlementFormulaMissingRightOperand | PlatformSettlementFormulaUnexpectedFunctionArguments | PlatformSettlementFormulaUnexpectedToken | PlatformSettlementFormulaUnknownError
 
 "정산 파라미터 다건 조회 결과"
 union PlatformSettlementParametersOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | PlatformSettlementParametersPayload | UnauthorizedError | InternalError
@@ -729,7 +735,7 @@ union UpdatePlatformContractOutput = UpdatePlatformContractPayload | PlatformNot
 union UpdatePlatformDiscountSharePolicyOutput = UpdatePlatformDiscountSharePayload | PlatformNotEnabledError | UnauthorizedError | ForbiddenError | InvalidRequestError | PlatformDiscountSharePolicyNotFoundError | PlatformArchivedDiscountSharePolicyError | InternalError
 
 "플랫폼 업데이트 결과"
-union UpdatePlatformOutput = PlatformInvalidSettlementFormulaError | InvalidRequestError | UnauthorizedError | UpdatePlatformPayload | PlatformNotEnabledError | ForbiddenError | InternalError
+union UpdatePlatformOutput = InvalidRequestError | UnauthorizedError | ForbiddenError | UpdatePlatformPayload | PlatformNotEnabledError | InternalError
 
 "파트너 업데이트 결과"
 union UpdatePlatformPartnerOutput = UpdatePlatformPartnerPayload | PlatformNotEnabledError | ForbiddenError | PlatformMemberCompanyConnectedPartnerBrnUnchangeableError | PlatformContractNotFoundError | PlatformArchivedPartnerError | PlatformAccountVerificationAlreadyUsedError | PlatformCompanyVerificationAlreadyUsedError | InvalidRequestError | PlatformPartnerNotFoundError | PlatformInsufficientDataToChangePartnerTypeError | PlatformUserDefinedPropertyNotFoundError | UnauthorizedError | PlatformAccountVerificationFailedError | PlatformAccountVerificationNotFoundError | PlatformMemberCompanyConnectedPartnerTypeUnchangeableError | InternalError
@@ -745,6 +751,9 @@ union UpdatePlatformPayoutsOutput = UpdatePlatformPayoutsPayload | UnauthorizedE
 
 "플랫폼 설정 업데이트 결과"
 union UpdatePlatformSettingOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | UpdatePlatformSettingPayload | UnauthorizedError | InternalError
+
+"플랫폼 정산 계산기 업데이트 결과"
+union UpdatePlatformSettlementCalculatorOutput = PlatformSettlementCalculator | UnauthorizedError | PlatformUserDefinedFormulaNotDeletableError | PlatformScheduleNotAllowedPastTimeError | PlatformInvalidSettlementFormulasError | PlatformMissingFormulaKeysInOrderError | PlatformUserDefinedFormulaLimitExceededError | PlatformScheduledVersionAlreadyExists | InvalidRequestError | PlatformNotEnabledError | PlatformUserDefinedFormulaKeysConflictSettlementParameterError | PlatformUserDefinedFormulaKeysDuplicatedError | ForbiddenError | PlatformNonOrderableKeysInOrderError | PlatformUnknownFormulaKeysInOrderError | InternalError
 
 "정산 파라미터 수정 결과"
 union UpdatePlatformSettlementParameterOutput = InvalidRequestError | PlatformNotEnabledError | ForbiddenError | UpdatePlatformSettlementParameterPayload | UnauthorizedError | PlatformSettlementParameterNotFoundError | InternalError
@@ -771,6 +780,9 @@ union V2ApiSecretInfosOutput = V2ApiSecretInfosPayload | UnauthorizedError | Sto
 "인증서 유효성 검증 결과"
 union ValidateB2bCertificateOutput = ValidateB2bCertificatePayload | UnauthorizedError | B2bExternalServiceError | B2bMemberCompanyNotFoundError | InvalidRequestError | B2bNotEnabledError | ForbiddenError | B2bCertificateUnregisteredError | InternalError
 
+"플랫폼 정산 계산기 유효성 검사"
+union ValidatePlatformSettlementCalculatorOutput = ForbiddenError | PlatformNonOrderableKeysInOrderError | PlatformUnknownFormulaKeysInOrderError | InvalidRequestError | PlatformNotEnabledError | PlatformUserDefinedFormulaKeysConflictSettlementParameterError | PlatformUserDefinedFormulaKeysDuplicatedError | PlatformInvalidSettlementFormulasError | PlatformMissingFormulaKeysInOrderError | PlatformUserDefinedFormulaLimitExceededError | PlatformSettlementFormula | UnauthorizedError | PlatformUserDefinedFormulaNotDeletableError | InternalError
+
 enum ActionType {
   "조회"
   GET
@@ -784,17 +796,6 @@ enum ActionType {
   GET_CERTIFICATE_REGISTRATION_URL
   "공동인증서 유효성 검증"
   VALIDATE_CERTIFICATE
-}
-
-enum AmountExceededType {
-  "할인금액이 주문금액을 초과"
-  DISCOUNT_THAN_ORDER
-  "면세 할인금액이 할인금액을 초과"
-  DISCOUNT_TAX_FREE_THAN_DISCOUNT
-  "면세 할인금액이 면세 주문금액을 초과"
-  DISCOUNT_TAX_FREE_THAN_ORDER_TAX_FREE
-  "면세 결제금액이 결제금액을 초과"
-  PAYMENT_TAX_FREE_THAN_PAYMENT
 }
 
 "일괄 발행 유형"
@@ -2232,6 +2233,16 @@ enum EasyPayProvider {
   ALIPAY
   HYPHEN
   TMONEY
+  PAYPAL
+  SMILEPAY
+  MIR
+  WECHAT
+  LINEPAY
+  KLARNA
+  GRABPAY
+  SHOPEEPAY
+  JKOPAY
+  PAYPAY
 }
 
 "성별"
@@ -2306,6 +2317,7 @@ enum PaymentMethodType {
   GIFT_CERTIFICATE
   MOBILE
   EASY_PAY
+  CONVENIENCE_STORE
 }
 
 "거래상태"
@@ -2538,6 +2550,7 @@ enum PgProvider {
   KPN
   KCP_V2
   HYPHEN
+  EXIMBAY_V2
 }
 
 "플랫폼 계좌 상태"
@@ -2562,6 +2575,17 @@ enum PlatformAccountTransferType {
   WITHDRAWAL_PARTNER_PAYOUT
   "송금"
   WITHDRAWAL_REMIT
+}
+
+enum PlatformAmountExceededType {
+  "할인금액이 주문금액을 초과"
+  DISCOUNT_THAN_ORDER
+  "면세 할인금액이 할인금액을 초과"
+  DISCOUNT_TAX_FREE_THAN_DISCOUNT
+  "면세 할인금액이 면세 주문금액을 초과"
+  DISCOUNT_TAX_FREE_THAN_ORDER_TAX_FREE
+  "면세 결제금액이 결제금액을 초과"
+  PAYMENT_TAX_FREE_THAN_PAYMENT
 }
 
 enum PlatformBulkPayoutStatus {
@@ -2727,6 +2751,8 @@ enum PlatformPayoutStatus {
 
 enum PlatformPermission {
   UNSPECIFIED
+  SETTLEMENT_CALCULATOR_READ
+  SETTLEMENT_CALCULATOR_WRITE
   SETTLEMENT_POLICY_READ
   SETTLEMENT_POLICY_WRITE
   TRANSFER_READ
@@ -2914,6 +2940,8 @@ enum ReconciliationEasyPayProvider {
   KB_APP
   TMONEYPAY
   HYPHEN
+  OK_CASHBAG
+  BENEPIA
 }
 
 "대사용 결제수단 목록"
@@ -2976,6 +3004,10 @@ enum ReconciliationPaymentMethodType {
   EASY_PAY_TMONEYPAY
   "하이픈 간편결제"
   EASY_PAY_HYPHEN
+  "OK캐시백 간편결제"
+  EASY_PAY_OK_CASHBAG
+  "베네피아 간편결제"
+  EASY_PAY_BENEPIA
 }
 
 enum ReconciliationPgProvider {
@@ -3506,7 +3538,7 @@ input ConnectBulkPartnerMemberCompanyInput {
   filter: PlatformPartnerFilterInput
 }
 
-"연동 사업자 연동을 위한 입력 정보"
+"파트너 연동 사업자 연동을 위한 입력 정보"
 input ConnectPartnerMemberCompanyInput {
   "파트너 아이디"
   id: ID!
@@ -4065,6 +4097,12 @@ input DeleteChannelGroupScheduledSessionInput {
 
 input DeletePaymentRecoverySettingInput {
   storeId: ID!
+}
+
+"플랫폼 정산 계산기 삭제를 위한 입력 정보"
+input DeletePlatformSettlementCalculatorInput {
+  "계산기 버전 식별자"
+  ref: String!
 }
 
 input DeletePlatformTransferInput {
@@ -4794,6 +4832,11 @@ input PlatformRemitInput {
   withdrawalMemo: String
 }
 
+input PlatformReservedFormulaInput {
+  formula: String!
+  roundType: PlatformRoundType!
+}
+
 "플랫폼 정산 주기 입력 정보"
 input PlatformSettlementCycleInput {
 """
@@ -4839,6 +4882,21 @@ input PlatformSettlementCycleMethodMonthlyInput {
 
 input PlatformSettlementCycleMethodWeeklyInput {
   daysOfWeek: [DayOfWeek!]!
+}
+
+input PlatformSettlementFormulaInput {
+  "플랫폼 수수료 계산식"
+  platformFee: PlatformReservedFormulaInput!
+  "할인 분담액 계산식"
+  discountShare: PlatformReservedFormulaInput!
+  "추가 수수료 계산식"
+  additionalFee: PlatformReservedFormulaInput!
+  "정산 수식"
+  settlement: PlatformReservedFormulaInput!
+  "사용자정의 수식"
+  userDefined: [PlatformUserDefinedFormulaInput!]!
+  "수식 순서"
+  orderKeys: [String!]!
 }
 
 "플랫폼 정산 파라미터 값"
@@ -4950,6 +5008,13 @@ input PlatformTransferParameterInput {
   key: String!
   "파라미터 값"
   value: PlatformSettlementParameterValueInput!
+}
+
+input PlatformUserDefinedFormulaInput {
+  name: String!
+  key: String!
+  formula: String!
+  roundType: PlatformRoundType!
 }
 
 "사용자 정의 속성"
@@ -5214,6 +5279,10 @@ input RegisterMerchantBillingCardInput {
   passwordTwoDigits: String!
   "카드 소유자 이메일"
   email: String!
+  "결제 담당자 이름"
+  billingManagerName: String
+  "결제 담당자 휴대폰 번호"
+  billingManagerPhoneNumber: String
 }
 
 "비즈니스 인증에 필요한 입력정보"
@@ -5381,8 +5450,8 @@ input ResendB2bTaxInvoiceReverseIssuanceEmailRequestInput {
 }
 
 input ResendFailedPaymentWebhooksInput {
-  "웹훅 일괄 재발송을 실행할 하위 상점"
-  storeId: ID!
+  "웹훅 일괄 재발송을 실행할 하위 상점입니다. 입력하지 않으면 전체 상점에 대해 재발송합니다."
+  storeId: ID
   "조회 기준 시점 유형"
   timestampType: PaymentTimestampType!
   "결제 요청/상태 승인 시점 범위의 시작"
@@ -5928,10 +5997,6 @@ input UpdatePlatformDiscountSharePolicyInput {
 값이 명시되지 않은 필드는 업데이트하지 않습니다.
 """
 input UpdatePlatformInput {
-  "파트너 정산금액의 소수점 처리 방식"
-  roundType: PlatformRoundType
-  "수수료 및 할인 분담 정책 관련 계산식"
-  settlementFormula: UpdatePlatformSettlementFormulaInput
   "정산 규칙"
   settlementRule: UpdatePlatformSettlementRuleInput
 }
@@ -6056,17 +6121,17 @@ input UpdatePlatformSettingInput {
 }
 
 """
-플랫폼 업데이트 시 변경할 계산식 정보
+플랫폼 정산 계산기 업데이트를 위한 입력 정보
 
-값이 명시되지 않은 필드는 업데이트하지 않습니다.
+정산 계산기 업데이트는 부분 업데이트를 지원하지 않으므로 항상 완성된 설정 데이터를 요구합니다.
 """
-input UpdatePlatformSettlementFormulaInput {
-  "플랫폼 수수료 계산식"
-  platformFee: String
-  "할인 분담액 계산식"
-  discountShare: String
-  "추가 수수료 계산식"
-  additionalFee: String
+input UpdatePlatformSettlementCalculatorInput {
+  "정산 수식 설정"
+  settlementFormula: PlatformSettlementFormulaInput!
+  "부가세 소수점 절사 설정"
+  vatRoundType: PlatformRoundType!
+  "적용시점"
+  scheduledAt: DateTime
 }
 
 input UpdatePlatformSettlementParameterInput {
@@ -6171,6 +6236,12 @@ input UpdateStoreWebhookSettingInput {
   contentType: WebhookContentType!
   "웹훅 버전"
   version: WebhookVersion
+}
+
+"플랫폼 정산 계산기 유효성 검사 정보"
+input ValidatePlatformSettlementCalculatorInput {
+  "정산 수식 설정"
+  settlementFormula: PlatformSettlementFormulaInput!
 }
 
 """
@@ -7162,6 +7233,8 @@ type B2bMemberCompany implements Node {
   "사업자 고유 아이디"
   plainId: String!
   id: ID!
+  "외부 공개용 아이디"
+  externalId: String
 """
 사업자등록번호
 
@@ -7886,6 +7959,11 @@ type Channel {
   key: String!
 }
 
+"이름 중복이 허용되지 않는데 이름이 겹치는 대상이 있는 경우"
+type ChannelDuplicateNameError implements Error {
+  message: String
+}
+
 type ChannelGroup implements Node {
   plainId: String!
   id: ID!
@@ -7997,7 +8075,7 @@ type ConnectBulkPartnerMemberCompanyPayload {
   bulkTask: PlatformBulkTask!
 }
 
-"연동 사업자 연동 요청 응답"
+"파트너 연동 사업자 연동 요청 응답"
 type ConnectPartnerMemberCompanyPayload {
   partner: PlatformPartner!
 }
@@ -8396,6 +8474,11 @@ type IdentityVerificationNotSentError implements Error {
   message: String
 }
 
+"삭제하려는 채널이 채널 그룹에 포함되어 있는 경우"
+type IncludedInChannelGroupError implements Error {
+  message: String
+}
+
 "포트원 시스템에서 알 수 없는 오류가 발생한 경우"
 type InternalError implements Error {
   message: String
@@ -8567,6 +8650,10 @@ id 가 주어지는 경우 해당 아이디를 가진 하위 상점을 조회하
   terms: MerchantTermsOutput! @hidden @unstable
   "B2B 기능 관련 정보를 제공합니다."
   b2b: B2b!
+  "웹훅 실패 건수 조회"
+  failedPaymentWebhookCount("조회 기준 시점 유형" timestampType: PaymentTimestampType!, "결제 요청/상태 승인 시점 범위의 시작" from: DateTime!, "결제 요청/상태 승인 시점 범위의 끝" until: DateTime!): GetFailedPaymentWebhookCountOutput! @hidden @unstable
+  "웹훅 일괄 재발송 진행 상태 조회"
+  failedPaymentWebhooksResendStatus: GetFailedWebhooksResendStatusOutput! @hidden @unstable
 }
 
 type MerchantBilling {
@@ -8915,6 +9002,12 @@ API secret 를 통해 API 인증에 사용할 토큰을 가져옵니다.
   remitPlatformVirtualAccount(input: RemitPlatformVirtualAccountInput!): RemitPlatformVirtualAccountOutput! @hidden @unstable
   createPlatformSettlementParameter(input: CreatePlatformSettlementParameterInput!): CreatePlatformSettlementParameterOutput! @hidden
   updatePlatformSettlementParameter(input: UpdatePlatformSettlementParameterInput!): UpdatePlatformSettlementParameterOutput! @hidden
+  "정산 계산기 수정"
+  updatePlatformSettlementCalculator(input: UpdatePlatformSettlementCalculatorInput!): UpdatePlatformSettlementCalculatorOutput! @hidden
+  "정산 계산기 버전 삭제"
+  deletePlatformSettlementCalculator(input: DeletePlatformSettlementCalculatorInput!): DeletePlatformSettlementCalculatorOutput! @hidden
+  "정산 계산기 수식 유효성 검증"
+  validatePlatformSettlementCalculator(input: ValidatePlatformSettlementCalculatorInput!): ValidatePlatformSettlementCalculatorOutput! @hidden
 """
 파일 업로드 url 생성
 
@@ -9157,7 +9250,7 @@ id를 입력하여 연동 사업자 id를 부여할 수 있고, merchant를 연�
 """
   connectBulkPartnerMemberCompany(input: ConnectBulkPartnerMemberCompanyInput!): ConnectBulkPartnerMemberCompanyOutput!
 """
-파트너 연동 사업자 연동 해제
+파트너 연동 사업자 일괄 연동 해제
 
 파트너들을 연동 사업자에서 일괄 연동 해제합니다.
 """
@@ -9177,6 +9270,11 @@ type NegativePromotionAdjustedCancelAmountError implements Error {
 
 "예약된 세션이 없는 경우"
 type NoScheduledSessionError implements Error {
+  message: String
+}
+
+"포트원에서 허용되지 않는 PG 상점 아이디로 채널 등록을 시도했을 경우"
+type NotAllowedPgMerchantIdError implements Error {
   message: String
 }
 
@@ -9275,6 +9373,8 @@ type PaymentProduct {
   amount: Long!
   "주문 수량"
   quantity: Int!
+  "판매 링크"
+  link: String
 }
 
 "거래대사 정산내역 일자별 통계"
@@ -10021,13 +10121,8 @@ type Platform implements Node {
   "해당 플랫폼의 고객사 아이디"
   plainId: String!
   id: ID!
-  "파트너 정산금액의 소수점 처리 방식"
-  roundType: PlatformRoundType!
-  "수수료 및 할인 분담 정책 관련 계산식"
-  settlementFormula: PlatformSettlementFormula!
   "정산 규칙"
   settlementRule: PlatformSettlementRule!
-  settlementFormulaValidation(platformFee: String, discountShare: String, additionalFee: String): PlatformSettlementFormulaValidationOutput! @hidden @unstable
   "주어진 아이디에 대응되는 할인 분담을 조회합니다."
   discountSharePolicy("조회할 할인 분담 정책 아이디" id: ID!): PlatformDiscountSharePolicyOutput!
   "여러 할인 분담을 조회합니다."
@@ -10109,6 +10204,10 @@ true 이면 isForTest 가 true 인 파트너들을 조회하고, false 이면 is
   partnerSettlement(id: ID!): PlatformPartnerSettlementOutput! @hidden @unstable
   "정산 파라미터 다건 조회"
   settlementParameters: PlatformSettlementParametersOutput! @hidden @unstable
+  "플랫폼 정산 계산기 조회"
+  settlementCalculator: PlatformSettlementCalculatorOutput! @hidden @unstable
+  "플랫폼 정산 계산기 버전 이력 조회"
+  settlementCalculatorVersions: PlatformSettlementCalculatorVersionsOutput! @hidden @unstable
   accountTransfers(isForTest: Boolean, page: PageInput, filter: PlatformAccountTransferFilterInput): PlatformAccountTransfersOutput! @hidden @unstable
   bulkTask(id: ID!): PlatformBulkTaskOutput! @hidden @unstable
   bulkTasks(filter: PlatformBulkTaskFilterInput, page: PageInput, isForTest: Boolean): PlatformBulkTasksOutput! @hidden @unstable
@@ -10874,10 +10973,18 @@ type PlatformInsufficientDataToChangePartnerTypeError implements Error {
   message: String
 }
 
-type PlatformInvalidSettlementFormulaError implements Error {
+"유효하지 않은 정산 수식 오류"
+type PlatformInvalidSettlementFormulasError implements Error {
+  "중개 수수료"
   platformFee: PlatformSettlementFormulaError
+  "할인 분담금"
   discountShare: PlatformSettlementFormulaError
+  "추가 수수료"
   additionalFee: PlatformSettlementFormulaError
+  "정산금"
+  settlement: PlatformSettlementFormulaError
+  "사용자 정의"
+  userDefined: [PlatformSettlementFormulaKeyErrorPair!]!
   message: String
 }
 
@@ -10973,6 +11080,12 @@ type PlatformMemberCompanyNotConnectedError implements Error {
   message: String
 }
 
+"수식 순서에 지정되지 않은 수식 키가 있는 경우"
+type PlatformMissingFormulaKeysInOrderError implements Error {
+  keys: [String!]!
+  message: String
+}
+
 "지급 금액의 총합이 음수인 파트너가 존재하는 경우"
 type PlatformNegativePayoutAmountPartnersError implements Error {
   message: String
@@ -10984,6 +11097,17 @@ type PlatformNoPayablePartnerSettlementsError implements Error {
 
 "선택된 정산건이 없는 경우"
 type PlatformNoSelectedPartnerSettlementsError implements Error {
+  message: String
+}
+
+"삭제가 불가능한 버전인 경우"
+type PlatformNonDeletableVersionError implements Error {
+  message: String
+}
+
+"수식 순서에 지정할 수 없는 키가 있는 경우"
+type PlatformNonOrderableKeysInOrderError implements Error {
+  keys: [String!]!
   message: String
 }
 
@@ -11138,6 +11262,8 @@ type PlatformOrderSettlementAmount {
   discountShare: Long!
   "면세 할인 분담 금액"
   discountShareTaxFree: Long!
+  "사용자 정의 수식 결과"
+  userDefinedFormulas: [PlatformUserDefinedFormulaResult!]!
 }
 
 "주문 정산건"
@@ -11607,6 +11733,11 @@ type PlatformPartnerTagsPayload {
   tags: [String!]!
 }
 
+"파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우"
+type PlatformPartnerTaxationTypeIsSimpleError implements Error {
+  message: String
+}
+
 """
 사업자 파트너 정보
 
@@ -11883,8 +12014,18 @@ type PlatformRemitRequestFailedError implements Error {
   message: String
 }
 
+type PlatformReservedFormula {
+  formula: String!
+  roundType: PlatformRoundType!
+}
+
 "과거 시간을 예약 시간으로 지정하려는 경우"
 type PlatformScheduleNotAllowedPastTimeError implements Error {
+  message: String
+}
+
+"이미 예약된 버전이 존재하는 경우"
+type PlatformScheduledVersionAlreadyExists {
   message: String
 }
 
@@ -11910,7 +12051,22 @@ type PlatformSettlementAmountExceededError implements Error {
   "초과한 금액"
   allowedAmount: Long!
   "요청 받은 금액과 초과한 금액 타입"
-  type: AmountExceededType!
+  type: PlatformAmountExceededType!
+}
+
+type PlatformSettlementCalculator {
+  "정산 수식 설정"
+  formula: PlatformSettlementFormula!
+  "부가세 소수점 절사 설정"
+  vatRoundType: PlatformRoundType!
+  "버전"
+  version: PlatformVersion!
+}
+
+"정산 계산기 버전 이력 조회 성공 응답 정보"
+type PlatformSettlementCalculatorVersionsPayload {
+  "조회된 정산 계산기 버전 이력"
+  versions: [PlatformSettlementCalculator!]!
 }
 
 "정산 취소 요청 금액이 포트원 결제 취소 내역의 취소 금액을 초과한 경우"
@@ -11961,14 +12117,19 @@ type PlatformSettlementCycleMethodWeekly {
   daysOfWeek: [DayOfWeek!]!
 }
 
-"플랫폼 내 발생하는 여러 수수료 및 할인 분담에 관한 계산식 정보"
 type PlatformSettlementFormula {
   "플랫폼 수수료 계산식"
-  platformFee: String!
+  platformFee: PlatformReservedFormula!
   "할인 분담액 계산식"
-  discountShare: String!
+  discountShare: PlatformReservedFormula!
   "추가 수수료 계산식"
-  additionalFee: String!
+  additionalFee: PlatformReservedFormula!
+  "정산 수식"
+  settlement: PlatformReservedFormula!
+  "사용자정의 수식"
+  userDefined: [PlatformUserDefinedFormula!]!
+  "수식 순서"
+  orderKeys: [String!]!
 }
 
 type PlatformSettlementFormulaInvalidFunction {
@@ -11991,6 +12152,30 @@ type PlatformSettlementFormulaInvalidVariable {
   position: PlatformSettlementFormulaPosition!
 }
 
+type PlatformSettlementFormulaKeyErrorPair {
+  "수식 키"
+  key: String!
+  "수식 오류"
+  error: PlatformSettlementFormulaError!
+}
+
+type PlatformSettlementFormulaMissingExpectedToken {
+  token: String!
+  position: PlatformSettlementFormulaPosition!
+}
+
+type PlatformSettlementFormulaMissingLeftOperand {
+  position: PlatformSettlementFormulaPosition!
+}
+
+type PlatformSettlementFormulaMissingOperator {
+  position: PlatformSettlementFormulaPosition!
+}
+
+type PlatformSettlementFormulaMissingRightOperand {
+  position: PlatformSettlementFormulaPosition!
+}
+
 type PlatformSettlementFormulaPosition {
   startLine: Int!
   startIndex: Int!
@@ -12005,24 +12190,14 @@ type PlatformSettlementFormulaUnexpectedFunctionArguments {
   position: PlatformSettlementFormulaPosition!
 }
 
-type PlatformSettlementFormulaUnknownError {
-  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
-  _: Boolean
-}
-
-type PlatformSettlementFormulaUnsupportedVariable {
-  name: String!
+type PlatformSettlementFormulaUnexpectedToken {
+  token: String!
   position: PlatformSettlementFormulaPosition!
 }
 
-"플랫폼 계산식 검증 결과"
-type PlatformSettlementFormulaValidation {
-"""
-계산식 오류 정보
-
-계산식이 올바른 경우 주어지지 않습니다.
-"""
-  error: PlatformInvalidSettlementFormulaError
+type PlatformSettlementFormulaUnknownError {
+  "Fake field because GraphQL does not support empty objects. Do not query, use __typename instead."
+  _: Boolean
 }
 
 "플랫폼 정산 파라미터"
@@ -12050,6 +12225,11 @@ type PlatformSettlementParameterCountLimitExceededError implements Error {
 
 "정산 파라미터의 키가 이미 존재하는 경우"
 type PlatformSettlementParameterKeyAlreadyExistsError implements Error {
+  message: String
+}
+
+"입력한 정산 파라미터의 키가 이미 사용자 정의 수식에서 사용 중인 경우"
+type PlatformSettlementParameterKeyConflictUserDefinedFormulaError implements Error {
   message: String
 }
 
@@ -12190,6 +12370,50 @@ type PlatformTransferSummaryPortOnePayment implements PlatformTransferSummaryPay
   methodType: PaymentMethodType
 }
 
+"수식 순서에 알 수 없는 수식 키가 있는 경우"
+type PlatformUnknownFormulaKeysInOrderError implements Error {
+  keys: [String!]!
+  message: String
+}
+
+type PlatformUserDefinedFormula {
+  name: String!
+  key: String!
+  formula: String!
+  roundType: PlatformRoundType!
+}
+
+"사용자 정의 수식의 키가 정산 파라미터에서 이미 사용중인 경우"
+type PlatformUserDefinedFormulaKeysConflictSettlementParameterError implements Error {
+  keys: [String!]!
+  message: String
+}
+
+"사용자 정의 수식 중 키 중복이 있는 경우"
+type PlatformUserDefinedFormulaKeysDuplicatedError implements Error {
+  keys: [String!]!
+  message: String
+}
+
+"사용자 정의 수식의 최대 개수를 초과한 경우"
+type PlatformUserDefinedFormulaLimitExceededError implements Error {
+  message: String
+}
+
+"사용자 정의 수식을 삭제하려고 하는 경우"
+type PlatformUserDefinedFormulaNotDeletableError implements Error {
+  keys: [String!]!
+  message: String
+}
+
+"사용자 정의 수식 결과"
+type PlatformUserDefinedFormulaResult {
+  "수식 키"
+  key: String!
+  "수식 계산 결과"
+  value: Long!
+}
+
 "사용자 정의 속성 생성 허용 개수를 초과한 경우"
 type PlatformUserDefinedPropertiesMaxCountsExceededError implements Error {
   message: String
@@ -12231,6 +12455,19 @@ type PlatformUserDefinedPropertyValue {
 
 "사용자가 존재하지 않는 경우"
 type PlatformUserNotFoundError implements Error {
+  message: String
+}
+
+"버전"
+type PlatformVersion {
+  "버전 식별자"
+  ref: String!
+  "적용 시점"
+  appliedAt: DateTime!
+}
+
+"요청한 버전이 존재하지 않는 경우"
+type PlatformVersionNotFoundError implements Error {
   message: String
 }
 
