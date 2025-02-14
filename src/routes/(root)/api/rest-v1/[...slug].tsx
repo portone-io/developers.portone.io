@@ -81,6 +81,15 @@ export default function ApiV1Docs() {
         </prose.p>
         <br />
         <BackwardCompatibilityContent version="v1" />
+        <prose.h3>하위 상점의 API 사용</prose.h3>
+        <prose.p>
+          하위 상점에 대해 API를 사용하려는 경우 API 호출 시 Tier 헤더(HTTP
+          Request Header)로 하위상점의 티어코드를 전달해야 합니다.
+          <br />
+          <prose.a href="/opi/ko/support/agency-and-tier">
+            [Agency & Tier 란?]
+          </prose.a>
+        </prose.p>
       </RestApi>
     </div>
   );
