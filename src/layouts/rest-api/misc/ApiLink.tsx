@@ -19,13 +19,12 @@ export default function ApiLink({
 }: ApiLinkProps) {
   const id = getEndpointRepr({ method, path });
   const href = `${basepath}/${section}#${encodeURIComponent(id)}`;
-  const className =
-    "hover:text-orange-5 hover:border-orange-2 border-b-2 transition-colors";
   return (
     <a
-      className={className}
+      class="border-b-2 transition-colors hover:border-orange-2 hover:text-orange-5"
       href={href}
       onClick={(e) => {
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
         e.preventDefault();
         expandAndScrollTo({ section, href, id });
       }}
