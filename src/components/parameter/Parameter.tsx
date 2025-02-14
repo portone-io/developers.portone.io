@@ -24,6 +24,7 @@ import { ParameterIdent } from "./ParameterIdent";
 import { ParameterType } from "./ParameterType";
 
 interface ParameterProps {
+  class?: string;
   flatten?: boolean;
   heading?: unknown;
   children?: JSXElement;
@@ -70,7 +71,7 @@ export default function Parameter(props: ParameterProps) {
   });
 
   return (
-    <div class="text-sm text-slate-5 space-y-3">
+    <div class={clsx("text-sm text-slate-5 space-y-3", props.class)}>
       <ProseContext.Provider value={{ styles: proseStyles }}>
         <ParameterContext.Provider
           value={{ flatten: Boolean(props.flatten), forceDepth: forceDepth() }}
@@ -161,12 +162,10 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
         <div class="overflow-x-auto">{children}</div>
       </div>
       <Collapsible.Content
-        as="div"
+        as={Parameter}
         class="grid col-start-2 row-start-3 col-end-3 mt-3 b-l"
       >
-        <For each={detailKeyArray()}>
-          {(key) => <Parameter>{details.get(key)?.()}</Parameter>}
-        </For>
+        <For each={detailKeyArray()}>{(key) => details.get(key)?.()}</For>
       </Collapsible.Content>
     </Collapsible>
   );
