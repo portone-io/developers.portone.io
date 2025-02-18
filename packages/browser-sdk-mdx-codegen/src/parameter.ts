@@ -494,7 +494,9 @@ export function generateParameter({
       { type: "union" },
       { type: "array" },
       () => {
-        writer.writeLine("<Parameter.Hover content={<TypeDef {...props} />}>");
+        writer.writeLine(
+          "<Parameter.Hover content={() => <TypeDef {...props} />}>",
+        );
         writer.indent();
         writer.writeLine("<Parameter.Type>");
         writer.writeLine(`<span class="text-purple-5">${parameterName}</span>`);
