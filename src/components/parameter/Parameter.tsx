@@ -17,11 +17,12 @@ import {
 } from "solid-js";
 import { match, P } from "ts-pattern";
 
-import { ProseContext } from "../prose";
-import { ParameterDeclaration } from "./ParameterDeclaration";
-import { ParameterHover } from "./ParameterHover";
-import { ParameterIdent } from "./ParameterIdent";
-import { ParameterType } from "./ParameterType";
+import { ParameterDeclaration } from "~/components/parameter/ParameterDeclaration";
+import { ParameterHover } from "~/components/parameter/ParameterHover";
+import { ParameterIdent } from "~/components/parameter/ParameterIdent";
+import { ParameterRef } from "~/components/parameter/ParameterRef";
+import { ParameterType } from "~/components/parameter/ParameterType";
+import { ProseContext } from "~/components/prose";
 
 interface ParameterProps {
   class?: string;
@@ -191,3 +192,5 @@ Parameter.Type = ParameterType;
 Parameter.Declaration = ParameterDeclaration;
 
 Parameter.Hover = ParameterHover;
+
+Parameter.Ref = ParameterRef;
