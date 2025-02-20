@@ -1,26 +1,23 @@
-import { A } from "@solidjs/router";
-import Fuse from "fuse.js";
+import { A, createAsync, query } from "@solidjs/router";
 import {
   createContext,
   createEffect,
   createMemo,
-  createResource,
   createSignal,
   For,
   type JSXElement,
   Match,
   Show,
+  Suspense,
   Switch,
   useContext,
 } from "solid-js";
-import { match } from "ts-pattern";
 
-import { lazy } from "~/misc/async";
 import type { IndexFilesMapping } from "~/misc/contentIndex";
+import type { SearchResult } from "~/routes/(root)/search";
 import type { NavMenuSystemVersions } from "~/state/nav";
 import { useSystemVersion } from "~/state/system-version";
-
-const BEFORE_KEYWORD_TEXT_LENGTH = 50;
+import type { Lang, SystemVersion } from "~/type";
 
 const SearchContext = createContext({
   open: (): boolean => false,
@@ -78,15 +75,6 @@ export function SearchButton({ lang }: SearchButtonProps) {
   );
 }
 
-export const searchIndexKo = lazy(() => fetchSearchIndex("ko"));
-export const searchIndexBlog = lazy(() => fetchSearchIndex("blog"));
-async function fetchSearchIndex(
-  fileName: keyof IndexFilesMapping,
-): Promise<SearchIndex> {
-  const res = await fetch(`/content-index/${fileName}.json`);
-  return JSON.parse((await res.text()).normalize("NFKD")) as SearchIndex;
-}
-
 export type SearchIndex = Record<string, SearchIndexItem[]>;
 export interface SearchIndexItem {
   slug: string;
@@ -99,79 +87,52 @@ export interface SearchScreenProps {
   searchIndex: keyof IndexFilesMapping;
   navMenuSystemVersions: NavMenuSystemVersions;
 }
+
+const search = query(
+  async (
+    searchIndex: keyof IndexFilesMapping,
+    lang: Lang,
+    v: SystemVersion,
+    q: string,
+  ) => {
+    if (q.length < 2) return [];
+    const searchParams = new URLSearchParams({
+      searchIndex,
+      lang,
+      v,
+      q,
+    });
+    const res = await fetch(`/search?${searchParams}`);
+    return JSON.parse((await res.text()).normalize("NFC")) as SearchResult[];
+  },
+  "search",
+);
+
 export function SearchScreen(props: SearchScreenProps) {
   const { open, setOpen } = useSearchContext();
   const { systemVersion } = useSystemVersion();
   let inputRef: HTMLInputElement | undefined;
 
-  const [searchText, setSearchText] = createSignal("");
-  const [searchIndex] = createResource(
-    () => open() && props.searchIndex,
-    async (searchIndex) => {
+  const [_searchText, setSearchText] = createSignal("");
+  const searchText = createMemo(() => _searchText().normalize("NFC").trim());
+  const searchResult = createAsync(
+    () => {
       inputRef?.focus();
-      return await match(searchIndex)
-        .with("ko", () => searchIndexKo)
-        .with("blog", () => searchIndexBlog)
-        .exhaustive();
+      return search(props.searchIndex, "ko", systemVersion(), searchText());
     },
-    { initialValue: undefined },
+    {
+      initialValue: undefined,
+    },
   );
-  const fuse = createMemo(() => {
-    const index = searchIndex.latest;
-    if (!index) return;
-    const filteredIndex = Object.entries(index)
-      .flatMap(([key, value]) => value.map((item) => ({ ...item, key })))
-      .filter((item) => {
-        const navMenuSystemVersion =
-          props.navMenuSystemVersions[`/${item.slug}`];
-        if (!navMenuSystemVersion) return true;
-        return navMenuSystemVersion === systemVersion();
-      })
-      .map((item) => {
-        const slug = item.slug
-          .replace(/\/index$/, "")
-          // /foo/(bar)/baz -> /foo/baz
-          .replace(/\/\([\w\d]+\)/, "");
-        return { ...item, slug };
-      });
-    return new Fuse(filteredIndex, {
-      keys: [
-        {
-          name: "title",
-          weight: 3,
-        },
-        {
-          name: "description",
-          weight: 2,
-        },
-        {
-          name: "text",
-          weight: 1,
-        },
-      ],
-      minMatchCharLength: 2,
-      includeMatches: true,
-      distance: 600,
-    });
-  });
-  const searchResult = createMemo(() => {
-    const text = searchText();
-    const f = fuse();
-    if (!text || !f) return [];
-    return Map.groupBy(f.search(text.normalize("NFKD")), ({ item }) => item.key)
-      .entries()
-      .toArray();
-  });
 
-  const highlightedRegex = createMemo(
-    () =>
-      new RegExp(
-        `([${searchText()}]${
-          searchText().length > 1 ? `{2,${searchText().length}}` : ""
-        })`,
-        "i",
-      ),
-  );
+  const highlightedRegex = createMemo(() => {
+    return new RegExp(
+      `([${searchText()}]${
+        searchText().length > 1 ? `{2,${searchText().length}}` : ""
+      })`,
+      "i",
+    );
+  });
 
   const closeSearchScreen = () => {
     setOpen(false);
@@ -198,7 +159,7 @@ export function SearchScreen(props: SearchScreenProps) {
             class="flex-1 bg-transparent px-2 outline-none"
             ref={inputRef}
             placeholder={t(props.searchIndex, "searchContent")}
-            value={searchText()}
+            value={_searchText()}
             onInput={(e) => setSearchText(e.currentTarget.value)}
             onKeyDown={(e) => {
               if (e.key === "Escape") closeSearchScreen();
@@ -206,35 +167,18 @@ export function SearchScreen(props: SearchScreenProps) {
           />
         </div>
         <div class="flex flex-1 flex-col gap-1 overflow-y-auto">
-          <Switch fallback={<Waiting />}>
-            <Match when={searchResult().length > 0}>
-              <For each={searchResult()}>
-                {([key, value]) => (
-                  <div>
-                    <span class="text-sm text-slate-5 font-medium leading-4.5">
-                      {key}
-                    </span>
-                    <ul>
-                      <For each={value.slice(0, 3)}>
-                        {({ item }) => {
-                          const normalizedText = createMemo(() =>
-                            item.text.normalize("NFKC"),
-                          );
-                          const keywordFirstIndex = createMemo(() =>
-                            Math.max(normalizedText().indexOf(searchText()), 0),
-                          );
-                          const textStartIndex = createMemo(() =>
-                            keywordFirstIndex() >= BEFORE_KEYWORD_TEXT_LENGTH
-                              ? keywordFirstIndex() - BEFORE_KEYWORD_TEXT_LENGTH
-                              : 0,
-                          );
-                          const contentDescription = createMemo(() =>
-                            normalizedText().slice(
-                              textStartIndex(),
-                              textStartIndex() + 300,
-                            ),
-                          );
-                          return (
+          <Suspense fallback={<Waiting />}>
+            <Switch fallback={<Waiting />}>
+              <Match when={searchResult()}>
+                <For each={searchResult()}>
+                  {([key, value]) => (
+                    <div>
+                      <span class="text-sm text-slate-5 font-medium leading-4.5">
+                        {key}
+                      </span>
+                      <ul>
+                        <For each={value}>
+                          {(item) => (
                             <A
                               href={`/${item.slug}`}
                               tabIndex={0}
@@ -253,7 +197,7 @@ export function SearchScreen(props: SearchScreenProps) {
                                 </div>
                                 <div class="line-clamp-2 text-ellipsis leading-[1.2]">
                                   <For
-                                    each={contentDescription().split(
+                                    each={item.contentDescription.split(
                                       highlightedRegex(),
                                     )}
                                   >
@@ -278,18 +222,18 @@ export function SearchScreen(props: SearchScreenProps) {
                                 </div>
                               </li>
                             </A>
-                          );
-                        }}
-                      </For>
-                    </ul>
-                  </div>
-                )}
-              </For>
-            </Match>
-            <Match when={fuse()}>
-              <Empty lang={props.searchIndex} />
-            </Match>
-          </Switch>
+                          )}
+                        </For>
+                      </ul>
+                    </div>
+                  )}
+                </For>
+              </Match>
+              <Match when={searchResult() === undefined}>
+                <Empty lang="ko" />
+              </Match>
+            </Switch>
+          </Suspense>
         </div>
       </div>
     </div>
@@ -297,7 +241,7 @@ export function SearchScreen(props: SearchScreenProps) {
 }
 
 interface EmptyProps {
-  lang: string;
+  lang: Lang;
 }
 function Empty({ lang }: EmptyProps) {
   return (
