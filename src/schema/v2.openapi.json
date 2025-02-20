@@ -5541,7 +5541,8 @@
                   "statusChangedAt": "2023-10-16T00:00:00Z",
                   "verifiedAt": "2023-10-16T00:00:00Z",
                   "pgTxId": "transaction-id-from-pg-provider",
-                  "pgRawResponse": "{ .. raw response from pg provider .. }"
+                  "pgRawResponse": "{ .. raw response from pg provider .. }",
+                  "version": "V2"
                 }
               }
             },
@@ -5601,6 +5602,98 @@
         "x-portone-description": "주어진 아이디에 대응되는 본인인증 내역을 조회합니다.",
         "x-portone-error": {
           "$ref": "#/components/schemas/GetIdentityVerificationError"
+        }
+      }
+    },
+    "/identity-verifications": {
+      "get": {
+        "summary": "본인인증 내역 다건 조회",
+        "description": "본인인증 내역 다건 조회\n\n주어진 조건에 맞는 본인인증 내역들을 페이지 기반으로 조회합니다.",
+        "operationId": "getIdentityVerifications",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetIdentityVerificationsBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetIdentityVerificationsBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 조회된 본인인증 내역 리스트와 페이지 정보가 반환됩니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetIdentityVerificationsResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답으로 조회된 본인인증 내역 리스트와 페이지 정보가 반환됩니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetIdentityVerificationsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetIdentityVerificationsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetIdentityVerificationsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "identityVerification",
+        "x-portone-title": "본인인증 내역 다건 조회",
+        "x-portone-description": "주어진 조건에 맞는 본인인증 내역들을 페이지 기반으로 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetIdentityVerificationsError"
         }
       }
     },
@@ -5950,98 +6043,6 @@
         "x-portone-description": "SMS 본인인증 요청을 재전송합니다.",
         "x-portone-error": {
           "$ref": "#/components/schemas/ResendIdentityVerificationError"
-        }
-      }
-    },
-    "/identity-verifications": {
-      "get": {
-        "summary": "본인인증 내역 다건 조회",
-        "description": "본인인증 내역 다건 조회\n\n주어진 조건에 맞는 본인인증 내역들을 페이지 기반으로 조회합니다.",
-        "operationId": "getIdentityVerifications",
-        "parameters": [
-          {
-            "name": "requestBody",
-            "in": "query",
-            "required": false,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetIdentityVerificationsBody"
-                }
-              }
-            },
-            "x-portone-query-or-body": {
-              "enabled": true,
-              "required": false
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetIdentityVerificationsBody"
-              }
-            }
-          },
-          "required": false
-        },
-        "responses": {
-          "200": {
-            "description": "성공 응답으로 조회된 본인인증 내역 리스트와 페이지 정보가 반환됩니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetIdentityVerificationsResponse"
-                }
-              }
-            },
-            "x-portone-title": "성공 응답으로 조회된 본인인증 내역 리스트와 페이지 정보가 반환됩니다."
-          },
-          "400": {
-            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetIdentityVerificationsError"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetIdentityVerificationsError"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "* `ForbiddenError`: 요청이 거절된 경우",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetIdentityVerificationsError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerJwt": []
-          },
-          {
-            "portOne": []
-          }
-        ],
-        "x-portone-category": "identityVerification",
-        "x-portone-title": "본인인증 내역 다건 조회",
-        "x-portone-description": "주어진 조건에 맞는 본인인증 내역들을 페이지 기반으로 조회합니다.",
-        "x-portone-error": {
-          "$ref": "#/components/schemas/GetIdentityVerificationsError"
         }
       }
     },
@@ -15643,7 +15644,8 @@
           },
           "timeRangeField": {
             "$ref": "#/components/schemas/CashReceiptTimeRangeField",
-            "title": "조회 기준 시점 유형"
+            "title": "조회 기준 시점 유형",
+            "description": "값을 입력하지 않으면 ISSUED_AT으로 설정됩니다."
           },
           "from": {
             "type": "string",
@@ -21149,7 +21151,8 @@
           "requestedAt",
           "updatedAt",
           "statusChangedAt",
-          "failure"
+          "failure",
+          "version"
         ],
         "properties": {
           "status": {
@@ -21190,6 +21193,10 @@
           "failure": {
             "$ref": "#/components/schemas/IdentityVerificationFailure",
             "title": "본인인증 실패 정보"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           }
         },
         "x-portone-title": "실패한 본인인증 내역"
@@ -23709,7 +23716,7 @@
           "sort": {
             "$ref": "#/components/schemas/IdentityVerificationSortInput",
             "title": "정렬 조건",
-            "description": "미 입력 시 sortBy: ISSUED_AT, sortOrder: DESC 으로 기본값이 적용됩니다."
+            "description": "미 입력 시 sortBy: REQUESTED_AT, sortOrder: DESC 으로 기본값이 적용됩니다."
           },
           "filter": {
             "$ref": "#/components/schemas/IdentityVerificationFilterInput",
@@ -26413,6 +26420,39 @@
         },
         "x-portone-title": "본인인증 실패 정보"
       },
+      "IdentityVerificationFilterCustomerInput": {
+        "title": "본인인증 다건 조회를 위한 고객 정보 입력 정보",
+        "description": "본인인증 다건 조회를 위한 고객 정보 입력 정보",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "이름"
+          },
+          "birthYear": {
+            "type": "string",
+            "title": "출생 연도"
+          },
+          "birthMonth": {
+            "type": "string",
+            "title": "출생월"
+          },
+          "birthDay": {
+            "type": "string",
+            "title": "출생일"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "전화번호",
+            "description": "특수 문자(-) 없이 숫자로만 이루어진 번호 형식입니다."
+          },
+          "gender": {
+            "$ref": "#/components/schemas/Gender",
+            "title": "성별"
+          }
+        },
+        "x-portone-title": "본인인증 다건 조회를 위한 고객 정보 입력 정보"
+      },
       "IdentityVerificationFilterInput": {
         "title": "본인인증 다건 조회를 위한 입력 정보",
         "description": "본인인증 다건 조회를 위한 입력 정보",
@@ -26425,7 +26465,8 @@
           },
           "timeRangeField": {
             "$ref": "#/components/schemas/IdentityVerificationTimeRangeField",
-            "title": "조회 기준 시점 유형"
+            "title": "조회 기준 시점 유형",
+            "description": "값을 입력하지 않으면 REQUESTED_AT으로 설정됩니다."
           },
           "from": {
             "type": "string",
@@ -26441,19 +26482,17 @@
           },
           "identityVerificationId": {
             "type": "string",
-            "title": "고객사 본인인증 아이디"
+            "title": "고객사 본인인증 아이디",
+            "description": "V1 본인인증 건의 경우 `merchant_uid`에 대응됩니다."
           },
           "identityVerificationTxId": {
             "type": "string",
-            "title": "포트원 본인인증 시도 번호"
+            "title": "포트원 본인인증 시도 번호",
+            "description": "V1 본인인증 건의 경우 `merchant_uid`에 대응됩니다."
           },
           "isTest": {
             "type": "boolean",
             "title": "테스트 결제 필터링"
-          },
-          "orderName": {
-            "type": "string",
-            "title": "주문명"
           },
           "statuses": {
             "title": "본인인증 상태 리스트",
@@ -26462,10 +26501,6 @@
               "$ref": "#/components/schemas/IdentityVerificationStatus"
             },
             "description": "값을 입력하지 않으면 필터링이 적용되지 않습니다."
-          },
-          "isManual": {
-            "type": "boolean",
-            "title": "수동 발급 여부"
           },
           "pgTxId": {
             "type": "string",
@@ -26501,6 +26536,11 @@
           "version": {
             "$ref": "#/components/schemas/PortOneVersion",
             "title": "포트원 버전"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/IdentityVerificationFilterCustomerInput",
+            "title": "고객 정보",
+            "description": "인증이 완료되지 않은 본인인증 내역의 경우 요청 시 고객 정보로, 인증이 완료된 본인인증 내역의 경우 인증된 고객 정보로 필터링합니다."
           }
         },
         "x-portone-title": "본인인증 다건 조회를 위한 입력 정보"
@@ -26645,7 +26685,7 @@
           "by": {
             "$ref": "#/components/schemas/IdentityVerificationSortBy",
             "title": "정렬 기준 필드",
-            "description": "어떤 필드를 기준으로 정렬할 지 결정합니다. 비워서 보낼 경우, ISSUED_AT이 기본값으로 설정됩니다."
+            "description": "어떤 필드를 기준으로 정렬할 지 결정합니다. 비워서 보낼 경우, REQUESTED_AT이 기본값으로 설정됩니다."
           },
           "order": {
             "$ref": "#/components/schemas/SortOrder",
@@ -26709,8 +26749,7 @@
         "description": "인증된 고객 정보",
         "type": "object",
         "required": [
-          "name",
-          "birthDate"
+          "name"
         ],
         "properties": {
           "id": {
@@ -26732,7 +26771,7 @@
             "description": "특수 문자(-) 없이 숫자로만 이루어진 번호 형식입니다.\n다날: 별도 계약이 필요합니다.\nKG이니시스: 항상 제공합니다."
           },
           "birthDate": {
-            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "description": "포트원 V2 본인인증 건의 경우 항상 존재합니다.",
             "type": "string",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일 (yyyy-MM-dd)"
@@ -41124,7 +41163,8 @@
           "requestedCustomer",
           "requestedAt",
           "updatedAt",
-          "statusChangedAt"
+          "statusChangedAt",
+          "version"
         ],
         "properties": {
           "status": {
@@ -41161,6 +41201,10 @@
             "type": "string",
             "format": "date-time",
             "title": "상태 업데이트 시점"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           }
         },
         "x-portone-title": "준비 상태의 본인인증 내역"
@@ -46140,7 +46184,8 @@
           "statusChangedAt",
           "verifiedAt",
           "pgTxId",
-          "pgRawResponse"
+          "pgRawResponse",
+          "version"
         ],
         "properties": {
           "status": {
@@ -46190,6 +46235,10 @@
           "pgRawResponse": {
             "type": "string",
             "title": "PG사 응답 데이터"
+          },
+          "version": {
+            "$ref": "#/components/schemas/PortOneVersion",
+            "title": "포트원 버전"
           }
         },
         "x-portone-title": "완료된 본인인증 내역"
