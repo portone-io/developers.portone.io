@@ -8969,8 +8969,8 @@
     },
     "/platform/partners/member-company-disconnect/{id}": {
       "post": {
-        "summary": "파트너 연동 사업자 연동 해제",
-        "description": "파트너 연동 사업자 연동 해제\n\n파트너를 연동 사업자에서 연동 해제합니다.",
+        "summary": "연동 사업자 연동 해제",
+        "description": "연동 사업자 연동 해제\n\n파트너를 연동 사업자에서 연동 해제합니다.",
         "operationId": "disconnectPartnerMemberCompany",
         "parameters": [
           {
@@ -9066,7 +9066,7 @@
           }
         ],
         "x-portone-category": "platform.partner",
-        "x-portone-title": "파트너 연동 사업자 연동 해제",
+        "x-portone-title": "연동 사업자 연동 해제",
         "x-portone-description": "파트너를 연동 사업자에서 연동 해제합니다.",
         "x-portone-error": {
           "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
@@ -9169,8 +9169,8 @@
     },
     "/platform/partners/member-company-disconnect": {
       "post": {
-        "summary": "파트너 연동 사업자 일괄 연동 해제",
-        "description": "파트너 연동 사업자 일괄 연동 해제\n\n파트너들을 연동 사업자에서 일괄 연동 해제합니다.",
+        "summary": "파트너 연동 사업자 연동 해제",
+        "description": "파트너 연동 사업자 연동 해제\n\n파트너들을 연동 사업자에서 일괄 연동 해제합니다.",
         "operationId": "disconnectBulkPartnerMemberCompany",
         "requestBody": {
           "content": {
@@ -9254,7 +9254,7 @@
           }
         ],
         "x-portone-category": "platform.partner",
-        "x-portone-title": "파트너 연동 사업자 일괄 연동 해제",
+        "x-portone-title": "파트너 연동 사업자 연동 해제",
         "x-portone-description": "파트너들을 연동 사업자에서 일괄 연동 해제합니다.",
         "x-portone-error": {
           "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
@@ -20173,8 +20173,8 @@
         }
       },
       "DisconnectPartnerMemberCompanyResponse": {
-        "title": "파트너 연동 사업자 연동 해제 요청 응답",
-        "description": "파트너 연동 사업자 연동 해제 요청 응답",
+        "title": "연동 사업자 연동 해제 요청 응답",
+        "description": "연동 사업자 연동 해제 요청 응답",
         "type": "object",
         "required": [
           "partner"
@@ -20184,7 +20184,7 @@
             "$ref": "#/components/schemas/PlatformPartner"
           }
         },
-        "x-portone-title": "파트너 연동 사업자 연동 해제 요청 응답"
+        "x-portone-title": "연동 사업자 연동 해제 요청 응답"
       },
       "DiscountAmountExceedsTotalAmountError": {
         "title": "프로모션 할인 금액이 결제 시도 금액 이상인 경우",
@@ -20203,6 +20203,61 @@
         },
         "x-portone-title": "프로모션 할인 금액이 결제 시도 금액 이상인 경우",
         "x-portone-status-code": 400
+      },
+      "Dispute": {
+        "title": "분쟁 내역",
+        "description": "분쟁 내역",
+        "type": "object",
+        "required": [
+          "status",
+          "reason",
+          "createdAt"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/DisputeStatus",
+            "title": "분쟁 상태"
+          },
+          "pgDisputeId": {
+            "type": "string",
+            "title": "PG사 분쟁 아이디"
+          },
+          "reason": {
+            "type": "string",
+            "title": "분쟁 사유"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "분쟁 발생 시각"
+          },
+          "resolvedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "분쟁 해소 시각"
+          }
+        },
+        "x-portone-title": "분쟁 내역"
+      },
+      "DisputeStatus": {
+        "title": "분쟁 상태",
+        "description": "분쟁 상태",
+        "type": "string",
+        "enum": [
+          "UNRESOLVED",
+          "RESOLVED"
+        ],
+        "x-portone-title": "분쟁 상태",
+        "x-portone-enum": {
+          "UNRESOLVED": {
+            "title": "분쟁 발생 상태",
+            "description": "분쟁이 발생하였으며 아직 해소되지 않은 상태입니다."
+          },
+          "RESOLVED": {
+            "title": "분쟁 해소 상태",
+            "description": "분쟁이 발생하였으나 해소된 상태입니다."
+          }
+        }
       },
       "DownloadB2bTaxInvoicesSheetBody": {
         "title": "DownloadB2bTaxInvoicesSheetBody",
@@ -23384,6 +23439,39 @@
         "properties": {
           "channel": {
             "$ref": "#/components/schemas/PaymentReconciliationChannel"
+          }
+        }
+      },
+      "GetPaymentReconciliationCollectionHistoriesError": {
+        "title": "GetPaymentReconciliationCollectionHistoriesError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetPaymentReconciliationCollectionHistoriesResponse": {
+        "title": "GetPaymentReconciliationCollectionHistoriesResponse",
+        "type": "object",
+        "required": [
+          "collectionHistories"
+        ],
+        "properties": {
+          "collectionHistories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentReconciliationCollectionHistory"
+            }
           }
         }
       },
@@ -27058,12 +27146,12 @@
           "accessToken": {
             "type": "string",
             "title": "인증에 사용하는 엑세스 토큰",
-            "description": "하루의 유효기간을 가지고 있습니다."
+            "description": "30분의 유효기간을 가지고 있습니다."
           },
           "refreshToken": {
             "type": "string",
             "title": "토큰 재발급 및 유효기간 연장을 위해 사용하는 리프레시 토큰",
-            "description": "일주일의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.\n동일한 유저가 로그인 또는 토큰 재발급을 진행할 때마다 기존에 발급된 리프레시 토큰은 즉시 만료되므로 API 사용에 유의해주세요."
+            "description": "하루의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.\n동일한 유저가 로그인 또는 토큰 재발급을 진행할 때마다 기존에 발급된 리프레시 토큰은 즉시 만료되므로 API 사용에 유의해주세요."
           }
         },
         "x-portone-title": "API key 로그인 성공 응답"
@@ -27113,12 +27201,12 @@
           "accessToken": {
             "type": "string",
             "title": "인증에 사용하는 엑세스 토큰",
-            "description": "하루의 유효기간을 가지고 있습니다."
+            "description": "30분의 유효기간을 가지고 있습니다."
           },
           "refreshToken": {
             "type": "string",
             "title": "토큰 재발급 및 유효기간 연장을 위해 사용하는 리프레시 토큰",
-            "description": "일주일의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.\n동일한 유저가 로그인 또는 토큰 재발급을 진행할 때마다 기존에 발급된 리프레시 토큰은 즉시 만료되므로 API 사용에 유의해주세요."
+            "description": "하루의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.\n동일한 유저가 로그인 또는 토큰 재발급을 진행할 때마다 기존에 발급된 리프레시 토큰은 즉시 만료되므로 API 사용에 유의해주세요."
           }
         },
         "x-portone-title": "API key 로그인 성공 응답"
@@ -27425,7 +27513,8 @@
           "amount",
           "currency",
           "customer",
-          "paidAt"
+          "paidAt",
+          "disputes"
         ],
         "properties": {
           "status": {
@@ -27566,6 +27655,13 @@
           "receiptUrl": {
             "type": "string",
             "title": "거래 영수증 URL"
+          },
+          "disputes": {
+            "title": "분쟁 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dispute"
+            }
           }
         },
         "x-portone-title": "결제 완료 상태 건"
@@ -29891,7 +29987,10 @@
             "$ref": "#/components/schemas/PaymentReconciliationNaverpayCredential"
           },
           {
-            "$ref": "#/components/schemas/PaymentReconciliationNicepayCredential"
+            "$ref": "#/components/schemas/PaymentReconciliationNicepayHttpCredential"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentReconciliationNicepaySftpCredential"
           },
           {
             "$ref": "#/components/schemas/PaymentReconciliationPaycoCredential"
@@ -29907,7 +30006,7 @@
           }
         ],
         "discriminator": {
-          "propertyName": "pgCompany",
+          "propertyName": "type",
           "mapping": {
             "DANAL": "#/components/schemas/PaymentReconciliationDanalCredential",
             "EXIMBAY": "#/components/schemas/PaymentReconciliationEximbayCredential",
@@ -29919,7 +30018,8 @@
             "KPN": "#/components/schemas/PaymentReconciliationKpnCredential",
             "KSNET": "#/components/schemas/PaymentReconciliationKsnetCredential",
             "NAVERPAY": "#/components/schemas/PaymentReconciliationNaverpayCredential",
-            "NICEPAY": "#/components/schemas/PaymentReconciliationNicepayCredential",
+            "NICEPAY_HTTP": "#/components/schemas/PaymentReconciliationNicepayHttpCredential",
+            "NICEPAY_SFTP": "#/components/schemas/PaymentReconciliationNicepaySftpCredential",
             "PAYCO": "#/components/schemas/PaymentReconciliationPaycoCredential",
             "TOSSPAY": "#/components/schemas/PaymentReconciliationTosspayCredential",
             "TOSSPAYMENTS": "#/components/schemas/PaymentReconciliationTosspaymentsCredential",
@@ -29933,14 +30033,15 @@
           "HECTO": {},
           "TOSSPAY": {},
           "INICIS": {},
+          "NICEPAY_SFTP": {},
           "KPN": {},
-          "DANAL": {},
-          "NICEPAY": {},
           "TOSSPAYMENTS": {},
           "KAKAOPAY": {},
           "EXIMBAY": {},
           "UPLUS": {},
           "HYPHEN": {},
+          "NICEPAY_HTTP": {},
+          "DANAL": {},
           "KSNET": {},
           "KCP": {}
         }
@@ -29970,6 +30071,69 @@
             "$ref": "#/components/schemas/TaxationType",
             "title": "과세 구분"
           }
+        }
+      },
+      "PaymentReconciliationCollectionHistory": {
+        "title": "PaymentReconciliationCollectionHistory",
+        "type": "object",
+        "required": [
+          "id",
+          "channelKey",
+          "collectedAt",
+          "collectionType",
+          "targetDate",
+          "transactionDates",
+          "isDaily"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "수집 이력 건별 고유 아이디"
+          },
+          "channelKey": {
+            "type": "string",
+            "title": "채널키"
+          },
+          "collectedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "수집 시각"
+          },
+          "collectionType": {
+            "$ref": "#/components/schemas/PaymentReconciliationCollectionType",
+            "title": "수집 형태"
+          },
+          "targetDate": {
+            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "type": "string",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "수집 대상 일자"
+          },
+          "transactionDates": {
+            "type": "array",
+            "items": {
+              "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+              "type": "string",
+              "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
+            },
+            "title": "수집된 건들의 거래일자"
+          },
+          "isDaily": {
+            "type": "boolean",
+            "title": "일일 자동 수집 여부"
+          }
+        }
+      },
+      "PaymentReconciliationCollectionType": {
+        "title": "PaymentReconciliationCollectionType",
+        "type": "string",
+        "enum": [
+          "TRANSACTION",
+          "SETTLEMENT"
+        ],
+        "x-portone-enum": {
+          "TRANSACTION": {},
+          "SETTLEMENT": {}
         }
       },
       "PaymentReconciliationColumn": {
@@ -30131,12 +30295,12 @@
         "title": "PaymentReconciliationDanalCredential",
         "type": "object",
         "required": [
-          "pgCompany"
+          "type"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           }
         }
       },
@@ -30203,13 +30367,13 @@
         "title": "PaymentReconciliationEximbayCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
           "secretKey"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "secretKey": {
             "type": "string"
@@ -30227,6 +30391,13 @@
               "type": "string"
             },
             "title": "거래대사 하위 가맹점 아이디 필터"
+          },
+          "channelKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "거래대사 채널 키 필터"
           },
           "pgSpecifiers": {
             "title": "거래대사 결제사(PG) 식별자 필터",
@@ -30278,13 +30449,13 @@
         "title": "PaymentReconciliationHectoCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
           "authKey"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "authKey": {
             "type": "string"
@@ -30295,12 +30466,12 @@
         "title": "PaymentReconciliationHyphenCredential",
         "type": "object",
         "required": [
-          "pgCompany"
+          "type"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           }
         }
       },
@@ -30406,13 +30577,13 @@
         "title": "PaymentReconciliationInicisCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
           "reconciliationPassword"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "reconciliationPassword": {
             "type": "string"
@@ -30423,12 +30594,12 @@
         "title": "PaymentReconciliationKakaopayCredential",
         "type": "object",
         "required": [
-          "pgCompany"
+          "type"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           }
         }
       },
@@ -30436,12 +30607,12 @@
         "title": "PaymentReconciliationKcpCredential",
         "type": "object",
         "required": [
-          "pgCompany"
+          "type"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           }
         }
       },
@@ -30449,12 +30620,12 @@
         "title": "PaymentReconciliationKpnCredential",
         "type": "object",
         "required": [
-          "pgCompany"
+          "type"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           }
         }
       },
@@ -30462,13 +30633,13 @@
         "title": "PaymentReconciliationKsnetCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
           "reconciliationApiKey"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "reconciliationApiKey": {
             "type": "string"
@@ -30595,16 +30766,16 @@
         "title": "PaymentReconciliationNaverpayCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
           "chainId",
           "clientId",
           "clientSecret",
           "apiKeys"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "chainId": {
             "type": "string"
@@ -30623,18 +30794,39 @@
           }
         }
       },
-      "PaymentReconciliationNicepayCredential": {
-        "title": "PaymentReconciliationNicepayCredential",
+      "PaymentReconciliationNicepayHttpCredential": {
+        "title": "PaymentReconciliationNicepayHttpCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
+          "usrId",
+          "merchantKey"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "크레덴셜 종류"
+          },
+          "usrId": {
+            "type": "string"
+          },
+          "merchantKey": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentReconciliationNicepaySftpCredential": {
+        "title": "PaymentReconciliationNicepaySftpCredential",
+        "type": "object",
+        "required": [
+          "type",
           "sftpUsername",
           "sftpPassword"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "sftpUsername": {
             "type": "string"
@@ -30957,12 +31149,12 @@
         "title": "PaymentReconciliationPaycoCredential",
         "type": "object",
         "required": [
-          "pgCompany"
+          "type"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           }
         }
       },
@@ -31433,13 +31625,13 @@
         "title": "PaymentReconciliationTosspayCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
           "apiKey"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "apiKey": {
             "type": "string"
@@ -31450,13 +31642,13 @@
         "title": "PaymentReconciliationTosspaymentsCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
           "secretKey"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "secretKey": {
             "type": "string"
@@ -31752,13 +31944,13 @@
         "title": "PaymentReconciliationUplusCredential",
         "type": "object",
         "required": [
-          "pgCompany",
+          "type",
           "mertKey"
         ],
         "properties": {
-          "pgCompany": {
+          "type": {
             "type": "string",
-            "title": "PG사"
+            "title": "크레덴셜 종류"
           },
           "mertKey": {
             "type": "string"
@@ -41387,12 +41579,12 @@
           "accessToken": {
             "type": "string",
             "title": "인증에 사용하는 엑세스 토큰",
-            "description": "하루의 유효기간을 가지고 있습니다."
+            "description": "30분의 유효기간을 가지고 있습니다."
           },
           "refreshToken": {
             "type": "string",
             "title": "토큰 재발급 및 유효기간 연장을 위해 사용하는 리프레시 토큰",
-            "description": "일주일의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.\n동일한 유저가 로그인 또는 토큰 재발급을 진행할 때마다 기존에 발급된 리프레시 토큰은 즉시 만료되므로 API 사용에 유의해주세요."
+            "description": "하루의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.\n동일한 유저가 로그인 또는 토큰 재발급을 진행할 때마다 기존에 발급된 리프레시 토큰은 즉시 만료되므로 API 사용에 유의해주세요."
           }
         },
         "x-portone-title": "토큰 재발급 성공 응답"
