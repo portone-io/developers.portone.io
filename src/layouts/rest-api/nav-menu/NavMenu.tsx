@@ -12,7 +12,7 @@ import {
 } from "solid-js";
 
 import { VersionSwitch } from "~/layouts/gnb/VersionSwitch";
-import DropdownLink from "~/layouts/sidebar/DropdownLink";
+import DropdownLink, { getDropdownLinks } from "~/layouts/sidebar/DropdownLink";
 import LeftSidebar from "~/layouts/sidebar/LeftSidebar";
 import { useSystemVersion } from "~/state/system-version";
 
@@ -119,14 +119,7 @@ export default function NavMenu(props: Props) {
         <div class="md:hidden">
           <DropdownLink
             pathname={location.pathname}
-            items={[
-              { label: "원 페이먼트 인프라", link: "/opi/ko" },
-              { label: "REST API", link: `/api/rest-${systemVersion()}` },
-              { label: "포트원 SDK", link: "/sdk/ko" },
-              { label: "파트너 정산 자동화", link: "/platform/ko" },
-              { label: "릴리스 노트", link: "/release-notes" },
-              { label: "기술 블로그", link: "/blog" },
-            ]}
+            items={getDropdownLinks(systemVersion())}
           />
           <div class="my-4 h-1px bg-slate-200"></div>
         </div>
