@@ -10,7 +10,7 @@ import SchemaDownloadButton, {
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
-import BackwardCompatibilityContent from "~/routes/(root)/api/backward-compatibility";
+import BackwardCompatibilityContent from "~/routes/(root)/api/backward-compatibility.mdx";
 import schema from "~/schema/v2.openapi.json";
 import { useSystemVersion } from "~/state/system-version";
 
@@ -96,7 +96,7 @@ export default function ApiV2Docs() {
           이 경우, Body 객체를 <code>requestBody</code> Query 필드에 넣어주시면
           됩니다.
         </prose.p>
-        <BackwardCompatibilityContent version="v2" />
+        <BackwardCompatibilityContent />
       </RestApi>
     </div>
   );
