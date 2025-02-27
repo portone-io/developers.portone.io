@@ -1,3 +1,4 @@
+import { useLocation } from "@solidjs/router";
 import clsx from "clsx";
 import {
   createEffect,
@@ -11,7 +12,9 @@ import {
 } from "solid-js";
 
 import { VersionSwitch } from "~/layouts/gnb/VersionSwitch";
+import DropdownLink, { getDropdownLinks } from "~/layouts/sidebar/DropdownLink";
 import LeftSidebar from "~/layouts/sidebar/LeftSidebar";
+import { useSystemVersion } from "~/state/system-version";
 
 import NavMenuLink from "./NavMenuLink";
 
@@ -31,6 +34,8 @@ interface Props {
 }
 
 export default function NavMenu(props: Props) {
+  const { systemVersion } = useSystemVersion();
+  const location = useLocation();
   const items = createMemo(() => [
     { title: "개요", id: "overview" },
     ...props.items,
@@ -110,7 +115,16 @@ export default function NavMenu(props: Props) {
 
   return (
     <LeftSidebar>
-      <div class="pb-1 pl-2 pr-6 pt-4">
+      <div class="pr-4 pt-5">
+        <div class="md:hidden">
+          <DropdownLink
+            pathname={location.pathname}
+            items={getDropdownLinks(systemVersion())}
+          />
+          <div class="my-4 h-1px bg-slate-200"></div>
+        </div>
+      </div>
+      <div class="pb-1 pl-2 pr-6">
         <VersionSwitch />
       </div>
       <div class="px-2 pb-2 pt-3 text-lg font-bold">{props.title}</div>
