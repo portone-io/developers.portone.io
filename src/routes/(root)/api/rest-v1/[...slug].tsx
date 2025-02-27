@@ -11,7 +11,7 @@ import SchemaDownloadButton, {
 } from "~/layouts/rest-api/misc/SchemaDownloadButton";
 import NavMenu from "~/layouts/rest-api/nav-menu/NavMenu";
 import { getCategories } from "~/layouts/rest-api/schema-utils/category";
-import BackwardCompatibilityContent from "~/routes/(root)/api/backward-compatibility";
+import BackwardCompatibilityContent from "~/routes/(root)/api/backward-compatibility.mdx";
 import schema from "~/schema/v1.openapi.json";
 import { useSystemVersion } from "~/state/system-version";
 
@@ -80,7 +80,7 @@ export default function ApiV1Docs() {
           </SchemaDownloadButton>
         </prose.p>
         <br />
-        <BackwardCompatibilityContent version="v1" />
+        <BackwardCompatibilityContent />
         <prose.h3>하위 상점의 API 사용</prose.h3>
         <prose.p>
           하위 상점에 대해 API를 사용하려는 경우 API 호출 시 Tier 헤더(HTTP
