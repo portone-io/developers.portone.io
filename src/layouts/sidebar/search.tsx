@@ -7,6 +7,7 @@ import {
   For,
   type JSXElement,
   Match,
+  on,
   Show,
   Suspense,
   Switch,
@@ -75,14 +76,6 @@ export function SearchButton({ lang }: SearchButtonProps) {
   );
 }
 
-export type SearchIndex = Record<string, SearchIndexItem[]>;
-export interface SearchIndexItem {
-  slug: string;
-  title?: string;
-  description?: string;
-  text: string;
-}
-
 export interface SearchScreenProps {
   searchIndex: keyof IndexFilesMapping;
   navMenuSystemVersions: NavMenuSystemVersions;
@@ -115,6 +108,13 @@ export function SearchScreen(props: SearchScreenProps) {
 
   const [_searchText, setSearchText] = createSignal("");
   const searchText = createMemo(() => _searchText().normalize("NFC").trim());
+  createEffect(
+    on(open, (open) => {
+      if (open) {
+        inputRef?.focus();
+      }
+    }),
+  );
   const searchResult = createAsync(
     () => {
       inputRef?.focus();

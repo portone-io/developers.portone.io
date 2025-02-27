@@ -1,62 +1,49 @@
 import type { APIEvent } from "@solidjs/start/server";
-import Fuse from "fuse.js";
-import * as yaml from "js-yaml";
-import { match, P } from "ts-pattern";
+import Fuse, { type FuseIndex } from "fuse.js";
+import { match } from "ts-pattern";
 import { z } from "zod";
 
-import { indexFilesMapping as _indexFilesMapping } from "~/misc/contentIndex";
-import { toPlainText } from "~/misc/mdx";
-import { makeReleaseNoteFrontmatter } from "~/misc/releaseNote";
+import { type IndexFilesMapping } from "~/misc/contentIndex";
+import type { SearchIndex } from "~/routes/content-index/[fileName]";
 import { calcNavMenuSystemVersions } from "~/state/nav";
 import { navMenu } from "~/state/server-only/nav";
 import { Lang, SystemVersion } from "~/type";
 
 const BEFORE_KEYWORD_TEXT_LENGTH = 50;
 
-const makeSearchIndex = async (index: "ko" | "blog") => {
-  const indexFilesMapping = _indexFilesMapping[index];
-  const entryMap = import.meta.glob("~/routes/**/*.mdx", {
-    query: "?raw",
-  });
-  const mdxTable = Object.fromEntries(
-    await Promise.all(
-      Object.entries(indexFilesMapping).map(
-        async ([title, slug]) =>
-          [
-            title.normalize("NFC"),
-            await generateMdxTable(entryMap, slug),
-          ] as const,
-      ),
-    ),
+const createFuseInstance = ({
+  searchIndex,
+  fuseIndex,
+}: {
+  searchIndex: SearchIndex[];
+  fuseIndex: FuseIndex<SearchIndex>;
+}) => {
+  return new Fuse(
+    searchIndex,
+    {
+      keys: [
+        { name: "title", weight: 3 },
+        { name: "description", weight: 2 },
+        { name: "text", weight: 1 },
+      ],
+      minMatchCharLength: 2,
+      includeMatches: true,
+      distance: 600,
+    },
+    fuseIndex,
   );
-  const searchIndex = Object.entries(mdxTable).flatMap(([key, value]) =>
-    value.map((item) => {
-      const slug = item.slug
-        .replace(/\/index$/, "")
-        .replace(/\/\([\w\d]+\)/, "");
-      return { ...item, key, slug };
-    }),
-  );
-  return searchIndex;
 };
 
-const createFuseInstance = (
-  items: Awaited<ReturnType<typeof makeSearchIndex>>,
-) => {
-  return new Fuse(items, {
-    keys: [
-      { name: "title", weight: 3 },
-      { name: "description", weight: 2 },
-      { name: "text", weight: 1 },
-    ],
-    minMatchCharLength: 2,
-    includeMatches: true,
-    distance: 600,
-  });
+const getSearchIndex = async (index: keyof IndexFilesMapping) => {
+  const res = await fetch(`/content-index/${index}.json`);
+  return (await res.json()) as {
+    searchIndex: SearchIndex[];
+    fuseIndex: FuseIndex<SearchIndex>;
+  };
 };
 
-const searchFuseKo = makeSearchIndex("ko").then(createFuseInstance);
-const searchFuseBlog = makeSearchIndex("blog").then(createFuseInstance);
+const searchFuseKo = getSearchIndex("ko").then(createFuseInstance);
+const searchFuseBlog = getSearchIndex("blog").then(createFuseInstance);
 
 export type SearchResult = [key: string, SearchResultItem[]];
 
@@ -125,71 +112,4 @@ export async function GET(req: APIEvent) {
       "CDN-Cache-Control": "max-age=31536000",
     },
   });
-}
-
-interface CutFrontmatterResult {
-  frontmatter: unknown;
-  md: string;
-}
-async function generateMdxTable(
-  entryMap: Record<string, () => Promise<unknown>>,
-  slug: string,
-) {
-  const newLocal = await Promise.all(
-    Object.entries(entryMap)
-      .filter(([path]) => !path.includes("_components"))
-      .map(async ([path, importEntry]) => {
-        const pathMatch = path.match(/\/routes\/\(root\)\/(.+)\.mdx$/);
-        if (!pathMatch || !pathMatch[1]?.startsWith(slug)) return;
-        const entry = await importEntry();
-        if (
-          !entry ||
-          typeof entry !== "object" ||
-          !("default" in entry) ||
-          typeof entry.default !== "string"
-        )
-          return;
-
-        const { frontmatter, md } = cutFrontmatter(entry.default);
-
-        if (!frontmatter || typeof frontmatter !== "object") return;
-
-        const entrySlug = match(frontmatter)
-          .with({ slug: P.string }, ({ slug }) => slug)
-          .otherwise(() => pathMatch[1]);
-
-        if (entrySlug === undefined) {
-          return;
-        }
-
-        const releaseNoteFrontmatter = match(frontmatter)
-          .with({ releasedAt: P.instanceOf(Date) }, ({ releasedAt }) =>
-            makeReleaseNoteFrontmatter(releasedAt, entrySlug),
-          )
-          .otherwise(() => undefined);
-
-        return {
-          ...frontmatter,
-          slug: entrySlug,
-          text: toPlainText(md),
-          ...releaseNoteFrontmatter,
-        } as const;
-      }),
-  );
-  return newLocal.filter(Boolean);
-}
-
-function cutFrontmatter(md: string): CutFrontmatterResult {
-  const match = md
-    .normalize("NFC")
-    .match(/^---\r?\n((?:.|\r|\n)*?)\r?\n---\r?\n((?:.|\r|\n)*)$/);
-  if (!match) return { frontmatter: {}, md };
-  try {
-    const fm = match[1] || "";
-    const md = match[2] || "";
-    const frontmatter = yaml.load(fm);
-    return { frontmatter, md };
-  } catch {
-    return { frontmatter: {}, md };
-  }
 }

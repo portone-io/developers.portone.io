@@ -148,8 +148,11 @@ async function generate(watch = false) {
     ),
   );
 
-  await writeIndex(collections, outDir);
-  await writeThumbnail(collections, path.join(outDir, "client"));
+  await Promise.all([
+    writeIndex(collections, outDir),
+    writeSearchIndex(collections, outDir),
+    writeThumbnail(collections, path.join(outDir, "client")),
+  ]);
   if (!watch) return () => {};
 
   const subscriptions = await Promise.all(
@@ -179,8 +182,11 @@ async function generate(watch = false) {
             if (!collection) {
               collections.set(name, newCollection);
               collection = newCollection;
-              await writeCollection(name, collection, outDir);
-              await writeIndex(collections, outDir);
+              await Promise.all([
+                writeCollection(name, collection, outDir),
+                writeSearchIndex(collections, outDir),
+                writeIndex(collections, outDir),
+              ]);
             } else {
               for (const [slug, entry] of newCollection.entries) {
                 collection.entries.set(slug, entry);
@@ -274,6 +280,23 @@ ${[...collections.values()]
 
   await fs.mkdir(outDir, { recursive: true });
   await fs.writeFile(path.join(outDir, "thumbnail.ts"), content);
+}
+
+async function writeSearchIndex(
+  collections: Map<string, Collection>,
+  outDir: string,
+) {
+  await fs.mkdir(outDir, { recursive: true });
+
+  console.log("Generating search index...");
+  console.log(collections.get("sdk")?.entries.get("ko/readme"));
+  const content = `// @vinxi-ignore-style-collection
+/* eslint-disable */
+
+
+
+`;
+  // await fs.writeFile(path.join(outDir, "searchIndex.ts"), content);
 }
 
 if (process.argv[2] === "watch") {
