@@ -101,6 +101,13 @@ export function Category(props: CategoryProps) {
                         "opacity-50": endpoint.deprecated || endpoint.unstable,
                       }}
                       onClick={(e) => {
+                        if (
+                          e.ctrlKey ||
+                          e.metaKey ||
+                          e.shiftKey ||
+                          e.button !== 0
+                        )
+                          return;
                         e.preventDefault();
                         expandAndScrollTo({
                           section: props.section,
