@@ -292,26 +292,22 @@ export interface ReqPropertiesDocProps {
 }
 export function ReqPropertiesDoc(props: ReqPropertiesDocProps) {
   return (
-    <div class="flex flex-col gap-1">
-      <For
-        each={
-          props.properties.length ? interleave(props.properties, null) : null
-        }
-      >
-        {(property) =>
-          property && (
-            <PropertyDoc
-              basepath={props.basepath}
-              name={property.name}
-              required={property.required}
-              property={property}
-              schema={props.schema}
-              showNested={props.showNested}
-            />
-          )
-        }
-      </For>
-    </div>
+    <For
+      each={props.properties.length ? interleave(props.properties, null) : null}
+    >
+      {(property) =>
+        property && (
+          <PropertyDoc
+            basepath={props.basepath}
+            name={property.name}
+            required={property.required}
+            property={property}
+            schema={props.schema}
+            showNested={props.showNested}
+          />
+        )
+      }
+    </For>
   );
 }
 
