@@ -1,6 +1,7 @@
 import { Link } from "@solidjs/meta";
+import type { JSXElement } from "solid-js";
 
-export default function BlogLayout(props: { children: JSX.Element }) {
+export default function BlogLayout(props: { children: JSXElement }) {
   return (
     <>
       <Link
