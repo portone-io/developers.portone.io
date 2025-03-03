@@ -7,4 +7,6 @@ declare module "solid-mdx" {
   }
 
   export const MDXProvider: Component<MDXProviderProps>;
+
+  export const useMDXComponents: () => Record<string, Component>;
 }

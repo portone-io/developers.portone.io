@@ -1,10 +1,11 @@
-import { createMemo, For, type JSXElement, Show } from "solid-js";
+import { createMemo, type JSXElement, Show } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
+import Parameter from "~/components/parameter/Parameter";
 import { prose } from "~/components/prose";
-import { toHtml } from "~/misc/md";
+import { toMDXModule } from "~/misc/md";
 
 import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";
-import DescriptionArea from "../DescriptionArea";
 import { type Endpoint, getEndpointRepr } from "../schema-utils/endpoint";
 import {
   getBodyParameters,
@@ -14,9 +15,9 @@ import {
   getResponseSchemata,
   isQueryOrBodyOperation,
   type Operation,
-  type Parameter,
+  type Parameter as OperationParameter,
 } from "../schema-utils/operation";
-import { resolveTypeDef } from "../schema-utils/type-def";
+import { getTypeDefByRef, resolveTypeDef } from "../schema-utils/type-def";
 import TwoColumnLayout from "../TwoColumnLayout";
 
 export interface EndpointDocProps {
@@ -66,9 +67,7 @@ export default function EndpointDoc(props: EndpointDocProps) {
           <div class="flex flex-col gap-6">
             <Show when={description()}>
               <article class="overflow-hidden rounded">
-                <DescriptionArea>
-                  <div class="p-2 text-sm" innerHTML={description()} />
-                </DescriptionArea>
+                <div class="p-2 text-sm" innerHTML={description()} />
               </article>
             </Show>
             <RequestDoc
@@ -180,7 +179,6 @@ function RequestDoc(props: RequestDocProps) {
             title="Path"
             parameters={pathParameters()}
             schema={props.schema}
-            showNested
           />
         </Show>
         <Show when={showQuery()}>
@@ -189,7 +187,6 @@ function RequestDoc(props: RequestDocProps) {
             title="Query"
             parameters={queryParameters()}
             schema={props.schema}
-            showNested
           />
         </Show>
         <Show when={showBody()}>
@@ -198,7 +195,6 @@ function RequestDoc(props: RequestDocProps) {
             title="Body"
             parameters={bodyParameters()}
             schema={props.schema}
-            showNested
           />
         </Show>
       </div>
@@ -215,39 +211,55 @@ function ResponseDoc(props: ResponseDocProps) {
   const responseSchemata = createMemo(() =>
     getResponseSchemata(props.schema, props.operation),
   );
+  const successTypeDef = createMemo(
+    () =>
+      responseSchemata().find(([statusCode]) => statusCode === "200")?.[1]
+        .schema,
+  );
+  const errorTypeDef = createMemo(() =>
+    getTypeDefByRef(props.schema, props.operation["x-portone-error"].$ref),
+  );
   return (
     <div class="flex flex-col gap-2">
       <prose.h4 class="border-b pb-1 !mt-0">Response</prose.h4>
-      <For each={responseSchemata()}>
-        {([statusCode, schemata]) => (
-          <ReqRes
-            title={statusCode}
-            description={schemata.response.description}
-          >
-            <TypeDefDoc
-              basepath={props.basepath}
-              schema={props.schema}
-              typeDef={
-                schemata.schema && resolveTypeDef(props.schema, schemata.schema)
-              }
-              bgColor="#f1f5f9"
-              nestedBgColor="#fcfdfe"
-              showNested
-            />
-          </ReqRes>
-        )}
-      </For>
+      <Show when={successTypeDef()}>
+        {(typeDef) => {
+          return (
+            <ReqRes title="Success">
+              <TypeDefDoc
+                basepath={props.basepath}
+                schema={props.schema}
+                typeDef={resolveTypeDef(props.schema, typeDef())}
+                showNested
+              />
+            </ReqRes>
+          );
+        }}
+      </Show>
+      <Show when={errorTypeDef()}>
+        {(typeDef) => {
+          return (
+            <ReqRes title="Error">
+              <TypeDefDoc
+                basepath={props.basepath}
+                schema={props.schema}
+                typeDef={typeDef()}
+                showNested
+              />
+            </ReqRes>
+          );
+        }}
+      </Show>
     </div>
   );
 }
 
 interface ReqParametersProps {
   basepath: string;
-  title?: string | undefined;
+  title: string;
   description?: string | undefined;
-  parameters: Parameter[];
+  parameters: OperationParameter[];
   schema?: unknown;
-  showNested?: boolean | undefined;
 }
 function ReqParameters(props: ReqParametersProps) {
   return (
@@ -256,33 +268,33 @@ function ReqParameters(props: ReqParametersProps) {
         basepath={props.basepath}
         properties={props.parameters}
         schema={props.schema}
-        showNested={props.showNested}
+        showNested
       />
     </ReqRes>
   );
 }
 
 interface ReqResProps {
-  title?: string | undefined;
+  title: string;
   description?: string | undefined;
   children: JSXElement;
 }
 function ReqRes(props: ReqResProps) {
   const description = createMemo(() => {
     const markdown = props.description;
-    return markdown == null ? markdown : toHtml(markdown);
+    return markdown == null ? markdown : toMDXModule(markdown);
   });
   return (
-    <div>
+    <Parameter flatten>
       <Show when={props.title}>
         <div class="mb-1 inline-flex gap-2 text-xs">
           <h4 class="shrink-0 font-bold uppercase">{props.title}</h4>
           <Show when={description()}>
-            <div class="text-slate-5" innerHTML={description()} />
+            {(description) => <Dynamic component={description()} />}
           </Show>
         </div>
       </Show>
       {props.children}
-    </div>
+    </Parameter>
   );
 }

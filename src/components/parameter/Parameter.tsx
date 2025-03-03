@@ -24,6 +24,7 @@ import { ParameterIdent } from "./ParameterIdent";
 import { ParameterType } from "./ParameterType";
 
 interface ParameterProps {
+  id?: string;
   class?: string;
   flatten?: boolean;
   heading?: unknown;
@@ -71,7 +72,10 @@ export default function Parameter(props: ParameterProps) {
   });
 
   return (
-    <div class={clsx("text-sm text-slate-5 space-y-3", props.class)}>
+    <div
+      id={props.id}
+      class={clsx("parameter text-sm text-slate-5 space-y-3", props.class)}
+    >
       <ProseContext.Provider value={{ styles: proseStyles }}>
         <ParameterContext.Provider
           value={{ flatten: Boolean(props.flatten), forceDepth: forceDepth() }}
@@ -86,6 +90,8 @@ export default function Parameter(props: ParameterProps) {
 interface TypeDefProps {
   ident?: JSXElement;
   optional?: boolean;
+  // TODO: deprecated
+  deprecated?: boolean;
   type: JSXElement;
   children?: JSXElement;
   defaultExpanded?: boolean;
@@ -126,7 +132,9 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
       .with([true, undefined, undefined], () => true)
       .with([true, 1, P._], () => true)
       .with([true, P.number.gt(1), P.select(P.boolean)], (expanded) => expanded)
-      .with([true, P.number, P._], () => false)
+      .with([true, P.number.gt(1), undefined], () => true)
+      .with([true, P.number, P.boolean], () => true)
+      .with([true, P.number, undefined], () => false)
       .with([false, P._, P._], () => false)
       .exhaustive(),
   );
