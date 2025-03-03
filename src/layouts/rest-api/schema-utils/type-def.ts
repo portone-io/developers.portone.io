@@ -39,7 +39,7 @@ export interface Property {
   description?: string | undefined;
   type?: string | undefined;
   format?: string | undefined;
-  items?: string | TypeDef | undefined;
+  items?: TypeDef | undefined;
   deprecated?: boolean | undefined;
   example?: unknown;
   /**
@@ -62,11 +62,12 @@ export interface ResponseProperty {
   properties?: Record<string, ResponseProperty>;
 }
 
-export type TypeDefKind = "object" | "union" | "enum";
+export type TypeDefKind = "object" | "union" | "enum" | "primitive";
 export function getTypeDefKind(typeDef?: TypeDef): TypeDefKind {
   if (typeDef?.discriminator) return "union";
   if (typeDef?.enum) return "enum";
-  return "object";
+  if (typeDef?.properties) return "object";
+  return "primitive";
 }
 
 export interface BakedProperty extends Property {
@@ -140,7 +141,7 @@ export function followRef(
   let curr = typeDef;
   while (curr.$ref) curr = getTypeDefByRef(schema, curr.$ref);
   if (unwrapArray && curr.type === "array" && curr.items) {
-    return followRef(schema, curr.items as TypeDef);
+    return followRef(schema, curr.items);
   }
   return curr as TypeDef;
 }
@@ -162,8 +163,10 @@ export function getTypenameByRef($ref: string): string {
 export function repr(def: string | TypeDef | Property | Parameter): string {
   if (typeof def === "string") return getTypenameByRef(def);
   if ("schema" in def) return repr(def.schema!);
-  if (def.items) return `${repr(def.items)}[]`;
+  if (def.items) return "array";
   if (def.$ref) return getTypenameByRef(def.$ref);
+  if ("discriminator" in def && def.discriminator) return "union";
+  if ("enum" in def && def.enum) return "enum";
   return def.type || "";
 }
 

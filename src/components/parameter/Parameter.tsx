@@ -24,6 +24,7 @@ import { ParameterIdent } from "./ParameterIdent";
 import { ParameterType } from "./ParameterType";
 
 interface ParameterProps {
+  id?: string;
   class?: string;
   flatten?: boolean;
   heading?: unknown;
@@ -71,7 +72,10 @@ export default function Parameter(props: ParameterProps) {
   });
 
   return (
-    <div class={clsx("text-sm text-slate-5 space-y-3", props.class)}>
+    <div
+      id={props.id}
+      class={clsx("parameter text-sm text-slate-5 space-y-3", props.class)}
+    >
       <ProseContext.Provider value={{ styles: proseStyles }}>
         <ParameterContext.Provider
           value={{ flatten: Boolean(props.flatten), forceDepth: forceDepth() }}
@@ -84,7 +88,6 @@ export default function Parameter(props: ParameterProps) {
 }
 
 interface TypeDefProps {
-  id?: string;
   ident?: JSXElement;
   optional?: boolean;
   // TODO: deprecated
@@ -138,11 +141,10 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
 
   return (
     <Collapsible
-      id={others.id}
       open={expanded()}
       onOpenChange={setExpanded}
       as="div"
-      class="parameter--type-def grid grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-center text-sm"
+      class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-center text-sm"
     >
       <div
         class={clsx("col-start-1 row-start-1 h-4 w-4", isFlatten() && "-ml-4")}

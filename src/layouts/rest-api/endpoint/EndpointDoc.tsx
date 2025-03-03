@@ -230,6 +230,7 @@ function ResponseDoc(props: ResponseDocProps) {
                 basepath={props.basepath}
                 schema={props.schema}
                 typeDef={resolveTypeDef(props.schema, typeDef())}
+                showNested
               />
             </ReqRes>
           );
@@ -243,6 +244,7 @@ function ResponseDoc(props: ResponseDocProps) {
                 basepath={props.basepath}
                 schema={props.schema}
                 typeDef={typeDef()}
+                showNested
               />
             </ReqRes>
           );
@@ -266,6 +268,7 @@ function ReqParameters(props: ReqParametersProps) {
         basepath={props.basepath}
         properties={props.parameters}
         schema={props.schema}
+        showNested
       />
     </ReqRes>
   );
