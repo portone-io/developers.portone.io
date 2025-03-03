@@ -14,14 +14,19 @@ import remarkMdx from "remark-mdx";
 import remarkParse from "remark-parse";
 import remarkStringify from "remark-stringify";
 import * as seroval from "seroval";
+import { match, P } from "ts-pattern";
 import { type Plugin, unified } from "unified";
 import { visit } from "unist-util-visit";
 
 import type {
   CollectionConfig,
+  config,
   Import,
   parseFrontmatter,
-} from "./content/config";
+} from "~/content/config";
+import { indexFilesMapping } from "~/misc/contentIndex";
+
+import { makeReleaseNoteFrontmatter } from "./misc/releaseNote";
 
 type Collection = {
   files: Set<string>;
@@ -44,6 +49,8 @@ export type Heading = {
   depth: number;
   children: Heading[];
 };
+
+type ObjectEntries<T> = T extends Record<infer K, infer V> ? [K, V][] : never;
 
 const cwd = process.cwd();
 
@@ -136,15 +143,17 @@ async function generate(watch = false) {
 
   const collections = new Map(
     await Promise.all(
-      Object.entries(config).map(async ([name, config]) => {
-        const collection = await getCollection(
-          config,
-          outDir,
-          parseFrontmatter,
-        );
-        await writeCollection(name, collection, outDir);
-        return [name, collection] as const;
-      }),
+      (Object.entries(config) as ObjectEntries<typeof config>).map(
+        async ([name, collectionConfig]) => {
+          const collection = await getCollection(
+            collectionConfig,
+            outDir,
+            parseFrontmatter,
+          );
+          await writeCollection(name, collection, outDir);
+          return [name, collection] as const;
+        },
+      ),
     ),
   );
 
@@ -156,46 +165,47 @@ async function generate(watch = false) {
   if (!watch) return () => {};
 
   const subscriptions = await Promise.all(
-    Object.entries(config).map(([name, config]) =>
-      subscribe(path.join(cwd, config.path), (err, events) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-
-        let collection = collections.get(name);
-        let files: Set<string> | undefined;
-
-        for (const event of events) {
-          const file = path.relative(cwd, event.path);
-          if (event.type === "update" && collection?.files.has(file)) {
-            if (!files) files = new Set();
-            files.add(file);
-          } else {
-            files = undefined;
-            break;
+    (Object.entries(config) as ObjectEntries<typeof config>).map(
+      ([name, config]) =>
+        subscribe(path.join(cwd, config.path), (err, events) => {
+          if (err) {
+            console.error(err);
+            return;
           }
-        }
 
-        void getCollection(config, outDir, parseFrontmatter, files).then(
-          async (newCollection) => {
-            if (!collection) {
-              collections.set(name, newCollection);
-              collection = newCollection;
-              await Promise.all([
-                writeCollection(name, collection, outDir),
-                writeSearchIndex(collections, outDir),
-                writeIndex(collections, outDir),
-              ]);
+          let collection = collections.get(name);
+          let files: Set<string> | undefined;
+
+          for (const event of events) {
+            const file = path.relative(cwd, event.path);
+            if (event.type === "update" && collection?.files.has(file)) {
+              if (!files) files = new Set();
+              files.add(file);
             } else {
-              for (const [slug, entry] of newCollection.entries) {
-                collection.entries.set(slug, entry);
-              }
-              await writeCollection(name, collection, outDir);
+              files = undefined;
+              break;
             }
-          },
-        );
-      }),
+          }
+
+          void getCollection(config, outDir, parseFrontmatter, files).then(
+            async (newCollection) => {
+              if (!collection) {
+                collections.set(name, newCollection);
+                collection = newCollection;
+                await Promise.all([
+                  writeCollection(name, collection, outDir),
+                  writeSearchIndex(collections, outDir),
+                  writeIndex(collections, outDir),
+                ]);
+              } else {
+                for (const [slug, entry] of newCollection.entries) {
+                  collection.entries.set(slug, entry);
+                }
+                await writeCollection(name, collection, outDir);
+              }
+            },
+          );
+        }),
     ),
   );
 
@@ -283,20 +293,78 @@ ${[...collections.values()]
 }
 
 async function writeSearchIndex(
-  collections: Map<string, Collection>,
+  collections: Map<keyof typeof config, Collection>,
   outDir: string,
 ) {
   await fs.mkdir(outDir, { recursive: true });
 
   console.log("Generating search index...");
   console.log(collections.get("sdk")?.entries.get("ko/readme"));
-  const content = `// @vinxi-ignore-style-collection
-/* eslint-disable */
 
+  for (const [indexType, mapping] of Object.entries(indexFilesMapping)) {
+    const searchIndex = Object.entries(mapping).flatMap(
+      ([key, collectionName]) => {
+        const collection = collections.get(collectionName);
+        if (!collection) return [];
 
+        return [...collection.entries.values()].map((entry) => {
+          const frontmatter = entry.frontmatter;
+          const slug = entry.slug
+            .replace(/\/index$/, "")
+            .replace(/\/\([\w\d]+\)/, "");
 
-`;
-  // await fs.writeFile(path.join(outDir, "searchIndex.ts"), content);
+          const {
+            title,
+            description,
+          }: { title?: string; description?: string } = match(frontmatter)
+            .with(
+              { releasedAt: P.instanceOf(Date), slug: P.string },
+              ({ releasedAt, slug }) =>
+                makeReleaseNoteFrontmatter(releasedAt, slug),
+            )
+            .with(
+              { title: P.string.optional(), description: P.string.optional() },
+              ({ description, title }) => ({
+                title,
+                description,
+              }),
+            )
+            .otherwise(() => ({}));
+
+          return {
+            key,
+            slug,
+            title,
+            description,
+            text:
+              typeof frontmatter.content === "string"
+                ? frontmatter.content
+                : entry.headings.map((h) => h.title).join(" "),
+          };
+        });
+      },
+    );
+
+    // Create Fuse.js index
+    const fuseOptions = {
+      keys: [
+        { name: "title", weight: 3 },
+        { name: "description", weight: 2 },
+        { name: "text", weight: 1 },
+      ],
+    };
+    const fuse = new Fuse(searchIndex, fuseOptions);
+    const fuseIndex = fuse.getIndex();
+
+    // Write both indices to files
+    const data = { fuseIndex, searchIndex };
+    await fs.writeFile(
+      path.join(outDir, `search-${indexType}.json`),
+      JSON.stringify(data, null, 2),
+    );
+
+    console.log(`Generated search index for ${indexType}`);
+  }
 }
 
 if (process.argv[2] === "watch") {
