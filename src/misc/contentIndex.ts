@@ -2,13 +2,13 @@ import type { Lang } from "~/type";
 
 export const indexFilesMapping = {
   ko: {
-    "원 페이먼트 인프라": "opi/ko/",
-    "파트너 정산 자동화": "platform/ko/",
-    "릴리즈 노트": "release-notes/(note)/",
-    "API & SDK": "sdk/ko/",
+    "/opi/ko/": "원 페이먼트 인프라",
+    "/platform/ko/": "파트너 정산 자동화",
+    "/release-notes/(note)/": "릴리즈 노트",
+    "/sdk/ko/": "API & SDK",
   },
   blog: {
-    "기술 블로그": "blog/",
+    "/blog/": "기술 블로그",
   },
 } as const satisfies Record<Lang | "blog", Record<string, string>>;
 
