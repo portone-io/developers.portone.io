@@ -1,6 +1,5 @@
 import {
   createMemo,
-  createSignal,
   For,
   type JSXElement,
   Match,
@@ -8,13 +7,14 @@ import {
   Show,
   Switch,
 } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
+import Parameter from "~/components/parameter/Parameter";
 import { prose } from "~/components/prose";
-import { toHtml } from "~/misc/md";
+import { toMDXModule } from "~/misc/md";
 import { expandAndScrollTo, useExpand } from "~/state/rest-api/expand-section";
 
 import { interleave } from "..";
-import DescriptionArea from "../DescriptionArea";
 import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
 import {
   type BakedProperty,
@@ -93,24 +93,27 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
         <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
           <For each={typeDefPropsList()}>
             {(property) => (
-              <div class="flex flex-col gap-2">
-                <prose.h3
+              <Parameter flatten>
+                <Parameter.TypeDef
                   id={property.name}
-                  class="text-slate-6 target:text-orange-5"
+                  ident={property.name}
+                  defaultExpanded={false}
+                  type={
+                    <Parameter.Type>
+                      {getTypeDefKind(property.typeDef)}
+                    </Parameter.Type>
+                  }
                 >
-                  <span>{property.name}</span>
-                  <span class="ml-2 text-base opacity-60">
-                    {getTypeDefKind(property.typeDef)}
-                  </span>
-                </prose.h3>
-                <TypeDefDoc
-                  basepath={props.basepath}
-                  schema={props.schema}
-                  typeDef={property.typeDef}
-                  bgColor="#f1f5f9"
-                  nestedBgColor="#fcfdfe"
-                />
-              </div>
+                  <DescriptionDoc typeDef={property.typeDef} />
+                  <Parameter.Details>
+                    <TypeDefDoc
+                      basepath={props.basepath}
+                      schema={props.schema}
+                      typeDef={property.typeDef}
+                    />
+                  </Parameter.Details>
+                </Parameter.TypeDef>
+              </Parameter>
             )}
           </For>
         </div>
@@ -124,8 +127,6 @@ export interface TypeDefDocProps {
   schema: unknown;
   typeDef?: TypeDef | undefined;
   showNested?: boolean | undefined;
-  bgColor: string;
-  nestedBgColor?: string | undefined;
 }
 export function TypeDefDoc(props: TypeDefDocProps) {
   const kind = createMemo(() => getTypeDefKind(props.typeDef));
@@ -138,8 +139,6 @@ export function TypeDefDoc(props: TypeDefDocProps) {
           schema={props.schema}
           typeDef={props.typeDef}
           showNested={props.showNested}
-          bgColor={props.bgColor}
-          nestedBgColor={props.nestedBgColor}
         />
       </Match>
       <Match when={kind() === "enum"}>
@@ -147,7 +146,6 @@ export function TypeDefDoc(props: TypeDefDocProps) {
           basepath={props.basepath}
           enum={props.typeDef!["enum"]}
           xPortoneEnum={props.typeDef!["x-portone-enum"]}
-          bgColor={props.bgColor}
         />
       </Match>
       <Match when={kind() === "union"}>
@@ -156,8 +154,6 @@ export function TypeDefDoc(props: TypeDefDocProps) {
           schema={props.schema}
           typeDef={props.typeDef!}
           showNested={props.showNested}
-          bgColor={props.bgColor}
-          nestedBgColor={props.nestedBgColor}
         />
       </Match>
     </Switch>
@@ -169,95 +165,50 @@ interface UnionDocProps {
   schema: unknown;
   typeDef: TypeDef;
   showNested?: boolean | undefined;
-  bgColor: string;
-  nestedBgColor?: string | undefined;
 }
 function UnionDoc(props: UnionDocProps) {
-  const types = createMemo(() =>
-    Object.keys(props.typeDef.discriminator!.mapping),
-  );
-  const [type, setType] = createSignal(types()[0]!);
-  const selectedTypeDef = createMemo(() => {
-    return getTypeDefByRef(
-      props.schema,
-      props.typeDef.discriminator!.mapping[type()]!,
-    );
-  });
-  const properties = createMemo(() =>
-    props.typeDef ? bakeProperties(props.schema, selectedTypeDef()) : [],
-  );
-  const discriminatorProperty = createMemo(
-    () =>
-      properties().find(
-        (property) =>
-          property.name === props.typeDef.discriminator!.propertyName,
-      )!,
-  );
-  const otherProperties = createMemo(() =>
-    properties().filter(
-      (property) => property.name !== props.typeDef.discriminator!.propertyName,
-    ),
-  );
+  const discriminator = createMemo(() => props.typeDef.discriminator!);
   return (
-    <div class="flex flex-col gap-2">
-      <div class="rounded py-1" style={{ "background-color": props.bgColor }}>
-        <PropertyDoc
-          basepath={props.basepath}
-          name={discriminatorProperty().name}
-          required={true}
-          isDiscriminator
-          property={discriminatorProperty()}
-          bgColor={props.bgColor}
-          nestedBgColor={props.nestedBgColor}
-        >
-          <div class="flex flex-wrap items-center gap-y-2 whitespace-pre-wrap">
-            필드의 값이{" "}
-            <select
-              class="w-fit text-ellipsis whitespace-nowrap border border-slate-2 rounded px-2 py-1"
-              value={type()}
-              onChange={(e) => {
-                setType(e.currentTarget.value);
-              }}
-            >
-              <For each={types()}>
-                {(type) => (
-                  <option value={type}>
-                    {type}
-                    {props.typeDef["x-portone-discriminator"]?.[type]?.title &&
-                      ` (${props.typeDef["x-portone-discriminator"][type]?.title})`}
-                  </option>
-                )}
-              </For>
-            </select>{" "}
-            일 때 타입은{" "}
-            <TypeReprDoc
-              basepath={props.basepath}
-              def={props.typeDef.discriminator!.mapping[type()]!}
-            />{" "}
-            입니다.
-          </div>
-        </PropertyDoc>
-      </div>
-      <For each={otherProperties()}>
-        {(property) => (
-          <div
-            class="rounded py-1"
-            style={{ "background-color": props.bgColor }}
+    <For each={Object.entries(discriminator().mapping)}>
+      {([discriminateValue, _typeDef]) => {
+        const typeDef = createMemo(() => {
+          const typeDef = getTypeDefByRef(props.schema, _typeDef);
+          return typeDef;
+        });
+        const properties = createMemo(() =>
+          props.typeDef ? bakeProperties(props.schema, typeDef()) : [],
+        );
+        const otherProperties = createMemo(() =>
+          properties().filter(
+            (property) => property.name !== discriminator().propertyName,
+          ),
+        );
+        return (
+          <Parameter.TypeDef
+            type={<TypeReprDoc basepath={props.basepath} def={_typeDef} />}
+            defaultExpanded={false}
           >
-            <PropertyDoc
-              basepath={props.basepath}
-              name={property.name}
-              required={property.required}
-              property={property}
-              bgColor={props.bgColor}
-              nestedBgColor={props.nestedBgColor}
-              schema={props.schema}
-              showNested={props.showNested}
-            />
-          </div>
-        )}
-      </For>
-    </div>
+            <prose.p>
+              <code>{discriminator().propertyName}</code>이(가)
+              <code>"{discriminateValue}"</code>일 때의 타입
+            </prose.p>
+            <DescriptionDoc typeDef={typeDef()} />
+            <Parameter.Details>
+              <Parameter.TypeDef
+                ident={discriminator().propertyName}
+                type={<Parameter.Type>"{discriminateValue}"</Parameter.Type>}
+              />
+              <PropertiesDoc
+                basepath={props.basepath}
+                schema={props.schema}
+                properties={otherProperties()}
+                showNested={props.showNested}
+              />
+            </Parameter.Details>
+          </Parameter.TypeDef>
+        );
+      }}
+    </For>
   );
 }
 
@@ -265,39 +216,29 @@ interface EnumDocProps {
   basepath: string;
   enum: TypeDef["enum"];
   xPortoneEnum: TypeDef["x-portone-enum"];
-  bgColor: string;
 }
 function EnumDoc(props: EnumDocProps) {
   const xPortoneEnum = createMemo(() => props.xPortoneEnum || {});
   return (
-    <div class="flex flex-col gap-2">
-      <For each={props.enum}>
-        {(enumValue) => {
-          const enumCase = createMemo(
-            () => xPortoneEnum()[enumValue] || { title: "" },
-          );
-          const title = createMemo(
-            () => enumCase()["x-portone-title"] || enumCase().title || "",
-          );
-          return (
-            <div
-              class="flex flex-col gap-2 rounded p-2"
-              style={{ "background-color": props.bgColor }}
-            >
-              <div class="flex items-center gap-2 leading-none">
-                <code>{enumValue}</code>
-                <span class="text-sm text-slate-5">{title()}</span>
-              </div>
-              <DescriptionDoc
-                basepath={props.basepath}
-                typeDef={enumCase()}
-                bgColor={props.bgColor}
-              />
-            </div>
-          );
-        }}
-      </For>
-    </div>
+    <For each={props.enum}>
+      {(enumValue) => {
+        const enumCase = createMemo(
+          () => xPortoneEnum()[enumValue] || { title: "" },
+        );
+        const title = createMemo(
+          () => enumCase()["x-portone-title"] || enumCase().title || "",
+        );
+        return (
+          <Parameter.TypeDef
+            type={<Parameter.Type>"{enumValue}"</Parameter.Type>}
+            defaultExpanded={false}
+          >
+            <prose.p>{title()}</prose.p>
+            <DescriptionDoc typeDef={enumCase()} />
+          </Parameter.TypeDef>
+        );
+      }}
+    </For>
   );
 }
 
@@ -305,9 +246,7 @@ interface ObjectDocProps {
   basepath: string;
   schema: unknown;
   typeDef?: TypeDef | undefined;
-  showNested?: boolean | undefined;
-  bgColor: string;
-  nestedBgColor?: string | undefined;
+  showNested?: boolean;
 }
 function ObjectDoc(props: ObjectDocProps) {
   const properties = createMemo(() =>
@@ -316,8 +255,6 @@ function ObjectDoc(props: ObjectDocProps) {
   return (
     <PropertiesDoc
       basepath={props.basepath}
-      bgColor={props.bgColor}
-      nestedBgColor={props.nestedBgColor}
       schema={props.schema}
       properties={properties()}
       showNested={props.showNested}
@@ -328,34 +265,23 @@ function ObjectDoc(props: ObjectDocProps) {
 export interface PropertiesDocProps {
   basepath: string;
   properties: BakedProperty[];
-  bgColor: string;
-  nestedBgColor?: string | undefined;
   schema?: unknown;
   showNested?: boolean | undefined;
 }
 export function PropertiesDoc(props: PropertiesDocProps) {
   return (
-    <div class="flex flex-col gap-2">
-      <For each={props.properties}>
-        {(property) => (
-          <div
-            class="rounded py-1"
-            style={{ "background-color": props.bgColor }}
-          >
-            <PropertyDoc
-              basepath={props.basepath}
-              name={property.name}
-              required={property.required}
-              property={property}
-              bgColor={props.bgColor}
-              nestedBgColor={props.nestedBgColor}
-              schema={props.schema}
-              showNested={props.showNested}
-            />
-          </div>
-        )}
-      </For>
-    </div>
+    <For each={props.properties}>
+      {(property) => (
+        <PropertyDoc
+          basepath={props.basepath}
+          name={property.name}
+          required={property.required}
+          property={property}
+          schema={props.schema}
+          showNested={props.showNested}
+        />
+      )}
+    </For>
   );
 }
 
@@ -374,19 +300,15 @@ export function ReqPropertiesDoc(props: ReqPropertiesDocProps) {
         }
       >
         {(property) =>
-          property ? (
+          property && (
             <PropertyDoc
               basepath={props.basepath}
               name={property.name}
               required={property.required}
               property={property}
-              bgColor="white"
-              nestedBgColor="#f4f8fa"
               schema={props.schema}
               showNested={props.showNested}
             />
-          ) : (
-            <hr />
           )
         }
       </For>
@@ -400,8 +322,6 @@ interface PropertyDocProps {
   required?: boolean | undefined;
   isDiscriminator?: boolean | undefined;
   property: Property;
-  bgColor: string;
-  nestedBgColor?: string | undefined;
   schema?: unknown;
   showNested?: boolean | undefined;
   children?: JSXElement;
@@ -416,48 +336,44 @@ function PropertyDoc(_props: PropertyDocProps) {
       "",
   );
   const deprecated = createMemo(() => Boolean(props.property.deprecated));
+  const unwrappedTypeDef = createMemo(() => {
+    if (!props.schema || !props.showNested || !props.property) return;
+    return resolveTypeDef(props.schema, props.property, true);
+  });
   return (
-    <div
-      class="flex flex-col gap-2 p-2 text-14px"
-      classList={{ "opacity-50": deprecated() }}
+    <Parameter.TypeDef
+      ident={props.name}
+      optional={!props.required}
+      deprecated={deprecated()}
+      defaultExpanded={false}
+      type={
+        <>
+          <TypeReprDoc basepath={props.basepath} def={props.property} />
+          <Show when={props.isDiscriminator}>
+            <span class="inline-block">(Union Tag)</span>
+          </Show>
+        </>
+      }
     >
-      <div class="flex items-center justify-between gap-4">
-        <div>
-          <div class="mr-4 inline-block font-bold leading-tight font-mono">
-            <span>{props.name}</span>
-            <span class="text-slate-4 -mr-[4px]">
-              {`${!props.required ? "?" : ""}: `}
-            </span>
-            <TypeReprDoc basepath={props.basepath} def={props.property} />{" "}
-            <Show when={props.isDiscriminator}>
-              <span class="inline-block">(Union Tag)</span>
-            </Show>
-          </div>
-          <Show when={title()}>
-            <div class="inline-block text-xs text-slate-5">
-              <span>{title()}</span>
-            </div>
-          </Show>
-        </div>
-        <div class="inline-block shrink-0 text-xs text-slate-5">
-          <Show when={!props.required}>
-            <span class="inline-block">(Optional)</span>{" "}
-          </Show>
-          <Show when={deprecated()}>
-            <span class="inline-block">(Deprecated)</span>
-          </Show>
-        </div>
-      </div>
+      <Show when={title()}>
+        <strong>{title()}</strong>
+      </Show>
       {props.children}
-      <DescriptionDoc
-        basepath={props.basepath}
-        typeDef={props.property}
-        bgColor={props.bgColor}
-        nestedBgColor={props.nestedBgColor}
-        schema={props.schema}
-        showNested={props.showNested}
-      />
-    </div>
+      <DescriptionDoc typeDef={props.property} />
+      <Show when={unwrappedTypeDef()}>
+        {(typeDef) => {
+          return (
+            <Parameter.Details>
+              <TypeDefDoc
+                basepath={props.basepath}
+                schema={props.schema}
+                typeDef={typeDef()}
+              />
+            </Parameter.Details>
+          );
+        }}
+      </Show>
+    </Parameter.TypeDef>
   );
 }
 
@@ -497,42 +413,39 @@ function TypeReprDoc(props: TypeReprDocProps) {
   return (
     <Switch
       fallback={
-        <span class="inline-block text-green-6 font-bold">
+        <Parameter.Type>
           {typeRepr()}
           <Show when={format()}>
             {(format) => <span class="font-normal"> {format()}</span>}
           </Show>
-        </span>
+        </Parameter.Type>
       }
     >
       <Match when={isUserType()}>
-        <a
-          class="inline-block text-green-6 font-bold underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
-          href={href()}
-          onClick={(e) => {
-            e.preventDefault();
-            expandAndScrollTo({
-              section: "type-def",
-              href: href(),
-              id: typeName(),
-            });
-          }}
-          data-norefresh
-        >
-          {typeRepr()}
-        </a>
+        <Parameter.Type>
+          <a
+            class="inline-block underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
+            href={href()}
+            onClick={(e) => {
+              e.preventDefault();
+              expandAndScrollTo({
+                section: "type-def",
+                href: href(),
+                id: typeName(),
+              });
+            }}
+            data-norefresh
+          >
+            {typeRepr()}
+          </a>
+        </Parameter.Type>
       </Match>
     </Switch>
   );
 }
 
 interface DescriptionDocProps {
-  basepath: string;
   typeDef: TypeDef | Property;
-  bgColor: string;
-  nestedBgColor?: string | undefined;
-  schema?: unknown;
-  showNested?: boolean | undefined;
 }
 function DescriptionDoc(props: DescriptionDocProps) {
   const rawDescription = createMemo(
@@ -540,39 +453,20 @@ function DescriptionDoc(props: DescriptionDocProps) {
   );
   const description = createMemo(() => {
     const markdown = rawDescription();
-    return markdown == null ? markdown : toHtml(markdown);
+    return markdown == null ? markdown : toMDXModule(markdown);
   });
   const summary = createMemo(
     () => props.typeDef["x-portone-summary"] ?? props.typeDef.summary,
   );
-  const html = createMemo(() => description() || summary() || "");
-  const unwrappedTypeDef = createMemo(() => {
-    if (!props.schema || !props.showNested || !props.typeDef) return;
-    return resolveTypeDef(props.schema, props.typeDef, true);
-  });
 
   return (
-    <Show when={html() || unwrappedTypeDef()}>
-      <DescriptionArea maxHeightPx={16 * 6} bgColor={props.bgColor}>
-        <Show when={html()}>
-          {(html) => (
-            <div class="flex flex-col gap-1 text-sm text-slate-5">
-              <div innerHTML={html()} />
-            </div>
-          )}
-        </Show>
-        <Show when={unwrappedTypeDef()}>
-          {(typeDef) => (
-            <TypeDefDoc
-              basepath={props.basepath}
-              schema={props.schema}
-              typeDef={typeDef()}
-              bgColor={props.nestedBgColor || props.bgColor}
-              nestedBgColor={props.bgColor}
-            />
-          )}
-        </Show>
-      </DescriptionArea>
-    </Show>
+    <Switch>
+      <Match when={description()}>
+        {(description) => <Dynamic component={description()} />}
+      </Match>
+      <Match when={summary()}>
+        <prose.p>{summary()}</prose.p>
+      </Match>
+    </Switch>
   );
 }

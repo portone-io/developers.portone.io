@@ -84,8 +84,11 @@ export default function Parameter(props: ParameterProps) {
 }
 
 interface TypeDefProps {
+  id?: string;
   ident?: JSXElement;
   optional?: boolean;
+  // TODO: deprecated
+  deprecated?: boolean;
   type: JSXElement;
   children?: JSXElement;
   defaultExpanded?: boolean;
@@ -126,17 +129,20 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
       .with([true, undefined, undefined], () => true)
       .with([true, 1, P._], () => true)
       .with([true, P.number.gt(1), P.select(P.boolean)], (expanded) => expanded)
-      .with([true, P.number, P._], () => false)
+      .with([true, P.number.gt(1), undefined], () => true)
+      .with([true, P.number, P.boolean], () => true)
+      .with([true, P.number, undefined], () => false)
       .with([false, P._, P._], () => false)
       .exhaustive(),
   );
 
   return (
     <Collapsible
+      id={others.id}
       open={expanded()}
       onOpenChange={setExpanded}
       as="div"
-      class="grid grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-center text-sm"
+      class="parameter--type-def grid grid-cols-[auto_1fr] grid-rows-[auto_auto_auto] items-center text-sm"
     >
       <div
         class={clsx("col-start-1 row-start-1 h-4 w-4", isFlatten() && "-ml-4")}
