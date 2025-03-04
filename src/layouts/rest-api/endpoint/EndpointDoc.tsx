@@ -1,4 +1,4 @@
-import { createMemo, type JSXElement, Show } from "solid-js";
+import { createMemo, For, type JSXElement, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 
 import Parameter from "~/components/parameter/Parameter";
@@ -217,8 +217,15 @@ function ResponseDoc(props: ResponseDocProps) {
         .schema,
   );
   const errorTypeDef = createMemo(() =>
-    getTypeDefByRef(props.schema, props.operation["x-portone-error"].$ref),
+    props.operation["x-portone-error"]
+      ? getTypeDefByRef(props.schema, props.operation["x-portone-error"].$ref)
+      : null,
   );
+
+  const nonSuccessResponses = createMemo(() =>
+    responseSchemata().filter(([statusCode]) => statusCode !== "200"),
+  );
+
   return (
     <div class="flex flex-col gap-2">
       <prose.h4 class="border-b pb-1 !mt-0">Response</prose.h4>
@@ -249,6 +256,17 @@ function ResponseDoc(props: ResponseDocProps) {
             </ReqRes>
           );
         }}
+      </Show>
+      <Show when={!errorTypeDef() && nonSuccessResponses().length > 0}>
+        <For each={nonSuccessResponses()}>
+          {([statusCode, { response }]) => (
+            <ReqRes title={`${statusCode} Error`}>
+              <prose.p class="text-sm text-slate-6">
+                {response.description}
+              </prose.p>
+            </ReqRes>
+          )}
+        </For>
       </Show>
     </div>
   );
