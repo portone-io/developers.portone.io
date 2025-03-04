@@ -102,6 +102,7 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
                   name={property.name}
                   property={property.typeDef}
                   showNested={1}
+                  required
                 />
               </Parameter>
             )}
