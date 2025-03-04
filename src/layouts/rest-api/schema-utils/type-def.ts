@@ -163,10 +163,12 @@ export function getTypenameByRef($ref: string): string {
 export function repr(def: string | TypeDef | Property | Parameter): string {
   if (typeof def === "string") return getTypenameByRef(def);
   if ("schema" in def) return repr(def.schema!);
-  if (def.items) return "array";
+  if (def.items) return "_array";
   if (def.$ref) return getTypenameByRef(def.$ref);
-  if ("discriminator" in def && def.discriminator) return "union";
-  if ("enum" in def && def.enum) return "enum";
+  if ("discriminator" in def && def.discriminator) return "_union";
+  if ("enum" in def && def.enum) return "_enum";
+  if ("properties" in def && def.properties) return "object";
+  if (!def.type && "allOf" in def && def.allOf) return "object";
   return def.type || "";
 }
 

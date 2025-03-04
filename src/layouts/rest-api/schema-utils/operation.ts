@@ -31,7 +31,7 @@ export interface Operation {
   "x-portone-description"?: string | undefined;
   "x-portone-unstable"?: boolean | undefined;
   "x-portone-category"?: string | undefined;
-  "x-portone-error": {
+  "x-portone-error"?: {
     $ref: string;
   };
 }

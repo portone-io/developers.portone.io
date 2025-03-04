@@ -447,7 +447,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
         </Parameter.Type>
       }
     >
-      <Match when={typeRepr() === "union"}>
+      <Match when={typeRepr() === "_union"}>
         <UnionReprDoc
           schema={props.schema}
           basepath={props.basepath}
@@ -461,14 +461,18 @@ function TypeReprDoc(props: TypeReprDocProps) {
           typeDef={typeDef()}
         />
       </Match>
-      <Match when={typeRepr() === "array"}>
+      <Match when={typeRepr() === "_array"}>
         <ArrayReprDoc
           schema={props.schema}
           basepath={props.basepath}
-          typeDef={typeDef()}
+          typeDef={
+            typeof props.def === "object" && props.def.items?.$ref
+              ? props.def.items?.$ref
+              : typeDef()
+          }
         />
       </Match>
-      <Match when={typeRepr() === "enum"}>
+      <Match when={typeRepr() === "_enum"}>
         <EnumReprDoc
           schema={props.schema}
           basepath={props.basepath}
@@ -485,6 +489,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
                 </Parameter.Type>
               }
             >
+              <DescriptionDoc typeDef={typeDef()} />
               <Parameter.Details>
                 <TypeDefDoc
                   basepath={props.basepath}
@@ -586,7 +591,7 @@ function ObjectReprDoc(props: ObjectReprDocProps) {
 interface ArrayReprDocProps {
   schema?: unknown;
   basepath: string;
-  typeDef: TypeDef;
+  typeDef: string | TypeDef;
 }
 function ArrayReprDoc(props: ArrayReprDocProps) {
   return (
