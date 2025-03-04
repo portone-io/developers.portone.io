@@ -12,7 +12,7 @@ export interface TypeDef {
   description?: string | undefined;
   type?: string | undefined;
   enum?: string[];
-  items?: TypeDef | undefined;
+  items?: TypeDef | string | undefined;
   required?: string[] | undefined;
   properties?: Properties | undefined;
   additionalProperties?: Property | undefined;
@@ -39,7 +39,7 @@ export interface Property {
   description?: string | undefined;
   type?: string | undefined;
   format?: string | undefined;
-  items?: TypeDef | undefined;
+  items?: TypeDef | string | undefined;
   deprecated?: boolean | undefined;
   example?: unknown;
   /**
@@ -140,7 +140,12 @@ export function followRef(
 ): TypeDef {
   let curr = typeDef;
   while (curr.$ref) curr = getTypeDefByRef(schema, curr.$ref);
-  if (unwrapArray && curr.type === "array" && curr.items) {
+  if (
+    unwrapArray &&
+    curr.type === "array" &&
+    curr.items &&
+    typeof curr.items === "object"
+  ) {
     return followRef(schema, curr.items);
   }
   return curr as TypeDef;
@@ -204,7 +209,10 @@ export function crawlRefs(
         result.add(parameter.items.$ref);
       } else if (parameter.schema?.$ref) {
         result.add(parameter.schema.$ref);
-      } else if (parameter.schema?.items?.$ref) {
+      } else if (
+        typeof parameter.schema?.items === "object" &&
+        parameter.schema.items.$ref
+      ) {
         result.add(parameter.schema.items.$ref);
       }
     },
@@ -238,7 +246,10 @@ export function crawlRefs(
     ...defaultVisitor,
     visitUnion(typeDef) {
       const refs = typeDef
-        .oneOf!.map((def) => def.$ref || def.items?.$ref)
+        .oneOf!.map(
+          (def) =>
+            def.$ref || (typeof def.items === "object" ? def.items.$ref : null),
+        )
         .filter(Boolean);
       for (const ref of refs) push(ref);
       defaultVisitor.visitUnion.call(this, typeDef);
