@@ -317,7 +317,7 @@ interface PropertyDocProps {
   name: string;
   required?: boolean | undefined;
   isDiscriminator?: boolean | undefined;
-  property: Property;
+  property: TypeDef | Property;
   schema?: unknown;
   showNested?: boolean | number | undefined;
   children?: JSXElement;
@@ -331,7 +331,9 @@ function PropertyDoc(_props: PropertyDocProps) {
       props.property["x-portone-name"] ||
       "",
   );
-  const deprecated = createMemo(() => Boolean(props.property.deprecated));
+  const deprecated = createMemo(() =>
+    "deprecated" in props.property ? Boolean(props.property.deprecated) : false,
+  );
   const unwrappedTypeDef = createMemo(() => {
     if (!props.schema || !props.showNested || !props.property) return;
     return resolveTypeDef(props.schema, props.property, true);
@@ -479,6 +481,13 @@ function TypeReprDoc(props: TypeReprDocProps) {
       </Match>
       <Match when={typeRepr() === "_enum"}>
         <EnumReprDoc
+          schema={props.schema}
+          basepath={props.basepath}
+          typeDef={typeDef() as TypeDef}
+        />
+      </Match>
+      <Match when={typeRepr() === "_additionalProperties"}>
+        <AdditionalPropertiesReprDoc
           schema={props.schema}
           basepath={props.basepath}
           typeDef={typeDef() as TypeDef}
@@ -638,6 +647,38 @@ function EnumReprDoc(props: EnumReprDocProps) {
         )}
       </For>
       {isEnumOverThreshold() && <span class="text-slate-5"> | ...</span>}
+    </Parameter.Type>
+  );
+}
+
+interface AdditionalPropertiesReprDocProps {
+  schema?: unknown;
+  basepath: string;
+  typeDef: TypeDef;
+}
+
+function AdditionalPropertiesReprDoc(props: AdditionalPropertiesReprDocProps) {
+  return (
+    <Parameter.Type>
+      <span class="text-purple-5">{"{ "}</span>
+      <span class="text-purple-5">{"["}</span>
+      <span class="text-slate-5">{"key: "}</span>
+      <span>string</span>
+      <span class="text-purple-5">{"]"}</span>
+      <span class="text-slate-5">{": "}</span>
+      <Show
+        when={props.typeDef.additionalProperties}
+        fallback={<span>any</span>}
+      >
+        {(additionalProperties) => (
+          <TypeReprDoc
+            schema={props.schema}
+            basepath={props.basepath}
+            def={additionalProperties()}
+          />
+        )}
+      </Show>
+      <span class="text-purple-5">{" }"}</span>
     </Parameter.Type>
   );
 }

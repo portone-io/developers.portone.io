@@ -67,6 +67,7 @@ export function getTypeDefKind(typeDef?: TypeDef): TypeDefKind {
   if (typeDef?.discriminator) return "union";
   if (typeDef?.enum) return "enum";
   if (typeDef?.properties) return "object";
+  if (typeDef?.additionalProperties) return "object";
   return "primitive";
 }
 
@@ -172,6 +173,8 @@ export function repr(def: string | TypeDef | Property | Parameter): string {
   if (def.$ref) return getTypenameByRef(def.$ref);
   if ("discriminator" in def && def.discriminator) return "_union";
   if ("enum" in def && def.enum) return "_enum";
+  if ("additionalProperties" in def && def.additionalProperties)
+    return "_additionalProperties";
   if ("properties" in def && def.properties) return "object";
   if (!def.type && "allOf" in def && def.allOf) return "object";
   return def.type || "";
