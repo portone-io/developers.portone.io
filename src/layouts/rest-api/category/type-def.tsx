@@ -406,7 +406,9 @@ function TypeReprDoc(props: TypeReprDocProps) {
   const typeDef = createMemo(() =>
     typeof props.def === "string"
       ? getTypeDefByRef(props.schema, props.def)
-      : resolveTypeDef(props.schema, props.def, true),
+      : typeof props.def.items === "string"
+        ? props.def.items
+        : resolveTypeDef(props.schema, props.def, true),
   );
   const isUserType = createMemo(
     () => typeRepr()[0]?.toUpperCase() === typeRepr()[0],
@@ -415,7 +417,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
   const href = createMemo(() => `${props.basepath}/type-def#${typeName()}`);
   const format = createMemo(
     on(typeDef, (typeDef): JSXElement => {
-      if (!("format" in typeDef)) return null;
+      if (typeof typeDef === "string" || !("format" in typeDef)) return null;
       switch (typeDef.format) {
         case "int32":
           return "(32 bit)";
@@ -452,14 +454,14 @@ function TypeReprDoc(props: TypeReprDocProps) {
         <UnionReprDoc
           schema={props.schema}
           basepath={props.basepath}
-          typeDef={typeDef()}
+          typeDef={typeDef() as TypeDef}
         />
       </Match>
       <Match when={typeRepr() === "object"}>
         <ObjectReprDoc
           schema={props.schema}
           basepath={props.basepath}
-          typeDef={typeDef()}
+          typeDef={typeDef() as TypeDef}
         />
       </Match>
       <Match when={typeRepr() === "_array"}>
@@ -467,7 +469,9 @@ function TypeReprDoc(props: TypeReprDocProps) {
           schema={props.schema}
           basepath={props.basepath}
           typeDef={
-            typeof props.def === "object" && props.def.items?.$ref
+            typeof props.def === "object" &&
+            typeof props.def.items === "object" &&
+            props.def.items?.$ref
               ? props.def.items?.$ref
               : typeDef()
           }
@@ -477,7 +481,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
         <EnumReprDoc
           schema={props.schema}
           basepath={props.basepath}
-          typeDef={typeDef()}
+          typeDef={typeDef() as TypeDef}
         />
       </Match>
       <Match when={isUserType()}>
@@ -490,14 +494,16 @@ function TypeReprDoc(props: TypeReprDocProps) {
                 </Parameter.Type>
               }
             >
-              <DescriptionDoc typeDef={typeDef()} />
-              <Parameter.Details>
-                <TypeDefDoc
-                  basepath={props.basepath}
-                  schema={props.schema}
-                  typeDef={typeDef()}
-                />
-              </Parameter.Details>
+              <Show when={typeof typeDef() === "object"}>
+                <DescriptionDoc typeDef={typeDef() as TypeDef} />
+                <Parameter.Details>
+                  <TypeDefDoc
+                    basepath={props.basepath}
+                    schema={props.schema}
+                    typeDef={typeDef() as TypeDef}
+                  />
+                </Parameter.Details>
+              </Show>
             </Parameter.TypeDef>
           )}
         >
