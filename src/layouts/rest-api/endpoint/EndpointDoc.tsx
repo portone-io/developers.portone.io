@@ -17,7 +17,7 @@ import {
   type Operation,
   type Parameter as OperationParameter,
 } from "../schema-utils/operation";
-import { getTypeDefByRef, resolveTypeDef } from "../schema-utils/type-def";
+import { resolveTypeDef } from "../schema-utils/type-def";
 import TwoColumnLayout from "../TwoColumnLayout";
 
 export interface EndpointDocProps {
@@ -216,11 +216,6 @@ function ResponseDoc(props: ResponseDocProps) {
       responseSchemata().find(([statusCode]) => statusCode === "200")?.[1]
         .schema,
   );
-  const errorTypeDef = createMemo(() =>
-    props.operation["x-portone-error"]
-      ? getTypeDefByRef(props.schema, props.operation["x-portone-error"].$ref)
-      : null,
-  );
 
   const nonSuccessResponses = createMemo(() =>
     responseSchemata().filter(([statusCode]) => statusCode !== "200"),
@@ -232,7 +227,7 @@ function ResponseDoc(props: ResponseDocProps) {
       <Show when={successTypeDef()}>
         {(typeDef) => {
           return (
-            <ReqRes title="Success">
+            <ReqRes title="200 Ok">
               <TypeDefDoc
                 basepath={props.basepath}
                 schema={props.schema}
@@ -243,31 +238,29 @@ function ResponseDoc(props: ResponseDocProps) {
           );
         }}
       </Show>
-      <Show when={errorTypeDef()}>
-        {(typeDef) => {
-          return (
-            <ReqRes title="Error">
-              <TypeDefDoc
-                basepath={props.basepath}
-                schema={props.schema}
-                typeDef={typeDef()}
-                showNested
-              />
-            </ReqRes>
-          );
-        }}
-      </Show>
-      <Show when={!errorTypeDef() && nonSuccessResponses().length > 0}>
-        <For each={nonSuccessResponses()}>
-          {([statusCode, { response }]) => (
-            <ReqRes title={`${statusCode} Error`}>
-              <prose.p class="text-sm text-slate-6">
-                {response.description}
-              </prose.p>
-            </ReqRes>
-          )}
-        </For>
-      </Show>
+      <For each={nonSuccessResponses()}>
+        {([statusCode, schemata]) => (
+          <ReqRes title={`${statusCode} Error`}>
+            <Show
+              fallback={
+                <prose.p class="text-sm text-slate-6">
+                  {schemata.response.description}
+                </prose.p>
+              }
+              when={schemata.schema}
+            >
+              {(typeDef) => (
+                <TypeDefDoc
+                  basepath={props.basepath}
+                  schema={props.schema}
+                  typeDef={resolveTypeDef(props.schema, typeDef())}
+                  showNested
+                />
+              )}
+            </Show>
+          </ReqRes>
+        )}
+      </For>
     </div>
   );
 }
