@@ -10,12 +10,12 @@ import vinxiMdxPkg from "@vinxi/plugin-mdx";
 import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
+import { solidStartSiteMapPlugin } from "solid-start-sitemap";
 import unocss from "unocss/vite";
 import { imagetools } from "vite-imagetools";
 
 // 현재 Vinxi export 설정 이슈로 파일을 직접 가져와야 함
 import type { CustomizableConfig } from "./node_modules/vinxi/dist/types/lib/vite-dev";
-import { indexFilesMapping } from "./src/misc/contentIndex";
 
 const { default: vinxiMdx } = vinxiMdxPkg;
 
@@ -23,12 +23,7 @@ export default defineConfig({
   server: {
     preset: "vercel",
     prerender: {
-      routes: [
-        ...Object.keys(indexFilesMapping).map(
-          (fileName) => `/content-index/${fileName}.json`,
-        ),
-        "/blog/rss.xml",
-      ],
+      routes: ["/blog/rss.xml"],
     },
     rollupConfig: {
       external: ["monaco-editor"],
@@ -132,6 +127,10 @@ export default defineConfig({
             return `export default '${base64}';`;
           },
         },
+        solidStartSiteMapPlugin({
+          hostname: "https://developers.portone.io",
+          ignoreRoutes: ["_preview", "_components"],
+        }),
       ],
     }) satisfies CustomizableConfig,
   solid: {
