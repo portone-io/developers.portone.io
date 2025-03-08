@@ -99,7 +99,7 @@ export function bakeProperties(
     const $ref = property.$ref;
     const resolvedProperty = resolveTypeDef(schema, property);
     const type = $ref ? getTypenameByRef($ref) : resolvedProperty.type;
-    const required = resolvedDef.required?.includes(name);
+    const required = resolvedDef.required?.includes?.(name);
     return {
       ...resolvedProperty,
       $ref,
