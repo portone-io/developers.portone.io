@@ -13,8 +13,9 @@ import { visit } from "unist-util-visit";
 // 마크다운 파일 저장 디렉토리
 const MARKDOWN_OUTPUT_DIR = path.join(process.cwd(), "public", "llms");
 // 전체 콘텐츠를 합칠 파일들
-const FULL_OUTPUT_PATH = path.join(MARKDOWN_OUTPUT_DIR, "llms-full.txt");
-const SMALL_OUTPUT_PATH = path.join(MARKDOWN_OUTPUT_DIR, "llms-small.txt");
+const FULL_OUTPUT_PATH = path.join(process.cwd(), "public", "llms-full.txt");
+const SMALL_OUTPUT_PATH = path.join(process.cwd(), "public", "llms-small.txt");
+const LLMS_TXT_PATH = path.join(process.cwd(), "public", "llms.txt");
 
 // MDX 파일에서 순수 마크다운으로 변환하는 함수
 async function mdxToMarkdown(filePath: string): Promise<{
@@ -234,6 +235,7 @@ async function processAllMdxFiles() {
   // 개별 파일 및 전체 콘텐츠를 위한 배열
   const allMarkdownContent: string[] = [];
   const smallMarkdownContent: string[] = [];
+  const llmsFileLinks: string[] = [];
   
   // 각 MDX 파일 처리
   let successCount = 0;
@@ -265,6 +267,9 @@ async function processAllMdxFiles() {
       // 요약 콘텐츠에 추가 (제목과 설명만)
       smallMarkdownContent.push(`## ${title} (/${slug})\n\n${description}\n\n`);
       
+      // llms.txt 파일을 위한 링크 추가
+      llmsFileLinks.push(`- [${title}](/${slug}): ${description}`);
+      
       successCount++;
     } catch (error) {
       console.error(`Error processing file ${file}:`, error);
@@ -278,7 +283,28 @@ async function processAllMdxFiles() {
   await fs.writeFile(FULL_OUTPUT_PATH, allMarkdownContent.join("\n"), "utf-8");
   await fs.writeFile(SMALL_OUTPUT_PATH, smallMarkdownContent.join("\n"), "utf-8");
   
+  // llms.txt 표준에 맞는 파일 생성
+  const llmsTxtContent = `# 포트원 개발자센터
+
+> 포트원 개발자센터는 결제, 본인인증, 정산 등 다양한 결제 관련 서비스를 제공하는 포트원의 개발 문서를 제공합니다.
+
+포트원 개발자센터는 결제 연동, API 사용법, SDK 가이드 등 개발자를 위한 다양한 문서를 제공합니다.
+이 문서들은 포트원 서비스를 효과적으로 활용하는 데 도움이 됩니다.
+
+## 문서
+
+${llmsFileLinks.join('\n')}
+
+## 추가 자료
+
+- [전체 문서 모음](/llms-full.txt): 모든 문서의 전체 내용을 포함합니다.
+- [요약 문서 모음](/llms-small.txt): 모든 문서의 제목과 설명만 포함합니다.
+`;
+
+  await fs.writeFile(LLMS_TXT_PATH, llmsTxtContent, "utf-8");
+  
   console.log(`Generated LLMs files in ${MARKDOWN_OUTPUT_DIR}`);
+  console.log(`Generated llms.txt, llms-full.txt, and llms-small.txt in public directory`);
   console.log(`Total pages processed: ${allMdxFiles.length}`);
 }
 

@@ -60,14 +60,20 @@ export default function Metadata(_props: Props) {
       <Link
         rel="alternate"
         type="text/markdown"
-        href="https://developers.portone.io/llms/llms-full.txt"
+        href="https://developers.portone.io/llms-full.txt"
         title="Full content in Markdown format"
       />
       <Link
         rel="alternate"
         type="text/markdown"
-        href="https://developers.portone.io/llms/llms-small.txt"
+        href="https://developers.portone.io/llms-small.txt"
         title="Summary content in Markdown format"
+      />
+      <Link
+        rel="alternate"
+        type="text/markdown"
+        href="https://developers.portone.io/llms.txt"
+        title="LLMs.txt standard format"
       />
     </>
   );
