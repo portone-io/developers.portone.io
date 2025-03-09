@@ -50,6 +50,25 @@ export default function Metadata(_props: Props) {
         content={`https://developers.portone.io/${props.ogImageSlug}`}
       />
       <Meta name="twitter:card" content="summary_large_image" />
+      <Show when={location.pathname !== "/"}>
+        <Link
+          rel="alternate"
+          type="text/markdown"
+          href={`https://developers.portone.io/llms${location.pathname}/llms.txt`}
+        />
+      </Show>
+      <Link
+        rel="alternate"
+        type="text/markdown"
+        href="https://developers.portone.io/llms/llms-full.txt"
+        title="Full content in Markdown format"
+      />
+      <Link
+        rel="alternate"
+        type="text/markdown"
+        href="https://developers.portone.io/llms/llms-small.txt"
+        title="Summary content in Markdown format"
+      />
     </>
   );
 }
