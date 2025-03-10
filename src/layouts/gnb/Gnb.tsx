@@ -1,15 +1,16 @@
 import { A } from "@solidjs/router";
+import { clientOnly } from "@solidjs/start";
 import clsx from "clsx";
 import { createMemo, For, Show, untrack } from "solid-js";
 
+import Dropdown, { type DropdownItem } from "~/layouts/gnb/Dropdown";
+import Logo from "~/layouts/gnb/Logo";
+import MobileMenuButton from "~/layouts/gnb/MobileMenuButton";
 import { useSidebarContext } from "~/layouts/sidebar/context";
 import { useSystemVersion } from "~/state/system-version";
 import type { Lang, SystemVersion } from "~/type";
 
-import { SearchButton } from "../sidebar/search";
-import Dropdown, { type DropdownItem } from "./Dropdown";
-import Logo from "./Logo";
-import MobileMenuButton from "./MobileMenuButton";
+const SearchButton = clientOnly(() => import("~/layouts/sidebar/search"));
 
 interface Props {
   lang: Lang;
