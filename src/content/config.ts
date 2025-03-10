@@ -119,7 +119,7 @@ export const config = {
     path: "src/routes/(root)/sdk",
     entrySchema: DocsEntry,
   },
-} satisfies Record<string, CollectionConfig>;
+} as const;
 
 export type CollectionConfig = {
   path: string;
