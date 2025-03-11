@@ -2,7 +2,7 @@ import {
   convertAllMdxToMarkdown,
   generateLlmsTxtFiles,
   parseAllMdxFiles,
-} from "./mdx-to-markdown";
+} from "./generator";
 
 /**
  * 메인 함수
