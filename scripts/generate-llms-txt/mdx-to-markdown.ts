@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -538,16 +538,19 @@ function removeImports(ast: any): void {
 }
 
 /**
- * 모든 MDX 파일을 마크다운으로 변환하고 저장하는 함수
+ * 모든 MDX 파일을 파싱하고 결과를 맵으로 반환하는 함수
+ * @returns 파일 경로(slug)와 파싱 결과를 매핑한 Map 객체
  */
-export async function convertAllMdxToMarkdown(): Promise<void> {
+export async function parseAllMdxFiles(): Promise<Map<string, MdxParseResult>> {
   // MDX 파일 찾기
-  const mdxFiles = await fastGlob(["content/**/*.mdx", "src/routes/**/*.mdx"], {
+  const mdxFiles = await fastGlob(["src/routes/**/*.mdx"], {
     cwd: rootDir,
-    absolute: false,
   });
 
   console.log(`총 ${mdxFiles.length}개의 MDX 파일을 찾았습니다.`);
+
+  // 파일 경로와 파싱 결과를 매핑할 Map 객체
+  const fileParseMap = new Map<string, MdxParseResult>();
 
   // 각 MDX 파일 처리
   for (const mdxFile of mdxFiles) {
@@ -555,12 +558,32 @@ export async function convertAllMdxToMarkdown(): Promise<void> {
       // MDX 파싱
       const parseResult = await parseMdxFile(mdxFile);
 
+      // Map에 파싱 결과 저장 (slug를 키로 사용)
+      fileParseMap.set(parseResult.slug, parseResult);
+    } catch (error) {
+      console.error(`${mdxFile} 파싱 중 오류 발생:`, error);
+    }
+  }
+
+  return fileParseMap;
+}
+
+/**
+ * 모든 MDX 파일을 마크다운으로 변환하고 저장하는 함수
+ * @param fileParseMap 파일 경로와 파싱 결과를 매핑한 Map 객체
+ */
+export async function convertAllMdxToMarkdown(
+  fileParseMap: Map<string, MdxParseResult>,
+): Promise<void> {
+  // 각 파싱 결과를 마크다운으로 변환하여 저장
+  for (const [slug, parseResult] of fileParseMap.entries()) {
+    try {
       // 마크다운으로 변환
       const markdown = await convertMdxToMarkdown(parseResult);
 
       // 출력 경로 생성
-      const relativePath = parseResult.slug;
-      const outputPath = join(outputDir, `${relativePath}.md`);
+      const outputRelativePath = `${slug}.md`;
+      const outputPath = join(outputDir, outputRelativePath);
 
       // 디렉토리 생성
       await mkdir(dirname(outputPath), { recursive: true });
@@ -568,9 +591,9 @@ export async function convertAllMdxToMarkdown(): Promise<void> {
       // 파일 저장
       await writeFile(outputPath, markdown, "utf-8");
 
-      console.log(`변환 완료: ${mdxFile} -> ${outputPath}`);
+      console.log(`변환 완료: ${parseResult.filePath} -> ${outputPath}`);
     } catch (error) {
-      console.error(`${mdxFile} 변환 중 오류 발생:`, error);
+      console.error(`${parseResult.filePath} 변환 중 오류 발생:`, error);
     }
   }
 
@@ -578,144 +601,124 @@ export async function convertAllMdxToMarkdown(): Promise<void> {
 }
 
 /**
- * llms.txt, llms-full.txt, llms-small.txt 파일 생성
+ * 모든 마크다운 파일을 읽고 llms.txt 파일을 생성하는 함수
+ * @param fileParseMap MDX 파싱 결과 맵
+ * @returns 생성된 llms.txt 파일 경로
  */
-export async function generateLlmsTxtFiles(): Promise<void> {
-  // 마크다운 파일 찾기
-  const markdownFiles = await fastGlob(["**/*.md"], {
-    cwd: outputDir,
-    absolute: false,
-  });
+export async function generateLlmsTxtFiles(
+  fileParseMap: Map<string, MdxParseResult>,
+): Promise<string> {
+  // fileParseMap에서 slug 추출
+  const slugs = Array.from(fileParseMap.keys());
 
-  console.log(`총 ${markdownFiles.length}개의 마크다운 파일을 찾았습니다.`);
+  console.log(`총 ${slugs.length}개의 문서를 찾았습니다.`);
 
-  // 문서 섹션 파일 필터링
-  const documentationFiles = markdownFiles.filter(
-    (file) =>
-      !file.includes("api/") &&
-      !file.includes("sdk/") &&
-      !file.includes("release-notes/") &&
-      !file.includes("blog/posts/"),
+  // 카테고리별 파일 필터링
+  const apiReferenceFiles = slugs.filter((slug) =>
+    slug.includes("api-reference"),
+  );
+  const sdkFiles = slugs.filter((slug) => slug.includes("sdk"));
+  const releaseNoteFiles = slugs.filter((slug) =>
+    slug.includes("release-notes"),
+  );
+  const blogFiles = slugs.filter((slug) => slug.includes("blog/posts"));
+  const otherFiles = slugs.filter(
+    (slug) =>
+      !slug.includes("api-reference") &&
+      !slug.includes("sdk") &&
+      !slug.includes("release-notes") &&
+      !slug.includes("blog/posts"),
   );
 
-  // API 참조 섹션 파일 필터링
-  const apiReferenceFiles = markdownFiles.filter((file) =>
-    file.includes("api/"),
-  );
+  // 링크 생성 헬퍼 함수
+  const createLinkWithDescription = (slug: string): string => {
+    const parseResult = fileParseMap.get(slug);
+    const title = parseResult?.frontmatter.title || basename(slug);
+    const displayPath = `${slug}.md`;
 
-  // SDK 섹션 파일 필터링
-  const sdkFiles = markdownFiles.filter((file) => file.includes("sdk/"));
+    // description이 있는 경우 표준 형식에 맞게 추가
+    if (parseResult?.frontmatter.description) {
+      return `- [${title}](${displayPath}): ${parseResult.frontmatter.description}\n`;
+    } else {
+      return `- [${title}](${displayPath})\n`;
+    }
+  };
 
-  // 릴리스 노트 섹션 파일 필터링
-  const releaseNoteFiles = markdownFiles.filter(
-    (file) => file.includes("release-notes/") || file.includes("changelog"),
-  );
+  // llms.txt 파일 내용 생성
+  let llmsTxtContent = `# PortOne 개발자 문서
 
-  // 블로그 섹션 파일 필터링
-  const blogFiles = markdownFiles.filter((file) =>
-    file.includes("blog/posts/"),
-  );
+PortOne은 온라인 결제, 본인인증, 비대면 계약을 위한 API와 SDK를 제공합니다.
+아래 링크를 통해 필요한 문서를 찾아보세요.
 
-  // llms.txt 생성 (llmstxt.org 형식)
-  let llmsTxtContent = "# PortOne Developers\n\n";
-  llmsTxtContent +=
-    "> PortOne은 온라인 결제 및 금융 서비스를 위한 통합 플랫폼으로, 개발자들이 다양한 결제 수단과 PG사를 쉽게 연동할 수 있도록 도와줍니다.\n\n";
-  llmsTxtContent +=
-    "이 문서는 PortOne API, SDK, 통합 가이드 및 기타 개발자 리소스에 대한 정보를 제공합니다.\n\n";
+`;
 
-  // 문서 섹션
-  llmsTxtContent += "## 문서\n\n";
-  for (const file of documentationFiles) {
-    const fileName = basename(file, ".md");
-    const url = `https://developers.portone.io/llms/${file}`;
-    llmsTxtContent += `- [${fileName}](${url})\n`;
+  // API 레퍼런스 섹션 추가
+  llmsTxtContent += `## API 레퍼런스\n\n`;
+  for (const slug of apiReferenceFiles) {
+    llmsTxtContent += createLinkWithDescription(slug);
   }
+  llmsTxtContent += `\n`;
 
-  // API 참조 섹션
-  if (apiReferenceFiles.length > 0) {
-    llmsTxtContent += "\n## API 참조\n\n";
-    for (const file of apiReferenceFiles) {
-      const fileName = basename(file, ".md");
-      const url = `https://developers.portone.io/llms/${file}`;
-      llmsTxtContent += `- [${fileName}](${url})\n`;
+  // SDK 섹션 추가
+  llmsTxtContent += `## SDK\n\n`;
+  for (const slug of sdkFiles) {
+    llmsTxtContent += createLinkWithDescription(slug);
+  }
+  llmsTxtContent += `\n`;
+
+  // 기타 문서 섹션 추가
+  llmsTxtContent += `## 기타 문서\n\n`;
+  for (const slug of otherFiles) {
+    llmsTxtContent += createLinkWithDescription(slug);
+  }
+  llmsTxtContent += `\n`;
+
+  // 릴리스 노트 섹션 추가
+  llmsTxtContent += `## 릴리스 노트\n\n`;
+  for (const slug of releaseNoteFiles) {
+    llmsTxtContent += createLinkWithDescription(slug);
+  }
+  llmsTxtContent += `\n`;
+
+  // 블로그 섹션 추가
+  llmsTxtContent += `## 블로그\n\n`;
+  for (const slug of blogFiles) {
+    llmsTxtContent += createLinkWithDescription(slug);
+  }
+  llmsTxtContent += `\n`;
+
+  // llms.txt 파일 저장
+  const llmsTxtPath = join(rootDir, "public", "llms.txt");
+  await writeFile(llmsTxtPath, llmsTxtContent, "utf-8");
+  console.log(`llms.txt 파일이 생성되었습니다: ${llmsTxtPath}`);
+
+  // llms-full.txt 파일 생성 (모든 문서 내용 포함)
+  let fullContent = llmsTxtContent;
+  for (const slug of slugs) {
+    const parseResult = fileParseMap.get(slug);
+    if (parseResult) {
+      // 마크다운으로 변환
+      const markdown = await convertMdxToMarkdown(parseResult);
+      fullContent += `\n\n# ${slug}\n\n${markdown}`;
     }
   }
+  const llmsFullTxtPath = join(rootDir, "public", "llms-full.txt");
+  await writeFile(llmsFullTxtPath, fullContent, "utf-8");
+  console.log(`llms-full.txt 파일이 생성되었습니다: ${llmsFullTxtPath}`);
 
-  // SDK 섹션
-  if (sdkFiles.length > 0) {
-    llmsTxtContent += "\n## SDK\n\n";
-    for (const file of sdkFiles) {
-      const fileName = basename(file, ".md");
-      const url = `https://developers.portone.io/llms/${file}`;
-      llmsTxtContent += `- [${fileName}](${url})\n`;
+  // llms-small.txt 파일 생성 (처음 10개 문서만 포함)
+  let smallContent = llmsTxtContent;
+  for (const slug of slugs.slice(0, 10)) {
+    const parseResult = fileParseMap.get(slug);
+    if (parseResult) {
+      // 마크다운으로 변환
+      const markdown = await convertMdxToMarkdown(parseResult);
+      smallContent += `\n\n# ${slug}\n\n${markdown}`;
     }
   }
+  const llmsSmallTxtPath = join(rootDir, "public", "llms-small.txt");
+  await writeFile(llmsSmallTxtPath, smallContent, "utf-8");
+  console.log(`llms-small.txt 파일이 생성되었습니다: ${llmsSmallTxtPath}`);
 
-  // 릴리스 노트 섹션
-  if (releaseNoteFiles.length > 0) {
-    llmsTxtContent += "\n## 릴리스 노트\n\n";
-    for (const file of releaseNoteFiles) {
-      const fileName = basename(file, ".md");
-      const url = `https://developers.portone.io/llms/${file}`;
-      llmsTxtContent += `- [${fileName}](${url})\n`;
-    }
-  }
-
-  // 블로그 섹션
-  if (blogFiles.length > 0) {
-    llmsTxtContent += "\n## 블로그\n\n";
-    for (const file of blogFiles) {
-      const fileName = basename(file, ".md");
-      const url = `https://developers.portone.io/llms/${file}`;
-      llmsTxtContent += `- [${fileName}](${url})\n`;
-    }
-  }
-
-  await writeFile(join(rootDir, "public", "llms.txt"), llmsTxtContent, "utf-8");
-  console.log("llms.txt 파일이 생성되었습니다.");
-
-  // llms-full.txt 생성 (모든 내용 포함)
-  let llmsFullTxtContent = "";
-
-  for (const file of markdownFiles) {
-    const filePath = join(outputDir, file);
-    const content = await readFile(filePath, "utf-8");
-    const url = `https://developers.portone.io/llms/${file}`;
-
-    llmsFullTxtContent += `# ${url}\n\n${content}\n\n`;
-  }
-
-  await writeFile(
-    join(rootDir, "public", "llms-full.txt"),
-    llmsFullTxtContent,
-    "utf-8",
-  );
-  console.log("llms-full.txt 파일이 생성되었습니다.");
-
-  // llms-small.txt 생성 (요약 내용 포함)
-  let llmsSmallTxtContent = "";
-
-  for (const file of markdownFiles) {
-    const filePath = join(outputDir, file);
-    const content = await readFile(filePath, "utf-8");
-    const url = `https://developers.portone.io/llms/${file}`;
-
-    // 프론트매터 제거 및 내용 요약 (처음 500자)
-    const contentWithoutFrontmatter = content.replace(
-      /^---\n[\s\S]*?\n---\n/,
-      "",
-    );
-    const summary =
-      contentWithoutFrontmatter.trim().slice(0, 500) +
-      (contentWithoutFrontmatter.length > 500 ? "..." : "");
-
-    llmsSmallTxtContent += `# ${url}\n\n${summary}\n\n`;
-  }
-
-  await writeFile(
-    join(rootDir, "public", "llms-small.txt"),
-    llmsSmallTxtContent,
-    "utf-8",
-  );
-  console.log("llms-small.txt 파일이 생성되었습니다.");
+  return llmsTxtPath;
 }

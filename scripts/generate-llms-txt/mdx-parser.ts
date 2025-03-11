@@ -14,11 +14,23 @@ import { visit } from "unist-util-visit";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
 
+// Frontmatter 타입 정의
+export interface Frontmatter {
+  title?: string;
+  description?: string;
+  author?: string;
+  date?: string;
+  tags?: string[];
+  thumbnail?: string;
+  targetVersions?: string[];
+  [key: string]: any; // 기타 알려지지 않은 필드를 위한 인덱스 시그니처
+}
+
 // MDX 파싱 결과 타입
 export type MdxParseResult = {
   filePath: string;
   slug: string;
-  frontmatter: Record<string, any>;
+  frontmatter: Frontmatter;
   imports: {
     source: string;
     specifiers: {
@@ -63,9 +75,26 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
       // 프론트매터 추출
       visit(tree, "yaml", (node: any) => {
         try {
-          result.frontmatter = yaml.load(node.value as string) || {};
+          const parsedFrontmatter = yaml.load(node.value as string);
+
+          // 프론트매터가 존재하는 경우에만 할당
+          if (parsedFrontmatter && typeof parsedFrontmatter === "object") {
+            result.frontmatter = parsedFrontmatter as Frontmatter;
+            console.log(
+              `${filePath}의 프론트매터 파싱 성공:`,
+              result.frontmatter,
+            );
+          } else {
+            console.warn(
+              `${filePath}의 프론트매터가 비어있거나 객체가 아닙니다.`,
+            );
+            // 빈 객체로 초기화
+            result.frontmatter = {};
+          }
         } catch (e) {
           console.warn(`${filePath}의 프론트매터 파싱 중 오류 발생:`, e);
+          // 오류 발생 시 빈 객체로 초기화
+          result.frontmatter = {};
         }
       });
 
@@ -90,7 +119,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
             ] = importMatch;
 
             const importInfo = {
-              source,
+              source: source || "",
               specifiers: [] as {
                 name: string;
                 isDefault: boolean;
@@ -111,7 +140,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
               const specifiers = namedImports1.split(",").map((s) => s.trim());
               for (const specifier of specifiers) {
                 const aliasMatch = specifier.match(/(\w+)\s+as\s+(\w+)/);
-                if (aliasMatch) {
+                if (aliasMatch && aliasMatch[1] && aliasMatch[2]) {
                   importInfo.specifiers.push({
                     name: aliasMatch[1],
                     isDefault: false,
@@ -139,7 +168,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
               const specifiers = namedImports2.split(",").map((s) => s.trim());
               for (const specifier of specifiers) {
                 const aliasMatch = specifier.match(/(\w+)\s+as\s+(\w+)/);
-                if (aliasMatch) {
+                if (aliasMatch && aliasMatch[1] && aliasMatch[2]) {
                   importInfo.specifiers.push({
                     name: aliasMatch[1],
                     isDefault: false,
@@ -162,7 +191,23 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
 
   // MDX 파싱 실행
   const file = await processor.parse(content);
+  await processor.run(file);
   result.ast = file;
+
+  // frontmatter에 title이 없는 경우 AST에서 첫 번째 제목 추출 시도
+  if (!result.frontmatter.title) {
+    visit(result.ast, "heading", (node: any) => {
+      if (node.depth === 1 && node.children && node.children.length > 0) {
+        const textNode = node.children.find(
+          (child: any) => child.type === "text",
+        );
+        if (textNode && textNode.value) {
+          result.frontmatter.title = textNode.value;
+          return false; // 첫 번째 제목을 찾았으므로 순회 중단
+        }
+      }
+    });
+  }
 
   return result;
 }
@@ -250,21 +295,19 @@ export function extractJsxComponents(parseResult: MdxParseResult): {
 }
 
 /**
- * 슬러그를 생성하는 함수
+ * 파일 경로에서 슬러그 생성
  * @param filePath 파일 경로
  * @returns 슬러그
  */
 function generateSlug(filePath: string): string {
-  // 파일 확장자 제거
-  const withoutExtension = filePath.replace(/\.(mdx|md)$/, "");
+  // src/routes/(root) 제거
+  let slug = filePath.replace(/^src\/routes\/\(root\)\//, "");
 
-  // content/ 또는 src/routes/ 접두사 제거
-  const withoutPrefix = withoutExtension
-    .replace(/^content\//, "")
-    .replace(/^src\/routes\/\(root\)\//, "");
+  // 확장자 제거
+  slug = slug.replace(/\.mdx$/, "");
 
-  // index 파일 처리
-  const withoutIndex = withoutPrefix.replace(/\/index$/, "");
+  // index.mdx 파일은 디렉토리 이름으로 변경
+  slug = slug.replace(/\/index$/, "");
 
-  return withoutIndex;
+  return slug;
 }

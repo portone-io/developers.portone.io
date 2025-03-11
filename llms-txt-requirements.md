@@ -7,14 +7,6 @@
 
 llms.txt 표준에 맞는 파일이 `/llms.txt` 경로에 생성되었으며, llms-full.txt와 llms-small.txt의 경로도 각각 `/llms-full.txt`, `/llms-small.txt`로 변경되었습니다. 또한 Metadata 컴포넌트에서 이러한 변경사항이 반영되어 올바른 경로로 링크가 제공됩니다.
 
-## 추가 요구사항
-
-현재 mdx 파일을 파싱해 마크다운으로 변경하는 방식으로 `scripts/generate-llms-txt.ts`가 구현되었지만, 아래 내용처럼 SolidJS 커스텀 컴포넌트를 함께 사용하고 있기에 추후 확장이 용이한 구조로 개선되어야 해
-이 컴포넌트들의 용례를 보면 알겠지만, mdx에서 import한 레퍼런스를 attribute로 넣고 활용하는 등의 예시가 있어서 단순 정규식 기반 구현만으로는 mdx -> md 변환이 어려운 상황이야.
-현재 구현된 내용 중 정규식 활용을 모두 제거하고, AST를 활용하는 구조로 바꿔줘.
-- 일단 개별 mdx를 파싱해 frontmatter, slug 및 파일 경로, imports, AST가 포함된 결과를 반환하는 함수를 먼저 작성하고
-- 해당 함수를 활용해 기반으로 정규식 없이 구현을 재작성해줘.
-
 ## MDX 파일에서 활용되는 SolidJS 커스텀 컴포넌트 목록
 
 ### Figure (~/components/Figure.tsx)
