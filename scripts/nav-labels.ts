@@ -25,9 +25,9 @@ async function run(lang: string): Promise<Result> {
 const titleCache: Record<string, string> = {};
 async function getTitleFromPath(path: string): Promise<string> {
   if (path.startsWith("!")) return path.slice(1);
-  return titleCache[path] ||= getTitle(
+  return (titleCache[path] ||= getTitle(
     await Deno.readTextFile(`src/content/docs${path}.mdx`),
-  );
+  ));
 }
 
 function getTitle(mdx: string): string {

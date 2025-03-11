@@ -28,13 +28,13 @@ const downloadFns: { [key in Schema]: () => Promise<void> } = {
 };
 
 if (import.meta.main) {
-  const schema = await Input.prompt({
+  const schema = (await Input.prompt({
     message: "내려받을 스키마를 선택해주세요.",
     default: schemas[0],
     list: true,
     info: true,
     suggestions: schemas as unknown as Schema[],
-  }) as Schema;
+  })) as Schema;
   if (schema in downloadFns) await downloadFns[schema]();
   else {
     console.log("지원하지 않는 스키마입니다.");
@@ -71,8 +71,8 @@ export async function downloadV1Openapi() {
 }
 
 export function processV2Openapi(schema: any): any {
-  schema.servers = (schema.servers as { url: string }[]).filter((server) =>
-    !server.url.endsWith(".iamport.co")
+  schema.servers = (schema.servers as { url: string }[]).filter(
+    (server) => !server.url.endsWith(".iamport.co"),
   );
   schema["x-portone-categories"] = filterCategories(
     schema["x-portone-categories"],
@@ -95,7 +95,7 @@ export function processV2Openapi(schema: any): any {
     node.properties ||= {};
     for (const field in node["x-portone-fields"]) {
       Object.assign(
-        node.properties[field] ||= {},
+        (node.properties[field] ||= {}),
         node["x-portone-fields"][field],
       );
     }
@@ -196,18 +196,18 @@ export function traverseEveryProperty(
   }
 }
 
-function filterCategories(
-  list: any[],
-): any[] {
-  return list.filter((object) => object.invisible !== true).map((object) => {
-    if (Array.isArray(object.children)) {
-      return {
-        ...object,
-        children: filterCategories(object.children),
-      };
-    }
-    return object;
-  });
+function filterCategories(list: any[]): any[] {
+  return list
+    .filter((object) => object.invisible !== true)
+    .map((object) => {
+      if (Array.isArray(object.children)) {
+        return {
+          ...object,
+          children: filterCategories(object.children),
+        };
+      }
+      return object;
+    });
 }
 
 function collectCategoryIds(

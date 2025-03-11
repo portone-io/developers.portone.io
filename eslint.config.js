@@ -53,11 +53,11 @@ export default [
   },
   {
     ...eslint.configs.recommended,
-    ignores: ["scripts/**/*.ts", "**/*.mdx/*"],
+    ignores: ["**/*.mdx/*"],
   },
   {
     files: ["**/*.{ts,tsx}"],
-    ignores: ["scripts/**/*.ts", "**/*.mdx/*", "**/__fixtures__/**/*"],
+    ignores: ["**/*.mdx/*", "**/__fixtures__/**/*"],
     languageOptions: {
       parser: tsEslintParser,
       parserOptions: {
@@ -69,6 +69,33 @@ export default [
       "@typescript-eslint": tsEslintPlugin,
     },
     rules: tsTypeCheckedRules,
+  },
+  {
+    files: ["scripts/**/*.ts"],
+    languageOptions: {
+      parser: tsEslintParser,
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tsEslintPlugin,
+    },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { varsIgnorePattern: "^_", argsIgnorePattern: "^_" },
+      ],
+      "@typescript-eslint/await-thenable": "off",
+    },
   },
   prettierRecommended,
   {
