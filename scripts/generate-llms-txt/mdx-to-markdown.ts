@@ -268,27 +268,21 @@ function transformJsxComponents(ast: any): void {
 /**
  * Figure 컴포넌트 처리
  */
-function handleFigureComponent(node: any, _props: Record<string, any>): any {
-  // 이미지 URL과 캡션 추출
-  const src = node.attributes?.src || "";
+export function handleFigureComponent(
+  node: any,
+  _props: Record<string, any>,
+): any {
+  // 이미지 캡션 추출
   const caption = node.attributes?.caption || "";
 
-  // 마크다운 이미지로 변환
+  // '(이미지 첨부: {caption})' 형태로 변환
   return {
     type: "paragraph",
     children: [
       {
-        type: "image",
-        url: src,
-        alt: caption,
-        title: caption,
+        type: "text",
+        value: caption ? `(이미지 첨부: ${caption})` : "(관련 이미지 첨부)",
       },
-      ...(caption
-        ? [
-            { type: "text", value: "\n" },
-            { type: "emphasis", children: [{ type: "text", value: caption }] },
-          ]
-        : []),
     ],
   };
 }
