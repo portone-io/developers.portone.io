@@ -1,62 +1,62 @@
-# llms.txt를 지원하기 위한 추가 요구사항 정리
+# llms.txt를 지원하기 위한 요구사항 정리
 
-## 이미 구현된 부분
+## 기능 설명
 
-현재까지 프로젝트 내 존재하는 모든 mdx파일을 markdown 형식으로 바꾸고, 해당 public/llms/ 내 각각의 mdx filepath에 상응하는 경로에 배치하는 것까지 잘 구현되었음
-또 이를 바탕으로 한 llms-full.txt, llms-small.txt도 생성하고 있음
+- 프로젝트 내 mdx 파일 중 필요한 것들을 markdown 형식으로 바꾸고, public/llms/ 내 각각의 mdx filepath에 상응하는 경로에 파일로 생성
+- [llms.txt 표준](https://llmstxt.org/)에 맞게 llms.txt, llms-full.txt, llms-small.txt 또한 생성
 
-llms.txt 표준에 맞는 파일이 `/llms.txt` 경로에 생성되었으며, llms-full.txt와 llms-small.txt의 경로도 각각 `/llms-full.txt`, `/llms-small.txt`로 변경되었습니다. 또한 Metadata 컴포넌트에서 이러한 변경사항이 반영되어 올바른 경로로 링크가 제공됩니다.
+## TODO List
 
-## MDX 파일에서 활용되는 SolidJS 커스텀 컴포넌트 목록
+- [ ] 마크다운 변환에서 제외할 mdx 파일들 제외하기.
+- [ ] 개별 마크다운 파일들 보면서 퀄리티 높이기
+  - 커스텀 컴포넌트 태그들 잘 알맞게 처리하기
+  - 이상한 부분들 찾아 고치기
+- [ ] llms-full.txt, llms-small.txt로 찾아 합치는 부분 개선하기
+  - full / small 어떻게 나눌지 고려하기
+  - header depth 등 고려하기
+- [x] llms.txt 카테고리 섹션 개선하기
+- [x] 문서별로 targetVersions 명시 안 된 것들 추가해주기
 
-### Figure (~/components/Figure.tsx)
+## MDX 파일에서 활용되는 태그 목록
 
-- 이미지와 캡션을 표시하는 컴포넌트
-- 블로그 포스트와 문서에서 이미지 표시에 자주 사용됨
-- 일단 생략해도 무관
+프로젝트 내 MDX 파일에서 사용되는 HTML 형식 태그는 다음과 같습니다.
 
-### Hint (~/components/Hint.tsx)
+### 커스텀 컴포넌트 태그
 
-- 정보, 경고, 성공, 위험 메시지를 표시하는 컴포넌트
-- 스타일: info, warning, success, danger
-- 이모지 또는 위 스타일 워딩으로 대체
+- `<Figure>` - 이미지와 캡션을 표시하는 컴포넌트
+- `<Hint>` - 정보, 경고, 위험 등의 힌트를 표시하는 컴포넌트
+- `<Details>` - 접을 수 있는 세부 정보를 표시하는 컴포넌트
+  - `<Details.Summary>` - 접힌 상태에서 보이는 요약 부분
+  - `<Details.Content>` - 펼쳤을 때 보이는 내용 부분
+- `<Tabs>` - 탭 인터페이스를 제공하는 컴포넌트
+  - `<Tabs.Tab>` - 개별 탭 컨텐츠
+- `<ApiLink>` - API 문서 링크를 제공하는 컴포넌트
+- `<VersionGate>` - 특정 버전에 따라 컨텐츠를 조건부로 표시하는 컴포넌트
+- `<ContentRef>` - 다른 문서에 대한 참조를 제공하는 컴포넌트
+- `<Parameter>` - API 파라미터를 표시하는 컴포넌트
+- `<SwaggerDescription>` - Swagger API 설명을 표시하는 컴포넌트
+- `<prose.h3>` - 프로즈 스타일의 헤딩 컴포넌트
 
-### Tabs (~/components/gitbook/Tabs.tsx)
+### 기본 HTML 태그
 
-- 탭 인터페이스를 제공하는 컴포넌트
-- Tabs.Tab 하위 컴포넌트를 통해 각 탭의 내용을 정의
-- title, content 그냥 순서대로 나열하기
+- `<a>` - 하이퍼링크
+- `<ul>` - 순서 없는 목록
+- `<li>` - 목록 항목
+- `<br>` - 줄바꿈
+- `<strong>` - 강조 텍스트
+- `<em>` - 기울임꼴 텍스트
+- `<code>` - 인라인 코드
+- `<pre>` - 서식이 지정된 텍스트 블록
+- `<table>` - 테이블
+- `<tr>` - 테이블 행
+- `<td>` - 테이블 셀
+- `<th>` - 테이블 헤더 셀
+- `<p>` - 단락
+- `<div>` - 일반 컨테이너
+- `<span>` - 인라인 컨테이너
 
-### Details (~/components/gitbook/Details.tsx)
+### 특수 구문
 
-- 접을 수 있는 세부 정보 섹션을 제공하는 컴포넌트
-- Details.Summary와 Details.Content 하위 컴포넌트 포함
-- 제목, 내용 순서대로 보여주기
+- `<project-id>`, `<region-anme>`, `<dataset name>`, `<dataset-name>.<table_name>` 등 - 실제 태그가 아닌 변수나 자리 표시자로 사용됨
 
-### ContentRef (~/components/gitbook/ContentRef.tsx)
-
-- 다른 문서에 대한 참조 링크를 제공하는 컴포넌트
-- 링크된 마크다운 파일 링크로 대체
-
-### VersionGate (~/components/gitbook/VersionGate.tsx)
-
-- 시스템 버전에 따라 콘텐츠를 조건부로 표시하는 컴포넌트
-- v1 또는 v2 버전에 따라 다른 내용 표시
-
-### Youtube (~/components/gitbook/Youtube.tsx)
-
-- YouTube 비디오를 임베드하는 컴포넌트
-- 링크로 대체
-
-### Parameter (~/components/parameter/Parameter.tsx)
-
-- API 파라미터 정보를 표시하는 컴포넌트
-- Parameter.TypeDef, Parameter.Details 하위 컴포넌트 포함
-- 일단 생략
-
-### Swagger 관련 컴포넌트 (~/components/gitbook/swagger/)
-
-- Swagger: API 엔드포인트 정보를 표시
-- SwaggerDescription: API 설명 표시
-- SwaggerParameter: API 파라미터 정보 표시
-- 일단 생략
+이러한 태그들은 MDX 파일에서 다양한 형태의 콘텐츠를 구조화하고 스타일링하는 데 사용되고 있습니다. 특히 커스텀 컴포넌트 태그들은 문서화 시스템에서 일관된 UI 요소를 제공하기 위해 사용되고 있습니다.

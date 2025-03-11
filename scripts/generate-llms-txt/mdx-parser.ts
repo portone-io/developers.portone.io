@@ -80,10 +80,6 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
           // 프론트매터가 존재하는 경우에만 할당
           if (parsedFrontmatter && typeof parsedFrontmatter === "object") {
             result.frontmatter = parsedFrontmatter as Frontmatter;
-            console.log(
-              `${filePath}의 프론트매터 파싱 성공:`,
-              result.frontmatter,
-            );
           } else {
             console.warn(
               `${filePath}의 프론트매터가 비어있거나 객체가 아닙니다.`,
@@ -92,7 +88,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
             result.frontmatter = {};
           }
         } catch (e) {
-          console.warn(`${filePath}의 프론트매터 파싱 중 오류 발생:`, e);
+          console.error(`${filePath}의 프론트매터 파싱 중 오류 발생:`, e);
           // 오류 발생 시 빈 객체로 초기화
           result.frontmatter = {};
         }
@@ -300,8 +296,11 @@ export function extractJsxComponents(parseResult: MdxParseResult): {
  * @returns 슬러그
  */
 function generateSlug(filePath: string): string {
-  // src/routes/(root) 제거
-  let slug = filePath.replace(/^src\/routes\/\(root\)\//, "");
+  // src/routes/ 제거
+  let slug = filePath.replace(/^src\/routes\//, "");
+
+  // 괄호로 감싸진 모든 디렉터리 제거 (예: (root), (auth) 등)
+  slug = slug.replace(/\([^/]+\)\//g, "");
 
   // 확장자 제거
   slug = slug.replace(/\.mdx$/, "");
