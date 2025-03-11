@@ -148,9 +148,9 @@ function removeYamlNodes(ast: any): void {
 
   // 역순으로 제거
   for (let i = nodesToRemove.length - 1; i >= 0; i--) {
-    const { parent, index } = nodesToRemove[i];
-    if (parent && Array.isArray(parent.children)) {
-      parent.children.splice(index, 1);
+    const item = nodesToRemove[i];
+    if (item && item.parent && Array.isArray(item.parent.children)) {
+      item.parent.children.splice(item.index, 1);
     }
   }
 }
@@ -258,9 +258,9 @@ function transformJsxComponents(ast: any): void {
 
   // 제거할 노드 처리 (역순으로 제거하여 인덱스 변화 방지)
   for (let i = nodesToRemove.length - 1; i >= 0; i--) {
-    const { parent, index } = nodesToRemove[i];
-    if (parent && Array.isArray(parent.children)) {
-      parent.children.splice(index, 1);
+    const item = nodesToRemove[i];
+    if (item && item.parent && Array.isArray(item.parent.children)) {
+      item.parent.children.splice(item.index, 1);
     }
   }
 }
@@ -291,29 +291,41 @@ export function handleFigureComponent(
  * Hint 컴포넌트 처리
  */
 function handleHintComponent(node: any, props: Record<string, any>): any {
-  // 스타일에 따른 이모지 매핑
-  const styleToEmoji: Record<string, string> = {
-    info: "ℹ️",
-    warning: "⚠️",
-    success: "✅",
-    danger: "🚨",
+  // 속성 문자열 생성
+  let attributesStr = "";
+
+  // 모든 속성 추가
+  Object.entries(props).forEach(([key, value]) => {
+    if (value !== undefined) {
+      // 문자열이 아닌 값은 JSON 문자열로 변환
+      const valueStr =
+        typeof value === "string" ? value : JSON.stringify(value);
+
+      attributesStr += `${key}="${valueStr}" `;
+    }
+  });
+
+  // HTML 코멘트와 원래 자식 노드를 포함하는 루트 노드 생성
+  const hintStartComment = {
+    type: "html",
+    value: `<!-- HINT ${attributesStr.trim()} -->`,
   };
 
-  const style = props.style || "info";
-  const emoji = styleToEmoji[style] || styleToEmoji.info;
+  const hintEndComment = {
+    type: "html",
+    value: "<!-- END HINT -->",
+  };
 
-  // 블록 인용구로 변환
+  // 원래 자식 노드들
+  const children = node.children || [];
+
+  // 시작 코멘트, 원래 자식 노드들, 종료 코멘트를 포함하는 배열 생성
+  const newChildren = [hintStartComment, ...children, hintEndComment];
+
+  // 루트 노드 반환
   return {
-    type: "blockquote",
-    children: [
-      {
-        type: "paragraph",
-        children: [
-          { type: "text", value: `${emoji} ` },
-          ...(node.children || []),
-        ],
-      },
-    ],
+    type: "root",
+    children: newChildren,
   };
 }
 
@@ -377,62 +389,69 @@ function handleTabsComponent(node: any, _props: Record<string, any>): any {
  * Details 컴포넌트 처리
  */
 function handleDetailsComponent(node: any, _props: Record<string, any>): any {
-  let summary = "";
-  let content: any[] = [];
+  // 결과 노드들을 저장할 배열
+  const resultNodes: any[] = [];
 
-  // Summary와 Content 컴포넌트 찾기
-  visit(
-    node,
-    { type: "mdxJsxFlowElement", name: "Details.Summary" },
-    (summaryNode: any) => {
-      // 요약 텍스트 추출
-      if (summaryNode.children && summaryNode.children.length > 0) {
-        const textNodes = summaryNode.children.filter(
-          (child: any) =>
-            child.type === "text" ||
-            (child.type === "paragraph" &&
-              child.children &&
-              child.children.some((c: any) => c.type === "text")),
-        );
+  // Summary와 Content 노드 찾기
+  let summaryNode = null;
+  let contentNode = null;
 
-        if (textNodes.length > 0) {
-          summary = textNodes
-            .map((textNode: any) => {
-              if (textNode.type === "text") {
-                return textNode.value;
-              } else if (textNode.type === "paragraph") {
-                return textNode.children
-                  .filter((c: any) => c.type === "text")
-                  .map((c: any) => c.value)
-                  .join("");
-              }
-              return "";
-            })
-            .join(" ");
+  // 자식 노드들을 순회하면서 Summary와 Content 컴포넌트 찾기
+  if (node.children && Array.isArray(node.children)) {
+    for (const child of node.children) {
+      if (child.type === "mdxJsxFlowElement") {
+        if (child.name === "Details.Summary") {
+          summaryNode = child;
+        } else if (child.name === "Details.Content") {
+          contentNode = child;
         }
       }
-    },
-  );
+    }
+  }
 
-  visit(
-    node,
-    { type: "mdxJsxFlowElement", name: "Details.Content" },
-    (contentNode: any) => {
-      content = contentNode.children || [];
-    },
-  );
+  // details 시작 태그
+  resultNodes.push({
+    type: "html",
+    value: "<details>",
+  });
 
-  // 제목과 내용 순서대로 표시
+  // summary 시작 태그
+  resultNodes.push({
+    type: "html",
+    value: "<summary>",
+  });
+
+  // Summary 내용 추가 (AST 구조 유지)
+  if (summaryNode && summaryNode.children && summaryNode.children.length > 0) {
+    resultNodes.push(...summaryNode.children);
+  } else {
+    // 기본 Summary 텍스트
+    resultNodes.push({
+      type: "text",
+      value: "상세 정보",
+    });
+  }
+
+  // summary 종료 태그
+  resultNodes.push({
+    type: "html",
+    value: "</summary>",
+  });
+
+  // Content 내용 추가
+  if (contentNode && contentNode.children) {
+    resultNodes.push(...contentNode.children);
+  }
+
+  // details 닫기
+  resultNodes.push({
+    type: "html",
+    value: "</details>",
+  });
+
   return {
     type: "root",
-    children: [
-      {
-        type: "heading",
-        depth: 4,
-        children: [{ type: "text", value: summary || "상세 정보" }],
-      },
-      ...content,
-    ],
+    children: resultNodes,
   };
 }
 
@@ -533,9 +552,9 @@ function removeImports(ast: any): void {
 
   // 역순으로 제거
   for (let i = nodesToRemove.length - 1; i >= 0; i--) {
-    const { parent, index } = nodesToRemove[i];
-    if (parent && Array.isArray(parent.children)) {
-      parent.children.splice(index, 1);
+    const item = nodesToRemove[i];
+    if (item && item.parent && Array.isArray(item.parent.children)) {
+      item.parent.children.splice(item.index, 1);
     }
   }
 }
