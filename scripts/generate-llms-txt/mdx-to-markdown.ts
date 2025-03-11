@@ -689,10 +689,35 @@ export async function generateLlmsTxtFiles(
     }
   };
 
+  // 릴리스 노트 링크 생성 함수
+  const createReleaseNoteLink = (slug: string): string => {
+    const displayPath = `${slug}.md`;
+    // slug에서 카테고리와 날짜 추출
+    const parts = slug.split("/");
+    if (parts.length >= 3) {
+      const category = parts[1]; // api-sdk, console, platform
+      const date = parts[2]; // 날짜 (YYYY-MM-DD)
+
+      let categoryName = "";
+      if (category === "api-sdk") {
+        categoryName = "API / SDK";
+      } else if (category === "console") {
+        categoryName = "관리자콘솔";
+      } else if (category === "platform") {
+        categoryName = "파트너 정산 자동화";
+      }
+
+      return `- [${categoryName} ${date}](${displayPath})\n`;
+    }
+
+    // 형식이 맞지 않는 경우 기본 형식으로 반환
+    return `- [${slug}](${displayPath})\n`;
+  };
+
   // llms.txt 파일 내용 생성
   let llmsTxtContent = `# PortOne 개발자 문서
 
-> PortOne은 온라인 결제, 본인인증, 파트너정산 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
+> PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
 
 `;
 
@@ -814,7 +839,7 @@ export async function generateLlmsTxtFiles(
   if (releaseNoteFiles.length > 0) {
     llmsTxtContent += `\n## 릴리스 노트\n\n`;
     for (const slug of releaseNoteFiles) {
-      llmsTxtContent += createLinkWithDescription(slug);
+      llmsTxtContent += createReleaseNoteLink(slug);
     }
   }
 
