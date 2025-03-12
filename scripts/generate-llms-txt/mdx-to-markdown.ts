@@ -8,12 +8,25 @@ import { type MdxParseResult } from "./mdx-parser";
 
 /**
  * MDX 파일을 마크다운으로 변환하는 함수
- * @param parseResult MDX 파싱 결과
+ * @param slug 변환할 MDX 파일의 slug
+ * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
  * @returns 마크다운 문자열
  */
 export async function convertMdxToMarkdown(
-  parseResult: MdxParseResult,
+  slug: string,
+  parseResultMap: Record<string, MdxParseResult>,
 ): Promise<string> {
+  // slug에 해당하는 parseResult 가져오기
+  const parseResult = parseResultMap[slug];
+
+  // parseResult가 없으면 빈 문자열 반환
+  if (!parseResult) {
+    console.warn(
+      `[convertMdxToMarkdown] parseResult not found for slug: ${slug}`,
+    );
+    return "";
+  }
+
   // AST 복제 (원본 변경 방지)
   const ast = JSON.parse(JSON.stringify(parseResult.ast));
 
@@ -24,7 +37,7 @@ export async function convertMdxToMarkdown(
   }
 
   // JSX 컴포넌트를 마크다운으로 변환
-  transformJsxComponents(ast);
+  transformJsxComponents(ast, parseResultMap);
 
   // 임포트 구문 제거
   removeImports(ast);
@@ -158,8 +171,12 @@ function removeYamlNodes(ast: any): void {
 /**
  * JSX 컴포넌트를 마크다운으로 변환하는 함수
  * @param ast MDX AST
+ * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
  */
-function transformJsxComponents(ast: any): void {
+function transformJsxComponents(
+  ast: any,
+  parseResultMap: Record<string, MdxParseResult>,
+): void {
   // 제거할 노드 인덱스 목록
   const nodesToRemove: Array<{ parent: any; index: number }> = [];
 
@@ -216,7 +233,11 @@ function transformJsxComponents(ast: any): void {
           replacementNode = handleDetailsComponent(node, props);
           break;
         case "ContentRef":
-          replacementNode = handleContentRefComponent(node, props);
+          replacementNode = handleContentRefComponent(
+            node,
+            props,
+            parseResultMap,
+          );
           break;
         case "VersionGate":
           replacementNode = handleVersionGateComponent(node, props);
@@ -464,18 +485,32 @@ function handleDetailsComponent(node: any, _props: Record<string, any>): any {
 /**
  * ContentRef 컴포넌트 처리
  */
-function handleContentRefComponent(node: any, props: Record<string, any>): any {
-  const url = props.url || "";
-  const title = props.title || url;
+function handleContentRefComponent(
+  _node: any,
+  props: Record<string, any>,
+  parseResultMap: Record<string, MdxParseResult>,
+): any {
+  const slug = props.slug ? props.slug.replace(/^\//, "") : "";
+  let title;
 
-  // 링크로 변환
+  // slug에 해당하는 문서가 있으면 해당 문서의 frontmatter title 사용
+  if (slug && parseResultMap[slug]) {
+    const targetDoc = parseResultMap[slug];
+    title = targetDoc?.frontmatter.title;
+  }
+
+  // title이 여전히 없으면 slug 사용
+  if (!title) {
+    title = "링크";
+  }
+
+  // 마크다운 링크로 변환
   return {
     type: "paragraph",
     children: [
       {
         type: "link",
-        url,
-        title,
+        url: `/llms/${slug}.md`,
         children: [{ type: "text", value: title }],
       },
     ],

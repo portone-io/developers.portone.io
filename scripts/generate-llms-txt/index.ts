@@ -3,6 +3,7 @@ import {
   generateLlmsTxtFiles,
   parseAllMdxFiles,
 } from "./generator";
+import type { MdxParseResult } from "./mdx-parser";
 
 /**
  * 메인 함수
@@ -14,7 +15,8 @@ export async function main() {
     );
 
     // MDX 파일 파싱
-    const fileParseMap = await parseAllMdxFiles();
+    const fileParseMap: Record<string, MdxParseResult> =
+      await parseAllMdxFiles();
 
     // MDX 파일을 마크다운으로 변환
     await convertAllMdxToMarkdown(fileParseMap);

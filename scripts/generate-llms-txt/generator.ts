@@ -14,9 +14,11 @@ const outputDir = join(rootDir, "public", "llms");
 
 /**
  * 모든 MDX 파일을 파싱하고 결과를 맵으로 반환하는 함수
- * @returns 파일 경로(slug)와 파싱 결과를 매핑한 Map 객체
+ * @returns 파일 경로(slug)와 파싱 결과를 매핑한 객체
  */
-export async function parseAllMdxFiles(): Promise<Map<string, MdxParseResult>> {
+export async function parseAllMdxFiles(): Promise<
+  Record<string, MdxParseResult>
+> {
   // MDX 파일 찾기
   const mdxFiles = await fastGlob(["src/routes/**/*.mdx"], {
     cwd: rootDir,
@@ -24,8 +26,8 @@ export async function parseAllMdxFiles(): Promise<Map<string, MdxParseResult>> {
 
   console.log(`총 ${mdxFiles.length}개의 MDX 파일을 찾았습니다.`);
 
-  // 파일 경로와 파싱 결과를 매핑할 Map 객체
-  const fileParseMap = new Map<string, MdxParseResult>();
+  // 파일 경로와 파싱 결과를 매핑할 객체
+  const fileParseMap: Record<string, MdxParseResult> = {};
 
   // 각 MDX 파일 처리
   for (const mdxFile of mdxFiles) {
@@ -33,8 +35,8 @@ export async function parseAllMdxFiles(): Promise<Map<string, MdxParseResult>> {
       // MDX 파싱
       const parseResult = await parseMdxFile(mdxFile);
 
-      // Map에 파싱 결과 저장 (slug를 키로 사용)
-      fileParseMap.set(parseResult.slug, parseResult);
+      // 객체에 파싱 결과 저장 (slug를 키로 사용)
+      fileParseMap[parseResult.slug] = parseResult;
     } catch (error) {
       console.error(`${mdxFile} 파싱 중 오류 발생:`, error);
     }
@@ -45,16 +47,16 @@ export async function parseAllMdxFiles(): Promise<Map<string, MdxParseResult>> {
 
 /**
  * 모든 MDX 파일을 마크다운으로 변환하고 저장하는 함수
- * @param fileParseMap 파일 경로와 파싱 결과를 매핑한 Map 객체
+ * @param fileParseMap 파일 경로와 파싱 결과를 매핑한 객체
  */
 export async function convertAllMdxToMarkdown(
-  fileParseMap: Map<string, MdxParseResult>,
+  fileParseMap: Record<string, MdxParseResult>,
 ): Promise<void> {
   // 각 파싱 결과를 마크다운으로 변환하여 저장
-  for (const [slug, parseResult] of fileParseMap.entries()) {
+  for (const slug of Object.keys(fileParseMap)) {
     try {
       // 마크다운으로 변환
-      const markdown = await convertMdxToMarkdown(parseResult);
+      const markdown = await convertMdxToMarkdown(slug, fileParseMap);
 
       // 출력 경로 생성
       const outputRelativePath = `${slug}.md`;
@@ -66,9 +68,14 @@ export async function convertAllMdxToMarkdown(
       // 파일 저장
       await writeFile(outputPath, markdown, "utf-8");
 
-      console.log(`변환 완료: ${parseResult.filePath} -> ${outputPath}`);
+      console.log(
+        `변환 완료: ${fileParseMap[slug]?.filePath} -> ${outputPath}`,
+      );
     } catch (error) {
-      console.error(`${parseResult.filePath} 변환 중 오류 발생:`, error);
+      console.error(
+        `${fileParseMap[slug]?.filePath} 변환 중 오류 발생:`,
+        error,
+      );
     }
   }
 
@@ -81,10 +88,10 @@ export async function convertAllMdxToMarkdown(
  * @returns 생성된 llms.txt 파일 경로
  */
 export async function generateLlmsTxtFiles(
-  fileParseMap: Map<string, MdxParseResult>,
+  fileParseMap: Record<string, MdxParseResult>,
 ): Promise<string> {
   // fileParseMap에서 slug 추출
-  const slugs = Array.from(fileParseMap.keys());
+  const slugs = Object.keys(fileParseMap);
 
   console.log(`총 ${slugs.length}개의 문서를 찾았습니다.`);
 
@@ -121,7 +128,7 @@ export async function generateLlmsTxtFiles(
 
   // 각 파일을 버전별로 분류
   for (const slug of remainingFiles) {
-    const parseResult = fileParseMap.get(slug);
+    const parseResult = fileParseMap[slug];
     const targetVersions = parseResult?.frontmatter.targetVersions || [];
 
     // targetVersions가 ["v1", "v2"] 이거나 빈 배열이면 공용 문서로 취급
@@ -152,7 +159,7 @@ export async function generateLlmsTxtFiles(
 
   // 링크 생성 헬퍼 함수
   const createLinkWithDescription = (slug: string): string => {
-    const parseResult = fileParseMap.get(slug);
+    const parseResult = fileParseMap[slug];
     const title = parseResult?.frontmatter.title || slug;
     const displayPath = `${slug}.md`;
 
@@ -334,12 +341,9 @@ export async function generateLlmsTxtFiles(
   // llms-full.txt 파일 생성 (모든 문서 내용 포함)
   let fullContent = llmsTxtContent;
   for (const slug of slugs) {
-    const parseResult = fileParseMap.get(slug);
-    if (parseResult) {
-      // 마크다운으로 변환
-      const markdown = await convertMdxToMarkdown(parseResult);
-      fullContent += `\n\n# ${slug}\n\n${markdown}`;
-    }
+    // 마크다운으로 변환
+    const markdown = await convertMdxToMarkdown(slug, fileParseMap);
+    fullContent += `\n\n# ${slug}\n\n${markdown}`;
   }
   const llmsFullTxtPath = join(rootDir, "public", "llms-full.txt");
   await writeFile(llmsFullTxtPath, fullContent, "utf-8");
@@ -348,12 +352,9 @@ export async function generateLlmsTxtFiles(
   // llms-small.txt 파일 생성 (처음 10개 문서만 포함)
   let smallContent = llmsTxtContent;
   for (const slug of slugs.slice(0, 10)) {
-    const parseResult = fileParseMap.get(slug);
-    if (parseResult) {
-      // 마크다운으로 변환
-      const markdown = await convertMdxToMarkdown(parseResult);
-      smallContent += `\n\n# ${slug}\n\n${markdown}`;
-    }
+    // 마크다운으로 변환
+    const markdown = await convertMdxToMarkdown(slug, fileParseMap);
+    smallContent += `\n\n# ${slug}\n\n${markdown}`;
   }
   const llmsSmallTxtPath = join(rootDir, "public", "llms-small.txt");
   await writeFile(llmsSmallTxtPath, smallContent, "utf-8");
