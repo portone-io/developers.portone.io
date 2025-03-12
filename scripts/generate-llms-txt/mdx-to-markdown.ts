@@ -7,6 +7,32 @@ import { visit } from "unist-util-visit";
 import { type MdxParseResult } from "./mdx-parser";
 
 /**
+ * MDX JSX 속성을 추출하는 함수
+ * @param node MDX JSX 노드
+ * @returns 추출된 속성 객체
+ */
+function extractMdxJsxAttributes(node: any): Record<string, any> {
+  const props: Record<string, any> = {};
+  if (node.attributes && Array.isArray(node.attributes)) {
+    for (const attr of node.attributes) {
+      if (attr.type === "mdxJsxAttribute" && attr.name) {
+        if (attr.value && typeof attr.value === "string") {
+          props[attr.name] = attr.value;
+        } else if (
+          attr.value &&
+          attr.value.type === "mdxJsxAttributeValueExpression"
+        ) {
+          props[attr.name] = attr.value.value;
+        } else {
+          props[attr.name] = true;
+        }
+      }
+    }
+  }
+  return props;
+}
+
+/**
  * MDX 파일을 마크다운으로 변환하는 함수
  * @param slug 변환할 MDX 파일의 slug
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
@@ -191,30 +217,9 @@ function transformJsxComponents(
 
       // 컴포넌트 이름과 속성
       const componentName = node.name;
-      const props: Record<string, any> = {};
 
       // 속성 추출
-      if (node.attributes && Array.isArray(node.attributes)) {
-        for (const attr of node.attributes) {
-          if (attr.type === "mdxJsxAttribute" && attr.name) {
-            // 문자열 값
-            if (attr.value && typeof attr.value === "string") {
-              props[attr.name] = attr.value;
-            }
-            // 표현식 값
-            else if (
-              attr.value &&
-              attr.value.type === "mdxJsxAttributeValueExpression"
-            ) {
-              props[attr.name] = attr.value.value;
-            }
-            // 불리언 속성
-            else {
-              props[attr.name] = true;
-            }
-          }
-        }
-      }
+      const props = extractMdxJsxAttributes(node);
 
       // 컴포넌트별 변환 처리
       let replacementNode: any = null;
@@ -379,25 +384,8 @@ function handleTabsComponent(node: any, _props: Record<string, any>): any {
     node,
     { type: "mdxJsxFlowElement", name: "Tabs.Tab" },
     (tabNode: any) => {
-      const tabProps: Record<string, any> = {};
-
       // 탭 속성 추출
-      if (tabNode.attributes && Array.isArray(tabNode.attributes)) {
-        for (const attr of tabNode.attributes) {
-          if (attr.type === "mdxJsxAttribute" && attr.name) {
-            if (attr.value && typeof attr.value === "string") {
-              tabProps[attr.name] = attr.value;
-            } else if (
-              attr.value &&
-              attr.value.type === "mdxJsxAttributeValueExpression"
-            ) {
-              tabProps[attr.name] = attr.value.value;
-            } else {
-              tabProps[attr.name] = true;
-            }
-          }
-        }
-      }
+      const tabProps = extractMdxJsxAttributes(tabNode);
 
       const title = tabProps.title || "탭";
 

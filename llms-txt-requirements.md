@@ -35,7 +35,7 @@
 - [ ] `<ApiLink>` - API 문서 링크를 제공하는 컴포넌트
 - [ ] `<VersionGate>` - 특정 버전에 따라 컨텐츠를 조건부로 표시하는 컴포넌트
 - [x] `<ContentRef>` - 다른 문서에 대한 참조를 제공하는 컴포넌트
-- [x] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
+- [ ] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
 - [ ] `<SwaggerDescription>` - Swagger API 설명을 표시하는 컴포넌트
 - [ ] `<prose.h3>` - 프로즈 스타일의 헤딩 컴포넌트
 
