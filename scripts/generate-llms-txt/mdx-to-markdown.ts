@@ -292,35 +292,41 @@ export function handleFigureComponent(
  */
 function handleHintComponent(node: any, props: Record<string, any>): any {
   // 속성 문자열 생성
+  let classNames = "hint";
   let attributesStr = "";
 
-  // 모든 속성 추가
+  // 모든 속성 처리
   Object.entries(props).forEach(([key, value]) => {
     if (value !== undefined) {
-      // 문자열이 아닌 값은 JSON 문자열로 변환
-      const valueStr =
-        typeof value === "string" ? value : JSON.stringify(value);
-
-      attributesStr += `${key}="${valueStr}" `;
+      // type 속성은 클래스로 추가
+      if (key === "type") {
+        classNames += ` hint-${value}`;
+      } else {
+        // 나머지 속성은 data-* 속성으로 추가
+        const valueStr =
+          typeof value === "string" ? value : JSON.stringify(value);
+        attributesStr += `data-${key}="${valueStr}" `;
+      }
     }
   });
 
-  // HTML 코멘트와 원래 자식 노드를 포함하는 루트 노드 생성
-  const hintStartComment = {
+  // HTML div 시작 태그
+  const hintStartDiv = {
     type: "html",
-    value: `<!-- HINT ${attributesStr.trim()} -->`,
+    value: `<div class="${classNames}" ${attributesStr.trim()}>`,
   };
 
-  const hintEndComment = {
+  // HTML div 종료 태그
+  const hintEndDiv = {
     type: "html",
-    value: "<!-- END HINT -->",
+    value: "</div>",
   };
 
   // 원래 자식 노드들
   const children = node.children || [];
 
-  // 시작 코멘트, 원래 자식 노드들, 종료 코멘트를 포함하는 배열 생성
-  const newChildren = [hintStartComment, ...children, hintEndComment];
+  // 시작 태그, 원래 자식 노드들, 종료 태그를 포함하는 배열 생성
+  const newChildren = [hintStartDiv, ...children, hintEndDiv];
 
   // 루트 노드 반환
   return {
