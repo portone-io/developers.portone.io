@@ -360,8 +360,19 @@ function handleHintComponent(node: any, props: Record<string, any>): any {
  * Tabs 컴포넌트 처리
  */
 function handleTabsComponent(node: any, _props: Record<string, any>): any {
-  // 탭 컴포넌트의 자식 노드 처리
-  const tabNodes: any[] = [];
+  // 탭 컴포넌트 전체를 감싸는 div 시작 태그
+  const tabsStartDiv = {
+    type: "html",
+    value: `<div class="tabs-container">`,
+  };
+
+  // 탭 컴포넌트 전체를 감싸는 div 종료 태그
+  const tabsEndDiv = {
+    type: "html",
+    value: "</div>",
+  };
+
+  const tabContents: any[] = [];
 
   // 각 탭 처리
   visit(
@@ -390,25 +401,29 @@ function handleTabsComponent(node: any, _props: Record<string, any>): any {
 
       const title = tabProps.title || "탭";
 
-      tabNodes.push({
-        type: "heading",
-        depth: 4,
-        children: [{ type: "text", value: title }],
-      });
+      // 탭 콘텐츠 시작 태그
+      const tabContentStartDiv = {
+        type: "html",
+        value: `<div class="tabs-content" data-title="${title}">`,
+      };
 
-      tabNodes.push({
-        type: "root",
-        children: tabNode.children || [],
-      });
+      // 탭 콘텐츠 종료 태그
+      const tabContentEndDiv = {
+        type: "html",
+        value: "</div>",
+      };
+
+      // 탭 콘텐츠에 자식 노드들 추가
+      tabContents.push(tabContentStartDiv);
+      tabContents.push(...(tabNode.children || []));
+      tabContents.push(tabContentEndDiv);
     },
   );
 
-  // 탭 내용을 순차적으로 나열
+  // 모든 요소를 순서대로 배치
   return {
     type: "root",
-    children: tabNodes.flatMap((node) =>
-      node.type === "root" ? node.children : [node],
-    ),
+    children: [tabsStartDiv, ...tabContents, tabsEndDiv],
   };
 }
 
