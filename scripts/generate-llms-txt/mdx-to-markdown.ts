@@ -75,7 +75,7 @@ export async function convertMdxToMarkdown(
   simplifyJsxNodes(ast);
 
   // MDX 표현식 노드 처리
-  handleMdxExpressions(ast);
+  handleRemainingMdxFlowExpressions(ast);
 
   // 마크다운으로 변환
   const processor = unified()
@@ -101,29 +101,7 @@ export async function convertMdxToMarkdown(
 /**
  * MDX 표현식 노드를 처리하는 함수
  */
-function handleMdxExpressions(ast: any): void {
-  // MDX 텍스트 표현식 처리
-  visit(
-    ast,
-    "mdxTextExpression",
-    (node: any, index: number | undefined, parent: any) => {
-      if (!parent || !Array.isArray(parent.children) || index === undefined)
-        return;
-
-      // 표현식을 텍스트 노드로 변환 (코드 내용을 주석으로 표시)
-      const textNode = {
-        type: "text",
-        value: `[JS 표현식: ${node.value || ""}]`,
-      };
-
-      // 노드 교체
-      parent.children.splice(index, 1, textNode);
-
-      // 방문 인덱스 조정
-      return index;
-    },
-  );
-
+function handleRemainingMdxFlowExpressions(ast: any): void {
   // MDX 플로우 표현식 처리
   visit(
     ast,
@@ -132,15 +110,14 @@ function handleMdxExpressions(ast: any): void {
       if (!parent || !Array.isArray(parent.children) || index === undefined)
         return;
 
-      // 표현식을 코드 블록으로 변환
-      const codeNode = {
-        type: "code",
-        lang: "js",
-        value: `// MDX 표현식\n${node.value || ""}`,
+      // 표현식을 텍스트 노드로 변환
+      const newNode = {
+        type: "text",
+        value: node.value || "",
       };
 
       // 노드 교체
-      parent.children.splice(index, 1, codeNode);
+      parent.children.splice(index, 1, newNode);
 
       // 방문 인덱스 조정
       return index;
@@ -195,6 +172,28 @@ function removeYamlNodes(ast: any): void {
 }
 
 /**
+ * 코드 컴포넌트의 내용을 추출하여 백틱으로 감싼 텍스트 노드를 생성하는 함수
+ * @param node 코드 컴포넌트 노드
+ * @returns 백틱으로 감싼 텍스트 노드
+ */
+export function extractCodeContent(node: any): any {
+  // 자식 노드의 텍스트 추출
+  let codeContent = "";
+  if (node.children && node.children.length > 0) {
+    // 모든 자식 텍스트 노드의 내용 결합
+    node.children.forEach((child: any) => {
+      codeContent += child.value;
+    });
+  }
+
+  // 백틱으로 감싼 텍스트 노드 생성
+  return {
+    type: "inlineCode",
+    value: codeContent,
+  };
+}
+
+/**
  * JSX 컴포넌트를 마크다운으로 변환하는 함수
  * @param ast MDX AST
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
@@ -226,6 +225,17 @@ function transformJsxComponents(
           return;
         }
       }
+
+      // code 요소인지 확인
+      if (node.name === "code") {
+        // 코드 내용 추출 및 백틱으로 감싼 텍스트 노드 생성
+        const backtickNode = extractCodeContent(node);
+
+        // 원래 노드를 백틱 노드로 교체
+        parent.children.splice(index, 1, backtickNode);
+        return;
+      }
+
       // 일반 컴포넌트 처리 (대문자로 시작하는 컴포넌트)
       if (!/^[A-Z]/.test(node.name)) return;
 
