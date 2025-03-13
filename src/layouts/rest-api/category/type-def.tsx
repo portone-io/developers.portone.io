@@ -425,6 +425,8 @@ function TypeReprDoc(props: TypeReprDocProps) {
           return "(32 bit)";
         case "int64":
           return "(64 bit)";
+        case "date":
+          return "(yyyy-MM-dd)";
         case "date-time":
           return (
             <a
