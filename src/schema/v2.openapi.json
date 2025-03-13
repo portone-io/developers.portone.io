@@ -8639,6 +8639,90 @@
         }
       }
     },
+    "/b2b/companies/business-info": {
+      "post": {
+        "summary": "사업자 정보 조회",
+        "description": "사업자 정보 조회\n\n요청된 사업자번호에 해당하는 사업자의 정보를 조회합니다.",
+        "operationId": "getB2bBusinessInfos",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetB2bBusinessInfosBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 사업자 정보 조회 결과 리스트를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 사업자 정보 조회 결과 리스트를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.business",
+        "x-portone-title": "사업자 정보 조회",
+        "x-portone-description": "요청된 사업자번호에 해당하는 사업자의 정보를 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+        }
+      }
+    },
     "/kakaopay/payment/order": {
       "get": {
         "summary": "카카오페이 주문 조회 API",
@@ -10786,6 +10870,121 @@
         "x-portone-title": "계좌가 존재하지 않는 경우",
         "x-portone-status-code": 404
       },
+      "B2bBusinessInfo": {
+        "title": "사업자 정보",
+        "description": "사업자 정보",
+        "type": "object",
+        "required": [
+          "brn",
+          "name",
+          "ceoName",
+          "zipCode",
+          "address",
+          "businessEntityType",
+          "businessStatus",
+          "taxationType",
+          "openingDate",
+          "businessType",
+          "businessClass",
+          "businessCategoryCode"
+        ],
+        "properties": {
+          "brn": {
+            "type": "string",
+            "title": "사업자 등록 번호"
+          },
+          "name": {
+            "type": "string",
+            "title": "상호"
+          },
+          "ceoName": {
+            "type": "string",
+            "title": "대표자명"
+          },
+          "zipCode": {
+            "type": "string",
+            "title": "우편번호"
+          },
+          "address": {
+            "type": "string",
+            "title": "주소"
+          },
+          "businessEntityType": {
+            "type": "string",
+            "title": "사업자 유형"
+          },
+          "businessStatus": {
+            "type": "string",
+            "title": "사업 상태"
+          },
+          "taxationType": {
+            "type": "string",
+            "title": "과세 유형"
+          },
+          "simplifiedTaxationTypeDate": {
+            "type": "string",
+            "title": "간이과세-일반과세 전환일"
+          },
+          "closingDate": {
+            "type": "string",
+            "title": "폐업일"
+          },
+          "openingDate": {
+            "type": "string",
+            "title": "개업일"
+          },
+          "businessType": {
+            "type": "string",
+            "title": "업태"
+          },
+          "businessClass": {
+            "type": "string",
+            "title": "종목"
+          },
+          "businessCategoryCode": {
+            "type": "string",
+            "title": "업종코드"
+          },
+          "corpRegNo": {
+            "type": "string",
+            "title": "법인등록번호"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "전화번호"
+          },
+          "taxOfficeCode": {
+            "type": "string",
+            "title": "관할세무서코드"
+          },
+          "taxOfficeName": {
+            "type": "string",
+            "title": "관할세무서명"
+          }
+        },
+        "x-portone-title": "사업자 정보"
+      },
+      "B2bBusinessInfoResult": {
+        "title": "사업자 정보 조회 결과",
+        "description": "사업자 정보 조회 결과",
+        "type": "object",
+        "required": ["brn"],
+        "properties": {
+          "brn": {
+            "type": "string",
+            "title": "사업자등록번호"
+          },
+          "businessInfo": {
+            "$ref": "#/components/schemas/B2bBusinessInfo",
+            "title": "사업자 정보"
+          },
+          "error": {
+            "type": "string",
+            "title": "조회 실패 메시지"
+          }
+        },
+        "x-portone-title": "사업자 정보 조회 결과"
+      },
       "B2bCertificate": {
         "title": "B2bCertificate",
         "type": "object",
@@ -10957,6 +11156,7 @@
           "taxationTypeUpdateDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "과세 유형 변경 일자"
           },
@@ -10967,6 +11167,7 @@
           "closedSuspendedDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "휴폐업 일자"
           }
@@ -11483,12 +11684,14 @@
           "writeDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "작성일"
           },
           "issuanceDueDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "발행 마감일"
           },
@@ -11816,6 +12019,7 @@
           "writeDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "작성일"
           },
@@ -11931,6 +12135,7 @@
           "purchaseDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "결제일"
           },
@@ -12398,18 +12603,21 @@
           "recipientClosedSuspendedDate": {
             "description": "상태가 CLOSED, SUSPENDED 상태인 경우에만 결과값 반환",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "공급받는자 휴폐업일자"
           },
           "writeDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "작성일"
           },
           "issuanceDueDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "발행 마감일"
           },
@@ -17570,6 +17778,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 일"
           },
@@ -17668,6 +17877,7 @@
           "settlementStartDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 시작일"
           },
@@ -17928,6 +18138,7 @@
           "settlementStartDate": {
             "description": "기본값은 결제 일시 입니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 시작일"
           },
@@ -18387,6 +18598,7 @@
           "birthdate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일"
           }
@@ -18399,6 +18611,7 @@
           "birthdate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일"
           }
@@ -19453,11 +19666,13 @@
           "from": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           },
           "until": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           }
         }
@@ -19469,11 +19684,13 @@
           "from": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           },
           "until": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           }
         }
@@ -22214,6 +22431,68 @@
         },
         "x-portone-title": "예금주 조회 응답 정보"
       },
+      "GetB2bBusinessInfosBody": {
+        "title": "사업자 정보 다건 조회를 위한 입력 정보",
+        "description": "사업자 정보 다건 조회를 위한 입력 정보",
+        "type": "object",
+        "required": ["brnList"],
+        "properties": {
+          "brnList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "조회할 사업자등록번호 리스트"
+          }
+        },
+        "x-portone-title": "사업자 정보 다건 조회를 위한 입력 정보"
+      },
+      "GetB2bBusinessInfosError": {
+        "title": "GetB2bBusinessInfosError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetB2bBusinessInfosResponse": {
+        "title": "사업자 정보 다건 조회 성공 응답",
+        "description": "사업자 정보 다건 조회 성공 응답",
+        "type": "object",
+        "required": ["result"],
+        "properties": {
+          "result": {
+            "title": "사업자 정보 다건 조회 결과 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/B2bBusinessInfoResult"
+            }
+          }
+        },
+        "x-portone-title": "사업자 정보 다건 조회 성공 응답"
+      },
       "GetB2bCertificateError": {
         "title": "GetB2bCertificateError",
         "oneOf": [
@@ -23292,6 +23571,28 @@
           }
         }
       },
+      "GetPaymentReconciliationCollectionHistoriesBody": {
+        "title": "GetPaymentReconciliationCollectionHistoriesBody",
+        "type": "object",
+        "properties": {
+          "channelKey": {
+            "type": "string",
+            "title": "채널키"
+          },
+          "collectionType": {
+            "$ref": "#/components/schemas/PaymentReconciliationCollectionType",
+            "title": "수집 형태"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "GetPaymentReconciliationCollectionHistoriesError": {
         "title": "GetPaymentReconciliationCollectionHistoriesError",
         "oneOf": [
@@ -23313,13 +23614,16 @@
       "GetPaymentReconciliationCollectionHistoriesResponse": {
         "title": "GetPaymentReconciliationCollectionHistoriesResponse",
         "type": "object",
-        "required": ["collectionHistories"],
+        "required": ["collectionHistories", "page"],
         "properties": {
           "collectionHistories": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PaymentReconciliationCollectionHistory"
             }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInfo"
           }
         }
       },
@@ -25025,6 +25329,7 @@
             "items": {
               "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
               "type": "string",
+              "format": "date",
               "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
             }
           }
@@ -25200,6 +25505,7 @@
             "items": {
               "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
               "type": "string",
+              "format": "date",
               "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
             },
             "title": "IN_PROCESS, SETTLED 상태의 Transfer가 등록되어 있는 정산일 리스트"
@@ -25331,6 +25637,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           },
           "isForTest": {
@@ -25522,6 +25829,25 @@
           }
         }
       },
+      "GetV2SupportedChannelsBody": {
+        "title": "GetV2SupportedChannelsBody",
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 토큰에 담긴 상점 아이디를 사용합니다."
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "GetV2SupportedChannelsError": {
         "title": "GetV2SupportedChannelsError",
         "oneOf": [
@@ -25548,7 +25874,7 @@
         "title": "채널 다건 조회 성공 응답 정보",
         "description": "채널 다건 조회 성공 응답 정보",
         "type": "object",
-        "required": ["items"],
+        "required": ["items", "page"],
         "properties": {
           "items": {
             "title": "조회된 채널 리스트",
@@ -25556,6 +25882,10 @@
             "items": {
               "$ref": "#/components/schemas/Channel"
             }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInfo",
+            "title": "페이지 정보"
           }
         },
         "x-portone-title": "채널 다건 조회 성공 응답 정보"
@@ -26022,6 +26352,7 @@
           "birthDate": {
             "description": "포트원 V2 본인인증 건의 경우 항상 존재합니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일 (yyyy-MM-dd)"
           },
@@ -29918,6 +30249,7 @@
           "targetDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "수집 대상 일자"
           },
@@ -29926,6 +30258,7 @@
             "items": {
               "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
               "type": "string",
+              "format": "date",
               "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
             },
             "title": "수집된 건들의 거래일자"
@@ -31085,6 +31418,7 @@
           "date": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산일"
           },
@@ -31421,6 +31755,7 @@
           "date": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "거래일"
           },
@@ -33986,6 +34321,7 @@
           "taxationTypeDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           },
           "businessStatus": {
@@ -33994,6 +34330,7 @@
           "closedSuspendedDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           }
         }
@@ -34680,6 +35017,7 @@
           "date": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "날짜"
           }
@@ -34744,6 +35082,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 일"
           },
@@ -34814,6 +35153,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           },
           "settlementCurrency": {
@@ -35064,6 +35404,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 일"
           },
@@ -35103,6 +35444,7 @@
           "settlementStartDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 시작일"
           },
@@ -35182,6 +35524,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           },
           "settlementCurrency": {
@@ -35213,6 +35556,7 @@
           "settlementStartDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           }
         }
@@ -35407,6 +35751,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 일"
           },
@@ -35446,6 +35791,7 @@
           "settlementStartDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 시작일"
           },
@@ -35688,6 +36034,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           },
           "settlementCurrency": {
@@ -35719,6 +36066,7 @@
           "settlementStartDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
           }
         }
@@ -35869,6 +36217,7 @@
           "upcomingSettlementDate": {
             "description": "정산이 예정되어 있지 않은 경우 값이 주어지지 않습니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "예정된 정산일"
           }
@@ -36150,6 +36499,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 일"
           },
@@ -36254,6 +36604,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 일"
           },
@@ -36321,6 +36672,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산 일"
           },
@@ -36612,6 +36964,7 @@
             "items": {
               "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
               "type": "string",
+              "format": "date",
               "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다."
             }
           },
@@ -37130,6 +37483,7 @@
           "birthdate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일"
           }
@@ -37149,6 +37503,7 @@
           "birthdate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일"
           }
@@ -42515,6 +42870,7 @@
           "birthdate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일"
           }
@@ -42527,6 +42883,7 @@
           "birthdate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일"
           }
@@ -43019,6 +43376,7 @@
           "settlementDate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "정산일"
           }
@@ -44296,6 +44654,7 @@
           "birthdate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일"
           }
@@ -44308,6 +44667,7 @@
           "birthdate": {
             "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "type": "string",
+            "format": "date",
             "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
             "title": "생년월일"
           }
@@ -45031,6 +45391,18 @@
       "id": "identityVerification",
       "title": "본인인증 관련 API",
       "description": "본인인증과 관련된 API 기능을 제공합니다."
+    },
+    {
+      "id": "b2b",
+      "title": "B2B API",
+      "description": "B2B API 기능을 제공합니다.",
+      "children": [
+        {
+          "id": "b2b.business",
+          "title": "사업자 관련 API",
+          "description": "B2B 사업자 관련 API 기능을 제공합니다."
+        }
+      ]
     },
     {
       "id": "platform",
