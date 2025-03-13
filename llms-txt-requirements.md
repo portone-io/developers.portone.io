@@ -38,7 +38,7 @@
 - [ ] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
 - [ ] `<SwaggerDescription>` - Swagger API 설명을 표시하는 컴포넌트
 - [x] `<prose.xxx>` - 프로즈 스타일 컴포넌트 패밀리
-- [ ] `<PaymentV1>`
+- [x] badges.txt
 
 ### 기본 HTML 태그
 
