@@ -37,7 +37,8 @@
 - [x] `<ContentRef>` - 다른 문서에 대한 참조를 제공하는 컴포넌트
 - [ ] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
 - [ ] `<SwaggerDescription>` - Swagger API 설명을 표시하는 컴포넌트
-- [ ] `<prose.h3>` - 프로즈 스타일의 헤딩 컴포넌트
+- [x] `<prose.xxx>` - 프로즈 스타일 컴포넌트 패밀리
+- [ ] `<PaymentV1>`
 
 ### 기본 HTML 태그
 
