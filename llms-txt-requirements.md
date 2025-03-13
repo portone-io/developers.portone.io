@@ -32,17 +32,16 @@
   - `<Details.Content>` - 펼쳤을 때 보이는 내용 부분
 - [x] `<Tabs>` - 탭 인터페이스를 제공하는 컴포넌트
   - `<Tabs.Tab>` - 개별 탭 컨텐츠
-- [ ] `<ApiLink>` - API 문서 링크를 제공하는 컴포넌트
 - [x] `<VersionGate>` - 특정 버전에 따라 컨텐츠를 조건부로 표시하는 컴포넌트
 - [x] `<ContentRef>` - 다른 문서에 대한 참조를 제공하는 컴포넌트
-- [ ] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
-- [ ] `<SwaggerDescription>` - Swagger API 설명을 표시하는 컴포넌트
+- [x] `<Swagger>` `<SwaggerDescription>` `<SwaggerResponse>` - Swagger API 설명을 표시하는 컴포넌트
 - [x] `<prose.xxx>` - 프로즈 스타일 컴포넌트 패밀리
 - [x] badges.txt
 - [x] `<File>` - 처리 안함
 - [x] `handleRemainingMdxFlowExpressions` - 백틱 코드블록 또는 단순 텍스트로 변경
 - [x] `<Youtube>`
-
+- [ ] `<ApiLink>` - API 문서 링크를 제공하는 컴포넌트
+- [ ] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
 
 ### 기본 HTML 태그
 
