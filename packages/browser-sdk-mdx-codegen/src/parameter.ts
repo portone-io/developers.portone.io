@@ -210,15 +210,18 @@ function generateTypeDetails({
       writer.writeLine("<Parameter.Details>");
       writer.indent();
       for (const [variantName, variant] of Object.entries(parameter.variants)) {
+        const variantValue = parameter.valuePrefix
+          ? `${parameter.valuePrefix}_${variantName}`
+          : variantName;
         if (variant.description !== undefined) {
           writer.writeLine(
-            `<Parameter.TypeDef type={<Parameter.Type>"${variantName}"</Parameter.Type>}>`,
+            `<Parameter.TypeDef type={<Parameter.Type>"${variantValue}"</Parameter.Type>}>`,
           );
           writer.indent();
           const description = generateDescription({
             imports,
             basePath,
-            filePath: path.join(parameterPath, variantName),
+            filePath: path.join(parameterPath, variantValue),
             description: variant.description,
           });
           writer.writeLine(`<${description.componentName} />`);
@@ -226,7 +229,7 @@ function generateTypeDetails({
           writer.writeLine("</Parameter.TypeDef>");
         } else {
           writer.writeLine(
-            `<Parameter.TypeDef type={<Parameter.Type>"${variantName}"</Parameter.Type>} />`,
+            `<Parameter.TypeDef type={<Parameter.Type>"${variantValue}"</Parameter.Type>} />`,
           );
         }
       }
@@ -346,7 +349,10 @@ function generateInlineType({
     .with({ type: "enum" }, (parameter) => {
       const variantNames = Object.keys(parameter.variants)
         .slice(0, 3)
-        .map((v) => `<Parameter.Type>"${v}"</Parameter.Type>`)
+        .map(
+          (v) =>
+            `<Parameter.Type>"${parameter.valuePrefix ? `${parameter.valuePrefix}_${v}` : v}"</Parameter.Type>`,
+        )
         .join(`<span class="text-slate-5">|</span>`);
       writer.writeLine(`<span class="space-x-1">`);
       writer.indent();
