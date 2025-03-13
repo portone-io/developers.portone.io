@@ -1,7 +1,13 @@
 import { visit } from "unist-util-visit";
 import { describe, expect, it } from "vitest";
 
-import { handleFigureComponent } from "./mdx-to-markdown";
+import {
+  handleContentRefComponent,
+  handleDetailsComponent,
+  handleFigureComponent,
+  handleHintComponent,
+  handleTabsComponent,
+} from "./mdx-to-markdown";
 
 describe("handleFigureComponent", () => {
   it("캡션이 있는 경우 '(이미지 첨부: {caption})' 형태로 변환한다", () => {
@@ -123,6 +129,527 @@ describe("handleFigureComponent", () => {
               value: "(이미지 첨부: 테스트 이미지)",
             },
           ],
+        },
+      ],
+    });
+  });
+});
+
+describe("handleHintComponent", () => {
+  it("기본 Hint 컴포넌트를 HTML div로 변환한다", () => {
+    // 테스트용 Hint 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Hint",
+      children: [
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "힌트 내용입니다." }],
+        },
+      ],
+    };
+
+    // handleHintComponent 함수 실행
+    const result = handleHintComponent(node, {});
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        {
+          type: "html",
+          value: '<div class="hint">',
+        },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "힌트 내용입니다." }],
+        },
+        {
+          type: "html",
+          value: "</div>",
+        },
+      ],
+    });
+  });
+
+  it("type 속성이 있는 Hint 컴포넌트를 처리한다", () => {
+    // 테스트용 Hint 노드 생성 (type 속성 포함)
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Hint",
+      children: [
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "경고 메시지입니다." }],
+        },
+      ],
+    };
+
+    // handleHintComponent 함수 실행 (type 속성 추가)
+    const result = handleHintComponent(node, { type: "warning" });
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        {
+          type: "html",
+          value: '<div class="hint hint-warning">',
+        },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "경고 메시지입니다." }],
+        },
+        {
+          type: "html",
+          value: "</div>",
+        },
+      ],
+    });
+  });
+
+  it("여러 속성이 있는 Hint 컴포넌트를 처리한다", () => {
+    // 테스트용 Hint 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Hint",
+      children: [
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "중요 정보입니다." }],
+        },
+      ],
+    };
+
+    // handleHintComponent 함수 실행 (여러 속성 추가)
+    const result = handleHintComponent(node, {
+      type: "info",
+      id: "important-hint",
+      custom: "value",
+    });
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        {
+          type: "html",
+          value:
+            '<div class="hint hint-info" data-id="important-hint" data-custom="value">',
+        },
+
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "중요 정보입니다." }],
+        },
+        {
+          type: "html",
+          value: "</div>",
+        },
+      ],
+    });
+  });
+
+  it("자식 노드가 없는 경우에도 정상적으로 처리한다", () => {
+    // 테스트용 Hint 노드 생성 (자식 노드 없음)
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Hint",
+    };
+
+    // handleHintComponent 함수 실행
+    const result = handleHintComponent(node, { type: "note" });
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        {
+          type: "html",
+          value: '<div class="hint hint-note">',
+        },
+        {
+          type: "html",
+          value: "</div>",
+        },
+      ],
+    });
+  });
+});
+
+describe("handleDetailsComponent", () => {
+  it("Summary와 Content가 있는 Details 컴포넌트를 HTML details/summary로 변환한다", () => {
+    // 테스트용 Details 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Details",
+      children: [
+        {
+          type: "mdxJsxFlowElement",
+          name: "Details.Summary",
+          children: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", value: "자세히 보기" }],
+            },
+          ],
+        },
+        {
+          type: "mdxJsxFlowElement",
+          name: "Details.Content",
+          children: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", value: "상세 내용입니다." }],
+            },
+          ],
+        },
+      ],
+    };
+
+    // handleDetailsComponent 함수 실행
+    const result = handleDetailsComponent(node, {});
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        { type: "html", value: "<details>" },
+        { type: "html", value: "<summary>" },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "자세히 보기" }],
+        },
+        { type: "html", value: "</summary>" },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "상세 내용입니다." }],
+        },
+        { type: "html", value: "</details>" },
+      ],
+    });
+  });
+
+  it("Summary가 없는 경우 기본 텍스트를 사용한다", () => {
+    // 테스트용 Details 노드 생성 (Summary 없음)
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Details",
+      children: [
+        {
+          type: "mdxJsxFlowElement",
+          name: "Details.Content",
+          children: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", value: "상세 내용입니다." }],
+            },
+          ],
+        },
+      ],
+    };
+
+    // handleDetailsComponent 함수 실행
+    const result = handleDetailsComponent(node, {});
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        { type: "html", value: "<details>" },
+        { type: "html", value: "<summary>" },
+        { type: "text", value: "상세 정보" },
+        { type: "html", value: "</summary>" },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "상세 내용입니다." }],
+        },
+        { type: "html", value: "</details>" },
+      ],
+    });
+  });
+
+  it("Content가 없는 경우에도 정상적으로 처리한다", () => {
+    // 테스트용 Details 노드 생성 (Content 없음)
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Details",
+      children: [
+        {
+          type: "mdxJsxFlowElement",
+          name: "Details.Summary",
+          children: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", value: "자세히 보기" }],
+            },
+          ],
+        },
+      ],
+    };
+
+    // handleDetailsComponent 함수 실행
+    const result = handleDetailsComponent(node, {});
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        { type: "html", value: "<details>" },
+        { type: "html", value: "<summary>" },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "자세히 보기" }],
+        },
+        { type: "html", value: "</summary>" },
+        { type: "html", value: "</details>" },
+      ],
+    });
+  });
+});
+
+describe("handleTabsComponent", () => {
+  it("여러 탭이 있는 Tabs 컴포넌트를 HTML div로 변환한다", () => {
+    // 테스트용 Tabs 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Tabs",
+      children: [
+        {
+          type: "mdxJsxFlowElement",
+          name: "Tabs.Tab",
+          attributes: [
+            { type: "mdxJsxAttribute", name: "title", value: "탭1" },
+          ],
+          children: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", value: "첫 번째 탭 내용" }],
+            },
+          ],
+        },
+        {
+          type: "mdxJsxFlowElement",
+          name: "Tabs.Tab",
+          attributes: [
+            { type: "mdxJsxAttribute", name: "title", value: "탭2" },
+          ],
+          children: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", value: "두 번째 탭 내용" }],
+            },
+          ],
+        },
+      ],
+    };
+
+    // handleTabsComponent 함수 실행
+    const result = handleTabsComponent(node, {});
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        { type: "html", value: '<div class="tabs-container">' },
+        { type: "html", value: '<div class="tabs-content" data-title="탭1">' },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "첫 번째 탭 내용" }],
+        },
+        { type: "html", value: "</div>" },
+        { type: "html", value: '<div class="tabs-content" data-title="탭2">' },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "두 번째 탭 내용" }],
+        },
+        { type: "html", value: "</div>" },
+        { type: "html", value: "</div>" },
+      ],
+    });
+  });
+
+  it("탭 제목이 없는 경우 기본 제목을 사용한다", () => {
+    // 테스트용 Tabs 노드 생성 (탭 제목 없음)
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Tabs",
+      children: [
+        {
+          type: "mdxJsxFlowElement",
+          name: "Tabs.Tab",
+          children: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", value: "탭 내용" }],
+            },
+          ],
+        },
+      ],
+    };
+
+    // handleTabsComponent 함수 실행
+    const result = handleTabsComponent(node, {});
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        { type: "html", value: '<div class="tabs-container">' },
+        { type: "html", value: '<div class="tabs-content" data-title="탭">' },
+        {
+          type: "paragraph",
+          children: [{ type: "text", value: "탭 내용" }],
+        },
+        { type: "html", value: "</div>" },
+        { type: "html", value: "</div>" },
+      ],
+    });
+  });
+
+  it("자식 노드가 없는 탭도 정상적으로 처리한다", () => {
+    // 테스트용 Tabs 노드 생성 (자식 노드 없는 탭)
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Tabs",
+      children: [
+        {
+          type: "mdxJsxFlowElement",
+          name: "Tabs.Tab",
+          attributes: [
+            { type: "mdxJsxAttribute", name: "title", value: "빈 탭" },
+          ],
+        },
+      ],
+    };
+
+    // handleTabsComponent 함수 실행
+    const result = handleTabsComponent(node, {});
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "root",
+      children: [
+        { type: "html", value: '<div class="tabs-container">' },
+        {
+          type: "html",
+          value: '<div class="tabs-content" data-title="빈 탭">',
+        },
+        { type: "html", value: "</div>" },
+        { type: "html", value: "</div>" },
+      ],
+    });
+  });
+});
+
+describe("handleContentRefComponent", () => {
+  it("slug가 있고 해당 문서가 존재하는 경우 제목으로 링크를 생성한다", () => {
+    // 테스트용 ContentRef 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+    };
+
+    // 테스트용 parseResultMap 생성
+    const parseResultMap = {
+      "guide/payment": {
+        filePath: "/path/to/guide/payment.mdx",
+        slug: "guide/payment",
+        frontmatter: {
+          title: "결제 가이드",
+        },
+        imports: [],
+        ast: {},
+        content: "",
+      },
+    };
+
+    // handleContentRefComponent 함수 실행
+    const result = handleContentRefComponent(
+      node,
+      { slug: "guide/payment" },
+      parseResultMap,
+    );
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "paragraph",
+      children: [
+        {
+          type: "link",
+          url: "/llms/guide/payment.md",
+          children: [{ type: "text", value: "결제 가이드" }],
+        },
+      ],
+    });
+  });
+
+  it("slug가 있지만 해당 문서가 존재하지 않는 경우 기본 텍스트로 링크를 생성한다", () => {
+    // 테스트용 ContentRef 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+    };
+
+    // 빈 parseResultMap 생성
+    const parseResultMap = {};
+
+    // handleContentRefComponent 함수 실행
+    const result = handleContentRefComponent(
+      node,
+      { slug: "non-existent/page" },
+      parseResultMap,
+    );
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "paragraph",
+      children: [
+        {
+          type: "link",
+          url: "/llms/non-existent/page.md",
+          children: [{ type: "text", value: "링크" }],
+        },
+      ],
+    });
+  });
+
+  it("slug가 '/'로 시작하는 경우 정상적으로 처리한다", () => {
+    // 테스트용 ContentRef 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+    };
+
+    // 테스트용 parseResultMap 생성
+    const parseResultMap = {
+      "api/overview": {
+        filePath: "/path/to/api/overview.mdx",
+        slug: "api/overview",
+        frontmatter: {
+          title: "API 개요",
+        },
+        imports: [],
+        ast: {},
+        content: "",
+      },
+    };
+
+    // handleContentRefComponent 함수 실행 (slug가 '/'로 시작)
+    const result = handleContentRefComponent(
+      node,
+      { slug: "/api/overview" },
+      parseResultMap,
+    );
+
+    // 결과 검증
+    expect(result).toEqual({
+      type: "paragraph",
+      children: [
+        {
+          type: "link",
+          url: "/llms/api/overview.md",
+          children: [{ type: "text", value: "API 개요" }],
         },
       ],
     });

@@ -316,7 +316,10 @@ export function handleFigureComponent(
 /**
  * Hint 컴포넌트 처리
  */
-function handleHintComponent(node: any, props: Record<string, any>): any {
+export function handleHintComponent(
+  node: any,
+  props: Record<string, any>,
+): any {
   // 속성 문자열 생성
   let classNames = "hint";
   let attributesStr = "";
@@ -336,10 +339,12 @@ function handleHintComponent(node: any, props: Record<string, any>): any {
     }
   });
 
+  attributesStr = attributesStr.trim();
+
   // HTML div 시작 태그
   const hintStartDiv = {
     type: "html",
-    value: `<div class="${classNames}" ${attributesStr.trim()}>`,
+    value: `<div class="${classNames}"${attributesStr ? ` ${attributesStr}` : ""}>`,
   };
 
   // HTML div 종료 태그
@@ -364,7 +369,10 @@ function handleHintComponent(node: any, props: Record<string, any>): any {
 /**
  * Tabs 컴포넌트 처리
  */
-function handleTabsComponent(node: any, _props: Record<string, any>): any {
+export function handleTabsComponent(
+  node: any,
+  _props: Record<string, any>,
+): any {
   // 탭 컴포넌트 전체를 감싸는 div 시작 태그
   const tabsStartDiv = {
     type: "html",
@@ -418,7 +426,10 @@ function handleTabsComponent(node: any, _props: Record<string, any>): any {
 /**
  * Details 컴포넌트 처리
  */
-function handleDetailsComponent(node: any, _props: Record<string, any>): any {
+export function handleDetailsComponent(
+  node: any,
+  _props: Record<string, any>,
+): any {
   // 결과 노드들을 저장할 배열
   const resultNodes: any[] = [];
 
@@ -488,7 +499,7 @@ function handleDetailsComponent(node: any, _props: Record<string, any>): any {
 /**
  * ContentRef 컴포넌트 처리
  */
-function handleContentRefComponent(
+export function handleContentRefComponent(
   _node: any,
   props: Record<string, any>,
   parseResultMap: Record<string, MdxParseResult>,
