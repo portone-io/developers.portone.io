@@ -41,6 +41,7 @@
 - [x] badges.txt
 - [x] `<File>` - 처리 안함
 - [x] `handleRemainingMdxFlowExpressions` - 백틱 코드블록 또는 단순 텍스트로 변경
+- [x] `<Youtube>`
 
 
 ### 기본 HTML 태그

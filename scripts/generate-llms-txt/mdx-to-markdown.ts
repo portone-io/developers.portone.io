@@ -608,20 +608,28 @@ export function handleVersionGateComponent(
 
 /**
  * Youtube 컴포넌트 처리
+ * @param node MDX JSX 노드
+ * @param props 컴포넌트 속성
+ * @returns 변환된 마크다운 노드
  */
-function handleYoutubeComponent(node: any, _props: Record<string, any>): any {
-  const id = node.attributes?.id || "";
-  const url = `https://www.youtube.com/watch?v=${id}`;
+export function handleYoutubeComponent(
+  node: any,
+  props: Record<string, any>,
+): any {
+  // videoId와 caption 추출
+  const videoId = props.videoId || "";
+  const caption = props.caption || "YouTube 비디오";
 
-  // 유튜브 링크로 변환
+  const url = `https://www.youtube.com/watch?v=${videoId}`;
+
+  // 단순히 caption을 제목으로 하는 링크 생성
   return {
     type: "paragraph",
     children: [
       {
         type: "link",
         url,
-        title: "YouTube 비디오",
-        children: [{ type: "text", value: "YouTube 비디오 보기" }],
+        children: [{ type: "text", value: caption }],
       },
     ],
   };
