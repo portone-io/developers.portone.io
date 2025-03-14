@@ -25,7 +25,7 @@ export function handleVersionGateComponent(
         type: "paragraph",
         children: [
           {
-            type: "text",
+            type: "html",
             value: `<!-- VERSION-SPECIFIC: ${version.toUpperCase()} ONLY CONTENT START -->`,
           },
         ],
@@ -35,7 +35,7 @@ export function handleVersionGateComponent(
         type: "paragraph",
         children: [
           {
-            type: "text",
+            type: "html",
             value: `<!-- VERSION-SPECIFIC: ${version.toUpperCase()} ONLY CONTENT END -->`,
           },
         ],

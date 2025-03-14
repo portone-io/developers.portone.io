@@ -28,7 +28,7 @@ describe("handleVersionGateComponent", () => {
           type: "paragraph",
           children: [
             {
-              type: "text",
+              type: "html",
               value: "<!-- VERSION-SPECIFIC: V1 ONLY CONTENT START -->",
             },
           ],
@@ -41,7 +41,7 @@ describe("handleVersionGateComponent", () => {
           type: "paragraph",
           children: [
             {
-              type: "text",
+              type: "html",
               value: "<!-- VERSION-SPECIFIC: V1 ONLY CONTENT END -->",
             },
           ],
@@ -141,7 +141,7 @@ describe("handleVersionGateComponent", () => {
               type: "paragraph",
               children: [
                 {
-                  type: "text",
+                  type: "html",
                   value: "<!-- VERSION-SPECIFIC: V2 ONLY CONTENT START -->",
                 },
               ],
@@ -154,7 +154,7 @@ describe("handleVersionGateComponent", () => {
               type: "paragraph",
               children: [
                 {
-                  type: "text",
+                  type: "html",
                   value: "<!-- VERSION-SPECIFIC: V2 ONLY CONTENT END -->",
                 },
               ],
