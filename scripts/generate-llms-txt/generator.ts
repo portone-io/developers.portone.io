@@ -99,8 +99,8 @@ export async function generateLlmsTxtFiles(
   const PATH_PREFIXES = {
     RELEASE_NOTES: "release-notes/",
     BLOG: "blog/posts/",
+    API: "api/",
     SDK: "sdk/",
-    API_REFERENCE: "api-reference/",
     PLATFORM: "platform/",
   };
 
@@ -118,7 +118,8 @@ export async function generateLlmsTxtFiles(
     (slug) =>
       !slug.startsWith(PATH_PREFIXES.RELEASE_NOTES) &&
       !slug.startsWith(PATH_PREFIXES.BLOG) &&
-      !slug.startsWith(PATH_PREFIXES.PLATFORM),
+      !slug.startsWith(PATH_PREFIXES.API) &&
+      !slug.startsWith(PATH_PREFIXES.SDK),
   );
 
   // 버전별 및 카테고리별 파일 필터링
@@ -215,10 +216,7 @@ export async function generateLlmsTxtFiles(
   }
 
   // 공용 API 레퍼런스 문서
-  const commonApiFiles = filterByCategory(
-    commonFiles,
-    PATH_PREFIXES.API_REFERENCE,
-  );
+  const commonApiFiles = filterByCategory(commonFiles, PATH_PREFIXES.API);
   if (commonApiFiles.length > 0) {
     for (const slug of commonApiFiles) {
       llmsTxtContent += createLinkWithDescription(slug);
@@ -229,7 +227,7 @@ export async function generateLlmsTxtFiles(
   const commonOtherFiles = commonFiles.filter(
     (slug) =>
       !slug.startsWith(PATH_PREFIXES.SDK) &&
-      !slug.startsWith(PATH_PREFIXES.API_REFERENCE),
+      !slug.startsWith(PATH_PREFIXES.API),
   );
   if (commonOtherFiles.length > 0) {
     for (const slug of commonOtherFiles) {
@@ -250,8 +248,8 @@ export async function generateLlmsTxtFiles(
       }
     }
 
-    // V2 API 레퍼런스 문서
-    const v2ApiFiles = filterByCategory(v2Files, PATH_PREFIXES.API_REFERENCE);
+    // V2 API 문서
+    const v2ApiFiles = filterByCategory(v2Files, PATH_PREFIXES.API);
     if (v2ApiFiles.length > 0) {
       llmsTxtContent += `\n### V2 API 레퍼런스\n\n`;
       for (const slug of v2ApiFiles) {
@@ -263,7 +261,7 @@ export async function generateLlmsTxtFiles(
     const v2OtherFiles = v2Files.filter(
       (slug) =>
         !slug.startsWith(PATH_PREFIXES.SDK) &&
-        !slug.startsWith(PATH_PREFIXES.API_REFERENCE),
+        !slug.startsWith(PATH_PREFIXES.API),
     );
     if (v2OtherFiles.length > 0) {
       llmsTxtContent += `\n### V2 통합 가이드\n\n`;
@@ -287,7 +285,7 @@ export async function generateLlmsTxtFiles(
     }
 
     // V1 API 레퍼런스 문서
-    const v1ApiFiles = filterByCategory(v1Files, PATH_PREFIXES.API_REFERENCE);
+    const v1ApiFiles = filterByCategory(v1Files, PATH_PREFIXES.API);
     if (v1ApiFiles.length > 0) {
       llmsTxtContent += `\n### V1 API 레퍼런스\n\n`;
       for (const slug of v1ApiFiles) {
@@ -299,7 +297,7 @@ export async function generateLlmsTxtFiles(
     const v1OtherFiles = v1Files.filter(
       (slug) =>
         !slug.startsWith(PATH_PREFIXES.SDK) &&
-        !slug.startsWith(PATH_PREFIXES.API_REFERENCE),
+        !slug.startsWith(PATH_PREFIXES.API),
     );
     if (v1OtherFiles.length > 0) {
       llmsTxtContent += `\n### V1 통합 가이드\n\n`;

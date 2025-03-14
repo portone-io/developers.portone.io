@@ -1,6 +1,7 @@
 import { visit } from "unist-util-visit";
 
 import { type MdxParseResult } from "../../mdx-parser";
+import { handleApiLinkComponent } from "./apiLink";
 import { handleBadgeComponent } from "./badge";
 import { extractCodeContent } from "./code";
 import { extractMdxJsxAttributes } from "./common";
@@ -100,6 +101,9 @@ export function transformJsxComponents(
           break;
         case "Parameter":
           replacementNode = handleParameterComponent(node, props);
+          break;
+        case "ApiLink":
+          replacementNode = handleApiLinkComponent(node, props);
           break;
         case "PaymentV1":
         case "PaymentV2":
