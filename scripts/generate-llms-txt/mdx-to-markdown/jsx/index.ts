@@ -9,7 +9,6 @@ import { handleContentRefComponent } from "./contentRef";
 import { handleDetailsComponent } from "./details";
 import { handleFigureComponent } from "./figure";
 import { handleHintComponent } from "./hint";
-import { handleParameterComponent } from "./parameter";
 import { handleProseComponent } from "./prose";
 import {
   handleSwaggerComponent,
@@ -98,9 +97,6 @@ export function transformJsxComponents(
           break;
         case "Youtube":
           replacementNode = handleYoutubeComponent(node, props);
-          break;
-        case "Parameter":
-          replacementNode = handleParameterComponent(node, props);
           break;
         case "ApiLink":
           replacementNode = handleApiLinkComponent(node, props);
