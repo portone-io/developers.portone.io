@@ -37,9 +37,10 @@
 - [x] `<Swagger>` `<SwaggerDescription>` `<SwaggerResponse>` - Swagger API 설명을 표시하는 컴포넌트
 - [x] `<prose.xxx>` - 프로즈 스타일 컴포넌트 패밀리
 - [x] badges.txt
-- [x] `<File>` - 처리 안함
+- [x] `<File>` - 처리 생략
 - [x] `handleRemainingMdxFlowExpressions` - 백틱 코드블록 또는 단순 텍스트로 변경
 - [x] `<Youtube>`
+- [x] `<EasyGuideLink>` - 처리 생략
 - [ ] `<ApiLink>` - API 문서 링크를 제공하는 컴포넌트
 - [ ] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
 
