@@ -10,7 +10,10 @@ import { getToken } from "https://deno.land/x/pbkit@v0.0.70/misc/github/index.ts
 import { Input } from "jsr:@cliffy/prompt@1.0.0-rc.5/input";
 import { render as renderGfm } from "jsr:@deno/gfm@0.9.0";
 import { ensureFile } from "jsr:@std/fs@1.0.2/ensure-file";
-import { parse as parseYaml } from "jsr:@std/yaml@1.0.4";
+import {
+  parse as parseYaml,
+  stringify as stringifyYaml,
+} from "jsr:@std/yaml@1.0.4";
 
 const mdProperties = new Set([
   "summary",
@@ -60,13 +63,27 @@ export async function downloadV1Openapi() {
   const src = "https://api.iamport.kr/api/docs";
   // const src = "https://core-api.stg.iamport.co/api/docs";
   const dst = import.meta.resolve("../src/schema/v1.openapi.json");
+  const publicJsonDst = import.meta.resolve("../public/schema/v1.openapi.json");
+  const publicYamlDst = import.meta.resolve("../public/schema/v1.openapi.yml");
   console.log(`스키마 위치: ${src}`);
-  console.log(`저장할 위치: ${dst}`);
+  console.log(`저장할 위치 (src JSON): ${dst}`);
+  console.log(`저장할 위치 (public JSON): ${publicJsonDst}`);
+  console.log(`저장할 위치 (public YAML): ${publicYamlDst}`);
   console.log("내려받는 중...");
   const res = await fetch(src);
   const schema = processV1Openapi(await res.json());
   const json = JSON.stringify(schema, null, 2);
+
+  // src 디렉터리에 JSON 저장
   await touchAndSaveText(dst, json);
+
+  // public 디렉터리에 JSON 저장
+  await touchAndSaveText(publicJsonDst, json);
+
+  // public 디렉터리에 YAML 저장 (JSON을 YAML로 변환)
+  const yaml = stringifyYaml(schema);
+  await touchAndSaveText(publicYamlDst, yaml);
+
   console.log("완료");
 }
 
@@ -113,14 +130,32 @@ export async function downloadV2Openapi() {
   const src =
     "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/openapi.yml";
   const dst = import.meta.resolve("../src/schema/v2.openapi.json");
+  const publicYamlDst = import.meta.resolve("../public/schema/v2.openapi.yml");
+  const publicJsonDst = import.meta.resolve("../public/schema/v2.openapi.json");
   const token = await ensureLoggedIn();
   console.log(`스키마 위치: ${src}`);
-  console.log(`저장할 위치: ${dst}`);
+  console.log(`저장할 위치 (src JSON): ${dst}`);
+  console.log(`저장할 위치 (public YAML): ${publicYamlDst}`);
+  console.log(`저장할 위치 (public JSON): ${publicJsonDst}`);
   console.log("내려받는 중...");
   const yaml = await fetchTextFromGithub(src, token);
-  const schema = processV2Openapi(parseYaml(yaml));
-  const json = JSON.stringify(schema, null, 2);
-  await touchAndSaveText(dst, json);
+
+  // YAML 파싱 및 처리
+  const processedSchema = processV2Openapi(parseYaml(yaml));
+
+  // 처리된 스키마를 JSON과 YAML로 변환
+  const processedJson = JSON.stringify(processedSchema, null, 2);
+  const processedYaml = stringifyYaml(processedSchema);
+
+  // src 디렉터리에 JSON 저장
+  await touchAndSaveText(dst, processedJson);
+
+  // public 디렉터리에 처리된 JSON 저장
+  await touchAndSaveText(publicJsonDst, processedJson);
+
+  // public 디렉터리에 처리된 YAML 저장
+  await touchAndSaveText(publicYamlDst, processedYaml);
+
   console.log("완료");
 }
 
@@ -128,12 +163,20 @@ export async function downloadV2Graphql() {
   const src =
     "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/schema.graphql";
   const dst = import.meta.resolve("../src/schema/v2.graphql");
+  const publicDst = import.meta.resolve("../public/schema/v2.graphql");
   const token = await ensureLoggedIn();
   console.log(`스키마 위치: ${src}`);
-  console.log(`저장할 위치: ${dst}`);
+  console.log(`저장할 위치 (src): ${dst}`);
+  console.log(`저장할 위치 (public): ${publicDst}`);
   console.log("내려받는 중...");
   const graphql = await fetchTextFromGithub(src, token);
+
+  // src 디렉터리에 저장
   await touchAndSaveText(dst, graphql);
+
+  // public 디렉터리에 저장
+  await touchAndSaveText(publicDst, graphql);
+
   console.log("완료");
 }
 
