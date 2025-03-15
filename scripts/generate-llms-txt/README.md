@@ -14,7 +14,7 @@
 
 1. MDX 파일을 파싱하여 frontmatter, slug, 파일 경로, imports, AST를 추출
 2. SolidJS 커스텀 컴포넌트를 마크다운으로 변환
-3. 변환된 마크다운 파일을 `public/llms/` 디렉터리에 저장
+3. 변환된 마크다운 파일을 `public/markdown/` 디렉터리에 저장
 4. llms.txt, llms-full.txt, llms-small.txt 파일 생성
 
 ## 지원하는 SolidJS 커스텀 컴포넌트

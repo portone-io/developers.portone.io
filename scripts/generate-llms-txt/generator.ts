@@ -10,7 +10,7 @@ import { convertMdxToMarkdown } from "./mdx-to-markdown";
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
-const outputDir = join(rootDir, "public", "llms");
+const outputDir = join(rootDir, "public", "markdown");
 
 /**
  * 모든 MDX 파일을 파싱하고 결과를 맵으로 반환하는 함수
