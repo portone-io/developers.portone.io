@@ -104,22 +104,22 @@ export async function generateLlmsTxtFiles(
     PLATFORM: "platform/",
   };
 
+  // 카테고리별 필터링 함수
+  const filterByCategory = (files: string[], categoryPrefix: string) => {
+    return files.filter((slug) => slug.startsWith(categoryPrefix));
+  };
+
   // 릴리즈 노트, 블로그, 파트너정산 파일 먼저 필터링
-  const releaseNoteFiles = slugs.filter((slug) =>
-    slug.startsWith(PATH_PREFIXES.RELEASE_NOTES),
-  );
-  const blogFiles = slugs.filter((slug) => slug.startsWith(PATH_PREFIXES.BLOG));
-  const platformFiles = slugs.filter((slug) =>
-    slug.startsWith(PATH_PREFIXES.PLATFORM),
-  );
+  const releaseNoteFiles = filterByCategory(slugs, PATH_PREFIXES.RELEASE_NOTES);
+  const blogFiles = filterByCategory(slugs, PATH_PREFIXES.BLOG);
+  const platformFiles = filterByCategory(slugs, PATH_PREFIXES.PLATFORM);
 
   // 릴리즈 노트, 블로그, 파트너정산을 제외한 나머지 파일들만 버전별로 분류
   const remainingFiles = slugs.filter(
     (slug) =>
       !slug.startsWith(PATH_PREFIXES.RELEASE_NOTES) &&
       !slug.startsWith(PATH_PREFIXES.BLOG) &&
-      !slug.startsWith(PATH_PREFIXES.API) &&
-      !slug.startsWith(PATH_PREFIXES.SDK),
+      !slug.startsWith(PATH_PREFIXES.PLATFORM),
   );
 
   // 버전별 및 카테고리별 파일 필터링
@@ -140,11 +140,11 @@ export async function generateLlmsTxtFiles(
       commonFiles.push(slug);
     }
     // targetVersions가 ["v1"]만 있으면 v1 문서로 취급
-    else if (targetVersions.includes("v1") && !targetVersions.includes("v2")) {
+    else if (targetVersions.includes("v1")) {
       v1Files.push(slug);
     }
     // targetVersions가 ["v2"]만 있으면 v2 문서로 취급
-    else if (targetVersions.includes("v2") && !targetVersions.includes("v1")) {
+    else if (targetVersions.includes("v2")) {
       v2Files.push(slug);
     }
     // 그 외의 경우 (예: 다른 버전이 명시된 경우) 공용 문서로 취급
@@ -152,11 +152,6 @@ export async function generateLlmsTxtFiles(
       commonFiles.push(slug);
     }
   }
-
-  // 카테고리별 필터링 함수
-  const filterByCategory = (files: string[], categoryPrefix: string) => {
-    return files.filter((slug) => slug.startsWith(categoryPrefix));
-  };
 
   // 링크 생성 헬퍼 함수
   const createLinkWithDescription = (slug: string): string => {
@@ -223,7 +218,7 @@ export async function generateLlmsTxtFiles(
     }
   }
 
-  // 기타 공용 문서 (platform/ 제외)
+  // 기타 공용 문서
   const commonOtherFiles = commonFiles.filter(
     (slug) =>
       !slug.startsWith(PATH_PREFIXES.SDK) &&

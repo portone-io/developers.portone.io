@@ -4,10 +4,7 @@
  * @param props 컴포넌트 속성
  * @returns 변환된 마크다운 노드
  */
-export function handleYoutubeComponent(
-  node: any,
-  props: Record<string, any>,
-): any {
+export function handleYoutubeComponent(props: Record<string, any>): any {
   // videoId와 caption 추출
   const videoId = props.videoId || "";
   const caption = props.caption || "YouTube 비디오";

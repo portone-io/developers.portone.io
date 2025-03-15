@@ -1,3 +1,4 @@
+import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { visit } from "unist-util-visit";
 import { describe, expect, it } from "vitest";
 
@@ -15,7 +16,7 @@ describe("handleVersionGateComponent", () => {
           children: [{ type: "text", value: "V1에서 보여질 내용" }],
         },
       ],
-    };
+    } as MdxJsxFlowElement;
 
     // handleVersionGateComponent 함수 실행
     const result = handleVersionGateComponent(node, { v: "v1" });
@@ -61,7 +62,7 @@ describe("handleVersionGateComponent", () => {
           children: [{ type: "text", value: "일반 내용" }],
         },
       ],
-    };
+    } as MdxJsxFlowElement;
 
     // handleVersionGateComponent 함수 실행 (v 속성 없음)
     const result = handleVersionGateComponent(node, {});

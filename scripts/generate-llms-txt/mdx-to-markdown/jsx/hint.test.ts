@@ -1,3 +1,4 @@
+import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { describe, expect, it } from "vitest";
 
 import { handleHintComponent } from "./hint";
@@ -14,7 +15,7 @@ describe("handleHintComponent", () => {
           children: [{ type: "text", value: "힌트 내용입니다." }],
         },
       ],
-    };
+    } as MdxJsxFlowElement;
 
     // handleHintComponent 함수 실행
     const result = handleHintComponent(node, {});
@@ -50,7 +51,7 @@ describe("handleHintComponent", () => {
           children: [{ type: "text", value: "경고 메시지입니다." }],
         },
       ],
-    };
+    } as MdxJsxFlowElement;
 
     // handleHintComponent 함수 실행 (type 속성 추가)
     const result = handleHintComponent(node, { type: "warning" });
@@ -86,7 +87,7 @@ describe("handleHintComponent", () => {
           children: [{ type: "text", value: "중요 정보입니다." }],
         },
       ],
-    };
+    } as MdxJsxFlowElement;
 
     // handleHintComponent 함수 실행 (여러 속성 추가)
     const result = handleHintComponent(node, {
@@ -122,7 +123,7 @@ describe("handleHintComponent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "Hint",
-    };
+    } as MdxJsxFlowElement;
 
     // handleHintComponent 함수 실행
     const result = handleHintComponent(node, { type: "note" });

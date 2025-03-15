@@ -2,7 +2,7 @@
  * Badge 컴포넌트 처리 (PaymentV1, PaymentV2, Recon, Console, Partner)
  * 각 뱃지를 볼드 텍스트로 변환
  */
-export function handleBadgeComponent(_node: any, componentName: string): any {
+export function handleBadgeComponent(componentName: string): any {
   // 컴포넌트 이름에 따라 적절한 텍스트 선택
   let badgeText = "";
   switch (componentName) {

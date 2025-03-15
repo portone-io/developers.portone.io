@@ -1,22 +1,13 @@
 import { visit } from "unist-util-visit";
 import { describe, expect, it } from "vitest";
 
+import { extractMdxJsxAttributes } from "./common";
 import { handleFigureComponent } from "./figure";
 
 describe("handleFigureComponent", () => {
   it("캡션이 있는 경우 '(이미지 첨부: {caption})' 형태로 변환한다", () => {
-    // 테스트용 Figure 노드 생성
-    const node = {
-      type: "mdxJsxFlowElement",
-      name: "Figure",
-      attributes: {
-        src: "image1.png",
-        caption: "테스트 이미지",
-      },
-    };
-
     // handleFigureComponent 함수 실행
-    const result = handleFigureComponent(node, {});
+    const result = handleFigureComponent({ caption: "테스트 이미지" });
 
     // 결과 검증
     expect(result).toEqual({
@@ -31,17 +22,8 @@ describe("handleFigureComponent", () => {
   });
 
   it("캡션이 없는 경우 '(관련 이미지 첨부)' 형태로 변환한다", () => {
-    // 테스트용 Figure 노드 생성 (캡션 없음)
-    const node = {
-      type: "mdxJsxFlowElement",
-      name: "Figure",
-      attributes: {
-        src: "image2.png",
-      },
-    };
-
     // handleFigureComponent 함수 실행
-    const result = handleFigureComponent(node, {});
+    const result = handleFigureComponent({ src: "image2.png" });
 
     // 결과 검증
     expect(result).toEqual({
@@ -56,15 +38,8 @@ describe("handleFigureComponent", () => {
   });
 
   it("속성이 없는 경우에도 정상적으로 처리한다", () => {
-    // 테스트용 Figure 노드 생성 (속성 없음)
-    const node = {
-      type: "mdxJsxFlowElement",
-      name: "Figure",
-      attributes: {},
-    };
-
     // handleFigureComponent 함수 실행
-    const result = handleFigureComponent(node, {});
+    const result = handleFigureComponent({});
 
     // 결과 검증
     expect(result).toEqual({
@@ -86,10 +61,18 @@ describe("handleFigureComponent", () => {
         {
           type: "mdxJsxFlowElement",
           name: "Figure",
-          attributes: {
-            src: "image1.png",
-            caption: "테스트 이미지",
-          },
+          attributes: [
+            {
+              type: "mdxJsxAttribute",
+              name: "src",
+              value: "image1.png",
+            },
+            {
+              type: "mdxJsxAttribute",
+              name: "caption",
+              value: "테스트 이미지",
+            },
+          ],
         },
       ],
     };
@@ -101,7 +84,9 @@ describe("handleFigureComponent", () => {
       (node: any, index: number | undefined, parent: any) => {
         if (node.name === "Figure" && index !== undefined) {
           // Figure 컴포넌트 처리
-          const replacementNode = handleFigureComponent(node, {});
+          const replacementNode = handleFigureComponent(
+            extractMdxJsxAttributes(node),
+          );
 
           // 노드 교체
           if (replacementNode && parent && Array.isArray(parent.children)) {

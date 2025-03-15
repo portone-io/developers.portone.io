@@ -4,10 +4,7 @@
  * @param node ApiLink 컴포넌트 노드
  * @returns 마크다운 노드
  */
-export function handleApiLinkComponent(
-  _node: any,
-  props: Record<string, any>,
-): any {
+export function handleApiLinkComponent(props: Record<string, any>): any {
   // 필수 속성 확인
   const { basepath, method, path, apiName } = props;
 

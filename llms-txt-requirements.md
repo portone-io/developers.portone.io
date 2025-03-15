@@ -10,14 +10,14 @@
 - [x] 마크다운 변환에서 제외할 mdx 파일들 제외하기.
 - [x] llms.txt 카테고리 섹션 개선하기
 - [x] 문서별로 targetVersions 명시 안 된 것들 추가해주기
-- [ ] 개별 마크다운 파일들 보면서 퀄리티 높이기
+- [x] 개별 마크다운 파일들 보면서 퀄리티 높이기
   - 커스텀 컴포넌트 태그들 잘 알맞게 처리하기
   - 이상한 부분들 찾아 고치기
-- [ ] 태그들 사이 줄바꿈 등 포매팅 개선하기
+- [ ] 마크다운 문서 내에서의 링크 고쳐주기. `llms/` path도 추가되어야함
 - [ ] llms-full.txt, llms-small.txt로 찾아 합치는 부분 개선하기
   - full / small 어떻게 나눌지 고려하기
   - header depth 등 고려하기
-- [ ] 마크다운 문서 내에서의 링크 고쳐주기. `llms/` path도 추가되어야함
+- [ ] 태그들 사이 줄바꿈 등 포매팅 개선하기
 
 ## MDX 파일에서 활용되는 태그 목록
 
@@ -41,8 +41,8 @@
 - [x] `handleRemainingMdxFlowExpressions` - 백틱 코드블록 또는 단순 텍스트로 변경
 - [x] `<Youtube>`
 - [x] `<EasyGuideLink>` - 처리 생략
-- [ ] `<ApiLink>` - API 문서 링크를 제공하는 컴포넌트
-- [ ] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
+- [x] `<ApiLink>` - API 문서 링크를 제공하는 컴포넌트
+- [x] `<Parameter>` - API 파라미터를 표시하는 컴포넌트
 
 ### 기본 HTML 태그
 

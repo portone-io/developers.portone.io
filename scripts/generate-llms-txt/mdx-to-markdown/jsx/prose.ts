@@ -1,3 +1,5 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+
 import { extractMdxJsxAttributes } from "./common";
 
 /**
@@ -6,7 +8,10 @@ import { extractMdxJsxAttributes } from "./common";
  * @param elementType prose 요소 타입 (h1, h2, p 등)
  * @returns 변환된 노드
  */
-export function handleProseComponent(node: any, elementType: string): any {
+export function handleProseComponent(
+  node: MdxJsxFlowElement | MdxJsxTextElement,
+  elementType: string,
+) {
   // prose 태그 내의 자식 노드들을 유지하면서 적절한 마크다운 요소로 변환
   switch (elementType) {
     case "h1":

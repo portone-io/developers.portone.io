@@ -1,3 +1,4 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 /**
  * Swagger 컴포넌트 처리
  * @param node MDX JSX 노드
@@ -5,9 +6,9 @@
  * @returns 변환된 마크다운 노드
  */
 export function handleSwaggerComponent(
-  node: any,
+  node: MdxJsxFlowElement | MdxJsxTextElement,
   props: Record<string, any>,
-): any {
+) {
   // 헤더 생성 (메서드 + 경로)
   const headerNode = {
     type: "paragraph",

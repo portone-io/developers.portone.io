@@ -5,14 +5,8 @@ import { handleBadgeComponent } from "./badge";
 
 describe("handleBadgeComponent", () => {
   it("PaymentV1 뱃지를 볼드 텍스트로 변환한다", () => {
-    // 테스트용 PaymentV1 노드 생성
-    const node = {
-      type: "mdxJsxFlowElement",
-      name: "PaymentV1",
-    };
-
     // handleBadgeComponent 함수 실행
-    const result = handleBadgeComponent(node, "PaymentV1");
+    const result = handleBadgeComponent("PaymentV1");
 
     // 결과 검증
     expect(result).toEqual({
@@ -32,14 +26,8 @@ describe("handleBadgeComponent", () => {
   });
 
   it("PaymentV2 뱃지를 볼드 텍스트로 변환한다", () => {
-    // 테스트용 PaymentV2 노드 생성
-    const node = {
-      type: "mdxJsxFlowElement",
-      name: "PaymentV2",
-    };
-
     // handleBadgeComponent 함수 실행
-    const result = handleBadgeComponent(node, "PaymentV2");
+    const result = handleBadgeComponent("PaymentV2");
 
     // 결과 검증
     expect(result).toEqual({
@@ -59,14 +47,8 @@ describe("handleBadgeComponent", () => {
   });
 
   it("Recon 뱃지를 볼드 텍스트로 변환한다", () => {
-    // 테스트용 Recon 노드 생성
-    const node = {
-      type: "mdxJsxFlowElement",
-      name: "Recon",
-    };
-
     // handleBadgeComponent 함수 실행
-    const result = handleBadgeComponent(node, "Recon");
+    const result = handleBadgeComponent("Recon");
 
     // 결과 검증
     expect(result).toEqual({
@@ -86,14 +68,8 @@ describe("handleBadgeComponent", () => {
   });
 
   it("Console 뱃지를 볼드 텍스트로 변환한다", () => {
-    // 테스트용 Console 노드 생성
-    const node = {
-      type: "mdxJsxFlowElement",
-      name: "Console",
-    };
-
     // handleBadgeComponent 함수 실행
-    const result = handleBadgeComponent(node, "Console");
+    const result = handleBadgeComponent("Console");
 
     // 결과 검증
     expect(result).toEqual({
@@ -113,14 +89,8 @@ describe("handleBadgeComponent", () => {
   });
 
   it("Partner 뱃지를 볼드 텍스트로 변환한다", () => {
-    // 테스트용 Partner 노드 생성
-    const node = {
-      type: "mdxJsxFlowElement",
-      name: "Partner",
-    };
-
     // handleBadgeComponent 함수 실행
-    const result = handleBadgeComponent(node, "Partner");
+    const result = handleBadgeComponent("Partner");
 
     // 결과 검증
     expect(result).toEqual({
@@ -171,7 +141,7 @@ describe("handleBadgeComponent", () => {
           index !== undefined
         ) {
           // Badge 컴포넌트 처리
-          const replacementNode = handleBadgeComponent(node, node.name);
+          const replacementNode = handleBadgeComponent(node.name);
 
           // 노드 교체
           if (replacementNode && parent && Array.isArray(parent.children)) {

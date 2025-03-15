@@ -1,3 +1,4 @@
+import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { describe, expect, it } from "vitest";
 
 import { extractCodeContent } from "./code";
@@ -8,6 +9,7 @@ describe("extractCodeContent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "code",
+      attributes: [],
       children: [
         {
           type: "text",
@@ -21,7 +23,7 @@ describe("extractCodeContent", () => {
     };
 
     // extractCodeContent 함수 실행
-    const result = extractCodeContent(node);
+    const result = extractCodeContent(node as MdxJsxFlowElement);
 
     // 결과 검증
     expect(result).toEqual({
@@ -35,11 +37,12 @@ describe("extractCodeContent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "code",
+      attributes: [],
       children: [],
     };
 
     // extractCodeContent 함수 실행
-    const result = extractCodeContent(node);
+    const result = extractCodeContent(node as MdxJsxFlowElement);
 
     // 결과 검증
     expect(result).toEqual({
@@ -53,6 +56,7 @@ describe("extractCodeContent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "code",
+      attributes: [],
       children: [
         {
           type: "text",
@@ -70,7 +74,7 @@ describe("extractCodeContent", () => {
     };
 
     // extractCodeContent 함수 실행
-    const result = extractCodeContent(node);
+    const result = extractCodeContent(node as MdxJsxFlowElement);
 
     // 결과 검증
     expect(result).toEqual({

@@ -1,3 +1,4 @@
+import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { describe, expect, it } from "vitest";
 
 import { handleProseComponent } from "./prose";
@@ -9,7 +10,7 @@ describe("handleProseComponent", () => {
       type: "mdxJsxFlowElement",
       name: "prose.h1",
       children: [{ type: "text", value: "제목 텍스트" }],
-    };
+    } as unknown as MdxJsxFlowElement;
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(node, "h1");
@@ -30,7 +31,7 @@ describe("handleProseComponent", () => {
         type: "mdxJsxFlowElement",
         name: `prose.h${i}`,
         children: [{ type: "text", value: `제목 레벨 ${i}` }],
-      };
+      } as unknown as MdxJsxFlowElement;
 
       // handleProseComponent 함수 실행
       const result = handleProseComponent(node, `h${i}`);
@@ -50,7 +51,7 @@ describe("handleProseComponent", () => {
       type: "mdxJsxFlowElement",
       name: "prose.p",
       children: [{ type: "text", value: "단락 텍스트" }],
-    };
+    } as unknown as MdxJsxFlowElement;
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(node, "p");
@@ -80,7 +81,7 @@ describe("handleProseComponent", () => {
         },
       ],
       children: [{ type: "text", value: "링크 텍스트" }],
-    };
+    } as unknown as MdxJsxFlowElement;
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(node, "a");
@@ -107,7 +108,7 @@ describe("handleProseComponent", () => {
         },
       ],
       children: [{ type: "text", value: "링크 텍스트" }],
-    };
+    } as unknown as MdxJsxFlowElement;
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(node, "a");
@@ -132,7 +133,7 @@ describe("handleProseComponent", () => {
           children: [{ type: "text", value: "인용구 텍스트" }],
         },
       ],
-    };
+    } as unknown as MdxJsxFlowElement;
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(node, "blockquote");
@@ -164,7 +165,7 @@ describe("handleProseComponent", () => {
           children: [{ type: "text", value: "항목 2" }],
         },
       ],
-    };
+    } as unknown as MdxJsxFlowElement;
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(node, "ul");
@@ -193,7 +194,7 @@ describe("handleProseComponent", () => {
       type: "mdxJsxFlowElement",
       name: "prose.unknown",
       children: [{ type: "text", value: "알 수 없는 요소" }],
-    };
+    } as unknown as MdxJsxFlowElement;
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(node, "unknown");
@@ -210,7 +211,7 @@ describe("handleProseComponent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "prose.p",
-    };
+    } as unknown as MdxJsxFlowElement;
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(node, "p");

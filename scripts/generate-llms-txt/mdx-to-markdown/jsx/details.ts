@@ -1,10 +1,11 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+
 /**
  * Details 컴포넌트 처리
  */
 export function handleDetailsComponent(
-  node: any,
-  _props: Record<string, any>,
-): any {
+  node: MdxJsxFlowElement | MdxJsxTextElement,
+) {
   // 결과 노드들을 저장할 배열
   const resultNodes: any[] = [];
 

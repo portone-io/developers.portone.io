@@ -1,11 +1,13 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+
 /**
  * VersionGate 컴포넌트 처리
  * V1/V2 토글 상태에 따라 다른 컨텐츠를 표시하기 위한 컴포넌트
  */
 export function handleVersionGateComponent(
-  node: any,
+  node: MdxJsxFlowElement | MdxJsxTextElement,
   props: Record<string, any>,
-): any {
+) {
   // 버전 정보 추출 (v 또는 version 속성 사용)
   const version = props.v || "";
 

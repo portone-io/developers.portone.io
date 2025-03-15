@@ -1,10 +1,12 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+
 /**
  * Hint 컴포넌트 처리
  */
 export function handleHintComponent(
-  node: any,
+  node: MdxJsxFlowElement | MdxJsxTextElement,
   props: Record<string, any>,
-): any {
+) {
   // 속성 문자열 생성
   let classNames = "hint";
   let attributesStr = "";

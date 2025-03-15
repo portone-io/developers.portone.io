@@ -1,3 +1,4 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import { visit } from "unist-util-visit";
 
 import { extractMdxJsxAttributes } from "./common";
@@ -6,9 +7,8 @@ import { extractMdxJsxAttributes } from "./common";
  * Tabs 컴포넌트 처리
  */
 export function handleTabsComponent(
-  node: any,
-  _props: Record<string, any>,
-): any {
+  node: MdxJsxFlowElement | MdxJsxTextElement,
+) {
   // 탭 컴포넌트 전체를 감싸는 div 시작 태그
   const tabsStartDiv = {
     type: "html",

@@ -4,7 +4,6 @@ import type { MdxParseResult } from "scripts/generate-llms-txt/mdx-parser";
  * ConentRef 컴포넌트 처리
  */
 export function handleContentRefComponent(
-  _node: any,
   props: Record<string, any>,
   parseResultMap: Record<string, MdxParseResult>,
 ): any {

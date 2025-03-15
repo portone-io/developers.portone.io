@@ -1,3 +1,4 @@
+import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { describe, expect, it } from "vitest";
 
 import { handleDetailsComponent } from "./details";
@@ -30,10 +31,10 @@ describe("handleDetailsComponent", () => {
           ],
         },
       ],
-    };
+    } as MdxJsxFlowElement;
 
     // handleDetailsComponent 함수 실행
-    const result = handleDetailsComponent(node, {});
+    const result = handleDetailsComponent(node);
 
     // 결과 검증
     expect(result).toEqual({
@@ -72,10 +73,10 @@ describe("handleDetailsComponent", () => {
           ],
         },
       ],
-    };
+    } as MdxJsxFlowElement;
 
     // handleDetailsComponent 함수 실행
-    const result = handleDetailsComponent(node, {});
+    const result = handleDetailsComponent(node);
 
     // 결과 검증
     expect(result).toEqual({
@@ -111,10 +112,10 @@ describe("handleDetailsComponent", () => {
           ],
         },
       ],
-    };
+    } as MdxJsxFlowElement;
 
     // handleDetailsComponent 함수 실행
-    const result = handleDetailsComponent(node, {});
+    const result = handleDetailsComponent(node);
 
     // 결과 검증
     expect(result).toEqual({
