@@ -33,12 +33,12 @@ export function transformJsxComponents(
   // 제거할 노드 인덱스 목록
   const nodesToRemove: Array<{ parent: Parent; index: number }> = [];
 
-  // JSX 컴포넌트 변환
+  // JSX Flow 컴포넌트 변환
   visit(
     ast,
     ["mdxJsxFlowElement", "mdxJsxTextElement"],
     (node: Node, index: number | undefined, parent: Parent | undefined) => {
-      // Type assertion to handle the specific node types we expect
+      // Type assertion to handle flow element
       const jsxNode = node as MdxJsxFlowElement | MdxJsxTextElement;
       if (!jsxNode.name || index === undefined || !parent) return;
 

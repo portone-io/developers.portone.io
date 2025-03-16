@@ -1,41 +1,37 @@
 import yaml from "js-yaml";
+import type { Root } from "mdast";
 import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
-import { type MdxParseResult } from "../mdx-parser";
+import { type Frontmatter, type MdxParseResult } from "../mdx-parser";
 import { transformJsxComponents } from "./jsx";
 
 /**
- * MDX 파일을 마크다운으로 변환하는 함수
+ * MDX AST를 마크다운용 AST로 변환하는 함수
+ * JSX 컴포넌트 변환, 임포트 구문 제거, YAML 노드 제거 등의 처리를 수행
  * @param slug 변환할 MDX 파일의 slug
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
- * @returns 마크다운 문자열
+ * @returns 변환된 AST 노드
+ * @throws Error parseResult를 찾을 수 없는 경우 예외 발생
  */
-export async function convertMdxToMarkdown(
+export function transformAstForMarkdown(
   slug: string,
   parseResultMap: Record<string, MdxParseResult>,
-): Promise<string> {
+): Root {
   // slug에 해당하는 parseResult 가져오기
   const parseResult = parseResultMap[slug];
 
-  // parseResult가 없으면 빈 문자열 반환
+  // parseResult가 없으면 예외 발생
   if (!parseResult) {
-    console.warn(
-      `[convertMdxToMarkdown] parseResult not found for slug: ${slug}`,
+    throw new Error(
+      `[transformAstForMarkdown] parseResult not found for slug: ${slug}`,
     );
-    return "";
   }
 
   // AST 복제 (원본 변경 방지)
   const ast = JSON.parse(JSON.stringify(parseResult.ast));
-
-  // 프론트매터 문자열 생성
-  let frontmatterStr = "";
-  if (Object.keys(parseResult.frontmatter).length > 0) {
-    frontmatterStr = `---\n${yaml.dump(parseResult.frontmatter)}---\n\n`;
-  }
 
   // JSX 컴포넌트를 마크다운으로 변환
   transformJsxComponents(ast, parseResultMap);
@@ -52,6 +48,27 @@ export async function convertMdxToMarkdown(
   // MDX 표현식 노드 처리
   handleRemainingMdxFlowExpressions(ast);
 
+  return ast;
+}
+
+/**
+ * 변환된 AST를 마크다운 문자열로 변환하는 함수
+ * 프론트매터를 포함한 완전한 마크다운 문자열을 생성
+ * remark 설정을 통해 GitHub Flavored Markdown 형식으로 출력
+ * @param ast 변환된 AST 노드
+ * @param frontmatter 프론트매터 객체 (선택적)
+ * @returns 마크다운 문자열
+ */
+export function astToMarkdownString(
+  ast: Root,
+  frontmatter?: Frontmatter,
+): string {
+  // 프론트매터 문자열 생성
+  let frontmatterStr = "";
+  if (frontmatter && Object.keys(frontmatter).length > 0) {
+    frontmatterStr = `---\n${yaml.dump(frontmatter)}---\n\n`;
+  }
+
   // 마크다운으로 변환
   const processor = unified()
     .use(remarkGfm) // GitHub Flavored Markdown 지원 (테이블 등)
@@ -67,7 +84,7 @@ export async function convertMdxToMarkdown(
       stringLength: () => 1, // 테이블 셀 너비 계산 단순화
     } as any); // 타입 오류 해결을 위한 any 타입 캐스팅
 
-  const markdownContent = await processor.stringify(ast);
+  const markdownContent = processor.stringify(ast);
 
   // 프론트매터와 마크다운 내용 결합
   return frontmatterStr + markdownContent;
@@ -131,7 +148,7 @@ function simplifyJsxNodes(ast: any): void {
 function removeYamlNodes(ast: any): void {
   const nodesToRemove: Array<{ parent: any; index: number }> = [];
 
-  visit(ast, "yaml", (node: any, index: number | undefined, parent: any) => {
+  visit(ast, "yaml", (_node: any, index: number | undefined, parent: any) => {
     if (index !== undefined) {
       nodesToRemove.push({ parent, index });
     }
@@ -155,7 +172,7 @@ function removeImports(ast: any): void {
   visit(
     ast,
     "mdxjsEsm",
-    (node: any, index: number | undefined, parent: any) => {
+    (_node: any, index: number | undefined, parent: any) => {
       if (index !== undefined) {
         nodesToRemove.push({ parent, index });
       }

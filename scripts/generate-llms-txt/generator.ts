@@ -3,9 +3,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import fastGlob from "fast-glob";
+import type { Root } from "mdast";
 
 import { type MdxParseResult, parseMdxFile } from "./mdx-parser";
-import { convertMdxToMarkdown } from "./mdx-to-markdown";
+import {
+  astToMarkdownString,
+  transformAstForMarkdown,
+} from "./mdx-to-markdown";
 
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -46,17 +50,59 @@ export async function parseAllMdxFiles(): Promise<
 }
 
 /**
- * 모든 MDX 파일을 마크다운으로 변환하고 저장하는 함수
+ * 모든 MDX 파일의 AST를 마크다운용 AST로 변환하는 함수
  * @param fileParseMap 파일 경로와 파싱 결과를 매핑한 객체
+ * @returns 변환된 AST 노드 매핑 (slug -> Node)
  */
-export async function convertAllMdxToMarkdown(
+export function transformAllMdxToAst(
   fileParseMap: Record<string, MdxParseResult>,
-): Promise<void> {
-  // 각 파싱 결과를 마크다운으로 변환하여 저장
+): Record<string, Root> {
+  // 변환된 AST 노드를 저장할 객체
+  const transformedAstMap: Record<string, Root> = {};
+
+  // 각 파싱 결과의 AST 변환
   for (const slug of Object.keys(fileParseMap)) {
     try {
-      // 마크다운으로 변환
-      const markdown = await convertMdxToMarkdown(slug, fileParseMap);
+      // AST 변환
+      const transformedAst = transformAstForMarkdown(slug, fileParseMap);
+      if (transformedAst) {
+        transformedAstMap[slug] = transformedAst;
+      }
+    } catch (error) {
+      console.error(
+        `${fileParseMap[slug]?.filePath} AST 변환 중 오류 발생:`,
+        error,
+      );
+    }
+  }
+
+  console.log(
+    `${Object.keys(transformedAstMap).length}개의 MDX 파일 AST 변환이 완료되었습니다.`,
+  );
+  return transformedAstMap;
+}
+
+/**
+ * 변환된 AST를 마크다운 파일로 저장하는 함수
+ * @param fileParseMap 파일 경로와 파싱 결과를 매핑한 객체
+ * @param transformedAstMap 변환된 AST 노드 매핑 (slug -> Node)
+ */
+export async function saveMarkdownFiles(
+  fileParseMap: Record<string, MdxParseResult>,
+  transformedAstMap: Record<string, Root>,
+): Promise<void> {
+  // 각 변환된 AST를 마크다운 파일로 저장
+  for (const slug of Object.keys(transformedAstMap)) {
+    try {
+      const transformedAst = transformedAstMap[slug];
+      if (transformedAst == null)
+        throw new Error(`${slug}에 대한 AST를 찾을 수 없습니다.`);
+
+      // 마크다운 문자열로 변환
+      const markdown = astToMarkdownString(
+        transformedAst,
+        fileParseMap[slug]?.frontmatter,
+      );
 
       // 출력 경로 생성
       const outputRelativePath = `${slug}.md`;
@@ -69,26 +115,29 @@ export async function convertAllMdxToMarkdown(
       await writeFile(outputPath, markdown, "utf-8");
 
       console.log(
-        `변환 완료: ${fileParseMap[slug]?.filePath} -> ${outputPath}`,
+        `마크다운 저장 완료: ${fileParseMap[slug]?.filePath} -> ${outputPath}`,
       );
     } catch (error) {
       console.error(
-        `${fileParseMap[slug]?.filePath} 변환 중 오류 발생:`,
+        `${fileParseMap[slug]?.filePath} 마크다운 저장 중 오류 발생:`,
         error,
       );
     }
   }
 
-  console.log("모든 MDX 파일 변환이 완료되었습니다.");
+  console.log("모든 마크다운 파일 저장이 완료되었습니다.");
 }
 
 /**
  * 모든 마크다운 파일을 읽고 llms.txt 파일을 생성하는 함수
+ * 변환된 AST 노드를 재사용하여 llms.txt, llms-full.txt, llms-small.txt 파일을 생성
  * @param fileParseMap MDX 파싱 결과 맵
+ * @param transformedAstMap 변환된 AST 노드 맵
  * @returns 생성된 llms.txt 파일 경로
  */
 export async function generateLlmsTxtFiles(
   fileParseMap: Record<string, MdxParseResult>,
+  transformedAstMap: Record<string, Root>,
 ): Promise<string> {
   // fileParseMap에서 slug 추출
   const slugs = Object.keys(fileParseMap);
@@ -334,8 +383,15 @@ export async function generateLlmsTxtFiles(
   // llms-full.txt 파일 생성 (모든 문서 내용 포함)
   let fullContent = llmsTxtContent;
   for (const slug of slugs) {
-    // 마크다운으로 변환
-    const markdown = await convertMdxToMarkdown(slug, fileParseMap);
+    const transformedAst = transformedAstMap[slug];
+    if (transformedAst == null)
+      throw new Error(`${slug}에 대한 AST를 찾을 수 없습니다.`);
+
+    // 이미 변환된 AST를 사용하여 마크다운 생성
+    const markdown = astToMarkdownString(
+      transformedAst,
+      fileParseMap[slug]?.frontmatter,
+    );
     fullContent += `\n\n# ${slug}\n\n${markdown}`;
   }
   const llmsFullTxtPath = join(rootDir, "public", "llms-full.txt");
@@ -345,8 +401,15 @@ export async function generateLlmsTxtFiles(
   // llms-small.txt 파일 생성 (처음 10개 문서만 포함)
   let smallContent = llmsTxtContent;
   for (const slug of slugs.slice(0, 10)) {
-    // 마크다운으로 변환
-    const markdown = await convertMdxToMarkdown(slug, fileParseMap);
+    const transformedAst = transformedAstMap[slug];
+    if (transformedAst == null)
+      throw new Error(`${slug}에 대한 AST를 찾을 수 없습니다.`);
+
+    // 이미 변환된 AST를 사용하여 마크다운 생성
+    const markdown = astToMarkdownString(
+      transformedAst,
+      fileParseMap[slug]?.frontmatter,
+    );
     smallContent += `\n\n# ${slug}\n\n${markdown}`;
   }
   const llmsSmallTxtPath = join(rootDir, "public", "llms-small.txt");
