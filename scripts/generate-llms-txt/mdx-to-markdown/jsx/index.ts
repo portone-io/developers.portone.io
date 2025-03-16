@@ -34,9 +34,6 @@ export function transformJsxComponents(
   ast: Node,
   parseResultMap: Record<string, MdxParseResult>,
 ): void {
-  // 제거할 노드 인덱스 목록
-  const nodesToRemove: Array<{ parent: Parent; index: number }> = [];
-
   // JSX Flow 컴포넌트 변환
   visit(
     ast,
@@ -81,7 +78,7 @@ export function transformJsxComponents(
       // 속성 추출
       const props = extractMdxJsxAttributes(jsxNode);
 
-      let replacementNode: Node | null = null;
+      let replacementNode: Node;
       switch (componentName) {
         case "Figure":
           replacementNode = handleFigureComponent(props);
@@ -192,21 +189,8 @@ export function transformJsxComponents(
           }
       }
 
-      if (replacementNode) {
-        // 노드 교체
-        parent.children.splice(index, 1, replacementNode);
-      } else {
-        // 교체 노드가 없으면 제거 목록에 추가
-        nodesToRemove.push({ parent, index });
-      }
+      // 노드 교체
+      parent.children.splice(index, 1, replacementNode);
     },
   );
-
-  // 제거할 노드 처리 (역순으로 제거하여 인덱스 변화 방지)
-  for (let i = nodesToRemove.length - 1; i >= 0; i--) {
-    const item = nodesToRemove[i];
-    if (item && item.parent && Array.isArray(item.parent.children)) {
-      item.parent.children.splice(item.index, 1);
-    }
-  }
 }
