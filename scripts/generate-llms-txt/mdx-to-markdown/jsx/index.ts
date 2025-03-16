@@ -8,7 +8,11 @@ import { handleBadgeComponent } from "./badge";
 import { extractCodeContent } from "./code";
 import { extractMdxJsxAttributes } from "./common";
 import { handleContentRefComponent } from "./contentRef";
-import { handleDetailsComponent } from "./details";
+import {
+  handleDetailsComponent,
+  handleDetailsContentComponent,
+  handleDetailsSummaryComponent,
+} from "./details";
 import { handleFigureComponent } from "./figure";
 import { handleHintComponent } from "./hint";
 import { handleProseComponent } from "./prose";
@@ -98,6 +102,20 @@ export function transformJsxComponents(
         case "Details":
           replacementNode = handleDetailsComponent(jsxNode, (innerAst: Node) =>
             transformJsxComponents(innerAst, parseResultMap),
+          );
+          break;
+        case "Details.Summary":
+          replacementNode = handleDetailsSummaryComponent(
+            jsxNode,
+            (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
+          );
+          break;
+        case "Details.Content":
+          replacementNode = handleDetailsContentComponent(
+            jsxNode,
+            (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
           );
           break;
         case "ContentRef":
