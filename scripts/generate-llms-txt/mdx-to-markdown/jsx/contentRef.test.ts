@@ -32,7 +32,7 @@ describe("handleContentRefComponent", () => {
       children: [
         {
           type: "link",
-          url: "/llms/guide/payment.md",
+          url: "https://developers.portone.io/guide/payment.md",
           children: [{ type: "text", value: "결제 가이드" }],
         },
       ],
@@ -55,7 +55,7 @@ describe("handleContentRefComponent", () => {
       children: [
         {
           type: "link",
-          url: "/llms/non-existent/page.md",
+          url: "https://developers.portone.io/non-existent/page.md",
           children: [{ type: "text", value: "링크" }],
         },
       ],
@@ -89,7 +89,7 @@ describe("handleContentRefComponent", () => {
       children: [
         {
           type: "link",
-          url: "/llms/api/overview.md",
+          url: "https://developers.portone.io/api/overview.md",
           children: [{ type: "text", value: "API 개요" }],
         },
       ],

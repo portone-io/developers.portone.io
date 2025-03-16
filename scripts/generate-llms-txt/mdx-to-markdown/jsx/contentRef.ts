@@ -27,7 +27,7 @@ export function handleContentRefComponent(
     children: [
       {
         type: "link",
-        url: `/llms/${slug}.md`,
+        url: `https://developers.portone.io/${slug}.md`,
         children: [{ type: "text", value: title }],
       },
     ],

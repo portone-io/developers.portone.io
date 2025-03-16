@@ -206,7 +206,7 @@ export async function generateLlmsTxtFiles(
   const createLinkWithDescription = (slug: string): string => {
     const parseResult = fileParseMap[slug];
     const title = parseResult?.frontmatter.title || slug;
-    const displayPath = `${slug}.md`;
+    const displayPath = `https://developers.portone.io/${slug}.md`;
 
     // description이 있는 경우 표준 형식에 맞게 추가
     if (parseResult?.frontmatter.description) {
@@ -218,7 +218,7 @@ export async function generateLlmsTxtFiles(
 
   // 릴리스 노트 링크 생성 함수
   const createReleaseNoteLink = (slug: string): string => {
-    const displayPath = `${slug}.md`;
+    const displayPath = `https://developers.portone.io/${slug}.md`;
     // slug에서 카테고리와 날짜 추출
     const parts = slug.split("/");
     if (parts.length >= 3) {
