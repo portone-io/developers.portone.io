@@ -17,7 +17,6 @@
 - [ ] llms-full.txt, llms-small.txt로 찾아 합치는 부분 개선하기
   - full / small 어떻게 나눌지 고려하기
   - header depth 등 고려하기
-- [ ] 태그들 사이 줄바꿈 등 포매팅 개선하기
 
 ## MDX 파일에서 활용되는 태그 목록
 

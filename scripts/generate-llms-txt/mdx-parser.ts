@@ -23,7 +23,6 @@ export type Frontmatter = {
   author?: string;
   date?: string;
   tags?: string[];
-  thumbnail?: string;
   targetVersions?: string[];
   [key: string]: any; // 기타 알려지지 않은 필드를 위한 인덱스 시그니처
 };

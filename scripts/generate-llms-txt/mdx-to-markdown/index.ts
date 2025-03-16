@@ -66,7 +66,9 @@ export function astToMarkdownString(
   // 프론트매터 문자열 생성
   let frontmatterStr = "";
   if (frontmatter && Object.keys(frontmatter).length > 0) {
-    frontmatterStr = `---\n${yaml.dump(frontmatter)}---\n\n`;
+    // thumbnail 필드를 제외한 프론트매터 생성
+    const { thumbnail: _thumbnail, ...filteredFrontmatter } = frontmatter;
+    frontmatterStr = `---\n${yaml.dump(filteredFrontmatter)}---\n\n`;
   }
 
   // 마크다운으로 변환
