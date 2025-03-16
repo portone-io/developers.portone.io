@@ -398,22 +398,10 @@ export async function generateLlmsTxtFiles(
   await writeFile(llmsFullTxtPath, fullContent, "utf-8");
   console.log(`llms-full.txt 파일이 생성되었습니다: ${llmsFullTxtPath}`);
 
-  // llms-small.txt 파일 생성 (처음 10개 문서만 포함)
-  let smallContent = llmsTxtContent;
-  for (const slug of slugs.slice(0, 10)) {
-    const transformedAst = transformedAstMap[slug];
-    if (transformedAst == null)
-      throw new Error(`${slug}에 대한 AST를 찾을 수 없습니다.`);
-
-    // 이미 변환된 AST를 사용하여 마크다운 생성
-    const markdown = astToMarkdownString(
-      transformedAst,
-      fileParseMap[slug]?.frontmatter,
-    );
-    smallContent += `\n\n# https://developers.portone.io/${slug}.md\n\n${markdown}`;
-  }
+  // llms-small.txt 파일 생성 (llms.txt와 동일한 내용으로)
+  // llms.txt의 내용을 그대로 사용합니다
   const llmsSmallTxtPath = join(rootDir, "public", "llms-small.txt");
-  await writeFile(llmsSmallTxtPath, smallContent, "utf-8");
+  await writeFile(llmsSmallTxtPath, llmsTxtContent, "utf-8");
   console.log(`llms-small.txt 파일이 생성되었습니다: ${llmsSmallTxtPath}`);
 
   return llmsTxtPath;
