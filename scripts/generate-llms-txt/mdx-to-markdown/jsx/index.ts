@@ -21,7 +21,7 @@ import {
   handleSwaggerDescriptionComponent,
   handleSwaggerResponseComponent,
 } from "./swagger";
-import { handleTabsComponent } from "./tabs";
+import { handleTabComponent, handleTabsComponent } from "./tabs";
 import { handleVersionGateComponent } from "./versionGate";
 import { handleYoutubeComponent } from "./youtube";
 
@@ -97,6 +97,14 @@ export function transformJsxComponents(
         case "Tabs":
           replacementNode = handleTabsComponent(jsxNode, (innerAst: Node) =>
             transformJsxComponents(innerAst, parseResultMap),
+          );
+          break;
+        case "Tabs.Tab":
+          replacementNode = handleTabComponent(
+            jsxNode,
+            props,
+            (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
           );
           break;
         case "Details":
