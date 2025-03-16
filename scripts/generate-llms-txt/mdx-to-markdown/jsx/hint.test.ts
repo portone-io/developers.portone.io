@@ -1,4 +1,5 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
+import type { Node } from "unist";
 import { describe, expect, it } from "vitest";
 
 import { handleHintComponent } from "./hint";
@@ -17,8 +18,13 @@ describe("handleHintComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleHintComponent 함수 실행
-    const result = handleHintComponent(node, {});
+    const result = handleHintComponent(node, {}, mockTransformJsxComponentsFn);
 
     // 결과 검증
     expect(result).toEqual({
@@ -53,8 +59,17 @@ describe("handleHintComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleHintComponent 함수 실행 (type 속성 추가)
-    const result = handleHintComponent(node, { type: "warning" });
+    const result = handleHintComponent(
+      node,
+      { type: "warning" },
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -89,12 +104,21 @@ describe("handleHintComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleHintComponent 함수 실행 (여러 속성 추가)
-    const result = handleHintComponent(node, {
-      type: "info",
-      id: "important-hint",
-      custom: "value",
-    });
+    const result = handleHintComponent(
+      node,
+      {
+        type: "info",
+        id: "important-hint",
+        custom: "value",
+      },
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -125,8 +149,17 @@ describe("handleHintComponent", () => {
       name: "Hint",
     } as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleHintComponent 함수 실행
-    const result = handleHintComponent(node, { type: "note" });
+    const result = handleHintComponent(
+      node,
+      { type: "note" },
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({

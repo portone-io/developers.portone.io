@@ -1,13 +1,18 @@
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 
 import { extractMdxJsxAttributes } from "./common";
 
 /**
  * Tabs 컴포넌트 처리
+ * @param node Tabs 컴포넌트 노드
+ * @param transformJsxComponentsFn 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
+ * @returns 변환된 노드
  */
 export function handleTabsComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
+  transformJsxComponentsFn: (ast: Node) => void,
 ) {
   // 탭 컴포넌트 전체를 감싸는 div 시작 태그
   const tabsStartDiv = {
@@ -45,9 +50,16 @@ export function handleTabsComponent(
         value: "</div>",
       };
 
-      // 탭 콘텐츠에 자식 노드들 추가
+      // 탭 내부 자식 노드들을 재귀적으로 처리
+      const tabChildrenContent = {
+        type: "root",
+        children: tabNode.children || [],
+      };
+      transformJsxComponentsFn(tabChildrenContent);
+
+      // 탭 콘텐츠에 처리된 자식 노드들 추가
       tabContents.push(tabContentStartDiv);
-      tabContents.push(...(tabNode.children || []));
+      tabContents.push(...tabChildrenContent.children);
       tabContents.push(tabContentEndDiv);
     },
   );

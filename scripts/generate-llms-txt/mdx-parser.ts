@@ -12,6 +12,8 @@ import { unified } from "unified";
 import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 
+import { generateSlug as originalGenerateSlug } from "../../src/utils/slugs";
+
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
@@ -200,17 +202,15 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
  * @returns 슬러그
  */
 function generateSlug(filePath: string): string {
-  // src/routes/ 제거
-  let slug = filePath.replace(/^src\/routes\//, "");
+  const basePath = "src/routes/(root)";
 
-  // 괄호로 감싸진 모든 디렉터리 제거 (예: (root), (auth) 등)
-  slug = slug.replace(/\([^/]+\)\//g, "");
+  // utils/slugs.ts의 generateSlug 함수 사용
+  let slug = originalGenerateSlug(filePath, basePath);
 
-  // 확장자 제거
-  slug = slug.replace(/\.mdx$/, "");
-
-  // index.mdx 파일은 디렉토리 이름으로 변경
-  slug = slug.replace(/\/index$/, "");
+  // 슬러그가 /로 시작하면 제거
+  if (slug.startsWith("/")) {
+    slug = slug.substring(1);
+  }
 
   return slug;
 }

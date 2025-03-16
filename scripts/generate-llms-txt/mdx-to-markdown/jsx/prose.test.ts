@@ -1,4 +1,5 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
+import type { Node } from "unist";
 import { describe, expect, it } from "vitest";
 
 import { handleProseComponent } from "./prose";
@@ -12,8 +13,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "제목 텍스트" }],
     } as unknown as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(node, "h1");
+    const result = handleProseComponent(
+      node,
+      "h1",
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -24,6 +34,11 @@ describe("handleProseComponent", () => {
   });
 
   it("h2부터 h6까지 요소를 적절한 depth의 heading으로 변환한다", () => {
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // h2부터 h6까지 테스트
     for (let i = 2; i <= 6; i++) {
       // 테스트용 Prose 노드 생성
@@ -34,7 +49,11 @@ describe("handleProseComponent", () => {
       } as unknown as MdxJsxFlowElement;
 
       // handleProseComponent 함수 실행
-      const result = handleProseComponent(node, `h${i}`);
+      const result = handleProseComponent(
+        node,
+        `h${i}`,
+        mockTransformJsxComponentsFn,
+      );
 
       // 결과 검증
       expect(result).toEqual({
@@ -53,8 +72,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "단락 텍스트" }],
     } as unknown as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(node, "p");
+    const result = handleProseComponent(
+      node,
+      "p",
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -83,8 +111,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "링크 텍스트" }],
     } as unknown as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(node, "a");
+    const result = handleProseComponent(
+      node,
+      "a",
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -110,8 +147,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "링크 텍스트" }],
     } as unknown as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(node, "a");
+    const result = handleProseComponent(
+      node,
+      "a",
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -135,8 +181,17 @@ describe("handleProseComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(node, "blockquote");
+    const result = handleProseComponent(
+      node,
+      "blockquote",
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -167,8 +222,17 @@ describe("handleProseComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(node, "ul");
+    const result = handleProseComponent(
+      node,
+      "ul",
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -196,8 +260,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "알 수 없는 요소" }],
     } as unknown as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(node, "unknown");
+    const result = handleProseComponent(
+      node,
+      "unknown",
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -213,8 +286,17 @@ describe("handleProseComponent", () => {
       name: "prose.p",
     } as unknown as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(node, "p");
+    const result = handleProseComponent(
+      node,
+      "p",
+      mockTransformJsxComponentsFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({

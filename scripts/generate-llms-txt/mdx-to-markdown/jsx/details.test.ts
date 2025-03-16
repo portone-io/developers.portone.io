@@ -1,4 +1,5 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
+import type { Node } from "unist";
 import { describe, expect, it } from "vitest";
 
 import { handleDetailsComponent } from "./details";
@@ -33,8 +34,13 @@ describe("handleDetailsComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleDetailsComponent 함수 실행
-    const result = handleDetailsComponent(node);
+    const result = handleDetailsComponent(node, mockTransformJsxComponentsFn);
 
     // 결과 검증
     expect(result).toEqual({
@@ -75,8 +81,13 @@ describe("handleDetailsComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleDetailsComponent 함수 실행
-    const result = handleDetailsComponent(node);
+    const result = handleDetailsComponent(node, mockTransformJsxComponentsFn);
 
     // 결과 검증
     expect(result).toEqual({
@@ -114,8 +125,13 @@ describe("handleDetailsComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
+    // 목 transformJsxComponentsFn 함수 생성
+    const mockTransformJsxComponentsFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleDetailsComponent 함수 실행
-    const result = handleDetailsComponent(node);
+    const result = handleDetailsComponent(node, mockTransformJsxComponentsFn);
 
     // 결과 검증
     expect(result).toEqual({

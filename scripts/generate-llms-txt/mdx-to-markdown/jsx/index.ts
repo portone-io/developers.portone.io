@@ -50,7 +50,9 @@ export function transformJsxComponents(
           parent.children.splice(
             index,
             1,
-            handleProseComponent(jsxNode, proseElementType),
+            handleProseComponent(jsxNode, proseElementType, (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
+            ),
           );
           return;
         }
@@ -81,19 +83,35 @@ export function transformJsxComponents(
           replacementNode = handleFigureComponent(props);
           break;
         case "Hint":
-          replacementNode = handleHintComponent(jsxNode, props);
+          replacementNode = handleHintComponent(
+            jsxNode,
+            props,
+            (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
+          );
           break;
         case "Tabs":
-          replacementNode = handleTabsComponent(jsxNode);
+          replacementNode = handleTabsComponent(jsxNode, (innerAst: Node) =>
+            transformJsxComponents(innerAst, parseResultMap),
+          );
           break;
         case "Details":
-          replacementNode = handleDetailsComponent(jsxNode);
+          replacementNode = handleDetailsComponent(jsxNode, (innerAst: Node) =>
+            transformJsxComponents(innerAst, parseResultMap),
+          );
           break;
         case "ContentRef":
           replacementNode = handleContentRefComponent(props, parseResultMap);
           break;
         case "VersionGate":
-          replacementNode = handleVersionGateComponent(jsxNode, props);
+          // VersionGate 컴포넌트 처리 - 내부에서 재귀적으로 transformJsxComponents 호출
+          // 클로저를 사용하여 parseResultMap을 캡처한 함수 전달
+          replacementNode = handleVersionGateComponent(
+            jsxNode,
+            props,
+            (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
+          );
           break;
         case "Youtube":
           replacementNode = handleYoutubeComponent(props);
@@ -109,13 +127,28 @@ export function transformJsxComponents(
           replacementNode = handleBadgeComponent(componentName);
           break;
         case "Swagger":
-          replacementNode = handleSwaggerComponent(jsxNode, props);
+          replacementNode = handleSwaggerComponent(
+            jsxNode,
+            props,
+            (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
+          );
           break;
         case "SwaggerDescription":
-          replacementNode = handleSwaggerDescriptionComponent(jsxNode, props);
+          replacementNode = handleSwaggerDescriptionComponent(
+            jsxNode,
+            props,
+            (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
+          );
           break;
         case "SwaggerResponse":
-          replacementNode = handleSwaggerResponseComponent(jsxNode, props);
+          replacementNode = handleSwaggerResponseComponent(
+            jsxNode,
+            props,
+            (innerAst: Node) =>
+              transformJsxComponents(innerAst, parseResultMap),
+          );
           break;
         default:
           // 기본적으로 자식 노드만 유지
@@ -123,6 +156,14 @@ export function transformJsxComponents(
             type: "root",
             children: jsxNode.children || [],
           } as Parent;
+
+          // 자식 노드들에 대해 재귀적으로 transformJsxComponents 호출
+          if (
+            (replacementNode as Parent).children &&
+            (replacementNode as Parent).children.length > 0
+          ) {
+            transformJsxComponents(replacementNode, parseResultMap);
+          }
       }
 
       if (replacementNode) {

@@ -1,4 +1,5 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
+import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 import { describe, expect, it } from "vitest";
 
@@ -6,20 +7,29 @@ import { handleVersionGateComponent } from "./versionGate";
 
 describe("handleVersionGateComponent", () => {
   it("v 속성이 있는 경우 주석 스타일 박스로 내용을 감싼다", () => {
-    // 테스트용 VersionGate 노드 생성
+    // 테스트용 노드 생성
     const node = {
       type: "mdxJsxFlowElement",
       name: "VersionGate",
       children: [
         {
           type: "paragraph",
-          children: [{ type: "text", value: "V1에서 보여질 내용" }],
+          children: [{ type: "text", value: "V2에서 보여질 내용" }],
         },
       ],
-    } as MdxJsxFlowElement;
+    } as unknown as MdxJsxFlowElement;
+
+    // 목 함수 생성 (transformJsxComponentsFn)
+    const mockTransformFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
 
     // handleVersionGateComponent 함수 실행
-    const result = handleVersionGateComponent(node, { v: "v1" });
+    const result = handleVersionGateComponent(
+      node,
+      { v: "v2" },
+      mockTransformFn,
+    );
 
     // 결과 검증
     expect(result).toEqual({
@@ -30,20 +40,20 @@ describe("handleVersionGateComponent", () => {
           children: [
             {
               type: "html",
-              value: "<!-- VERSION-SPECIFIC: V1 ONLY CONTENT START -->",
+              value: "<!-- VERSION-SPECIFIC: V2 ONLY CONTENT START -->",
             },
           ],
         },
         {
           type: "paragraph",
-          children: [{ type: "text", value: "V1에서 보여질 내용" }],
+          children: [{ type: "text", value: "V2에서 보여질 내용" }],
         },
         {
           type: "paragraph",
           children: [
             {
               type: "html",
-              value: "<!-- VERSION-SPECIFIC: V1 ONLY CONTENT END -->",
+              value: "<!-- VERSION-SPECIFIC: V2 ONLY CONTENT END -->",
             },
           ],
         },
@@ -64,8 +74,13 @@ describe("handleVersionGateComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
+    // 목 함수 생성 (transformJsxComponentsFn)
+    const mockTransformFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
+    };
+
     // handleVersionGateComponent 함수 실행 (v 속성 없음)
-    const result = handleVersionGateComponent(node, {});
+    const result = handleVersionGateComponent(node, {}, mockTransformFn);
 
     // 결과 검증
     expect(result).toEqual({
@@ -87,13 +102,7 @@ describe("handleVersionGateComponent", () => {
         {
           type: "mdxJsxFlowElement",
           name: "VersionGate",
-          attributes: [
-            {
-              type: "mdxJsxAttribute",
-              name: "v",
-              value: "v2",
-            },
-          ],
+          attributes: [{ type: "mdxJsxAttribute", name: "v", value: "v2" }],
           children: [
             {
               type: "paragraph",
@@ -102,6 +111,11 @@ describe("handleVersionGateComponent", () => {
           ],
         },
       ],
+    };
+
+    // 목 함수 생성 (transformJsxComponentsFn)
+    const mockTransformFn = (_ast: Node) => {
+      // 테스트에서는 아무 작업도 하지 않음
     };
 
     // AST 변환 함수 (transformJsxComponents 함수의 일부 로직)
@@ -121,7 +135,11 @@ describe("handleVersionGateComponent", () => {
           }
 
           // VersionGate 컴포넌트 처리
-          const replacementNode = handleVersionGateComponent(node, props);
+          const replacementNode = handleVersionGateComponent(
+            node,
+            props,
+            mockTransformFn,
+          );
 
           // 노드 교체
           if (replacementNode && parent && Array.isArray(parent.children)) {
