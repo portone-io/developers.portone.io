@@ -392,7 +392,7 @@ export async function generateLlmsTxtFiles(
       transformedAst,
       fileParseMap[slug]?.frontmatter,
     );
-    fullContent += `\n\n# ${slug}\n\n${markdown}`;
+    fullContent += `\n\n# https://developers.portone.io/${slug}.md\n\n${markdown}`;
   }
   const llmsFullTxtPath = join(rootDir, "public", "llms-full.txt");
   await writeFile(llmsFullTxtPath, fullContent, "utf-8");
@@ -410,7 +410,7 @@ export async function generateLlmsTxtFiles(
       transformedAst,
       fileParseMap[slug]?.frontmatter,
     );
-    smallContent += `\n\n# ${slug}\n\n${markdown}`;
+    smallContent += `\n\n# https://developers.portone.io/${slug}.md\n\n${markdown}`;
   }
   const llmsSmallTxtPath = join(rootDir, "public", "llms-small.txt");
   await writeFile(llmsSmallTxtPath, smallContent, "utf-8");
