@@ -58,7 +58,7 @@ export function createInteractiveDoc<
   initialSelectedExample: NoInfer<
     [frontend: FrontendLanguage, backend: BackendLanguage] | HybridLanguage
   >;
-  preview: Component;
+  preview?: Component;
 }): {
   InteractiveDoc: ParentComponent;
   Section: ParentComponent<{ section?: Sections }>;
