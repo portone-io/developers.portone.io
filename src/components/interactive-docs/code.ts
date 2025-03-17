@@ -196,13 +196,8 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
    *
    * 예시:
    * ```
-   * function example() {
-   *   const config = ${({ indentObject }) => indentObject({
-   *     // 객체는 자동으로 현재 들여쓰기 레벨에 맞게 포맷팅됩니다.
-   *     name: "포트원",
-   *     settings: { enabled: true }
-   *   })}
-   * }
+   * ${({ params, indentObject }) =>
+   *   indentObject(createPaymentRequest(params, "123"))}
    * ```
    *
    * @param obj 변환할 객체
