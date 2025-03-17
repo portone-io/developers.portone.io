@@ -345,12 +345,17 @@ export async function generateDocsForLlms(
     if (includeCommon) {
       filesToInclude.push(...commonFiles);
     }
-    if (platformFiles.length > 0) {
-      filesToInclude.push(...platformFiles);
-    }
+    // 파트너정산, 릴리즈 노트, 블로그 컨텐츠 추가
+    filesToInclude.push(...platformFiles, ...releaseNoteFiles, ...blogFiles);
 
+    // 각 파일에 대한 링크 생성
     for (const slug of filesToInclude) {
-      content += createLinkWithDescription(slug);
+      // 릴리즈 노트인 경우 createReleaseNoteLink 함수 사용
+      if (slug.startsWith(PATH_PREFIXES.RELEASE_NOTES)) {
+        content += createReleaseNoteLink(slug);
+      } else {
+        content += createLinkWithDescription(slug);
+      }
     }
 
     // 문서 내용 추가
