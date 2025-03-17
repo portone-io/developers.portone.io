@@ -1,6 +1,7 @@
-# generate-docs-for-llms
+# docs-for-llms
 
 PortOne 개발자 문서를 LLM(Large Language Model)에 최적화된 형태로 변환하는 스크립트입니다.
+실행하면 `docs-for-llms/` 디렉토리가 생성됩니다.
 
 ## 기능
 
@@ -16,7 +17,7 @@ PortOne 개발자 문서를 LLM(Large Language Model)에 최적화된 형태로 
 
 ```bash
 # 프로젝트 루트 디렉토리에서 실행
-pnpm generate-docs-for-llms
+pnpm docs-for-llms
 ```
 
 ## 출력 결과
