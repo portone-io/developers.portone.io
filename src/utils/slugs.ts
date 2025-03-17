@@ -17,5 +17,6 @@ export function generateSlug(filePath: string, basePath: string): string {
   // 정규식으로 슬러그 추출
   const slug = slugRegex.exec(filePath)?.[1]?.replace(/\/index$/, "") ?? "";
 
-  return slug;
+  // 괄호로 감싸진 path component 제거
+  return slug.replace(/\([^/]+\)\//g, "");
 }
