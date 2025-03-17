@@ -246,6 +246,14 @@ export async function generateLlmsTxtFiles(
 
 > PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
 
+## 스키마 파일
+
+- [V2 GraphQL 스키마](https://developers.portone.io/schema/v2.graphql)
+- [V2 OpenAPI 스키마 (YAML)](https://developers.portone.io/schema/v2.openapi.yml)
+- [V2 OpenAPI 스키마 (JSON)](https://developers.portone.io/schema/v2.openapi.json)
+- [V1 OpenAPI 스키마 (YAML)](https://developers.portone.io/schema/v1.openapi.yml)
+- [V1 OpenAPI 스키마 (JSON)](https://developers.portone.io/schema/v1.openapi.json)
+
 `;
 
   // 공용 문서 섹션 추가
