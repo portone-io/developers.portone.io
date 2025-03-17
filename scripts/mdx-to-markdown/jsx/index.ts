@@ -29,10 +29,12 @@ import { handleYoutubeComponent } from "./youtube";
  * JSX 컴포넌트를 마크다운으로 변환하는 함수
  * @param ast MDX AST
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
+ * @param useMarkdownLinks 내부 링크를 마크다운 파일 링크로 변환할지 여부 (true: 마크다운 파일 링크, false: 웹페이지 링크)
  */
 export function transformJsxComponents(
   ast: Node,
   parseResultMap: Record<string, MdxParseResult>,
+  useMarkdownLinks: boolean = true,
 ): void {
   // JSX Flow 컴포넌트 변환
   visit(
@@ -52,7 +54,11 @@ export function transformJsxComponents(
             index,
             1,
             handleProseComponent(jsxNode, proseElementType, (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
             ),
           );
           return;
@@ -88,12 +94,16 @@ export function transformJsxComponents(
             jsxNode,
             props,
             (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
           );
           break;
         case "Tabs":
           replacementNode = handleTabsComponent(jsxNode, (innerAst: Node) =>
-            transformJsxComponents(innerAst, parseResultMap),
+            transformJsxComponents(innerAst, parseResultMap, useMarkdownLinks),
           );
           break;
         case "Tabs.Tab":
@@ -101,30 +111,46 @@ export function transformJsxComponents(
             jsxNode,
             props,
             (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
           );
           break;
         case "Details":
           replacementNode = handleDetailsComponent(jsxNode, (innerAst: Node) =>
-            transformJsxComponents(innerAst, parseResultMap),
+            transformJsxComponents(innerAst, parseResultMap, useMarkdownLinks),
           );
           break;
         case "Details.Summary":
           replacementNode = handleDetailsSummaryComponent(
             jsxNode,
             (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
           );
           break;
         case "Details.Content":
           replacementNode = handleDetailsContentComponent(
             jsxNode,
             (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
           );
           break;
         case "ContentRef":
-          replacementNode = handleContentRefComponent(props, parseResultMap);
+          replacementNode = handleContentRefComponent(
+            props,
+            parseResultMap,
+            useMarkdownLinks,
+          );
           break;
         case "VersionGate":
           // VersionGate 컴포넌트 처리 - 내부에서 재귀적으로 transformJsxComponents 호출
@@ -133,7 +159,11 @@ export function transformJsxComponents(
             jsxNode,
             props,
             (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
           );
           break;
         case "Youtube":
@@ -154,7 +184,11 @@ export function transformJsxComponents(
             jsxNode,
             props,
             (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
           );
           break;
         case "SwaggerDescription":
@@ -162,7 +196,11 @@ export function transformJsxComponents(
             jsxNode,
             props,
             (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
           );
           break;
         case "SwaggerResponse":
@@ -170,7 +208,11 @@ export function transformJsxComponents(
             jsxNode,
             props,
             (innerAst: Node) =>
-              transformJsxComponents(innerAst, parseResultMap),
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
           );
           break;
         default:
@@ -185,7 +227,11 @@ export function transformJsxComponents(
             (replacementNode as Parent).children &&
             (replacementNode as Parent).children.length > 0
           ) {
-            transformJsxComponents(replacementNode, parseResultMap);
+            transformJsxComponents(
+              replacementNode,
+              parseResultMap,
+              useMarkdownLinks,
+            );
           }
       }
 

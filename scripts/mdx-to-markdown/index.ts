@@ -13,12 +13,14 @@ import { type Frontmatter, type MdxParseResult } from "./mdx-parser";
  * JSX 컴포넌트 변환, 임포트 구문 제거, YAML 노드 제거 등의 처리를 수행
  * @param slug 변환할 MDX 파일의 slug
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
+ * @param useMarkdownLinks 내부 링크를 마크다운 파일 링크로 변환할지 여부 (true: 마크다운 파일 링크, false: 웹페이지 링크)
  * @returns 변환된 AST 노드
  * @throws Error parseResult를 찾을 수 없는 경우 예외 발생
  */
 export function transformAstForMarkdown(
   slug: string,
   parseResultMap: Record<string, MdxParseResult>,
+  useMarkdownLinks: boolean = true,
 ): Root {
   // slug에 해당하는 parseResult 가져오기
   const parseResult = parseResultMap[slug];
@@ -33,8 +35,8 @@ export function transformAstForMarkdown(
   // AST 복제 (원본 변경 방지)
   const ast = JSON.parse(JSON.stringify(parseResult.ast));
 
-  // JSX 컴포넌트를 마크다운으로 변환
-  transformJsxComponents(ast, parseResultMap);
+  // JSX 컴포넌트를 마크다운으로 변환 (useMarkdownLinks 파라미터 전달)
+  transformJsxComponents(ast, parseResultMap, useMarkdownLinks);
 
   // 임포트 구문 제거
   removeImports(ast);
