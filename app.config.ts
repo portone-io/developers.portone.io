@@ -3,6 +3,7 @@ import path from "node:path";
 
 import remarkParamTree from "@portone-io/remark-param-tree";
 import yaml from "@rollup/plugin-yaml";
+import { withSentry } from '@sentry/solidstart';
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import { defineConfig } from "@solidjs/start/config";
@@ -19,7 +20,7 @@ import { indexFilesMapping } from "./src/misc/contentIndex";
 
 const { default: vinxiMdx } = vinxiMdxPkg;
 
-export default defineConfig({
+export default defineConfig(withSentry({
   server: {
     preset: "vercel",
     prerender: {
@@ -137,4 +138,12 @@ export default defineConfig({
   solid: {
     exclude: ["./src/misc/opengraph/**/*"],
   },
-});
+},
+{ 
+  org: "iamport-corp",
+  project: "developers-portone-io",
+  authToken: process.env?.VITE_SENTRY_AUTH_TOKEN,
+  sourceMapsUploadOptions: {
+    telemetry: false
+  }
+}));
