@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import fastGlob from "fast-glob";
 import type { Root } from "mdast";
 
-import { type MdxParseResult, parseMdxFile } from "./mdx-parser";
+import { type MdxParseResult, parseMdxFile } from "./mdx-to-markdown/mdx-parser";
 import {
   astToMarkdownString,
   transformAstForMarkdown,

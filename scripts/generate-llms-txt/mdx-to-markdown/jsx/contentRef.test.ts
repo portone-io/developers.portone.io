@@ -1,7 +1,7 @@
-import type { MdxParseResult } from "scripts/generate-llms-txt/mdx-parser";
 import type { Node } from "unist";
 import { describe, expect, it } from "vitest";
 
+import type { MdxParseResult } from "../mdx-parser";
 import { handleContentRefComponent } from "./contentRef";
 
 describe("handleContentRefComponent", () => {

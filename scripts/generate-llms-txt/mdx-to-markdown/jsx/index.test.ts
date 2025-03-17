@@ -2,7 +2,7 @@ import type { Root } from "mdast";
 import type { Node } from "unist";
 import { describe, expect, it } from "vitest";
 
-import type { MdxParseResult } from "../../mdx-parser";
+import type { MdxParseResult } from "../mdx-parser";
 import { transformJsxComponents } from ".";
 
 describe("transformJsxComponents", () => {

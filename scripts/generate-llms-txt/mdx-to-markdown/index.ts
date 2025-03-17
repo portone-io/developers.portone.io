@@ -5,8 +5,8 @@ import remarkStringify from "remark-stringify";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
-import { type Frontmatter, type MdxParseResult } from "../mdx-parser";
 import { transformJsxComponents } from "./jsx";
+import { type Frontmatter, type MdxParseResult } from "./mdx-parser";
 
 /**
  * MDX AST를 마크다운용 AST로 변환하는 함수

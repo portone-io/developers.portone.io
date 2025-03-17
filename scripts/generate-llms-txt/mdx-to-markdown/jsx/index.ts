@@ -2,7 +2,7 @@ import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node, Parent } from "unist";
 import { visit } from "unist-util-visit";
 
-import { type MdxParseResult } from "../../mdx-parser";
+import { type MdxParseResult } from "../mdx-parser";
 import { handleApiLinkComponent } from "./apiLink";
 import { handleBadgeComponent } from "./badge";
 import { extractCodeContent } from "./code";

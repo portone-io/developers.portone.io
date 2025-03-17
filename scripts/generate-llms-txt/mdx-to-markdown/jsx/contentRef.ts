@@ -1,4 +1,4 @@
-import type { MdxParseResult } from "scripts/generate-llms-txt/mdx-parser";
+import type { MdxParseResult } from "../mdx-parser";
 
 /**
  * ConentRef 컴포넌트 처리

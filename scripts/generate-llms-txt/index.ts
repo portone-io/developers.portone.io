@@ -4,7 +4,7 @@ import {
   saveMarkdownFiles,
   transformAllMdxToAst,
 } from "./generator";
-import type { MdxParseResult } from "./mdx-parser";
+import type { MdxParseResult } from "./mdx-to-markdown/mdx-parser";
 
 /**
  * 메인 함수
