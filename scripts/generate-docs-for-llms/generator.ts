@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { cp, mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -19,6 +19,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
 const outputDir = join(rootDir, "public", "markdown");
 const docsForLlmsDir = join(rootDir, "docs-for-llms");
+const schemaDir = join(rootDir, "public", "schema");
+const docsForLlmsSchemaDir = join(docsForLlmsDir, "schema");
 
 /**
  * 모든 MDX 파일을 파싱하고 결과를 맵으로 반환하는 함수
@@ -148,6 +150,25 @@ export async function generateDocsForLlms(
 
   // docs-for-llms 디렉토리 생성
   await mkdir(docsForLlmsDir, { recursive: true });
+
+  // schema 디렉토리 생성 및 파일 복사
+  await mkdir(docsForLlmsSchemaDir, { recursive: true });
+  try {
+    // 각 스키마 파일을 개별적으로 복사
+    const schemaFiles = [
+      "v1.openapi.yml",
+      "v1.openapi.json",
+      "v2.graphql",
+      "v2.openapi.yml",
+      "v2.openapi.json",
+    ];
+    for (const file of schemaFiles) {
+      await cp(join(schemaDir, file), join(docsForLlmsSchemaDir, file));
+    }
+    console.log(`스키마 파일이 ${docsForLlmsSchemaDir}로 복사되었습니다.`);
+  } catch (error) {
+    console.error(`스키마 파일 복사 중 오류 발생:`, error);
+  }
 
   // 문서 카테고리 경로 접두사 정의
   const PATH_PREFIXES = {
@@ -325,6 +346,22 @@ export async function generateDocsForLlms(
     return content;
   };
 
+  // 스키마 파일 링크 생성 함수
+  const createSchemaLinks = (version: string) => {
+    let content = `\n### ${version} 스키마 파일\n\n`;
+
+    if (version === "V1") {
+      content += `- [V1 OpenAPI YAML](https://developers.portone.io/schema/v1.openapi.yml)\n`;
+      content += `- [V1 OpenAPI JSON](https://developers.portone.io/schema/v1.openapi.json)\n`;
+    } else if (version === "V2") {
+      content += `- [V2 GraphQL 스키마](https://developers.portone.io/schema/v2.graphql)\n`;
+      content += `- [V2 OpenAPI YAML](https://developers.portone.io/schema/v2.openapi.yml)\n`;
+      content += `- [V2 OpenAPI JSON](https://developers.portone.io/schema/v2.openapi.json)\n`;
+    }
+
+    return content;
+  };
+
   // 전체 문서 파일 생성 함수
   const generateFullDocFile = async (
     filePath: string,
@@ -340,6 +377,13 @@ export async function generateDocsForLlms(
 
 `;
 
+    // 스키마 파일 링크 추가
+    if (title.includes("V1")) {
+      content += createSchemaLinks("V1");
+    } else if (title.includes("V2")) {
+      content += createSchemaLinks("V2");
+    }
+
     // 목차 생성
     const filesToInclude = [...versionFiles];
     if (includeCommon) {
@@ -348,12 +392,67 @@ export async function generateDocsForLlms(
     // 파트너정산, 릴리즈 노트, 블로그 컨텐츠 추가
     filesToInclude.push(...platformFiles, ...releaseNoteFiles, ...blogFiles);
 
-    // 각 파일에 대한 링크 생성
-    for (const slug of filesToInclude) {
-      // 릴리즈 노트인 경우 createReleaseNoteLink 함수 사용
-      if (slug.startsWith(PATH_PREFIXES.RELEASE_NOTES)) {
+    // 섹션별로 목차 구성
+    const version = title.includes("V1") ? "V1" : "V2";
+
+    // SDK 문서 목차
+    const sdkFiles = filesToInclude.filter((slug) =>
+      slug.startsWith(PATH_PREFIXES.SDK),
+    );
+    if (sdkFiles.length > 0) {
+      content += `\n### ${version} SDK\n\n`;
+      for (const slug of sdkFiles) {
+        content += createLinkWithDescription(slug);
+      }
+    }
+
+    // API 문서 목차
+    const apiFiles = filesToInclude.filter((slug) =>
+      slug.startsWith(PATH_PREFIXES.API),
+    );
+    if (apiFiles.length > 0) {
+      content += `\n### ${version} API 레퍼런스\n\n`;
+      for (const slug of apiFiles) {
+        content += createLinkWithDescription(slug);
+      }
+    }
+
+    // 통합 가이드 및 기타 문서 목차
+    const otherFiles = filesToInclude.filter(
+      (slug) =>
+        !slug.startsWith(PATH_PREFIXES.SDK) &&
+        !slug.startsWith(PATH_PREFIXES.API) &&
+        !slug.startsWith(PATH_PREFIXES.PLATFORM) &&
+        !slug.startsWith(PATH_PREFIXES.RELEASE_NOTES) &&
+        !slug.startsWith(PATH_PREFIXES.BLOG),
+    );
+    if (otherFiles.length > 0) {
+      content += `\n### ${version} 통합 가이드\n\n`;
+      for (const slug of otherFiles) {
+        content += createLinkWithDescription(slug);
+      }
+    }
+
+    // 파트너정산 문서 목차
+    if (platformFiles.length > 0) {
+      content += `\n### 파트너정산\n\n`;
+      for (const slug of platformFiles) {
+        content += createLinkWithDescription(slug);
+      }
+    }
+
+    // 릴리즈 노트 목차
+    if (releaseNoteFiles.length > 0) {
+      content += `\n### 릴리스 노트\n\n`;
+      for (const slug of releaseNoteFiles) {
         content += createReleaseNoteLink(slug);
-      } else {
+      }
+    }
+
+    // 블로그 목차
+    if (blogFiles.length > 0) {
+      content += `\n### 블로그\n\n`;
+      for (const slug of blogFiles) {
         content += createLinkWithDescription(slug);
       }
     }
@@ -369,6 +468,14 @@ export async function generateDocsForLlms(
   let readmeContent = `# PortOne 개발자 문서
 
 > PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
+
+## 스키마 파일
+
+- [V1 OpenAPI YAML](https://developers.portone.io/schema/v1.openapi.yml)
+- [V1 OpenAPI JSON](https://developers.portone.io/schema/v1.openapi.json)
+- [V2 GraphQL 스키마](https://developers.portone.io/schema/v2.graphql)
+- [V2 OpenAPI YAML](https://developers.portone.io/schema/v2.openapi.yml)
+- [V2 OpenAPI JSON](https://developers.portone.io/schema/v2.openapi.json)
 
 `;
 
