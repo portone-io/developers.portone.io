@@ -35,6 +35,9 @@ export function transformAstForMarkdown(
   // AST 복제 (원본 변경 방지)
   const ast = JSON.parse(JSON.stringify(parseResult.ast));
 
+  // 기존 마크다운 형식 링크 변환
+  transformLinks(ast, useMarkdownLinks);
+
   // JSX 컴포넌트를 마크다운으로 변환 (useMarkdownLinks 파라미터 전달)
   transformJsxComponents(ast, parseResultMap, useMarkdownLinks);
 
@@ -92,6 +95,48 @@ export function astToMarkdownString(
 
   // 프론트매터와 마크다운 내용 결합
   return frontmatterStr + markdownContent;
+}
+
+/**
+ * 미리 존재하는 마크다운 링크를 알맞게 변환합니다.
+ *
+ * @param ast 변환할 AST
+ * @param [useMarkdownLinks=true] true이면 마크다운 경로로, false이면 웹페이지 경로로 변환합니다.
+ */
+function transformLinks(ast: Node, useMarkdownLinks: boolean = true): void {
+  const BASE_URL = "https://developers.portone.io";
+
+  // 링크 노드를 찾아 변환
+  visit(ast, "link", (node: any) => {
+    const url = node.url;
+
+    // 이미 hostname이 있는 외부 링크는 변환하지 않음
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return;
+    }
+
+    // 내부 링크인 경우 (슬래시로 시작하는 경우)
+    if (url.startsWith("/")) {
+      // URL 파싱 (쿼리 파라미터와 해시 프래그먼트 처리)
+      const urlParts = url.split(/[?#]/);
+      const path = urlParts[0];
+      const queryAndHash = url.substring(path.length);
+
+      // 기본 URL에 경로 추가
+      let newUrl = `${BASE_URL}${path}`;
+
+      // useMarkdownLinks가 true이면 .md 확장자 추가
+      if (useMarkdownLinks) {
+        newUrl += ".md";
+      }
+
+      // 쿼리 파라미터와 해시 프래그먼트 다시 추가
+      newUrl += queryAndHash;
+
+      // 노드 URL 업데이트
+      node.url = newUrl;
+    }
+  });
 }
 
 /**
