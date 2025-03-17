@@ -70,7 +70,7 @@
 ## 사용법
 
 ```bash
-pnpm generate-llms-txt
+pnpm llms-txt
 ```
 
 이 명령어는 모든 MDX 파일을 마크다운으로 변환하고, llms.txt, llms-full.txt, llms-small.txt 파일을 생성합니다.
