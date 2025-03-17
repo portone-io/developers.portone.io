@@ -12,11 +12,11 @@ import { unified } from "unified";
 import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 
-import { generateSlug as originalGenerateSlug } from "../../../src/utils/slugs";
+import { generateSlug as originalGenerateSlug } from "../../src/utils/slugs";
 
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const rootDir = join(__dirname, "../../..");
+const rootDir = join(__dirname, "../..");
 
 // Frontmatter 타입 정의
 export type Frontmatter = {

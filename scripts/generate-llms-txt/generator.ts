@@ -5,11 +5,14 @@ import { fileURLToPath } from "node:url";
 import fastGlob from "fast-glob";
 import type { Root } from "mdast";
 
-import { type MdxParseResult, parseMdxFile } from "./mdx-to-markdown/mdx-parser";
 import {
   astToMarkdownString,
   transformAstForMarkdown,
-} from "./mdx-to-markdown";
+} from "../mdx-to-markdown";
+import {
+  type MdxParseResult,
+  parseMdxFile,
+} from "../mdx-to-markdown/mdx-parser";
 
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
