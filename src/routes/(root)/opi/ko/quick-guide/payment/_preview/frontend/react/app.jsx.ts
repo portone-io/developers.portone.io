@@ -1,12 +1,6 @@
 import { code } from "~/components/interactive-docs/index.jsx";
 
-import {
-  createPaymentRequest,
-  isCustomerEmailRequired,
-  isCustomerNameRequired,
-  isCustomerPhoneNumberRequired,
-  isCustomerRequired,
-} from "../../request";
+import { createPaymentRequest } from "../../request";
 import type { Params, Sections } from "../../type";
 
 export default code<{
@@ -54,32 +48,30 @@ export function App() {
     setPaymentStatus({ status: "PENDING" })
     ${({ section }) => section("client:request-payment")`
     const paymentId = randomId()
-    const payment = await PortOne.requestPayment({
-      storeId: ${({ params }) => code`"${createPaymentRequest(params, "").storeId}"`},
-      channelKey: ${({ params }) => code`"${createPaymentRequest(params, "").channelKey}"`},
+    const payment = await PortOne.requestPayment(${({ params }) => {
+      // @ts-expect-error(2339)
+      const { storeId, channelKey, payMethod, customer, virtualAccount } =
+        createPaymentRequest(params, "");
+      return code`{
+      storeId: "${storeId}",
+      channelKey: "${channelKey}",
       paymentId,
       orderName: item.name,
       totalAmount: item.price,
       currency: item.currency,
-      payMethod: ${({ params }) => code`"${createPaymentRequest(params, "").payMethod}"`},
-      ${({ when }) => when(isCustomerRequired)`
-      customer: {
-         ${({ when }) => when(isCustomerNameRequired)`
-        fullName: '포트원',
-         `}
-         ${({ when }) => when(isCustomerPhoneNumberRequired)`
-        phoneNumber: '01012341234',
-         `}
-         ${({ when }) => when(isCustomerEmailRequired)`
-        email: 'example@portone.io',
-         `}
-      },
+      payMethod: "${payMethod}",
+      ${({ when }) => when(() => customer !== undefined)`
+      customer: ${({ indentObject }) => indentObject(customer)},
+      `}
+      ${({ when }) => when(() => virtualAccount !== undefined)`
+      virtualAccount: ${({ indentObject }) => indentObject(virtualAccount)},
       `}
       customData: {
         item: item.id,
       },
-    })
-    `}
+      `;
+    }}
+    )`}
     ${({ section }) => section("client:handle-payment-error")`
     if (payment.code !== undefined) {
       setPaymentStatus({
