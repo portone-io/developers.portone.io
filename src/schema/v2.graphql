@@ -4308,6 +4308,8 @@ input PausePromotionInput {
 input PaymentReconciliationFilterInput {
   "거래대사 하위 가맹점 아이디 필터"
   storeIds: [ID]
+  "거래대사 채널 키 필터"
+  channelKeys: [String!]
   "거래대사 결제사(PG) 식별자 필터"
   pgSpecifiers: [ReconciliationPgSpecifierInput!]
   "거래대사 결제 수단 필터"
@@ -8555,13 +8557,13 @@ type LoginViaApiSecretPayload {
 """
 인증에 사용하는 엑세스 토큰
 
-하루의 유효기간을 가지고 있습니다.
+30분의 유효기간을 가지고 있습니다.
 """
   accessToken: String!
 """
 토큰 재발급 및 유효기간 연장을 위해 사용하는 리프레시 토큰
 
-일주일의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.
+하루의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.
 동일한 유저가 로그인 또는 토큰 재발급을 진행할 때마다 기존에 발급된 리프레시 토큰은 즉시 만료되므로 API 사용에 유의해주세요.
 """
   refreshToken: String!
@@ -8720,6 +8722,8 @@ type MerchantBillingInstance implements Node {
   chargedDate: Date!
   "이용 기간"
   period: MerchantBillingPeriod!
+  "매출전표"
+  receiptUrl: String
 }
 
 type MerchantBillingInstancesPayload {
@@ -9250,7 +9254,7 @@ id를 입력하여 연동 사업자 id를 부여할 수 있고, merchant를 연�
 """
   connectBulkPartnerMemberCompany(input: ConnectBulkPartnerMemberCompanyInput!): ConnectBulkPartnerMemberCompanyOutput!
 """
-파트너 연동 사업자 일괄 연동 해제
+파트너 연동 사업자 연동 해제
 
 파트너들을 연동 사업자에서 일괄 연동 해제합니다.
 """
@@ -12794,13 +12798,13 @@ type RefreshTokenPayload {
 """
 인증에 사용하는 엑세스 토큰
 
-하루의 유효기간을 가지고 있습니다.
+30분의 유효기간을 가지고 있습니다.
 """
   accessToken: String!
 """
 토큰 재발급 및 유효기간 연장을 위해 사용하는 리프레시 토큰
 
-일주일의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.
+하루의 유효기간을 가지고 있으며, 리프레시 토큰을 통해 유효기간이 연장된 새로운 엑세스 토큰을 발급받을 수 있습니다.
 동일한 유저가 로그인 또는 토큰 재발급을 진행할 때마다 기존에 발급된 리프레시 토큰은 즉시 만료되므로 API 사용에 유의해주세요.
 """
   refreshToken: String!
