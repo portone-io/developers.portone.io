@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -413,4 +413,40 @@ export async function generateLlmsTxtFiles(
   console.log(`llms-small.txt 파일이 생성되었습니다: ${llmsSmallTxtPath}`);
 
   return llmsTxtPath;
+}
+
+/**
+ * src/schema 디렉토리의 모든 파일을 public/schema 디렉토리로 복사하는 함수
+ * @returns 복사된 파일 경로의 배열
+ */
+export async function copySchemaFiles(): Promise<string[]> {
+  // 소스 및 대상 디렉토리 경로 설정
+  const sourceDir = join(rootDir, "src", "schema");
+  const targetDir = join(rootDir, "public", "schema");
+
+  console.log(`스키마 파일을 복사합니다: ${sourceDir} -> ${targetDir}`);
+
+  // 대상 디렉토리 생성 (없는 경우)
+  await mkdir(targetDir, { recursive: true });
+
+  // 소스 디렉토리의 모든 파일 읽기
+  const files = await readdir(sourceDir);
+  const copiedFiles: string[] = [];
+
+  // 각 파일을 대상 디렉토리로 복사
+  for (const file of files) {
+    const sourcePath = join(sourceDir, file);
+    const targetPath = join(targetDir, file);
+
+    try {
+      await copyFile(sourcePath, targetPath);
+      copiedFiles.push(targetPath);
+      console.log(`스키마 파일 복사 완료: ${sourcePath} -> ${targetPath}`);
+    } catch (error) {
+      console.error(`스키마 파일 복사 중 오류 발생: ${sourcePath}`, error);
+    }
+  }
+
+  console.log(`총 ${copiedFiles.length}개의 스키마 파일이 복사되었습니다.`);
+  return copiedFiles;
 }

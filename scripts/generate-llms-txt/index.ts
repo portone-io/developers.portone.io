@@ -1,4 +1,5 @@
 import {
+  copySchemaFiles,
   generateLlmsTxtFiles,
   parseAllMdxFiles,
   saveMarkdownFiles,
@@ -32,7 +33,11 @@ export async function main() {
       transformedAstMap,
     );
 
+    // src/schema 디렉토리의 모든 파일을 public/schema 디렉토리로 복사
+    const copiedSchemaFiles = await copySchemaFiles();
+
     console.log(`작업이 완료되었습니다. 생성된 파일: ${llmsTxtPath}`);
+    console.log(`복사된 스키마 파일: ${copiedSchemaFiles.length}개`);
   } catch (error) {
     console.error("오류 발생:", error);
     process.exit(1);
