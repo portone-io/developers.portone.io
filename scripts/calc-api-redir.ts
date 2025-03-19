@@ -2,6 +2,7 @@
 
 import { walkSync } from "jsr:@std/fs@1.0.2/walk";
 import { stringify } from "jsr:@std/yaml@1.0.4";
+
 import schema from "../src/schema/v1.openapi.json" with { type: "json" };
 
 const redirList = [];
@@ -17,9 +18,9 @@ for (const { isFile, path } of walkSync("src/content/docs/ko/api")) {
   const category = op?.["x-portone-category"] || "";
   const redir = {
     old: path.slice("src/content/docs".length, -".mdx".length),
-    new: `https://developers.portone.io/api/rest-v1/${category}#${
-      encodeURIComponent(`${method} ${apipath}`)
-    }`,
+    new: `https://developers.portone.io/api/rest-v1/${category}#${encodeURIComponent(
+      `${method} ${apipath}`,
+    )}`,
   };
   redirList.push(redir);
 }

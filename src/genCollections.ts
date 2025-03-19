@@ -22,6 +22,7 @@ import type {
   Import,
   parseFrontmatter,
 } from "./content/config";
+import { generateSlug } from "./utils/slugs";
 
 type Collection = {
   files: Set<string>;
@@ -61,15 +62,9 @@ async function getCollection(
     files = new Set(allFiles.filter((path) => !path.includes("/_")));
   }
 
-  const slugRegex = new RegExp(
-    `^${config.path
-      .replaceAll(/\(/g, "\\(")
-      .replaceAll(/\)/g, "\\)")}/([\\s\\S]+)\\.mdx$`,
-  );
-
   const entries = await Promise.all(
     [...files].map(async (file) => {
-      const slug = slugRegex.exec(file)?.[1]?.replace(/\/index$/, "") ?? "";
+      const slug = generateSlug(file, config.path);
       const content = await fs.readFile(file, "utf-8");
       const parsed = await parseMdx(
         config,

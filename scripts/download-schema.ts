@@ -10,7 +10,10 @@ import { getToken } from "https://deno.land/x/pbkit@v0.0.70/misc/github/index.ts
 import { Input } from "jsr:@cliffy/prompt@1.0.0-rc.5/input";
 import { render as renderGfm } from "jsr:@deno/gfm@0.9.0";
 import { ensureFile } from "jsr:@std/fs@1.0.2/ensure-file";
-import { parse as parseYaml } from "jsr:@std/yaml@1.0.4";
+import {
+  parse as parseYaml,
+  stringify as stringifyYaml,
+} from "jsr:@std/yaml@1.0.4";
 
 const mdProperties = new Set([
   "summary",
@@ -28,13 +31,13 @@ const downloadFns: { [key in Schema]: () => Promise<void> } = {
 };
 
 if (import.meta.main) {
-  const schema = await Input.prompt({
+  const schema = (await Input.prompt({
     message: "내려받을 스키마를 선택해주세요.",
     default: schemas[0],
     list: true,
     info: true,
     suggestions: schemas as unknown as Schema[],
-  }) as Schema;
+  })) as Schema;
   if (schema in downloadFns) await downloadFns[schema]();
   else {
     console.log("지원하지 않는 스키마입니다.");
@@ -59,20 +62,29 @@ export function processV1Openapi(schema: any): any {
 export async function downloadV1Openapi() {
   const src = "https://api.iamport.kr/api/docs";
   // const src = "https://core-api.stg.iamport.co/api/docs";
-  const dst = import.meta.resolve("../src/schema/v1.openapi.json");
+  const jsonDst = import.meta.resolve("../src/schema/v1.openapi.json");
+  const yamlDst = import.meta.resolve("../src/schema/v1.openapi.yml");
   console.log(`스키마 위치: ${src}`);
-  console.log(`저장할 위치: ${dst}`);
+  console.log(`저장할 위치 (JSON): ${jsonDst}`);
+  console.log(`저장할 위치 (YAML): ${yamlDst}`);
   console.log("내려받는 중...");
   const res = await fetch(src);
   const schema = processV1Openapi(await res.json());
   const json = JSON.stringify(schema, null, 2);
-  await touchAndSaveText(dst, json);
+
+  // src 디렉터리에 JSON 저장
+  await touchAndSaveText(jsonDst, json);
+
+  // src 디렉터리에 YAML 저장 (JSON을 YAML로 변환)
+  const yaml = stringifyYaml(schema);
+  await touchAndSaveText(yamlDst, yaml);
+
   console.log("완료");
 }
 
 export function processV2Openapi(schema: any): any {
-  schema.servers = (schema.servers as { url: string }[]).filter((server) =>
-    !server.url.endsWith(".iamport.co")
+  schema.servers = (schema.servers as { url: string }[]).filter(
+    (server) => !server.url.endsWith(".iamport.co"),
   );
   schema["x-portone-categories"] = filterCategories(
     schema["x-portone-categories"],
@@ -95,7 +107,7 @@ export function processV2Openapi(schema: any): any {
     node.properties ||= {};
     for (const field in node["x-portone-fields"]) {
       Object.assign(
-        node.properties[field] ||= {},
+        (node.properties[field] ||= {}),
         node["x-portone-fields"][field],
       );
     }
@@ -112,15 +124,28 @@ export function processV2Openapi(schema: any): any {
 export async function downloadV2Openapi() {
   const src =
     "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/openapi.yml";
-  const dst = import.meta.resolve("../src/schema/v2.openapi.json");
+  const jsonDst = import.meta.resolve("../src/schema/v2.openapi.json");
+  const yamlDst = import.meta.resolve("../src/schema/v2.openapi.yml");
   const token = await ensureLoggedIn();
   console.log(`스키마 위치: ${src}`);
-  console.log(`저장할 위치: ${dst}`);
+  console.log(`저장할 위치 (src JSON): ${jsonDst}`);
+  console.log(`저장할 위치 (src YAML): ${yamlDst}`);
   console.log("내려받는 중...");
   const yaml = await fetchTextFromGithub(src, token);
-  const schema = processV2Openapi(parseYaml(yaml));
-  const json = JSON.stringify(schema, null, 2);
-  await touchAndSaveText(dst, json);
+
+  // YAML 파싱 및 처리
+  const processedSchema = processV2Openapi(parseYaml(yaml));
+
+  // 처리된 스키마를 JSON과 YAML로 변환
+  const processedJson = JSON.stringify(processedSchema, null, 2);
+  const processedYaml = stringifyYaml(processedSchema);
+
+  // src 디렉터리에 JSON 저장
+  await touchAndSaveText(jsonDst, processedJson);
+
+  // src 디렉터리에 YAML 저장
+  await touchAndSaveText(yamlDst, processedYaml);
+
   console.log("완료");
 }
 
@@ -130,10 +155,13 @@ export async function downloadV2Graphql() {
   const dst = import.meta.resolve("../src/schema/v2.graphql");
   const token = await ensureLoggedIn();
   console.log(`스키마 위치: ${src}`);
-  console.log(`저장할 위치: ${dst}`);
+  console.log(`저장할 위치 (src): ${dst}`);
   console.log("내려받는 중...");
   const graphql = await fetchTextFromGithub(src, token);
+
+  // src 디렉터리에 저장
   await touchAndSaveText(dst, graphql);
+
   console.log("완료");
 }
 
@@ -196,18 +224,18 @@ export function traverseEveryProperty(
   }
 }
 
-function filterCategories(
-  list: any[],
-): any[] {
-  return list.filter((object) => object.invisible !== true).map((object) => {
-    if (Array.isArray(object.children)) {
-      return {
-        ...object,
-        children: filterCategories(object.children),
-      };
-    }
-    return object;
-  });
+function filterCategories(list: any[]): any[] {
+  return list
+    .filter((object) => object.invisible !== true)
+    .map((object) => {
+      if (Array.isArray(object.children)) {
+        return {
+          ...object,
+          children: filterCategories(object.children),
+        };
+      }
+      return object;
+    });
 }
 
 function collectCategoryIds(

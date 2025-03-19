@@ -45,7 +45,7 @@ import Hint from "~/components/Hint";
 <Hint style="info">Hint 컴포넌트는 이와 같이 활용합니다.</Hint>;
 ```
 
-### `<Tabs>` & `<Tab>`
+### `<Tabs>` & `<Tabs.Tab>`
 
 ![Tabs 컴포넌트 활용 예시 스크린샷](./.github/docs/tabs-screenshot.png)
 
