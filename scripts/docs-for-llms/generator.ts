@@ -17,9 +17,8 @@ import {
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
-const outputDir = join(rootDir, "public", "markdown");
 const docsForLlmsDir = join(rootDir, "docs-for-llms");
-const schemaDir = join(rootDir, "public", "schema");
+const schemaDir = join(rootDir, "src", "schema");
 const docsForLlmsSchemaDir = join(docsForLlmsDir, "schema");
 
 /**
@@ -99,7 +98,7 @@ export function transformAllMdxToAst(
  * @param fileParseMap 파일 경로와 파싱 결과를 매핑한 객체
  * @param transformedAstMap 변환된 AST 노드 매핑 (slug -> Node)
  */
-export async function saveMarkdownFiles(
+async function saveMarkdownFiles(
   fileParseMap: Record<string, MdxParseResult>,
   transformedAstMap: Record<string, Root>,
 ): Promise<void> {
@@ -116,7 +115,7 @@ export async function saveMarkdownFiles(
       const markdown = astToMarkdownString(transformedAst, frontmatter);
 
       // 저장할 파일 경로 생성
-      const outputPath = join(outputDir, `${slug}.md`);
+      const outputPath = join(docsForLlmsDir, `${slug}.md`);
 
       // 디렉토리 생성
       await mkdir(dirname(outputPath), { recursive: true });
@@ -528,28 +527,7 @@ export async function generateDocsForLlms(
   await generateMarkdownFile(readmePath, readmeContent);
 
   // 각 마크다운 파일을 docs-for-llms 디렉토리에 저장
-  for (const slug of slugs) {
-    try {
-      const transformedAst = transformedAstMap[slug];
-      if (transformedAst == null)
-        throw new Error(`${slug}에 대한 AST 변환 결과를 찾을 수 없습니다.`);
-      const frontmatter = fileParseMap[slug]?.frontmatter;
-
-      // 마크다운 문자열로 변환
-      const markdown = astToMarkdownString(transformedAst, frontmatter);
-
-      // 저장할 파일 경로 생성
-      const outputPath = join(docsForLlmsDir, `${slug}.md`);
-
-      // 디렉토리 생성
-      await mkdir(dirname(outputPath), { recursive: true });
-
-      // 파일 저장
-      await writeFile(outputPath, markdown, "utf-8");
-    } catch (error) {
-      console.error(`${slug} 마크다운 파일 저장 중 오류 발생:`, error);
-    }
-  }
+  await saveMarkdownFiles(fileParseMap, transformedAstMap);
 
   // 전체 문서 파일 생성
   await generateFullDocFile(

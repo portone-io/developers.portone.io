@@ -2,7 +2,6 @@ import type { MdxParseResult } from "../mdx-to-markdown/mdx-parser";
 import {
   generateDocsForLlms,
   parseAllMdxFiles,
-  saveMarkdownFiles,
   transformAllMdxToAst,
 } from "./generator";
 
@@ -22,9 +21,6 @@ export async function main() {
 
     // MDX 파일을 마크다운 AST로 변환 (웹페이지 링크 사용)
     const transformedAstMap = transformAllMdxToAst(fileParseMap, false);
-
-    // 변환된 AST를 마크다운 파일로 저장
-    await saveMarkdownFiles(fileParseMap, transformedAstMap);
 
     // 변환된 AST를 재사용하여 docs-for-llms 디렉토리 생성
     const docsForLlmsPath = await generateDocsForLlms(
