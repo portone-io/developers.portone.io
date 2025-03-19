@@ -9,7 +9,8 @@
 - Test: `pnpm test`
 - Test with watch mode: `pnpm test:watch`
 - Test single file: `pnpm test path/to/file.spec.ts`
-- Generate llms.txt files: `pnpm generate-llms-txt`
+- Generate llms.txt files: `pnpm llms-txt`
+- Generate a document directory for LLMs: `pnpm llms-txt`
 
 ## Code Style Guidelines
 - **TypeScript**: Strict mode, no unused variables/parameters, no implicit returns
@@ -31,5 +32,5 @@
 - Monorepo using pnpm workspaces
 - Node requirement: >=22.6.0
 - Path aliases: `~/*` → `./src/*`
-- Important scripts: `generate-llms-txt`, `update-schema`, `gen-collections`
+- Important scripts: `update-schema`, `gen-collections`, `llms-txt`, `docs-for-llms`
 - Pre-commit workflow: Run linting and type checking before commits
