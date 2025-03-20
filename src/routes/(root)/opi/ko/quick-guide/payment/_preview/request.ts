@@ -177,11 +177,17 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "nice", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.nice.virtualAccount),
     )
+    .with({ pg: { name: "nice", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.nice.easyPay),
+    )
     .with({ pg: { name: "smartro", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.smartro.card),
     )
     .with({ pg: { name: "smartro", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.smartro.virtualAccount),
+    )
+    .with({ pg: { name: "smartro", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.smartro.easyPay),
     )
     .with({ pg: { name: "inicis", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.inicis.card),
@@ -189,11 +195,17 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "inicis", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.inicis.virtualAccount),
     )
+    .with({ pg: { name: "inicis", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.inicis.easyPay),
+    )
     .with({ pg: { name: "kcp", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.kcp.card),
     )
     .with({ pg: { name: "kcp", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.kcp.virtualAccount),
+    )
+    .with({ pg: { name: "kcp", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.kcp.easyPay),
     )
     .with({ pg: { name: "kpn", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.kpn.card),
@@ -201,11 +213,17 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "kpn", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.kpn.virtualAccount),
     )
+    .with({ pg: { name: "kpn", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.kpn.easyPay),
+    )
     .with({ pg: { name: "ksnet", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.ksnet.card),
     )
     .with({ pg: { name: "ksnet", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.ksnet.virtualAccount),
+    )
+    .with({ pg: { name: "ksnet", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.ksnet.easyPay),
     )
     .exhaustive();
 }
