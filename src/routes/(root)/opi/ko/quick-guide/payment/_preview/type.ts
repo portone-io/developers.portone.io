@@ -2,7 +2,7 @@ import type { ConvertToPgParam, PgOptions } from "~/state/interactive-docs";
 
 export const pgOptions = {
   toss: {
-    payMethods: ["card", "virtualAccount"],
+    payMethods: ["card", "virtualAccount", "easyPay"],
   },
   nice: {
     payMethods: ["card", "virtualAccount"],
