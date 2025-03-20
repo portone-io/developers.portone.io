@@ -5,22 +5,22 @@ export const pgOptions = {
     payMethods: ["card", "virtualAccount", "easyPay"],
   },
   nice: {
-    payMethods: ["card", "virtualAccount"],
+    payMethods: ["card", "virtualAccount", "easyPay"],
   },
   smartro: {
-    payMethods: ["card", "virtualAccount"],
+    payMethods: ["card", "virtualAccount", "easyPay"],
   },
   kpn: {
-    payMethods: ["card", "virtualAccount"],
+    payMethods: ["card", "virtualAccount", "easyPay"],
   },
   inicis: {
-    payMethods: ["card", "virtualAccount"],
+    payMethods: ["card", "virtualAccount", "easyPay"],
   },
   ksnet: {
-    payMethods: ["card", "virtualAccount"],
+    payMethods: ["card", "virtualAccount", "easyPay"],
   },
   kcp: {
-    payMethods: ["card", "virtualAccount"],
+    payMethods: ["card", "virtualAccount", "easyPay"],
   },
 } as const satisfies PgOptions;
 

@@ -123,6 +123,8 @@ export default code<{
                 customer,
                 // @ts-expect-error(2339)
                 virtualAccount,
+                // @ts-expect-error(2339)
+                easyPay,
               } = createPaymentRequest(params, "");
               return code`{
               storeId: "${storeId}",
@@ -137,6 +139,9 @@ export default code<{
               `}
               ${({ when }) => when(() => virtualAccount !== undefined)`
               virtualAccount: ${({ indentObject }) => indentObject(virtualAccount)},
+              `}
+              ${({ when }) => when(() => easyPay !== undefined)`
+              easyPay: ${({ indentObject }) => indentObject(easyPay)},
               `}
               customData: {
                 item: item.id,
