@@ -6,13 +6,12 @@ import {
   type RouteDefinition,
   useLocation,
 } from "@solidjs/router";
-import { createMemo, createResource, type JSXElement, Show } from "solid-js";
+import { createMemo, createResource, type JSXElement } from "solid-js";
 import { MDXProvider } from "solid-mdx";
 
 import { prose } from "~/components/prose";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
-import { SearchProvider, SearchScreen } from "~/layouts/sidebar/search";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
 import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import { getInteractiveDocs } from "~/misc/interactiveDocs";
@@ -74,28 +73,18 @@ export default function Layout(props: Props) {
       <SidebarProvider>
         <InteractiveDocsProvider initial={interactiveDocs()}>
           <MDXProvider components={prose}>
-            <SearchProvider>
-              <div class="h-full flex flex-col">
-                <Gnb
-                  lang={lang()}
-                  navAsMenu={navAsMenuPaths.some((path) =>
-                    location.pathname.startsWith(path),
-                  )}
-                />
-                <SidebarBackground />
-                <main class="mx-auto max-w-8xl min-h-0 w-full flex-1 lg:px-10 md:px-8 sm:px-6">
-                  {props.children}
-                </main>
-              </div>
-              <Show when={navMenuSystemVersions.latest}>
-                {(versions) => (
-                  <SearchScreen
-                    searchIndex={searchIndex()}
-                    navMenuSystemVersions={versions()}
-                  />
+            <div class="h-full flex flex-col">
+              <Gnb
+                lang={lang()}
+                navAsMenu={navAsMenuPaths.some((path) =>
+                  location.pathname.startsWith(path),
                 )}
-              </Show>
-            </SearchProvider>
+              />
+              <SidebarBackground />
+              <main class="mx-auto max-w-8xl min-h-0 w-full flex-1 lg:px-10 md:px-8 sm:px-6">
+                {props.children}
+              </main>
+            </div>
           </MDXProvider>
         </InteractiveDocsProvider>
       </SidebarProvider>
