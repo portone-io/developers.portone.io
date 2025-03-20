@@ -58,6 +58,8 @@ export function App() {
         virtualAccount,
         // @ts-expect-error(2339)
         easyPay,
+        bypass,
+        productType,
       } = createPaymentRequest(params, "");
       return code`{
       storeId: "${storeId}",
@@ -67,6 +69,9 @@ export function App() {
       totalAmount: item.price,
       currency: item.currency,
       payMethod: "${payMethod}",
+      ${({ when }) => when(() => productType !== undefined)`
+      productType: "${productType}",
+      `}
       ${({ when }) => when(() => customer !== undefined)`
       customer: ${({ indentObject }) => indentObject(customer)},
       `}
@@ -75,6 +80,9 @@ export function App() {
       `}
       ${({ when }) => when(() => easyPay !== undefined)`
       easyPay: ${({ indentObject }) => indentObject(easyPay)},
+      `}
+      ${({ when }) => when(() => bypass !== undefined)`
+      bypass: ${({ indentObject }) => indentObject(bypass)},
       `}
       customData: {
         item: item.id,

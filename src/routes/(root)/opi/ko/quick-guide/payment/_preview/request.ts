@@ -23,6 +23,17 @@ const easyPayPaymentKakaoPay = {
   },
 } satisfies Partial<PortOne.PaymentRequest>;
 
+const easyPayPaymentEmpty = {
+  payMethod: "EASY_PAY",
+} satisfies Partial<PortOne.PaymentRequest>;
+
+const easyPayPaymentNaverPay = {
+  payMethod: "EASY_PAY",
+  easyPay: {
+    easyPayProvider: "EASY_PAY_PROVIDER_NAVERPAY",
+  },
+} satisfies Partial<PortOne.PaymentRequest>;
+
 const customer = {
   fullName: "포트원",
   email: "example@portone.io",
@@ -92,6 +103,7 @@ const overrides = {
     easyPay: {
       channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
       ...easyPayPaymentKakaoPay,
+      customer,
     },
   },
   kcp: {
@@ -119,7 +131,7 @@ const overrides = {
     },
     easyPay: {
       channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
-      ...easyPayPaymentKakaoPay,
+      ...easyPayPaymentEmpty,
     },
   },
   ksnet: {
@@ -134,12 +146,21 @@ const overrides = {
       channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
       ...virtualAccountPayment,
       customer: {
-        fullName: "포트원",
+        fullName: customer.fullName,
       },
     },
     easyPay: {
       channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
-      ...easyPayPaymentKakaoPay,
+      ...easyPayPaymentNaverPay,
+      customer: {
+        fullName: customer.fullName,
+      },
+      productType: "PRODUCT_TYPE_REAL",
+      bypass: {
+        ksnet: {
+          easyPayDirect: true,
+        },
+      },
     },
   },
 } as const;
@@ -223,6 +244,8 @@ export function createPaymentRequest(params: Params, paymentId: string) {
       templatedPayment(paymentId, overrides.ksnet.virtualAccount),
     )
     .with({ pg: { name: "ksnet", payMethods: "easyPay" } }, () =>
+      // easyPayBypass 파라미터 누락
+      // @ts-expect-error(2345)
       templatedPayment(paymentId, overrides.ksnet.easyPay),
     )
     .exhaustive();

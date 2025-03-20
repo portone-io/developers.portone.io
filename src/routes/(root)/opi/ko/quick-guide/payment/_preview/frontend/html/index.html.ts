@@ -125,6 +125,8 @@ export default code<{
                 virtualAccount,
                 // @ts-expect-error(2339)
                 easyPay,
+                bypass,
+                productType,
               } = createPaymentRequest(params, "");
               return code`{
               storeId: "${storeId}",
@@ -133,6 +135,9 @@ export default code<{
               orderName: item.name,
               totalAmount: item.price,
               currency: item.currency,
+              ${({ when }) => when(() => productType !== undefined)`
+              productType: "${productType}",
+              `}
               payMethod: "${payMethod}",
               ${({ when }) => when(() => customer !== undefined)`
               customer: ${({ indentObject }) => indentObject(customer)},
@@ -142,6 +147,9 @@ export default code<{
               `}
               ${({ when }) => when(() => easyPay !== undefined)`
               easyPay: ${({ indentObject }) => indentObject(easyPay)},
+              `}
+              ${({ when }) => when(() => bypass !== undefined)`
+              bypass: ${({ indentObject }) => indentObject(bypass)},
               `}
               customData: {
                 item: item.id,

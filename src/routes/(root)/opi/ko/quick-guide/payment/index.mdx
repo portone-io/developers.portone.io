@@ -993,12 +993,15 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                     - `LPAY` (L페이)
                     - `NAVERPAY` (네이버페이)
                     - `PAYCO` (페이코)
-                    - `SSGPAY` (SSG페이)
+
+                    <Hint style="warning">
+                      KSNET의 경우 카카오페이를 사용하기 위해서는 앱 또는 웹 하단에 대표자명, 주소, 전화번호와 같은 상점 정보를 필수로 입력해야 합니다.
+                    </Hint>
                   </Condition>
                 </Details.Content>
               </Details>
 
-            <Condition when={({ pg: { name } }) => !['kpn', 'inicis'].includes(name)}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'inicis', 'ksnet'].includes(name)}>
               - useFreeInterestFromMall?: boolean
 
                 **상점분담 무이자 활성화 여부**
@@ -1114,6 +1117,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 </Condition>
 
                 <Parameter.Details>
+                  <Condition when={({ pg: { name } }) => name !== 'ksnet'}>
                   - freeInstallmentPlans?: object\[]
 
                     **무이자 할부 설정**
@@ -1131,6 +1135,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
                         **무이자 할부를 제공하는 개월 수**
                     </Parameter.Details>
+                  </Condition>
 
                   - monthOption?: object
 
@@ -1139,6 +1144,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                     할부 결제 시 할부 개월 수를 설정할 수 있습니다.
 
                     `fixedMonth`와 `availableMonthList` 중 하나만 제공해주세요.
+
+                    <Condition when={({ pg: { name } }) => name === 'ksnet'}>
+                      <Hint style="warning">
+                        KSNET의 경우 할부 개월 수 설정은 네이버페이, 카카오페이, L페이만 가능합니다.
+                      </Hint>
+                    </Condition>
 
                     <Parameter.Details>
                       - fixedMonth: number
@@ -1631,6 +1642,30 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 - 항상 두 자리 수로 입력되어야 합니다. 예상 배송 소요기간이 3일인 경우, `03`으로 입력합니다.
             </Parameter.Details>
           </Condition>
+
+          <Condition when={({ pg: { name }}) => name === "ksnet"}>
+            - ksnet: object
+
+              <Parameter.Details>
+                <Condition when={({ pg: { payMethods }}) => payMethods === "easyPay"}>
+                  - easyPayDirect?: boolean
+
+                    **간편결제 직접 호출 여부**
+
+                    - `true`로 설정하면 KSNET 결제창을 표시하지 않고 간편결제 화면을 바로 표시합니다.
+                    - 간편결제 직접 호출 시 `productType` 파라미터는 필수입니다.
+                    - 카카오페이 직접 호출 시 `storeDetails.ceoFullName`, `storeDetails.address`, `storeDetails.phoneNumber` 값이 필수입니다.
+                </Condition>
+                
+                <Condition when={({ pg: { payMethods }}) => payMethods === "card"}>
+                  - sndQpayType?: string
+
+                    **간편결제 표시 구분**
+
+                    `'1'`일 경우 간편결제 수단을 표시합니다.
+                </Condition>
+              </Parameter.Details>
+          </Condition>
         </Parameter.Details>
 
       - redirectUrl?: string
@@ -1681,6 +1716,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
         <Condition when={({ pg: { name, payMethods } }) => name === 'kpn' && payMethods === 'mobile'}>
           <Hint style="warning">
             한국결제네트웍스 휴대폰 소액결제 시 `productType`는 필수 입력입니다.
+          </Hint>
+        </Condition>
+
+        <Condition when={({ pg: { name, payMethods } }) => name === 'ksnet' && payMethods === 'easyPay'}>
+          <Hint style="warning">
+            KSNET의 경우 간편결제 직접 호출 시 `productType`는 필수 입력입니다.
           </Hint>
         </Condition>
 
@@ -1761,6 +1802,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
       - storeDetails?: object
 
         **상점 정보**
+
+        <Condition when={({ pg: { name, payMethods }}) => name === "ksnet" && payMethods === "easyPay"}>
+          <Hint style="warning">
+            KSNET의 경우 카카오페이 직접 호출 시 `storeDetails.ceoFullName`, `storeDetails.address`, `storeDetails.phoneNumber` 값이 필수입니다.
+          </Hint>
+        </Condition>
 
         <Parameter.Details>
           - ceoFullName?: string
