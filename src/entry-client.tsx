@@ -1,4 +1,5 @@
 // @refresh reload
+import "solid-devtools";
 import "#thumbnail";
 
 import * as Sentry from "@sentry/solidstart";

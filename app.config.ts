@@ -8,9 +8,11 @@ import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import { defineConfig } from "@solidjs/start/config";
 import vinxiMdxPkg from "@vinxi/plugin-mdx";
+import type { SolidStartInlineConfig } from "node_modules/@sentry/solidstart/build/types/config/types";
 import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
+import devtools from "solid-devtools/vite";
 import unocss from "unocss/vite";
 import { imagetools } from "vite-imagetools";
 
@@ -25,12 +27,7 @@ export default defineConfig(
       server: {
         preset: "vercel",
         prerender: {
-          routes: [
-            ...Object.keys(indexFilesMapping).map(
-              (fileName) => `/content-index/${fileName}.json`,
-            ),
-            "/blog/rss.xml",
-          ],
+          routes: ["/blog/rss.xml"],
         },
         rollupConfig: {
           external: ["monaco-editor"],
@@ -43,6 +40,9 @@ export default defineConfig(
           plugins: [
             yaml(),
             unocss(),
+            devtools({
+              autoname: true,
+            }),
             vinxiMdx.withImports({})({
               jsx: true,
               jsxImportSource: "solid-js",
@@ -140,7 +140,7 @@ export default defineConfig(
       solid: {
         exclude: ["./src/misc/opengraph/**/*"],
       },
-    },
+    } satisfies SolidStartInlineConfig,
     {
       org: "iamport-corp",
       project: "developers-portone-io",
