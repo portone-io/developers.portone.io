@@ -69,9 +69,9 @@ export function App() {
       customData: {
         item: item.id,
       },
-      `;
+    `;
     }}
-    )`}
+    })`}
     ${({ section }) => section("client:handle-payment-error")`
     if (payment.code !== undefined) {
       setPaymentStatus({
