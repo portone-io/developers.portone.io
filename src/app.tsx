@@ -3,6 +3,7 @@ import "./styles/fonts.css";
 import "@unocss/reset/tailwind.css";
 import "uno.css";
 import "./styles/global.css";
+import "@docsearch/css";
 
 import { Link, Meta, MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
