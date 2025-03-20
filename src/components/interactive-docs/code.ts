@@ -1,28 +1,30 @@
+import { match, P } from "ts-pattern";
+
 import type { PayMethod, Pg } from "~/state/interactive-docs";
 
-type CodeForPreview<Sections extends string> = {
+type CodeForPreview<Sections extends string> = Readonly<{
   code: string;
   sections: Partial<Record<Sections, Section>>;
-};
+}>;
 
-export type Section = {
+export type Section = Readonly<{
   startLine: number;
   endLine: number;
-};
+}>;
 
-export type DefaultParams = {
+export type DefaultParams = Readonly<{
   pg: {
     name: Pg;
     payMethods: PayMethod;
   };
-};
+}>;
 
-type Primitive = string | number | boolean | null | undefined;
+type Primitive = string | number | false | null | undefined;
 
 type Interpolation<Params extends DefaultParams, Sections extends string> =
   | GenerateCode<Params, Sections>
   | Primitive
-  | Interpolation<Params, Sections>[];
+  | readonly NoInfer<Interpolation<Params, Sections>>[];
 
 export type CodeResult<Sections extends string> = Partial<{
   code: string;
@@ -38,25 +40,27 @@ type CodeTemplateFunction<
   Sections extends string,
 > = (
   codes: TemplateStringsArray,
-  ...interpolations: Interpolation<Params, Sections>[]
+  ...interpolations: readonly Interpolation<Params, Sections>[]
 ) => CodeFunction<Params, CodeResult<Sections>>;
 
-type CodeHelpers<Params extends DefaultParams, Sections extends string> = {
+type CodeHelpers<
+  Params extends DefaultParams,
+  Sections extends string,
+> = Readonly<{
   section: (sectionName: Sections) => CodeTemplateFunction<Params, Sections>;
   when: (
     predicate: (params: Params) => boolean,
   ) => CodeTemplateFunction<Params, Sections>;
   params: Params;
   indentObject: (obj: unknown) => string;
-};
+}>;
 
 type GenerateCode<Params extends DefaultParams, Sections extends string> = (
   helpers: CodeHelpers<Params, Sections>,
 ) => CodeFunction<Params, CodeResult<Sections>> | string;
 
-function countLines(text: string): number {
-  return (text.match(/\n/g)?.length ?? 0) + 1;
-}
+const countLines = (text: string): number =>
+  (text.match(/\n/g)?.length ?? 0) + 1;
 
 /**
  * 코드 문자열에서 마지막 비어있지 않은 줄의 들여쓰기를 분석합니다.
@@ -64,58 +68,50 @@ function countLines(text: string): number {
  * @param code 분석할 코드 문자열
  * @returns 감지된 들여쓰기 문자열 (공백 또는 탭)
  */
-function detectIndentation(code: string): string {
+const detectIndentation = (code: string): string => {
   if (!code) return "";
 
-  // 마지막 줄을 가져옵니다.
   const lines = code.split("\n");
-  let lastLine = "";
 
   // 비어있지 않은 마지막 줄을 찾습니다.
   for (let i = lines.length - 1; i >= 0; i--) {
-    if (lines[i]?.trim()) {
-      lastLine = lines[i] || "";
-      break;
+    const line = lines[i];
+    if (line?.trim()) {
+      return line.match(/^(\s+)/)?.[1] ?? "";
     }
   }
 
-  // 들여쓰기를 추출합니다.
-  const indentMatch = lastLine.match(/^(\s+)/);
-  return indentMatch?.[1] || "";
-}
+  return "";
+};
 
 class CodeGenerator<Params extends DefaultParams, Sections extends string> {
   codeString = "";
   sections: Partial<Record<Sections, Section>> = {};
   currentLine = 1;
-  params: Params;
+  currentIndentation = "";
 
-  constructor(params: Params) {
-    this.params = params;
-  }
+  constructor(private readonly params: Params) {}
 
   generate(
     codes: TemplateStringsArray,
-    interpolations: Interpolation<Params, Sections>[],
-  ) {
+    interpolations: readonly Interpolation<Params, Sections>[],
+  ): void {
     const trimmedCodes = trimCodes(codes);
     for (let i = 0; i < trimmedCodes.length; i++) {
-      const literal = trimmedCodes[i]!;
-      this.append(literal);
+      this.append(trimmedCodes[i]!);
 
       if (i < interpolations.length) {
-        const interpolation = interpolations[i]!;
-        this.processInterpolation(interpolation);
+        this.processInterpolation(interpolations[i]);
       }
     }
   }
 
-  append(text: string) {
+  append(text: string): void {
     this.codeString += text;
     this.currentLine += countLines(text) - 1;
   }
 
-  removeLastLine() {
+  removeLastLine(): void {
     const reLastLine = /\n[^\n]*$/;
     const matches = reLastLine.exec(this.codeString);
     if (matches) {
@@ -125,28 +121,42 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
   }
 
   getCurrentIndentation(): string {
-    return detectIndentation(this.codeString);
-  }
-
-  processInterpolation(interpolation: Interpolation<Params, Sections>) {
-    if (typeof interpolation === "function") {
-      const result = interpolation(this.getHelpers());
-      if (typeof result === "function") {
-        const { code, sections = {} } = result(this.params);
-        if (code) {
-          this.append(code);
-        }
-        Object.assign(this.sections, sections);
-      } else {
-        this.append(result);
-      }
-    } else if (Array.isArray(interpolation)) {
-      for (const item of interpolation) {
-        this.processInterpolation(item);
-      }
-    } else if (interpolation != null && interpolation !== false) {
-      this.append(String(interpolation));
+    if (!this.currentIndentation) {
+      this.currentIndentation = detectIndentation(this.codeString);
     }
+    return this.currentIndentation;
+  }
+  processInterpolation(interpolation: Interpolation<Params, Sections>): void {
+    match(interpolation)
+      .with(P.string, (str) => {
+        this.append(str);
+      })
+      .with(P.number, (num) => {
+        this.append(String(num));
+      })
+      .with(P.array(), (arr) => {
+        arr.forEach((item) => this.processInterpolation(item));
+      })
+      .with(P.nullish, false, () => {})
+      .with(
+        P.when(
+          (fn): fn is GenerateCode<Params, Sections> =>
+            typeof fn === "function",
+        ),
+        (fn) => {
+          const result = fn(this.getHelpers());
+          if (typeof result === "function") {
+            const { code, sections = {} } = result(this.params);
+            if (code) {
+              this.append(code);
+            }
+            Object.assign(this.sections, sections);
+          } else {
+            this.append(result);
+          }
+        },
+      )
+      .exhaustive();
   }
 
   getHelpers(): CodeHelpers<Params, Sections> {
@@ -155,7 +165,7 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
       when: this.whenResolver(),
       params: this.params,
       indentObject: this.indentObjectResolver(),
-    };
+    } as const;
   }
 
   sectionResolver(): CodeHelpers<Params, Sections>["section"] {
@@ -166,6 +176,7 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
 
         const generator = new CodeGenerator<Params, Sections>(params);
         generator.currentLine = startLine;
+        generator.currentIndentation = this.getCurrentIndentation();
         generator.generate(codes, interpolations);
 
         const endLine = generator.currentLine;
@@ -182,6 +193,7 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
         if (predicate(params)) {
           const generator = new CodeGenerator<Params, Sections>(params);
           generator.currentLine = this.currentLine;
+          generator.currentIndentation = this.getCurrentIndentation();
           generator.generate(codes, interpolations);
 
           return { code: generator.codeString, sections: generator.sections };
@@ -205,20 +217,14 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
    */
   indentObjectResolver(): (obj: unknown) => string {
     return (obj) => {
-      // 현재 들여쓰기를 감지합니다.
       const currentIndent = this.getCurrentIndentation();
-
-      // 들여쓰기 문자를 결정합니다 (공백 또는 탭)
       const indentChar = currentIndent.startsWith("\t") ? "\t" : " ";
-
-      // 추가 들여쓰기에 사용할 간격 (기본 2칸)
       const indentStep = 2;
 
-      function getIndentation(level: number): string {
-        return currentIndent + indentChar.repeat(level * indentStep);
-      }
+      const getIndentation = (level: number): string =>
+        `${currentIndent}${indentChar.repeat(level * indentStep)}`;
 
-      function stringifyValue(value: unknown, level: number): string {
+      const stringifyValue = (value: unknown, level: number): string => {
         if (value === null) return "null";
         if (value === undefined) return "undefined";
 
@@ -244,17 +250,16 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
         }
 
         if (typeof value === "object" && value !== null) {
-          const objValue = value as Record<string, unknown>;
-          return stringifyObject(objValue, level);
+          return stringifyObject(value as Record<string, unknown>, level);
         }
 
         return JSON.stringify(value);
-      }
+      };
 
-      function stringifyObject(
+      const stringifyObject = (
         obj: Record<string, unknown>,
         level: number,
-      ): string {
+      ): string => {
         if (!obj || Object.keys(obj).length === 0) return "{}";
 
         const keyIndent = getIndentation(level + 1);
@@ -268,34 +273,36 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
           .join(",\n");
 
         return `{\n${entries},\n${closingIndent}}`;
-      }
+      };
 
       return stringifyValue(obj, 0);
     };
   }
 }
 
-function trimCodes(codes: TemplateStringsArray): readonly string[] {
+const trimCodes = (codes: TemplateStringsArray): readonly string[] => {
   const [first, ...rest] = codes;
   const last = rest.pop();
+
   if (first && last !== undefined) {
-    return [first.trimStart(), ...rest, last.trimEnd()];
+    return [first.trimStart(), ...rest, last.trimEnd()] as const;
   }
-  return [first?.trim() ?? "", ...rest];
-}
+
+  return [first?.trim() ?? "", ...rest] as const;
+};
 
 export type Code<
   Params extends DefaultParams,
   Sections extends string,
 > = CodeFunction<Params, CodeForPreview<Sections>>;
 
-export function code<T extends { params: DefaultParams; sections: string }>(
+export const code = <T extends { params: DefaultParams; sections: string }>(
   codes: TemplateStringsArray,
-  ...interpolations: Interpolation<T["params"], T["sections"]>[]
-): Code<T["params"], T["sections"]> {
+  ...interpolations: readonly Interpolation<T["params"], T["sections"]>[]
+): Code<T["params"], T["sections"]> => {
   return (params) => {
     const generator = new CodeGenerator<T["params"], T["sections"]>(params);
     generator.generate(codes, interpolations);
     return { code: generator.codeString, sections: generator.sections };
   };
-}
+};
