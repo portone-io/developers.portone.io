@@ -2,14 +2,15 @@ import type { MdxjsEsm } from "mdast-util-mdx";
 import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 
-// TODO: provide an option to exclude components
 /**
- * Collects all imported element names from the MDX AST
+ * Collects all imported elements from the MDX AST
  * @param ast MDX AST
- * @returns Set of imported element names
+ * @returns Array of imported elements
  */
-export function collectAllImportedElementNames(ast: Node): Set<string> {
-  const importedElementNames = new Set<string>();
+export function collectAllImportedElements(
+  ast: Node,
+): { name: string; from: string }[] {
+  const importedElements: { name: string; from: string }[] = [];
   visit(ast, "mdxjsEsm", (node: MdxjsEsm) => {
     if (node.data?.estree) {
       const estree = node.data.estree;
@@ -22,13 +23,22 @@ export function collectAllImportedElementNames(ast: Node): Set<string> {
           for (const specifier of statement.specifiers) {
             if (specifier.type === "ImportDefaultSpecifier") {
               // Handle default imports like: import React from 'react'
-              importedElementNames.add(specifier.local.name);
+              importedElements.push({
+                name: specifier.local.name,
+                from: String(statement.source?.value),
+              });
             } else if (specifier.type === "ImportSpecifier") {
               // Handle named imports like: import { useState as useStateAlias } from 'react'
-              importedElementNames.add(specifier.local.name);
+              importedElements.push({
+                name: specifier.local.name,
+                from: String(statement.source?.value),
+              });
             } else if (specifier.type === "ImportNamespaceSpecifier") {
               // Handle namespace imports like: import * as React from 'react'
-              importedElementNames.add(specifier.local.name);
+              importedElements.push({
+                name: specifier.local.name,
+                from: String(statement.source?.value),
+              });
             }
           }
         }
@@ -36,5 +46,5 @@ export function collectAllImportedElementNames(ast: Node): Set<string> {
     }
   });
 
-  return importedElementNames;
+  return importedElements;
 }

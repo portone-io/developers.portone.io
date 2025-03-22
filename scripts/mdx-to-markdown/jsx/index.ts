@@ -16,7 +16,7 @@ import {
 } from "./details";
 import { handleFigureComponent } from "./figure";
 import { handleHintComponent } from "./hint";
-import { collectAllImportedElementNames } from "./imports";
+import { collectAllImportedElements } from "./imports";
 import { handleProseComponent } from "./prose";
 import {
   handleSwaggerComponent,
@@ -26,13 +26,6 @@ import {
 import { handleTabComponent, handleTabsComponent } from "./tabs";
 import { handleVersionGateComponent } from "./versionGate";
 import { handleYoutubeComponent } from "./youtube";
-
-// TODO: handle imported tags
-const tagsNotToHandle = new Set<string>([
-  "Parameter",
-  "Parameter.Details",
-  "center",
-]);
 
 /**
  * JSX 컴포넌트를 마크다운으로 변환하는 함수
@@ -49,7 +42,12 @@ export function transformJsxComponents(
   const emptySet = new Set<string>();
 
   // Collect all imported element names
-  const importedElementNames = collectAllImportedElementNames(ast);
+  const importedElements = collectAllImportedElements(ast);
+  const importedNonComponents = new Set(
+    importedElements
+      .filter((item) => !item.from.includes("components"))
+      .map((item) => item.name),
+  );
 
   const transformRecursively = (innerAst: Node) =>
     transformJsxComponents(innerAst, parseResultMap, useMarkdownLinks);
@@ -152,8 +150,12 @@ export function transformJsxComponents(
               jsxNode,
               transformRecursively,
             );
+          case "Parameter":
+          case "Parameter.Details":
+          case "center":
+            return unwrapJsxNode(jsxNode, transformRecursively);
           default: {
-            const result = replaceToHtml(jsxNode, transformRecursively);
+            const result = unwrapJsxNode(jsxNode, transformRecursively);
             return {
               ast: result.ast,
               unhandledTags: result.unhandledTags.add(componentName ?? "null"),
@@ -185,8 +187,6 @@ export function transformJsxComponents(
 
   return {
     ast: result.ast,
-    unhandledTags: result.unhandledTags
-      .difference(tagsNotToHandle)
-      .difference(importedElementNames),
+    unhandledTags: result.unhandledTags.difference(importedNonComponents),
   };
 }

@@ -1,7 +1,7 @@
 import type { Root } from "mdast";
 import { describe, expect, it } from "vitest";
 
-import { collectAllImportedElementNames } from "./imports";
+import { collectAllImportedElements } from "./imports";
 
 describe("collectAllImportedElementNames", () => {
   it("should return an empty set for an AST with no imports", () => {
@@ -22,11 +22,10 @@ describe("collectAllImportedElementNames", () => {
     };
 
     // Call the function
-    const result = collectAllImportedElementNames(ast);
+    const result = collectAllImportedElements(ast);
 
     // Verify the result
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(0);
+    expect(result.length).toBe(0);
   });
 
   it("should collect default imports", () => {
@@ -67,12 +66,16 @@ describe("collectAllImportedElementNames", () => {
     };
 
     // Call the function
-    const result = collectAllImportedElementNames(ast);
+    const result = collectAllImportedElements(ast);
 
     // Verify the result
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(1);
-    expect(result.has("React")).toBe(true);
+    expect(result.length).toBe(1);
+
+    // Check if the array contains an object with the expected name and from properties
+    const hasReact = result.some(
+      (item) => item.name === "React" && item.from === "react",
+    );
+    expect(hasReact).toBe(true);
   });
 
   it("should collect named imports", () => {
@@ -128,13 +131,20 @@ describe("collectAllImportedElementNames", () => {
     };
 
     // Call the function
-    const result = collectAllImportedElementNames(ast);
+    const result = collectAllImportedElements(ast);
 
     // Verify the result
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(2);
-    expect(result.has("useState")).toBe(true);
-    expect(result.has("useEffect")).toBe(true);
+    expect(result.length).toBe(2);
+
+    // Check if the array contains objects with the expected name and from properties
+    const hasUseState = result.some(
+      (item) => item.name === "useState" && item.from === "react",
+    );
+    const hasUseEffect = result.some(
+      (item) => item.name === "useEffect" && item.from === "react",
+    );
+    expect(hasUseState).toBe(true);
+    expect(hasUseEffect).toBe(true);
   });
 
   it("should collect renamed imports", () => {
@@ -179,12 +189,16 @@ describe("collectAllImportedElementNames", () => {
     };
 
     // Call the function
-    const result = collectAllImportedElementNames(ast);
+    const result = collectAllImportedElements(ast);
 
     // Verify the result
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(1);
-    expect(result.has("useStateAlias")).toBe(true);
+    expect(result.length).toBe(1);
+
+    // Check if the set contains an object with the expected name and from properties
+    const hasUseStateAlias = result.some(
+      (item) => item.name === "useStateAlias" && item.from === "react",
+    );
+    expect(hasUseStateAlias).toBe(true);
   });
 
   it("should collect namespace imports", () => {
@@ -225,12 +239,16 @@ describe("collectAllImportedElementNames", () => {
     };
 
     // Call the function
-    const result = collectAllImportedElementNames(ast);
+    const result = collectAllImportedElements(ast);
 
     // Verify the result
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(1);
-    expect(result.has("ReactAll")).toBe(true);
+    expect(result.length).toBe(1);
+
+    // Check if the array contains an object with the expected name and from properties
+    const hasReactAll = result.some(
+      (item) => item.name === "ReactAll" && item.from === "react",
+    );
+    expect(hasReactAll).toBe(true);
   });
 
   it("should collect mixed import types", () => {
@@ -311,15 +329,29 @@ describe("collectAllImportedElementNames", () => {
     };
 
     // Call the function
-    const result = collectAllImportedElementNames(ast);
+    const result = collectAllImportedElements(ast);
 
     // Verify the result
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(4);
-    expect(result.has("React")).toBe(true);
-    expect(result.has("useState")).toBe(true);
-    expect(result.has("useEffectAlias")).toBe(true);
-    expect(result.has("ReactDOM")).toBe(true);
+    expect(result.length).toBe(4);
+
+    // Check if the array contains objects with the expected name and from properties
+    const hasReact = result.some(
+      (item) => item.name === "React" && item.from === "react",
+    );
+    const hasUseState = result.some(
+      (item) => item.name === "useState" && item.from === "react",
+    );
+    const hasUseEffectAlias = result.some(
+      (item) => item.name === "useEffectAlias" && item.from === "react",
+    );
+    const hasReactDOM = result.some(
+      (item) => item.name === "ReactDOM" && item.from === "react-dom",
+    );
+
+    expect(hasReact).toBe(true);
+    expect(hasUseState).toBe(true);
+    expect(hasUseEffectAlias).toBe(true);
+    expect(hasReactDOM).toBe(true);
   });
 
   it("should handle multiple import statements", () => {
@@ -399,13 +431,24 @@ describe("collectAllImportedElementNames", () => {
     };
 
     // Call the function
-    const result = collectAllImportedElementNames(ast);
+    const result = collectAllImportedElements(ast);
 
     // Verify the result
-    expect(result).toBeInstanceOf(Set);
-    expect(result.size).toBe(3);
-    expect(result.has("React")).toBe(true);
-    expect(result.has("useState")).toBe(true);
-    expect(result.has("ReactDOM")).toBe(true);
+    expect(result.length).toBe(3);
+
+    // Check if the array contains objects with the expected name and from properties
+    const hasReact = result.some(
+      (item) => item.name === "React" && item.from === "react",
+    );
+    const hasUseState = result.some(
+      (item) => item.name === "useState" && item.from === "react",
+    );
+    const hasReactDOM = result.some(
+      (item) => item.name === "ReactDOM" && item.from === "react-dom",
+    );
+
+    expect(hasReact).toBe(true);
+    expect(hasUseState).toBe(true);
+    expect(hasReactDOM).toBe(true);
   });
 });
