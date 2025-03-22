@@ -64,7 +64,7 @@ describe("transformLinks", () => {
     const useMarkdownLinks = false;
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockParseResultMap,
       useMarkdownLinks,
@@ -82,7 +82,7 @@ describe("transformLinks", () => {
     const useMarkdownLinks = true;
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockParseResultMap,
       useMarkdownLinks,
@@ -112,7 +112,7 @@ describe("transformLinks", () => {
     const slug = "test-slug";
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockParseResultMapWithExternalLink,
       true,
@@ -163,7 +163,7 @@ describe("transformLinks", () => {
     const useMarkdownLinks = true;
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockComplexParseResultMap,
       useMarkdownLinks,
@@ -195,7 +195,7 @@ describe("transformLinks", () => {
     const useMarkdownLinks = true;
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockParseResultMapWithComplexUrl,
       useMarkdownLinks,

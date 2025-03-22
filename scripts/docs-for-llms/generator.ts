@@ -68,16 +68,20 @@ export function transformAllMdxToAst(
   const transformedAstMap: Record<string, Root> = {};
 
   // 각 파싱 결과의 AST 변환
+  const allUnhandledTags: Set<string> = new Set();
   for (const slug of Object.keys(fileParseMap)) {
     try {
       // AST 변환 (useMarkdownLinks 파라미터 전달)
-      const transformedAst = transformAstForMarkdown(
+      const { ast, unhandledTags } = transformAstForMarkdown(
         slug,
         fileParseMap,
         useMarkdownLinks,
       );
-      if (transformedAst) {
-        transformedAstMap[slug] = transformedAst;
+      if (ast) {
+        transformedAstMap[slug] = ast;
+      }
+      for (const tag of unhandledTags) {
+        allUnhandledTags.add(tag);
       }
     } catch (error) {
       console.error(
@@ -90,6 +94,8 @@ export function transformAllMdxToAst(
   console.log(
     `${Object.keys(transformedAstMap).length}개의 MDX 파일 AST 변환이 완료되었습니다.`,
   );
+
+  console.log(`처리되지 않은 태그: ${Array.from(allUnhandledTags).join(", ")}`);
   return transformedAstMap;
 }
 
