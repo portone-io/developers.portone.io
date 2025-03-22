@@ -10,11 +10,11 @@ import type { Node } from "unist";
  */
 export function handleVersionGateComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, any>,
+  props: Record<string, unknown>,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
   // 버전 정보 추출 (v 또는 version 속성 사용)
-  const version = props.v || "";
+  const version = typeof props.v === "string" ? props.v : "";
 
   // 버전 정보가 없는 경우 기본 처리
   if (!version) {

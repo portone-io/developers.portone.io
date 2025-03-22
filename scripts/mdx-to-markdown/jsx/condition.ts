@@ -19,7 +19,7 @@ import type { Node, Parent } from "unist";
  */
 export function handleConditionComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, any>,
+  props: Record<string, unknown>,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
   // 속성과 값을 찾아서 주석 텍스트 생성 (빈 값이 아닌 모든 속성 처리)
@@ -42,7 +42,7 @@ export function handleConditionComponent(
     let conditionText = "";
     if (firstEntry !== undefined) {
       const [attrName, attrValue] = firstEntry;
-      conditionText = ` ${attrName}=${attrValue}`;
+      conditionText = ` ${attrName}=${String(attrValue)}`;
     }
 
     // 주석 스타일 박스를 사용하여 조건부 콘텐츠 표시
