@@ -49,9 +49,18 @@ export function App() {
     ${({ section }) => section("client:request-payment")`
     const paymentId = randomId()
     const payment = await PortOne.requestPayment(${({ params }) => {
-      // @ts-expect-error(2339)
-      const { storeId, channelKey, payMethod, customer, virtualAccount } =
-        createPaymentRequest(params, "");
+      const {
+        storeId,
+        channelKey,
+        payMethod,
+        customer,
+        // @ts-expect-error(2339)
+        virtualAccount,
+        // @ts-expect-error(2339)
+        easyPay,
+        bypass,
+        productType,
+      } = createPaymentRequest(params, "");
       return code`{
       storeId: "${storeId}",
       channelKey: "${channelKey}",
@@ -60,11 +69,20 @@ export function App() {
       totalAmount: item.price,
       currency: item.currency,
       payMethod: "${payMethod}",
+      ${({ when }) => when(() => productType !== undefined)`
+      productType: "${productType}",
+      `}
       ${({ when }) => when(() => customer !== undefined)`
       customer: ${({ indentObject }) => indentObject(customer)},
       `}
       ${({ when }) => when(() => virtualAccount !== undefined)`
       virtualAccount: ${({ indentObject }) => indentObject(virtualAccount)},
+      `}
+      ${({ when }) => when(() => easyPay !== undefined)`
+      easyPay: ${({ indentObject }) => indentObject(easyPay)},
+      `}
+      ${({ when }) => when(() => bypass !== undefined)`
+      bypass: ${({ indentObject }) => indentObject(bypass)},
       `}
       customData: {
         item: item.id,

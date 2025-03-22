@@ -16,6 +16,24 @@ const virtualAccountPayment = {
   },
 } satisfies Partial<PortOne.PaymentRequest>;
 
+const easyPayPaymentKakaoPay = {
+  payMethod: "EASY_PAY",
+  easyPay: {
+    easyPayProvider: "EASY_PAY_PROVIDER_KAKAOPAY",
+  },
+} satisfies Partial<PortOne.PaymentRequest>;
+
+const easyPayPaymentEmpty = {
+  payMethod: "EASY_PAY",
+} satisfies Partial<PortOne.PaymentRequest>;
+
+const easyPayPaymentNaverPay = {
+  payMethod: "EASY_PAY",
+  easyPay: {
+    easyPayProvider: "EASY_PAY_PROVIDER_NAVERPAY",
+  },
+} satisfies Partial<PortOne.PaymentRequest>;
+
 const customer = {
   fullName: "포트원",
   email: "example@portone.io",
@@ -32,6 +50,10 @@ const overrides = {
       channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
       ...virtualAccountPayment,
     },
+    easyPay: {
+      channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
+      ...easyPayPaymentKakaoPay,
+    },
   },
   nice: {
     card: {
@@ -41,6 +63,10 @@ const overrides = {
     virtualAccount: {
       channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
       ...virtualAccountPayment,
+    },
+    easyPay: {
+      channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
+      ...easyPayPaymentKakaoPay,
     },
   },
   smartro: {
@@ -58,6 +84,10 @@ const overrides = {
         phoneNumber: customer.phoneNumber,
       },
     },
+    easyPay: {
+      channelKey: "channel-key-c4a4b281-a1e5-40c9-8140-f055262bcefd",
+      ...easyPayPaymentKakaoPay,
+    },
   },
   inicis: {
     card: {
@@ -70,6 +100,11 @@ const overrides = {
       ...virtualAccountPayment,
       customer,
     },
+    easyPay: {
+      channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
+      ...easyPayPaymentKakaoPay,
+      customer,
+    },
   },
   kcp: {
     card: {
@@ -80,6 +115,10 @@ const overrides = {
       channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
       ...virtualAccountPayment,
     },
+    easyPay: {
+      channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
+      ...easyPayPaymentKakaoPay,
+    },
   },
   kpn: {
     card: {
@@ -89,6 +128,10 @@ const overrides = {
     virtualAccount: {
       channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
       ...virtualAccountPayment,
+    },
+    easyPay: {
+      channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
+      ...easyPayPaymentEmpty,
     },
   },
   ksnet: {
@@ -103,7 +146,20 @@ const overrides = {
       channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
       ...virtualAccountPayment,
       customer: {
-        fullName: "포트원",
+        fullName: customer.fullName,
+      },
+    },
+    easyPay: {
+      channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
+      ...easyPayPaymentNaverPay,
+      customer: {
+        fullName: customer.fullName,
+      },
+      productType: "PRODUCT_TYPE_REAL",
+      bypass: {
+        ksnet: {
+          easyPayDirect: true,
+        },
       },
     },
   },
@@ -133,11 +189,17 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "toss", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.toss.virtualAccount),
     )
+    .with({ pg: { name: "toss", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.toss.easyPay),
+    )
     .with({ pg: { name: "nice", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.nice.card),
     )
     .with({ pg: { name: "nice", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.nice.virtualAccount),
+    )
+    .with({ pg: { name: "nice", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.nice.easyPay),
     )
     .with({ pg: { name: "smartro", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.smartro.card),
@@ -145,11 +207,17 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "smartro", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.smartro.virtualAccount),
     )
+    .with({ pg: { name: "smartro", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.smartro.easyPay),
+    )
     .with({ pg: { name: "inicis", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.inicis.card),
     )
     .with({ pg: { name: "inicis", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.inicis.virtualAccount),
+    )
+    .with({ pg: { name: "inicis", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.inicis.easyPay),
     )
     .with({ pg: { name: "kcp", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.kcp.card),
@@ -157,17 +225,28 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "kcp", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.kcp.virtualAccount),
     )
+    .with({ pg: { name: "kcp", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.kcp.easyPay),
+    )
     .with({ pg: { name: "kpn", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.kpn.card),
     )
     .with({ pg: { name: "kpn", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.kpn.virtualAccount),
     )
+    .with({ pg: { name: "kpn", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.kpn.easyPay),
+    )
     .with({ pg: { name: "ksnet", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.ksnet.card),
     )
     .with({ pg: { name: "ksnet", payMethods: "virtualAccount" } }, () =>
       templatedPayment(paymentId, overrides.ksnet.virtualAccount),
+    )
+    .with({ pg: { name: "ksnet", payMethods: "easyPay" } }, () =>
+      // easyPayBypass 파라미터 누락
+      // @ts-expect-error(2345)
+      templatedPayment(paymentId, overrides.ksnet.easyPay),
     )
     .exhaustive();
 }
