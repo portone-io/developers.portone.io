@@ -7,6 +7,7 @@ import { handleApiLinkComponent } from "./apiLink";
 import { handleBadgeComponent } from "./badge";
 import { extractCodeContent } from "./code";
 import { extractMdxJsxAttributes } from "./common";
+import { handleConditionComponent } from "./condition";
 import { handleContentRefComponent } from "./contentRef";
 import {
   handleDetailsComponent,
@@ -137,6 +138,18 @@ export function transformJsxComponents(
         case "Details.Content":
           replacementNode = handleDetailsContentComponent(
             jsxNode,
+            (innerAst: Node) =>
+              transformJsxComponents(
+                innerAst,
+                parseResultMap,
+                useMarkdownLinks,
+              ),
+          );
+          break;
+        case "Condition":
+          replacementNode = handleConditionComponent(
+            jsxNode,
+            props,
             (innerAst: Node) =>
               transformJsxComponents(
                 innerAst,
