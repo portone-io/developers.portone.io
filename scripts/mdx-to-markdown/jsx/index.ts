@@ -28,7 +28,11 @@ import { handleVersionGateComponent } from "./versionGate";
 import { handleYoutubeComponent } from "./youtube";
 
 // TODO: handle imported tags
-const tagsNotToHandle = new Set<string>(["Parameter", "center"]);
+const tagsNotToHandle = new Set<string>([
+  "Parameter",
+  "Parameter.Details",
+  "center",
+]);
 
 /**
  * JSX 컴포넌트를 마크다운으로 변환하는 함수
@@ -83,6 +87,9 @@ export function transformJsxComponents(
           case "table":
           case "thead":
           case "tbody":
+          case "th":
+          case "tr":
+          case "td":
             return replaceToHtml(jsxNode, transformRecursively);
           case "Figure":
             return {
