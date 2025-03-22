@@ -641,7 +641,7 @@ describe("transformJsxComponents", () => {
               children: [
                 {
                   type: "html",
-                  value: "<!-- CONDITIONAL CONTENT: if=browser START -->",
+                  value: "<!-- CONDITIONAL CONTENT if=browser START -->",
                 },
               ],
             },
@@ -659,7 +659,7 @@ describe("transformJsxComponents", () => {
               children: [
                 {
                   type: "html",
-                  value: "<!-- CONDITIONAL CONTENT: if=browser END -->",
+                  value: "<!-- CONDITIONAL CONTENT if=browser END -->",
                 },
               ],
             },
@@ -673,7 +673,7 @@ describe("transformJsxComponents", () => {
               children: [
                 {
                   type: "html",
-                  value: "<!-- CONDITIONAL CONTENT: when=future START -->",
+                  value: "<!-- CONDITIONAL CONTENT when=future START -->",
                 },
               ],
             },
@@ -691,7 +691,7 @@ describe("transformJsxComponents", () => {
               children: [
                 {
                   type: "html",
-                  value: "<!-- CONDITIONAL CONTENT: when=future END -->",
+                  value: "<!-- CONDITIONAL CONTENT when=future END -->",
                 },
               ],
             },
@@ -705,7 +705,7 @@ describe("transformJsxComponents", () => {
               children: [
                 {
                   type: "html",
-                  value: "<!-- CONDITIONAL CONTENT: language=js START -->",
+                  value: "<!-- CONDITIONAL CONTENT language=js START -->",
                 },
               ],
             },
@@ -723,7 +723,7 @@ describe("transformJsxComponents", () => {
               children: [
                 {
                   type: "html",
-                  value: "<!-- CONDITIONAL CONTENT: language=js END -->",
+                  value: "<!-- CONDITIONAL CONTENT language=js END -->",
                 },
               ],
             },
@@ -737,7 +737,7 @@ describe("transformJsxComponents", () => {
               children: [
                 {
                   type: "html",
-                  value: "<!-- CONDITIONAL CONTENT: custom=value START -->",
+                  value: "<!-- CONDITIONAL CONTENT custom=value START -->",
                 },
               ],
             },
@@ -755,7 +755,7 @@ describe("transformJsxComponents", () => {
               children: [
                 {
                   type: "html",
-                  value: "<!-- CONDITIONAL CONTENT: custom=value END -->",
+                  value: "<!-- CONDITIONAL CONTENT custom=value END -->",
                 },
               ],
             },

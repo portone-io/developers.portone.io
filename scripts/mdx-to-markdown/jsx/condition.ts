@@ -1,5 +1,6 @@
+import type { Paragraph } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
-import type { Node } from "unist";
+import type { Node, Parent } from "unist";
 
 /**
  * Condition 컴포넌트 처리
@@ -12,9 +13,9 @@ import type { Node } from "unist";
  * - 기타 모든 속성도 자동 처리
  *
  * 예) <Condition if="browser"> ... </Condition> ->
- * <!-- CONDITIONAL CONTENT: if=browser START -->
+ * <!-- CONDITIONAL CONTENT if browser START -->
  * ...
- * <!-- CONDITIONAL CONTENT: if=browser END -->
+ * <!-- CONDITIONAL CONTENT if browser END -->
  */
 export function handleConditionComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
@@ -26,7 +27,7 @@ export function handleConditionComponent(
     ([, value]) => value !== undefined && value !== "",
   );
 
-  let resultNode: Node;
+  let resultNode: Parent;
 
   // 조건이 없는 경우 기본 처리
   if (conditionEntries.length === 0) {
@@ -36,8 +37,13 @@ export function handleConditionComponent(
     };
   } else {
     // 첫 번째 유효한 조건 사용 (여러 조건이 있는 경우)
-    const [attrName, attrValue] = conditionEntries[0];
-    const conditionText = `${attrName}=${attrValue}`;
+    const firstEntry = conditionEntries[0];
+
+    let conditionText = "";
+    if (firstEntry !== undefined) {
+      const [attrName, attrValue] = firstEntry;
+      conditionText = ` ${attrName}=${attrValue}`;
+    }
 
     // 주석 스타일 박스를 사용하여 조건부 콘텐츠 표시
     resultNode = {
@@ -48,10 +54,10 @@ export function handleConditionComponent(
           children: [
             {
               type: "html",
-              value: `<!-- CONDITIONAL CONTENT: ${conditionText} START -->`,
+              value: `<!-- CONDITIONAL CONTENT${conditionText} START -->`,
             },
           ],
-        },
+        } as Paragraph,
         // 내부 컴포넌트들
         ...(node.children || []),
         {
@@ -59,10 +65,10 @@ export function handleConditionComponent(
           children: [
             {
               type: "html",
-              value: `<!-- CONDITIONAL CONTENT: ${conditionText} END -->`,
+              value: `<!-- CONDITIONAL CONTENT${conditionText} END -->`,
             },
           ],
-        },
+        } as Paragraph,
       ],
     };
   }
