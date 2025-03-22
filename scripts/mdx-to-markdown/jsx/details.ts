@@ -1,3 +1,4 @@
+import type { Html, Root, Text } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
@@ -11,19 +12,19 @@ export function handleDetailsComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
-  const resultNodes: any[] = [];
+  const resultNodes: Node[] = [];
 
   // summary 시작 태그
   resultNodes.push({
     type: "html",
     value: "<details>",
-  });
+  } as Html);
 
   if (node.children && node.children.length > 0) {
     const detailsContent = {
       type: "root",
       children: node.children,
-    };
+    } as Root;
     transformJsxComponentsFn(detailsContent);
     resultNodes.push(...detailsContent.children);
   } else {
@@ -31,19 +32,19 @@ export function handleDetailsComponent(
     resultNodes.push({
       type: "text",
       value: "상세 정보",
-    });
+    } as Text);
   }
 
   // summary 종료 태그
   resultNodes.push({
     type: "html",
     value: "</details>",
-  });
+  } as Html);
 
   return {
     type: "root",
     children: resultNodes,
-  };
+  } as Root;
 }
 
 /**
@@ -56,13 +57,13 @@ export function handleDetailsSummaryComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
-  const resultNodes: any[] = [];
+  const resultNodes: Node[] = [];
 
   // summary 시작 태그
   resultNodes.push({
     type: "html",
     value: "<summary>",
-  });
+  } as Html);
 
   // Summary 내용 추가 (AST 구조 유지)
   if (node.children && node.children.length > 0) {
@@ -70,7 +71,7 @@ export function handleDetailsSummaryComponent(
     const summaryContent = {
       type: "root",
       children: node.children,
-    };
+    } as Root;
     transformJsxComponentsFn(summaryContent);
     resultNodes.push(...summaryContent.children);
   } else {
@@ -78,19 +79,19 @@ export function handleDetailsSummaryComponent(
     resultNodes.push({
       type: "text",
       value: "상세 정보",
-    });
+    } as Text);
   }
 
   // summary 종료 태그
   resultNodes.push({
     type: "html",
     value: "</summary>",
-  });
+  } as Html);
 
   return {
     type: "root",
     children: resultNodes,
-  };
+  } as Root;
 }
 
 /**
@@ -108,14 +109,14 @@ export function handleDetailsContentComponent(
     return {
       type: "root",
       children: [],
-    };
+    } as Root;
   }
 
   // Content 노드를 재귀적으로 처리
   const contentNodeContent = {
     type: "root",
     children: node.children,
-  };
+  } as Root;
   transformJsxComponentsFn(contentNodeContent);
 
   return contentNodeContent;

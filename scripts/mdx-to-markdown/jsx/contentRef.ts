@@ -8,11 +8,12 @@ import type { MdxParseResult } from "../mdx-parser";
  * @returns 변환된 마크다운 노드
  */
 export function handleContentRefComponent(
-  props: Record<string, any>,
+  props: Record<string, unknown>,
   parseResultMap: Record<string, MdxParseResult>,
   useMarkdownLinks: boolean = true,
-): any {
-  const slug = props.slug ? props.slug.replace(/^\//, "") : "";
+) {
+  const slugProp = props.slug;
+  const slug = typeof slugProp === "string" ? slugProp.replace(/^\//, "") : "";
   let title;
 
   // slug에 해당하는 문서가 있으면 해당 문서의 frontmatter title 사용

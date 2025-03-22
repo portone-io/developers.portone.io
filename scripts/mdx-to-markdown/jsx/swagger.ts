@@ -10,9 +10,25 @@ import type { Node } from "unist";
  */
 export function handleSwaggerComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, any>,
+  props: Record<string, unknown>,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
+  const method = (
+    typeof props.method === "string"
+      ? props.method
+      : JSON.stringify(props.method)
+  ).toUpperCase();
+  const baseUrl =
+    typeof props.baseUrl === "string"
+      ? props.baseUrl
+      : JSON.stringify(props.baseUrl);
+  const path =
+    typeof props.path === "string" ? props.path : JSON.stringify(props.path);
+  const summary =
+    typeof props.summary === "string"
+      ? props.summary
+      : JSON.stringify(props.summary);
+
   // 헤더 생성 (메서드 + 경로)
   const headerNode = {
     type: "paragraph",
@@ -22,25 +38,25 @@ export function handleSwaggerComponent(
         children: [
           {
             type: "text",
-            value: props.method.toUpperCase(),
+            value: method,
           },
         ],
       },
       {
         type: "text",
-        value: ` ${props.baseUrl}${props.path}`,
+        value: ` ${baseUrl}${path}`,
       },
     ],
   };
 
   // 요약 정보
-  const summaryNode = props.summary
+  const summaryNode = summary
     ? {
         type: "paragraph",
         children: [
           {
             type: "emphasis",
-            children: [{ type: "text", value: props.summary }],
+            children: [{ type: "text", value: summary }],
           },
         ],
       }
@@ -73,7 +89,7 @@ export function handleSwaggerComponent(
  */
 export function handleSwaggerDescriptionComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  _props: Record<string, any>,
+  _props: Record<string, unknown>,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
   // 자식 노드들을 재귀적으로 처리
@@ -99,9 +115,14 @@ export function handleSwaggerDescriptionComponent(
  */
 export function handleSwaggerResponseComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, any>,
+  props: Record<string, unknown>,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
+  const description =
+    typeof props.description === "string"
+      ? props.description
+      : JSON.stringify(props.description);
+
   // 헤더 노드 생성
   const headerNode = {
     type: "paragraph",
@@ -112,7 +133,7 @@ export function handleSwaggerResponseComponent(
       },
       {
         type: "text",
-        value: ` - ${props.description}`,
+        value: ` - ${description}`,
       },
     ],
   };

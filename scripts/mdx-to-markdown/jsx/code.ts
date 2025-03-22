@@ -13,8 +13,10 @@ export function extractCodeContent(
   let codeContent = "";
   if (node.children && node.children.length > 0) {
     // 모든 자식 텍스트 노드의 내용 결합
-    node.children.forEach((child: any) => {
-      codeContent += child.value;
+    node.children.forEach((child) => {
+      if ("value" in child) {
+        codeContent += child.value;
+      }
     });
   }
 

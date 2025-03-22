@@ -6,8 +6,8 @@ import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
  */
 export function extractMdxJsxAttributes(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-): Record<string, any> {
-  const props: Record<string, any> = {};
+): Record<string, unknown> {
+  const props: Record<string, unknown> = {};
   if (node.attributes && Array.isArray(node.attributes)) {
     for (const attr of node.attributes) {
       if (attr.type === "mdxJsxAttribute" && attr.name) {

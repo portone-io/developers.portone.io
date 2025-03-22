@@ -23,7 +23,7 @@ export function handleTabsComponent(
     value: "</div>",
   };
 
-  const resultNodes: any[] = [];
+  const resultNodes: Node[] = [];
 
   resultNodes.push(tabsStartDiv);
 
@@ -53,11 +53,11 @@ export function handleTabsComponent(
  */
 export function handleTabComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, any>,
+  props: Record<string, unknown>,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
   // 탭 속성 추출
-  const title = props.title || "탭";
+  const title = typeof props.title === "string" ? props.title : "탭";
 
   // 탭 콘텐츠 시작 태그
   const tabContentStartDiv = {
@@ -71,7 +71,7 @@ export function handleTabComponent(
     value: "</div>",
   };
 
-  const resultNodes: any[] = [];
+  const resultNodes: Node[] = [];
 
   // 탭 콘텐츠 시작 태그 추가
   resultNodes.push(tabContentStartDiv);
