@@ -1,3 +1,4 @@
+import type { Html } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node, Parent } from "unist";
 import { visit } from "unist-util-visit";
@@ -77,14 +78,21 @@ export function transformJsxComponents(
               ),
           );
         }
-      } else if (componentName === "code") {
-        // 코드 내용 추출 및 백틱으로 감싼 텍스트 노드 생성
-        replacementNode = extractCodeContent(jsxNode);
       } else {
         // 속성 추출
         const props = extractMdxJsxAttributes(jsxNode);
 
         switch (componentName) {
+          case "code":
+            replacementNode = extractCodeContent(jsxNode);
+            break;
+          case "br":
+            replacementNode = {
+              type: "html",
+              value: "<br />",
+            } as Html;
+
+            break;
           case "Figure":
             replacementNode = handleFigureComponent(props);
             break;
