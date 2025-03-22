@@ -14,7 +14,7 @@
 
 1. MDX 파일을 파싱하여 frontmatter, slug, 파일 경로, imports, AST를 추출
 2. SolidJS 커스텀 컴포넌트를 마크다운으로 변환
-3. 변환된 마크다운 파일을 `public/markdown/` 디렉터리에 저장
+3. 변환된 마크다운 파일을 `public/` 디렉터리에 저장
 4. 다음 세 가지 형식의 파일 생성:
    - `llms.txt`: 모든 문서의 링크와 설명을 카테고리별로 정리한 파일
    - `llms-full.txt`: `llms.txt`의 내용과 함께 모든 문서의 전체 내용을 포함
@@ -34,7 +34,7 @@
 
 ### saveMarkdownFiles
 
-- 변환된 AST를 마크다운 문자열로 변환하여 `public/markdown/` 디렉터리에 저장
+- 변환된 AST를 마크다운 문자열로 변환하여 `public/` 디렉터리에 저장
 - 각 MDX 파일에 대응하는 마크다운 파일을 생성
 
 ### generateLlmsTxtFiles
@@ -77,7 +77,7 @@ pnpm llms-txt
 
 ## 출력 파일
 
-- 개별 마크다운 파일: `public/markdown/{slug}.md`
+- 개별 마크다운 파일: `public/{slug}.md`
 - llms.txt 파일들:
   - `public/llms.txt`: 문서 목록과 링크
   - `public/llms-full.txt`: 모든 문서의 전체 내용
