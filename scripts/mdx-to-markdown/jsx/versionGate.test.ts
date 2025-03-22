@@ -1,5 +1,5 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
-import type { Node } from "unist";
+import type { Node, Parent } from "unist";
 import { visit } from "unist-util-visit";
 import { describe, expect, it } from "vitest";
 
@@ -121,14 +121,18 @@ describe("handleVersionGateComponent", () => {
     // AST 변환 함수 (transformJsxComponents 함수의 일부 로직)
     visit(
       ast,
-      ["mdxJsxFlowElement"],
-      (node: any, index: number | undefined, parent: any) => {
+      "mdxJsxFlowElement",
+      (node: MdxJsxFlowElement, index, parent: Parent) => {
         if (node.name === "VersionGate" && index !== undefined) {
           // 속성 추출
-          const props: Record<string, any> = {};
+          const props: Record<string, unknown> = {};
           if (node.attributes && Array.isArray(node.attributes)) {
             for (const attr of node.attributes) {
-              if (attr.name && attr.value !== undefined) {
+              if (
+                "name" in attr &&
+                typeof attr.name === "string" &&
+                attr.value !== undefined
+              ) {
                 props[attr.name] = attr.value;
               }
             }

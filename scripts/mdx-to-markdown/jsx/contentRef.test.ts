@@ -1,8 +1,13 @@
-import type { Node } from "unist";
+import type { Root } from "mdast";
 import { describe, expect, it } from "vitest";
 
 import type { MdxParseResult } from "../mdx-parser";
 import { handleContentRefComponent } from "./contentRef";
+
+const emptyRoot: Root = {
+  type: "root",
+  children: [],
+};
 
 describe("handleContentRefComponent", () => {
   it("slug가 있고 해당 문서가 존재하는 경우 제목으로 링크를 생성한다", () => {
@@ -15,7 +20,7 @@ describe("handleContentRefComponent", () => {
           title: "결제 가이드",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -72,7 +77,7 @@ describe("handleContentRefComponent", () => {
           title: "API 개요",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -106,7 +111,7 @@ describe("handleContentRefComponent", () => {
           title: "연동 준비하기",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -137,7 +142,7 @@ describe("handleContentRefComponent", () => {
           title: "인증결제 연동하기",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -168,7 +173,7 @@ describe("handleContentRefComponent", () => {
           title: "결제창 연동하기",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -199,7 +204,7 @@ describe("handleContentRefComponent", () => {
           title: "웹훅 연동하기 (V1)",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
       "opi/ko/integration/webhook/readme-v2": {
@@ -209,7 +214,7 @@ describe("handleContentRefComponent", () => {
           title: "웹훅 연동하기 (V2)",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -256,7 +261,7 @@ describe("handleContentRefComponent", () => {
           title: "JavaScript SDK (V1)",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
       "sdk/ko/v2-sdk/readme": {
@@ -266,7 +271,7 @@ describe("handleContentRefComponent", () => {
           title: "JavaScript SDK (V2)",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -313,7 +318,7 @@ describe("handleContentRefComponent", () => {
           title: "PG사별 결제 연동 가이드 (V1)",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
       "opi/ko/integration/pg/v2/readme": {
@@ -323,7 +328,7 @@ describe("handleContentRefComponent", () => {
           title: "PG사별 결제 연동 가이드 (V2)",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };

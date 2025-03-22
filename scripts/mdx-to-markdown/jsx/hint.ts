@@ -10,7 +10,7 @@ import type { Node } from "unist";
  */
 export function handleHintComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, any>,
+  props: Record<string, unknown>,
   transformJsxComponentsFn: (ast: Node) => void,
 ) {
   // 속성 문자열 생성
@@ -21,7 +21,7 @@ export function handleHintComponent(
   Object.entries(props).forEach(([key, value]) => {
     if (value !== undefined) {
       // type 속성은 클래스로 추가
-      if (key === "type") {
+      if (key === "type" && typeof value === "string") {
         classNames += ` hint-${value}`;
       } else {
         // 나머지 속성은 data-* 속성으로 추가

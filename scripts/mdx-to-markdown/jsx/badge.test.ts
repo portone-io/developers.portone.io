@@ -1,3 +1,5 @@
+import type { MdxJsxFlowElement } from "mdast-util-mdx";
+import type { Parent } from "unist";
 import { visit } from "unist-util-visit";
 import { describe, expect, it } from "vitest";
 
@@ -132,9 +134,10 @@ describe("handleBadgeComponent", () => {
     // AST 변환 함수 (transformJsxComponents 함수의 일부 로직)
     visit(
       ast,
-      ["mdxJsxFlowElement"],
-      (node: any, index: number | undefined, parent: any) => {
+      "mdxJsxFlowElement",
+      (node: MdxJsxFlowElement, index, parent: Parent) => {
         if (
+          node.name &&
           ["PaymentV1", "PaymentV2", "Recon", "Console", "Partner"].includes(
             node.name,
           ) &&

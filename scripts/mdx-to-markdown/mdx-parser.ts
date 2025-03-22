@@ -3,13 +3,12 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import yaml from "js-yaml";
-import type { Literal } from "mdast";
+import type { Literal, Root } from "mdast";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import remarkMdx from "remark-mdx";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
-import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 
 import { generateSlug as originalGenerateSlug } from "../../src/utils/slugs";
@@ -26,7 +25,7 @@ export type Frontmatter = {
   date?: string;
   tags?: string[];
   targetVersions?: string[];
-  [key: string]: any; // 기타 알려지지 않은 필드를 위한 인덱스 시그니처
+  [key: string]: unknown; // 기타 알려지지 않은 필드를 위한 인덱스 시그니처
 };
 
 // MDX 파싱 결과 타입
@@ -42,7 +41,7 @@ export type MdxParseResult = {
       alias?: string;
     }[];
   }[];
-  ast: Node; // unified AST
+  ast: Root; // unified AST
   content: string; // 원본 MDX 내용
 };
 
@@ -61,7 +60,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
     slug: generateSlug(filePath),
     frontmatter: {},
     imports: [],
-    ast: null as unknown as Node,
+    ast: null as unknown as Root,
     content,
   };
 
@@ -73,7 +72,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
     .use(remarkGfm)
     .use(() => (tree) => {
       // AST 저장
-      result.ast = tree;
+      result.ast = tree as Root;
 
       // 프론트매터 추출
       visit(tree, "yaml", (node: Literal) => {
