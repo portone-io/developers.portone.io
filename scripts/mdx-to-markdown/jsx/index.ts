@@ -1,13 +1,12 @@
-import type { Html } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+import { replaceToHtml } from "scripts/mdx-to-markdown/jsx/replaceToHtml";
 import type { Node, Parent } from "unist";
-import { visit } from "unist-util-visit";
 
 import { type MdxParseResult } from "../mdx-parser";
 import { handleApiLinkComponent } from "./apiLink";
 import { handleBadgeComponent } from "./badge";
 import { extractCodeContent } from "./code";
-import { extractMdxJsxAttributes } from "./common";
+import { unwrapJsxNode } from "./common";
 import { handleConditionComponent } from "./condition";
 import { handleContentRefComponent } from "./contentRef";
 import {
@@ -36,244 +35,151 @@ const tagsNotToHandle = new Set<string>(["Parameter", "center"]);
  * @param ast MDX AST
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
  * @param useMarkdownLinks 내부 링크를 마크다운 파일 링크로 변환할지 여부 (true: 마크다운 파일 링크, false: 웹페이지 링크)
- * @returns 처리되지 않은 태그 목록
+ * @returns 변환된 AST 노드와 처리되지 않은 태그 목록
  */
 export function transformJsxComponents(
   ast: Node,
   parseResultMap: Record<string, MdxParseResult>,
   useMarkdownLinks: boolean = true,
-): Set<string> {
-  const unhandledTags = new Set<string>();
+): { ast: Node; unhandledTags: Set<string> } {
+  const emptySet = new Set<string>();
 
   // Collect all imported element names
   const importedElementNames = collectAllImportedElementNames(ast);
 
-  // JSX Flow 컴포넌트 변환
-  visit(
-    ast,
-    ["mdxJsxFlowElement", "mdxJsxTextElement"],
-    (node: Node, index: number | undefined, parent: Parent | undefined) => {
+  const transformRecursively = (innerAst: Node) =>
+    transformJsxComponents(innerAst, parseResultMap, useMarkdownLinks);
+
+  const result: { ast: Node; unhandledTags: Set<string> } = (() => {
+    const astAsParent = ast as Parent;
+    if (ast.type === "mdxJsxFlowElement" || ast.type === "mdxJsxTextElement") {
       // Type assertion to handle flow element
-      const jsxNode = node as MdxJsxFlowElement | MdxJsxTextElement;
-      if (!jsxNode.name || index === undefined || !parent) return;
+      const jsxNode = ast as MdxJsxFlowElement | MdxJsxTextElement;
 
       // 컴포넌트 이름과 속성
       const componentName = jsxNode.name;
 
-      let replacementNode: Node | undefined;
-
       // prose 태그 처리 (예: <prose.h1>, <prose.p> 등)
-      if (componentName.startsWith("prose.")) {
+      if (componentName?.startsWith("prose.")) {
         const proseElementType = componentName.split(".")[1];
         if (proseElementType) {
           // 노드 교체 - 배열에서 직접 교체
-          replacementNode = handleProseComponent(
+          return handleProseComponent(
             jsxNode,
             proseElementType,
-            (innerAst: Node) =>
-              transformJsxComponents(
-                innerAst,
-                parseResultMap,
-                useMarkdownLinks,
-              ),
+            transformRecursively,
           );
+        } else {
+          return unwrapJsxNode(jsxNode, transformRecursively);
         }
       } else {
-        // 속성 추출
-        const props = extractMdxJsxAttributes(jsxNode);
-
         switch (componentName) {
           case "code":
-            replacementNode = extractCodeContent(jsxNode);
-            break;
+            return {
+              ast: extractCodeContent(jsxNode),
+              unhandledTags: emptySet,
+            };
           case "br":
-            replacementNode = {
-              type: "html",
-              value: "<br />",
-            } as Html;
-
-            break;
+          case "table":
+          case "thead":
+          case "tbody":
+            return replaceToHtml(jsxNode, transformRecursively);
           case "Figure":
-            replacementNode = handleFigureComponent(props);
-            break;
+            return {
+              ast: handleFigureComponent(jsxNode),
+              unhandledTags: emptySet,
+            };
           case "Hint":
-            replacementNode = handleHintComponent(
-              jsxNode,
-              props,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
-            );
-            break;
+            return handleHintComponent(jsxNode, transformRecursively);
           case "Tabs":
-            replacementNode = handleTabsComponent(jsxNode, (innerAst: Node) =>
-              transformJsxComponents(
-                innerAst,
+            return handleTabsComponent(jsxNode, transformRecursively);
+          case "Tabs.Tab":
+            return handleTabComponent(jsxNode, transformRecursively);
+          case "Details":
+            return handleDetailsComponent(jsxNode, transformRecursively);
+          case "Details.Summary":
+            return handleDetailsSummaryComponent(jsxNode, transformRecursively);
+          case "Details.Content":
+            return handleDetailsContentComponent(jsxNode, transformRecursively);
+          case "Condition":
+            return handleConditionComponent(jsxNode, transformRecursively);
+          case "ContentRef":
+            return {
+              ast: handleContentRefComponent(
+                jsxNode,
                 parseResultMap,
                 useMarkdownLinks,
               ),
-            );
-            break;
-          case "Tabs.Tab":
-            replacementNode = handleTabComponent(
-              jsxNode,
-              props,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
-            );
-            break;
-          case "Details":
-            replacementNode = handleDetailsComponent(
-              jsxNode,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
-            );
-            break;
-          case "Details.Summary":
-            replacementNode = handleDetailsSummaryComponent(
-              jsxNode,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
-            );
-            break;
-          case "Details.Content":
-            replacementNode = handleDetailsContentComponent(
-              jsxNode,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
-            );
-            break;
-          case "Condition":
-            replacementNode = handleConditionComponent(
-              jsxNode,
-              props,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
-            );
-            break;
-          case "ContentRef":
-            replacementNode = handleContentRefComponent(
-              props,
-              parseResultMap,
-              useMarkdownLinks,
-            );
-            break;
+              unhandledTags: emptySet,
+            };
           case "VersionGate":
-            replacementNode = handleVersionGateComponent(
-              jsxNode,
-              props,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
-            );
-            break;
+            return handleVersionGateComponent(jsxNode, transformRecursively);
           case "Youtube":
-            replacementNode = handleYoutubeComponent(props);
-            break;
+            return {
+              ast: handleYoutubeComponent(jsxNode),
+              unhandledTags: emptySet,
+            };
           case "ApiLink":
-            replacementNode = handleApiLinkComponent(props);
-            break;
+            return {
+              ast: handleApiLinkComponent(jsxNode),
+              unhandledTags: emptySet,
+            };
           case "PaymentV1":
           case "PaymentV2":
           case "Recon":
           case "Console":
           case "Partner":
-            replacementNode = handleBadgeComponent(componentName);
-            break;
+            return {
+              ast: handleBadgeComponent(componentName),
+              unhandledTags: emptySet,
+            };
           case "Swagger":
-            replacementNode = handleSwaggerComponent(
-              jsxNode,
-              props,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
-            );
-            break;
+            return handleSwaggerComponent(jsxNode, transformRecursively);
           case "SwaggerDescription":
-            replacementNode = handleSwaggerDescriptionComponent(
+            return handleSwaggerDescriptionComponent(
               jsxNode,
-              props,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
+              transformRecursively,
             );
-            break;
           case "SwaggerResponse":
-            replacementNode = handleSwaggerResponseComponent(
+            return handleSwaggerResponseComponent(
               jsxNode,
-              props,
-              (innerAst: Node) =>
-                transformJsxComponents(
-                  innerAst,
-                  parseResultMap,
-                  useMarkdownLinks,
-                ),
+              transformRecursively,
             );
-            break;
+          default: {
+            const result = replaceToHtml(jsxNode, transformRecursively);
+            return {
+              ast: result.ast,
+              unhandledTags: result.unhandledTags.add(componentName ?? "null"),
+            };
+          }
         }
       }
+    } else if (astAsParent.children && astAsParent.children.length > 0) {
+      const results = astAsParent.children.map(transformRecursively);
 
-      if (!replacementNode) {
-        unhandledTags.add(componentName);
+      const newAst = {
+        ...ast,
+        children: results.map((result) => result.ast),
+      };
 
-        if (!jsxNode.children || jsxNode.children.length === 0) {
-          // Nothing to keep, remove this node from the AST
-          parent.children.splice(index, 1);
-          return index;
-        }
+      const unhandledTags = results.reduce(
+        (acc, result) => acc.union(result.unhandledTags),
+        new Set<string>(),
+      );
 
-        // 기본적으로 자식 노드만 유지
-        replacementNode = {
-          type: "root",
-          children: jsxNode.children,
-        } as Parent;
+      return {
+        ast: newAst,
+        unhandledTags,
+      };
+    } else {
+      return { ast, unhandledTags: emptySet };
+    }
+  })();
 
-        // 자식 노드들에 대해 재귀적으로 transformJsxComponents 호출
-        transformJsxComponents(
-          replacementNode,
-          parseResultMap,
-          useMarkdownLinks,
-        );
-      }
-
-      // 노드 교체
-      parent.children.splice(index, 1, replacementNode);
-    },
-  );
-
-  return unhandledTags
-    .difference(tagsNotToHandle)
-    .difference(importedElementNames);
+  return {
+    ast: result.ast,
+    unhandledTags: result.unhandledTags
+      .difference(tagsNotToHandle)
+      .difference(importedElementNames),
+  };
 }

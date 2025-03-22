@@ -1,17 +1,21 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+
 import type { MdxParseResult } from "../mdx-parser";
+import { extractMdxJsxAttributes } from "./common";
 
 /**
- * ConentRef 컴포넌트 처리
- * @param props 컴포넌트 속성
+ * ContentRef 컴포넌트 처리
+ * @param node JSX 컴포넌트 노드
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵
  * @param useMarkdownLinks 내부 링크를 마크다운 파일 링크로 변환할지 여부 (true: 마크다운 파일 링크, false: 웹페이지 링크)
  * @returns 변환된 마크다운 노드
  */
 export function handleContentRefComponent(
-  props: Record<string, unknown>,
+  node: MdxJsxFlowElement | MdxJsxTextElement,
   parseResultMap: Record<string, MdxParseResult>,
   useMarkdownLinks: boolean = true,
 ) {
+  const props = extractMdxJsxAttributes(node);
   const slugProp = props.slug;
   const slug = typeof slugProp === "string" ? slugProp.replace(/^\//, "") : "";
   let title;

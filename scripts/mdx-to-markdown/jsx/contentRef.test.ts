@@ -1,4 +1,5 @@
 import type { Root } from "mdast";
+import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { describe, expect, it } from "vitest";
 
 import type { MdxParseResult } from "../mdx-parser";
@@ -26,10 +27,16 @@ describe("handleContentRefComponent", () => {
     };
 
     // handleContentRefComponent 함수 실행
-    const result = handleContentRefComponent(
-      { slug: "guide/payment" },
-      parseResultMap,
-    );
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        { type: "mdxJsxAttribute", name: "slug", value: "guide/payment" },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const result = handleContentRefComponent(node, parseResultMap);
 
     // 결과 검증
     expect(result).toEqual({
@@ -49,10 +56,16 @@ describe("handleContentRefComponent", () => {
     const parseResultMap = {};
 
     // handleContentRefComponent 함수 실행
-    const result = handleContentRefComponent(
-      { slug: "non-existent/page" },
-      parseResultMap,
-    );
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        { type: "mdxJsxAttribute", name: "slug", value: "non-existent/page" },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const result = handleContentRefComponent(node, parseResultMap);
 
     // 결과 검증
     expect(result).toEqual({
@@ -83,10 +96,16 @@ describe("handleContentRefComponent", () => {
     };
 
     // handleContentRefComponent 함수 실행 (slug가 '/'로 시작)
-    const result = handleContentRefComponent(
-      { slug: "/api/overview" },
-      parseResultMap,
-    );
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        { type: "mdxJsxAttribute", name: "slug", value: "/api/overview" },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const result = handleContentRefComponent(node, parseResultMap);
 
     // 결과 검증
     expect(result).toEqual({
@@ -116,10 +135,20 @@ describe("handleContentRefComponent", () => {
       },
     };
 
-    const result = handleContentRefComponent(
-      { slug: "/opi/ko/integration/ready/readme" },
-      parseResultMap,
-    );
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/opi/ko/integration/ready/readme",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const result = handleContentRefComponent(node, parseResultMap);
 
     expect(result).toEqual({
       type: "paragraph",
@@ -147,10 +176,20 @@ describe("handleContentRefComponent", () => {
       },
     };
 
-    const result = handleContentRefComponent(
-      { slug: "/opi/ko/integration/start/v1/auth" },
-      parseResultMap,
-    );
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/opi/ko/integration/start/v1/auth",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const result = handleContentRefComponent(node, parseResultMap);
 
     expect(result).toEqual({
       type: "paragraph",
@@ -178,10 +217,20 @@ describe("handleContentRefComponent", () => {
       },
     };
 
-    const result = handleContentRefComponent(
-      { slug: "/opi/ko/integration/start/v2/checkout" },
-      parseResultMap,
-    );
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/opi/ko/integration/start/v2/checkout",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const result = handleContentRefComponent(node, parseResultMap);
 
     expect(result).toEqual({
       type: "paragraph",
@@ -219,10 +268,20 @@ describe("handleContentRefComponent", () => {
       },
     };
 
-    const resultV1 = handleContentRefComponent(
-      { slug: "/opi/ko/integration/webhook/readme-v1" },
-      parseResultMap,
-    );
+    const nodeV1 = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/opi/ko/integration/webhook/readme-v1",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const resultV1 = handleContentRefComponent(nodeV1, parseResultMap);
 
     expect(resultV1).toEqual({
       type: "paragraph",
@@ -235,10 +294,20 @@ describe("handleContentRefComponent", () => {
       ],
     });
 
-    const resultV2 = handleContentRefComponent(
-      { slug: "/opi/ko/integration/webhook/readme-v2" },
-      parseResultMap,
-    );
+    const nodeV2 = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/opi/ko/integration/webhook/readme-v2",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const resultV2 = handleContentRefComponent(nodeV2, parseResultMap);
 
     expect(resultV2).toEqual({
       type: "paragraph",
@@ -276,10 +345,20 @@ describe("handleContentRefComponent", () => {
       },
     };
 
-    const resultV1 = handleContentRefComponent(
-      { slug: "/sdk/ko/v1-sdk/javascript-sdk/readme" },
-      parseResultMap,
-    );
+    const nodeV1 = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/sdk/ko/v1-sdk/javascript-sdk/readme",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const resultV1 = handleContentRefComponent(nodeV1, parseResultMap);
 
     expect(resultV1).toEqual({
       type: "paragraph",
@@ -292,10 +371,20 @@ describe("handleContentRefComponent", () => {
       ],
     });
 
-    const resultV2 = handleContentRefComponent(
-      { slug: "/sdk/ko/v2-sdk/readme" },
-      parseResultMap,
-    );
+    const nodeV2 = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/sdk/ko/v2-sdk/readme",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const resultV2 = handleContentRefComponent(nodeV2, parseResultMap);
 
     expect(resultV2).toEqual({
       type: "paragraph",
@@ -333,10 +422,20 @@ describe("handleContentRefComponent", () => {
       },
     };
 
-    const resultV1 = handleContentRefComponent(
-      { slug: "/opi/ko/integration/pg/v1/readme" },
-      parseResultMap,
-    );
+    const nodeV1 = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/opi/ko/integration/pg/v1/readme",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const resultV1 = handleContentRefComponent(nodeV1, parseResultMap);
 
     expect(resultV1).toEqual({
       type: "paragraph",
@@ -349,10 +448,20 @@ describe("handleContentRefComponent", () => {
       ],
     });
 
-    const resultV2 = handleContentRefComponent(
-      { slug: "/opi/ko/integration/pg/v2/readme" },
-      parseResultMap,
-    );
+    const nodeV2 = {
+      type: "mdxJsxFlowElement",
+      name: "ContentRef",
+      attributes: [
+        {
+          type: "mdxJsxAttribute",
+          name: "slug",
+          value: "/opi/ko/integration/pg/v2/readme",
+        },
+      ],
+      children: [],
+    } as MdxJsxFlowElement;
+
+    const resultV2 = handleContentRefComponent(nodeV2, parseResultMap);
 
     expect(resultV2).toEqual({
       type: "paragraph",

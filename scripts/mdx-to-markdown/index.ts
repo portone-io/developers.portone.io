@@ -43,25 +43,22 @@ export function transformAstForMarkdown(
   transformLinks(ast, useMarkdownLinks);
 
   // JSX 컴포넌트를 마크다운으로 변환 (useMarkdownLinks 파라미터 전달)
-  const unhandledTags = transformJsxComponents(
-    ast,
-    parseResultMap,
-    useMarkdownLinks,
-  );
+  const result = transformJsxComponents(ast, parseResultMap, useMarkdownLinks);
+  const transformedAst = result.ast as Root;
 
   // 임포트 구문 제거
-  removeImports(ast);
+  removeImports(transformedAst);
 
   // YAML 노드 제거 (프론트매터는 별도로 처리)
-  removeYamlNodes(ast);
+  removeYamlNodes(transformedAst);
 
   // JSX 요소 제거 또는 자식 노드만 유지
-  simplifyJsxElements(ast);
+  simplifyJsxElements(transformedAst);
 
   // MDX 표현식 노드 처리
-  handleRemainingMdxFlowExpressions(ast);
+  handleRemainingMdxFlowExpressions(transformedAst);
 
-  return { ast, unhandledTags };
+  return { ast: transformedAst, unhandledTags: result.unhandledTags };
 }
 
 /**

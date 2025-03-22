@@ -1,16 +1,22 @@
+import type { Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
+
+import { extractMdxJsxAttributes } from "./common";
 
 /**
  * Tabs 컴포넌트 처리
  * @param node Tabs 컴포넌트 노드
- * @param transformJsxComponentsFn 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
+ * @param transformRecursively 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
  * @returns 변환된 노드
  */
 export function handleTabsComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  transformJsxComponentsFn: (ast: Node) => void,
-) {
+  transformRecursively: (ast: Node) => {
+    ast: Node;
+    unhandledTags: Set<string>;
+  },
+): { ast: Node; unhandledTags: Set<string> } {
   // 탭 컴포넌트 전체를 감싸는 div 시작 태그
   const tabsStartDiv = {
     type: "html",
@@ -23,39 +29,40 @@ export function handleTabsComponent(
     value: "</div>",
   };
 
-  const resultNodes: Node[] = [];
-
-  resultNodes.push(tabsStartDiv);
-
   // 탭 내부 자식 노드들을 재귀적으로 처리
-  if (node.children && node.children.length > 0) {
-    const tabsChildrenContent = {
-      type: "root",
-      children: node.children,
-    };
-    transformJsxComponentsFn(tabsChildrenContent);
-    resultNodes.push(...tabsChildrenContent.children);
-  }
+  const results = node.children.map(transformRecursively);
+  const newChildren = results.map((r) => r.ast);
+  const unhandledTags = results.reduce(
+    (acc, r) => acc.union(r.unhandledTags),
+    new Set<string>(),
+  );
 
-  resultNodes.push(tabsEndDiv);
+  const resultNodes = [tabsStartDiv, ...newChildren, tabsEndDiv];
 
   return {
-    type: "root",
-    children: resultNodes,
+    ast: {
+      type: "root",
+      children: resultNodes,
+    } as Root,
+    unhandledTags,
   };
 }
 
 /**
  * 개별 Tab 컴포넌트 처리
  * @param node Tab 컴포넌트 노드
- * @param transformJsxComponentsFn 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
+ * @param transformRecursively 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
  * @returns 변환된 노드
  */
 export function handleTabComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, unknown>,
-  transformJsxComponentsFn: (ast: Node) => void,
-) {
+  transformRecursively: (ast: Node) => {
+    ast: Node;
+    unhandledTags: Set<string>;
+  },
+): { ast: Root; unhandledTags: Set<string> } {
+  const props = extractMdxJsxAttributes(node);
+
   // 탭 속성 추출
   const title = typeof props.title === "string" ? props.title : "탭";
 
@@ -71,26 +78,22 @@ export function handleTabComponent(
     value: "</div>",
   };
 
-  const resultNodes: Node[] = [];
-
-  // 탭 콘텐츠 시작 태그 추가
-  resultNodes.push(tabContentStartDiv);
-
   // 탭 내부 자식 노드들을 재귀적으로 처리
-  if (node.children && node.children.length > 0) {
-    const tabChildrenContent = {
-      type: "root",
-      children: node.children,
-    };
-    transformJsxComponentsFn(tabChildrenContent);
-    resultNodes.push(...tabChildrenContent.children);
-  }
+  const results = node.children.map(transformRecursively);
+  const newChildren = results.map((r) => r.ast);
+  const unhandledTags = results.reduce(
+    (acc, r) => acc.union(r.unhandledTags),
+    new Set<string>(),
+  );
 
   // 탭 콘텐츠 종료 태그 추가
-  resultNodes.push(tabContentEndDiv);
+  const resultNodes = [tabContentStartDiv, ...newChildren, tabContentEndDiv];
 
   return {
-    type: "root",
-    children: resultNodes,
+    ast: {
+      type: "root",
+      children: resultNodes,
+    } as Root,
+    unhandledTags,
   };
 }

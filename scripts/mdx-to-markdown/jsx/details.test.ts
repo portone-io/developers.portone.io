@@ -1,6 +1,6 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import type { Node } from "unist";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   handleDetailsComponent,
@@ -23,16 +23,17 @@ describe("handleDetailsComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleDetailsComponent 함수 실행
-    const result = handleDetailsComponent(node, mockTransformJsxComponentsFn);
+    const result = handleDetailsComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         { type: "html", value: "<details>" },
@@ -43,6 +44,8 @@ describe("handleDetailsComponent", () => {
         { type: "html", value: "</details>" },
       ],
     });
+    expect(result.unhandledTags).toBeDefined();
+    expect(result.unhandledTags.size).toBe(0);
   });
 
   it("자식 노드가 없는 경우 기본 텍스트를 사용한다", () => {
@@ -54,23 +57,25 @@ describe("handleDetailsComponent", () => {
       children: [],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleDetailsComponent 함수 실행
-    const result = handleDetailsComponent(node, mockTransformJsxComponentsFn);
+    const result = handleDetailsComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         { type: "html", value: "<details>" },
-        { type: "text", value: "상세 정보" },
         { type: "html", value: "</details>" },
       ],
     });
+    expect(result.unhandledTags).toBeDefined();
+    expect(result.unhandledTags.size).toBe(0);
   });
 });
 
@@ -89,19 +94,20 @@ describe("handleDetailsSummaryComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleDetailsSummaryComponent 함수 실행
     const result = handleDetailsSummaryComponent(
       node,
-      mockTransformJsxComponentsFn,
+      mockTransformRecursively,
     );
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         { type: "html", value: "<summary>" },
@@ -112,6 +118,8 @@ describe("handleDetailsSummaryComponent", () => {
         { type: "html", value: "</summary>" },
       ],
     });
+    expect(result.unhandledTags).toBeDefined();
+    expect(result.unhandledTags.size).toBe(0);
   });
 
   it("자식 노드가 없는 경우 기본 텍스트를 사용한다", () => {
@@ -123,26 +131,28 @@ describe("handleDetailsSummaryComponent", () => {
       children: [],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleDetailsSummaryComponent 함수 실행
     const result = handleDetailsSummaryComponent(
       node,
-      mockTransformJsxComponentsFn,
+      mockTransformRecursively,
     );
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         { type: "html", value: "<summary>" },
-        { type: "text", value: "상세 정보" },
         { type: "html", value: "</summary>" },
       ],
     });
+    expect(result.unhandledTags).toBeDefined();
+    expect(result.unhandledTags.size).toBe(0);
   });
 });
 
@@ -161,19 +171,20 @@ describe("handleDetailsContentComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleDetailsContentComponent 함수 실행
     const result = handleDetailsContentComponent(
       node,
-      mockTransformJsxComponentsFn,
+      mockTransformRecursively,
     );
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -182,6 +193,8 @@ describe("handleDetailsContentComponent", () => {
         },
       ],
     });
+    expect(result.unhandledTags).toBeDefined();
+    expect(result.unhandledTags.size).toBe(0);
   });
 
   it("자식 노드가 없는 경우 빈 노드를 반환한다", () => {
@@ -193,21 +206,24 @@ describe("handleDetailsContentComponent", () => {
       children: [],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleDetailsContentComponent 함수 실행
     const result = handleDetailsContentComponent(
       node,
-      mockTransformJsxComponentsFn,
+      mockTransformRecursively,
     );
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [],
     });
+    expect(result.unhandledTags).toBeDefined();
+    expect(result.unhandledTags.size).toBe(0);
   });
 });

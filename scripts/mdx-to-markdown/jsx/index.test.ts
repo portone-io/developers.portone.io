@@ -108,10 +108,10 @@ describe("transformJsxComponents", () => {
     };
 
     // transformJsxComponents 함수 실행
-    transformJsxComponents(ast, parseResultMap);
+    const { ast: transformedAst } = transformJsxComponents(ast, parseResultMap);
 
     // 결과 검증 - VersionGate 내부의 ContentRef가 마크다운 링크로 변환되었는지 확인
-    expect(ast).toEqual({
+    expect(transformedAst).toEqual({
       type: "root",
       children: [
         {
@@ -289,10 +289,10 @@ describe("transformJsxComponents", () => {
     };
 
     // transformJsxComponents 함수 실행
-    transformJsxComponents(ast, parseResultMap);
+    const { ast: transformedAst } = transformJsxComponents(ast, parseResultMap);
 
     // 결과 검증 - 중첩된 VersionGate와 ContentRef가 모두 처리되었는지 확인
-    expect(ast).toEqual({
+    expect(transformedAst).toEqual({
       type: "root",
       children: [
         {
@@ -463,10 +463,10 @@ describe("transformJsxComponents", () => {
     };
 
     // transformJsxComponents 함수 실행
-    transformJsxComponents(ast, parseResultMap);
+    const { ast: transformedAst } = transformJsxComponents(ast, parseResultMap);
 
     // 결과 검증 - 다양한 컴포넌트가 모두 처리되었는지 확인
-    expect(ast).toEqual({
+    expect(transformedAst).toEqual({
       type: "root",
       children: [
         {
@@ -631,10 +631,10 @@ describe("transformJsxComponents", () => {
     };
 
     // transformJsxComponents 함수 실행
-    transformJsxComponents(ast, parseResultMap);
+    const { ast: transformedAst } = transformJsxComponents(ast, parseResultMap);
 
     // 결과 검증 - 각 Condition 컴포넌트가 HTML 주석으로 변환되었는지 확인
-    expect(ast).toEqual({
+    expect(transformedAst).toEqual({
       type: "root",
       children: [
         {

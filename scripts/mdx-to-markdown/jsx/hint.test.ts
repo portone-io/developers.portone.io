@@ -1,6 +1,6 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import type { Node } from "unist";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { handleHintComponent } from "./hint";
 
@@ -18,16 +18,17 @@ describe("handleHintComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleHintComponent 함수 실행
-    const result = handleHintComponent(node, {}, mockTransformJsxComponentsFn);
+    const result = handleHintComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -44,6 +45,7 @@ describe("handleHintComponent", () => {
         },
       ],
     });
+    expect(result.unhandledTags.size).toBe(0);
   });
 
   it("type 속성이 있는 Hint 컴포넌트를 처리한다", () => {
@@ -59,20 +61,26 @@ describe("handleHintComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 속성 추가
+    node.attributes = [
+      {
+        type: "mdxJsxAttribute",
+        name: "type",
+        value: "warning",
+      },
+    ];
 
-    // handleHintComponent 함수 실행 (type 속성 추가)
-    const result = handleHintComponent(
-      node,
-      { type: "warning" },
-      mockTransformJsxComponentsFn,
-    );
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
+
+    // handleHintComponent 함수 실행
+    const result = handleHintComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -89,6 +97,7 @@ describe("handleHintComponent", () => {
         },
       ],
     });
+    expect(result.unhandledTags.size).toBe(0);
   });
 
   it("여러 속성이 있는 Hint 컴포넌트를 처리한다", () => {
@@ -104,24 +113,36 @@ describe("handleHintComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
-
-    // handleHintComponent 함수 실행 (여러 속성 추가)
-    const result = handleHintComponent(
-      node,
+    // 속성 추가
+    node.attributes = [
       {
-        type: "info",
-        id: "important-hint",
-        custom: "value",
+        type: "mdxJsxAttribute",
+        name: "type",
+        value: "info",
       },
-      mockTransformJsxComponentsFn,
-    );
+      {
+        type: "mdxJsxAttribute",
+        name: "id",
+        value: "important-hint",
+      },
+      {
+        type: "mdxJsxAttribute",
+        name: "custom",
+        value: "value",
+      },
+    ];
+
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
+
+    // handleHintComponent 함수 실행
+    const result = handleHintComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -140,6 +161,7 @@ describe("handleHintComponent", () => {
         },
       ],
     });
+    expect(result.unhandledTags.size).toBe(0);
   });
 
   it("자식 노드가 없는 경우에도 정상적으로 처리한다", () => {
@@ -149,20 +171,26 @@ describe("handleHintComponent", () => {
       name: "Hint",
     } as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 속성 추가
+    node.attributes = [
+      {
+        type: "mdxJsxAttribute",
+        name: "type",
+        value: "note",
+      },
+    ];
+
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleHintComponent 함수 실행
-    const result = handleHintComponent(
-      node,
-      { type: "note" },
-      mockTransformJsxComponentsFn,
-    );
+    const result = handleHintComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -175,5 +203,44 @@ describe("handleHintComponent", () => {
         },
       ],
     });
+    expect(result.unhandledTags.size).toBe(0);
+  });
+
+  it("unhandledTags를 올바르게 수집한다", () => {
+    // 테스트용 Hint 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "Hint",
+      attributes: [],
+      children: [
+        { type: "text", value: "텍스트" },
+        {
+          type: "mdxJsxFlowElement",
+          name: "CustomComponent",
+          attributes: [],
+          children: [],
+        },
+      ],
+    } as MdxJsxFlowElement;
+
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi
+      .fn()
+      .mockImplementationOnce((ast: Node) => ({
+        ast,
+        unhandledTags: new Set<string>(),
+      }))
+      .mockImplementationOnce((ast: Node) => ({
+        ast,
+        unhandledTags: new Set(["CustomComponent"]),
+      }));
+
+    // handleHintComponent 함수 실행
+    const result = handleHintComponent(node, mockTransformRecursively);
+
+    // 결과 검증
+    expect(result.unhandledTags.size).toBe(1);
+    expect(result.unhandledTags.has("CustomComponent")).toBe(true);
+    expect(mockTransformRecursively).toHaveBeenCalledTimes(2);
   });
 });

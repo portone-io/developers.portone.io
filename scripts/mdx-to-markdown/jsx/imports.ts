@@ -2,6 +2,7 @@ import type { MdxjsEsm } from "mdast-util-mdx";
 import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 
+// TODO: provide an option to exclude components
 /**
  * Collects all imported element names from the MDX AST
  * @param ast MDX AST
