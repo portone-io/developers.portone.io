@@ -14,7 +14,7 @@ describe("transformJsxComponents", () => {
     // 테스트용 parseResultMap 생성
     const parseResultMap: Record<string, MdxParseResult> = {
       "opi/ko/integration/webhook/readme-v1": {
-        filePath: "/path/to/opi/ko/integration/webhook/readme-v1.mdx",
+        filePath: "src/routes/(root)/opi/ko/integration/webhook/readme-v1.mdx",
         slug: "opi/ko/integration/webhook/readme-v1",
         frontmatter: {
           title: "웹훅 연동하기 (V1)",
@@ -24,10 +24,20 @@ describe("transformJsxComponents", () => {
         content: "",
       },
       "opi/ko/integration/webhook/readme-v2": {
-        filePath: "/path/to/opi/ko/integration/webhook/readme-v2.mdx",
+        filePath: "src/routes/(root)/opi/ko/integration/webhook/readme-v2.mdx",
         slug: "opi/ko/integration/webhook/readme-v2",
         frontmatter: {
           title: "웹훅 연동하기 (V2)",
+        },
+        imports: [],
+        ast: emptyRoot,
+        content: "",
+      },
+      "opi/ko/integration/webhook/readme": {
+        filePath: "src/routes/(root)/opi/ko/integration/webhook/readme.mdx",
+        slug: "opi/ko/integration/webhook/readme",
+        frontmatter: {
+          title: "웹훅 연동하기",
         },
         imports: [],
         ast: emptyRoot,
@@ -108,7 +118,11 @@ describe("transformJsxComponents", () => {
     };
 
     // transformJsxComponents 함수 실행
-    const { ast: transformedAst } = transformJsxComponents(ast, parseResultMap);
+    const { ast: transformedAst } = transformJsxComponents(
+      "opi/ko/integration/webhook/readme",
+      ast,
+      parseResultMap,
+    );
 
     // 결과 검증 - VersionGate 내부의 ContentRef가 마크다운 링크로 변환되었는지 확인
     expect(transformedAst).toEqual({
@@ -215,7 +229,7 @@ describe("transformJsxComponents", () => {
     // 테스트용 parseResultMap 생성
     const parseResultMap: Record<string, MdxParseResult> = {
       "opi/ko/integration/start/v1/auth": {
-        filePath: "/path/to/opi/ko/integration/start/v1/auth.mdx",
+        filePath: "src/routes/(root)/opi/ko/integration/start/v1/auth.mdx",
         slug: "opi/ko/integration/start/v1/auth",
         frontmatter: {
           title: "인증결제 연동하기",
@@ -289,7 +303,11 @@ describe("transformJsxComponents", () => {
     };
 
     // transformJsxComponents 함수 실행
-    const { ast: transformedAst } = transformJsxComponents(ast, parseResultMap);
+    const { ast: transformedAst } = transformJsxComponents(
+      "opi/ko/integration/start/v1/auth",
+      ast,
+      parseResultMap,
+    );
 
     // 결과 검증 - 중첩된 VersionGate와 ContentRef가 모두 처리되었는지 확인
     expect(transformedAst).toEqual({
@@ -388,7 +406,7 @@ describe("transformJsxComponents", () => {
     // 테스트용 parseResultMap 생성
     const parseResultMap: Record<string, MdxParseResult> = {
       "opi/ko/integration/ready/readme": {
-        filePath: "/path/to/opi/ko/integration/ready/readme.mdx",
+        filePath: "src/routes/(root)/opi/ko/integration/ready/readme.mdx",
         slug: "opi/ko/integration/ready/readme",
         frontmatter: {
           title: "연동 준비하기",
@@ -463,7 +481,11 @@ describe("transformJsxComponents", () => {
     };
 
     // transformJsxComponents 함수 실행
-    const { ast: transformedAst } = transformJsxComponents(ast, parseResultMap);
+    const { ast: transformedAst } = transformJsxComponents(
+      "opi/ko/integration/ready/readme",
+      ast,
+      parseResultMap,
+    );
 
     // 결과 검증 - 다양한 컴포넌트가 모두 처리되었는지 확인
     expect(transformedAst).toEqual({
@@ -549,7 +571,19 @@ describe("transformJsxComponents", () => {
 
   it("Condition 컴포넌트를 HTML 주석으로 처리한다", () => {
     // 테스트용 parseResultMap 생성
-    const parseResultMap: Record<string, MdxParseResult> = {};
+    const parseResultMap: Record<string, MdxParseResult> = {
+      "opi/ko/integration/ready/condition-test": {
+        filePath:
+          "src/routes/(root)/opi/ko/integration/ready/condition-test.mdx",
+        slug: "opi/ko/integration/ready/condition-test",
+        frontmatter: {
+          title: "조건부 컨텐츠",
+        },
+        imports: [],
+        ast: emptyRoot,
+        content: "",
+      },
+    };
 
     // 테스트용 AST 생성 - 다양한 속성을 가진 Condition 컴포넌트
     const ast: Root = {
@@ -631,7 +665,11 @@ describe("transformJsxComponents", () => {
     };
 
     // transformJsxComponents 함수 실행
-    const { ast: transformedAst } = transformJsxComponents(ast, parseResultMap);
+    const { ast: transformedAst } = transformJsxComponents(
+      "opi/ko/integration/ready/condition-test",
+      ast,
+      parseResultMap,
+    );
 
     // 결과 검증 - 각 Condition 컴포넌트가 HTML 주석으로 변환되었는지 확인
     expect(transformedAst).toEqual({

@@ -16,7 +16,7 @@ import {
 } from "./details";
 import { handleFigureComponent } from "./figure";
 import { handleHintComponent } from "./hint";
-import { collectAllImportedElements } from "./imports";
+import { validateImportedMdx } from "./importedMdx";
 import { handleParameterTypeDefComponent } from "./parameter";
 import { handleProseComponent } from "./prose";
 import {
@@ -30,28 +30,30 @@ import { handleYoutubeComponent } from "./youtube";
 
 /**
  * JSX 컴포넌트를 마크다운으로 변환하는 함수
+ * @param slug 현재 파일의 slug
  * @param ast MDX AST
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
  * @param useMarkdownLinks 내부 링크를 마크다운 파일 링크로 변환할지 여부 (true: 마크다운 파일 링크, false: 웹페이지 링크)
  * @returns 변환된 AST 노드와 처리되지 않은 태그 목록
  */
 export function transformJsxComponents(
+  slug: string,
   ast: Node,
   parseResultMap: Record<string, MdxParseResult>,
   useMarkdownLinks: boolean = true,
 ): { ast: Node; unhandledTags: Set<string> } {
   const emptySet = new Set<string>();
 
+  const parseResult = parseResultMap[slug]!;
+
   // Collect all imported element names
-  const importedElements = collectAllImportedElements(ast);
   const importedNonComponents = new Set(
-    importedElements
+    parseResult.imports
       .filter((item) => !item.from.includes("components"))
       .map((item) => item.name),
   );
-
   const transformRecursively = (innerAst: Node) =>
-    transformJsxComponents(innerAst, parseResultMap, useMarkdownLinks);
+    transformJsxComponents(slug, innerAst, parseResultMap, useMarkdownLinks);
 
   const result: { ast: Node; unhandledTags: Set<string> } = (() => {
     const astAsParent = ast as Parent;
@@ -162,6 +164,22 @@ export function transformJsxComponents(
           case "center":
             return unwrapJsxNode(jsxNode, transformRecursively);
           default: {
+            const importedMdx = validateImportedMdx(
+              jsxNode,
+              parseResult.filePath,
+              parseResult.imports,
+              parseResultMap,
+            );
+
+            if (importedMdx) {
+              return transformJsxComponents(
+                importedMdx.slug,
+                importedMdx.ast,
+                parseResultMap,
+                useMarkdownLinks,
+              );
+            }
+
             const result = unwrapJsxNode(jsxNode, transformRecursively);
             return {
               ast: result.ast,
