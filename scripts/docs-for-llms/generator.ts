@@ -48,7 +48,7 @@ export async function generateDocsForLlms(
       ),
     );
     console.log(
-      `스키마 파일이 ${docsForLlmsSchemaDir}로 복사되었습니다. (${schemaFiles.length}개)`,
+      `총 ${schemaFiles.length}개의 스키마 파일이 ${docsForLlmsSchemaDir}로 복사되었습니다.`,
     );
   } catch (error) {
     console.error(`스키마 파일 복사 중 오류 발생:`, error);
@@ -353,9 +353,24 @@ export async function generateDocsForLlms(
   );
   readmeContent += createDocSection("블로그", blogSlugs);
 
-  // README.md 파일 저장
+  // README.md 파일 저장 (frontmatter 추가)
   const readmePath = join(docsForLlmsDir, "README.md");
-  await generateMarkdownFile(readmePath, readmeContent);
+  // 현재 날짜 생성
+  const currentDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD 형식
+  // frontmatter 생성
+  const frontmatter = `---
+title: PortOne 개발자센터 문서 가이드
+description: PortOne 개발자센터 문서를 올바르게 활용하기 위한 가이드와 목차를 제공합니다.
+targetVersions:
+  - v1
+  - v2
+date: ${currentDate}
+author: PortOne
+---
+
+`;
+  // frontmatter와 기존 내용 병합
+  await generateMarkdownFile(readmePath, frontmatter + readmeContent);
 
   // 각 마크다운 파일을 docs-for-llms 디렉토리에 저장
   await saveMarkdownFiles(fileParseMap, transformedAstMap, docsForLlmsDir);
