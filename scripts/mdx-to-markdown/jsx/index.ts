@@ -16,6 +16,7 @@ import {
   handleDetailsSummaryComponent,
 } from "./details";
 import { handleFigureComponent } from "./figure";
+import { handleFileComponent } from "./file";
 import { handleHintComponent } from "./hint";
 import { handleImgTag } from "./img";
 import { validateImportedMdx } from "./importedMdx";
@@ -90,6 +91,11 @@ export function transformJsxComponents(
           case "Figure":
             return {
               ast: handleFigureComponent(jsxNode),
+              unhandledTags: emptySet,
+            };
+          case "File":
+            return {
+              ast: handleFileComponent(jsxNode),
               unhandledTags: emptySet,
             };
           case "Hint":
