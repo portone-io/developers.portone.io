@@ -1,4 +1,4 @@
-import { cp, mkdir, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -16,6 +16,7 @@ import {
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
+const guideForLlmsFilePath = join(rootDir, "scripts", "guide-for-llms.md");
 const schemaDir = join(rootDir, "src", "schema");
 const docsForLlmsDir = join(rootDir, "docs-for-llms");
 const docsForLlmsSchemaDir = join(docsForLlmsDir, "schema");
@@ -198,18 +199,16 @@ export async function generateDocsForLlms(
     return content;
   };
 
+  const guideForLlmsContent = await readFile(guideForLlmsFilePath, "utf-8");
+
   // 전체 문서 파일 생성 함수
   const generateFullDocFile = async (
     filePath: string,
     version: "V1" | "V2",
     includeCommon: boolean = true,
   ) => {
-    let content = `# PortOne 개발자 문서 (${version})
-
-> PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
-
-## 목차
-`;
+    let content = guideForLlmsContent;
+    content += "\n## 목차\n";
 
     // 포함할 슬러그 목록 생성
     const slugsToInclude = [];
@@ -299,20 +298,17 @@ export async function generateDocsForLlms(
   };
 
   // README.md 파일 내용 생성 (llms.txt와 동일한 내용)
-  let readmeContent = `# PortOne 개발자 문서
-
-> PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
-`;
+  let readmeContent = guideForLlmsContent;
 
   // 스키마 파일 추가
   readmeContent += `\n## 스키마 파일\n`;
   readmeContent += createSchemaLinks("V2");
   readmeContent += createSchemaLinks("V1");
 
-  // 공용 문서 섹션 추가
+  // 공통 문서 섹션 추가
   readmeContent += `\n## 공통 문서 (V1 & V2)\n\n`;
 
-  // 공용 SDK 문서 (공통 유틸리티 사용)
+  // 공통 SDK 문서 (공통 유틸리티 사용)
   const commonSdkSlugs = commonSlugs.filter((slug) =>
     slug.startsWith(PATH_PREFIXES.SDK),
   );
