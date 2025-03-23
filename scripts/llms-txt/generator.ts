@@ -90,7 +90,11 @@ export function transformAllMdxToAst(
     `${Object.keys(transformedAstMap).length}개의 MDX 파일 AST 변환이 완료되었습니다.`,
   );
 
-  console.log(`처리되지 않은 태그: ${Array.from(allUnhandledTags).join(", ")}`);
+  if (allUnhandledTags.size > 0) {
+    console.log(
+      `처리되지 않은 태그: ${Array.from(allUnhandledTags).join(", ")}`,
+    );
+  }
   return transformedAstMap;
 }
 

@@ -3,6 +3,7 @@ import { replaceToHtml } from "scripts/mdx-to-markdown/jsx/replaceToHtml";
 import type { Node, Parent } from "unist";
 
 import { type MdxParseResult } from "../mdx-parser";
+import { handleAComponent } from "./a";
 import { handleApiLinkComponent } from "./apiLink";
 import { handleBadgeComponent } from "./badge";
 import { extractCodeContent } from "./code";
@@ -126,6 +127,8 @@ export function transformJsxComponents(
               ast: handleApiLinkComponent(jsxNode),
               unhandledTags: emptySet,
             };
+          case "A":
+            return handleAComponent(jsxNode, transformRecursively);
           case "PaymentV1":
           case "PaymentV2":
           case "Recon":
@@ -177,6 +180,7 @@ export function transformJsxComponents(
           case "span":
           case "i":
           case "strong":
+          case "a":
             return replaceToHtml(jsxNode, transformRecursively);
           case "Parameter":
           case "Parameter.Details":
