@@ -9,7 +9,7 @@ import { join } from "node:path";
 
 import type { Root } from "mdast";
 
-import { astToMarkdownString } from "../mdx-to-markdown";
+import { astToMarkdownString, frontmatterToString } from "../mdx-to-markdown";
 import { type MdxParseResult } from "../mdx-to-markdown/mdx-parser";
 import {
   categorizeSlugs,
@@ -260,10 +260,24 @@ export async function generateLlmsTxtFiles(
   await writeFile(llmsFullTxtPath, fullContent, "utf-8");
   console.log(`llms-full.txt 파일이 생성되었습니다: ${llmsFullTxtPath}`);
 
-  // llms-small.txt 파일 생성 (llms.txt와 동일한 내용으로)
-  // llms.txt의 내용을 그대로 사용합니다
+  // llms-small.txt 파일 생성 (llms.txt 내용 + 각 문서의 링크와 프론트매터)
+  let smallContent = llmsTxtContent;
+
+  // 각 문서의 링크와 프론트매터 추가
+  for (const slug of slugs) {
+    const frontmatter = fileParseMap[slug]?.frontmatter;
+    if (frontmatter) {
+      // h1 헤딩으로 문서 링크 추가
+      smallContent += `\n\n# https://developers.portone.io/${slug}.md`;
+
+      // 프론트매터 추가 (frontmatterToString 함수 사용)
+      const frontmatterStr = frontmatterToString(frontmatter);
+      smallContent += `\n\n${frontmatterStr}`;
+    }
+  }
+
   const llmsSmallTxtPath = join(outputDir, "llms-small.txt");
-  await writeFile(llmsSmallTxtPath, llmsTxtContent, "utf-8");
+  await writeFile(llmsSmallTxtPath, smallContent, "utf-8");
   console.log(`llms-small.txt 파일이 생성되었습니다: ${llmsSmallTxtPath}`);
 
   return llmsTxtPath;
