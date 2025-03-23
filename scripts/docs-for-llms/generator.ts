@@ -37,6 +37,9 @@ export async function generateDocsForLlms(
   // docs-for-llms 디렉토리 생성
   await mkdir(docsForLlmsDir, { recursive: true });
 
+  // 각 마크다운 파일을 docs-for-llms 디렉토리에 저장
+  await saveMarkdownFiles(fileParseMap, transformedAstMap, docsForLlmsDir);
+
   // schema 디렉토리 생성 및 파일 복사
   await mkdir(docsForLlmsSchemaDir, { recursive: true });
   try {
@@ -159,7 +162,7 @@ export async function generateDocsForLlms(
   };
 
   // 마크다운 파일 생성 함수
-  const generateMarkdownFile = async (filePath: string, content: string) => {
+  const generateFile = async (filePath: string, content: string) => {
     await writeFile(filePath, content, "utf-8");
     console.log(`${filePath} 파일이 생성되었습니다.`);
   };
@@ -294,7 +297,7 @@ export async function generateDocsForLlms(
     content += generateDocContent(slugsToInclude);
 
     // 파일 저장
-    await generateMarkdownFile(filePath, content);
+    await generateFile(filePath, content);
   };
 
   // README.md 파일 내용 생성 (llms.txt와 동일한 내용)
@@ -369,11 +372,9 @@ author: PortOne
 ---
 
 `;
-  // frontmatter와 기존 내용 병합
-  await generateMarkdownFile(readmePath, frontmatter + readmeContent);
 
-  // 각 마크다운 파일을 docs-for-llms 디렉토리에 저장
-  await saveMarkdownFiles(fileParseMap, transformedAstMap, docsForLlmsDir);
+  // frontmatter와 기존 내용 병합
+  await generateFile(readmePath, frontmatter + readmeContent);
 
   // 전체 문서 파일 생성
   await generateFullDocFile(join(docsForLlmsDir, "v1-docs-full.md"), "V1");
