@@ -16,6 +16,7 @@ import {
 } from "./details";
 import { handleFigureComponent } from "./figure";
 import { handleHintComponent } from "./hint";
+import { handleImgTag } from "./img";
 import { validateImportedMdx } from "./importedMdx";
 import { handleParameterTypeDefComponent } from "./parameter";
 import { handleProseComponent } from "./prose";
@@ -158,6 +159,11 @@ export function transformJsxComponents(
               ast: sdkChangelog(),
               unhandledTags: emptySet,
             };
+          case "img":
+            return {
+              ast: handleImgTag(jsxNode),
+              unhandledTags: emptySet,
+            };
           case "br":
           case "table":
           case "thead":
@@ -165,11 +171,20 @@ export function transformJsxComponents(
           case "th":
           case "tr":
           case "td":
+          case "ul":
+          case "li":
+          case "p":
+          case "span":
+          case "i":
+          case "strong":
             return replaceToHtml(jsxNode, transformRecursively);
           case "Parameter":
           case "Parameter.Details":
-          case "center":
           case "EasyGuideLink":
+          case "center":
+          case "div":
+          case "figure":
+          case "figcaption":
             return unwrapJsxNode(jsxNode, transformRecursively);
           default: {
             const importedMdx = validateImportedMdx(

@@ -1,4 +1,4 @@
-import type { Link, ListItem, Paragraph, Root, Text } from "mdast";
+import type { Link, ListItem, Paragraph, Text } from "mdast";
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { describe, expect, it } from "vitest";
 

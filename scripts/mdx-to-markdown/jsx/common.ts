@@ -12,7 +12,7 @@ export function extractMdxJsxAttributes(
   if (node.attributes && Array.isArray(node.attributes)) {
     for (const attr of node.attributes) {
       if (attr.type === "mdxJsxAttribute" && attr.name) {
-        if (attr.value && typeof attr.value === "string") {
+        if (attr.value != null && typeof attr.value === "string") {
           props[attr.name] = attr.value;
         } else if (
           attr.value &&
