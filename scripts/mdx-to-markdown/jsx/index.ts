@@ -17,6 +17,7 @@ import {
 import { handleFigureComponent } from "./figure";
 import { handleHintComponent } from "./hint";
 import { collectAllImportedElements } from "./imports";
+import { handleParameterTypeDefComponent } from "./parameter";
 import { handleProseComponent } from "./prose";
 import {
   handleSwaggerComponent,
@@ -152,6 +153,12 @@ export function transformJsxComponents(
             );
           case "Parameter":
           case "Parameter.Details":
+            return unwrapJsxNode(jsxNode, transformRecursively);
+          case "Parameter.TypeDef":
+            return handleParameterTypeDefComponent(
+              jsxNode,
+              transformRecursively,
+            );
           case "center":
             return unwrapJsxNode(jsxNode, transformRecursively);
           default: {
