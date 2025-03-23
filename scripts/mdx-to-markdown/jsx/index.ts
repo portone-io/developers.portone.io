@@ -19,6 +19,7 @@ import { handleHintComponent } from "./hint";
 import { validateImportedMdx } from "./importedMdx";
 import { handleParameterTypeDefComponent } from "./parameter";
 import { handleProseComponent } from "./prose";
+import { handleSDKParameterComponent, sdkChangelog } from "./sdk";
 import {
   handleSwaggerComponent,
   handleSwaggerDescriptionComponent,
@@ -84,14 +85,6 @@ export function transformJsxComponents(
               ast: extractCodeContent(jsxNode),
               unhandledTags: emptySet,
             };
-          case "br":
-          case "table":
-          case "thead":
-          case "tbody":
-          case "th":
-          case "tr":
-          case "td":
-            return replaceToHtml(jsxNode, transformRecursively);
           case "Figure":
             return {
               ast: handleFigureComponent(jsxNode),
@@ -153,15 +146,30 @@ export function transformJsxComponents(
               jsxNode,
               transformRecursively,
             );
-          case "Parameter":
-          case "Parameter.Details":
-            return unwrapJsxNode(jsxNode, transformRecursively);
           case "Parameter.TypeDef":
             return handleParameterTypeDefComponent(
               jsxNode,
               transformRecursively,
             );
+          case "SDKParameter":
+            return handleSDKParameterComponent(jsxNode);
+          case "SDKChangelog":
+            return {
+              ast: sdkChangelog(),
+              unhandledTags: emptySet,
+            };
+          case "br":
+          case "table":
+          case "thead":
+          case "tbody":
+          case "th":
+          case "tr":
+          case "td":
+            return replaceToHtml(jsxNode, transformRecursively);
+          case "Parameter":
+          case "Parameter.Details":
           case "center":
+          case "EasyGuideLink":
             return unwrapJsxNode(jsxNode, transformRecursively);
           default: {
             const importedMdx = validateImportedMdx(
