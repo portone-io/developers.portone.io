@@ -28,6 +28,9 @@ export const pgOptions = {
   naver: {
     payMethods: ["easyPay"],
   },
+  tosspay: {
+    payMethods: ["easyPay"],
+  },
 } as const satisfies PgOptions;
 
 export type Params = {

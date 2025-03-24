@@ -257,6 +257,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
+        <Condition when={({ pg: { name } }) => name === 'tosspay'}>
+          <Hint style="warning">
+            토스페이는 `KRW`만을 지원합니다.
+          </Hint>
+        </Condition>
+
       - payMethod: string
 
         **결제 수단**
@@ -917,7 +923,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           `payMethod`가 `EASY_PAY`인 경우 간편결제와 관련한 추가 정보를 입력할 수 있습니다.
 
           <Parameter.Details>
-            <Condition when={({ pg: { name } }) => !['kakao', 'naver'].includes(name)}>
+            <Condition when={({ pg: { name } }) => !['kakao', 'naver', 'tosspay'].includes(name)}>
               - easyPayProvider?: string
 
                 **간편결제 수단**
@@ -1040,7 +1046,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 **카드사 포인트 사용 여부**
             </Condition>
 
-            <Condition when={({ pg: { name } }) => !['kpn', 'inicis', 'naver'].includes(name)}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'inicis', 'naver', 'tosspay'].includes(name)}>
               - availableCards?: string\[]
 
                 **카드사 일부 노출**
@@ -1219,7 +1225,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 </Parameter.Details>
             </Condition>
 
-            <Condition when={({ pg: { name } }) => name !== 'kpn'}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'tosspay'].includes(name)}>
               - cashReceiptType?: string
 
                 **결제창에서 발급 가능한 현금영수증 발급 유형**
@@ -1229,7 +1235,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 - `ANONYMOUS` (미발행(국세청번호 자동발급))
             </Condition>
 
-            <Condition when={({ pg: { name } }) => !['kpn', 'inicis'].includes(name)}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'inicis', 'tosspay'].includes(name)}>
               - customerIdentifier?: string
 
                 **현금영수증 발행 대상 식별 정보**
@@ -1755,21 +1761,35 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
                       **결제 상품 유형**
 
+                      [공식 매뉴얼](https://developers.pay.naver.com/docs/v2/api#etc-etc_product)을 참조해 주세요.
+
                     - categoryId: string
 
                       **결제 상품 분류**
+
+                      [공식 매뉴얼](https://developers.pay.naver.com/docs/v2/api#etc-etc_product)을 참조해 주세요.
 
                     - uid: string
 
                       **결제 상품 식별값**
 
+                      고객사 내부적으로 관리하는 상품 고유 ID를 활용하는 것이 일반적이지만, [공식 매뉴얼](https://developers.pay.naver.com/docs/v2/api#etc-etc_product) 참고가 필요합니다.
+
                     - name: string
 
-                    **상품명**
+                      **상품명**
+
+                    - count: number
+
+                      **결제 상품 개수**
 
                     - payReferrer?: string
 
-                    **결제 상품 유입경로**
+                      **결제 상품 유입경로**
+
+                      네이버 플랫폼의 타 서비스와 제휴계약 후 유입분석을 진행하는 경우에만 입력합니다.
+                      
+                      [공식 매뉴얼](https://developers.pay.naver.com/docs/v2/api#etc-etc_product_ref)
 
                     - startDate?: string
 
@@ -1783,14 +1803,37 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
                       **하위 판매자 식별키**
 
-                    - count: number
-
-                      **결제 상품 개수**
+                      고객사가 하위 판매자를 식별하기 위한 고유 ID (영문 대소문자 및 숫자 허용)
+                      - 고객사의 업종이 통신판매중개업에 해당하여 네이버페이 계약 당시 별도의 안내를 받은 대상 고객사만 필수 입력합니다.
+                      - 비대상 고객사는 입력하지 않습니다.
                   </Parameter.Details>
 
                 - deliveryFee?: number
 
                   **배송비**
+              </Parameter.Details>
+          </Condition>
+
+          <Condition when={({ pg: { name }}) => name === "tosspay"}>
+            - tosspay?: object
+
+              <Parameter.Details>
+                - expiredTime?: string
+
+                  **결제 만료 기한**
+
+                  - `yyyy-MM-dd HH:mm:ss` 의 형식으로 입력해야 합니다.
+                  - 입력하지 않을 경우, 기본값인 15분으로 설정됩니다.
+                  - 최대 60분까지 설정할 수 있습니다.
+
+                - cashReceiptTradeOption?: string
+
+                  **현금영수증 발급 대상 타입**
+
+                  전달하지 않을 경우, 기본값은 `GENERAL` 입니다.
+                  - `GENERAL` : 일반
+                  - `CULTURE` : 문화비
+                  - `PUBLIC_TP` : 교통비
               </Parameter.Details>
           </Condition>
         </Parameter.Details>
