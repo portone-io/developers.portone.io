@@ -47,7 +47,9 @@ export function validateImportedMdx(
   const subSlug = importPath
     .replace(/^\.\//, `${parentSlug}/`)
     .replace(/^~\//, "")
-    .replace(/^[./]+/, "") // Remove any leading ./ ../ ~/ or combinations
+    .replace(/^routes\//, "")
+    .replace(/^\(root\)\//, "")
+    .replace(/^[./]+/, "") // Remove any leading ./ ../ or combinations
     .replace(/\.mdx$/, ""); // Remove .mdx extension
 
   // Find the MDX parse result for this slug
