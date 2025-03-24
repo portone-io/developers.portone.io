@@ -1,6 +1,8 @@
+import { exec } from "node:child_process";
 import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
 import fastGlob from "fast-glob";
 import type { Root } from "mdast";
@@ -20,6 +22,7 @@ const guideForLlmsFilePath = join(rootDir, "scripts", "guide-for-llms.md");
 const schemaDir = join(rootDir, "src", "schema");
 const docsForLlmsDir = join(rootDir, "docs-for-llms");
 const docsForLlmsSchemaDir = join(docsForLlmsDir, "schema");
+const publicDir = join(rootDir, "public");
 
 /**
  * docs-for-llms 디렉토리를 생성하고 마크다운 파일들을 저장하는 함수
@@ -381,5 +384,31 @@ author: PortOne
 
   await generateFullDocFile(join(docsForLlmsDir, "v2-docs-full.md"), "V2");
 
+  // 디렉토리를 zip 파일로 압축하고 public 디렉토리로 복사
+  await compressAndCopyToPublic();
+
   return docsForLlmsDir;
+}
+
+/**
+ * docs-for-llms 디렉토리를 zip 파일로 압축하여 public 디렉토리에 직접 저장하는 함수
+ */
+async function compressAndCopyToPublic(): Promise<void> {
+  console.log("docs-for-llms 디렉토리를 압축하는 중...");
+
+  try {
+    // zip 파일 이름 설정
+    const zipFileName = "docs-for-llms.zip";
+    const publicZipFilePath = join(publicDir, zipFileName);
+
+    // zip 명령어 실행 (macOS에 기본 내장) - 직접 public 디렉토리에 압축 파일 생성
+    const cmd = `cd "${rootDir}" && zip -r "${publicZipFilePath}" docs-for-llms`;
+
+    await promisify(exec)(cmd);
+
+    console.log(`${zipFileName} 파일이 public 디렉토리에 생성되었습니다.`);
+  } catch (error) {
+    console.error("압축 중 오류 발생:", error);
+    throw error;
+  }
 }
