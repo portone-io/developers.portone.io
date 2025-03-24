@@ -163,6 +163,12 @@ const overrides = {
       },
     },
   },
+  kakao: {
+    easyPay: {
+      payMethod: "EASY_PAY",
+      channelKey: "channel-key-01764171-b249-4c16-9d18-e9174fa8e611",
+    },
+  },
 } as const;
 
 function templatedPayment(
@@ -247,6 +253,9 @@ export function createPaymentRequest(params: Params, paymentId: string) {
       // easyPayBypass 파라미터 누락
       // @ts-expect-error(2345)
       templatedPayment(paymentId, overrides.ksnet.easyPay),
+    )
+    .with({ pg: { name: "kakao", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.kakao.easyPay),
     )
     .exhaustive();
 }

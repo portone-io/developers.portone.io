@@ -127,7 +127,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
         <Condition when={({ pg: { name } }) => name === 'inicis'}>
           <Hint style="warning">
-            KG이니시스의 경우 ASCII 문자만 허용되며, 40자 이하로 입력합니다. 
+            KG이니시스의 경우 ASCII 문자만 허용되며, 40자 이하로 입력합니다.
           </Hint>
         </Condition>
 
@@ -164,7 +164,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
             한국결제네트웍스의 경우 최대 256바이트까지 입력할 수 있습니다.
           </Hint>
         </Condition>
-        
+
         <Condition when={({ pg: { name } }) => name === 'inicis'}>
           <Hint style="warning">
             KG이니시스의 경우 최대 40바이트까지 입력할 수 있으며, 40바이트 초과시 37바이트에서 잘리고 "..."가 추가됩니다.
@@ -235,6 +235,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
         <Condition when={({ pg: { name, payMethods } }) => name === 'inicis' && payMethods !== 'card'}>
           <Hint style="warning">
             카드 결제를 제외한 KG이니시스는 `KRW`만을 지원합니다.
+          </Hint>
+        </Condition>
+
+        <Condition when={({ pg: { name } }) => name === 'kakao'}>
+          <Hint style="warning">
+            카카오페이는 `KRW`만을 지원합니다.
           </Hint>
         </Condition>
 
@@ -608,7 +614,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 - `PERSONAL` (소득공제용)
                 - `CORPORATE` (지출증빙용)
                 - `ANONYMOUS` (미발행(국세청번호 자동발급))
-                
+
                 <Condition when={({ pg: { name } }) => name === 'smartro'}>
                   <Hint style="warning">
                     스마트로의 경우 `cashReceiptType`과 `bankCode`를 같이 사용해야 합니다.
@@ -898,108 +904,110 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           `payMethod`가 `EASY_PAY`인 경우 간편결제와 관련한 추가 정보를 입력할 수 있습니다.
 
           <Parameter.Details>
-            - easyPayProvider?: string
+            <Condition when={({ pg: { name } }) => name !== 'kakao'}>
+              - easyPayProvider?: string
 
-              **간편결제 수단**
+                **간편결제 수단**
 
-              <Condition when={({ pg: { name } }) => name === 'kpn'}>
-                <Hint style="warning">
-                  한국결제네트웍스의 경우 간편결제 수단을 직접 지정하려면 별도 계약이 필요합니다.
-                </Hint>
-              </Condition>
+                <Condition when={({ pg: { name } }) => name === 'kpn'}>
+                  <Hint style="warning">
+                    한국결제네트웍스의 경우 간편결제 수단을 직접 지정하려면 별도 계약이 필요합니다.
+                  </Hint>
+                </Condition>
 
-              <Condition when={({ pg: { name } }) => name === 'inicis'}>
-                <Hint style="warning">
-                  KG이니시스의 경우 간편결제 수단 설정 시 별도 계약이 필요합니다.
-                </Hint>
-              </Condition>
+                <Condition when={({ pg: { name } }) => name === 'inicis'}>
+                  <Hint style="warning">
+                    KG이니시스의 경우 간편결제 수단 설정 시 별도 계약이 필요합니다.
+                  </Hint>
+                </Condition>
 
-              <Details>
-                <Details.Summary>지원 간편결제 코드</Details.Summary>
+                <Details>
+                  <Details.Summary>지원 간편결제 코드</Details.Summary>
 
-                <Details.Content>
-                  <Condition when={({ pg: { name }}) => name === 'toss'}>
-                    - `PAYCO` (페이코)
-                    - `SAMSUNGPAY` (삼성페이)
-                    - `APPLEPAY` (애플페이)
-                    - `SSGPAY` (SSG페이)
-                    - `KAKAOPAY` (카카오페이)
-                    - `NAVERPAY` (네이버페이)
-                    - `LPAY` (L페이)
-                    - `TOSSPAY` (토스페이)
-                  </Condition>
+                  <Details.Content>
+                    <Condition when={({ pg: { name }}) => name === 'toss'}>
+                      - `PAYCO` (페이코)
+                      - `SAMSUNGPAY` (삼성페이)
+                      - `APPLEPAY` (애플페이)
+                      - `SSGPAY` (SSG페이)
+                      - `KAKAOPAY` (카카오페이)
+                      - `NAVERPAY` (네이버페이)
+                      - `LPAY` (L페이)
+                      - `TOSSPAY` (토스페이)
+                    </Condition>
 
-                  <Condition when={({ pg: { name }}) => name === 'nice'}>
-                    - `PAYCO` (페이코)
-                    - `SKPAY` (11페이)
-                    - `SAMSUNGPAY` (삼성페이)
-                    - `SSGPAY` (SSG페이)
-                    - `APPLEPAY` (애플페이)
-                    - `KAKAOPAY` (카카오페이)
-                    - `NAVERPAY` (네이버페이)
-                    - `LPAY` (L페이)
-                    - `TOSSPAY` (토스페이)
-                  </Condition>
+                    <Condition when={({ pg: { name }}) => name === 'nice'}>
+                      - `PAYCO` (페이코)
+                      - `SKPAY` (11페이)
+                      - `SAMSUNGPAY` (삼성페이)
+                      - `SSGPAY` (SSG페이)
+                      - `APPLEPAY` (애플페이)
+                      - `KAKAOPAY` (카카오페이)
+                      - `NAVERPAY` (네이버페이)
+                      - `LPAY` (L페이)
+                      - `TOSSPAY` (토스페이)
+                    </Condition>
 
-                  <Condition when={({ pg: { name }}) => name === 'smartro'}>
-                    - `PAYCO` (페이코)
-                    - `KAKAOPAY` (카카오페이)
-                    - `NAVERPAY` (네이버페이)
-                    - `SKPAY` (11페이)
-                    - `LPAY` (L페이)
-                    - `PINPAY` (핀페이)
-                    - `SAMSUNGPAY` (삼성페이)
-                    - `TOSSPAY` (토스페이)
-                    - `LINEPAY` (라인페이)
-                    - `TMONEYPAY` (티머니)
+                    <Condition when={({ pg: { name }}) => name === 'smartro'}>
+                      - `PAYCO` (페이코)
+                      - `KAKAOPAY` (카카오페이)
+                      - `NAVERPAY` (네이버페이)
+                      - `SKPAY` (11페이)
+                      - `LPAY` (L페이)
+                      - `PINPAY` (핀페이)
+                      - `SAMSUNGPAY` (삼성페이)
+                      - `TOSSPAY` (토스페이)
+                      - `LINEPAY` (라인페이)
+                      - `TMONEYPAY` (티머니)
 
-                    <Hint style="warning">
-                      스마트로의 경우 네이버페이는 카드결제만 가능합니다.
-                      네이버페이 포인트 및 머니 결제는 결제수단을 `CARD`로 설정해 주세요.
-                    </Hint>
-                  </Condition>
+                      <Hint style="warning">
+                        스마트로의 경우 네이버페이는 카드결제만 가능합니다.
+                        네이버페이 포인트 및 머니 결제는 결제수단을 `CARD`로 설정해 주세요.
+                      </Hint>
+                    </Condition>
 
-                  <Condition when={({ pg: { name }}) => name === 'kpn'}>
-                    - `KAKAOPAY` (카카오페이)
-                    - `SAMSUNGPAY` (삼성페이)
-                    - `TOSSPAY` (토스페이)
-                    - `PAYCO` (페이코)
-                  </Condition>
-                  
-                  <Condition when={({ pg: { name }}) => name === 'inicis'}>
-                    - `KAKAOPAY` (카카오페이)
-                    - `NAVERPAY` (네이버페이)
-                    - `SAMSUNGPAY` (삼성페이)
-                    - `SSGPAY` (SSG페이)
-                    - `APPLEPAY` (애플페이)
-                    - `LPAY` (L페이)
-                    - `TOSSPAY` (토스페이)
-                    - `PAYCO` (페이코)
-                  </Condition>
+                    <Condition when={({ pg: { name }}) => name === 'kpn'}>
+                      - `KAKAOPAY` (카카오페이)
+                      - `SAMSUNGPAY` (삼성페이)
+                      - `TOSSPAY` (토스페이)
+                      - `PAYCO` (페이코)
+                    </Condition>
 
-                  <Condition when={({ pg: { name }}) => name === 'kcp'}>
-                    - `NAVERPAY` (네이버페이)
-                    - `PAYCO` (페이코)
-                    - `KAKAOPAY` (카카오페이)
-                    - `SAMSUNGPAY` (삼성페이)
-                    - `APPLEPAY` (애플페이)
-                    - `LPAY` (L페이)
-                    - `SSGPAY` (SSG페이)
-                    - `TOSSPAY` (토스페이)
-                  </Condition>
+                    <Condition when={({ pg: { name }}) => name === 'inicis'}>
+                      - `KAKAOPAY` (카카오페이)
+                      - `NAVERPAY` (네이버페이)
+                      - `SAMSUNGPAY` (삼성페이)
+                      - `SSGPAY` (SSG페이)
+                      - `APPLEPAY` (애플페이)
+                      - `LPAY` (L페이)
+                      - `TOSSPAY` (토스페이)
+                      - `PAYCO` (페이코)
+                    </Condition>
 
-                  <Condition when={({ pg: { name }}) => name === 'ksnet'}>
-                    - `KAKAOPAY` (카카오페이)
-                    - `LPAY` (L페이)
-                    - `NAVERPAY` (네이버페이)
-                    - `PAYCO` (페이코)
+                    <Condition when={({ pg: { name }}) => name === 'kcp'}>
+                      - `NAVERPAY` (네이버페이)
+                      - `PAYCO` (페이코)
+                      - `KAKAOPAY` (카카오페이)
+                      - `SAMSUNGPAY` (삼성페이)
+                      - `APPLEPAY` (애플페이)
+                      - `LPAY` (L페이)
+                      - `SSGPAY` (SSG페이)
+                      - `TOSSPAY` (토스페이)
+                    </Condition>
 
-                    <Hint style="warning">
-                      KSNET의 경우 카카오페이를 사용하기 위해서는 앱 또는 웹 하단에 대표자명, 주소, 전화번호와 같은 상점 정보를 필수로 입력해야 합니다.
-                    </Hint>
-                  </Condition>
-                </Details.Content>
-              </Details>
+                    <Condition when={({ pg: { name }}) => name === 'ksnet'}>
+                      - `KAKAOPAY` (카카오페이)
+                      - `LPAY` (L페이)
+                      - `NAVERPAY` (네이버페이)
+                      - `PAYCO` (페이코)
+
+                      <Hint style="warning">
+                        KSNET의 경우 카카오페이를 사용하기 위해서는 앱 또는 웹 하단에 대표자명, 주소, 전화번호와 같은 상점 정보를 필수로 입력해야 합니다.
+                      </Hint>
+                    </Condition>
+                  </Details.Content>
+                </Details>
+            </Condition>
 
             <Condition when={({ pg: { name } }) => !['kpn', 'inicis', 'ksnet'].includes(name)}>
               - useFreeInterestFromMall?: boolean
@@ -1014,9 +1022,9 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
             </Condition>
 
             <Condition when={({ pg: { name } }) => !['kpn', 'inicis'].includes(name)}>
-            - useCardPoint?: boolean
+              - useCardPoint?: boolean
 
-              **카드사 포인트 사용 여부**
+                **카드사 포인트 사용 여부**
             </Condition>
 
             <Condition when={({ pg: { name } }) => !['kpn', 'inicis'].includes(name)}>
@@ -1027,6 +1035,8 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 지정한 일부 카드사만을 목록에 노출할 수 있습니다.
 
                 <Details>
+                  <Details.Summary>지원 카드사 코드 목록</Details.Summary>
+
                   <Details.Content>
                     <Condition when={({ pg: { name } }) => name === 'toss'}>
                       - `KOREA_DEVELOPMENT_BANK` (KDB산업은행 카드)
@@ -1101,6 +1111,19 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                       - `K_BANK` (케이뱅크 카드)
                       - `TOSS_BANK` (토스뱅크 카드)
                     </Condition>
+
+                    <Condition when={({ pg: { name } }) => name === 'kakao'}>
+                      - `SHINHAN_CARD` (신한카드)
+                      - `KOOKMIN_CARD` (국민카드)
+                      - `HYUNDAI_CARD` (현대카드)
+                      - `LOTTE_CARD` (롯데카드)
+                      - `SAMSUNG_CARD` (삼성카드)
+                      - `NH_CARD` (NH농협카드)
+                      - `BC_CARD` (BC카드)
+                      - `HANA_CARD` (하나카드)
+                      - `CITI_CARD` (씨티카드)
+                      - `KAKAO_BANK` (카카오뱅크 카드)
+                    </Condition>
                   </Details.Content>
                 </Details>
             </Condition>
@@ -1117,24 +1140,24 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 </Condition>
 
                 <Parameter.Details>
-                  <Condition when={({ pg: { name } }) => name !== 'ksnet'}>
-                  - freeInstallmentPlans?: object\[]
+                  <Condition when={({ pg: { name } }) => !['ksnet', 'kakao'].includes(name)}>
+                    - freeInstallmentPlans?: object\[]
 
-                    **무이자 할부 설정**
+                      **무이자 할부 설정**
 
-                    고객사가 부담하는 무이자 할부 설정입니다.
+                      고객사가 부담하는 무이자 할부 설정입니다.
 
-                    <Parameter.Details>
-                      - cardCompany: string
+                      <Parameter.Details>
+                        - cardCompany: string
 
-                        **무이자 할부를 제공하는 카드사 식별 값**
+                          **무이자 할부를 제공하는 카드사 식별 값**
 
-                        상단의 카드사 식별 값 항목을 참고해주세요.
+                          상단의 카드사 식별 값 항목을 참고해주세요.
 
-                      - months: number\[]
+                        - months: number\[]
 
-                        **무이자 할부를 제공하는 개월 수**
-                    </Parameter.Details>
+                          **무이자 할부를 제공하는 개월 수**
+                      </Parameter.Details>
                   </Condition>
 
                   - monthOption?: object
@@ -1143,7 +1166,9 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
                     할부 결제 시 할부 개월 수를 설정할 수 있습니다.
 
-                    `fixedMonth`와 `availableMonthList` 중 하나만 제공해주세요.
+                    <Condition when={({ pg: { name } }) => name !== 'kakao'}>
+                      `fixedMonth`와 `availableMonthList` 중 하나만 제공해주세요.
+                    </Condition>
 
                     <Condition when={({ pg: { name } }) => name === 'ksnet'}>
                       <Hint style="warning">
@@ -1156,8 +1181,17 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
                         **구매자가 선택할 수 없도록 고정된 할부 개월 수**
 
-                        구매자가 할부 개월 수를 선택할 수 있도록 하려면 `availableMonthList`를 사용해주세요.
+                        <Condition when={({ pg: { name } }) => name !== 'kakao'}>
+                          구매자가 할부 개월 수를 선택할 수 있도록 하려면 `availableMonthList`를 사용해주세요.
+                        </Condition>
 
+                        <Condition when={({ pg: { name } }) => name === 'kakao'}>
+                          <Hint style="warning">
+                            카카오페이의 경우, 결제 금액이 5만원 미만이어도 해당 파라미터가 채워져 있으면 체크카드로 결제가 불가능합니다.
+                          </Hint>
+                        </Condition>
+
+                      <Condition when={({ pg: { name } }) => name !== 'kakao'}>
                       - availableMonthList: number\[]
 
                         **구매자가 선택할 수 있는 할부 개월 수 목록**
@@ -1167,6 +1201,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                             토스페이먼츠의 경우 자체 정책에 따라 **일시불부터 전달한 값 중 최댓값까지 모두 표시**됩니다.
                           </Hint>
                         </Condition>
+                      </Condition>
                     </Parameter.Details>
                 </Parameter.Details>
             </Condition>
@@ -1557,7 +1592,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Condition>
 
           <Condition when={({ pg: { name } }) => name === 'kpn'}>
-            - kpn: object
+            - kpn?: object
 
               <Parameter.Details>
                 - CardSelect?: string\[]
@@ -1644,7 +1679,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Condition>
 
           <Condition when={({ pg: { name }}) => name === "ksnet"}>
-            - ksnet: object
+            - ksnet?: object
 
               <Parameter.Details>
                 <Condition when={({ pg: { payMethods }}) => payMethods === "easyPay"}>
@@ -1656,7 +1691,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                     - 간편결제 직접 호출 시 `productType` 파라미터는 필수입니다.
                     - 카카오페이 직접 호출 시 `storeDetails.ceoFullName`, `storeDetails.address`, `storeDetails.phoneNumber` 값이 필수입니다.
                 </Condition>
-                
+
                 <Condition when={({ pg: { payMethods }}) => payMethods === "card"}>
                   - sndQpayType?: string
 
@@ -1664,6 +1699,20 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
                     `'1'`일 경우 간편결제 수단을 표시합니다.
                 </Condition>
+              </Parameter.Details>
+          </Condition>
+
+          <Condition when={({ pg: { name }}) => name === "kakao"}>
+            - kakao?: object
+
+              <Parameter.Details>
+                - custom\_message?: string
+
+                  **결제 화면에 보여줄 사용자 정의 문구**
+
+                  <Hint style="warning">
+                    `custom_message`를 사용하기 위해서는 카카오페이와 사전 협의가 필요합니다.
+                  </Hint>
               </Parameter.Details>
           </Condition>
         </Parameter.Details>
@@ -1833,6 +1882,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
         도서, 공연, 박물관 등 문화비 지출 여부
 
+        <Condition when={({ pg: { name }}) => name === "kakao"}>
+          <Hint style="warning">
+            카카오페이의 경우 문화비는 지원하지 않으며, `isCulturalExpense` 값은 포트원 내부적으로만 저장됩니다.
+          </Hint>
+        </Condition>
+
       - isEscrow?: boolean
 
         **에스크로 결제 여부**
@@ -1863,11 +1918,17 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
+        <Condition when={({ pg: { name } }) => name === 'kakao'}>
+          <Hint style="warning">
+            카카오페이의 경우 에스크로 결제를 지원하지 않으며, `isEscrow` 값은 포트원 내부적으로만 저장됩니다.
+          </Hint>
+        </Condition>
+
         <Condition when={({ pg: { name }}) => ['kcp', 'kpn', 'inicis'].includes(name)}>
           - locale?: string
 
           **결제창 언어**
-        
+
           <Condition when={({ pg: { name } }) => ['kcp', 'kpn'].includes(name)}>
             - 한국어: `KO_KR`
             - 영어: `EN_US`
