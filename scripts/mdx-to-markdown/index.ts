@@ -1,6 +1,5 @@
 import yaml from "js-yaml";
 import type { Root, Text } from "mdast";
-import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
 import stringWidth from "string-width";
@@ -43,7 +42,12 @@ export function transformAstForMarkdown(
   transformLinks(ast, useMarkdownLinks);
 
   // JSX 컴포넌트를 마크다운으로 변환 (useMarkdownLinks 파라미터 전달)
-  const result = transformJsxComponents(ast, parseResultMap, useMarkdownLinks);
+  const result = transformJsxComponents(
+    slug,
+    ast,
+    parseResultMap,
+    useMarkdownLinks,
+  );
   const transformedAst = result.ast as Root;
 
   // 임포트 구문 제거
@@ -51,9 +55,6 @@ export function transformAstForMarkdown(
 
   // YAML 노드 제거 (프론트매터는 별도로 처리)
   removeYamlNodes(transformedAst);
-
-  // JSX 요소 제거 또는 자식 노드만 유지
-  simplifyJsxElements(transformedAst);
 
   // MDX 표현식 노드 처리
   handleRemainingMdxFlowExpressions(transformedAst);
@@ -178,31 +179,6 @@ function removeYamlNodes(ast: Root): void {
   for (const item of [...nodesToRemove].reverse()) {
     item.parent.children.splice(item.index, 1);
   }
-}
-
-/**
- * JSX 노드를 단순화하는 함수 (자식 노드만 유지)
- */
-function simplifyJsxElements(ast: Root): void {
-  visit(
-    ast,
-    ["mdxJsxFlowElement", "mdxJsxTextElement"],
-    (_node, index, parent) => {
-      const node = _node as MdxJsxFlowElement | MdxJsxTextElement;
-      if (!parent || !Array.isArray(parent.children) || index === undefined)
-        return;
-
-      // 자식 노드가 있으면 부모의 해당 위치에 자식 노드들을 삽입
-      if (node.children && node.children.length > 0) {
-        parent.children.splice(index, 1, ...node.children);
-      } else {
-        // 자식 노드가 없으면 제거
-        parent.children.splice(index, 1);
-      }
-      // 방문 인덱스 조정 (노드가 교체되었으므로)
-      return index;
-    },
-  );
 }
 
 /**

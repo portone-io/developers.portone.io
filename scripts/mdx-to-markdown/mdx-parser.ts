@@ -12,6 +12,7 @@ import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
 import { generateSlug as originalGenerateSlug } from "../../src/utils/slugs";
+import { collectAllImportedElements, type Import } from "./jsx/imports";
 
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -33,14 +34,7 @@ export type MdxParseResult = {
   filePath: string;
   slug: string;
   frontmatter: Frontmatter;
-  imports: {
-    source: string;
-    specifiers: {
-      name: string;
-      isDefault: boolean;
-      alias?: string;
-    }[];
-  }[];
+  imports: Import[];
   ast: Root; // unified AST
   content: string; // 원본 MDX 내용
 };
@@ -97,94 +91,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
       });
 
       // 임포트 구문 추출
-      visit(tree, "mdxjsEsm", (node: Literal) => {
-        const value = node.value;
-
-        // import 구문 분석
-        if (value.startsWith("import")) {
-          const importMatch = value.match(
-            /import\s+(?:(?:(\w+)|{([^}]*)})(?:\s*,\s*(?:(\w+)|{([^}]*)}))?)?\s+from\s+['"]([^'"]+)['"]/,
-          );
-
-          if (importMatch) {
-            const [
-              _,
-              defaultImport,
-              namedImports1,
-              defaultImport2,
-              namedImports2,
-              source,
-            ] = importMatch;
-
-            const importInfo = {
-              source: source || "",
-              specifiers: [] as {
-                name: string;
-                isDefault: boolean;
-                alias?: string;
-              }[],
-            };
-
-            // 기본 임포트 처리
-            if (defaultImport) {
-              importInfo.specifiers.push({
-                name: defaultImport,
-                isDefault: true,
-              });
-            }
-
-            // 명명된 임포트 처리
-            if (namedImports1) {
-              const specifiers = namedImports1.split(",").map((s) => s.trim());
-              for (const specifier of specifiers) {
-                const aliasMatch = specifier.match(/(\w+)\s+as\s+(\w+)/);
-                if (aliasMatch && aliasMatch[1] && aliasMatch[2]) {
-                  importInfo.specifiers.push({
-                    name: aliasMatch[1],
-                    isDefault: false,
-                    alias: aliasMatch[2],
-                  });
-                } else {
-                  importInfo.specifiers.push({
-                    name: specifier,
-                    isDefault: false,
-                  });
-                }
-              }
-            }
-
-            // 두 번째 기본 임포트 처리 (드문 경우)
-            if (defaultImport2) {
-              importInfo.specifiers.push({
-                name: defaultImport2,
-                isDefault: true,
-              });
-            }
-
-            // 두 번째 명명된 임포트 처리
-            if (namedImports2) {
-              const specifiers = namedImports2.split(",").map((s) => s.trim());
-              for (const specifier of specifiers) {
-                const aliasMatch = specifier.match(/(\w+)\s+as\s+(\w+)/);
-                if (aliasMatch && aliasMatch[1] && aliasMatch[2]) {
-                  importInfo.specifiers.push({
-                    name: aliasMatch[1],
-                    isDefault: false,
-                    alias: aliasMatch[2],
-                  });
-                } else {
-                  importInfo.specifiers.push({
-                    name: specifier,
-                    isDefault: false,
-                  });
-                }
-              }
-            }
-
-            result.imports.push(importInfo);
-          }
-        }
-      });
+      result.imports = collectAllImportedElements(tree);
     });
 
   // MDX 파싱 실행

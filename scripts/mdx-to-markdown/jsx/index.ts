@@ -3,6 +3,7 @@ import { replaceToHtml } from "scripts/mdx-to-markdown/jsx/replaceToHtml";
 import type { Node, Parent } from "unist";
 
 import { type MdxParseResult } from "../mdx-parser";
+import { handleAComponent } from "./a";
 import { handleApiLinkComponent } from "./apiLink";
 import { handleBadgeComponent } from "./badge";
 import { extractCodeContent } from "./code";
@@ -15,9 +16,13 @@ import {
   handleDetailsSummaryComponent,
 } from "./details";
 import { handleFigureComponent } from "./figure";
+import { handleFileComponent } from "./file";
 import { handleHintComponent } from "./hint";
-import { collectAllImportedElements } from "./imports";
+import { handleImgTag } from "./img";
+import { validateImportedMdx } from "./importedMdx";
+import { handleParameterTypeDefComponent } from "./parameter";
 import { handleProseComponent } from "./prose";
+import { handleSDKParameterComponent, sdkChangelog } from "./sdk";
 import {
   handleSwaggerComponent,
   handleSwaggerDescriptionComponent,
@@ -29,28 +34,30 @@ import { handleYoutubeComponent } from "./youtube";
 
 /**
  * JSX 컴포넌트를 마크다운으로 변환하는 함수
+ * @param slug 현재 파일의 slug
  * @param ast MDX AST
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
  * @param useMarkdownLinks 내부 링크를 마크다운 파일 링크로 변환할지 여부 (true: 마크다운 파일 링크, false: 웹페이지 링크)
  * @returns 변환된 AST 노드와 처리되지 않은 태그 목록
  */
 export function transformJsxComponents(
+  slug: string,
   ast: Node,
   parseResultMap: Record<string, MdxParseResult>,
   useMarkdownLinks: boolean = true,
 ): { ast: Node; unhandledTags: Set<string> } {
   const emptySet = new Set<string>();
 
+  const parseResult = parseResultMap[slug]!;
+
   // Collect all imported element names
-  const importedElements = collectAllImportedElements(ast);
   const importedNonComponents = new Set(
-    importedElements
+    parseResult.imports
       .filter((item) => !item.from.includes("components"))
       .map((item) => item.name),
   );
-
   const transformRecursively = (innerAst: Node) =>
-    transformJsxComponents(innerAst, parseResultMap, useMarkdownLinks);
+    transformJsxComponents(slug, innerAst, parseResultMap, useMarkdownLinks);
 
   const result: { ast: Node; unhandledTags: Set<string> } = (() => {
     const astAsParent = ast as Parent;
@@ -81,17 +88,14 @@ export function transformJsxComponents(
               ast: extractCodeContent(jsxNode),
               unhandledTags: emptySet,
             };
-          case "br":
-          case "table":
-          case "thead":
-          case "tbody":
-          case "th":
-          case "tr":
-          case "td":
-            return replaceToHtml(jsxNode, transformRecursively);
           case "Figure":
             return {
               ast: handleFigureComponent(jsxNode),
+              unhandledTags: emptySet,
+            };
+          case "File":
+            return {
+              ast: handleFileComponent(jsxNode),
               unhandledTags: emptySet,
             };
           case "Hint":
@@ -129,6 +133,8 @@ export function transformJsxComponents(
               ast: handleApiLinkComponent(jsxNode),
               unhandledTags: emptySet,
             };
+          case "A":
+            return handleAComponent(jsxNode, transformRecursively);
           case "PaymentV1":
           case "PaymentV2":
           case "Recon":
@@ -150,11 +156,63 @@ export function transformJsxComponents(
               jsxNode,
               transformRecursively,
             );
+          case "Parameter.TypeDef":
+            return handleParameterTypeDefComponent(
+              jsxNode,
+              transformRecursively,
+            );
+          case "SDKParameter":
+            return handleSDKParameterComponent(jsxNode);
+          case "SDKChangelog":
+            return {
+              ast: sdkChangelog(),
+              unhandledTags: emptySet,
+            };
+          case "img":
+            return {
+              ast: handleImgTag(jsxNode),
+              unhandledTags: emptySet,
+            };
+          case "br":
+          case "table":
+          case "thead":
+          case "tbody":
+          case "th":
+          case "tr":
+          case "td":
+          case "ul":
+          case "li":
+          case "p":
+          case "span":
+          case "i":
+          case "strong":
+          case "a":
+            return replaceToHtml(jsxNode, transformRecursively);
           case "Parameter":
           case "Parameter.Details":
+          case "EasyGuideLink":
           case "center":
+          case "div":
+          case "figure":
+          case "figcaption":
             return unwrapJsxNode(jsxNode, transformRecursively);
           default: {
+            const importedMdx = validateImportedMdx(
+              jsxNode,
+              parseResult.filePath,
+              parseResult.imports,
+              parseResultMap,
+            );
+
+            if (importedMdx) {
+              return transformJsxComponents(
+                importedMdx.slug,
+                importedMdx.ast,
+                parseResultMap,
+                useMarkdownLinks,
+              );
+            }
+
             const result = unwrapJsxNode(jsxNode, transformRecursively);
             return {
               ast: result.ast,

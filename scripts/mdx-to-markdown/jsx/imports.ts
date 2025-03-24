@@ -2,15 +2,18 @@ import type { MdxjsEsm } from "mdast-util-mdx";
 import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 
+export type Import = {
+  name: string;
+  from: string;
+};
+
 /**
  * Collects all imported elements from the MDX AST
  * @param ast MDX AST
  * @returns Array of imported elements
  */
-export function collectAllImportedElements(
-  ast: Node,
-): { name: string; from: string }[] {
-  const importedElements: { name: string; from: string }[] = [];
+export function collectAllImportedElements(ast: Node): Import[] {
+  const importedElements: Import[] = [];
   visit(ast, "mdxjsEsm", (node: MdxjsEsm) => {
     if (node.data?.estree) {
       const estree = node.data.estree;
