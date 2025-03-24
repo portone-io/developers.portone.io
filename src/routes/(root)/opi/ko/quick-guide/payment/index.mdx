@@ -171,6 +171,13 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           </Hint>
         </Condition>
 
+        <Condition when={({ pg: { name } }) => name === 'naver'}>
+          <Hint style="warning">
+            네이버페이의 경우 `bypass.naverpay.productItems`의 개수에 따라 주문명 뒤에 `외 X개`가 붙으므로,
+            주문명을 `bypass.naverpay.productItems[0].name`으로 입력하는 것이 권장됩니다.
+          </Hint>
+        </Condition>
+
       - totalAmount: number
 
         **결제 금액**
@@ -241,6 +248,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
         <Condition when={({ pg: { name } }) => name === 'kakao'}>
           <Hint style="warning">
             카카오페이는 `KRW`만을 지원합니다.
+          </Hint>
+        </Condition>
+
+        <Condition when={({ pg: { name } }) => name === 'naver'}>
+          <Hint style="warning">
+            네이버페이는 `KRW`만을 지원합니다.
           </Hint>
         </Condition>
 
@@ -904,7 +917,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           `payMethod`가 `EASY_PAY`인 경우 간편결제와 관련한 추가 정보를 입력할 수 있습니다.
 
           <Parameter.Details>
-            <Condition when={({ pg: { name } }) => name !== 'kakao'}>
+            <Condition when={({ pg: { name } }) => !['kakao', 'naver'].includes(name)}>
               - easyPayProvider?: string
 
                 **간편결제 수단**
@@ -1027,7 +1040,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 **카드사 포인트 사용 여부**
             </Condition>
 
-            <Condition when={({ pg: { name } }) => !['kpn', 'inicis'].includes(name)}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'inicis', 'naver'].includes(name)}>
               - availableCards?: string\[]
 
                 **카드사 일부 노출**
@@ -1128,7 +1141,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 </Details>
             </Condition>
 
-            <Condition when={({ pg: { name } }) => name !== 'kpn'}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'naverpay'].includes(name)}>
               - installment?: object
 
                 **할부 설정**
@@ -1327,6 +1340,12 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
         <Condition when={({ pg: { name }}) => name === 'smartro'}>
           <Hint style="warning">
             스마트로 결제 시 구매자 연락처를 필수로 입력해야 합니다.
+          </Hint>
+        </Condition>
+
+        <Condition when={({ pg: { name }}) => name === 'naver'}>
+          <Hint style="warning">
+            네이버페이 계약 당시 고위험 업종으로 별도 안내를 받은 경우 고객의 이름, 출생년도, 출생월, 출생일을 필수로 입력해야 합니다.
           </Hint>
         </Condition>
 
@@ -1713,6 +1732,65 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   <Hint style="warning">
                     `custom_message`를 사용하기 위해서는 카카오페이와 사전 협의가 필요합니다.
                   </Hint>
+              </Parameter.Details>
+          </Condition>
+
+          <Condition when={({ pg: { name }}) => name === "naver"}>
+            - naver?: object
+
+              <Parameter.Details>
+                - useCfmYmdt?: string
+
+                  **이용 완료일**
+
+                  - `YYYYMMDD` 형식으로 입력해주세요.
+                  - 상품 유형에 따라 필수 값으로 계약된 경우에 입력합니다.
+
+                - productItems?: object\[]
+
+                  **상품 정보**
+
+                  <Parameter.Details>
+                    - categoryType: string
+
+                      **결제 상품 유형**
+
+                    - categoryId: string
+
+                      **결제 상품 분류**
+
+                    - uid: string
+
+                      **결제 상품 식별값**
+
+                    - name: string
+
+                    **상품명**
+
+                    - payReferrer?: string
+
+                    **결제 상품 유입경로**
+
+                    - startDate?: string
+
+                      **시작일(YYYYMMDD)**
+
+                    - endDate?: string
+
+                      **종료일(YYYYMMDD)**
+
+                    - sellerId?: string
+
+                      **하위 판매자 식별키**
+
+                    - count: number
+
+                      **결제 상품 개수**
+                  </Parameter.Details>
+
+                - deliveryFee?: number
+
+                  **배송비**
               </Parameter.Details>
           </Condition>
         </Parameter.Details>

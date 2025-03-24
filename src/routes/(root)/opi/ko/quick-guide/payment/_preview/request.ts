@@ -169,6 +169,11 @@ const overrides = {
       channelKey: "channel-key-01764171-b249-4c16-9d18-e9174fa8e611",
     },
   },
+  naver: {
+    easyPay: {
+      payMethod: "EASY_PAY",
+    },
+  },
 } as const;
 
 function templatedPayment(
@@ -256,6 +261,9 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     )
     .with({ pg: { name: "kakao", payMethods: "easyPay" } }, () =>
       templatedPayment(paymentId, overrides.kakao.easyPay),
+    )
+    .with({ pg: { name: "naver", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.naver.easyPay),
     )
     .exhaustive();
 }

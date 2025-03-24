@@ -25,6 +25,9 @@ export const pgOptions = {
   kakao: {
     payMethods: ["easyPay"],
   },
+  naver: {
+    payMethods: ["easyPay"],
+  },
 } as const satisfies PgOptions;
 
 export type Params = {
