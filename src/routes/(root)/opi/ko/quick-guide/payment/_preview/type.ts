@@ -31,6 +31,9 @@ export const pgOptions = {
   tosspay: {
     payMethods: ["easyPay"],
   },
+  hyphen: {
+    payMethods: ["easyPay"],
+  },
 } as const satisfies PgOptions;
 
 export type Params = {
