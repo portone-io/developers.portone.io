@@ -1,6 +1,5 @@
 import "~/styles/article.css";
 
-import { Link } from "@solidjs/meta";
 import {
   cache,
   createAsync,
