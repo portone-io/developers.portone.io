@@ -1,11 +1,18 @@
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import type { MdxParseResult } from "../mdx-to-markdown/mdx-parser";
 import {
-  copySchemaFiles,
-  generateLlmsTxtFiles,
   parseAllMdxFiles,
   saveMarkdownFiles,
-  transformAllMdxToAst,
-} from "./generator";
+  transformAllMdxsToAsts,
+} from "../mdx-to-markdown/utils";
+import { copySchemaFiles, generateLlmsTxtFiles } from "./generator";
+
+// 프로젝트 경로 설정
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const rootDir = join(__dirname, "../..");
+const outputDir = join(rootDir, "public");
 
 /**
  * 메인 함수
@@ -22,19 +29,20 @@ export async function main() {
       await parseAllMdxFiles();
 
     // MDX 파일을 마크다운 AST로 변환
-    const transformedAstMap = transformAllMdxToAst(fileParseMap);
+    const transformedAstMap = transformAllMdxsToAsts(fileParseMap);
 
     // 변환된 AST를 마크다운 파일로 저장
-    await saveMarkdownFiles(fileParseMap, transformedAstMap);
+    await saveMarkdownFiles(fileParseMap, transformedAstMap, outputDir);
 
     // 변환된 AST를 재사용하여 llms.txt 파일 생성
     const llmsTxtPath = await generateLlmsTxtFiles(
       fileParseMap,
       transformedAstMap,
+      outputDir,
     );
 
     // src/schema 디렉토리의 모든 파일을 public/schema 디렉토리로 복사
-    const copiedSchemaFiles = await copySchemaFiles();
+    const copiedSchemaFiles = await copySchemaFiles(rootDir, outputDir);
 
     console.log(`작업이 완료되었습니다. 생성된 파일: ${llmsTxtPath}`);
     console.log(`복사된 스키마 파일: ${copiedSchemaFiles.length}개`);

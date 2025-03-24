@@ -5,142 +5,20 @@ import { fileURLToPath } from "node:url";
 import fastGlob from "fast-glob";
 import type { Root } from "mdast";
 
+import { astToMarkdownString } from "../mdx-to-markdown";
+import { type MdxParseResult } from "../mdx-to-markdown/mdx-parser";
 import {
-  astToMarkdownString,
-  transformAstForMarkdown,
-} from "../mdx-to-markdown";
-import {
-  type MdxParseResult,
-  parseMdxFile,
-} from "../mdx-to-markdown/mdx-parser";
+  categorizeSlugs,
+  PATH_PREFIXES,
+  saveMarkdownFiles,
+} from "../mdx-to-markdown/utils";
 
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
-const docsForLlmsDir = join(rootDir, "docs-for-llms");
 const schemaDir = join(rootDir, "src", "schema");
+const docsForLlmsDir = join(rootDir, "docs-for-llms");
 const docsForLlmsSchemaDir = join(docsForLlmsDir, "schema");
-
-/**
- * 모든 MDX 파일을 파싱하고 결과를 맵으로 반환하는 함수
- * @returns 파일 경로(slug)와 파싱 결과를 매핑한 객체
- */
-export async function parseAllMdxFiles(): Promise<
-  Record<string, MdxParseResult>
-> {
-  // MDX 파일 찾기
-  const mdxFiles = await fastGlob(["src/routes/**/*.mdx"], {
-    cwd: rootDir,
-  });
-
-  console.log(`총 ${mdxFiles.length}개의 MDX 파일을 찾았습니다.`);
-
-  // 파일 경로와 파싱 결과를 매핑할 객체
-  const fileParseMap: Record<string, MdxParseResult> = {};
-
-  // 각 MDX 파일 처리
-  for (const mdxFile of mdxFiles) {
-    try {
-      // MDX 파싱
-      const parseResult = await parseMdxFile(mdxFile);
-
-      // 객체에 파싱 결과 저장 (slug를 키로 사용)
-      fileParseMap[parseResult.slug] = parseResult;
-    } catch (error) {
-      console.error(`${mdxFile} 파싱 중 오류 발생:`, error);
-    }
-  }
-
-  return fileParseMap;
-}
-
-/**
- * 모든 MDX 파일의 AST를 마크다운용 AST로 변환하는 함수
- * @param fileParseMap 파일 경로와 파싱 결과를 매핑한 객체
- * @param useMarkdownLinks 내부 링크를 마크다운 파일 링크로 변환할지 여부 (true: 마크다운 파일 링크, false: 웹페이지 링크)
- * @returns 변환된 AST 노드 매핑 (slug -> Node)
- */
-export function transformAllMdxToAst(
-  fileParseMap: Record<string, MdxParseResult>,
-  useMarkdownLinks: boolean = true,
-): Record<string, Root> {
-  // 변환된 AST 노드를 저장할 객체
-  const transformedAstMap: Record<string, Root> = {};
-
-  // 각 파싱 결과의 AST 변환
-  const allUnhandledTags: Set<string> = new Set();
-  for (const slug of Object.keys(fileParseMap)) {
-    try {
-      // AST 변환 (useMarkdownLinks 파라미터 전달)
-      const { ast, unhandledTags } = transformAstForMarkdown(
-        slug,
-        fileParseMap,
-        useMarkdownLinks,
-      );
-      if (ast) {
-        transformedAstMap[slug] = ast;
-      }
-      for (const tag of unhandledTags) {
-        allUnhandledTags.add(tag);
-      }
-    } catch (error) {
-      console.error(
-        `${fileParseMap[slug]?.filePath} AST 변환 중 오류 발생:`,
-        error,
-      );
-    }
-  }
-
-  console.log(
-    `${Object.keys(transformedAstMap).length}개의 MDX 파일 AST 변환이 완료되었습니다.`,
-  );
-
-  if (allUnhandledTags.size > 0) {
-    console.log(
-      `처리되지 않은 태그: ${Array.from(allUnhandledTags).join(", ")}`,
-    );
-  }
-  return transformedAstMap;
-}
-
-/**
- * 변환된 AST를 마크다운 파일로 저장하는 함수
- * @param fileParseMap 파일 경로와 파싱 결과를 매핑한 객체
- * @param transformedAstMap 변환된 AST 노드 매핑 (slug -> Node)
- */
-async function saveMarkdownFiles(
-  fileParseMap: Record<string, MdxParseResult>,
-  transformedAstMap: Record<string, Root>,
-): Promise<void> {
-  // 각 변환된 AST를 마크다운 파일로 저장
-  for (const slug of Object.keys(transformedAstMap)) {
-    try {
-      const transformedAst = transformedAstMap[slug];
-      if (transformedAst == null)
-        throw new Error(`${slug}에 대한 AST 변환 결과를 찾을 수 없습니다.`);
-
-      const frontmatter = fileParseMap[slug]?.frontmatter;
-
-      // 마크다운 문자열로 변환
-      const markdown = astToMarkdownString(transformedAst, frontmatter);
-
-      // 저장할 파일 경로 생성
-      const outputPath = join(docsForLlmsDir, `${slug}.md`);
-
-      // 디렉토리 생성
-      await mkdir(dirname(outputPath), { recursive: true });
-
-      // 파일 저장
-      await writeFile(outputPath, markdown, "utf-8");
-    } catch (error) {
-      console.error(`${slug} 마크다운 파일 저장 중 오류 발생:`, error);
-    }
-  }
-
-  console.log(
-    `${Object.keys(transformedAstMap).length}개의 마크다운 파일이 생성되었습니다.`,
-  );
-}
 
 /**
  * docs-for-llms 디렉토리를 생성하고 마크다운 파일들을 저장하는 함수
@@ -155,87 +33,35 @@ export async function generateDocsForLlms(
   // fileParseMap에서 slug 추출
   const slugs = Object.keys(fileParseMap);
 
-  console.log(`총 ${slugs.length}개의 문서를 찾았습니다.`);
-
   // docs-for-llms 디렉토리 생성
   await mkdir(docsForLlmsDir, { recursive: true });
 
   // schema 디렉토리 생성 및 파일 복사
   await mkdir(docsForLlmsSchemaDir, { recursive: true });
   try {
-    // 각 스키마 파일을 개별적으로 복사
-    const schemaFiles = [
-      "v1.openapi.yml",
-      "v1.openapi.json",
-      "v2.graphql",
-      "v2.openapi.yml",
-      "v2.openapi.json",
-    ];
-    for (const file of schemaFiles) {
-      await cp(join(schemaDir, file), join(docsForLlmsSchemaDir, file));
-    }
-    console.log(`스키마 파일이 ${docsForLlmsSchemaDir}로 복사되었습니다.`);
+    // 스키마 디렉토리의 모든 파일을 복사
+    const schemaFiles = await fastGlob("*", { cwd: schemaDir });
+    await Promise.all(
+      schemaFiles.map((file) =>
+        cp(join(schemaDir, file), join(docsForLlmsSchemaDir, file)),
+      ),
+    );
+    console.log(
+      `스키마 파일이 ${docsForLlmsSchemaDir}로 복사되었습니다. (${schemaFiles.length}개)`,
+    );
   } catch (error) {
     console.error(`스키마 파일 복사 중 오류 발생:`, error);
   }
 
-  // 문서 카테고리 경로 접두사 정의
-  const PATH_PREFIXES = {
-    RELEASE_NOTES: "release-notes/",
-    BLOG: "blog/posts/",
-    API: "api/",
-    SDK: "sdk/",
-    PLATFORM: "platform/",
-  };
-
-  // 카테고리별 필터링 함수
-  const filterByCategory = (files: string[], categoryPrefix: string) => {
-    return files.filter((slug) => slug.startsWith(categoryPrefix));
-  };
-
-  // 릴리즈 노트, 블로그, 파트너정산 파일 먼저 필터링
-  const releaseNoteFiles = filterByCategory(slugs, PATH_PREFIXES.RELEASE_NOTES);
-  const blogFiles = filterByCategory(slugs, PATH_PREFIXES.BLOG);
-  const platformFiles = filterByCategory(slugs, PATH_PREFIXES.PLATFORM);
-
-  // 릴리즈 노트, 블로그, 파트너정산을 제외한 나머지 파일들만 버전별로 분류
-  const remainingFiles = slugs.filter(
-    (slug) =>
-      !slug.startsWith(PATH_PREFIXES.RELEASE_NOTES) &&
-      !slug.startsWith(PATH_PREFIXES.BLOG) &&
-      !slug.startsWith(PATH_PREFIXES.PLATFORM),
-  );
-
-  // 버전별 파일 분류 함수
-  const categorizeFilesByVersion = (files: string[]) => {
-    const v1Files: string[] = [];
-    const v2Files: string[] = [];
-    const commonFiles: string[] = [];
-
-    for (const slug of files) {
-      const parseResult = fileParseMap[slug];
-      const targetVersions = parseResult?.frontmatter.targetVersions || [];
-
-      if (
-        targetVersions.length === 0 ||
-        (targetVersions.includes("v1") && targetVersions.includes("v2"))
-      ) {
-        commonFiles.push(slug);
-      } else if (targetVersions.includes("v1")) {
-        v1Files.push(slug);
-      } else if (targetVersions.includes("v2")) {
-        v2Files.push(slug);
-      } else {
-        commonFiles.push(slug);
-      }
-    }
-
-    return { v1Files, v2Files, commonFiles };
-  };
-
-  // 버전별 및 카테고리별 파일 필터링
-  const { v1Files, v2Files, commonFiles } =
-    categorizeFilesByVersion(remainingFiles);
+  // 파일 카테고리 분류 (공통 유틸리티 사용)
+  const {
+    releaseNoteSlugs,
+    blogSlugs,
+    platformSlugs,
+    v1Slugs,
+    v2Slugs,
+    commonSlugs,
+  } = categorizeSlugs(slugs, fileParseMap);
 
   // 링크 생성 헬퍼 함수
   const createLinkWithDescription = (slug: string): string => {
@@ -279,51 +105,51 @@ export async function generateDocsForLlms(
   // 문서 섹션 생성 함수
   const createDocSection = (
     title: string,
-    files: string[],
+    slugs: string[],
     linkCreator: (slug: string) => string = createLinkWithDescription,
   ) => {
-    if (files.length === 0) return "";
+    if (slugs.length === 0) return "";
 
     let content = `\n## ${title}\n\n`;
-    for (const slug of files) {
+    for (const slug of slugs) {
       content += linkCreator(slug);
     }
     return content;
   };
 
   // 버전별 문서 섹션 생성 함수
-  const createVersionSection = (title: string, files: string[]) => {
-    if (files.length === 0) return "";
+  const createVersionSection = (title: string, slugs: string[]) => {
+    if (slugs.length === 0) return "";
 
     let content = `\n## ${title}\n\n`;
 
-    // SDK 문서
-    const sdkFiles = filterByCategory(files, PATH_PREFIXES.SDK);
-    if (sdkFiles.length > 0) {
+    // SDK 문서 (공통 유틸리티 사용)
+    const sdkSlugs = slugs.filter((slug) => slug.startsWith(PATH_PREFIXES.SDK));
+    if (sdkSlugs.length > 0) {
       content += `### ${title} SDK\n\n`;
-      for (const slug of sdkFiles) {
+      for (const slug of sdkSlugs) {
         content += createLinkWithDescription(slug);
       }
     }
 
-    // API 문서
-    const apiFiles = filterByCategory(files, PATH_PREFIXES.API);
-    if (apiFiles.length > 0) {
+    // API 문서 (공통 유틸리티 사용)
+    const apiSlugs = slugs.filter((slug) => slug.startsWith(PATH_PREFIXES.API));
+    if (apiSlugs.length > 0) {
       content += `\n### ${title} API 레퍼런스\n\n`;
-      for (const slug of apiFiles) {
+      for (const slug of apiSlugs) {
         content += createLinkWithDescription(slug);
       }
     }
 
     // 통합 가이드 및 기타 문서
-    const otherFiles = files.filter(
+    const otherSlugs = slugs.filter(
       (slug) =>
         !slug.startsWith(PATH_PREFIXES.SDK) &&
         !slug.startsWith(PATH_PREFIXES.API),
     );
-    if (otherFiles.length > 0) {
+    if (otherSlugs.length > 0) {
       content += `\n### ${title} 통합 가이드\n\n`;
-      for (const slug of otherFiles) {
+      for (const slug of otherSlugs) {
         content += createLinkWithDescription(slug);
       }
     }
@@ -363,6 +189,7 @@ export async function generateDocsForLlms(
       content += `- [V1 OpenAPI YAML](https://developers.portone.io/schema/v1.openapi.yml)\n`;
       content += `- [V1 OpenAPI JSON](https://developers.portone.io/schema/v1.openapi.json)\n`;
     } else if (version === "V2") {
+      content += `- [V2 브라우저 SDK 스키마](https://developers.portone.io/schema/browser-sdk.yml)\n`;
       content += `- [V2 GraphQL 스키마](https://developers.portone.io/schema/v2.graphql)\n`;
       content += `- [V2 OpenAPI YAML](https://developers.portone.io/schema/v2.openapi.yml)\n`;
       content += `- [V2 OpenAPI JSON](https://developers.portone.io/schema/v2.openapi.json)\n`;
@@ -374,60 +201,58 @@ export async function generateDocsForLlms(
   // 전체 문서 파일 생성 함수
   const generateFullDocFile = async (
     filePath: string,
-    title: string,
-    versionFiles: string[],
+    version: "V1" | "V2",
     includeCommon: boolean = true,
   ) => {
-    let content = `# PortOne 개발자 문서 (${title})
+    let content = `# PortOne 개발자 문서 (${version})
 
 > PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
 
 ## 목차
-
 `;
 
+    // 포함할 슬러그 목록 생성
+    const slugsToInclude = [];
+
     // 스키마 파일 링크 추가
-    if (title.includes("V1")) {
+    if (version === "V1") {
+      slugsToInclude.push(...v1Slugs);
       content += createSchemaLinks("V1");
-    } else if (title.includes("V2")) {
+    } else {
+      slugsToInclude.push(...v2Slugs);
       content += createSchemaLinks("V2");
     }
 
-    // 목차 생성
-    const filesToInclude = [...versionFiles];
     if (includeCommon) {
-      filesToInclude.push(...commonFiles);
+      slugsToInclude.push(...commonSlugs);
     }
     // 파트너정산, 릴리즈 노트, 블로그 컨텐츠 추가
-    filesToInclude.push(...platformFiles, ...releaseNoteFiles, ...blogFiles);
-
-    // 섹션별로 목차 구성
-    const version = title.includes("V1") ? "V1" : "V2";
+    slugsToInclude.push(...platformSlugs, ...releaseNoteSlugs, ...blogSlugs);
 
     // SDK 문서 목차
-    const sdkFiles = filesToInclude.filter((slug) =>
+    const sdkSlugs = slugsToInclude.filter((slug) =>
       slug.startsWith(PATH_PREFIXES.SDK),
     );
-    if (sdkFiles.length > 0) {
+    if (sdkSlugs.length > 0) {
       content += `\n### ${version} SDK\n\n`;
-      for (const slug of sdkFiles) {
+      for (const slug of sdkSlugs) {
         content += createLinkWithDescription(slug);
       }
     }
 
     // API 문서 목차
-    const apiFiles = filesToInclude.filter((slug) =>
+    const apiSlugs = slugsToInclude.filter((slug) =>
       slug.startsWith(PATH_PREFIXES.API),
     );
-    if (apiFiles.length > 0) {
+    if (apiSlugs.length > 0) {
       content += `\n### ${version} API 레퍼런스\n\n`;
-      for (const slug of apiFiles) {
+      for (const slug of apiSlugs) {
         content += createLinkWithDescription(slug);
       }
     }
 
     // 통합 가이드 및 기타 문서 목차
-    const otherFiles = filesToInclude.filter(
+    const otherSlugs = slugsToInclude.filter(
       (slug) =>
         !slug.startsWith(PATH_PREFIXES.SDK) &&
         !slug.startsWith(PATH_PREFIXES.API) &&
@@ -435,39 +260,39 @@ export async function generateDocsForLlms(
         !slug.startsWith(PATH_PREFIXES.RELEASE_NOTES) &&
         !slug.startsWith(PATH_PREFIXES.BLOG),
     );
-    if (otherFiles.length > 0) {
+    if (otherSlugs.length > 0) {
       content += `\n### ${version} 통합 가이드\n\n`;
-      for (const slug of otherFiles) {
+      for (const slug of otherSlugs) {
         content += createLinkWithDescription(slug);
       }
     }
 
     // 파트너정산 문서 목차
-    if (platformFiles.length > 0) {
+    if (platformSlugs.length > 0) {
       content += `\n### 파트너정산\n\n`;
-      for (const slug of platformFiles) {
+      for (const slug of platformSlugs) {
         content += createLinkWithDescription(slug);
       }
     }
 
     // 릴리즈 노트 목차
-    if (releaseNoteFiles.length > 0) {
+    if (releaseNoteSlugs.length > 0) {
       content += `\n### 릴리스 노트\n\n`;
-      for (const slug of releaseNoteFiles) {
+      for (const slug of releaseNoteSlugs) {
         content += createReleaseNoteLink(slug);
       }
     }
 
     // 블로그 목차
-    if (blogFiles.length > 0) {
+    if (blogSlugs.length > 0) {
       content += `\n### 블로그\n\n`;
-      for (const slug of blogFiles) {
+      for (const slug of blogSlugs) {
         content += createLinkWithDescription(slug);
       }
     }
 
     // 문서 내용 추가
-    content += generateDocContent(filesToInclude);
+    content += generateDocContent(slugsToInclude);
 
     // 파일 저장
     await generateMarkdownFile(filePath, content);
@@ -477,80 +302,72 @@ export async function generateDocsForLlms(
   let readmeContent = `# PortOne 개발자 문서
 
 > PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
-
-## 스키마 파일
-
-- [V1 OpenAPI YAML](https://developers.portone.io/schema/v1.openapi.yml)
-- [V1 OpenAPI JSON](https://developers.portone.io/schema/v1.openapi.json)
-- [V2 GraphQL 스키마](https://developers.portone.io/schema/v2.graphql)
-- [V2 OpenAPI YAML](https://developers.portone.io/schema/v2.openapi.yml)
-- [V2 OpenAPI JSON](https://developers.portone.io/schema/v2.openapi.json)
-
 `;
 
-  // 공용 문서 섹션 추가
-  readmeContent += `## 공통 문서 (V1 & V2)\n\n`;
+  // 스키마 파일 추가
+  readmeContent += `\n## 스키마 파일\n`;
+  readmeContent += createSchemaLinks("V2");
+  readmeContent += createSchemaLinks("V1");
 
-  // 공용 SDK 문서
-  const commonSdkFiles = filterByCategory(commonFiles, PATH_PREFIXES.SDK);
-  if (commonSdkFiles.length > 0) {
-    for (const slug of commonSdkFiles) {
+  // 공용 문서 섹션 추가
+  readmeContent += `\n## 공통 문서 (V1 & V2)\n\n`;
+
+  // 공용 SDK 문서 (공통 유틸리티 사용)
+  const commonSdkSlugs = commonSlugs.filter((slug) =>
+    slug.startsWith(PATH_PREFIXES.SDK),
+  );
+  if (commonSdkSlugs.length > 0) {
+    for (const slug of commonSdkSlugs) {
       readmeContent += createLinkWithDescription(slug);
     }
   }
 
-  // 공용 API 레퍼런스 문서
-  const commonApiFiles = filterByCategory(commonFiles, PATH_PREFIXES.API);
-  if (commonApiFiles.length > 0) {
-    for (const slug of commonApiFiles) {
+  // 공용 API 레퍼런스 문서 (공통 유틸리티 사용)
+  const commonApiSlugs = commonSlugs.filter((slug) =>
+    slug.startsWith(PATH_PREFIXES.API),
+  );
+  if (commonApiSlugs.length > 0) {
+    for (const slug of commonApiSlugs) {
       readmeContent += createLinkWithDescription(slug);
     }
   }
 
   // 기타 공용 문서
-  const commonOtherFiles = commonFiles.filter(
+  const commonOtherSlugs = commonSlugs.filter(
     (slug) =>
       !slug.startsWith(PATH_PREFIXES.SDK) &&
       !slug.startsWith(PATH_PREFIXES.API),
   );
-  if (commonOtherFiles.length > 0) {
-    for (const slug of commonOtherFiles) {
+  if (commonOtherSlugs.length > 0) {
+    for (const slug of commonOtherSlugs) {
       readmeContent += createLinkWithDescription(slug);
     }
   }
 
   // 버전별 문서 섹션 추가
-  readmeContent += createVersionSection("V2 문서", v2Files);
-  readmeContent += createVersionSection("V1 문서", v1Files);
+  readmeContent += createVersionSection("V2 문서", v2Slugs);
+  readmeContent += createVersionSection("V1 문서", v1Slugs);
 
   // 파트너정산, 릴리스 노트, 블로그 섹션 추가
-  readmeContent += createDocSection("파트너정산", platformFiles);
+  readmeContent += createDocSection("파트너정산", platformSlugs);
   readmeContent += createDocSection(
     "릴리스 노트",
-    releaseNoteFiles,
+    releaseNoteSlugs,
     createReleaseNoteLink,
   );
-  readmeContent += createDocSection("블로그", blogFiles);
+  readmeContent += createDocSection("블로그", blogSlugs);
 
   // README.md 파일 저장
   const readmePath = join(docsForLlmsDir, "README.md");
   await generateMarkdownFile(readmePath, readmeContent);
 
   // 각 마크다운 파일을 docs-for-llms 디렉토리에 저장
-  await saveMarkdownFiles(fileParseMap, transformedAstMap);
+  await saveMarkdownFiles(fileParseMap, transformedAstMap, docsForLlmsDir);
 
   // 전체 문서 파일 생성
-  await generateFullDocFile(
-    join(docsForLlmsDir, "v1-docs-full.md"),
-    "V1 전체 문서",
-    v1Files,
-  );
+  await generateFullDocFile(join(docsForLlmsDir, "v1-docs-full.md"), "V1");
 
-  await generateFullDocFile(
-    join(docsForLlmsDir, "v2-docs-full.md"),
-    "V2 전체 문서",
-    v2Files,
-  );
+  await generateFullDocFile(join(docsForLlmsDir, "v2-docs-full.md"), "V2");
 
   return docsForLlmsDir;
 }
