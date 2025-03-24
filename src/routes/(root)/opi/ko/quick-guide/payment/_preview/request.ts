@@ -163,6 +163,31 @@ const overrides = {
       },
     },
   },
+  kakao: {
+    easyPay: {
+      payMethod: "EASY_PAY",
+      channelKey: "channel-key-01764171-b249-4c16-9d18-e9174fa8e611",
+    },
+  },
+  naver: {
+    easyPay: {
+      payMethod: "EASY_PAY",
+    },
+  },
+  tosspay: {
+    easyPay: {
+      payMethod: "EASY_PAY",
+      channelKey: "channel-key-1d494380-d047-458a-a20a-edd28f7f635c",
+    },
+  },
+  hyphen: {
+    easyPay: {
+      payMethod: "EASY_PAY",
+      customer: {
+        fullName: customer.fullName,
+      },
+    },
+  },
 } as const;
 
 function templatedPayment(
@@ -247,6 +272,18 @@ export function createPaymentRequest(params: Params, paymentId: string) {
       // easyPayBypass 파라미터 누락
       // @ts-expect-error(2345)
       templatedPayment(paymentId, overrides.ksnet.easyPay),
+    )
+    .with({ pg: { name: "kakao", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.kakao.easyPay),
+    )
+    .with({ pg: { name: "naver", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.naver.easyPay),
+    )
+    .with({ pg: { name: "tosspay", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.tosspay.easyPay),
+    )
+    .with({ pg: { name: "hyphen", payMethods: "easyPay" } }, () =>
+      templatedPayment(paymentId, overrides.hyphen.easyPay),
     )
     .exhaustive();
 }

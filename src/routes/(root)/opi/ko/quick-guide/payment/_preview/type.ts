@@ -22,6 +22,18 @@ export const pgOptions = {
   kcp: {
     payMethods: ["card", "virtualAccount", "easyPay"],
   },
+  kakao: {
+    payMethods: ["easyPay"],
+  },
+  naver: {
+    payMethods: ["easyPay"],
+  },
+  tosspay: {
+    payMethods: ["easyPay"],
+  },
+  hyphen: {
+    payMethods: ["easyPay"],
+  },
 } as const satisfies PgOptions;
 
 export type Params = {
