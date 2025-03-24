@@ -4,6 +4,8 @@ import { createMemo, mergeProps, Show } from "solid-js";
 import { match, P } from "ts-pattern";
 
 import type { DocsEntry } from "~/content/config";
+import { useSystemVersion } from "~/state/system-version";
+import type { SystemVersion } from "~/type";
 
 interface Props {
   title: string;
@@ -20,34 +22,102 @@ export default function Metadata(_props: Props) {
   );
   const location = useLocation();
 
-  const canonicalUrl = createMemo(() => {
+  const { systemVersion } = useSystemVersion();
+
+  const createVersionUrl = (version?: SystemVersion) => {
+    return version
+      ? `https://developers.portone.io${location.pathname}?v=${version}`
+      : `https://developers.portone.io${location.pathname}`;
+  };
+
+  const createVersionVariantUrl = (version: string, path: string) => {
+    const isAbsolutePath = path.startsWith("/");
+
+    let resultPath: string;
+
+    if (isAbsolutePath) {
+      resultPath = path;
+    } else {
+      const currentPathSegments = location.pathname.split("/").filter(Boolean);
+      currentPathSegments.pop();
+
+      const relativeSegments = path.split("/").filter(Boolean);
+      const resultSegments = [...currentPathSegments];
+
+      for (const segment of relativeSegments) {
+        if (segment === "..") {
+          resultSegments.pop();
+        } else if (segment !== ".") {
+          resultSegments.push(segment);
+        }
+      }
+
+      resultPath = `/${resultSegments.join("/")}`;
+    }
+
+    return `https://developers.portone.io${resultPath}?v=${version}`;
+  };
+
+  const canonicalVersion = createMemo<SystemVersion | undefined>(() => {
     const url = match([
       props.docsEntry?.targetVersions,
       props.docsEntry?.versionVariants,
     ])
-      .with([[...P.array("v1"), "v1"], P._], () => {
-        return `https://developers.portone.io${location.pathname}?v=v1`;
+      .with([P.array("v1"), P._], () => {
+        return "v1" as const;
       })
-      .with([[...P.array("v2"), "v2"], P._], () => {
-        return `https://developers.portone.io${location.pathname}?v=v2`;
+      .with([P.array("v2"), P._], () => {
+        return "v2" as const;
       })
-      .with([P._, { v2: P.string }], () => {
-        return `https://developers.portone.io${location.pathname}?v=v1`;
+      .with([P._, { v2: P.string, v1: P.nullish }], () => {
+        return "v1" as const;
       })
-      .with([P._, { v1: P.string }], () => {
-        return `https://developers.portone.io${location.pathname}?v=v2`;
+      .with([P._, { v1: P.string, v2: P.nullish }], () => {
+        return "v2" as const;
       })
       .with(
-        [[...P.array(P.union("v1", "v2")), P.union("v1", "v2")], P._],
+        [P.array(P.union("v1", "v2")), P._],
         [P._, { v1: P.string, v2: P.string }],
         [undefined, undefined],
         [[], undefined],
-        () => {
-          return `https://developers.portone.io${location.pathname}`;
-        },
+        () => (systemVersion() ? systemVersion() : undefined),
       )
       .exhaustive();
     return url;
+  });
+  const canonicalUrl = createMemo(() => {
+    return createVersionUrl(canonicalVersion());
+  });
+
+  const alternateUrl = createMemo<string | undefined>(() => {
+    return match([
+      canonicalVersion(),
+      props.docsEntry?.targetVersions,
+      props.docsEntry?.versionVariants,
+    ])
+      .with(
+        ["v1", P.array(), P._],
+        ([_, targetVersions]) => targetVersions.includes("v2"),
+        () => createVersionUrl("v2"),
+      )
+      .with(
+        ["v2", P.array(), P._],
+        ([_, targetVersions]) => targetVersions.includes("v1"),
+        () => createVersionUrl("v1"),
+      )
+      .with(["v1", P._, { v2: P.select(P.string) }], (slug) => {
+        return createVersionVariantUrl("v2", slug);
+      })
+      .with(["v2", P._, { v1: P.select(P.string) }], (slug) => {
+        return createVersionVariantUrl("v1", slug);
+      })
+      .with(
+        [undefined, P._, P._],
+        [P.string, undefined, undefined],
+        [P.string, P.array(), P._],
+        () => undefined,
+      )
+      .exhaustive();
   });
 
   return (
@@ -59,6 +129,9 @@ export default function Metadata(_props: Props) {
         <Meta property="og:description" content={props.description} />
       </Show>
       <Link rel="canonical" href={canonicalUrl()} />
+      <Show when={alternateUrl()}>
+        <Link rel="alternate" href={alternateUrl()} />
+      </Show>
       <Meta property="og:type" content={props.ogType} />
       <Meta
         property="og:url"
