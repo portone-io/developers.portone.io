@@ -1,9 +1,9 @@
 import { Link, Meta, Title } from "@solidjs/meta";
 import { useLocation } from "@solidjs/router";
 import { createMemo, mergeProps, Show } from "solid-js";
+import { match, P } from "ts-pattern";
 
 import type { DocsEntry } from "~/content/config";
-import { useSystemVersion } from "~/state/system-version";
 
 interface Props {
   title: string;
@@ -19,16 +19,35 @@ export default function Metadata(_props: Props) {
     _props,
   );
   const location = useLocation();
-  const { systemVersion } = useSystemVersion();
 
   const canonicalUrl = createMemo(() => {
-    return `https://developers.portone.io/${location.pathname}${
-      // 버전별로 다른 내용을 가질 수 있다고 명시된 페이지인 경우,
-      // 검색엔진이 별도로 인덱싱할 수 있도록 ?v= 추가
-      (props.docsEntry?.targetVersions?.length ?? 0) > 1
-        ? `?v=${systemVersion()}`
-        : ""
-    }`;
+    const url = match([
+      props.docsEntry?.targetVersions,
+      props.docsEntry?.versionVariants,
+    ])
+      .with([[...P.array("v1"), "v1"], P._], () => {
+        return `https://developers.portone.io${location.pathname}?v=v1`;
+      })
+      .with([[...P.array("v2"), "v2"], P._], () => {
+        return `https://developers.portone.io${location.pathname}?v=v2`;
+      })
+      .with([P._, { v2: P.string }], () => {
+        return `https://developers.portone.io${location.pathname}?v=v1`;
+      })
+      .with([P._, { v1: P.string }], () => {
+        return `https://developers.portone.io${location.pathname}?v=v2`;
+      })
+      .with(
+        [[...P.array(P.union("v1", "v2")), P.union("v1", "v2")], P._],
+        [P._, { v1: P.string, v2: P.string }],
+        [undefined, undefined],
+        [[], undefined],
+        () => {
+          return `https://developers.portone.io${location.pathname}`;
+        },
+      )
+      .exhaustive();
+    return url;
   });
 
   return (

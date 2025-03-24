@@ -72,10 +72,6 @@ export default function Layout(props: Props) {
 
   return (
     <SystemVersionProvider>
-      <Link
-        rel="canonical"
-        href={`https://developers.portone.io${location.pathname}`}
-      />
       <SidebarProvider>
         <InteractiveDocsProvider initial={interactiveDocs()}>
           <MDXProvider components={prose}>
