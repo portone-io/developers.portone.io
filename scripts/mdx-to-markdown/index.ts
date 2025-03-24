@@ -16,14 +16,16 @@ import { type Frontmatter, type MdxParseResult } from "./mdx-parser";
  * @param slug 변환할 MDX 파일의 slug
  * @param parseResultMap 모든 MDX 파일의 파싱 결과 맵 (slug -> MdxParseResult)
  * @param useMarkdownLinks 내부 링크를 마크다운 파일 링크로 변환할지 여부 (true: 마크다운 파일 링크, false: 웹페이지 링크)
- * @returns 변환된 AST 노드
+ * @returns {오브젝트} 변환된 AST 노드와 처리되지 않은 태그 목록을 포함한 객체
+ * @returns {Root} ast - 변환된 AST 노드
+ * @returns {Set<string>} unhandledTags - 처리되지 않은 태그 목록
  * @throws Error parseResult를 찾을 수 없는 경우 예외 발생
  */
 export function transformAstForMarkdown(
   slug: string,
   parseResultMap: Record<string, MdxParseResult>,
   useMarkdownLinks: boolean = true,
-): Root {
+): { ast: Root; unhandledTags: Set<string> } {
   // slug에 해당하는 parseResult 가져오기
   const parseResult = parseResultMap[slug];
 
@@ -41,21 +43,22 @@ export function transformAstForMarkdown(
   transformLinks(ast, useMarkdownLinks);
 
   // JSX 컴포넌트를 마크다운으로 변환 (useMarkdownLinks 파라미터 전달)
-  transformJsxComponents(ast, parseResultMap, useMarkdownLinks);
+  const result = transformJsxComponents(ast, parseResultMap, useMarkdownLinks);
+  const transformedAst = result.ast as Root;
 
   // 임포트 구문 제거
-  removeImports(ast);
+  removeImports(transformedAst);
 
   // YAML 노드 제거 (프론트매터는 별도로 처리)
-  removeYamlNodes(ast);
+  removeYamlNodes(transformedAst);
 
   // JSX 요소 제거 또는 자식 노드만 유지
-  simplifyJsxElements(ast);
+  simplifyJsxElements(transformedAst);
 
   // MDX 표현식 노드 처리
-  handleRemainingMdxFlowExpressions(ast);
+  handleRemainingMdxFlowExpressions(transformedAst);
 
-  return ast;
+  return { ast: transformedAst, unhandledTags: result.unhandledTags };
 }
 
 /**

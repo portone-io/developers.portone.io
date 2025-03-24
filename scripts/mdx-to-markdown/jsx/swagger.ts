@@ -1,18 +1,23 @@
+import type { Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
+
+import { extractMdxJsxAttributes, unwrapJsxNode } from "./common";
 
 /**
  * Swagger 컴포넌트 처리
  * @param node MDX JSX 노드
- * @param props 컴포넌트 속성
- * @param transformJsxComponentsFn 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
+ * @param transformRecursively 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
  * @returns 변환된 마크다운 노드
  */
 export function handleSwaggerComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, unknown>,
-  transformJsxComponentsFn: (ast: Node) => void,
-) {
+  transformRecursively: (ast: Node) => {
+    ast: Node;
+    unhandledTags: Set<string>;
+  },
+): { ast: Root; unhandledTags: Set<string> } {
+  const props = extractMdxJsxAttributes(node);
   const method = (
     typeof props.method === "string"
       ? props.method
@@ -63,61 +68,58 @@ export function handleSwaggerComponent(
     : undefined;
 
   // 자식 노드들을 재귀적으로 처리
-  const childrenContent = {
-    type: "root",
-    children: node.children || [],
-  };
-  transformJsxComponentsFn(childrenContent);
+  const results = node.children.map(transformRecursively);
+  const newChildren = results.map((result) => result.ast);
+  const unhandledTags = results.reduce(
+    (acc, result) => acc.union(result.unhandledTags),
+    new Set<string>(),
+  );
 
   // 자식 노드들을 포함한 컨테이너 생성
   return {
-    type: "root",
-    children: [
-      headerNode,
-      ...(summaryNode ? [summaryNode] : []),
-      ...childrenContent.children,
-    ],
+    ast: {
+      type: "root",
+      children: [
+        headerNode,
+        ...(summaryNode ? [summaryNode] : []),
+        ...newChildren,
+      ],
+    } as Root,
+    unhandledTags,
   };
 }
 
 /**
  * SwaggerDescription 컴포넌트 처리
  * @param node MDX JSX 노드
- * @param _props 컴포넌트 속성
- * @param transformJsxComponentsFn 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
+ * @param transformRecursively 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
  * @returns 변환된 마크다운 노드
  */
 export function handleSwaggerDescriptionComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  _props: Record<string, unknown>,
-  transformJsxComponentsFn: (ast: Node) => void,
-) {
-  // 자식 노드들을 재귀적으로 처리
-  const childrenContent = {
-    type: "root",
-    children: node.children || [],
-  };
-  transformJsxComponentsFn(childrenContent);
-
-  // 자식 노드들을 포함한 컨테이너 생성
-  return {
-    type: "root",
-    children: childrenContent.children,
-  };
+  transformRecursively: (ast: Node) => {
+    ast: Node;
+    unhandledTags: Set<string>;
+  },
+): { ast: Root; unhandledTags: Set<string> } {
+  return unwrapJsxNode(node, transformRecursively);
 }
 
 /**
  * SwaggerResponse 컴포넌트 처리
  * @param node MDX JSX 노드
  * @param props 컴포넌트 속성
- * @param transformJsxComponentsFn 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
+ * @param transformRecursively 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
  * @returns 변환된 마크다운 노드
  */
 export function handleSwaggerResponseComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, unknown>,
-  transformJsxComponentsFn: (ast: Node) => void,
-) {
+  transformRecursively: (ast: Node) => {
+    ast: Node;
+    unhandledTags: Set<string>;
+  },
+): { ast: Root; unhandledTags: Set<string> } {
+  const props = extractMdxJsxAttributes(node);
   const description =
     typeof props.description === "string"
       ? props.description
@@ -138,16 +140,19 @@ export function handleSwaggerResponseComponent(
     ],
   };
 
-  // 자식 노드들을 재귀적으로 처리
-  const childrenContent = {
-    type: "root",
-    children: node.children || [],
-  };
-  transformJsxComponentsFn(childrenContent);
+  const results = node.children.map(transformRecursively);
+  const newChildren = results.map((result) => result.ast);
+  const unhandledTags = results.reduce(
+    (acc, result) => acc.union(result.unhandledTags),
+    new Set<string>(),
+  );
 
   // 최종 노드 구성
   return {
-    type: "root",
-    children: [headerNode, ...childrenContent.children],
+    ast: {
+      type: "root",
+      children: [headerNode, ...newChildren],
+    } as Root,
+    unhandledTags,
   };
 }

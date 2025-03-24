@@ -1,6 +1,8 @@
-import type { Paragraph } from "mdast";
+import type { Paragraph, Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
-import type { Node, Parent } from "unist";
+import type { Node } from "unist";
+
+import { extractMdxJsxAttributes } from "./common";
 
 /**
  * Condition 컴포넌트 처리
@@ -19,21 +21,32 @@ import type { Node, Parent } from "unist";
  */
 export function handleConditionComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, unknown>,
-  transformJsxComponentsFn: (ast: Node) => void,
-) {
+  transformRecursively: (ast: Node) => {
+    ast: Node;
+    unhandledTags: Set<string>;
+  },
+): { ast: Node; unhandledTags: Set<string> } {
   // 속성과 값을 찾아서 주석 텍스트 생성 (빈 값이 아닌 모든 속성 처리)
+  const props = extractMdxJsxAttributes(node);
   const conditionEntries = Object.entries(props).filter(
     ([, value]) => value !== undefined && value !== "",
   );
 
-  let resultNode: Parent;
+  const results = node.children.map(transformRecursively);
+  const newChildren = results.map((result) => result.ast);
+  const unhandledTags = results.reduce(
+    (acc, result) => acc.union(result.unhandledTags),
+    new Set<string>(),
+  );
 
   // 조건이 없는 경우 기본 처리
   if (conditionEntries.length === 0) {
-    resultNode = {
-      type: "root",
-      children: node.children || [],
+    return {
+      ast: {
+        type: "root",
+        children: newChildren,
+      } as Root,
+      unhandledTags,
     };
   } else {
     // 첫 번째 유효한 조건 사용 (여러 조건이 있는 경우)
@@ -46,7 +59,7 @@ export function handleConditionComponent(
     }
 
     // 주석 스타일 박스를 사용하여 조건부 콘텐츠 표시
-    resultNode = {
+    const resultNode = {
       type: "root",
       children: [
         {
@@ -59,7 +72,7 @@ export function handleConditionComponent(
           ],
         } as Paragraph,
         // 내부 컴포넌트들
-        ...(node.children || []),
+        ...newChildren,
         {
           type: "paragraph",
           children: [
@@ -70,11 +83,11 @@ export function handleConditionComponent(
           ],
         } as Paragraph,
       ],
+    } as Root;
+
+    return {
+      ast: resultNode,
+      unhandledTags,
     };
   }
-
-  // 내부 컴포넌트들을 재귀적으로 처리 (모든 경우에 적용)
-  transformJsxComponentsFn(resultNode);
-
-  return resultNode;
 }

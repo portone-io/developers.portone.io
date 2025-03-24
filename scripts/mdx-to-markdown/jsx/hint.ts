@@ -1,18 +1,25 @@
+import type { Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
+
+import { extractMdxJsxAttributes } from "./common";
 
 /**
  * Hint 컴포넌트를 HTML div로 변환하는 함수
  * @param node Hint 컴포넌트 노드
  * @param props 컴포넌트 속성
- * @param transformJsxComponentsFn 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
+ * @param transformRecursively 내부 JSX 컴포넌트를 재귀적으로 변환하는 함수
  * @returns 변환된 노드
  */
 export function handleHintComponent(
   node: MdxJsxFlowElement | MdxJsxTextElement,
-  props: Record<string, unknown>,
-  transformJsxComponentsFn: (ast: Node) => void,
-) {
+  transformRecursively: (ast: Node) => {
+    ast: Node;
+    unhandledTags: Set<string>;
+  },
+): { ast: Root; unhandledTags: Set<string> } {
+  const props = extractMdxJsxAttributes(node);
+
   // 속성 문자열 생성
   let classNames = "hint";
   let attributesStr = "";
@@ -46,19 +53,20 @@ export function handleHintComponent(
     value: "</div>",
   };
 
-  // 자식 노드들을 재귀적으로 처리
-  const childrenContent = {
-    type: "root",
-    children: node.children || [],
-  };
-  transformJsxComponentsFn(childrenContent);
+  // Handle case when node.children is undefined
+  const children = node.children || [];
+  const results = children.map(transformRecursively);
+  const newChildren = results.map((r) => r.ast);
+  const unhandledTags = results.reduce(
+    (acc, r) => new Set([...acc, ...r.unhandledTags]),
+    new Set<string>(),
+  );
 
-  // 시작 태그, 처리된 자식 노드들, 종료 태그를 포함하는 배열 생성
-  const newChildren = [hintStartDiv, ...childrenContent.children, hintEndDiv];
-
-  // 루트 노드 반환
   return {
-    type: "root",
-    children: newChildren,
+    ast: {
+      type: "root",
+      children: [hintStartDiv, ...newChildren, hintEndDiv],
+    } as Root,
+    unhandledTags,
   };
 }

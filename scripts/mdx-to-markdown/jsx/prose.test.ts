@@ -1,6 +1,6 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import type { Node } from "unist";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { handleProseComponent } from "./prose";
 
@@ -13,20 +13,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "제목 텍스트" }],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(
-      node,
-      "h1",
-      mockTransformJsxComponentsFn,
-    );
+    const result = handleProseComponent(node, "h1", mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "heading",
       depth: 1,
       children: [{ type: "text", value: "제목 텍스트" }],
@@ -34,10 +31,11 @@ describe("handleProseComponent", () => {
   });
 
   it("h2부터 h6까지 요소를 적절한 depth의 heading으로 변환한다", () => {
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // h2부터 h6까지 테스트
     for (let i = 2; i <= 6; i++) {
@@ -52,11 +50,11 @@ describe("handleProseComponent", () => {
       const result = handleProseComponent(
         node,
         `h${i}`,
-        mockTransformJsxComponentsFn,
+        mockTransformRecursively,
       );
 
       // 결과 검증
-      expect(result).toEqual({
+      expect(result.ast).toEqual({
         type: "heading",
         depth: i,
         children: [{ type: "text", value: `제목 레벨 ${i}` }],
@@ -72,20 +70,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "단락 텍스트" }],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(
-      node,
-      "p",
-      mockTransformJsxComponentsFn,
-    );
+    const result = handleProseComponent(node, "p", mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "paragraph",
       children: [{ type: "text", value: "단락 텍스트" }],
     });
@@ -111,20 +106,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "링크 텍스트" }],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(
-      node,
-      "a",
-      mockTransformJsxComponentsFn,
-    );
+    const result = handleProseComponent(node, "a", mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "link",
       url: "https://example.com",
       title: "예제 링크",
@@ -147,20 +139,17 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "링크 텍스트" }],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(
-      node,
-      "a",
-      mockTransformJsxComponentsFn,
-    );
+    const result = handleProseComponent(node, "a", mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "link",
       url: "#",
       title: "예제 링크",
@@ -181,20 +170,21 @@ describe("handleProseComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(
       node,
       "blockquote",
-      mockTransformJsxComponentsFn,
+      mockTransformRecursively,
     );
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "blockquote",
       children: [
         {
@@ -222,20 +212,17 @@ describe("handleProseComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(
-      node,
-      "ul",
-      mockTransformJsxComponentsFn,
-    );
+    const result = handleProseComponent(node, "ul", mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "list",
       ordered: false,
       spread: false,
@@ -260,20 +247,21 @@ describe("handleProseComponent", () => {
       children: [{ type: "text", value: "알 수 없는 요소" }],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleProseComponent 함수 실행
     const result = handleProseComponent(
       node,
       "unknown",
-      mockTransformJsxComponentsFn,
+      mockTransformRecursively,
     );
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "paragraph",
       children: [{ type: "text", value: "알 수 없는 요소" }],
     });
@@ -286,22 +274,52 @@ describe("handleProseComponent", () => {
       name: "prose.p",
     } as unknown as MdxJsxFlowElement;
 
-    // 목 transformJsxComponentsFn 함수 생성
-    const mockTransformJsxComponentsFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi.fn((ast: Node) => ({
+      ast,
+      unhandledTags: new Set<string>(),
+    }));
 
     // handleProseComponent 함수 실행
-    const result = handleProseComponent(
-      node,
-      "p",
-      mockTransformJsxComponentsFn,
-    );
+    const result = handleProseComponent(node, "p", mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "paragraph",
       children: [],
     });
+    expect(result.unhandledTags.size).toBe(0);
+  });
+
+  it("unhandledTags를 올바르게 수집한다", () => {
+    // 테스트용 Prose 노드 생성
+    const node = {
+      type: "mdxJsxFlowElement",
+      name: "prose.p",
+      children: [
+        { type: "text", value: "텍스트" },
+        { type: "mdxJsxFlowElement", name: "CustomComponent" },
+      ],
+    } as unknown as MdxJsxFlowElement;
+
+    // Mock transformRecursively 함수 생성
+    const mockTransformRecursively = vi
+      .fn()
+      .mockImplementationOnce((ast) => ({
+        ast,
+        unhandledTags: new Set<string>(),
+      }))
+      .mockImplementationOnce((ast) => ({
+        ast,
+        unhandledTags: new Set(["CustomComponent"]),
+      }));
+
+    // handleProseComponent 함수 실행
+    const result = handleProseComponent(node, "p", mockTransformRecursively);
+
+    // 결과 검증
+    expect(result.unhandledTags.size).toBe(1);
+    expect(result.unhandledTags.has("CustomComponent")).toBe(true);
+    expect(mockTransformRecursively).toHaveBeenCalledTimes(2);
   });
 });

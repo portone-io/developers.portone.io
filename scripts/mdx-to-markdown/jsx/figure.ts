@@ -1,8 +1,15 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+
+import { extractMdxJsxAttributes } from "./common";
+
 /**
  * Figure 컴포넌트 처리
  */
-export function handleFigureComponent(props: Record<string, unknown>) {
+export function handleFigureComponent(
+  node: MdxJsxFlowElement | MdxJsxTextElement,
+) {
   // 이미지 캡션 추출
+  const props = extractMdxJsxAttributes(node);
   const caption = typeof props.caption === "string" ? props.caption : "";
 
   // '(이미지 첨부: {caption})' 형태로 변환

@@ -11,6 +11,7 @@ describe("handleVersionGateComponent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "VersionGate",
+      attributes: [{ type: "mdxJsxAttribute", name: "v", value: "v2" }],
       children: [
         {
           type: "paragraph",
@@ -19,20 +20,19 @@ describe("handleVersionGateComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 함수 생성 (transformJsxComponentsFn)
+    // 목 함수 생성 (transformRecursively)
     const mockTransformFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
+      return {
+        ast: _ast,
+        unhandledTags: new Set<string>(),
+      };
     };
 
     // handleVersionGateComponent 함수 실행
-    const result = handleVersionGateComponent(
-      node,
-      { v: "v2" },
-      mockTransformFn,
-    );
+    const result = handleVersionGateComponent(node, mockTransformFn);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -66,6 +66,7 @@ describe("handleVersionGateComponent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "VersionGate",
+      attributes: [],
       children: [
         {
           type: "paragraph",
@@ -74,16 +75,19 @@ describe("handleVersionGateComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
-    // 목 함수 생성 (transformJsxComponentsFn)
+    // 목 함수 생성 (transformRecursively)
     const mockTransformFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
+      return {
+        ast: _ast,
+        unhandledTags: new Set<string>(),
+      };
     };
 
     // handleVersionGateComponent 함수 실행 (v 속성 없음)
-    const result = handleVersionGateComponent(node, {}, mockTransformFn);
+    const result = handleVersionGateComponent(node, mockTransformFn);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -113,9 +117,12 @@ describe("handleVersionGateComponent", () => {
       ],
     };
 
-    // 목 함수 생성 (transformJsxComponentsFn)
+    // 목 함수 생성 (transformRecursively)
     const mockTransformFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
+      return {
+        ast: _ast,
+        unhandledTags: new Set<string>(),
+      };
     };
 
     // AST 변환 함수 (transformJsxComponents 함수의 일부 로직)
@@ -124,30 +131,12 @@ describe("handleVersionGateComponent", () => {
       "mdxJsxFlowElement",
       (node: MdxJsxFlowElement, index, parent: Parent) => {
         if (node.name === "VersionGate" && index !== undefined) {
-          // 속성 추출
-          const props: Record<string, unknown> = {};
-          if (node.attributes && Array.isArray(node.attributes)) {
-            for (const attr of node.attributes) {
-              if (
-                "name" in attr &&
-                typeof attr.name === "string" &&
-                attr.value !== undefined
-              ) {
-                props[attr.name] = attr.value;
-              }
-            }
-          }
-
           // VersionGate 컴포넌트 처리
-          const replacementNode = handleVersionGateComponent(
-            node,
-            props,
-            mockTransformFn,
-          );
+          const result = handleVersionGateComponent(node, mockTransformFn);
 
           // 노드 교체
-          if (replacementNode && parent && Array.isArray(parent.children)) {
-            parent.children[index] = replacementNode;
+          if (result.ast && parent && Array.isArray(parent.children)) {
+            parent.children[index] = result.ast;
           }
         }
       },

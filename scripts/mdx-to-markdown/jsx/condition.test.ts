@@ -1,7 +1,7 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import type { Node, Parent } from "unist";
 import { visit } from "unist-util-visit";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { handleConditionComponent } from "./condition";
 
@@ -11,6 +11,7 @@ describe("handleConditionComponent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "Condition",
+      attributes: [{ type: "mdxJsxAttribute", name: "if", value: "browser" }],
       children: [
         {
           type: "paragraph",
@@ -19,20 +20,19 @@ describe("handleConditionComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 함수 생성 (transformJsxComponentsFn)
-    const mockTransformFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 함수 생성 (transformRecursively)
+    const mockTransformRecursively = vi
+      .fn()
+      .mockImplementation((ast: Node) => ({
+        ast,
+        unhandledTags: new Set<string>(),
+      }));
 
     // handleConditionComponent 함수 실행
-    const result = handleConditionComponent(
-      node,
-      { if: "browser" },
-      mockTransformFn,
-    );
+    const result = handleConditionComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -66,6 +66,7 @@ describe("handleConditionComponent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "Condition",
+      attributes: [{ type: "mdxJsxAttribute", name: "when", value: "future" }],
       children: [
         {
           type: "paragraph",
@@ -74,20 +75,19 @@ describe("handleConditionComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 함수 생성 (transformJsxComponentsFn)
-    const mockTransformFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 함수 생성 (transformRecursively)
+    const mockTransformRecursively = vi
+      .fn()
+      .mockImplementation((ast: Node) => ({
+        ast,
+        unhandledTags: new Set<string>(),
+      }));
 
     // handleConditionComponent 함수 실행
-    const result = handleConditionComponent(
-      node,
-      { when: "future" },
-      mockTransformFn,
-    );
+    const result = handleConditionComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -121,6 +121,7 @@ describe("handleConditionComponent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "Condition",
+      attributes: [{ type: "mdxJsxAttribute", name: "language", value: "js" }],
       children: [
         {
           type: "paragraph",
@@ -129,20 +130,19 @@ describe("handleConditionComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 함수 생성 (transformJsxComponentsFn)
-    const mockTransformFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 함수 생성 (transformRecursively)
+    const mockTransformRecursively = vi
+      .fn()
+      .mockImplementation((ast: Node) => ({
+        ast,
+        unhandledTags: new Set<string>(),
+      }));
 
     // handleConditionComponent 함수 실행
-    const result = handleConditionComponent(
-      node,
-      { language: "js" },
-      mockTransformFn,
-    );
+    const result = handleConditionComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -176,6 +176,7 @@ describe("handleConditionComponent", () => {
     const node = {
       type: "mdxJsxFlowElement",
       name: "Condition",
+      attributes: [{ type: "mdxJsxAttribute", name: "custom", value: "value" }],
       children: [
         {
           type: "paragraph",
@@ -184,20 +185,19 @@ describe("handleConditionComponent", () => {
       ],
     } as unknown as MdxJsxFlowElement;
 
-    // 목 함수 생성 (transformJsxComponentsFn)
-    const mockTransformFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 함수 생성 (transformRecursively)
+    const mockTransformRecursively = vi
+      .fn()
+      .mockImplementation((ast: Node) => ({
+        ast,
+        unhandledTags: new Set<string>(),
+      }));
 
     // handleConditionComponent 함수 실행
-    const result = handleConditionComponent(
-      node,
-      { custom: "value" },
-      mockTransformFn,
-    );
+    const result = handleConditionComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -226,11 +226,12 @@ describe("handleConditionComponent", () => {
     });
   });
 
-  it("속성이 없는 경우에도 transformJsxComponentsFn 함수를 호출하고 원본 내용을 반환한다", () => {
+  it("속성이 없는 경우에도 transformRecursively 함수를 호출하고 원본 내용을 반환한다", () => {
     // 테스트용 Condition 노드 생성
     const node = {
       type: "mdxJsxFlowElement",
       name: "Condition",
+      attributes: [],
       children: [
         {
           type: "paragraph",
@@ -239,17 +240,19 @@ describe("handleConditionComponent", () => {
       ],
     } as MdxJsxFlowElement;
 
-    // transformJsxComponentsFn 호출 여부를 확인하기 위한 목 함수
-    let transformCalled = false;
-    const mockTransformFn = (_ast: Node) => {
-      transformCalled = true;
-    };
+    // transformRecursively 호출 여부를 확인하기 위한 목 함수
+    const mockTransformRecursively = vi
+      .fn()
+      .mockImplementation((ast: Node) => ({
+        ast,
+        unhandledTags: new Set<string>(),
+      }));
 
     // handleConditionComponent 함수 실행 (속성 없음)
-    const result = handleConditionComponent(node, {}, mockTransformFn);
+    const result = handleConditionComponent(node, mockTransformRecursively);
 
     // 결과 검증
-    expect(result).toEqual({
+    expect(result.ast).toEqual({
       type: "root",
       children: [
         {
@@ -259,8 +262,10 @@ describe("handleConditionComponent", () => {
       ],
     });
 
-    // transformJsxComponentsFn가 호출되었는지 확인
-    expect(transformCalled).toBe(true);
+    // transformRecursively가 호출되었는지 확인
+    expect(mockTransformRecursively).toHaveBeenCalled();
+    // unhandledTags가 비어있는지 확인
+    expect(result.unhandledTags.size).toBe(0);
   });
 
   it("실제 AST 변환 과정에서 정상적으로 동작하는지 테스트", () => {
@@ -284,10 +289,13 @@ describe("handleConditionComponent", () => {
       ],
     };
 
-    // 목 함수 생성 (transformJsxComponentsFn)
-    const mockTransformFn = (_ast: Node) => {
-      // 테스트에서는 아무 작업도 하지 않음
-    };
+    // 목 함수 생성 (transformRecursively)
+    const mockTransformRecursively = vi
+      .fn()
+      .mockImplementation((ast: Node) => ({
+        ast,
+        unhandledTags: new Set<string>(),
+      }));
 
     // AST 변환 함수 (transformJsxComponents 함수의 일부 로직)
     visit(
@@ -295,26 +303,15 @@ describe("handleConditionComponent", () => {
       "mdxJsxFlowElement",
       (node: MdxJsxFlowElement, index, parent: Parent) => {
         if (node.name === "Condition" && index !== undefined) {
-          // 속성 추출
-          const props: Record<string, unknown> = {};
-          if (node.attributes && Array.isArray(node.attributes)) {
-            for (const attr of node.attributes) {
-              if ("name" in attr && attr.value !== undefined) {
-                props[attr.name] = attr.value;
-              }
-            }
-          }
-
           // Condition 컴포넌트 처리
-          const replacementNode = handleConditionComponent(
+          const result = handleConditionComponent(
             node,
-            props,
-            mockTransformFn,
+            mockTransformRecursively,
           );
 
           // 노드 교체
-          if (replacementNode && parent && Array.isArray(parent.children)) {
-            parent.children[index] = replacementNode;
+          if (result && parent && Array.isArray(parent.children)) {
+            parent.children[index] = result.ast;
           }
         }
       },
@@ -353,5 +350,8 @@ describe("handleConditionComponent", () => {
         },
       ],
     });
+
+    // transformRecursively가 호출되었는지 확인
+    expect(mockTransformRecursively).toHaveBeenCalled();
   });
 });

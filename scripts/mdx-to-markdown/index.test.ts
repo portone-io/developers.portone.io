@@ -1,16 +1,11 @@
 import type { Link, Root } from "mdast";
 import type { Node } from "unist";
 import { visit } from "unist-util-visit";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 // Import the function to test and the MdxParseResult type
 import { transformAstForMarkdown } from "./index";
 import type { MdxParseResult } from "./mdx-parser";
-
-// Mock the necessary dependencies
-vi.mock("./jsx", () => ({
-  transformJsxComponents: vi.fn(),
-}));
 
 // Helper function to create a simple AST with a link
 function createAstWithLink(url: string, text: string = "link text"): Root {
@@ -64,7 +59,7 @@ describe("transformLinks", () => {
     const useMarkdownLinks = false;
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockParseResultMap,
       useMarkdownLinks,
@@ -82,7 +77,7 @@ describe("transformLinks", () => {
     const useMarkdownLinks = true;
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockParseResultMap,
       useMarkdownLinks,
@@ -112,7 +107,7 @@ describe("transformLinks", () => {
     const slug = "test-slug";
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockParseResultMapWithExternalLink,
       true,
@@ -163,7 +158,7 @@ describe("transformLinks", () => {
     const useMarkdownLinks = true;
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockComplexParseResultMap,
       useMarkdownLinks,
@@ -195,7 +190,7 @@ describe("transformLinks", () => {
     const useMarkdownLinks = true;
 
     // Act
-    const transformedAst = transformAstForMarkdown(
+    const { ast: transformedAst } = transformAstForMarkdown(
       slug,
       mockParseResultMapWithComplexUrl,
       useMarkdownLinks,

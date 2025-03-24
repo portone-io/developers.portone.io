@@ -1,17 +1,23 @@
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
+
+import { extractMdxJsxAttributes } from "./common";
+
 /**
  * ApiLink 컴포넌트를 마크다운으로 변환하는 함수
  *
  * @param node ApiLink 컴포넌트 노드
  * @returns 마크다운 노드
  */
-export function handleApiLinkComponent(props: Record<string, unknown>) {
+export function handleApiLinkComponent(
+  node: MdxJsxFlowElement | MdxJsxTextElement,
+) {
   // 필수 속성 확인
   const {
     basepath: basepathStr,
     method: methodStr,
     path: pathStr,
     apiName: apiNameStr,
-  } = props;
+  } = extractMdxJsxAttributes(node);
 
   const basepath = typeof basepathStr === "string" ? basepathStr : undefined;
   const method = typeof methodStr === "string" ? methodStr : undefined;
