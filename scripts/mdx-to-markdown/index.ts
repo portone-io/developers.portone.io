@@ -63,6 +63,18 @@ export function transformAstForMarkdown(
 }
 
 /**
+ * 프론트매터 객체를 문자열로 변환하는 함수
+ * thumbnail 필드를 제외하고 YAML 형식으로 변환
+ * @param frontmatter 프론트매터 객체
+ * @returns 프론트매터 문자열 (YAML 형식)
+ */
+export function frontmatterToString(frontmatter: Frontmatter): string {
+  // thumbnail 필드를 제외한 프론트매터 생성
+  const { thumbnail: _thumbnail, ...filteredFrontmatter } = frontmatter;
+  return `---\n${yaml.dump(filteredFrontmatter)}---`;
+}
+
+/**
  * 변환된 AST를 마크다운 문자열로 변환하는 함수
  * 프론트매터를 포함한 완전한 마크다운 문자열을 생성
  * remark 설정을 통해 GitHub Flavored Markdown 형식으로 출력
@@ -75,12 +87,9 @@ export function astToMarkdownString(
   frontmatter?: Frontmatter,
 ): string {
   // 프론트매터 문자열 생성
-  let frontmatterStr = "";
-  if (frontmatter && Object.keys(frontmatter).length > 0) {
-    // thumbnail 필드를 제외한 프론트매터 생성
-    const { thumbnail: _thumbnail, ...filteredFrontmatter } = frontmatter;
-    frontmatterStr = `---\n${yaml.dump(filteredFrontmatter)}---\n\n`;
-  }
+  const frontmatterStr = frontmatter
+    ? frontmatterToString(frontmatter) + "\n\n"
+    : "";
 
   // 마크다운으로 변환
   const processor = unified()
