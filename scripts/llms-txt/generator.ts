@@ -1,4 +1,10 @@
-import { copyFile, mkdir, readdir, writeFile } from "node:fs/promises";
+import {
+  copyFile,
+  mkdir,
+  readdir,
+  readFile,
+  writeFile,
+} from "node:fs/promises";
 import { join } from "node:path";
 
 import type { Root } from "mdast";
@@ -16,12 +22,14 @@ import {
  * 변환된 AST 노드를 재사용하여 llms.txt, llms-full.txt, llms-small.txt 파일을 생성
  * @param fileParseMap MDX 파싱 결과 맵
  * @param transformedAstMap 변환된 AST 노드 맵
+ * @param guideForLlmsFilePath LLM 가이드 파일 경로
  * @param outputDir 생성된 파일을 저장할 대상 디렉토리
  * @returns 생성된 llms.txt 파일 경로
  */
 export async function generateLlmsTxtFiles(
   fileParseMap: Record<string, MdxParseResult>,
   transformedAstMap: Record<string, Root>,
+  guideForLlmsFilePath: string,
   outputDir: string,
 ): Promise<string> {
   // fileParseMap에서 slug 추출
@@ -78,19 +86,27 @@ export async function generateLlmsTxtFiles(
     return `- [${slug}](${displayPath})\n`;
   };
 
+  // 가이드 파일 내용 불러오기
+  const guideContent = await readFile(guideForLlmsFilePath, "utf-8");
+
   // llms.txt 파일 내용 생성
-  let llmsTxtContent = `# PortOne 개발자 문서
+  let llmsTxtContent = guideContent;
 
-> PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
-
+  // 스키마 파일 섹션 추가
+  llmsTxtContent += `
 ## 스키마 파일
+
+### V2 스키마 파일
 
 - [V2 브라우저 SDK 스키마](https://developers.portone.io/schema/browser-sdk.yml)
 - [V2 GraphQL 스키마](https://developers.portone.io/schema/v2.graphql)
-- [V2 OpenAPI 스키마 (YAML)](https://developers.portone.io/schema/v2.openapi.yml)
-- [V2 OpenAPI 스키마 (JSON)](https://developers.portone.io/schema/v2.openapi.json)
-- [V1 OpenAPI 스키마 (YAML)](https://developers.portone.io/schema/v1.openapi.yml)
-- [V1 OpenAPI 스키마 (JSON)](https://developers.portone.io/schema/v1.openapi.json)
+- [V2 OpenAPI YAML](https://developers.portone.io/schema/v2.openapi.yml)
+- [V2 OpenAPI JSON](https://developers.portone.io/schema/v2.openapi.json)
+
+### V1 스키마 파일
+
+- [V1 OpenAPI YAML](https://developers.portone.io/schema/v1.openapi.yml)
+- [V1 OpenAPI JSON](https://developers.portone.io/schema/v1.openapi.json)
 
 `;
 

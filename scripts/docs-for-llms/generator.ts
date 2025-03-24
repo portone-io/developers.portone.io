@@ -1,4 +1,4 @@
-import { cp, mkdir, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -16,6 +16,7 @@ import {
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
+const guideForLlmsFilePath = join(rootDir, "scripts", "guide-for-llms.md");
 const schemaDir = join(rootDir, "src", "schema");
 const docsForLlmsDir = join(rootDir, "docs-for-llms");
 const docsForLlmsSchemaDir = join(docsForLlmsDir, "schema");
@@ -36,6 +37,9 @@ export async function generateDocsForLlms(
   // docs-for-llms 디렉토리 생성
   await mkdir(docsForLlmsDir, { recursive: true });
 
+  // 각 마크다운 파일을 docs-for-llms 디렉토리에 저장
+  await saveMarkdownFiles(fileParseMap, transformedAstMap, docsForLlmsDir);
+
   // schema 디렉토리 생성 및 파일 복사
   await mkdir(docsForLlmsSchemaDir, { recursive: true });
   try {
@@ -47,7 +51,7 @@ export async function generateDocsForLlms(
       ),
     );
     console.log(
-      `스키마 파일이 ${docsForLlmsSchemaDir}로 복사되었습니다. (${schemaFiles.length}개)`,
+      `총 ${schemaFiles.length}개의 스키마 파일이 ${docsForLlmsSchemaDir}로 복사되었습니다.`,
     );
   } catch (error) {
     console.error(`스키마 파일 복사 중 오류 발생:`, error);
@@ -158,7 +162,7 @@ export async function generateDocsForLlms(
   };
 
   // 마크다운 파일 생성 함수
-  const generateMarkdownFile = async (filePath: string, content: string) => {
+  const generateFile = async (filePath: string, content: string) => {
     await writeFile(filePath, content, "utf-8");
     console.log(`${filePath} 파일이 생성되었습니다.`);
   };
@@ -198,18 +202,16 @@ export async function generateDocsForLlms(
     return content;
   };
 
+  const guideForLlmsContent = await readFile(guideForLlmsFilePath, "utf-8");
+
   // 전체 문서 파일 생성 함수
   const generateFullDocFile = async (
     filePath: string,
     version: "V1" | "V2",
     includeCommon: boolean = true,
   ) => {
-    let content = `# PortOne 개발자 문서 (${version})
-
-> PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
-
-## 목차
-`;
+    let content = guideForLlmsContent;
+    content += "\n## 목차\n";
 
     // 포함할 슬러그 목록 생성
     const slugsToInclude = [];
@@ -295,24 +297,21 @@ export async function generateDocsForLlms(
     content += generateDocContent(slugsToInclude);
 
     // 파일 저장
-    await generateMarkdownFile(filePath, content);
+    await generateFile(filePath, content);
   };
 
   // README.md 파일 내용 생성 (llms.txt와 동일한 내용)
-  let readmeContent = `# PortOne 개발자 문서
-
-> PortOne은 온라인 결제, 본인인증, 파트너 정산 자동화 및 재무/회계 업무를 위한 API와 SDK를 제공합니다.
-`;
+  let readmeContent = guideForLlmsContent;
 
   // 스키마 파일 추가
   readmeContent += `\n## 스키마 파일\n`;
   readmeContent += createSchemaLinks("V2");
   readmeContent += createSchemaLinks("V1");
 
-  // 공용 문서 섹션 추가
+  // 공통 문서 섹션 추가
   readmeContent += `\n## 공통 문서 (V1 & V2)\n\n`;
 
-  // 공용 SDK 문서 (공통 유틸리티 사용)
+  // 공통 SDK 문서 (공통 유틸리티 사용)
   const commonSdkSlugs = commonSlugs.filter((slug) =>
     slug.startsWith(PATH_PREFIXES.SDK),
   );
@@ -357,12 +356,25 @@ export async function generateDocsForLlms(
   );
   readmeContent += createDocSection("블로그", blogSlugs);
 
-  // README.md 파일 저장
+  // README.md 파일 저장 (frontmatter 추가)
   const readmePath = join(docsForLlmsDir, "README.md");
-  await generateMarkdownFile(readmePath, readmeContent);
+  // 현재 날짜 생성
+  const currentDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD 형식
+  // frontmatter 생성
+  const frontmatter = `---
+title: PortOne 개발자센터 문서 가이드
+description: PortOne 개발자센터 문서를 올바르게 활용하기 위한 가이드와 목차를 제공합니다.
+targetVersions:
+  - v1
+  - v2
+date: ${currentDate}
+author: PortOne
+---
 
-  // 각 마크다운 파일을 docs-for-llms 디렉토리에 저장
-  await saveMarkdownFiles(fileParseMap, transformedAstMap, docsForLlmsDir);
+`;
+
+  // frontmatter와 기존 내용 병합
+  await generateFile(readmePath, frontmatter + readmeContent);
 
   // 전체 문서 파일 생성
   await generateFullDocFile(join(docsForLlmsDir, "v1-docs-full.md"), "V1");
