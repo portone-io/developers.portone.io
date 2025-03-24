@@ -1,9 +1,13 @@
 import type { Root } from "mdast";
-import type { Node } from "unist";
 import { describe, expect, it } from "vitest";
 
 import type { MdxParseResult } from "../mdx-parser";
 import { transformJsxComponents } from ".";
+
+const emptyRoot: Root = {
+  type: "root",
+  children: [],
+};
 
 describe("transformJsxComponents", () => {
   it("VersionGate 내부의 ContentRef 컴포넌트를 재귀적으로 처리한다", () => {
@@ -16,7 +20,7 @@ describe("transformJsxComponents", () => {
           title: "웹훅 연동하기 (V1)",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
       "opi/ko/integration/webhook/readme-v2": {
@@ -26,7 +30,7 @@ describe("transformJsxComponents", () => {
           title: "웹훅 연동하기 (V2)",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -217,7 +221,7 @@ describe("transformJsxComponents", () => {
           title: "인증결제 연동하기",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };
@@ -390,7 +394,7 @@ describe("transformJsxComponents", () => {
           title: "연동 준비하기",
         },
         imports: [],
-        ast: {} as unknown as Node,
+        ast: emptyRoot,
         content: "",
       },
     };

@@ -4,11 +4,21 @@
  * @param node ApiLink 컴포넌트 노드
  * @returns 마크다운 노드
  */
-export function handleApiLinkComponent(props: Record<string, any>): any {
+export function handleApiLinkComponent(props: Record<string, unknown>) {
   // 필수 속성 확인
-  const { basepath, method, path, apiName } = props;
+  const {
+    basepath: basepathStr,
+    method: methodStr,
+    path: pathStr,
+    apiName: apiNameStr,
+  } = props;
 
-  if (!method || !path) {
+  const basepath = typeof basepathStr === "string" ? basepathStr : undefined;
+  const method = typeof methodStr === "string" ? methodStr : undefined;
+  const path = typeof pathStr === "string" ? pathStr : undefined;
+  const apiName = typeof apiNameStr === "string" ? apiNameStr : undefined;
+
+  if (!method || !path || !basepath) {
     return {
       type: "text",
       value: "[API Link]",

@@ -1,7 +1,9 @@
 import yaml from "js-yaml";
-import type { Root } from "mdast";
+import type { Root, Text } from "mdast";
+import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
+import stringWidth from "string-width";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
@@ -33,7 +35,7 @@ export function transformAstForMarkdown(
   }
 
   // AST 복제 (원본 변경 방지)
-  const ast = JSON.parse(JSON.stringify(parseResult.ast));
+  const ast = structuredClone(parseResult.ast);
 
   // 기존 마크다운 형식 링크 변환
   transformLinks(ast, useMarkdownLinks);
@@ -48,7 +50,7 @@ export function transformAstForMarkdown(
   removeYamlNodes(ast);
 
   // JSX 요소 제거 또는 자식 노드만 유지
-  simplifyJsxNodes(ast);
+  simplifyJsxElements(ast);
 
   // MDX 표현식 노드 처리
   handleRemainingMdxFlowExpressions(ast);
@@ -78,18 +80,13 @@ export function astToMarkdownString(
 
   // 마크다운으로 변환
   const processor = unified()
-    .use(remarkGfm) // GitHub Flavored Markdown 지원 (테이블 등)
+    .use(remarkGfm, { tableCellPadding: false, stringLength: stringWidth }) // GitHub Flavored Markdown 지원 (테이블 등)
     .use(remarkStringify, {
       bullet: "-",
       emphasis: "_",
       listItemIndent: "one",
       rule: "-",
-      ruleSpaces: false,
-      // 테이블 관련 설정
-      tableCellPadding: true,
-      tablePipeAlign: false,
-      stringLength: () => 1, // 테이블 셀 너비 계산 단순화
-    } as any); // 타입 오류 해결을 위한 any 타입 캐스팅
+    }); // 타입 오류 해결을 위한 any 타입 캐스팅
 
   const markdownContent = processor.stringify(ast);
 
@@ -103,11 +100,11 @@ export function astToMarkdownString(
  * @param ast 변환할 AST
  * @param [useMarkdownLinks=true] true이면 마크다운 경로로, false이면 웹페이지 경로로 변환합니다.
  */
-function transformLinks(ast: Node, useMarkdownLinks: boolean = true): void {
+function transformLinks(ast: Root, useMarkdownLinks: boolean = true): void {
   const BASE_URL = "https://developers.portone.io";
 
   // 링크 노드를 찾아 변환
-  visit(ast, "link", (node: any) => {
+  visit(ast, "link", (node) => {
     const url = node.url;
 
     // 이미 hostname이 있는 외부 링크는 변환하지 않음
@@ -119,7 +116,7 @@ function transformLinks(ast: Node, useMarkdownLinks: boolean = true): void {
     if (url.startsWith("/")) {
       // URL 파싱 (쿼리 파라미터와 해시 프래그먼트 처리)
       const urlParts = url.split(/[?#]/);
-      const path = urlParts[0];
+      const path = urlParts[0]!;
       const queryAndHash = url.substring(path.length);
 
       // 기본 URL에 경로 추가
@@ -142,38 +139,53 @@ function transformLinks(ast: Node, useMarkdownLinks: boolean = true): void {
 /**
  * MDX 표현식 노드를 처리하는 함수
  */
-function handleRemainingMdxFlowExpressions(ast: any): void {
+function handleRemainingMdxFlowExpressions(ast: Root): void {
   // MDX 플로우 표현식 처리
-  visit(
-    ast,
-    "mdxFlowExpression",
-    (node: any, index: number | undefined, parent: any) => {
-      if (!parent || !Array.isArray(parent.children) || index === undefined)
-        return;
+  visit(ast, "mdxFlowExpression", (node, index, parent) => {
+    if (!parent || !Array.isArray(parent.children) || index === undefined)
+      return;
 
-      // 표현식을 텍스트 노드로 변환
-      const newNode = {
-        type: "text",
-        value: node.value || "",
-      };
+    // 표현식을 텍스트 노드로 변환
+    const newNode: Text = {
+      type: "text",
+      value: node.value || "",
+    };
 
-      // 노드 교체
-      parent.children.splice(index, 1, newNode);
+    // 노드 교체
+    parent.children.splice(index, 1, newNode);
 
-      // 방문 인덱스 조정
-      return index;
-    },
-  );
+    // 방문 인덱스 조정
+    return index;
+  });
+}
+
+/**
+ * YAML 노드 제거 함수
+ */
+function removeYamlNodes(ast: Root): void {
+  const nodesToRemove: Array<{ parent: Root; index: number }> = [];
+
+  visit(ast, "yaml", (_node, index, parent) => {
+    if (index !== undefined && parent) {
+      nodesToRemove.push({ parent, index });
+    }
+  });
+
+  // 역순으로 제거
+  for (const item of [...nodesToRemove].reverse()) {
+    item.parent.children.splice(item.index, 1);
+  }
 }
 
 /**
  * JSX 노드를 단순화하는 함수 (자식 노드만 유지)
  */
-function simplifyJsxNodes(ast: any): void {
+function simplifyJsxElements(ast: Root): void {
   visit(
     ast,
     ["mdxJsxFlowElement", "mdxJsxTextElement"],
-    (node: any, index: number | undefined, parent: any) => {
+    (_node, index, parent) => {
+      const node = _node as MdxJsxFlowElement | MdxJsxTextElement;
       if (!parent || !Array.isArray(parent.children) || index === undefined)
         return;
 
@@ -184,7 +196,6 @@ function simplifyJsxNodes(ast: any): void {
         // 자식 노드가 없으면 제거
         parent.children.splice(index, 1);
       }
-
       // 방문 인덱스 조정 (노드가 교체되었으므로)
       return index;
     },
@@ -192,47 +203,19 @@ function simplifyJsxNodes(ast: any): void {
 }
 
 /**
- * YAML 노드 제거 함수
+ * 임포트 구문 제거
  */
-function removeYamlNodes(ast: any): void {
-  const nodesToRemove: Array<{ parent: any; index: number }> = [];
+function removeImports(ast: Root): void {
+  const nodesToRemove: Array<{ parent: Root; index: number }> = [];
 
-  visit(ast, "yaml", (_node: any, index: number | undefined, parent: any) => {
-    if (index !== undefined) {
+  visit(ast, "mdxjsEsm", (_node, index, parent) => {
+    if (index !== undefined && parent) {
       nodesToRemove.push({ parent, index });
     }
   });
 
   // 역순으로 제거
-  for (let i = nodesToRemove.length - 1; i >= 0; i--) {
-    const item = nodesToRemove[i];
-    if (item && item.parent && Array.isArray(item.parent.children)) {
-      item.parent.children.splice(item.index, 1);
-    }
-  }
-}
-
-/**
- * 임포트 구문 제거
- */
-function removeImports(ast: any): void {
-  const nodesToRemove: Array<{ parent: any; index: number }> = [];
-
-  visit(
-    ast,
-    "mdxjsEsm",
-    (_node: any, index: number | undefined, parent: any) => {
-      if (index !== undefined) {
-        nodesToRemove.push({ parent, index });
-      }
-    },
-  );
-
-  // 역순으로 제거
-  for (let i = nodesToRemove.length - 1; i >= 0; i--) {
-    const item = nodesToRemove[i];
-    if (item && item.parent && Array.isArray(item.parent.children)) {
-      item.parent.children.splice(item.index, 1);
-    }
+  for (const item of [...nodesToRemove].reverse()) {
+    item.parent.children.splice(item.index, 1);
   }
 }

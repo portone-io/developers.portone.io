@@ -37,7 +37,6 @@ export default defineConfig(
           external: ["monaco-editor"],
         },
       },
-      middleware: "src/middleware/index.ts",
       extensions: ["ts", "tsx", "mdx"],
       vite: () =>
         ({
