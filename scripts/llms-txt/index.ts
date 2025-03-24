@@ -41,7 +41,7 @@ export async function main() {
     const llmsTxtPath = await generateLlmsTxtFiles(
       fileParseMap,
       transformedAstMap,
-      join(rootDir, "scripts/guide-for-llms.md"),
+      join(rootDir, "scripts", "resources", "guide-for-llms.md"),
       outputDir,
     );
 

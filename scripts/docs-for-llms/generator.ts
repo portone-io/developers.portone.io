@@ -18,7 +18,12 @@ import {
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
-const guideForLlmsFilePath = join(rootDir, "scripts", "guide-for-llms.md");
+const guideForLlmsFilePath = join(
+  rootDir,
+  "scripts",
+  "resources",
+  "guide-for-llms.md",
+);
 const schemaDir = join(rootDir, "src", "schema");
 const docsForLlmsDir = join(rootDir, "docs-for-llms");
 const docsForLlmsSchemaDir = join(docsForLlmsDir, "schema");
@@ -35,7 +40,9 @@ export async function generateDocsForLlms(
   transformedAstMap: Record<string, Root>,
 ): Promise<string> {
   // fileParseMap에서 slug 추출
-  const slugs = Object.keys(fileParseMap);
+  const slugs = Object.keys(fileParseMap)
+    // _components로 다른 마크다운 파일에서 사용된 것들 제외하기
+    .filter((slug) => !slug.includes("_components"));
 
   // docs-for-llms 디렉토리 생성
   await mkdir(docsForLlmsDir, { recursive: true });

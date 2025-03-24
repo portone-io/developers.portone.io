@@ -112,8 +112,12 @@ export async function saveMarkdownFiles(
   transformedAstMap: Record<string, Root>,
   outputDir: string,
 ): Promise<void> {
+  const slugs = Object.keys(transformedAstMap)
+    // _components로 다른 마크다운 파일에서 사용된 것들 제외하기
+    .filter((slug) => !slug.includes("_components"));
+
   // 각 변환된 AST를 마크다운 파일로 저장
-  for (const slug of Object.keys(transformedAstMap)) {
+  for (const slug of slugs) {
     try {
       const transformedAst = transformedAstMap[slug];
       if (transformedAst == null)
@@ -163,7 +167,7 @@ export function filterSlugsByCategory(
  * @param fileParseMap 파일 파싱 결과 맵
  * @returns 버전별로 분류된 슬러그 목록 객체
  */
-export function categorizeSlugsByVersion(
+function categorizeSlugsByVersion(
   slugs: string[],
   fileParseMap: Record<string, MdxParseResult>,
 ): { v1Slugs: string[]; v2Slugs: string[]; commonSlugs: string[] } {

@@ -33,7 +33,9 @@ export async function generateLlmsTxtFiles(
   outputDir: string,
 ): Promise<string> {
   // fileParseMap에서 slug 추출
-  const slugs = Object.keys(fileParseMap);
+  const slugs = Object.keys(fileParseMap)
+    // _components로 다른 마크다운 파일에서 사용된 것들 제외하기
+    .filter((slug) => !slug.includes("_components"));
 
   console.log(`총 ${slugs.length}개의 문서를 찾았습니다.`);
 
