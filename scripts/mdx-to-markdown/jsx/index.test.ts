@@ -542,4 +542,226 @@ describe("transformJsxComponents", () => {
       ],
     });
   });
+
+  it("Condition 컴포넌트를 HTML 주석으로 처리한다", () => {
+    // 테스트용 parseResultMap 생성
+    const parseResultMap: Record<string, MdxParseResult> = {};
+
+    // 테스트용 AST 생성 - 다양한 속성을 가진 Condition 컴포넌트
+    const ast: Root = {
+      type: "root",
+      children: [
+        {
+          type: "mdxJsxFlowElement",
+          name: "Condition",
+          attributes: [
+            { type: "mdxJsxAttribute", name: "if", value: "browser" },
+          ],
+          children: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  value: "브라우저에서만 보여질 내용",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "mdxJsxFlowElement",
+          name: "Condition",
+          attributes: [
+            { type: "mdxJsxAttribute", name: "when", value: "future" },
+          ],
+          children: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  value: "미래에 보여질 내용",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "mdxJsxFlowElement",
+          name: "Condition",
+          attributes: [
+            { type: "mdxJsxAttribute", name: "language", value: "js" },
+          ],
+          children: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  value: "자바스크립트 관련 내용",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "mdxJsxFlowElement",
+          name: "Condition",
+          attributes: [
+            { type: "mdxJsxAttribute", name: "custom", value: "value" },
+          ],
+          children: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  value: "커스텀 조건 내용",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    // transformJsxComponents 함수 실행
+    transformJsxComponents(ast, parseResultMap);
+
+    // 결과 검증 - 각 Condition 컴포넌트가 HTML 주석으로 변환되었는지 확인
+    expect(ast).toEqual({
+      type: "root",
+      children: [
+        {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "html",
+                  value: "<!-- CONDITIONAL CONTENT if=browser START -->",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  value: "브라우저에서만 보여질 내용",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "html",
+                  value: "<!-- CONDITIONAL CONTENT if=browser END -->",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "html",
+                  value: "<!-- CONDITIONAL CONTENT when=future START -->",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  value: "미래에 보여질 내용",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "html",
+                  value: "<!-- CONDITIONAL CONTENT when=future END -->",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "html",
+                  value: "<!-- CONDITIONAL CONTENT language=js START -->",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  value: "자바스크립트 관련 내용",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "html",
+                  value: "<!-- CONDITIONAL CONTENT language=js END -->",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "root",
+          children: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "html",
+                  value: "<!-- CONDITIONAL CONTENT custom=value START -->",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  value: "커스텀 조건 내용",
+                },
+              ],
+            },
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "html",
+                  value: "<!-- CONDITIONAL CONTENT custom=value END -->",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
 });

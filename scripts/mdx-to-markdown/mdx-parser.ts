@@ -189,7 +189,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
     });
 
   // MDX 파싱 실행
-  const file = await processor.parse(content);
+  const file = processor.parse(content);
   await processor.run(file);
   result.ast = file;
 
