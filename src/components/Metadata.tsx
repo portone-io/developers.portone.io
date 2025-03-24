@@ -78,10 +78,9 @@ export default function Metadata(_props: Props) {
       .with(
         [P.array(P.union("v1", "v2")), P._],
         [P._, { v1: P.string, v2: P.string }],
-        [undefined, undefined],
-        [[], undefined],
         () => (systemVersion() ? systemVersion() : undefined),
       )
+      .with([undefined, undefined], [[], undefined], () => undefined)
       .exhaustive();
     return url;
   });
