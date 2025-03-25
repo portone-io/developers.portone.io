@@ -2,25 +2,25 @@ import type { ConvertToPgParam, PgOptions } from "~/state/interactive-docs";
 
 export const pgOptions = {
   toss: {
-    payMethods: ["card", "virtualAccount", "easyPay"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
   },
   nice: {
-    payMethods: ["card", "virtualAccount", "easyPay"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
   },
   smartro: {
-    payMethods: ["card", "virtualAccount", "easyPay"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
   },
   kpn: {
-    payMethods: ["card", "virtualAccount", "easyPay"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
   },
   inicis: {
-    payMethods: ["card", "virtualAccount", "easyPay"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
   },
   ksnet: {
-    payMethods: ["card", "virtualAccount", "easyPay"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
   },
   kcp: {
-    payMethods: ["card", "virtualAccount", "easyPay"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
   },
   kakao: {
     payMethods: ["easyPay"],

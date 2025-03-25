@@ -834,10 +834,20 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
               - `CORPORATE` (지출증빙용)
               - `ANONYMOUS` (미발행(국세청번호 자동발급))
 
-            - customerIdentifier?: string
+            <Condition when={({ pg: { name } }) => !['inicis', 'kcp'].includes(name)}>
+              - customerIdentifier?: string
 
-              **현금영수증 발행 대상 식별 정보**
+                **현금영수증 발행 대상 식별 정보**
 
+                휴대폰 번호 또는 사업자번호를 입력합니다.
+
+                <Condition when={({ pg: { name } }) => name === 'ksnet'}>
+                  KSNET의 경우 휴대폰 번호 및 사업자번호는 숫자만 입력해야 합니다.
+                  하이픈(`-`)을 포함한 다른 문자가 포함되는 경우 별다른 에러 표시 없이 결제는 정상승인되지만 현금영수증이 발급되지 않습니다.
+                </Condition>
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => name === 'smartro'}>
             - bankCode?: string
 
               **단독 노출 은행**
@@ -848,23 +858,25 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 <Details.Summary>지원 은행 코드</Details.Summary>
 
                 <Details.Content>
-                  <Condition when={({ pg: { name } }) => name === 'toss'}>
-                    - `KYONGNAM_BANK` (경남은행)
-                    - `GWANGJU_BANK` (광주은행)
-                    - `KOOKMIN_BANK` (국민은행)
-                    - `INDUSTRIAL_BANK_OF_KOREA` (기업은행)
-                    - `NH_NONGHYUP_BANK` (NH농협은행)
-                    - `DAEGU_BANK` (대구은행)
-                    - `BUSAN_BANK` (부산은행)
-                    - `KFCC` (새마을금고)
-                    - `SUHYUP_BANK` (수협은행)
-                    - `SHINHAN_BANK` (신한은행)
-                    - `WOORI_BANK` (우리은행)
-                    - `EPOST` (우체국)
-                    - `HANA_BANK` (하나은행)
-                  </Condition>
+                  - `BANK_INDUSTRIAL_BANK_OF_KOREA` (기업은행)
+                  - `BANK_KOOKMIN_BANK` (국민은행)
+                  - `BANK_SUHYUP_BANK` (수협은행)
+                  - `BANK_NH_NONGHYUP_BANK` (농협은행)
+                  - `BANK_WOORI_BANK` (우리은행)
+                  - `BANK_SC_BANK_KOREA` (SC 제일은행)
+                  - `BANK_CITI_BANK_KOREA` (씨티은행)
+                  - `BANK_DAEGU_BANK` (대구은행)
+                  - `BANK_BUSAN_BANK` (부산은행)
+                  - `BANK_GWANGJU_BANK` (광주은행)
+                  - `BANK_JEONBUK_BANK` (전북은행)
+                  - `BANK_KYONGNAM_BANK` (경남은행)
+                  - `BANK_HANA_BANK` (하나은행)
+                  - `BANK_SHINHAN_BANK` (신한은행)
+                  - `BANK_EPOST` (우체국)
+                  - `BANK_K_BANK` (케이뱅크)
                 </Details.Content>
               </Details>
+            </Condition>
           </Parameter.Details>
       </Condition>
 
