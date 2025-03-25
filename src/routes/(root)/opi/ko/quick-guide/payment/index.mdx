@@ -888,7 +888,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
           `payMethod`가 `MOBILE`인 경우 휴대폰 소액결제와 관련한 추가 정보를 입력할 수 있습니다.
 
           <Parameter.Details>
-            <Condition when={({ pg: { name } }) => name !== 'kpn'}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'inicis'].includes(name)}>
               - carrier?: string
 
                 **단독 호출 통신사**
@@ -903,12 +903,18 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                 - `SK7` (SK 세븐모바일)
             </Condition>
 
-            <Condition when={({ pg: { name } }) => name !== 'kpn'}>
+            <Condition when={({ pg: { name } }) => !['kpn', 'kcp'].includes(name)}>
               - availableCarriers?: string\[]
 
                 **통신사 일부 노출**
 
                 지정한 일부 통신사만을 목록에 노출할 수 있습니다. 상단의 통신사 식별 값 항목을 참고해주세요.
+
+                <Condition when={({ pg: { name } }) => name === 'inicis'}>
+                  <Hint style="warning">
+                    KG이니시스의 경우 모바일 환경에서만 `availableCarriers` 옵션을 사용 가능합니다.
+                  </Hint>
+                </Condition>
             </Condition>
           </Parameter.Details>
       </Condition>
@@ -1936,32 +1942,10 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
         **상품 유형**
 
+        휴대폰 소액결제 시 `productType`는 필수 입력이며, 상점에 설정된 상품 유형과 입력된 상품 유형이 다른 경우 결제가 실패합니다.
+
         - 실물 상품: `PRODUCT_TYPE_REAL`
         - 디지털 상품: `PRODUCT_TYPE_DIGITAL`
-
-        <Condition when={({ pg: { name, payMethods }}) => name === "nice" && payMethods === 'mobile'}>
-          <Hint style="warning">
-            나이스페이먼츠 휴대폰 소액결제 시 `productType`는 필수 입력이며, 상점에 설정된 상품 유형과 입력된 상품 유형이 다른 경우 결제가 실패합니다.
-          </Hint>
-        </Condition>
-
-        <Condition when={({ pg: { name, payMethods } }) => name === 'smartro' && payMethods === 'mobile'}>
-          <Hint style="warning">
-            스마트로 휴대폰 소액결제 시 `productType`는 필수 입력이며, 상점에 설정된 상품 유형과 입력된 상품 유형이 다른 경우 결제가 실패합니다.
-          </Hint>
-        </Condition>
-
-        <Condition when={({ pg: { name, payMethods } }) => name === 'kpn' && payMethods === 'mobile'}>
-          <Hint style="warning">
-            한국결제네트웍스 휴대폰 소액결제 시 `productType`는 필수 입력입니다.
-          </Hint>
-        </Condition>
-
-        <Condition when={({ pg: { name, payMethods } }) => name === 'ksnet' && payMethods === 'easyPay'}>
-          <Hint style="warning">
-            KSNET의 경우 간편결제 직접 호출 시 `productType`는 필수 입력입니다.
-          </Hint>
-        </Condition>
 
       - offerPeriod?: oneof object
 
