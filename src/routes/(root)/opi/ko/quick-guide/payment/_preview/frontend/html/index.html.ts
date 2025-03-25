@@ -125,6 +125,8 @@ export default code<{
                 virtualAccount,
                 // @ts-expect-error(2339)
                 easyPay,
+                // @ts-expect-error(2339)
+                giftCertificate,
                 bypass,
                 productType,
               } = createPaymentRequest(params, "");
@@ -147,6 +149,9 @@ export default code<{
               `}
               ${({ when }) => when(() => easyPay !== undefined)`
               easyPay: ${({ indentObject }) => indentObject(easyPay)},
+              `}
+              ${({ when }) => when(() => giftCertificate !== undefined)`
+              giftCertificate: ${({ indentObject }) => indentObject(giftCertificate)},
               `}
               ${({ when }) => when(() => bypass !== undefined)`
               bypass: ${({ indentObject }) => indentObject(bypass)},
