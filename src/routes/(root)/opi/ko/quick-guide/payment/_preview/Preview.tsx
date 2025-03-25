@@ -111,7 +111,7 @@ export function Preview() {
           disabled={isChannelUnavailable()}
           onClick={() => void requestPayment()}
           type="button"
-          class="flex justify-center rounded-md bg-portone px-4 py-2"
+          class="flex justify-center rounded-md bg-portone px-4 py-2 disabled:opacity-50"
         >
           <span class="text-[15px] text-white font-medium leading-5.5">
             결제
