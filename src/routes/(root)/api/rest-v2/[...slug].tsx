@@ -1,6 +1,6 @@
-import { Title } from "@solidjs/meta";
+import { Link, Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
-import { createSignal } from "solid-js";
+import { createMemo, createSignal } from "solid-js";
 
 import { prose } from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
@@ -24,8 +24,13 @@ export default function ApiV2Docs() {
 
   setSystemVersion("v2");
 
+  const canonicalUrl = createMemo(() => {
+    return `/api/rest-v2/${params.slug}?v=v2`;
+  });
+
   return (
     <div class="flex gap-5">
+      <Link rel="canonical" href={canonicalUrl()} />
       <Title>PortOne REST API - V2</Title>
       <NavMenu
         title="REST API - V2"
