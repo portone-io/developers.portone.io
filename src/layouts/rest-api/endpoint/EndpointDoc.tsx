@@ -66,9 +66,7 @@ export default function EndpointDoc(props: EndpointDocProps) {
         left={() => (
           <div class="flex flex-col gap-6">
             <Show when={description()}>
-              <article class="overflow-hidden rounded">
-                <div class="p-2 text-sm" innerHTML={description()} />
-              </article>
+              <div class="p-2 text-sm" innerHTML={description()} />
             </Show>
             <RequestDoc
               basepath={props.basepath}
