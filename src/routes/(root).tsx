@@ -1,42 +1,27 @@
 import "~/styles/article.css";
 
 import {
-  cache,
   createAsync,
   type RouteDefinition,
   useLocation,
 } from "@solidjs/router";
-import { createMemo, createResource, type JSXElement } from "solid-js";
+import { createMemo, type JSXElement } from "solid-js";
 import { MDXProvider } from "solid-mdx";
 
 import { prose } from "~/components/prose";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
-import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
+import { parseDocsFullSlug } from "~/misc/docs";
 import { getInteractiveDocs } from "~/misc/interactiveDocs";
 import { InteractiveDocsProvider } from "~/state/interactive-docs";
-import { calcNavMenuSystemVersions } from "~/state/nav";
 import { SystemVersionProvider } from "~/state/system-version";
-import type { Lang } from "~/type";
 
 interface Props {
   children: JSXElement;
 }
 
 const navAsMenuPaths = ["/blog", "/release-notes"];
-
-export const route = {
-  preload: ({ location }) => {
-    const parsedFullSlug = parseDocsFullSlug(location.pathname);
-    if (!parsedFullSlug) return;
-    const [contentName, fullSlug] = parsedFullSlug;
-
-    void loadNavMenuSystemVersions("ko");
-    void loadDoc(contentName, fullSlug);
-    void loadInteractiveDocs(location.pathname);
-  },
-} satisfies RouteDefinition;
 
 const loadInteractiveDocs = async (pathname: string) => {
   const parsedFullSlug = parseDocsFullSlug(pathname);
@@ -45,28 +30,21 @@ const loadInteractiveDocs = async (pathname: string) => {
   return getInteractiveDocs(contentName, fullSlug);
 };
 
-const loadNavMenuSystemVersions = cache(async (lang: Lang) => {
-  "use server";
-
-  const { navMenu } = await import("~/state/server-only/nav");
-  return calcNavMenuSystemVersions(Object.values(navMenu[lang]).flat());
-}, "nav-menu-system-versions");
+export const route = {
+  preload: ({ location }) => {
+    void loadInteractiveDocs(location.pathname);
+  },
+} satisfies RouteDefinition;
 
 export default function Layout(props: Props) {
   const location = useLocation();
-  const interactiveDocs = createAsync(() =>
-    loadInteractiveDocs(location.pathname),
+  const interactiveDocs = createAsync(
+    () => loadInteractiveDocs(location.pathname),
+    {
+      deferStream: true,
+    },
   );
   const lang = createMemo<"ko">(() => "ko");
-  const searchIndex = createMemo(() => {
-    if (location.pathname.startsWith("/blog")) {
-      return "blog";
-    }
-    return lang();
-  });
-  const [navMenuSystemVersions] = createResource(() => {
-    return loadNavMenuSystemVersions(lang());
-  });
 
   return (
     <SystemVersionProvider>
