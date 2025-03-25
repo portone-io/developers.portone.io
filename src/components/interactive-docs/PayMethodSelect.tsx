@@ -75,7 +75,7 @@ export function PayMethodSelect(props: PayMethodSelectProps) {
         <Select.Icon class="data-[closed]:i-ic-baseline-keyboard-arrow-down data-[expanded]:i-ic-baseline-keyboard-arrow-up flex items-center text-xl"></Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Content class="border rounded-md bg-white p-3 shadow-md">
+        <Select.Content class="border rounded-md bg-white p-3 shadow-md z-dropdown-link">
           <Select.Listbox class="flex flex-col gap-.5" />
         </Select.Content>
       </Select.Portal>

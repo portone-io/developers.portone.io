@@ -7,7 +7,7 @@ export function CodePanel() {
   return (
     <nav
       ref={ref!}
-      class="sticky top-42 grid grid-rows-[auto_1fr] h-[calc(100dvh-160px-8px)] gap-y-2 overflow-hidden rounded-xl bg-slate-8 px-2 md:top-40"
+      class="sticky top-42 grid grid-rows-[auto_1fr] h-[calc(100dvh-160px-8px)] gap-y-2 overflow-hidden rounded-xl bg-slate-8 px-2 z-left-sidebar md:top-40"
     >
       <CodePreview />
       <CodeRenderer />
