@@ -1,5 +1,6 @@
 import { Select } from "@kobalte/core/select";
 import { createMemo } from "solid-js";
+import { produce } from "solid-js/store";
 import type { Picture as VitePicture } from "vite-imagetools";
 
 import hyphenLogo from "~/assets/pg-circle/hyphen.png";
@@ -42,8 +43,20 @@ export function PgSelect(props: PgSelectProps) {
   const options = createMemo(
     () => Object.keys(pgOptions()) as (keyof ReturnType<typeof pgOptions>)[],
   );
-  const handleChange = (value: Pg) => {
-    setParams("pg", "name", value);
+  const handleChange = (pgName: Pg) => {
+    setParams(
+      produce((params) => {
+        const pgOption = pgOptions()[pgName];
+        params.pg.name = pgName;
+        if (
+          pgOption &&
+          !pgOption.payMethods.includes(params.pg.payMethods) &&
+          pgOption.payMethods[0]
+        ) {
+          params.pg.payMethods = pgOption.payMethods[0];
+        }
+      }),
+    );
   };
   return (
     <Select
