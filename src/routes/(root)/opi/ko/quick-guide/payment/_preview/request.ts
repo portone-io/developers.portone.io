@@ -297,6 +297,15 @@ const overrides = {
       },
     },
   },
+  eximbay: {
+    card: {
+      ...cardPayment,
+      customer: {
+        fullName: customer.fullName,
+        email: customer.email,
+      },
+    },
+  },
 } as const;
 
 function templatedPayment(
@@ -447,6 +456,9 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     )
     .with({ pg: { name: "hyphen", payMethods: "easyPay" } }, () =>
       templatedPayment(paymentId, overrides.hyphen.easyPay),
+    )
+    .with({ pg: { name: "eximbay", payMethods: "card" } }, () =>
+      templatedPayment(paymentId, overrides.eximbay.card),
     )
     .exhaustive();
 }

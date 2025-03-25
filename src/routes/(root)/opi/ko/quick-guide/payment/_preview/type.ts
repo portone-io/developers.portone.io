@@ -62,6 +62,9 @@ export const pgOptions = {
   hyphen: {
     payMethods: ["easyPay"],
   },
+  eximbay: {
+    payMethods: ["card"],
+  },
 } as const satisfies PgOptions;
 
 export type Params = {
