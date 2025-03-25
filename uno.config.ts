@@ -15,9 +15,9 @@ const zIndex = {
   "gnb-body": 10,
   "dropdown-link": 9,
   "left-sidebar": 8,
+  "sticky-layout": 3,
   "overlay-dim": 2,
   "selected-tab": 1,
-  "sticky-layout": 3,
 };
 
 export default defineConfig({
