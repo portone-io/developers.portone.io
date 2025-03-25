@@ -53,7 +53,8 @@ export type Pg =
   | "kakao"
   | "naver"
   | "tosspay"
-  | "hyphen";
+  | "hyphen"
+  | "eximbay";
 
 export type ConvertToPgParam<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

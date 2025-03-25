@@ -38,6 +38,22 @@ const transferPayment = {
   payMethod: "TRANSFER",
 } satisfies Partial<PortOne.PaymentRequest>;
 
+const mobilePayment = {
+  payMethod: "MOBILE",
+  productType: "PRODUCT_TYPE_DIGITAL",
+} satisfies Partial<PortOne.PaymentRequest>;
+
+const giftCertificatePayment = {
+  payMethod: "GIFT_CERTIFICATE",
+} satisfies Partial<PortOne.PaymentRequest>;
+
+const giftCertificatePaymentCultureland = {
+  payMethod: "GIFT_CERTIFICATE",
+  giftCertificate: {
+    giftCertificateType: "GIFT_CERTIFICATE_TYPE_CULTURELAND",
+  },
+} satisfies Partial<PortOne.PaymentRequest>;
+
 const customer = {
   fullName: "포트원",
   email: "example@portone.io",
@@ -62,6 +78,12 @@ const overrides = {
       channelKey: "channel-key-ebe7daa6-4fe4-41bd-b17d-3495264399b5",
       ...transferPayment,
     },
+    mobile: {
+      ...mobilePayment,
+    },
+    giftCertificate: {
+      ...giftCertificatePaymentCultureland,
+    },
   },
   nice: {
     card: {
@@ -79,6 +101,19 @@ const overrides = {
     transfer: {
       channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
       ...transferPayment,
+    },
+    mobile: {
+      channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
+      ...mobilePayment,
+    },
+    giftCertificate: {
+      channelKey: "channel-key-e6c31df1-5559-4b4a-9b2c-a35793d14db2",
+      ...giftCertificatePaymentCultureland,
+      bypass: {
+        nice_v2: {
+          MallUserID: "MallUserID",
+        },
+      },
     },
   },
   smartro: {
@@ -107,6 +142,10 @@ const overrides = {
         phoneNumber: customer.phoneNumber,
       },
     },
+    mobile: {
+      channelKey: "channel-key-c4a4b281-a1e5-40c9-8140-f055262bcefd",
+      ...mobilePayment,
+    },
   },
   inicis: {
     card: {
@@ -129,6 +168,16 @@ const overrides = {
       ...transferPayment,
       customer,
     },
+    mobile: {
+      channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
+      ...mobilePayment,
+      customer,
+    },
+    giftCertificate: {
+      channelKey: "channel-key-fc5f33bb-c51e-4ac7-a0df-4dc40330046d",
+      ...giftCertificatePayment,
+      customer,
+    },
   },
   kcp: {
     card: {
@@ -147,6 +196,19 @@ const overrides = {
       channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
       ...transferPayment,
     },
+    mobile: {
+      channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
+      ...mobilePayment,
+    },
+    giftCertificate: {
+      channelKey: "channel-key-a79920e0-a898-49f0-aab7-50aa6834848f",
+      ...giftCertificatePayment,
+      bypass: {
+        kcp_v2: {
+          shop_user_id: "shop-user-id",
+        },
+      },
+    },
   },
   kpn: {
     card: {
@@ -164,6 +226,10 @@ const overrides = {
     transfer: {
       channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
       ...transferPayment,
+    },
+    mobile: {
+      channelKey: "channel-key-bcbb1622-ff80-49d5-adef-49191fda8ede",
+      ...mobilePayment,
     },
   },
   ksnet: {
@@ -201,6 +267,10 @@ const overrides = {
         fullName: customer.fullName,
       },
     },
+    mobile: {
+      channelKey: "channel-key-4a5daa34-aecb-44af-aaad-e42384acfb6e",
+      ...mobilePayment,
+    },
   },
   kakao: {
     easyPay: {
@@ -224,6 +294,15 @@ const overrides = {
       payMethod: "EASY_PAY",
       customer: {
         fullName: customer.fullName,
+      },
+    },
+  },
+  eximbay: {
+    card: {
+      ...cardPayment,
+      customer: {
+        fullName: customer.fullName,
+        email: customer.email,
       },
     },
   },
@@ -259,6 +338,12 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "toss", payMethods: "transfer" } }, () =>
       templatedPayment(paymentId, overrides.toss.transfer),
     )
+    .with({ pg: { name: "toss", payMethods: "mobile" } }, () =>
+      templatedPayment(paymentId, overrides.toss.mobile),
+    )
+    .with({ pg: { name: "toss", payMethods: "giftCertificate" } }, () =>
+      templatedPayment(paymentId, overrides.toss.giftCertificate),
+    )
     .with({ pg: { name: "nice", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.nice.card),
     )
@@ -270,6 +355,12 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     )
     .with({ pg: { name: "nice", payMethods: "transfer" } }, () =>
       templatedPayment(paymentId, overrides.nice.transfer),
+    )
+    .with({ pg: { name: "nice", payMethods: "mobile" } }, () =>
+      templatedPayment(paymentId, overrides.nice.mobile),
+    )
+    .with({ pg: { name: "nice", payMethods: "giftCertificate" } }, () =>
+      templatedPayment(paymentId, overrides.nice.giftCertificate),
     )
     .with({ pg: { name: "smartro", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.smartro.card),
@@ -283,6 +374,9 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "smartro", payMethods: "transfer" } }, () =>
       templatedPayment(paymentId, overrides.smartro.transfer),
     )
+    .with({ pg: { name: "smartro", payMethods: "mobile" } }, () =>
+      templatedPayment(paymentId, overrides.smartro.mobile),
+    )
     .with({ pg: { name: "inicis", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.inicis.card),
     )
@@ -294,6 +388,12 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     )
     .with({ pg: { name: "inicis", payMethods: "transfer" } }, () =>
       templatedPayment(paymentId, overrides.inicis.transfer),
+    )
+    .with({ pg: { name: "inicis", payMethods: "mobile" } }, () =>
+      templatedPayment(paymentId, overrides.inicis.mobile),
+    )
+    .with({ pg: { name: "inicis", payMethods: "giftCertificate" } }, () =>
+      templatedPayment(paymentId, overrides.inicis.giftCertificate),
     )
     .with({ pg: { name: "kcp", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.kcp.card),
@@ -307,6 +407,12 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "kcp", payMethods: "transfer" } }, () =>
       templatedPayment(paymentId, overrides.kcp.transfer),
     )
+    .with({ pg: { name: "kcp", payMethods: "mobile" } }, () =>
+      templatedPayment(paymentId, overrides.kcp.mobile),
+    )
+    .with({ pg: { name: "kcp", payMethods: "giftCertificate" } }, () =>
+      templatedPayment(paymentId, overrides.kcp.giftCertificate),
+    )
     .with({ pg: { name: "kpn", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.kpn.card),
     )
@@ -318,6 +424,9 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     )
     .with({ pg: { name: "kpn", payMethods: "transfer" } }, () =>
       templatedPayment(paymentId, overrides.kpn.transfer),
+    )
+    .with({ pg: { name: "kpn", payMethods: "mobile" } }, () =>
+      templatedPayment(paymentId, overrides.kpn.mobile),
     )
     .with({ pg: { name: "ksnet", payMethods: "card" } }, () =>
       templatedPayment(paymentId, overrides.ksnet.card),
@@ -333,6 +442,9 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     .with({ pg: { name: "ksnet", payMethods: "transfer" } }, () =>
       templatedPayment(paymentId, overrides.ksnet.transfer),
     )
+    .with({ pg: { name: "ksnet", payMethods: "mobile" } }, () =>
+      templatedPayment(paymentId, overrides.ksnet.mobile),
+    )
     .with({ pg: { name: "kakao", payMethods: "easyPay" } }, () =>
       templatedPayment(paymentId, overrides.kakao.easyPay),
     )
@@ -344,6 +456,9 @@ export function createPaymentRequest(params: Params, paymentId: string) {
     )
     .with({ pg: { name: "hyphen", payMethods: "easyPay" } }, () =>
       templatedPayment(paymentId, overrides.hyphen.easyPay),
+    )
+    .with({ pg: { name: "eximbay", payMethods: "card" } }, () =>
+      templatedPayment(paymentId, overrides.eximbay.card),
     )
     .exhaustive();
 }

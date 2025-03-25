@@ -2,25 +2,53 @@ import type { ConvertToPgParam, PgOptions } from "~/state/interactive-docs";
 
 export const pgOptions = {
   toss: {
-    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
+    payMethods: [
+      "card",
+      "virtualAccount",
+      "easyPay",
+      "transfer",
+      "mobile",
+      "giftCertificate",
+    ],
   },
   nice: {
-    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
+    payMethods: [
+      "card",
+      "virtualAccount",
+      "easyPay",
+      "transfer",
+      "mobile",
+      "giftCertificate",
+    ],
   },
   smartro: {
-    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer", "mobile"],
   },
   kpn: {
-    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer", "mobile"],
   },
   inicis: {
-    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
+    payMethods: [
+      "card",
+      "virtualAccount",
+      "easyPay",
+      "transfer",
+      "mobile",
+      "giftCertificate",
+    ],
   },
   ksnet: {
-    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
+    payMethods: ["card", "virtualAccount", "easyPay", "transfer", "mobile"],
   },
   kcp: {
-    payMethods: ["card", "virtualAccount", "easyPay", "transfer"],
+    payMethods: [
+      "card",
+      "virtualAccount",
+      "easyPay",
+      "transfer",
+      "mobile",
+      "giftCertificate",
+    ],
   },
   kakao: {
     payMethods: ["easyPay"],
@@ -33,6 +61,9 @@ export const pgOptions = {
   },
   hyphen: {
     payMethods: ["easyPay"],
+  },
+  eximbay: {
+    payMethods: ["card"],
   },
 } as const satisfies PgOptions;
 
