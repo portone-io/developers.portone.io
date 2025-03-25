@@ -1,6 +1,6 @@
 # docs-for-llms 생성 스크립트
 
-이 디렉토리에는 PortOne 개발자 문서를 LLM(Large Language Model)에 최적화된 형태로 변환하는 스크립트가 포함되어 있습니다. 실행하면 `docs-for-llms/` 디렉토리가 생성됩니다.
+이 디렉토리에는 PortOne 개발자 문서를 LLM(Large Language Model)에 최적화된 형태로 변환하는 스크립트가 포함되어 있습니다. 실행하면 `docs-for-llms/` 디렉토리와 `public/docs-for-llms.zip` 파일이 생성됩니다.
 
 - `index.ts`: 메인 스크립트 파일로, 실행 흐름을 관리
 - `parseUtils.ts`: MDX 파싱 관련 유틸리티 함수
@@ -22,6 +22,7 @@ pnpm docs-for-llms
 3. 스키마 파일(OpenAPI, GraphQL)을 `docs-for-llms/schema` 디렉토리에 복사
 4. 목차가 포함된 README.md 파일 생성
 5. 버전별 전체 문서 파일(v1-docs-full.md, v2-docs-full.md) 생성
+6. `docs-for-llms` 디렉토리와 `public/docs-for-llms.zip` 파일 생성
 
 ## 파일 생성 로직
 
@@ -64,5 +65,6 @@ pnpm docs-for-llms
     - `v2.graphql`, `v2.openapi.yml`, `v2.openapi.json`: V2 API 스키마
     - `browser-sdk.yml`: V2 브라우저 SDK 스키마
   - 각 문서별 마크다운 파일 (원본 경로 구조 유지)
+- `public/docs-for-llms.zip`: 압축된 디렉토리
 
 위 파일들은 LLM에 최적화된 형태로, 웹 링크와 마크다운 형식을 유지합니다.
