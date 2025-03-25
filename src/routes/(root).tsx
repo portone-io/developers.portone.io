@@ -1,6 +1,5 @@
 import "~/styles/article.css";
 
-import { Link } from "@solidjs/meta";
 import {
   cache,
   createAsync,
@@ -72,10 +71,6 @@ export default function Layout(props: Props) {
 
   return (
     <SystemVersionProvider>
-      <Link
-        rel="canonical"
-        href={`https://developers.portone.io${location.pathname}`}
-      />
       <SidebarProvider>
         <InteractiveDocsProvider initial={interactiveDocs()}>
           <MDXProvider components={prose}>
