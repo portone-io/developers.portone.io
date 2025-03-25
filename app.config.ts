@@ -8,9 +8,11 @@ import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import { defineConfig } from "@solidjs/start/config";
 import vinxiMdxPkg from "@vinxi/plugin-mdx";
+import fastGlob from "fast-glob";
 import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
+import { solidStartSiteMapPlugin } from "solid-start-sitemap";
 import unocss from "unocss/vite";
 import { imagetools } from "vite-imagetools";
 
@@ -129,6 +131,14 @@ export default defineConfig(
                 return `export default '${base64}';`;
               },
             },
+            solidStartSiteMapPlugin({
+              hostname: "https://developers.portone.io",
+              ignoreRoutes: fastGlob
+                .sync(["**/_components/**/*", "**/_preview/**/*"], {
+                  cwd: "src/routes/(root)",
+                })
+                .map((path) => `/${path.replace(/\.[^/.]+$/, "")}`),
+            }),
           ],
         }) satisfies CustomizableConfig,
       solid: {
