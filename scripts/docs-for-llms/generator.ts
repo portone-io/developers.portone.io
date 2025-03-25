@@ -385,10 +385,8 @@ author: PortOne
     websiteLinksFrontmatter + websiteLinksContent,
   );
 
-  await generateFile(
-    join(docsForLlmsDir, "guide-for-llms.md"),
-    guideForLlmsContent,
-  );
+  // guide-for-llms.md의 내용을 docs-for-llms/README.md로 추가
+  await generateFile(join(docsForLlmsDir, "README.md"), guideForLlmsContent);
 
   // 전체 문서 파일 생성
   await generateFullDocFile(join(docsForLlmsDir, "v1-docs-full.md"), "V1");
