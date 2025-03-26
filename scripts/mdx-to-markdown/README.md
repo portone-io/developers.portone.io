@@ -172,6 +172,14 @@
   <!-- CONDITIONAL CONTENT if 조건 END -->
   ```
 
+- **Section**: 섹션을 HTML 주석으로 변환하여 문서의 특정 부분을 표시
+
+  ```html
+  <!-- SECTION 섹션이름 START -->
+  섹션 내용
+  <!-- SECTION 섹션이름 END -->
+  ```
+
 - **기본 HTML 태그**: 일반적인 HTML 태그들을 그대로 HTML로 변환
 
   - br, table, thead, tbody, th, tr, td, ul, li, p, span, i, strong, a 등
