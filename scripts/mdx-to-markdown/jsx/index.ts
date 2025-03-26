@@ -23,6 +23,7 @@ import { validateImportedMdx } from "./importedMdx";
 import { handleParameterTypeDefComponent } from "./parameter";
 import { handleProseComponent } from "./prose";
 import { handleSDKParameterComponent, sdkChangelog } from "./sdk";
+import { handleSectionComponent } from "./section";
 import {
   handleSwaggerComponent,
   handleSwaggerDescriptionComponent,
@@ -168,6 +169,8 @@ export function transformJsxComponents(
               ast: sdkChangelog(),
               unhandledTags: emptySet,
             };
+          case "Section":
+            return handleSectionComponent(jsxNode, transformRecursively);
           case "img":
             return {
               ast: handleImgTag(jsxNode),
@@ -191,6 +194,7 @@ export function transformJsxComponents(
           case "Parameter":
           case "Parameter.Details":
           case "EasyGuideLink":
+          case "InteractiveDoc":
           case "center":
           case "div":
           case "figure":
