@@ -51,9 +51,9 @@ export function transformJsxComponents(
   const parseResult = parseResultMap[slug]!;
 
   // Collect all imported element names
-  const importedNonComponents = new Set(
+  const importsToIgnore = new Set(
     parseResult.imports
-      .filter((item) => !item.from.includes("components"))
+      .filter((item) => item.from.includes("_assets"))
       .map((item) => item.name),
   );
   const transformRecursively = (innerAst: Node) =>
@@ -245,6 +245,6 @@ export function transformJsxComponents(
 
   return {
     ast: result.ast,
-    unhandledTags: result.unhandledTags.difference(importedNonComponents),
+    unhandledTags: result.unhandledTags.difference(importsToIgnore),
   };
 }
