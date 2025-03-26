@@ -202,4 +202,34 @@ describe("validateParams", () => {
       },
     });
   });
+
+  it("should handle case-insensitive smartRouting parameter", () => {
+    // Test with uppercase TRUE
+    const resultTrue = validateParams({
+      pg: "toss",
+      payMethod: "card",
+      smartRouting: "TRUE",
+    });
+    expect(resultTrue).toEqual({
+      smartRouting: true,
+      pg: {
+        name: "toss",
+        payMethods: "card",
+      },
+    });
+
+    // Test with mixed case FaLsE
+    const resultFalse = validateParams({
+      pg: "nice",
+      payMethod: "virtualAccount",
+      smartRouting: "FaLsE",
+    });
+    expect(resultFalse).toEqual({
+      smartRouting: false,
+      pg: {
+        name: "nice",
+        payMethods: "virtualAccount",
+      },
+    });
+  });
 });

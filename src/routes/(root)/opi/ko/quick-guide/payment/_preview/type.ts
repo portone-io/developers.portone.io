@@ -89,9 +89,9 @@ export function validateParams(params: {
 
   // Nested function to parse smartRouting parameter
   const parseSmartRouting = (value: string | null): boolean => {
-    if (value === null || value === "false") {
+    if (value === null || value.toLowerCase() === "false") {
       return false;
-    } else if (value === "true") {
+    } else if (value.toLowerCase() === "true") {
       return true;
     } else {
       throw new Error("smartRouting은 true 또는 false여야 합니다");
