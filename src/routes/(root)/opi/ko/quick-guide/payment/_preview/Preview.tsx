@@ -39,6 +39,9 @@ export function Preview() {
   // 파라미터가 변경될 때마다 초기화
   createEffect(on(() => trackStore(params), reload));
 
+  const isChannelUnavailable = () =>
+    !("channelKey" in createPaymentRequest(params, ""));
+
   const requestPayment = async () => {
     if (paymentStatus().status === "PENDING") return undefined;
     const paymentId = crypto
@@ -105,9 +108,10 @@ export function Preview() {
       </div>
       <div class="grid grid-cols-[1fr_auto] gap-2">
         <button
+          disabled={isChannelUnavailable()}
           onClick={() => void requestPayment()}
           type="button"
-          class="flex justify-center rounded-md bg-portone px-4 py-2"
+          class="flex justify-center rounded-md bg-portone px-4 py-2 disabled:opacity-50"
         >
           <span class="text-[15px] text-white font-medium leading-5.5">
             결제

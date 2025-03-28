@@ -1,6 +1,8 @@
+import { exec } from "node:child_process";
 import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
 import fastGlob from "fast-glob";
 import type { Root } from "mdast";
@@ -16,10 +18,16 @@ import {
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
-const guideForLlmsFilePath = join(rootDir, "scripts", "guide-for-llms.md");
+const guideForLlmsFilePath = join(
+  rootDir,
+  "scripts",
+  "resources",
+  "guide-for-llms.md",
+);
 const schemaDir = join(rootDir, "src", "schema");
 const docsForLlmsDir = join(rootDir, "docs-for-llms");
 const docsForLlmsSchemaDir = join(docsForLlmsDir, "schema");
+const publicDir = join(rootDir, "public");
 
 /**
  * docs-for-llms 디렉토리를 생성하고 마크다운 파일들을 저장하는 함수
@@ -32,7 +40,9 @@ export async function generateDocsForLlms(
   transformedAstMap: Record<string, Root>,
 ): Promise<string> {
   // fileParseMap에서 slug 추출
-  const slugs = Object.keys(fileParseMap);
+  const slugs = Object.keys(fileParseMap)
+    // _components로 다른 마크다운 파일에서 사용된 것들 제외하기
+    .filter((slug) => !slug.includes("_components"));
 
   // docs-for-llms 디렉토리 생성
   await mkdir(docsForLlmsDir, { recursive: true });
@@ -300,16 +310,16 @@ export async function generateDocsForLlms(
     await generateFile(filePath, content);
   };
 
-  // README.md 파일 내용 생성 (llms.txt와 동일한 내용)
-  let readmeContent = guideForLlmsContent;
+  // website-links.md 파일 내용 생성
+  let websiteLinksContent = "";
 
   // 스키마 파일 추가
-  readmeContent += `\n## 스키마 파일\n`;
-  readmeContent += createSchemaLinks("V2");
-  readmeContent += createSchemaLinks("V1");
+  websiteLinksContent += `\n## 스키마 파일\n`;
+  websiteLinksContent += createSchemaLinks("V2");
+  websiteLinksContent += createSchemaLinks("V1");
 
   // 공통 문서 섹션 추가
-  readmeContent += `\n## 공통 문서 (V1 & V2)\n\n`;
+  websiteLinksContent += `\n## 공통 문서 (V1 & V2)\n\n`;
 
   // 공통 SDK 문서 (공통 유틸리티 사용)
   const commonSdkSlugs = commonSlugs.filter((slug) =>
@@ -317,7 +327,7 @@ export async function generateDocsForLlms(
   );
   if (commonSdkSlugs.length > 0) {
     for (const slug of commonSdkSlugs) {
-      readmeContent += createLinkWithDescription(slug);
+      websiteLinksContent += createLinkWithDescription(slug);
     }
   }
 
@@ -327,7 +337,7 @@ export async function generateDocsForLlms(
   );
   if (commonApiSlugs.length > 0) {
     for (const slug of commonApiSlugs) {
-      readmeContent += createLinkWithDescription(slug);
+      websiteLinksContent += createLinkWithDescription(slug);
     }
   }
 
@@ -339,47 +349,75 @@ export async function generateDocsForLlms(
   );
   if (commonOtherSlugs.length > 0) {
     for (const slug of commonOtherSlugs) {
-      readmeContent += createLinkWithDescription(slug);
+      websiteLinksContent += createLinkWithDescription(slug);
     }
   }
 
   // 버전별 문서 섹션 추가
-  readmeContent += createVersionSection("V2 문서", v2Slugs);
-  readmeContent += createVersionSection("V1 문서", v1Slugs);
+  websiteLinksContent += createVersionSection("V2 문서", v2Slugs);
+  websiteLinksContent += createVersionSection("V1 문서", v1Slugs);
 
   // 파트너정산, 릴리스 노트, 블로그 섹션 추가
-  readmeContent += createDocSection("파트너정산", platformSlugs);
-  readmeContent += createDocSection(
+  websiteLinksContent += createDocSection("파트너정산", platformSlugs);
+  websiteLinksContent += createDocSection(
     "릴리스 노트",
     releaseNoteSlugs,
     createReleaseNoteLink,
   );
-  readmeContent += createDocSection("블로그", blogSlugs);
+  websiteLinksContent += createDocSection("블로그", blogSlugs);
 
-  // README.md 파일 저장 (frontmatter 추가)
-  const readmePath = join(docsForLlmsDir, "README.md");
   // 현재 날짜 생성
   const currentDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD 형식
-  // frontmatter 생성
-  const frontmatter = `---
-title: PortOne 개발자센터 문서 가이드
-description: PortOne 개발자센터 문서를 올바르게 활용하기 위한 가이드와 목차를 제공합니다.
+  // website-links.md frontmatter 생성
+  const websiteLinksFrontmatter = `---
+title: PortOne 개발자센터 웹사이트 링크 목록
+description: PortOne 개발자센터 웹사이트 내 존재하는 문서들의 링크 목록을 제공합니다. 링크를 조회하고 싶은 경우 활용합니다.
 targetVersions:
   - v1
   - v2
 date: ${currentDate}
 author: PortOne
 ---
-
 `;
 
-  // frontmatter와 기존 내용 병합
-  await generateFile(readmePath, frontmatter + readmeContent);
+  await generateFile(
+    join(docsForLlmsDir, "website-links.md"),
+    websiteLinksFrontmatter + websiteLinksContent,
+  );
+
+  // guide-for-llms.md의 내용을 docs-for-llms/README.md로 추가
+  await generateFile(join(docsForLlmsDir, "README.md"), guideForLlmsContent);
 
   // 전체 문서 파일 생성
   await generateFullDocFile(join(docsForLlmsDir, "v1-docs-full.md"), "V1");
 
   await generateFullDocFile(join(docsForLlmsDir, "v2-docs-full.md"), "V2");
 
+  // 디렉토리를 zip 파일로 압축하고 public 디렉토리로 복사
+  await compressAndCopyToPublic();
+
   return docsForLlmsDir;
+}
+
+/**
+ * docs-for-llms 디렉토리를 zip 파일로 압축하여 public 디렉토리에 직접 저장하는 함수
+ */
+async function compressAndCopyToPublic(): Promise<void> {
+  console.log("docs-for-llms 디렉토리를 압축하는 중...");
+
+  try {
+    // zip 파일 이름 설정
+    const zipFileName = "docs-for-llms.zip";
+    const publicZipFilePath = join(publicDir, zipFileName);
+
+    // zip 명령어 실행 (macOS에 기본 내장) - 직접 public 디렉토리에 압축 파일 생성
+    const cmd = `cd "${rootDir}" && zip -r "${publicZipFilePath}" docs-for-llms`;
+
+    await promisify(exec)(cmd);
+
+    console.log(`${zipFileName} 파일이 public 디렉토리에 생성되었습니다.`);
+  } catch (error) {
+    console.error("압축 중 오류 발생:", error);
+    throw error;
+  }
 }

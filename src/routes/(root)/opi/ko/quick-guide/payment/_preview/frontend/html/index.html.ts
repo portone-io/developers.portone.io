@@ -123,6 +123,12 @@ export default code<{
                 customer,
                 // @ts-expect-error(2339)
                 virtualAccount,
+                // @ts-expect-error(2339)
+                easyPay,
+                // @ts-expect-error(2339)
+                giftCertificate,
+                bypass,
+                productType,
               } = createPaymentRequest(params, "");
               return code`{
               storeId: "${storeId}",
@@ -131,12 +137,24 @@ export default code<{
               orderName: item.name,
               totalAmount: item.price,
               currency: item.currency,
+              ${({ when }) => when(() => productType !== undefined)`
+              productType: "${productType}",
+              `}
               payMethod: "${payMethod}",
               ${({ when }) => when(() => customer !== undefined)`
               customer: ${({ indentObject }) => indentObject(customer)},
               `}
               ${({ when }) => when(() => virtualAccount !== undefined)`
               virtualAccount: ${({ indentObject }) => indentObject(virtualAccount)},
+              `}
+              ${({ when }) => when(() => easyPay !== undefined)`
+              easyPay: ${({ indentObject }) => indentObject(easyPay)},
+              `}
+              ${({ when }) => when(() => giftCertificate !== undefined)`
+              giftCertificate: ${({ indentObject }) => indentObject(giftCertificate)},
+              `}
+              ${({ when }) => when(() => bypass !== undefined)`
+              bypass: ${({ indentObject }) => indentObject(bypass)},
               `}
               customData: {
                 item: item.id,

@@ -1,7 +1,9 @@
 import { Select } from "@kobalte/core/select";
 import { createMemo } from "solid-js";
+import { produce } from "solid-js/store";
 import type { Picture as VitePicture } from "vite-imagetools";
 
+import eximbayLogo from "~/assets/pg-circle/eximbay.png";
 import hyphenLogo from "~/assets/pg-circle/hyphen.png";
 import inicisLogo from "~/assets/pg-circle/inicis.png";
 import kakaoLogo from "~/assets/pg-circle/kakao.png";
@@ -31,6 +33,7 @@ const PgOptions = {
   naver: { label: "네이버페이", icon: naverLogo },
   tosspay: { label: "토스페이", icon: tossLogo },
   hyphen: { label: "하이픈", icon: hyphenLogo },
+  eximbay: { label: "엑심베이", icon: eximbayLogo },
 } as const satisfies Record<Pg, PgSelectOption>;
 
 interface PgSelectProps {
@@ -42,8 +45,20 @@ export function PgSelect(props: PgSelectProps) {
   const options = createMemo(
     () => Object.keys(pgOptions()) as (keyof ReturnType<typeof pgOptions>)[],
   );
-  const handleChange = (value: Pg) => {
-    setParams("pg", "name", value);
+  const handleChange = (pgName: Pg) => {
+    setParams(
+      produce((params) => {
+        const pgOption = pgOptions()[pgName];
+        params.pg.name = pgName;
+        if (
+          pgOption &&
+          !pgOption.payMethods.includes(params.pg.payMethods) &&
+          pgOption.payMethods[0]
+        ) {
+          params.pg.payMethods = pgOption.payMethods[0];
+        }
+      }),
+    );
   };
   return (
     <Select
@@ -105,7 +120,7 @@ export function PgSelect(props: PgSelectProps) {
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Content class="border rounded-md bg-white p-1.5 shadow-md">
+        <Select.Content class="border rounded-md bg-white p-1.5 shadow-md z-dropdown-link">
           <Select.Listbox class="flex flex-col gap-.5" />
         </Select.Content>
       </Select.Portal>
