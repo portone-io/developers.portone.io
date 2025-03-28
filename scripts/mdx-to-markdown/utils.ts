@@ -29,9 +29,11 @@ export async function parseAllMdxFiles(): Promise<
   Record<string, MdxParseResult>
 > {
   // MDX 파일 찾기
-  const mdxFiles = await fastGlob(["src/routes/**/*.mdx"], {
-    cwd: rootDir,
-  });
+  const mdxFiles = (
+    await fastGlob(["src/routes/**/*.mdx"], {
+      cwd: rootDir,
+    })
+  ).sort();
 
   console.log(`총 ${mdxFiles.length}개의 MDX 파일을 찾았습니다.`);
 
