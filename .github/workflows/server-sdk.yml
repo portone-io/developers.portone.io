@@ -1,0 +1,66 @@
+name: Server SDK
+
+on:
+  push:
+    branches:
+      - main
+    paths: src/schema/v2.openapi.json
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Sync OpenAPI to Server SDK
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: devcenter
+      
+      - uses: actions/checkout@v4
+        with:
+          repository: portone-io/server-sdk
+          path: sdk
+          ref: main
+          token: ${{ secrets.SDK_REPO_TOKEN }}
+
+      - name: Create new branch
+        run: |
+          cd sdk
+          git checkout -b chore/openapi
+
+      - name: Copy OpenAPI schema
+        run: |
+          cp devcenter/src/schema/v2.openapi.json sdk/codegen/openapi.json
+
+      - name: Generate SDK code
+        run: |
+          cd sdk/codegen
+          deno run -A main.ts js
+          deno run -A main.ts py
+          deno run -A main.ts jvm
+
+      - name: Format Python code
+        run: |
+          cd sdk/python
+          uv run ruff format
+
+      - name: Commit and push changes
+        run: |
+          cd sdk
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "chore: update OpenAPI schema"
+          git push origin chore/openapi
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          path: sdk
+          title: "chore: update OpenAPI schema"
+          body: "OpenAPI 스키마가 업데이트되어 자동으로 생성된 PR입니다."
+          branch: chore/openapi
+          base: main
+          token: ${{ secrets.SDK_REPO_TOKEN }}
