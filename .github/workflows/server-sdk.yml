@@ -26,34 +26,58 @@ jobs:
           token: ${{ secrets.SDK_REPO_TOKEN }}
 
       - name: Create new branch
-        run: |
-          cd sdk
-          git checkout -b chore/openapi
+        run: git checkout -b chore/openapi
+        working-directory: sdk
 
       - name: Copy OpenAPI schema
-        run: |
-          cp devcenter/src/schema/v2.openapi.json sdk/codegen/openapi.json
+        run: cp devcenter/src/schema/v2.openapi.json sdk/codegen/openapi.json
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
 
       - name: Generate SDK code
         run: |
-          cd sdk/codegen
-          deno run -A main.ts js
-          deno run -A main.ts py
-          deno run -A main.ts jvm
+          deno run -A main.ts js && deno run -A main.ts py && deno run -A main.ts jvm
+        working-directory: sdk/codegen
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Add empty changeset
+        run: npx changeset add --empty
+        working-directory: sdk/javascript
+        
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "sdk/python/pyproject.toml"
+
+      - name: Install dependencies
+        run: uv sync --dev
+        working-directory: sdk/python
 
       - name: Format Python code
-        run: |
-          cd sdk/python
-          uv run ruff format
+        run: uv run ruff format
+        working-directory: sdk/python
 
       - name: Commit and push changes
         run: |
-          cd sdk
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           git commit -m "chore: update OpenAPI schema"
           git push origin chore/openapi
+        working-directory: sdk
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
