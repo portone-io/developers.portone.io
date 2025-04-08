@@ -40,6 +40,7 @@ export type ParameterType =
       type: "discriminatedUnion";
       types: Record<string, Parameter>;
       discriminator: string;
+      optional?: boolean;
     }
   | { type: "resourceRef"; $ref: string }
   | {

@@ -95,6 +95,7 @@ interface TypeDefProps {
   type: JSXElement;
   children?: JSXElement;
   defaultExpanded?: boolean;
+  leadingDescription?: JSXElement;
 }
 
 const TypeDefContext = createContext({
@@ -167,7 +168,10 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
           type={others.type}
           optional={others.optional}
         />
-        <div class="overflow-x-auto">{children}</div>
+        <div class="overflow-x-auto">
+          {others.leadingDescription}
+          {children}
+        </div>
       </div>
       <Collapsible.Content
         as={Parameter}
