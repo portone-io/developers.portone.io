@@ -6,6 +6,7 @@ import { match, P } from "ts-pattern";
 
 import { TypescriptWriter } from "./common.ts";
 import { getResourceRef, type Parameter } from "./schema.ts";
+import { getComponentName } from "./utils.ts";
 
 function generateDescription({
   imports,
@@ -36,9 +37,6 @@ function generateDescription({
   );
   return { componentName };
 }
-
-const getComponentName = (ref: string) =>
-  pascalCase(getResourceRef(ref).replaceAll("/", "_"));
 
 function generateTypeDef({
   imports,
