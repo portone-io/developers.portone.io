@@ -6,6 +6,7 @@ import { match, P } from "ts-pattern";
 
 import { TypescriptWriter } from "./common.ts";
 import { getResourceRef, type Parameter } from "./schema.ts";
+import { getComponentName } from "./utils.ts";
 
 function generateDescription({
   imports,
@@ -44,6 +45,7 @@ function generateTypeDef({
   parameter,
   ident,
   defaultExpanded,
+  leadingDescription,
 }: {
   imports: Set<string>;
   basePath: string;
@@ -51,14 +53,14 @@ function generateTypeDef({
   ident?: string;
   parameter: Parameter;
   defaultExpanded?: boolean;
+  leadingDescription?: string;
 }): string {
   const writer = TypescriptWriter();
 
   if (parameter.type === "resourceRef") {
-    const componentName = `${pascalCase(getResourceRef(parameter.$ref).replaceAll("/", "_"))}TypeDef`;
-    imports.add(
-      `import { TypeDef as ${componentName} } from "~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts";`,
-    );
+    const modulePath = `~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts`;
+    const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
+    imports.add(`import { TypeDef as ${componentName} } from "${modulePath}";`);
 
     writer.writeLine(`<${componentName}`);
     writer.indent();
@@ -67,6 +69,18 @@ function generateTypeDef({
     }
     if (ident !== undefined) {
       writer.writeLine(`ident="${ident}"`);
+    }
+    if (leadingDescription !== undefined) {
+      const description = generateDescription({
+        imports,
+        basePath,
+        filePath: path.join(parameterPath, "Leading"),
+        description: leadingDescription,
+      });
+      writer.writeLine(`leadingDescription={<${description.componentName} />}`);
+    }
+    if (defaultExpanded === false) {
+      writer.writeLine("defaultExpanded={false}");
     }
     writer.outdent();
     writer.writeLine("/>");
@@ -84,9 +98,19 @@ function generateTypeDef({
   if (ident !== undefined) {
     writer.writeLine(`ident="${ident}"`);
   }
-  if (parameter.type === "enum" || defaultExpanded === false) {
-    writer.writeLine(`defaultExpanded={false}`);
-  }
+  match(parameter)
+    .with({ type: "enum" }, () => {
+      writer.writeLine(`defaultExpanded={false}`);
+    })
+    .with({ type: "array", items: { type: "enum" } }, () => {
+      writer.writeLine(`defaultExpanded={false}`);
+    })
+    .with(P._, () => {
+      if (defaultExpanded === false) {
+        writer.writeLine(`defaultExpanded={false}`);
+      }
+    })
+    .exhaustive();
   writer.outdent();
   writer.writeLine(">");
   writer.indent();
@@ -122,7 +146,7 @@ function generateTypeDef({
         items: { type: "resourceRef" },
       },
       (parameter) => {
-        const componentName = `${pascalCase(getResourceRef(parameter.items.$ref).replaceAll("/", "_"))}Description`;
+        const componentName = `${getComponentName(parameter.items.$ref)}Description`;
         imports.add(
           `import { Description as ${componentName} } from "~/components/parameter/__generated__/${getResourceRef(parameter.items.$ref)}/index.ts";`,
         );
@@ -194,10 +218,8 @@ function generateTypeDetails({
             ident,
             basePath,
             imports,
-            parameter: {
-              ...propValue,
-              description: `\`${parameter.discriminator}\`가 \`${discriminateValue}\`인 경우에만 허용됩니다.\n\n`,
-            },
+            parameter: propValue,
+            leadingDescription: `\`${parameter.discriminator}\`가 \`${discriminateValue}\`인 경우에만 허용됩니다.\n\n`,
             parameterPath: path.join(parameterPath, ident),
             defaultExpanded: false,
           }),
@@ -221,7 +243,7 @@ function generateTypeDetails({
           const description = generateDescription({
             imports,
             basePath,
-            filePath: path.join(parameterPath, variantValue),
+            filePath: path.join(parameterPath, `Variant${variantValue}`),
             description: variant.description,
           });
           writer.writeLine(`<${description.componentName} />`);
@@ -271,7 +293,7 @@ function generateTypeDetails({
       });
     })
     .with({ type: "resourceRef" }, (parameter) => {
-      const componentName = `${pascalCase(getResourceRef(parameter.$ref).replaceAll("/", "_"))}Details`;
+      const componentName = `${getComponentName(parameter.$ref)}Details`;
       imports.add(
         `import { Details as ${componentName} } from "~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts";`,
       );
@@ -407,7 +429,7 @@ function generateInlineType({
       writer.writeLine(`<span class="text-slate-5">&#125;</span>`);
     })
     .with({ type: "resourceRef" }, ({ $ref }) => {
-      const componentName = `${pascalCase(getResourceRef($ref).replaceAll("/", "_"))}Type`;
+      const componentName = `${getComponentName($ref)}Type`;
       imports.add(
         `import { Type as ${componentName} } from "~/components/parameter/__generated__/${getResourceRef($ref)}/index.ts";`,
       );
@@ -437,12 +459,15 @@ export function generateParameter({
   const imports = new Set<string>();
   const writer = TypescriptWriter();
 
+  imports.add('import { type JSXElement } from "solid-js";');
   imports.add('import Parameter from "~/components/parameter/Parameter.tsx";');
 
   writer.writeLine("interface TypeDefProps {");
   writer.indent();
   writer.writeLine("ident?: string;");
   writer.writeLine("optional?: boolean;");
+  writer.writeLine("leadingDescription?: JSXElement;");
+  writer.writeLine("defaultExpanded?: boolean;");
   writer.outdent();
   writer.writeLine("}");
   writer.writeLine("");
@@ -452,7 +477,7 @@ export function generateParameter({
   writer.writeLine("return (");
   writer.indent();
   if (parameter.type === "resourceRef") {
-    const componentName = `${pascalCase(getResourceRef(parameter.$ref).replaceAll("/", "_"))}TypeDef`;
+    const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
     imports.add(
       `import { TypeDef as ${componentName} } from "~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts";`,
     );
@@ -468,7 +493,10 @@ export function generateParameter({
     writer.indent();
     writer.writeLine("type={<Type {...props} />}");
     writer.writeLine("{...props}");
-    if (parameter.type === "enum") {
+    if (
+      parameter.type === "enum" ||
+      (parameter.type === "array" && parameter.items.type === "enum")
+    ) {
       writer.writeLine("defaultExpanded={false}");
     }
     writer.outdent();
