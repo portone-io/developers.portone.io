@@ -50,7 +50,8 @@ export default function NavMenu(props: Props) {
     }
 
     const sectionData = new Map<string, SectionData>();
-    const article = document.getElementById("overview")!.closest("article")!;
+    const article = document.getElementById("overview")?.closest("article");
+    if (!article) return;
     const sections = Array.from(article.children).filter(
       (child) => child.tagName === "SECTION",
     );
