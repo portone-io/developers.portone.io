@@ -1,6 +1,6 @@
 import { Link, Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
-import { createMemo, createSignal } from "solid-js";
+import { createMemo, createSignal, onMount } from "solid-js";
 
 import Hint from "~/components/Hint";
 import { prose } from "~/components/prose";
@@ -27,7 +27,9 @@ export default function ApiV1Docs() {
     "section:auth": () => <V1Auth />,
   });
 
-  setSystemVersion("v1");
+  onMount(() => {
+    setSystemVersion("v1");
+  });
 
   const canonicalUrl = createMemo(() => {
     return `/api/rest-v1/${params.slug}?v=v1`;

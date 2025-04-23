@@ -1,6 +1,6 @@
 import { Link, Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
-import { createMemo, createSignal } from "solid-js";
+import { createMemo, createSignal, onMount } from "solid-js";
 
 import { prose } from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
@@ -22,7 +22,9 @@ export default function ApiV2Docs() {
   );
   const sectionDescriptionProps = createSectionDescriptionProps({});
 
-  setSystemVersion("v2");
+  onMount(() => {
+    setSystemVersion("v2");
+  });
 
   const canonicalUrl = createMemo(() => {
     return `/api/rest-v2/${params.slug}?v=v2`;
