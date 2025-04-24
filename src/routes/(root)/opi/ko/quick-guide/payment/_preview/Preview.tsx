@@ -39,8 +39,13 @@ export function Preview() {
   // 파라미터가 변경될 때마다 초기화
   createEffect(on(() => trackStore(params), reload));
 
-  const isChannelUnavailable = () =>
-    !("channelKey" in createPaymentRequest(params, ""));
+  const isChannelUnavailable = () => {
+    const paymentRequest = createPaymentRequest(params, "");
+    return match(paymentRequest)
+      .with(P.nullish, () => true)
+      .with({ channelKey: P.string }, () => false)
+      .otherwise(() => true);
+  };
 
   const requestPayment = async () => {
     if (paymentStatus().status === "PENDING") return undefined;
@@ -53,6 +58,7 @@ export function Preview() {
       untrack(() => params),
       paymentId,
     );
+    if (request === null) return;
 
     setPaymentStatus({ status: "PENDING" });
     setPayment(await PortOne.requestPayment(request));

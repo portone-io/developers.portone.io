@@ -1,5 +1,5 @@
 import * as PortOne from "@portone/browser-sdk/v2";
-import { match } from "ts-pattern";
+import { match, NonExhaustiveError } from "ts-pattern";
 
 import type { Params } from "./type";
 
@@ -324,141 +324,151 @@ function templatedPayment(
   } satisfies PortOne.PaymentRequest;
 }
 
-export function createPaymentRequest(params: Params, paymentId: string) {
-  return match(params)
-    .with({ pg: { name: "toss", payMethods: "card" } }, () =>
-      templatedPayment(paymentId, overrides.toss.card),
-    )
-    .with({ pg: { name: "toss", payMethods: "virtualAccount" } }, () =>
-      templatedPayment(paymentId, overrides.toss.virtualAccount),
-    )
-    .with({ pg: { name: "toss", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.toss.easyPay),
-    )
-    .with({ pg: { name: "toss", payMethods: "transfer" } }, () =>
-      templatedPayment(paymentId, overrides.toss.transfer),
-    )
-    .with({ pg: { name: "toss", payMethods: "mobile" } }, () =>
-      templatedPayment(paymentId, overrides.toss.mobile),
-    )
-    .with({ pg: { name: "toss", payMethods: "giftCertificate" } }, () =>
-      templatedPayment(paymentId, overrides.toss.giftCertificate),
-    )
-    .with({ pg: { name: "nice", payMethods: "card" } }, () =>
-      templatedPayment(paymentId, overrides.nice.card),
-    )
-    .with({ pg: { name: "nice", payMethods: "virtualAccount" } }, () =>
-      templatedPayment(paymentId, overrides.nice.virtualAccount),
-    )
-    .with({ pg: { name: "nice", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.nice.easyPay),
-    )
-    .with({ pg: { name: "nice", payMethods: "transfer" } }, () =>
-      templatedPayment(paymentId, overrides.nice.transfer),
-    )
-    .with({ pg: { name: "nice", payMethods: "mobile" } }, () =>
-      templatedPayment(paymentId, overrides.nice.mobile),
-    )
-    .with({ pg: { name: "nice", payMethods: "giftCertificate" } }, () =>
-      templatedPayment(paymentId, overrides.nice.giftCertificate),
-    )
-    .with({ pg: { name: "smartro", payMethods: "card" } }, () =>
-      templatedPayment(paymentId, overrides.smartro.card),
-    )
-    .with({ pg: { name: "smartro", payMethods: "virtualAccount" } }, () =>
-      templatedPayment(paymentId, overrides.smartro.virtualAccount),
-    )
-    .with({ pg: { name: "smartro", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.smartro.easyPay),
-    )
-    .with({ pg: { name: "smartro", payMethods: "transfer" } }, () =>
-      templatedPayment(paymentId, overrides.smartro.transfer),
-    )
-    .with({ pg: { name: "smartro", payMethods: "mobile" } }, () =>
-      templatedPayment(paymentId, overrides.smartro.mobile),
-    )
-    .with({ pg: { name: "inicis", payMethods: "card" } }, () =>
-      templatedPayment(paymentId, overrides.inicis.card),
-    )
-    .with({ pg: { name: "inicis", payMethods: "virtualAccount" } }, () =>
-      templatedPayment(paymentId, overrides.inicis.virtualAccount),
-    )
-    .with({ pg: { name: "inicis", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.inicis.easyPay),
-    )
-    .with({ pg: { name: "inicis", payMethods: "transfer" } }, () =>
-      templatedPayment(paymentId, overrides.inicis.transfer),
-    )
-    .with({ pg: { name: "inicis", payMethods: "mobile" } }, () =>
-      templatedPayment(paymentId, overrides.inicis.mobile),
-    )
-    .with({ pg: { name: "inicis", payMethods: "giftCertificate" } }, () =>
-      templatedPayment(paymentId, overrides.inicis.giftCertificate),
-    )
-    .with({ pg: { name: "kcp", payMethods: "card" } }, () =>
-      templatedPayment(paymentId, overrides.kcp.card),
-    )
-    .with({ pg: { name: "kcp", payMethods: "virtualAccount" } }, () =>
-      templatedPayment(paymentId, overrides.kcp.virtualAccount),
-    )
-    .with({ pg: { name: "kcp", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.kcp.easyPay),
-    )
-    .with({ pg: { name: "kcp", payMethods: "transfer" } }, () =>
-      templatedPayment(paymentId, overrides.kcp.transfer),
-    )
-    .with({ pg: { name: "kcp", payMethods: "mobile" } }, () =>
-      templatedPayment(paymentId, overrides.kcp.mobile),
-    )
-    .with({ pg: { name: "kcp", payMethods: "giftCertificate" } }, () =>
-      templatedPayment(paymentId, overrides.kcp.giftCertificate),
-    )
-    .with({ pg: { name: "kpn", payMethods: "card" } }, () =>
-      templatedPayment(paymentId, overrides.kpn.card),
-    )
-    .with({ pg: { name: "kpn", payMethods: "virtualAccount" } }, () =>
-      templatedPayment(paymentId, overrides.kpn.virtualAccount),
-    )
-    .with({ pg: { name: "kpn", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.kpn.easyPay),
-    )
-    .with({ pg: { name: "kpn", payMethods: "transfer" } }, () =>
-      templatedPayment(paymentId, overrides.kpn.transfer),
-    )
-    .with({ pg: { name: "kpn", payMethods: "mobile" } }, () =>
-      templatedPayment(paymentId, overrides.kpn.mobile),
-    )
-    .with({ pg: { name: "ksnet", payMethods: "card" } }, () =>
-      templatedPayment(paymentId, overrides.ksnet.card),
-    )
-    .with({ pg: { name: "ksnet", payMethods: "virtualAccount" } }, () =>
-      templatedPayment(paymentId, overrides.ksnet.virtualAccount),
-    )
-    .with({ pg: { name: "ksnet", payMethods: "easyPay" } }, () =>
-      // easyPayBypass 파라미터 누락
-      // @ts-expect-error(2345)
-      templatedPayment(paymentId, overrides.ksnet.easyPay),
-    )
-    .with({ pg: { name: "ksnet", payMethods: "transfer" } }, () =>
-      templatedPayment(paymentId, overrides.ksnet.transfer),
-    )
-    .with({ pg: { name: "ksnet", payMethods: "mobile" } }, () =>
-      templatedPayment(paymentId, overrides.ksnet.mobile),
-    )
-    .with({ pg: { name: "kakao", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.kakao.easyPay),
-    )
-    .with({ pg: { name: "naver", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.naver.easyPay),
-    )
-    .with({ pg: { name: "tosspay", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.tosspay.easyPay),
-    )
-    .with({ pg: { name: "hyphen", payMethods: "easyPay" } }, () =>
-      templatedPayment(paymentId, overrides.hyphen.easyPay),
-    )
-    .with({ pg: { name: "eximbay", payMethods: "card" } }, () =>
-      templatedPayment(paymentId, overrides.eximbay.card),
-    )
-    .exhaustive();
+export function createPaymentRequest(
+  params: Params,
+  paymentId: string,
+): PortOne.PaymentRequest | null {
+  try {
+    return match(params)
+      .with({ pg: { name: "toss", payMethods: "card" } }, () =>
+        templatedPayment(paymentId, overrides.toss.card),
+      )
+      .with({ pg: { name: "toss", payMethods: "virtualAccount" } }, () =>
+        templatedPayment(paymentId, overrides.toss.virtualAccount),
+      )
+      .with({ pg: { name: "toss", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.toss.easyPay),
+      )
+      .with({ pg: { name: "toss", payMethods: "transfer" } }, () =>
+        templatedPayment(paymentId, overrides.toss.transfer),
+      )
+      .with({ pg: { name: "toss", payMethods: "mobile" } }, () =>
+        templatedPayment(paymentId, overrides.toss.mobile),
+      )
+      .with({ pg: { name: "toss", payMethods: "giftCertificate" } }, () =>
+        templatedPayment(paymentId, overrides.toss.giftCertificate),
+      )
+      .with({ pg: { name: "nice", payMethods: "card" } }, () =>
+        templatedPayment(paymentId, overrides.nice.card),
+      )
+      .with({ pg: { name: "nice", payMethods: "virtualAccount" } }, () =>
+        templatedPayment(paymentId, overrides.nice.virtualAccount),
+      )
+      .with({ pg: { name: "nice", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.nice.easyPay),
+      )
+      .with({ pg: { name: "nice", payMethods: "transfer" } }, () =>
+        templatedPayment(paymentId, overrides.nice.transfer),
+      )
+      .with({ pg: { name: "nice", payMethods: "mobile" } }, () =>
+        templatedPayment(paymentId, overrides.nice.mobile),
+      )
+      .with({ pg: { name: "nice", payMethods: "giftCertificate" } }, () =>
+        templatedPayment(paymentId, overrides.nice.giftCertificate),
+      )
+      .with({ pg: { name: "smartro", payMethods: "card" } }, () =>
+        templatedPayment(paymentId, overrides.smartro.card),
+      )
+      .with({ pg: { name: "smartro", payMethods: "virtualAccount" } }, () =>
+        templatedPayment(paymentId, overrides.smartro.virtualAccount),
+      )
+      .with({ pg: { name: "smartro", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.smartro.easyPay),
+      )
+      .with({ pg: { name: "smartro", payMethods: "transfer" } }, () =>
+        templatedPayment(paymentId, overrides.smartro.transfer),
+      )
+      .with({ pg: { name: "smartro", payMethods: "mobile" } }, () =>
+        templatedPayment(paymentId, overrides.smartro.mobile),
+      )
+      .with({ pg: { name: "inicis", payMethods: "card" } }, () =>
+        templatedPayment(paymentId, overrides.inicis.card),
+      )
+      .with({ pg: { name: "inicis", payMethods: "virtualAccount" } }, () =>
+        templatedPayment(paymentId, overrides.inicis.virtualAccount),
+      )
+      .with({ pg: { name: "inicis", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.inicis.easyPay),
+      )
+      .with({ pg: { name: "inicis", payMethods: "transfer" } }, () =>
+        templatedPayment(paymentId, overrides.inicis.transfer),
+      )
+      .with({ pg: { name: "inicis", payMethods: "mobile" } }, () =>
+        templatedPayment(paymentId, overrides.inicis.mobile),
+      )
+      .with({ pg: { name: "inicis", payMethods: "giftCertificate" } }, () =>
+        templatedPayment(paymentId, overrides.inicis.giftCertificate),
+      )
+      .with({ pg: { name: "kcp", payMethods: "card" } }, () =>
+        templatedPayment(paymentId, overrides.kcp.card),
+      )
+      .with({ pg: { name: "kcp", payMethods: "virtualAccount" } }, () =>
+        templatedPayment(paymentId, overrides.kcp.virtualAccount),
+      )
+      .with({ pg: { name: "kcp", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.kcp.easyPay),
+      )
+      .with({ pg: { name: "kcp", payMethods: "transfer" } }, () =>
+        templatedPayment(paymentId, overrides.kcp.transfer),
+      )
+      .with({ pg: { name: "kcp", payMethods: "mobile" } }, () =>
+        templatedPayment(paymentId, overrides.kcp.mobile),
+      )
+      .with({ pg: { name: "kcp", payMethods: "giftCertificate" } }, () =>
+        templatedPayment(paymentId, overrides.kcp.giftCertificate),
+      )
+      .with({ pg: { name: "kpn", payMethods: "card" } }, () =>
+        templatedPayment(paymentId, overrides.kpn.card),
+      )
+      .with({ pg: { name: "kpn", payMethods: "virtualAccount" } }, () =>
+        templatedPayment(paymentId, overrides.kpn.virtualAccount),
+      )
+      .with({ pg: { name: "kpn", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.kpn.easyPay),
+      )
+      .with({ pg: { name: "kpn", payMethods: "transfer" } }, () =>
+        templatedPayment(paymentId, overrides.kpn.transfer),
+      )
+      .with({ pg: { name: "kpn", payMethods: "mobile" } }, () =>
+        templatedPayment(paymentId, overrides.kpn.mobile),
+      )
+      .with({ pg: { name: "ksnet", payMethods: "card" } }, () =>
+        templatedPayment(paymentId, overrides.ksnet.card),
+      )
+      .with({ pg: { name: "ksnet", payMethods: "virtualAccount" } }, () =>
+        templatedPayment(paymentId, overrides.ksnet.virtualAccount),
+      )
+      .with({ pg: { name: "ksnet", payMethods: "easyPay" } }, () =>
+        // easyPayBypass 파라미터 누락
+        // @ts-expect-error(2345)
+        templatedPayment(paymentId, overrides.ksnet.easyPay),
+      )
+      .with({ pg: { name: "ksnet", payMethods: "transfer" } }, () =>
+        templatedPayment(paymentId, overrides.ksnet.transfer),
+      )
+      .with({ pg: { name: "ksnet", payMethods: "mobile" } }, () =>
+        templatedPayment(paymentId, overrides.ksnet.mobile),
+      )
+      .with({ pg: { name: "kakao", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.kakao.easyPay),
+      )
+      .with({ pg: { name: "naver", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.naver.easyPay),
+      )
+      .with({ pg: { name: "tosspay", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.tosspay.easyPay),
+      )
+      .with({ pg: { name: "hyphen", payMethods: "easyPay" } }, () =>
+        templatedPayment(paymentId, overrides.hyphen.easyPay),
+      )
+      .with({ pg: { name: "eximbay", payMethods: "card" } }, () =>
+        templatedPayment(paymentId, overrides.eximbay.card),
+      )
+      .exhaustive();
+  } catch (error) {
+    if (error instanceof NonExhaustiveError) {
+      console.error(error);
+    }
+    return null;
+  }
 }
