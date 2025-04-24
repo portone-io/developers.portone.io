@@ -103,7 +103,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
   (props: { initial?: InteractiveDocsInit }) => {
     const defaultInitial: InteractiveDocsInit = {
       pgOptions: {
-        hyphen: { payMethods: ["card"] },
+        toss: { payMethods: ["card"] },
       },
       languages: {
         frontend: ["react"],
@@ -112,7 +112,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
       },
       params: {
         pg: {
-          name: "hyphen",
+          name: "toss",
           payMethods: "card",
         },
       },

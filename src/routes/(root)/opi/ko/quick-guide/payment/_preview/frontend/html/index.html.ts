@@ -116,6 +116,10 @@ export default code<{
             ${({ section }) => section("client:request-payment")`
             const paymentId = randomId()
             const payment = await PortOne.requestPayment(${({ params }) => {
+              const paymentRequest = createPaymentRequest(params, "");
+              if (paymentRequest === null) {
+                return code`null`;
+              }
               const {
                 storeId,
                 channelKey,
@@ -129,7 +133,7 @@ export default code<{
                 giftCertificate,
                 bypass,
                 productType,
-              } = createPaymentRequest(params, "");
+              } = paymentRequest;
               return code`{
               storeId: "${storeId}",
               channelKey: "${channelKey}",
