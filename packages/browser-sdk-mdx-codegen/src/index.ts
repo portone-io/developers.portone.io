@@ -48,7 +48,7 @@ function generateIndex(
 
   for (const [key, _] of Object.entries(resourceMap)) {
     const resourcePath = key;
-    const relativePath = `./${path.join(resourcePath, "index.ts")}`;
+    const relativePath = `./${path.posix.join(resourcePath, "index.ts")}`;
 
     writer.writeLine(`"#/resources/${resourcePath}": {`);
     writer.indent();
@@ -88,7 +88,7 @@ function generateIndex(
   writer.writeLine("};");
 
   // Write index.ts file
-  fs.writeFileSync(path.join(srcPath, "index.ts"), writer.content);
+  fs.writeFileSync(path.posix.join(srcPath, "index.ts"), writer.content);
 }
 
 const yamlText: string = fs.readFileSync(
