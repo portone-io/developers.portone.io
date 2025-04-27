@@ -1,0 +1,74 @@
+---
+title: 웰컴페이먼츠
+description: 웰컴페이먼츠 결제 연동 방법을 안내합니다.
+targetVersions: ["v2"]
+versionVariants:
+  v1: /opi/ko/integration/pg/v1/welcome/readme
+---
+
+## 지원 기능
+- 단건 결제 (UI)
+  `requestPayment` 함수를 사용합니다.
+  - 카드
+  - 간편결제
+  - 계좌이체
+  - 가상계좌
+  - 문화상품권
+  - 휴대전화
+- 빌링키 발급 (UI)
+  `requestIssueBillingKey` 함수를 사용합니다.
+  - 카드
+- 빌링키 발급 및 초회 결제 (UI)
+  `requestIssueBillingKeyAndPay` 함수를 사용합니다.
+  - 휴대전화
+- 단건 결제 (API)
+  - 카드
+- 빌링키 발급 (API)
+  - 카드
+
+## PC 통합결제창
+
+아래 결제 수단을 지원합니다.
+- 카드
+- 가상계좌
+- 계좌이체
+- 휴대폰
+- 문화상품권
+
+### 결제 수단 공통
+
+<Parameter flatten>
+  - customer.fullName: string
+
+    구매자 이름입니다. 웰컴페이먼츠에서는 필수 입력입니다.
+  - customer.phoneNumber: string
+
+    구매자 휴대 전화 번호입니다. 웰컴페이먼츠에서는 필수 입력입니다.
+  - offerPeriod.interval?: string
+
+    상품 제공 기간을 월단위 또는 년단위로 설정합니다. `1m`인 경우 월단위, `1y`인 경우 년단위입니다.
+    선택 입력이며, `offerPeriod.range`와 함께 사용하지 않습니다.
+  - offerPeriod.range?: \{ from: string, to: string \}
+
+    상품 제공 기간을 시작 날짜와 끝 날짜를 지정하여 설정합니다.
+    선택 입력이며, `offerPeriod.interval`과 함께 사용하지 않습니다.
+  - locale?: string
+
+    UI 언어입니다. `EN_US`, `KO_KR`, `ZH_CN` 중 하나를 선택합니다.
+    결제창 내에서도 언어를 변경할 수 있습니다.
+  - bypass.welcome.logo_url?: string
+
+    메인 로고 URL입니다. 89×19 크기 이미지입니다.
+  - bypass.welcome.logo_2nd?: string
+
+    서브 로고 URL입니다. 64×13 크기 이미지입니다.
+</Parameter>
+
+
+### 카드
+<Parameter flatten>
+  - card.installment.monthOption?: object
+    선택 가능한 할부 개월수 목록을 지정합니다.
+    현대카드는 1만원, 그 외는 5만원 이상 결제에만 동작합니다.
+  -
+</Parameter>
