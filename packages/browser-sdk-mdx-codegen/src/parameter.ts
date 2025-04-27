@@ -26,6 +26,7 @@ function generateDescription({
   fs.writeFileSync(file, description);
   const componentName = pascalCase(
     `${path
+      .posix
       .relative(basePath, filePath)
       .split("/")
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
@@ -33,7 +34,7 @@ function generateDescription({
   );
 
   imports.add(
-    `import ${componentName} from "./${path.relative(basePath, file)}";`,
+    `import ${componentName} from "./${path.posix.relative(basePath, file)}";`,
   );
   return { componentName };
 }
@@ -182,7 +183,7 @@ function generateTypeDetails({
         generateTypeDetails({
           imports,
           basePath,
-          parameterPath: path.join(parameterPath, "items"),
+          parameterPath: path.posix.join(parameterPath, "items"),
           parameter: parameter.items,
         }),
       );
@@ -199,7 +200,7 @@ function generateTypeDetails({
             basePath,
             imports,
             parameter: propValue,
-            parameterPath: path.join(parameterPath, propName),
+            parameterPath: path.posix.join(parameterPath, propName),
           }),
         );
       }
@@ -220,7 +221,7 @@ function generateTypeDetails({
             imports,
             parameter: propValue,
             leadingDescription: `\`${parameter.discriminator}\`가 \`${discriminateValue}\`인 경우에만 허용됩니다.\n\n`,
-            parameterPath: path.join(parameterPath, ident),
+            parameterPath: path.posix.join(parameterPath, ident),
             defaultExpanded: false,
           }),
         );
@@ -243,7 +244,7 @@ function generateTypeDetails({
           const description = generateDescription({
             imports,
             basePath,
-            filePath: path.join(parameterPath, `Variant${variantValue}`),
+            filePath: path.posix.join(parameterPath, `Variant${variantValue}`),
             description: variant.description,
           });
           writer.writeLine(`<${description.componentName} />`);
@@ -267,7 +268,7 @@ function generateTypeDetails({
             basePath,
             imports,
             parameter: type,
-            parameterPath: path.join(
+            parameterPath: path.posix.join(
               parameterPath,
               `${parameter.type}${index}`,
             ),
@@ -284,7 +285,7 @@ function generateTypeDetails({
             basePath,
             imports,
             parameter: type,
-            parameterPath: path.join(
+            parameterPath: path.posix.join(
               parameterPath,
               `${parameter.type}${index}`,
             ),
@@ -557,7 +558,7 @@ export function generateParameter({
     const description = generateDescription({
       imports,
       basePath: parameterPath,
-      filePath: path.join(parameterPath, parameterName),
+      filePath: path.posix.join(parameterPath, parameterName),
       description: parameter.description,
     });
     writer.writeLine(`return <${description.componentName} />;`);
