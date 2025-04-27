@@ -216,7 +216,7 @@ resources:
       description: |
         **국가**
 
-        - [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) 코드
+        [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) 코드입니다.
       variants:
         AF:
           description: Afghanistan
@@ -1117,43 +1117,109 @@ resources:
           description: |
             **구매자 전체 이름**
 
-            `fullName`과 `firstName` / `lastName`이 모두 입력된 경우 `fullName`으로 기록됩니다.
+            `fullName`이 사용되는 PG에서 `fullName`이 없고 `firstName`과 `lastName`이 있는 경우 `${lastName} ${firstName}`이 사용됩니다.
+
+            <Condition when={({ pg: { name } }) => ['tosspayments'].includes(name)}>
+            토스페이먼츠에 전달됩니다. 최대 100자입니다. 값이 있으면 구매자 대상 이메일에 포함됩니다.
+            </Condition>
 
             <Condition when={({ pg: { name } }) => ['nice'].includes(name)}>
-            나이스페이먼츠에 전달됩니다.
+            NICE페이먼츠에 전달됩니다. 최대 30바이트입니다. 알리페이 결제의 경우 필수입니다.
             </Condition>
 
-            <Condition when={({ pg: { name } }) => ['inicis', 'welcome', 'hyphen'].includes(name)}>
-            KG이니시스, 웰컴페이먼츠에서는 필수입니다.
+            <Condition when={({ pg: { name } }) => ['inicis', 'welcome'].includes(name)}>
+            KG이니시스, 웰컴페이먼츠에서는 필수입니다. 최대 30바이트입니다.
             </Condition>
 
+            <Condition when={({ pg: { name } }) => ['kcp'].includes(name)}>
+            NHN KCP에 전달됩니다. 최대 30자입니다. 모바일에서 카드사 UI를 직접 호출할 경우 필수입니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['smartro'].includes(name)}>
+            스마트로에서는 최대 30자입니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['ksnet'].includes(name)}>
+            KSNET에서는 필수입니다. 최대 50바이트입니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['kpn'].includes(name)}>
+            한국결제네트웍스에 전달됩니다. 최대 100자입니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['hyphen'].includes(name)}>
+            하이픈에서는 필수입니다.
+            </Condition>
         firstName:
           type: string
           optional: true
           description: |
-            **구매자 이름**
+            **구매자 성이 아닌 이름**
 
-            `firstName`을 입력하는 경우 `lastName`도 필수로 입력해야 합니다. `fullName`이 없고,
-            `firstName`과 `lastName`이 존재하는 경우 `{firstName} {lastName}`으로 저장됩니다.
+            페이팔에서 구매자 페이팔 계정 소유자의 이름을 지정합니다.
         lastName:
           type: string
           optional: true
           description: |
             **구매자 성**
 
-            `lastName`을 입력하는 경우 `firstName`도 필수로 입력해야 합니다.
+            페이팔에서 구매자 페이팔 계정 소유자의 성을 지정합니다.
         phoneNumber:
           type: string
           optional: true
           description: |
-            **구매자 연락처**
+            **구매자 휴대전화 번호**
+
+            숫자만 입력합니다.
+
+            <Condition when={({ pg: { name } }) => ['tosspayments'].includes(name)}>
+            토스페이먼츠에 전달됩니다. 퀵계좌이체, 가상계좌에서 기본값으로 사용되고, UI에서 변경 가능합니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['nice'].includes(name)}>
+            NICE페이먼츠에 전달됩니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['inicis', 'welcome'].includes(name)}>
+            KG이니시스, 웰컴페이먼츠에서는 필수입니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['kcp'].includes(name)}>
+            NHN KCP에 전달됩니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['smartro'].includes(name)}>
+            스마트로에 전달됩니다.
+            </Condition>
         email:
           type: string
           optional: true
           description: |
             **구매자 이메일 주소**
 
-            유효한 이메일 주소를 입력해주세요.
+            올바른 형식의 이메일 주소여야 합니다.
+
+            <Condition when={({ pg: { name } }) => ['tosspayments'].includes(name)}>
+            토스페이먼츠에서는 기본값으로 사용되고 UI에서 변경 가능합니다. 최대 100자입니다.
+
+            이메일 주소가 있는 경우 결제 상태가 바뀌면 해당 주소로 이메일이 발송됩니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['nice'].includes(name)}>
+            NICE페이먼츠에 전달됩니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['inicis', 'welcome'].includes(name)}>
+            KG이니시스, 웰컴페이먼츠에서는 필수입니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['kcp'].includes(name)}>
+            NHN KCP에 전달됩니다. PC에서 카드사 UI를 직접 호출할 경우 필수입니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['smartro'].includes(name)}>
+            스마트로에 전달됩니다. 최대 60자입니다.
+            </Condition>
         address:
           type: resourceRef
           $ref: "#/resources/entity/Address"
@@ -1177,35 +1243,41 @@ resources:
           description: |
             **구매자 출생년도**
 
-            ex. `"1990"` 같은 형식으로 입력해주세요.
+            `"1990"`과 같은 형식입니다.
+
+            KG이니시스 통합인증에서 `flgFixedUser`가 `Y`인 경우 필수입니다.
         birthMonth:
           type: string
           optional: true
           description: |
             **구매자 출생월**
 
-            ex. `"12"`, `"07"` 같은 형식으로 입력해주세요.
+            `"12"`, `"07"`과 같은 형식입니다.
+
+            KG이니시스 통합인증에서 `flgFixedUser`가 `Y`인 경우 필수입니다.
         birthDay:
           type: string
           optional: true
           description: |
             **구매자 출생일**
 
-            ex. `"25"`, `"08"` 같은 형식으로 입력해주세요.
+            `"25"`, `"08"`과 같은 형식입니다.
+
+            KG이니시스 통합인증에서 `flgFixedUser`가 `Y`인 경우 필수입니다.
         firstNameKana:
           type: string
           optional: true
           description: |
-            **구매자 이름 후리가나**
+            **구매자 일본어 성이 아닌 이름 후리가나(읽는 법)**
 
-            일본어 읽는 법 표기
+            KG이니시스 JPPG 일본 편의점 결제에서 필수입니다. 최대 20바이트입니다.
         lastNameKana:
           type: string
           optional: true
           description: |
-            **구매자 성 후리가나**
+            **구매자 일본어 성 후리가나(읽는 법)**
 
-            일본어 읽는 법 표기
+            KG이니시스 JPPG 일본 편의점 결제에서 필수입니다. 최대 20바이트입니다.
     EasyPayPaymentMethod:
       type: enum
       variants:
@@ -1546,17 +1618,13 @@ resources:
       description: |
         **면세 금액**
 
-        - 결제 금액 중 면세금액에 해당하는 금액을 입력합니다.
-        - 미입력 시 0으로 취급됩니다.
-        - 결제 금액과 동일하게 통화별 scale factor가 적용된 금액으로 전달해주세요.
+        미입력 시 0으로 취급됩니다.
     VatAmount:
       type: integer
       description: |
-        **부가세**
+        **부가세 금액**
 
-        - 부가세 금액을 입력합니다.
-        - 미입력 시 과세 금액의 1/11 로 자동 계산됩니다.
-        - 결제 금액과 동일하게 통화별 scale factor가 적용된 금액으로 전달해주세요.
+        미입력 시 과세 금액의 1/11로 자동 계산됩니다.
     Product:
       type: object
       description: |
@@ -1762,10 +1830,10 @@ resources:
         **PG 오류 메시지**
 
         PG에서 오류 메시지를 내려 주는 경우 이 오류 메시지를 그대로 반환합니다.
+
         <Condition when={({ pg: { name } }) => ['naver'].includes(name)}>
         네이버페이의 경우 이 오류 메시지가 사용자에게 표시되어야 합니다.
         </Condition>
-
     RedirectUrl:
       type: string
       description: |
@@ -3860,7 +3928,7 @@ resources:
     OfferPeriodRangeFromTo:
       type: object
       description: |
-        **시작 시점과 종료 지점이 모두 있는 기간 범위**
+        **시작 지점과 종료 지점이 모두 있는 기간 범위**
       properties:
         from:
           type: string
@@ -4074,7 +4142,7 @@ resources:
           description: |
             **오류 코드**
 
-            - 실패한 경우 오류 코드입니다.
+            실패한 경우 오류 코드입니다.
           types:
             - type: resourceRef
               $ref: "#/resources/exception/CheckoutServiceErrorCode"
@@ -4089,7 +4157,7 @@ resources:
           description: |
             **오류 메시지**
 
-            - 실패한 경우 오류 메시지입니다.
+            실패한 경우 오류 메시지입니다.
         pgCode:
           type: resourceRef
           optional: true
@@ -4108,7 +4176,7 @@ resources:
           description: |
             **오류 코드**
 
-            - 실패한 경우 오류 코드입니다.
+            실패한 경우 오류 코드입니다.
           types:
             - type: resourceRef
               $ref: "#/resources/exception/CheckoutServiceErrorCode"
@@ -4121,7 +4189,7 @@ resources:
           description: |
             **오류 메시지**
 
-            - 실패한 경우 오류 메시지입니다.
+            실패한 경우 오류 메시지입니다.
         billingKey:
           type: string
           optional: true
@@ -4151,7 +4219,7 @@ resources:
           description: |
             **오류 메시지**
 
-            - 실패한 경우 오류 메시지입니다.
+            실패한 경우 오류 메시지입니다.
     PaymentError:
       type: error
       transactionType: PAYMENT
@@ -4255,7 +4323,7 @@ resources:
           type: resourceRef
           $ref: "#/resources/entity/Currency"
           description: |
-            displayAmount의 화폐
+            `displayAmount`의 화폐
         storeId:
           type: resourceRef
           $ref: "#/resources/entity/StoreId"
@@ -4266,23 +4334,23 @@ resources:
           type: resourceRef
           $ref: "#/resources/entity/BillingKeyMethod"
           description: |
-            결제 수단 정보
+            **결제 수단 정보**
         issueName:
           optional: true
           type: string
           description: |
-            주문명
+            **주문명**
         issueId:
           optional: true
           type: string
           description: |
-            빌링 등록 주문 번호
+            **빌링 등록 주문 번호**
         customer:
           optional: true
           type: resourceRef
           $ref: "#/resources/entity/Customer"
           description: |
-            구매자 정보
+            **구매자 정보**
         redirectUrl:
           type: resourceRef
           optional: true
@@ -4292,30 +4360,34 @@ resources:
           type: resourceRef
           $ref: "#/resources/entity/Locale"
           description: |
-            UI 언어
+            **UI 언어**
         customData:
           optional: true
           type: json
           description: |
-            **빌링키와 함께 관리하고 싶은 고객사 커스텀 JSON 데이터**
+            **빌링키 커스텀 JSON 데이터**
+
+            자유롭게 데이터를 넣어 이후 조회할 수 있습니다.
         appScheme:
           optional: true
           type: string
           description: |
-            앱 URL Scheme
+            **앱 URL 스킴**
         noticeUrls:
           optional: true
           type: array
           items:
             type: string
           description: |
-            웹훅 URL
+            **웹훅 URL**
         productType:
           optional: true
           type: resourceRef
           $ref: "#/resources/entity/ProductType"
           description: |
-            상품 유형(휴대폰 빌링키 발급시 필수 입력)
+            **상품 유형**
+
+            휴대폰 빌링키 발급시 필수 입력입니다.
         bypass:
           optional: true
           type: resourceRef
@@ -4332,19 +4404,20 @@ resources:
         paymentId:
           type: string
           description: |
-            주문 번호
+            **결제 ID**
+
+            고객사에서 임의로 ID를 정합니다.
+
+            이미 결제 완료된 `paymentId`로 결제를 요청하는 경우 실패합니다.
         orderName:
-          type: string
-          description: |
-            주문명
+          type: resourceRef
+          $ref: "#/resources/entity/PaymentOrderName"
         totalAmount:
-          type: integer
-          description: |
-            결제 금액(실제 결제 금액 X 10^ 해당 currency의 scale factor, 예) $1.50 -> 150)
+          type: resourceRef
+          $ref: "#/resources/entity/PaymentTotalAmount"
         channelKey:
-          type: string
-          description: |
-            채널 이름
+          type: resourceRef
+          $ref: "#/resources/entity/ChannelKey"
         taxFreeAmount:
           optional: true
           type: resourceRef
@@ -4615,17 +4688,17 @@ resources:
         paymentId:
           type: string
           description: |
-            주문 번호
-        orderName:
-          type: string
-          description: |
-            주문명
-        totalAmount:
-          type: integer
-          description: |
-            결제 금액(실제 결제 금액 X 10^ 해당 currency의 scale factor
+            **결제 ID**
 
-            예) $1.50 -> 150)
+            고객사에서 임의로 ID를 정합니다.
+
+            이미 결제 완료된 `paymentId`로 결제를 요청하는 경우 실패합니다.
+        orderName:
+          type: resourceRef
+          $ref: "#/resources/entity/PaymentOrderName"
+        totalAmount:
+          type: resourceRef
+          $ref: "#/resources/entity/PaymentTotalAmount"
         currency:
           type: resourceRef
           $ref: "#/resources/entity/Currency"
@@ -4662,7 +4735,9 @@ resources:
           items:
             type: string
           description: |
-            웹훅 URL
+            **웹훅 URL**
+
+            웹훅을 받을 URL 목록입니다. 값이 있으면 관리자 콘솔에 설정한 URL로는 웹훅이 발송되지 않습니다.
         locale:
           optional: true
           type: resourceRef
@@ -4671,7 +4746,9 @@ resources:
           optional: true
           type: boolean
           description: |
-            문화비 지출 여부
+            **문화비 지출 여부**
+
+            도서, 공연, 박물관 등 문화비 지출 여부
         customData:
           optional: true
           type: json
@@ -4685,13 +4762,15 @@ resources:
           optional: true
           type: string
           description: |
-            앱 URL Scheme
+            **앱 URL 스킴**
         productType:
           optional: true
           type: resourceRef
           $ref: "#/resources/entity/ProductType"
           description: |
-            상품 유형(휴대폰 빌링키 발급시 필수 입력)
+            **상품 유형**
+
+            휴대폰 빌링키 발급시 필수 입력입니다.
         storeDetails:
           optional: true
           type: resourceRef
@@ -4725,10 +4804,11 @@ resources:
         paymentId:
           type: string
           description: |
-            **고객사 주문 ID**
+            **결제 ID**
 
-            - 임의로 ID를 정하여 입력합니다.
-            - 이미 결제 완료된 `paymentId`로 결제를 요청하는 경우 실패합니다.
+            고객사에서 임의로 ID를 정합니다.
+
+            이미 결제 완료된 `paymentId`로 결제를 요청하는 경우 실패합니다.
         orderName:
           type: resourceRef
           $ref: "#/resources/entity/PaymentOrderName"
@@ -4945,9 +5025,7 @@ resources:
     PaymentRequestUnionCard:
       type: object
       description: |
-        **카드 정보**
-
-        카드 결제 시, 카드 결제에 대한 세부 정보
+        **카드 결제 설정**
       properties:
         cardCompany:
           type: resourceRef
@@ -5119,9 +5197,7 @@ resources:
     PaymentRequestUnionMobile:
       type: object
       description: |
-        **휴대폰 소액결제 정보**
-
-        휴대폰 소액결제시 휴대폰 소액결제 상세 옵션
+        **휴대전화 결제 설정**
       properties:
         carrier:
           type: resourceRef
@@ -5142,9 +5218,7 @@ resources:
     PaymentRequestUnionGiftCertificate:
       type: object
       description: |
-        **상품권 정보**
-
-        상품권 결제시 상품권 결제 상세 옵션
+        **상품권 결제 설정**
       properties:
         giftCertificateType:
           type: resourceRef
@@ -5184,7 +5258,9 @@ resources:
           optional: true
           type: string
           description: |
-            현금영수증 발행 대상 식별 정보
+            **현금영수증 구매자 번호**
+
+            카드일련번호, 주민등록번호, 사업자등록번호, 휴대전화번호 중 하나입니다.
         useCardPoint:
           optional: true
           type: boolean
@@ -5254,18 +5330,18 @@ resources:
         validHours:
           type: integer
           description: |
-            **유효 시간(단위: 시간)**
+            **유효 시간 (단위: 시간)**
         dueDate:
           type: string
           description: |
-            **만료일시(ISO8601 형식)**
+            **만료일시**
+
+            RFC 3339 형식입니다.
   response:
     IssueBillingKeyResponse:
       type: object
       description: |
-        iframe/popup 방식으로 PG사 창이 렌더링 된 경우
-
-        프로세스 종료 후, 콜백 함수로 전달 될 빌링키 발급 정보 데이터
+        **리디렉션 없이 빌링키 발급 UI가 표시된 경우 반환값**
       properties:
         transactionType:
           type: stringLiteral
@@ -5275,7 +5351,9 @@ resources:
         billingKey:
           type: string
           description: |
-            빌링 결제를 일으킬 때 사용하는 포트원 빌링키
+            **빌링키**
+
+            빌링 결제를 일으킬 때 사용하는 빌링키입니다.
         code:
           type: string
           description: |
@@ -5301,9 +5379,7 @@ resources:
     PaymentResponse:
       type: object
       description: |
-        iframe/popup 방식으로 PG사 창이 렌더링 된 경우
-
-        프로세스 종료 후, 콜백 함수로 전달 될 결제 정보 데이터
+        **리디렉션 없이 결제 UI가 표시된 경우 반환값**
       properties:
         transactionType:
           type: stringLiteral
@@ -5322,8 +5398,6 @@ resources:
           type: string
           description: |
             **결제 ID**
-
-            결제 요청에 전달된 결제 ID입니다.
         code:
           type: string
           description: |
@@ -5356,28 +5430,36 @@ resources:
             `ISSUE_BILLING_KEY_AND_PAY`
         txId:
           type: string
+          description: |
+            **결제 시도 ID**
+
+            초회결제에 해당하는, 요청마다 고유하게 생성되는 결제 시도 ID입니다.
         paymentId:
           type: string
           description: |
-            결제 요청에 전달된 결제 ID
+            **결제 ID**
+
+            초회결제의 결제 ID입니다.
         billingKey:
           type: string
           description: |
-            빌링 결제를 일으킬 때 사용하는 포트원 빌링키
+            **빌링키**
+
+            빌링결제를 일으킬 때 사용하는 빌링키입니다.
         code:
           type: string
           optional: true
           description: |
             **오류 코드**
 
-            - 실패한 경우 오류 코드입니다.
+            실패한 경우 오류 코드입니다.
         message:
           type: string
           optional: true
           description: |
             **오류 메시지**
 
-            - 실패한 경우 오류 메시지입니다.
+            실패한 경우 오류 메시지입니다.
         pgCode:
           type: resourceRef
           optional: true
@@ -5387,9 +5469,7 @@ resources:
           optional: true
           $ref: "#/resources/entity/PgMessage"
       description: |
-        iframe/popup 방식으로 PG사 창이 렌더링 된 경우
-
-        프로세스 종료 후, 콜백 함수로 전달 될 빌링키 발급 및 결제 정보 데이터
+        **리디렉션 없이 빌링키 발급 및 초회결제 UI가 표시된 경우 반환값**
     IdentityVerificationResponse:
       type: object
       properties:
@@ -5399,33 +5479,33 @@ resources:
           description: |
             **트랜잭션 유형**
 
-            - 본인인증의 경우 경우 항상 `IDENTITY_VERIFICATION`으로 전달됩니다.
+            본인인증의 경우 경우 항상 `IDENTITY_VERIFICATION`으로 전달됩니다.
         identityVerificationId:
           type: string
           description: |
             **본인인증 ID**
 
-            - 본인인증 ID입니다.
+            본인인증 ID입니다.
         identityVerificationTxId:
           type: string
           description: |
             **본인인증 시도 ID**
 
-            - 요청마다 고유하게 생성되는 본인인증 시도 ID입니다.
+            요청마다 고유하게 생성되는 본인인증 시도 ID입니다.
         code:
           type: string
           optional: true
           description: |
             **오류 코드**
 
-            - 실패한 경우 오류 코드입니다.
+            실패한 경우 오류 코드입니다.
         message:
           type: string
           optional: true
           description: |
             **오류 메시지**
 
-            - 실패한 경우 오류 메시지입니다.
+            실패한 경우 오류 메시지입니다.
         pgCode:
           type: resourceRef
           optional: true
@@ -5436,7 +5516,6 @@ resources:
           $ref: "#/resources/entity/PgMessage"
       description: |
         **리디렉션 없이 결제 UI가 표시된 경우 반환값**
-
 methods:
   requestPayment:
     input:
