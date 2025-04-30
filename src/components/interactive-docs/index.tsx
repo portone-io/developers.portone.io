@@ -139,7 +139,7 @@ export function createInteractiveDoc<
         ref={ref!}
         onClick={handleClick}
         data-section={props.section}
-        class="cursor-pointer border-l-5 border-white rounded px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF2EC] [&:not([data-active])]:hover:border-slate-2"
+        class="cursor-pointer border-l-5 border-white rounded px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF8F5] [&:not([data-active])]:hover:border-slate-2"
       >
         {props.children}
       </div>
