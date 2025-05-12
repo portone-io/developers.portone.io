@@ -1,9 +1,13 @@
 import type { APIHandler } from "@solidjs/start/server";
 
-import type { CodeExample } from "~/state/interactive-docs/index.jsx";
+import {
+  type CodeExample,
+  PayMethod,
+} from "~/state/interactive-docs/index.jsx";
+import { PaymentGateway } from "~/type";
 
 import * as files from "./_preview/frontend";
-import { type Params, type Sections, validateParams } from "./_preview/type";
+import { type Params, type Sections } from "./_preview/type";
 import { formatCodeExample, markdownResponse } from "./_preview/utils";
 
 /**
@@ -19,25 +23,23 @@ import { formatCodeExample, markdownResponse } from "./_preview/utils";
 export const GET: APIHandler = (event): Promise<Response> => {
   // 요청 URL에서 쿼리 파라미터 추출
   const url = new URL(event.request.url);
-  const pg = url.searchParams.get("pg");
-  const payMethod = url.searchParams.get("payMethod");
-  const smartRouting = url.searchParams.get("smartRouting");
+  const pg = PaymentGateway.parse(url.searchParams.get("pg"));
+  const payMethod = PayMethod.parse(url.searchParams.get("payMethod"));
   const framework = url.searchParams.get("framework");
 
   const response = (() => {
     try {
       // 결제 파라미터 검증 및 정규화
       // 파라미터가 지원되는 PG와 호환되는지 확인
-      const codeParams = validateParams({
-        pg,
-        payMethod,
-        smartRouting,
-      });
+      const codeParams = {
+        pgName: pg,
+        payMethod: payMethod,
+      } as Params;
 
       // 여러 코드 예제를 하나의 마크다운 문자열로 포맷팅하는 헬퍼 함수
       const makeContent = (examples: CodeExample<Params, Sections>[]) => {
         return examples
-          .map((example) => formatCodeExample(example, codeParams))
+          .map((example) => formatCodeExample(example, codeParams, () => pg))
           .join("\n");
       };
 

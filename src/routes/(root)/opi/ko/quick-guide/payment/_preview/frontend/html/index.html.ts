@@ -51,7 +51,7 @@ export default code<{
         <p />
         <button type="button" class="closeDialog">닫기</button>
       </dialog>
-      ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+      ${({ when }) => when(({ payMethod }) => payMethod !== "virtualAccount")`
       <dialog id="successDialog">
         <header>
           <h1>결제 성공</h1>
@@ -60,7 +60,7 @@ export default code<{
         <button type="button" class="closeDialog">닫기</button>
       </dialog>
       `}
-      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+      ${({ when }) => when(({ payMethod }) => payMethod === "virtualAccount")`
       <dialog id="virtualAccountDialog">
         <header>
           <h1>가상계좌 발급 완료</h1>
@@ -115,8 +115,11 @@ export default code<{
 
             ${({ section }) => section("client:request-payment")`
             const paymentId = randomId()
-            const payment = await PortOne.requestPayment(${({ params }) => {
-              const paymentRequest = createPaymentRequest(params, "");
+            const payment = await PortOne.requestPayment(${({
+              params,
+              pgName,
+            }) => {
+              const paymentRequest = createPaymentRequest(pgName, params, "");
               if (paymentRequest === null) {
                 return code`null`;
               }
@@ -190,7 +193,7 @@ export default code<{
             if (completeResponse.ok) {
               const paymentComplete = await completeResponse.json()
               ${({ when }) => when(
-                ({ pg }) => pg.payMethods !== "virtualAccount",
+                ({ payMethod }) => payMethod !== "virtualAccount",
               )`
                 ${({ section }) => section("client:handle-payment-status:paid")`
               if (paymentComplete.status === "PAID") {
@@ -199,7 +202,7 @@ export default code<{
                 `}
               `}
               ${({ when }) => when(
-                ({ pg }) => pg.payMethods === "virtualAccount",
+                ({ payMethod }) => payMethod === "virtualAccount",
               )`
                 ${({ section }) => section(
                   "client:handle-payment-status:virtual-account-issued",
@@ -232,12 +235,12 @@ export default code<{
           window.failMessage.replaceChildren(message)
           window.failDialog.open = true
         }
-        ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+        ${({ when }) => when(({ payMethod }) => payMethod !== "virtualAccount")`
         this.openSuccessDialog = () => {
           window.successDialog.open = true
         }
         `}
-        ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+        ${({ when }) => when(({ payMethod }) => payMethod === "virtualAccount")`
         this.openVirtualAccountDialog = () => {
           window.virtualAccountDialog.open = true
         }
