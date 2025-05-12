@@ -1,6 +1,7 @@
 import { match, P } from "ts-pattern";
 
-import type { PayMethod, Pg } from "~/state/interactive-docs";
+import type { PayMethod } from "~/state/interactive-docs";
+import type { PaymentGateway } from "~/type";
 
 type CodeForPreview<Sections extends string> = Readonly<{
   code: string;
@@ -12,12 +13,9 @@ export type Section = Readonly<{
   endLine: number;
 }>;
 
-export type DefaultParams = Readonly<{
-  pg: {
-    name: Pg;
-    payMethods: PayMethod;
-  };
-}>;
+export type DefaultParams = {
+  payMethod: PayMethod;
+};
 
 type Primitive = string | number | false | null | undefined;
 
@@ -33,6 +31,7 @@ export type CodeResult<Sections extends string> = Partial<{
 
 export type CodeFunction<Params extends DefaultParams, Result> = (
   params: Params,
+  pgName: () => PaymentGateway,
 ) => Result;
 
 type CodeTemplateFunction<
@@ -52,6 +51,7 @@ type CodeHelpers<
     predicate: (params: Params) => boolean,
   ) => CodeTemplateFunction<Params, Sections>;
   params: Params;
+  pgName: () => PaymentGateway;
   indentObject: (obj: unknown) => string;
 }>;
 
@@ -90,7 +90,10 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
   currentLine = 1;
   currentIndentation = "";
 
-  constructor(private readonly params: Params) {}
+  constructor(
+    private readonly params: Params,
+    private readonly pgName: () => PaymentGateway,
+  ) {}
 
   generate(
     codes: TemplateStringsArray,
@@ -146,7 +149,7 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
         (fn) => {
           const result = fn(this.getHelpers());
           if (typeof result === "function") {
-            const { code, sections = {} } = result(this.params);
+            const { code, sections = {} } = result(this.params, this.pgName);
             if (code) {
               this.append(code);
             }
@@ -164,6 +167,7 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
       section: this.sectionResolver(),
       when: this.whenResolver(),
       params: this.params,
+      pgName: this.pgName,
       indentObject: this.indentObjectResolver(),
     } as const;
   }
@@ -171,10 +175,10 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
   sectionResolver(): CodeHelpers<Params, Sections>["section"] {
     return (sectionName) =>
       (codes, ...interpolations) =>
-      (params) => {
+      (params, pgName) => {
         const startLine = this.currentLine;
 
-        const generator = new CodeGenerator<Params, Sections>(params);
+        const generator = new CodeGenerator<Params, Sections>(params, pgName);
         generator.currentLine = startLine;
         generator.currentIndentation = this.getCurrentIndentation();
         generator.generate(codes, interpolations);
@@ -189,9 +193,9 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
   whenResolver(): CodeHelpers<Params, Sections>["when"] {
     return (predicate) =>
       (codes, ...interpolations) =>
-      (params) => {
+      (params, pgName) => {
         if (predicate(params)) {
-          const generator = new CodeGenerator<Params, Sections>(params);
+          const generator = new CodeGenerator<Params, Sections>(params, pgName);
           generator.currentLine = this.currentLine;
           generator.currentIndentation = this.getCurrentIndentation();
           generator.generate(codes, interpolations);
@@ -300,8 +304,11 @@ export const code = <T extends { params: DefaultParams; sections: string }>(
   codes: TemplateStringsArray,
   ...interpolations: readonly Interpolation<T["params"], T["sections"]>[]
 ): Code<T["params"], T["sections"]> => {
-  return (params) => {
-    const generator = new CodeGenerator<T["params"], T["sections"]>(params);
+  return (params, pgName) => {
+    const generator = new CodeGenerator<T["params"], T["sections"]>(
+      params,
+      pgName,
+    );
     generator.generate(codes, interpolations);
     return { code: generator.codeString, sections: generator.sections };
   };

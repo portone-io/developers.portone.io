@@ -92,7 +92,7 @@ class PaymentController(secret: PortOneSecretProperties) {
         throw SyncPaymentException()
       }
     `}
-    ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+    ${({ when }) => when(({ payMethod }) => payMethod !== "virtualAccount")`
     return if (actualPayment is PaidPayment) {
       if (!verifyPayment(actualPayment)) throw SyncPaymentException()
       logger.info("결제 성공 {}", actualPayment)
@@ -104,7 +104,7 @@ class PaymentController(secret: PortOneSecretProperties) {
         }
       }
     `}
-    ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+    ${({ when }) => when(({ payMethod }) => payMethod === "virtualAccount")`
     return if (actualPayment is VirtualAccountIssuedPayment) {
       payment.copy(status = "VIRTUAL_ACCOUNT_ISSUED").also {
         paymentStore[paymentId] = it
