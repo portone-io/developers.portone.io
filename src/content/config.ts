@@ -6,7 +6,7 @@ import Sharp from "sharp";
 import type { Picture } from "vite-imagetools";
 import { z } from "zod";
 
-import { SystemVersion } from "~/type";
+import { PaymentGateway, SystemVersion } from "~/type";
 
 export interface ParseContext {
   fileName: string;
@@ -73,6 +73,7 @@ const DocsEntry = z.object({
   targetVersions: z.array(SystemVersion).optional(),
   versionVariants: z.record(SystemVersion, z.string()).optional(),
   customLayout: z.enum(["InteractiveDocs"]).optional(),
+  targetPg: PaymentGateway.optional(),
 });
 export type DocsEntry = z.infer<typeof DocsEntry>;
 
