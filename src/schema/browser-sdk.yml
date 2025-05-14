@@ -1237,6 +1237,8 @@ resources:
           optional: true
           description: |
             **구매자 성별**
+
+            정보성 필드입니다.
         birthYear:
           type: string
           optional: true
@@ -1281,18 +1283,10 @@ resources:
     EasyPayPaymentMethod:
       type: enum
       variants:
-        CARD:
-          description: |
-            카드
-        CHARGE:
-          description: |
-            포인트(충전, 적립) 결제
-        TRANSFER:
-          description: |
-            계좌결제
-        MONEY:
-          description: |
-            포인트 및 계좌결제가 모두 가능한 경우
+        CARD: {}
+        TRANSFER: {}
+        CHARGE: {}
+        MONEY: {}
       description: |
         간편결제 결제수단
     EasyPayProvider:
@@ -1390,7 +1384,7 @@ resources:
     GiftCertificateType:
       type: enum
       description: |
-        **상품권 결제시, 상품권을 특정할 수 있는 값**
+        **상품권 종류**
       variants:
         BOOKNLIFE:
           description: 도서문화상품권
@@ -1746,8 +1740,8 @@ resources:
         **상점 정보**
 
         - KSNET 카카오페이의 경우 필수 입력
-        - (신)나이스페이의 경우 매출 전표에 표기 할 용도로 선택 입력
-        - 이니시스 일본결제의 경우 JPPG(gmoPayment) 결제의 상점정보로 사용되거나 편의점 결제 시 영수증 표시 정보로 사용됨.
+        - 나이스페이먼츠의 경우 매출 전표에 표기 할 용도로 선택 입력
+        - KG이니시스 일본결제의 경우 JPPG(gmoPayment) 결제의 상점정보로 사용되거나 편의점 결제 시 영수증 표시 정보로 사용됨.
     TransactionType:
       type: enum
       variants:
@@ -1758,7 +1752,7 @@ resources:
         IDENTITY_VERIFICATION:
           description: 본인 인증
         ISSUE_BILLING_KEY_AND_PAY:
-          description: 빌링키 발급과 동시에 결제
+          description: 빌링키 발급 및 초회결제
       description: |
         **트랜잭션 유형**
 
@@ -1971,7 +1965,7 @@ resources:
                 인증 창 좌측 상단 KG이니시스 로고 대신 들어갈 로고의 URL입니다.
                 최적 크기는 가로 164px, 세로 28px입니다.
 
-                HTTP URL인 경우 로고가 표시되지 않을 수 있습니다.
+                HTTPS URL을 입력합니다. (HTTP URL인 경우 표시되지 않을 수 있습니다.)
             DI_CODE:
               type: string
               optional: true
@@ -2388,7 +2382,7 @@ resources:
         PaypalV2Style:
           type: object
           description: |
-            Paypal 빌링키 발급 UI 호출 시 필요한 파라미터
+            페이팔 빌링키 발급 UI 호출 시 필요한 파라미터
           properties:
             color:
               type: resourceRef
@@ -5174,7 +5168,8 @@ resources:
             </Condition>
 
             <Condition when={({ pg: { name } }) => ['kpn'].includes(name)}>
-            한국결제네트웍스에서는 `ANONYMOUS`인 경우 현금영수증 설정이 표시되지 않고, `ANONYMOUS` 이외의 값일 경우 UI에서 현금영수증 정보 입력이 강제됩니다. 지정하지 않으면 현금영수증 정보 입력은 선택입니다.
+            한국결제네트웍스에서는 `ANONYMOUS`인 경우 현금영수증 설정이 표시되지 않고, `ANONYMOUS` 이외의 값일 경우 UI에서 현금영수증 정보 입력이 강제됩니다.
+            지정하지 않으면 현금영수증 정보 입력은 선택입니다.
 
             `PERSONAL`과 `CORPORATE`의 차이는 없습니다.
             </Condition>
@@ -5254,18 +5249,38 @@ resources:
           optional: true
           type: resourceRef
           $ref: "#/resources/entity/CashReceiptType"
+          description: |
+            **현금영수증 유형**
+
+            나이스페이먼츠, 토스페이먼츠 브랜드페이에서 사용합니다.
+
+            <Condition when={({ pg: { name } }) => ['nice'].includes(name)}>
+            나이스페이먼츠에서는 네이버페이 포인트·머니, SSGPAY 계좌이체 UI를 직접 호출할 때 필수입니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['brandpay'].includes(name)}>
+            토스페이먼츠 브랜드페이에서 사용됩니다.
+            </Condition>
         customerIdentifier:
           optional: true
           type: string
+          # TODO 꼭 필수가 아닌 곳들도 있음
           description: |
             **현금영수증 구매자 번호**
 
             카드일련번호, 주민등록번호, 사업자등록번호, 휴대전화번호 중 하나입니다.
+
+            `cashReceiptType`이 있고 `ANONYMOUS`가 아닐 때 필수입니다.
         useCardPoint:
           optional: true
           type: boolean
           description: |
-            카드사 포인트 사용 여부
+            **카드사 포인트 사용 여부**
+
+            토스페이먼츠 브랜드페이에서 사용합니다.
+            `true`로 설정하면 카드사 포인트 사용이 켜진 상태로 UI가 표시됩니다.
+            이외의 경우 구매자가 카드사 포인트 사용 여부를 선택할 수 있습니다.
+            토스페이먼츠와의 추가 게약이 필요합니다.
         availablePayMethods:
           optional: true
           type: array
@@ -5273,12 +5288,55 @@ resources:
             type: resourceRef
             $ref: "#/resources/entity/EasyPayPaymentMethod"
           description: |
-            노출을 허용할 결제 수단의 종류
+            **표시할 간편결제 수단 목록**
+
+            나이스페이먼츠, NHN KCP, KSNET에서 일부 간편결제의 UI를 직접 호출할 때 사용합니다.
+
+            PG 제휴를 통해 간편결제를 이용할 때에는 복합결제가 불가능한 경우가 많습니다. 즉, 전액 카드 결제나 전액 포인트 결제 등만 가능합니다.
+            보통 UI 안에서 결제 수단을 선택하게 되나, 일부 PG에서는 UI를 호출할 때 수단 중 하나를 지정할 수 있는 기능을 제공하기도 합니다.
+            이때 `availablePayMethods`가 사용됩니다.
+
+            단, 나이스페이먼츠를 통해 네이버페이 UI를 직접 호출할 때에는 **필수**임에 유의합니다.
+
+            <Condition when={({ pg: { name } }) => ['nice'].includes(name)}>
+            나이스페이먼츠에서는 네이버페이, 토스페이 SSGPAY UI를 직접 호출할 때에 사용합니다.
+
+            네이버페이 UI를 직접 호출할 때에는 필수입니다.
+
+            - `CARD`: 네이버페이 카드 결제 UI를 엽니다.
+            - `CHARGE` 또는 `MONEY`: 네이버페이 포인트·머니 결제 UI를 엽니다.
+
+            토스페이 UI를 직접 호출할 때에는 선택입니다. 기본값은 둘 모두 지정한 것과 같습니다.
+
+            - `CARD`: 토스페이 카드 결제 UI를 엽니다.
+            - `CHARGE` 또는 `MONEY`: 토스페이 포인트 결제 UI를 엽니다.
+            - 둘 모두 지정: 카드 또는 포인트 결제 중 하나를 선택하는 UI를 엽니다.
+
+            SSGPAY UI를 직접 호출하실 때에는 파라미터 관련 문의 바랍니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['kcp'].includes(name)}>
+            NHN KCP에서는 네이버페이 UI를 직접 호출할 때에 사용합니다. 기본값은 둘 모두 지정한 것과 같습니다.
+
+            - `CARD`: 네이버페이 카드 결제 UI를 엽니다.
+            - `CHARGE` 또는 `MONEY`: 네이버페이 포인트·머니 결제 UI를 엽니다.
+            - 둘 모두 지정: 카드 또는 포인트·머니 결제 중 하나를 선택하는 UI를 엽니다.
+            </Condition>
+
+            <Condition when={({ pg: { name } }) => ['ksnet'].includes(name)}>
+            KSNET에서는 카카오페이 UI를 직접 호출할 때에 사용합니다. 기본값은 둘 모두 지정한 것과 같습니다.
+
+            - `CARD`: 카카오페이 카드 결제 UI를 엽니다.
+            - `CHARGE` 또는 `MONEY`: 카카오페이 포인트 결제 UI를 엽니다.
+            - 둘 모두 지정: 카드 또는 포인트 결제 중 하나를 선택하는 UI를 엽니다.
+            </Condition>
         useInstallment:
           optional: true
           type: boolean
           description: |
-            할부 사용 가능 여부
+            **할부 사용 가능 여부**
+
+            `false`로 지정하면 신용카드 할부 사용을 금지합니다. 토스페이(직계약)에서 지원합니다.
     PaymentRequestUnionPaypal:
       type: emptyObject
     PaymentRequestUnionAlipay:
