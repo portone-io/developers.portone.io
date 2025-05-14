@@ -23,7 +23,7 @@ function generateDescription({
   if (fs.existsSync(path.dirname(file)) === false) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
   }
-  fs.writeFileSync(file, description);
+  fs.writeFileSync(file, `import { Condition } from "~/components/Condition";\n\n${description}`);
   const componentName = pascalCase(
     `${path
       .posix

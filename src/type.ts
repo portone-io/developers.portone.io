@@ -8,6 +8,22 @@ export const isLang = (v: unknown) => Lang.safeParse(v).success;
 export const SystemVersion = z.enum(["v1", "v2"]);
 export type SystemVersion = z.infer<typeof SystemVersion>;
 
+export const PaymentGateway = z.enum([
+  "nice",
+  "smartro",
+  "toss",
+  "kpn",
+  "inicis",
+  "ksnet",
+  "kcp",
+  "kakao",
+  "naver",
+  "tosspay",
+  "hyphen",
+  "eximbay",
+]);
+export type PaymentGateway = z.infer<typeof PaymentGateway>;
+
 export type YamlNavMenuToplevelItem =
   | YamlNavMenuPageSugar
   | YamlNavMenuPage
