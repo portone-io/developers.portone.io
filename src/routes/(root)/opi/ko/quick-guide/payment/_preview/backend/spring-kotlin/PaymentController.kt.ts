@@ -117,7 +117,7 @@ class PaymentController(secret: PortOneSecretProperties) {
 
   ${({ section }) => section("server:complete-payment:verify-payment")`
   fun verifyPayment(payment: PaidPayment): Boolean {
-    if (payment.channel.type !== SelectedChannelType.Live) return false
+    if (payment.channel.type != SelectedChannelType.Live) return false
     return payment.customData?.let { customData ->
       items[json.decodeFromString<CustomData>(customData).item]?.let {
         payment.orderName == it.name &&
