@@ -8,6 +8,7 @@ export default code<{
 }>`
 ${({ section }) => section("server:import-portone-sdk")`
 import io.portone.sdk.server.common.Currency
+import io.portone.sdk.server.common.SelectedChannelType
 import io.portone.sdk.server.payment.PaidPayment
 import io.portone.sdk.server.payment.PaymentClient
 import io.portone.sdk.server.payment.VirtualAccountIssuedPayment
@@ -115,14 +116,16 @@ class PaymentController(secret: PortOneSecretProperties) {
   }
 
   ${({ section }) => section("server:complete-payment:verify-payment")`
-  fun verifyPayment(payment: PaidPayment): Boolean =
-    payment.customData?.let { customData ->
+  fun verifyPayment(payment: PaidPayment): Boolean {
+    if (payment.channel.type !== SelectedChannelType.Live) return false
+    return payment.customData?.let { customData ->
       items[json.decodeFromString<CustomData>(customData).item]?.let {
         payment.orderName == it.name &&
           payment.amount.total == it.price.toLong() &&
           payment.currency.value == it.currency
       }
     } == true
+  }
   `}
 
   ${({ section }) => section("server:webhook")`
