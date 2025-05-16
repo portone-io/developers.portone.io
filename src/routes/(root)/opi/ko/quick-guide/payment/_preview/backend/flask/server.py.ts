@@ -111,6 +111,8 @@ def sync_payment(payment_id):
 
   ${({ section }) => section("server:complete-payment:verify-payment")`
   def verify_payment(payment):
+    if payment.channel.type != "LIVE":
+      return False
     if payment.custom_data is None:
       return False
     custom_data = json.loads(payment.custom_data)

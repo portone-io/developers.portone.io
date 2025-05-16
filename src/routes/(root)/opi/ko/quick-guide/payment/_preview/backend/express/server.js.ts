@@ -101,6 +101,7 @@ async function syncPayment(paymentId) {
 
 ${({ section }) => section("server:complete-payment:verify-payment")`
 function verifyPayment(payment) {
+  if (payment.channel.type !== "LIVE") return false
   if (payment.customData == null) return false
   const customData = JSON.parse(payment.customData)
   const item = items.get(customData.item)
