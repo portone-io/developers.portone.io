@@ -9,6 +9,15 @@ import Details from "~/components/gitbook/Details";
 ## 키움페이 결제 특이사항
 
 <Details>
+  <Details.Summary>주문명, 주문자명은 EUC-KR에서 표현 가능한 문자가 사용해야함</Details.Summary>
+
+  <Details.Content>
+    키움페이의 경우 EUC-KR 인코딩을 사용합니다. 따라서 주문자명(buyer_name), 주문명(name) 등의
+    파라미터에 EUC-KR에서 표현 가능한 문자를 입력해야 합니다.
+  </Details.Content>
+</Details>
+
+<Details>
   <Details.Summary>PC 결제는 `success`, 모바일 결제는 `imp_success` 전달</Details.Summary>
 
   <Details.Content>
@@ -160,12 +169,29 @@ import Details from "~/components/gitbook/Details";
 </Details>
 
 <Details>
-  <Details.Summary>면세금액은 카드 결제만 설정 가능</Details.Summary>
+  <Details.Summary>복합과세 거래는 일부 결제수단에서만 가능</Details.Summary>
 
   <Details.Content>
-    결제창(`IMP.request_pay` 함수) 호출시 총 결제 금액(`amount`)중 면세 금액(`tax_free`)을 설정할 수 있습니다.
-    단, 키움페이 시스템 상 면세 금액은 카드 결제(`pay_method: "card"`) 시에만 가능하고 계좌이체 / 가상계좌 결제 시에는
-    설정할 수 없어 전액 과세 처리 됩니다.
+    결제창(`IMP.request_pay` 함수) 호출시 총 결제 금액(`amount`)중 면세 금액(`tax_free`)을 설정하여 복합과세 거래로 진행할 수 있습니다.
+    단, 키움페이 시스템 상 면세 금액은 카드결제 혹은 간편결제 시에만 가능하고 계좌이체 / 가상계좌 결제 시에는 설정할 수 없어 전액 과세 처리 됩니다.
+
+    - 복합과세 거래가 가능한 결제수단 (pay_method)
+      - card
+      - kakaopay
+      - naverpay
+      - payco
+      - applepay
+      - samsung
+  </Details.Content>
+</Details>
+
+<Details>
+  <Details.Summary>카카오페이, 페이코 거래 부분취소 시  취소금액 중 면세금액을 설정 불가</Details.Summary>
+
+  <Details.Content>
+    카카오페이, 페이코 거래를 부분취소 하는 경우 취소금액 중 면세금액을 설정할 수 없습니다.
+    따라서 카카오페이, 페이코 복합과세를 부분취소하는 경우 취소금액 중 면세금액은 취소 요청한 금액을 기준으로 기본 부가세율로 계산된 면세금액이 적용되어
+    취소됩니다.
   </Details.Content>
 </Details>
 
