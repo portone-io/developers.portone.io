@@ -81,7 +81,7 @@ async function syncPayment(paymentId) {
     throw e
   }
   `}
-  ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+  ${({ when }) => when(({ payMethod }) => payMethod !== "virtualAccount")`
   if (actualPayment.status === "PAID") {
     if (!verifyPayment(actualPayment)) return false
     if (payment.status === "PAID") return payment
@@ -89,7 +89,7 @@ async function syncPayment(paymentId) {
     console.info("결제 성공", actualPayment)
   } else {
   `}
-  ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+  ${({ when }) => when(({ payMethod }) => payMethod === "virtualAccount")`
   if (actualPayment.status === "VIRTUAL_ACCOUNT_ISSUED") {
     payment.status = "VIRTUAL_ACCOUNT_ISSUED"
   } else {

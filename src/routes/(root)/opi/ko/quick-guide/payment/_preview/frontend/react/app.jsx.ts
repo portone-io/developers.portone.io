@@ -48,8 +48,8 @@ export function App() {
     setPaymentStatus({ status: "PENDING" })
     ${({ section }) => section("client:request-payment")`
     const paymentId = randomId()
-    const payment = await PortOne.requestPayment(${({ params }) => {
-      const paymentRequest = createPaymentRequest(params, "");
+    const payment = await PortOne.requestPayment(${({ params, pgName }) => {
+      const paymentRequest = createPaymentRequest(pgName, params, "");
       if (paymentRequest === null) {
         return code`{`;
       }
@@ -119,7 +119,7 @@ export function App() {
       }),
     })
     if (completeResponse.ok) {
-      ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+      ${({ when }) => when(({ payMethod }) => payMethod !== "virtualAccount")`
         ${({ section }) => section("client:handle-payment-status:paid")`
       const paymentComplete = await completeResponse.json()
       setPaymentStatus({
@@ -127,7 +127,7 @@ export function App() {
       })
         `}
       `}
-      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+      ${({ when }) => when(({ payMethod }) => payMethod === "virtualAccount")`
         ${({ section }) => section(
           "client:handle-payment-status:virtual-account-issued",
         )`
@@ -194,7 +194,7 @@ export function App() {
           </button>
         </dialog>
       )}
-      ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+      ${({ when }) => when(({ payMethod }) => payMethod !== "virtualAccount")`
       <dialog open={paymentStatus.status === "PAID"}>
         <header>
           <h1>결제 성공</h1>
@@ -205,7 +205,7 @@ export function App() {
         </button>
       </dialog>
       `}
-      ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+      ${({ when }) => when(({ payMethod }) => payMethod === "virtualAccount")`
       <dialog open={paymentStatus.status === "VIRTUAL_ACCOUNT_ISSUED"}>
         <header>
           <h1>가상계좌 발급 완료</h1>
