@@ -1,4 +1,5 @@
 import { createMemo, type ParentProps, Show } from "solid-js";
+import { MDXProvider } from "solid-mdx";
 
 import { CodePanel } from "~/components/interactive-docs/CodePanel";
 import LanguageSelect from "~/components/interactive-docs/LanguageSelect";
@@ -43,7 +44,7 @@ export function InteractiveDocs(
         <div class="mb-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
         </div>
-        {props.children}
+        <MDXProvider components={prose}>{props.children}</MDXProvider>
       </article>
       <CodePanel />
     </div>
