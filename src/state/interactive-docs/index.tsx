@@ -140,8 +140,8 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     const pgOptions = createMemo(() => initial().pgOptions);
     // PG사 변경 시 처리
     createEffect(
-      on(pgOptions, (pgOptions) => {
-        const pgOption = pgOptions[paymentGateway()];
+      on([paymentGateway, pgOptions], ([paymentGateway, pgOptions]) => {
+        const pgOption = pgOptions[paymentGateway];
         if (pgOption === undefined) {
           const firstPgName = Object.keys(pgOptions)[0];
           if (firstPgName !== undefined) {
