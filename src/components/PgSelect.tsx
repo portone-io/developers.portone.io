@@ -1,5 +1,5 @@
 import { Select } from "@kobalte/core/select";
-import { createMemo, startTransition } from "solid-js";
+import { createMemo, Show } from "solid-js";
 import type { Picture as VitePicture } from "vite-imagetools";
 
 import eximbayLogo from "~/assets/pg-circle/eximbay.png";
@@ -13,16 +13,15 @@ import naverLogo from "~/assets/pg-circle/naver.png";
 import niceLogo from "~/assets/pg-circle/nice.png";
 import smartroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
-import { useInteractiveDocs } from "~/state/interactive-docs";
 import { usePaymentGateway } from "~/state/payment-gateway";
 import type { PaymentGateway } from "~/type";
 
 export type PgSelectOption = {
   label: string;
-  icon: VitePicture;
+  icon: VitePicture | undefined;
 };
 
-const PgOptions = {
+export const PgOptions = {
   nice: { label: "나이스페이먼츠", icon: niceLogo },
   smartro: { label: "스마트로", icon: smartroLogo },
   toss: { label: "토스페이먼츠", icon: tossLogo },
@@ -35,45 +34,27 @@ const PgOptions = {
   tosspay: { label: "토스페이", icon: tossLogo },
   hyphen: { label: "하이픈", icon: hyphenLogo },
   eximbay: { label: "엑심베이", icon: eximbayLogo },
-} as const satisfies Record<PaymentGateway, PgSelectOption>;
+  all: { label: "모든 PG사", icon: undefined },
+} as const satisfies Record<PaymentGateway | "all", PgSelectOption>;
 
 interface PgSelectProps {
   class?: string;
+  options: (keyof typeof PgOptions)[];
 }
 
 export function PgSelect(props: PgSelectProps) {
   const { paymentGateway, setPaymentGateway } = usePaymentGateway();
-  const { params, setParams, pgOptions } = useInteractiveDocs();
-  const options = createMemo(
-    () => Object.keys(pgOptions()) as (keyof ReturnType<typeof pgOptions>)[],
-  );
-  const handleChange = (pgName: PaymentGateway | null) => {
+  const handleChange = (pgName: PaymentGateway | "all" | null) => {
     if (!pgName) return;
-    void startTransition(() => {
-      const pgOption = pgOptions()[pgName];
-      setPaymentGateway(pgName);
-      if (
-        pgOption &&
-        !pgOption.payMethods.includes(params.payMethod) &&
-        pgOption.payMethods[0]
-      ) {
-        setParams("payMethod", pgOption.payMethods[0]);
-      }
-    });
+    setPaymentGateway(pgName);
   };
-
-  const pgName = createMemo(() => {
-    const pgName = paymentGateway();
-    if (pgName === "all") return null;
-    return pgName;
-  });
 
   return (
     <Select
       class={props.class}
-      value={pgName()}
+      value={paymentGateway()}
       onChange={handleChange}
-      options={options()}
+      options={props.options}
       placeholder="PG사 선택"
       disallowEmptySelection
       itemComponent={(props) => {
@@ -88,11 +69,15 @@ export function PgSelect(props: PgSelectProps) {
                 <i class="i-ic-round-check inline-block" />
               </Select.ItemIndicator>
             </div>
-            <img
-              src={optionInfo().icon.img.src}
-              alt={optionInfo().label}
-              class="h-5 w-5"
-            />
+            <Show when={optionInfo().icon}>
+              {(icon) => (
+                <img
+                  src={icon().img.src}
+                  alt={optionInfo().label}
+                  class="h-5 w-5"
+                />
+              )}
+            </Show>
             <Select.ItemLabel class="text-sm font-medium">
               {optionInfo().label}
             </Select.ItemLabel>
