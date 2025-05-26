@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-    paths: src/schema/v2.openapi.json
+    paths:
+      - 'src/schema/v2.openapi.json'
 
 jobs:
   sync:
@@ -47,20 +48,17 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
+          cache-dependency-path: 'sdk/javascript/pnpm-lock.yaml'
 
       - name: Add empty changeset
         run: npx changeset add --empty
         working-directory: sdk/javascript
         
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-
-      - name: Install Python
-        uses: actions/setup-python@v5
-        with:
-          python-version-file: "sdk/python/pyproject.toml"
+          working-directory: 'sdk/python'
 
       - name: Install dependencies
         run: uv sync --dev
