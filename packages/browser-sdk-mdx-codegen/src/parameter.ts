@@ -57,45 +57,35 @@ function generateTypeDef({
 }): string {
   const writer = TypescriptWriter();
 
-  if (parameter.type === "resourceRef") {
-    // If there's a local description, use Parameter.TypeDef with the description
-    // Otherwise, use the referenced TypeDef component
-    if (parameter.description) {
-      // Fall through to the regular Parameter.TypeDef handling below
-    } else {
-      const modulePath = `~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts`;
-      const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
-      imports.add(
-        `import { TypeDef as ${componentName} } from "${modulePath}";`,
-      );
+  if (parameter.type === "resourceRef" && parameter.description === undefined) {
+    const modulePath = `~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts`;
+    const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
+    imports.add(`import { TypeDef as ${componentName} } from "${modulePath}";`);
 
-      writer.writeLine(`<${componentName}`);
-      writer.indent();
-      if (parameter.optional === true) {
-        writer.writeLine("optional");
-      }
-      if (ident !== undefined) {
-        writer.writeLine(`ident="${ident}"`);
-      }
-      if (leadingDescription !== undefined) {
-        const description = generateDescription({
-          imports,
-          basePath,
-          filePath: path.posix.join(parameterPath, "Leading"),
-          description: leadingDescription,
-        });
-        writer.writeLine(
-          `leadingDescription={<${description.componentName} />}`,
-        );
-      }
-      if (defaultExpanded === false) {
-        writer.writeLine("defaultExpanded={false}");
-      }
-      writer.outdent();
-      writer.writeLine("/>");
-
-      return writer.content;
+    writer.writeLine(`<${componentName}`);
+    writer.indent();
+    if (parameter.optional === true) {
+      writer.writeLine("optional");
     }
+    if (ident !== undefined) {
+      writer.writeLine(`ident="${ident}"`);
+    }
+    if (leadingDescription !== undefined) {
+      const description = generateDescription({
+        imports,
+        basePath,
+        filePath: path.posix.join(parameterPath, "Leading"),
+        description: leadingDescription,
+      });
+      writer.writeLine(`leadingDescription={<${description.componentName} />}`);
+    }
+    if (defaultExpanded === false) {
+      writer.writeLine("defaultExpanded={false}");
+    }
+    writer.outdent();
+    writer.writeLine("/>");
+
+    return writer.content;
   }
   writer.writeLine("<Parameter.TypeDef");
   writer.indent();
@@ -486,7 +476,7 @@ export function generateParameter({
   writer.indent();
   writer.writeLine("return (");
   writer.indent();
-  if (parameter.type === "resourceRef" && !parameter.description) {
+  if (parameter.type === "resourceRef" && parameter.description === undefined) {
     const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
     imports.add(
       `import { TypeDef as ${componentName} } from "~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts";`,
