@@ -63,22 +63,31 @@ export function Docs(props: ParentProps) {
       <Show when={params()}>
         {(params) => (
           <>
-            <DocsNavMenu
-              docData={doc()?.frontmatter as DocsEntry}
-              nav={contentName()}
-              lang={params().lang}
-              slug={params().slug}
-            />
             <Show when={frontmatter()}>
               {(frontmatter) => {
+                const initialPaymentGateway = createMemo(() => {
+                  if (interactiveDocs()?.fallbackPg) {
+                    return interactiveDocs()!.fallbackPg;
+                  }
+                  if (frontmatter().targetPg) {
+                    return frontmatter().targetPg as PaymentGateway;
+                  }
+                  return "all";
+                });
                 const [paymentGateway, setPaymentGateway] = createSignal<
                   PaymentGateway | "all"
-                >(frontmatter().targetPg ?? "all");
+                >(initialPaymentGateway());
                 return (
                   <PaymentGatewayProvider
                     paymentGateway={paymentGateway}
                     setPaymentGateway={setPaymentGateway}
                   >
+                    <DocsNavMenu
+                      docData={doc()?.frontmatter as DocsEntry}
+                      nav={contentName()}
+                      lang={params().lang}
+                      slug={params().slug}
+                    />
                     <Metadata
                       title={frontmatter().title}
                       description={frontmatter().description}
