@@ -55,8 +55,7 @@ export interface EnumVariant {
 }
 
 export interface PgSpecific {
-  description?: string;
-  optional?: boolean;
+  visible?: boolean;
 }
 
 export interface Method {
