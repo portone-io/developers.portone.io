@@ -80,8 +80,7 @@ export default function Metadata(_props: Props) {
         [P._, { v1: P.string, v2: P.string }],
         () => (systemVersion() ? systemVersion() : undefined),
       )
-      .with([undefined, undefined], [[], undefined], () => undefined)
-      .exhaustive();
+      .otherwise(() => undefined);
     return url;
   });
   const canonicalUrl = createMemo(() => {
@@ -110,13 +109,7 @@ export default function Metadata(_props: Props) {
       .with(["v2", P._, { v1: P.select(P.string) }], (slug) => {
         return createVersionVariantUrl("v1", slug);
       })
-      .with(
-        [undefined, P._, P._],
-        [P.string, undefined, undefined],
-        [P.string, P.array(), P._],
-        () => undefined,
-      )
-      .exhaustive();
+      .otherwise(() => undefined);
   });
 
   return (

@@ -37,7 +37,7 @@ export function GET() {
       }),
   };
 
-  return new Response(builder.build(root) as string, {
+  return new Response(builder.build(root), {
     headers: { "Content-Type": "application/xml" },
   });
 }
