@@ -11,9 +11,11 @@ import kpnLogo from "~/assets/pg-circle/kpn.png";
 import ksnetLogo from "~/assets/pg-circle/ksnet.png";
 import naverLogo from "~/assets/pg-circle/naver.png";
 import niceLogo from "~/assets/pg-circle/nice.png";
+import payletterLogo from "~/assets/pg-circle/payletter.png";
 import portoneLogo from "~/assets/pg-circle/portone.png";
 import smartroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
+import welcomeLogo from "~/assets/pg-circle/welcome.png";
 import { usePaymentGateway } from "~/state/payment-gateway";
 import type { PaymentGateway } from "~/type";
 
@@ -36,6 +38,10 @@ export const PgOptions = {
   tosspay: { label: "토스페이", icon: tossLogo },
   hyphen: { label: "하이픈", icon: hyphenLogo },
   eximbay: { label: "엑심베이", icon: eximbayLogo },
+  toss_brandpay: { label: "토스브랜드페이", icon: tossLogo },
+  welcome: { label: "웰컴페이먼츠", icon: welcomeLogo },
+  inicis_jp: { label: "KG이니시스(일본)", icon: inicisLogo },
+  payletter_global: { label: "페이레터해외결제", icon: payletterLogo },
 } as const satisfies Record<PaymentGateway | "all", PgSelectOption>;
 
 interface PgSelectProps {

@@ -21,6 +21,10 @@ export const PaymentGateway = z.enum([
   "tosspay",
   "hyphen",
   "eximbay",
+  "toss_brandpay",
+  "welcome",
+  "inicis_jp",
+  "payletter_global",
 ]);
 export type PaymentGateway = z.infer<typeof PaymentGateway>;
 
