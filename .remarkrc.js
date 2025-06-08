@@ -54,7 +54,6 @@ export default {
     "remark-lint-no-heading-content-indent",
     "remark-lint-no-heading-indent",
     "remark-lint-no-heading-like-paragraph",
-    "remark-lint-no-inline-padding",
     ["remark-lint-no-missing-blank-lines", { exceptTightLists: true }],
     "remark-lint-no-paragraph-content-indent",
     "remark-lint-no-shortcut-reference-image",

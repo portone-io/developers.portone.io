@@ -24,6 +24,7 @@ const { default: vinxiMdx } = vinxiMdxPkg;
 export default defineConfig(
   withSentry(
     {
+      middleware: "./src/middleware.ts",
       server: {
         preset: "vercel",
         prerender: {

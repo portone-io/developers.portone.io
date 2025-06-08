@@ -66,7 +66,9 @@ function SidebarItem(props: LinkProps) {
         <div class="overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-.8125rem text-slate-4 leading-5 hover:text-portone">
           <Show when={props.icon}>
             <>
-              <i class={`${props.icon} inline-block align-top text-lg`}></i>{" "}
+              <i
+                class={`${props.icon} inline-block align-top text-lg`}
+              ></i>{" "}
             </>
           </Show>
           {props.label}

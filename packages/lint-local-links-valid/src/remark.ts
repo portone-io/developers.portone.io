@@ -1,7 +1,8 @@
 import path from "node:path";
 
 import fastGlob from "fast-glob";
-import { lintRule, type Node } from "unified-lint-rule";
+import { lintRule } from "unified-lint-rule";
+import type { Node } from "unist";
 import { visit } from "unist-util-visit";
 import * as YAML from "yaml";
 
