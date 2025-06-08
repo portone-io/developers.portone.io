@@ -1,5 +1,5 @@
 import { Select } from "@kobalte/core/select";
-import { createMemo, Show } from "solid-js";
+import { createMemo, on } from "solid-js";
 import type { Picture as VitePicture } from "vite-imagetools";
 
 import eximbayLogo from "~/assets/pg-circle/eximbay.png";
@@ -11,6 +11,7 @@ import kpnLogo from "~/assets/pg-circle/kpn.png";
 import ksnetLogo from "~/assets/pg-circle/ksnet.png";
 import naverLogo from "~/assets/pg-circle/naver.png";
 import niceLogo from "~/assets/pg-circle/nice.png";
+import portoneLogo from "~/assets/pg-circle/portone.png";
 import smartroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
 import { usePaymentGateway } from "~/state/payment-gateway";
@@ -18,10 +19,11 @@ import type { PaymentGateway } from "~/type";
 
 export type PgSelectOption = {
   label: string;
-  icon: VitePicture | undefined;
+  icon: VitePicture;
 };
 
 export const PgOptions = {
+  all: { label: "모든 PG사", icon: portoneLogo },
   nice: { label: "나이스페이먼츠", icon: niceLogo },
   smartro: { label: "스마트로", icon: smartroLogo },
   toss: { label: "토스페이먼츠", icon: tossLogo },
@@ -34,12 +36,11 @@ export const PgOptions = {
   tosspay: { label: "토스페이", icon: tossLogo },
   hyphen: { label: "하이픈", icon: hyphenLogo },
   eximbay: { label: "엑심베이", icon: eximbayLogo },
-  all: { label: "모든 PG사", icon: undefined },
 } as const satisfies Record<PaymentGateway | "all", PgSelectOption>;
 
 interface PgSelectProps {
   class?: string;
-  options: (keyof typeof PgOptions)[];
+  options?: (keyof typeof PgOptions)[];
 }
 
 export function PgSelect(props: PgSelectProps) {
@@ -48,13 +49,19 @@ export function PgSelect(props: PgSelectProps) {
     if (!pgName) return;
     setPaymentGateway(pgName);
   };
+  const options = createMemo(
+    on([paymentGateway, () => props.options], ([_, options]) => {
+      if (!options) return Object.keys(PgOptions);
+      return options;
+    }),
+  );
 
   return (
     <Select
       class={props.class}
       value={paymentGateway()}
       onChange={handleChange}
-      options={props.options}
+      options={options()}
       placeholder="PG사 선택"
       disallowEmptySelection
       itemComponent={(props) => {
@@ -69,15 +76,11 @@ export function PgSelect(props: PgSelectProps) {
                 <i class="i-ic-round-check inline-block" />
               </Select.ItemIndicator>
             </div>
-            <Show when={optionInfo().icon}>
-              {(icon) => (
-                <img
-                  src={icon().img.src}
-                  alt={optionInfo().label}
-                  class="h-5 w-5"
-                />
-              )}
-            </Show>
+            <img
+              src={optionInfo().icon.img.src}
+              alt={optionInfo().label}
+              class="h-5 w-5 rounded-full"
+            />
             <Select.ItemLabel class="text-sm font-medium">
               {optionInfo().label}
             </Select.ItemLabel>
@@ -103,7 +106,7 @@ export function PgSelect(props: PgSelectProps) {
                 <img
                   src={PgOptions[selectedOption()].icon.img.src}
                   alt={PgOptions[selectedOption()].label}
-                  class="h-5 w-5"
+                  class="h-5 w-5 rounded-full"
                 />
                 {PgOptions[selectedOption()].label}
               </div>
