@@ -26,21 +26,30 @@ export type ParameterType =
   | { type: "integer" }
   | { type: "boolean" }
   | { type: "array"; items: Parameter }
-  | { type: "object"; properties: Record<string, Parameter> }
+  | {
+      type: "object";
+      properties: Record<string, Parameter>;
+      hideIfEmpty?: boolean;
+    }
   | { type: "emptyObject" }
   | {
       type: "enum";
       variants: Record<string, EnumVariant>;
       valuePrefix?: string;
     }
-  | { type: "oneOf"; properties: Record<string, Parameter> }
-  | { type: "union"; types: Parameter[] }
-  | { type: "intersection"; types: Parameter[] }
+  | {
+      type: "oneOf";
+      properties: Record<string, Parameter>;
+      hideIfEmpty?: boolean;
+    }
+  | { type: "union"; types: Parameter[]; hideIfEmpty?: boolean }
+  | { type: "intersection"; types: Parameter[]; hideIfEmpty?: boolean }
   | {
       type: "discriminatedUnion";
       types: Record<string, Parameter>;
       discriminator: string;
       optional?: boolean;
+      hideIfEmpty?: boolean;
     }
   | { type: "resourceRef"; $ref: string }
   | {
