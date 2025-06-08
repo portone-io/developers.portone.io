@@ -25,7 +25,7 @@ export type ParameterType =
   | { type: "stringLiteral"; value: string }
   | { type: "integer" }
   | { type: "boolean" }
-  | { type: "array"; items: Parameter }
+  | { type: "array"; items: Parameter; hideIfEmpty?: boolean }
   | {
       type: "object";
       properties: Record<string, Parameter>;
