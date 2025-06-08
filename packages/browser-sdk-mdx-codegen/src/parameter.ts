@@ -23,10 +23,12 @@ function generateDescription({
   if (fs.existsSync(path.dirname(file)) === false) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
   }
-  fs.writeFileSync(file, `import { Condition } from "~/components/Condition";\n\n${description}`);
+  fs.writeFileSync(
+    file,
+    `import { Condition } from "~/components/Condition";\n\n${description}`,
+  );
   const componentName = pascalCase(
-    `${path
-      .posix
+    `${path.posix
       .relative(basePath, filePath)
       .split("/")
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
