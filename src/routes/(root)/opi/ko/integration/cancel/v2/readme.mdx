@@ -281,7 +281,9 @@ try {
     // ... 생략 ...
   });
 
-  if (response.cancellation.status === "SUCCEEDED") {
+  if (isUnrecognizedPaymentCancellation(response.cancellation)) {
+    console.error(`취소 실패: ${response.cancellation.status}`);
+  } else if (response.cancellation.status === "SUCCEEDED") {
     console.log("취소 완료");
   } else if (response.cancellation.status === "FAILED") {
     console.error("취소 실패");
