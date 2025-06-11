@@ -338,6 +338,36 @@ KCP 기준으로 작성한 예시 코드는 아래와 같습니다.
 </Details>
 
 <Details>
+  <Details.Summary>휴대폰 소액결제시 `buyer_name`과 `bypass.shop_user_id` 파라미터를 필수 입력해야합니다.</Details.Summary>
+
+  <Details.Content>
+    결제수단 중 휴대폰 소액결제를 요청하는 경우 구매자 이름(`buyer_name`)과 고객사에서 관리하는 회원ID(`bypass.shop_user_id`)를 필수로 입력해야 합니다.
+
+    <Tabs>
+      <Tabs.Tab title="휴대폰 소액결제 호출 예제">
+        ```ts
+        IMP.request_pay({
+          channelKey: "{콘솔 내 연동 정보의 채널키}",
+          pay_method: "phone", //휴대폰 소액결제
+          merchant_uid: "A00021-TEST",
+          name: "당근 10kg",
+          amount: 1004,
+          buyer_email: "test@portone.io",
+          buyer_name: "포트원 기술지원팀", // 휴대폰 결제시 필수
+          buyer_tel: "010-1234-5678",
+          buyer_addr: "서울특별시 강남구 삼성동",
+          buyer_postcode: "123-456",
+          bypass: {
+            shop_user_id: "abaddd", // 고객사 회원 id 입력 (휴대폰 결제시 필수)
+          },
+        });
+        ```
+      </Tabs.Tab>
+    </Tabs>
+  </Details.Content>
+</Details>
+
+<Details>
   <Details.Summary>휴대폰 소액결제 시 전화번호를 고정할 수 있습니다.</Details.Summary>
 
   <Details.Content>
