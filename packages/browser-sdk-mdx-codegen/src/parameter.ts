@@ -57,7 +57,7 @@ function generateTypeDef({
 }): string {
   const writer = TypescriptWriter();
 
-  if (parameter.type === "resourceRef") {
+  if (parameter.type === "resourceRef" && parameter.description === undefined) {
     const modulePath = `~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts`;
     const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
     imports.add(`import { TypeDef as ${componentName} } from "${modulePath}";`);
@@ -74,7 +74,7 @@ function generateTypeDef({
       const description = generateDescription({
         imports,
         basePath,
-        filePath: path.join(parameterPath, "Leading"),
+        filePath: path.posix.join(parameterPath, "Leading"),
         description: leadingDescription,
       });
       writer.writeLine(`leadingDescription={<${description.componentName} />}`);
@@ -476,7 +476,7 @@ export function generateParameter({
   writer.indent();
   writer.writeLine("return (");
   writer.indent();
-  if (parameter.type === "resourceRef") {
+  if (parameter.type === "resourceRef" && parameter.description === undefined) {
     const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
     imports.add(
       `import { TypeDef as ${componentName} } from "~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts";`,
