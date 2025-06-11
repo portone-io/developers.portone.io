@@ -4724,6 +4724,97 @@
         }
       }
     },
+    "/platform/bulk-account-transfers": {
+      "get": {
+        "summary": "일괄 이체 내역 다건 조회",
+        "description": "일괄 이체 내역 다건 조회\n\n성공 응답으로 조회된 일괄 이체 내역 리스트와 페이지 정보 및 상태 별 개수 정보를 반환합니다.",
+        "operationId": "getPlatformBulkAccountTransfers",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkAccountTransfersBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetPlatformBulkAccountTransfersBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkAccountTransfersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkAccountTransfersError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우\n* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkAccountTransfersError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPlatformBulkAccountTransfersError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.bulkAccountTransfer",
+        "x-portone-title": "일괄 이체 내역 다건 조회",
+        "x-portone-description": "성공 응답으로 조회된 일괄 이체 내역 리스트와 페이지 정보 및 상태 별 개수 정보를 반환합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetPlatformBulkAccountTransfersError"
+        }
+      }
+    },
     "/platform/bulk-payouts": {
       "get": {
         "summary": "일괄 지급 내역 다건 조회",
@@ -20181,6 +20272,14 @@
             "type": "string",
             "title": "출생 연도"
           },
+          "birthMonth": {
+            "type": "string",
+            "title": "출생 월"
+          },
+          "birthDay": {
+            "type": "string",
+            "title": "출생 일자"
+          },
           "gender": {
             "$ref": "#/components/schemas/Gender",
             "title": "성별"
@@ -21106,6 +21205,44 @@
           }
         }
       },
+      "DownloadPlatformBulkAccountTransfersSheetBody": {
+        "title": "DownloadPlatformBulkAccountTransfersSheetBody",
+        "type": "object",
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/PlatformBulkAccountTransferFilterInput"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "컬럼 키 목록",
+            "description": "- BULK_ACCOUNT_TRANSFER_ID: 일괄 이체 아이디\n- BULK_ACCOUNT_TRANSFER_CREATOR_ID: 생성자 아이디\n- BULK_ACCOUNT_TRANSFER_TOTAL_AMOUNT: 일괄 이체 총액\n- BULK_ACCOUNT_TRANSFER_TOTAL_COUNT: 일괄 이체 총건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_PREPARED_AMOUNT: 이체 대기 총액\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_PREPARED_COUNT: 이체 대기 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_SCHEDULED_AMOUNT: 이체 예약 총액\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_SCHEDULED_COUNT: 이체 예약 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_CANCELLED_AMOUNT: 이체 취소 총액\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_CANCELLED_COUNT: 이체 취소 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_STOPPED_AMOUNT: 이체 중단 총액\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_STOPPED_COUNT: 이체 중단 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_PROCESSING_AMOUNT: 이체 처리중 총액\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_PROCESSING_COUNT: 이체 처리중 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_ASYNC_PROCESSING_COUNT: 이체 비동기 처리중 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_ASYNC_PROCESSING_AMOUNT: 이체 비동기 처리중 총액\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_TOTAL_PROCESSING_COUNT: 이체 처리중 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_TOTAL_PROCESSING_AMOUNT: 이체 처리중 총액\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_SUCCEEDED_COUNT: 이체 성공 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_SUCCEEDED_AMOUNT: 이체 성공 총액\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_FAILED_COUNT: 이체 실패 건수\n- BULK_ACCOUNT_TRANSFER_ACCOUNT_TRANSFER_FAILED_AMOUNT: 이체 실패 총액\n- BULK_ACCOUNT_TRANSFER_STATUS: 일괄 이체 상태\n- BULK_ACCOUNT_TRANSFER_STATUS_UPDATED_AT: 상태 업데이트 일시\n- BULK_ACCOUNT_TRANSFER_SCHEDULED_AT: 일괄 이체 예약 일시\n- BULK_ACCOUNT_TRANSFER_CREATED_AT: 생성 일시\n- BULK_ACCOUNT_TRANSFER_UPDATED_AT: 최종 업데이트 일시"
+          },
+          "isForTest": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DownloadPlatformBulkAccountTransfersSheetError": {
+        "title": "DownloadPlatformBulkAccountTransfersSheetError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
       "DownloadPlatformBulkPayoutsSheetBody": {
         "title": "DownloadPlatformBulkPayoutsSheetBody",
         "type": "object",
@@ -21119,7 +21256,7 @@
               "type": "string"
             },
             "title": "컬럼 키 목록",
-            "description": "- BULK_PAYOUT_METHOD: 지급 방법\n- BULK_PAYOUT_STATUS: 일괄지급 상태\n- BULK_PAYOUT_CREATED_AT: 일괄지급 생성 일시\n- BULK_PAYOUT_STATUS_UPDATED_AT: 상태 업데이트 일시\n- BULK_PAYOUT_BULK_PAYOUT_ID: 일괄지급 아이디\n- BULK_PAYOUT_NAME: 이름\n- BULK_PAYOUT_TOTAL_PAYOUT_AMOUNT: 일괄지급 총액\n- BULK_PAYOUT_TOTAL_PAYOUT_COUNT: 일괄지급 총건수\n- BULK_PAYOUT_PAYOUT_SCHEDULED_AMOUNT: 지급예약 총액\n- BULK_PAYOUT_PAYOUT_SCHEDULED_COUNT: 지급예약 건수\n- BULK_PAYOUT_PAYOUT_PREPARED_AMOUNT: 지급대기 총액\n- BULK_PAYOUT_PAYOUT_PROCESSING_AMOUNT: 지급중 총액\n- BULK_PAYOUT_PAYOUT_PROCESSING_COUNT: 지급중 건수\n- BULK_PAYOUT_PAYOUT_SUCCEEDED_AMOUNT: 지급성공 총액\n- BULK_PAYOUT_PAYOUT_SUCCEEDED_COUNT: 지급성공 건수\n- BULK_PAYOUT_PAYOUT_FAILED_AMOUNT: 지급실패 총액\n- BULK_PAYOUT_PAYOUT_FAILED_COUNT: 지급실패 건수\n- BULK_PAYOUT_PAYOUT_STOPPED_AMOUNT: 지급중단 총액\n- BULK_PAYOUT_PAYOUT_STOPPED_COUNT: 지급중단 건수\n- BULK_PAYOUT_PAYOUT_CANCELLED_AMOUNT: 지급취소 총액\n- BULK_PAYOUT_PAYOUT_CANCELLED_COUNT: 지급취소 건수\n- BULK_PAYOUT_SCHEDULED_AT: 일괄지급 예정 일시\n- BULK_PAYOUT_CREATOR_ID: 생성자 아이디\n- BULK_PAYOUT_UPDATED_AT: 최종 업데이트 일시"
+            "description": "- BULK_PAYOUT_METHOD: 지급 방법\n- BULK_PAYOUT_STATUS: 일괄지급 상태\n- BULK_PAYOUT_CREATED_AT: 일괄지급 생성 일시\n- BULK_PAYOUT_STATUS_UPDATED_AT: 상태 업데이트 일시\n- BULK_PAYOUT_BULK_PAYOUT_ID: 일괄지급 아이디\n- BULK_PAYOUT_NAME: 이름\n- BULK_PAYOUT_TOTAL_PAYOUT_AMOUNT: 일괄지급 총액\n- BULK_PAYOUT_TOTAL_PAYOUT_COUNT: 일괄지급 총건수\n- BULK_PAYOUT_PAYOUT_CONFIRMED_AMOUNT: 지급확정 총액\n- BULK_PAYOUT_PAYOUT_CONFIRMED_COUNT: 지급확정 총건수\n- BULK_PAYOUT_PAYOUT_SCHEDULED_AMOUNT: 지급예약 총액\n- BULK_PAYOUT_PAYOUT_SCHEDULED_COUNT: 지급예약 건수\n- BULK_PAYOUT_PAYOUT_PREPARED_AMOUNT: 지급대기 총액\n- BULK_PAYOUT_PAYOUT_PREPARED_COUNT: 지급대기 건수\n- BULK_PAYOUT_PAYOUT_PROCESSING_AMOUNT: 지급중 총액\n- BULK_PAYOUT_PAYOUT_PROCESSING_COUNT: 지급중 건수\n- BULK_PAYOUT_PAYOUT_SUCCEEDED_AMOUNT: 지급성공 총액\n- BULK_PAYOUT_PAYOUT_SUCCEEDED_COUNT: 지급성공 건수\n- BULK_PAYOUT_PAYOUT_FAILED_AMOUNT: 지급실패 총액\n- BULK_PAYOUT_PAYOUT_FAILED_COUNT: 지급실패 건수\n- BULK_PAYOUT_PAYOUT_STOPPED_AMOUNT: 지급중단 총액\n- BULK_PAYOUT_PAYOUT_STOPPED_COUNT: 지급중단 건수\n- BULK_PAYOUT_PAYOUT_CANCELLED_AMOUNT: 지급취소 총액\n- BULK_PAYOUT_PAYOUT_CANCELLED_COUNT: 지급취소 건수\n- BULK_PAYOUT_CREATOR_ID: 생성자 아이디\n- BULK_PAYOUT_UPDATED_AT: 최종 업데이트 일시"
           },
           "isForTest": {
             "type": "boolean"
@@ -21241,7 +21378,7 @@
               "type": "string"
             },
             "title": "컬럼 키 목록",
-            "description": "- PAYOUT_PAYOUT_ID: 지급 아이디\n- PAYOUT_METHOD: 지급 방법\n- PAYOUT_STATUS: 상태\n- PAYOUT_SETTLEMENT_CURRENCY: 정산 통화\n- PAYOUT_ACCOUNT_BANK: 지급 계좌 은행\n- PAYOUT_ACCOUNT_NUMBER: 지급 계좌 번호\n- PAYOUT_ACCOUNT_HOLDER: 예금주명\n- PAYOUT_AMOUNT: 지급 금액\n- PAYOUT_SETTLEMENT_AMOUNT: 정산 금액\n- PAYOUT_INCOME_TAX_AMOUNT: 원천징수세액 (소득세)\n- PAYOUT_LOCAL_INCOME_TAX_AMOUNT: 원천징수세액 (지방소득세)\n- PAYOUT_WITHDRAWAL_MEMO: 보내는 이 통장메모\n- PAYOUT_DEPOSIT_MEMO: 받는 이 통장메모\n- PAYOUT_MEMO: 메모\n- PAYOUT_STATUS_UPDATED_AT: 상태 업데이트 일시\n- PAYOUT_CREATED_AT: 지급 생성 일시\n- PAYOUT_SCHEDULED_AT: 지급 예정 일시\n- PAYOUT_SETTLEMENT_TAX_FREE_AMOUNT: 정산 면세액\n- PAYOUT_TAX_FREE_AMOUNT: 확정 면세액\n- PAYOUT_SUPPLY_AMOUNT: 확정 공급가액\n- PAYOUT_VAT_AMOUNT: 확정 부가세액\n- PAYOUT_FAIL_REASON: 지급 실패 사유\n- PAYOUT_DEDUCT_WHT: 원천징수세액 차감 여부\n- PAYOUT_SETTLEMENT_AMOUNT_TYPE: 정산 금액 취급 기준\n- PARTNER_* : 파트너 컬럼 키 사용 가능(w/o PARTNER_STATUS_UPDATED_AT)"
+            "description": "- PAYOUT_PAYOUT_ID: 지급 아이디\n- PAYOUT_BULK_PAYOUT_ID: 일괄지급 아이디\n- PAYOUT_METHOD: 지급 방법\n- PAYOUT_STATUS: 상태\n- PAYOUT_SETTLEMENT_CURRENCY: 정산 통화\n- PAYOUT_ACCOUNT_BANK: 지급 계좌 은행\n- PAYOUT_ACCOUNT_NUMBER: 지급 계좌 번호\n- PAYOUT_ACCOUNT_HOLDER: 예금주명\n- PAYOUT_AMOUNT: 지급 금액\n- PAYOUT_SETTLEMENT_AMOUNT: 정산 금액\n- PAYOUT_INCOME_TAX_AMOUNT: 원천징수세액 (소득세)\n- PAYOUT_LOCAL_INCOME_TAX_AMOUNT: 원천징수세액 (지방소득세)\n- PAYOUT_WITHDRAWAL_MEMO: 보내는 이 통장메모\n- PAYOUT_DEPOSIT_MEMO: 받는 이 통장메모\n- PAYOUT_MEMO: 메모\n- PAYOUT_STATUS_UPDATED_AT: 상태 업데이트 일시\n- PAYOUT_CREATED_AT: 지급 생성 일시\n- PAYOUT_SCHEDULED_AT: 지급 예정 일시\n- PAYOUT_SETTLEMENT_TAX_FREE_AMOUNT: 정산 면세액\n- PAYOUT_TAX_FREE_AMOUNT: 확정 면세액\n- PAYOUT_SUPPLY_AMOUNT: 확정 공급가액\n- PAYOUT_VAT_AMOUNT: 확정 부가세액\n- PAYOUT_FAIL_REASON: 지급 실패 사유\n- PAYOUT_DEDUCT_WHT: 원천징수세액 차감 여부\n- PAYOUT_SETTLEMENT_AMOUNT_TYPE: 정산 금액 취급 기준\n- PARTNER_* : 파트너 컬럼 키 사용 가능(w/o PARTNER_STATUS_UPDATED_AT)"
           },
           "isForTest": {
             "type": "boolean"
@@ -22163,7 +22300,7 @@
               "type": "string"
             },
             "title": "컬럼 키 목록",
-            "description": "- ACCOUNT_TRANSFER_ID: 아이디\n- ACCOUNT_TRANSFER_TYPE: 구분\n- ACCOUNT_TRANSFER_DEPOSITOR_NAME: 입금자명\n- ACCOUNT_TRANSFER_DEPOSIT_ACCOUNT_NUMBER: 이체 계좌 번호\n- ACCOUNT_TRANSFER_DEPOSIT_BANK: 이체 계좌 은행\n- ACCOUNT_TRANSFER_DEPOSIT_ACCOUNT_HOLDER: 예금주\n- ACCOUNT_TRANSFER_DEPOSIT_MEMO: 받는 이 통장메모\n- ACCOUNT_TRANSFER_WITHDRAWAL_MEMO: 보내는 이 통장메모\n- ACCOUNT_TRANSFER_CURRENCY: 통화\n- ACCOUNT_TRANSFER_AMOUNT: 금액\n- ACCOUNT_TRANSFER_BALANCE: 출금 후 금액\n- ACCOUNT_TRANSFER_STATUS: 상태\n- ACCOUNT_TRANSFER_TRADED_AT: 거래 일시\n- ACCOUNT_TRANSFER_CREATED_AT: 생성 일시\n- ACCOUNT_TRANSFER_UPDATED_AT: 최종 업데이트 일시"
+            "description": "- ACCOUNT_TRANSFER_ID: 아이디\n- ACCOUNT_TRANSFER_BULK_ACCOUNT_TRANSFER_ID: 일괄이체 아이디\n- ACCOUNT_TRANSFER_PAYOUT_ID: 지급 아이디\n- ACCOUNT_TRANSFER_TYPE: 구분\n- ACCOUNT_TRANSFER_DEPOSITOR_NAME: 입금자명\n- ACCOUNT_TRANSFER_DEPOSIT_ACCOUNT_NUMBER: 이체 계좌 번호\n- ACCOUNT_TRANSFER_DEPOSIT_BANK: 이체 계좌 은행\n- ACCOUNT_TRANSFER_DEPOSIT_ACCOUNT_HOLDER: 예금주\n- ACCOUNT_TRANSFER_DEPOSIT_MEMO: 받는 이 통장메모\n- ACCOUNT_TRANSFER_WITHDRAWAL_MEMO: 보내는 이 통장메모\n- ACCOUNT_TRANSFER_CURRENCY: 통화\n- ACCOUNT_TRANSFER_AMOUNT: 금액\n- ACCOUNT_TRANSFER_BALANCE: 출금 후 금액\n- ACCOUNT_TRANSFER_STATUS: 상태\n- ACCOUNT_TRANSFER_TRADED_AT: 거래 일시\n- ACCOUNT_TRANSFER_CREATED_AT: 생성 일시\n- ACCOUNT_TRANSFER_UPDATED_AT: 최종 업데이트 일시"
           },
           "isForTest": {
             "type": "boolean"
@@ -25512,6 +25649,100 @@
             "PLATFORM_ADDITIONAL_FEE_POLICY_NOT_FOUND": "#/components/schemas/PlatformAdditionalFeePolicyNotFoundError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetPlatformBulkAccountTransferError": {
+        "title": "GetPlatformBulkAccountTransferError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformBulkAccountTransferNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PLATFORM_BULK_ACCOUNT_TRANSFER_NOT_FOUND": "#/components/schemas/PlatformBulkAccountTransferNotFoundError",
+            "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetPlatformBulkAccountTransfersBody": {
+        "title": "GetPlatformBulkAccountTransfersBody",
+        "type": "object",
+        "properties": {
+          "isForTest": {
+            "type": "boolean"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInput"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/PlatformBulkAccountTransferFilterInput"
+          }
+        }
+      },
+      "GetPlatformBulkAccountTransfersError": {
+        "title": "GetPlatformBulkAccountTransfersError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PlatformNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetPlatformBulkAccountTransfersResponse": {
+        "title": "GetPlatformBulkAccountTransfersResponse",
+        "type": "object",
+        "required": [
+          "items",
+          "page",
+          "counts"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformBulkAccountTransfer"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInfo"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/PlatformBulkAccountTransferStatusStats"
           }
         }
       },
@@ -34593,6 +34824,21 @@
             "type": "string",
             "title": "이체 아이디"
           },
+          "bulkAccountTransferId": {
+            "type": "string",
+            "title": "일괄 이체 아이디"
+          },
+          "payoutId": {
+            "type": "string",
+            "title": "지급 아이디"
+          },
+          "accountTransferIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "이체 아이디 리스트"
+          },
           "types": {
             "title": "구분",
             "type": "array",
@@ -34622,6 +34868,54 @@
           "withdrawalMemo": {
             "type": "string",
             "title": "보내는 이 통장 메모"
+          }
+        }
+      },
+      "PlatformAccountTransferStatusStats": {
+        "title": "PlatformAccountTransferStatusStats",
+        "type": "object",
+        "required": [
+          "prepared",
+          "scheduled",
+          "cancelled",
+          "stopped",
+          "processing",
+          "asyncProcessing",
+          "succeeded",
+          "failed"
+        ],
+        "properties": {
+          "prepared": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "scheduled": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cancelled": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stopped": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "processing": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asyncProcessing": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "succeeded": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -35035,6 +35329,170 @@
         "x-portone-title": "BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
         "x-portone-status-code": 403
       },
+      "PlatformBulkAccountTransfer": {
+        "title": "PlatformBulkAccountTransfer",
+        "type": "object",
+        "required": [
+          "id",
+          "graphqlId",
+          "creatorId",
+          "totalAmount",
+          "status",
+          "stats",
+          "statusUpdatedAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "일괄 이체 고유 아이디"
+          },
+          "graphqlId": {
+            "type": "string"
+          },
+          "creatorId": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlatformBulkAccountTransferStatus"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/PlatformBulkAccountTransferStats"
+          },
+          "statusUpdatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PlatformBulkAccountTransferFilterInput": {
+        "title": "PlatformBulkAccountTransferFilterInput",
+        "type": "object",
+        "properties": {
+          "statuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformBulkAccountTransferStatus"
+            }
+          },
+          "criteria": {
+            "$ref": "#/components/schemas/PlatformBulkAccountTransferFilterInputCriteria"
+          }
+        }
+      },
+      "PlatformBulkAccountTransferFilterInputCriteria": {
+        "title": "PlatformBulkAccountTransferFilterInputCriteria",
+        "type": "object",
+        "properties": {
+          "timestampRange": {
+            "$ref": "#/components/schemas/DateTimeRange",
+            "title": "생성 일시 범위"
+          },
+          "statusUpdatedTimestampRange": {
+            "$ref": "#/components/schemas/DateTimeRange",
+            "title": "상태 업데이트 일시 범위"
+          },
+          "bulkAccountTransferId": {
+            "type": "string",
+            "title": "일괄 이체 아이디"
+          }
+        }
+      },
+      "PlatformBulkAccountTransferNotFoundError": {
+        "title": "일괄 이체가 존재하지 않는 경우",
+        "description": "일괄 이체가 존재하지 않는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "일괄 이체가 존재하지 않는 경우",
+        "x-portone-status-code": 404
+      },
+      "PlatformBulkAccountTransferStats": {
+        "title": "PlatformBulkAccountTransferStats",
+        "type": "object",
+        "required": [
+          "amount",
+          "count"
+        ],
+        "properties": {
+          "amount": {
+            "$ref": "#/components/schemas/PlatformAccountTransferStatusStats"
+          },
+          "count": {
+            "$ref": "#/components/schemas/PlatformAccountTransferStatusStats"
+          }
+        }
+      },
+      "PlatformBulkAccountTransferStatus": {
+        "title": "PlatformBulkAccountTransferStatus",
+        "type": "string",
+        "enum": [
+          "PREPARED",
+          "SCHEDULED",
+          "ONGOING",
+          "COMPLETED"
+        ],
+        "x-portone-enum": {
+          "PREPARED": {},
+          "SCHEDULED": {},
+          "ONGOING": {},
+          "COMPLETED": {}
+        }
+      },
+      "PlatformBulkAccountTransferStatusStats": {
+        "title": "PlatformBulkAccountTransferStatusStats",
+        "type": "object",
+        "required": [
+          "prepared",
+          "scheduled",
+          "ongoing",
+          "completed"
+        ],
+        "properties": {
+          "prepared": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "scheduled": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ongoing": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "completed": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "PlatformBulkPayout": {
         "title": "PlatformBulkPayout",
         "type": "object",
@@ -35044,7 +35502,6 @@
           "name",
           "creatorId",
           "method",
-          "arePayoutsGenerated",
           "totalPayoutAmount",
           "status",
           "payoutStats",
@@ -35069,9 +35526,6 @@
           "method": {
             "$ref": "#/components/schemas/PlatformPayoutMethod"
           },
-          "arePayoutsGenerated": {
-            "type": "boolean"
-          },
           "totalPayoutAmount": {
             "type": "integer",
             "format": "int64"
@@ -35091,10 +35545,6 @@
             "format": "date-time"
           },
           "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "scheduledAt": {
             "type": "string",
             "format": "date-time"
           }
@@ -35126,10 +35576,16 @@
         "type": "object",
         "properties": {
           "timestampRange": {
-            "$ref": "#/components/schemas/DateTimeRange"
+            "$ref": "#/components/schemas/DateTimeRange",
+            "title": "생성 일시 범위"
+          },
+          "statusUpdatedTimestampRange": {
+            "$ref": "#/components/schemas/DateTimeRange",
+            "title": "상태 업데이트 일시 범위"
           },
           "bulkPayoutId": {
-            "type": "string"
+            "type": "string",
+            "title": "일괄 지급 아이디"
           }
         }
       },
@@ -35177,7 +35633,10 @@
         "type": "object",
         "required": [
           "partnerIds",
-          "statuses"
+          "statuses",
+          "partnerTags",
+          "currencies",
+          "types"
         ],
         "properties": {
           "partnerIds": {
@@ -35195,6 +35654,30 @@
               "$ref": "#/components/schemas/PlatformPartnerSettlementStatus"
             },
             "description": "값이 존재하는 경우 해당 리스트에 포함되는 정산 상태를 가진 일괄 지급 정산 내역을 조회합니다."
+          },
+          "partnerTags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "파트너 태그 리스트",
+            "description": "값이 존재하는 경우 해당 리스트에 포함되는 태그를 하나 이상 가진 파트너에 대한 일괄 지급 정산 내역을 조회합니다."
+          },
+          "currencies": {
+            "title": "정산 통화",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Currency"
+            },
+            "description": "값이 존재하는 경우 해당 리스트에 포함되는 정산 통화를 가진 일괄 지급 정산 내역을 조회합니다."
+          },
+          "types": {
+            "title": "정산 유형",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformPartnerSettlementType"
+            },
+            "description": "값이 존재하는 경우 해당 리스트에 포함되는 정산 유형를 가진 일괄 지급 정산 내역을 조회합니다."
           }
         },
         "x-portone-title": "일괄 지급 정산 내역 필터 입력 정보"
@@ -35219,21 +35702,19 @@
         "title": "PlatformBulkPayoutStatus",
         "type": "string",
         "enum": [
-          "SCHEDULED",
           "PREPARING",
           "PREPARED",
           "ONGOING",
+          "POST_PROCESS_PENDING",
           "CANCELLED",
-          "STOPPED",
           "COMPLETED"
         ],
         "x-portone-enum": {
-          "STOPPED": {},
           "PREPARED": {},
           "CANCELLED": {},
           "COMPLETED": {},
-          "SCHEDULED": {},
           "PREPARING": {},
+          "POST_PROCESS_PENDING": {},
           "ONGOING": {}
         }
       },
@@ -35241,19 +35722,14 @@
         "title": "PlatformBulkPayoutStatusStats",
         "type": "object",
         "required": [
-          "scheduled",
           "preparing",
           "prepared",
           "ongoing",
-          "stopped",
-          "cancelled",
-          "completed"
+          "postProcessPending",
+          "completed",
+          "cancelled"
         ],
         "properties": {
-          "scheduled": {
-            "type": "integer",
-            "format": "int64"
-          },
           "preparing": {
             "type": "integer",
             "format": "int64"
@@ -35266,15 +35742,15 @@
             "type": "integer",
             "format": "int64"
           },
-          "stopped": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "cancelled": {
+          "postProcessPending": {
             "type": "integer",
             "format": "int64"
           },
           "completed": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cancelled": {
             "type": "integer",
             "format": "int64"
           }
@@ -38505,12 +38981,20 @@
           "PAYOUT_WITHHELD",
           "PAYOUT_FAILED",
           "IN_PAYOUT",
-          "PAID_OUT"
+          "PAID_OUT",
+          "CANCELLED",
+          "CONFIRMED"
         ],
         "x-portone-title": "정산 상태",
         "x-portone-enum": {
+          "CONFIRMED": {
+            "title": "지급 확정"
+          },
           "PAYOUT_FAILED": {
             "title": "지급 실패"
+          },
+          "CANCELLED": {
+            "title": "지급 취소"
           },
           "PAYOUT_SCHEDULED": {
             "title": "지급 예약"
@@ -38537,6 +39021,8 @@
           "payoutPrepared",
           "payoutWithheld",
           "payoutFailed",
+          "payoutCancelled",
+          "payoutConfirmed",
           "inPayout",
           "paidOut"
         ],
@@ -38554,6 +39040,14 @@
             "format": "int64"
           },
           "payoutFailed": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "payoutCancelled": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "payoutConfirmed": {
             "type": "integer",
             "format": "int64"
           },
@@ -39120,6 +39614,7 @@
         "required": [
           "id",
           "graphqlId",
+          "bulkPayoutId",
           "method",
           "status",
           "statusUpdatedAt",
@@ -39144,6 +39639,9 @@
             "title": "지급 고유 아이디"
           },
           "graphqlId": {
+            "type": "string"
+          },
+          "bulkPayoutId": {
             "type": "string"
           },
           "method": {
@@ -39307,6 +39805,14 @@
               "$ref": "#/components/schemas/Currency"
             },
             "description": "값이 존재하는 경우 해당 리스트에 포함되는 지급 통화를 가진 지급 내역을 조회합니다."
+          },
+          "payoutIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "지급 아이디",
+            "description": "값이 존재하는 경우 해당 리스트에 포함되는 지급 아이디를 가진 지급 내역을 조회합니다."
           }
         },
         "x-portone-title": "지급 내역 필터 입력 정보"
@@ -39318,11 +39824,15 @@
         "properties": {
           "timestampRange": {
             "$ref": "#/components/schemas/DateTimeRange",
-            "title": "생성 시간 범위"
+            "title": "생성 일시 범위"
           },
           "statusUpdatedTimestampRange": {
             "$ref": "#/components/schemas/DateTimeRange",
-            "title": "상태값 업데이트 시간 범위"
+            "title": "상태 업데이트 일시 범위"
+          },
+          "scheduledTimestampRange": {
+            "$ref": "#/components/schemas/DateTimeRange",
+            "title": "지급 예정 일시 범위"
           },
           "payoutId": {
             "type": "string",
@@ -39348,7 +39858,8 @@
         }
       },
       "PlatformPayoutNotFoundError": {
-        "title": "PlatformPayoutNotFoundError",
+        "title": "지급 내역이 존재하지 않는 경우",
+        "description": "지급 내역이 존재하지 않는 경우",
         "type": "object",
         "required": [
           "type"
@@ -39361,12 +39872,14 @@
             "type": "string"
           }
         },
+        "x-portone-title": "지급 내역이 존재하지 않는 경우",
         "x-portone-status-code": 404
       },
       "PlatformPayoutStatus": {
         "title": "PlatformPayoutStatus",
         "type": "string",
         "enum": [
+          "CONFIRMED",
           "PREPARED",
           "CANCELLED",
           "STOPPED",
@@ -39376,6 +39889,7 @@
           "SCHEDULED"
         ],
         "x-portone-enum": {
+          "CONFIRMED": {},
           "STOPPED": {},
           "PREPARED": {},
           "CANCELLED": {},
@@ -39389,6 +39903,7 @@
         "title": "PlatformPayoutStatusStats",
         "type": "object",
         "required": [
+          "confirmed",
           "prepared",
           "cancelled",
           "stopped",
@@ -39398,6 +39913,10 @@
           "scheduled"
         ],
         "properties": {
+          "confirmed": {
+            "type": "integer",
+            "format": "int64"
+          },
           "prepared": {
             "type": "integer",
             "format": "int64"
@@ -40761,7 +41280,6 @@
         "required": [
           "type",
           "id",
-          "sequenceNumber",
           "currency",
           "depositBank",
           "depositAccountNumber",
@@ -40866,6 +41384,12 @@
             "title": "지급 고유 아이디"
           },
           "payoutGraphqlId": {
+            "type": "string"
+          },
+          "bulkAccountTransferId": {
+            "type": "string"
+          },
+          "bulkAccountTransferGraphqlId": {
             "type": "string"
           },
           "documentId": {
@@ -45025,6 +45549,10 @@
         "description": "계좌 이체 상태",
         "type": "string",
         "enum": [
+          "PREPARED",
+          "SCHEDULED",
+          "CANCELLED",
+          "STOPPED",
           "PROCESSING",
           "ASYNC_PROCESSING",
           "SUCCEEDED",
@@ -45032,14 +45560,26 @@
         ],
         "x-portone-title": "계좌 이체 상태",
         "x-portone-enum": {
+          "STOPPED": {
+            "title": "중단"
+          },
+          "PREPARED": {
+            "title": "대기"
+          },
+          "CANCELLED": {
+            "title": "취소"
+          },
+          "SUCCEEDED": {
+            "title": "성공"
+          },
+          "SCHEDULED": {
+            "title": "예약"
+          },
           "PROCESSING": {
             "title": "처리 중"
           },
           "ASYNC_PROCESSING": {
             "title": "비동기 처리 중"
-          },
-          "SUCCEEDED": {
-            "title": "성공"
           },
           "FAILED": {
             "title": "실패"
@@ -46968,6 +47508,11 @@
           "id": "platform.accountTransfer",
           "title": "이체 내역 관련 API",
           "description": "파트너 정산 서비스의 이체 내역과 관련된 API 입니다."
+        },
+        {
+          "id": "platform.bulkAccountTransfer",
+          "title": "일괄 이체 내역 관련 API",
+          "description": "파트너 정산 서비스의 일괄 이체 내역과 관련된 API 입니다."
         },
         {
           "id": "platform.company",
