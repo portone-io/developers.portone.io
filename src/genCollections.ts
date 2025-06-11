@@ -203,7 +203,10 @@ import "#server-only";
 
 ${[...collection.entries.values()]
   .flatMap((entry) => entry.imports)
-  .map(({ ident, path }) => `import ${ident} from "${path.replaceAll('\\', '/')}";`)
+  .map(
+    ({ ident, path }) =>
+      `import ${ident} from "${path.replaceAll("\\", "/")}";`,
+  )
   .join("\n")}
 
 // prettier-ignore
@@ -263,7 +266,7 @@ ${[...collections.values()]
   .flatMap((entry) => [...entry.entries.values()])
   .flatMap((entry) => [...entry.imports])
   .filter(({ ident }) => thumbnails.some((t) => t.ident === ident))
-  .map(({ path }) => `import "../${path.replaceAll('\\', '/')}";`)
+  .map(({ path }) => `import "../${path.replaceAll("\\", "/")}";`)
   .join("\n")}
 `;
 
