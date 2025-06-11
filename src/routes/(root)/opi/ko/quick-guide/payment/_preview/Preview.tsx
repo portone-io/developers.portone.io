@@ -19,7 +19,7 @@ import { createPaymentRequest } from "./request";
 import type { Params } from "./type";
 
 export function Preview() {
-  const { params: _params } = useInteractiveDocs();
+  const { params: _params, paymentGateway } = useInteractiveDocs();
   const params = _params as Params;
 
   const [paymentStatus, setPaymentStatus] = createSignal<{
@@ -40,7 +40,7 @@ export function Preview() {
   createEffect(on(() => trackStore(params), reload));
 
   const isChannelUnavailable = () => {
-    const paymentRequest = createPaymentRequest(params, "");
+    const paymentRequest = createPaymentRequest(paymentGateway, params, "");
     return match(paymentRequest)
       .with(P.nullish, () => true)
       .with({ channelKey: P.string }, () => false)
@@ -55,6 +55,7 @@ export function Preview() {
       .padStart(8, "0");
 
     const request = createPaymentRequest(
+      paymentGateway,
       untrack(() => params),
       paymentId,
     );

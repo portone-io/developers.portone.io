@@ -2,6 +2,7 @@ import { Select } from "@kobalte/core/select";
 import { createMemo } from "solid-js";
 
 import { type PayMethod, useInteractiveDocs } from "~/state/interactive-docs";
+import { usePaymentGateway } from "~/state/payment-gateway";
 
 export type PayMethodSelectOption = {
   label: string;
@@ -21,17 +22,21 @@ interface PayMethodSelectProps {
 }
 
 export function PayMethodSelect(props: PayMethodSelectProps) {
+  const { paymentGateway } = usePaymentGateway();
   const { params, setParams, pgOptions } = useInteractiveDocs();
   const options = createMemo(() => {
-    return pgOptions()[params.pg.name]?.payMethods ?? [];
+    const pgName = paymentGateway();
+    if (pgName === "all") return [];
+    return pgOptions()[pgName]?.payMethods ?? [];
   });
-  const handleChange = (value: PayMethod) => {
-    setParams("pg", "payMethods", value);
+  const handleChange = (value: PayMethod | null) => {
+    if (!value) return;
+    setParams("payMethod", value);
   };
   return (
     <Select
       class={props.class}
-      value={params.pg.payMethods}
+      value={params.payMethod}
       onChange={handleChange}
       options={options()}
       placeholder="결제수단을 선택해주세요."

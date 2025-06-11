@@ -5,6 +5,7 @@ import { camelCase, pascalCase } from "es-toolkit/string";
 import { match, P } from "ts-pattern";
 
 import { TypescriptWriter } from "./common.ts";
+import { getNonEmptyPgs } from "./pgSpecific.ts";
 import { getResourceRef, type Parameter } from "./schema.ts";
 import { getComponentName } from "./utils.ts";
 
@@ -23,10 +24,12 @@ function generateDescription({
   if (fs.existsSync(path.dirname(file)) === false) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
   }
-  fs.writeFileSync(file, description);
+  fs.writeFileSync(
+    file,
+    `import { Condition } from "~/components/Condition";\n\n${description}`,
+  );
   const componentName = pascalCase(
-    `${path
-      .posix
+    `${path.posix
       .relative(basePath, filePath)
       .split("/")
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
@@ -58,6 +61,23 @@ function generateTypeDef({
 }): string {
   const writer = TypescriptWriter();
 
+  const hasPgCondition =
+    parameter.pgSpecific && Object.keys(parameter.pgSpecific).length > 0;
+  const visiblePgProviders =
+    hasPgCondition && parameter.pgSpecific
+      ? Object.entries(parameter.pgSpecific)
+          .filter(([_, spec]) => spec.visible === true)
+          .map(([pg]) => pg)
+      : [];
+
+  if (hasPgCondition && visiblePgProviders.length > 0) {
+    imports.add('import { Condition } from "~/components/Condition";');
+    writer.writeLine(
+      `<Condition pgName={(pg) => [${visiblePgProviders.map((pg) => `"${pg}"`).join(", ")}].includes(pg)}>`,
+    );
+    writer.indent();
+  }
+
   if (parameter.type === "resourceRef") {
     const modulePath = `~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts`;
     const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
@@ -85,6 +105,11 @@ function generateTypeDef({
     }
     writer.outdent();
     writer.writeLine("/>");
+
+    if (hasPgCondition && visiblePgProviders.length > 0) {
+      writer.outdent();
+      writer.writeLine("</Condition>");
+    }
 
     return writer.content;
   }
@@ -160,6 +185,11 @@ function generateTypeDef({
   );
   writer.outdent();
   writer.writeLine("</Parameter.TypeDef>");
+
+  if (hasPgCondition && visiblePgProviders.length > 0) {
+    writer.outdent();
+    writer.writeLine("</Condition>");
+  }
 
   return writer.content;
 }
@@ -477,6 +507,18 @@ export function generateParameter({
   writer.indent();
   writer.writeLine("return (");
   writer.indent();
+
+  const nonEmptyPgs = getNonEmptyPgs(parameter);
+  const shouldApplyHideIfEmpty = nonEmptyPgs !== null;
+
+  if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
+    imports.add('import { Condition } from "~/components/Condition";');
+    writer.writeLine(
+      `<Condition pgName={(pg) => [${nonEmptyPgs.map((pg) => `"${pg}"`).join(", ")}].includes(pg)}>`,
+    );
+    writer.indent();
+  }
+
   if (parameter.type === "resourceRef") {
     const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
     imports.add(
@@ -508,6 +550,12 @@ export function generateParameter({
     writer.outdent();
     writer.writeLine("</Parameter.TypeDef>");
   }
+
+  if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
+    writer.outdent();
+    writer.writeLine("</Condition>");
+  }
+
   writer.outdent();
   writer.writeLine(");");
   writer.outdent();
