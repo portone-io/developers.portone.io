@@ -89,9 +89,9 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
       - channelKey: string
 
-        **채널키**
+        **채널 키**
 
-        [관리자 콘솔 > 연동 정보](https://admin.portone.io/integration-v2/manage/channel)에서 채널 연동 시 생성된 채널키입니다.
+        [관리자 콘솔 > 연동 정보](https://admin.portone.io/integration-v2/manage/channel)에서 채널 연동 시 생성된 채널 키입니다.
 
       - paymentId: string
 
@@ -99,7 +99,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
         주문을 식별하는 고유 번호로, 포트원에서 제공하지 않고 직접 입력합니다.
 
-        이미 승인이 완료된 `paymentId`로 결제나 가상계좌 발급을 시도하는 경우 에러가 발생합니다.
+        이미 결제 완료된 `paymentId`로 결제나 가상계좌 발급을 시도하는 경우 실패합니다.
 
         <Condition when={({ pg: { name } }) => name === 'toss'}>
           <Hint style="warning">
@@ -205,7 +205,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
       - currency: string
 
-        **결제 통화**
+        **화폐**
 
         [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html)에 의해 표준화된 알파벳 통화 코드를 입력합니다.
 
@@ -688,24 +688,6 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
             </Condition>
 
             <Condition when={({ pg: {name }}) => !['kcp', 'kpn'].includes(name)}>
-              - fixedOption?: oneof object
-
-                **고정식 가상계좌 설정**
-
-                - `pgAccountId`와 `accountNumber` 중 하나만 입력해주세요.
-
-                <Parameter.Details>
-                  - pgAccountId?: string
-
-                    결제대행사로부터 사전에 가상계좌를 발급받은 경우, 그 번호를 입력해주세요.
-
-                  - accountNumber?: string
-
-                    고정하여 사용할 가상계좌 번호를 입력해주세요.
-                </Parameter.Details>
-            </Condition>
-
-            <Condition when={({ pg: {name }}) => !['kcp', 'kpn'].includes(name)}>
               - bankCode?: string
 
                 **단독 노출 은행**
@@ -861,37 +843,6 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   KSNET의 경우 휴대폰 번호 및 사업자번호는 숫자만 입력해야 합니다.
                   하이픈(`-`)을 포함한 다른 문자가 포함되는 경우 별다른 에러 표시 없이 결제는 정상승인되지만 현금영수증이 발급되지 않습니다.
                 </Condition>
-            </Condition>
-
-            <Condition when={({ pg: { name } }) => name === 'smartro'}>
-            - bankCode?: string
-
-              **단독 노출 은행**
-
-              구매자가 은행을 선택하지 않고 입력한 은행이 자동 선택되도록 합니다.
-
-              <Details>
-                <Details.Summary>지원 은행 코드</Details.Summary>
-
-                <Details.Content>
-                  - `BANK_INDUSTRIAL_BANK_OF_KOREA` (기업은행)
-                  - `BANK_KOOKMIN_BANK` (국민은행)
-                  - `BANK_SUHYUP_BANK` (수협은행)
-                  - `BANK_NH_NONGHYUP_BANK` (농협은행)
-                  - `BANK_WOORI_BANK` (우리은행)
-                  - `BANK_SC_BANK_KOREA` (SC 제일은행)
-                  - `BANK_CITI_BANK_KOREA` (씨티은행)
-                  - `BANK_DAEGU_BANK` (대구은행)
-                  - `BANK_BUSAN_BANK` (부산은행)
-                  - `BANK_GWANGJU_BANK` (광주은행)
-                  - `BANK_JEONBUK_BANK` (전북은행)
-                  - `BANK_KYONGNAM_BANK` (경남은행)
-                  - `BANK_HANA_BANK` (하나은행)
-                  - `BANK_SHINHAN_BANK` (신한은행)
-                  - `BANK_EPOST` (우체국)
-                  - `BANK_K_BANK` (케이뱅크)
-                </Details.Content>
-              </Details>
             </Condition>
           </Parameter.Details>
       </Condition>
@@ -1797,7 +1748,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
               - pt_memcorp_cd?: string
 
                 **베네피아 회원소속사코드**
-                
+
                 베네피아 복지포인트를 사용하는 경우 필수로 입력합니다.
 
               - disp_tax_yn?: string
@@ -1896,7 +1847,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                       **결제 상품 유입경로**
 
                       네이버 플랫폼의 타 서비스와 제휴계약 후 유입분석을 진행하는 경우에만 입력합니다.
-                      
+
                       [공식 매뉴얼](https://developers.pay.naver.com/docs/v2/api#etc-etc_product_ref)
 
                     - startDate?: string
@@ -2013,7 +1964,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                         계좌이체 사용 시 `Y`로 설정해야 합니다.
                       </Hint>
                   </Parameter.Details>
-                
+
                 - surcharge?: object\[]
 
                   **부가금 정보**
@@ -2024,7 +1975,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                     - name?: string
 
                       **항목명**
-                      
+
                     - quantity?: number
 
                       **수량**
@@ -2039,7 +1990,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   **배송지 정보**
 
                   <Parameter.Details>
-                    - city?: string 
+                    - city?: string
 
                       **배송지 도시**
 
@@ -2081,7 +2032,7 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
                   **청구지 정보**
 
                   <Parameter.Details>
-                    - city?: string 
+                    - city?: string
 
                       **청구지 도시**
 
@@ -2148,9 +2099,9 @@ import { Condition, InteractiveDoc, Section } from "./_preview";
 
       - redirectUrl?: string
 
-        **리디렉션 방식에서 결제 프로세스 완료 후 이동될 고객사 URL**
+        **리디렉션 방식에서 결제 완료 후 이동할 URL**
 
-        - 대부분의 모바일 결제환경에서 반드시 입력해야 합니다.
+        - 대부분의 모바일 환경에서 필수로 입력해야 합니다.
 
       - noticeUrls?: string\[]
 
