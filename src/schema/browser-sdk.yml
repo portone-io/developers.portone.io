@@ -1555,15 +1555,6 @@ resources:
         KCP_V2: {}
         HYPHEN: {}
         EXIMBAY_V2: {}
-    IsTestChannel:
-      type: boolean
-      deprecated: true
-      description: |
-        **테스트 채널 정보로 결제할지 여부** (2024년 09월 30일부터 사용이 불가능한 파라미터 입니다.)
-
-        미입력 시 기본값은 `false`입니다.
-
-        선택하신 채널이 테스트 채널이 아닌 경우 에러가 발생합니다.
     TaxFreeAmount:
       type: integer
       description: |
@@ -1678,18 +1669,9 @@ resources:
           optional: true
           description: 상점명 후리카나 (일본어 읽는법 표기)
         openingHours:
-          type: object
+          type: resourceRef
+          $ref: "#/resources/entity/StoreDetailsOpeningHours"
           optional: true
-          description: 상점 영업시간 (HH:mm)
-          properties:
-            open:
-              type: string
-              optional: true
-              description: 영업 시작 시간
-            close:
-              type: string
-              optional: true
-              description: 영업 종료 시간
         contactName:
           type: string
           optional: true
@@ -1703,6 +1685,18 @@ resources:
         - KSNET 카카오페이의 경우 필수 입력
         - (신)나이스페이의 경우 매출 전표에 표기 할 용도로 선택 입력
         - 이니시스 일본결제의 경우 JPPG(gmoPayment) 결제의 상점정보로 사용되거나 편의점 결제 시 영수증 표시 정보로 사용됨.
+    StoreDetailsOpeningHours:
+      type: object
+      description: 상점 영업시간 (HH:mm)
+      properties:
+        open:
+          type: string
+          optional: true
+          description: 영업 시작 시간
+        close:
+          type: string
+          optional: true
+          description: 영업 종료 시간
     TransactionType:
       type: enum
       variants:
@@ -1943,6 +1937,17 @@ resources:
           variants:
             Y: {}
             N: {}
+        KcpV2:
+          type: object
+          name: KcpV2IdentityVerificationBypass
+          description: |
+            **KCP bypass 파라미터**
+          properties:
+            web_siteid:
+              type: string
+              optional: true
+              description: |
+                **DI 생성 시 사용할 사이트 ID**
       IdentityVerificationBypass:
         type: object
         description: |
@@ -1956,10 +1961,16 @@ resources:
             type: resourceRef
             optional: true
             $ref: "#/resources/entity/bypass/identityVerification/InicisUnified"
+          kcpV2:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/identityVerification/KcpV2"
       issueBillingKey:
         SmartroV2:
           type: object
           name: SmartroV2IssueBillingKeyBypass
+          description: |
+            **스마트로 bypass 파라미터**
           properties:
             SkinColor:
               type: resourceRef
@@ -1972,6 +1983,8 @@ resources:
         InicisV2:
           type: object
           name: InicisV2IssueBillingKeyBypass
+          description: |
+            **KG이니시스 bypass 파라미터**
           properties:
             carduse:
               type: resourceRef
@@ -1980,6 +1993,8 @@ resources:
         KcpV2:
           type: object
           name: KcpV2IssueBillingKeyBypass
+          description: |
+            **KCP bypass 파라미터**
           properties:
             batch_soc_choice:
               type: resourceRef
@@ -1988,6 +2003,8 @@ resources:
         Naverpay:
           type: object
           name: NaverpayIssueBillingKeyBypass
+          description: |
+            **네이버페이 bypass 파라미터**
           properties:
             subMerchantName:
               type: string
@@ -2002,6 +2019,8 @@ resources:
         TosspayV2:
           type: object
           name: TosspayV2IssueBillingKeyBypass
+          description: |
+            **토스페이 bypass 파라미터**
           properties:
             encryptedUserCi:
               type: string
@@ -2011,6 +2030,8 @@ resources:
         Welcome:
           type: object
           name: WelcomeIssueBillingKeyBypass
+          description: |
+            **웰컴페이먼츠 bypass 파라미터**
           properties:
             logo_url:
               type: string
@@ -2099,6 +2120,8 @@ resources:
         Welcome:
           type: object
           name: WelcomeIssueBillingKeyAndPayBypass
+          description: |
+            **웰컴페이먼츠 bypass 파라미터**
           properties:
             acceptmethod:
               type: array
@@ -2151,6 +2174,8 @@ resources:
         EximbayV2:
           type: object
           name: EximbayV2IssueBillingKeyAndPayBypass
+          description: |
+            **엑심베이 bypass 파라미터**
           properties:
             merchant:
               type: resourceRef
@@ -2268,6 +2293,29 @@ resources:
               type: string
               description: |
                 **청구지 상세 주소**
+        PayletterGlobal:
+          type: object
+          description: |
+            **페이레터 해외결제 bypass 파라미터**
+          name: PayletterGlobalIssueBillingKeyAndPayBypass
+          properties:
+            pginfo:
+              type: string
+              description: |
+                **결제수단 지정용 파라미터**
+
+                - 해외카드 인증 : `PLCreditCard`
+                - 해외카드 비인증(3DS) : `PLCreditCardMpi`
+                - 유니온페이 : `PLUnionPay_HC`
+                - 위챗페이 PC결제: `WeChatPayQRCodePayment`
+                - 위챗페이 모바일결제 : `WeChatPayH5Payment`
+                - 알리페이 : `ICBAlipay`
+              optional: true
+            servicename:
+              type: string
+              description: |
+                고객사 서비스명, WeChatPay, Alipay 이용 시 필수 입력
+              optional: true
       IssueBillingKeyAndPayBypass:
         type: object
         properties:
@@ -2275,10 +2323,20 @@ resources:
             type: resourceRef
             optional: true
             $ref: "#/resources/entity/bypass/issueBillingKeyAndPay/Welcome"
+          payletter_global:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/issueBillingKeyAndPay/PayletterGlobal"
+          eximbay_v2:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/issueBillingKeyAndPay/EximbayV2"
       loadIssueBillingKeyUI:
         PaypalV2:
           type: object
           name: PaypalV2LoadIssueBillingKeyUIBypass
+          description: |
+            **Paypal bypass 파라미터**
           properties:
             style:
               type: resourceRef
@@ -2362,7 +2420,216 @@ resources:
               type: resourceRef
               description: |
                 국가 코드
-              $ref: "#/resources/entity/Country"
+              $ref: "#/resources/entity/bypass/loadIssueBillingKeyUI/PaypalV2Country"
+        PaypalV2Country:
+          type: enum
+          description: |
+            **페이팔 V2 국가 코드**
+          variants:
+            AL: {}
+            DZ: {}
+            AD: {}
+            AO: {}
+            AI: {}
+            AG: {}
+            AR: {}
+            AM: {}
+            AW: {}
+            AU: {}
+            AT: {}
+            AZ: {}
+            BS: {}
+            BH: {}
+            BB: {}
+            BY: {}
+            BE: {}
+            BZ: {}
+            BJ: {}
+            BM: {}
+            BT: {}
+            BO: {}
+            BA: {}
+            BW: {}
+            BR: {}
+            VG: {}
+            BN: {}
+            BG: {}
+            BF: {}
+            BI: {}
+            KH: {}
+            CM: {}
+            CA: {}
+            CV: {}
+            KY: {}
+            TD: {}
+            CL: {}
+            CN: {}
+            CO: {}
+            KM: {}
+            CG: {}
+            CD: {}
+            CK: {}
+            CR: {}
+            CI: {}
+            HR: {}
+            CY: {}
+            CZ: {}
+            DK: {}
+            DJ: {}
+            DM: {}
+            DO: {}
+            EC: {}
+            EG: {}
+            SV: {}
+            ER: {}
+            EE: {}
+            ET: {}
+            FK: {}
+            FO: {}
+            FJ: {}
+            FI: {}
+            FR: {}
+            GF: {}
+            PF: {}
+            GA: {}
+            GM: {}
+            GE: {}
+            DE: {}
+            GI: {}
+            GR: {}
+            GL: {}
+            GD: {}
+            GP: {}
+            GT: {}
+            GN: {}
+            GW: {}
+            GY: {}
+            HN: {}
+            HK: {}
+            HU: {}
+            IS: {}
+            IN: {}
+            ID: {}
+            IE: {}
+            IL: {}
+            IT: {}
+            JM: {}
+            JP: {}
+            JO: {}
+            KZ: {}
+            KE: {}
+            KI: {}
+            KW: {}
+            KG: {}
+            LA: {}
+            LV: {}
+            LS: {}
+            LI: {}
+            LT: {}
+            LU: {}
+            MK: {}
+            MG: {}
+            MW: {}
+            MY: {}
+            MV: {}
+            ML: {}
+            MT: {}
+            MH: {}
+            MQ: {}
+            MR: {}
+            MU: {}
+            YT: {}
+            MX: {}
+            FM: {}
+            MD: {}
+            MC: {}
+            MN: {}
+            ME: {}
+            MS: {}
+            MA: {}
+            MZ: {}
+            NA: {}
+            NR: {}
+            NP: {}
+            NL: {}
+            AN: {}
+            NC: {}
+            NZ: {}
+            NI: {}
+            NE: {}
+            NG: {}
+            NU: {}
+            NF: {}
+            NO: {}
+            OM: {}
+            PW: {}
+            PA: {}
+            PG: {}
+            PY: {}
+            PE: {}
+            PH: {}
+            PN: {}
+            PL: {}
+            PT: {}
+            QA: {}
+            RE: {}
+            RO: {}
+            RU: {}
+            RW: {}
+            WS: {}
+            SM: {}
+            ST: {}
+            SA: {}
+            SN: {}
+            RS: {}
+            SC: {}
+            SL: {}
+            SG: {}
+            SK: {}
+            SI: {}
+            SB: {}
+            SO: {}
+            ZA: {}
+            KR: {}
+            ES: {}
+            LK: {}
+            SH: {}
+            KN: {}
+            LC: {}
+            PM: {}
+            VC: {}
+            SR: {}
+            SJ: {}
+            SZ: {}
+            SE: {}
+            CH: {}
+            TW: {}
+            TJ: {}
+            TZ: {}
+            TH: {}
+            TG: {}
+            TO: {}
+            TT: {}
+            TN: {}
+            TM: {}
+            TC: {}
+            TV: {}
+            TR: {}
+            UG: {}
+            UA: {}
+            AE: {}
+            GB: {}
+            US: {}
+            UY: {}
+            VU: {}
+            VA: {}
+            VE: {}
+            VN: {}
+            WF: {}
+            YE: {}
+            ZM: {}
+            ZW: {}
+          valuePrefix: COUNTRY
         PaypalV2AdditionalData:
           type: object
           properties:
@@ -2417,6 +2684,8 @@ resources:
         PaypalV2:
           type: object
           name: PaypalV2LoadPaymentUIBypass
+          description: |
+            **Paypal bypass 파라미터**
           properties:
             style:
               type: resourceRef
@@ -2660,6 +2929,86 @@ resources:
               description: |
                 **KSNET 간편결제 다이렉트 여부**
               optional: true
+        PaypalV2:
+          type: object
+          name: PaypalV2PaymentBypass
+          description: |
+            **Paypal bypass 파라미터**
+          properties:
+            purchase_units:
+              type: array
+              description: |
+                create order API 호출에 필요한 파라미터
+              optional: true
+              items:
+                type: resourceRef
+                $ref: "#/resources/entity/bypass/loadPaymentUI/PaypalV2PurchaseUnit"
+            payer:
+              type: resourceRef
+              $ref: "#/resources/entity/bypass/loadPaymentUI/PaypalV2Payer"
+              optional: true
+            payment_source:
+              type: resourceRef
+              $ref: "#/resources/entity/bypass/payment/PaypalV2PaymentSource"
+              optional: true
+            additional_data:
+              type: array
+              items:
+                type: resourceRef
+                $ref: "#/resources/entity/bypass/loadPaymentUI/PaypalV2AdditionalData"
+              description: |
+                STC 파라미터
+              optional: true
+        PaypalV2PaymentSource:
+          type: object
+          optional: true
+          properties:
+            paypal:
+              type: resourceRef
+              optional: true
+              $ref: "#/resources/entity/bypass/payment/PaypalV2PaymentSourcePaypal"
+        PaypalV2PaymentSourcePaypal:
+          type: object
+          properties:
+            experience_context:
+              type: resourceRef
+              optional: true
+              $ref: "#/resources/entity/bypass/payment/PaypalV2PaymentSourcePaypalExperienceContext"
+        PaypalV2PaymentSourcePaypalExperienceContext:
+          type: object
+          properties:
+            brand_name:
+              type: string
+              optional: true
+            shipping_preference:
+              type: resourceRef
+              $ref: "#/resources/entity/bypass/payment/PaypalV2PaymentSourcePaypalExperienceContextShippingPreference"
+              optional: true
+            landing_page:
+              type: resourceRef
+              $ref: "#/resources/entity/bypass/payment/PaypalV2PaymentSourcePaypalExperienceContextLandingPage"
+              optional: true
+            payment_method_preference:
+              type: resourceRef
+              $ref: "#/resources/entity/bypass/payment/PaypalV2PaymentSourcePaypalExperienceContextPaymentMethodPreference"
+              optional: true
+        PaypalV2PaymentSourcePaypalExperienceContextShippingPreference:
+          type: enum
+          variants:
+            GET_FROM_FILE: {}
+            NO_SHIPPING: {}
+            SET_PROVIDED_ADDRESS: {}
+        PaypalV2PaymentSourcePaypalExperienceContextLandingPage:
+          type: enum
+          variants:
+            LOGIN: {}
+            GUEST_CHECKOUT: {}
+            NO_PREFERENCE: {}
+        PaypalV2PaymentSourcePaypalExperienceContextPaymentMethodPreference:
+          type: enum
+          variants:
+            UNRESTRICTED: {}
+            IMMEDIATE_PAYMENT_REQUIRED: {}
         Kakaopay:
           type: object
           description: "카카오페이 bypass 파라미터"
@@ -3627,8 +3976,10 @@ resources:
         TossBrandpayWidgetOptionsMethodType:
           type: enum
           variants:
-            카드: {}
-            계좌: {}
+            카드:
+              alias: CARD
+            계좌:
+              alias: ACCOUNT
           description: |
             위젯에 보여줄 결제 수단. 예) 카드 전달시 등록한 결제 수단 중 카드만 노출 됨
         TossBrandpayWidgetOptionsUi:
@@ -3751,6 +4102,10 @@ resources:
             type: resourceRef
             optional: true
             $ref: "#/resources/entity/bypass/payment/Ksnet"
+          paypal_v2:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/payment/PaypalV2"
           kakaopay:
             type: resourceRef
             optional: true
@@ -4906,6 +5261,18 @@ resources:
           items:
             type: resourceRef
             $ref: "#/resources/entity/CardCompany"
+        easyPayProvider:
+          optional: true
+          type: resourceRef
+          $ref: "#/resources/entity/EasyPayProvider"
+        availablePayMethods:
+          optional: true
+          type: array
+          items:
+            type: resourceRef
+            $ref: "#/resources/entity/EasyPayPaymentMethod"
+          description: |
+            노출을 허용할 결제 수단의 종류
     IssueBillingKeyRequestUnionPaypal:
       type: emptyObject
     IssueBillingKeyAndPayRequestUnionMobile:
