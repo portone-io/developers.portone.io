@@ -69,8 +69,9 @@ export function Docs(props: ParentProps) {
                   if (interactiveDocs()?.fallbackPg) {
                     return interactiveDocs()!.fallbackPg;
                   }
-                  if (frontmatter().targetPg) {
-                    return frontmatter().targetPg as PaymentGateway;
+                  const targetPg = frontmatter().targetPg;
+                  if (targetPg && targetPg !== "dynamic") {
+                    return targetPg;
                   }
                   return "all";
                 });
