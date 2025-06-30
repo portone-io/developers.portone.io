@@ -1,6 +1,5 @@
-import { createEffect, createMemo, For, on, Show, splitProps } from "solid-js";
+import { createMemo, For, Show, splitProps } from "solid-js";
 
-import { usePaymentGateway } from "~/state/payment-gateway";
 import { PaymentGateway } from "~/type";
 
 import { Condition, type ConditionProps } from "./Condition";
@@ -9,22 +8,13 @@ import { PgOptions } from "./PgSelect";
 export type PgSectionProps = ConditionProps;
 
 export const PgSection = (props: PgSectionProps) => {
-  const { paymentGateway } = usePaymentGateway();
   const [local, rest] = splitProps(props, ["pgName"]);
-  const targetPgSet = createMemo<Set<PaymentGateway>>(
-    on(
-      () => local.pgName,
-      (pgResolver) => {
-        if (!pgResolver) return new Set<PaymentGateway>();
-        const icons = new Set([...PaymentGateway.options].filter(pgResolver));
-        if (icons.size === PaymentGateway.options.length)
-          return new Set<PaymentGateway>();
-        return icons;
-      },
-    ),
-  );
-  createEffect(() => {
-    console.log(paymentGateway());
+  const targetPgSet = createMemo<Set<PaymentGateway>>(() => {
+    if (!local.pgName) return new Set<PaymentGateway>();
+    const icons = new Set([...PaymentGateway.options].filter(local.pgName));
+    if (icons.size === PaymentGateway.options.length)
+      return new Set<PaymentGateway>();
+    return icons;
   });
   return (
     <Condition pgName={local.pgName}>
