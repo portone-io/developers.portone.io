@@ -26,7 +26,7 @@ function generateDescription({
   }
   fs.writeFileSync(
     file,
-    `import { Condition } from "~/components/Condition";\n\n${description}`,
+    `import { PgSection } from "~/components/PgSection";\n\n${description}`,
   );
   const componentName = pascalCase(
     `${path.posix
