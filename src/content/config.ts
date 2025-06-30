@@ -73,7 +73,7 @@ const DocsEntry = z.object({
   targetVersions: z.array(SystemVersion).optional(),
   versionVariants: z.record(SystemVersion, z.string()).optional(),
   customLayout: z.enum(["InteractiveDocs"]).optional(),
-  targetPg: PaymentGateway.optional(),
+  targetPg: PaymentGateway.or(z.literal("dynamic")).optional(),
 });
 export type DocsEntry = z.infer<typeof DocsEntry>;
 

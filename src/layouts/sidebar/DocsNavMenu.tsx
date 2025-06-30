@@ -12,7 +12,7 @@ import LeftSidebar from "./LeftSidebar";
 import LeftSidebarItem from "./LeftSidebarItem";
 
 interface Props {
-  docData: Pick<DocsEntry, "versionVariants" | "targetVersions">;
+  docData: Pick<DocsEntry, "versionVariants" | "targetVersions" | "targetPg">;
   nav: string;
   lang: Lang;
   slug: string;
@@ -51,12 +51,14 @@ export default function DocsNavMenu(props: Props) {
         <div class="pb-1 pl-2 pr-6">
           <VersionSwitch docData={props.docData} />
         </div>
-        <section class="grid grid-cols-[auto_1fr] items-center justify-center pb-1 pl-2 pr-2">
-          <div class="rounded-md text-xs text-slate-5 font-medium">
-            결제대행사
-          </div>
-          <PgSelect />
-        </section>
+        <Show when={props.docData.targetPg === "dynamic"}>
+          <section class="grid grid-cols-[auto_1fr] items-center justify-center pb-1 pl-2 pr-2">
+            <div class="rounded-md text-xs text-slate-5 font-medium">
+              결제대행사
+            </div>
+            <PgSelect />
+          </section>
+        </Show>
         <ul class="flex flex-col gap-1 pb-4 pr-4">
           <For each={navMenuItems()}>
             {(item) => {
