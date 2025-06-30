@@ -1095,7 +1095,7 @@ resources:
             <Condition pgName={(name) => ['tosspayments'].includes(name)}>
             토스페이먼츠 빌링키 발급에서 사용합니다. 값이 없으면 포트원에서 자동으로 생성합니다.
 
-            로마자 대소문자, 숫자, 특수문자 -, _, =, ., @를 하나 이상 포함한 2~300자 문자열이어야 합니다.
+            로마자 대소문자, 숫자, 특수문자 -, _, =, ., @를 하나 이상 포함한 2~50자 문자열이어야 합니다.
             </Condition>
 
             <Condition pgName={(name) => ['smartro'].includes(name)}>
@@ -1415,9 +1415,10 @@ resources:
       description: |
         **무이자 할부 설정**
 
-        고객사가 부담하는 무이자 할부 설정입니다.
+        고객사가 부담하는 무이자 할부 설정입니다. 이자 수수료를 가맹점이 부담하여 구매자에게 무이자로 할부를 제공합니다.
 
-        예) 삼성카드에 대해 2, 3개월 무이자 할부 적용, 신한카드에 대해 2, 3, 4, 5, 6개월 무이자 할부 적용
+        ## 사용 예시
+        삼성카드에 대해 2, 3개월 무이자 할부 적용, 신한카드에 대해 2, 3, 4, 5, 6개월 무이자 할부 적용
         ```typescript
         freeInstallmentPlans: [
          {
@@ -1430,6 +1431,12 @@ resources:
          }
         ]
         ```
+
+        ## 주의사항
+        - 무이자 할부 수수료는 가맹점이 부담합니다
+        - PG사와의 계약에 따라 무이자 할부 제공 가능 여부가 결정됩니다
+        - 카드사별로 최소 결제 금액 제한이 있을 수 있습니다 (일반적으로 5만원 이상)
+        - 일부 카드사는 특정 개월수에 대해서만 무이자 할부를 허용할 수 있습니다
       properties:
         cardCompany:
           type: resourceRef
@@ -1474,17 +1481,151 @@ resources:
       type: object
       description: |
         **할부 설정**
+
+        신용카드 결제 시 할부 관련 설정을 제어합니다.
+
+        ## 사용 예시
+
+        ### 3개월 고정 할부
+        ```typescript
+        installment: {
+          monthOption: {
+            fixedMonth: 3
+          }
+        }
+        ```
+
+        ### 2~6개월 할부 선택
+        ```typescript
+        installment: {
+          monthOption: {
+            availableMonthList: [2, 3, 4, 5, 6]
+          }
+        }
+        ```
+
+        ### 무이자 할부 설정 (삼성카드 2,3개월)
+        ```typescript
+        installment: {
+          freeInstallmentPlans: [{
+            cardCompany: 'CARD_COMPANY_SAMSUNG',
+            months: [2, 3]
+          }]
+        }
+        ```
+
+        ## 주의사항
+        - 일반적으로 5만원 이상부터 할부가 가능합니다
+        - 1개월 할부는 일시불과 동일하게 처리됩니다
+        - 카드 다이렉트 호출 시 고정 할부만 가능한 PG사가 있습니다
+        - 무이자 할부는 가맹점이 수수료를 부담하는 방식입니다
       properties:
         freeInstallmentPlans:
           type: array
           optional: true
+          description: |
+            **무이자 할부 설정**
+
+            <Condition pgName={(name) => ['tosspayments'].includes(name)}>
+            토스페이먼츠에서 무이자 할부를 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['nice'].includes(name)}>
+            나이스페이먼츠에서 무이자 할부를 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['inicis'].includes(name)}>
+            KG이니시스에서 무이자 할부를 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['kcp'].includes(name)}>
+            NHN KCP에서 무이자 할부를 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['ksnet'].includes(name)}>
+            KSNET에서 무이자 할부를 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['welcome'].includes(name)}>
+            웰컴페이먼츠에서 무이자 할부를 지원합니다.
+            </Condition>
           items:
             type: resourceRef
             $ref: "#/resources/entity/FreeInstallmentPlan"
+          pgSpecific:
+            tosspayments:
+              visible: true
+            nice:
+              visible: true
+            inicis:
+              visible: true
+            kcp:
+              visible: true
+            ksnet:
+              visible: true
+            welcome:
+              visible: true
         monthOption:
           type: resourceRef
           $ref: "#/resources/entity/InstallmentMonthOption"
           optional: true
+          description: |
+            **할부 개월 수 설정**
+
+            <Condition pgName={(name) => ['tosspayments'].includes(name)}>
+            토스페이먼츠는 `fixedMonth`와 `availableMonthList`를 지원합니다. `availableMonthList` 사용 시 배열의 최대값을 최대 할부 개월수로 설정하여 고객이 0~최대값 범위에서 선택할 수 있습니다. 지원 범위: 0(일시불), 2~12개월.
+            </Condition>
+
+            <Condition pgName={(name) => ['nice'].includes(name)}>
+            나이스페이먼츠에서 고정 할부 및 할부 선택을 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['inicis'].includes(name)}>
+            KG이니시스에서 고정 할부 및 할부 선택을 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['kcp'].includes(name)}>
+            NHN KCP에서 고정 할부 및 할부 선택을 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['smartro'].includes(name)}>
+            스마트로에서 고정 할부만 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['ksnet'].includes(name)}>
+            KSNET에서 고정 할부 및 할부 선택을 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['welcome'].includes(name)}>
+            웰컴페이먼츠에서 고정 할부 및 할부 선택을 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['kpn'].includes(name)}>
+            KPN에서 고정 할부만 지원합니다.
+            </Condition>
+
+            <Condition pgName={(name) => ['toss_brandpay'].includes(name)}>
+            토스 브랜드페이에서 고정 할부만 지원합니다. `availableMonthList`에 2개 이상의 값이 있으면 오류가 발생합니다.
+            </Condition>
+          pgSpecific:
+            tosspayments:
+              visible: true
+            nice:
+              visible: true
+            inicis:
+              visible: true
+            kcp:
+              visible: true
+            smartro:
+              visible: true
+            ksnet:
+              visible: true
+            welcome:
+              visible: true
+            kpn:
+              visible: true
+            toss_brandpay:
+              visible: true
     IssueBillingKeyUIType:
       type: enum
       variants:
@@ -1910,6 +2051,11 @@ resources:
       type: string
       description: |
         **주문명**
+
+        <Condition pgName={(name) => name === 'tosspayments'}>
+        토스페이먼츠에서는 최대 100자까지 입력할 수 있습니다.
+        </Condition>
+
         <Condition pgName={(name) => name === 'nice'}>
         나이스페이먼츠의 경우 최대 40바이트까지 입력할 수 있으며, 사용 가능한 특수문자는 아래와 같습니다.
 
@@ -2259,41 +2405,6 @@ resources:
       IssueBillingKeyBypass:
         type: object
         properties:
-          kakaopay:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/payment/Kakaopay"
-            pgSpecific:
-              kakao:
-                visible: true
-          smartro_v2:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/issueBillingKey/SmartroV2"
-            pgSpecific:
-              smartro:
-                visible: true
-          naverpay:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/issueBillingKey/Naverpay"
-            pgSpecific:
-              naver:
-                visible: true
-          welcome:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/issueBillingKey/Welcome"
-            pgSpecific:
-              welcome:
-                visible: true
-          tosspay_v2:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/issueBillingKey/TosspayV2"
-            pgSpecific:
-              tosspay:
-                visible: true
           inicis_v2:
             type: resourceRef
             optional: true
@@ -2307,6 +2418,41 @@ resources:
             $ref: "#/resources/entity/bypass/issueBillingKey/KcpV2"
             pgSpecific:
               kcp:
+                visible: true
+          smartro_v2:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/issueBillingKey/SmartroV2"
+            pgSpecific:
+              smartro:
+                visible: true
+          welcome:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/issueBillingKey/Welcome"
+            pgSpecific:
+              welcome:
+                visible: true
+          naverpay:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/issueBillingKey/Naverpay"
+            pgSpecific:
+              naver:
+                visible: true
+          kakaopay:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/payment/Kakaopay"
+            pgSpecific:
+              kakao:
+                visible: true
+          tosspay_v2:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/issueBillingKey/TosspayV2"
+            pgSpecific:
+              tosspay:
                 visible: true
       issueBillingKeyAndPay:
         Welcome:
@@ -4302,12 +4448,12 @@ resources:
             pgSpecific:
               toss:
                 visible: true
-          ksnet:
+          nice_v2:
             type: resourceRef
             optional: true
-            $ref: "#/resources/entity/bypass/payment/Ksnet"
+            $ref: "#/resources/entity/bypass/payment/NiceV2"
             pgSpecific:
-              ksnet:
+              nice:
                 visible: true
           paypal_v2:
             type: resourceRef
@@ -4316,12 +4462,19 @@ resources:
             pgSpecific:
               paypal:
                 visible: true
-          kakaopay:
+          inicis_v2:
             type: resourceRef
             optional: true
-            $ref: "#/resources/entity/bypass/payment/Kakaopay"
+            $ref: "#/resources/entity/bypass/payment/InicisV2"
             pgSpecific:
-              kakao:
+              inicis:
+                visible: true
+          kcp_v2:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/payment/KcpV2"
+            pgSpecific:
+              kcp:
                 visible: true
           smartro_v2:
             type: resourceRef
@@ -4330,26 +4483,12 @@ resources:
             pgSpecific:
               smartro:
                 visible: true
-          naverpay:
+          ksnet:
             type: resourceRef
             optional: true
-            $ref: "#/resources/entity/bypass/payment/Naverpay"
+            $ref: "#/resources/entity/bypass/payment/Ksnet"
             pgSpecific:
-              naver:
-                visible: true
-          nice_v2:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/payment/NiceV2"
-            pgSpecific:
-              nice:
-                visible: true
-          toss_brandpay:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/payment/TossBrandpay"
-            pgSpecific:
-              toss_brandpay:
+              ksnet:
                 visible: true
           welcome:
             type: resourceRef
@@ -4358,20 +4497,6 @@ resources:
             pgSpecific:
               welcome:
                 visible: true
-          tosspay_v2:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/payment/TosspayV2"
-            pgSpecific:
-              tosspay:
-                visible: true
-          inicis_v2:
-            type: resourceRef
-            optional: true
-            $ref: "#/resources/entity/bypass/payment/InicisV2"
-            pgSpecific:
-              inicis:
-                visible: true
           kpn:
             type: resourceRef
             optional: true
@@ -4379,12 +4504,33 @@ resources:
             pgSpecific:
               kpn:
                 visible: true
-          kcp_v2:
+          naverpay:
             type: resourceRef
             optional: true
-            $ref: "#/resources/entity/bypass/payment/KcpV2"
+            $ref: "#/resources/entity/bypass/payment/Naverpay"
             pgSpecific:
-              kcp:
+              naver:
+                visible: true
+          kakaopay:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/payment/Kakaopay"
+            pgSpecific:
+              kakao:
+                visible: true
+          tosspay_v2:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/payment/TosspayV2"
+            pgSpecific:
+              tosspay:
+                visible: true
+          toss_brandpay:
+            type: resourceRef
+            optional: true
+            $ref: "#/resources/entity/bypass/payment/TossBrandpay"
+            pgSpecific:
+              toss_brandpay:
                 visible: true
           hyphen:
             type: resourceRef
@@ -4927,6 +5073,10 @@ resources:
             고객사에서 임의로 ID를 정합니다.
 
             이미 결제 완료된 `paymentId`로 결제를 요청하는 경우 실패합니다.
+
+            <Condition pgName={(name) => name === 'tosspayments'}>
+            토스페이먼츠에서는 6~64자의 영문 대소문자, 숫자, 특수문자 `-`, `_`, `=`를 사용할 수 있습니다.
+            </Condition>
         orderName:
           type: resourceRef
           $ref: "#/resources/entity/PaymentOrderName"
@@ -5586,12 +5736,20 @@ resources:
         useCardPoint:
           optional: true
           description: |
-            **카드사 포인트 사용 여부**
+            **카드 포인트 사용 설정**
+
+            <Condition pgName={(name) => name === 'tosspayments'}>
+            토스페이먼츠에서 카드 포인트 사용을 제어합니다. `true`로 설정하면 카드 포인트 사용이 체크된 상태로 결제창이 열리고, `false`로 설정하거나 값을 지정하지 않으면 구매자가 직접 카드 포인트 사용 여부를 선택할 수 있습니다. 별도 계약이 필요합니다.
+            </Condition>
           type: boolean
         useAppCardOnly:
           optional: true
           description: |
             **앱 카드만 허용할지 여부**
+
+            <Condition pgName={(name) => name === 'tosspayments'}>
+            토스페이먼츠에서 특정 카드사(국민, 농협, 롯데, 삼성, 신한, 우리, 현대)의 앱카드 결제만 사용할지 여부를 설정합니다.
+            </Condition>
           type: boolean
         useInstallment:
           optional: true
@@ -5898,8 +6056,12 @@ resources:
 
         `validHours`와 `dueDate` 중 하나만 지정합니다.
 
-        <Condition pgName={(name) => ['tosspayments', 'kcp'].includes(name)}>
-        토스페이먼츠, KCP에서는 초 단위로 전달됩니다.
+        <Condition pgName={(name) => ['tosspayments'].includes(name)}>
+        토스페이먼츠에서는 초 단위로 전달됩니다. 최대 2160시간(90일)까지 설정 가능합니다.
+        </Condition>
+
+        <Condition pgName={(name) => ['kcp'].includes(name)}>
+        KCP에서는 초 단위로 전달됩니다.
         </Condition>
 
         <Condition pgName={(name) => ['inicis'].includes(name)}>
