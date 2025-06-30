@@ -12,12 +12,17 @@ import {
   type Setter,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import { match, P } from "ts-pattern";
+import { z } from "zod";
 
 import type {
   Code,
   DefaultParams,
   Section,
 } from "~/components/interactive-docs/code";
+import type { PaymentGateway } from "~/type";
+
+import { usePaymentGateway } from "../payment-gateway";
 
 export type CodeExample<
   Params extends DefaultParams,
@@ -35,43 +40,29 @@ export type Tab = {
   language: string;
 };
 
-export type PayMethod =
-  | "card"
-  | "virtualAccount"
-  | "transfer"
-  | "mobile"
-  | "giftCertificate"
-  | "easyPay";
-export type Pg =
-  | "nice"
-  | "smartro"
-  | "toss"
-  | "kpn"
-  | "inicis"
-  | "ksnet"
-  | "kcp"
-  | "kakao"
-  | "naver"
-  | "tosspay"
-  | "hyphen"
-  | "eximbay";
+export const PayMethod = z.enum([
+  "card",
+  "virtualAccount",
+  "transfer",
+  "mobile",
+  "giftCertificate",
+  "easyPay",
+]);
+export type PayMethod = z.infer<typeof PayMethod>;
 
 export type ConvertToPgParam<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends Partial<Record<O, any>>,
-  O extends Pg = Pg,
-  KeyName extends string = "name",
-  ValueName extends string = "payMethods",
+  O extends PaymentGateway = PaymentGateway,
+  ValueName extends string = "payMethod",
 > = {
   [K in keyof T]: {
-    [P in KeyName]: K;
-  } & {
-    [M in ValueName]: T[K][ValueName][number];
+    [M in ValueName]: T[K][`${ValueName}s`][number];
   };
 }[keyof T];
 
 export type PgOptions = {
-  [key in Pg]?: {
+  [K in PaymentGateway]?: {
     payMethods: PayMethod[];
   };
 };
@@ -96,6 +87,7 @@ export type InteractiveDocsInit = {
     backend: [string, ...string[]];
     hybrid: string[];
   };
+  fallbackPg: keyof PgOptions;
   params: DefaultParams & object;
 };
 
@@ -103,18 +95,18 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
   (props: { initial?: InteractiveDocsInit }) => {
     const defaultInitial: InteractiveDocsInit = {
       pgOptions: {
-        toss: { payMethods: ["card"] },
+        toss: {
+          payMethods: ["card"],
+        },
       },
       languages: {
         frontend: ["react"],
         backend: ["node"],
         hybrid: ["nextjs"],
       },
+      fallbackPg: "toss",
       params: {
-        pg: {
-          name: "toss",
-          payMethods: "card",
-        },
+        payMethod: "card",
       },
     };
     const initial = createMemo(() => props.initial ?? defaultInitial);
@@ -129,23 +121,38 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     const [preview, setPreview] = createSignal<Component | undefined>(
       undefined,
     );
-    const pgName = createMemo(() => params.pg.name);
+    const { paymentGateway: _paymentGateway, setPaymentGateway } =
+      usePaymentGateway();
+    const paymentGateway = createMemo(() => {
+      return match(_paymentGateway())
+        .with(
+          P.not("all"),
+          (pgName) => initial().pgOptions[pgName],
+          (pgName) => pgName,
+        )
+        .with("all", P.string, () => {
+          setPaymentGateway(initial().fallbackPg);
+          return initial().fallbackPg;
+        })
+        .exhaustive();
+    });
+
     const pgOptions = createMemo(() => initial().pgOptions);
     // PG사 변경 시 처리
     createEffect(
-      on(pgOptions, (pgOptions) => {
-        const pgOption = pgOptions[pgName()];
+      on([paymentGateway, pgOptions], ([paymentGateway, pgOptions]) => {
+        const pgOption = pgOptions[paymentGateway];
         if (pgOption === undefined) {
           const firstPgName = Object.keys(pgOptions)[0];
-          if (firstPgName) {
-            setParams("pg", "name", firstPgName as Pg);
+          if (firstPgName !== undefined) {
+            setPaymentGateway(firstPgName as PaymentGateway);
           }
         } else {
           const payMethod = pgOption.payMethods.find(
-            (method) => method === params.pg.payMethods,
+            (method) => method === params.payMethod,
           );
           if (!payMethod && pgOption.payMethods[0]) {
-            setParams("pg", "payMethods", pgOption.payMethods[0]);
+            setParams("payMethod", pgOption.payMethods[0]);
           }
         }
       }),
@@ -196,7 +203,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
         [() => trackStore(params), selectedLanguage, codeExamples],
         ([params, selectedLanguage, codeExamples]) => {
           const resolveCode = (example: CodeExample<Params, string>): Tab => {
-            const { code, sections } = example.code(params);
+            const { code, sections } = example.code(params, paymentGateway);
             return {
               fileName: example.fileName,
               code,
@@ -284,6 +291,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     void highlighterInstance.then(setHighlighter);
 
     return {
+      paymentGateway,
       pgOptions,
       languages,
       selectedLanguage,
@@ -304,6 +312,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     };
   },
   {
+    paymentGateway: () => "toss",
     pgOptions: () => ({
       toss: {
         payMethods: ["card"],
@@ -317,10 +326,7 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     selectedLanguage: () => ["react", "express"],
     setSelectedLanguage: (_) => {},
     params: {
-      pg: {
-        name: "toss",
-        payMethods: "card",
-      },
+      payMethod: "card",
     },
     setParams: () => {},
     setCodeExamples: (_) => {},
