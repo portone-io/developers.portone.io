@@ -39,6 +39,53 @@ Cursor, Windsurf, Claude Code, Claude for Desktop 등 다양한 AI 도구의 설
 
 설정 파일 수정이 완료된 후 AI 도구를 재시작하면 MCP 서버가 적용됩니다.
 
+<prose.h4>포트원 기능 사용하기</prose.h4>
+
+MCP 서버에 포트원 기능을 연동하면, AI가 아래와 같은 작업을 수행할 수 있습니다.
+
+- 결제 내역 단건/다건 조회
+- 본인인증 내역 단건/다건 조회
+- 빌링키(정기결제) 내역 단건/다건 조회
+
+연동을 활성화하려면, MCP 설정 파일의 env 블록에 포트원 관리자 콘솔에서 발급받은 API\_SECRET을 추가합니다.
+
+```json
+{
+  // ...
+
+  "mcpServers": {
+    // ...
+
+    "portone-mcp-server": {
+      "command": "uvx",
+      "args": ["portone-mcp-server@latest"],
+      // 아래 env 블록을 추가하여 API 시크릿을 설정합니다.
+      "env": {
+        "API_SECRET": "<YOUR_PORTONE_API_SECRET>"
+      }
+    }
+  }
+}
+```
+
+<Hint style="warning">
+  **API 시크릿은 MCP 서버에서 제공하는 기능 외에도 포트원 REST API의 모든 권한을 가집니다.**
+
+  내부의 인가된 인원만이 MCP 서버를 사용할 수 있도록 통제해야 합니다.
+</Hint>
+
+<Hint style="warning">
+  **MCP 서버는 포트원의 공개된 API 기능만을 사용하며, 인증을 위해 사용자가 제공한 API 시크릿을 활용합니다.**
+
+  이 인증 과정은 전적으로 MCP 서버 내부에서 일어나므로, 언어 모델의 문제로 인해 비인가 사용자에게 기밀 정보가 유출되지는 않습니다.
+</Hint>
+
+<Hint style="warning">
+  **제3자 AI 서비스를 사용할 경우, API 응답(조회된 데이터 등)이 AI 서비스 측으로 전달되어 저장되거나 해당 서비스의 정책에 따라 모델 학습에 사용될 수 있습니다.**
+
+  현재 MCP 서버는 이러한 상황을 대비해 API 응답에서 개인정보를 우선적으로 제거하고 있지만, 개인정보 외의 정보는 AI 서비스에 노출될 수 있다는 점을 유의해야 합니다.
+</Hint>
+
 <prose.h3>2. MCP 서버 활용하기</prose.h3>
 
 사용 중인 AI 도구에 포트원 MCP 서버가 적용되었다면, 아래 예시들과 같이 질의하여 사용할 수 있습니다.
