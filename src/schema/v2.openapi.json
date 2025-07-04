@@ -4779,7 +4779,7 @@
             }
           },
           "401": {
-            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우\n* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -11152,23 +11152,19 @@
         "description": "일괄 세금계산서 상태",
         "type": "string",
         "enum": [
-          "STATUS_UNSPECIFIED",
           "DRAFT_PENDING",
           "DRAFTED",
           "REQUEST_PENDING",
           "IN_PROGRESS",
           "COMPLETED",
           "FAILED",
-          "CANCELLED",
-          "SCHEDULED"
+          "CANCELLED"
         ],
         "x-portone-title": "일괄 세금계산서 상태",
         "x-portone-enum": {
           "CANCELLED": {},
           "COMPLETED": {},
-          "SCHEDULED": {},
           "REQUEST_PENDING": {},
-          "STATUS_UNSPECIFIED": {},
           "DRAFT_PENDING": {},
           "FAILED": {},
           "IN_PROGRESS": {},
@@ -12957,6 +12953,10 @@
           "bulkTaxInvoiceId": {
             "type": "string",
             "title": "일괄 발행 아이디"
+          },
+          "payoutId": {
+            "type": "string",
+            "title": "지급 아이디"
           },
           "totalSupplyAmount": {
             "type": "integer",
@@ -20550,6 +20550,9 @@
         "title": "DeleteB2bTaxInvoiceError",
         "oneOf": [
           {
+            "$ref": "#/components/schemas/B2bBulkTaxInvoiceNotFoundError"
+          },
+          {
             "$ref": "#/components/schemas/B2bExternalServiceError"
           },
           {
@@ -20574,6 +20577,7 @@
         "discriminator": {
           "propertyName": "type",
           "mapping": {
+            "B2B_BULK_TAX_INVOICE_NOT_FOUND": "#/components/schemas/B2bBulkTaxInvoiceNotFoundError",
             "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
             "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
             "B2B_TAX_INVOICE_NON_DELETABLE_STATUS": "#/components/schemas/B2bTaxInvoiceNonDeletableStatusError",
@@ -21378,7 +21382,7 @@
               "type": "string"
             },
             "title": "컬럼 키 목록",
-            "description": "- PAYOUT_PAYOUT_ID: 지급 아이디\n- PAYOUT_BULK_PAYOUT_ID: 일괄지급 아이디\n- PAYOUT_METHOD: 지급 방법\n- PAYOUT_STATUS: 상태\n- PAYOUT_SETTLEMENT_CURRENCY: 정산 통화\n- PAYOUT_ACCOUNT_BANK: 지급 계좌 은행\n- PAYOUT_ACCOUNT_NUMBER: 지급 계좌 번호\n- PAYOUT_ACCOUNT_HOLDER: 예금주명\n- PAYOUT_AMOUNT: 지급 금액\n- PAYOUT_SETTLEMENT_AMOUNT: 정산 금액\n- PAYOUT_INCOME_TAX_AMOUNT: 원천징수세액 (소득세)\n- PAYOUT_LOCAL_INCOME_TAX_AMOUNT: 원천징수세액 (지방소득세)\n- PAYOUT_WITHDRAWAL_MEMO: 보내는 이 통장메모\n- PAYOUT_DEPOSIT_MEMO: 받는 이 통장메모\n- PAYOUT_MEMO: 메모\n- PAYOUT_STATUS_UPDATED_AT: 상태 업데이트 일시\n- PAYOUT_CREATED_AT: 지급 생성 일시\n- PAYOUT_SCHEDULED_AT: 지급 예정 일시\n- PAYOUT_SETTLEMENT_TAX_FREE_AMOUNT: 정산 면세액\n- PAYOUT_TAX_FREE_AMOUNT: 확정 면세액\n- PAYOUT_SUPPLY_AMOUNT: 확정 공급가액\n- PAYOUT_VAT_AMOUNT: 확정 부가세액\n- PAYOUT_FAIL_REASON: 지급 실패 사유\n- PAYOUT_DEDUCT_WHT: 원천징수세액 차감 여부\n- PAYOUT_SETTLEMENT_AMOUNT_TYPE: 정산 금액 취급 기준\n- PARTNER_* : 파트너 컬럼 키 사용 가능(w/o PARTNER_STATUS_UPDATED_AT)"
+            "description": "- PAYOUT_PAYOUT_ID: 지급 아이디\n- PAYOUT_BULK_PAYOUT_ID: 일괄지급 아이디\n- PAYOUT_METHOD: 지급 방법\n- PAYOUT_STATUS: 상태\n- PAYOUT_SETTLEMENT_CURRENCY: 정산 통화\n- PAYOUT_ACCOUNT_BANK: 지급 계좌 은행\n- PAYOUT_ACCOUNT_NUMBER: 지급 계좌 번호\n- PAYOUT_ACCOUNT_HOLDER: 예금주명\n- PAYOUT_AMOUNT: 지급 금액\n- PAYOUT_SETTLEMENT_AMOUNT: 정산 금액\n- PAYOUT_INCOME_TAX_AMOUNT: 원천징수세액 (소득세)\n- PAYOUT_LOCAL_INCOME_TAX_AMOUNT: 원천징수세액 (지방소득세)\n- PAYOUT_WITHDRAWAL_MEMO: 보내는 이 통장메모\n- PAYOUT_DEPOSIT_MEMO: 받는 이 통장메모\n- PAYOUT_MEMO: 메모\n- PAYOUT_STATUS_UPDATED_AT: 상태 업데이트 일시\n- PAYOUT_CREATED_AT: 지급 생성 일시\n- PAYOUT_SCHEDULED_AT: 지급 예정 일시\n- PAYOUT_SETTLEMENT_TAX_FREE_AMOUNT: 정산 면세액\n- PAYOUT_TAX_FREE_AMOUNT: 확정 면세액\n- PAYOUT_SUPPLY_AMOUNT: 확정 공급가액\n- PAYOUT_VAT_AMOUNT: 확정 부가세액\n- PAYOUT_FAIL_REASON: 지급 실패 사유\n- PAYOUT_DEDUCT_WHT: 원천징수세액 차감 여부\n- PAYOUT_SETTLEMENT_AMOUNT_TYPE: 정산 금액 취급 기준\n- PAYOUT_TAX_INVOICE_ID: 세금계산서 아이디\n- PAYOUT_TAX_INVOICE_STATUS: 세금계산서 상태\n- PARTNER_* : 파트너 컬럼 키 사용 가능(w/o PARTNER_STATUS_UPDATED_AT)"
           },
           "isForTest": {
             "type": "boolean"
@@ -21410,7 +21414,7 @@
           "filter": {
             "$ref": "#/components/schemas/PlatformTransferFilterInput",
             "title": "컬럼 키 목록",
-            "description": "- TRANSFER_MEMO:  메모 \n- TRANSFER_TYPE: 정산 유형\n- TRANSFER_STATUS:  상태 \n- TRANSFER_ID: 정산 아이디\n- TRANSFER_SETTLEMENT_DATE:  정산일 \n- TRANSFER_SETTLEMENT_AMOUNT: 정산 금액\n- TRANSFER_SETTLEMENT_TAX_FREE_AMOUNT: 정산 면세액\n- TRANSFER_SETTLEMENT_CURRENCY: 정산 통화\n- TRANSFER_SETTLEMENT_START_DATE: 정산 시작일\n- TRANSFER_ORDER_NAME:  주문명 \n- TRANSFER_ORDER_AMOUNT: 주문 금액\n- TRANSFER_ORDER_TAX_FREE_AMOUNT: 주문 면세액\n- TRANSFER_PAYMENT_ID: 주문 번호\n- TRANSFER_PAYMENT_METHOD: 결제 수단\n- TRANSFER_PAYMENT_AMOUNT: 결제 금액\n- TRANSFER_PAYMENT_SUPPLY_AMOUNT: 결제 공급가액\n- TRANSFER_PAYMENT_VAT_AMOUNT: 결제 부가세액\n- TRANSFER_PAYMENT_TAX_FREE_AMOUNT: 결제 면세액\n- TRANSFER_PAYMENT_VAT_BURDEN_AMOUNT: 결제 부가세 부담금\n- TRANSFER_PLATFORM_FEE:  중개수수료 \n- TRANSFER_PLATFORM_FEE_VAT: 중개수수료 부가세 부담금\n- TRANSFER_DISCOUNT_AMOUNT: 할인 금액\n- TRANSFER_DISCOUNT_TAX_FREE_AMOUNT: 할인 면세액\n- TRANSFER_DISCOUNT_SHARE_AMOUNT: 할인 분담금\n- TRANSFER_DISCOUNT_SHARE_TAX_FREE_AMOUNT: 할인 면세 분담금\n- TRANSFER_ADDITIONAL_FEE:  추가수수료 \n- TRANSFER_ADDITIONAL_FEE_VAT: 추가수수료 부가세 부담금\n- TRANSFER_{UserDefinedProperty.Key}\n- FORMULA_{UserDefinedFormula.Key}\n- PARTNER_* : 파트너 컬럼 키 사용 가능(w/o PARTNER_STATUS_UPDATED_AT)"
+            "description": "- TRANSFER_MEMO:  메모 \n- TRANSFER_TYPE: 정산 유형\n- TRANSFER_STATUS:  상태 \n- TRANSFER_ID: 정산 아이디\n- TRANSFER_SETTLEMENT_DATE:  정산일 \n- TRANSFER_SETTLEMENT_AMOUNT: 정산 금액\n- TRANSFER_SETTLEMENT_TAX_FREE_AMOUNT: 정산 면세액\n- TRANSFER_SETTLEMENT_CURRENCY: 정산 통화\n- TRANSFER_SETTLEMENT_START_DATE: 정산 시작일\n- TRANSFER_ORDER_NAME:  주문명 \n- TRANSFER_ORDER_AMOUNT: 주문 금액\n- TRANSFER_ORDER_TAX_FREE_AMOUNT: 주문 면세액\n- TRANSFER_PAYMENT_ID: 주문 번호\n- TRANSFER_PAYMENT_METHOD: 결제 수단\n- TRANSFER_PAYMENT_AMOUNT: 결제 금액\n- TRANSFER_PAYMENT_SUPPLY_AMOUNT: 결제 공급가액\n- TRANSFER_PAYMENT_VAT_AMOUNT: 결제 부가세액\n- TRANSFER_PAYMENT_TAX_FREE_AMOUNT: 결제 면세액\n- TRANSFER_PAYMENT_VAT_BURDEN_AMOUNT: 결제 부가세 부담금\n- TRANSFER_PLATFORM_FEE:  중개수수료 \n- TRANSFER_PLATFORM_FEE_VAT: 중개수수료 부가세 부담금\n- TRANSFER_CONTRACT_ID: 계약 아이디\n- TRANSFER_CONTRACT_NAME: 계약 이름\n- TRANSFER_DISCOUNT_AMOUNT: 할인 금액\n- TRANSFER_DISCOUNT_TAX_FREE_AMOUNT: 할인 면세액\n- TRANSFER_DISCOUNT_SHARE_AMOUNT: 할인 분담금\n- TRANSFER_DISCOUNT_SHARE_TAX_FREE_AMOUNT: 할인 면세 분담금\n- TRANSFER_ADDITIONAL_FEE:  추가수수료 \n- TRANSFER_ADDITIONAL_FEE_VAT: 추가수수료 부가세 부담금\n- TRANSFER_{UserDefinedProperty.Key}\n- FORMULA_{UserDefinedFormula.Key}\n- PARTNER_* : 파트너 컬럼 키 사용 가능(w/o PARTNER_STATUS_UPDATED_AT)"
           },
           "fields": {
             "type": "array",
@@ -22300,7 +22304,7 @@
               "type": "string"
             },
             "title": "컬럼 키 목록",
-            "description": "- ACCOUNT_TRANSFER_ID: 아이디\n- ACCOUNT_TRANSFER_BULK_ACCOUNT_TRANSFER_ID: 일괄이체 아이디\n- ACCOUNT_TRANSFER_PAYOUT_ID: 지급 아이디\n- ACCOUNT_TRANSFER_TYPE: 구분\n- ACCOUNT_TRANSFER_DEPOSITOR_NAME: 입금자명\n- ACCOUNT_TRANSFER_DEPOSIT_ACCOUNT_NUMBER: 이체 계좌 번호\n- ACCOUNT_TRANSFER_DEPOSIT_BANK: 이체 계좌 은행\n- ACCOUNT_TRANSFER_DEPOSIT_ACCOUNT_HOLDER: 예금주\n- ACCOUNT_TRANSFER_DEPOSIT_MEMO: 받는 이 통장메모\n- ACCOUNT_TRANSFER_WITHDRAWAL_MEMO: 보내는 이 통장메모\n- ACCOUNT_TRANSFER_CURRENCY: 통화\n- ACCOUNT_TRANSFER_AMOUNT: 금액\n- ACCOUNT_TRANSFER_BALANCE: 출금 후 금액\n- ACCOUNT_TRANSFER_STATUS: 상태\n- ACCOUNT_TRANSFER_TRADED_AT: 거래 일시\n- ACCOUNT_TRANSFER_CREATED_AT: 생성 일시\n- ACCOUNT_TRANSFER_UPDATED_AT: 최종 업데이트 일시"
+            "description": "- ACCOUNT_TRANSFER_ID: 이체 아이디\n- ACCOUNT_TRANSFER_BULK_ACCOUNT_TRANSFER_ID: 일괄이체 아이디\n- ACCOUNT_TRANSFER_PAYOUT_ID: 지급 아이디\n- ACCOUNT_TRANSFER_TYPE: 구분\n- ACCOUNT_TRANSFER_DEPOSITOR_NAME: 입금자명\n- ACCOUNT_TRANSFER_DEPOSIT_ACCOUNT_NUMBER: 이체 계좌 번호\n- ACCOUNT_TRANSFER_DEPOSIT_BANK: 이체 계좌 은행\n- ACCOUNT_TRANSFER_DEPOSIT_ACCOUNT_HOLDER: 예금주\n- ACCOUNT_TRANSFER_DEPOSIT_MEMO: 받는 이 통장메모\n- ACCOUNT_TRANSFER_WITHDRAWAL_MEMO: 보내는 이 통장메모\n- ACCOUNT_TRANSFER_CURRENCY: 통화\n- ACCOUNT_TRANSFER_AMOUNT: 금액\n- ACCOUNT_TRANSFER_BALANCE: 출금 후 금액\n- ACCOUNT_TRANSFER_STATUS: 상태\n- ACCOUNT_TRANSFER_TRADED_AT: 이체 일시\n- ACCOUNT_TRANSFER_CREATED_AT: 이체 생성 일시\n- ACCOUNT_TRANSFER_UPDATED_AT: 최종 업데이트 일시\n- ACCOUNT_TRANSFER_STATUS_UPDATED_AT: 상태 업데이트 일시\n- ACCOUNT_TRANSFER_SCHEDULED_AT: 이체 예정 일시"
           },
           "isForTest": {
             "type": "boolean"
@@ -24037,6 +24041,10 @@
               "type": "string"
             },
             "title": "세금계산서 아이디 리스트"
+          },
+          "payoutId": {
+            "type": "string",
+            "title": "지급 아이디"
           }
         },
         "x-portone-title": "상위 필터",
@@ -25510,7 +25518,8 @@
         "type": "object",
         "required": [
           "items",
-          "page"
+          "page",
+          "counts"
         ],
         "properties": {
           "items": {
@@ -25523,6 +25532,10 @@
           "page": {
             "$ref": "#/components/schemas/PageInfo",
             "title": "조회된 페이지 정보"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/PlatformAccountTransferStatusStats",
+            "title": "이체 내역 상태별 건 수"
           }
         },
         "x-portone-title": "이체내역 다건 조회 성공 응답 정보"
@@ -32319,6 +32332,11 @@
             "format": "date-time",
             "title": "결제일"
           },
+          "portonePaidAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "포트원 결제일"
+          },
           "isEscrow": {
             "type": "boolean",
             "title": "에스크로 여부"
@@ -32512,6 +32530,11 @@
             "format": "date-time",
             "title": "결제일"
           },
+          "portonePaidAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "포트원 결제일"
+          },
           "isEscrow": {
             "type": "boolean",
             "title": "에스크로 여부"
@@ -32640,6 +32663,11 @@
             "type": "string",
             "format": "date-time",
             "title": "결제일"
+          },
+          "portonePaidAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "포트원 결제일"
           },
           "isEscrow": {
             "type": "boolean",
@@ -34818,7 +34846,19 @@
         "properties": {
           "tradeTimestampRange": {
             "$ref": "#/components/schemas/DateTimeRange",
-            "title": "거래 시간 범위"
+            "title": "이체 일시 범위"
+          },
+          "createdTimestampRange": {
+            "$ref": "#/components/schemas/DateTimeRange",
+            "title": "생성 일시 범위"
+          },
+          "statusUpdatedTimestampRange": {
+            "$ref": "#/components/schemas/DateTimeRange",
+            "title": "상태 업데이트 일시 범위"
+          },
+          "scheduledTimestampRange": {
+            "$ref": "#/components/schemas/DateTimeRange",
+            "title": "이체 예정 일시 범위"
           },
           "accountTransferId": {
             "type": "string",
@@ -34850,7 +34890,7 @@
             "title": "상태",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Status"
+              "$ref": "#/components/schemas/PlatformAccountTransferStatus"
             }
           },
           "depositorName": {
@@ -34868,6 +34908,48 @@
           "withdrawalMemo": {
             "type": "string",
             "title": "보내는 이 통장 메모"
+          }
+        }
+      },
+      "PlatformAccountTransferStatus": {
+        "title": "계좌 이체 상태",
+        "description": "계좌 이체 상태",
+        "type": "string",
+        "enum": [
+          "PREPARED",
+          "SCHEDULED",
+          "CANCELLED",
+          "STOPPED",
+          "PROCESSING",
+          "ASYNC_PROCESSING",
+          "SUCCEEDED",
+          "FAILED"
+        ],
+        "x-portone-title": "계좌 이체 상태",
+        "x-portone-enum": {
+          "STOPPED": {
+            "title": "중단"
+          },
+          "PREPARED": {
+            "title": "대기"
+          },
+          "CANCELLED": {
+            "title": "취소"
+          },
+          "SUCCEEDED": {
+            "title": "성공"
+          },
+          "SCHEDULED": {
+            "title": "예약"
+          },
+          "PROCESSING": {
+            "title": "처리 중"
+          },
+          "ASYNC_PROCESSING": {
+            "title": "비동기 처리 중"
+          },
+          "FAILED": {
+            "title": "실패"
           }
         }
       },
@@ -35503,6 +35585,7 @@
           "creatorId",
           "method",
           "totalPayoutAmount",
+          "totalSettlementAmount",
           "status",
           "payoutStats",
           "statusUpdatedAt",
@@ -35518,35 +35601,49 @@
             "type": "string"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "title": "이름"
           },
           "creatorId": {
-            "type": "string"
+            "type": "string",
+            "title": "생성자 아이디"
           },
           "method": {
-            "$ref": "#/components/schemas/PlatformPayoutMethod"
+            "$ref": "#/components/schemas/PlatformPayoutMethod",
+            "title": "지급 유형"
           },
           "totalPayoutAmount": {
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "title": "총 지급 금액"
+          },
+          "totalSettlementAmount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "총 정산 금액"
           },
           "status": {
-            "$ref": "#/components/schemas/PlatformBulkPayoutStatus"
+            "$ref": "#/components/schemas/PlatformBulkPayoutStatus",
+            "title": "상태"
           },
           "payoutStats": {
-            "$ref": "#/components/schemas/PlatformBulkPayoutStats"
+            "$ref": "#/components/schemas/PlatformBulkPayoutStats",
+            "title": "지급 통계"
           },
           "statusUpdatedAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "title": "상태 업데이트 일시"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "title": "생성 일시"
           },
           "updatedAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "title": "업데이트 일시"
           }
         }
       },
@@ -36525,7 +36622,9 @@
           "createdAt",
           "updatedAt",
           "depositorName",
-          "isForTest"
+          "isForTest",
+          "statusUpdatedAt",
+          "status"
         ],
         "properties": {
           "type": {
@@ -36571,6 +36670,15 @@
           "isForTest": {
             "type": "boolean",
             "title": "테스트 모드 여부"
+          },
+          "statusUpdatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 일시"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlatformAccountTransferStatus",
+            "title": "상태"
           }
         }
       },
@@ -37470,6 +37578,7 @@
           "graphqlId",
           "storeId",
           "partner",
+          "contract",
           "status",
           "settlementDate",
           "settlementCurrency",
@@ -37495,6 +37604,9 @@
           },
           "partner": {
             "$ref": "#/components/schemas/PlatformTransferSummaryPartner"
+          },
+          "contract": {
+            "$ref": "#/components/schemas/PlatformContract"
           },
           "status": {
             "$ref": "#/components/schemas/PlatformTransferStatus"
@@ -37989,6 +38101,7 @@
           "graphqlId",
           "storeId",
           "partner",
+          "contract",
           "status",
           "settlementDate",
           "settlementCurrency",
@@ -38014,6 +38127,9 @@
           },
           "partner": {
             "$ref": "#/components/schemas/PlatformTransferSummaryPartner"
+          },
+          "contract": {
+            "$ref": "#/components/schemas/PlatformContract"
           },
           "status": {
             "$ref": "#/components/schemas/PlatformTransferStatus"
@@ -39615,11 +39731,13 @@
           "id",
           "graphqlId",
           "bulkPayoutId",
+          "bulkPayoutGraphqlId",
           "method",
           "status",
           "statusUpdatedAt",
           "partner",
           "account",
+          "taxInvoiceStatus",
           "currency",
           "amount",
           "supplyAmount",
@@ -39644,6 +39762,9 @@
           "bulkPayoutId": {
             "type": "string"
           },
+          "bulkPayoutGraphqlId": {
+            "type": "string"
+          },
           "method": {
             "$ref": "#/components/schemas/PlatformPayoutMethod"
           },
@@ -39662,6 +39783,14 @@
           },
           "account": {
             "$ref": "#/components/schemas/PlatformPayoutAccount"
+          },
+          "taxInvoiceId": {
+            "type": "string",
+            "title": "세금계산서 아이디"
+          },
+          "taxInvoiceStatus": {
+            "$ref": "#/components/schemas/PlatformPayoutTaxInvoiceStatus",
+            "title": "세금계산서 상태"
           },
           "currency": {
             "$ref": "#/components/schemas/Currency"
@@ -39813,6 +39942,30 @@
             },
             "title": "지급 아이디",
             "description": "값이 존재하는 경우 해당 리스트에 포함되는 지급 아이디를 가진 지급 내역을 조회합니다."
+          },
+          "taxInvoiceStatuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformPayoutTaxInvoiceStatus"
+            },
+            "title": "세금계산서 상태",
+            "description": "값이 존재하는 경우 해당 리스트에 포함되는 세금계산서 상태를 가진 지급 내역을 조회합니다."
+          },
+          "partnerTypes": {
+            "title": "파트너 유형",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformPartnerTypeName"
+            },
+            "description": "값이 존재하는 경우 해당 리스트에 포함되는 파트너 유형을 가진 지급 내역을 조회합니다."
+          },
+          "partnerTaxationTypes": {
+            "title": "파트너 과세 유형",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformPartnerTaxationType"
+            },
+            "description": "값이 존재하는 경우 해당 리스트에 포함되는 파트너 과세 유형을 가진 지급 내역을 조회합니다."
           }
         },
         "x-portone-title": "지급 내역 필터 입력 정보"
@@ -39841,6 +39994,10 @@
           "bulkPayoutId": {
             "type": "string",
             "title": "일괄 지급 아이디"
+          },
+          "taxInvoiceId": {
+            "type": "string",
+            "title": "세금계산서 아이디"
           }
         },
         "x-portone-title": "검색 기준 입력 정보"
@@ -39945,6 +40102,46 @@
             "type": "integer",
             "format": "int64"
           }
+        }
+      },
+      "PlatformPayoutTaxInvoiceStatus": {
+        "title": "PlatformPayoutTaxInvoiceStatus",
+        "type": "string",
+        "enum": [
+          "NONE",
+          "DRAFTED",
+          "DRAFT_PENDING",
+          "DRAFT_FAILED",
+          "REQUESTED",
+          "REQUEST_PENDING",
+          "REQUEST_FAILED",
+          "REQUEST_CANCELLED",
+          "REQUEST_REFUSED",
+          "ISSUED",
+          "ISSUANCE_CANCELLED",
+          "BEFORE_SENDING",
+          "WAITING_SENDING",
+          "SENDING",
+          "SENDING_COMPLETED",
+          "SENDING_FAILED"
+        ],
+        "x-portone-enum": {
+          "BEFORE_SENDING": {},
+          "DRAFTED": {},
+          "REQUEST_CANCELLED": {},
+          "REQUEST_REFUSED": {},
+          "REQUESTED": {},
+          "SENDING_COMPLETED": {},
+          "DRAFT_PENDING": {},
+          "SENDING_FAILED": {},
+          "REQUEST_FAILED": {},
+          "SENDING": {},
+          "WAITING_SENDING": {},
+          "ISSUANCE_CANCELLED": {},
+          "ISSUED": {},
+          "NONE": {},
+          "DRAFT_FAILED": {},
+          "REQUEST_PENDING": {}
         }
       },
       "PlatformPortOnePayment": {
@@ -40940,6 +41137,10 @@
           "partnerMemo": {
             "type": "string",
             "description": "해당 값이 포함된 partnerMemo 를 가진 정산건만 조회합니다."
+          },
+          "partnerSettlementId": {
+            "type": "string",
+            "description": "해당 값이 포함된 partnerSettlementId 를 가진 정산건만 조회합니다."
           }
         },
         "x-portone-title": "정산건 검색 키워드 입력 정보",
@@ -41288,7 +41489,9 @@
           "createdAt",
           "updatedAt",
           "isForTest",
-          "withdrawalType"
+          "withdrawalType",
+          "statusUpdatedAt",
+          "status"
         ],
         "properties": {
           "type": {
@@ -41395,6 +41598,20 @@
           "documentId": {
             "type": "string",
             "title": "전자서명 아이디"
+          },
+          "statusUpdatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "상태 업데이트 일시"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlatformAccountTransferStatus",
+            "title": "상태"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "예정 일시"
           }
         }
       },
@@ -42820,7 +43037,8 @@
           "KSNET",
           "KPN",
           "HYPHEN",
-          "PAYPAL"
+          "PAYPAL",
+          "HECTO_EASY"
         ],
         "x-portone-enum": {
           "PAYCO": {},
@@ -42833,10 +43051,11 @@
           "DANAL": {},
           "NICEPAY": {},
           "TOSSPAYMENTS": {},
-          "KAKAOPAY": {},
           "EXIMBAY": {},
           "UPLUS": {},
           "HYPHEN": {},
+          "HECTO_EASY": {},
+          "KAKAOPAY": {},
           "KSNET": {},
           "KCP": {}
         }
@@ -45544,48 +45763,6 @@
         },
         "x-portone-title": "결제 시작 상태"
       },
-      "Status": {
-        "title": "계좌 이체 상태",
-        "description": "계좌 이체 상태",
-        "type": "string",
-        "enum": [
-          "PREPARED",
-          "SCHEDULED",
-          "CANCELLED",
-          "STOPPED",
-          "PROCESSING",
-          "ASYNC_PROCESSING",
-          "SUCCEEDED",
-          "FAILED"
-        ],
-        "x-portone-title": "계좌 이체 상태",
-        "x-portone-enum": {
-          "STOPPED": {
-            "title": "중단"
-          },
-          "PREPARED": {
-            "title": "대기"
-          },
-          "CANCELLED": {
-            "title": "취소"
-          },
-          "SUCCEEDED": {
-            "title": "성공"
-          },
-          "SCHEDULED": {
-            "title": "예약"
-          },
-          "PROCESSING": {
-            "title": "처리 중"
-          },
-          "ASYNC_PROCESSING": {
-            "title": "비동기 처리 중"
-          },
-          "FAILED": {
-            "title": "실패"
-          }
-        }
-      },
       "SucceededPaymentCancellation": {
         "title": "취소 완료 상태",
         "description": "취소 완료 상태",
@@ -45919,7 +46096,8 @@
           "BULK_TAX_INVOICE_ID",
           "PLAIN_ID",
           "SUPPLIER_DOCUMENT_KEY",
-          "RECIPIENT_DOCUMENT_KEY"
+          "RECIPIENT_DOCUMENT_KEY",
+          "PAYOUT_ID"
         ],
         "x-portone-title": "다운로드 할 시트 컬럼",
         "x-portone-enum": {
@@ -45947,9 +46125,6 @@
           "MEMO": {
             "title": "관리용 메모"
           },
-          "ISSUANCE_TYPE": {
-            "title": "발행유형"
-          },
           "REQUESTED_AT": {
             "title": "발행요청일시"
           },
@@ -45973,6 +46148,12 @@
           },
           "ISSUANCE_DUE_DATE": {
             "title": "발행마감일"
+          },
+          "ISSUANCE_TYPE": {
+            "title": "발행유형"
+          },
+          "PAYOUT_ID": {
+            "title": "지급 아이디"
           },
           "PURPOSE_TYPE": {
             "title": "영수/청구"
@@ -47428,11 +47609,6 @@
   },
   "x-portone-categories": [
     {
-      "id": "auth",
-      "title": "인증 관련 API",
-      "description": "인증과 관련된 API 기능을 제공합니다."
-    },
-    {
       "id": "payment",
       "title": "결제 관련 API",
       "description": "결제와 관련된 API 기능을 제공합니다.",
@@ -47463,6 +47639,16 @@
       "id": "identityVerification",
       "title": "본인인증 관련 API",
       "description": "본인인증과 관련된 API 기능을 제공합니다."
+    },
+    {
+      "id": "pgSpecific",
+      "title": "특정 PG사 관련 API",
+      "description": "특정 PG사에 국한된 API 기능을 제공합니다."
+    },
+    {
+      "id": "reconciliation",
+      "title": "대사 서비스 API",
+      "description": "거래 대사 및 정산 대사 관련 API 기능을 제공합니다."
     },
     {
       "id": "platform",
@@ -47522,14 +47708,9 @@
       ]
     },
     {
-      "id": "pgSpecific",
-      "title": "특정 PG사 관련 API",
-      "description": "특정 PG사에 국한된 API 기능을 제공합니다."
-    },
-    {
-      "id": "reconciliation",
-      "title": "대사 서비스 API",
-      "description": "거래 대사 및 정산 대사 관련 API 기능을 제공합니다."
+      "id": "auth",
+      "title": "인증 관련 API",
+      "description": "인증과 관련된 API 기능을 제공합니다.\n접근 토큰 방식으로 인증하기를 원하는 경우, API 시크릿을 통해 토큰을 발급받은 후 Authorization 헤더에 `Bearer ACCESS_TOKEN` 형식으로 전달합니다."
     },
     {
       "id": "common",
