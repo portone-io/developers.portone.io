@@ -112,6 +112,7 @@ export function transformJsxComponents(
           case "Details.Content":
             return handleDetailsContentComponent(jsxNode, transformRecursively);
           case "Condition":
+          case "PgSection":
             return handleConditionComponent(jsxNode, transformRecursively);
           case "ContentRef":
             return {
