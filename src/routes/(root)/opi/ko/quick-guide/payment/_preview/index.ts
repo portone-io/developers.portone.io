@@ -12,9 +12,9 @@ export const { Section, InteractiveDoc, Condition, Toggle, preload } =
       backend,
     },
     pgOptions,
+    fallbackPg: "toss",
     initialParams: {
-      smartRouting: false,
-      pg: { name: "toss", payMethods: "card" },
+      payMethod: "card",
     },
     initialSelectedExample: ["React", "Express"],
     preview: Preview,

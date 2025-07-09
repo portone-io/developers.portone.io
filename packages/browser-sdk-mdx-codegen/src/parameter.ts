@@ -5,6 +5,7 @@ import { camelCase, pascalCase } from "es-toolkit/string";
 import { match, P } from "ts-pattern";
 
 import { TypescriptWriter } from "./common.ts";
+import { getNonEmptyPgs } from "./pgSpecific.ts";
 import { getResourceRef, type Parameter } from "./schema.ts";
 import { getComponentName } from "./utils.ts";
 
@@ -23,9 +24,12 @@ function generateDescription({
   if (fs.existsSync(path.dirname(file)) === false) {
     fs.mkdirSync(path.dirname(file), { recursive: true });
   }
-  fs.writeFileSync(file, description);
+  fs.writeFileSync(
+    file,
+    `import { PgSection } from "~/components/PgSection";\n\n${description}`,
+  );
   const componentName = pascalCase(
-    `${path
+    `${path.posix
       .relative(basePath, filePath)
       .split("/")
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
@@ -33,7 +37,7 @@ function generateDescription({
   );
 
   imports.add(
-    `import ${componentName} from "./${path.relative(basePath, file)}";`,
+    `import ${componentName} from "./${path.posix.relative(basePath, file)}";`,
   );
   return { componentName };
 }
@@ -56,6 +60,23 @@ function generateTypeDef({
   leadingDescription?: string;
 }): string {
   const writer = TypescriptWriter();
+
+  const hasPgCondition =
+    parameter.pgSpecific && Object.keys(parameter.pgSpecific).length > 0;
+  const visiblePgProviders =
+    hasPgCondition && parameter.pgSpecific
+      ? Object.entries(parameter.pgSpecific)
+          .filter(([_, spec]) => spec.visible === true)
+          .map(([pg]) => pg)
+      : [];
+
+  if (hasPgCondition && visiblePgProviders.length > 0) {
+    imports.add('import { Condition } from "~/components/Condition";');
+    writer.writeLine(
+      `<Condition pgName={(pg) => [${visiblePgProviders.map((pg) => `"${pg}"`).join(", ")}].includes(pg)}>`,
+    );
+    writer.indent();
+  }
 
   if (parameter.type === "resourceRef" && parameter.description === undefined) {
     const modulePath = `~/components/parameter/__generated__/${getResourceRef(parameter.$ref)}/index.ts`;
@@ -84,6 +105,11 @@ function generateTypeDef({
     }
     writer.outdent();
     writer.writeLine("/>");
+
+    if (hasPgCondition && visiblePgProviders.length > 0) {
+      writer.outdent();
+      writer.writeLine("</Condition>");
+    }
 
     return writer.content;
   }
@@ -160,6 +186,11 @@ function generateTypeDef({
   writer.outdent();
   writer.writeLine("</Parameter.TypeDef>");
 
+  if (hasPgCondition && visiblePgProviders.length > 0) {
+    writer.outdent();
+    writer.writeLine("</Condition>");
+  }
+
   return writer.content;
 }
 
@@ -182,7 +213,7 @@ function generateTypeDetails({
         generateTypeDetails({
           imports,
           basePath,
-          parameterPath: path.join(parameterPath, "items"),
+          parameterPath: path.posix.join(parameterPath, "items"),
           parameter: parameter.items,
         }),
       );
@@ -199,7 +230,7 @@ function generateTypeDetails({
             basePath,
             imports,
             parameter: propValue,
-            parameterPath: path.join(parameterPath, propName),
+            parameterPath: path.posix.join(parameterPath, propName),
           }),
         );
       }
@@ -220,7 +251,7 @@ function generateTypeDetails({
             imports,
             parameter: propValue,
             leadingDescription: `\`${parameter.discriminator}\`가 \`${discriminateValue}\`인 경우에만 허용됩니다.\n\n`,
-            parameterPath: path.join(parameterPath, ident),
+            parameterPath: path.posix.join(parameterPath, ident),
             defaultExpanded: false,
           }),
         );
@@ -243,7 +274,7 @@ function generateTypeDetails({
           const description = generateDescription({
             imports,
             basePath,
-            filePath: path.join(parameterPath, `Variant${variantValue}`),
+            filePath: path.posix.join(parameterPath, `Variant${variantValue}`),
             description: variant.description,
           });
           writer.writeLine(`<${description.componentName} />`);
@@ -267,7 +298,7 @@ function generateTypeDetails({
             basePath,
             imports,
             parameter: type,
-            parameterPath: path.join(
+            parameterPath: path.posix.join(
               parameterPath,
               `${parameter.type}${index}`,
             ),
@@ -284,7 +315,7 @@ function generateTypeDetails({
             basePath,
             imports,
             parameter: type,
-            parameterPath: path.join(
+            parameterPath: path.posix.join(
               parameterPath,
               `${parameter.type}${index}`,
             ),
@@ -476,6 +507,18 @@ export function generateParameter({
   writer.indent();
   writer.writeLine("return (");
   writer.indent();
+
+  const nonEmptyPgs = getNonEmptyPgs(parameter);
+  const shouldApplyHideIfEmpty = nonEmptyPgs !== null;
+
+  if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
+    imports.add('import { Condition } from "~/components/Condition";');
+    writer.writeLine(
+      `<Condition pgName={(pg) => [${nonEmptyPgs.map((pg) => `"${pg}"`).join(", ")}].includes(pg)}>`,
+    );
+    writer.indent();
+  }
+
   if (parameter.type === "resourceRef" && parameter.description === undefined) {
     const componentName = `${getComponentName(parameter.$ref)}TypeDef`;
     imports.add(
@@ -507,6 +550,12 @@ export function generateParameter({
     writer.outdent();
     writer.writeLine("</Parameter.TypeDef>");
   }
+
+  if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
+    writer.outdent();
+    writer.writeLine("</Condition>");
+  }
+
   writer.outdent();
   writer.writeLine(");");
   writer.outdent();
@@ -557,7 +606,7 @@ export function generateParameter({
     const description = generateDescription({
       imports,
       basePath: parameterPath,
-      filePath: path.join(parameterPath, parameterName),
+      filePath: path.posix.join(parameterPath, parameterName),
       description: parameter.description,
     });
     writer.writeLine(`return <${description.componentName} />;`);

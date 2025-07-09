@@ -59,7 +59,7 @@ def sync_payment(payment_id):
   except portone.payment.GetPaymentError:
     return None
   `}
-  ${({ when }) => when(({ pg }) => pg.payMethods !== "virtualAccount")`
+  ${({ when }) => when(({ payMethod }) => payMethod !== "virtualAccount")`
   if isinstance(actual_payment, portone.payment.PaidPayment):
     if not verify_payment(actual_payment):
       return None
@@ -68,7 +68,7 @@ def sync_payment(payment_id):
     payment.status = "PAID"
     print("결제 성공", actual_payment)
   `}
-  ${({ when }) => when(({ pg }) => pg.payMethods === "virtualAccount")`
+  ${({ when }) => when(({ payMethod }) => payMethod === "virtualAccount")`
   if isinstance(actual_payment, portone.payment.VirtualAccountIssuedPayment):
     payment.status = "VIRTUAL_ACCOUNT_ISSUED"
   `}
