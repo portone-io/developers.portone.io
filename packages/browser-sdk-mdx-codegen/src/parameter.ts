@@ -9,6 +9,27 @@ import { getNonEmptyPgs } from "./pgSpecific.ts";
 import { getResourceRef, type Parameter } from "./schema.ts";
 import { getComponentName } from "./utils.ts";
 
+function shouldUseDefaultExpanded(
+  parameter: Parameter,
+  resourceMap: Record<string, Parameter>,
+): boolean {
+  if (parameter.type === "array") {
+    return shouldUseDefaultExpanded(parameter.items, resourceMap);
+  }
+
+  if (parameter.type === "resourceRef") {
+    const ref = getResourceRef(parameter.$ref);
+    const resource = resourceMap[ref];
+    return resource ? shouldUseDefaultExpanded(resource, resourceMap) : false;
+  }
+
+  if (parameter.type === "enum" && parameter.variants) {
+    return Object.keys(parameter.variants).length >= 10;
+  }
+
+  return false;
+}
+
 function generateDescription({
   imports,
   basePath,
@@ -50,6 +71,7 @@ function generateTypeDef({
   ident,
   defaultExpanded,
   leadingDescription,
+  resourceMap,
 }: {
   imports: Set<string>;
   basePath: string;
@@ -58,6 +80,7 @@ function generateTypeDef({
   parameter: Parameter;
   defaultExpanded?: boolean;
   leadingDescription?: string;
+  resourceMap: Record<string, Parameter>;
 }): string {
   const writer = TypescriptWriter();
 
@@ -124,19 +147,12 @@ function generateTypeDef({
   if (ident !== undefined) {
     writer.writeLine(`ident="${ident}"`);
   }
-  match(parameter)
-    .with({ type: "enum" }, () => {
-      writer.writeLine(`defaultExpanded={false}`);
-    })
-    .with({ type: "array", items: { type: "enum" } }, () => {
-      writer.writeLine(`defaultExpanded={false}`);
-    })
-    .with(P._, () => {
-      if (defaultExpanded === false) {
-        writer.writeLine(`defaultExpanded={false}`);
-      }
-    })
-    .exhaustive();
+  if (
+    defaultExpanded === false ||
+    shouldUseDefaultExpanded(parameter, resourceMap)
+  ) {
+    writer.writeLine(`defaultExpanded={false}`);
+  }
   writer.outdent();
   writer.writeLine(">");
   writer.indent();
@@ -181,7 +197,13 @@ function generateTypeDef({
     )
     .otherwise(() => {});
   writer.writeLine(
-    generateTypeDetails({ parameter, imports, basePath, parameterPath }),
+    generateTypeDetails({
+      parameter,
+      imports,
+      basePath,
+      parameterPath,
+      resourceMap,
+    }),
   );
   writer.outdent();
   writer.writeLine("</Parameter.TypeDef>");
@@ -199,11 +221,13 @@ function generateTypeDetails({
   basePath,
   parameterPath,
   parameter,
+  resourceMap,
 }: {
   imports: Set<string>;
   basePath: string;
   parameterPath: string;
   parameter: Parameter;
+  resourceMap: Record<string, Parameter>;
 }): string {
   const writer = TypescriptWriter();
 
@@ -215,6 +239,7 @@ function generateTypeDetails({
           basePath,
           parameterPath: path.posix.join(parameterPath, "items"),
           parameter: parameter.items,
+          resourceMap,
         }),
       );
     })
@@ -231,6 +256,7 @@ function generateTypeDetails({
             imports,
             parameter: propValue,
             parameterPath: path.posix.join(parameterPath, propName),
+            resourceMap,
           }),
         );
       }
@@ -253,6 +279,7 @@ function generateTypeDetails({
             leadingDescription: `\`${parameter.discriminator}\`가 \`${discriminateValue}\`인 경우에만 허용됩니다.\n\n`,
             parameterPath: path.posix.join(parameterPath, ident),
             defaultExpanded: false,
+            resourceMap,
           }),
         );
       }
@@ -302,6 +329,7 @@ function generateTypeDetails({
               parameterPath,
               `${parameter.type}${index}`,
             ),
+            resourceMap,
           }),
         );
       });
@@ -319,6 +347,7 @@ function generateTypeDetails({
               parameterPath,
               `${parameter.type}${index}`,
             ),
+            resourceMap,
           }),
         );
       });
@@ -476,11 +505,13 @@ function generateInlineType({
 interface GenerateParameterParams {
   parameterPath: string;
   parameter: Parameter;
+  resourceMap: Record<string, Parameter>;
 }
 
 export function generateParameter({
   parameterPath,
   parameter,
+  resourceMap,
 }: GenerateParameterParams) {
   fs.mkdirSync(parameterPath, { recursive: true });
 
@@ -536,10 +567,7 @@ export function generateParameter({
     writer.indent();
     writer.writeLine("type={<Type {...props} />}");
     writer.writeLine("{...props}");
-    if (
-      parameter.type === "enum" ||
-      (parameter.type === "array" && parameter.items.type === "enum")
-    ) {
+    if (shouldUseDefaultExpanded(parameter, resourceMap)) {
       writer.writeLine("defaultExpanded={false}");
     }
     writer.outdent();
@@ -627,6 +655,7 @@ export function generateParameter({
       basePath: parameterPath,
       parameterPath,
       parameter,
+      resourceMap,
     }),
   );
   writer.outdent();

@@ -31,6 +31,7 @@ function generateParameterDirectory(
     generateParameter({
       parameter: value,
       parameterPath,
+      resourceMap,
     });
   }
 }
