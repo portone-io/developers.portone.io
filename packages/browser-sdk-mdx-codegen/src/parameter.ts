@@ -148,7 +148,7 @@ function generateTypeDef({
     writer.writeLine(`ident="${ident}"`);
   }
   if (
-    defaultExpanded === undefined ||
+    defaultExpanded === false ||
     shouldUseDefaultExpanded(parameter, resourceMap)
   ) {
     writer.writeLine(`defaultExpanded={false}`);
