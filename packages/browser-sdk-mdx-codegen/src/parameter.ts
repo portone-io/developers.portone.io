@@ -13,33 +13,18 @@ function shouldUseDefaultExpanded(
   parameter: Parameter,
   resourceMap: Record<string, Parameter>,
 ): boolean {
-  if (parameter.type === "enum") {
-    return true;
-  }
-
-  if (
-    parameter.type === "array" &&
-    parameter.items.type === "enum" &&
-    parameter.items.variants
-  ) {
-    return Object.keys(parameter.items.variants).length >= 10;
+  if (parameter.type === "array") {
+    return shouldUseDefaultExpanded(parameter.items, resourceMap);
   }
 
   if (parameter.type === "resourceRef") {
     const ref = getResourceRef(parameter.$ref);
     const resource = resourceMap[ref];
-    if (!resource) return false;
+    return resource ? shouldUseDefaultExpanded(resource, resourceMap) : false;
+  }
 
-    if (resource.type === "enum" && resource.variants) {
-      return Object.keys(resource.variants).length >= 10;
-    }
-
-    if (resource.type === "array" && resource.items) {
-      const items = resource.items;
-      if (items.type === "enum" && items.variants) {
-        return Object.keys(items.variants).length >= 10;
-      }
-    }
+  if (parameter.type === "enum" && parameter.variants) {
+    return Object.keys(parameter.variants).length >= 10;
   }
 
   return false;
@@ -162,7 +147,10 @@ function generateTypeDef({
   if (ident !== undefined) {
     writer.writeLine(`ident="${ident}"`);
   }
-  if (shouldUseDefaultExpanded(parameter, resourceMap)) {
+  if (
+    defaultExpanded === undefined ||
+    shouldUseDefaultExpanded(parameter, resourceMap)
+  ) {
     writer.writeLine(`defaultExpanded={false}`);
   }
   writer.outdent();
