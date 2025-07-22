@@ -1802,7 +1802,9 @@ resources:
           description: |
             **상품 코드**
 
-            - 토스페이먼츠의 경우 필수로 입력해주세요.
+            <PgSection pgName={(name) => name === 'tosspayments'}>
+            토스페이먼츠의 경우 필수입니다.
+            </PgSection>
         amount:
           type: integer
           description: |
@@ -1824,7 +1826,12 @@ resources:
         link:
           type: string
           optional: true
-          description: "**상품 판매 URL**"
+          description: |
+            **상품 판매 URL**
+
+            <PgSection pgName={(name) => name === 'eximbay'}>
+            엑심베이에서 products 파라미터를 사용하는 경우 ~필수로 입력해야 합니다.
+            </PgSection>
     ProductType:
       type: enum
       variants:
@@ -2515,6 +2522,10 @@ resources:
           description: |
             **엑심베이 bypass 파라미터**
           properties:
+            payment:
+              type: resourceRef
+              $ref: "#/resources/entity/bypass/issueBillingKeyAndPay/EximbayV2Payment"
+              optional: true
             merchant:
               type: resourceRef
               $ref: "#/resources/entity/bypass/issueBillingKeyAndPay/EximbayV2Merchant"
@@ -2534,6 +2545,23 @@ resources:
             billTo:
               type: resourceRef
               $ref: "#/resources/entity/bypass/issueBillingKeyAndPay/EximbayV2BillTo"
+              optional: true
+        EximbayV2Payment:
+          type: object
+          description: |
+            결제 정보
+          properties:
+            payment_method:
+              type: string
+              description: |
+                결제수단 단독 노출
+              optional: true
+            multi_payment_method:
+              type: array
+              items:
+                type: string
+              description: |
+                결제수단 노출 목록
               optional: true
         EximbayV2Merchant:
           type: object
@@ -5130,6 +5158,8 @@ resources:
           items:
             type: resourceRef
             $ref: "#/resources/entity/Product"
+          description: |
+            구매 상품 정보
         isCulturalExpense:
           optional: true
           type: boolean
@@ -5330,21 +5360,24 @@ resources:
           type: resourceRef
           $ref: "#/resources/entity/Iframe"
     IssueBillingKeyRequestUnion:
-      type: discriminatedUnion
-      types:
-        CARD:
+      type: object
+      properties:
+        card:
           type: resourceRef
           $ref: "#/resources/request/IssueBillingKeyRequestUnionCard"
-        MOBILE:
+          optional: true
+        mobile:
           type: resourceRef
           $ref: "#/resources/request/IssueBillingKeyRequestUnionMobile"
-        EASY_PAY:
+          optional: true
+        easyPay:
           type: resourceRef
           $ref: "#/resources/request/IssueBillingKeyRequestUnionEasyPay"
-        PAYPAL:
+          optional: true
+        paypal:
           type: resourceRef
           $ref: "#/resources/request/IssueBillingKeyRequestUnionPaypal"
-      discriminator: billingKeyMethod
+          optional: true
     IssueBillingKeyAndPayRequestBase:
       type: object
       properties:
@@ -5387,6 +5420,18 @@ resources:
           optional: true
           type: resourceRef
           $ref: "#/resources/entity/Customer"
+        products:
+          optional: true
+          type: array
+          items:
+            type: resourceRef
+            $ref: "#/resources/entity/Product"
+          description: |
+            **구매 상품 정보**
+
+            <PgSection pgName={(name) => name === 'eximbay'}>
+            엑심베이에서 알리페이, 위챗페이 등 해외 간편결제 사용 시 필수로 입력해야 합니다.
+            </PgSection>
         windowType:
           optional: true
           type: resourceRef
@@ -5458,13 +5503,12 @@ resources:
           type: resourceRef
           $ref: "#/resources/entity/Iframe"
     IssueBillingKeyAndPayRequestUnion:
-      type: discriminatedUnion
-      discriminator: billingKeyAndPayMethod
-      optional: true
-      types:
-        MOBILE:
+      type: object
+      properties:
+        mobile:
           type: resourceRef
           $ref: "#/resources/request/IssueBillingKeyAndPayRequestUnionMobile"
+          optional: true
     PaymentRequestBase:
       type: object
       properties:
@@ -5564,6 +5608,12 @@ resources:
           items:
             type: resourceRef
             $ref: "#/resources/entity/Product"
+          description: |
+            **구매 상품 정보**
+
+            <PgSection pgName={(name) => name === 'eximbay'}>
+            엑심베이에서 알리페이, 위챗페이 등 해외 간편결제 사용 시 필수로 입력해야 합니다.
+            </PgSection>
         isCulturalExpense:
           optional: true
           type: boolean
@@ -5616,37 +5666,44 @@ resources:
           type: resourceRef
           $ref: "#/resources/entity/bypass/PaymentBypass"
     PaymentRequestUnion:
-      type: discriminatedUnion
-      discriminator: payMethod
-      optional: true
-      types:
-        CARD:
+      type: object
+      properties:
+        card:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionCard"
-        VIRTUAL_ACCOUNT:
+          optional: true
+        virtualAccount:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionVirtualAccount"
-        TRANSFER:
+          optional: true
+        transfer:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionTransfer"
-        MOBILE:
+          optional: true
+        mobile:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionMobile"
-        GIFT_CERTIFICATE:
+          optional: true
+        giftCertificate:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionGiftCertificate"
-        EASY_PAY:
+          optional: true
+        easyPay:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionEasyPay"
-        PAYPAL:
+          optional: true
+        paypal:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionPaypal"
-        ALIPAY:
+          optional: true
+        alipay:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionAlipay"
-        CONVENIENCE_STORE:
+          optional: true
+        convenienceStore:
           type: resourceRef
           $ref: "#/resources/request/PaymentRequestUnionConvenienceStore"
+          optional: true
     IssueBillingKeyRequestUnionCard:
       type: object
       properties:
