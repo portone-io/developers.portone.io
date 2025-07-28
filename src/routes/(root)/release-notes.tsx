@@ -1,6 +1,8 @@
 import { createAsync, type RouteDefinition } from "@solidjs/router";
 import { type JSXElement, Show } from "solid-js";
+import { MDXProvider } from "solid-mdx";
 
+import { prose } from "~/components/prose";
 import Nav from "~/layouts/release-notes/Nav";
 import { getReleaseNotes } from "~/misc/releaseNote";
 
@@ -37,7 +39,7 @@ export default function ReleaseNotesLayout(props: Props) {
       </aside>
       <div class="mx-auto shrink basis-200">
         <article class="m-4 flex flex-col text-slate-7">
-          {props.children}
+          <MDXProvider components={prose}>{props.children}</MDXProvider>
         </article>
       </div>
     </div>
