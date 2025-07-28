@@ -123,7 +123,7 @@ export function processV2Openapi(schema: any): any {
 
 export async function downloadV2Openapi() {
   const src =
-    "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/openapi.yml";
+    "https://raw.githubusercontent.com/portone-io/public-api-service/feat/developers-document-update-b2b/schema/openapi.yml";
   const jsonDst = import.meta.resolve("../src/schema/v2.openapi.json");
   const yamlDst = import.meta.resolve("../src/schema/v2.openapi.yml");
   const token = await ensureLoggedIn();
