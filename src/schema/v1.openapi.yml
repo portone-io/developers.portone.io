@@ -7498,8 +7498,8 @@ paths:
         - name: vbank_num
           in: formData
           description: >-
-            고정식 가상계좌 발급 시, pg사로부터 전달받은 가상계좌 번호 <br> (필수 : 스마트로 - 신모듈) (**사용을 위해
-            PG사와 협의 필요**) 
+            고정식 가상계좌 발급 시, pg사로부터 전달받은 가상계좌 번호 <br> (필수 : 스마트로 - 신모듈, 헥토파이낸셜)
+            (**사용을 위해 PG사와 협의 필요**) 
           required: false
           type: string
           x-portone-name: 고정 가상 계좌 번호
@@ -7508,8 +7508,12 @@ paths:
             필요</strong>) </p>
           x-portone-supported-pgs:
             - smartro_v2
+            - settle
           x-portone-per-pg:
             smartro_v2:
+              description: |
+                <p>고정식 가상계좌를 발급 하시는 경우, <strong>필수</strong>로 입력해야합니다.</p>
+            settle:
               description: |
                 <p>고정식 가상계좌를 발급 하시는 경우, <strong>필수</strong>로 입력해야합니다.</p>
         - name: vbank_code
@@ -7619,7 +7623,7 @@ paths:
               required: true
         - name: buyer_email
           in: formData
-          description: '주문자 Email주소 <br>(필수 : 이니시스,스마트로 - 신모듈)'
+          description: '주문자 Email주소 <br>(필수 : 이니시스,스마트로 - 신모듈, 헥토파이낸셜 (고정식 가상계좌 에스크로 결제시)'
           required: false
           type: string
           maxLength: 64
@@ -7747,13 +7751,21 @@ paths:
                 <p>상점아이디의 과세설정이 <strong>지정금액방식</strong>(복합과세)으로 설정되어 있는 경우
                 <strong>필수값</strong> 입니다.</p>
 
-                <p>과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.</p>
+                <ul>
+
+                <li>과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.</li>
+
+                </ul>
             nice_v2:
               description: >
                 <p>상점아이디의 과세설정이 <strong>지정금액방식</strong>(복합과세)으로 설정되어 있는 경우
                 <strong>필수값</strong> 입니다.</p>
 
-                <p>과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.</p>
+                <ul>
+
+                <li>과세 혹은 면세로 설정된 상점아이디에서 파라미터 전달 시 가상계좌 생성이 불가능합니다.</li>
+
+                </ul>
             welcome:
               description: |
                 <p><code>현금영수증 부가세업체정함</code> 설정 고객사에 한해 사용이 가능합니다</p>
@@ -7807,6 +7819,23 @@ paths:
           x-portone-name: 결제 상품의 개수
           x-portone-description: |
             <p>가상계좌 발급을 위한 결제 상품의 개수로 기본값은 1입니다</p>
+        - name: escrow_password
+          in: formData
+          description: 헥토파이낸셜 고정식 가상계좌 에스크로 결제 시 필수로 입력해야합니다.
+          required: false
+          type: string
+          x-portone-name: 에스크로 비밀번호
+          x-portone-description: |
+            <p>헥토파이낸셜 고정식 가상계좌 에스크로 결제 시 필수로 입력해야합니다.</p>
+        - name: fixed_unlimited_vbank
+          in: formData
+          description: 헥토파이낸셜 고정식 무제한 가상계좌 발급 시 필수로 입력해야합니다.
+          required: false
+          type: boolean
+          default: false
+          x-portone-name: 고정식 무제한 가상계좌 여부
+          x-portone-description: |
+            <p>헥토파이낸셜 고정식 무제한 가상계좌 발급시 필수로 입력해야합니다.</p>
       responses:
         '200':
           description: 가상계좌 생성 완료
@@ -9741,6 +9770,14 @@ definitions:
         x-portone-name: 취소 내역
         x-portone-description: |
           <p>결제건의 취소/부분취소 내역</p>
+      deposit_history:
+        description: 고정식 무제한 가상계좌 입금 내역
+        type: array
+        items:
+          $ref: '#/definitions/VbankDepositAnnotation'
+        x-portone-name: 고정식 무제한 가상계좌 입금 내역
+        x-portone-description: |
+          <p>고정식 무제한 가상계좌 입금 내역</p>
       cancel_receipt_urls:
         description: >-
           (Deprecated : cancel_history 사용 권장) 취소/부분취소 시 생성되는 취소 매출전표 확인 URL.
@@ -11249,6 +11286,38 @@ definitions:
         properties:
           response:
             $ref: '#/definitions/VbankHolderAnnotation'
+  VbankDepositAnnotation:
+    required:
+      - pg_tid
+      - amount
+      - reason
+      - depositor_name
+      - deposited_at
+    properties:
+      pg_tid:
+        description: PG사 승인번호
+        type: string
+        x-portone-name: PG사 승인번호
+        x-portone-description: |
+          <p>입금건의 PG사 승인번호</p>
+      amount:
+        description: 입금건의 거래 금액
+        type: number
+        x-portone-name: 입금 금액
+        x-portone-description: |
+          <p>입금건의 거래 금액</p>
+      depositor_name:
+        description: 가상계좌에 실제 입금한 사람의 이름
+        type: string
+        x-portone-name: 입금자명
+        x-portone-description: |
+          <p>가상계좌에 실제 입금한 사람의 이름</p>
+      deposited_at:
+        description: 입금된 시각 UNIX timestamp
+        type: integer
+        x-portone-name: 입금 시각
+        x-portone-description: |
+          <p>입금된 시각 UNIX timestamp</p>
   KcpQuickControllerAnnotation: {}
   UserControllerAnnotation: {}
 tags:
