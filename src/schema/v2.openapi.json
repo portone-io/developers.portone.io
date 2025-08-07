@@ -115,6 +115,90 @@
         }
       }
     },
+    "/b2b/companies/business-info": {
+      "post": {
+        "summary": "사업자등록 정보조회",
+        "description": "사업자등록 정보조회\n\n요청된 사업자등록번호 리스트에 해당하는 사업자등록 정보를 조회합니다.\n해당 API 사용을 위해서는 별도 문의가 필요합니다.",
+        "operationId": "getB2bBusinessInfos",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetB2bBusinessInfosBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 사업자등록 정보조회 결과 리스트를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 사업자등록 정보조회 결과 리스트를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "platform.company",
+        "x-portone-title": "사업자등록 정보조회",
+        "x-portone-description": "요청된 사업자등록번호 리스트에 해당하는 사업자등록 정보를 조회합니다.\n해당 API 사용을 위해서는 별도 문의가 필요합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+        }
+      }
+    },
     "/b2b/file-upload-url": {
       "post": {
         "summary": "파일 업로드 URL 생성",
@@ -6303,12 +6387,13 @@
           {
             "name": "storeId",
             "in": "query",
-            "description": "상점 아이디",
+            "description": "상점 아이디\n\n접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 인증 정보의 상점 아이디를 사용합니다.",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "x-portone-title": "상점 아이디"
+            "x-portone-title": "상점 아이디",
+            "x-portone-description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 인증 정보의 상점 아이디를 사용합니다."
           }
         ],
         "responses": {
@@ -34157,9 +34242,12 @@
               "$ref": "#/components/schemas/PgCompany"
             }
           },
-          "currency": {
-            "$ref": "#/components/schemas/Currency",
-            "title": "통화"
+          "currencies": {
+            "title": "통화 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Currency"
+            }
           },
           "lastWebhookStatuses": {
             "title": "마지막 웹훅 상태 리스트",
@@ -34469,9 +34557,12 @@
               "$ref": "#/components/schemas/SelectedChannelType"
             }
           },
-          "currency": {
-            "$ref": "#/components/schemas/Currency",
-            "title": "통화"
+          "currencies": {
+            "title": "통화 리스트",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Currency"
+            }
           },
           "lastWebhookStatuses": {
             "title": "최종 결제 상태의 웹훅 상태 리스트",
@@ -44994,6 +45085,10 @@
           "partnerSettlementId": {
             "type": "string",
             "description": "해당 값이 포함된 partnerSettlementId 를 가진 정산건만 조회합니다."
+          },
+          "payoutId": {
+            "type": "string",
+            "description": "해당 값과 일치하는 지급건에 연관된 정산건만 조회합니다."
           }
         },
         "x-portone-title": "정산건 검색 키워드 입력 정보",
