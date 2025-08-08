@@ -142,6 +142,16 @@ export default function ApiV2Docs() {
           <li>멱등성 보장 기간: 3시간 (추후 변경 가능)</li>
           <li>서로 다른 요청을 같은 멱등 키로 요청해서는 안 됩니다.</li>
         </prose.ul>
+        <prose.h3 id="timeout-policy">요청 타임아웃 정책</prose.h3>
+        <prose.p>
+          API 호출시 PG 및 결제 원천사의 응답 지연을 고려하여 최소 60초의 읽기
+          타임아웃 시간을 설정하도록 권장합니다.
+        </prose.p>
+        <prose.p>
+          서버에서 요청 처리 중에 클라이언트 측에서 연결을 끊은 경우에도 요청이
+          취소되지 않습니다. 이 경우 같은 멱등 키로 같은 요청을 재시도하면
+          결과를 확인할 수 있습니다.
+        </prose.p>
         <BackwardCompatibilityContent />
       </RestApi>
     </div>
