@@ -71,9 +71,10 @@ export default function ApiV2Docs() {
         <prose.h3>요청 및 응답 형식</prose.h3>
         <prose.p>요청과 응답의 본문은 JSON 형식입니다.</prose.p>
         <prose.p>
-          API 매개 변수 중 URL 경로에 들어가는 문자열 값이 있는 경우, URL 경로에
-          들어갈 수 없는 문자열은 이스케이프하여야 합니다. 자바스크립트의{" "}
-          <code>encodeURIComponent</code> 함수 등을 사용할 수 있습니다.
+          API 매개 변수 중 URL 경로 또는 query에 들어가는 문자열 값이 있는 경우,
+          그 자리에 들어갈 수 없는 문자는 이스케이프하여야 합니다.
+          자바스크립트의 <code>encodeURIComponent</code> 함수 등을 사용할 수
+          있습니다.
           {/* TODO: 안전한 paymentId 사용에 대해 설명 */}
         </prose.p>
         <prose.h3 id="auth">인증 방식</prose.h3>
@@ -93,16 +94,54 @@ export default function ApiV2Docs() {
           </li>
         </ul>
         <prose.h3 id="get-with-body">
-          GET 요청 시 Body 대신 Query 사용하기
+          GET 요청 시 body 대신 query 사용하기
         </prose.h3>
         <prose.p>
-          GET 요청 시에 Body를 전달해야 하는 경우, Body 대신 Query를 사용할 수
-          있습니다.
+          GET 요청 시에 body(content)를 전달하는 것은 HTTP 표준에 부합하지 않아,
+          클라이언트에 따라 사용 불가능한 경우가 있습니다.
         </prose.p>
         <prose.p>
-          이 경우, Body 객체를 <code>requestBody</code> Query 필드에 넣어주시면
-          됩니다.
+          이 경우, body 문자열을 <code>requestBody</code> query 필드에 넣어
+          주시면 됩니다. query 필드에 들어가는 문자열은 URL 인코드하셔야 합니다.
         </prose.p>
+        <prose.h3 id="idempotency-key">멱등 키</prose.h3>
+        <prose.p>
+          <code>Idempotency-Key</code> 헤더는 네트워크 장애나 타임아웃 시 동일한
+          요청이 중복 처리되는 것을 방지합니다. 자세한 표준은{" "}
+          <prose.a href="https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/">
+            IETF 문서
+          </prose.a>
+          를 참고하세요.
+        </prose.p>
+        <prose.h4>사용 방법</prose.h4>
+        <prose.p>
+          요청 헤더에 고유한 키를 포함하세요. UUID 등 고유한 문자열이어야
+          합니다. 16~256자의 영문 대소문자, 숫자, -, _을 사용 가능합니다.
+        </prose.p>
+        <ul>
+          <li>
+            <code>Idempotency-Key: unique-request-id-123</code>
+          </li>
+        </ul>
+        <prose.p>
+          요청 타임아웃이 발생한 경우, 동일한 멱등 키를 사용하여 재시도할 수
+          있습니다. 이 경우, 서버는 요청을 중복 처리하지 않고, 기존 응답을
+          반환합니다.
+        </prose.p>
+        <prose.p>
+          재시도에서 <code>IDEMPOTENCY_OUTSTANDING_REQUEST</code> 에러가 발생한
+          경우, 시간이 조금 지난 후 다시 재시도해 주세요.
+        </prose.p>
+        <prose.ul>
+          <li>지원 메서드: POST, PUT, PATCH, DELETE (GET은 무시됨)</li>
+          <li>
+            처리 중인 요청을 재시도하는 경우: 409 에러 (
+            <code>{`{"type":"IDEMPOTENCY_OUTSTANDING_REQUEST"}...}`}</code>)
+          </li>
+          <li>완료된 요청을 재시도하는 경우: 기존 응답을 그대로 반환</li>
+          <li>멱등성 보장 기간: 3시간 (추후 변경 가능)</li>
+          <li>서로 다른 요청을 같은 멱등 키로 요청해서는 안 됩니다.</li>
+        </prose.ul>
         <BackwardCompatibilityContent />
       </RestApi>
     </div>
