@@ -1923,6 +1923,88 @@
         "x-portone-category": "pg.kcpquick"
       }
     },
+    "/kcpquick/payment/money": {
+      "post": {
+        "tags": [
+          "kcpquick"
+        ],
+        "summary": "KCP 선불머니 결제 API",
+        "description": "",
+        "operationId": "payWithMoney",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "member_id",
+            "in": "formData",
+            "description": "KCP 간편결제 유저 아이디",
+            "required": true,
+            "type": "string",
+            "default": "member_id",
+            "maxLength": "16",
+            "x-portone-name": "KCP 퀵페이, 선불머니 서비스 유저 아이디",
+            "x-portone-description": "<p>결제를 진행할 KCP 선불머니 결제서비스 유저 아이디</p>\n"
+          },
+          {
+            "name": "channelKey",
+            "in": "formData",
+            "description": "KCP 선불머니 결제 시 사용할 채널의 채널키",
+            "required": true,
+            "type": "string",
+            "x-portone-name": "채널키",
+            "x-portone-description": "<p>KCP 선불머니 결제 시 사용할 채널의 채널키</p>\n"
+          },
+          {
+            "name": "merchant_uid",
+            "in": "formData",
+            "description": "결제 요청할 거래의 고객사 주문번호",
+            "required": true,
+            "type": "string",
+            "maxLength": 40,
+            "x-portone-name": "고객사 주문번호",
+            "x-portone-description": "<p>결제 요청할 거래의 고객사 주문번호</p>\n"
+          },
+          {
+            "name": "name",
+            "in": "formData",
+            "description": "결제 요청할 거래의 주문명",
+            "required": true,
+            "type": "string",
+            "maxLength": 40,
+            "x-portone-name": "주문명",
+            "x-portone-description": "<p>결제 요청할 거래의 주문명</p>\n"
+          },
+          {
+            "name": "amount",
+            "in": "formData",
+            "description": "결제 요청할 금액",
+            "required": true,
+            "type": "integer",
+            "x-portone-name": "결제금액",
+            "x-portone-description": "<p>결제 요청할 금액</p>\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "응답",
+            "schema": {
+              "$ref": "#/definitions/PaymentResponse"
+            }
+          },
+          "401": {
+            "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
+          }
+        },
+        "x-portone-supported-pgs": [
+          "kcp_quick"
+        ],
+        "x-portone-category": "pg.kcpquick"
+      }
+    },
     "/payments/{imp_uid}/naver/cancel": {
       "post": {
         "tags": [
