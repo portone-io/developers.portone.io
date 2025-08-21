@@ -12,7 +12,7 @@ export default createMiddleware({
         httpOnly: true,
         path: "/",
         sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
+        secure: true,
       });
     }
   },
