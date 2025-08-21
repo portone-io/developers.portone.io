@@ -10,7 +10,7 @@ export default createMiddleware({
     ) {
       setCookie(event.nativeEvent, "__vdpl", process.env.VERCEL_DEPLOYMENT_ID, {
         httpOnly: true,
-        path: "/",
+        path: "/_build/assets",
         sameSite: "strict",
         secure: true,
       });
