@@ -14,6 +14,12 @@ export default createMiddleware({
         sameSite: "strict",
         secure: true,
       });
+      setCookie(event.nativeEvent, "__vdpl", process.env.VERCEL_DEPLOYMENT_ID, {
+        httpOnly: true,
+        path: "/_server",
+        sameSite: "strict",
+        secure: true,
+      });
     }
   },
   onBeforeResponse: [sentryBeforeResponseMiddleware()],
