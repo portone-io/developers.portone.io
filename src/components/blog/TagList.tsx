@@ -12,13 +12,13 @@ export default function TagList(props: Props) {
       <div
         class={clsx(
           "flex",
-          props.variant === "compact" ? "text-sm gap-1" : "text-base gap-2",
+          props.variant === "compact" ? "gap-1 text-sm" : "gap-2 text-base",
         )}
       >
         <i
           class={clsx(
             "i-ic-baseline-label inline-block text-slate-4",
-            props.variant === "compact" ? "text-base h-18px" : "text-lg h-18px",
+            props.variant === "compact" ? "h-18px text-base" : "h-18px text-lg",
           )}
         />
         <ul

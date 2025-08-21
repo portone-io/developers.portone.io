@@ -45,7 +45,7 @@ export default function Picture(props: Props) {
   });
 
   const el = (
-    <picture class={clsx(!isServerRendered() && !loaded() && "w-0 h-0")}>
+    <picture class={clsx(!isServerRendered() && !loaded() && "h-0 w-0")}>
       <For each={sources()}>
         {({ format, src }) => <source type={`image/${format}`} src={src} />}
       </For>
