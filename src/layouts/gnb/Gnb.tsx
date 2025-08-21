@@ -205,7 +205,7 @@ export default function Gnb(props: Props) {
                 return (
                   <div
                     class={clsx(
-                      "flex gap-6 absolute inset-x-0 bottom-0 px-12 py-6 rounded-b-md transition-transform transform duration-300 flex-col items-start bg-white md:hidden",
+                      "absolute inset-x-0 bottom-0 flex flex-col transform items-start gap-6 rounded-b-md bg-white px-12 py-6 transition-transform duration-300 md:hidden",
                       sidebarContext.get() && "translate-y-full shadow-lg",
                     )}
                   >

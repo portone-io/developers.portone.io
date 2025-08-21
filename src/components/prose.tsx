@@ -27,7 +27,7 @@ function h1(props: JSX.IntrinsicElements["h1"]) {
     <h1
       {...rest}
       class={clsx(
-        "text-6 mt-12px mb-12px font-500 leading-[28.8px] tracking-[-.021em] first:mt-0 last:mb-0",
+        "mb-12px mt-12px text-6 font-500 leading-[28.8px] tracking-[-.021em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h1}
@@ -44,7 +44,7 @@ function h2(props: JSX.IntrinsicElements["h2"]) {
     <h2
       {...rest}
       class={clsx(
-        "text-5 mt-12px mb-12px font-500 leading-[24px] tracking-[-.02em] first:mt-0 last:mb-0",
+        "mb-12px mt-12px text-5 font-500 leading-[24px] tracking-[-.02em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h2}
@@ -61,7 +61,7 @@ function h3(props: JSX.IntrinsicElements["h3"]) {
     <h3
       {...rest}
       class={clsx(
-        "text-[18px] mt-12px mb-12px font-500 leading-[22px] tracking-[-.018em] first:mt-0 last:mb-0",
+        "mb-12px mt-12px text-[18px] font-500 leading-[22px] tracking-[-.018em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h3}
@@ -78,7 +78,7 @@ function h4(props: JSX.IntrinsicElements["h4"]) {
     <h4
       {...rest}
       class={clsx(
-        "text-[15px] mt-8px mb-8px font-500 leading-5 tracking-[-.014em] first:mt-0 last:mb-0",
+        "mb-8px mt-8px text-[15px] font-500 leading-5 tracking-[-.014em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h4}
@@ -95,7 +95,7 @@ function h5(props: JSX.IntrinsicElements["h5"]) {
     <h5
       {...rest}
       class={clsx(
-        "text-.875rem mt-8px mb-8px font-medium leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
+        "mb-8px mt-8px text-.875rem font-medium leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h5}
@@ -112,7 +112,7 @@ function h6(props: JSX.IntrinsicElements["h6"]) {
     <h6
       {...rest}
       class={clsx(
-        "text-.875rem mt-8px mb-8px font-medium leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
+        "mb-8px mt-8px text-.875rem font-medium leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h6}
@@ -129,7 +129,7 @@ function p(props: JSX.IntrinsicElements["p"]) {
     <p
       {...rest}
       class={clsx(
-        "mt-8px mb-8px leading-5 font-400 first:mt-0 last:mb-0",
+        "mb-8px mt-8px font-400 leading-5 first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.p}
@@ -145,7 +145,7 @@ function a(props: JSX.IntrinsicElements["a"]) {
 
   const cls = createMemo(() => {
     return clsx(
-      "text-orange-5 hover:text-orange-7 cursor-pointer hover:underline",
+      "cursor-pointer text-orange-5 hover:text-orange-7 hover:underline",
       local.class,
     );
   });

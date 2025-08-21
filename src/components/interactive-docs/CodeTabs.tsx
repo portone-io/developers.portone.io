@@ -38,7 +38,7 @@ export function CodeTabs() {
                   "flex items-center gap-1 rounded-md px-3 py-1",
                   isSelected()
                     ? "bg-slate-2 text-slate-9"
-                    : "hover:bg-slate-5 text-slate-4 hover:text-slate-3",
+                    : "text-slate-4 hover:bg-slate-5 hover:text-slate-3",
                 )}
                 value={tab.fileName}
               >

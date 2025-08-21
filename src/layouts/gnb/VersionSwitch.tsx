@@ -52,7 +52,7 @@ export function VersionSwitch(props: VersionSwitchProps) {
             else navigate("/");
           }}
           class={clsx(
-            "bg-slate-1 text-[13px] leading-[15.6px] text-slate-5 p-1 <md:p-.5 flex cursor-pointer select-none overflow-hidden whitespace-pre rounded-md text-center font-medium",
+            "flex cursor-pointer select-none overflow-hidden whitespace-pre rounded-md bg-slate-1 p-1 text-center text-[13px] text-slate-5 font-medium leading-[15.6px] <md:p-.5",
             props.class,
           )}
         >

@@ -17,13 +17,13 @@ export default function Card(props: CardProps) {
     <div
       {...rest}
       class={clsx(
-        "border-slate-2 flex flex-col rounded-lg border",
+        "flex flex-col border border-slate-2 rounded-lg",
         local.class,
       )}
     >
       <div
         class={clsx(
-          "border-slate-2 flex h-10 items-center justify-between border-b px-4 font-bold",
+          "h-10 flex items-center justify-between border-b border-slate-2 px-4 font-bold",
           local.titleClass,
         )}
       >
