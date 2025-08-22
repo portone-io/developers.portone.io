@@ -24,7 +24,7 @@ export default function NavigationMenu(props: Props) {
       <button
         type="button"
         class={clsx(
-          "text-1.125rem hover:bg-#F4F4F5 <sm:border flex w-full items-center justify-between gap-1 rounded-md px-4 py-2 font-medium text-slate-600 transition-colors duration-200 lg:hidden",
+          "w-full flex items-center justify-between gap-1 rounded-md px-4 py-2 text-1.125rem text-slate-600 font-medium transition-colors duration-200 lg:hidden <sm:border hover:bg-#F4F4F5",
           open && "bg-#F4F4F580",
         )}
         onClick={() => setOpen((prev) => !prev)}
@@ -42,22 +42,22 @@ export default function NavigationMenu(props: Props) {
       <div
         class={clsx(
           "transform transition-all duration-200",
-          !open && "<lg:opacity-0 <lg:scale-95 <lg:pointer-events-none",
+          !open && "<lg:pointer-events-none <lg:scale-95 <lg:opacity-0",
         )}
       >
         <ul
           class={clsx(
             "flex gap-x-5 overflow-x-auto whitespace-nowrap py-2",
             // prettier-ignore
-            "lt-lg:(absolute shadow-lg right-0 top-full mt-1.5 flex-col rounded-md border bg-white px-4 py-2)",
+            "lt-lg:(absolute right-0 top-full mt-1.5 flex-col border rounded-md bg-white px-4 py-2 shadow-lg)",
             "<sm:left-0",
           )}
         >
           {Object.entries(navMap).map(([path, tag]) => (
             <li
               class={clsx(
-                "text-1.125rem hover:text-slate-9 transition-colors duration-200",
-                "<lg:text-slate-9 <lg:hover:bg-slate-1 <lg:px-1 <lg:py-2 <lg:rounded-md <lg:flex <lg:items-center <lg:gap-3",
+                "text-1.125rem transition-colors duration-200 hover:text-slate-9",
+                "<lg:flex <lg:items-center <lg:gap-3 <lg:rounded-md <lg:px-1 <lg:py-2 <lg:text-slate-9 <lg:hover:bg-slate-1",
                 props.activeTag === tag
                   ? "lg:(text-slate-9 font-semibold)"
                   : "lg:text-slate-4",

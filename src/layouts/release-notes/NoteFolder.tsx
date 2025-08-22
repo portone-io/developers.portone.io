@@ -17,7 +17,7 @@ function NoteFolder(props: FolderProps) {
   return (
     <div>
       <button
-        class={clsx("flex w-full pr-0", getLinkStyle(false))}
+        class={clsx("w-full flex pr-0", getLinkStyle(false))}
         onClick={() => setOpen((prev) => !prev)}
       >
         <div class="grow">

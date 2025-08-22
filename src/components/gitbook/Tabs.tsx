@@ -53,7 +53,7 @@ export default function Tabs(
               class={clsx(
                 "border px-4 py-2 text-sm",
                 "data-[selected]:(shrink-0 border-b-white bg-white z-selected-tab)",
-                "[&:not([data-selected])]:(shrink text-ellipsis overflow-hidden whitespace-nowrap text-slate bg-slate-1)",
+                "[&:not([data-selected])]:(shrink overflow-hidden text-ellipsis whitespace-nowrap bg-slate-1 text-slate)",
               )}
             >
               {title}
