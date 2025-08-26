@@ -20,8 +20,9 @@ const ViteErrorHandler = () => {
       {`
     window.addEventListener('vite:preloadError', (event) => {
       window.location.reload();
+      event.preventDefault();
     });
-    `}
+      `}
     </script>
   );
 };
