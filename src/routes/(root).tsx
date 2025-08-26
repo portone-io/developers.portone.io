@@ -19,7 +19,13 @@ const ViteErrorHandler = () => {
     <script>
       {`
     window.addEventListener('vite:preloadError', (event) => {
-      window.location.reload();
+      const key = 'vite-preload-error-reload';
+      const lastReload = sessionStorage.getItem(key);
+      const now = Date.now();
+      if (!lastReload || now - Number(lastReload) > 1000) {
+        sessionStorage.setItem(key, String(now));
+        window.location.reload();
+      }
       event.preventDefault();
     });
       `}
