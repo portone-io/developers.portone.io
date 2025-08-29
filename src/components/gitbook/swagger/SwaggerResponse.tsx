@@ -14,7 +14,7 @@ export default function SwaggerResponse(props: Props) {
       <summary class="grid grid-cols-[2fr_3fr_2em] cursor-pointer gap-2 border-l-4 border-l-transparent py-4">
         <div class="flex items-center font-bold">
           <span
-            class={`mr-2 inline-block w-2 h-2 rounded-full ${
+            class={`mr-2 inline-block h-2 w-2 rounded-full ${
               props.status[0] == "2"
                 ? "bg-green-6"
                 : props.status[0] == "3"

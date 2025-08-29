@@ -231,6 +231,111 @@ callback)` 호출 후 **callback**으로 수신되고 모바일의 경우
       </Details.Content>
     </Details>
   </Tabs.Tab>
+
+  <Tabs.Tab title="비인증 결제창 요청">
+    (신) 나이스페이먼츠의 경우 비인증 결제창 방식은 간편결제(네이버페이 / 카카오페이)만 지원합니다.
+
+    ```ts title="Javascript SDK"
+    IMP.request_pay(
+      {
+        channelKey: "{콘솔 내 연동 정보의 채널키}",
+        pay_method: "kakaopay",
+        merchant_uid: "orderNo0001",
+        name: "주문명:결제테스트",
+        amount: 0,
+        buyer_email: "test@portone.io",
+        buyer_name: "구매자이름",
+        buyer_tel: "010-1234-5678",
+        buyer_addr: "서울특별시 강남구 삼성동",
+        buyer_postcode: "123-456",
+        m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
+        customer_uid: "your-customer-unique-id",
+        customer_id: "your-customer-id", // 고객사가 회원에게 부여한 고유 ID로 필수 입력
+      },
+      function (rsp) {
+        // callback 로직
+      },
+    );
+    ```
+
+    <Details>
+      <Details.Summary><strong>주요 파라미터 설명</strong></Details.Summary>
+
+      <Details.Content>
+        <Parameter flatten>
+          - channelKey: string
+
+            **채널키**
+
+            결제를 진행할 채널을 지정합니다.
+
+            포트원 콘솔 내 \[결제 연동] - \[연동 정보] - \[채널 관리] 에서 확인 가능합니다.
+
+            (최신 JavaScript SDK 버전부터 사용 가능합니다.)
+
+          - pg(deprecated)?: string
+
+            **PG사 구분코드**
+
+            `nice_v2` 로 지정하면 됩니다.
+
+          <Hint style="warning">
+            `pg` 파라미터는 지원 중단 예정입니다.
+
+            JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
+          </Hint>
+
+          - pay\_method: string
+
+            **빌링키 발급 수단 구분코드**
+
+            - naverpay\_card (네이버페이 - 카드)
+            - naverpay\_point (네이버페이 - 포인트)
+            - kakaopay (카카오페이)
+
+          - merchant\_uid: string
+
+            **주문번호**
+
+            매번 고유하게 채번되어야 합니다.
+
+          - name: string
+
+            **상품명**
+
+            **40Byte** 이내로 작성해주세요
+
+            **특수문자 유의사항**
+
+            - 사용 가능 : **\_**
+            - 사용 불가 : **% & | $ - + = \[ ]**
+            - 사용 가능하나 권장하지 않음 : **( )**
+
+          - buyer\_tel: string
+
+            **구매자 전화번호**
+
+          - customer\_uid: string
+
+            **빌링키 발급을 위한 결제 수단을 특정하는 고유 번호**
+
+            빌링키 발급시 필수 입력
+
+          - customer\_id: string
+
+            **구매자 식별자**
+
+            (신)나이스 빌링키 발급 시 필수 입력
+
+          - m\_redirect\_url: string
+
+            **리다이렉트 URL**
+
+            리다이렉트 방식으로 진행할 경우, 트랜잭션 종료 이후 302 리디렉션 될 고객사 URL
+        </Parameter>
+      </Details.Content>
+    </Details>
+  </Tabs.Tab>
 </Tabs>
 
 <Details>

@@ -1,4 +1,5 @@
 import type { CodeExample } from "~/state/interactive-docs/index.jsx";
+import type { PaymentGateway } from "~/type";
 
 import { type Params, type Sections } from "./type";
 
@@ -14,6 +15,7 @@ export function markdownResponse(content: string, status: number) {
 export function formatCodeExample(
   codeExample: CodeExample<Params, Sections>,
   codeParams: Params,
+  pgName: () => PaymentGateway,
 ) {
   return (
     "```" +
@@ -21,7 +23,7 @@ export function formatCodeExample(
     " " +
     codeExample.fileName +
     "\n" +
-    codeExample.code(codeParams).code +
+    codeExample.code(codeParams, pgName).code +
     "\n```\n"
   );
 }

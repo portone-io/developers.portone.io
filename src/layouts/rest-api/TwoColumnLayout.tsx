@@ -26,9 +26,9 @@ export default function TwoColumnLayout(_props: TwoColumnLayoutProps) {
 
   return (
     <div
-      class={`relative grid gap-${props.gap} ${props.bp}:${
+      class={`gap-${props.gap} relative grid ${props.bp}:${
         smallRight() ? "grid-cols-[3fr_2fr]" : "grid-cols-2"
-      } ${props.class}`}
+      }  ${props.class}`}
     >
       <div class={props.leftClass}>{props.left()}</div>
       <div

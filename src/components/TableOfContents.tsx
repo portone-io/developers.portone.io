@@ -145,7 +145,7 @@ function Item(props: {
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "py-1 block break-keep text-[14px] leading-5 font-medium",
+          "block break-keep py-1 text-[14px] font-medium leading-5",
           props.isActive ? "text-slate-8" : "text-slate-4",
         )}
       >
@@ -194,9 +194,9 @@ function SubItem(props: {
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "py-1 block break-keep font-medium text-[14px] leading-5 transition-[padding-top,padding-bottom] duration-300 hover:text-portone",
+          "transition-[padding-top,padding-bottom] block break-keep py-1 text-[14px] font-medium leading-5 duration-300 hover:text-portone",
           props.isActive
-            ? "text-portone py-8px"
+            ? "py-8px text-portone"
             : props.isParentActive
               ? "text-slate-4"
               : "text-slate-3",

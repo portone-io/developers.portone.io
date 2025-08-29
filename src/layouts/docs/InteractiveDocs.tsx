@@ -1,9 +1,10 @@
 import { createMemo, type ParentProps, Show } from "solid-js";
+import { MDXProvider } from "solid-mdx";
 
 import { CodePanel } from "~/components/interactive-docs/CodePanel";
 import LanguageSelect from "~/components/interactive-docs/LanguageSelect";
 import { PayMethodSelect } from "~/components/interactive-docs/PayMethodSelect";
-import { PgSelect } from "~/components/interactive-docs/PgSelect";
+import { PgSelect } from "~/components/PgSelect";
 import { prose } from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
 import { type loadDoc } from "~/misc/docs";
@@ -17,7 +18,7 @@ export function InteractiveDocs(
     doc: Awaited<ReturnType<typeof loadDoc> | undefined>;
   }>,
 ) {
-  const { selectedLanguage } = useInteractiveDocs();
+  const { selectedLanguage, pgOptions } = useInteractiveDocs();
   const isHybridSelected = createMemo(() => !Array.isArray(selectedLanguage()));
   return (
     <div class="grid grid-cols-[1fr_1.2fr] grid-rows-[auto_1fr] flex-1 gap-y-2">
@@ -26,7 +27,9 @@ export function InteractiveDocs(
           <div class="rounded-md text-xs text-slate-5 font-medium">
             결제대행사
           </div>
-          <PgSelect />
+          <PgSelect
+            options={Object.keys(pgOptions()) as (keyof typeof pgOptions)[]}
+          />
         </section>
         <section class="flex flex-row items-center">
           <div class="rounded-md text-xs text-slate-5 font-medium">
@@ -43,7 +46,7 @@ export function InteractiveDocs(
         <div class="mb-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
         </div>
-        {props.children}
+        <MDXProvider components={prose}>{props.children}</MDXProvider>
       </article>
       <CodePanel />
     </div>

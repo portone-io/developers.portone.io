@@ -54,7 +54,7 @@ export function Tabs<Id extends string>(props: TabsProps<Id>) {
           {(tab) => (
             <div
               class={clsx(
-                "w-full h-full relative",
+                "relative h-full w-full",
                 currTab()?.id !== tab.id && "hidden",
               )}
             >

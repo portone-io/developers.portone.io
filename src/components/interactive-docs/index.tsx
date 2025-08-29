@@ -18,14 +18,15 @@ import {
 import type { SetStoreFunction } from "solid-js/store";
 import { match, P } from "ts-pattern";
 
+import { Condition as GlobalCondition } from "~/components/Condition";
+import type { DefaultParams } from "~/components/interactive-docs/code";
 import {
   type CodeExample,
   type InteractiveDocsInit,
   type PgOptions,
   useInteractiveDocs,
 } from "~/state/interactive-docs";
-
-import type { DefaultParams } from "./code";
+import type { PaymentGateway } from "~/type";
 
 export type CodeExmapleMap<
   Params extends DefaultParams,
@@ -44,6 +45,7 @@ export function createInteractiveDoc<
 >({
   codeExamples,
   pgOptions,
+  fallbackPg,
   initialParams,
   initialSelectedExample,
   preview,
@@ -54,6 +56,7 @@ export function createInteractiveDoc<
     hybrid?: CodeExmapleMap<Params, Sections, HybridLanguage>;
   };
   pgOptions: PgOptions;
+  fallbackPg: PaymentGateway;
   initialParams: NoInfer<Params>;
   initialSelectedExample: NoInfer<
     [frontend: FrontendLanguage, backend: BackendLanguage] | HybridLanguage
@@ -63,6 +66,7 @@ export function createInteractiveDoc<
   InteractiveDoc: ParentComponent;
   Section: ParentComponent<{ section?: Sections }>;
   Condition: ParentComponent<{
+    pgName?: (paymentGateway: PaymentGateway) => boolean;
     when?: (params: Params) => boolean;
     language?:
       | `frontend/${FrontendLanguage}`
@@ -123,15 +127,15 @@ export function createInteractiveDoc<
     let ref: HTMLDivElement;
     createEffect(() => {
       if (props.section === currentSection()) {
-        ref.dataset.active = "";
+        ref!.dataset.active = "";
       } else {
-        delete ref.dataset.active;
+        delete ref!.dataset.active;
       }
     });
     const handleClick = (e: MouseEvent) => {
       e.stopPropagation();
       setCurrentSection(() => untrack(() => props.section) ?? null);
-      ref.scrollBy();
+      ref!.scrollBy();
     };
     return (
       <div
@@ -147,6 +151,7 @@ export function createInteractiveDoc<
   };
   const Condition = (
     props: ParentProps<{
+      pgName?: (paymentGateway: PaymentGateway) => boolean;
       when?: (params: Params) => boolean;
       language?:
         | `frontend/${FrontendLanguage}`
@@ -181,7 +186,11 @@ export function createInteractiveDoc<
         },
       ),
     );
-    return <Show when={show()}>{props.children}</Show>;
+    return (
+      <GlobalCondition pgName={props.pgName}>
+        <Show when={show()}>{props.children}</Show>
+      </GlobalCondition>
+    );
   };
   const Toggle = (
     props: ParentProps<{
@@ -235,6 +244,7 @@ export function createInteractiveDoc<
         ],
         hybrid: codeExamples.hybrid ? Object.keys(codeExamples.hybrid) : [],
       },
+      fallbackPg,
       params: initialParams,
     },
   };
