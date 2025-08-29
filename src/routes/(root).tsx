@@ -14,26 +14,48 @@ interface Props {
 
 const navAsMenuPaths = ["/blog", "/release-notes"];
 
+const ViteErrorHandler = () => {
+  return (
+    <script>
+      {`
+    window.addEventListener('vite:preloadError', (event) => {
+      const key = 'vite-preload-error-reload';
+      const lastReload = sessionStorage.getItem(key);
+      const now = Date.now();
+      if (!lastReload || now - Number(lastReload) > 1000) {
+        sessionStorage.setItem(key, String(now));
+        window.location.reload();
+      }
+      event.preventDefault();
+    });
+      `}
+    </script>
+  );
+};
+
 export default function Layout(props: Props) {
   const location = useLocation();
   const lang = createMemo<"ko">(() => "ko");
 
   return (
-    <SystemVersionProvider>
-      <SidebarProvider>
-        <div class="h-full flex flex-col">
-          <Gnb
-            lang={lang()}
-            navAsMenu={navAsMenuPaths.some((path) =>
-              location.pathname.startsWith(path),
-            )}
-          />
-          <SidebarBackground />
-          <main class="mx-auto max-w-8xl min-h-0 w-full flex-1 lg:px-10 md:px-8 sm:px-6">
-            {props.children}
-          </main>
-        </div>
-      </SidebarProvider>
-    </SystemVersionProvider>
+    <>
+      <ViteErrorHandler />
+      <SystemVersionProvider>
+        <SidebarProvider>
+          <div class="h-full flex flex-col">
+            <Gnb
+              lang={lang()}
+              navAsMenu={navAsMenuPaths.some((path) =>
+                location.pathname.startsWith(path),
+              )}
+            />
+            <SidebarBackground />
+            <main class="mx-auto max-w-8xl min-h-0 w-full flex-1 lg:px-10 md:px-8 sm:px-6">
+              {props.children}
+            </main>
+          </div>
+        </SidebarProvider>
+      </SystemVersionProvider>
+    </>
   );
 }
