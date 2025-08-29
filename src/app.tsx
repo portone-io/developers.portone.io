@@ -18,6 +18,24 @@ import Trackers from "./layouts/trackers/Trackers";
 
 const SentryRouter = withSentryRouterRouting(Router);
 
+const ViteErrorHandler = () => {
+  return (
+    <script>
+      {`
+    window.addEventListener('vite:preloadError', (event) => {
+      const key = 'vite-preload-error-reload';
+      const lastReload = sessionStorage.getItem(key);
+      const now = Date.now();
+      if (!lastReload || now - Number(lastReload) > 1000) {
+        sessionStorage.setItem(key, String(now));
+        window.location.reload();
+      }
+    });
+      `}
+    </script>
+  );
+};
+
 export default function App() {
   return (
     <SentryRouter
@@ -28,6 +46,7 @@ export default function App() {
           <Meta name="viewport" content="width=device-width,initial-scale=1" />
           <Link rel="icon" type="image/png" href="/favicon.png" />
           <Trackers />
+          <ViteErrorHandler />
           <Suspense>
             <NotFoundBoundary>{props.children}</NotFoundBoundary>
           </Suspense>
