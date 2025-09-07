@@ -111,6 +111,82 @@ export function bakeProperties(
   });
 }
 
+export function extractCommonPropertiesFromUnion(
+  schema: unknown,
+  unionTypeDef: TypeDef,
+): BakedProperty[] {
+  if (!unionTypeDef.discriminator?.mapping) {
+    return [];
+  }
+
+  const discriminator = unionTypeDef.discriminator;
+  const variantRefs = Object.values(discriminator.mapping);
+
+  if (variantRefs.length === 0) {
+    return [];
+  }
+
+  // 각 variant의 properties를 가져옴
+  const allVariantProperties = variantRefs.map((ref) => {
+    const typeDef = getTypeDefByRef(schema, ref);
+    return bakeProperties(schema, typeDef);
+  });
+
+  // 첫 번째 variant의 properties를 기준으로 시작
+  const firstVariantProps = allVariantProperties[0];
+  if (!firstVariantProps) {
+    return [];
+  }
+
+  const commonProperties: BakedProperty[] = [];
+
+  // discriminator 필드를 공통 필드로 추가
+  const discriminatorProp: BakedProperty = {
+    name: discriminator.propertyName,
+    type: "string",
+    required: true,
+    title: "Union Tag",
+    description: "이 필드의 값에 따라 실제 타입이 결정됩니다",
+  };
+  commonProperties.push(discriminatorProp);
+
+  // 각 필드가 모든 variant에 존재하는지 확인
+  for (const prop of firstVariantProps) {
+    // discriminator 필드는 이미 추가했으므로 건너뜀
+    if (prop.name === discriminator.propertyName) {
+      continue;
+    }
+
+    // 모든 variant에서 동일한 이름과 타입의 필드가 있는지 확인
+    const isCommon = allVariantProperties.every((variantProps) => {
+      const matchingProp = variantProps.find((p) => p.name === prop.name);
+      if (!matchingProp) return false;
+
+      // 타입이 동일한지 확인 (간단한 비교)
+      // $ref가 있으면 $ref 비교, 없으면 type 비교
+      if (prop.$ref && matchingProp.$ref) {
+        return prop.$ref === matchingProp.$ref;
+      }
+      return prop.type === matchingProp.type;
+    });
+
+    if (isCommon) {
+      // required는 모든 variant에서 required인 경우에만 true
+      const isRequiredInAll = allVariantProperties.every((variantProps) => {
+        const matchingProp = variantProps.find((p) => p.name === prop.name);
+        return matchingProp?.required === true;
+      });
+
+      commonProperties.push({
+        ...prop,
+        required: isRequiredInAll,
+      });
+    }
+  }
+
+  return commonProperties;
+}
+
 export function resolveTypeDef(
   schema: unknown,
   typeDef: TypeDef | Property,
