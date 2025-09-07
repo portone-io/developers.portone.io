@@ -22,6 +22,7 @@ import {
   type BakedProperty,
   bakeProperties,
   crawlRefs,
+  extractCommonPropertiesFromUnion,
   getTypeDefByRef,
   getTypeDefKind,
   getTypenameByRef,
@@ -160,55 +161,80 @@ interface UnionDocProps {
 }
 function UnionDoc(props: UnionDocProps) {
   const discriminator = createMemo(() => props.typeDef.discriminator!);
+
+  // 공통 필드 추출
+  const commonProperties = createMemo(() =>
+    extractCommonPropertiesFromUnion(props.schema, props.typeDef),
+  );
+
+  // 공통 필드 이름 집합 생성 (빠른 검색을 위해)
+  const commonPropertyNames = createMemo(
+    () => new Set(commonProperties().map((p) => p.name)),
+  );
+
   return (
-    <For each={Object.entries(discriminator().mapping)}>
-      {([discriminateValue, _typeDef]) => {
-        const typeDef = createMemo(() => {
-          const typeDef = getTypeDefByRef(props.schema, _typeDef);
-          return typeDef;
-        });
-        const properties = createMemo(() =>
-          bakeProperties(props.schema, typeDef()),
-        );
-        const otherProperties = createMemo(() =>
-          properties().filter(
-            (property) => property.name !== discriminator().propertyName,
-          ),
-        );
-        return (
-          <Parameter.TypeDef
-            type={
-              <TypeReprDoc
-                schema={props.schema}
-                basepath={props.basepath}
-                def={_typeDef}
-              />
-            }
-            defaultExpanded={false}
-          >
-            <prose.p>
-              <code>{discriminator().propertyName}</code>
-              {"이(가)"}
-              <code>"{discriminateValue}"</code>
-              {"일 때의 타입"}
-            </prose.p>
-            <DescriptionDoc typeDef={typeDef()} />
-            <Parameter.Details>
-              <Parameter.TypeDef
-                ident={discriminator().propertyName}
-                type={<Parameter.Type>"{discriminateValue}"</Parameter.Type>}
-              />
-              <PropertiesDoc
-                basepath={props.basepath}
-                schema={props.schema}
-                properties={otherProperties()}
-                showNested={props.showNested}
-              />
-            </Parameter.Details>
-          </Parameter.TypeDef>
-        );
-      }}
-    </For>
+    <Parameter>
+      {/* 공통 필드 섹션 */}
+      <Show when={commonProperties().length > 0}>
+        <PropertiesDoc
+          basepath={props.basepath}
+          schema={props.schema}
+          properties={commonProperties()}
+          showNested={props.showNested}
+        />
+      </Show>
+
+      {/* 각 variant별 고유 필드 */}
+      <For each={Object.entries(discriminator().mapping)}>
+        {([discriminateValue, _typeDef]) => {
+          const typeDef = createMemo(() => {
+            const typeDef = getTypeDefByRef(props.schema, _typeDef);
+            return typeDef;
+          });
+          const properties = createMemo(() =>
+            bakeProperties(props.schema, typeDef()),
+          );
+
+          // 공통 필드를 제외한 고유 필드만 필터링
+          const uniqueProperties = createMemo(() =>
+            properties().filter(
+              (property) => !commonPropertyNames().has(property.name),
+            ),
+          );
+
+          return (
+            <Parameter.TypeDef
+              type={
+                <TypeReprDoc
+                  schema={props.schema}
+                  basepath={props.basepath}
+                  def={_typeDef}
+                />
+              }
+              defaultExpanded={false}
+            >
+              <prose.p>
+                <code>{discriminator().propertyName}</code>
+                {"이(가) "}
+                <code>"{discriminateValue}"</code>
+                {"일 때의 고유 필드"}
+              </prose.p>
+              <DescriptionDoc typeDef={typeDef()} />
+              <Show when={uniqueProperties().length > 0}>
+                <Parameter.Details>
+                  <PropertiesDoc
+                    basepath={props.basepath}
+                    schema={props.schema}
+                    properties={uniqueProperties()}
+                    showNested={props.showNested}
+                  />
+                </Parameter.Details>
+              </Show>
+            </Parameter.TypeDef>
+          );
+        }}
+      </For>
+    </Parameter>
   );
 }
 
