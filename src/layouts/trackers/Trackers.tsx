@@ -1,6 +1,7 @@
 import { onMount } from "solid-js";
 
 import GoogleTagManager from "./GoogleTagManager";
+import Hubspot from "./Hubspot";
 import NaverAdvertiseAnalytics from "./NaverAdvertiseAnalytics";
 
 const isProd = import.meta.env.VITE_VERCEL_ENV === "production";
@@ -30,6 +31,7 @@ export default function Trackers() {
     <>
       {isProd && <GoogleTagManager />}
       {isProd && <NaverAdvertiseAnalytics />}
+      {isProd && <Hubspot />}
     </>
   );
 }
