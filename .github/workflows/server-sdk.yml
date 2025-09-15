@@ -2,10 +2,10 @@ name: Server SDK
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
     paths:
       - 'src/schema/v2.openapi.json'
+  workflow_dispatch: {}
 
 jobs:
   sync:
@@ -51,7 +51,7 @@ jobs:
           cache-dependency-path: 'sdk/javascript/pnpm-lock.yaml'
 
       - name: Add empty changeset
-        run: npx changeset add --empty
+        run: npx @changesets/cli add --empty
         working-directory: sdk/javascript
         
       - name: Install uv
