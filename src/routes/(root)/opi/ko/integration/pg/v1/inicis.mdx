@@ -93,7 +93,7 @@ KG이니시스 결제창을 호출할 수 있습니다.
           JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
         </Hint>
 
-      - pay_method: string
+      - pay\_method: string
 
         **결제수단 구분코드**
 
@@ -119,7 +119,7 @@ KG이니시스 결제창을 호출할 수 있습니다.
           </Details.Content>
         </Details>
 
-      - merchant_uid: string
+      - merchant\_uid: string
 
         **주문번호**
 
@@ -131,13 +131,13 @@ KG이니시스 결제창을 호출할 수 있습니다.
 
         **string** 이 아닌점에 유의하세요
 
-      - buyer_tel: string
+      - buyer\_tel: string
 
         **주문자연락처**
 
         필수 파라미터 입니다.
 
-      - vbank_due?: string
+      - vbank\_due?: string
 
         가상계좌 입금마감일시를 지정할수 있습니다.(미 지정시 Default 30일)
 
@@ -215,7 +215,7 @@ KG이니시스 결제창을 호출할 수 있습니다.
           JS SDK를 가장 최신 버전으로 업그레이드 후 `channelKey` 파라미터로 채널 설정(PG사 구분)을 대체해주세요.
         </Hint>
 
-      - customer_uid: string
+      - customer\_uid: string
 
         **카드 빌링키**
 
@@ -228,15 +228,15 @@ KG이니시스 결제창을 호출할 수 있습니다.
         결제창에 표시될 금액으로 실제 승인은 이루어지지 않습니다.(실 결제를 발생시키기 위해서는 **customer\_uid** 로 **REST API 를 이용하여 결제요청**을 해주셔야 합니다.)
     </Parameter>
 
-      **빌링키(customer\_uid)로 결제 요청하기**
+    **빌링키(customer\_uid)로 결제 요청하기**
 
-      빌링키 발급이 성공하면 실 빌링키는 customer\_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer\_uid를 고객사 내부서버에 저장하시고 [**비 인증 결제요청 REST API**](/api/rest-v1/nonAuthPayment?v=v1#post%20%2Fsubscribe%2Fpayments%2Fagain)를 호출하시면 결제를 발생시킬 수 있습니다.
+    빌링키 발급이 성공하면 실 빌링키는 customer\_uid 와 1:1 매칭되어 **포트원 서버에 저장**됩니다. customer\_uid를 고객사 내부서버에 저장하시고 [**비 인증 결제요청 REST API**](/api/rest-v1/nonAuthPayment?v=v1#post%20%2Fsubscribe%2Fpayments%2Fagain)를 호출하시면 결제를 발생시킬 수 있습니다.
 
-      ```sh title="server-side"
-      curl -H "Content-Type: application/json" \
-          -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
-          https://api.iamport.kr/subscribe/payments/again
-      ```
+    ```sh title="server-side"
+    curl -H "Content-Type: application/json" \
+        -X POST -d '{"customer_uid":"your-customer-unique-id", "merchant_uid":"order_id_8237352", "amount":3000}' \
+        https://api.iamport.kr/subscribe/payments/again
+    ```
   </Tabs.Tab>
 
   <Tabs.Tab title="비인증 API 방식">
@@ -311,7 +311,7 @@ KG이니시스 결제창을 호출할 수 있습니다.
         **결제창에 렌더링될 카드 할부 개월수 리스트 설정값**
 
         <Parameter.Details>
-          - card\_quota: number[]
+          - card\_quota: number\[]
 
             **할부 개월수**
 
@@ -412,7 +412,7 @@ KG이니시스 결제창을 호출할 수 있습니다.
 
     <Parameter flatten>
       - vat\_amount?: number
-      
+
         상점아이디(MID)에 영세율 설정된 경우 부가세(`vat_amount`) 및 면세금액(`tax_free`)를 0원으로 지정하여 영세율 결제 가능
     </Parameter>
 
@@ -438,5 +438,59 @@ KG이니시스 결제창을 호출할 수 있습니다.
       }
     }
     ```
+  </Tabs.Tab>
+
+  <Tabs.Tab title="이니시스 에스크로 상태변경 웹훅">
+    에스크로 상태 변경이 이뤄지면 고객사의 웹훅을 호출하여 통해 아래와 같은 데이터가 전송됩니다.
+
+    ```json
+    {
+      "event": "Inicis.Escrow.Changed",
+      "imp_uid": "imp_123412341234",
+      "merchant_uid": "asdfasdfasdf",
+      "status": "paid",
+      "extra": {
+        "escrow_status": "4",
+        "changed_at": 112312323,
+        "denied_reason": "구매 거절 사유"
+      }
+    }
+    ```
+
+    웹훅 데이터 필드 설명
+
+    |필드명               |타입  |설명                                                                                                                                                                            |
+    |---------------------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    |`event`              |string|이벤트 타입 (항상 `Inicis.Escrow.Changed`)                                                                                                                                      |
+    |`imp_uid`            |string|포트원 거래 고유번호                                                                                                                                                            |
+    |`merchant_uid`       |string|고객사 주문번호                                                                                                                                                                 |
+    |`status`             |string|결제 상태                                                                                                                                                                       |
+    |`extra.escrow_status`|string|에스크로 상태구분 <br />- `2`: 배송등록<br />- `3`: 구매확인<br />- `31`: 자동구매확인<br />- `32`: 강제구매확인<br />- `4`: 구매거절<br />- `8`: 거래취소<br />- `10`: 거절확인|
+    |`extra.changed_at`   |number|상태 변경 시각 (Unix Timestamp)                                                                                                                                                 |
+    |`extra.denied_reason`|string|구매 거절 사유 (구매거절시 전달)                                                                                                                                                |
+
+    <Hint style="warning">
+      이니시스 에스크로 웹훅 기능을 사용하려면 별도 설정이 필요합니다.
+      [cs@portone.io](mailto:cs@portone.io)로 아래와 같이 설정 요청 메일을 보내주세요.
+
+      ```
+      제목: [에스크로 상태 변화에 따른 통보 수신 URL 설정 요청]
+
+      안녕하세요, 포트원 담당자님
+
+      에스크로 상태 변화에 따른 통보 수신 URL 설정 요청드립니다.
+
+      ■ 고객사 정보
+      - 상호명: [상호명 입력]
+      - 사업자번호: [사업자번호 입력]
+      - 이니시스 MID: [MID 입력]
+
+      ■ 이니시스 에스크로 상태변화 수신 URL
+      -URL : https://service.iamport.kr/inicis_payments/escrow/changed
+      -한글 인코딩 : UTF-8
+
+      감사합니다.
+      ```
+    </Hint>
   </Tabs.Tab>
 </Tabs>
