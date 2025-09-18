@@ -21,7 +21,7 @@ export const GET = async ({ params }: APIEvent) => {
   };
   const response = await generate(generateConfig);
 
-  return new Response(response, {
+  return new Response(response as BodyInit, {
     status: 200,
     headers: { "Content-Type": "image/png" },
   });
