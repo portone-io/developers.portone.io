@@ -1,6 +1,4 @@
-/* eslint-disable unocss/order */
-/* eslint-disable simple-import-sort/imports */
-import { createSignal, createEffect, For, onMount } from "solid-js";
+import { createEffect, createSignal, For, onMount } from "solid-js";
 
 interface SearchResult {
   id: string;
@@ -12,9 +10,7 @@ interface SearchResult {
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = createSignal("");
-  const [searchResults, setSearchResults] = createSignal<SearchResult[]>(
-    [],
-  );
+  const [searchResults, setSearchResults] = createSignal<SearchResult[]>([]);
   const [isSearching, setIsSearching] = createSignal(false);
   const [dictionaryTerms, setDictionaryTerms] = createSignal<SearchResult[]>(
     [],
@@ -23,14 +19,14 @@ export default function Search() {
   // MDX 파일에서 자동으로 용어 추출하는 함수
   const extractTermsFromPage = (): SearchResult[] => {
     const terms: SearchResult[] = [];
-    
+
     // 모든 h3 요소 (### 용어) 찾기
     const headings = document.querySelectorAll("h3");
-    
+
     // 섹션 제목 찾기 (h2 요소)
     const sections = document.querySelectorAll("h2");
     const sectionMap = new Map<Element, string>();
-    
+
     sections.forEach((section) => {
       const sectionText = section.textContent?.trim() || "";
       if (sectionText.includes("**") && sectionText.includes("**")) {
@@ -38,10 +34,10 @@ export default function Search() {
         sectionMap.set(section, cleanSection);
       }
     });
-    
+
     headings.forEach((heading) => {
       const headingText = heading.textContent?.trim() || "";
-      
+
       // 해당 헤딩이 속한 섹션 찾기
       let section = "기타";
       for (const [sectionElement, sectionName] of sectionMap) {
@@ -53,14 +49,14 @@ export default function Search() {
           break;
         }
       }
-      
+
       // ID가 있는 div 찾기
       const idDiv = heading.nextElementSibling as HTMLElement;
       if (idDiv && idDiv.tagName === "DIV" && idDiv.id) {
         // 설명 텍스트 추출 (다음 p 태그들에서)
         let description = "";
         let nextElement = idDiv.nextElementSibling;
-        
+
         while (
           nextElement &&
           nextElement.tagName !== "H3" &&
@@ -71,16 +67,16 @@ export default function Search() {
           }
           nextElement = nextElement.nextElementSibling;
         }
-        
+
         terms.push({
           id: idDiv.id,
           title: headingText,
           content: description.trim(),
-          section: section
+          section: section,
         });
       }
     });
-    
+
     return terms;
   };
 
@@ -108,7 +104,7 @@ export default function Search() {
   const generateSpacingVariations = (text: string): string[] => {
     const normalized = normalizeText(text);
     const variations = [normalized];
-    
+
     // 2글자 이상인 경우 중간에 공백을 넣은 변형들 생성
     if (normalized.length >= 2) {
       for (let i = 1; i < normalized.length; i++) {
@@ -116,7 +112,7 @@ export default function Search() {
         variations.push(normalized.slice(0, i) + normalized.slice(i)); // 공백 없는 버전
       }
     }
-    
+
     return [...new Set(variations)]; // 중복 제거
   };
 
@@ -124,11 +120,11 @@ export default function Search() {
   const calculateSimilarity = (str1: string, str2: string): number => {
     const s1 = normalizeText(str1);
     const s2 = normalizeText(str2);
-    
+
     // 정확한 매칭
     if (s1 === s2) return 1;
     if (s1.length === 0 || s2.length === 0) return 0;
-    
+
     // 부분 문자열 매칭 (높은 점수)
     if (s1.includes(s2)) {
       return 0.9 + (s2.length / s1.length) * 0.1;
@@ -136,11 +132,11 @@ export default function Search() {
     if (s2.includes(s1)) {
       return 0.9 + (s1.length / s2.length) * 0.1;
     }
-    
+
     // 띄어쓰기 변형 고려한 매칭
     const variations1 = generateSpacingVariations(str1);
     const variations2 = generateSpacingVariations(str2);
-    
+
     for (const v1 of variations1) {
       for (const v2 of variations2) {
         if (v1 === v2) return 0.95;
@@ -149,15 +145,15 @@ export default function Search() {
         }
       }
     }
-    
+
     // 문자별 유사도 계산 (낮은 점수)
     let matches = 0;
     const minLength = Math.min(s1.length, s2.length);
-    
+
     for (let i = 0; i < minLength; i++) {
       if (s1[i] === s2[i]) matches++;
     }
-    
+
     const similarity = matches / Math.max(s1.length, s2.length);
     return similarity > 0.5 ? similarity * 0.7 : similarity * 0.5;
   };
@@ -172,21 +168,22 @@ export default function Search() {
     }
 
     setIsSearching(true);
-    
-    const terms = dictionaryTerms().length > 0 ? dictionaryTerms() : fallbackTerms;
-    
+
+    const terms =
+      dictionaryTerms().length > 0 ? dictionaryTerms() : fallbackTerms;
+
     const results = terms
       .map((termData) => {
         const titleScore = calculateSimilarity(termData.title, term);
         const contentScore = calculateSimilarity(termData.content, term);
         const sectionScore = calculateSimilarity(termData.section, term);
-        
+
         // 최고 점수를 해당 용어의 점수로 사용
         const maxScore = Math.max(titleScore, contentScore, sectionScore);
-        
+
         return {
           ...termData,
-          score: maxScore
+          score: maxScore,
         };
       })
       .filter((item) => item.score > 0.2) // 20% 이상 유사한 것만 표시
@@ -210,19 +207,19 @@ export default function Search() {
         document.querySelector("[data-header]") ||
         document.querySelector(".header");
       const headerHeight = header ? header.getBoundingClientRect().height : 100;
-      
+
       // 오프셋 사용 (헤더 + 네비게이션 + 여백)
       const extraOffset = 600;
       const totalOffset = Math.max(headerHeight + extraOffset, 400); // 최소 400px 오프셋 보장
-      
+
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - totalOffset;
 
       window.scrollTo({
         top: Math.max(0, offsetPosition), // 음수 방지
-        behavior: "smooth"
+        behavior: "smooth",
       });
-      
+
       // 스크롤 완료 후 하이라이트 효과
       setTimeout(() => {
         element.style.transition = "background-color 0.3s ease";
@@ -232,23 +229,23 @@ export default function Search() {
           element.style.backgroundColor = "";
         }, 2000);
       }, 500); // 스크롤 완료 대기
-      
+
       // 검색 결과 초기화
       setSearchTerm("");
     }
   };
 
   return (
-    <div class="w-1/2 max-w-full mb-8">
+    <div class="mb-8 max-w-full w-1/2">
       <div class="relative">
         <input
           type="text"
           placeholder="용어를 검색하세요..."
           value={searchTerm()}
           onInput={handleSearch}
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200"
+          class="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500"
         />
-        <div class="absolute top-1/2 right-3 -translate-y-1/2 transform">
+        <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
           <svg
             class="h-5 w-5 text-gray-400"
             fill="none"
@@ -267,11 +264,9 @@ export default function Search() {
 
       {/* 검색 결과 */}
       {searchTerm().length > 0 && (
-        <div class="mt-4 max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div class="mt-4 max-h-96 overflow-y-auto border border-gray-200 rounded-lg bg-white shadow-lg">
           {isSearching() ? (
-            <div class="p-4 text-center text-gray-500">
-              검색 중...
-            </div>
+            <div class="p-4 text-center text-gray-500">검색 중...</div>
           ) : searchResults().length > 0 ? (
             <div class="p-2">
               <div class="mb-2 px-2 text-sm text-gray-600">
@@ -281,11 +276,17 @@ export default function Search() {
                 {(result) => (
                   <button
                     onClick={() => scrollToTerm(result.id)}
-                    class="w-full rounded-md border-b border-gray-100 p-3 text-left transition-colors duration-150 hover:bg-gray-50 last:border-b-0"
+                    class="w-full border-b border-gray-100 rounded-md p-3 text-left transition-colors duration-150 last:border-b-0 hover:bg-gray-50"
                   >
-                    <div class="mb-1 font-medium text-gray-900">{result.title}</div>
-                    <div class="mb-1 text-sm text-gray-600">{result.section}</div>
-                    <div class="text-sm text-gray-500 line-clamp-2">{result.content}</div>
+                    <div class="mb-1 text-gray-900 font-medium">
+                      {result.title}
+                    </div>
+                    <div class="mb-1 text-sm text-gray-600">
+                      {result.section}
+                    </div>
+                    <div class="line-clamp-2 text-sm text-gray-500">
+                      {result.content}
+                    </div>
                   </button>
                 )}
               </For>
@@ -300,4 +301,3 @@ export default function Search() {
     </div>
   );
 }
-
