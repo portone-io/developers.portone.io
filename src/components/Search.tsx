@@ -12,9 +12,13 @@ interface SearchResult {
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = createSignal("");
-  const [searchResults, setSearchResults] = createSignal<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = createSignal<SearchResult[]>(
+    [],
+  );
   const [isSearching, setIsSearching] = createSignal(false);
-  const [dictionaryTerms, setDictionaryTerms] = createSignal<SearchResult[]>([]);
+  const [dictionaryTerms, setDictionaryTerms] = createSignal<SearchResult[]>(
+    [],
+  );
 
   // MDX 파일에서 자동으로 용어 추출하는 함수
   const extractTermsFromPage = (): SearchResult[] => {
@@ -223,7 +227,6 @@ export default function Search() {
       setTimeout(() => {
         element.style.transition = "background-color 0.3s ease";
         element.style.backgroundColor = "#fef3c7"; // 연한 노란색
-        
         // 2초 후 하이라이트 제거
         setTimeout(() => {
           element.style.backgroundColor = "";
