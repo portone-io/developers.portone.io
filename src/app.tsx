@@ -10,6 +10,7 @@ import "./styles/docsearch/button.css";
 import { withSentryRouterRouting } from "@sentry/solidstart/solidrouter";
 import { Link, Meta, MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
+import { clientOnly } from "@solidjs/start";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 
@@ -36,6 +37,8 @@ const ViteErrorHandler = () => {
   );
 };
 
+const Chatbot = clientOnly(() => import("./components/Chatbot"));
+
 export default function App() {
   return (
     <SentryRouter
@@ -47,6 +50,7 @@ export default function App() {
           <Link rel="icon" type="image/png" href="/favicon.png" />
           <Trackers />
           <ViteErrorHandler />
+          <Chatbot />
           <Suspense>
             <NotFoundBoundary>{props.children}</NotFoundBoundary>
           </Suspense>
