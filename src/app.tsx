@@ -8,11 +8,12 @@ import "./styles/docsearch/modal.css";
 import "./styles/docsearch/button.css";
 
 import { withSentryRouterRouting } from "@sentry/solidstart/solidrouter";
+import { createMediaQuery } from "@solid-primitives/media";
 import { Link, Meta, MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { clientOnly } from "@solidjs/start";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
+import { Show, Suspense } from "solid-js";
 
 import { NotFoundBoundary } from "./components/404";
 import Trackers from "./layouts/trackers/Trackers";
@@ -40,6 +41,7 @@ const ViteErrorHandler = () => {
 const Chatbot = clientOnly(() => import("./components/Chatbot"));
 
 export default function App() {
+  const isDesktop = createMediaQuery("(min-width: 769px)");
   return (
     <SentryRouter
       root={(props) => (
@@ -50,7 +52,9 @@ export default function App() {
           <Link rel="icon" type="image/png" href="/favicon.png" />
           <Trackers />
           <ViteErrorHandler />
-          <Chatbot />
+          <Show when={isDesktop()}>
+            <Chatbot />
+          </Show>
           <Suspense>
             <NotFoundBoundary>{props.children}</NotFoundBoundary>
           </Suspense>
