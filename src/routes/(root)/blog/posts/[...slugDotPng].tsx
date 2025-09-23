@@ -21,8 +21,13 @@ export const GET = async ({ params }: APIEvent) => {
   };
   const response = await generate(generateConfig);
 
-  return new Response(response, {
+  return new Response(response as BodyInit, {
     status: 200,
     headers: { "Content-Type": "image/png" },
   });
 };
+
+// Dummy route, redirection and 404 handling will be done in the layout
+export default function Fallback() {
+  return null;
+}

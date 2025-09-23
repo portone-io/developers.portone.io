@@ -71,7 +71,7 @@ const DocsEntry = z.object({
   title: z.string(),
   description: z.string(),
   targetVersions: z.array(SystemVersion).optional(),
-  versionVariants: z.record(SystemVersion, z.string()).optional(),
+  versionVariants: z.partialRecord(SystemVersion, z.string()).optional(),
   customLayout: z.enum(["InteractiveDocs"]).optional(),
   targetPg: PaymentGateway.or(z.literal("dynamic")).optional(),
 });
