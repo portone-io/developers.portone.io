@@ -18,7 +18,7 @@ export default function Footer(props: Props) {
           </tr>
           <tr>
             <th class="bg-orange-5 px-4 text-white font-bold">기술지원 문의</th>
-            <td class="px-4">support@portone.io</td>
+            <td class="px-4">tech.support@portone.io</td>
           </tr>
         </tbody>
       </table>
