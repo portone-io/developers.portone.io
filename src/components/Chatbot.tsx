@@ -5,6 +5,9 @@ function Chatbot() {
   onMount(() => {
     PortOneAIChatbotLoader.load({
       baseUrl: "https://ai-chatbot-kappa-blue-portone.vercel.app",
+      channelIO: {
+        pluginKey: "1c56a28b-bb3a-4b8b-afd0-f2fc3da403b5",
+      },
     });
   });
 
