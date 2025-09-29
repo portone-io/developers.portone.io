@@ -226,12 +226,14 @@ function ResponseDoc(props: ResponseDocProps) {
         {(typeDef) => {
           return (
             <ReqRes title="200 Ok">
-              <TypeDefDoc
-                basepath={props.basepath}
-                schema={props.schema}
-                typeDef={resolveTypeDef(props.schema, typeDef())}
-                showNested
-              />
+              <Parameter>
+                <TypeDefDoc
+                  basepath={props.basepath}
+                  schema={props.schema}
+                  typeDef={resolveTypeDef(props.schema, typeDef())}
+                  showNested
+                />
+              </Parameter>
             </ReqRes>
           );
         }}
@@ -273,12 +275,14 @@ interface ReqParametersProps {
 function ReqParameters(props: ReqParametersProps) {
   return (
     <ReqRes title={props.title} description={props.description}>
-      <ReqPropertiesDoc
-        basepath={props.basepath}
-        properties={props.parameters}
-        schema={props.schema}
-        showNested
-      />
+      <Parameter>
+        <ReqPropertiesDoc
+          basepath={props.basepath}
+          properties={props.parameters}
+          schema={props.schema}
+          showNested
+        />
+      </Parameter>
     </ReqRes>
   );
 }
