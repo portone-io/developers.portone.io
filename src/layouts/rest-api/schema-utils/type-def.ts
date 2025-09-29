@@ -150,6 +150,14 @@ export function extractCommonPropertiesFromUnion(
   };
   commonProperties.push(discriminatorProp);
 
+  const variantPropertyMaps = allVariantProperties.map((variantProps) => {
+    const map = new Map<string, BakedProperty>();
+    for (const prop of variantProps) {
+      map.set(prop.name, prop);
+    }
+    return map;
+  });
+
   // 각 필드가 모든 variant에 존재하는지 확인
   for (const prop of firstVariantProps) {
     // discriminator 필드는 이미 추가했으므로 건너뜀
@@ -157,26 +165,34 @@ export function extractCommonPropertiesFromUnion(
       continue;
     }
 
-    // 모든 variant에서 동일한 이름과 타입의 필드가 있는지 확인
-    const isCommon = allVariantProperties.every((variantProps) => {
-      const matchingProp = variantProps.find((p) => p.name === prop.name);
-      if (!matchingProp) return false;
+    let isCommon = true;
+    let isRequiredInAll = true;
 
-      // 타입이 동일한지 확인 (간단한 비교)
-      // $ref가 있으면 $ref 비교, 없으면 type 비교
-      if (prop.$ref && matchingProp.$ref) {
-        return prop.$ref === matchingProp.$ref;
+    // 모든 variant에서 동일한 이름과 타입의 필드가 있는지 확인
+    for (const variantMap of variantPropertyMaps) {
+      const matchingProp = variantMap.get(prop.name);
+
+      if (!matchingProp) {
+        isCommon = false;
+        break;
       }
-      return prop.type === matchingProp.type;
-    });
+
+      const typesMatch =
+        prop.$ref && matchingProp.$ref
+          ? prop.$ref === matchingProp.$ref
+          : prop.type === matchingProp.type;
+
+      if (!typesMatch) {
+        isCommon = false;
+        break;
+      }
+
+      if (matchingProp.required !== true) {
+        isRequiredInAll = false;
+      }
+    }
 
     if (isCommon) {
-      // required는 모든 variant에서 required인 경우에만 true
-      const isRequiredInAll = allVariantProperties.every((variantProps) => {
-        const matchingProp = variantProps.find((p) => p.name === prop.name);
-        return matchingProp?.required === true;
-      });
-
       commonProperties.push({
         ...prop,
         required: isRequiredInAll,
