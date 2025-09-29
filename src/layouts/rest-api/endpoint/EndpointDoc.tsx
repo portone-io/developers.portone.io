@@ -279,9 +279,9 @@ function ReqParameters(props: ReqParametersProps) {
         <ReqPropertiesDoc
           basepath={props.basepath}
           properties={props.parameters}
-            schema={props.schema}
-            showNested
-          />
+          schema={props.schema}
+          showNested
+        />
       </Parameter>
     </ReqRes>
   );
