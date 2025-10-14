@@ -1,6 +1,6 @@
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 
-import type { MdxParseResult } from "../mdx-parser";
+import type { MdxParseResult } from "../mdx-parser.ts";
 import type { Import } from "./imports";
 
 /**

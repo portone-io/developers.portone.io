@@ -2,7 +2,7 @@ import type { Blockquote, Heading, Link, List, Paragraph } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
-import { extractMdxJsxAttributes } from "./common";
+import { extractMdxJsxAttributes } from "./common.ts";
 
 /**
  * Prose 컴포넌트 처리 (prose.h1, prose.h2, prose.p 등)

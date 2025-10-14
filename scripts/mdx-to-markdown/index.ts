@@ -6,8 +6,8 @@ import stringWidth from "string-width";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
-import { transformJsxComponents } from "./jsx";
-import { type Frontmatter, type MdxParseResult } from "./mdx-parser";
+import { transformJsxComponents } from "./jsx/index.ts";
+import { type Frontmatter, type MdxParseResult } from "./mdx-parser.ts";
 
 /**
  * MDX AST를 마크다운용 AST로 변환하는 함수
@@ -129,7 +129,7 @@ function transformLinks(ast: Root, useMarkdownLinks: boolean = true): void {
     if (url.startsWith("/")) {
       // URL 파싱 (쿼리 파라미터와 해시 프래그먼트 처리)
       const urlParts = url.split(/[?#]/);
-      const path = urlParts[0]!;
+      const path = urlParts[0];
       const queryAndHash = url.substring(path.length);
 
       // 기본 URL에 경로 추가

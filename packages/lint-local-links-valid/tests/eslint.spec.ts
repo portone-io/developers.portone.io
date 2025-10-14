@@ -7,13 +7,10 @@ import YAMLParser from "yaml-eslint-parser";
 import { rule as navRule } from "../src/eslint/nav.ts";
 import { rule as redirRule } from "../src/eslint/redir.ts";
 
-// @ts-expect-error https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester
 RuleTester.describe = vitest.describe;
-// @ts-expect-error https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester
 RuleTester.it = vitest.it;
 // @ts-expect-error https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester
 RuleTester.afterAll = vitest.afterAll;
-// @ts-expect-error https://eslint.org/docs/latest/integrate/nodejs-api#customizing-ruletester
 RuleTester.itOnly = vitest.it.only;
 
 const ruleTester = new RuleTester({

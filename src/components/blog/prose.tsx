@@ -112,7 +112,7 @@ export function a(props: JSX.HTMLAttributes<HTMLAnchorElement>) {
   );
 }
 
-export function blockquote(props: JSX.HTMLAttributes<HTMLElement>) {
+export function blockquote(props: JSX.HTMLAttributes<HTMLQuoteElement>) {
   const [locals, others] = splitProps(props, ["class", "children"]);
   return (
     <blockquote {...others} class={clsx("my-6 border-l-4 pl-4", locals.class)}>

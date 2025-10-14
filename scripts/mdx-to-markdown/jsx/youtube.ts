@@ -1,6 +1,6 @@
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 
-import { extractMdxJsxAttributes } from "./common";
+import { extractMdxJsxAttributes } from "./common.ts";
 /**
  * Youtube 컴포넌트 처리
  * @param node MDX JSX 노드

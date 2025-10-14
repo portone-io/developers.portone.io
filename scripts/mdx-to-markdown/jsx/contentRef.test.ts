@@ -2,7 +2,7 @@ import type { Root } from "mdast";
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { describe, expect, it } from "vitest";
 
-import type { MdxParseResult } from "../mdx-parser";
+import type { MdxParseResult } from "../mdx-parser.ts";
 import { handleContentRefComponent } from "./contentRef";
 
 const emptyRoot: Root = {

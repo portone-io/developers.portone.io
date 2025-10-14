@@ -9,13 +9,16 @@ import { join } from "node:path";
 
 import type { Root } from "mdast";
 
-import { astToMarkdownString, frontmatterToString } from "../mdx-to-markdown";
-import { type MdxParseResult } from "../mdx-to-markdown/mdx-parser";
+import {
+  astToMarkdownString,
+  frontmatterToString,
+} from "../mdx-to-markdown/index.ts";
+import { type MdxParseResult } from "../mdx-to-markdown/mdx-parser.ts";
 import {
   categorizeSlugs,
   filterSlugsByCategory,
   PATH_PREFIXES,
-} from "../mdx-to-markdown/utils";
+} from "../mdx-to-markdown/utils.ts";
 
 /**
  * 모든 마크다운 파일을 읽고 llms.txt 파일을 생성하는 함수

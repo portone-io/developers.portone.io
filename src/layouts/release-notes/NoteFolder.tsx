@@ -21,7 +21,7 @@ function NoteFolder(props: FolderProps) {
         onClick={() => setOpen((prev) => !prev)}
       >
         <div class="grow">
-          <LinkTitle title={props.title} />
+          <LinkTitle title={props.title} isActive={false} />
         </div>
         <div class="h-full flex items-center p-2">
           <i

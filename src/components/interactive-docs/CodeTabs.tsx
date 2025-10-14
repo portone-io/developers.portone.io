@@ -28,7 +28,7 @@ export function CodeTabs() {
             const isSelected = createMemo(() => tab.fileName === selectedTab());
             createEffect(() => {
               if (isSelected()) {
-                tabRef.scrollBy();
+                tabRef!.scrollBy();
               }
             });
             return (

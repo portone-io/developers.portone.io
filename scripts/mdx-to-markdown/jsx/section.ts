@@ -2,7 +2,7 @@ import type { Html, Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
-import { extractMdxJsxAttributes } from "./common";
+import { extractMdxJsxAttributes } from "./common.ts";
 
 /**
  * Section 컴포넌트를 HTML 주석으로 변환하는 함수

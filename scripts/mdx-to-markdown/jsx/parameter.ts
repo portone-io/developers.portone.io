@@ -2,7 +2,7 @@ import type { BlockContent, ListItem, Paragraph, Root, Text } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
-import { extractMdxJsxAttributes, unwrapJsxNode } from "./common";
+import { extractMdxJsxAttributes, unwrapJsxNode } from "./common.ts";
 
 /**
  * Parameter.TypeDef 컴포넌트를 마크다운으로 변환하는 함수
