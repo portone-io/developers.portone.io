@@ -2,6 +2,7 @@ import { Link, Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
 import { createMemo, createSignal, onMount } from "solid-js";
 
+import V2MigrationBanner from "~/components/gitbook/V2MigrationBanner";
 import Hint from "~/components/Hint";
 import { prose } from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
@@ -60,6 +61,7 @@ export default function ApiV1Docs() {
           <br />
           비인증 결제, 정기 자동결제 등 부가기능을 위한 REST API도 제공합니다.
         </prose.p>
+        <V2MigrationBanner lang="ko" />
         <Hint style="danger">
           <prose.p>
             2024년 9월 1일부로 포트원 V1 API에 대해 일부 보안 규격이 지원
