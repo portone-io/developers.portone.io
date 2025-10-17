@@ -26,7 +26,7 @@ export type PgSelectOption = {
 
 export const PgOptions = {
   all: { label: "모든 PG사", icon: portoneLogo },
-  nice: { label: "나이스페이먼츠", icon: niceLogo },
+  nice: { label: "나이스정보통신", icon: niceLogo },
   smartro: { label: "스마트로", icon: smartroLogo },
   toss: { label: "토스페이먼츠", icon: tossLogo },
   kpn: { label: "한국결제네트웍스", icon: kpnLogo },
