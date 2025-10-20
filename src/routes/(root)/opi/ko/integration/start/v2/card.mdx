@@ -1,0 +1,632 @@
+---
+title: 한국 카드 결제 연동하기
+description: 한국 카드 결제의 특징과 연동 방법을 안내합니다.
+targetVersions: ["v2"]
+---
+
+import Hint from "~/components/Hint";
+import Parameter from "~/components/parameter/Parameter";
+
+## 한국 카드 결제 개요
+
+한국의 카드 결제는 국내 카드사들과 PG사를 통해 제공되며, 다양한 결제 방식과 부가 기능을 지원합니다.
+포트원 V2를 통해 통일된 인터페이스로 여러 PG사의 카드 결제를 연동할 수 있습니다.
+
+### 지원되는 주요 카드사
+
+한국에서 발급된 다음 카드사들의 카드로 결제가 가능합니다.
+
+| 카드사명 |코드|  비고  |
+|:--------:|:--:|:------:|
+|   신한   | 366|        |
+|   삼성   | 365|        |
+|   현대   | 367|        |
+|   롯데   | 368|        |
+|    BC    | 361|        |
+|    KB    | 381|        |
+|    NH    | 371|  농협  |
+|   우리   | 041|        |
+|  하나SK  | 374|        |
+|   씨티   | 370|        |
+|   광주   | 364|        |
+|   제주   | 373|        |
+|   전북   | 372|        |
+|  새마을  | 045|        |
+|   수협   | 369|        |
+|   신협   | 048|        |
+|  우체국  | 071|        |
+|    KDB   | 002|산업은행|
+|카카오뱅크| 090|        |
+|   K뱅크  | 089|        |
+
+자세한 카드사 코드는 [카드사 코드](/opi/ko/support/code-info/card-code) 페이지를 참고해주세요.
+
+### 카드 결제 방식
+
+한국 카드 결제는 크게 세 가지 방식으로 연동할 수 있습니다.
+
+- **인증 결제 (SDK)**: 결제창을 통한 일반적인 카드 결제
+- **수기(키인) 결제 (API)**: 카드 정보를 직접 입력받아 서버에서 결제 요청
+- **빌링키 결제**: 카드 정보를 저장하여 정기/반복 결제에 사용
+
+## SDK를 통한 카드 결제
+
+### 1. 기본 카드 결제
+
+결제창을 통한 일반적인 카드 결제는 `requestPayment` 함수를 사용합니다.
+
+```ts
+import * as PortOne from "@portone/browser-sdk/v2";
+
+const response = await PortOne.requestPayment({
+  storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
+  channelKey: "channel-key-893597d6-e62d-410f-83f9-119f530b4b11",
+  paymentId: `payment-${crypto.randomUUID()}`,
+  orderName: "나이키 와플 트레이너 2 SD",
+  totalAmount: 1000,
+  currency: "CURRENCY_KRW",
+  payMethod: "CARD",
+  customer: {
+    fullName: "홍길동",
+    phoneNumber: "010-1234-5678",
+    email: "customer@example.com",
+  },
+});
+```
+
+### 2. 할부 설정
+
+카드 결제 시 할부 개월 수를 설정할 수 있습니다.
+
+#### 할부 개월 수 표시 제어
+
+결제창에 표시될 할부 개월 수 목록을 지정할 수 있습니다.
+
+```ts
+const response = await PortOne.requestPayment({
+  // ... 기본 파라미터
+  payMethod: "CARD",
+  card: {
+    installment: {
+      monthOption: {
+        availableMonthList: [2, 3, 4, 5, 6], // 2~6개월 할부 옵션 표시
+      },
+    },
+  },
+});
+```
+
+<Hint style="info">
+  **PG사별 차이**
+
+  - **토스페이먼츠**: 일시불부터 지정한 최대 개월 수까지 모두 표시됩니다.
+  - **기타 PG사**: 지정한 개월 수만 표시됩니다.
+</Hint>
+
+#### 고정 할부 개월 수 설정
+
+특정 할부 개월 수로만 결제하도록 고정할 수 있습니다.
+
+```ts
+const response = await PortOne.requestPayment({
+  // ... 기본 파라미터
+  payMethod: "CARD",
+  card: {
+    installment: {
+      monthOption: {
+        fixedMonth: 3, // 3개월 할부로 고정
+      },
+    },
+  },
+});
+```
+
+<Hint style="warning">
+  **할부 최소 금액**
+
+  - **토스페이먼츠**: 현대카드 1만원, 그 외 카드사 5만원 이상
+  - **기타 PG사**: PG사 정책에 따라 상이
+</Hint>
+
+### 3. 무이자 할부 설정
+
+특정 카드사에 대해 무이자 할부를 제공할 수 있습니다.
+
+#### 상점 분담 무이자 할부
+
+```ts
+const response = await PortOne.requestPayment({
+  // ... 기본 파라미터
+  payMethod: "CARD",
+  card: {
+    installment: {
+      monthOption: {
+        availableMonthList: [2, 3, 4, 5, 6],
+      },
+      freeInstallmentPlans: [
+        {
+          cardCompany: "HYUNDAI_CARD", // 현대카드
+          months: [2, 3], // 2, 3개월 무이자
+        },
+        {
+          cardCompany: "SHINHAN_CARD", // 신한카드
+          months: [2, 3, 4, 5, 6], // 2~6개월 무이자
+        },
+      ],
+    },
+  },
+});
+```
+
+<Hint style="warning">
+  **사전 계약 필요**
+
+  상점 분담 무이자 할부를 사용하려면 PG사와 사전 계약이 필요합니다. 계약 없이 사용 시 결제가 실패하거나 일반 할부로 처리될 수 있습니다.
+</Hint>
+
+### 4. 카드사 포인트 사용
+
+카드사 포인트를 결제에 사용할 수 있도록 설정할 수 있습니다.
+
+```ts
+const response = await PortOne.requestPayment({
+  // ... 기본 파라미터
+  payMethod: "CARD",
+  card: {
+    useCardPoint: true, // 카드사 포인트 사용 허용
+  },
+});
+```
+
+<Hint style="info">
+  카드사 포인트 사용 기능은 PG사와의 계약에 따라 지원 여부가 다를 수 있습니다.
+</Hint>
+
+### 5. 앱카드 결제
+
+모바일 앱에서 앱카드(앱투앱 결제)만 허용하도록 설정할 수 있습니다.
+
+```ts
+const response = await PortOne.requestPayment({
+  // ... 기본 파라미터
+  payMethod: "CARD",
+  card: {
+    useAppCardOnly: true, // 앱카드만 허용
+  },
+});
+```
+
+<Hint style="info">
+  **지원 카드사 (토스페이먼츠 기준)**
+
+  - 지원: 국민, 농협, 롯데, 삼성, 신한, 현대, 우리, 하나
+  - 미지원: 씨티
+</Hint>
+
+### 6. 에스크로 결제
+
+고액 결제 시 에스크로 결제를 사용할 수 있습니다.
+
+```ts
+const response = await PortOne.requestPayment({
+  // ... 기본 파라미터
+  payMethod: "CARD",
+  productType: "PHYSICAL", // 실물 상품
+  escrow: {
+    sender: {
+      name: "보내는 사람",
+      phoneNumber: "010-1234-5678",
+      address: {
+        addressLine1: "서울시 강남구 테헤란로 123",
+        addressLine2: "포트원빌딩 4층",
+      },
+    },
+    receiver: {
+      name: "받는 사람",
+      phoneNumber: "010-9876-5432",
+      address: {
+        addressLine1: "서울시 서초구 반포대로 123",
+        addressLine2: "101동 1001호",
+      },
+    },
+    logistics: {
+      company: "HANJIN", // 물류사
+      invoiceNumber: "1234567890", // 송장번호
+    },
+  },
+});
+```
+
+<Hint style="warning">
+  **사전 계약 필요**
+
+  에스크로 결제를 사용하려면 PG사와 사전 계약이 필요합니다.
+</Hint>
+
+### 7. 문화비 지출 설정
+
+도서, 공연 등 문화비 지출로 처리할 수 있습니다.
+
+```ts
+const response = await PortOne.requestPayment({
+  // ... 기본 파라미터
+  payMethod: "CARD",
+  isCulturalExpense: true, // 문화비 지출 여부
+});
+```
+
+## API를 통한 수기(키인) 결제
+
+카드 정보를 직접 입력받아 서버에서 결제를 요청할 수 있습니다.
+
+<Hint style="warning">
+  **사전 계약 필요**
+
+  API를 통한 수기 결제는 대부분의 PG사에서 사전 계약이 필요합니다.
+</Hint>
+
+```ts
+// 서버에서 실행
+const response = await fetch("https://api.portone.io/payments/{paymentId}/instant", {
+  method: "POST",
+  headers: {
+    "Authorization": `PortOne ${PORTONE_API_SECRET}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    channelKey: "channel-key-xxxxx",
+    orderName: "나이키 와플 트레이너 2 SD",
+    amount: {
+      total: 10000,
+    },
+    currency: "KRW",
+    method: {
+      card: {
+        credential: {
+          number: "1234567812345678", // 카드번호
+          expiryYear: "25", // 유효기간 년
+          expiryMonth: "12", // 유효기간 월
+          birthOrBusinessRegistrationNumber: "900101", // 생년월일 6자리 또는 사업자번호 10자리
+          passwordTwoDigits: "12", // 카드 비밀번호 앞 2자리
+        },
+        installment: {
+          month: 0, // 0: 일시불, 2~12: 할부 개월 수
+        },
+      },
+    },
+    customer: {
+      name: {
+        full: "홍길동",
+      },
+      phoneNumber: "010-1234-5678",
+      email: "customer@example.com",
+    },
+  }),
+});
+```
+
+<Hint style="danger">
+  **보안 주의사항**
+
+  - 카드 정보는 반드시 HTTPS를 통해 전송해야 합니다.
+  - 카드 정보를 고객사 서버에 저장하지 마세요.
+  - PCI-DSS 인증이 필요할 수 있습니다.
+</Hint>
+
+## 빌링키 발급 및 정기 결제
+
+빌링키를 발급받아 정기/반복 결제를 구현할 수 있습니다.
+
+### 1. SDK를 통한 빌링키 발급
+
+```ts
+import * as PortOne from "@portone/browser-sdk/v2";
+
+const response = await PortOne.requestIssueBillingKey({
+  storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec",
+  channelKey: "channel-key-893597d6-e62d-410f-83f9-119f530b4b11",
+  billingKeyMethod: "CARD",
+  customer: {
+    id: "customer-1234",
+    fullName: "홍길동",
+    phoneNumber: "010-1234-5678",
+    email: "customer@example.com",
+  },
+});
+```
+
+### 2. API를 통한 빌링키 발급
+
+```ts
+// 서버에서 실행
+const response = await fetch("https://api.portone.io/billing-keys", {
+  method: "POST",
+  headers: {
+    "Authorization": `PortOne ${PORTONE_API_SECRET}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    channelKey: "channel-key-xxxxx",
+    customer: {
+      id: "customer-1234",
+    },
+    method: {
+      card: {
+        credential: {
+          number: "1234567812345678",
+          expiryYear: "25",
+          expiryMonth: "12",
+          birthOrBusinessRegistrationNumber: "900101",
+          passwordTwoDigits: "12",
+        },
+      },
+    },
+  }),
+});
+```
+
+### 3. 빌링키를 사용한 결제
+
+발급받은 빌링키로 결제를 요청할 수 있습니다.
+
+#### 단건 결제
+
+```ts
+// 서버에서 실행
+const response = await fetch(`https://api.portone.io/payments/${paymentId}/billing-key`, {
+  method: "POST",
+  headers: {
+    "Authorization": `PortOne ${PORTONE_API_SECRET}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    billingKey: "billing-key-xxxxx",
+    orderName: "월간 구독료",
+    amount: {
+      total: 9900,
+    },
+    currency: "KRW",
+    customer: {
+      id: "customer-1234",
+    },
+  }),
+});
+```
+
+#### 예약/반복 결제
+
+```ts
+// 서버에서 실행
+const response = await fetch(`https://api.portone.io/payments/${paymentId}/schedules`, {
+  method: "POST",
+  headers: {
+    "Authorization": `PortOne ${PORTONE_API_SECRET}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    payment: {
+      billingKey: "billing-key-xxxxx",
+      orderName: "월간 구독료",
+      amount: {
+        total: 9900,
+      },
+      currency: "KRW",
+      customer: {
+        id: "customer-1234",
+      },
+    },
+    timeToPay: "2025-11-20T00:00:00Z", // 결제 예약 시각
+  }),
+});
+```
+
+## 주요 파라미터 설명
+
+<Parameter flatten>
+  - storeId: string
+
+    포트원 상점 ID로, 관리자 콘솔에서 확인할 수 있습니다.
+
+  - channelKey: string
+
+    PG사 채널 키로, 관리자 콘솔의 결제 연동 페이지에서 확인할 수 있습니다.
+
+  - paymentId: string
+
+    고객사에서 관리하는 고유한 결제 ID입니다. 매번 고유하게 생성되어야 합니다.
+
+  - orderName: string
+
+    주문명으로, 결제창과 영수증에 표시됩니다.
+
+  - totalAmount: number
+
+    결제 금액입니다. 원화(KRW)의 경우 정수로 입력합니다.
+
+  - currency: string
+
+    결제 통화입니다. 한국 원화는 `CURRENCY_KRW` 또는 `KRW`를 사용합니다.
+
+  - payMethod: string
+
+    결제 수단입니다. 카드 결제는 `CARD`를 사용합니다.
+
+  - card?: object
+
+    카드 결제 관련 추가 설정입니다.
+
+    <Parameter.Details>
+      - installment?: object
+
+        할부 설정입니다.
+
+        <Parameter.Details>
+          - monthOption?: object
+
+            할부 개월 수 옵션입니다.
+
+            <Parameter.Details>
+              - availableMonthList?: number\[]
+
+                결제창에 표시할 할부 개월 수 목록입니다.
+
+              - fixedMonth?: number
+
+                고정할 할부 개월 수입니다. 설정 시 해당 개월 수로만 결제 가능합니다.
+            </Parameter.Details>
+
+          - freeInstallmentPlans?: object\[]
+
+            무이자 할부 설정입니다.
+
+            <Parameter.Details>
+              - cardCompany: string
+
+                무이자 할부를 제공할 카드사입니다.
+
+              - months: number\[]
+
+                무이자로 제공할 할부 개월 수 목록입니다.
+            </Parameter.Details>
+        </Parameter.Details>
+
+      - useCardPoint?: boolean
+
+        카드사 포인트 사용 허용 여부입니다. (기본값: false)
+
+      - useAppCardOnly?: boolean
+
+        앱카드만 허용할지 여부입니다. (기본값: false)
+
+      - useFreeInterestFromMall?: boolean
+
+        상점 분담 무이자 할부 사용 여부입니다. (기본값: false)
+    </Parameter.Details>
+
+  - customer?: object
+
+    구매자 정보입니다.
+
+    <Parameter.Details>
+      - id?: string
+
+        고객사에서 관리하는 고객 ID입니다.
+
+      - fullName?: string
+
+        구매자 전체 이름입니다.
+
+      - phoneNumber?: string
+
+        구매자 연락처입니다.
+
+      - email?: string
+
+        구매자 이메일 주소입니다.
+    </Parameter.Details>
+
+  - isCulturalExpense?: boolean
+
+    문화비 지출 여부입니다. (기본값: false)
+</Parameter>
+
+## PG사별 특이사항
+
+### 토스페이먼츠
+
+- **할부 개월 수 표시**: `availableMonthList`로 지정한 최대값까지 모두 표시됩니다.
+- **앱카드 지원**: 씨티카드를 제외한 주요 카드사 지원
+- **결제창 타입**: PC는 IFRAME, 모바일은 REDIRECTION만 지원
+- **해외 카드**: `useInternationalCardOnly` bypass 파라미터로 해외 카드만 허용 가능
+
+### NHN KCP
+
+- **paymentId 제약**: 영문/숫자만 사용 가능, 한글/특수문자 불가, 최대 40자
+- **orderName 제약**: 최대 100Byte
+- **부가세 직접 지정**: 사전 계약 필요
+- **언어 지원**: 한국어(KO\_KR), 영어(EN\_US) 지원
+
+### KG이니시스
+
+- **간편결제 지원**: 카카오페이, 네이버페이, 토스페이, 삼성페이 등
+- **상품권 결제**: 컬처랜드, 스마트문상, 도서문화상품권 지원
+- **휴대폰 빌링키**: 휴대폰 결제도 빌링키 발급 가능
+
+### 나이스페이먼츠
+
+- **간편결제 빌링**: 카카오페이, 네이버페이 빌링키 발급 가능
+- **상품권**: 컬처랜드 지원
+
+### KSNET
+
+- **간편결제**: 카카오페이, 네이버페이, 페이코, SSGPay, LPay 지원
+
+### 스마트로
+
+- **카드 수기 결제**: API 수기 결제 시 카드는 지원하지 않음 (가상계좌만 지원)
+- **간편결제**: 핀페이 추가 지원
+
+## 유의사항
+
+### 결제 검증 필수
+
+<Hint style="danger">
+  **결제 금액 위변조 방지**
+
+  SDK를 통한 결제는 브라우저에서 이루어지므로, 반드시 서버에서 결제 내역을 조회하여 금액이 일치하는지 확인해야 합니다.
+</Hint>
+
+```ts
+// 서버에서 결제 검증
+app.post("/payment/complete", async (req, res) => {
+  const { paymentId } = req.body;
+
+  // 포트원 결제내역 조회
+  const paymentResponse = await fetch(
+    `https://api.portone.io/payments/${encodeURIComponent(paymentId)}`,
+    {
+      headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
+    }
+  );
+  const payment = await paymentResponse.json();
+
+  // 주문 정보와 금액 비교
+  const order = await getOrder(paymentId);
+  if (order.amount !== payment.amount.total) {
+    // 위변조 의심
+    throw new Error("결제 금액 불일치");
+  }
+
+  // 결제 상태 확인
+  if (payment.status === "PAID") {
+    // 결제 완료 처리
+  }
+});
+```
+
+### 사전 계약이 필요한 기능
+
+다음 기능들은 PG사와 사전 계약이 필요합니다. 계약 없이 사용 시 결제 실패하거나 예상과 다른 결과가 발생할 수 있습니다.
+
+- **할부 결제**: 신용카드 할부 (일부 PG사)
+- **무이자 할부**: 상점 분담 무이자 할부
+- **카드사 포인트**: 카드사 포인트 사용
+- **에스크로**: 에스크로 결제
+- **면세/복합과세**: 부가세 직접 지정
+- **API 결제**: 수기(키인) 결제, 빌링키 발급
+
+### 테스트 환경
+
+실제 카드 결제 테스트 전에 PG사별 테스트 환경을 이용하시기 바랍니다.
+
+- 대부분의 PG사는 테스트 채널을 제공합니다.
+- 테스트 카드 번호를 사용하여 실제 결제 없이 테스트할 수 있습니다.
+- 자세한 내용은 각 PG사 문서를 참고하세요.
+
+## 다음 단계
+
+- [토스페이먼츠 연동하기](/opi/ko/integration/pg/v2/tosspayments)
+- [NHN KCP 연동하기](/opi/ko/integration/pg/v2/kcp-v2)
+- [KG이니시스 연동하기](/opi/ko/integration/pg/v2/inicis-v2)
+- [나이스페이먼츠 연동하기](/opi/ko/integration/pg/v2/nice-v2)
+- [빌링키 결제 연동하기](/opi/ko/integration/start/v2/billing/payment)
