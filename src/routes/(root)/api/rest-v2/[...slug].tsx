@@ -116,11 +116,12 @@ export default function ApiV2Docs() {
         <prose.h4>사용 방법</prose.h4>
         <prose.p>
           요청 헤더에 고유한 키를 포함하세요. UUID 등 고유한 문자열이어야
-          합니다. 16~256자의 영문 대소문자, 숫자, -, _을 사용 가능합니다.
+          합니다. 16~256자의 ASCII 문자열(권장: 영문 대소문자, 숫자, -, _)을 사용 가능합니다.
+          RFC 8941에 따라 문자열을 쌍따옴표로 감싸세요.
         </prose.p>
         <ul>
           <li>
-            <code>Idempotency-Key: unique-request-id-123</code>
+            <code>Idempotency-Key: "unique-request-id-123"</code>
           </li>
         </ul>
         <prose.p>
