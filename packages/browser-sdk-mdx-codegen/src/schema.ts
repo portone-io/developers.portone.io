@@ -1,12 +1,12 @@
 import YAML from "yaml";
 
 export interface Schema {
-  pgProviders: Record<string, PgProvider>;
+  flags: Record<string, Flag>;
   resources: Resource;
   methods: Record<string, Method>;
 }
 
-export interface PgProvider {
+export interface Flag {
   description: string;
 }
 
@@ -16,7 +16,7 @@ export type Parameter = {
   name?: string;
   description?: string;
   optional?: boolean;
-  pgSpecific?: Record<string, PgSpecific>;
+  flagOptions?: Record<string, FlagOption>;
   deprecated?: boolean;
 } & ParameterType;
 
@@ -63,7 +63,7 @@ export interface EnumVariant {
   description?: string;
 }
 
-export interface PgSpecific {
+export interface FlagOption {
   visible?: boolean;
 }
 

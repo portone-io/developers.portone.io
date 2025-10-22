@@ -5,7 +5,7 @@ import { camelCase, pascalCase } from "es-toolkit/string";
 import { match, P } from "ts-pattern";
 
 import { TypescriptWriter } from "./common.ts";
-import { getNonEmptyPgs } from "./pgSpecific.ts";
+import { getNonEmptyFlags } from "./flags.ts";
 import { getResourceRef, type Parameter } from "./schema.ts";
 import { getComponentName } from "./utils.ts";
 
@@ -84,19 +84,19 @@ function generateTypeDef({
 }): string {
   const writer = TypescriptWriter();
 
-  const hasPgCondition =
-    parameter.pgSpecific && Object.keys(parameter.pgSpecific).length > 0;
-  const visiblePgProviders =
-    hasPgCondition && parameter.pgSpecific
-      ? Object.entries(parameter.pgSpecific)
+  const hasFlagCondition =
+    parameter.flagOptions && Object.keys(parameter.flagOptions).length > 0;
+  const visibleFlags =
+    hasFlagCondition && parameter.flagOptions
+      ? Object.entries(parameter.flagOptions)
           .filter(([_, spec]) => spec.visible === true)
-          .map(([pg]) => pg)
+          .map(([flag]) => flag)
       : [];
 
-  if (hasPgCondition && visiblePgProviders.length > 0) {
+  if (hasFlagCondition && visibleFlags.length > 0) {
     imports.add('import { Condition } from "~/components/Condition";');
     writer.writeLine(
-      `<Condition pgName={(pg) => [${visiblePgProviders.map((pg) => `"${pg}"`).join(", ")}].includes(pg)}>`,
+      `<Condition flag={(flag) => [${visibleFlags.map((flag) => `"${flag}"`).join(", ")}].includes(flag)}>`,
     );
     writer.indent();
   }
@@ -129,7 +129,7 @@ function generateTypeDef({
     writer.outdent();
     writer.writeLine("/>");
 
-    if (hasPgCondition && visiblePgProviders.length > 0) {
+    if (hasFlagCondition && visibleFlags.length > 0) {
       writer.outdent();
       writer.writeLine("</Condition>");
     }
@@ -208,7 +208,7 @@ function generateTypeDef({
   writer.outdent();
   writer.writeLine("</Parameter.TypeDef>");
 
-  if (hasPgCondition && visiblePgProviders.length > 0) {
+  if (hasFlagCondition && visibleFlags.length > 0) {
     writer.outdent();
     writer.writeLine("</Condition>");
   }
@@ -533,13 +533,13 @@ export function generateParameter({
   writer.writeLine("return (");
   writer.indent();
 
-  const nonEmptyPgs = getNonEmptyPgs(parameter);
+  const nonEmptyPgs = getNonEmptyFlags(parameter);
   const shouldApplyHideIfEmpty = nonEmptyPgs !== null;
 
   if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
     imports.add('import { Condition } from "~/components/Condition";');
     writer.writeLine(
-      `<Condition pgName={(pg) => [${nonEmptyPgs.map((pg) => `"${pg}"`).join(", ")}].includes(pg)}>`,
+      `<Condition flag={(flag) => [${nonEmptyPgs.map((flag) => `"${flag}"`).join(", ")}].includes(flag)}>`,
     );
     writer.indent();
   }
