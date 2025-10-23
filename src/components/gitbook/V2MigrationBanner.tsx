@@ -35,6 +35,7 @@ export default function V2MigrationBanner(props: Props): JSXElement {
             <strong>{msg().v1Only}</strong> {msg().recommendV2}
           </p>
           <button
+            type="button"
             onClick={() => setSystemVersion("v2")}
             class="inline-flex items-center gap-1 text-blue-600 font-500 hover:text-blue-700"
           >
