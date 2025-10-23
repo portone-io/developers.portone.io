@@ -46,6 +46,16 @@ if (import.meta.main) {
 }
 
 export function processV1Openapi(schema: any): any {
+  // x-portone-hidden 제거
+  traverseEveryProperty(schema, (node, property) => {
+    if (!node[property]) return;
+    if (node[property]["x-portone-hidden"]) {
+      delete node[property];
+      return;
+    }
+  });
+
+  // Markdown 렌더링 처리
   traverseEveryProperty(schema, (node, property, context) => {
     if (property === "x-portone-per-pg") {
       context.renderAll = true;
@@ -56,6 +66,16 @@ export function processV1Openapi(schema: any): any {
     if (!context.renderAll && !property.startsWith("x-")) return;
     node[property] = renderGfm(node[property]);
   });
+
+  // 빈 paths 제거
+  if (schema.paths) {
+    for (const [key, value] of Object.entries(schema.paths)) {
+      if (value == null || Object.keys(value as any).length === 0) {
+        delete schema.paths[key];
+      }
+    }
+  }
+
   return schema;
 }
 
