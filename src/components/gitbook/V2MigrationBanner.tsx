@@ -1,4 +1,4 @@
-import { type JSXElement, Show } from "solid-js";
+import { createMemo, type JSXElement, Show } from "solid-js";
 
 import Hint from "~/components/Hint";
 import { useSystemVersion } from "~/state/system-version";
@@ -24,8 +24,8 @@ const messages: Record<
 };
 
 export default function V2MigrationBanner(props: Props): JSXElement {
-  const msg = () => messages[props.lang];
   const { systemVersion, setSystemVersion } = useSystemVersion();
+  const msg = createMemo(() => messages[props.lang]);
 
   return (
     <Show when={systemVersion() === "v1"}>
