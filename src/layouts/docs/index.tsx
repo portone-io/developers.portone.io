@@ -152,7 +152,7 @@ const DefaultLayout = (
             </p>
           </Show>
         </div>
-        <Show when={targetVersions} >
+        <Show when={targetVersions}>
           <V2MigrationBanner lang={props.params.lang} />
         </Show>
         <MDXProvider components={prose}>{props.children}</MDXProvider>
