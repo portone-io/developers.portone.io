@@ -1,13 +1,13 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import type { MdxParseResult } from "../mdx-to-markdown/mdx-parser";
+import type { MdxParseResult } from "../mdx-to-markdown/mdx-parser.ts";
 import {
   parseAllMdxFiles,
   saveMarkdownFiles,
   transformAllMdxsToAsts,
-} from "../mdx-to-markdown/utils";
-import { copySchemaFiles, generateLlmsTxtFiles } from "./generator";
+} from "../mdx-to-markdown/utils.ts";
+import { copySchemaFiles, generateLlmsTxtFiles } from "./generator.ts";
 
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));

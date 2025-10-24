@@ -51,7 +51,7 @@ export function CodeRenderer() {
       const owner = getOwner();
       setTimeout(() => {
         runWithOwner(owner, () => {
-          rendererRef.scrollTo({
+          rendererRef!.scrollTo({
             top: Math.max(section.startLine - 1, 0) * 16,
             behavior: "smooth",
           });
@@ -68,14 +68,14 @@ export function CodeRenderer() {
           ref={copyButtonRef!}
           class="i-mdi-content-copy data-[copied]:i-mdi-check h-5 w-5 rounded-md p-1 text-xl text-slate-4 data-[copied]:text-green-5 [&:not([data-copied])]:hover:text-slate-1"
           onPointerLeave={() => {
-            delete copyButtonRef.dataset.copied;
+            delete copyButtonRef!.dataset.copied;
           }}
           type="button"
           onClick={() => {
             const code = currentTab()?.code;
             if (code) {
               void writeClipboard(code).then(() => {
-                copyButtonRef.dataset.copied = "true";
+                copyButtonRef!.dataset.copied = "true";
               });
             }
           }}

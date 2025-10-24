@@ -1,7 +1,7 @@
 import type { Root } from "mdast";
 import { describe, expect, it } from "vitest";
 
-import type { MdxParseResult } from "../mdx-parser";
+import type { MdxParseResult } from "../mdx-parser.ts";
 import { transformJsxComponents } from ".";
 
 const emptyRoot: Root = {

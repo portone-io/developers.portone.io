@@ -19,11 +19,9 @@ export default function ApiLink({
 }: ApiLinkProps) {
   const id = getEndpointRepr({ method, path });
   const href = `${basepath}/${section}#${encodeURIComponent(id)}`;
-  const className =
-    "border-b-2 transition-colors hover:border-orange-2 hover:text-orange-5";
   return (
     <a
-      className={className}
+      class="border-b-2 transition-colors hover:border-orange-2 hover:text-orange-5"
       href={href}
       onClick={(e) => {
         e.preventDefault();

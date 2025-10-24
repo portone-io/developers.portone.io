@@ -7,13 +7,13 @@ import { promisify } from "node:util";
 import fastGlob from "fast-glob";
 import type { Root } from "mdast";
 
-import { astToMarkdownString } from "../mdx-to-markdown";
-import { type MdxParseResult } from "../mdx-to-markdown/mdx-parser";
+import { astToMarkdownString } from "../mdx-to-markdown/index.ts";
+import { type MdxParseResult } from "../mdx-to-markdown/mdx-parser.ts";
 import {
   categorizeSlugs,
   PATH_PREFIXES,
   saveMarkdownFiles,
-} from "../mdx-to-markdown/utils";
+} from "../mdx-to-markdown/utils.ts";
 
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));

@@ -8,7 +8,7 @@ import type {
 } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 
-import { extractMdxJsxAttributes } from "./common";
+import { extractMdxJsxAttributes } from "./common.ts";
 
 export function sdkChangelog() {
   // markdown link to https://developers.portone.io/sdk/ko/v2-sdk/changelog

@@ -6,7 +6,7 @@ import Sharp from "sharp";
 import type { Picture } from "vite-imagetools";
 import { z } from "zod";
 
-import { PaymentGateway, SystemVersion } from "~/type";
+import { PaymentGateway, SystemVersion } from "../type.ts";
 
 export interface ParseContext {
   fileName: string;
