@@ -21,6 +21,35 @@ export function generate(root: string, schema: Schema) {
   generateIndex(srcPath, resourceMap);
 }
 
+function generateFlagsFile(schema: Schema, outputPath: string) {
+  const writer = TypescriptWriter();
+
+  writer.writeLine("// @vinxi-ignore-style-collection");
+  writer.writeLine("/* eslint-disable */");
+  writer.writeLine("");
+  writer.writeLine('import { z } from "zod";');
+  writer.writeLine("");
+
+  const flagKeys = Object.keys(schema.flags || {});
+
+  writer.writeLine("export const Flags = z.enum([");
+  writer.indent();
+  flagKeys.forEach((flag, index) => {
+    const isLast = index === flagKeys.length - 1;
+    writer.writeLine(`"${flag}"${isLast ? "" : ","}`);
+  });
+  writer.outdent();
+  writer.writeLine("]);");
+  writer.writeLine("export type Flags = z.infer<typeof Flags>;");
+
+  const dir = path.dirname(outputPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  fs.writeFileSync(outputPath, writer.content);
+}
+
 function generateParameterDirectory(
   srcPath: string,
   resourceMap: Record<string, Parameter>,
@@ -97,7 +126,17 @@ const yamlText: string = fs.readFileSync(
   { encoding: "utf-8" },
 );
 
+const schema = parseSchema(yamlText);
+
 generate(
   path.resolve(import.meta.dirname, "../../../src/components/parameter"),
-  parseSchema(yamlText),
+  schema,
+);
+
+generateFlagsFile(
+  schema,
+  path.resolve(
+    import.meta.dirname,
+    "../../../src/types/__generated__/flags.ts",
+  ),
 );
