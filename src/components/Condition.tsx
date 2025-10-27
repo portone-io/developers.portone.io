@@ -21,16 +21,14 @@ export const Condition = (props: ConditionProps) => {
   const show = createMemo(
     on([flags], ([flags]) => {
       const flagResolver = (flagCallback: ConditionProps["flag"]) =>
-        [...flags]
-          .map((flag) =>
-            match([flagCallback, flag])
-              .with([P.nonNullable, P.not("all")], ([flagCallback, flag]) =>
-                flagCallback(flag),
-              )
-              .with([P.nullish, P._], [P._, "all"], () => true)
-              .exhaustive(),
-          )
-          .includes(true);
+        [...flags].some((flag) =>
+          match([flagCallback, flag])
+            .with([P.nonNullable, P.not("all")], ([flagCallback, flag]) =>
+              flagCallback(flag),
+            )
+            .with([P.nullish, P._], [P._, "all"], () => true)
+            .exhaustive(),
+        );
       return flagResolver(props.flag);
     }),
   );

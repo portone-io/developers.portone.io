@@ -533,13 +533,13 @@ export function generateParameter({
   writer.writeLine("return (");
   writer.indent();
 
-  const nonEmptyPgs = getNonEmptyFlags(parameter);
-  const shouldApplyHideIfEmpty = nonEmptyPgs !== null;
+  const nonEmptyFlags = getNonEmptyFlags(parameter);
+  const shouldApplyHideIfEmpty = nonEmptyFlags !== null;
 
-  if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
+  if (shouldApplyHideIfEmpty && nonEmptyFlags && nonEmptyFlags.length > 0) {
     imports.add('import { Condition } from "~/components/Condition";');
     writer.writeLine(
-      `<Condition flag={(flag) => [${nonEmptyPgs.map((flag) => `"${flag}"`).join(", ")}].includes(flag)}>`,
+      `<Condition flag={(flag) => [${nonEmptyFlags.map((flag) => `"${flag}"`).join(", ")}].includes(flag)}>`,
     );
     writer.indent();
   }
@@ -573,7 +573,7 @@ export function generateParameter({
     writer.writeLine("</Parameter.TypeDef>");
   }
 
-  if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
+  if (shouldApplyHideIfEmpty && nonEmptyFlags && nonEmptyFlags.length > 0) {
     writer.outdent();
     writer.writeLine("</Condition>");
   }
