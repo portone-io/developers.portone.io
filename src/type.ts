@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { Flags } from "./types/__generated__/flags";
+import { Flags } from "./types/__generated__/flags.ts";
 
 export const Lang = z.enum(["ko"]);
 export type Lang = z.infer<typeof Lang>;
