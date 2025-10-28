@@ -17,6 +17,8 @@ import {
 } from "solid-js";
 import { match, P } from "ts-pattern";
 
+import type { Flags } from "~/types/__generated__/flags";
+
 import { ProseContext } from "../prose";
 import { ParameterDeclaration } from "./ParameterDeclaration";
 import { ParameterHover } from "./ParameterHover";
@@ -30,11 +32,13 @@ interface ParameterProps {
   heading?: unknown;
   children?: JSXElement;
   forceDepth?: number;
+  flags?: Flags[];
 }
 
-const ParameterContext = createContext<{
+export const ParameterContext = createContext<{
   flatten: boolean;
   forceDepth?: number;
+  flags?: Flags[];
 }>({
   flatten: false,
 });
@@ -78,7 +82,11 @@ export default function Parameter(props: ParameterProps) {
     >
       <ProseContext.Provider value={{ styles: proseStyles }}>
         <ParameterContext.Provider
-          value={{ flatten: Boolean(props.flatten), forceDepth: forceDepth() }}
+          value={{
+            flatten: Boolean(props.flatten),
+            forceDepth: forceDepth(),
+            flags: props.flags,
+          }}
         >
           {props.children}
         </ParameterContext.Provider>

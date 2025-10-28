@@ -2,7 +2,7 @@ import type { Html, Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
-import { unwrapJsxNode } from "./common";
+import { unwrapJsxNode } from "./common.ts";
 
 /**
  * Details 컴포넌트를 HTML details 태그로 변환하는 함수

@@ -1,7 +1,7 @@
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 
-import type { MdxParseResult } from "../mdx-parser";
-import { extractMdxJsxAttributes } from "./common";
+import type { MdxParseResult } from "../mdx-parser.ts";
+import { extractMdxJsxAttributes } from "./common.ts";
 
 /**
  * ContentRef 컴포넌트 처리

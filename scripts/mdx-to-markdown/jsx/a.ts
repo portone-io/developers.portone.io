@@ -2,7 +2,7 @@ import type { Html, Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
-import { extractMdxJsxAttributes } from "./common";
+import { extractMdxJsxAttributes } from "./common.ts";
 
 /**
  * A 컴포넌트를 HTML <a> 태그로 변환하는 함수

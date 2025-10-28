@@ -1,37 +1,37 @@
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
-import { replaceToHtml } from "scripts/mdx-to-markdown/jsx/replaceToHtml";
 import type { Node, Parent } from "unist";
 
-import { type MdxParseResult } from "../mdx-parser";
-import { handleAComponent } from "./a";
-import { handleApiLinkComponent } from "./apiLink";
-import { handleBadgeComponent } from "./badge";
-import { extractCodeContent } from "./code";
-import { unwrapJsxNode } from "./common";
-import { handleConditionComponent } from "./condition";
-import { handleContentRefComponent } from "./contentRef";
+import { type MdxParseResult } from "../mdx-parser.ts";
+import { handleAComponent } from "./a.ts";
+import { handleApiLinkComponent } from "./apiLink.ts";
+import { handleBadgeComponent } from "./badge.ts";
+import { extractCodeContent } from "./code.ts";
+import { unwrapJsxNode } from "./common.ts";
+import { handleConditionComponent } from "./condition.ts";
+import { handleContentRefComponent } from "./contentRef.ts";
 import {
   handleDetailsComponent,
   handleDetailsContentComponent,
   handleDetailsSummaryComponent,
-} from "./details";
-import { handleFigureComponent } from "./figure";
-import { handleFileComponent } from "./file";
-import { handleHintComponent } from "./hint";
-import { handleImgTag } from "./img";
-import { validateImportedMdx } from "./importedMdx";
-import { handleParameterTypeDefComponent } from "./parameter";
-import { handleProseComponent } from "./prose";
-import { handleSDKParameterComponent, sdkChangelog } from "./sdk";
-import { handleSectionComponent } from "./section";
+} from "./details.ts";
+import { handleFigureComponent } from "./figure.ts";
+import { handleFileComponent } from "./file.ts";
+import { handleHintComponent } from "./hint.ts";
+import { handleImgTag } from "./img.ts";
+import { validateImportedMdx } from "./importedMdx.ts";
+import { handleParameterTypeDefComponent } from "./parameter.ts";
+import { handleProseComponent } from "./prose.ts";
+import { replaceToHtml } from "./replaceToHtml.ts";
+import { handleSDKParameterComponent, sdkChangelog } from "./sdk.ts";
+import { handleSectionComponent } from "./section.ts";
 import {
   handleSwaggerComponent,
   handleSwaggerDescriptionComponent,
   handleSwaggerResponseComponent,
-} from "./swagger";
-import { handleTabComponent, handleTabsComponent } from "./tabs";
-import { handleVersionGateComponent } from "./versionGate";
-import { handleYoutubeComponent } from "./youtube";
+} from "./swagger.ts";
+import { handleTabComponent, handleTabsComponent } from "./tabs.ts";
+import { handleVersionGateComponent } from "./versionGate.ts";
+import { handleYoutubeComponent } from "./youtube.ts";
 
 /**
  * JSX 컴포넌트를 마크다운으로 변환하는 함수

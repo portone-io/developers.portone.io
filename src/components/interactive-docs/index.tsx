@@ -187,7 +187,7 @@ export function createInteractiveDoc<
       ),
     );
     return (
-      <GlobalCondition pgName={props.pgName}>
+      <GlobalCondition flag={props.pgName}>
         <Show when={show()}>{props.children}</Show>
       </GlobalCondition>
     );

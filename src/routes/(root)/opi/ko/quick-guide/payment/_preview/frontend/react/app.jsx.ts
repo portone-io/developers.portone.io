@@ -58,11 +58,8 @@ export function App() {
         channelKey,
         payMethod,
         customer,
-        // @ts-expect-error(2339)
         virtualAccount,
-        // @ts-expect-error(2339)
         easyPay,
-        // @ts-expect-error(2339)
         giftCertificate,
         bypass,
         productType,

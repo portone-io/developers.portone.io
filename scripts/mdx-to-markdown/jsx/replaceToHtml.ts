@@ -1,7 +1,8 @@
 import type { Html, Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
-import { extractMdxJsxAttributes } from "scripts/mdx-to-markdown/jsx/common";
 import type { Node } from "unist";
+
+import { extractMdxJsxAttributes } from "./common.ts";
 
 /**
  * JSX 엘리먼트를 HTML 노드로 변환하는 함수

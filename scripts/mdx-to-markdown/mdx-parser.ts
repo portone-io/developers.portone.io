@@ -11,8 +11,8 @@ import remarkParse from "remark-parse";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
-import { generateSlug as originalGenerateSlug } from "../../src/utils/slugs";
-import { collectAllImportedElements, type Import } from "./jsx/imports";
+import { generateSlug as originalGenerateSlug } from "../../src/utils/slugs.ts";
+import { collectAllImportedElements, type Import } from "./jsx/imports.ts";
 
 // 프로젝트 경로 설정
 const __dirname = dirname(fileURLToPath(import.meta.url));

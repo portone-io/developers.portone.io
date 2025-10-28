@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { Flags } from "./types/__generated__/flags";
+
 export const Lang = z.enum(["ko"]);
 export type Lang = z.infer<typeof Lang>;
 
@@ -8,7 +10,7 @@ export const isLang = (v: unknown) => Lang.safeParse(v).success;
 export const SystemVersion = z.enum(["v1", "v2"]);
 export type SystemVersion = z.infer<typeof SystemVersion>;
 
-export const PaymentGateway = z.enum([
+export const PaymentGateway = Flags.extract([
   "nice",
   "smartro",
   "toss",

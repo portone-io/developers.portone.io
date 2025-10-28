@@ -442,8 +442,6 @@ export function createPaymentRequest(
         templatedPayment(paymentId, overrides.ksnet.virtualAccount),
       )
       .with({ pgName: "ksnet", payMethod: "easyPay" }, () =>
-        // easyPayBypass 파라미터 누락
-        // @ts-expect-error(2345)
         templatedPayment(paymentId, overrides.ksnet.easyPay),
       )
       .with({ pgName: "ksnet", payMethod: "transfer" }, () =>

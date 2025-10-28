@@ -2,7 +2,7 @@ import type { Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
-import { extractMdxJsxAttributes, unwrapJsxNode } from "./common";
+import { extractMdxJsxAttributes, unwrapJsxNode } from "./common.ts";
 
 /**
  * Swagger 컴포넌트 처리

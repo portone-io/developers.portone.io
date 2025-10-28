@@ -1,25 +1,35 @@
-import { createMemo, on, type ParentProps, Show } from "solid-js";
+import { createMemo, on, type ParentProps, Show, useContext } from "solid-js";
 import { match, P } from "ts-pattern";
 
 import { usePaymentGateway } from "~/state/payment-gateway";
-import { PaymentGateway } from "~/type";
+import type { Flags } from "~/types/__generated__/flags";
+
+import { ParameterContext } from "./parameter/Parameter";
 
 export type ConditionProps = ParentProps<{
-  pgName?: (pgName: PaymentGateway) => boolean;
+  flag?: (flag: Flags) => boolean;
 }>;
 
 export const Condition = (props: ConditionProps) => {
   const { paymentGateway } = usePaymentGateway();
+  const parameterContext = useContext(ParameterContext);
+
+  const flags = createMemo(
+    () => new Set([paymentGateway(), ...(parameterContext?.flags ?? [])]),
+  );
+
   const show = createMemo(
-    on([paymentGateway], ([paymentGateway]) => {
-      const pgNameResolver = (pgName: ConditionProps["pgName"]) =>
-        match([pgName, paymentGateway])
-          .with([P.nonNullable, P.not("all")], ([pgName, paymentGateway]) =>
-            pgName(paymentGateway),
-          )
-          .with([P.nullish, P._], [P._, "all"], () => true)
-          .exhaustive();
-      return pgNameResolver(props.pgName);
+    on([flags], ([flags]) => {
+      const flagResolver = (flagCallback: ConditionProps["flag"]) =>
+        [...flags].some((flag) =>
+          match([flagCallback, flag])
+            .with([P.nonNullable, P.not("all")], ([flagCallback, flag]) =>
+              flagCallback(flag),
+            )
+            .with([P.nullish, P._], [P._, "all"], () => true)
+            .exhaustive(),
+        );
+      return flagResolver(props.flag);
     }),
   );
   return <Show when={show()}>{props.children}</Show>;

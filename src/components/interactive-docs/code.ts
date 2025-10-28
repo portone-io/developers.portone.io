@@ -90,10 +90,13 @@ class CodeGenerator<Params extends DefaultParams, Sections extends string> {
   currentLine = 1;
   currentIndentation = "";
 
-  constructor(
-    private readonly params: Params,
-    private readonly pgName: () => PaymentGateway,
-  ) {}
+  private readonly params: Params;
+  private readonly pgName: () => PaymentGateway;
+
+  constructor(params: Params, pgName: () => PaymentGateway) {
+    this.params = params;
+    this.pgName = pgName;
+  }
 
   generate(
     codes: TemplateStringsArray,

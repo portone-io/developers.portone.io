@@ -1,7 +1,7 @@
 import type { MdxJsxFlowElement } from "mdast-util-mdx";
 import { describe, expect, it } from "vitest";
 
-import type { MdxParseResult } from "../mdx-parser";
+import type { MdxParseResult } from "../mdx-parser.ts";
 import { validateImportedMdx } from "./importedMdx";
 
 describe("validateImportedMdx", () => {

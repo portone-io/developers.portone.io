@@ -5,7 +5,7 @@ import { camelCase, pascalCase } from "es-toolkit/string";
 import { match, P } from "ts-pattern";
 
 import { TypescriptWriter } from "./common.ts";
-import { getNonEmptyPgs } from "./pgSpecific.ts";
+import { getNonEmptyFlags } from "./flags.ts";
 import { getResourceRef, type Parameter } from "./schema.ts";
 import { getComponentName } from "./utils.ts";
 
@@ -84,19 +84,19 @@ function generateTypeDef({
 }): string {
   const writer = TypescriptWriter();
 
-  const hasPgCondition =
-    parameter.pgSpecific && Object.keys(parameter.pgSpecific).length > 0;
-  const visiblePgProviders =
-    hasPgCondition && parameter.pgSpecific
-      ? Object.entries(parameter.pgSpecific)
+  const hasFlagCondition =
+    parameter.flagOptions && Object.keys(parameter.flagOptions).length > 0;
+  const visibleFlags =
+    hasFlagCondition && parameter.flagOptions
+      ? Object.entries(parameter.flagOptions)
           .filter(([_, spec]) => spec.visible === true)
-          .map(([pg]) => pg)
+          .map(([flag]) => flag)
       : [];
 
-  if (hasPgCondition && visiblePgProviders.length > 0) {
+  if (hasFlagCondition && visibleFlags.length > 0) {
     imports.add('import { Condition } from "~/components/Condition";');
     writer.writeLine(
-      `<Condition pgName={(pg) => [${visiblePgProviders.map((pg) => `"${pg}"`).join(", ")}].includes(pg)}>`,
+      `<Condition flag={(flag) => [${visibleFlags.map((flag) => `"${flag}"`).join(", ")}].includes(flag)}>`,
     );
     writer.indent();
   }
@@ -129,7 +129,7 @@ function generateTypeDef({
     writer.outdent();
     writer.writeLine("/>");
 
-    if (hasPgCondition && visiblePgProviders.length > 0) {
+    if (hasFlagCondition && visibleFlags.length > 0) {
       writer.outdent();
       writer.writeLine("</Condition>");
     }
@@ -208,7 +208,7 @@ function generateTypeDef({
   writer.outdent();
   writer.writeLine("</Parameter.TypeDef>");
 
-  if (hasPgCondition && visiblePgProviders.length > 0) {
+  if (hasFlagCondition && visibleFlags.length > 0) {
     writer.outdent();
     writer.writeLine("</Condition>");
   }
@@ -290,18 +290,15 @@ function generateTypeDetails({
       writer.writeLine("<Parameter.Details>");
       writer.indent();
       for (const [variantName, variant] of Object.entries(parameter.variants)) {
-        const variantValue = parameter.valuePrefix
-          ? `${parameter.valuePrefix}_${variantName}`
-          : variantName;
         if (variant.description !== undefined) {
           writer.writeLine(
-            `<Parameter.TypeDef type={<Parameter.Type>"${variantValue}"</Parameter.Type>}>`,
+            `<Parameter.TypeDef type={<Parameter.Type>"${variantName}"</Parameter.Type>}>`,
           );
           writer.indent();
           const description = generateDescription({
             imports,
             basePath,
-            filePath: path.posix.join(parameterPath, `Variant${variantValue}`),
+            filePath: path.posix.join(parameterPath, `Variant${variantName}`),
             description: variant.description,
           });
           writer.writeLine(`<${description.componentName} />`);
@@ -309,7 +306,7 @@ function generateTypeDetails({
           writer.writeLine("</Parameter.TypeDef>");
         } else {
           writer.writeLine(
-            `<Parameter.TypeDef type={<Parameter.Type>"${variantValue}"</Parameter.Type>} />`,
+            `<Parameter.TypeDef type={<Parameter.Type>"${variantName}"</Parameter.Type>} />`,
           );
         }
       }
@@ -431,10 +428,7 @@ function generateInlineType({
     .with({ type: "enum" }, (parameter) => {
       const variantNames = Object.keys(parameter.variants)
         .slice(0, 3)
-        .map(
-          (v) =>
-            `<Parameter.Type>"${parameter.valuePrefix ? `${parameter.valuePrefix}_${v}` : v}"</Parameter.Type>`,
-        )
+        .map((v) => `<Parameter.Type>"${v}"</Parameter.Type>`)
         .join(`<span class="text-slate-5">|</span>`);
       writer.writeLine(`<span class="space-x-1">`);
       writer.indent();
@@ -539,13 +533,13 @@ export function generateParameter({
   writer.writeLine("return (");
   writer.indent();
 
-  const nonEmptyPgs = getNonEmptyPgs(parameter);
-  const shouldApplyHideIfEmpty = nonEmptyPgs !== null;
+  const nonEmptyFlags = getNonEmptyFlags(parameter);
+  const shouldApplyHideIfEmpty = nonEmptyFlags !== null;
 
-  if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
+  if (shouldApplyHideIfEmpty && nonEmptyFlags && nonEmptyFlags.length > 0) {
     imports.add('import { Condition } from "~/components/Condition";');
     writer.writeLine(
-      `<Condition pgName={(pg) => [${nonEmptyPgs.map((pg) => `"${pg}"`).join(", ")}].includes(pg)}>`,
+      `<Condition flag={(flag) => [${nonEmptyFlags.map((flag) => `"${flag}"`).join(", ")}].includes(flag)}>`,
     );
     writer.indent();
   }
@@ -579,7 +573,7 @@ export function generateParameter({
     writer.writeLine("</Parameter.TypeDef>");
   }
 
-  if (shouldApplyHideIfEmpty && nonEmptyPgs && nonEmptyPgs.length > 0) {
+  if (shouldApplyHideIfEmpty && nonEmptyFlags && nonEmptyFlags.length > 0) {
     writer.outdent();
     writer.writeLine("</Condition>");
   }

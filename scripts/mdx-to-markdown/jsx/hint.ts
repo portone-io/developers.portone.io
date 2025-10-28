@@ -2,7 +2,7 @@ import type { Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
-import { extractMdxJsxAttributes } from "./common";
+import { extractMdxJsxAttributes } from "./common.ts";
 
 /**
  * Hint 컴포넌트를 HTML div로 변환하는 함수

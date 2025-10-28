@@ -1,6 +1,6 @@
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 
-import { extractMdxJsxAttributes } from "./common";
+import { extractMdxJsxAttributes } from "./common.ts";
 
 /**
  * File 컴포넌트 처리

@@ -1,9 +1,9 @@
-import type { MdxParseResult } from "../mdx-to-markdown/mdx-parser";
+import type { MdxParseResult } from "../mdx-to-markdown/mdx-parser.ts";
 import {
   parseAllMdxFiles,
   transformAllMdxsToAsts,
-} from "../mdx-to-markdown/utils";
-import { generateDocsForLlms } from "./generator";
+} from "../mdx-to-markdown/utils.ts";
+import { generateDocsForLlms } from "./generator.ts";
 
 /**
  * 메인 함수

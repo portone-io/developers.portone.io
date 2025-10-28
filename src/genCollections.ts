@@ -21,8 +21,8 @@ import type {
   CollectionConfig,
   Import,
   parseFrontmatter,
-} from "./content/config";
-import { generateSlug } from "./utils/slugs";
+} from "./content/config.ts";
+import { generateSlug } from "./utils/slugs.ts";
 
 type Collection = {
   files: Set<string>;
@@ -124,8 +124,8 @@ async function parseMdx(
 
 async function generate(watch = false) {
   const { config, parseFrontmatter } = (await import(
-    `./content/config?t=${Date.now()}`
-  )) as typeof import("./content/config");
+    `./content/config.ts?t=${Date.now()}`
+  )) as typeof import("./content/config.ts");
 
   const outDir = path.join(import.meta.dirname, "./content/__generated__");
 

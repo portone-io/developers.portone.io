@@ -1,7 +1,7 @@
 import type { Link, Paragraph, Text } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 
-import { extractMdxJsxAttributes } from "./common";
+import { extractMdxJsxAttributes } from "./common.ts";
 
 /**
  * <img> 태그를 마크다운 링크로 변환하는 함수

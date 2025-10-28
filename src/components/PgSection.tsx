@@ -1,11 +1,13 @@
-import { createMemo, For, Show, splitProps } from "solid-js";
+import { createMemo, For, type ParentProps, Show, splitProps } from "solid-js";
 
 import { PaymentGateway } from "~/type";
 
-import { Condition, type ConditionProps } from "./Condition";
+import { Condition } from "./Condition";
 import { PgOptions } from "./PgSelect";
 
-export type PgSectionProps = ConditionProps;
+export type PgSectionProps = ParentProps<{
+  pgName: (pgName: PaymentGateway) => boolean;
+}>;
 
 export const PgSection = (props: PgSectionProps) => {
   const [local, rest] = splitProps(props, ["pgName"]);
@@ -17,7 +19,7 @@ export const PgSection = (props: PgSectionProps) => {
     return icons;
   });
   return (
-    <Condition pgName={local.pgName}>
+    <Condition flag={local.pgName}>
       <Show when={targetPgSet().size > 0}>
         <div class="mb-2 flex flex-col gap-2 rounded-lg bg-gray-50 px-4 py-2">
           <div class="flex items-center gap-2">
