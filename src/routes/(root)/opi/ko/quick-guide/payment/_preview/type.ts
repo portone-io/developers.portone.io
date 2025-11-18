@@ -59,9 +59,6 @@ export const pgOptions = {
   tosspay: {
     payMethods: ["easyPay"],
   },
-  hyphen: {
-    payMethods: ["easyPay"],
-  },
   eximbay: {
     payMethods: ["card"],
   },
