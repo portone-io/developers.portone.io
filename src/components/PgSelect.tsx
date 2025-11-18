@@ -3,7 +3,6 @@ import { createMemo, on } from "solid-js";
 import type { Picture as VitePicture } from "vite-imagetools";
 
 import eximbayLogo from "~/assets/pg-circle/eximbay.png";
-import hyphenLogo from "~/assets/pg-circle/hyphen.png";
 import inicisLogo from "~/assets/pg-circle/inicis.png";
 import kakaoLogo from "~/assets/pg-circle/kakao.png";
 import kcpLogo from "~/assets/pg-circle/kcp.png";
@@ -36,7 +35,6 @@ export const PgOptions = {
   kakao: { label: "카카오페이", icon: kakaoLogo },
   naver: { label: "네이버페이", icon: naverLogo },
   tosspay: { label: "토스페이", icon: tossLogo },
-  hyphen: { label: "하이픈", icon: hyphenLogo },
   eximbay: { label: "엑심베이", icon: eximbayLogo },
   toss_brandpay: { label: "토스브랜드페이", icon: tossLogo },
   welcome: { label: "웰컴페이먼츠", icon: welcomeLogo },

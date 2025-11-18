@@ -291,14 +291,6 @@ const overrides = {
       channelKey: "channel-key-1d494380-d047-458a-a20a-edd28f7f635c",
     },
   },
-  hyphen: {
-    easyPay: {
-      payMethod: "EASY_PAY",
-      customer: {
-        fullName: customer.fullName,
-      },
-    },
-  },
   eximbay: {
     card: {
       ...cardPayment,
@@ -458,9 +450,6 @@ export function createPaymentRequest(
       )
       .with({ pgName: "tosspay", payMethod: "easyPay" }, () =>
         templatedPayment(paymentId, overrides.tosspay.easyPay),
-      )
-      .with({ pgName: "hyphen", payMethod: "easyPay" }, () =>
-        templatedPayment(paymentId, overrides.hyphen.easyPay),
       )
       .with({ pgName: "eximbay", payMethod: "card" }, () =>
         templatedPayment(paymentId, overrides.eximbay.card),
