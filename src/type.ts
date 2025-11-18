@@ -21,7 +21,6 @@ export const PaymentGateway = Flags.extract([
   "kakao",
   "naver",
   "tosspay",
-  "hyphen",
   "eximbay",
   "toss_brandpay",
   "welcome",
