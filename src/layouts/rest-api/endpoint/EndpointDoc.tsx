@@ -209,10 +209,8 @@ function ResponseDoc(props: ResponseDocProps) {
   const responseSchemata = createMemo(() =>
     getResponseSchemata(props.schema, props.operation),
   );
-  const successTypeDef = createMemo(
-    () =>
-      responseSchemata().find(([statusCode]) => statusCode === "200")?.[1]
-        .schema,
+  const successResponse = createMemo(() =>
+    responseSchemata().find(([statusCode]) => statusCode === "200"),
   );
 
   const nonSuccessResponses = createMemo(() =>
@@ -222,44 +220,62 @@ function ResponseDoc(props: ResponseDocProps) {
   return (
     <div class="flex flex-col gap-2">
       <prose.h4 class="border-b pb-1 !mt-0">Response</prose.h4>
-      <Show when={successTypeDef()}>
-        {(typeDef) => {
+      <Show when={successResponse()}>
+        {(response) => {
+          const [_statusCode, schemata] = response();
           return (
             <ReqRes title="200 Ok">
-              <Parameter>
-                <TypeDefDoc
-                  basepath={props.basepath}
-                  schema={props.schema}
-                  typeDef={resolveTypeDef(props.schema, typeDef())}
-                  showNested
-                />
-              </Parameter>
+              <Show when={schemata.response.description}>
+                <prose.p class="text-slate-11 mb-2 text-sm">
+                  {schemata.response.description}
+                </prose.p>
+              </Show>
+              <Show when={schemata.schema}>
+                {(typeDef) => (
+                  <Parameter>
+                    <TypeDefDoc
+                      basepath={props.basepath}
+                      schema={props.schema}
+                      typeDef={resolveTypeDef(props.schema, typeDef())}
+                      showNested
+                    />
+                  </Parameter>
+                )}
+              </Show>
             </ReqRes>
           );
         }}
       </Show>
       <For each={nonSuccessResponses()}>
-        {([statusCode, schemata]) => (
-          <ReqRes title={`${statusCode} Error`}>
-            <Show
-              fallback={
-                <prose.p class="text-sm text-slate-6">
+        {([statusCode, schemata]) => {
+          const isError =
+            statusCode.startsWith("4") || statusCode.startsWith("5");
+          const is207 = statusCode === "207";
+          const title = isError
+            ? `${statusCode} Error`
+            : is207
+              ? `${statusCode} Partial Success`
+              : statusCode;
+          return (
+            <ReqRes title={title}>
+              <Show when={schemata.response.description}>
+                <prose.p class="text-slate-11 mb-2 text-sm">
                   {schemata.response.description}
                 </prose.p>
-              }
-              when={schemata.schema}
-            >
-              {(typeDef) => (
-                <TypeDefDoc
-                  basepath={props.basepath}
-                  schema={props.schema}
-                  typeDef={resolveTypeDef(props.schema, typeDef())}
-                  showNested
-                />
-              )}
-            </Show>
-          </ReqRes>
-        )}
+              </Show>
+              <Show when={schemata.schema}>
+                {(typeDef) => (
+                  <TypeDefDoc
+                    basepath={props.basepath}
+                    schema={props.schema}
+                    typeDef={resolveTypeDef(props.schema, typeDef())}
+                    showNested
+                  />
+                )}
+              </Show>
+            </ReqRes>
+          );
+        }}
       </For>
     </div>
   );
