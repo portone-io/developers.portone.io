@@ -209,8 +209,8 @@ function ResponseDoc(props: ResponseDocProps) {
   const responseSchemata = createMemo(() =>
     getResponseSchemata(props.schema, props.operation),
   );
-  const successResponse = createMemo(
-    () => responseSchemata().find(([statusCode]) => statusCode === "200"),
+  const successResponse = createMemo(() =>
+    responseSchemata().find(([statusCode]) => statusCode === "200"),
   );
 
   const nonSuccessResponses = createMemo(() =>
@@ -226,7 +226,7 @@ function ResponseDoc(props: ResponseDocProps) {
           return (
             <ReqRes title="200 Ok">
               <Show when={schemata.response.description}>
-                <prose.p class="text-sm text-slate-11 mb-2">
+                <prose.p class="text-slate-11 mb-2 text-sm">
                   {schemata.response.description}
                 </prose.p>
               </Show>
@@ -248,13 +248,18 @@ function ResponseDoc(props: ResponseDocProps) {
       </Show>
       <For each={nonSuccessResponses()}>
         {([statusCode, schemata]) => {
-          const isError = statusCode.startsWith("4") || statusCode.startsWith("5");
+          const isError =
+            statusCode.startsWith("4") || statusCode.startsWith("5");
           const is207 = statusCode === "207";
-          const title = isError ? `${statusCode} Error` : is207 ? `${statusCode} Partial Success` : statusCode;
+          const title = isError
+            ? `${statusCode} Error`
+            : is207
+              ? `${statusCode} Partial Success`
+              : statusCode;
           return (
             <ReqRes title={title}>
               <Show when={schemata.response.description}>
-                <prose.p class="text-sm text-slate-11 mb-2">
+                <prose.p class="text-slate-11 mb-2 text-sm">
                   {schemata.response.description}
                 </prose.p>
               </Show>
