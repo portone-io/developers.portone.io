@@ -64,6 +64,8 @@ export function processV1Openapi(schema: any): any {
     if (typeof node[property] !== "string") return;
     if (!mdProperties.has(property)) return;
     if (!context.renderAll && !property.startsWith("x-")) return;
+    // x-portone-description은 프론트엔드에서 마크다운으로 렌더링하므로 여기서는 변환하지 않음
+    if (property === "x-portone-description") return;
     node[property] = renderGfm(node[property]);
   });
 
