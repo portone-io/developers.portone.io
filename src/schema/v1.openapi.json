@@ -5780,7 +5780,7 @@
           {
             "name": "customer_uid",
             "in": "formData",
-            "description": "빌링키와 매핑되며 고객사에서 채번하는 구매자의 결제 수단 식별 고유번호.<br><br>(결제에 사용된 카드정보를 빌링키 형태로 저장해두고 재결제에 사용하시려면 customer_uid를 지정해주세요. 비 인증 결제(빌링키) API, 결제 예약 API로 재결제를 진행하실 수 있습니다. customer_uid가 없는 경우 저장되지 않습니다.)",
+            "description": "빌링키와 매핑되며 고객사에서 채번하는 구매자의 결제 수단 식별 고유번호.<br><br>(결제에 사용된 카드정보를 빌링키 형태로 저장해두고 결제에 사용하시려면 customer_uid를 지정해주세요. 비 인증 결제(빌링키) API, 결제 예약 API로 결제를 진행하실 수 있습니다. customer_uid가 없는 경우 저장되지 않습니다.)",
             "required": false,
             "type": "string",
             "maxLength": 80,
@@ -5960,11 +5960,11 @@
           {
             "name": "browser_ip",
             "in": "formData",
-            "description": "구매자 브라우져(PC)의 IP (필수 : 페이먼트월)",
+            "description": "구매자 브라우저(PC)의 IP (입력하지 않은 경우 API를 호출한 클라이언트 IP로 설정됩니다.)",
             "required": false,
             "type": "string",
-            "x-portone-name": "브라우져 IP",
-            "x-portone-description": "구매자 브라우져(PC)의 IP",
+            "x-portone-name": "브라우저 IP",
+            "x-portone-description": "구매자 브라우저(PC)의 IP",
             "x-portone-per-pg": {
               "paymentwall": {
                 "required": true
@@ -5974,11 +5974,11 @@
           {
             "name": "secure_3d_charge_id",
             "in": "formData",
-            "description": "(해외PG 전용) 3D secure 인증 후 재결제시 PG사에서 부여한 결제 ID",
+            "description": "(해외PG 전용) 3D secure 인증 후 결제시 PG사에서 부여한 결제 ID",
             "required": false,
             "type": "string",
             "x-portone-name": "결제 ID",
-            "x-portone-description": "해외PG 전용 파라미터로 3D secure 인증 후 재결제시 PG사에서 부여한 결제 ID",
+            "x-portone-description": "해외PG 전용 파라미터로 3D secure 인증 후 결제시 PG사에서 부여한 결제 ID",
             "x-portone-supported-pgs": [
               "paymentwall"
             ]
@@ -5986,11 +5986,11 @@
           {
             "name": "secure_3d_token",
             "in": "formData",
-            "description": "(해외PG 전용) 3D secure 인증 후 재결제시 PG사에서 부여한 토큰",
+            "description": "(해외PG 전용) 3D secure 인증 후 결제시 PG사에서 부여한 토큰",
             "required": false,
             "type": "string",
             "x-portone-name": "토큰",
-            "x-portone-description": "해외PG 전용 파라미터로 3D secure 인증 후 재결제시 PG사에서 부여한 토큰",
+            "x-portone-description": "해외PG 전용 파라미터로 3D secure 인증 후 결제시 PG사에서 부여한 토큰",
             "x-portone-supported-pgs": [
               "paymentwall"
             ]
@@ -6058,7 +6058,7 @@
           "subscribe"
         ],
         "summary": "비 인증 결제(빌링키) API",
-        "description": "저장된 빌링키로 재결제를 하는 경우 사용됩니다. PG사 결제창, 비 인증 결제(일회성)API 또는 빌링키 발급 API로 등록된 빌링키가 있을 때 매칭되는 customer_uid로 재결제를 진행할 수 있습니다.",
+        "description": "저장된 빌링키로 결제를 하는 경우 사용됩니다. PG사 결제창, 비 인증 결제(일회성)API 또는 빌링키 발급 API로 등록된 빌링키가 있을 때 매칭되는 customer_uid로 결제를 진행할 수 있습니다.",
         "operationId": "again",
         "consumes": [
           "application/json",
@@ -6089,7 +6089,7 @@
             "x-portone-description": "결제 요청할 결제건의 고객사 거래 고유번호",
             "x-portone-per-pg": {
               "smartro_v2": {
-                "description": "<p>스마트로는 주문 번호(merchant_uid)에 <strong>특수문자를 허용하고 있지 않습니다.</strong></p>\n<p>따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 재결제를 하는 경우 숫자, 문자(알파벳 소문자와 대문자) 또는 그 조합으로 이루어진 주문 번호를 사용해주세요.\n또한, 주문번호(merchant_uid)가 <strong>최대 40자</strong>를 넘을 수 없습니다. 40자가 넘을 경우 40자까지 잘려서 저장되기 때문에 유의 바랍니다.</p>\n"
+                "description": "<p>스마트로는 주문 번호(merchant_uid)에 <strong>특수문자를 허용하고 있지 않습니다.</strong></p>\n<p>따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 결제를 하는 경우 숫자, 문자(알파벳 소문자와 대문자) 또는 그 조합으로 이루어진 주문 번호를 사용해주세요.\n또한, 주문번호(merchant_uid)가 <strong>최대 40자</strong>를 넘을 수 없습니다. 40자가 넘을 경우 40자까지 잘려서 저장되기 때문에 유의 바랍니다.</p>\n"
               }
             }
           },
@@ -6323,11 +6323,11 @@
           {
             "name": "browser_ip",
             "in": "formData",
-            "description": "구매자 브라우져(PC)의 IP <br> (필수 : 페이먼트월)",
+            "description": "구매자 브라우저(PC)의 IP <br> (입력하지 않은 경우 API를 호출한 클라이언트 IP로 설정됩니다.)",
             "required": false,
             "type": "string",
             "x-portone-name": "브라우저의 IP",
-            "x-portone-description": "구매자 브라우져(PC)의 IP",
+            "x-portone-description": "구매자 브라우저(PC)의 IP (입력하지 않은 경우 API를 호출한 클라이언트 IP로 설정됩니다.)",
             "x-portone-per-pg": {
               "paymentwall": {
                 "required": true
@@ -6468,7 +6468,7 @@
         "x-portone-category": "nonAuthPayment",
         "x-portone-per-pg": {
           "paypal_v2": {
-            "description": "<h3 id=\"manges--fraudnet-이상-거래-대응-필요\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#manges--fraudnet-이상-거래-대응-필요\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>Manges &amp; Fraudnet 이상 거래 대응 필요</h3>\n<p>페이팔은 이상 거래를 줄이기 위해 Risk Data Acquisition 정책을 시행하고 있습니다. 일반 결제나 빌링키 발급은 페이팔 버튼을 통해 진행되기 때문에 페이팔이 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 있지만, 발급 된 빌링키로 재결제 (again API 호출) 할때는 고객사 서버에서 포트원 API를 통해 페이팔 API가 호출되는 구조이기 때문에 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 없습니다.\n따라서 발급 된 빌링키로 재결제를 할때는 구매자의 브라우저/디바이스 접속 정보를 페이팔에 전달할 수 있도록 again API가 호출되는 <strong>고객사 클라이언트 페이지에 반드시 페이팔 Fraudnet 스크립트/Manges SDK를 아래와 같이 추가</strong>해야 합니다.</p>\n<p><strong>페이팔 RT를 통한 again API 호출시에는 Manges &amp; Fraudnet 조치가 필수적으로 요구됩니다.</strong>\n브라우저/앱에 페이팔 Fraudnet Script/Manges SDK를 추가한 후 again API를 호출할때 진행되는 플로우는 아래와 같습니다.</p>\n<p><img src=\"https://raw.githubusercontent.com/portone-io/developers.portone.io/e206047c43ed15bc364b58e0647dda4584964c9c/public/gitbook-assets/ko/paypal-rt/manges-fraudnet-flow.png\" alt=\"플로우\" /></p>\n<h4 id=\"브라우저\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#브라우저\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>브라우저</h4>\n<div class=\"highlight highlight-source-html notranslate\"><pre><span class=\"token comment\">&lt;!-- again API가 호출되는 고객사 클라이언트 --&gt;</span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;</span>script</span>\n    <span class=\"token attr-name\">type</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>application/json<span class=\"token punctuation\">\"</span></span>\n    <span class=\"token attr-name\">fncls</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99<span class=\"token punctuation\">\"</span></span>\n<span class=\"token punctuation\">&gt;</span></span><span class=\"token script\"><span class=\"token\">\n<span class=\"token punctuation\">{</span>\n    <span class=\"token property\">\"f\"</span><span class=\"token operator\">:</span> <span class=\"token string\">\"RISK_SESSION_CORRELATION_ID\"</span><span class=\"token punctuation\">,</span>\n    <span class=\"token property\">\"s\"</span><span class=\"token operator\">:</span> <span class=\"token string\">\"SOURCE_IDENTIFIER\"</span><span class=\"token punctuation\">,</span>\n    <span class=\"token property\">\"sandbox\"</span><span class=\"token operator\">:</span> <span class=\"token boolean\">true</span>\n<span class=\"token punctuation\">}</span>\n</span></span><span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;/</span>script</span><span class=\"token punctuation\">&gt;</span></span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;</span>script</span> <span class=\"token attr-name\">type</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>text/javascript<span class=\"token punctuation\">\"</span></span> <span class=\"token attr-name\">src</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>https://c.paypal.com/da/r/fb.js<span class=\"token punctuation\">\"</span></span><span class=\"token punctuation\">&gt;</span></span><span class=\"token script\"></span><span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;/</span>script</span><span class=\"token punctuation\">&gt;</span></span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;</span>noscript</span><span class=\"token punctuation\">&gt;</span></span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;</span>img</span>\n    <span class=\"token attr-name\">src</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>https://c.paypal.com/v1/r/d/b/ns?f=RISK_SESSION_CORRELATION_ID&amp;s=SOURCE_IDENTIFIER&amp;js=0&amp;r=1<span class=\"token punctuation\">\"</span></span>\n<span class=\"token punctuation\">/&gt;</span></span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;/</span>noscript</span><span class=\"token punctuation\">&gt;</span></span></pre></div><table>\n<thead>\n<tr>\n<th>파라미터</th>\n<th>의미</th>\n<th>예시</th>\n</tr>\n</thead>\n<tbody><tr>\n<td>fncls</td>\n<td>fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99로 항상 고정</td>\n<td>fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99</td>\n</tr>\n<tr>\n<td>f</td>\n<td>주문번호(merchant_uid) 전달</td>\n<td>mid_1683690731602</td>\n</tr>\n<tr>\n<td>s</td>\n<td>string</td>\n<td>7WBB3CKT63FRG_checkout-page</td>\n</tr>\n<tr>\n<td>sandbox</td>\n<td>페이팔 Account ID가 테스트 용인지 운영 용인지 여부</td>\n<td>true</td>\n</tr>\n</tbody></table>\n<h4 id=\"앱\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#앱\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>앱</h4>\n<h5 id=\"안드로이드\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#안드로이드\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>안드로이드</h5>\n<p><a href=\"https://developer.paypal.com/limited-release/magnes/integrate/android/\" rel=\"noopener noreferrer\"><strong>Android Integration of Magnes</strong></a> 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 두번째 파라미터(<code>paypalClientMetaDataId</code>)로는 주문번호(<code>merchant_uid</code>)를 전달해주시면 됩니다.</p>\n<pre><code>MagnesResult magnesResult = MagnesSDK.getInstance()\n.collectAndSubmit(Context context, String paypalClientMetaDataId,\nHashMap&lt;String, String&gt;\nadditionalData)</code></pre><h5 id=\"ios-swift\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#ios-swift\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>IOS Swift</h5>\n<p><a href=\"https://developer.paypal.com/limited-release/magnes/integrate/ios-swift/\" rel=\"noopener noreferrer\"><strong>iOS Swift SDK Integration</strong></a> 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(<code>withPayPalClientMetadataId</code>)로는 주문번호(<code>merchant_uid</code>)를 전달해주시면 됩니다.</p>\n<pre><code>let magnesResult:MagnesResult =\nMagnesSDK.shared().collectAndSubmit(withPayPalClientMetadataId:\n\"YOUR-PAYPAL-CLIENT-METADATA-ID\", withAdditionalData: [String: String])</code></pre><h5 id=\"ios-objective-c\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#ios-objective-c\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>IOS Objective-C</h5>\n<p><a href=\"https://developer.paypal.com/limited-release/magnes/integrate/ios-objective-c/\" rel=\"noopener noreferrer\"><strong>iOS Objective-C SDK Integration of Magnes</strong></a> 가이드 문서에 따라 아래와 같이 collectAndSubmitWithPayPalClientMetadataId 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(<code>YOUR-PAYPAL-CLIENT-METADATA-ID</code>)로는 주문번호(<code>merchant_uid</code>)를 전달해주시면 됩니다.</p>\n<pre><code>//PPRMOCMagnesSDK *magnesSDK = [PPRMOCMagnesSDK shared];\nPPRMOCMagnesSDKResult *magnesResult =\n[magnesSDK\ncollectAndSubmitWithPayPalClientMetadataId:@\"YOUR-PAYPAL-CLIENT-METADATA-ID\"\nwithAdditionalData:@{}];</code></pre><h3 id=\"고위험-결제-처리\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#고위험-결제-처리\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>고위험 결제 처리</h3>\n<p>페이팔은 판매자 보호 정책을 통해 고객사 거래에서 이상 거래나 사기 등이 발생 시, 판매자 보호 정책을 통해 고객사가 손해 입을 수 있는 부분을 보존하는 판매자 보호 프로그램을 가지고 있습니다. 이 판매자 보호 정책을 적용하기 위해서는 페이팔 측에서 제공하는 <strong>STC 기능</strong>을 사용해야 합니다.</p>\n<p>STC 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다.</p>\n<ol>\n<li>페이팔 Business 계정 가입시 산업 종류(Industry)를 결정하는데, 계정의 산업 종류를 확인해야 합니다.</li>\n<li>계정의 산업 종류를 확인하신 뒤, loadUI 호출 해 빌링키를 발급 받을때 그리고 발급 된 빌링키로 재결제(again API 호출)할때 모두 bypass.paypal_v2 객체에 아래와 같은 형식으로 전달해주셔야 합니다.</li>\n</ol>\n<h4 id=\"발급-된-빌링키로-단건-결제again-api-호출시-stc-적용하기\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#발급-된-빌링키로-단건-결제again-api-호출시-stc-적용하기\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>발급 된 빌링키로 단건 결제(again API 호출)시 STC 적용하기</h4>\n<div class=\"highlight highlight-source-javascript notranslate\"><pre><span class=\"token keyword\">await</span> <span class=\"token function\">fetch</span><span class=\"token punctuation\">(</span>\n   <span class=\"token string\">\"https://api.iamport.kr/subscribe/payments/again\"</span><span class=\"token punctuation\">,</span>\n   <span class=\"token punctuation\">{</span>\n       <span class=\"token property\">method</span><span class=\"token operator\">:</span> <span class=\"token string\">\"POST\"</span><span class=\"token punctuation\">,</span>\n       <span class=\"token property\">headers</span><span class=\"token operator\">:</span> <span class=\"token punctuation\">{</span>\n           <span class=\"token property\">Authorization</span><span class=\"token operator\">:</span> <span class=\"token\"><span class=\"token string\">`</span><span class=\"token string\">Basic </span><span class=\"token\"><span class=\"token punctuation\">${</span><span class=\"token\">ACCESS_TOKEN</span><span class=\"token punctuation\">}</span></span><span class=\"token string\">`</span></span><span class=\"token punctuation\">,</span>\n           <span class=\"token property\">\"Content-Type\"</span><span class=\"token operator\">:</span> <span class=\"token string\">\"application/json\"</span><span class=\"token punctuation\">,</span>\n       <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span>\n       <span class=\"token property\">body</span><span class=\"token operator\">:</span> <span class=\"token\">JSON</span><span class=\"token punctuation\">.</span><span class=\"token function\">stringify</span><span class=\"token punctuation\">(</span><span class=\"token punctuation\">{</span>\n           customer_uid<span class=\"token punctuation\">,</span> <span class=\"token comment\">// [필수 입력] 빌링키 발급시 전달 한 빌링키와 1:1 매핑되는 UUID</span>\n           merchant_uid<span class=\"token punctuation\">,</span> <span class=\"token comment\">// [필수 입력] 주문 번호</span>\n           currency<span class=\"token punctuation\">,</span> <span class=\"token comment\">// [필수 입력] 결제 통화 (페이팔은 KRW 불가능)</span>\n           amount<span class=\"token punctuation\">,</span> <span class=\"token comment\">// [필수 입력] 결제 금액</span>\n           name<span class=\"token punctuation\">,</span> <span class=\"token comment\">// 주문명</span>\n           <span class=\"token property\">bypass</span><span class=\"token operator\">:</span> <span class=\"token\">JSON</span><span class=\"token punctuation\">.</span><span class=\"token function\">stringify</span><span class=\"token punctuation\">(</span><span class=\"token punctuation\">{</span>\n               <span class=\"token property\">paypal_v2</span><span class=\"token operator\">:</span> <span class=\"token punctuation\">{</span>\n                   <span class=\"token property\">additional_data</span><span class=\"token operator\">:</span> <span class=\"token punctuation\">[</span><span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_account_id\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사 account ID(merchant-id)</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"A12345N343\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_first_name\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 구매자의 이름</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"John\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_last_name\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 구매자의 이름</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"Doe\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_email\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 구매자의 이메일 주소</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"example@example.com\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_phone\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 구매자의 연락처</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"(02)16705176\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_country_code\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 국가 코드</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"KR\"</span> <span class=\"token comment\">// ISO Alpha-2 형식 국가 코드</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_create_date\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 국가 코드</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"2023-10-10T23:59:59+09:00\"</span> <span class=\"token comment\">// IOS8601 형식</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">]</span>\n               <span class=\"token punctuation\">}</span>\n           <span class=\"token punctuation\">}</span><span class=\"token punctuation\">)</span> <span class=\"token comment\">// end of bypass string</span>\n       <span class=\"token punctuation\">}</span><span class=\"token punctuation\">)</span> <span class=\"token comment\">// end of body</span>\n   <span class=\"token punctuation\">}</span>\n<span class=\"token punctuation\">)</span></pre></div>"
+            "description": "<h3 id=\"manges--fraudnet-이상-거래-대응-필요\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#manges--fraudnet-이상-거래-대응-필요\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>Manges &amp; Fraudnet 이상 거래 대응 필요</h3>\n<p>페이팔은 이상 거래를 줄이기 위해 Risk Data Acquisition 정책을 시행하고 있습니다. 일반 결제나 빌링키 발급은 페이팔 버튼을 통해 진행되기 때문에 페이팔이 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 있지만, 발급 된 빌링키로 결제 (again API 호출) 할때는 고객사 서버에서 포트원 API를 통해 페이팔 API가 호출되는 구조이기 때문에 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 없습니다.\n따라서 발급 된 빌링키로 결제를 할때는 구매자의 브라우저/디바이스 접속 정보를 페이팔에 전달할 수 있도록 again API가 호출되는 <strong>고객사 클라이언트 페이지에 반드시 페이팔 Fraudnet 스크립트/Manges SDK를 아래와 같이 추가</strong>해야 합니다.</p>\n<p><strong>페이팔 RT를 통한 again API 호출시에는 Manges &amp; Fraudnet 조치가 필수적으로 요구됩니다.</strong>\n브라우저/앱에 페이팔 Fraudnet Script/Manges SDK를 추가한 후 again API를 호출할때 진행되는 플로우는 아래와 같습니다.</p>\n<p><img src=\"https://raw.githubusercontent.com/portone-io/developers.portone.io/e206047c43ed15bc364b58e0647dda4584964c9c/public/gitbook-assets/ko/paypal-rt/manges-fraudnet-flow.png\" alt=\"플로우\" /></p>\n<h4 id=\"브라우저\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#브라우저\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>브라우저</h4>\n<div class=\"highlight highlight-source-html notranslate\"><pre><span class=\"token comment\">&lt;!-- again API가 호출되는 고객사 클라이언트 --&gt;</span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;</span>script</span>\n    <span class=\"token attr-name\">type</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>application/json<span class=\"token punctuation\">\"</span></span>\n    <span class=\"token attr-name\">fncls</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99<span class=\"token punctuation\">\"</span></span>\n<span class=\"token punctuation\">&gt;</span></span><span class=\"token script\"><span class=\"token\">\n<span class=\"token punctuation\">{</span>\n    <span class=\"token property\">\"f\"</span><span class=\"token operator\">:</span> <span class=\"token string\">\"RISK_SESSION_CORRELATION_ID\"</span><span class=\"token punctuation\">,</span>\n    <span class=\"token property\">\"s\"</span><span class=\"token operator\">:</span> <span class=\"token string\">\"SOURCE_IDENTIFIER\"</span><span class=\"token punctuation\">,</span>\n    <span class=\"token property\">\"sandbox\"</span><span class=\"token operator\">:</span> <span class=\"token boolean\">true</span>\n<span class=\"token punctuation\">}</span>\n</span></span><span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;/</span>script</span><span class=\"token punctuation\">&gt;</span></span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;</span>script</span> <span class=\"token attr-name\">type</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>text/javascript<span class=\"token punctuation\">\"</span></span> <span class=\"token attr-name\">src</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>https://c.paypal.com/da/r/fb.js<span class=\"token punctuation\">\"</span></span><span class=\"token punctuation\">&gt;</span></span><span class=\"token script\"></span><span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;/</span>script</span><span class=\"token punctuation\">&gt;</span></span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;</span>noscript</span><span class=\"token punctuation\">&gt;</span></span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;</span>img</span>\n    <span class=\"token attr-name\">src</span><span class=\"token\"><span class=\"token punctuation\">=</span><span class=\"token punctuation\">\"</span>https://c.paypal.com/v1/r/d/b/ns?f=RISK_SESSION_CORRELATION_ID&amp;s=SOURCE_IDENTIFIER&amp;js=0&amp;r=1<span class=\"token punctuation\">\"</span></span>\n<span class=\"token punctuation\">/&gt;</span></span>\n<span class=\"token tag\"><span class=\"token tag\"><span class=\"token punctuation\">&lt;/</span>noscript</span><span class=\"token punctuation\">&gt;</span></span></pre></div><table>\n<thead>\n<tr>\n<th>파라미터</th>\n<th>의미</th>\n<th>예시</th>\n</tr>\n</thead>\n<tbody><tr>\n<td>fncls</td>\n<td>fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99로 항상 고정</td>\n<td>fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99</td>\n</tr>\n<tr>\n<td>f</td>\n<td>주문번호(merchant_uid) 전달</td>\n<td>mid_1683690731602</td>\n</tr>\n<tr>\n<td>s</td>\n<td>string</td>\n<td>7WBB3CKT63FRG_checkout-page</td>\n</tr>\n<tr>\n<td>sandbox</td>\n<td>페이팔 Account ID가 테스트 용인지 운영 용인지 여부</td>\n<td>true</td>\n</tr>\n</tbody></table>\n<h4 id=\"앱\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#앱\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>앱</h4>\n<h5 id=\"안드로이드\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#안드로이드\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>안드로이드</h5>\n<p><a href=\"https://developer.paypal.com/limited-release/magnes/integrate/android/\" rel=\"noopener noreferrer\"><strong>Android Integration of Magnes</strong></a> 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 두번째 파라미터(<code>paypalClientMetaDataId</code>)로는 주문번호(<code>merchant_uid</code>)를 전달해주시면 됩니다.</p>\n<pre><code>MagnesResult magnesResult = MagnesSDK.getInstance()\n.collectAndSubmit(Context context, String paypalClientMetaDataId,\nHashMap&lt;String, String&gt;\nadditionalData)</code></pre><h5 id=\"ios-swift\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#ios-swift\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>IOS Swift</h5>\n<p><a href=\"https://developer.paypal.com/limited-release/magnes/integrate/ios-swift/\" rel=\"noopener noreferrer\"><strong>iOS Swift SDK Integration</strong></a> 가이드 문서에 따라 아래와 같이 collectAndSubmit 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(<code>withPayPalClientMetadataId</code>)로는 주문번호(<code>merchant_uid</code>)를 전달해주시면 됩니다.</p>\n<pre><code>let magnesResult:MagnesResult =\nMagnesSDK.shared().collectAndSubmit(withPayPalClientMetadataId:\n\"YOUR-PAYPAL-CLIENT-METADATA-ID\", withAdditionalData: [String: String])</code></pre><h5 id=\"ios-objective-c\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#ios-objective-c\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>IOS Objective-C</h5>\n<p><a href=\"https://developer.paypal.com/limited-release/magnes/integrate/ios-objective-c/\" rel=\"noopener noreferrer\"><strong>iOS Objective-C SDK Integration of Magnes</strong></a> 가이드 문서에 따라 아래와 같이 collectAndSubmitWithPayPalClientMetadataId 메소드 호출을 통해 페이팔로 디바이스 정보를 보내야합니다. 이때 첫번째 파라미터(<code>YOUR-PAYPAL-CLIENT-METADATA-ID</code>)로는 주문번호(<code>merchant_uid</code>)를 전달해주시면 됩니다.</p>\n<pre><code>//PPRMOCMagnesSDK *magnesSDK = [PPRMOCMagnesSDK shared];\nPPRMOCMagnesSDKResult *magnesResult =\n[magnesSDK\ncollectAndSubmitWithPayPalClientMetadataId:@\"YOUR-PAYPAL-CLIENT-METADATA-ID\"\nwithAdditionalData:@{}];</code></pre><h3 id=\"고위험-결제-처리\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#고위험-결제-처리\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>고위험 결제 처리</h3>\n<p>페이팔은 판매자 보호 정책을 통해 고객사 거래에서 이상 거래나 사기 등이 발생 시, 판매자 보호 정책을 통해 고객사가 손해 입을 수 있는 부분을 보존하는 판매자 보호 프로그램을 가지고 있습니다. 이 판매자 보호 정책을 적용하기 위해서는 페이팔 측에서 제공하는 <strong>STC 기능</strong>을 사용해야 합니다.</p>\n<p>STC 기능을 사용하시기 위해 다음 정보를 확인하셔야 합니다.</p>\n<ol>\n<li>페이팔 Business 계정 가입시 산업 종류(Industry)를 결정하는데, 계정의 산업 종류를 확인해야 합니다.</li>\n<li>계정의 산업 종류를 확인하신 뒤, loadUI 호출 해 빌링키를 발급 받을때 그리고 발급 된 빌링키로 결제(again API 호출)할때 모두 bypass.paypal_v2 객체에 아래와 같은 형식으로 전달해주셔야 합니다.</li>\n</ol>\n<h4 id=\"발급-된-빌링키로-단건-결제again-api-호출시-stc-적용하기\"><a class=\"anchor\" aria-hidden=\"true\" tabindex=\"-1\" href=\"#발급-된-빌링키로-단건-결제again-api-호출시-stc-적용하기\"><svg class=\"octicon octicon-link\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z\"></path></svg></a>발급 된 빌링키로 단건 결제(again API 호출)시 STC 적용하기</h4>\n<div class=\"highlight highlight-source-javascript notranslate\"><pre><span class=\"token keyword\">await</span> <span class=\"token function\">fetch</span><span class=\"token punctuation\">(</span>\n   <span class=\"token string\">\"https://api.iamport.kr/subscribe/payments/again\"</span><span class=\"token punctuation\">,</span>\n   <span class=\"token punctuation\">{</span>\n       <span class=\"token property\">method</span><span class=\"token operator\">:</span> <span class=\"token string\">\"POST\"</span><span class=\"token punctuation\">,</span>\n       <span class=\"token property\">headers</span><span class=\"token operator\">:</span> <span class=\"token punctuation\">{</span>\n           <span class=\"token property\">Authorization</span><span class=\"token operator\">:</span> <span class=\"token\"><span class=\"token string\">`</span><span class=\"token string\">Basic </span><span class=\"token\"><span class=\"token punctuation\">${</span><span class=\"token\">ACCESS_TOKEN</span><span class=\"token punctuation\">}</span></span><span class=\"token string\">`</span></span><span class=\"token punctuation\">,</span>\n           <span class=\"token property\">\"Content-Type\"</span><span class=\"token operator\">:</span> <span class=\"token string\">\"application/json\"</span><span class=\"token punctuation\">,</span>\n       <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span>\n       <span class=\"token property\">body</span><span class=\"token operator\">:</span> <span class=\"token\">JSON</span><span class=\"token punctuation\">.</span><span class=\"token function\">stringify</span><span class=\"token punctuation\">(</span><span class=\"token punctuation\">{</span>\n           customer_uid<span class=\"token punctuation\">,</span> <span class=\"token comment\">// [필수 입력] 빌링키 발급시 전달 한 빌링키와 1:1 매핑되는 UUID</span>\n           merchant_uid<span class=\"token punctuation\">,</span> <span class=\"token comment\">// [필수 입력] 주문 번호</span>\n           currency<span class=\"token punctuation\">,</span> <span class=\"token comment\">// [필수 입력] 결제 통화 (페이팔은 KRW 불가능)</span>\n           amount<span class=\"token punctuation\">,</span> <span class=\"token comment\">// [필수 입력] 결제 금액</span>\n           name<span class=\"token punctuation\">,</span> <span class=\"token comment\">// 주문명</span>\n           <span class=\"token property\">bypass</span><span class=\"token operator\">:</span> <span class=\"token\">JSON</span><span class=\"token punctuation\">.</span><span class=\"token function\">stringify</span><span class=\"token punctuation\">(</span><span class=\"token punctuation\">{</span>\n               <span class=\"token property\">paypal_v2</span><span class=\"token operator\">:</span> <span class=\"token punctuation\">{</span>\n                   <span class=\"token property\">additional_data</span><span class=\"token operator\">:</span> <span class=\"token punctuation\">[</span><span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_account_id\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사 account ID(merchant-id)</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"A12345N343\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_first_name\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 구매자의 이름</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"John\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_last_name\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 구매자의 이름</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"Doe\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_email\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 구매자의 이메일 주소</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"example@example.com\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_phone\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 구매자의 연락처</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"(02)16705176\"</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_country_code\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 국가 코드</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"KR\"</span> <span class=\"token comment\">// ISO Alpha-2 형식 국가 코드</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">,</span> <span class=\"token punctuation\">{</span>\n                       <span class=\"token property\">key</span><span class=\"token operator\">:</span> <span class=\"token string\">\"sender_create_date\"</span><span class=\"token punctuation\">,</span> <span class=\"token comment\">// 고객사의 account에 등록 된 국가 코드</span>\n                       <span class=\"token property\">value</span><span class=\"token operator\">:</span> <span class=\"token string\">\"2023-10-10T23:59:59+09:00\"</span> <span class=\"token comment\">// IOS8601 형식</span>\n                   <span class=\"token punctuation\">}</span><span class=\"token punctuation\">]</span>\n               <span class=\"token punctuation\">}</span>\n           <span class=\"token punctuation\">}</span><span class=\"token punctuation\">)</span> <span class=\"token comment\">// end of bypass string</span>\n       <span class=\"token punctuation\">}</span><span class=\"token punctuation\">)</span> <span class=\"token comment\">// end of body</span>\n   <span class=\"token punctuation\">}</span>\n<span class=\"token punctuation\">)</span></pre></div>"
           }
         }
       }
@@ -6766,7 +6766,7 @@
           {
             "name": "schedules",
             "in": "formData",
-            "description": "결제예약 스케쥴<br>[ 필수항목 ]<br>merchant_uid : 고객사 주문번호(동일한 주문번호로 중복결제 불가) (스마트로 - 신모듈의 경우, 특수문자 포함이 불가능합니다.)<br>schedule_at : 결제요청 예약시각(초) (UNIX timestamp in seconds)<br>currency : 통화 e.g.) KRW, USD 등(단, (신) 페이팔의 경우 KRW 결제가 불가능하므로 반드시 유효한 값을 필수로 입력해야합니다.)<br>amount : 결제금액<br>name : 주문명<br>[ 선택항목 ]<br>tax_free : amount 중 면세공급가액(기본값 : 0)<br>vat_amount : amount 중 부가세 금액(기본값 : null, 현재 나이스페이먼츠, 이니시스, (신) 나이스페이, 웰컴페이먼츠, (신) 토스페이 지원)<br>buyer_name : 주문자명(필수 : KSENT, 스마트로-신모듈)<br>buyer_email : 주문자Email (필수 : 스마트로-신모듈)<br>buyer_tel : 주문자 전화번호 (필수 : 스마트로-신모듈)<br>buyer_addr : 주문자 주소<br>buyer_postcode : 주문자 우편번호<br>custom_data : 결제수행 시 사용될 custom_data 값<br>notice_url : 예약결제수행 후 통지될 Notification URL(지정되지 않으면 관리자페이지의 Notification URL로 발송)<br>product_type :\n                판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠) (필수 : KSNET)<br>cash_receipt_type : 현금영수증 발행대상 (person, company, anonymous) ((신) 토스페이의 경우 anonymous 전달 시 미발행 그 외 경우 현금영수증 자동발행으로 동작합니다.)<br>card_quota : 카드할부개월수. 2 이상의 integer 할부개월수 적용(결제금액 50,000원 이상 한정, default = 0(일시불))<br>interest_free_by_merchant : 카드할부처리시, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 고객사가 지불하고자 PG사와 계약된 경우(default : false) (현재, 나이스페이먼츠, KSNET만 지원됨)<br>use_card_point : 승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요(default : false) (현재, 나이스페이먼츠만 지원됨) <br>product_count : 결제 상품의 개수 (Default : 1) <br>bypass : 포트원이 정규화하기 어려운 JSON string 형식의 PG사별 specific 파라미터.전달 한 값은 가공 없이 그대로 PG사로 전달 됩니다. <br><br>promotion_id: `promotion-id-`로 시작하며, 프로모션 아이디에 설정된 할인 내용을 적용하여 결제합니다. 비인증 결제 경우 빌링키 발급시 저장된 마스킹된 카드번호를 통해 프로모션 적용 여부가 결정됩니다.<br><br>extra.naverUseCfm : 이용완료일 YYYYMMDD (네이버페이 반복결제 계약 시 이용완료일 필수로 설정된 고객사에 한함)",
+            "description": "결제예약 스케쥴<br>[ 필수항목 ]<br>merchant_uid : 고객사 주문번호(동일한 주문번호로 중복결제 불가) (스마트로 - 신모듈의 경우, 특수문자 포함이 불가능합니다.)<br>schedule_at : 결제요청 예약시각(초) (UNIX timestamp in seconds)<br>currency : 통화 e.g.) KRW, USD 등(단, (신) 페이팔의 경우 KRW 결제가 불가능하므로 반드시 유효한 값을 필수로 입력해야합니다.)<br>amount : 결제금액<br>name : 주문명<br>[ 선택항목 ]<br>tax_free : amount 중 면세공급가액(기본값 : 0)<br>vat_amount : amount 중 부가세 금액(기본값 : null, 현재 나이스페이먼츠, 이니시스, (신) 나이스페이, 웰컴페이먼츠, (신) 토스페이 지원)<br>buyer_name : 주문자명(필수 : KSENT, 스마트로-신모듈)<br>buyer_email : 주문자Email (필수 : 스마트로-신모듈)<br>buyer_tel : 주문자 전화번호 (필수 : 스마트로-신모듈)<br>buyer_addr : 주문자 주소<br>buyer_postcode : 주문자 우편번호<br>custom_data : 결제수행 시 사용될 custom_data 값<br>notice_url : 예약결제수행 후 통지될 Notification URL(지정되지 않으면 관리자페이지의 Notification URL로 발송)<br>product_type :\n                판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠) (필수 : KSNET)<br>cash_receipt_type : 현금영수증 발행대상 (person, company, anonymous) ((신) 토스페이의 경우 anonymous 전달 시 미발행 그 외 경우 현금영수증 자동발행으로 동작합니다.)<br>card_quota : 카드할부개월수. 2 이상의 integer 할부개월수 적용(결제금액 50,000원 이상 한정, default = 0(일시불))<br>interest_free_by_merchant : 카드할부처리시, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 고객사가 지불하고자 PG사와 계약된 경우(default : false) (현재, 나이스페이먼츠, KSNET만 지원됨)<br>use_card_point : 승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요(default : false) (현재, 나이스페이먼츠만 지원됨) <br>product_count : 결제 상품의 개수 (Default : 1)<br>browser_ip : 결제고객의 IP <br><br>bypass : 포트원이 정규화하기 어려운 JSON string 형식의 PG사별 specific 파라미터.전달 한 값은 가공 없이 그대로 PG사로 전달 됩니다. <br><br>promotion_id: `promotion-id-`로 시작하며, 프로모션 아이디에 설정된 할인 내용을 적용하여 결제합니다. 비인증 결제 경우 빌링키 발급시 저장된 마스킹된 카드번호를 통해 프로모션 적용 여부가 결정됩니다.<br><br>extra.naverUseCfm : 이용완료일 YYYYMMDD (네이버페이 반복결제 계약 시 이용완료일 필수로 설정된 고객사에 한함)",
             "required": true,
             "type": "array",
             "items": {
@@ -8092,20 +8092,20 @@
           "description": "인증결과-성별 <ul><li>male:남성</li> <li>female:여성</li></ul>",
           "type": "string",
           "x-portone-name": "성별",
-          "x-portone-description": "인증된 사용자의 성별"
+          "x-portone-description": "- male : 남성\n- female : 여성"
         },
         "birthday": {
           "description": "인증결과-생년월일 <br> ISO8601 형식의 문자열. YYYY-MM-DD 10자리 문자열",
           "type": "string",
           "x-portone-name": "생년월일",
-          "x-portone-description": "인증된 사용자의 생년월일 ISO8601 형식의 문자열. `YYYY-MM-DD` 10자리 문자열"
+          "x-portone-description": "ISO8601 형식의 문자열. YYYY-MM-DD 10자리 문자열"
         },
         "foreigner": {
           "description": "인증결과-외국인 여부.<br><b>다날 본인인증서비스 계약시</b>외국인 구분기능을 추가 요청하지 않은 경우 항상 <b>false</b>를 응답합니다.\n     <ul><li>true:외국인</li> <li>false:내국인</li></ul>",
           "type": "boolean",
           "x-portone-name": "외국인 여부",
           "x-portone-summary": "<p>인증된 사용자의 외국인 여부</p>\n",
-          "x-portone-description": "다날 본인인증서비스 계약시 외국인 구분기능을 추가 요청하지 않은 경우 **항상 false를 응답**합니다.\n- true : 외국인\n- false : 내국인"
+          "x-portone-description": "**다날 본인인증서비스 계약시** 외국인 구분기능을 추가 요청하지 않은 경우 항상 **false**를 응답합니다.\n- true : 외국인\n- false : 내국인"
         },
         "phone": {
           "description": "인증결과-사용된 휴대폰번호(신용카드 본인인증의 경우 해당사항없음). 특수기호없이 숫자로만 구성된 휴대폰번호가 전달됨. 통신사 사전승인이 이뤄지지 않으면 phone 속성은 존재하지 않습니다. 통신사 사전승인이 필요하므로 cs@portone.io 로 다날 CPID 와 함께 사용승인 요청주시면 안내도와드리겠습니다.",
@@ -8119,7 +8119,7 @@
           "type": "string",
           "x-portone-name": "통신사",
           "x-portone-summary": "<p>인증에 사용된 휴대폰번호의 통신사 (신용카드 본인인증의 경우 해당사항없음)</p>\n",
-          "x-portone-description": "통신사 사전승인이 이뤄지지 않으면 carrier 속성은 존재하지 않습니다.\n\n통신사 사전승인이 필요하므로 cs@portone.io 로 다날 CPID 와 함께 사용승인 요청주시면 안내도와드리겠습니다.\n- SKT\n- KT\n- LGT\n- SKT_MVNO\n- KT_MVNO\n- LGT_MVNO"
+          "x-portone-description": "사용된 휴대폰번호의 통신사(신용카드 본인인증의 경우 해당사항없음). 통신사 사전승인이 이뤄지지 않으면 carrier 속성은 존재하지 않습니다. 통신사 사전승인이 필요하므로 cs@portone.io 로 다날 CPID 와 함께 사용승인 요청주시면 안내도와드리겠습니다.\n- SKT\n- KT\n- LGT\n- SKT_MVNO\n- KT_MVNO\n- LGT_MVNO"
         },
         "certified": {
           "description": "인증성공여부",
@@ -8159,7 +8159,7 @@
           "type": "boolean",
           "x-portone-name": "외국인 여부(nullable)",
           "x-portone-summary": "<p>본인인증 결과 외국인 여부(nullable)</p>\n",
-          "x-portone-description": "다날 본인인증서비스 계약시 외국인 구분기능 추가 요청을 해주셔야 사용이 가능합니다. 요청을 하지 않은 경우 **null**을 응답합니다.\n- true:외국인\n- false:내국인"
+          "x-portone-description": "- true : 외국인\n- false : 내국인\n\n**다날 본인인증서비스 계약시** 외국인 구분기능 추가 요청을 해주셔야 사용이 가능합니다. 요청을 하지 않은 경우 **null**을 응답합니다."
         }
       }
     },
@@ -8250,16 +8250,16 @@
           "x-portone-description": "빌링키 발급 한 카드명"
         },
         "card_code": {
-          "description": "카드사 코드(금융결제원 표준코드번호)\n     <a href='https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630'>링크보기</a>",
+          "description": "카드사 코드(금융결제원 표준코드번호)\n     <a href='https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1'>링크보기</a>",
           "type": "string",
           "x-portone-name": "카드사 코드",
-          "x-portone-description": "[카드사 코드 확인하기](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630)"
+          "x-portone-description": "카드사 코드(금융결제원 표준코드번호)\n\n[링크보기](https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1)"
         },
         "card_issuer_code": {
           "description": "카드 발급사 코드(금융결제원 표준코드번호) <br>\n    발급사 코드 지원 pg사\n    <ul><li>(신) 토스페이먼츠\n    </li><li>KSNET\n    </li><li>페이팔 RT\n    </li><li>(신) 스마트로\n    </li><li>(신) 나이스페이먼츠\n    </li><li>웰컴페이먼츠\n    </li><li>(신) 토스페이",
           "type": "string",
           "x-portone-name": "카드 발급사 코드",
-          "x-portone-description": "카드 발급사 코드번호 (금융결제원 표준코드 번호)\n\n    발급사 코드 지원 pg사\n    - (신) 토스페이먼츠\n    - KSNET\n    - 페이팔 RT\n    - (신) 스마트로\n    - (신) 나이스페이먼츠\n    - 웰컴페이먼츠\n    - (신) 토스페이",
+          "x-portone-description": "카드 발급사 코드(금융결제원 표준코드번호)\n\n발급사 코드 지원 pg사\n- (신) 토스페이먼츠\n- KSNET\n- 페이팔 RT\n- (신) 스마트로\n- (신) 나이스페이먼츠\n- 웰컴페이먼츠\n- (신) 토스페이",
           "x-portone-supported-pgs": [
             "tosspayments",
             "ksnet",
@@ -8280,7 +8280,7 @@
           "description": "카드 발행사 코드(금융결제원 표준코드번호) <br>\n    발행사 코드 지원 pg사\n    <ul><li>(신) 토스페이먼츠\n    </li><li>KSNET\n    </li><li>페이팔 RT\n    </li><li>(신) 스마트로\n    </li><li>(신) 나이스페이먼츠\n    </li><li>웰컴페이먼츠\n    </li><li>(신) 토스페이",
           "type": "string",
           "x-portone-name": "카드 발행사 코드",
-          "x-portone-description": "카드 발행사 코드번호 (금융결제원 표준코드 번호)\n\n    발행사 코드 지원 pg사\n    - (신) 토스페이먼츠\n    - KSNET사\n    - 페이팔 RT\n    - (신) 스마트로\n    - (신) 나이스페이먼츠\n    - 웰컴페이먼츠\n    - (신) 토스페이",
+          "x-portone-description": "카드 발행사 코드(금융결제원 표준코드번호)\n\n발행사 코드 지원 pg사\n- (신) 토스페이먼츠\n- KSNET\n- 페이팔 RT\n- (신) 스마트로\n- (신) 나이스페이먼츠\n- 웰컴페이먼츠\n- (신) 토스페이",
           "x-portone-supported-pgs": [
             "tosspayments",
             "ksnet",
@@ -8308,7 +8308,7 @@
           "type": "integer",
           "x-portone-name": "카드유형",
           "x-portone-summary": "<p>빌링키 발급 한 카드의 유형</p>\n",
-          "x-portone-description": "**주의 : 해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답**됩니다.(ex. 이니시스-빌링)\n- 0 : 신용카드\n- 1 : 체크카드"
+          "x-portone-description": "(주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)\n- 0 : 신용카드\n- 1 : 체크카드"
         },
         "customer_name": {
           "description": "고객(카드소지자) 성함",
@@ -8535,7 +8535,7 @@
           },
           "type": "object",
           "x-portone-name": "주소 구성",
-          "x-portone-description": "배송을 보내는 발신자의 주소 구성",
+          "x-portone-description": "(필수 : 스마트로 - 신모듈)\n\n스마트로 - 신모듈의 경우 기존 파라미터인 addr가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다.",
           "x-portone-per-pg": {
             "smartro_v2": {
               "required": true,
@@ -8628,7 +8628,7 @@
           },
           "type": "object",
           "x-portone-name": "주소 구성",
-          "x-portone-description": "배송을 받는 수신자의 주소 구성",
+          "x-portone-description": "(필수 : 스마트로 - 신모듈)\n\n스마트로 - 신모듈의 경우 기존 파라미터인 addr가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다.",
           "x-portone-per-pg": {
             "smartro_v2": {
               "required": true,
@@ -9346,7 +9346,7 @@
           "type": "string",
           "maxLength": "20",
           "x-portone-name": "결제수단 구분코드",
-          "x-portone-description": "결제건의 결제수단을 구분하는 코드",
+          "x-portone-description": "\n- samsung : 삼성페이\n- card : 신용카드\n- trans : 계좌이체\n- vbank : 가상계좌\n- phone : 휴대폰\n- cultureland : 컬쳐랜드 문화상품권\n- culturegift : 문화상품권\n- smartculture : 스마트문상\n- booknlife : 도서문화상품권\n- point : 포인트\n- ssgpay : SSGPAY\n- lpay : LPAY\n- payco : 페이코\n- kakaopay : 카카오페이\n- tosspay : 토스\n- naverpay : 네이버페이\n- applepay : 애플페이\n- paypal : 페이팔",
           "x-portone-per-pg": {
             "paypal_v2": {
               "description": "<p>페이팔을 통해 카드 결제 외 BanContact, BLIK, eps, giropay 등 다양한 결제 수단으로 결제가 가능하지만,\n<strong>페이팔이 승인 된 결제 수단을 알려주지 않기 때문에</strong> 페이팔의 모든 결제 건의 결제 수단은 paypal로 일괄 저장됩니다.</p>\n"
@@ -9357,7 +9357,7 @@
           "description": "결제환경 구분코드\n     <ul><li> pc:(인증방식)PC결제\n     </li><li> mobile:(인증방식)모바일결제\n     </li><li> api:정기결제 또는 비인증방식결제</li></ul>",
           "type": "string",
           "x-portone-name": "결제환경 구분코드",
-          "x-portone-description": "결제건을 생성한 환경을 구분하는 코드"
+          "x-portone-description": "\n- pc : (인증방식)PC결제\n- mobile : (인증방식)모바일결제\n- api : 정기결제 또는 비인증방식결제"
         },
         "pg_provider": {
           "description": "PG사 구분코드",
@@ -9413,10 +9413,10 @@
           "x-portone-description": "결제건의 은행명 - 실시간계좌이체 결제 건의 경우"
         },
         "card_code": {
-          "description": "카드사 코드번호(금융결제원 표준코드번호)\n     <a href='https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630'>링크보기</a>",
+          "description": "카드사 코드번호(금융결제원 표준코드번호)\n     <a href='https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1'>링크보기</a>",
           "type": "string",
           "x-portone-name": "카드사 코드번호",
-          "x-portone-description": "결제건의 카드사 코드번호 (금융결제원 표준코드번호) - 카드 결제 건의 경우"
+          "x-portone-description": "카드사 코드번호(금융결제원 표준코드번호)\n\n[링크보기](https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1)"
         },
         "card_name": {
           "description": "카드사명 - (신용카드 결제 건의 경우)",
@@ -9428,7 +9428,7 @@
           "description": "결제건의 카드 발급사 코드번호(금융결제원 표준코드번호) - (카드 결제 건의 경우) <br>\n    발급사 코드 지원 pg사\n    <ul><li>(신) 토스페이먼츠\n    </li><li>KSNET\n    </li><li>페이팔 RT\n    </li><li>(신) 스마트로\n    </li><li>(신) 나이스페이먼츠\n    </li><li>웰컴페이먼츠\n    </li><li>토스페이먼츠 브랜드페이\n    </li><li>(신) 토스페이",
           "type": "string",
           "x-portone-name": "카드 발급사 코드",
-          "x-portone-description": "결제건의 카드 발급사 코드번호 (금융결제원 표준코드 번호) - 카드 결제 건의 경우\n\n    발급사 코드 지원 pg사\n    - (신) 토스페이먼츠\n    - KSNET\n    - 페이팔 RT\n    - (신) 스마트로\n    - (신) 나이스페이먼츠\n    - 웰컴페이먼츠\n    - 토스페이먼츠 브랜드페이\n    - (신) 토스페이",
+          "x-portone-description": "결제건의 카드 발급사 코드번호(금융결제원 표준코드번호) - 카드 결제 건의 경우\n\n발급사 코드 지원 pg사\n- (신) 토스페이먼츠\n- KSNET\n- 페이팔 RT\n- (신) 스마트로\n- (신) 나이스페이먼츠\n- 웰컴페이먼츠\n- 토스페이먼츠 브랜드페이\n- (신) 토스페이",
           "x-portone-supported-pgs": [
             "tosspayments",
             "ksnet",
@@ -9450,7 +9450,7 @@
           "description": "결제건의 카드 발행사 코드번호(금융결제원 표준코드번호) - (카드 결제 건의 경우) <br>\n    발행사 코드 지원 pg사\n    <ul><li>(신) 토스페이먼츠\n    </li><li>KSNET\n    </li><li>페이팔 RT\n    </li><li>(신) 스마트로\n    </li><li>(신) 나이스페이먼츠\n    </li><li>웰컴페이먼츠\n    </li><li>토스페이먼츠 브랜드페이\n    </li><li>(신) 토스페이",
           "type": "string",
           "x-portone-name": "카드 발행사 코드",
-          "x-portone-description": "결제건의 카드 발행사 코드번호(금융결제원 표준코드번호) - 카드 결제 건의 경우\n\n    발행사 코드 지원 pg사\n    - (신) 토스페이먼츠\n    - KSNET사\n    - 페이팔 RT\n    - (신) 스마트로\n    - (신) 나이스페이먼츠\n    - 웰컴페이먼츠\n    - 토스페이먼츠 브랜드페이\n    - (신) 토스페이",
+          "x-portone-description": "결제건의 카드 발행사 코드번호(금융결제원 표준코드번호) - 카드 결제 건의 경우\n\n발행사 코드 지원 pg사\n- (신) 토스페이먼츠\n- KSNET\n- 페이팔 RT\n- (신) 스마트로\n- (신) 나이스페이먼츠\n- 웰컴페이먼츠\n- 토스페이먼츠 브랜드페이\n- (신) 토스페이",
           "x-portone-supported-pgs": [
             "tosspayments",
             "ksnet",
@@ -9466,7 +9466,7 @@
           "description": "카드 발행사명으로 발행사 코드를 지원하는 pg사에 한해 제공됩니다. - (카드 결제 건의 경우)",
           "type": "string",
           "x-portone-name": "카드 발행사명",
-          "x-portone-description": "결제 한 카드의 발행사명 - (카드 결제 건의 경우)\n\n    발행사 코드를 지원하는 pg사에 한해 제공됩니다."
+          "x-portone-description": "결제 한 카드의 발행사명 - 카드 결제 건의 경우\n\n    발행사 코드를 지원하는 pg사에 한해 제공됩니다."
         },
         "card_quota": {
           "description": "할부개월 수(0이면 일시불)",
@@ -9482,14 +9482,14 @@
           "type": "string",
           "x-portone-name": "카드번호",
           "x-portone-summary": "<p>결제에 사용된 마스킹된 카드번호</p>\n",
-          "x-portone-description": "7~12번째 자리를 마스킹하는 것이 일반적이지만, PG사의 정책/설정에 따라 상이할 수 있습니다."
+          "x-portone-description": "결제에 사용된 마스킹된 카드번호. 7~12번째 자리를 마스킹하는 것이 일반적이지만, PG사의 정책/설정에 따라 다소 차이가 있을 수 있습니다."
         },
         "card_type": {
-          "description": "카드 구분코드 (주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)\n     <ul><li> 0 : 신용코드\n     </li><li> 1 : 체크카드</li></ul>",
+          "description": "카드 구분코드 (주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)\n     <ul><li> 0 : 신용카드\n     </li><li> 1 : 체크카드</li></ul>",
           "type": "integer",
           "x-portone-name": "카드 구분코드",
           "x-portone-summary": "<p>결제건에 사용된 카드 구분코드</p>\n",
-          "x-portone-description": "**주의 : 해당 정보를 제공하지 않는 일부 PG사의 경우 null로 응답**됩니다.(ex. 이니시스-빌링)\n- 0 : 신용카드\n- 1 : 체크카드"
+          "x-portone-description": "(주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)\n- 0 : 신용카드\n- 1 : 체크카드"
         },
         "vbank_code": {
           "description": "가상계좌 은행 표준코드 - (금융결제원기준)",
@@ -9609,7 +9609,7 @@
           "description": "결제상태\n     <ul><li>ready:미결제\n     </li><li>paid:결제완료\n     </li><li> cancelled:결제취소\n     </li><li> failed:결제실패</li></ul>",
           "type": "string",
           "x-portone-name": "결제상태",
-          "x-portone-description": "결제건의 결제상태"
+          "x-portone-description": "\n- ready : 미결제\n- paid : 결제완료\n- cancelled : 결제취소\n- failed : 결제실패"
         },
         "started_at": {
           "description": "결제시작시점 UNIX timestamp",
@@ -9622,21 +9622,21 @@
           "type": "integer",
           "x-portone-name": "결제 시각",
           "x-portone-summary": "<p>결제건의 결제완료 시각 UNIX timestamp</p>\n",
-          "x-portone-description": "결제상태가 결제완료(paid)가 아닌 경우 0으로 표시됩니다."
+          "x-portone-description": "결제완료시점 UNIX timestamp\n\n결제완료가 아닐 경우 0"
         },
         "failed_at": {
           "description": "결제실패시점 UNIX timestamp <br> 결제실패가 아닐 경우 0",
           "type": "integer",
           "x-portone-name": "실패시각",
           "x-portone-summary": "<p>결제건의 결제실패시각 UNIX timestamp</p>\n",
-          "x-portone-description": "결제상태가 결제실패(failed)가 아닌경우 0으로 표시됩니다."
+          "x-portone-description": "결제실패시점 UNIX timestamp\n\n결제실패가 아닐 경우 0"
         },
         "cancelled_at": {
           "description": "결제취소시점 UNIX timestamp <br> 결제취소가 아닐 경우 0",
           "type": "integer",
           "x-portone-name": "취소시각",
           "x-portone-summary": "<p>결제건의 결제취소시각 UNIX timestamp</p>\n",
-          "x-portone-description": "결제상태가 결제취소(cancelled)가 아닐 경우 0으로 표시됩니다."
+          "x-portone-description": "결제취소시점 UNIX timestamp\n\n결제취소가 아닐 경우 0"
         },
         "fail_reason": {
           "description": "결제실패 사유",
@@ -9656,7 +9656,7 @@
           "description": "매출전표 확인 URL <br> PG사 또는 결제 수단에 따라 매출전표가 없을 수 있습니다.",
           "type": "string",
           "x-portone-name": "매출전표 URL",
-          "x-portone-description": "결제건의 매출전표 URL로 PG사 또는 결제 수단에 따라 매출전표가 없을 수 있습니다.",
+          "x-portone-description": "PG사 또는 결제 수단에 따라 매출전표가 없을 수 있습니다.",
           "x-portone-per-pg": {
             "tosspayments": {
               "description": "<p>테스트 결제건, 간편결제 중 카드 외 결제건은 매출 전표 확인이 불가능합니다.</p>\n"
@@ -9710,7 +9710,7 @@
           "description": "customer_uid가 결제처리에 사용된 상세 용도\n     <ul><li>null:일반결제\n     </li><li> issue:빌링키 발급\n     </li><li> payment:결제\n     </li><li> payment.scheduled:예약결제</li></ul>",
           "type": "string",
           "x-portone-name": "구매자의 결제 수단 식별 고유번호 사용 구분코드",
-          "x-portone-description": "결제처리에 사용된 구매자의 결제 수단 식별 고유번호의 사용 구분코드"
+          "x-portone-description": "customer_uid가 결제처리에 사용된 상세 용도\n- null : 일반결제\n- issue : 빌링키 발급\n- payment : 결제\n- payment.scheduled : 예약결제"
         },
         "promotion": {
           "description": "프로모션 아이디와 할인된 프로모션 비용을 나타냅니다.",
@@ -9998,7 +9998,7 @@
           "description": "취소에 대한 매출전표 확인 URL <br>PG사, 결제 수단에 따라 제공되지 않는 경우도 있음",
           "type": "string",
           "x-portone-name": "취소 매출전표 URL",
-          "x-portone-description": "결제건의 취소 매출전표 확인 URL로 PG사, 결제 수단에 따라 제공되지 않을 수 있습니다."
+          "x-portone-description": "PG사 또는 결제 수단에 따라 매출전표가 없을 수 있습니다."
         }
       }
     },
@@ -10297,7 +10297,7 @@
           "description": "현금영수증 발행대상 타입\n     <ul><li>개인 : `person`\n     </li><li>사업자 : `company`</li></ul>",
           "type": "string",
           "x-portone-name": "타입(대상)",
-          "x-portone-description": "현금영수증 발행 대상의 타입"
+          "x-portone-description": "현금영수증 발행대상 타입\n- 개인 : `person`\n- 사업자 : `company`"
         },
         "amount": {
           "description": "현금영수증 발행금액",
@@ -10378,7 +10378,7 @@
           "description": "현금영수증 발행대상 타입\n     <ul><li>개인 : `person`\n     </li><li>사업자 : `company`</li></ul>",
           "type": "string",
           "x-portone-name": "타입(대상)",
-          "x-portone-description": "현금영수증 발행 대상의 타입"
+          "x-portone-description": "현금영수증 발행대상 타입\n- 개인 : `person`\n- 사업자 : `company`"
         },
         "amount": {
           "description": "현금영수증 발행금액",
@@ -10459,7 +10459,7 @@
           "x-portone-description": "결제 예약건의 고객사 주문번호",
           "x-portone-per-pg": {
             "smartro_v2": {
-              "description": "<p>스마트로는 주문 번호(merchant_uid)에 <strong>특수문자를 허용하고 있지 않습니다.</strong></p>\n<p>따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 재결제를 하는 경우 숫자, 문자(알파벳 소문자와 대문자) 또는 그 조합으로 이루어진 주문 번호를 사용해주세요.\n또한, 주문번호(merchant_uid)가 <strong>최대 40자</strong>를 넘을 수 없습니다. 40자가 넘을 경우 40자까지 잘려서 저장되기 때문에 유의 바랍니다.</p>\n"
+              "description": "<p>스마트로는 주문 번호(merchant_uid)에 <strong>특수문자를 허용하고 있지 않습니다.</strong></p>\n<p>따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 결제를 하는 경우 숫자, 문자(알파벳 소문자와 대문자) 또는 그 조합으로 이루어진 주문 번호를 사용해주세요.\n또한, 주문번호(merchant_uid)가 <strong>최대 40자</strong>를 넘을 수 없습니다. 40자가 넘을 경우 40자까지 잘려서 저장되기 때문에 유의 바랍니다.</p>\n"
             }
           }
         },
@@ -10510,7 +10510,7 @@
           "description": "amount 중 부가세 금액(기본값 : null, 현재 나이스페이먼츠, 이니시스, (신) 나이스페이, 웰컴페이먼츠 지원)",
           "type": "number",
           "x-portone-name": "부가세",
-          "x-portone-description": "결제 예약을 요청한 결제금액 중 부가세",
+          "x-portone-description": "amount 중 부가세 금액\n부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)\n##### 지원되는 PG사\n- 나이스페이먼츠\n- 이니시스\n- (신) 나이스페이\n- 웰컴페이먼츠",
           "x-portone-supported-pgs": [
             "nice",
             "html5_inicis",
@@ -10604,7 +10604,7 @@
           "type": "string",
           "x-portone-name": "Notification URL(Webhook URL)",
           "x-portone-summary": "<p>예약된 결제가 수행된 후 웹훅(Notification)이 발송될 URL을 직접 지정</p>\n",
-          "x-portone-description": "해당 파리미터를 지정하지 않으면 웹훅은 관리자페이지의 Notification URL로 발송 됩니다"
+          "x-portone-description": "예약된 결제가 수행된 후 웹훅(Notification)이 발송될 URL을 직접 지정. (지정되지 않으면 관리자페이지의 Notification URL로 발송됨)"
         },
         "product_type": {
           "description": "판매 상품에 대한 구분 값 (real : 실물상품 digital : 디지털 컨텐츠)",
@@ -10625,7 +10625,7 @@
           "description": "현금영수증 발행대상 구분 값 (person, company, anonymous) <br><br><h5>지원되는 PG사</h5><ul><li>(신) 토스페이</li></ul>(신) 토스페이 경우 anonymous 전달 시 현금영수증 미발행 그 외 경우 현금영수증 자동 발행으로 동작합니다.",
           "type": "string",
           "x-portone-name": "현금영수증 발행대상",
-          "x-portone-description": "현금영수증 발행대상 구분 값",
+          "x-portone-description": "현금영수증 발행대상 구분 값 (person, company, anonymous)\n\n지원되는 PG사\n- (신) 토스페이 ((신) 토스페이 경우 anonymous 전달 시 현금영수증 미발행 그 외 경우 현금영수증 자동 발행으로 동작합니다.)",
           "x-portone-supported-pgs": [
             "tosspay_v2"
           ],
@@ -10672,6 +10672,17 @@
           "type": "integer",
           "x-portone-name": "결제 상품의 개수",
           "x-portone-description": "결제 상품의 개수로 기본값은 1입니다."
+        },
+        "browser_ip": {
+          "description": "구매자 브라우져의 IP",
+          "type": "string",
+          "x-portone-name": "구매자 브라우져의 IP",
+          "x-portone-description": "구매자 브라우져의 IP",
+          "x-portone-per-pg": {
+            "paymentwall": {
+              "description": "<p>빌링키 결제 요청 시 전달</p>\n"
+            }
+          }
         },
         "extra": {
           "description": "결제 예약 요청시 필요한 추가 정보",
@@ -10836,13 +10847,13 @@
           "description": "예약상태\n     <ul><li>scheduled:예약됨(실행되기 전)\n     </li><li>executed:예약된 결제실행완료\n     </li><li>revoked:예약철회</li></ul>",
           "type": "string",
           "x-portone-name": "예약상태",
-          "x-portone-description": "결제건의 예약상태"
+          "x-portone-description": "\n- scheduled : 예약됨(실행되기 전)\n- executed : 예약된 결제실행완료\n- revoked : 예약철회"
         },
         "payment_status": {
           "description": "실행된 결제의 승인 상태\n     <ul><li> null:아직 예약결제가 실행되지 않음(null 이라는 값의 문자열이 아닌 실제 null 입니다)\n     </li><li> paid:예약결제가 결제승인됨\n     </li><li>failed:예약결제가 승인실패됨\n     </li><li> cancelled:예약결제가 결제승인 후 환불됨</li></ul>",
           "type": "string",
           "x-portone-name": "결제상태",
-          "x-portone-description": "예약 결제건의 승인 상태"
+          "x-portone-description": "실행된 결제의 승인 상태\n- null : 아직 예약결제가 실행되지 않음(null 이라는 값의 문자열이 아닌 실제 null 입니다)\n- paid : 예약결제가 결제승인됨\n- failed : 예약결제가 승인실패됨\n- cancelled : 예약결제가 결제승인 후 환불됨"
         },
         "fail_reason": {
           "description": "실행된 결제가 승인 실패인 경우, 실패사유",
@@ -11069,16 +11080,16 @@
           "x-portone-description": "빌링키 발급 한 카드명"
         },
         "card_code": {
-          "description": "카드사 코드(금융결제원 표준코드번호)\n    <a href='https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630'>링크보기</a>",
+          "description": "카드사 코드(금융결제원 표준코드번호)\n    <a href='https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1'>링크보기</a>",
           "type": "string",
           "x-portone-name": "카드사 코드",
-          "x-portone-description": "[카드사 코드 확인하기](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630)"
+          "x-portone-description": "카드사 코드(금융결제원 표준코드번호)\n\n[링크보기](https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1)"
         },
         "card_issuer_code": {
           "description": "카드 발급사 코드(금융결제원 표준코드번호) <br>\n    발급사 코드 지원 pg사\n    <ul><li>(신) 토스페이먼츠\n    </li><li>KSNET\n    </li><li>페이팔 RT\n    </li><li>(신) 스마트로\n    </li><li>(신) 나이스페이먼츠\n    </li><li>웰컴페이먼츠\n    </li><li>(신) 토스페이",
           "type": "string",
           "x-portone-name": "카드 발급사 코드",
-          "x-portone-description": "카드 발급사 코드번호 (금융결제원 표준코드 번호)\n\n    발급사 코드 지원 pg사\n    - (신) 토스페이먼츠\n    - KSNET\n    - 페이팔 RT\n    - (신) 스마트로\n    - (신) 나이스페이먼츠\n    - 웰컴페이먼츠\n    - (신) 토스페이",
+          "x-portone-description": "카드 발급사 코드(금융결제원 표준코드번호)\n\n발급사 코드 지원 pg사\n- (신) 토스페이먼츠\n- KSNET\n- 페이팔 RT\n- (신) 스마트로\n- (신) 나이스페이먼츠\n- 웰컴페이먼츠\n- (신) 토스페이",
           "x-portone-supported-pgs": [
             "tosspayments",
             "ksnet",
@@ -11099,7 +11110,7 @@
           "description": "카드 발행사 코드(금융결제원 표준코드번호) <br>\n    발행사 코드 지원 pg사\n    <ul><li>(신) 토스페이먼츠\n    </li><li>KSNET\n    </li><li>페이팔 RT\n    </li><li>(신) 스마트로\n    </li><li>(신) 나이스페이먼츠\n    </li><li>웰컴페이먼츠\n    </li><li>(신) 토스페이",
           "type": "string",
           "x-portone-name": "카드 발행사 코드",
-          "x-portone-description": "카드 발행사 코드번호 (금융결제원 표준코드 번호)\n\n    발행사 코드 지원 pg사\n    - (신) 토스페이먼츠\n    - KSNET사\n    - 페이팔 RT\n    - (신) 스마트로\n    - (신) 나이스페이먼츠\n    - 웰컴페이먼츠\n    - (신) 토스페이",
+          "x-portone-description": "카드 발행사 코드(금융결제원 표준코드번호)\n\n발행사 코드 지원 pg사\n- (신) 토스페이먼츠\n- KSNET\n- 페이팔 RT\n- (신) 스마트로\n- (신) 나이스페이먼츠\n- 웰컴페이먼츠\n- (신) 토스페이",
           "x-portone-supported-pgs": [
             "tosspayments",
             "ksnet",
@@ -11127,7 +11138,7 @@
           "type": "integer",
           "x-portone-name": "카드유형",
           "x-portone-summary": "<p>빌링키 발급 한 카드의 유형</p>\n",
-          "x-portone-description": "**주의 : 해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답**됩니다.(ex. 이니시스-빌링)\n- 0 : 신용카드\n    - 1 : 체크카드"
+          "x-portone-description": "(주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)\n- 0 : 신용카드\n- 1 : 체크카드"
         },
         "inserted": {
           "description": "빌링키가 등록된 시각 UNIX timestamp",
@@ -11155,7 +11166,7 @@
           "description": "빌링키 발급 실패 유형\n    <ul><li>INVALID_REQUEST (요청된 입력 정보가 유효하지 않은 경우)</li>\n    <li>PG_PROVIDER (PG사에서 오류를 전달한 경우)</li>\n    <li>DB_FAILED(DB CRUD에 실패한 경우)</li></ul>",
           "type": "string",
           "x-portone-name": "실패 유형",
-          "x-portone-description": "빌링키 발급 실패 유형",
+          "x-portone-description": "빌링키 발급 실패 유형\n- INVALID_REQUEST (요청된 입력 정보가 유효하지 않은 경우)\n- PG_PROVIDER (PG사에서 오류를 전달한 경우)\n- DB_FAILED(DB CRUD에 실패한 경우)",
           "x-portone-enum": [
             "INVALID_REQUEST",
             "PG_PROVIDER",
