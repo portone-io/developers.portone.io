@@ -5363,8 +5363,8 @@ paths:
           in: formData
           description: >-
             빌링키와 매핑되며 고객사에서 채번하는 구매자의 결제 수단 식별 고유번호.<br><br>(결제에 사용된 카드정보를 빌링키
-            형태로 저장해두고 재결제에 사용하시려면 customer_uid를 지정해주세요. 비 인증 결제(빌링키) API, 결제 예약
-            API로 재결제를 진행하실 수 있습니다. customer_uid가 없는 경우 저장되지 않습니다.)
+            형태로 저장해두고 결제에 사용하시려면 customer_uid를 지정해주세요. 비 인증 결제(빌링키) API, 결제 예약
+            API로 결제를 진행하실 수 있습니다. customer_uid가 없는 경우 저장되지 않습니다.)
           required: false
           type: string
           maxLength: 80
@@ -5525,30 +5525,30 @@ paths:
           x-portone-description: 결제성공 시 통지될 Notification URL(Webhook URL)
         - name: browser_ip
           in: formData
-          description: '구매자 브라우져(PC)의 IP (필수 : 페이먼트월)'
+          description: 구매자 브라우저(PC)의 IP (입력하지 않은 경우 API를 호출한 클라이언트 IP로 설정됩니다.)
           required: false
           type: string
-          x-portone-name: 브라우져 IP
-          x-portone-description: 구매자 브라우져(PC)의 IP
+          x-portone-name: 브라우저 IP
+          x-portone-description: 구매자 브라우저(PC)의 IP
           x-portone-per-pg:
             paymentwall:
               required: true
         - name: secure_3d_charge_id
           in: formData
-          description: (해외PG 전용) 3D secure 인증 후 재결제시 PG사에서 부여한 결제 ID
+          description: (해외PG 전용) 3D secure 인증 후 결제시 PG사에서 부여한 결제 ID
           required: false
           type: string
           x-portone-name: 결제 ID
-          x-portone-description: 해외PG 전용 파라미터로 3D secure 인증 후 재결제시 PG사에서 부여한 결제 ID
+          x-portone-description: 해외PG 전용 파라미터로 3D secure 인증 후 결제시 PG사에서 부여한 결제 ID
           x-portone-supported-pgs:
             - paymentwall
         - name: secure_3d_token
           in: formData
-          description: (해외PG 전용) 3D secure 인증 후 재결제시 PG사에서 부여한 토큰
+          description: (해외PG 전용) 3D secure 인증 후 결제시 PG사에서 부여한 토큰
           required: false
           type: string
           x-portone-name: 토큰
-          x-portone-description: 해외PG 전용 파라미터로 3D secure 인증 후 재결제시 PG사에서 부여한 토큰
+          x-portone-description: 해외PG 전용 파라미터로 3D secure 인증 후 결제시 PG사에서 부여한 토큰
           x-portone-supported-pgs:
             - paymentwall
         - name: product_type
@@ -5602,8 +5602,8 @@ paths:
         - subscribe
       summary: 비 인증 결제(빌링키) API
       description: >-
-        저장된 빌링키로 재결제를 하는 경우 사용됩니다. PG사 결제창, 비 인증 결제(일회성)API 또는 빌링키 발급 API로 등록된
-        빌링키가 있을 때 매칭되는 customer_uid로 재결제를 진행할 수 있습니다.
+        저장된 빌링키로 결제를 하는 경우 사용됩니다. PG사 결제창, 비 인증 결제(일회성)API 또는 빌링키 발급 API로 등록된
+        빌링키가 있을 때 매칭되는 customer_uid로 결제를 진행할 수 있습니다.
       operationId: again
       consumes:
         - application/json
@@ -5635,7 +5635,7 @@ paths:
                 <p>스마트로는 주문 번호(merchant_uid)에 <strong>특수문자를 허용하고 있지
                 않습니다.</strong></p>
 
-                <p>따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 재결제를 하는 경우 숫자, 문자(알파벳
+                <p>따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 결제를 하는 경우 숫자, 문자(알파벳
                 소문자와 대문자) 또는 그 조합으로 이루어진 주문 번호를 사용해주세요.
 
                 또한, 주문번호(merchant_uid)가 <strong>최대 40자</strong>를 넘을 수 없습니다. 40자가
@@ -5848,11 +5848,11 @@ paths:
           x-portone-description: 결제성공 시 통지될 Notification URL(Webhook URL)
         - name: browser_ip
           in: formData
-          description: '구매자 브라우져(PC)의 IP <br> (필수 : 페이먼트월)'
+          description: 구매자 브라우저(PC)의 IP <br> (입력하지 않은 경우 API를 호출한 클라이언트 IP로 설정됩니다.)
           required: false
           type: string
           x-portone-name: 브라우저의 IP
-          x-portone-description: 구매자 브라우져(PC)의 IP
+          x-portone-description: 구매자 브라우저(PC)의 IP (입력하지 않은 경우 API를 호출한 클라이언트 IP로 설정됩니다.)
           x-portone-per-pg:
             paymentwall:
               required: true
@@ -5989,10 +5989,10 @@ paths:
 
             <p>페이팔은 이상 거래를 줄이기 위해 Risk Data Acquisition 정책을 시행하고 있습니다. 일반 결제나
             빌링키 발급은 페이팔 버튼을 통해 진행되기 때문에 페이팔이 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 있지만,
-            발급 된 빌링키로 재결제 (again API 호출) 할때는 고객사 서버에서 포트원 API를 통해 페이팔 API가 호출되는
+            발급 된 빌링키로 결제 (again API 호출) 할때는 고객사 서버에서 포트원 API를 통해 페이팔 API가 호출되는
             구조이기 때문에 이상 거래 판단을 위한 구매자 접속 정보를 얻을 수 없습니다.
 
-            따라서 발급 된 빌링키로 재결제를 할때는 구매자의 브라우저/디바이스 접속 정보를 페이팔에 전달할 수 있도록 again
+            따라서 발급 된 빌링키로 결제를 할때는 구매자의 브라우저/디바이스 접속 정보를 페이팔에 전달할 수 있도록 again
             API가 호출되는 <strong>고객사 클라이언트 페이지에 반드시 페이팔 Fraudnet 스크립트/Manges SDK를
             아래와 같이 추가</strong>해야 합니다.</p>
 
@@ -6231,7 +6231,7 @@ paths:
             합니다.</li>
 
             <li>계정의 산업 종류를 확인하신 뒤, loadUI 호출 해 빌링키를 발급 받을때 그리고 발급 된 빌링키로
-            재결제(again API 호출)할때 모두 bypass.paypal_v2 객체에 아래와 같은 형식으로 전달해주셔야
+            결제(again API 호출)할때 모두 bypass.paypal_v2 객체에 아래와 같은 형식으로 전달해주셔야
             합니다.</li>
 
             </ol>
@@ -6588,7 +6588,7 @@ paths:
             주문자 우편번호<br>custom_data : 결제수행 시 사용될 custom_data 값<br>notice_url :
             예약결제수행 후 통지될 Notification URL(지정되지 않으면 관리자페이지의 Notification URL로
             발송)<br>product_type :
-                            판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠) (필수 : KSNET)<br>cash_receipt_type : 현금영수증 발행대상 (person, company, anonymous) ((신) 토스페이의 경우 anonymous 전달 시 미발행 그 외 경우 현금영수증 자동발행으로 동작합니다.)<br>card_quota : 카드할부개월수. 2 이상의 integer 할부개월수 적용(결제금액 50,000원 이상 한정, default = 0(일시불))<br>interest_free_by_merchant : 카드할부처리시, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 고객사가 지불하고자 PG사와 계약된 경우(default : false) (현재, 나이스페이먼츠, KSNET만 지원됨)<br>use_card_point : 승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요(default : false) (현재, 나이스페이먼츠만 지원됨) <br>product_count : 결제 상품의 개수 (Default : 1) <br>bypass : 포트원이 정규화하기 어려운 JSON string 형식의 PG사별 specific 파라미터.전달 한 값은 가공 없이 그대로 PG사로 전달 됩니다. <br><br>promotion_id: `promotion-id-`로 시작하며, 프로모션 아이디에 설정된 할인 내용을 적용하여 결제합니다. 비인증 결제 경우 빌링키 발급시 저장된 마스킹된 카드번호를 통해 프로모션 적용 여부가 결정됩니다.<br><br>extra.naverUseCfm : 이용완료일 YYYYMMDD (네이버페이 반복결제 계약 시 이용완료일 필수로 설정된 고객사에 한함)
+                            판매 상품에 대한 구분 값 (real : 실물상품, digital : 디지털 컨텐츠) (필수 : KSNET)<br>cash_receipt_type : 현금영수증 발행대상 (person, company, anonymous) ((신) 토스페이의 경우 anonymous 전달 시 미발행 그 외 경우 현금영수증 자동발행으로 동작합니다.)<br>card_quota : 카드할부개월수. 2 이상의 integer 할부개월수 적용(결제금액 50,000원 이상 한정, default = 0(일시불))<br>interest_free_by_merchant : 카드할부처리시, 할부이자가 발생하는 경우(카드사 무이자 프로모션 제외) 부과되는 할부이자를 고객사가 지불하고자 PG사와 계약된 경우(default : false) (현재, 나이스페이먼츠, KSNET만 지원됨)<br>use_card_point : 승인요청시 카드사 포인트 차감하며 결제승인처리할지 flag. PG사 영업담당자와 계약 당시 사전 협의 필요(default : false) (현재, 나이스페이먼츠만 지원됨) <br>product_count : 결제 상품의 개수 (Default : 1)<br>browser_ip : 결제고객의 IP <br><br>bypass : 포트원이 정규화하기 어려운 JSON string 형식의 PG사별 specific 파라미터.전달 한 값은 가공 없이 그대로 PG사로 전달 됩니다. <br><br>promotion_id: `promotion-id-`로 시작하며, 프로모션 아이디에 설정된 할인 내용을 적용하여 결제합니다. 비인증 결제 경우 빌링키 발급시 저장된 마스킹된 카드번호를 통해 프로모션 적용 여부가 결정됩니다.<br><br>extra.naverUseCfm : 이용완료일 YYYYMMDD (네이버페이 반복결제 계약 시 이용완료일 필수로 설정된 고객사에 한함)
           required: true
           type: array
           items:
@@ -7759,12 +7759,14 @@ definitions:
         description: '인증결과-성별 <ul><li>male:남성</li> <li>female:여성</li></ul>'
         type: string
         x-portone-name: 성별
-        x-portone-description: 인증된 사용자의 성별
+        x-portone-description: |-
+          - male : 남성
+          - female : 여성
       birthday:
         description: 인증결과-생년월일 <br> ISO8601 형식의 문자열. YYYY-MM-DD 10자리 문자열
         type: string
         x-portone-name: 생년월일
-        x-portone-description: 인증된 사용자의 생년월일 ISO8601 형식의 문자열. `YYYY-MM-DD` 10자리 문자열
+        x-portone-description: ISO8601 형식의 문자열. YYYY-MM-DD 10자리 문자열
       foreigner:
         description: >-
           인증결과-외국인 여부.<br><b>다날 본인인증서비스 계약시</b>외국인 구분기능을 추가 요청하지 않은 경우 항상
@@ -7775,7 +7777,7 @@ definitions:
         x-portone-summary: |
           <p>인증된 사용자의 외국인 여부</p>
         x-portone-description: |-
-          다날 본인인증서비스 계약시 외국인 구분기능을 추가 요청하지 않은 경우 **항상 false를 응답**합니다.
+          **다날 본인인증서비스 계약시** 외국인 구분기능을 추가 요청하지 않은 경우 항상 **false**를 응답합니다.
           - true : 외국인
           - false : 내국인
       phone:
@@ -7806,15 +7808,21 @@ definitions:
         x-portone-name: 통신사
         x-portone-summary: |
           <p>인증에 사용된 휴대폰번호의 통신사 (신용카드 본인인증의 경우 해당사항없음)</p>
-        x-portone-description: |-
-          통신사 사전승인이 이뤄지지 않으면 carrier 속성은 존재하지 않습니다.
+        x-portone-description: >-
+          사용된 휴대폰번호의 통신사(신용카드 본인인증의 경우 해당사항없음). 통신사 사전승인이 이뤄지지 않으면 carrier 속성은
+          존재하지 않습니다. 통신사 사전승인이 필요하므로 cs@portone.io 로 다날 CPID 와 함께 사용승인 요청주시면
+          안내도와드리겠습니다.
 
-          통신사 사전승인이 필요하므로 cs@portone.io 로 다날 CPID 와 함께 사용승인 요청주시면 안내도와드리겠습니다.
           - SKT
+
           - KT
+
           - LGT
+
           - SKT_MVNO
+
           - KT_MVNO
+
           - LGT_MVNO
       certified:
         description: 인증성공여부
@@ -7856,12 +7864,13 @@ definitions:
         x-portone-summary: |
           <p>본인인증 결과 외국인 여부(nullable)</p>
         x-portone-description: >-
-          다날 본인인증서비스 계약시 외국인 구분기능 추가 요청을 해주셔야 사용이 가능합니다. 요청을 하지 않은 경우 **null**을
-          응답합니다.
+          - true : 외국인
 
-          - true:외국인
+          - false : 내국인
 
-          - false:내국인
+
+          **다날 본인인증서비스 계약시** 외국인 구분기능 추가 요청을 해주셔야 사용이 가능합니다. 요청을 하지 않은 경우
+          **null**을 응답합니다.
   CertificationResponse:
     allOf:
       - $ref: '#/definitions/ResponseAnnotation'
@@ -7925,12 +7934,14 @@ definitions:
       card_code:
         description: |-
           카드사 코드(금융결제원 표준코드번호)
-               <a href='https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630'>링크보기</a>
+               <a href='https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1'>링크보기</a>
         type: string
         x-portone-name: 카드사 코드
         x-portone-description: >-
-          [카드사 코드
-          확인하기](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630)
+          카드사 코드(금융결제원 표준코드번호)
+
+
+          [링크보기](https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1)
       card_issuer_code:
         description: |-
           카드 발급사 코드(금융결제원 표준코드번호) <br>
@@ -7945,16 +7956,16 @@ definitions:
         type: string
         x-portone-name: 카드 발급사 코드
         x-portone-description: |-
-          카드 발급사 코드번호 (금융결제원 표준코드 번호)
+          카드 발급사 코드(금융결제원 표준코드번호)
 
-              발급사 코드 지원 pg사
-              - (신) 토스페이먼츠
-              - KSNET
-              - 페이팔 RT
-              - (신) 스마트로
-              - (신) 나이스페이먼츠
-              - 웰컴페이먼츠
-              - (신) 토스페이
+          발급사 코드 지원 pg사
+          - (신) 토스페이먼츠
+          - KSNET
+          - 페이팔 RT
+          - (신) 스마트로
+          - (신) 나이스페이먼츠
+          - 웰컴페이먼츠
+          - (신) 토스페이
         x-portone-supported-pgs:
           - tosspayments
           - ksnet
@@ -7985,16 +7996,16 @@ definitions:
         type: string
         x-portone-name: 카드 발행사 코드
         x-portone-description: |-
-          카드 발행사 코드번호 (금융결제원 표준코드 번호)
+          카드 발행사 코드(금융결제원 표준코드번호)
 
-              발행사 코드 지원 pg사
-              - (신) 토스페이먼츠
-              - KSNET사
-              - 페이팔 RT
-              - (신) 스마트로
-              - (신) 나이스페이먼츠
-              - 웰컴페이먼츠
-              - (신) 토스페이
+          발행사 코드 지원 pg사
+          - (신) 토스페이먼츠
+          - KSNET
+          - 페이팔 RT
+          - (신) 스마트로
+          - (신) 나이스페이먼츠
+          - 웰컴페이먼츠
+          - (신) 토스페이
         x-portone-supported-pgs:
           - tosspayments
           - ksnet
@@ -8027,7 +8038,7 @@ definitions:
         x-portone-summary: |
           <p>빌링키 발급 한 카드의 유형</p>
         x-portone-description: |-
-          **주의 : 해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답**됩니다.(ex. 이니시스-빌링)
+          (주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)
           - 0 : 신용카드
           - 1 : 체크카드
       customer_name:
@@ -8191,7 +8202,10 @@ definitions:
                 required: true
         type: object
         x-portone-name: 주소 구성
-        x-portone-description: 배송을 보내는 발신자의 주소 구성
+        x-portone-description: |-
+          (필수 : 스마트로 - 신모듈)
+
+          스마트로 - 신모듈의 경우 기존 파라미터인 addr가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다.
         x-portone-per-pg:
           smartro_v2:
             required: true
@@ -8260,7 +8274,10 @@ definitions:
                 required: true
         type: object
         x-portone-name: 주소 구성
-        x-portone-description: 배송을 받는 수신자의 주소 구성
+        x-portone-description: |-
+          (필수 : 스마트로 - 신모듈)
+
+          스마트로 - 신모듈의 경우 기존 파라미터인 addr가 아닌 해당 파라미터를 이용한 주소 설정이 필요합니다.
         x-portone-per-pg:
           smartro_v2:
             required: true
@@ -8818,7 +8835,26 @@ definitions:
         type: string
         maxLength: '20'
         x-portone-name: 결제수단 구분코드
-        x-portone-description: 결제건의 결제수단을 구분하는 코드
+        x-portone-description: |-
+
+          - samsung : 삼성페이
+          - card : 신용카드
+          - trans : 계좌이체
+          - vbank : 가상계좌
+          - phone : 휴대폰
+          - cultureland : 컬쳐랜드 문화상품권
+          - culturegift : 문화상품권
+          - smartculture : 스마트문상
+          - booknlife : 도서문화상품권
+          - point : 포인트
+          - ssgpay : SSGPAY
+          - lpay : LPAY
+          - payco : 페이코
+          - kakaopay : 카카오페이
+          - tosspay : 토스
+          - naverpay : 네이버페이
+          - applepay : 애플페이
+          - paypal : 페이팔
         x-portone-per-pg:
           paypal_v2:
             description: >
@@ -8835,7 +8871,11 @@ definitions:
                </li><li> api:정기결제 또는 비인증방식결제</li></ul>
         type: string
         x-portone-name: 결제환경 구분코드
-        x-portone-description: 결제건을 생성한 환경을 구분하는 코드
+        x-portone-description: |-
+
+          - pc : (인증방식)PC결제
+          - mobile : (인증방식)모바일결제
+          - api : 정기결제 또는 비인증방식결제
       pg_provider:
         description: PG사 구분코드
         type: string
@@ -8884,10 +8924,14 @@ definitions:
       card_code:
         description: |-
           카드사 코드번호(금융결제원 표준코드번호)
-               <a href='https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630'>링크보기</a>
+               <a href='https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1'>링크보기</a>
         type: string
         x-portone-name: 카드사 코드번호
-        x-portone-description: 결제건의 카드사 코드번호 (금융결제원 표준코드번호) - 카드 결제 건의 경우
+        x-portone-description: >-
+          카드사 코드번호(금융결제원 표준코드번호)
+
+
+          [링크보기](https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1)
       card_name:
         description: 카드사명 - (신용카드 결제 건의 경우)
         type: string
@@ -8908,17 +8952,17 @@ definitions:
         type: string
         x-portone-name: 카드 발급사 코드
         x-portone-description: |-
-          결제건의 카드 발급사 코드번호 (금융결제원 표준코드 번호) - 카드 결제 건의 경우
+          결제건의 카드 발급사 코드번호(금융결제원 표준코드번호) - 카드 결제 건의 경우
 
-              발급사 코드 지원 pg사
-              - (신) 토스페이먼츠
-              - KSNET
-              - 페이팔 RT
-              - (신) 스마트로
-              - (신) 나이스페이먼츠
-              - 웰컴페이먼츠
-              - 토스페이먼츠 브랜드페이
-              - (신) 토스페이
+          발급사 코드 지원 pg사
+          - (신) 토스페이먼츠
+          - KSNET
+          - 페이팔 RT
+          - (신) 스마트로
+          - (신) 나이스페이먼츠
+          - 웰컴페이먼츠
+          - 토스페이먼츠 브랜드페이
+          - (신) 토스페이
         x-portone-supported-pgs:
           - tosspayments
           - ksnet
@@ -8953,15 +8997,15 @@ definitions:
         x-portone-description: |-
           결제건의 카드 발행사 코드번호(금융결제원 표준코드번호) - 카드 결제 건의 경우
 
-              발행사 코드 지원 pg사
-              - (신) 토스페이먼츠
-              - KSNET사
-              - 페이팔 RT
-              - (신) 스마트로
-              - (신) 나이스페이먼츠
-              - 웰컴페이먼츠
-              - 토스페이먼츠 브랜드페이
-              - (신) 토스페이
+          발행사 코드 지원 pg사
+          - (신) 토스페이먼츠
+          - KSNET
+          - 페이팔 RT
+          - (신) 스마트로
+          - (신) 나이스페이먼츠
+          - 웰컴페이먼츠
+          - 토스페이먼츠 브랜드페이
+          - (신) 토스페이
         x-portone-supported-pgs:
           - tosspayments
           - ksnet
@@ -8976,7 +9020,7 @@ definitions:
         type: string
         x-portone-name: 카드 발행사명
         x-portone-description: |-
-          결제 한 카드의 발행사명 - (카드 결제 건의 경우)
+          결제 한 카드의 발행사명 - 카드 결제 건의 경우
 
               발행사 코드를 지원하는 pg사에 한해 제공됩니다.
       card_quota:
@@ -8996,18 +9040,20 @@ definitions:
         x-portone-name: 카드번호
         x-portone-summary: |
           <p>결제에 사용된 마스킹된 카드번호</p>
-        x-portone-description: '7~12번째 자리를 마스킹하는 것이 일반적이지만, PG사의 정책/설정에 따라 상이할 수 있습니다.'
+        x-portone-description: >-
+          결제에 사용된 마스킹된 카드번호. 7~12번째 자리를 마스킹하는 것이 일반적이지만, PG사의 정책/설정에 따라 다소 차이가
+          있을 수 있습니다.
       card_type:
         description: |-
           카드 구분코드 (주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)
-               <ul><li> 0 : 신용코드
+               <ul><li> 0 : 신용카드
                </li><li> 1 : 체크카드</li></ul>
         type: integer
         x-portone-name: 카드 구분코드
         x-portone-summary: |
           <p>결제건에 사용된 카드 구분코드</p>
         x-portone-description: |-
-          **주의 : 해당 정보를 제공하지 않는 일부 PG사의 경우 null로 응답**됩니다.(ex. 이니시스-빌링)
+          (주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)
           - 0 : 신용카드
           - 1 : 체크카드
       vbank_code:
@@ -9118,7 +9164,12 @@ definitions:
                </li><li> failed:결제실패</li></ul>
         type: string
         x-portone-name: 결제상태
-        x-portone-description: 결제건의 결제상태
+        x-portone-description: |-
+
+          - ready : 미결제
+          - paid : 결제완료
+          - cancelled : 결제취소
+          - failed : 결제실패
       started_at:
         description: 결제시작시점 UNIX timestamp
         type: integer
@@ -9130,21 +9181,30 @@ definitions:
         x-portone-name: 결제 시각
         x-portone-summary: |
           <p>결제건의 결제완료 시각 UNIX timestamp</p>
-        x-portone-description: 결제상태가 결제완료(paid)가 아닌 경우 0으로 표시됩니다.
+        x-portone-description: |-
+          결제완료시점 UNIX timestamp
+
+          결제완료가 아닐 경우 0
       failed_at:
         description: 결제실패시점 UNIX timestamp <br> 결제실패가 아닐 경우 0
         type: integer
         x-portone-name: 실패시각
         x-portone-summary: |
           <p>결제건의 결제실패시각 UNIX timestamp</p>
-        x-portone-description: 결제상태가 결제실패(failed)가 아닌경우 0으로 표시됩니다.
+        x-portone-description: |-
+          결제실패시점 UNIX timestamp
+
+          결제실패가 아닐 경우 0
       cancelled_at:
         description: 결제취소시점 UNIX timestamp <br> 결제취소가 아닐 경우 0
         type: integer
         x-portone-name: 취소시각
         x-portone-summary: |
           <p>결제건의 결제취소시각 UNIX timestamp</p>
-        x-portone-description: 결제상태가 결제취소(cancelled)가 아닐 경우 0으로 표시됩니다.
+        x-portone-description: |-
+          결제취소시점 UNIX timestamp
+
+          결제취소가 아닐 경우 0
       fail_reason:
         description: 결제실패 사유
         type: string
@@ -9163,7 +9223,7 @@ definitions:
         description: 매출전표 확인 URL <br> PG사 또는 결제 수단에 따라 매출전표가 없을 수 있습니다.
         type: string
         x-portone-name: 매출전표 URL
-        x-portone-description: 결제건의 매출전표 URL로 PG사 또는 결제 수단에 따라 매출전표가 없을 수 있습니다.
+        x-portone-description: PG사 또는 결제 수단에 따라 매출전표가 없을 수 있습니다.
         x-portone-per-pg:
           tosspayments:
             description: |
@@ -9215,7 +9275,12 @@ definitions:
                </li><li> payment.scheduled:예약결제</li></ul>
         type: string
         x-portone-name: 구매자의 결제 수단 식별 고유번호 사용 구분코드
-        x-portone-description: 결제처리에 사용된 구매자의 결제 수단 식별 고유번호의 사용 구분코드
+        x-portone-description: |-
+          customer_uid가 결제처리에 사용된 상세 용도
+          - null : 일반결제
+          - issue : 빌링키 발급
+          - payment : 결제
+          - payment.scheduled : 예약결제
       promotion:
         description: 프로모션 아이디와 할인된 프로모션 비용을 나타냅니다.
         properties:
@@ -9426,7 +9491,7 @@ definitions:
         description: '취소에 대한 매출전표 확인 URL <br>PG사, 결제 수단에 따라 제공되지 않는 경우도 있음'
         type: string
         x-portone-name: 취소 매출전표 URL
-        x-portone-description: '결제건의 취소 매출전표 확인 URL로 PG사, 결제 수단에 따라 제공되지 않을 수 있습니다.'
+        x-portone-description: PG사 또는 결제 수단에 따라 매출전표가 없을 수 있습니다.
   PaymentPrepareAnnotation:
     required:
       - total
@@ -9645,7 +9710,10 @@ definitions:
                </li><li>사업자 : `company`</li></ul>
         type: string
         x-portone-name: 타입(대상)
-        x-portone-description: 현금영수증 발행 대상의 타입
+        x-portone-description: |-
+          현금영수증 발행대상 타입
+          - 개인 : `person`
+          - 사업자 : `company`
       amount:
         description: 현금영수증 발행금액
         type: integer
@@ -9709,7 +9777,10 @@ definitions:
                </li><li>사업자 : `company`</li></ul>
         type: string
         x-portone-name: 타입(대상)
-        x-portone-description: 현금영수증 발행 대상의 타입
+        x-portone-description: |-
+          현금영수증 발행대상 타입
+          - 개인 : `person`
+          - 사업자 : `company`
       amount:
         description: 현금영수증 발행금액
         type: integer
@@ -9773,8 +9844,8 @@ definitions:
               <p>스마트로는 주문 번호(merchant_uid)에 <strong>특수문자를 허용하고 있지
               않습니다.</strong></p>
 
-              <p>따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 재결제를 하는 경우 숫자, 문자(알파벳
-              소문자와 대문자) 또는 그 조합으로 이루어진 주문 번호를 사용해주세요.
+              <p>따라서 결제창에서 일반결제를 할때와 발급 된 빌링키로 API를 통해 결제를 하는 경우 숫자, 문자(알파벳 소문자와
+              대문자) 또는 그 조합으로 이루어진 주문 번호를 사용해주세요.
 
               또한, 주문번호(merchant_uid)가 <strong>최대 40자</strong>를 넘을 수 없습니다. 40자가
               넘을 경우 40자까지 잘려서 저장되기 때문에 유의 바랍니다.</p>
@@ -9825,7 +9896,14 @@ definitions:
         description: 'amount 중 부가세 금액(기본값 : null, 현재 나이스페이먼츠, 이니시스, (신) 나이스페이, 웰컴페이먼츠 지원)'
         type: number
         x-portone-name: 부가세
-        x-portone-description: 결제 예약을 요청한 결제금액 중 부가세
+        x-portone-description: |-
+          amount 중 부가세 금액
+          부가세를 지정할 수 있으며, tax_free=0, vat_amount=0으로 영세율로 결제 가능합니다.(기본값: null)
+          ##### 지원되는 PG사
+          - 나이스페이먼츠
+          - 이니시스
+          - (신) 나이스페이
+          - 웰컴페이먼츠
         x-portone-supported-pgs:
           - nice
           - html5_inicis
@@ -9906,7 +9984,9 @@ definitions:
         x-portone-name: Notification URL(Webhook URL)
         x-portone-summary: |
           <p>예약된 결제가 수행된 후 웹훅(Notification)이 발송될 URL을 직접 지정</p>
-        x-portone-description: 해당 파리미터를 지정하지 않으면 웹훅은 관리자페이지의 Notification URL로 발송 됩니다
+        x-portone-description: >-
+          예약된 결제가 수행된 후 웹훅(Notification)이 발송될 URL을 직접 지정. (지정되지 않으면 관리자페이지의
+          Notification URL로 발송됨)
       product_type:
         description: '판매 상품에 대한 구분 값 (real : 실물상품 digital : 디지털 컨텐츠)'
         type: string
@@ -9925,7 +10005,14 @@ definitions:
           그 외 경우 현금영수증 자동 발행으로 동작합니다.
         type: string
         x-portone-name: 현금영수증 발행대상
-        x-portone-description: 현금영수증 발행대상 구분 값
+        x-portone-description: >-
+          현금영수증 발행대상 구분 값 (person, company, anonymous)
+
+
+          지원되는 PG사
+
+          - (신) 토스페이 ((신) 토스페이 경우 anonymous 전달 시 현금영수증 미발행 그 외 경우 현금영수증 자동 발행으로
+          동작합니다.)
         x-portone-supported-pgs:
           - tosspay_v2
         x-portone-per-pg:
@@ -9972,6 +10059,15 @@ definitions:
         type: integer
         x-portone-name: 결제 상품의 개수
         x-portone-description: 결제 상품의 개수로 기본값은 1입니다.
+      browser_ip:
+        description: 구매자 브라우져의 IP
+        type: string
+        x-portone-name: 구매자 브라우져의 IP
+        x-portone-description: 구매자 브라우져의 IP
+        x-portone-per-pg:
+          paymentwall:
+            description: |
+              <p>빌링키 결제 요청 시 전달</p>
       extra:
         description: 결제 예약 요청시 필요한 추가 정보
         properties:
@@ -10125,7 +10221,11 @@ definitions:
                </li><li>revoked:예약철회</li></ul>
         type: string
         x-portone-name: 예약상태
-        x-portone-description: 결제건의 예약상태
+        x-portone-description: |-
+
+          - scheduled : 예약됨(실행되기 전)
+          - executed : 예약된 결제실행완료
+          - revoked : 예약철회
       payment_status:
         description: |-
           실행된 결제의 승인 상태
@@ -10135,7 +10235,12 @@ definitions:
                </li><li> cancelled:예약결제가 결제승인 후 환불됨</li></ul>
         type: string
         x-portone-name: 결제상태
-        x-portone-description: 예약 결제건의 승인 상태
+        x-portone-description: |-
+          실행된 결제의 승인 상태
+          - null : 아직 예약결제가 실행되지 않음(null 이라는 값의 문자열이 아닌 실제 null 입니다)
+          - paid : 예약결제가 결제승인됨
+          - failed : 예약결제가 승인실패됨
+          - cancelled : 예약결제가 결제승인 후 환불됨
       fail_reason:
         description: '실행된 결제가 승인 실패인 경우, 실패사유'
         type: string
@@ -10302,12 +10407,14 @@ definitions:
       card_code:
         description: |-
           카드사 코드(금융결제원 표준코드번호)
-              <a href='https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630'>링크보기</a>
+              <a href='https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1'>링크보기</a>
         type: string
         x-portone-name: 카드사 코드
         x-portone-description: >-
-          [카드사 코드
-          확인하기](https://chaifinance.notion.site/53589280bbc94fab938d93257d452216?v=eb405baf52134b3f90d438e3bf763630)
+          카드사 코드(금융결제원 표준코드번호)
+
+
+          [링크보기](https://developers.portone.io/opi/ko/support/code-info/card-code?v=v1)
       card_issuer_code:
         description: |-
           카드 발급사 코드(금융결제원 표준코드번호) <br>
@@ -10322,16 +10429,16 @@ definitions:
         type: string
         x-portone-name: 카드 발급사 코드
         x-portone-description: |-
-          카드 발급사 코드번호 (금융결제원 표준코드 번호)
+          카드 발급사 코드(금융결제원 표준코드번호)
 
-              발급사 코드 지원 pg사
-              - (신) 토스페이먼츠
-              - KSNET
-              - 페이팔 RT
-              - (신) 스마트로
-              - (신) 나이스페이먼츠
-              - 웰컴페이먼츠
-              - (신) 토스페이
+          발급사 코드 지원 pg사
+          - (신) 토스페이먼츠
+          - KSNET
+          - 페이팔 RT
+          - (신) 스마트로
+          - (신) 나이스페이먼츠
+          - 웰컴페이먼츠
+          - (신) 토스페이
         x-portone-supported-pgs:
           - tosspayments
           - ksnet
@@ -10362,16 +10469,16 @@ definitions:
         type: string
         x-portone-name: 카드 발행사 코드
         x-portone-description: |-
-          카드 발행사 코드번호 (금융결제원 표준코드 번호)
+          카드 발행사 코드(금융결제원 표준코드번호)
 
-              발행사 코드 지원 pg사
-              - (신) 토스페이먼츠
-              - KSNET사
-              - 페이팔 RT
-              - (신) 스마트로
-              - (신) 나이스페이먼츠
-              - 웰컴페이먼츠
-              - (신) 토스페이
+          발행사 코드 지원 pg사
+          - (신) 토스페이먼츠
+          - KSNET
+          - 페이팔 RT
+          - (신) 스마트로
+          - (신) 나이스페이먼츠
+          - 웰컴페이먼츠
+          - (신) 토스페이
         x-portone-supported-pgs:
           - tosspayments
           - ksnet
@@ -10404,9 +10511,9 @@ definitions:
         x-portone-summary: |
           <p>빌링키 발급 한 카드의 유형</p>
         x-portone-description: |-
-          **주의 : 해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답**됩니다.(ex. 이니시스-빌링)
+          (주의)해당 정보를 제공하지 않는 일부 PG사의 경우 null 로 응답됨(ex. 이니시스-빌링)
           - 0 : 신용카드
-              - 1 : 체크카드
+          - 1 : 체크카드
       inserted:
         description: 빌링키가 등록된 시각 UNIX timestamp
         type: integer
@@ -10432,7 +10539,11 @@ definitions:
               <li>DB_FAILED(DB CRUD에 실패한 경우)</li></ul>
         type: string
         x-portone-name: 실패 유형
-        x-portone-description: 빌링키 발급 실패 유형
+        x-portone-description: |-
+          빌링키 발급 실패 유형
+          - INVALID_REQUEST (요청된 입력 정보가 유효하지 않은 경우)
+          - PG_PROVIDER (PG사에서 오류를 전달한 경우)
+          - DB_FAILED(DB CRUD에 실패한 경우)
         x-portone-enum:
           - INVALID_REQUEST
           - PG_PROVIDER
