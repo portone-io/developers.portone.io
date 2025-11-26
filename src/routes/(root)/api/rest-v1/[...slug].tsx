@@ -64,13 +64,13 @@ export default function ApiV1Docs() {
         <V2MigrationBanner lang="ko" />
         <Hint style="danger">
           <prose.p>
-            2024년 9월 1일부로 포트원 V1 API에 대해 일부 보안 규격이 지원
-            종료됩니다.
+            2026년 1월 26일부로 포트원 V1 결제내역 단건조회 API에 동작 변경이
+            있습니다.
           </prose.p>
           <prose.p>
             자세한 사항은{" "}
-            <prose.a href="/opi/ko/support/tls-support?v=v1">
-              TLS 지원 범위
+            <prose.a href="https://help.portone.io/news/content/notice-v1-api-2025-11-25">
+              V1 결제내역 단건조회 API 동작 변경 안내
             </prose.a>
             를 참고해주세요.
           </prose.p>
