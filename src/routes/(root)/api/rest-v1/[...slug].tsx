@@ -3,6 +3,7 @@ import { useParams } from "@solidjs/router";
 import { createMemo, createSignal, onMount } from "solid-js";
 
 import V2MigrationBanner from "~/components/gitbook/V2MigrationBanner";
+import Hint from "~/components/Hint";
 import { prose } from "~/components/prose";
 import RestApi from "~/layouts/rest-api";
 import createSectionDescriptionProps from "~/layouts/rest-api/misc/createSectionDescriptionProps";
@@ -61,6 +62,19 @@ export default function ApiV1Docs() {
           비인증 결제, 정기 자동결제 등 부가기능을 위한 REST API도 제공합니다.
         </prose.p>
         <V2MigrationBanner lang="ko" />
+        <Hint style="danger">
+          <prose.p>
+            2026년 1월 26일부로 포트원 V1 결제내역 단건조회 API에 동작 변경이
+            있습니다.
+          </prose.p>
+          <prose.p>
+            자세한 사항은{" "}
+            <prose.a href="https://help.portone.io/news/content/notice-v1-api-2025-11-25">
+              V1 결제내역 단건조회 API 동작 변경 안내
+            </prose.a>
+            를 참고해주세요.
+          </prose.p>
+        </Hint>
         <prose.p>
           <strong>V1 API hostname: </strong>
           <code>api.iamport.kr</code>
