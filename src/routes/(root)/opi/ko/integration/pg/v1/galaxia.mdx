@@ -43,7 +43,7 @@ PC의 경우 **callback** 함수로 전달되고
         pay_method: "card",
         merchant_uid: "orderNo0001", // 고객사에서 채번한 주문 고유 번호입니다.
         name: "주문명:결제테스트",
-        amount: 1004,
+        amount: 1000,
         customer_id: "matthew", // 고객사가 회원에게 부여한 고유 ID입니다. (필수)
         m_redirect_url: "{모바일에서 결제 완료 후 리디렉션 될 URL}",
         bypass: {
@@ -254,12 +254,7 @@ PC의 경우 **callback** 함수로 전달되고
 
             **휴대폰 통신사 코드**
 
-            - `SKT`: SK텔레콤
-            - `KTF`: KT
-            - `LGT`: LG U+
-            - `CJH`: CJ헬로모바일
-            - `KCT`: KCT
-            - `SKL`: SK텔링크
+            `SKT`, `KTF`, `LGT`, `CJH`, `KCT`, `SKL`
         </Parameter.Details>
 
       - cashReceiptType?: string
@@ -340,9 +335,9 @@ PC의 경우 **callback** 함수로 전달되고
         pay_method: "card", // 빌링키 발급 수단입니다. 갤럭시아의 경우 'card'만 지원됩니다.
         merchant_uid: "orderMonthly0001", // 고객사에서 채번한 주문 고유 번호입니다.
         name: "빌링키 발급",
-        amount: 0, // 빌링키 발급시에는 0으로 설정합니다.
-        customer_uid: "your-customer-unique-id", // 고객사가 구매자의 결제 수단을 특정하기 위해 채번한 고유 ID로 빌링키 발급시 필수 입력입니다.
+        amount: 1000,
         customer_id: "matthew", // 고객사가 회원에게 부여한 고유 ID입니다. (필수)
+        customer_uid: "your-customer-unique-id", // 고객사가 구매자의 결제 수단을 특정하기 위해 채번한 고유 ID로 빌링키 발급시 필수 입력입니다.
         m_redirect_url: "{모바일에서 빌링키 발급 완료 후 리디렉션 될 URL}",
         bypass: {
           galaxia: {
@@ -351,6 +346,7 @@ PC의 경우 **callback** 함수로 전달되고
         },
       },
       function (rsp) {
+        // callback 로직
         const { imp_uid, merchant_uid } = rsp;
 
         // 콜백 함수로 전달 받은 imp_uid로 포트원 결제 내역 조회 API를 통해 빌링키 발급 상태를 판단합니다.
@@ -411,7 +407,7 @@ PC의 경우 **callback** 함수로 전달되고
 
         **string** 이 아닌 점에 유의하세요.
 
-        빌링키 발급시 amount 미입력시 1000원으로 노출됩니다. (결제 발생하지 않음)
+        빌링키 발급시 amount가 0이거나 미입력시 1000원으로 노출됩니다. (결제 발생하지 않음)
 
       - buyer\_name?: string
 
@@ -576,12 +572,7 @@ PC의 경우 **callback** 함수로 전달되고
 
             **휴대폰 통신사 코드**
 
-            - `SKT`: SK텔레콤
-            - `KTF`: KT
-            - `LGT`: LG U+
-            - `CJH`: CJ헬로모바일
-            - `KCT`: KCT
-            - `SKL`: SK텔링크
+            `SKT`, `KTF`, `LGT`, `CJH`, `KCT`, `SKL`
         </Parameter.Details>
 
       - bypass?: object
