@@ -3302,6 +3302,194 @@ paths:
       x-portone-error:
         $ref: '#/components/schemas/GetAllPaymentEventsError'
       x-portone-unstable: true
+  /payment-gateways/card-promotion:
+    get:
+      summary: PG사 카드 프로모션 조회 API
+      description: |-
+        PG사 카드 프로모션 조회 API
+
+        주어진 채널에 대해 PG사에서 제공하는 카드 프로모션 목록을 조회합니다.
+        해당 API는 현재 특정 PG사(KCP_V2)에 대해서만 지원되며, 지원 여부는 포트원 기술지원팀에 문의 부탁드립니다.
+      operationId: getPgCardPromotions
+      parameters:
+        - name: channelKey
+          in: query
+          description: |-
+            채널 키
+
+            조회하고자 하는 채널의 키
+          required: true
+          schema:
+            type: string
+          x-portone-title: 채널 키
+          x-portone-description: 조회하고자 하는 채널의 키
+        - name: amount
+          in: query
+          description: |-
+            결제 금액
+
+            결제 금액입니다. 해당 결제 금액 기준 이용 가능한 프로모션 목록이 조회됩니다.
+          required: true
+          schema:
+            type: integer
+            format: int64
+          x-portone-title: 결제 금액
+          x-portone-description: 결제 금액입니다. 해당 결제 금액 기준 이용 가능한 프로모션 목록이 조회됩니다.
+        - name: cardCompany
+          in: query
+          description: |-
+            카드사 필터
+
+            조회할 카드사입니다. 값을 입력하지 않으면 카드사 필터링이 적용되지 않습니다.
+          required: false
+          schema:
+            $ref: '#/components/schemas/PgPromotionCardCompany'
+          x-portone-title: 카드사 필터
+          x-portone-description: 조회할 카드사입니다. 값을 입력하지 않으면 카드사 필터링이 적용되지 않습니다.
+      responses:
+        '200':
+          description: 성공 응답으로 카드 프로모션 목록을 반환합니다.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPgCardPromotionsResponse'
+          x-portone-title: 성공 응답으로 카드 프로모션 목록을 반환합니다.
+        '400':
+          description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPgCardPromotionsError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPgCardPromotionsError'
+        '404':
+          description: '* `ChannelNotFoundError`: 요청된 채널이 존재하지 않는 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPgCardPromotionsError'
+        '502':
+          description: '* `PgProviderError`: PG사에서 오류를 전달한 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPgCardPromotionsError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: payment.additionalFeature
+      x-portone-title: PG사 카드 프로모션 조회 API
+      x-portone-description: |-
+        주어진 채널에 대해 PG사에서 제공하는 카드 프로모션 목록을 조회합니다.
+        해당 API는 현재 특정 PG사(KCP_V2)에 대해서만 지원되며, 지원 여부는 포트원 기술지원팀에 문의 부탁드립니다.
+      x-portone-error:
+        $ref: '#/components/schemas/GetPgCardPromotionsError'
+  /payment-reconciliations/settlements/vat-report:
+    get:
+      summary: 정산일 기준 부가세 내역 조회
+      description: 정산일 기준 부가세 내역 조회
+      operationId: getPaymentReconciliationSettlementVatReport
+      parameters:
+        - name: requestBody
+          in: query
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationSettlementVatReportBody
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationSettlementVatReportResponse
+        '400':
+          description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationSettlementVatReportError
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationSettlementVatReportError
+        '403':
+          description: '* `ForbiddenError`: 요청이 거절된 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationSettlementVatReportError
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: reconciliation
+      x-portone-title: 정산일 기준 부가세 내역 조회
+      x-portone-error:
+        $ref: '#/components/schemas/GetPaymentReconciliationSettlementVatReportError'
+      x-portone-unstable: true
+  /payment-reconciliations/transactions/vat-report:
+    get:
+      summary: 거래일 기준 부가세 내역 조회
+      description: 거래일 기준 부가세 내역 조회
+      operationId: getPaymentReconciliationTransactionVatReport
+      parameters:
+        - name: requestBody
+          in: query
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationTransactionVatReportBody
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationTransactionVatReportResponse
+        '400':
+          description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationTransactionVatReportError
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationTransactionVatReportError
+        '403':
+          description: '* `ForbiddenError`: 요청이 거절된 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetPaymentReconciliationTransactionVatReportError
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: reconciliation
+      x-portone-title: 거래일 기준 부가세 내역 조회
+      x-portone-error:
+        $ref: '#/components/schemas/GetPaymentReconciliationTransactionVatReportError'
+      x-portone-unstable: true
   '/payment-schedules/{paymentScheduleId}':
     get:
       summary: 결제 예약 단건 조회
@@ -10375,6 +10563,139 @@ components:
           title: 한 줄 형식
         SEPARATED:
           title: 분리 형식
+    AddressAutocompleteBody:
+      title: AddressAutocompleteBody
+      description: 주소 자동완성을 위한 입력 정보
+      type: object
+      required:
+        - country
+      properties:
+        query:
+          type: string
+          title: 검색어
+          description: '`query`와 `addressKey` 중 하나만 입력해 주세요.'
+        addressKey:
+          type: string
+          title: 주소 키
+          description: >-
+            `query`와 `addressKey` 중 하나만 입력해 주세요.
+
+            - 국제 주소의 경우, `InternationalAddressSummary`의 `addressKey`를 입력하여 하위
+            주소를 얻을 수 있습니다.
+              - 사용한 `InternationalAddressSummary`의 `entryCount`가 2 이상이면 하위 `InternationalAddressSummary`들을 반환합니다.
+              - 사용한 `InternationalAddressSummary`의 `entryCount`가 1이면 `InternationalAddressDetail`을 반환합니다.
+            - 미국 주소의 경우, `UsAddress`의 `entryCount`가 2 이상이면 `addressKey`를 입력하여 하위
+            주소들을 얻을 수 있습니다.
+        country:
+          $ref: '#/components/schemas/Country'
+          title: 국가 코드
+        maxResults:
+          type: integer
+          format: int32
+          title: 최대 결과 개수
+          description: 기본값은 10입니다.
+        language:
+          $ref: '#/components/schemas/AddressLanguage'
+          title: 상세 주소 표시 언어
+          description: |-
+            기본값은 `NATIVE`입니다.
+            특송사 제약 사항 등으로 인해 국제 주소 상세가 영어로만 표시되도록 원할 경우 `ENGLISH`로 설정합니다.
+      x-portone-description: 주소 자동완성을 위한 입력 정보
+    AddressAutocompleteError:
+      title: AddressAutocompleteError
+      oneOf:
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    AddressAutocompleteResponse:
+      title: 주소 자동완성 응답
+      description: 주소 자동완성 응답
+      oneOf:
+        - $ref: '#/components/schemas/AddressAutocompleteResponseInternationalDetail'
+        - $ref: '#/components/schemas/AddressAutocompleteResponseInternationalSummary'
+        - $ref: '#/components/schemas/AddressAutocompleteResponseUs'
+      discriminator:
+        propertyName: type
+        mapping:
+          INTERNATIONAL_DETAIL: '#/components/schemas/AddressAutocompleteResponseInternationalDetail'
+          INTERNATIONAL_SUMMARY: '#/components/schemas/AddressAutocompleteResponseInternationalSummary'
+          US: '#/components/schemas/AddressAutocompleteResponseUs'
+      x-portone-title: 주소 자동완성 응답
+      x-portone-discriminator:
+        US:
+          title: 미국 주소 목록
+        INTERNATIONAL_SUMMARY:
+          title: 국제 주소 요약 목록
+        INTERNATIONAL_DETAIL:
+          title: 국제 주소 상세
+          description: '`entryCount`가 1인 국제 주소 요약의 `addressKey`를 입력해야 조회 가능합니다.'
+    AddressAutocompleteResponseInternationalDetail:
+      title: 국제 주소 상세
+      description: |-
+        국제 주소 상세
+
+        `entryCount`가 1인 국제 주소 요약의 `addressKey`를 입력해야 조회 가능합니다.
+      type: object
+      required:
+        - type
+        - internationalDetail
+      properties:
+        type:
+          type: string
+        internationalDetail:
+          $ref: '#/components/schemas/InternationalAddressDetail'
+          title: 국제 주소 상세
+      x-portone-title: 국제 주소 상세
+      x-portone-description: '`entryCount`가 1인 국제 주소 요약의 `addressKey`를 입력해야 조회 가능합니다.'
+    AddressAutocompleteResponseInternationalSummary:
+      title: 국제 주소 요약 목록
+      description: 국제 주소 요약 목록
+      type: object
+      required:
+        - type
+        - internationalSummaries
+      properties:
+        type:
+          type: string
+        internationalSummaries:
+          title: 국제 주소 요약 목록
+          type: array
+          items:
+            $ref: '#/components/schemas/InternationalAddressSummary'
+      x-portone-title: 국제 주소 요약 목록
+    AddressAutocompleteResponseUs:
+      title: 미국 주소 목록
+      description: 미국 주소 목록
+      type: object
+      required:
+        - type
+        - usAddresses
+      properties:
+        type:
+          type: string
+        usAddresses:
+          title: 미국 주소 목록
+          type: array
+          items:
+            $ref: '#/components/schemas/UsAddress'
+      x-portone-title: 미국 주소 목록
+    AddressLanguage:
+      title: 주소 언어
+      description: 주소 언어
+      type: string
+      enum:
+        - NATIVE
+        - ENGLISH
+      x-portone-title: 주소 언어
+      x-portone-enum:
+        AddressLanguage:
+          title: 주소 언어
     AlreadyPaidError:
       title: 결제가 이미 완료된 경우
       description: 결제가 이미 완료된 경우
@@ -14116,6 +14437,10 @@ components:
           $ref: '#/components/schemas/CancelPaymentBodyRefundAccount'
           title: 환불 계좌
           description: '계좌 환불일 경우 입력합니다. 계좌 환불이 필요한 경우는 가상계좌 환불, 휴대폰 익월 환불 등이 있습니다.'
+        skipWebhook:
+          type: boolean
+          title: 웹훅 생략 여부
+          description: 취소가 성공했을 때 웹훅을 전송하지 않으려면 true로 설정합니다.
       x-portone-title: 결제 취소 요청 입력 정보
     CancelPaymentBodyRefundAccount:
       title: 고객 정보 입력 형식
@@ -20933,6 +21258,9 @@ components:
         version:
           $ref: '#/components/schemas/PortOneVersion'
           title: 포트원 버전
+        pgTxId:
+          type: string
+          title: 본인인증 내역 PG사 아이디
       x-portone-title: 실패한 본인인증 내역
     FailedPayment:
       title: 결제 실패 상태 건
@@ -23184,6 +23512,66 @@ components:
           FORBIDDEN: '#/components/schemas/ForbiddenError'
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    GetPaymentReconciliationSettlementVatReportBody:
+      title: GetPaymentReconciliationSettlementVatReportBody
+      type: object
+      required:
+        - dateRange
+      properties:
+        dateRange:
+          $ref: '#/components/schemas/DateRange'
+          title: 정산일 범위
+        filter:
+          $ref: >-
+            #/components/schemas/PaymentReconciliationSettlementSummaryFilterInput
+    GetPaymentReconciliationSettlementVatReportError:
+      title: GetPaymentReconciliationSettlementVatReportError
+      oneOf:
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    GetPaymentReconciliationSettlementVatReportResponse:
+      title: GetPaymentReconciliationSettlementVatReportResponse
+      type: object
+      required:
+        - summary
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentReconciliationVatReportItem'
+          properties:
+            paymentMethod:
+              title: 결제수단
+            vatAmount:
+              title: 부가세 금액
+            taxFreeAmount:
+              title: 면세 금액
+            totalAmount:
+              title: 총 금액
+            supplyAmount:
+              title: 공급가액
+          title: 부가세 내역 항목 리스트
+        summary:
+          $ref: '#/components/schemas/PaymentReconciliationVatReportSummary'
+          title: 부가세 내역 요약
+        pgSpecifiers:
+          title: PG사 식별자 리스트
+          type: array
+          items:
+            $ref: '#/components/schemas/ReconciliationPgSpecifier'
+          x-portone-title: 대사용 PG사 가맹점 식별자
+          properties:
+            pgMerchantId:
+              title: PG사 가맹점 식별 아이디
+            pgProvider:
+              title: PG사
     GetPaymentReconciliationTransactionSummariesBody:
       title: GetPaymentReconciliationTransactionSummariesBody
       type: object
@@ -23281,6 +23669,66 @@ components:
           FORBIDDEN: '#/components/schemas/ForbiddenError'
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    GetPaymentReconciliationTransactionVatReportBody:
+      title: GetPaymentReconciliationTransactionVatReportBody
+      type: object
+      required:
+        - dateRange
+      properties:
+        dateRange:
+          $ref: '#/components/schemas/DateRange'
+          title: 거래일 범위
+        filter:
+          $ref: >-
+            #/components/schemas/PaymentReconciliationTransactionSummaryFilterInput
+    GetPaymentReconciliationTransactionVatReportError:
+      title: GetPaymentReconciliationTransactionVatReportError
+      oneOf:
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    GetPaymentReconciliationTransactionVatReportResponse:
+      title: GetPaymentReconciliationTransactionVatReportResponse
+      type: object
+      required:
+        - summary
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentReconciliationVatReportItem'
+          properties:
+            paymentMethod:
+              title: 결제수단
+            vatAmount:
+              title: 부가세 금액
+            taxFreeAmount:
+              title: 면세 금액
+            totalAmount:
+              title: 총 금액
+            supplyAmount:
+              title: 공급가액
+          title: 부가세 내역 항목 리스트
+        summary:
+          $ref: '#/components/schemas/PaymentReconciliationVatReportSummary'
+          title: 부가세 내역 요약
+        pgSpecifiers:
+          title: PG사 식별자 리스트
+          type: array
+          items:
+            $ref: '#/components/schemas/ReconciliationPgSpecifier'
+          x-portone-title: 대사용 PG사 가맹점 식별자
+          properties:
+            pgMerchantId:
+              title: PG사 가맹점 식별 아이디
+            pgProvider:
+              title: PG사
     GetPaymentReconciliationsBody:
       title: GetPaymentReconciliationsBody
       type: object
@@ -23538,6 +23986,46 @@ components:
           $ref: '#/components/schemas/PageInfo'
           title: 조회된 페이지 정보
       x-portone-title: 결제 건 다건 조회 성공 응답 정보
+    GetPgCardPromotionsError:
+      title: GetPgCardPromotionsError
+      oneOf:
+        - $ref: '#/components/schemas/ChannelNotFoundError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/PgProviderError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          CHANNEL_NOT_FOUND: '#/components/schemas/ChannelNotFoundError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          PG_PROVIDER: '#/components/schemas/PgProviderError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    GetPgCardPromotionsResponse:
+      title: PG사 카드 프로모션 조회 응답
+      description: PG사 카드 프로모션 조회 응답
+      type: object
+      properties:
+        promotions:
+          title: 카드 프로모션 목록
+          type: array
+          items:
+            $ref: '#/components/schemas/PgCardPromotion'
+          x-portone-title: PG사 카드 프로모션
+          x-portone-description: PG사에서 제공하는 카드 프로모션 정보입니다.
+          properties:
+            promotionId:
+              title: 프로모션 아이디
+              description: PG사에서 부여한 프로모션 식별자입니다.
+            cardCompany:
+              title: 카드사
+              description: 프로모션이 적용되는 카드사입니다.
+            discountAmount:
+              title: 할인 금액
+              description: 프로모션 적용 시 할인되는 금액입니다.
+            minimumPaymentAmount:
+              title: 최소 결제 금액
+              description: 프로모션이 적용되기 위한 최소 결제 금액입니다.
+      x-portone-title: PG사 카드 프로모션 조회 응답
     GetPgCompanyChartError:
       title: GetPgCompanyChartError
       oneOf:
@@ -25276,6 +25764,61 @@ components:
           format: date-time
           title: 결제 완료 시점 (가상 계좌는 발급 완료 시점)
       x-portone-title: 수기 결제가 완료된 결제 건 요약 정보
+    InternationalAddressDetail:
+      title: 국제 주소 상세
+      description: 국제 주소 상세
+      type: object
+      required:
+        - streetLine
+        - country
+      properties:
+        streetLine:
+          type: string
+          title: 상세 주소 (도로명 등)
+        locality:
+          type: string
+          title: 지역명
+        administrativeArea:
+          type: string
+          title: 행정 구역
+        administrativeAreaShort:
+          type: string
+          title: 행정 구역 약칭
+        administrativeAreaLong:
+          type: string
+          title: 행정 구역 전체명
+        country:
+          $ref: '#/components/schemas/Country'
+          title: 국가 코드
+        postalCode:
+          type: string
+          title: 우편번호
+      x-portone-title: 국제 주소 상세
+    InternationalAddressSummary:
+      title: 국제 주소 요약 항목
+      description: 국제 주소 요약 항목
+      type: object
+      required:
+        - addressText
+        - addressKey
+        - entryCount
+      properties:
+        addressText:
+          type: string
+          title: 주소 텍스트
+        addressKey:
+          type: string
+          title: 주소 키
+          description: 주소 자동완성 API 호출 시 입력하여 하위 주소를 얻을 수 있습니다.
+        entryCount:
+          type: integer
+          format: int32
+          title: 하위 주소 개수
+          description: >-
+            2 이상인 경우 `addressKey`로 주소 자동완성 API를 재호출하여 하위
+            `InternationalAddressSummary` 목록을 얻을 수 있습니다. 1인 경우 `addressKey`로 주소
+            자동완성 API를 재호출하여 `InternationalAddressDetail`을 얻을 수 있습니다.
+      x-portone-title: 국제 주소 요약 항목
     InvalidPaymentTokenError:
       title: 유효하지 않은 결제 토큰인 경우
       description: 유효하지 않은 결제 토큰인 경우
@@ -30152,6 +30695,60 @@ components:
           title: 크레덴셜 종류
         mertKey:
           type: string
+    PaymentReconciliationVatReportItem:
+      title: PaymentReconciliationVatReportItem
+      type: object
+      required:
+        - paymentMethod
+        - supplyAmount
+        - vatAmount
+        - taxFreeAmount
+        - totalAmount
+      properties:
+        paymentMethod:
+          $ref: '#/components/schemas/SimplifiedPaymentMethodType'
+          title: 결제수단
+        supplyAmount:
+          type: integer
+          format: int64
+          title: 공급가액
+        vatAmount:
+          type: integer
+          format: int64
+          title: 부가세 금액
+        taxFreeAmount:
+          type: integer
+          format: int64
+          title: 면세 금액
+        totalAmount:
+          type: integer
+          format: int64
+          title: 총 금액
+    PaymentReconciliationVatReportSummary:
+      title: PaymentReconciliationVatReportSummary
+      type: object
+      required:
+        - totalSupplyAmount
+        - totalVatAmount
+        - totalTaxFreeAmount
+        - totalAmount
+      properties:
+        totalSupplyAmount:
+          type: integer
+          format: int64
+          title: 총 공급가액
+        totalVatAmount:
+          type: integer
+          format: int64
+          title: 총 부가세 금액
+        totalTaxFreeAmount:
+          type: integer
+          format: int64
+          title: 총 면세 금액
+        totalAmount:
+          type: integer
+          format: int64
+          title: 총 금액
     PaymentReconciliationWithCursor:
       title: PaymentReconciliationWithCursor
       type: object
@@ -30877,6 +31474,39 @@ components:
           title: 발급 성공 채널 응답
         FAILED:
           title: 발급 실패 채널 응답
+    PgCardPromotion:
+      title: PG사 카드 프로모션
+      description: |-
+        PG사 카드 프로모션
+
+        PG사에서 제공하는 카드 프로모션 정보입니다.
+      type: object
+      required:
+        - promotionId
+        - cardCompany
+        - discountAmount
+        - minimumPaymentAmount
+      properties:
+        promotionId:
+          type: string
+          title: 프로모션 아이디
+          description: PG사에서 부여한 프로모션 식별자입니다.
+        cardCompany:
+          $ref: '#/components/schemas/PgPromotionCardCompany'
+          title: 카드사
+          description: 프로모션이 적용되는 카드사입니다.
+        discountAmount:
+          type: integer
+          format: int64
+          title: 할인 금액
+          description: 프로모션 적용 시 할인되는 금액입니다.
+        minimumPaymentAmount:
+          type: integer
+          format: int64
+          title: 최소 결제 금액
+          description: 프로모션이 적용되기 위한 최소 결제 금액입니다.
+      x-portone-title: PG사 카드 프로모션
+      x-portone-description: PG사에서 제공하는 카드 프로모션 정보입니다.
     PgCompany:
       title: PG사
       description: PG사
@@ -30946,6 +31576,86 @@ components:
         PAYPLE: {}
         KSNET: {}
         KCP: {}
+    PgPromotionCardCompany:
+      title: PG 프로모션 카드사
+      description: |-
+        PG 프로모션 카드사
+
+        PG사 프로모션 조회 시 필터링할 수 있는 카드사 목록입니다.
+      type: string
+      enum:
+        - KOREA_DEVELOPMENT_BANK
+        - KFCC
+        - SHINHYUP
+        - EPOST
+        - SAVINGS_BANK_KOREA
+        - KAKAO_BANK
+        - WOORI_CARD
+        - BC_CARD
+        - GWANGJU_CARD
+        - SAMSUNG_CARD
+        - SHINHAN_CARD
+        - HYUNDAI_CARD
+        - LOTTE_CARD
+        - SUHYUP_CARD
+        - CITI_CARD
+        - NH_CARD
+        - JEONBUK_CARD
+        - JEJU_CARD
+        - HANA_CARD
+        - KOOKMIN_CARD
+        - K_BANK
+        - TOSS_BANK
+        - MIRAE_ASSET_SECURITIES
+      x-portone-title: PG 프로모션 카드사
+      x-portone-description: PG사 프로모션 조회 시 필터링할 수 있는 카드사 목록입니다.
+      x-portone-enum:
+        HANA_CARD:
+          title: 하나카드
+        JEONBUK_CARD:
+          title: 전북카드
+        SHINHYUP:
+          title: 신협
+        WOORI_CARD:
+          title: 우리카드
+        LOTTE_CARD:
+          title: 롯데카드
+        SAMSUNG_CARD:
+          title: 삼성카드
+        KOREA_DEVELOPMENT_BANK:
+          title: KDB산업은행
+        SUHYUP_CARD:
+          title: 수협카드
+        GWANGJU_CARD:
+          title: 광주카드
+        HYUNDAI_CARD:
+          title: 현대카드
+        EPOST:
+          title: 우체국
+        BC_CARD:
+          title: BC카드
+        K_BANK:
+          title: 케이뱅크
+        JEJU_CARD:
+          title: 제주카드
+        KOOKMIN_CARD:
+          title: 국민카드
+        MIRAE_ASSET_SECURITIES:
+          title: 미래에셋증권
+        NH_CARD:
+          title: NH카드
+        SHINHAN_CARD:
+          title: 신한카드
+        CITI_CARD:
+          title: 씨티카드
+        SAVINGS_BANK_KOREA:
+          title: 저축은행
+        KFCC:
+          title: 새마을금고
+        KAKAO_BANK:
+          title: 카카오뱅크
+        TOSS_BANK:
+          title: 토스뱅크
     PgProvider:
       title: PG사 결제 모듈
       description: PG사 결제 모듈
@@ -31002,6 +31712,7 @@ components:
         - EXIMBAY_V2
         - INICIS_JP
         - PAYLETTER_GLOBAL
+        - MOBILIANS_V2
       x-portone-title: PG사 결제 모듈
       x-portone-enum:
         KICC: {}
@@ -31031,6 +31742,7 @@ components:
         DAOU: {}
         GALAXIA: {}
         PINPAY: {}
+        MOBILIANS_V2: {}
         INICIS_JP: {}
         SETTLE_ACC: {}
         TOSSPAY_V2: {}
@@ -36838,6 +37550,9 @@ components:
         version:
           $ref: '#/components/schemas/PortOneVersion'
           title: 포트원 버전
+        pgTxId:
+          type: string
+          title: 본인인증 내역 PG사 아이디
       x-portone-title: 준비 상태의 본인인증 내역
     ReadyPayment:
       title: 준비 상태 건
@@ -39256,6 +39971,34 @@ components:
           title: 순액(공급가액)
         GROSS:
           title: '총액(공급가액, 부가세)'
+    SimplifiedPaymentMethodType:
+      title: 간소화된 결제수단 목록
+      description: 간소화된 결제수단 목록
+      type: string
+      enum:
+        - CARD
+        - VIRTUAL_ACCOUNT
+        - TRANSFER
+        - CHARGE
+        - MOBILE
+        - POINT
+        - ETC
+      x-portone-title: 간소화된 결제수단 목록
+      x-portone-enum:
+        TRANSFER:
+          title: 계좌이체
+        VIRTUAL_ACCOUNT:
+          title: 가상계좌
+        CHARGE:
+          title: 머니
+        POINT:
+          title: 포인트
+        ETC:
+          title: 기타
+        MOBILE:
+          title: 모바일
+        CARD:
+          title: 신용카드/체크카드
     SortOrder:
       title: 정렬 방식
       description: 정렬 방식
@@ -40320,6 +41063,53 @@ components:
         setting:
           $ref: '#/components/schemas/PlatformSetting'
       x-portone-title: 플랫폼 설정 업데이트 결과
+    UsAddress:
+      title: 미국 주소
+      description: 미국 주소
+      type: object
+      required:
+        - addressText
+        - entryCount
+        - streetLine
+        - city
+        - state
+        - zipCode
+      properties:
+        addressText:
+          type: string
+          title: 주소 텍스트
+          description: >-
+            `<상세 주소 (도로명 등)> <상세 주소 (건물 번호 등)> <하위 주소 개수> <도시>, <주> <우편번호>` 형태로
+            제공됩니다.
+        addressKey:
+          type: string
+          title: 주소 키
+        entryCount:
+          type: integer
+          format: int32
+          title: 하위 주소 개수
+          description: >-
+            2 이상이면 `addressKey`로 주소 자동완성 API를 재호출하여 하위 `UsAddress` 목록을 얻을 수
+            있습니다. 1이면 하위 주소가 없는 최종 주소입니다.
+        streetLine:
+          type: string
+          title: 상세 주소 (도로명 등)
+        secondary:
+          type: string
+          title: 상세 주소 (건물 번호 등)
+          description: >-
+            아파트 동 번호 등의 건물 번호가 포함됩니다. `addressKey`가 존재하는 경우 반드시 `secondary`가
+            존재합니다.
+        city:
+          type: string
+          title: 도시
+        state:
+          type: string
+          title: 주
+        zipCode:
+          type: string
+          title: 우편번호
+      x-portone-title: 미국 주소
     ValidateB2bCertificateError:
       title: ValidateB2bCertificateError
       oneOf:
@@ -40707,6 +41497,9 @@ x-portone-categories:
       - id: payment.promotion
         title: 프로모션 관련 API
         description: 프로모션과 관련된 API 기능을 제공합니다.
+      - id: payment.additionalFeature
+        title: 결제 부가기능 관련 API
+        description: 결제 부가기능과 관련된 API 기능을 제공합니다.
   - id: identityVerification
     title: 본인인증 관련 API
     description: 본인인증과 관련된 API 기능을 제공합니다.
@@ -40764,6 +41557,9 @@ x-portone-categories:
 
       접근 토큰 방식으로 인증하기를 원하는 경우, API 시크릿을 통해 토큰을 발급받은 후 Authorization 헤더에 `Bearer
       ACCESS_TOKEN` 형식으로 전달합니다.
+  - id: address
+    title: 주소 API
+    description: 주소 관련 API를 제공합니다.
   - id: common
     title: 공통 API
     description: 공통 API 기능을 제공합니다.

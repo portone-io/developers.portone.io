@@ -213,6 +213,27 @@ resources:
         MIRAE_ASSET_SECURITIES:
           description: 미래에셋증권 카드
       valuePrefix: CARD_COMPANY
+    CardPromotion:
+      type: object
+      description: |
+        **카드 프로모션 정보**
+
+        카드사 다이렉트 호출 시 적용할 카드사 할인 쿠폰 정보입니다.
+
+        현재 KCP_V2 채널에서만 사용 가능합니다.
+      properties:
+        promotionId:
+          type: string
+          description: |
+            **프로모션 ID**
+
+            카드사에서 제공하는 프로모션 식별자입니다.
+        discountAmount:
+          type: integer
+          description: |
+            **할인 금액**
+
+            프로모션으로 할인받을 금액입니다.
     Carrier:
       type: enum
       description: |
@@ -5866,6 +5887,18 @@ resources:
           type: boolean
           description: |
             할부 사용 가능 여부
+        cardPromotion:
+          optional: true
+          type: resourceRef
+          $ref: "#/resources/entity/CardPromotion"
+          description: |
+            **카드 프로모션 정보**
+
+            카드사 다이렉트 호출 시 적용할 카드사 할인 쿠폰 정보입니다.
+
+            <PgSection pgName={(name) => name === 'kcp'}>
+            NHN KCP에서 카드사 다이렉트 호출 시 카드사 할인 쿠폰을 적용할 수 있습니다.
+            </PgSection>
     PaymentRequestUnionVirtualAccount:
       type: object
       description: |
