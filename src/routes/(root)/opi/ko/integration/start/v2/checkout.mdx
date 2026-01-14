@@ -115,6 +115,11 @@ async function requestPayment() {
 지정한 `redirectUrl`로 다시 리다이렉트됩니다. 이 경우에는 함수 호출 결과를 이용할 수 없고,
 결제 성공 여부 등은 [쿼리 문자열](http://en.wikipedia.org/wiki/Query_string)로 전달받게 됩니다.
 
+<Hint style="info">
+  PC 환경에서도 리다이렉트 방식을 사용하려면 `forceRedirect: true` 옵션을 사용하세요.
+  자세한 내용은 아래 [3-2. forceRedirect 옵션](#3-2-forceredirect-옵션으로-리다이렉트-강제하기)을 참고하세요.
+</Hint>
+
 ```ts
 PortOne.requestPayment({
   /* 파라미터 생략 */
@@ -135,6 +140,37 @@ PortOne.requestPayment({
 
 예를 들어 paymentId가 `payment-39ecfa97`, redirectUrl이 `https://example.com/payment-redirect`인 경우,
 결제 성공 시에 `https://example.com/payment-redirect?paymentId=payment-39ecfa97`로 리다이렉트됩니다.
+
+### 3-2. forceRedirect 옵션으로 리다이렉트 강제하기
+
+PC 환경에서도 결과를 리다이렉트 방식으로 받고 싶은 경우 `forceRedirect` 옵션을 사용할 수 있습니다.
+`forceRedirect` 옵션을 사용할 경우 `redirectUrl`을 필수적으로 전달해 주셔야 합니다.
+```ts title="TypeScript"
+PortOne.requestPayment({
+  storeId: "store-xxxxxxxx",
+  channelKey: "channel-key-xxxxxxxx",
+  paymentId: `payment-${crypto.randomUUID()}`,
+  orderName: "나이키 와플 트레이너 2 SD",
+  totalAmount: 1000,
+  currency: "CURRENCY_KRW",
+  payMethod: "CARD",
+  redirectUrl: "https://example.com/payment/complete",
+  forceRedirect: true, // PC에서도 리다이렉트 방식 사용
+});
+```
+
+<Hint style="warning">
+  `forceRedirect: true`를 사용할 때 `redirectUrl`은 반드시 `http://` 또는 `https://`로 시작해야 합니다.
+</Hint>
+
+### 3-3. 모바일 환경에서의 결제창 동작
+
+모바일 환경에서 `redirectUrl`을 설정하지 않으면 SDK가 자동으로 PC 모드로 전환하여
+결제창을 표시합니다. 이 경우 결과는 Promise로 반환됩니다.
+
+<Hint style="info">
+  모바일에서 `redirectUrl` 없이 결제할 경우, 결제창이 팝업 또는 iframe 형태로 표시됩니다.
+</Hint>
 
 ## 4. 결제 완료 처리 (서버)
 
