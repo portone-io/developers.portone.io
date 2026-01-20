@@ -14,6 +14,7 @@ import payletterLogo from "~/assets/pg-circle/payletter.png";
 import portoneLogo from "~/assets/pg-circle/portone.png";
 import smartroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
+import tripleALogo from "~/assets/pg-circle/triple-a.png";
 import welcomeLogo from "~/assets/pg-circle/welcome.png";
 import { usePaymentGateway } from "~/state/payment-gateway";
 import type { PaymentGateway } from "~/type";
@@ -40,6 +41,7 @@ export const PgOptions = {
   welcome: { label: "웰컴페이먼츠", icon: welcomeLogo },
   inicis_jp: { label: "KG이니시스(일본)", icon: inicisLogo },
   payletter_global: { label: "페이레터해외결제", icon: payletterLogo },
+  triple_a: { label: "Triple-A", icon: tripleALogo },
 } as const satisfies Record<PaymentGateway | "all", PgSelectOption>;
 
 interface PgSelectProps {
