@@ -5315,6 +5315,132 @@
         }
       }
     },
+    "/payments/{paymentId}/cancellations/{cancellationId}/stop": {
+      "post": {
+        "summary": "결제 취소 요청 취소",
+        "description": "결제 취소 요청 취소\n\n비동기적으로 수행되는 결제 취소 요청을 취소합니다.\nTriple-A에서만 사용됩니다.",
+        "operationId": "stopPaymentCancellation",
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "결제 건 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "결제 건 아이디"
+          },
+          {
+            "name": "cancellationId",
+            "in": "path",
+            "description": "취소 요청 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "취소 요청 아이디"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StopPaymentCancellationBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StopPaymentCancellationResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StopPaymentCancellationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StopPaymentCancellationError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StopPaymentCancellationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PaymentCancellationNotFoundError`: 결제 취소 내역이 존재하지 않는 경우\n* `PaymentNotFoundError`: 결제 건이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StopPaymentCancellationError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `PaymentCancellationNotPendingError`: 결제 취소 내역이 취소 요청 상태가 아닌 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StopPaymentCancellationError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `PgProviderError`: PG사에서 오류를 전달한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StopPaymentCancellationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "payment",
+        "x-portone-title": "결제 취소 요청 취소",
+        "x-portone-description": "비동기적으로 수행되는 결제 취소 요청을 취소합니다.\nTriple-A에서만 사용됩니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/StopPaymentCancellationError"
+        }
+      }
+    },
     "/payments/{paymentId}/capture": {
       "post": {
         "summary": "수동 매입",
@@ -17203,6 +17329,68 @@
         "x-portone-title": "세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우",
         "x-portone-status-code": 400
       },
+      "B2bTaxInvoiceSortBy": {
+        "title": "세금계산서 정렬 기준",
+        "description": "세금계산서 정렬 기준",
+        "type": "string",
+        "enum": [
+          "WRITE_DATE",
+          "ISSUANCE_DUE_DATE",
+          "TOTAL_AMOUNT",
+          "TOTAL_SUPPLY_AMOUNT",
+          "TOTAL_TAX_AMOUNT",
+          "REQUESTED_AT",
+          "ISSUED_AT",
+          "NTS_SENT_AT",
+          "STATUS_UPDATED_AT"
+        ],
+        "x-portone-title": "세금계산서 정렬 기준",
+        "x-portone-enum": {
+          "NTS_SENT_AT": {
+            "title": "국세청전송일시"
+          },
+          "TOTAL_SUPPLY_AMOUNT": {
+            "title": "공급가액"
+          },
+          "STATUS_UPDATED_AT": {
+            "title": "상태 업데이트 일시"
+          },
+          "REQUESTED_AT": {
+            "title": "발행요청일시"
+          },
+          "ISSUED_AT": {
+            "title": "발행완료일시"
+          },
+          "TOTAL_TAX_AMOUNT": {
+            "title": "세액"
+          },
+          "TOTAL_AMOUNT": {
+            "title": "합계금액"
+          },
+          "WRITE_DATE": {
+            "title": "작성일자"
+          },
+          "ISSUANCE_DUE_DATE": {
+            "title": "발행마감일"
+          }
+        }
+      },
+      "B2bTaxInvoiceSortInput": {
+        "title": "세금계산서 다건 조회 시 정렬 조건",
+        "description": "세금계산서 다건 조회 시 정렬 조건",
+        "type": "object",
+        "properties": {
+          "by": {
+            "$ref": "#/components/schemas/B2bTaxInvoiceSortBy",
+            "title": "정렬 기준"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SortOrder",
+            "title": "정렬 방식"
+          }
+        },
+        "x-portone-title": "세금계산서 다건 조회 시 정렬 조건"
+      },
       "B2bTaxInvoiceStatus": {
         "title": "B2bTaxInvoiceStatus",
         "type": "string",
@@ -18942,6 +19130,11 @@
             "title": "환불 계좌",
             "description": "계좌 환불일 경우 입력합니다. 계좌 환불이 필요한 경우는 가상계좌 환불, 휴대폰 익월 환불 등이 있습니다."
           },
+          "refundEmail": {
+            "type": "string",
+            "title": "환불 이메일",
+            "description": "Triple-A 결제 환불에 필요합니다. 해당 이메일로 환불 안내가 발송됩니다."
+          },
           "skipWebhook": {
             "type": "boolean",
             "title": "웹훅 생략 여부",
@@ -19055,7 +19248,7 @@
         "properties": {
           "cancellation": {
             "$ref": "#/components/schemas/PaymentCancellation",
-            "title": "결체 취소 내역"
+            "title": "결제 취소 내역"
           }
         },
         "x-portone-title": "결제 취소 성공 응답"
@@ -28043,7 +28236,8 @@
           "RAKUTENPAY",
           "DBARAI",
           "AUPAY",
-          "MERPAY"
+          "MERPAY",
+          "MONEYTREE"
         ],
         "x-portone-title": "간편 결제사",
         "x-portone-enum": {
@@ -28052,6 +28246,7 @@
           "KLARNA": {},
           "NAVERPAY": {},
           "CHAI": {},
+          "MONEYTREE": {},
           "GRABPAY": {},
           "TOSS_BRANDPAY": {},
           "LGPAY": {},
@@ -30423,6 +30618,11 @@
           "filter": {
             "$ref": "#/components/schemas/GetB2bTaxInvoicesBodyFilter",
             "title": "필터"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/B2bTaxInvoiceSortInput",
+            "title": "정렬 조건",
+            "description": "미입력 시 상태 업데이트 일시 내림차순 정렬됩니다."
           }
         },
         "x-portone-title": "세금 계산서 다건 조회를 위한 입력 정보"
@@ -34490,6 +34690,10 @@
           "promotionId": {
             "type": "string",
             "title": "해당 결제에 적용할 프로모션 아이디"
+          },
+          "bypass": {
+            "type": "object",
+            "title": "PG사별 추가 파라미터 (\"PG사별 연동 가이드\" 참고)"
           }
         },
         "x-portone-title": "수기 결제 요청 정보"
@@ -35175,6 +35379,11 @@
             "type": "string",
             "title": "고객 식별값"
           },
+          "identityNumberType": {
+            "$ref": "#/components/schemas/IssueCashReceiptCustomerInputIdentityNumberType",
+            "title": "고객 식별값 유형",
+            "description": "갤럭시아머니트리의 경우 필요합니다"
+          },
           "name": {
             "type": "string",
             "title": "이름"
@@ -35189,6 +35398,28 @@
           }
         },
         "x-portone-title": "현금영수증 발급 시 고객 관련 입력 정보"
+      },
+      "IssueCashReceiptCustomerInputIdentityNumberType": {
+        "title": "현금영수증 발급 시 고객 식별 정보 유형",
+        "description": "현금영수증 발급 시 고객 식별 정보 유형",
+        "type": "string",
+        "enum": [
+          "PHONE",
+          "CARD",
+          "BUSINESS"
+        ],
+        "x-portone-title": "현금영수증 발급 시 고객 식별 정보 유형",
+        "x-portone-enum": {
+          "PHONE": {
+            "title": "휴대전화번호"
+          },
+          "CARD": {
+            "title": "카드번호"
+          },
+          "BUSINESS": {
+            "title": "사업자등록번호"
+          }
+        }
       },
       "IssueCashReceiptError": {
         "title": "IssueCashReceiptError",
@@ -36178,6 +36409,13 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Dispute"
+            }
+          },
+          "cancellations": {
+            "title": "결제 취소 요청 내역",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentCancellation"
             }
           }
         },
@@ -37655,6 +37893,42 @@
           }
         }
       },
+      "PaymentCancellationNotFoundError": {
+        "title": "결제 취소 내역이 존재하지 않는 경우",
+        "description": "결제 취소 내역이 존재하지 않는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "결제 취소 내역이 존재하지 않는 경우",
+        "x-portone-status-code": 404
+      },
+      "PaymentCancellationNotPendingError": {
+        "title": "결제 취소 내역이 취소 요청 상태가 아닌 경우",
+        "description": "결제 취소 내역이 취소 요청 상태가 아닌 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "결제 취소 내역이 취소 요청 상태가 아닌 경우",
+        "x-portone-status-code": 409
+      },
       "PaymentCashReceipt": {
         "title": "결제 건 내 현금영수증 정보",
         "description": "결제 건 내 현금영수증 정보",
@@ -38519,6 +38793,9 @@
             "$ref": "#/components/schemas/PaymentMethodConvenienceStore"
           },
           {
+            "$ref": "#/components/schemas/PaymentMethodCrypto"
+          },
+          {
             "$ref": "#/components/schemas/PaymentMethodEasyPay"
           },
           {
@@ -38539,6 +38816,7 @@
           "mapping": {
             "PaymentMethodCard": "#/components/schemas/PaymentMethodCard",
             "PaymentMethodConvenienceStore": "#/components/schemas/PaymentMethodConvenienceStore",
+            "PaymentMethodCrypto": "#/components/schemas/PaymentMethodCrypto",
             "PaymentMethodEasyPay": "#/components/schemas/PaymentMethodEasyPay",
             "PaymentMethodGiftCertificate": "#/components/schemas/PaymentMethodGiftCertificate",
             "PaymentMethodMobile": "#/components/schemas/PaymentMethodMobile",
@@ -38562,6 +38840,9 @@
           },
           "PaymentMethodGiftCertificate": {
             "title": "상품권 상세 정보"
+          },
+          "PaymentMethodCrypto": {
+            "title": "암호화폐 결제 상세 정보"
           },
           "PaymentMethodTransfer": {
             "title": "계좌 이체 상세 정보"
@@ -38632,6 +38913,20 @@
         },
         "x-portone-title": "편의점 결제 상세 정보"
       },
+      "PaymentMethodCrypto": {
+        "title": "암호화폐 결제 상세 정보",
+        "description": "암호화폐 결제 상세 정보",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "암호화폐 결제 상세 정보"
+      },
       "PaymentMethodDetailType": {
         "title": "결제 수단 상세 유형",
         "description": "결제 수단 상세 유형",
@@ -38645,6 +38940,7 @@
           "EASY_PAY",
           "CONVENIENCE_STORE",
           "POINT",
+          "CRYPTO",
           "ETC"
         ],
         "x-portone-title": "결제 수단 상세 유형",
@@ -38657,6 +38953,9 @@
           },
           "VIRTUAL_ACCOUNT": {
             "title": "가상계좌"
+          },
+          "CRYPTO": {
+            "title": "암호화폐"
           },
           "POINT": {
             "title": "간편결제 포인트(충전식/적립식)"
@@ -38847,12 +39146,14 @@
           "GIFT_CERTIFICATE",
           "MOBILE",
           "EASY_PAY",
-          "CONVENIENCE_STORE"
+          "CONVENIENCE_STORE",
+          "CRYPTO"
         ],
         "x-portone-enum": {
           "CONVENIENCE_STORE": {},
           "GIFT_CERTIFICATE": {},
           "VIRTUAL_ACCOUNT": {},
+          "CRYPTO": {},
           "MOBILE": {},
           "CARD": {},
           "TRANSFER": {},
@@ -39198,6 +39499,9 @@
             "$ref": "#/components/schemas/PaymentReconciliationKcpCredential"
           },
           {
+            "$ref": "#/components/schemas/PaymentReconciliationKcpHttpCredential"
+          },
+          {
             "$ref": "#/components/schemas/PaymentReconciliationKpnCredential"
           },
           {
@@ -39238,6 +39542,7 @@
             "INICIS": "#/components/schemas/PaymentReconciliationInicisCredential",
             "KAKAOPAY": "#/components/schemas/PaymentReconciliationKakaopayCredential",
             "KCP": "#/components/schemas/PaymentReconciliationKcpCredential",
+            "KCP_HTTP": "#/components/schemas/PaymentReconciliationKcpHttpCredential",
             "KPN": "#/components/schemas/PaymentReconciliationKpnCredential",
             "KSNET": "#/components/schemas/PaymentReconciliationKsnetCredential",
             "MOBILIANS": "#/components/schemas/PaymentReconciliationMobiliansCredential",
@@ -39258,6 +39563,7 @@
           "TOSSPAY": {},
           "INICIS": {},
           "NICEPAY_SFTP": {},
+          "KCP_HTTP": {},
           "KPN": {},
           "TOSSPAYMENTS": {},
           "KAKAOPAY": {},
@@ -39874,6 +40180,35 @@
           "type": {
             "type": "string",
             "title": "크레덴셜 종류"
+          }
+        }
+      },
+      "PaymentReconciliationKcpHttpCredential": {
+        "title": "PaymentReconciliationKcpHttpCredential",
+        "type": "object",
+        "required": [
+          "type",
+          "apiCertificate",
+          "apiPrivateKey",
+          "apiPrivateKeyPassword",
+          "identifyKey"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "크레덴셜 종류"
+          },
+          "apiCertificate": {
+            "type": "string"
+          },
+          "apiPrivateKey": {
+            "type": "string"
+          },
+          "apiPrivateKeyPassword": {
+            "type": "string"
+          },
+          "identifyKey": {
+            "type": "string"
           }
         }
       },
@@ -42101,12 +42436,14 @@
           "ASYNC_CANCEL_FAILED",
           "ASYNC_PAY_APPROVED",
           "ASYNC_PAY_FAILED",
+          "ASYNC_PAY_PENDING",
           "DISPUTE_CREATED",
           "DISPUTE_RESOLVED"
         ],
         "x-portone-title": "웹훅 실행 트리거",
         "x-portone-description": "수동 웹훅 재발송, 가상계좌 입금, 비동기 취소 승인 시 발생한 웹훅일 때 필드의 값이 존재합니다.",
         "x-portone-enum": {
+          "ASYNC_PAY_PENDING": {},
           "ASYNC_CANCEL_APPROVED": {},
           "DISPUTE_CREATED": {},
           "ASYNC_CANCEL_FAILED": {},
@@ -42366,7 +42703,8 @@
           "JTNET",
           "KPN",
           "HYPHEN",
-          "PAYLETTER"
+          "PAYLETTER",
+          "TRIPLE_A"
         ],
         "x-portone-title": "PG사",
         "x-portone-enum": {
@@ -42380,7 +42718,6 @@
           "TOSSPAY": {},
           "INICIS": {},
           "SETTLE": {},
-          "KPN": {},
           "KAKAO": {},
           "DANAL": {},
           "BLUEWALNUT": {},
@@ -42396,6 +42733,8 @@
           "PAYPAL": {},
           "MOBILIANS": {},
           "HYPHEN": {},
+          "TRIPLE_A": {},
+          "KPN": {},
           "NICE": {},
           "TOSSPAYMENTS": {},
           "PAYPLE": {},
@@ -42562,7 +42901,8 @@
           "EXIMBAY_V2",
           "INICIS_JP",
           "PAYLETTER_GLOBAL",
-          "MOBILIANS_V2"
+          "MOBILIANS_V2",
+          "TRIPLE_A"
         ],
         "x-portone-title": "PG사 결제 모듈",
         "x-portone-enum": {
@@ -42573,7 +42913,6 @@
           "CHAI": {},
           "NICE_V2": {},
           "PAYPAL_V2": {},
-          "KPN": {},
           "KAKAO": {},
           "DANAL": {},
           "KAKAOPAY": {},
@@ -42609,6 +42948,8 @@
           "MOBILIANS": {},
           "UPLUS": {},
           "HYPHEN": {},
+          "TRIPLE_A": {},
+          "KPN": {},
           "INICIS_V2": {},
           "KCP_V2": {},
           "INICIS_UNIFIED": {},
@@ -51116,10 +51457,10 @@
           "HYPHEN",
           "PAYPAL",
           "HECTO_EASY",
-          "MOBILIANS"
+          "MOBILIANS",
+          "PAYLETTER_GLOBAL"
         ],
         "x-portone-enum": {
-          "PAYCO": {},
           "NAVERPAY": {},
           "HECTO": {},
           "TOSSPAY": {},
@@ -51130,6 +51471,8 @@
           "NICEPAY": {},
           "TOSSPAYMENTS": {},
           "EXIMBAY": {},
+          "PAYLETTER_GLOBAL": {},
+          "PAYCO": {},
           "MOBILIANS": {},
           "UPLUS": {},
           "HYPHEN": {},
@@ -53883,6 +54226,73 @@
           }
         },
         "x-portone-title": "결제 시작 상태"
+      },
+      "StopPaymentCancellationBody": {
+        "title": "결제 취소 요청 취소 입력 정보",
+        "description": "결제 취소 요청 취소 입력 정보",
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "title": "상점 아이디",
+            "description": "접근 권한이 있는 상점 아이디만 입력 가능하며, 미입력시 인증 정보의 상점 아이디를 사용합니다."
+          }
+        },
+        "x-portone-title": "결제 취소 요청 취소 입력 정보"
+      },
+      "StopPaymentCancellationError": {
+        "title": "StopPaymentCancellationError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentCancellationNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentCancellationNotPendingError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/PgProviderError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PAYMENT_CANCELLATION_NOT_FOUND": "#/components/schemas/PaymentCancellationNotFoundError",
+            "PAYMENT_CANCELLATION_NOT_PENDING": "#/components/schemas/PaymentCancellationNotPendingError",
+            "PAYMENT_NOT_FOUND": "#/components/schemas/PaymentNotFoundError",
+            "PG_PROVIDER": "#/components/schemas/PgProviderError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "StopPaymentCancellationResponse": {
+        "title": "결제 취소 요청 취소 성공 응답",
+        "description": "결제 취소 요청 취소 성공 응답",
+        "type": "object",
+        "required": [
+          "stoppedAt"
+        ],
+        "properties": {
+          "stoppedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "결제 취소 요청 취소 완료 시각"
+          }
+        },
+        "x-portone-title": "결제 취소 요청 취소 성공 응답"
       },
       "SucceededPaymentCancellation": {
         "title": "취소 완료 상태",
