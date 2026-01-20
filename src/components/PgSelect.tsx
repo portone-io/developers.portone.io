@@ -124,7 +124,7 @@ export function PgSelect(props: PgSelectProps) {
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Content class="border rounded-md bg-white p-1.5 shadow-md z-dropdown-link">
+        <Select.Content class="max-h-md overflow-y-auto border rounded-md bg-white p-1.5 shadow-md z-dropdown-link">
           <Select.Listbox class="flex flex-col gap-.5" />
         </Select.Content>
       </Select.Portal>
