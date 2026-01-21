@@ -111,7 +111,6 @@ export function processV2Openapi(schema: any): any {
   schema["x-portone-categories"] = filterCategories(
     schema["x-portone-categories"],
   );
-  console.log(schema["x-portone-categories"]);
   const categories = collectCategoryIds(schema["x-portone-categories"]);
   traverseEveryProperty(schema, (node, property) => {
     if (!node[property]) return;
