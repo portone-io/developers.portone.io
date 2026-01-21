@@ -26,6 +26,7 @@ export const PaymentGateway = Flags.extract([
   "welcome",
   "inicis_jp",
   "payletter_global",
+  "triple_a",
 ]);
 export type PaymentGateway = z.infer<typeof PaymentGateway>;
 
