@@ -111,6 +111,7 @@ export function processV2Openapi(schema: any): any {
   schema["x-portone-categories"] = filterCategories(
     schema["x-portone-categories"],
   );
+  console.log(schema["x-portone-categories"]);
   const categories = collectCategoryIds(schema["x-portone-categories"]);
   traverseEveryProperty(schema, (node, property) => {
     if (!node[property]) return;
@@ -138,6 +139,16 @@ export function processV2Openapi(schema: any): any {
   for (const [key, value] of Object.entries(schema.paths)) {
     if (value == null || Object.keys(value).length === 0) {
       delete schema.paths[key];
+    }
+  }
+  const dependencies = new Set<string>();
+  const schemas = schema.components.schemas;
+  for (const path of Object.values(schema.paths)) {
+    collectComponentsSchemaDependencies(path, schemas, dependencies);
+  }
+  for (const component in schemas) {
+    if (!dependencies.has(component)) {
+      delete schemas[component];
     }
   }
   return schema;
@@ -272,5 +283,31 @@ function collectCategoryIds(
       collectCategoryIds(object.children, list);
     }
   }
+  return list;
+}
+
+function collectComponentsSchemaDependencies(
+  object: unknown,
+  componentsSchema: Record<string, unknown>,
+  list = new Set<string>(),
+): Set<string> {
+  traverseEveryProperty(object, (node, property) => {
+    if (property !== "$ref") {
+      return;
+    }
+    const ref = node[property];
+    if (!(typeof ref === "string" && ref.startsWith("#/components/schemas/"))) {
+      return;
+    }
+    const referred = ref.slice("#/components/schemas/".length);
+    list.add(referred);
+    if (referred in componentsSchema) {
+      collectComponentsSchemaDependencies(
+        componentsSchema[referred],
+        componentsSchema,
+        list,
+      );
+    }
+  });
   return list;
 }
