@@ -299,6 +299,9 @@ function collectComponentsSchemaDependencies(
       return;
     }
     const referred = ref.slice("#/components/schemas/".length);
+    if (list.has(referred)) {
+      return;
+    }
     list.add(referred);
     if (referred in componentsSchema) {
       collectComponentsSchemaDependencies(
