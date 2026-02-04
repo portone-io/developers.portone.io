@@ -140,6 +140,16 @@ export function processV2Openapi(schema: any): any {
       delete schema.paths[key];
     }
   }
+  const dependencies = new Set<string>();
+  const schemas = schema.components.schemas;
+  for (const path of Object.values(schema.paths)) {
+    collectComponentsSchemaDependencies(path, schemas, dependencies);
+  }
+  for (const component in schemas) {
+    if (!dependencies.has(component)) {
+      delete schemas[component];
+    }
+  }
   return schema;
 }
 
@@ -272,5 +282,34 @@ function collectCategoryIds(
       collectCategoryIds(object.children, list);
     }
   }
+  return list;
+}
+
+function collectComponentsSchemaDependencies(
+  object: unknown,
+  componentsSchema: Record<string, unknown>,
+  list = new Set<string>(),
+): Set<string> {
+  traverseEveryProperty(object, (node, property) => {
+    if (property !== "$ref") {
+      return;
+    }
+    const ref = node[property];
+    if (!(typeof ref === "string" && ref.startsWith("#/components/schemas/"))) {
+      return;
+    }
+    const referred = ref.slice("#/components/schemas/".length);
+    if (list.has(referred)) {
+      return;
+    }
+    list.add(referred);
+    if (referred in componentsSchema) {
+      collectComponentsSchemaDependencies(
+        componentsSchema[referred],
+        componentsSchema,
+        list,
+      );
+    }
+  });
   return list;
 }
