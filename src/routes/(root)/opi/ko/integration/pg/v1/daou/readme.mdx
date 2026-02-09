@@ -92,6 +92,7 @@ import Parameter from "~/components/parameter/Parameter";
         - cultureland (컬쳐랜드 문화상품권)
         - smartculture (스마트문화상품권)
         - booknlife (도서문화상품권)
+        - phone (휴대폰결제)
 
       - merchant\_uid: string
 
@@ -340,5 +341,90 @@ import Parameter from "~/components/parameter/Parameter";
 
       - 에스크로 배송정보 등록/수정 시 고객사가 전달한 배송정보(운송장 번호, 택배사 이름 등)에 대해 키움페이 측에서 유효성 체크를 하지 않습니다.
     </Hint>
+  </Tabs.Tab>
+
+  <Tabs.Tab title="통신사 노출 제어">
+      ```json title="모든 통신사 노출"
+          {
+            "phone": {
+              "detail": [
+                {
+                  "carrier": "*", // 모두 활성화
+                  "enabled": true
+                }
+              ]
+            }
+          }
+      ```
+
+     ```json title="특정 통신사만 노출"
+        {
+          "phone": {
+            "detail": [
+              {
+                "carrier": "SKT", // SKT만 활성화
+                "enabled": true
+              }
+            ]
+          }
+        }
+      ```
+
+      ```json title="2개 이상 통신사 노출"
+        {
+          "phone": {
+            "detail": [
+              {
+                "carrier": "SKT",
+                "enabled": true
+              },
+              {
+                "carrier": "KTF",
+                "enabled": true
+              },
+              {
+                "carrier": "LGT",
+                "enabled": false
+              },
+              {
+                "carrier": "CJH",
+                "enabled": false
+              }
+            ]
+          }
+        }
+      // SKT, KTF 을 제외한 나머지 통신사는 비활성화 됩니다.
+      ```
+
+      ```json title="특정 통신사만 비노출"
+        {
+          "phone": {
+            "detail": [
+              {
+                "carrier": "SKT",
+                "enabled": false
+              }
+            ]
+          }
+        }
+      ```
+
+      <Hint style="info">
+        `phone 파라미터 미 설정시`(기본값) 모든 통신사 노출됨
+      </Hint>
+  </Tabs.Tab>
+
+  <Tabs.Tab title="휴대폰 번호 고정">
+      ```json
+      {
+        "prefill": {
+          "phoneNumber": "휴대폰번호" // 휴대폰번호 입력(하이픈 제거)
+        }
+      }
+      ```
+
+      <Hint style="info">
+        휴대폰 결제시 해당 파라미터를 설정하면 휴대폰번호를 고정시킬수 있습니다.
+      </Hint>
   </Tabs.Tab>
 </Tabs>
