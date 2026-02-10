@@ -1,25 +1,19 @@
-import { defineConfig } from "vite";
-
-import { solidStart } from "@solidjs/start/config";
-import { nitroV2Plugin } from "@solidjs/vite-plugin-nitro-2";
-
-import yaml from "@rollup/plugin-yaml";
-import unocss from "unocss/vite";
-
-import remarkFrontmatter from "remark-frontmatter";
-import remarkGfm from "remark-gfm";
-import remarkParamTree from "@portone-io/remark-param-tree";
-
-import rehypeSlug from "rehype-slug";
-
-import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
-import { transformerMetaHighlight } from "@shikijs/transformers";
-import { imagetools } from "vite-imagetools";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 
 import mdx from "@mdx-js/rollup";
-
-import path from "node:path";
-import { readFile } from "node:fs/promises";
+import remarkParamTree from "@portone-io/remark-param-tree";
+import yaml from "@rollup/plugin-yaml";
+import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
+import { transformerMetaHighlight } from "@shikijs/transformers";
+import { solidStart } from "@solidjs/start/config";
+import { nitroV2Plugin } from "@solidjs/vite-plugin-nitro-2";
+import rehypeSlug from "rehype-slug";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkGfm from "remark-gfm";
+import unocss from "unocss/vite";
+import { defineConfig } from "vite";
+import { imagetools } from "vite-imagetools";
 
 export default defineConfig({
   plugins: [
