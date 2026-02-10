@@ -16,78 +16,77 @@ import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import { imagetools } from "vite-imagetools";
 
-import vinxiMdxPkg from '@vinxi/plugin-mdx';
-
-const { default: vinxiMdx } = vinxiMdxPkg;
+import mdx from "@mdx-js/rollup";
 
 import path from "node:path";
 import { readFile } from "node:fs/promises";
 
 export default defineConfig({
   plugins: [
-    vinxiMdx.withImports({})({
-      jsx: true,
-      jsxImportSource: "solid-js",
-      providerImportSource: "solid-mdx",
-      remarkPlugins: [remarkFrontmatter, remarkGfm, remarkParamTree],
-      rehypePlugins: [
-        rehypeSlug,
-        [
-          rehypeShiki,
-          {
-            theme: "github-light",
-            fallbackLanguage: "text",
-            defaultLanguage: "text",
-            transformers: [
-              {
-                name: "remove-trailing-newline",
-                preprocess(code) {
-                  if (code.endsWith("\n")) {
-                    return code.slice(0, -1);
-                  }
-                  return code;
+    {
+      enforce: "pre",
+      ...mdx({
+        jsx: true,
+        jsxImportSource: "solid-js",
+        providerImportSource: "solid-mdx",
+        remarkPlugins: [remarkFrontmatter, remarkGfm, remarkParamTree],
+        rehypePlugins: [
+          rehypeSlug,
+          [
+            rehypeShiki,
+            {
+              theme: "github-light",
+              fallbackLanguage: "text",
+              defaultLanguage: "text",
+              transformers: [
+                {
+                  name: "remove-trailing-newline",
+                  preprocess(code) {
+                    if (code.endsWith("\n")) {
+                      return code.slice(0, -1);
+                    }
+                    return code;
+                  },
                 },
-              },
-              transformerMetaHighlight(),
-              {
-                name: "line-number-meta",
-                code(node) {
-                  if (
-                    this.options.meta?.__raw?.includes("showLineNumber")
-                  ) {
-                    this.addClassToHast(node, "line-numbers");
-                  }
+                transformerMetaHighlight(),
+                {
+                  name: "line-number-meta",
+                  code(node) {
+                    if (this.options.meta?.__raw?.includes("showLineNumber")) {
+                      this.addClassToHast(node, "line-numbers");
+                    }
+                  },
                 },
-              },
-              {
-                name: "title",
-                pre(node) {
-                  const matches = /title="([^"]+)"/.exec(
-                    this.options.meta?.__raw ?? "",
-                  );
-                  if (matches?.[1]) {
-                    node.children.unshift({
-                      type: "element",
-                      tagName: "div",
-                      properties: {
-                        className: ["title"],
-                      },
-                      children: [{ type: "text", value: matches[1] }],
-                    });
-                  }
+                {
+                  name: "title",
+                  pre(node) {
+                    const matches = /title="([^"]+)"/.exec(
+                      this.options.meta?.__raw ?? "",
+                    );
+                    if (matches?.[1]) {
+                      node.children.unshift({
+                        type: "element",
+                        tagName: "div",
+                        properties: {
+                          className: ["title"],
+                        },
+                        children: [{ type: "text", value: matches[1] }],
+                      });
+                    }
+                  },
                 },
-              },
-            ],
-          } satisfies RehypeShikiOptions,
+              ],
+            } satisfies RehypeShikiOptions,
+          ],
         ],
-      ],
-    }),
+      }),
+    },
     solidStart({
       // middleware: "./src/middleware.ts",
       extensions: ["ts", "tsx", "mdx"],
       solid: {
         exclude: ["./src/misc/opengraph/**/*"],
-      }
+      },
     }),
     nitroV2Plugin({
       preset: "vercel",
@@ -136,4 +135,4 @@ export default defineConfig({
       },
     },
   ],
-})
+});
