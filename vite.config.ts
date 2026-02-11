@@ -75,6 +75,7 @@ export default defineConfig({
         ],
       }),
     },
+    unocss(),
     solidStart({
       // middleware: "./src/middleware.ts",
       extensions: ["ts", "tsx", "mdx"],
@@ -92,7 +93,6 @@ export default defineConfig({
       },
     }),
     yaml(),
-    unocss(),
     imagetools({
       defaultDirectives: (url) => {
         const extname = path.extname(url.pathname);
