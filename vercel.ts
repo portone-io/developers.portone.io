@@ -6,4 +6,8 @@ export default {
       { key: "X-Content-Type-Options", value: "nosniff" },
     ]),
   ],
+  installCommand: "pnpm install",
+  outputDirectory: ".vercel/output",
+  buildCommand: "pnpm build",
+  devCommand: "pnpm dev",
 } satisfies VercelConfig;
