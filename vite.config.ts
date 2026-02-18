@@ -4,10 +4,6 @@ import path from "node:path";
 import mdx from "@mdx-js/rollup";
 import remarkParamTree from "@portone-io/remark-param-tree";
 import yaml from "@rollup/plugin-yaml";
-import {
-  sentrySolidStartVite,
-  withSentryNitroConfig,
-} from "@sentry/solidstart/config";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import { solidStart } from "@solidjs/start/config";
@@ -21,15 +17,6 @@ import { imagetools } from "vite-imagetools";
 
 export default defineConfig({
   plugins: [
-    sentrySolidStartVite({
-      org: "iamport-corp",
-      project: "developers-portone-io",
-      authToken: process.env?.VITE_SENTRY_AUTH_TOKEN,
-      sourceMapsUploadOptions: {
-        telemetry: false,
-      },
-      autoInjectServerSentry: "experimental_dynamic-import",
-    }),
     {
       enforce: "pre",
       ...mdx({
@@ -96,22 +83,15 @@ export default defineConfig({
         exclude: ["./src/misc/opengraph/**/*"],
       },
     }),
-    nitroV2Plugin(
-      withSentryNitroConfig(
-        {
-          preset: "vercel",
-          prerender: {
-            routes: ["/blog/rss.xml"],
-          },
-          rollupConfig: {
-            external: ["monaco-editor"],
-          },
-        },
-        {
-          autoInjectServerSentry: "experimental_dynamic-import",
-        },
-      ),
-    ),
+    nitroV2Plugin({
+      preset: "vercel",
+      prerender: {
+        routes: ["/blog/rss.xml"],
+      },
+      rollupConfig: {
+        external: ["monaco-editor"],
+      },
+    }),
     yaml(),
     imagetools({
       defaultDirectives: (url) => {
