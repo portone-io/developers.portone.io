@@ -30,7 +30,11 @@ async function isDraft(filePath: string): Promise<boolean> {
     if (!match?.[1]) return false;
     const frontmatter = yaml.load(match[1]) as Record<string, unknown>;
     return frontmatter.draft === true;
-  } catch {
+  } catch (error) {
+    console.warn(
+      `'${filePath}'의 frontmatter를 파싱하는 중 오류가 발생했습니다:`,
+      error,
+    );
     return false;
   }
 }
