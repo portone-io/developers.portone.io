@@ -18,17 +18,19 @@ async function main() {
 
     const { indexXml, sitemaps } = generateSitemap(urls);
 
-    // sitemap index가 필요한 경우
-    if (indexXml) {
-      await writeFile(join(outputDir, "sitemap.xml"), indexXml, "utf-8");
-      console.log("sitemap.xml (index) 파일을 생성했습니다.");
-    }
-
-    // 개별 sitemap 파일 저장
-    for (const { filename, xml } of sitemaps) {
-      await writeFile(join(outputDir, filename), xml, "utf-8");
-      console.log(`${filename} 파일을 생성했습니다.`);
-    }
+    await Promise.all([
+      // sitemap index가 필요한 경우
+      indexXml &&
+        writeFile(join(outputDir, "sitemap.xml"), indexXml, "utf-8").then(() =>
+          console.log("sitemap.xml (index) 파일을 생성했습니다."),
+        ),
+      // 개별 sitemap 파일 저장
+      ...sitemaps.map(({ filename, xml }) =>
+        writeFile(join(outputDir, filename), xml, "utf-8").then(() =>
+          console.log(`${filename} 파일을 생성했습니다.`),
+        ),
+      ),
+    ]);
 
     console.log("sitemap 생성이 완료되었습니다.");
   } catch (error) {

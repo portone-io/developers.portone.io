@@ -44,7 +44,7 @@ export async function collectRoutes(): Promise<string[]> {
     await fastGlob(["src/routes/**/*.mdx"], { cwd: rootDir })
   ).sort();
 
-  const urls: string[] = [];
+  const urls = new Set<string>(STATIC_ROUTES);
 
   for (const filePath of mdxFiles) {
     const slug = generateSlug(filePath, routesDir);
@@ -58,18 +58,8 @@ export async function collectRoutes(): Promise<string[]> {
     // 블로그 draft 포스트 제외
     if (slug.startsWith("blog/posts/") && (await isDraft(filePath))) continue;
 
-    urls.push(`/${slug}`);
+    urls.add(`/${slug}`);
   }
 
-  // 정적 라우트 추가
-  for (const route of STATIC_ROUTES) {
-    if (!urls.includes(route)) {
-      urls.push(route);
-    }
-  }
-
-  // 정렬
-  urls.sort();
-
-  return urls;
+  return [...urls].sort();
 }
