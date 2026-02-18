@@ -2,9 +2,9 @@ name: Server SDK
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
-      - "src/schema/v2.openapi.json"
+      - 'src/schema/v2.openapi.json'
   workflow_dispatch: {}
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: devcenter
-
+      
       - uses: actions/checkout@v4
         with:
           repository: portone-io/server-sdk
@@ -46,19 +46,19 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
-          cache: "npm"
-          cache-dependency-path: "sdk/javascript/pnpm-lock.yaml"
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'sdk/javascript/pnpm-lock.yaml'
 
       - name: Add empty changeset
         run: npx @changesets/cli add --empty
         working-directory: sdk/javascript
-
+        
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          working-directory: "sdk/python"
+          working-directory: 'sdk/python'
 
       - name: Install dependencies
         run: uv sync --dev

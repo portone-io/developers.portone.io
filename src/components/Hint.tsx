@@ -1,10 +1,11 @@
-import { createMemo, type ParentProps } from "solid-js";
+import { createMemo, type JSXElement } from "solid-js";
 
 interface Props {
   style: "info" | "warning" | "success" | "danger";
+  children: JSXElement;
 }
 
-export default function Hint(props: ParentProps<Props>) {
+export default function Hint(props: Props) {
   const cls = createMemo(
     () =>
       `my-4 p-4 flex gap-3 rounded border-l-4 bg-slate-1 ${

@@ -1,7 +1,7 @@
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 import "./styles/fonts.css";
 import "@unocss/reset/tailwind.css";
-import "virtual:uno.css";
+import "uno.css";
 import "./styles/global.css";
 import "./styles/docsearch/_variables.css";
 import "./styles/docsearch/modal.css";
