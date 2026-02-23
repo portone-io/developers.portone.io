@@ -12,7 +12,7 @@ import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import unocss from "unocss/vite";
-import { defineConfig } from "vite";
+import { defineConfig, withFilter } from "vite";
 import { imagetools } from "vite-imagetools";
 
 export default defineConfig({
@@ -93,31 +93,41 @@ export default defineConfig({
       },
     }),
     yaml(),
-    imagetools({
-      defaultDirectives: (url) => {
-        const extname = path.extname(url.pathname);
-        if (
-          // formats supported by Sharp (https://sharp.pixelplumbing.com/#formats)
-          [
-            ".png",
-            ".jpg",
-            ".jpeg",
-            ".webp",
-            ".gif",
-            ".avif",
-            ".tiff",
-            ".tif",
-            ".svg",
-          ].includes(extname)
-        ) {
-          return new URLSearchParams([
-            ["as", "picture"],
-            ["format", "webp"],
-            ...url.searchParams.entries(),
-          ]);
-        } else return url.searchParams;
+    withFilter(
+      imagetools({
+        defaultDirectives: (url) => {
+          const extname = path.extname(url.pathname);
+          if (
+            // formats supported by Sharp (https://sharp.pixelplumbing.com/#formats)
+            [
+              ".png",
+              ".jpg",
+              ".jpeg",
+              ".webp",
+              ".gif",
+              ".avif",
+              ".tiff",
+              ".tif",
+              ".svg",
+            ].includes(extname)
+          ) {
+            return new URLSearchParams([
+              ["as", "picture"],
+              ["format", "webp"],
+              ...url.searchParams.entries(),
+            ]);
+          } else return url.searchParams;
+        },
+      }),
+      {
+        load: {
+          id: {
+            include: /^[^?]+\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)(\?.*)?$/,
+            exclude: "./public/**/*",
+          },
+        },
       },
-    }),
+    ),
     {
       name: "base64-loader",
       async transform(_, id) {
