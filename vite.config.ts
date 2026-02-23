@@ -17,64 +17,73 @@ import { imagetools } from "vite-imagetools";
 
 export default defineConfig({
   plugins: [
-    {
-      enforce: "pre",
-      ...mdx({
-        jsx: true,
-        jsxImportSource: "solid-js",
-        providerImportSource: "solid-mdx",
-        remarkPlugins: [remarkFrontmatter, remarkGfm, remarkParamTree],
-        rehypePlugins: [
-          rehypeSlug,
-          [
-            rehypeShiki,
-            {
-              theme: "github-light",
-              fallbackLanguage: "text",
-              defaultLanguage: "text",
-              transformers: [
-                {
-                  name: "remove-trailing-newline",
-                  preprocess(code) {
-                    if (code.endsWith("\n")) {
-                      return code.slice(0, -1);
-                    }
-                    return code;
+    withFilter(
+      {
+        enforce: "pre",
+        ...mdx({
+          jsx: true,
+          jsxImportSource: "solid-js",
+          providerImportSource: "solid-mdx",
+          remarkPlugins: [remarkFrontmatter, remarkGfm, remarkParamTree],
+          rehypePlugins: [
+            rehypeSlug,
+            [
+              rehypeShiki,
+              {
+                theme: "github-light",
+                fallbackLanguage: "text",
+                defaultLanguage: "text",
+                transformers: [
+                  {
+                    name: "remove-trailing-newline",
+                    preprocess(code) {
+                      if (code.endsWith("\n")) {
+                        return code.slice(0, -1);
+                      }
+                      return code;
+                    },
                   },
-                },
-                transformerMetaHighlight(),
-                {
-                  name: "line-number-meta",
-                  code(node) {
-                    if (this.options.meta?.__raw?.includes("showLineNumber")) {
-                      this.addClassToHast(node, "line-numbers");
-                    }
+                  transformerMetaHighlight(),
+                  {
+                    name: "line-number-meta",
+                    code(node) {
+                      if (
+                        this.options.meta?.__raw?.includes("showLineNumber")
+                      ) {
+                        this.addClassToHast(node, "line-numbers");
+                      }
+                    },
                   },
-                },
-                {
-                  name: "title",
-                  pre(node) {
-                    const matches = /title="([^"]+)"/.exec(
-                      this.options.meta?.__raw ?? "",
-                    );
-                    if (matches?.[1]) {
-                      node.children.unshift({
-                        type: "element",
-                        tagName: "div",
-                        properties: {
-                          className: ["title"],
-                        },
-                        children: [{ type: "text", value: matches[1] }],
-                      });
-                    }
+                  {
+                    name: "title",
+                    pre(node) {
+                      const matches = /title="([^"]+)"/.exec(
+                        this.options.meta?.__raw ?? "",
+                      );
+                      if (matches?.[1]) {
+                        node.children.unshift({
+                          type: "element",
+                          tagName: "div",
+                          properties: {
+                            className: ["title"],
+                          },
+                          children: [{ type: "text", value: matches[1] }],
+                        });
+                      }
+                    },
                   },
-                },
-              ],
-            } satisfies RehypeShikiOptions,
+                ],
+              } satisfies RehypeShikiOptions,
+            ],
           ],
-        ],
-      }),
-    },
+        }),
+      },
+      {
+        transform: {
+          id: /\.(md|mdx)(\?.*)?$/,
+        },
+      },
+    ),
     unocss(),
     solidStart({
       // middleware: "./src/middleware.ts",
@@ -122,7 +131,7 @@ export default defineConfig({
       {
         load: {
           id: {
-            include: /^[^?]+\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)(\?.*)?$/,
+            include: /\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)(\?.*)?$/,
             exclude: "./public/**/*",
           },
         },
