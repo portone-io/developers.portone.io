@@ -1,7 +1,7 @@
 "use server";
 
+import { getCookie, getQuery } from "@solidjs/start/http";
 import { getRequestEvent } from "solid-js/web";
-import { getCookie, getQuery } from "vinxi/http";
 
 import type { SystemVersion } from "~/type";
 

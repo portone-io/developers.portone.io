@@ -1,12 +1,13 @@
 import { createMemo, For, type ParentProps, Show, splitProps } from "solid-js";
 
 import { PaymentGateway } from "~/type";
+import type { Flags } from "~/types/__generated__/flags";
 
 import { Condition } from "./Condition";
 import { PgOptions } from "./PgSelect";
 
 export type PgSectionProps = ParentProps<{
-  pgName: (pgName: PaymentGateway) => boolean;
+  pgName: (pgName: Flags) => boolean;
 }>;
 
 export const PgSection = (props: PgSectionProps) => {
