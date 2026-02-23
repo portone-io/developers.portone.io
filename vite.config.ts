@@ -7,7 +7,7 @@ import yaml from "@rollup/plugin-yaml";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import { solidStart } from "@solidjs/start/config";
-import { nitroV2Plugin } from "@solidjs/vite-plugin-nitro-2";
+import { nitro } from "nitro/vite";
 import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -83,7 +83,7 @@ export default defineConfig({
         exclude: ["./src/misc/opengraph/**/*"],
       },
     }),
-    nitroV2Plugin({
+    nitro({
       preset: "vercel",
       prerender: {
         routes: ["/blog/rss.xml"],
@@ -92,7 +92,11 @@ export default defineConfig({
         external: ["monaco-editor"],
       },
     }),
-    yaml(),
+    withFilter(yaml(), {
+      transform: {
+        id: /\.(yaml|yml)$/,
+      },
+    }),
     withFilter(
       imagetools({
         defaultDirectives: (url) => {
