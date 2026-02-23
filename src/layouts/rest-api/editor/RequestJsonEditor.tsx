@@ -31,7 +31,7 @@ export default function RequestJsonEditor(props: RequestJsonEditorProps) {
         const uri = `inmemory://operation/${props.operation.operationId}/${props.part}`;
         const schemaUri = `inmemory://operation/${props.operation.operationId}/${props.part}/schema`;
         const model = getModel(props.initialValue, uri);
-        const { jsonDefaults } = monaco.languages.json;
+        const { jsonDefaults } = monaco.json;
         registerSchema();
         const editor = monaco.editor.create(domElement, {
           ...commonEditorConfig,
@@ -58,16 +58,15 @@ export default function RequestJsonEditor(props: RequestJsonEditorProps) {
             uri: "inmemory://schema",
             schema: props.openapiSchema,
           });
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-          (diagnosticsOptions as any).schemas = schemasArray;
-          jsonDefaults.setDiagnosticsOptions(diagnosticsOptions);
+          const newOptions = { ...diagnosticsOptions, schemas: schemasArray };
+          jsonDefaults.setDiagnosticsOptions(newOptions);
         }
       }}
     />
   );
 }
 
-const diagnosticsOptions: monaco.languages.json.DiagnosticsOptions = {
+const diagnosticsOptions: monaco.json.DiagnosticsOptions = {
   validate: true,
   allowComments: true,
   trailingCommas: "ignore",

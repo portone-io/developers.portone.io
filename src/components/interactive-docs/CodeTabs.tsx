@@ -24,16 +24,16 @@ export function CodeTabs() {
       <Tabs.List class="w-full flex flex-nowrap gap-2 overflow-x-auto whitespace-nowrap">
         <For each={tabs()}>
           {(tab) => {
-            let tabRef: HTMLElement;
+            let tabRef: HTMLElement | undefined;
             const isSelected = createMemo(() => tab.fileName === selectedTab());
             createEffect(() => {
               if (isSelected()) {
-                tabRef!.scrollBy();
+                tabRef?.scrollBy();
               }
             });
             return (
               <Tabs.Trigger
-                ref={tabRef!}
+                ref={tabRef}
                 class={clsx(
                   "flex items-center gap-1 rounded-md px-3 py-1",
                   isSelected()

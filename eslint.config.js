@@ -49,10 +49,16 @@ export default [
       ".vinxi",
       ".output",
       "packages/**/dist",
+      ".nitro",
+      ".solid-start",
     ],
   },
   {
     ...eslint.configs.recommended,
+    rules: {
+      ...eslint.configs.recommended.rules,
+      "no-unassigned-vars": "off",
+    },
     ignores: ["**/*.mdx/*"],
   },
   {

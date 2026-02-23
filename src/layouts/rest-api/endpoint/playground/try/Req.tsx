@@ -253,7 +253,7 @@ function parseReqJson(json: string, part: RequestPart): unknown {
     return json5.parse(json);
   } catch (err) {
     const Part = part[0]?.toUpperCase() + part.slice(1);
-    throw new Error(`${Part}가 올바르지 않습니다.\n${(err as Error).message}`);
+    throw new Error(`${Part}가 올바르지 않습니다.`, { cause: err });
   }
 }
 
