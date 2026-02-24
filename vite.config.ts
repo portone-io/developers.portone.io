@@ -16,6 +16,20 @@ import { defineConfig, withFilter } from "vite";
 import { imagetools } from "vite-imagetools";
 
 export default defineConfig({
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: "monaco-editor",
+              test: /node_modules[\\/]monaco-editor/,
+            },
+          ],
+        },
+      },
+    },
+  },
   plugins: [
     withFilter(
       {
