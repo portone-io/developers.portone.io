@@ -14,7 +14,7 @@ import { match, P } from "ts-pattern";
 import Parameter from "~/components/parameter/Parameter";
 import { prose } from "~/components/prose";
 import { toMDXModule } from "~/misc/md";
-import { expandAndScrollTo, useExpand } from "~/state/rest-api/expand-section";
+import { expandAndScrollTo } from "~/state/rest-api/expand-section";
 
 import { interleave } from "..";
 import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
@@ -31,20 +31,12 @@ import {
   resolveTypeDef,
   type TypeDef,
 } from "../schema-utils/type-def";
-import Expand from "./Expand";
-
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
-  initialExpand?: boolean;
   endpointGroups: CategoryEndpointsPair[];
   schema: unknown;
 }
 export function TypeDefinitions(props: TypeDefinitionsProps) {
-  const { expand, onToggle } = useExpand(
-    "type-def",
-    () => !!props.initialExpand,
-  );
-  let headingRef: HTMLHeadingElement | undefined;
   const typeDefPropsList = createMemo(() =>
     crawlRefs(props.schema, props.endpointGroups)
       .sort()
@@ -56,7 +48,7 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
 
   return (
     <section id="type-def" class="flex flex-col scroll-mt-5.2rem">
-      <prose.h2 ref={headingRef}>타입 정의</prose.h2>
+      <prose.h2>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
@@ -84,32 +76,22 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
           }}
         </For>
       </div>
-      <Expand
-        class="mt-20"
-        title="타입 정의"
-        expand={expand()}
-        onToggle={onToggle}
-        onCollapse={() => {
-          headingRef?.scrollIntoView({ behavior: "smooth" });
-        }}
-      >
-        <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
-          <For each={typeDefPropsList()}>
-            {(property) => (
-              <Parameter flatten id={property.name}>
-                <PropertyDoc
-                  basepath={props.basepath}
-                  schema={props.schema}
-                  name={property.name}
-                  property={property.typeDef}
-                  showNested={1}
-                  required
-                />
-              </Parameter>
-            )}
-          </For>
-        </div>
-      </Expand>
+      <div class="grid-flow-rows grid mt-20 gap-4 lg:grid-cols-2">
+        <For each={typeDefPropsList()}>
+          {(property) => (
+            <Parameter flatten id={property.name}>
+              <PropertyDoc
+                basepath={props.basepath}
+                schema={props.schema}
+                name={property.name}
+                property={property.typeDef}
+                showNested={1}
+                required
+              />
+            </Parameter>
+          )}
+        </For>
+      </div>
     </section>
   );
 }

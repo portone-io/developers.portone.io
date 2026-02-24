@@ -52,7 +52,6 @@ export default function RestApi(props: RestApiProps) {
         />
         <TypeDefinitions
           basepath={props.basepath}
-          initialExpand={props.currentSection === "type-def"}
           endpointGroups={endpointGroups()}
           schema={props.schema}
         />
@@ -176,7 +175,6 @@ export function RestApiCategory(props: RestApiCategoryProps) {
         />
         <TypeDefinitions
           basepath={props.basepath}
-          initialExpand={!!location.hash}
           endpointGroups={filteredEndpointGroups()}
           schema={props.schema}
         />
