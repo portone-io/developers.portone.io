@@ -63,7 +63,7 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
       <div class="grid-flow-rows grid mt-4 gap-x-4 gap-y-1 border border-slate-3 rounded-lg bg-slate-1 px-6 py-4 text-xs lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
         <For each={typeDefPropsList()}>
           {(property) => {
-            const href = `${props.basepath}/type-def#${property.name}`;
+            const href = `#${property.name}`;
             return (
               <a
                 class="underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
@@ -442,7 +442,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
     () => typeRepr()[0]?.toUpperCase() === typeRepr()[0],
   );
   const typeName = createMemo(() => typeRepr().replace("[]", ""));
-  const href = createMemo(() => `${props.basepath}/type-def#${typeName()}`);
+  const href = createMemo(() => `#${typeName()}`);
   const format = createMemo(
     on(typeDef, (typeDef): JSXElement => {
       if (typeof typeDef === "string" || !("format" in typeDef)) return null;

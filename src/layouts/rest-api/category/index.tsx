@@ -47,6 +47,7 @@ export interface CategoryProps {
   basepath: string;
   apiHost: string;
   initialExpand: boolean;
+  alwaysExpand?: boolean;
   section: string;
   schema: unknown;
   title: string;
@@ -66,6 +67,27 @@ export function Category(props: CategoryProps) {
       description={props.description}
     />
   );
+
+  const endpointList = () => (
+    <For each={props.endpoints}>
+      {(endpoint) => (
+        <EndpointDoc
+          basepath={props.basepath}
+          schema={props.schema}
+          endpoint={endpoint}
+          renderRightFn={({ schema, endpoint, operation }) => (
+            <EndpointPlayground
+              apiHost={props.apiHost}
+              schema={schema()}
+              endpoint={endpoint()}
+              operation={operation()}
+            />
+          )}
+        />
+      )}
+    </For>
+  );
+
   return (
     <section id={props.section} class="flex flex-col scroll-mt-5.2rem">
       <div>
@@ -101,12 +123,20 @@ export function Category(props: CategoryProps) {
                         "opacity-50": endpoint.deprecated || endpoint.unstable,
                       }}
                       onClick={(e) => {
-                        e.preventDefault();
-                        expandAndScrollTo({
-                          section: props.section,
-                          href: href(),
-                          id: id(),
-                        });
+                        if (props.alwaysExpand) {
+                          e.preventDefault();
+                          document
+                            .getElementById(id())
+                            ?.scrollIntoView({ behavior: "smooth" });
+                          history.replaceState({}, "", href());
+                        } else {
+                          e.preventDefault();
+                          expandAndScrollTo({
+                            section: props.section,
+                            href: href(),
+                            id: id(),
+                          });
+                        }
                       }}
                       data-norefresh
                     >
@@ -122,33 +152,24 @@ export function Category(props: CategoryProps) {
             </div>
           )}
         />
-        <Expand
-          class="my-20"
-          title={props.title}
-          expand={expand()}
-          onToggle={onToggle}
-          onCollapse={() => {
-            headingRef?.scrollIntoView({ behavior: "smooth" });
-          }}
+        <Show
+          when={props.alwaysExpand}
+          fallback={
+            <Expand
+              class="my-20"
+              title={props.title}
+              expand={expand()}
+              onToggle={onToggle}
+              onCollapse={() => {
+                headingRef?.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
+              {endpointList()}
+            </Expand>
+          }
         >
-          <For each={props.endpoints}>
-            {(endpoint) => (
-              <EndpointDoc
-                basepath={props.basepath}
-                schema={props.schema}
-                endpoint={endpoint}
-                renderRightFn={({ schema, endpoint, operation }) => (
-                  <EndpointPlayground
-                    apiHost={props.apiHost}
-                    schema={schema()}
-                    endpoint={endpoint()}
-                    operation={operation()}
-                  />
-                )}
-              />
-            )}
-          </For>
-        </Expand>
+          <div class="my-20 flex flex-col gap-20">{endpointList()}</div>
+        </Show>
       </Show>
     </section>
   );

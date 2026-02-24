@@ -69,6 +69,25 @@ export function getEndpointRepr({
   return `${method} ${path}`;
 }
 
+export function getEmptyCategoryIds(schema: unknown): Set<string> {
+  const endpoints = getEveryEndpoints(schema);
+  const usedCategoryIds = new Set<string>();
+  for (const endpoint of endpoints) {
+    const operation = getOperation(schema, endpoint);
+    const categoryId =
+      operation["x-portone-category"] || operation.tags?.[0] || "";
+    if (categoryId) usedCategoryIds.add(categoryId);
+  }
+  const allCategories = flatCategories(getCategories(schema));
+  const emptyIds = new Set<string>();
+  for (const category of allCategories) {
+    if (!usedCategoryIds.has(category.id)) {
+      emptyIds.add(category.id);
+    }
+  }
+  return emptyIds;
+}
+
 export function getEveryEndpoints(schema: unknown): Endpoint[] {
   const s = schema as {
     paths: Record<string, Record<string, Operation>>;
