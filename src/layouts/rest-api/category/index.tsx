@@ -123,14 +123,13 @@ export function Category(props: CategoryProps) {
                         "opacity-50": endpoint.deprecated || endpoint.unstable,
                       }}
                       onClick={(e) => {
+                        e.preventDefault();
                         if (props.alwaysExpand) {
-                          e.preventDefault();
                           document
                             .getElementById(id())
                             ?.scrollIntoView({ behavior: "smooth" });
                           history.replaceState({}, "", href());
                         } else {
-                          e.preventDefault();
                           expandAndScrollTo({
                             section: props.section,
                             href: href(),
