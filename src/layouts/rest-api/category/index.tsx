@@ -168,7 +168,7 @@ export function Category(props: CategoryProps) {
           when={props.alwaysExpand}
           fallback={
             <Expand
-              class="my-20"
+              class="my-10"
               title={props.title}
               expand={expand()}
               onToggle={onToggle}
@@ -180,7 +180,7 @@ export function Category(props: CategoryProps) {
             </Expand>
           }
         >
-          <div class="my-20 flex flex-col gap-4">
+          <div class="my-10 flex flex-col gap-4">
             {collapsibleEndpointList()}
           </div>
         </Show>
