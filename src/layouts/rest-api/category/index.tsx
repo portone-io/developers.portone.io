@@ -8,17 +8,16 @@ import {
 } from "solid-js";
 
 import { prose } from "~/components/prose";
-import { expandAndScrollTo, useExpand } from "~/state/rest-api/expand-section";
+import { useExpand } from "~/state/rest-api/expand-section";
 
 import { Hr } from "..";
-import EndpointDoc, { MethodLine } from "../endpoint/EndpointDoc";
+import EndpointDoc from "../endpoint/EndpointDoc";
 import EndpointPlayground from "../endpoint/playground/EndpointPlayground";
 import {
   type CategoryEndpointsPair,
   type Endpoint,
   getEndpointRepr,
 } from "../schema-utils/endpoint";
-import TwoColumnLayout from "../TwoColumnLayout";
 import Expand from "./Expand";
 
 export interface CategoriesProps {
@@ -164,58 +163,7 @@ export function Category(props: CategoryProps) {
           </>
         }
       >
-        <TwoColumnLayout
-          gap={6}
-          left={descriptionElement}
-          right={() => (
-            <div class="mt-4 flex flex-col gap-4">
-              <h3 class="text-slate-4 font-bold">목차</h3>
-              <For each={props.endpoints}>
-                {(endpoint) => {
-                  const id = createMemo(() => getEndpointRepr(endpoint));
-                  const href = createMemo(
-                    () =>
-                      `${props.basepath}/${props.section}#${encodeURIComponent(id())}`,
-                  );
-                  return (
-                    <a
-                      href={href()}
-                      class="flex flex-col gap-1 text-sm text-slate-6 leading-tight underline-offset-4 transition-colors hover:text-orange-5"
-                      classList={{
-                        "opacity-50": endpoint.deprecated || endpoint.unstable,
-                      }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (props.alwaysExpand) {
-                          setEndpointOpen(id(), true);
-                          requestAnimationFrame(() => {
-                            document
-                              .getElementById(id())
-                              ?.scrollIntoView({ behavior: "smooth" });
-                            history.replaceState({}, "", href());
-                          });
-                        } else {
-                          expandAndScrollTo({
-                            section: props.section,
-                            href: href(),
-                            id: id(),
-                          });
-                        }
-                      }}
-                      data-norefresh
-                    >
-                      <div class="font-bold">{endpoint.title}</div>
-                      <MethodLine
-                        method={endpoint.method}
-                        path={endpoint.path}
-                      />
-                    </a>
-                  );
-                }}
-              </For>
-            </div>
-          )}
-        />
+        {descriptionElement()}
         <Show
           when={props.alwaysExpand}
           fallback={
