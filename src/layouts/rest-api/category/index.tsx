@@ -1,4 +1,11 @@
-import { createMemo, For, type JSXElement, Show } from "solid-js";
+import {
+  createMemo,
+  createSignal,
+  For,
+  type JSXElement,
+  onMount,
+  Show,
+} from "solid-js";
 
 import { prose } from "~/components/prose";
 import { expandAndScrollTo, useExpand } from "~/state/rest-api/expand-section";
@@ -68,6 +75,30 @@ export function Category(props: CategoryProps) {
     />
   );
 
+  // alwaysExpand 모드에서 각 엔드포인트의 open 상태 관리
+  const [openStates, setOpenStates] = createSignal<Record<string, boolean>>({});
+
+  onMount(() => {
+    if (!props.alwaysExpand) return;
+    const hash = window.location.hash;
+    const hashId = hash ? decodeURIComponent(hash.slice(1)) : "";
+    const initial: Record<string, boolean> = {};
+    for (const endpoint of props.endpoints) {
+      const id = getEndpointRepr(endpoint);
+      initial[id] = id === hashId;
+    }
+    setOpenStates(initial);
+    if (hashId) {
+      requestAnimationFrame(() => {
+        document.getElementById(hashId)?.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  });
+
+  const setEndpointOpen = (id: string, open: boolean) => {
+    setOpenStates((prev) => ({ ...prev, [id]: open }));
+  };
+
   const endpointList = () => (
     <For each={props.endpoints}>
       {(endpoint) => (
@@ -85,6 +116,37 @@ export function Category(props: CategoryProps) {
           )}
         />
       )}
+    </For>
+  );
+
+  const collapsibleEndpointList = () => (
+    <For each={props.endpoints}>
+      {(endpoint, index) => {
+        const id = createMemo(() => getEndpointRepr(endpoint));
+        return (
+          <>
+            <Show when={index() > 0}>
+              <hr class="border-slate-2" />
+            </Show>
+            <EndpointDoc
+              basepath={props.basepath}
+              schema={props.schema}
+              endpoint={endpoint}
+              collapsible
+              open={openStates()[id()]}
+              onOpenChange={(open) => setEndpointOpen(id(), open)}
+              renderRightFn={({ schema, endpoint, operation }) => (
+                <EndpointPlayground
+                  apiHost={props.apiHost}
+                  schema={schema()}
+                  endpoint={endpoint()}
+                  operation={operation()}
+                />
+              )}
+            />
+          </>
+        );
+      }}
     </For>
   );
 
@@ -125,10 +187,13 @@ export function Category(props: CategoryProps) {
                       onClick={(e) => {
                         e.preventDefault();
                         if (props.alwaysExpand) {
-                          document
-                            .getElementById(id())
-                            ?.scrollIntoView({ behavior: "smooth" });
-                          history.replaceState({}, "", href());
+                          setEndpointOpen(id(), true);
+                          requestAnimationFrame(() => {
+                            document
+                              .getElementById(id())
+                              ?.scrollIntoView({ behavior: "smooth" });
+                            history.replaceState({}, "", href());
+                          });
                         } else {
                           expandAndScrollTo({
                             section: props.section,
@@ -167,7 +232,9 @@ export function Category(props: CategoryProps) {
             </Expand>
           }
         >
-          <div class="my-20 flex flex-col gap-20">{endpointList()}</div>
+          <div class="my-20 flex flex-col gap-4">
+            {collapsibleEndpointList()}
+          </div>
         </Show>
       </Show>
     </section>
