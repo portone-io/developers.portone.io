@@ -16,7 +16,7 @@ export default code<{
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>포트원 결제연동 샘플</title>
     ${({ section }) => section("client:import-portone-sdk")`
-    <script src="https://cdn.portone.io/v2/browser-sdk.js" async defer></script>
+    <script src="https://cdn.portone.io/v2/browser-sdk.js" async defer></scr${"i"}pt>
     `}
   </head>
   <body>
@@ -243,7 +243,7 @@ export default code<{
         }
         `}
       }
-    </script>
+    </scr${"i"}pt>
   </body>
 </html>
 
