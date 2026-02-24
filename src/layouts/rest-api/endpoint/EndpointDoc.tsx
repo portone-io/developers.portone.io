@@ -62,12 +62,36 @@ export default function EndpointDoc(props: EndpointDocProps) {
     </div>
   );
 
+  const collapsibleHeader = () => (
+    <div class="flex flex-col gap-1">
+      <prose.h3 id={endpointId()} class="!mt-0 !mb-0 !text-base target:text-orange-5">
+        <div class="flex items-center gap-2">
+          <span>{props.endpoint.title}</span>
+          <Show when={props.endpoint.deprecated}>
+            <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
+              deprecated
+            </span>
+          </Show>
+          <Show when={props.endpoint.unstable}>
+            <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
+              unstable
+            </span>
+          </Show>
+        </div>
+      </prose.h3>
+      <MethodLine method={props.endpoint.method} path={props.endpoint.path} />
+      <Show when={description()}>
+        <div class="text-sm text-slate-5" innerHTML={description()} />
+      </Show>
+    </div>
+  );
+
   const content = () => (
     <TwoColumnLayout
       gap={6}
       left={() => (
         <div class="flex flex-col gap-6">
-          <Show when={description()}>
+          <Show when={description() && !props.collapsible}>
             <div class="p-2 text-sm" innerHTML={description()} />
           </Show>
           <RequestDoc
@@ -112,9 +136,9 @@ export default function EndpointDoc(props: EndpointDocProps) {
           <div class="chevron absolute top-1 h-5 w-5 transition-transform -left-6">
             <i class="i-ic-sharp-chevron-right inline-block text-slate-4" />
           </div>
-          {header()}
+          {collapsibleHeader()}
         </Collapsible.Trigger>
-        <Collapsible.Content>{content()}</Collapsible.Content>
+        <Collapsible.Content class="mt-4">{content()}</Collapsible.Content>
       </Collapsible>
     </Show>
   );
