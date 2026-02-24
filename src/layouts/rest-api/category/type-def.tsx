@@ -52,31 +52,7 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
-      <div class="grid-flow-rows grid mt-4 gap-x-4 gap-y-1 border border-slate-3 rounded-lg bg-slate-1 px-6 py-4 text-xs lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
-        <For each={typeDefPropsList()}>
-          {(property) => {
-            const href = `#${property.name}`;
-            return (
-              <a
-                class="underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
-                href={href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  expandAndScrollTo({
-                    section: "type-def",
-                    href,
-                    id: property.name,
-                  });
-                }}
-                data-norefresh
-              >
-                {property.name}
-              </a>
-            );
-          }}
-        </For>
-      </div>
-      <div class="grid-flow-rows grid mt-20 gap-4 lg:grid-cols-2">
+      <div class="grid-flow-rows grid mt-10 gap-4 lg:grid-cols-2">
         <For each={typeDefPropsList()}>
           {(property) => (
             <Parameter flatten id={property.name}>

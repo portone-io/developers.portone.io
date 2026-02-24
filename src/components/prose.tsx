@@ -44,7 +44,7 @@ function h2(props: JSX.IntrinsicElements["h2"]) {
     <h2
       {...rest}
       class={clsx(
-        "mb-12px mt-12px text-5 font-500 leading-[24px] tracking-[-.02em] first:mt-0 last:mb-0",
+        "mt-12px text-5 font-500 leading-[24px] tracking-[-.02em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h2}
