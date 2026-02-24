@@ -64,7 +64,10 @@ export default function EndpointDoc(props: EndpointDocProps) {
 
   const collapsibleHeader = () => (
     <div class="flex flex-col gap-1">
-      <prose.h3 id={endpointId()} class="!mt-0 !mb-0 !text-base target:text-orange-5">
+      <prose.h3
+        id={endpointId()}
+        class="!mb-0 !mt-0 !text-base target:text-orange-5"
+      >
         <div class="flex items-center gap-2">
           <span>{props.endpoint.title}</span>
           <Show when={props.endpoint.deprecated}>
