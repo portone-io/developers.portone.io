@@ -1,4 +1,4 @@
-import { A, useNavigate } from "@solidjs/router";
+import { A, useLocation, useNavigate } from "@solidjs/router";
 import { createMemo, For, type JSXElement, onMount } from "solid-js";
 
 import { prose } from "~/components/prose";
@@ -118,6 +118,7 @@ export interface RestApiCategoryProps {
   schema: unknown;
 }
 export function RestApiCategory(props: RestApiCategoryProps) {
+  const location = useLocation();
   const navigate = useNavigate();
   onMount(() => {
     const id = location.hash ? decodeURIComponent(location.hash.slice(1)) : "";
@@ -135,9 +136,9 @@ export function RestApiCategory(props: RestApiCategoryProps) {
     ),
   );
 
-  // 빈 카테고리인 경우 리다이렉트
+  // 존재하지 않거나 빈 카테고리인 경우 리다이렉트
   const isEmpty = createMemo(
-    () => currentGroup() && currentGroup()!.endpoints.length === 0,
+    () => !currentGroup() || currentGroup()!.endpoints.length === 0,
   );
   onMount(() => {
     if (!isEmpty()) return;
@@ -175,7 +176,7 @@ export function RestApiCategory(props: RestApiCategoryProps) {
         />
         <TypeDefinitions
           basepath={props.basepath}
-          initialExpand={false}
+          initialExpand={!!location.hash}
           endpointGroups={filteredEndpointGroups()}
           schema={props.schema}
         />
