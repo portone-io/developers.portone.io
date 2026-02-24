@@ -69,10 +69,13 @@ export function getEndpointRepr({
   return `${method} ${path}`;
 }
 
-export function getEmptyCategoryIds(schema: unknown): Set<string> {
-  const endpoints = getEveryEndpoints(schema);
+export function getEmptyCategoryIds(
+  schema: unknown,
+  endpoints?: Endpoint[],
+): Set<string> {
+  const eps = endpoints ?? getEveryEndpoints(schema);
   const usedCategoryIds = new Set<string>();
-  for (const endpoint of endpoints) {
+  for (const endpoint of eps) {
     const operation = getOperation(schema, endpoint);
     const categoryId =
       operation["x-portone-category"] || operation.tags?.[0] || "";

@@ -143,7 +143,7 @@ export function RestApiCategory(props: RestApiCategoryProps) {
   onMount(() => {
     if (!isEmpty()) return;
     const categories = getCategories(props.schema);
-    const emptyIds = getEmptyCategoryIds(props.schema);
+    const emptyIds = getEmptyCategoryIds(props.schema, everyEndpoints());
     const parent = categories.find((c) => c.id === props.currentSection);
     if (parent?.children && parent.children.length > 0) {
       const firstNonEmpty = parent.children.find((c) => !emptyIds.has(c.id));
