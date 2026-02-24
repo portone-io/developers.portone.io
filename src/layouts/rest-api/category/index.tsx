@@ -124,10 +124,10 @@ export function Category(props: CategoryProps) {
       {(endpoint, index) => {
         const id = createMemo(() => getEndpointRepr(endpoint));
         return (
-          <>
-            <Show when={index() > 0}>
-              <hr class="border-slate-2" />
-            </Show>
+          <div
+            class="flex flex-col"
+            classList={{ "border-t border-slate-2 pt-4": index() > 0 }}
+          >
             <EndpointDoc
               basepath={props.basepath}
               schema={props.schema}
@@ -144,7 +144,7 @@ export function Category(props: CategoryProps) {
                 />
               )}
             />
-          </>
+          </div>
         );
       }}
     </For>
