@@ -49,6 +49,8 @@ export default [
       ".vinxi",
       ".output",
       "packages/**/dist",
+      ".nitro",
+      ".solid-start",
     ],
   },
   {
