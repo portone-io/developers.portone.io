@@ -13,7 +13,7 @@ import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
 import { readFileSync } from "fs";
 import { load } from "js-yaml";
-import YAMLParser from "yaml-eslint-parser";
+import * as YAMLParser from "yaml-eslint-parser";
 
 const redirects = load(
   readFileSync("src/routes/(root)/docs/_redir.yaml", "utf8"),
@@ -38,7 +38,7 @@ const tsTypeCheckedRules = {
   ...tsRules,
 };
 
-/** @type {import("eslint").Linter.FlatConfig[]} */
+/** @type {import("eslint").Linter.Config[]} */
 export default [
   {
     ignores: [
@@ -49,10 +49,16 @@ export default [
       ".vinxi",
       ".output",
       "packages/**/dist",
+      ".nitro",
+      ".solid-start",
     ],
   },
   {
     ...eslint.configs.recommended,
+    rules: {
+      ...eslint.configs.recommended.rules,
+      "no-unassigned-vars": "off",
+    },
     ignores: ["**/*.mdx/*"],
   },
   {

@@ -12,69 +12,92 @@ import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 import unocss from "unocss/vite";
-import { defineConfig } from "vite";
+import { defineConfig, withFilter } from "vite";
 import { imagetools } from "vite-imagetools";
 
 export default defineConfig({
-  plugins: [
-    {
-      enforce: "pre",
-      ...mdx({
-        jsx: true,
-        jsxImportSource: "solid-js",
-        providerImportSource: "solid-mdx",
-        remarkPlugins: [remarkFrontmatter, remarkGfm, remarkParamTree],
-        rehypePlugins: [
-          rehypeSlug,
-          [
-            rehypeShiki,
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
             {
-              theme: "github-light",
-              fallbackLanguage: "text",
-              defaultLanguage: "text",
-              transformers: [
-                {
-                  name: "remove-trailing-newline",
-                  preprocess(code) {
-                    if (code.endsWith("\n")) {
-                      return code.slice(0, -1);
-                    }
-                    return code;
-                  },
-                },
-                transformerMetaHighlight(),
-                {
-                  name: "line-number-meta",
-                  code(node) {
-                    if (this.options.meta?.__raw?.includes("showLineNumber")) {
-                      this.addClassToHast(node, "line-numbers");
-                    }
-                  },
-                },
-                {
-                  name: "title",
-                  pre(node) {
-                    const matches = /title="([^"]+)"/.exec(
-                      this.options.meta?.__raw ?? "",
-                    );
-                    if (matches?.[1]) {
-                      node.children.unshift({
-                        type: "element",
-                        tagName: "div",
-                        properties: {
-                          className: ["title"],
-                        },
-                        children: [{ type: "text", value: matches[1] }],
-                      });
-                    }
-                  },
-                },
-              ],
-            } satisfies RehypeShikiOptions,
+              name: "monaco-editor",
+              test: /node_modules[\\/]monaco-editor/,
+            },
           ],
-        ],
-      }),
+        },
+      },
     },
+  },
+  plugins: [
+    withFilter(
+      {
+        enforce: "pre",
+        ...mdx({
+          jsx: true,
+          jsxImportSource: "solid-js",
+          providerImportSource: "solid-mdx",
+          remarkPlugins: [remarkFrontmatter, remarkGfm, remarkParamTree],
+          rehypePlugins: [
+            rehypeSlug,
+            [
+              rehypeShiki,
+              {
+                theme: "github-light",
+                fallbackLanguage: "text",
+                defaultLanguage: "text",
+                transformers: [
+                  {
+                    name: "remove-trailing-newline",
+                    preprocess(code) {
+                      if (code.endsWith("\n")) {
+                        return code.slice(0, -1);
+                      }
+                      return code;
+                    },
+                  },
+                  transformerMetaHighlight(),
+                  {
+                    name: "line-number-meta",
+                    code(node) {
+                      if (
+                        this.options.meta?.__raw?.includes("showLineNumber")
+                      ) {
+                        this.addClassToHast(node, "line-numbers");
+                      }
+                    },
+                  },
+                  {
+                    name: "title",
+                    pre(node) {
+                      const matches = /title="([^"]+)"/.exec(
+                        this.options.meta?.__raw ?? "",
+                      );
+                      if (matches?.[1]) {
+                        node.children.unshift({
+                          type: "element",
+                          tagName: "div",
+                          properties: {
+                            className: ["title"],
+                          },
+                          children: [{ type: "text", value: matches[1] }],
+                        });
+                      }
+                    },
+                  },
+                ],
+              } satisfies RehypeShikiOptions,
+            ],
+          ],
+        }),
+      },
+      {
+        transform: {
+          id: /\.(md|mdx)(\?.*)?$/,
+        },
+      },
+    ),
     unocss(),
     solidStart({
       // middleware: "./src/middleware.ts",
@@ -93,31 +116,41 @@ export default defineConfig({
       },
     }),
     yaml(),
-    imagetools({
-      defaultDirectives: (url) => {
-        const extname = path.extname(url.pathname);
-        if (
-          // formats supported by Sharp (https://sharp.pixelplumbing.com/#formats)
-          [
-            ".png",
-            ".jpg",
-            ".jpeg",
-            ".webp",
-            ".gif",
-            ".avif",
-            ".tiff",
-            ".tif",
-            ".svg",
-          ].includes(extname)
-        ) {
-          return new URLSearchParams([
-            ["as", "picture"],
-            ["format", "webp"],
-            ...url.searchParams.entries(),
-          ]);
-        } else return url.searchParams;
+    withFilter(
+      imagetools({
+        defaultDirectives: (url) => {
+          const extname = path.extname(url.pathname);
+          if (
+            // formats supported by Sharp (https://sharp.pixelplumbing.com/#formats)
+            [
+              ".png",
+              ".jpg",
+              ".jpeg",
+              ".webp",
+              ".gif",
+              ".avif",
+              ".tiff",
+              ".tif",
+              ".svg",
+            ].includes(extname)
+          ) {
+            return new URLSearchParams([
+              ["as", "picture"],
+              ["format", "webp"],
+              ...url.searchParams.entries(),
+            ]);
+          } else return url.searchParams;
+        },
+      }),
+      {
+        load: {
+          id: {
+            include: /\.(avif|gif|heif|jpeg|jpg|png|tiff|webp)(\?.*)?$/,
+            exclude: "./public/**/*",
+          },
+        },
       },
-    }),
+    ),
     {
       name: "base64-loader",
       async transform(_, id) {
