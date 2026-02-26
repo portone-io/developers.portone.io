@@ -153,7 +153,10 @@ const DefaultLayout = (
           </Show>
         </div>
         <Show when={targetVersions}>
-          <V2MigrationBanner lang={props.params.lang} versionVariants={props.frontmatter.versionVariants} />
+          <V2MigrationBanner
+            lang={props.params.lang}
+            versionVariants={props.frontmatter.versionVariants}
+          />
         </Show>
         <MDXProvider components={prose}>{props.children}</MDXProvider>
       </article>
