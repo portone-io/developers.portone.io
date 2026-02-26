@@ -1,4 +1,4 @@
-import { A, useLocation, useNavigate } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { createMemo, For, type JSXElement, onMount } from "solid-js";
 
 import { prose } from "~/components/prose";
@@ -24,12 +24,6 @@ export interface RestApiProps {
 }
 
 export default function RestApi(props: RestApiProps) {
-  onMount(() => {
-    const id = location.hash
-      ? decodeURIComponent(location.hash.slice(1))
-      : props.currentSection;
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  });
   const everyEndpoints = createMemo(() => getEveryEndpoints(props.schema));
   const endpointGroups = createMemo(() =>
     groupEndpointsByCategory(props.schema, everyEndpoints()),
@@ -117,14 +111,7 @@ export interface RestApiCategoryProps {
   schema: unknown;
 }
 export function RestApiCategory(props: RestApiCategoryProps) {
-  const location = useLocation();
   const navigate = useNavigate();
-  onMount(() => {
-    const id = location.hash ? decodeURIComponent(location.hash.slice(1)) : "";
-    if (id) {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    }
-  });
   const everyEndpoints = createMemo(() => getEveryEndpoints(props.schema));
   const allEndpointGroups = createMemo(() =>
     groupEndpointsByCategory(props.schema, everyEndpoints()),
@@ -165,8 +152,6 @@ export function RestApiCategory(props: RestApiCategoryProps) {
           basepath={props.basepath}
           apiHost={props.apiHost}
           section={props.currentSection}
-          initialExpand={true}
-          alwaysExpand={true}
           schema={props.schema}
           title={currentGroup()?.category.title ?? ""}
           description={currentGroup()?.category.description}

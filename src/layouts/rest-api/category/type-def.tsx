@@ -14,7 +14,6 @@ import { match, P } from "ts-pattern";
 import Parameter from "~/components/parameter/Parameter";
 import { prose } from "~/components/prose";
 import { toMDXModule } from "~/misc/md";
-import { expandAndScrollTo } from "~/state/rest-api/expand-section";
 
 import { interleave } from "..";
 import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
@@ -506,14 +505,6 @@ function TypeReprDoc(props: TypeReprDocProps) {
             <a
               class="inline-block text-purple-5 underline-offset-4 transition-colors hover:text-portone hover:underline"
               href={href()}
-              onClick={(e) => {
-                e.preventDefault();
-                expandAndScrollTo({
-                  section: "type-def",
-                  href: href(),
-                  id: typeName(),
-                });
-              }}
               data-norefresh
             >
               {typeRepr()}

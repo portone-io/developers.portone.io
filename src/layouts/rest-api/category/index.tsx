@@ -8,9 +8,7 @@ import {
 } from "solid-js";
 
 import { prose } from "~/components/prose";
-import { useExpand } from "~/state/rest-api/expand-section";
 
-import { Hr } from "..";
 import EndpointDoc from "../endpoint/EndpointDoc";
 import EndpointPlayground from "../endpoint/playground/EndpointPlayground";
 import {
@@ -18,7 +16,6 @@ import {
   type Endpoint,
   getEndpointRepr,
 } from "../schema-utils/endpoint";
-import Expand from "./Expand";
 
 export interface CategoriesProps {
   basepath: string; // e.g. "/api/rest-v1"
@@ -37,7 +34,6 @@ export function Categories(props: CategoriesProps) {
           basepath={props.basepath}
           apiHost={props.apiHost}
           section={group.category.id}
-          initialExpand={props.currentSection === group.category.id}
           schema={props.schema}
           title={group.category.title}
           description={group.category.description}
@@ -52,8 +48,6 @@ export interface CategoryProps {
   sectionDescriptionProps: Record<string, () => JSXElement>;
   basepath: string;
   apiHost: string;
-  initialExpand: boolean;
-  alwaysExpand?: boolean;
   section: string;
   schema: unknown;
   title: string;
@@ -61,10 +55,6 @@ export interface CategoryProps {
   endpoints: Endpoint[];
 }
 export function Category(props: CategoryProps) {
-  const { expand, onToggle } = useExpand(
-    props.section,
-    () => props.initialExpand,
-  );
   let headingRef: HTMLHeadingElement | undefined;
   const descriptionElement = () => (
     <SectionDescription
@@ -74,11 +64,9 @@ export function Category(props: CategoryProps) {
     />
   );
 
-  // alwaysExpand 모드에서 각 엔드포인트의 open 상태 관리
   const [openStates, setOpenStates] = createSignal<Record<string, boolean>>({});
 
   onMount(() => {
-    if (!props.alwaysExpand) return;
     const hash = window.location.hash;
     const hashId = hash ? decodeURIComponent(hash.slice(1)) : "";
     const initial: Record<string, boolean> = {};
@@ -87,36 +75,11 @@ export function Category(props: CategoryProps) {
       initial[id] = id === hashId;
     }
     setOpenStates(initial);
-    if (hashId) {
-      requestAnimationFrame(() => {
-        document.getElementById(hashId)?.scrollIntoView({ behavior: "smooth" });
-      });
-    }
   });
 
   const setEndpointOpen = (id: string, open: boolean) => {
     setOpenStates((prev) => ({ ...prev, [id]: open }));
   };
-
-  const endpointList = () => (
-    <For each={props.endpoints}>
-      {(endpoint) => (
-        <EndpointDoc
-          basepath={props.basepath}
-          schema={props.schema}
-          endpoint={endpoint}
-          renderRightFn={({ schema, endpoint, operation }) => (
-            <EndpointPlayground
-              apiHost={props.apiHost}
-              schema={schema()}
-              endpoint={endpoint()}
-              operation={operation()}
-            />
-          )}
-        />
-      )}
-    </For>
-  );
 
   const collapsibleEndpointList = () => (
     <For each={props.endpoints}>
@@ -154,37 +117,8 @@ export function Category(props: CategoryProps) {
       <div>
         <prose.h2 ref={headingRef}>{props.title}</prose.h2>
       </div>
-      <Show
-        when={props.endpoints.length > 0}
-        fallback={
-          <>
-            {descriptionElement()}
-            <Hr />
-          </>
-        }
-      >
-        {descriptionElement()}
-        <Show
-          when={props.alwaysExpand}
-          fallback={
-            <Expand
-              class="my-10"
-              title={props.title}
-              expand={expand()}
-              onToggle={onToggle}
-              onCollapse={() => {
-                headingRef?.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              {endpointList()}
-            </Expand>
-          }
-        >
-          <div class="my-10 flex flex-col gap-4">
-            {collapsibleEndpointList()}
-          </div>
-        </Show>
-      </Show>
+      {descriptionElement()}
+      <div class="my-10 flex flex-col gap-4">{collapsibleEndpointList()}</div>
     </section>
   );
 }

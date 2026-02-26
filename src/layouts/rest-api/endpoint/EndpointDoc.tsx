@@ -135,9 +135,13 @@ export default function EndpointDoc(props: EndpointDocProps) {
         onOpenChange={props.onOpenChange}
         class="flex flex-col [&[data-expanded]_.chevron]:(transform-origin-c transform-rotate-90)"
       >
-        <Collapsible.Trigger class="relative w-full cursor-pointer text-left">
-          <div class="chevron absolute top-1 h-5 w-5 transition-transform -left-6">
-            <i class="i-ic-sharp-chevron-right inline-block text-slate-4" />
+        <Collapsible.Trigger
+          as="a"
+          href={`#${encodeURIComponent(endpointId())}`}
+          class="relative w-full cursor-pointer text-left"
+        >
+          <div class="chevron absolute top-1 h-4 w-4 transition-transform -left-4">
+            <i class="i-ic-sharp-chevron-right inline-block h-4 w-4 text-slate-4" />
           </div>
           {collapsibleHeader()}
         </Collapsible.Trigger>
