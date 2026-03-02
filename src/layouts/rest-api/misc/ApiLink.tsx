@@ -1,5 +1,3 @@
-import { expandAndScrollTo } from "~/state/rest-api/expand-section";
-
 import { MethodLine } from "../endpoint/EndpointDoc";
 import { getEndpointRepr } from "../schema-utils/endpoint";
 
@@ -23,10 +21,6 @@ export default function ApiLink({
     <a
       class="border-b-2 transition-colors hover:border-orange-2 hover:text-orange-5"
       href={href}
-      onClick={(e) => {
-        e.preventDefault();
-        expandAndScrollTo({ section, href, id });
-      }}
     >
       {apiName && <strong>{apiName} </strong>}
       <MethodLine method={method} path={path} />
