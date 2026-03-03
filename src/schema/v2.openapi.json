@@ -119,9 +119,22 @@
     },
     "/b2b/companies/business-info": {
       "post": {
-        "summary": "사업자등록 정보조회",
-        "description": "사업자등록 정보조회\n\n요청된 사업자등록번호 리스트에 해당하는 사업자등록 정보를 조회합니다.\n해당 API 사용을 위해서는 별도 문의가 필요합니다.",
+        "summary": "사업자등록 정보 조회",
+        "description": "사업자등록 정보 조회\n\n요청된 사업자등록번호 리스트에 해당하는 사업자등록 정보를 조회합니다.\n해당 API 사용을 위해서는 별도 문의가 필요합니다.",
         "operationId": "getB2bBusinessInfos",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -194,10 +207,905 @@
           }
         ],
         "x-portone-category": "platform.company",
-        "x-portone-title": "사업자등록 정보조회",
+        "x-portone-title": "사업자등록 정보 조회",
         "x-portone-description": "요청된 사업자등록번호 리스트에 해당하는 사업자등록 정보를 조회합니다.\n해당 API 사용을 위해서는 별도 문의가 필요합니다.",
         "x-portone-error": {
           "$ref": "#/components/schemas/GetB2bBusinessInfosError"
+        }
+      }
+    },
+    "/b2b/counterparties/{brn}/certificate/registration-url": {
+      "get": {
+        "summary": "사업자 인증서 등록 URL 조회",
+        "description": "사업자 인증서 등록 URL 조회\n\n연동 사업자의 인증서를 등록하기 위한 URL을 조회합니다.",
+        "operationId": "getB2bCounterpartyCertificateRegistrationUrl",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          },
+          {
+            "name": "brn",
+            "in": "path",
+            "description": "사업자등록번호",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 URL을 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 URL을 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.counterparty",
+        "x-portone-title": "사업자 인증서 등록 URL 조회",
+        "x-portone-description": "연동 사업자의 인증서를 등록하기 위한 URL을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError"
+        }
+      }
+    },
+    "/b2b/counterparties/{brn}/certificate/validate": {
+      "post": {
+        "summary": "사업자 인증서 유효성 검증",
+        "description": "사업자 인증서 유효성 검증\n\n연동 사업자가 등록한 인증서의 유효성을 검증합니다.",
+        "operationId": "validateB2bCounterpartyCertificate",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          },
+          {
+            "name": "brn",
+            "in": "path",
+            "description": "사업자등록번호",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 유효성 검증 결과를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateB2bCounterpartyCertificateResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 유효성 검증 결과를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우\n* `B2bCertificateUnregisteredError`: 인증서가 등록되어 있지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.counterparty",
+        "x-portone-title": "사업자 인증서 유효성 검증",
+        "x-portone-description": "연동 사업자가 등록한 인증서의 유효성을 검증합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ValidateB2bCounterpartyCertificateError"
+        }
+      }
+    },
+    "/b2b/counterparties/{brn}/certificate": {
+      "get": {
+        "summary": "인증서 조회",
+        "description": "인증서 조회\n\n연동 사업자의 인증서를 조회합니다.",
+        "operationId": "getB2bCounterpartyCertificate",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          },
+          {
+            "name": "brn",
+            "in": "path",
+            "description": "사업자등록번호",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "사업자등록번호"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 인증서 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2bCertificate"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 인증서 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우\n* `B2bCertificateUnregisteredError`: 인증서가 등록되어 있지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyCertificateError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.counterparty",
+        "x-portone-title": "인증서 조회",
+        "x-portone-description": "연동 사업자의 인증서를 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetB2bCounterpartyCertificateError"
+        }
+      }
+    },
+    "/b2b/counterparties/{counterpartyId}": {
+      "get": {
+        "summary": "거래처 조회",
+        "description": "거래처 조회\n\n거래처를 조회합니다.",
+        "operationId": "getB2bCounterparty",
+        "parameters": [
+          {
+            "name": "counterpartyId",
+            "in": "path",
+            "description": "거래처 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "거래처 ID"
+          },
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 거래처 객체를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2bCounterparty"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 거래처 객체를 반환합니다."
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.counterparty",
+        "x-portone-title": "거래처 조회",
+        "x-portone-description": "거래처를 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetB2bCounterpartyError"
+        }
+      },
+      "delete": {
+        "summary": "거래처 삭제",
+        "description": "거래처 삭제\n\n거래처를 삭제합니다.",
+        "operationId": "deleteB2bCounterparty",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          },
+          {
+            "name": "counterpartyId",
+            "in": "path",
+            "description": "거래처 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "거래처 ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteB2bCounterpartyBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bCounterpartyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우\n* `B2bCounterpartyPartnerNotDeletableError`: 파트너 연동 거래처는 삭제할 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `B2bCounterpartyOngoingTaxInvoiceExistsError`: 진행 중인 세금계산서가 존재하여 거래처를 삭제할 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteB2bCounterpartyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.counterparty",
+        "x-portone-title": "거래처 삭제",
+        "x-portone-description": "거래처를 삭제합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DeleteB2bCounterpartyError"
+        }
+      },
+      "patch": {
+        "summary": "거래처 정보 수정",
+        "description": "거래처 정보 수정\n\n거래처 정보를 수정합니다.",
+        "operationId": "updateB2bCounterparty",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          },
+          {
+            "name": "counterpartyId",
+            "in": "path",
+            "description": "거래처 ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "거래처 ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateB2bCounterpartyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bCounterpartyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bCounterpartyBrnModificationNotAllowedError`: 사업자등록번호 수정이 허용되지 않는 경우\n* `B2bCounterpartyTooManyAdditionalContactsError`: 추가 담당자가 너무 많은 경우\n* `B2bCounterpartyMissingRequiredFieldsError`: 필수 입력 항목이 누락된 경우\n* `B2bCounterpartyVerificationBrnMismatchError`: 검증 결과의 사업자등록번호가 일치하지 않는 경우\n* `B2bCounterpartyVerificationTypeMismatchError`: 검증 유형이 일치하지 않는 경우\n* `B2bCounterpartyVerificationInvalidError`: 검증 결과가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우\n* `B2bCounterpartyPartnerNotUpdatableError`: 파트너 연동 거래처는 수정할 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우\n* `B2bCounterpartyVerificationNotFoundError`: 검증 결과를 찾을 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateB2bCounterpartyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.counterparty",
+        "x-portone-title": "거래처 정보 수정",
+        "x-portone-description": "거래처 정보를 수정합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdateB2bCounterpartyError"
+        }
+      }
+    },
+    "/b2b/counterparties": {
+      "get": {
+        "summary": "거래처 검색",
+        "description": "거래처 검색\n\n거래처를 검색합니다.",
+        "operationId": "getB2bCounterparties",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          },
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartiesBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetB2bCounterpartiesBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartiesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartiesError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartiesError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartiesError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetB2bCounterpartiesError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.counterparty",
+        "x-portone-title": "거래처 검색",
+        "x-portone-description": "거래처를 검색합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetB2bCounterpartiesError"
+        }
+      },
+      "post": {
+        "summary": "거래처 생성",
+        "description": "거래처 생성\n\n거래처를 생성합니다.",
+        "operationId": "createB2bCounterparty",
+        "parameters": [
+          {
+            "name": "test",
+            "in": "query",
+            "description": "테스트 모드 여부\n\ntrue 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "x-portone-title": "테스트 모드 여부",
+            "x-portone-description": "true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateB2bCounterpartyBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bCounterpartyResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bCounterpartyBrnInvalidError`: 사업자등록번호가 유효하지 않은 경우\n* `B2bCounterpartySelfOriginBrnMismatchError`: 자사 사업자등록번호와 동일한 거래처를 생성할 수 없는 경우\n* `B2bCounterpartyTooManyAdditionalContactsError`: 추가 담당자가 너무 많은 경우\n* `B2bCounterpartyMissingRequiredFieldsError`: 필수 입력 항목이 누락된 경우\n* `B2bCounterpartyVerificationBrnMismatchError`: 검증 결과의 사업자등록번호가 일치하지 않는 경우\n* `B2bCounterpartyVerificationTypeMismatchError`: 검증 유형이 일치하지 않는 경우\n* `B2bCounterpartyVerificationInvalidError`: 검증 결과가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우\n* `ForbiddenError`: 요청이 거절된 경우\n* `B2bCounterpartyPartnerNotConnectableError`: 파트너 연동 거래처는 국세청 연동이 허용되지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `B2bCounterpartyVerificationNotFoundError`: 검증 결과를 찾을 수 없는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `B2bCounterpartyIdAlreadyExistsError`: 거래처 ID가 이미 사용중인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bCounterpartyError"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우\n* `B2bCounterpartyNtsConnectionFailedError`: 국세청 연동에 실패한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateB2bCounterpartyError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "b2b.counterparty",
+        "x-portone-title": "거래처 생성",
+        "x-portone-description": "거래처를 생성합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreateB2bCounterpartyError"
         }
       }
     },
@@ -420,7 +1328,7 @@
             "x-portone-description": "성공 응답으로 세금계산서를 반환합니다."
           },
           "400": {
-            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError`: 세금계산서에 공급자 문서 번호가 이미 사용 중인 경우\n* `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우\n* `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우\n* `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우\n* `B2BTaxInvoiceStatusNotSendingCompletedError`: 원본 세금계산서가 전송완료 상태가 아닌 경우\n* `B2bTaxInvoiceNotDraftedStatusError`: 세금계산서가 임시저장 완료 상태가 아닌 경우\n* `B2bDocumentKeyCannotBeChangedError`: 문서번호 수정이 요청된 경우\n* `B2bIssuanceTypeMismatchError`: 세금계산서 발행 유형이 올바르지 않은 경우",
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError`: 세금계산서에 공급자 문서 번호가 이미 사용 중인 경우\n* `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우\n* `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우\n* `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우\n* `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우\n* `B2BTaxInvoiceStatusNotSendingCompletedError`: 원본 세금계산서가 전송완료 상태가 아닌 경우\n* `B2bTaxInvoiceNotDraftedStatusError`: 세금계산서가 임시저장 완료 상태가 아닌 경우\n* `B2bDocumentKeyCannotBeChangedError`: 문서번호 수정이 요청된 경우\n* `B2bIssuanceTypeMismatchError`: 세금계산서 발행 유형이 올바르지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -450,7 +1358,7 @@
             }
           },
           "404": {
-            "description": "* `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우\n* `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우\n* `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우\n* `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우",
+            "description": "* `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우\n* `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우\n* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우\n* `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우\n* `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -535,7 +1443,7 @@
             "x-portone-description": "성공 응답으로 세금계산서를 반환합니다."
           },
           "400": {
-            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError`: 세금계산서에 공급자 문서 번호가 이미 사용 중인 경우\n* `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우\n* `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우\n* `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우\n* `B2BTaxInvoiceStatusNotSendingCompletedError`: 원본 세금계산서가 전송완료 상태가 아닌 경우\n* `B2bIssuanceTypeMismatchError`: 세금계산서 발행 유형이 올바르지 않은 경우",
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError`: 세금계산서에 공급자 문서 번호가 이미 사용 중인 경우\n* `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우\n* `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우\n* `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우\n* `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우\n* `B2BTaxInvoiceStatusNotSendingCompletedError`: 원본 세금계산서가 전송완료 상태가 아닌 경우\n* `B2bIssuanceTypeMismatchError`: 세금계산서 발행 유형이 올바르지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -565,7 +1473,7 @@
             }
           },
           "404": {
-            "description": "* `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우\n* `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우\n* `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우\n* `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우",
+            "description": "* `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우\n* `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우\n* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우\n* `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우\n* `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -652,7 +1560,7 @@
             "x-portone-description": "성공 응답으로 세금계산서를 반환합니다."
           },
           "400": {
-            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError`: 세금계산서에 공급자 문서 번호가 이미 사용 중인 경우\n* `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우\n* `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우\n* `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우\n* `B2BTaxInvoiceStatusNotSendingCompletedError`: 원본 세금계산서가 전송완료 상태가 아닌 경우\n* `B2bIssuanceTypeMismatchError`: 세금계산서 발행 유형이 올바르지 않은 경우",
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError`: 세금계산서에 공급자 문서 번호가 이미 사용 중인 경우\n* `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우\n* `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우\n* `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우\n* `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우\n* `B2BTaxInvoiceStatusNotSendingCompletedError`: 원본 세금계산서가 전송완료 상태가 아닌 경우\n* `B2bIssuanceTypeMismatchError`: 세금계산서 발행 유형이 올바르지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -682,7 +1590,7 @@
             }
           },
           "404": {
-            "description": "* `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우\n* `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우\n* `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우\n* `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우",
+            "description": "* `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우\n* `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우\n* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우\n* `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우\n* `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -769,7 +1677,7 @@
             "x-portone-description": "성공 응답으로 세금계산서를 반환합니다."
           },
           "400": {
-            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError`: 세금계산서에 공급자 문서 번호가 이미 사용 중인 경우\n* `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우\n* `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우\n* `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우\n* `B2BTaxInvoiceStatusNotSendingCompletedError`: 원본 세금계산서가 전송완료 상태가 아닌 경우\n* `B2bIssuanceTypeMismatchError`: 세금계산서 발행 유형이 올바르지 않은 경우",
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `B2bTaxInvoiceSupplierDocumentKeyAlreadyUsedError`: 세금계산서에 공급자 문서 번호가 이미 사용 중인 경우\n* `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자 문서 번호가 이미 사용 중인 경우\n* `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우\n* `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우\n* `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우\n* `B2BTaxInvoiceStatusNotSendingCompletedError`: 원본 세금계산서가 전송완료 상태가 아닌 경우\n* `B2bIssuanceTypeMismatchError`: 세금계산서 발행 유형이 올바르지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -799,7 +1707,7 @@
             }
           },
           "404": {
-            "description": "* `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우\n* `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우\n* `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우\n* `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우",
+            "description": "* `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우\n* `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우\n* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우\n* `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우\n* `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -7169,6 +8077,70 @@
         }
       }
     },
+    "/paymentwall/delivery/confirm": {
+      "post": {
+        "summary": "페이먼트월 배송 정보 등록",
+        "description": "페이먼트월 배송 정보 등록\n\n배송 정보를 페이먼트월에 등록합니다.\n등록된 배송 정보는 차지백 발생 시 고객사의 상품 배송 완료 증빙 자료로 활용되므로, 반드시 연동해야 합니다.",
+        "operationId": "confirmPaymentwallDelivery",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "pgSpecific",
+        "x-portone-title": "페이먼트월 배송 정보 등록",
+        "x-portone-description": "배송 정보를 페이먼트월에 등록합니다.\n등록된 배송 정보는 차지백 발생 시 고객사의 상품 배송 완료 증빙 자료로 활용되므로, 반드시 연동해야 합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryError"
+        }
+      }
+    },
     "/platform/account-transfers": {
       "get": {
         "summary": "이체 내역 다건 조회",
@@ -11147,11 +12119,11 @@
         }
       }
     },
-    "/platform/partners/member-company-connect/{id}": {
+    "/platform/partners/counterparty-connect/{id}": {
       "post": {
-        "summary": "파트너 국세청 연동",
-        "description": "파트너 국세청 연동\n\n파트너를 국세청 연동합니다.",
-        "operationId": "connectPartnerMemberCompany",
+        "summary": "파트너 거래처 연동",
+        "description": "파트너 거래처 연동\n\n파트너를 거래처에 연동합니다.",
+        "operationId": "connectPartnerCounterparty",
         "parameters": [
           {
             "name": "id",
@@ -11181,18 +12153,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyResponse"
+                  "$ref": "#/components/schemas/ConnectPartnerCounterpartyResponse"
                 }
               }
             },
             "x-portone-description": "성공 응답으로 파트너 객체를 반환합니다."
           },
           "400": {
-            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformPartnerTypeIsNotBusinessError`: 파트너 유형이 사업자가 아닌 경우\n* `PlatformPartnerTaxationTypeIsSimpleError`: 파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우\n* `PlatformMemberCompanyNotConnectableStatusError`: 파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우",
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformPartnerTypeIsNotBusinessError`: 파트너 유형이 사업자가 아닌 경우\n* `PlatformPartnerTaxationTypeIsSimpleError`: 파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우\n* `PlatformCounterpartyNotConnectableStatusError`: 파트너 거래처 연동 상태가 연동 가능한 상태가 아닌 경우",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11202,7 +12174,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11212,7 +12184,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11222,7 +12194,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11232,7 +12204,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11242,7 +12214,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11257,18 +12229,18 @@
           }
         ],
         "x-portone-category": "platform.partner",
-        "x-portone-title": "파트너 국세청 연동",
-        "x-portone-description": "파트너를 국세청 연동합니다.",
+        "x-portone-title": "파트너 거래처 연동",
+        "x-portone-description": "파트너를 거래처에 연동합니다.",
         "x-portone-error": {
-          "$ref": "#/components/schemas/ConnectPartnerMemberCompanyError"
+          "$ref": "#/components/schemas/ConnectPartnerCounterpartyError"
         }
       }
     },
-    "/platform/partners/member-company-connect": {
+    "/platform/partners/counterparty-connect": {
       "post": {
-        "summary": "파트너 일괄 국세청 연동",
-        "description": "파트너 일괄 국세청 연동\n\n파트너들을 일괄 국세청 연동합니다.",
-        "operationId": "connectBulkPartnerMemberCompany",
+        "summary": "파트너 일괄 거래처 연동",
+        "description": "파트너 일괄 거래처 연동\n\n파트너들을 일괄 거래처 연동합니다.",
+        "operationId": "connectBulkPartnerCounterparty",
         "parameters": [
           {
             "name": "test",
@@ -11286,7 +12258,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyBody"
+                "$ref": "#/components/schemas/ConnectBulkPartnerCounterpartyBody"
               }
             }
           },
@@ -11298,7 +12270,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyResponse"
+                  "$ref": "#/components/schemas/ConnectBulkPartnerCounterpartyResponse"
                 }
               }
             },
@@ -11309,7 +12281,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11319,7 +12291,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11329,7 +12301,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11339,7 +12311,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11349,7 +12321,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/ConnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11364,18 +12336,18 @@
           }
         ],
         "x-portone-category": "platform.partner",
-        "x-portone-title": "파트너 일괄 국세청 연동",
-        "x-portone-description": "파트너들을 일괄 국세청 연동합니다.",
+        "x-portone-title": "파트너 일괄 거래처 연동",
+        "x-portone-description": "파트너들을 일괄 거래처 연동합니다.",
         "x-portone-error": {
-          "$ref": "#/components/schemas/ConnectBulkPartnerMemberCompanyError"
+          "$ref": "#/components/schemas/ConnectBulkPartnerCounterpartyError"
         }
       }
     },
-    "/platform/partners/member-company-disconnect/{id}": {
+    "/platform/partners/counterparty-disconnect/{id}": {
       "post": {
-        "summary": "파트너 국세청 연동 해제",
-        "description": "파트너 국세청 연동 해제\n\n파트너를 국세청 연동 해제합니다.",
-        "operationId": "disconnectPartnerMemberCompany",
+        "summary": "파트너 거래처 연동 해제",
+        "description": "파트너 거래처 연동 해제\n\n파트너를 거래처 연동 해제합니다.",
+        "operationId": "disconnectPartnerCounterparty",
         "parameters": [
           {
             "name": "id",
@@ -11405,18 +12377,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyResponse"
+                  "$ref": "#/components/schemas/DisconnectPartnerCounterpartyResponse"
                 }
               }
             },
             "x-portone-description": "성공 응답으로 파트너 객체를 반환합니다."
           },
           "400": {
-            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformPartnerTypeIsNotBusinessError`: 파트너 유형이 사업자가 아닌 경우\n* `PlatformPartnerTaxationTypeIsSimpleError`: 파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우\n* `PlatformMemberCompanyNotConnectedError`: 파트너가 연동 사업자로 연동 되어있지 않은 경우",
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우\n* `PlatformPartnerTypeIsNotBusinessError`: 파트너 유형이 사업자가 아닌 경우\n* `PlatformPartnerTaxationTypeIsSimpleError`: 파트너의 과세 유형이 간이 과세 세금계산서 미발행 유형인 경우\n* `PlatformCounterpartyNotConnectedError`: 파트너가 거래처로 연동 되어있지 않은 경우",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11426,7 +12398,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11436,7 +12408,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11446,7 +12418,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11456,7 +12428,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11466,7 +12438,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectPartnerCounterpartyError"
                 }
               }
             }
@@ -11481,18 +12453,18 @@
           }
         ],
         "x-portone-category": "platform.partner",
-        "x-portone-title": "파트너 국세청 연동 해제",
-        "x-portone-description": "파트너를 국세청 연동 해제합니다.",
+        "x-portone-title": "파트너 거래처 연동 해제",
+        "x-portone-description": "파트너를 거래처 연동 해제합니다.",
         "x-portone-error": {
-          "$ref": "#/components/schemas/DisconnectPartnerMemberCompanyError"
+          "$ref": "#/components/schemas/DisconnectPartnerCounterpartyError"
         }
       }
     },
-    "/platform/partners/member-company-disconnect": {
+    "/platform/partners/counterparty-disconnect": {
       "post": {
-        "summary": "파트너 일괄 국세청 연동 해제",
-        "description": "파트너 일괄 국세청 연동 해제\n\n파트너들을 일괄 국세청 연동 해제합니다.",
-        "operationId": "disconnectBulkPartnerMemberCompany",
+        "summary": "파트너 일괄 거래처 연동 해제",
+        "description": "파트너 일괄 거래처 연동 해제\n\n파트너들을 일괄 거래처 연동 해제합니다.",
+        "operationId": "disconnectBulkPartnerCounterparty",
         "parameters": [
           {
             "name": "test",
@@ -11510,7 +12482,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyBody"
+                "$ref": "#/components/schemas/DisconnectBulkPartnerCounterpartyBody"
               }
             }
           },
@@ -11522,7 +12494,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyResponse"
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerCounterpartyResponse"
                 }
               }
             },
@@ -11533,7 +12505,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11543,7 +12515,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11553,7 +12525,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11563,7 +12535,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11573,7 +12545,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+                  "$ref": "#/components/schemas/DisconnectBulkPartnerCounterpartyError"
                 }
               }
             }
@@ -11588,10 +12560,10 @@
           }
         ],
         "x-portone-category": "platform.partner",
-        "x-portone-title": "파트너 일괄 국세청 연동 해제",
-        "x-portone-description": "파트너들을 일괄 국세청 연동 해제합니다.",
+        "x-portone-title": "파트너 일괄 거래처 연동 해제",
+        "x-portone-description": "파트너들을 일괄 거래처 연동 해제합니다.",
         "x-portone-error": {
-          "$ref": "#/components/schemas/DisconnectBulkPartnerMemberCompanyError"
+          "$ref": "#/components/schemas/DisconnectBulkPartnerCounterpartyError"
         }
       }
     },
@@ -14517,9 +15489,104 @@
           "error": {
             "type": "string",
             "title": "조회 실패 시 에러 메시지"
+          },
+          "verificationId": {
+            "type": "string",
+            "title": "조회 결과 ID",
+            "description": "거래처 생성/수정 시 사업자 정보 조회 결과를 재사용하기 위한 ID입니다. 조회 성공 시에만 설정됩니다."
           }
         },
         "x-portone-title": "사업자등록 정보조회 결과"
+      },
+      "B2bCertificate": {
+        "title": "B2bCertificate",
+        "type": "object",
+        "required": [
+          "registeredAt",
+          "expiredAt",
+          "issuerName",
+          "subjectName",
+          "certificateType",
+          "oid",
+          "registrantContactName",
+          "registrantContactId"
+        ],
+        "properties": {
+          "registeredAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "등록일시"
+          },
+          "expiredAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "만료일시"
+          },
+          "issuerName": {
+            "type": "string",
+            "title": "발행자명"
+          },
+          "subjectName": {
+            "type": "string",
+            "title": "본인명"
+          },
+          "certificateType": {
+            "$ref": "#/components/schemas/B2bCertificateType",
+            "title": "인증서 타입"
+          },
+          "oid": {
+            "type": "string",
+            "title": "OID"
+          },
+          "registrantContactName": {
+            "type": "string",
+            "title": "등록 담당자 성명"
+          },
+          "registrantContactId": {
+            "type": "string",
+            "title": "등록 담당자 ID"
+          }
+        }
+      },
+      "B2bCertificateType": {
+        "title": "인증서 타입",
+        "description": "인증서 타입",
+        "type": "string",
+        "enum": [
+          "E_TAX",
+          "PORTONE",
+          "ETC"
+        ],
+        "x-portone-title": "인증서 타입",
+        "x-portone-enum": {
+          "E_TAX": {
+            "title": "전자세금용 공동인증서"
+          },
+          "PORTONE": {
+            "title": "특수목적용 공동인증서"
+          },
+          "ETC": {
+            "title": "기타"
+          }
+        }
+      },
+      "B2bCertificateUnregisteredError": {
+        "title": "인증서가 등록되어 있지 않은 경우",
+        "description": "인증서가 등록되어 있지 않은 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "인증서가 등록되어 있지 않은 경우",
+        "x-portone-status-code": 404
       },
       "B2bCompanyStateBusinessStatus": {
         "title": "영업 상태",
@@ -14542,6 +15609,696 @@
             "title": "휴업"
           }
         }
+      },
+      "B2bCounterparty": {
+        "title": "거래처",
+        "description": "거래처\n\nB2B 거래처 정보입니다.",
+        "type": "object",
+        "required": [
+          "id",
+          "graphqlId",
+          "isForTest",
+          "brn",
+          "companyName",
+          "representativeName",
+          "contact",
+          "additionalContacts",
+          "ntsConnectionStatus"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "거래처 고유 아이디"
+          },
+          "graphqlId": {
+            "type": "string"
+          },
+          "isForTest": {
+            "type": "boolean",
+            "title": "테스트 모드 여부"
+          },
+          "brn": {
+            "type": "string",
+            "title": "사업자등록번호",
+            "description": "`-` 없이 숫자로만 구성됩니다."
+          },
+          "companyName": {
+            "type": "string",
+            "title": "상호명"
+          },
+          "representativeName": {
+            "type": "string",
+            "title": "대표자 성명"
+          },
+          "address": {
+            "type": "string",
+            "title": "주소"
+          },
+          "businessType": {
+            "type": "string",
+            "title": "업태"
+          },
+          "businessClass": {
+            "type": "string",
+            "title": "업종"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/B2bCounterpartyContact",
+            "title": "담당자 정보"
+          },
+          "additionalContacts": {
+            "title": "추가 담당자 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/B2bCounterpartyContact"
+            },
+            "description": "최대 5명까지 등록할 수 있습니다."
+          },
+          "memo": {
+            "type": "string",
+            "title": "메모"
+          },
+          "ntsConnectionStatus": {
+            "$ref": "#/components/schemas/B2bNtsConnectionStatus",
+            "title": "국세청 연동 상태"
+          },
+          "ntsConnectedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "국세청 연동 시각"
+          },
+          "ntsConnectionFailedReason": {
+            "type": "string",
+            "title": "국세청 연동 실패 사유"
+          },
+          "partnerId": {
+            "type": "string",
+            "title": "파트너 연동 ID",
+            "description": "파트너 연동 거래처인 경우에만 존재합니다."
+          },
+          "businessStatus": {
+            "$ref": "#/components/schemas/B2bCounterpartyBusinessStatus",
+            "title": "휴폐업 상태"
+          },
+          "businessStatusCheckedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "휴폐업 상태 확인 시각"
+          },
+          "businessStatusVerification": {
+            "$ref": "#/components/schemas/B2bCounterpartyVerification",
+            "title": "휴폐업 상태 검증 정보"
+          },
+          "businessInfoVerification": {
+            "$ref": "#/components/schemas/B2bCounterpartyVerification",
+            "title": "사업자 정보 검증 정보"
+          },
+          "appliedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "적용 시각"
+          }
+        },
+        "x-portone-title": "거래처",
+        "x-portone-description": "B2B 거래처 정보입니다."
+      },
+      "B2bCounterpartyBrnInvalidError": {
+        "title": "사업자등록번호가 유효하지 않은 경우",
+        "description": "사업자등록번호가 유효하지 않은 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "사업자등록번호가 유효하지 않은 경우",
+        "x-portone-status-code": 400
+      },
+      "B2bCounterpartyBrnModificationNotAllowedError": {
+        "title": "사업자등록번호 수정이 허용되지 않는 경우",
+        "description": "사업자등록번호 수정이 허용되지 않는 경우\n\n거래처의 사업자등록번호는 수정할 수 없습니다.",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "사업자등록번호 수정이 허용되지 않는 경우",
+        "x-portone-description": "거래처의 사업자등록번호는 수정할 수 없습니다.",
+        "x-portone-status-code": 400
+      },
+      "B2bCounterpartyBusinessStatus": {
+        "title": "거래처 휴폐업 상태",
+        "description": "거래처 휴폐업 상태",
+        "type": "string",
+        "enum": [
+          "UNKNOWN",
+          "IN_BUSINESS",
+          "CLOSED",
+          "SUSPENDED",
+          "NOT_FOUND",
+          "CHECK_PENDING",
+          "CHECK_FAILED"
+        ],
+        "x-portone-title": "거래처 휴폐업 상태",
+        "x-portone-enum": {
+          "SUSPENDED": {
+            "title": "휴업"
+          },
+          "IN_BUSINESS": {
+            "title": "영업중"
+          },
+          "CHECK_PENDING": {
+            "title": "조회 대기",
+            "description": "일괄 등록 시 조회 대기 상태입니다."
+          },
+          "NOT_FOUND": {
+            "title": "사업체 미등록"
+          },
+          "UNKNOWN": {
+            "title": "미조회"
+          },
+          "CLOSED": {
+            "title": "폐업"
+          },
+          "CHECK_FAILED": {
+            "title": "조회 실패"
+          }
+        }
+      },
+      "B2bCounterpartyContact": {
+        "title": "거래처 담당자 정보",
+        "description": "거래처 담당자 정보",
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "담당자 성명"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "담당자 전화번호"
+          },
+          "email": {
+            "type": "string",
+            "title": "담당자 이메일"
+          },
+          "memo": {
+            "type": "string",
+            "title": "담당자 메모"
+          }
+        },
+        "x-portone-title": "거래처 담당자 정보"
+      },
+      "B2bCounterpartyContactInput": {
+        "title": "거래처 담당자 입력 정보",
+        "description": "거래처 담당자 입력 정보",
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "담당자 성명"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "담당자 전화번호"
+          },
+          "email": {
+            "type": "string",
+            "title": "담당자 이메일"
+          },
+          "memo": {
+            "type": "string",
+            "title": "담당자 메모"
+          }
+        },
+        "x-portone-title": "거래처 담당자 입력 정보"
+      },
+      "B2bCounterpartyCreateOptions": {
+        "title": "거래처 생성 옵션",
+        "description": "거래처 생성 옵션",
+        "type": "object",
+        "properties": {
+          "checkBusinessInfo": {
+            "type": "boolean",
+            "title": "사업자 정보 조회 여부",
+            "description": "true인 경우 사업자 정보를 조회하여 거래처에 반영합니다."
+          },
+          "checkBusinessStatus": {
+            "type": "boolean",
+            "title": "휴폐업 상태 조회 여부",
+            "description": "true인 경우 휴폐업 상태를 조회하여 거래처에 반영합니다."
+          },
+          "businessInfoVerificationId": {
+            "type": "string",
+            "title": "사업자 정보 조회 결과 ID",
+            "description": "이전에 조회한 사업자 정보 조회 결과의 ID를 입력하면 재조회 없이 해당 결과를 사용합니다."
+          },
+          "businessStatusVerificationId": {
+            "type": "string",
+            "title": "휴폐업 상태 조회 결과 ID",
+            "description": "이전에 조회한 휴폐업 상태 조회 결과의 ID를 입력하면 재조회 없이 해당 결과를 사용합니다."
+          }
+        },
+        "x-portone-title": "거래처 생성 옵션"
+      },
+      "B2bCounterpartyFilter": {
+        "title": "거래처 검색 필터",
+        "description": "거래처 검색 필터",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "거래처 ID",
+            "description": "prefix 검색"
+          },
+          "brn": {
+            "type": "string",
+            "title": "사업자등록번호"
+          },
+          "companyName": {
+            "type": "string",
+            "title": "거래처명",
+            "description": "포함 검색"
+          },
+          "representativeName": {
+            "type": "string",
+            "title": "대표자명"
+          },
+          "contactName": {
+            "type": "string",
+            "title": "담당자 이름"
+          },
+          "contactPhone": {
+            "type": "string",
+            "title": "담당자 전화번호"
+          },
+          "contactEmail": {
+            "type": "string",
+            "title": "담당자 이메일"
+          },
+          "businessStatuses": {
+            "title": "휴폐업 상태",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/B2bCounterpartyBusinessStatus"
+            }
+          },
+          "ntsConnectionStatuses": {
+            "title": "국세청 연동 상태",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/B2bNtsConnectionStatus"
+            }
+          },
+          "counterpartyIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "거래처 ID 목록",
+            "description": "특정 ID 목록으로 필터링"
+          }
+        },
+        "x-portone-title": "거래처 검색 필터"
+      },
+      "B2bCounterpartyIdAlreadyExistsError": {
+        "title": "거래처 ID가 이미 사용중인 경우",
+        "description": "거래처 ID가 이미 사용중인 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "거래처 ID가 이미 사용중인 경우",
+        "x-portone-status-code": 409
+      },
+      "B2bCounterpartyInput": {
+        "title": "거래처 입력 정보",
+        "description": "거래처 입력 정보",
+        "type": "object",
+        "required": [
+          "brn"
+        ],
+        "properties": {
+          "brn": {
+            "type": "string",
+            "title": "사업자등록번호",
+            "description": "`-` 없이 숫자로만 구성됩니다."
+          },
+          "name": {
+            "type": "string",
+            "title": "거래처명"
+          },
+          "representativeName": {
+            "type": "string",
+            "title": "대표자 성명"
+          },
+          "address": {
+            "type": "string",
+            "title": "주소"
+          },
+          "businessType": {
+            "type": "string",
+            "title": "업태"
+          },
+          "businessClass": {
+            "type": "string",
+            "title": "업종"
+          },
+          "contact": {
+            "$ref": "#/components/schemas/B2bCounterpartyContactInput",
+            "title": "담당자 정보"
+          },
+          "additionalContacts": {
+            "title": "추가 담당자 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/B2bCounterpartyContactInput"
+            },
+            "description": "최대 5명까지 등록할 수 있습니다."
+          },
+          "memo": {
+            "type": "string",
+            "title": "메모"
+          }
+        },
+        "x-portone-title": "거래처 입력 정보"
+      },
+      "B2bCounterpartyMissingRequiredFieldsError": {
+        "title": "필수 입력 항목이 누락된 경우",
+        "description": "필수 입력 항목이 누락된 경우\n\n거래처 생성/수정 시 필수 입력 항목이 누락되었습니다.",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "필수 입력 항목이 누락된 경우",
+        "x-portone-description": "거래처 생성/수정 시 필수 입력 항목이 누락되었습니다.",
+        "x-portone-status-code": 400
+      },
+      "B2bCounterpartyNotFoundError": {
+        "title": "거래처가 존재하지 않는 경우",
+        "description": "거래처가 존재하지 않는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "counterpartyId": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "거래처가 존재하지 않는 경우",
+        "x-portone-status-code": 404
+      },
+      "B2bCounterpartyNtsConnectionFailedError": {
+        "title": "국세청 연동에 실패한 경우",
+        "description": "국세청 연동에 실패한 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "국세청 연동에 실패한 경우",
+        "x-portone-status-code": 502
+      },
+      "B2bCounterpartyNtsNotConnectedError": {
+        "title": "국세청에 연동되어 있지 않은 경우",
+        "description": "국세청에 연동되어 있지 않은 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "brn": {
+            "type": "string"
+          },
+          "counterpartyId": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "국세청에 연동되어 있지 않은 경우",
+        "x-portone-status-code": 400
+      },
+      "B2bCounterpartyOngoingTaxInvoiceExistsError": {
+        "title": "진행 중인 세금계산서가 존재하여 거래처를 삭제할 수 없는 경우",
+        "description": "진행 중인 세금계산서가 존재하여 거래처를 삭제할 수 없는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "진행 중인 세금계산서가 존재하여 거래처를 삭제할 수 없는 경우",
+        "x-portone-status-code": 409
+      },
+      "B2bCounterpartyPartnerNotConnectableError": {
+        "title": "파트너 연동 거래처는 국세청 연동이 허용되지 않는 경우",
+        "description": "파트너 연동 거래처는 국세청 연동이 허용되지 않는 경우\n\n파트너와 연동된 거래처는 국세청 연동을 직접 수행할 수 없습니다.",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너 연동 거래처는 국세청 연동이 허용되지 않는 경우",
+        "x-portone-description": "파트너와 연동된 거래처는 국세청 연동을 직접 수행할 수 없습니다.",
+        "x-portone-status-code": 403
+      },
+      "B2bCounterpartyPartnerNotDeletableError": {
+        "title": "파트너 연동 거래처는 삭제할 수 없는 경우",
+        "description": "파트너 연동 거래처는 삭제할 수 없는 경우\n\n파트너와 연동된 거래처는 직접 삭제할 수 없습니다.",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너 연동 거래처는 삭제할 수 없는 경우",
+        "x-portone-description": "파트너와 연동된 거래처는 직접 삭제할 수 없습니다.",
+        "x-portone-status-code": 403
+      },
+      "B2bCounterpartyPartnerNotUpdatableError": {
+        "title": "파트너 연동 거래처는 수정할 수 없는 경우",
+        "description": "파트너 연동 거래처는 수정할 수 없는 경우\n\n파트너와 연동된 거래처는 직접 수정할 수 없습니다.",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너 연동 거래처는 수정할 수 없는 경우",
+        "x-portone-description": "파트너와 연동된 거래처는 직접 수정할 수 없습니다.",
+        "x-portone-status-code": 403
+      },
+      "B2bCounterpartySelfOriginBrnMismatchError": {
+        "title": "자사 사업자등록번호와 동일한 거래처를 생성할 수 없는 경우",
+        "description": "자사 사업자등록번호와 동일한 거래처를 생성할 수 없는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "자사 사업자등록번호와 동일한 거래처를 생성할 수 없는 경우",
+        "x-portone-status-code": 400
+      },
+      "B2bCounterpartyTooManyAdditionalContactsError": {
+        "title": "추가 담당자가 너무 많은 경우",
+        "description": "추가 담당자가 너무 많은 경우\n\n추가 담당자는 최대 5명까지 등록할 수 있습니다.",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "추가 담당자가 너무 많은 경우",
+        "x-portone-description": "추가 담당자는 최대 5명까지 등록할 수 있습니다.",
+        "x-portone-status-code": 400
+      },
+      "B2bCounterpartyVerification": {
+        "title": "거래처 검증 정보",
+        "description": "거래처 검증 정보",
+        "type": "object",
+        "required": [
+          "id",
+          "checkedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "외부 API 사용 ID"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "검증 시각"
+          }
+        },
+        "x-portone-title": "거래처 검증 정보"
+      },
+      "B2bCounterpartyVerificationBrnMismatchError": {
+        "title": "검증 결과의 사업자등록번호가 일치하지 않는 경우",
+        "description": "검증 결과의 사업자등록번호가 일치하지 않는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "검증 결과의 사업자등록번호가 일치하지 않는 경우",
+        "x-portone-status-code": 400
+      },
+      "B2bCounterpartyVerificationInvalidError": {
+        "title": "검증 결과가 유효하지 않은 경우",
+        "description": "검증 결과가 유효하지 않은 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "검증 결과가 유효하지 않은 경우",
+        "x-portone-status-code": 400
+      },
+      "B2bCounterpartyVerificationNotFoundError": {
+        "title": "검증 결과를 찾을 수 없는 경우",
+        "description": "검증 결과를 찾을 수 없는 경우\n\n사업자 정보 검증 결과를 찾을 수 없습니다.",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "검증 결과를 찾을 수 없는 경우",
+        "x-portone-description": "사업자 정보 검증 결과를 찾을 수 없습니다.",
+        "x-portone-status-code": 404
+      },
+      "B2bCounterpartyVerificationTypeMismatchError": {
+        "title": "검증 유형이 일치하지 않는 경우",
+        "description": "검증 유형이 일치하지 않는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "검증 유형이 일치하지 않는 경우",
+        "x-portone-status-code": 400
       },
       "B2bDocumentKeyCannotBeChangedError": {
         "title": "문서번호 수정이 요청된 경우",
@@ -14669,6 +16426,36 @@
         "x-portone-title": "B2B 기능이 활성화되지 않은 경우",
         "x-portone-status-code": 403
       },
+      "B2bNtsConnectionStatus": {
+        "title": "국세청 연동 상태",
+        "description": "국세청 연동 상태",
+        "type": "string",
+        "enum": [
+          "NOT_CONNECTED",
+          "PENDING_CONNECT",
+          "CONNECTED",
+          "PENDING_DISCONNECT",
+          "ERROR"
+        ],
+        "x-portone-title": "국세청 연동 상태",
+        "x-portone-enum": {
+          "ERROR": {
+            "title": "연동 오류"
+          },
+          "PENDING_CONNECT": {
+            "title": "연동 대기"
+          },
+          "CONNECTED": {
+            "title": "연동 됨"
+          },
+          "NOT_CONNECTED": {
+            "title": "연동 안 됨"
+          },
+          "PENDING_DISCONNECT": {
+            "title": "연동 해제 대기"
+          }
+        }
+      },
       "B2bOriginalTaxInvoiceNotFoundError": {
         "title": "원본 세금계산서가 존재하지 않은 경우",
         "description": "원본 세금계산서가 존재하지 않은 경우",
@@ -14699,6 +16486,12 @@
             "type": "string"
           },
           "message": {
+            "type": "string"
+          },
+          "brn": {
+            "type": "string"
+          },
+          "counterpartyId": {
             "type": "string"
           }
         },
@@ -14739,6 +16532,12 @@
             "type": "string"
           },
           "message": {
+            "type": "string"
+          },
+          "brn": {
+            "type": "string"
+          },
+          "counterpartyId": {
             "type": "string"
           }
         },
@@ -14911,7 +16710,7 @@
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "description": "최대 3개"
+            "description": "최대 5명"
           },
           "memo": {
             "type": "string",
@@ -14985,6 +16784,10 @@
           "email": {
             "type": "string",
             "title": "이메일"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "전화번호"
           }
         },
         "x-portone-title": "추가 담당자"
@@ -15036,17 +16839,15 @@
       "B2bTaxInvoiceCompany": {
         "title": "B2bTaxInvoiceCompany",
         "type": "object",
-        "required": [
-          "brn",
-          "name",
-          "representativeName",
-          "contact"
-        ],
         "properties": {
           "brn": {
             "type": "string",
             "title": "사업자등록번호",
             "description": "`-`를 제외한 10자리"
+          },
+          "counterpartyId": {
+            "type": "string",
+            "title": "거래처 ID"
           },
           "taxRegistrationId": {
             "type": "string",
@@ -15144,7 +16945,6 @@
           "totalSupplyAmount",
           "totalTaxAmount",
           "totalAmount",
-          "supplier",
           "recipient"
         ],
         "properties": {
@@ -15262,7 +17062,12 @@
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoiceAdditionalContact"
             },
-            "description": "최대 3개"
+            "description": "최대 5명"
+          },
+          "useCounterpartyAdditionalContacts": {
+            "type": "boolean",
+            "title": "거래처 추가 담당자 사용 여부",
+            "description": "true인 경우 거래처의 추가 담당자를 세금계산서 추가 담당자로 사용합니다. additional_contacts가 직접 지정된 경우 무시됩니다."
           }
         },
         "x-portone-title": "세금계산서 생성 요청 정보"
@@ -15840,6 +17645,10 @@
             "type": "string",
             "title": "공급자 문서번호"
           },
+          "supplierCounterpartyId": {
+            "type": "string",
+            "title": "공급자 거래처 아이디"
+          },
           "recipientBrn": {
             "type": "string",
             "title": "공급받는자 사업자등록번호"
@@ -15855,6 +17664,10 @@
           "recipientDocumentKey": {
             "type": "string",
             "title": "공급받는자 문서번호"
+          },
+          "recipientCounterpartyId": {
+            "type": "string",
+            "title": "공급받는자 거래처 아이디"
           },
           "recipientBusinessStatus": {
             "$ref": "#/components/schemas/B2bCompanyStateBusinessStatus",
@@ -19806,6 +21619,146 @@
           }
         }
       },
+      "ConfirmPaymentwallDeliveryBody": {
+        "title": "페이먼트월 배송 정보 등록 입력 정보",
+        "description": "페이먼트월 배송 정보 등록 입력 정보",
+        "type": "object",
+        "required": [
+          "transactionId",
+          "deliveryType",
+          "deliveryStatus",
+          "estimatedDeliveryDatetime",
+          "estimatedUpdateDatetime",
+          "refundable",
+          "details",
+          "shippingAddressEmail"
+        ],
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "title": "결제 건 포트원 채번 아이디"
+          },
+          "deliveryType": {
+            "$ref": "#/components/schemas/PaymentwallDeliveryType",
+            "title": "배송 유형"
+          },
+          "deliveryStatus": {
+            "$ref": "#/components/schemas/PaymentwallDeliveryStatus",
+            "title": "배송 상태"
+          },
+          "estimatedDeliveryDatetime": {
+            "type": "string",
+            "format": "date-time",
+            "title": "배송 완료 예상 일시",
+            "description": "배송 유형이 DIGITAL인 경우 현재 시각을 입력해도 무방합니다."
+          },
+          "estimatedUpdateDatetime": {
+            "type": "string",
+            "format": "date-time",
+            "title": "배송 상태 업데이트 예정 일시",
+            "description": "배송 유형이 DIGITAL인 경우 현재 시각을 입력해도 무방합니다."
+          },
+          "reason": {
+            "type": "string",
+            "title": "상태 변경 사유"
+          },
+          "refundable": {
+            "type": "boolean",
+            "title": "환불 가능 여부"
+          },
+          "details": {
+            "type": "string",
+            "title": "상세 설명"
+          },
+          "shippingAddressEmail": {
+            "type": "string",
+            "title": "고객 이메일 주소"
+          },
+          "carrierTrackingId": {
+            "type": "string",
+            "title": "운송장 번호",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "carrierType": {
+            "type": "string",
+            "title": "운송사 이름",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressCountry": {
+            "$ref": "#/components/schemas/Country",
+            "title": "수신자 국가",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressCity": {
+            "type": "string",
+            "title": "수신자 도시",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressZip": {
+            "type": "string",
+            "title": "수신자 우편번호",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressState": {
+            "type": "string",
+            "title": "수신자 주",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressStreet": {
+            "type": "string",
+            "title": "수신자 도로명 주소",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressPhone": {
+            "type": "string",
+            "title": "수신자 전화번호",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressFirstname": {
+            "type": "string",
+            "title": "수신자 이름",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressLastname": {
+            "type": "string",
+            "title": "수신자 성",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "배송 증빙 첨부 파일 URL 목록",
+            "description": "배송 증빙 자료의 URL(이미지 등)을 입력합니다. 증빙 자료를 제공하기 어려운 경우 생략할 수 있습니다."
+          }
+        },
+        "x-portone-title": "페이먼트월 배송 정보 등록 입력 정보"
+      },
+      "ConfirmPaymentwallDeliveryError": {
+        "title": "ConfirmPaymentwallDeliveryError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ConfirmPaymentwallDeliveryResponse": {
+        "title": "페이먼트월 배송 정보 등록 성공 응답",
+        "description": "페이먼트월 배송 정보 등록 성공 응답",
+        "type": "object",
+        "x-portone-title": "페이먼트월 배송 정보 등록 성공 응답"
+      },
       "ConfirmedBillingKeyIssueAndPaySummary": {
         "title": "빌링키 발급 및 초회 결제 수동 승인 완료 응답",
         "description": "빌링키 발급 및 초회 결제 수동 승인 완료 응답",
@@ -19902,21 +21855,21 @@
         },
         "x-portone-title": "결제 수동 승인 완료된 결제 건 요약 정보"
       },
-      "ConnectBulkPartnerMemberCompanyBody": {
-        "title": "파트너 일괄 국세청 연동 요청 정보",
-        "description": "파트너 일괄 국세청 연동 요청 정보\n\n파트너들을 일괄 국세청 연동합니다.",
+      "ConnectBulkPartnerCounterpartyBody": {
+        "title": "파트너 일괄 거래처 연동 요청 정보",
+        "description": "파트너 일괄 거래처 연동 요청 정보\n\n파트너들을 일괄 거래처 연동합니다.",
         "type": "object",
         "properties": {
           "filter": {
             "$ref": "#/components/schemas/PlatformPartnerFilterInput",
-            "title": "일괄 국세청 연동할 파트너 조건 필터"
+            "title": "일괄 거래처 연동할 파트너 조건 필터"
           }
         },
-        "x-portone-title": "파트너 일괄 국세청 연동 요청 정보",
-        "x-portone-description": "파트너들을 일괄 국세청 연동합니다."
+        "x-portone-title": "파트너 일괄 거래처 연동 요청 정보",
+        "x-portone-description": "파트너들을 일괄 거래처 연동합니다."
       },
-      "ConnectBulkPartnerMemberCompanyError": {
-        "title": "ConnectBulkPartnerMemberCompanyError",
+      "ConnectBulkPartnerCounterpartyError": {
+        "title": "ConnectBulkPartnerCounterpartyError",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ForbiddenError"
@@ -19957,9 +21910,9 @@
           }
         }
       },
-      "ConnectBulkPartnerMemberCompanyResponse": {
-        "title": "파트너 일괄 국세청 연동 응답",
-        "description": "파트너 일괄 국세청 연동 응답",
+      "ConnectBulkPartnerCounterpartyResponse": {
+        "title": "파트너 일괄 거래처 연동 응답",
+        "description": "파트너 일괄 거래처 연동 응답",
         "type": "object",
         "required": [
           "bulkTask"
@@ -19969,10 +21922,10 @@
             "$ref": "#/components/schemas/PlatformBulkTask"
           }
         },
-        "x-portone-title": "파트너 일괄 국세청 연동 응답"
+        "x-portone-title": "파트너 일괄 거래처 연동 응답"
       },
-      "ConnectPartnerMemberCompanyError": {
-        "title": "ConnectPartnerMemberCompanyError",
+      "ConnectPartnerCounterpartyError": {
+        "title": "ConnectPartnerCounterpartyError",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ForbiddenError"
@@ -19984,10 +21937,10 @@
             "$ref": "#/components/schemas/PlatformBtxNotEnabledError"
           },
           {
-            "$ref": "#/components/schemas/PlatformExternalApiFailedError"
+            "$ref": "#/components/schemas/PlatformCounterpartyNotConnectableStatusError"
           },
           {
-            "$ref": "#/components/schemas/PlatformMemberCompanyNotConnectableStatusError"
+            "$ref": "#/components/schemas/PlatformExternalApiFailedError"
           },
           {
             "$ref": "#/components/schemas/PlatformNotEnabledError"
@@ -20014,8 +21967,8 @@
             "FORBIDDEN": "#/components/schemas/ForbiddenError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "PLATFORM_BTX_NOT_ENABLED": "#/components/schemas/PlatformBtxNotEnabledError",
+            "PLATFORM_COUNTERPARTY_NOT_CONNECTABLE_STATUS": "#/components/schemas/PlatformCounterpartyNotConnectableStatusError",
             "PLATFORM_EXTERNAL_API_FAILED": "#/components/schemas/PlatformExternalApiFailedError",
-            "PLATFORM_MEMBER_COMPANY_NOT_CONNECTABLE_STATUS": "#/components/schemas/PlatformMemberCompanyNotConnectableStatusError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
             "PLATFORM_PARTNER_SCHEDULE_EXISTS": "#/components/schemas/PlatformPartnerScheduleExistsError",
@@ -20025,9 +21978,9 @@
           }
         }
       },
-      "ConnectPartnerMemberCompanyResponse": {
-        "title": "파트너 국세청 연동 응답",
-        "description": "파트너 국세청 연동 응답",
+      "ConnectPartnerCounterpartyResponse": {
+        "title": "파트너 거래처 연동 응답",
+        "description": "파트너 거래처 연동 응답",
         "type": "object",
         "required": [
           "partner"
@@ -20037,7 +21990,7 @@
             "$ref": "#/components/schemas/PlatformPartner"
           }
         },
-        "x-portone-title": "파트너 국세청 연동 응답"
+        "x-portone-title": "파트너 거래처 연동 응답"
       },
       "ConvenienceStoreBrand": {
         "title": "편의점 브랜드",
@@ -21074,6 +23027,119 @@
             "title": "Suriname"
           }
         }
+      },
+      "CreateB2bCounterpartyBody": {
+        "title": "거래처 생성 요청 정보",
+        "description": "거래처 생성 요청 정보",
+        "type": "object",
+        "required": [
+          "counterparty"
+        ],
+        "properties": {
+          "counterpartyId": {
+            "type": "string",
+            "title": "거래처 아이디",
+            "description": "입력하지 않으면 임의의 ID가 채번됩니다."
+          },
+          "counterparty": {
+            "$ref": "#/components/schemas/B2bCounterpartyInput",
+            "title": "거래처 정보"
+          },
+          "options": {
+            "$ref": "#/components/schemas/B2bCounterpartyCreateOptions",
+            "title": "거래처 생성 옵션"
+          }
+        },
+        "x-portone-title": "거래처 생성 요청 정보"
+      },
+      "CreateB2bCounterpartyError": {
+        "title": "CreateB2bCounterpartyError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyBrnInvalidError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyIdAlreadyExistsError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyMissingRequiredFieldsError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNtsConnectionFailedError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyPartnerNotConnectableError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartySelfOriginBrnMismatchError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyTooManyAdditionalContactsError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyVerificationBrnMismatchError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyVerificationInvalidError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyVerificationNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyVerificationTypeMismatchError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_COUNTERPARTY_BRN_INVALID": "#/components/schemas/B2bCounterpartyBrnInvalidError",
+            "B2B_COUNTERPARTY_ID_ALREADY_EXISTS": "#/components/schemas/B2bCounterpartyIdAlreadyExistsError",
+            "B2B_COUNTERPARTY_MISSING_REQUIRED_FIELDS": "#/components/schemas/B2bCounterpartyMissingRequiredFieldsError",
+            "B2B_COUNTERPARTY_NTS_CONNECTION_FAILED": "#/components/schemas/B2bCounterpartyNtsConnectionFailedError",
+            "B2B_COUNTERPARTY_PARTNER_NOT_CONNECTABLE": "#/components/schemas/B2bCounterpartyPartnerNotConnectableError",
+            "B2B_COUNTERPARTY_SELF_ORIGIN_BRN_MISMATCH": "#/components/schemas/B2bCounterpartySelfOriginBrnMismatchError",
+            "B2B_COUNTERPARTY_TOO_MANY_ADDITIONAL_CONTACTS": "#/components/schemas/B2bCounterpartyTooManyAdditionalContactsError",
+            "B2B_COUNTERPARTY_VERIFICATION_BRN_MISMATCH": "#/components/schemas/B2bCounterpartyVerificationBrnMismatchError",
+            "B2B_COUNTERPARTY_VERIFICATION_INVALID": "#/components/schemas/B2bCounterpartyVerificationInvalidError",
+            "B2B_COUNTERPARTY_VERIFICATION_NOT_FOUND": "#/components/schemas/B2bCounterpartyVerificationNotFoundError",
+            "B2B_COUNTERPARTY_VERIFICATION_TYPE_MISMATCH": "#/components/schemas/B2bCounterpartyVerificationTypeMismatchError",
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "CreateB2bCounterpartyResponse": {
+        "title": "거래처 생성 응답 정보",
+        "description": "거래처 생성 응답 정보",
+        "type": "object",
+        "required": [
+          "counterparty"
+        ],
+        "properties": {
+          "counterparty": {
+            "$ref": "#/components/schemas/B2bCounterparty",
+            "title": "거래처 정보"
+          }
+        },
+        "x-portone-title": "거래처 생성 응답 정보"
       },
       "CreateB2bFileUploadUrlBody": {
         "title": "파일 업로드 URL 생성 요청 정보",
@@ -23562,6 +25628,60 @@
         },
         "x-portone-title": "BigDecimal 타입"
       },
+      "DeleteB2bCounterpartyBody": {
+        "title": "거래처 삭제 요청",
+        "description": "거래처 삭제 요청",
+        "type": "object",
+        "x-portone-title": "거래처 삭제 요청"
+      },
+      "DeleteB2bCounterpartyError": {
+        "title": "DeleteB2bCounterpartyError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyOngoingTaxInvoiceExistsError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyPartnerNotDeletableError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_ONGOING_TAX_INVOICE_EXISTS": "#/components/schemas/B2bCounterpartyOngoingTaxInvoiceExistsError",
+            "B2B_COUNTERPARTY_PARTNER_NOT_DELETABLE": "#/components/schemas/B2bCounterpartyPartnerNotDeletableError",
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "DeleteB2bCounterpartyResponse": {
+        "title": "거래처 삭제 응답",
+        "description": "거래처 삭제 응답",
+        "type": "object",
+        "x-portone-title": "거래처 삭제 응답"
+      },
       "DeleteB2bTaxInvoiceAttachmentError": {
         "title": "DeleteB2bTaxInvoiceAttachmentError",
         "oneOf": [
@@ -23882,21 +26002,21 @@
         },
         "x-portone-title": "배송 완료"
       },
-      "DisconnectBulkPartnerMemberCompanyBody": {
-        "title": "파트너 일괄 국세청 연동 해제 요청 정보",
-        "description": "파트너 일괄 국세청 연동 해제 요청 정보\n\n파트너들을 일괄 국세청 연동 해제합니다.",
+      "DisconnectBulkPartnerCounterpartyBody": {
+        "title": "파트너 일괄 거래처 연동 해제 요청 정보",
+        "description": "파트너 일괄 거래처 연동 해제 요청 정보\n\n파트너들을 일괄 거래처 연동 해제합니다.",
         "type": "object",
         "properties": {
           "filter": {
             "$ref": "#/components/schemas/PlatformPartnerFilterInput",
-            "title": "일괄 국세청 연동 해제할 파트너 조건 필터"
+            "title": "일괄 거래처 연동 해제할 파트너 조건 필터"
           }
         },
-        "x-portone-title": "파트너 일괄 국세청 연동 해제 요청 정보",
-        "x-portone-description": "파트너들을 일괄 국세청 연동 해제합니다."
+        "x-portone-title": "파트너 일괄 거래처 연동 해제 요청 정보",
+        "x-portone-description": "파트너들을 일괄 거래처 연동 해제합니다."
       },
-      "DisconnectBulkPartnerMemberCompanyError": {
-        "title": "DisconnectBulkPartnerMemberCompanyError",
+      "DisconnectBulkPartnerCounterpartyError": {
+        "title": "DisconnectBulkPartnerCounterpartyError",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ForbiddenError"
@@ -23937,9 +26057,9 @@
           }
         }
       },
-      "DisconnectBulkPartnerMemberCompanyResponse": {
-        "title": "파트너 일괄 국세청 연동 해제 응답",
-        "description": "파트너 일괄 국세청 연동 해제 응답",
+      "DisconnectBulkPartnerCounterpartyResponse": {
+        "title": "파트너 일괄 거래처 연동 해제 응답",
+        "description": "파트너 일괄 거래처 연동 해제 응답",
         "type": "object",
         "required": [
           "bulkTask"
@@ -23949,10 +26069,10 @@
             "$ref": "#/components/schemas/PlatformBulkTask"
           }
         },
-        "x-portone-title": "파트너 일괄 국세청 연동 해제 응답"
+        "x-portone-title": "파트너 일괄 거래처 연동 해제 응답"
       },
-      "DisconnectPartnerMemberCompanyError": {
-        "title": "DisconnectPartnerMemberCompanyError",
+      "DisconnectPartnerCounterpartyError": {
+        "title": "DisconnectPartnerCounterpartyError",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ForbiddenError"
@@ -23964,10 +26084,10 @@
             "$ref": "#/components/schemas/PlatformBtxNotEnabledError"
           },
           {
-            "$ref": "#/components/schemas/PlatformExternalApiFailedError"
+            "$ref": "#/components/schemas/PlatformCounterpartyNotConnectedError"
           },
           {
-            "$ref": "#/components/schemas/PlatformMemberCompanyNotConnectedError"
+            "$ref": "#/components/schemas/PlatformExternalApiFailedError"
           },
           {
             "$ref": "#/components/schemas/PlatformNotEnabledError"
@@ -23994,8 +26114,8 @@
             "FORBIDDEN": "#/components/schemas/ForbiddenError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
             "PLATFORM_BTX_NOT_ENABLED": "#/components/schemas/PlatformBtxNotEnabledError",
+            "PLATFORM_COUNTERPARTY_NOT_CONNECTED": "#/components/schemas/PlatformCounterpartyNotConnectedError",
             "PLATFORM_EXTERNAL_API_FAILED": "#/components/schemas/PlatformExternalApiFailedError",
-            "PLATFORM_MEMBER_COMPANY_NOT_CONNECTED": "#/components/schemas/PlatformMemberCompanyNotConnectedError",
             "PLATFORM_NOT_ENABLED": "#/components/schemas/PlatformNotEnabledError",
             "PLATFORM_ONGOING_TAX_INVOICE_EXISTS": "#/components/schemas/PlatformOngoingTaxInvoiceExistsError",
             "PLATFORM_PARTNER_NOT_FOUND": "#/components/schemas/PlatformPartnerNotFoundError",
@@ -24005,9 +26125,9 @@
           }
         }
       },
-      "DisconnectPartnerMemberCompanyResponse": {
-        "title": "파트너 국세청 연동 해제 응답",
-        "description": "파트너 국세청 연동 해제 응답",
+      "DisconnectPartnerCounterpartyResponse": {
+        "title": "파트너 거래처 연동 해제 응답",
+        "description": "파트너 거래처 연동 해제 응답",
         "type": "object",
         "required": [
           "partner"
@@ -24017,7 +26137,7 @@
             "$ref": "#/components/schemas/PlatformPartner"
           }
         },
-        "x-portone-title": "파트너 국세청 연동 해제 응답"
+        "x-portone-title": "파트너 거래처 연동 해제 응답"
       },
       "DiscountAmountExceedsTotalAmountError": {
         "title": "프로모션 할인 금액이 결제 시도 금액 이상인 경우",
@@ -24183,6 +26303,11 @@
           "memo": {
             "type": "string",
             "title": "메모"
+          },
+          "createRecipientCounterparty": {
+            "type": "boolean",
+            "title": "공급받는자 거래처 생성 여부",
+            "description": "true인 경우 공급받는자 정보로 거래처를 자동 생성합니다."
           }
         },
         "x-portone-title": "세금계산서 임시 저장 정보"
@@ -24195,6 +26320,12 @@
           },
           {
             "$ref": "#/components/schemas/B2BTaxInvoiceStatusNotSendingCompletedError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNtsNotConnectedError"
           },
           {
             "$ref": "#/components/schemas/B2bExternalServiceError"
@@ -24243,6 +26374,8 @@
           "propertyName": "type",
           "mapping": {
             "B2B_CANNOT_CHANGE_TAX_TYPE": "#/components/schemas/B2BCannotChangeTaxTypeError",
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_NTS_NOT_CONNECTED": "#/components/schemas/B2bCounterpartyNtsNotConnectedError",
             "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
             "B2B_ID_ALREADY_EXISTS": "#/components/schemas/B2bIdAlreadyExistsError",
             "B2B_ISSUANCE_TYPE_MISMATCH": "#/components/schemas/B2bIssuanceTypeMismatchError",
@@ -24329,44 +26462,86 @@
           "DBARAI",
           "AUPAY",
           "MERPAY",
-          "MONEYTREE"
+          "MONEYTREE",
+          "KPLUS",
+          "TINABA",
+          "BILL_EASE",
+          "KREDIVO",
+          "RABBIT_LINE_PAY",
+          "ALIPAY_HK",
+          "AKULAKU_PAY_LATER",
+          "BOOST",
+          "BPI",
+          "DANA",
+          "G_CASH",
+          "HIPAY",
+          "MPAY",
+          "TOUCH_N_GO",
+          "TRUE_MONEY",
+          "DOKUWALLET",
+          "JENIUSPAY",
+          "OVO",
+          "PAYMAYA",
+          "QRIS",
+          "THAIQR"
         ],
         "x-portone-title": "간편 결제사",
         "x-portone-enum": {
+          "ALIPAY_HK": {},
           "MIR": {},
-          "SMILEPAY": {},
-          "KLARNA": {},
           "NAVERPAY": {},
-          "CHAI": {},
-          "MONEYTREE": {},
+          "QRIS": {},
           "GRABPAY": {},
           "TOSS_BRANDPAY": {},
-          "LGPAY": {},
           "JKOPAY": {},
+          "THAIQR": {},
           "SHOPEEPAY": {},
+          "BOOST": {},
           "ALIPAY": {},
+          "PAYMAYA": {},
           "LPAY": {},
           "DBARAI": {},
           "KB_APP": {},
           "LINEPAY": {},
           "PAYCO": {},
+          "HIPAY": {},
+          "BILL_EASE": {},
+          "SMILEPAY": {},
+          "TINABA": {},
+          "KLARNA": {},
+          "RABBIT_LINE_PAY": {},
+          "KREDIVO": {},
+          "CHAI": {},
           "PINPAY": {},
           "WECHAT": {},
+          "KPLUS": {},
           "TMONEY": {},
+          "MONEYTREE": {},
+          "JENIUSPAY": {},
           "TOSSPAY": {},
           "SSGPAY": {},
           "MERPAY": {},
           "PAYPAL": {},
+          "OVO": {},
+          "G_CASH": {},
+          "LGPAY": {},
           "APPLEPAY": {},
+          "DOKUWALLET": {},
           "HYPHEN": {},
           "AUPAY": {},
           "SAMSUNGPAY": {},
+          "DANA": {},
+          "TOUCH_N_GO": {},
           "KPAY": {},
           "AMAZONPAY": {},
+          "BPI": {},
+          "TRUE_MONEY": {},
           "SKPAY": {},
+          "AKULAKU_PAY_LATER": {},
           "RAKUTENPAY": {},
           "PAYPAY": {},
-          "KAKAOPAY": {}
+          "KAKAOPAY": {},
+          "MPAY": {}
         }
       },
       "FailedIdentityVerification": {
@@ -25267,6 +27442,204 @@
         },
         "x-portone-title": "사업자등록 정보 조회 성공 응답"
       },
+      "GetB2bCounterpartiesBody": {
+        "title": "거래처 검색 요청 정보",
+        "description": "거래처 검색 요청 정보",
+        "type": "object",
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/PageInput",
+            "title": "페이지 정보"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/B2bCounterpartyFilter",
+            "title": "검색 필터"
+          }
+        },
+        "x-portone-title": "거래처 검색 요청 정보"
+      },
+      "GetB2bCounterpartiesError": {
+        "title": "GetB2bCounterpartiesError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetB2bCounterpartiesResponse": {
+        "title": "거래처 검색 성공 응답",
+        "description": "거래처 검색 성공 응답",
+        "type": "object",
+        "required": [
+          "page",
+          "items"
+        ],
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/PageInfo",
+            "title": "페이지 정보"
+          },
+          "items": {
+            "title": "거래처 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/B2bCounterparty"
+            }
+          }
+        },
+        "x-portone-title": "거래처 검색 성공 응답"
+      },
+      "GetB2bCounterpartyCertificateError": {
+        "title": "GetB2bCounterpartyCertificateError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bCertificateUnregisteredError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNtsNotConnectedError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_CERTIFICATE_UNREGISTERED": "#/components/schemas/B2bCertificateUnregisteredError",
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_NTS_NOT_CONNECTED": "#/components/schemas/B2bCounterpartyNtsNotConnectedError",
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetB2bCounterpartyCertificateRegistrationUrlError": {
+        "title": "GetB2bCounterpartyCertificateRegistrationUrlError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNtsNotConnectedError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_NTS_NOT_CONNECTED": "#/components/schemas/B2bCounterpartyNtsNotConnectedError",
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetB2bCounterpartyCertificateRegistrationUrlResponse": {
+        "title": "인증서 등록 URL 조회 응답 정보",
+        "description": "인증서 등록 URL 조회 응답 정보",
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "인증서 등록 URL"
+          }
+        },
+        "x-portone-title": "인증서 등록 URL 조회 응답 정보"
+      },
+      "GetB2bCounterpartyError": {
+        "title": "GetB2bCounterpartyError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
       "GetB2bTaxInvoiceAttachmentsError": {
         "title": "GetB2bTaxInvoiceAttachmentsError",
         "oneOf": [
@@ -25613,6 +27986,16 @@
             "items": {
               "$ref": "#/components/schemas/B2bTaxInvoicePurposeType"
             }
+          },
+          "counterpartyId": {
+            "type": "string",
+            "title": "거래처 ID",
+            "description": "거래처 ID로 필터링합니다. 공급자 또는 공급받는자 거래처 ID에 대해 조회합니다."
+          },
+          "includeBrnMatch": {
+            "type": "boolean",
+            "title": "거래처 사업자등록번호 매칭 포함 여부",
+            "description": "counterpartyId 조건과 함께 거래처의 사업자등록번호 매칭 조건을 추가할지 여부입니다."
           }
         },
         "x-portone-title": "세금계산서 다건 조회 필터"
@@ -28608,6 +30991,11 @@
           "modification": {
             "$ref": "#/components/schemas/B2bTaxInvoiceModificationCreateBody",
             "title": "수정 세금계산서 입력 정보"
+          },
+          "createRecipientCounterparty": {
+            "type": "boolean",
+            "title": "공급받는자 거래처 생성 여부",
+            "description": "true인 경우 공급받는자 정보로 거래처를 자동 생성합니다."
           }
         },
         "x-portone-title": "세금계산서 즉시 정발행 요청 정보"
@@ -28620,6 +31008,12 @@
           },
           {
             "$ref": "#/components/schemas/B2BTaxInvoiceStatusNotSendingCompletedError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNtsNotConnectedError"
           },
           {
             "$ref": "#/components/schemas/B2bExternalServiceError"
@@ -28668,6 +31062,8 @@
           "propertyName": "type",
           "mapping": {
             "B2B_CANNOT_CHANGE_TAX_TYPE": "#/components/schemas/B2BCannotChangeTaxTypeError",
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_NTS_NOT_CONNECTED": "#/components/schemas/B2bCounterpartyNtsNotConnectedError",
             "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
             "B2B_ID_ALREADY_EXISTS": "#/components/schemas/B2bIdAlreadyExistsError",
             "B2B_ISSUANCE_TYPE_MISMATCH": "#/components/schemas/B2bIssuanceTypeMismatchError",
@@ -33321,6 +35717,46 @@
         },
         "x-portone-title": "결제 건 및 커서 정보"
       },
+      "PaymentwallDeliveryStatus": {
+        "title": "페이먼트월 배송 상태",
+        "description": "페이먼트월 배송 상태",
+        "type": "string",
+        "enum": [
+          "ORDER_PLACED",
+          "ORDER_SHIPPED",
+          "DELIVERED"
+        ],
+        "x-portone-title": "페이먼트월 배송 상태",
+        "x-portone-enum": {
+          "ORDER_PLACED": {
+            "title": "주문 접수"
+          },
+          "ORDER_SHIPPED": {
+            "title": "배송 중"
+          },
+          "DELIVERED": {
+            "title": "배송 완료"
+          }
+        }
+      },
+      "PaymentwallDeliveryType": {
+        "title": "페이먼트월 배송 유형",
+        "description": "페이먼트월 배송 유형",
+        "type": "string",
+        "enum": [
+          "DIGITAL",
+          "PHYSICAL"
+        ],
+        "x-portone-title": "페이먼트월 배송 유형",
+        "x-portone-enum": {
+          "DIGITAL": {
+            "title": "디지털"
+          },
+          "PHYSICAL": {
+            "title": "실물"
+          }
+        }
+      },
       "PendingPaymentSchedule": {
         "title": "결제 완료 대기 상태",
         "description": "결제 완료 대기 상태",
@@ -33749,7 +36185,8 @@
           "INICIS_JP",
           "PAYLETTER_GLOBAL",
           "MOBILIANS_V2",
-          "TRIPLE_A"
+          "TRIPLE_A",
+          "KICC_V2"
         ],
         "x-portone-title": "PG사 결제 모듈",
         "x-portone-enum": {
@@ -33797,6 +36234,7 @@
           "HYPHEN": {},
           "TRIPLE_A": {},
           "KPN": {},
+          "KICC_V2": {},
           "INICIS_V2": {},
           "KCP_V2": {},
           "INICIS_UNIFIED": {},
@@ -35620,6 +38058,42 @@
         },
         "x-portone-status-code": 404
       },
+      "PlatformCounterpartyNotConnectableStatusError": {
+        "title": "파트너 거래처 연동 상태가 연동 가능한 상태가 아닌 경우",
+        "description": "파트너 거래처 연동 상태가 연동 가능한 상태가 아닌 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너 거래처 연동 상태가 연동 가능한 상태가 아닌 경우",
+        "x-portone-status-code": 400
+      },
+      "PlatformCounterpartyNotConnectedError": {
+        "title": "파트너가 거래처로 연동 되어있지 않은 경우",
+        "description": "파트너가 거래처로 연동 되어있지 않은 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "파트너가 거래처로 연동 되어있지 않은 경우",
+        "x-portone-status-code": 400
+      },
       "PlatformCurrencyNotSupportedError": {
         "title": "지원 되지 않는 통화를 선택한 경우",
         "description": "지원 되지 않는 통화를 선택한 경우",
@@ -36351,42 +38825,6 @@
         },
         "x-portone-title": "연동 사업자로 연동된 파트너들을 예약 수정하려고 시도한 경우",
         "x-portone-status-code": 409
-      },
-      "PlatformMemberCompanyNotConnectableStatusError": {
-        "title": "파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우",
-        "description": "파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우",
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "x-portone-title": "파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우",
-        "x-portone-status-code": 400
-      },
-      "PlatformMemberCompanyNotConnectedError": {
-        "title": "파트너가 연동 사업자로 연동 되어있지 않은 경우",
-        "description": "파트너가 연동 사업자로 연동 되어있지 않은 경우",
-        "type": "object",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "x-portone-title": "파트너가 연동 사업자로 연동 되어있지 않은 경우",
-        "x-portone-status-code": 400
       },
       "PlatformNotEnabledError": {
         "title": "플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우",
@@ -41972,6 +44410,12 @@
             "$ref": "#/components/schemas/B2BTaxInvoiceStatusNotSendingCompletedError"
           },
           {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNtsNotConnectedError"
+          },
+          {
             "$ref": "#/components/schemas/B2bExternalServiceError"
           },
           {
@@ -42018,6 +44462,8 @@
           "propertyName": "type",
           "mapping": {
             "B2B_CANNOT_CHANGE_TAX_TYPE": "#/components/schemas/B2BCannotChangeTaxTypeError",
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_NTS_NOT_CONNECTED": "#/components/schemas/B2bCounterpartyNtsNotConnectedError",
             "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
             "B2B_ID_ALREADY_EXISTS": "#/components/schemas/B2bIdAlreadyExistsError",
             "B2B_ISSUANCE_TYPE_MISMATCH": "#/components/schemas/B2bIssuanceTypeMismatchError",
@@ -44231,8 +46677,9 @@
           "ISSUANCE_DUE_DATE",
           "TAXATION_TYPE",
           "PURPOSE_TYPE",
-          "PARTNER_NAME",
-          "PARTNER_BRN",
+          "SUPPLIER_COMPANY_NAME",
+          "SUPPLIER_BRN",
+          "SUPPLIER_REPRESENTATIVE_NAME",
           "TOTAL_AMOUNT",
           "TOTAL_SUPPLY_AMOUNT",
           "TOTAL_TAX_AMOUNT",
@@ -44245,6 +46692,11 @@
           "PLAIN_ID",
           "SUPPLIER_DOCUMENT_KEY",
           "RECIPIENT_DOCUMENT_KEY",
+          "RECIPIENT_COMPANY_NAME",
+          "RECIPIENT_BRN",
+          "RECIPIENT_REPRESENTATIVE_NAME",
+          "SUPPLIER_COUNTERPARTY_ID",
+          "RECIPIENT_COUNTERPARTY_ID",
           "PAYOUT_ID",
           "ITEMS"
         ],
@@ -44259,14 +46711,11 @@
           "STATUS_UPDATED_AT": {
             "title": "상태 업데이트 일시"
           },
-          "PARTNER_BRN": {
-            "title": "거래처 사업자등록번호"
+          "RECIPIENT_COMPANY_NAME": {
+            "title": "공급받는자 상호"
           },
           "DOCUMENT_MODIFICATION_TYPE": {
             "title": "문서형태"
-          },
-          "IS_DELAYED": {
-            "title": "지연발행"
           },
           "STATUS": {
             "title": "상태"
@@ -44277,20 +46726,14 @@
           "REQUESTED_AT": {
             "title": "발행요청일시"
           },
+          "RECIPIENT_COUNTERPARTY_ID": {
+            "title": "공급받는자 거래처 아이디"
+          },
           "RECIPIENT_DOCUMENT_KEY": {
             "title": "공급받는자 문서번호"
           },
-          "PLAIN_ID": {
-            "title": "세금계산서 아이디"
-          },
-          "ISSUED_AT": {
-            "title": "발행완료일시"
-          },
-          "TOTAL_TAX_AMOUNT": {
-            "title": "세액"
-          },
-          "TOTAL_AMOUNT": {
-            "title": "합계금액"
+          "SUPPLIER_COMPANY_NAME": {
+            "title": "공급자 상호"
           },
           "TAXATION_TYPE": {
             "title": "과세형태"
@@ -44304,20 +46747,47 @@
           "ISSUANCE_DUE_DATE": {
             "title": "발행마감일"
           },
+          "IS_DELAYED": {
+            "title": "지연발행"
+          },
+          "SUPPLIER_REPRESENTATIVE_NAME": {
+            "title": "공급자 대표자명"
+          },
           "ISSUANCE_TYPE": {
             "title": "발행유형"
           },
           "PAYOUT_ID": {
             "title": "지급 아이디"
           },
-          "PARTNER_NAME": {
-            "title": "거래처 회사명"
-          },
           "PURPOSE_TYPE": {
             "title": "영수/청구"
           },
           "SUPPLIER_DOCUMENT_KEY": {
             "title": "공급자 문서번호"
+          },
+          "SUPPLIER_BRN": {
+            "title": "공급자 사업자등록번호"
+          },
+          "PLAIN_ID": {
+            "title": "세금계산서 아이디"
+          },
+          "RECIPIENT_BRN": {
+            "title": "공급받는자 사업자등록번호"
+          },
+          "ISSUED_AT": {
+            "title": "발행완료일시"
+          },
+          "RECIPIENT_REPRESENTATIVE_NAME": {
+            "title": "공급받는자 대표자명"
+          },
+          "TOTAL_TAX_AMOUNT": {
+            "title": "세액"
+          },
+          "SUPPLIER_COUNTERPARTY_ID": {
+            "title": "공급자 거래처 아이디"
+          },
+          "TOTAL_AMOUNT": {
+            "title": "합계금액"
           },
           "CANCEL_REASON": {
             "title": "취소사유"
@@ -44380,6 +46850,107 @@
         "x-portone-title": "인증 정보가 올바르지 않은 경우",
         "x-portone-status-code": 401
       },
+      "UpdateB2bCounterpartyBody": {
+        "title": "거래처 정보 수정 요청",
+        "description": "거래처 정보 수정 요청",
+        "type": "object",
+        "required": [
+          "counterparty"
+        ],
+        "properties": {
+          "counterparty": {
+            "$ref": "#/components/schemas/B2bCounterpartyInput",
+            "title": "거래처 정보"
+          },
+          "options": {
+            "$ref": "#/components/schemas/B2bCounterpartyCreateOptions",
+            "title": "확인 옵션",
+            "description": "사업자 정보 및 휴폐업 상태 조회 옵션입니다."
+          }
+        },
+        "x-portone-title": "거래처 정보 수정 요청"
+      },
+      "UpdateB2bCounterpartyError": {
+        "title": "UpdateB2bCounterpartyError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyBrnModificationNotAllowedError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyMissingRequiredFieldsError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyPartnerNotUpdatableError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyTooManyAdditionalContactsError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyVerificationBrnMismatchError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyVerificationInvalidError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyVerificationNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyVerificationTypeMismatchError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_COUNTERPARTY_BRN_MODIFICATION_NOT_ALLOWED": "#/components/schemas/B2bCounterpartyBrnModificationNotAllowedError",
+            "B2B_COUNTERPARTY_MISSING_REQUIRED_FIELDS": "#/components/schemas/B2bCounterpartyMissingRequiredFieldsError",
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_PARTNER_NOT_UPDATABLE": "#/components/schemas/B2bCounterpartyPartnerNotUpdatableError",
+            "B2B_COUNTERPARTY_TOO_MANY_ADDITIONAL_CONTACTS": "#/components/schemas/B2bCounterpartyTooManyAdditionalContactsError",
+            "B2B_COUNTERPARTY_VERIFICATION_BRN_MISMATCH": "#/components/schemas/B2bCounterpartyVerificationBrnMismatchError",
+            "B2B_COUNTERPARTY_VERIFICATION_INVALID": "#/components/schemas/B2bCounterpartyVerificationInvalidError",
+            "B2B_COUNTERPARTY_VERIFICATION_NOT_FOUND": "#/components/schemas/B2bCounterpartyVerificationNotFoundError",
+            "B2B_COUNTERPARTY_VERIFICATION_TYPE_MISMATCH": "#/components/schemas/B2bCounterpartyVerificationTypeMismatchError",
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "UpdateB2bCounterpartyResponse": {
+        "title": "거래처 정보 수정 응답",
+        "description": "거래처 정보 수정 응답",
+        "type": "object",
+        "required": [
+          "counterparty"
+        ],
+        "properties": {
+          "counterparty": {
+            "$ref": "#/components/schemas/B2bCounterparty",
+            "title": "거래처 정보"
+          }
+        },
+        "x-portone-title": "거래처 정보 수정 응답"
+      },
       "UpdateB2bTaxInvoiceDraftBody": {
         "title": "세금계산서 임시저장 수정 정보",
         "description": "세금계산서 임시저장 수정 정보",
@@ -44422,6 +46993,12 @@
           },
           {
             "$ref": "#/components/schemas/B2BTaxInvoiceStatusNotSendingCompletedError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNtsNotConnectedError"
           },
           {
             "$ref": "#/components/schemas/B2bDocumentKeyCannotBeChangedError"
@@ -44476,6 +47053,8 @@
           "propertyName": "type",
           "mapping": {
             "B2B_CANNOT_CHANGE_TAX_TYPE": "#/components/schemas/B2BCannotChangeTaxTypeError",
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_NTS_NOT_CONNECTED": "#/components/schemas/B2bCounterpartyNtsNotConnectedError",
             "B2B_DOCUMENT_KEY_CANNOT_BE_CHANGED": "#/components/schemas/B2bDocumentKeyCannotBeChangedError",
             "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
             "B2B_ID_ALREADY_EXISTS": "#/components/schemas/B2bIdAlreadyExistsError",
@@ -45078,6 +47657,63 @@
         },
         "x-portone-title": "플랫폼 설정 업데이트 결과"
       },
+      "ValidateB2bCounterpartyCertificateError": {
+        "title": "ValidateB2bCounterpartyCertificateError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/B2bCertificateUnregisteredError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bCounterpartyNtsNotConnectedError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bExternalServiceError"
+          },
+          {
+            "$ref": "#/components/schemas/B2bNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "B2B_CERTIFICATE_UNREGISTERED": "#/components/schemas/B2bCertificateUnregisteredError",
+            "B2B_COUNTERPARTY_NOT_FOUND": "#/components/schemas/B2bCounterpartyNotFoundError",
+            "B2B_COUNTERPARTY_NTS_NOT_CONNECTED": "#/components/schemas/B2bCounterpartyNtsNotConnectedError",
+            "B2B_EXTERNAL_SERVICE": "#/components/schemas/B2bExternalServiceError",
+            "B2B_NOT_ENABLED": "#/components/schemas/B2bNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ValidateB2bCounterpartyCertificateResponse": {
+        "title": "인증서 유효성 검증 응답 정보",
+        "description": "인증서 유효성 검증 응답 정보",
+        "type": "object",
+        "required": [
+          "isValid"
+        ],
+        "properties": {
+          "isValid": {
+            "type": "boolean",
+            "title": "인증서 유효 여부"
+          }
+        },
+        "x-portone-title": "인증서 유효성 검증 응답 정보"
+      },
       "VerifiedIdentityVerification": {
         "title": "완료된 본인인증 내역",
         "description": "완료된 본인인증 내역",
@@ -45589,6 +48225,11 @@
       "title": "세금계산서 API",
       "description": "세금계산서 API 기능을 제공합니다.",
       "children": [
+        {
+          "id": "b2b.counterparty",
+          "title": "거래처 관련 API",
+          "description": "거래처 관련 API 기능을 제공합니다."
+        },
         {
           "id": "b2b.taxInvoice",
           "title": "세금계산서 발행 관련 API",
