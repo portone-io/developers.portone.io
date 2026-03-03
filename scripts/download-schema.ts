@@ -162,8 +162,7 @@ export function processV2Openapi(schema: any): any {
 }
 
 export async function downloadV2Openapi(branch: string) {
-  const src =
-    `https://raw.githubusercontent.com/portone-io/public-api-service/${branch}/schema/openapi.yml`;
+  const src = `https://raw.githubusercontent.com/portone-io/public-api-service/${branch}/schema/openapi.yml`;
   const jsonDst = import.meta.resolve("../src/schema/v2.openapi.json");
   const yamlDst = import.meta.resolve("../src/schema/v2.openapi.yml");
   const token = await ensureLoggedIn();
@@ -190,8 +189,7 @@ export async function downloadV2Openapi(branch: string) {
 }
 
 export async function downloadV2Graphql(branch: string) {
-  const src =
-    `https://raw.githubusercontent.com/portone-io/public-api-service/${branch}/schema/schema.graphql`;
+  const src = `https://raw.githubusercontent.com/portone-io/public-api-service/${branch}/schema/schema.graphql`;
   const dst = import.meta.resolve("../src/schema/v2.graphql");
   const token = await ensureLoggedIn();
   console.log(`스키마 위치: ${src}`);
