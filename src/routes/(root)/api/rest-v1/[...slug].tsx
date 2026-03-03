@@ -52,16 +52,16 @@ export default function ApiV1Docs() {
             <NavMenu
               title="REST API - V1"
               basepath="/api/rest-v1"
-              items={getCategories(schema)}
+              items={getCategories(schema())}
               currentSection={currentSection()}
-              emptyCategories={getEmptyCategoryIds(schema)}
+              emptyCategories={getEmptyCategoryIds(schema())}
             />
             <Switch>
               <Match when={currentSection() === "overview"}>
                 <RestApiOverview
                   title="PortOne REST API - V1"
                   basepath="/api/rest-v1"
-                  schema={schema}
+                  schema={schema()}
                 >
                   <prose.p>
                     결제완료된 정보, 결제취소, 상태별 결제목록 조회 등의 기능을
@@ -118,7 +118,7 @@ export default function ApiV1Docs() {
                   apiHost="https://api.iamport.kr"
                   currentSection={currentSection()}
                   sectionDescriptionProps={sectionDescriptionProps}
-                  schema={schema}
+                  schema={schema()}
                 />
               </Match>
             </Switch>
