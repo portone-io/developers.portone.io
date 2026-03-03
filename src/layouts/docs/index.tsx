@@ -1,6 +1,7 @@
 import { createAsync, useLocation } from "@solidjs/router";
 import {
   createMemo,
+  createResource,
   createSignal,
   Match,
   type ParentProps,
@@ -17,19 +18,20 @@ import type { DocsEntry } from "~/content/config";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
 import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
-import { getInteractiveDocs } from "~/misc/interactiveDocs";
+import { loadInteractiveDocs } from "~/misc/interactiveDocs";
 import { InteractiveDocsProvider } from "~/state/interactive-docs";
 import { PaymentGatewayProvider } from "~/state/payment-gateway";
 import { Lang, PaymentGateway } from "~/type";
 
 import { InteractiveDocs } from "./InteractiveDocs";
 
-const loadInteractiveDocs = async (pathname: string) => {
+export function preloadDocs(pathname: string) {
   const parsedFullSlug = parseDocsFullSlug(pathname);
   if (!parsedFullSlug) return;
   const [contentName, fullSlug] = parsedFullSlug;
-  return getInteractiveDocs(contentName, fullSlug);
-};
+  void loadDoc(contentName, fullSlug);
+  void loadInteractiveDocs(contentName, fullSlug);
+}
 
 export function Docs(props: ParentProps) {
   const location = useLocation();
@@ -47,13 +49,18 @@ export function Docs(props: ParentProps) {
     const slug = parts.slice(1).join("/");
     return { lang, slug };
   });
-  const doc = createAsync(() => loadDoc(contentName(), fullSlug()), {
-    deferStream: true,
-  });
+  const [doc] = createResource(
+    () => [contentName(), fullSlug()] as const,
+    async ([contentName, fullSlug]) => {
+      const result = await loadDoc(contentName, fullSlug);
+      if (!result) throw new NotFoundError();
+      return result;
+    },
+  );
   const frontmatter = createMemo(() => doc()?.frontmatter as DocsEntry);
 
   const interactiveDocs = createAsync(
-    () => loadInteractiveDocs(location.pathname),
+    () => loadInteractiveDocs(contentName(), fullSlug()),
     {
       deferStream: true,
     },
