@@ -24,7 +24,7 @@ const mdProperties = new Set([
 
 const schemas = ["V1 OpenAPI", "V2 OpenAPI", "V2 GraphQL"] as const;
 type Schema = (typeof schemas)[number];
-const downloadFns: { [key in Schema]: () => Promise<void> } = {
+const downloadFns: { [key in Schema]: (branch: string) => Promise<void> } = {
   "V1 OpenAPI": downloadV1Openapi,
   "V2 OpenAPI": downloadV2Openapi,
   "V2 GraphQL": downloadV2Graphql,
@@ -38,8 +38,16 @@ if (import.meta.main) {
     info: true,
     suggestions: schemas as unknown as Schema[],
   })) as Schema;
-  if (schema in downloadFns) await downloadFns[schema]();
-  else {
+  if (schema in downloadFns) {
+    let branch = "main";
+    if (schema.startsWith("V2")) {
+      branch = await Input.prompt({
+        message: "브랜치를 입력해주세요.",
+        default: "main",
+      });
+    }
+    await downloadFns[schema](branch);
+  } else {
     console.log("지원하지 않는 스키마입니다.");
     Deno.exit(1);
   }
@@ -81,7 +89,7 @@ export function processV1Openapi(schema: any): any {
   return schema;
 }
 
-export async function downloadV1Openapi() {
+export async function downloadV1Openapi(_branch: string) {
   const src = "https://api.iamport.kr/api/docs";
   // const src = "https://core-api.stg.iamport.co/api/docs";
   const jsonDst = import.meta.resolve("../src/schema/v1.openapi.json");
@@ -153,9 +161,8 @@ export function processV2Openapi(schema: any): any {
   return schema;
 }
 
-export async function downloadV2Openapi() {
-  const src =
-    "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/openapi.yml";
+export async function downloadV2Openapi(branch: string) {
+  const src = `https://raw.githubusercontent.com/portone-io/public-api-service/${branch}/schema/openapi.yml`;
   const jsonDst = import.meta.resolve("../src/schema/v2.openapi.json");
   const yamlDst = import.meta.resolve("../src/schema/v2.openapi.yml");
   const token = await ensureLoggedIn();
@@ -181,9 +188,8 @@ export async function downloadV2Openapi() {
   console.log("완료");
 }
 
-export async function downloadV2Graphql() {
-  const src =
-    "https://raw.githubusercontent.com/portone-io/public-api-service/main/schema/schema.graphql";
+export async function downloadV2Graphql(branch: string) {
+  const src = `https://raw.githubusercontent.com/portone-io/public-api-service/${branch}/schema/schema.graphql`;
   const dst = import.meta.resolve("../src/schema/v2.graphql");
   const token = await ensureLoggedIn();
   console.log(`스키마 위치: ${src}`);
