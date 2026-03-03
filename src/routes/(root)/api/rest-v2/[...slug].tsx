@@ -46,16 +46,16 @@ export default function ApiV2Docs() {
             <NavMenu
               title="REST API - V2"
               basepath="/api/rest-v2"
-              items={getCategories(schema)}
+              items={getCategories(schema())}
               currentSection={currentSection()}
-              emptyCategories={getEmptyCategoryIds(schema)}
+              emptyCategories={getEmptyCategoryIds(schema())}
             />
             <Switch>
               <Match when={currentSection() === "overview"}>
                 <RestApiOverview
                   title="PortOne REST API - V2"
                   basepath="/api/rest-v2"
-                  schema={schema}
+                  schema={schema()}
                 >
                   <prose.p>
                     API 결제, 결제 정보 조회, 결제 취소 등의 기능을 제공하는
@@ -182,7 +182,7 @@ export default function ApiV2Docs() {
                   apiHost="https://api.portone.io"
                   currentSection={currentSection()}
                   sectionDescriptionProps={sectionDescriptionProps}
-                  schema={schema}
+                  schema={schema()}
                 />
               </Match>
             </Switch>
