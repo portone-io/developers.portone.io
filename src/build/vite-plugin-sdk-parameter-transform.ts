@@ -26,7 +26,7 @@ export function sdkParameterTransform(): Plugin {
         let result = code.replace(importPattern, "");
 
         // <SDKParameter ... /> 태그 파싱
-        const tagPattern = /<SDKParameter\s+((?:[^>]|(?:>(?!\s)))*?)\s*\/>/g;
+        const tagPattern = /<SDKParameter\s+((?:[^/]|\/(?!>))*?)\/>/g;
         const entries: {
           key: string;
           importPath: string;
