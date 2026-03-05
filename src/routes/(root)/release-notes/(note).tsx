@@ -5,9 +5,11 @@ import {
   useLocation,
 } from "@solidjs/router";
 import { format } from "date-fns";
+import type { Article, WithContext } from "schema-dts";
 import { createMemo, type JSXElement, Show } from "solid-js";
 
 import { NotFoundError } from "~/components/404";
+import JsonLd from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import Banner from "~/components/release-note/Banner";
@@ -47,9 +49,29 @@ export default function NoteLayout(props: { children: JSXElement }) {
         const description = createMemo(() =>
           getReleaseNoteDescription(note().frontmatter.releasedAt, slug()),
         );
+        const articleJsonLd = createMemo(
+          (): WithContext<Article> => ({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: title(),
+            description: description(),
+            datePublished: note().frontmatter.releasedAt.toISOString(),
+            dateModified: note().frontmatter.writtenAt.toISOString(),
+            url: `https://developers.portone.io/release-notes/${slug()}`,
+            publisher: {
+              "@type": "Organization",
+              name: "PortOne",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://developers.portone.io/opengraph.png",
+              },
+            },
+          }),
+        );
         return (
           <>
             <Metadata title={title()} ogType="article" />
+            <JsonLd data={articleJsonLd()} />
             <prose.h1>{title()}</prose.h1>
             <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
               {description()}

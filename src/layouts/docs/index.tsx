@@ -1,4 +1,5 @@
 import { createAsync, useLocation } from "@solidjs/router";
+import type { BreadcrumbList, TechArticle, WithContext } from "schema-dts";
 import {
   createMemo,
   createSignal,
@@ -11,6 +12,7 @@ import { MDXProvider } from "solid-mdx";
 
 import { NotFoundError } from "~/components/404";
 import V2MigrationBanner from "~/components/gitbook/V2MigrationBanner";
+import JsonLd from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
@@ -96,6 +98,53 @@ export function Docs(props: ParentProps) {
                       ogType="article"
                       ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
                       docsEntry={frontmatter()}
+                    />
+                    <JsonLd
+                      data={
+                        {
+                          "@context": "https://schema.org",
+                          "@type": "TechArticle",
+                          headline: frontmatter().title,
+                          description: frontmatter().description,
+                          url: `https://developers.portone.io/${contentName()}/${params().lang}/${params().slug}`,
+                          publisher: {
+                            "@type": "Organization",
+                            name: "PortOne",
+                          },
+                        } satisfies WithContext<TechArticle>
+                      }
+                    />
+                    <JsonLd
+                      data={
+                        {
+                          "@context": "https://schema.org",
+                          "@type": "BreadcrumbList",
+                          itemListElement: [
+                            contentName(),
+                            params().lang,
+                            ...params().slug.split("/"),
+                          ].reduce<
+                            {
+                              "@type": "ListItem";
+                              position: number;
+                              name: string;
+                              item: string;
+                            }[]
+                          >((items, segment, i) => {
+                            const path =
+                              i === 0
+                                ? `/${segment}`
+                                : `${items[i - 1]!.item}/${segment}`;
+                            items.push({
+                              "@type": "ListItem",
+                              position: i + 1,
+                              name: segment,
+                              item: `https://developers.portone.io${path}`,
+                            });
+                            return items;
+                          }, []),
+                        } satisfies WithContext<BreadcrumbList>
+                      }
                     />
                     <Switch
                       fallback={
