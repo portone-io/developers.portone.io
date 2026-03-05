@@ -90,6 +90,7 @@ export default defineConfig({
       preset: "vercel",
       prerender: {
         routes: ["/blog/rss.xml"],
+        crawlLinks: true,
       },
       rollupConfig: {
         external: ["monaco-editor"],
