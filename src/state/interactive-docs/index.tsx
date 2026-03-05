@@ -1,7 +1,5 @@
 import { createContextProvider } from "@solid-primitives/context";
 import { trackStore } from "@solid-primitives/deep";
-import { createHighlighterCore } from "shiki/core";
-import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import {
   batch,
   type Component,
@@ -66,18 +64,6 @@ export type PgOptions = {
     payMethods: PayMethod[];
   };
 };
-
-const highlighterInstance = createHighlighterCore({
-  themes: [import("shiki/themes/one-dark-pro.mjs")],
-  langs: [
-    import("shiki/langs/javascript.mjs"),
-    import("shiki/langs/html.mjs"),
-    import("shiki/langs/css.mjs"),
-    import("shiki/langs/python.mjs"),
-    import("shiki/langs/kotlin.mjs"),
-  ],
-  engine: createOnigurumaEngine(import("shiki/wasm")),
-});
 
 type Params = DefaultParams & object;
 export type InteractiveDocsInit = {
@@ -287,8 +273,10 @@ const [InteractiveDocsProvider, useInteractiveDocs] = createContextProvider(
     );
 
     const [highlighter, setHighlighter] =
-      createSignal<Awaited<ReturnType<typeof createHighlighterCore>>>();
-    void highlighterInstance.then(setHighlighter);
+      createSignal<import("./highlighter").Highlighter>();
+    void import("./highlighter").then(({ initHighlighter }) =>
+      initHighlighter().then(setHighlighter),
+    );
 
     return {
       paymentGateway,

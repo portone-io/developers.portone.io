@@ -1,4 +1,4 @@
-import { cache } from "@solidjs/router";
+import { query } from "@solidjs/router";
 import { format } from "date-fns";
 import { match } from "ts-pattern";
 
@@ -42,7 +42,7 @@ export const makeReleaseNoteFrontmatter = (
   };
 };
 
-export const getReleaseNotes = cache(async () => {
+export const getReleaseNotes = query(async () => {
   "use server";
 
   const { releaseNotes } = await import("#content");

@@ -1,8 +1,9 @@
 import "~/styles/article.css";
 
-import { useLocation } from "@solidjs/router";
+import { type RouteDefinition, useLocation } from "@solidjs/router";
 import { createMemo, type JSXElement } from "solid-js";
 
+import { preloadDocs } from "~/layouts/docs";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
@@ -13,6 +14,12 @@ interface Props {
 }
 
 const navAsMenuPaths = ["/blog", "/release-notes"];
+
+export const route = {
+  preload: ({ location }) => {
+    preloadDocs(location.pathname);
+  },
+} satisfies RouteDefinition;
 
 export default function Layout(props: Props) {
   const location = useLocation();
