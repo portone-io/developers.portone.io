@@ -42,8 +42,8 @@ export function CodeRenderer() {
     },
     { deferStream: true },
   );
-  let rendererRef: HTMLDivElement;
-  let copyButtonRef: HTMLButtonElement;
+  let rendererRef: HTMLDivElement | undefined;
+  let copyButtonRef: HTMLButtonElement | undefined;
   // highlightSection이 변경될 때만 Section으로 스크롤 하도록 구현
   createEffect(
     on(highlightSection, (section) => {
@@ -51,7 +51,7 @@ export function CodeRenderer() {
       const owner = getOwner();
       setTimeout(() => {
         runWithOwner(owner, () => {
-          rendererRef!.scrollTo({
+          rendererRef?.scrollTo({
             top: Math.max(section.startLine - 1, 0) * 16,
             behavior: "smooth",
           });
@@ -65,24 +65,26 @@ export function CodeRenderer() {
       <div class="grid grid-cols-[1fr_min-content] h-12 items-center gap-2 rounded-lg bg-slate-7 p-2">
         <CodeTabs />
         <button
-          ref={copyButtonRef!}
+          ref={copyButtonRef}
           class="i-mdi-content-copy data-[copied]:i-mdi-check h-5 w-5 rounded-md p-1 text-xl text-slate-4 data-[copied]:text-green-5 [&:not([data-copied])]:hover:text-slate-1"
           onPointerLeave={() => {
-            delete copyButtonRef!.dataset.copied;
+            delete copyButtonRef?.dataset.copied;
           }}
           type="button"
           onClick={() => {
             const code = currentTab()?.code;
             if (code) {
               void writeClipboard(code).then(() => {
-                copyButtonRef!.dataset.copied = "true";
+                if (copyButtonRef) {
+                  copyButtonRef.dataset.copied = "true";
+                }
               });
             }
           }}
         />
       </div>
       <div
-        ref={rendererRef!}
+        ref={rendererRef}
         innerHTML={code()}
         class="overflow-auto text-xs [&_code]:[counter-increment:step_0] [&_code]:[counter-reset:step] [&_code_.line]:before:[content:counter(step)] [&_code_.line]:before:[counter-increment:step] [&_code_.line]:before:mr-6 [&_code_.line]:before:inline-block [&_code_.line]:before:w-4 [&_code_.line]:before:text-right [&_code_.line]:before:text-slate-5"
       />

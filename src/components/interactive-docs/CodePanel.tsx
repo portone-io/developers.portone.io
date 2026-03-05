@@ -2,11 +2,11 @@ import { CodePreview } from "./CodePreview";
 import { CodeRenderer } from "./CodeRenderer";
 
 export function CodePanel() {
-  let ref: HTMLElement;
+  let ref: HTMLElement | undefined;
 
   return (
     <nav
-      ref={ref!}
+      ref={ref}
       class="sticky top-42 grid grid-rows-[auto_1fr] h-[calc(100dvh-160px-8px)] gap-y-2 overflow-hidden rounded-xl bg-slate-8 px-2 z-left-sidebar md:top-40"
     >
       <CodePreview />

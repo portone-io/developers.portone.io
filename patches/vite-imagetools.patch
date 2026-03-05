@@ -1,8 +1,8 @@
 diff --git a/dist/index.js b/dist/index.js
-index 812b53d4e401879101313a8e5197315faab1e354..f1397133a9042ecb7bc8e1291827f6fc194cf80d 100644
+index b4fac7103ac3747ffe6c524912105c5448add2ee..fc6d6253cd8aa9c894b1602018125f0a64c9d302 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -62,7 +62,7 @@ function imagetools(userOptions = {}) {
+@@ -65,7 +65,7 @@ function imagetools(userOptions = {}) {
              const lazyLoadImage = () => {
                  if (lazyImg)
                      return lazyImg;
@@ -11,12 +11,12 @@ index 812b53d4e401879101313a8e5197315faab1e354..f1397133a9042ecb7bc8e1291827f6fc
              };
              let lazyMetadata;
              const lazyLoadMetadata = async () => {
-@@ -109,7 +109,7 @@ function imagetools(userOptions = {}) {
-                 let image;
-                 let metadata;
-                 if (cacheOptions.enabled && ((_d = (_c = statSync(`${cacheOptions.dir}/${id}`, { throwIfNoEntry: false })) === null || _c === void 0 ? void 0 : _c.size) !== null && _d !== void 0 ? _d : 0) > 0) {
--                    metadata = (await sharp(`${cacheOptions.dir}/${id}`).metadata());
-+                    metadata = (await sharp(`${cacheOptions.dir}/${id}`, { animated: true }).metadata());
+@@ -112,7 +112,7 @@ function imagetools(userOptions = {}) {
+                 let cachedBuffer;
+                 if (cacheOptions.enabled && ((_b = (_a = statSync(`${cacheOptions.dir}/${id}`, { throwIfNoEntry: false })) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0) > 0) {
+                     cachedBuffer = await readFile(`${cacheOptions.dir}/${id}`);
+-                    image = sharp(cachedBuffer);
++                    image = sharp(cachedBuffer, { animated: true });
+                     metadata = (await image.metadata());
                      // we set the format on the metadata during transformation using the format directive
                      // when restoring from the cache, we use sharp to read it from the image and that results in a different value for avif images
-                     // see https://github.com/lovell/sharp/issues/2504 and https://github.com/lovell/sharp/issues/3746
