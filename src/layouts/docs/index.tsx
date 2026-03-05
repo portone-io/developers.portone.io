@@ -119,30 +119,23 @@ export function Docs(props: ParentProps) {
                         {
                           "@context": "https://schema.org",
                           "@type": "BreadcrumbList",
-                          itemListElement: [
-                            contentName(),
-                            params().lang,
-                            ...params().slug.split("/"),
-                          ].reduce<
-                            {
-                              "@type": "ListItem";
-                              position: number;
-                              name: string;
-                              item: string;
-                            }[]
-                          >((items, segment, i) => {
-                            const path =
-                              i === 0
-                                ? `/${segment}`
-                                : `${items[i - 1]!.item}/${segment}`;
-                            items.push({
-                              "@type": "ListItem",
-                              position: i + 1,
-                              name: segment,
-                              item: `https://developers.portone.io${path}`,
+                          itemListElement: (() => {
+                            const segments = [
+                              contentName(),
+                              params().lang,
+                              ...params().slug.split("/"),
+                            ];
+                            let path = "";
+                            return segments.map((segment, i) => {
+                              path += `/${segment}`;
+                              return {
+                                "@type": "ListItem" as const,
+                                position: i + 1,
+                                name: segment,
+                                item: `https://developers.portone.io${path}`,
+                              };
                             });
-                            return items;
-                          }, []),
+                          })(),
                         } satisfies WithContext<BreadcrumbList>
                       }
                     />
