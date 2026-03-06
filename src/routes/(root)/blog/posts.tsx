@@ -16,7 +16,7 @@ import PostList from "~/components/blog/PostList/PostList";
 import ProfileImage from "~/components/blog/ProfileImage";
 import * as prose from "~/components/blog/prose";
 import TagList from "~/components/blog/TagList";
-import JsonLd from "~/components/JsonLd";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import TableOfContents from "~/components/TableOfContents";
 
@@ -82,14 +82,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                 jobTitle: post().author!.role,
               },
             }),
-            publisher: {
-              "@type": "Organization",
-              name: "PortOne",
-              logo: {
-                "@type": "ImageObject",
-                url: "https://developers.portone.io/opengraph.png",
-              },
-            },
+            publisher: organizationJsonLd,
           }),
         );
         return (

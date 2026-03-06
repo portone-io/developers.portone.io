@@ -4,7 +4,7 @@ import { useLocation } from "@solidjs/router";
 import type { WebSite, WithContext } from "schema-dts";
 import { createMemo, type JSXElement } from "solid-js";
 
-import JsonLd from "~/components/JsonLd";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
@@ -15,15 +15,7 @@ const websiteJsonLd: WithContext<WebSite> = {
   "@type": "WebSite",
   name: "PortOne Developers",
   url: "https://developers.portone.io",
-  publisher: {
-    "@type": "Organization",
-    name: "PortOne",
-    url: "https://portone.io",
-    logo: {
-      "@type": "ImageObject",
-      url: "https://developers.portone.io/opengraph.png",
-    },
-  },
+  publisher: organizationJsonLd,
 };
 
 interface Props {

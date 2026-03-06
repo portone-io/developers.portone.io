@@ -12,7 +12,7 @@ import { MDXProvider } from "solid-mdx";
 
 import { NotFoundError } from "~/components/404";
 import V2MigrationBanner from "~/components/gitbook/V2MigrationBanner";
-import JsonLd from "~/components/JsonLd";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
@@ -107,10 +107,7 @@ export function Docs(props: ParentProps) {
                           headline: frontmatter().title,
                           description: frontmatter().description,
                           url: `https://developers.portone.io/${contentName()}/${params().lang}/${params().slug}`,
-                          publisher: {
-                            "@type": "Organization",
-                            name: "PortOne",
-                          },
+                          publisher: organizationJsonLd,
                         } satisfies WithContext<TechArticle>
                       }
                     />

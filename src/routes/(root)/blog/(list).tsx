@@ -3,7 +3,7 @@ import { cache } from "@solidjs/router";
 import type { Blog, WithContext } from "schema-dts";
 import type { JSXElement } from "solid-js";
 
-import JsonLd from "~/components/JsonLd";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import type { BlogEntry } from "~/content/config";
 
@@ -14,14 +14,7 @@ const blogJsonLd: WithContext<Blog> = {
   description:
     "핀테크 기업 포트원이 기술을 통해 결제를 혁신해나가는 과정을 이야기합니다.",
   url: "https://developers.portone.io/blog",
-  publisher: {
-    "@type": "Organization",
-    name: "PortOne",
-    logo: {
-      "@type": "ImageObject",
-      url: "https://developers.portone.io/opengraph.png",
-    },
-  },
+  publisher: organizationJsonLd,
 };
 
 export const loadLatestPosts = cache(async () => {

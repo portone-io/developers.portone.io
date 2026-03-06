@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import type { WebPage, WithContext } from "schema-dts";
 import { For, Show } from "solid-js";
 
-import JsonLd from "~/components/JsonLd";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import Banner from "~/components/release-note/Banner";
@@ -15,10 +15,7 @@ const releaseNotesJsonLd: WithContext<WebPage> = {
   name: "포트원 릴리즈노트",
   description: "포트원의 업데이트 소식을 전해드립니다.",
   url: "https://developers.portone.io/release-notes",
-  publisher: {
-    "@type": "Organization",
-    name: "PortOne",
-  },
+  publisher: organizationJsonLd,
 };
 
 export const route = {
