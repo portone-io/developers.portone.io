@@ -23,7 +23,7 @@ export default function Footer(props: Props) {
         </tbody>
       </table>
       <p>
-        <a class="text-orange-5" href="https://portone.io/korea/ko/service">
+        <a class="text-orange-5" href="https://portone.io">
           포트원 서비스 더 알아보기 →
         </a>
       </p>
