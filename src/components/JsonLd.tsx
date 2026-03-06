@@ -27,8 +27,11 @@ export const organizationJsonLd: Organization = {
   areaServed: "South Korea",
   address: {
     "@type": "PostalAddress",
+    postalCode: "04783",
     addressCountry: "KR",
-    streetAddress: "서울특별시",
+    addressRegion: "서울특별시",
+    addressLocality: "성동구",
+    streetAddress: "성수이로 20길 16",
   },
   knowsAbout: ["결제 인프라 구축", "플랫폼 정산 자동화", "매출 마감 자동화"],
   sameAs: [
