@@ -6,6 +6,7 @@ import {
 } from "@solidjs/router";
 import clsx from "clsx";
 import { format } from "date-fns";
+import type { BlogPosting, WithContext } from "schema-dts";
 import { createMemo, For, type JSXElement, Show } from "solid-js";
 import { MDXProvider } from "solid-mdx";
 import { match, P } from "ts-pattern";
@@ -15,6 +16,7 @@ import PostList from "~/components/blog/PostList/PostList";
 import ProfileImage from "~/components/blog/ProfileImage";
 import * as prose from "~/components/blog/prose";
 import TagList from "~/components/blog/TagList";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import TableOfContents from "~/components/TableOfContents";
 
@@ -63,6 +65,26 @@ export default function PostsLayout(props: { children: JSXElement }) {
     <Show when={post()}>
       {(post) => {
         const { title, description } = post().frontmatter;
+        const blogPostingJsonLd = createMemo(
+          (): WithContext<BlogPosting> => ({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: title,
+            description,
+            datePublished: post().frontmatter.date.toISOString(),
+            image: `https://developers.portone.io/blog/posts/${slug()}.png`,
+            url: `https://developers.portone.io/blog/posts/${slug()}`,
+            keywords: post().frontmatter.tags,
+            ...(post().author && {
+              author: {
+                "@type": "Person",
+                name: post().author!.name,
+                jobTitle: post().author!.role,
+              },
+            }),
+            publisher: organizationJsonLd,
+          }),
+        );
         return (
           <>
             <Metadata
@@ -71,6 +93,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
               ogType="article"
               ogImageSlug={`blog/posts/${slug()}.png`}
             />
+            <JsonLd data={blogPostingJsonLd()} />
             <div class="mx-auto max-w-[1150px] break-keep pb-50 [&_a]:break-keep">
               <article class="w-full flex flex-col gap-6 text-17px text-slate-7 <lg:mx-auto md:my-4">
                 <div class="mx-auto max-w-[800px] w-full flex flex-col gap-3 px-4 lg:max-w-none md:px-6">

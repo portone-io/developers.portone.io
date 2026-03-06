@@ -1,12 +1,22 @@
 import "~/styles/article.css";
 
 import { useLocation } from "@solidjs/router";
+import type { WebSite, WithContext } from "schema-dts";
 import { createMemo, type JSXElement } from "solid-js";
 
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Gnb from "~/layouts/gnb/Gnb";
 import SidebarProvider from "~/layouts/sidebar/context";
 import SidebarBackground from "~/layouts/sidebar/SidebarBackground";
 import { SystemVersionProvider } from "~/state/system-version";
+
+const websiteJsonLd: WithContext<WebSite> = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "PortOne Developers",
+  url: "https://developers.portone.io",
+  publisher: organizationJsonLd,
+};
 
 interface Props {
   children: JSXElement;
@@ -29,6 +39,7 @@ export default function Layout(props: Props) {
             )}
           />
           <SidebarBackground />
+          <JsonLd data={websiteJsonLd} />
           <main class="mx-auto max-w-8xl min-h-0 w-full flex-1 lg:px-10 md:px-8 sm:px-6">
             {props.children}
           </main>

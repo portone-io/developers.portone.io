@@ -1,4 +1,5 @@
 import { createAsync, useLocation } from "@solidjs/router";
+import type { BreadcrumbList, TechArticle, WithContext } from "schema-dts";
 import {
   createMemo,
   createSignal,
@@ -11,6 +12,7 @@ import { MDXProvider } from "solid-mdx";
 
 import { NotFoundError } from "~/components/404";
 import V2MigrationBanner from "~/components/gitbook/V2MigrationBanner";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
@@ -59,6 +61,43 @@ export function Docs(props: ParentProps) {
     },
   );
 
+  const breadcrumbListJsonLd = createMemo(() => {
+    const paramsInner = params();
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: (() => {
+        if (!paramsInner) return [];
+        const segments = [
+          contentName(),
+          paramsInner.lang,
+          ...paramsInner.slug.split("/"),
+        ];
+        let path = "";
+        return segments.map((segment, i) => {
+          path += `/${segment}`;
+          const isLast = i === segments.length - 1;
+          return {
+            "@type": "ListItem" as const,
+            position: i + 1,
+            name: isLast ? frontmatter().title : segment,
+            item: `https://developers.portone.io${path}`,
+          };
+        });
+      })(),
+    } satisfies WithContext<BreadcrumbList>;
+  });
+  const techArticleJsonLd = createMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      headline: frontmatter().title,
+      description: frontmatter()?.description,
+      url: `https://developers.portone.io/${contentName()}/${params()?.lang}/${params()?.slug}`,
+      image: `https://developers.portone.io/${contentName()}/${params()?.lang}/${params()?.slug}.png`,
+      publisher: organizationJsonLd,
+    } satisfies WithContext<TechArticle>;
+  });
   return (
     <div class="flex">
       <Show when={params()}>
@@ -97,6 +136,8 @@ export function Docs(props: ParentProps) {
                       ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
                       docsEntry={frontmatter()}
                     />
+                    <JsonLd data={techArticleJsonLd()} />
+                    <JsonLd data={breadcrumbListJsonLd()} />
                     <Switch
                       fallback={
                         <DefaultLayout
