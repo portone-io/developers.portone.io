@@ -107,6 +107,7 @@ export function Docs(props: ParentProps) {
                           headline: frontmatter().title,
                           description: frontmatter().description,
                           url: `https://developers.portone.io/${contentName()}/${params().lang}/${params().slug}`,
+                          image: `https://developers.portone.io/${contentName()}/${params().lang}/${params().slug}.png`,
                           publisher: organizationJsonLd,
                         } satisfies WithContext<TechArticle>
                       }
@@ -125,10 +126,11 @@ export function Docs(props: ParentProps) {
                             let path = "";
                             return segments.map((segment, i) => {
                               path += `/${segment}`;
+                              const isLast = i === segments.length - 1;
                               return {
                                 "@type": "ListItem" as const,
                                 position: i + 1,
-                                name: segment,
+                                name: isLast ? frontmatter().title : segment,
                                 item: `https://developers.portone.io${path}`,
                               };
                             });

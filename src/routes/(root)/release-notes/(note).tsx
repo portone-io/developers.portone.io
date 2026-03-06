@@ -9,7 +9,7 @@ import type { Article, WithContext } from "schema-dts";
 import { createMemo, type JSXElement, Show } from "solid-js";
 
 import { NotFoundError } from "~/components/404";
-import JsonLd from "~/components/JsonLd";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import Banner from "~/components/release-note/Banner";
@@ -58,14 +58,7 @@ export default function NoteLayout(props: { children: JSXElement }) {
             datePublished: note().frontmatter.releasedAt.toISOString(),
             dateModified: note().frontmatter.writtenAt.toISOString(),
             url: `https://developers.portone.io/release-notes/${slug()}`,
-            publisher: {
-              "@type": "Organization",
-              name: "PortOne",
-              logo: {
-                "@type": "ImageObject",
-                url: "https://developers.portone.io/opengraph.png",
-              },
-            },
+            publisher: organizationJsonLd,
           }),
         );
         return (
