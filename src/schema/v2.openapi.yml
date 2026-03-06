@@ -82,13 +82,25 @@ paths:
         $ref: '#/components/schemas/GetB2bBulkTaxInvoiceError'
   /b2b/companies/business-info:
     post:
-      summary: 사업자등록 정보조회
+      summary: 사업자등록 정보 조회
       description: |-
-        사업자등록 정보조회
+        사업자등록 정보 조회
 
         요청된 사업자등록번호 리스트에 해당하는 사업자등록 정보를 조회합니다.
         해당 API 사용을 위해서는 별도 문의가 필요합니다.
       operationId: getB2bBusinessInfos
+      parameters:
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
       requestBody:
         content:
           application/json:
@@ -133,12 +145,695 @@ paths:
         - bearerJwt: []
         - portOne: []
       x-portone-category: platform.company
-      x-portone-title: 사업자등록 정보조회
+      x-portone-title: 사업자등록 정보 조회
       x-portone-description: |-
         요청된 사업자등록번호 리스트에 해당하는 사업자등록 정보를 조회합니다.
         해당 API 사용을 위해서는 별도 문의가 필요합니다.
       x-portone-error:
         $ref: '#/components/schemas/GetB2bBusinessInfosError'
+  '/b2b/counterparties/{brn}/certificate/registration-url':
+    get:
+      summary: 사업자 인증서 등록 URL 조회
+      description: |-
+        사업자 인증서 등록 URL 조회
+
+        연동 사업자의 인증서를 등록하기 위한 URL을 조회합니다.
+      operationId: getB2bCounterpartyCertificateRegistrationUrl
+      parameters:
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
+        - name: brn
+          in: path
+          description: 사업자등록번호
+          required: true
+          schema:
+            type: string
+          x-portone-title: 사업자등록번호
+      responses:
+        '200':
+          description: 성공 응답으로 URL을 반환합니다.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlResponse
+          x-portone-description: 성공 응답으로 URL을 반환합니다.
+        '400':
+          description: |-
+            * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+            * `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError
+        '403':
+          description: |-
+            * `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError
+        '404':
+          description: '* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError
+        '502':
+          description: '* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: b2b.counterparty
+      x-portone-title: 사업자 인증서 등록 URL 조회
+      x-portone-description: 연동 사업자의 인증서를 등록하기 위한 URL을 조회합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/GetB2bCounterpartyCertificateRegistrationUrlError'
+  '/b2b/counterparties/{brn}/certificate/validate':
+    post:
+      summary: 사업자 인증서 유효성 검증
+      description: |-
+        사업자 인증서 유효성 검증
+
+        연동 사업자가 등록한 인증서의 유효성을 검증합니다.
+      operationId: validateB2bCounterpartyCertificate
+      parameters:
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
+        - name: brn
+          in: path
+          description: 사업자등록번호
+          required: true
+          schema:
+            type: string
+          x-portone-title: 사업자등록번호
+      responses:
+        '200':
+          description: 성공 응답으로 유효성 검증 결과를 반환합니다.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/ValidateB2bCounterpartyCertificateResponse
+          x-portone-description: 성공 응답으로 유효성 검증 결과를 반환합니다.
+        '400':
+          description: |-
+            * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+            * `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateB2bCounterpartyCertificateError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateB2bCounterpartyCertificateError'
+        '403':
+          description: |-
+            * `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateB2bCounterpartyCertificateError'
+        '404':
+          description: |-
+            * `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우
+            * `B2bCertificateUnregisteredError`: 인증서가 등록되어 있지 않은 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateB2bCounterpartyCertificateError'
+        '502':
+          description: '* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateB2bCounterpartyCertificateError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: b2b.counterparty
+      x-portone-title: 사업자 인증서 유효성 검증
+      x-portone-description: 연동 사업자가 등록한 인증서의 유효성을 검증합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/ValidateB2bCounterpartyCertificateError'
+  '/b2b/counterparties/{brn}/certificate':
+    get:
+      summary: 인증서 조회
+      description: |-
+        인증서 조회
+
+        연동 사업자의 인증서를 조회합니다.
+      operationId: getB2bCounterpartyCertificate
+      parameters:
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
+        - name: brn
+          in: path
+          description: 사업자등록번호
+          required: true
+          schema:
+            type: string
+          x-portone-title: 사업자등록번호
+      responses:
+        '200':
+          description: 성공 응답으로 인증서 객체를 반환합니다.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/B2bCertificate'
+          x-portone-description: 성공 응답으로 인증서 객체를 반환합니다.
+        '400':
+          description: |-
+            * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+            * `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyCertificateError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyCertificateError'
+        '403':
+          description: |-
+            * `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyCertificateError'
+        '404':
+          description: |-
+            * `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우
+            * `B2bCertificateUnregisteredError`: 인증서가 등록되어 있지 않은 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyCertificateError'
+        '502':
+          description: '* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyCertificateError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: b2b.counterparty
+      x-portone-title: 인증서 조회
+      x-portone-description: 연동 사업자의 인증서를 조회합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/GetB2bCounterpartyCertificateError'
+  '/b2b/counterparties/{counterpartyId}':
+    get:
+      summary: 거래처 조회
+      description: |-
+        거래처 조회
+
+        거래처를 조회합니다.
+      operationId: getB2bCounterparty
+      parameters:
+        - name: counterpartyId
+          in: path
+          description: 거래처 ID
+          required: true
+          schema:
+            type: string
+          x-portone-title: 거래처 ID
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
+      responses:
+        '200':
+          description: 성공 응답으로 거래처 객체를 반환합니다.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/B2bCounterparty'
+          x-portone-description: 성공 응답으로 거래처 객체를 반환합니다.
+        '400':
+          description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyError'
+        '403':
+          description: |-
+            * `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyError'
+        '404':
+          description: '* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyError'
+        '502':
+          description: '* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartyError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: b2b.counterparty
+      x-portone-title: 거래처 조회
+      x-portone-description: 거래처를 조회합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/GetB2bCounterpartyError'
+    delete:
+      summary: 거래처 삭제
+      description: |-
+        거래처 삭제
+
+        거래처를 삭제합니다.
+      operationId: deleteB2bCounterparty
+      parameters:
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
+        - name: counterpartyId
+          in: path
+          description: 거래처 ID
+          required: true
+          schema:
+            type: string
+          x-portone-title: 거래처 ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteB2bCounterpartyBody'
+        required: false
+      responses:
+        '200':
+          description: 성공 응답
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteB2bCounterpartyResponse'
+          x-portone-title: 성공 응답
+        '400':
+          description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteB2bCounterpartyError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteB2bCounterpartyError'
+        '403':
+          description: |-
+            * `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+            * `B2bCounterpartyPartnerNotDeletableError`: 파트너 연동 거래처는 삭제할 수 없는 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteB2bCounterpartyError'
+        '404':
+          description: '* `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteB2bCounterpartyError'
+        '409':
+          description: >-
+            * `B2bCounterpartyOngoingTaxInvoiceExistsError`: 진행 중인 세금계산서가 존재하여
+            거래처를 삭제할 수 없는 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteB2bCounterpartyError'
+        '502':
+          description: '* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteB2bCounterpartyError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: b2b.counterparty
+      x-portone-title: 거래처 삭제
+      x-portone-description: 거래처를 삭제합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/DeleteB2bCounterpartyError'
+    patch:
+      summary: 거래처 정보 수정
+      description: |-
+        거래처 정보 수정
+
+        거래처 정보를 수정합니다.
+      operationId: updateB2bCounterparty
+      parameters:
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
+        - name: counterpartyId
+          in: path
+          description: 거래처 ID
+          required: true
+          schema:
+            type: string
+          x-portone-title: 거래처 ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateB2bCounterpartyBody'
+        required: true
+      responses:
+        '200':
+          description: 성공 응답
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateB2bCounterpartyResponse'
+          x-portone-title: 성공 응답
+        '400':
+          description: >-
+            * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+
+            * `B2bCounterpartyBrnModificationNotAllowedError`: 사업자등록번호 수정이 허용되지
+            않는 경우
+
+            * `B2bCounterpartyTooManyAdditionalContactsError`: 추가 담당자가 너무 많은 경우
+
+            * `B2bCounterpartyMissingRequiredFieldsError`: 필수 입력 항목이 누락된 경우
+
+            * `B2bCounterpartyVerificationBrnMismatchError`: 검증 결과의 사업자등록번호가
+            일치하지 않는 경우
+
+            * `B2bCounterpartyVerificationTypeMismatchError`: 검증 유형이 일치하지 않는 경우
+
+            * `B2bCounterpartyVerificationInvalidError`: 검증 결과가 유효하지 않은 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateB2bCounterpartyError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateB2bCounterpartyError'
+        '403':
+          description: |-
+            * `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+            * `B2bCounterpartyPartnerNotUpdatableError`: 파트너 연동 거래처는 수정할 수 없는 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateB2bCounterpartyError'
+        '404':
+          description: |-
+            * `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우
+            * `B2bCounterpartyVerificationNotFoundError`: 검증 결과를 찾을 수 없는 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateB2bCounterpartyError'
+        '502':
+          description: '* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateB2bCounterpartyError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: b2b.counterparty
+      x-portone-title: 거래처 정보 수정
+      x-portone-description: 거래처 정보를 수정합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/UpdateB2bCounterpartyError'
+  /b2b/counterparties:
+    get:
+      summary: 거래처 검색
+      description: |-
+        거래처 검색
+
+        거래처를 검색합니다.
+      operationId: getB2bCounterparties
+      parameters:
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
+        - name: requestBody
+          in: query
+          required: false
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartiesBody'
+          x-portone-query-or-body:
+            enabled: true
+            required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetB2bCounterpartiesBody'
+        required: false
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartiesResponse'
+        '400':
+          description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartiesError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartiesError'
+        '403':
+          description: |-
+            * `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartiesError'
+        '502':
+          description: '* `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetB2bCounterpartiesError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: b2b.counterparty
+      x-portone-title: 거래처 검색
+      x-portone-description: 거래처를 검색합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/GetB2bCounterpartiesError'
+    post:
+      summary: 거래처 생성
+      description: |-
+        거래처 생성
+
+        거래처를 생성합니다.
+      operationId: createB2bCounterparty
+      parameters:
+        - name: test
+          in: query
+          description: |-
+            테스트 모드 여부
+
+            true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: 'true 이면 테스트 모드로 실행되며, false 이거나 주어지지 않은 경우 테스트 모드를 사용하지 않습니다.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateB2bCounterpartyBody'
+        required: true
+      responses:
+        '200':
+          description: 성공 응답
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateB2bCounterpartyResponse'
+          x-portone-title: 성공 응답
+        '400':
+          description: >-
+            * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+
+            * `B2bCounterpartyBrnInvalidError`: 사업자등록번호가 유효하지 않은 경우
+
+            * `B2bCounterpartySelfOriginBrnMismatchError`: 자사 사업자등록번호와 동일한 거래처를
+            생성할 수 없는 경우
+
+            * `B2bCounterpartyTooManyAdditionalContactsError`: 추가 담당자가 너무 많은 경우
+
+            * `B2bCounterpartyMissingRequiredFieldsError`: 필수 입력 항목이 누락된 경우
+
+            * `B2bCounterpartyVerificationBrnMismatchError`: 검증 결과의 사업자등록번호가
+            일치하지 않는 경우
+
+            * `B2bCounterpartyVerificationTypeMismatchError`: 검증 유형이 일치하지 않는 경우
+
+            * `B2bCounterpartyVerificationInvalidError`: 검증 결과가 유효하지 않은 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateB2bCounterpartyError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateB2bCounterpartyError'
+        '403':
+          description: >-
+            * `B2bNotEnabledError`: B2B 기능이 활성화되지 않은 경우
+
+            * `ForbiddenError`: 요청이 거절된 경우
+
+            * `B2bCounterpartyPartnerNotConnectableError`: 파트너 연동 거래처는 국세청 연동이
+            허용되지 않는 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateB2bCounterpartyError'
+        '404':
+          description: '* `B2bCounterpartyVerificationNotFoundError`: 검증 결과를 찾을 수 없는 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateB2bCounterpartyError'
+        '409':
+          description: '* `B2bCounterpartyIdAlreadyExistsError`: 거래처 ID가 이미 사용중인 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateB2bCounterpartyError'
+        '502':
+          description: |-
+            * `B2bExternalServiceError`: 외부 서비스에서 에러가 발생한 경우
+            * `B2bCounterpartyNtsConnectionFailedError`: 국세청 연동에 실패한 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateB2bCounterpartyError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: b2b.counterparty
+      x-portone-title: 거래처 생성
+      x-portone-description: 거래처를 생성합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/CreateB2bCounterpartyError'
   /b2b/file-upload-url:
     post:
       summary: 파일 업로드 URL 생성
@@ -303,6 +998,8 @@ paths:
             * `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자
             문서 번호가 이미 사용 중인 경우
 
+            * `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우
+
             * `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우
 
             * `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우
@@ -337,6 +1034,7 @@ paths:
           description: |-
             * `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우
             * `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우
+            * `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우
             * `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우
             * `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우
           content:
@@ -406,6 +1104,8 @@ paths:
             * `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자
             문서 번호가 이미 사용 중인 경우
 
+            * `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우
+
             * `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우
 
             * `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우
@@ -436,6 +1136,7 @@ paths:
           description: |-
             * `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우
             * `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우
+            * `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우
             * `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우
             * `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우
           content:
@@ -506,6 +1207,8 @@ paths:
             * `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자
             문서 번호가 이미 사용 중인 경우
 
+            * `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우
+
             * `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우
 
             * `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우
@@ -536,6 +1239,7 @@ paths:
           description: |-
             * `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우
             * `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우
+            * `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우
             * `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우
             * `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우
           content:
@@ -607,6 +1311,8 @@ paths:
             * `B2bTaxInvoiceRecipientDocumentKeyAlreadyUsedError`: 세금계산서에 공급 받는자
             문서 번호가 이미 사용 중인 경우
 
+            * `B2bCounterpartyNtsNotConnectedError`: 국세청에 연동되어 있지 않은 경우
+
             * `B2bModificationNotProvidedError`: 세금계산서 수정 입력 정보를 찾을 수 없는 경우
 
             * `B2BCannotChangeTaxTypeError`: 세금계산서 과세 유형을 수정할 수 없는 경우
@@ -637,6 +1343,7 @@ paths:
           description: |-
             * `B2bSupplierNotFoundError`: 공급자가 존재하지 않은 경우
             * `B2bRecipientNotFoundError`: 공급받는자가 존재하지 않은 경우
+            * `B2bCounterpartyNotFoundError`: 거래처가 존재하지 않는 경우
             * `B2bOriginalTaxInvoiceNotFoundError`: 원본 세금계산서가 존재하지 않은 경우
             * `B2bTaxInvoiceNotFoundError`: 세금계산서가 존재하지 않은 경우
           content:
@@ -8219,6 +8926,189 @@ paths:
       x-portone-error:
         $ref: '#/components/schemas/GetPlatformPartnerFilterOptionsError'
       x-portone-unstable: true
+  /platform/partner-settlements/complete-payout:
+    post:
+      summary: 일괄 지급 완료 처리
+      description: |-
+        일괄 지급 완료 처리
+
+        선택한 정산내역 아이디들로 일괄 지급을 완료 처리 합니다.
+      operationId: completePlatformPayoutByPartnerSettlementIds
+      parameters:
+        - name: test
+          in: query
+          description: >-
+            테스트 모드 여부
+
+
+            테스트 모드 여부를 결정합니다. true 이면 테스트 모드로 실행됩니다. Request Body에도 isForTest가
+            있을 수 있으나, 둘 다 제공되면 Query Parameter의 test 값을 사용하고, Request Body의
+            isForTest는 무시됩니다. Query Parameter의 test와 Request Body의 isForTest에 모두
+            값이 제공되지 않으면 기본값인 false로 적용됩니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: >-
+            테스트 모드 여부를 결정합니다. true 이면 테스트 모드로 실행됩니다. Request Body에도 isForTest가
+            있을 수 있으나, 둘 다 제공되면 Query Parameter의 test 값을 사용하고, Request Body의
+            isForTest는 무시됩니다. Query Parameter의 test와 Request Body의 isForTest에 모두
+            값이 제공되지 않으면 기본값인 false로 적용됩니다.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: >-
+                #/components/schemas/CompletePlatformPayoutByPartnerSettlementIdsBody
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/CompletePlatformPayoutByPartnerSettlementIdsResponse
+        '400':
+          description: >-
+            * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+
+            * `PlatformNoSelectedPartnerSettlementsError`: 선택된 정산건이 없는 경우
+
+            * `PlatformDuplicatedPartnerSettlementIdsError`: 선택된 정산건 아이디에 중복이 있는
+            경우
+
+            * `PlatformNonPayablePartnerSettlementsError`: 지급할 수 없는 정산건이 포함된 경우
+
+            * `PlatformNegativePayoutAmountPartnersError`: 지급 금액의 총합이 음수인 파트너가
+            존재하는 경우
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/CompletePlatformPayoutByPartnerSettlementIdsError
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/CompletePlatformPayoutByPartnerSettlementIdsError
+        '403':
+          description: |-
+            * `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/CompletePlatformPayoutByPartnerSettlementIdsError
+        '404':
+          description: '* `PlatformPartnerSettlementsNotFoundError`: 요청한 정산건 목록을 찾을 수 없는 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/CompletePlatformPayoutByPartnerSettlementIdsError
+        '409':
+          description: '* `PlatformBulkPayoutIdAlreadyExistsError`: 일괄 지급 아이디가 이미 존재하는 경우'
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/CompletePlatformPayoutByPartnerSettlementIdsError
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: platform.payout
+      x-portone-title: 일괄 지급 완료 처리
+      x-portone-description: 선택한 정산내역 아이디들로 일괄 지급을 완료 처리 합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/CompletePlatformPayoutByPartnerSettlementIdsError'
+      x-portone-unstable: true
+  /platform/partner-settlements/delete:
+    post:
+      summary: 정산내역 삭제
+      description: |-
+        정산내역 삭제
+
+        선택한 정산내역들을 삭제합니다.
+      operationId: deletePlatformPartnerSettlements
+      parameters:
+        - name: test
+          in: query
+          description: >-
+            테스트 모드 여부
+
+
+            테스트 모드 여부를 결정합니다. true 이면 테스트 모드로 실행됩니다. Request Body에도 isForTest가
+            있을 수 있으나, 둘 다 제공되면 Query Parameter의 test 값을 사용하고, Request Body의
+            isForTest는 무시됩니다. Query Parameter의 test와 Request Body의 isForTest에 모두
+            값이 제공되지 않으면 기본값인 false로 적용됩니다.
+          required: false
+          schema:
+            type: boolean
+          x-portone-title: 테스트 모드 여부
+          x-portone-description: >-
+            테스트 모드 여부를 결정합니다. true 이면 테스트 모드로 실행됩니다. Request Body에도 isForTest가
+            있을 수 있으나, 둘 다 제공되면 Query Parameter의 test 값을 사용하고, Request Body의
+            isForTest는 무시됩니다. Query Parameter의 test와 Request Body의 isForTest에 모두
+            값이 제공되지 않으면 기본값인 false로 적용됩니다.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeletePlatformPartnerSettlementsBody'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePlatformPartnerSettlementsResponse'
+        '400':
+          description: >-
+            * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+
+            * `PlatformNonDeletablePartnerSettlementsError`: 삭제할 수 없는 정산건이 포함된
+            경우
+
+            * `PlatformReferencedCancelOrderTransfersExistError`: 취소 정산건이 참조 중인
+            정산건이 포함된 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePlatformPartnerSettlementsError'
+        '401':
+          description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePlatformPartnerSettlementsError'
+        '403':
+          description: |-
+            * `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
+            * `ForbiddenError`: 요청이 거절된 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePlatformPartnerSettlementsError'
+        '404':
+          description: '* `PlatformPartnerSettlementsNotFoundError`: 요청한 정산건 목록을 찾을 수 없는 경우'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePlatformPartnerSettlementsError'
+      security:
+        - bearerJwt: []
+        - portOne: []
+      x-portone-category: platform.partnerSettlement
+      x-portone-title: 정산내역 삭제
+      x-portone-description: 선택한 정산내역들을 삭제합니다.
+      x-portone-error:
+        $ref: '#/components/schemas/DeletePlatformPartnerSettlementsError'
+      x-portone-unstable: true
   /platform/partner-settlements:
     get:
       summary: 정산 내역 다건 조회
@@ -8386,14 +9276,14 @@ paths:
       x-portone-description: 새로운 파트너를 다건 생성합니다.
       x-portone-error:
         $ref: '#/components/schemas/CreatePlatformPartnersError'
-  '/platform/partners/member-company-connect/{id}':
+  '/platform/partners/counterparty-connect/{id}':
     post:
-      summary: 파트너 국세청 연동
+      summary: 파트너 거래처 연동
       description: |-
-        파트너 국세청 연동
+        파트너 거래처 연동
 
-        파트너를 국세청 연동합니다.
-      operationId: connectPartnerMemberCompany
+        파트너를 거래처에 연동합니다.
+      operationId: connectPartnerCounterparty
       parameters:
         - name: id
           in: path
@@ -8427,7 +9317,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectPartnerMemberCompanyResponse'
+                $ref: '#/components/schemas/ConnectPartnerCounterpartyResponse'
           x-portone-description: 성공 응답으로 파트너 객체를 반환합니다.
         '400':
           description: >-
@@ -8438,18 +9328,18 @@ paths:
             * `PlatformPartnerTaxationTypeIsSimpleError`: 파트너의 과세 유형이 간이 과세
             세금계산서 미발행 유형인 경우
 
-            * `PlatformMemberCompanyNotConnectableStatusError`: 파트너 연동 사업자 연동
-            상태가 연동 가능한 상태가 아닌 경우
+            * `PlatformCounterpartyNotConnectableStatusError`: 파트너 거래처 연동 상태가 연동
+            가능한 상태가 아닌 경우
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectPartnerCounterpartyError'
         '401':
           description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectPartnerCounterpartyError'
         '403':
           description: |-
             * `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
@@ -8458,41 +9348,41 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectPartnerCounterpartyError'
         '404':
           description: '* `PlatformPartnerNotFoundError`'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectPartnerCounterpartyError'
         '409':
           description: '* `PlatformPartnerScheduleExistsError`: 파트너 수정 예약 건이 존재하는 경우'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectPartnerCounterpartyError'
         '503':
           description: '* `PlatformExternalApiFailedError`: 외부 api 오류'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectPartnerCounterpartyError'
       security:
         - bearerJwt: []
         - portOne: []
       x-portone-category: platform.partner
-      x-portone-title: 파트너 국세청 연동
-      x-portone-description: 파트너를 국세청 연동합니다.
+      x-portone-title: 파트너 거래처 연동
+      x-portone-description: 파트너를 거래처에 연동합니다.
       x-portone-error:
-        $ref: '#/components/schemas/ConnectPartnerMemberCompanyError'
-  /platform/partners/member-company-connect:
+        $ref: '#/components/schemas/ConnectPartnerCounterpartyError'
+  /platform/partners/counterparty-connect:
     post:
-      summary: 파트너 일괄 국세청 연동
+      summary: 파트너 일괄 거래처 연동
       description: |-
-        파트너 일괄 국세청 연동
+        파트너 일괄 거래처 연동
 
-        파트너들을 일괄 국세청 연동합니다.
-      operationId: connectBulkPartnerMemberCompany
+        파트너들을 일괄 거래처 연동합니다.
+      operationId: connectBulkPartnerCounterparty
       parameters:
         - name: test
           in: query
@@ -8517,7 +9407,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConnectBulkPartnerMemberCompanyBody'
+              $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyBody'
         required: true
       responses:
         '200':
@@ -8525,20 +9415,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectBulkPartnerMemberCompanyResponse'
+                $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyResponse'
           x-portone-description: 성공 응답으로 일괄 작업 객체를 반환합니다.
         '400':
           description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyError'
         '401':
           description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyError'
         '403':
           description: |-
             * `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
@@ -8547,7 +9437,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyError'
         '404':
           description: |-
             * `PlatformPartnerNotFoundError`
@@ -8555,29 +9445,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyError'
         '503':
           description: '* `PlatformExternalApiFailedError`: 외부 api 오류'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyError'
       security:
         - bearerJwt: []
         - portOne: []
       x-portone-category: platform.partner
-      x-portone-title: 파트너 일괄 국세청 연동
-      x-portone-description: 파트너들을 일괄 국세청 연동합니다.
+      x-portone-title: 파트너 일괄 거래처 연동
+      x-portone-description: 파트너들을 일괄 거래처 연동합니다.
       x-portone-error:
-        $ref: '#/components/schemas/ConnectBulkPartnerMemberCompanyError'
-  '/platform/partners/member-company-disconnect/{id}':
+        $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyError'
+  '/platform/partners/counterparty-disconnect/{id}':
     post:
-      summary: 파트너 국세청 연동 해제
+      summary: 파트너 거래처 연동 해제
       description: |-
-        파트너 국세청 연동 해제
+        파트너 거래처 연동 해제
 
-        파트너를 국세청 연동 해제합니다.
-      operationId: disconnectPartnerMemberCompany
+        파트너를 거래처 연동 해제합니다.
+      operationId: disconnectPartnerCounterparty
       parameters:
         - name: id
           in: path
@@ -8611,7 +9501,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectPartnerMemberCompanyResponse'
+                $ref: '#/components/schemas/DisconnectPartnerCounterpartyResponse'
           x-portone-description: 성공 응답으로 파트너 객체를 반환합니다.
         '400':
           description: >-
@@ -8622,18 +9512,17 @@ paths:
             * `PlatformPartnerTaxationTypeIsSimpleError`: 파트너의 과세 유형이 간이 과세
             세금계산서 미발행 유형인 경우
 
-            * `PlatformMemberCompanyNotConnectedError`: 파트너가 연동 사업자로 연동 되어있지 않은
-            경우
+            * `PlatformCounterpartyNotConnectedError`: 파트너가 거래처로 연동 되어있지 않은 경우
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectPartnerCounterpartyError'
         '401':
           description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectPartnerCounterpartyError'
         '403':
           description: |-
             * `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
@@ -8642,41 +9531,41 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectPartnerCounterpartyError'
         '404':
           description: '* `PlatformPartnerNotFoundError`'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectPartnerCounterpartyError'
         '409':
           description: '* `PlatformOngoingTaxInvoiceExistsError`: 진행 중인 세금계산서가 존재하는 경우'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectPartnerCounterpartyError'
         '503':
           description: '* `PlatformExternalApiFailedError`: 외부 api 오류'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectPartnerCounterpartyError'
       security:
         - bearerJwt: []
         - portOne: []
       x-portone-category: platform.partner
-      x-portone-title: 파트너 국세청 연동 해제
-      x-portone-description: 파트너를 국세청 연동 해제합니다.
+      x-portone-title: 파트너 거래처 연동 해제
+      x-portone-description: 파트너를 거래처 연동 해제합니다.
       x-portone-error:
-        $ref: '#/components/schemas/DisconnectPartnerMemberCompanyError'
-  /platform/partners/member-company-disconnect:
+        $ref: '#/components/schemas/DisconnectPartnerCounterpartyError'
+  /platform/partners/counterparty-disconnect:
     post:
-      summary: 파트너 일괄 국세청 연동 해제
+      summary: 파트너 일괄 거래처 연동 해제
       description: |-
-        파트너 일괄 국세청 연동 해제
+        파트너 일괄 거래처 연동 해제
 
-        파트너들을 일괄 국세청 연동 해제합니다.
-      operationId: disconnectBulkPartnerMemberCompany
+        파트너들을 일괄 거래처 연동 해제합니다.
+      operationId: disconnectBulkPartnerCounterparty
       parameters:
         - name: test
           in: query
@@ -8701,7 +9590,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DisconnectBulkPartnerMemberCompanyBody'
+              $ref: '#/components/schemas/DisconnectBulkPartnerCounterpartyBody'
         required: true
       responses:
         '200':
@@ -8709,21 +9598,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: >-
-                  #/components/schemas/DisconnectBulkPartnerMemberCompanyResponse
+                $ref: '#/components/schemas/DisconnectBulkPartnerCounterpartyResponse'
           x-portone-description: 성공 응답으로 일괄 작업 객체를 반환합니다.
         '400':
           description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectBulkPartnerCounterpartyError'
         '401':
           description: '* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectBulkPartnerCounterpartyError'
         '403':
           description: |-
             * `PlatformNotEnabledError`: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
@@ -8732,7 +9620,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectBulkPartnerCounterpartyError'
         '404':
           description: |-
             * `PlatformPartnerNotFoundError`
@@ -8740,21 +9628,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectBulkPartnerCounterpartyError'
         '503':
           description: '* `PlatformExternalApiFailedError`: 외부 api 오류'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DisconnectBulkPartnerMemberCompanyError'
+                $ref: '#/components/schemas/DisconnectBulkPartnerCounterpartyError'
       security:
         - bearerJwt: []
         - portOne: []
       x-portone-category: platform.partner
-      x-portone-title: 파트너 일괄 국세청 연동 해제
-      x-portone-description: 파트너들을 일괄 국세청 연동 해제합니다.
+      x-portone-title: 파트너 일괄 거래처 연동 해제
+      x-portone-description: 파트너들을 일괄 거래처 연동 해제합니다.
       x-portone-error:
-        $ref: '#/components/schemas/DisconnectBulkPartnerMemberCompanyError'
+        $ref: '#/components/schemas/DisconnectBulkPartnerCounterpartyError'
   /platform/partners/schedule:
     post:
       operationId: schedulePlatformPartners
@@ -10118,7 +11006,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateManualTransferResponse'
         '400':
-          description: '* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우'
+          description: |-
+            * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+            * `PlatformCurrencyNotSupportedError`: 지원 되지 않는 통화를 선택한 경우
           content:
             application/json:
               schema:
@@ -10141,6 +11031,12 @@ paths:
           description: |-
             * `PlatformPartnerNotFoundError`
             * `PlatformUserDefinedPropertyNotFoundError`: 사용자 정의 속성이 존재 하지 않는 경우
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePlatformManualTransferError'
+        '409':
+          description: '* `PlatformTransferIdAlreadyUsedError`'
           content:
             application/json:
               schema:
@@ -10256,7 +11152,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreatePlatformOrderCancelTransferError'
         '409':
-          description: '* `PlatformTransferAlreadyExistsError`'
+          description: |-
+            * `PlatformTransferAlreadyExistsError`
+            * `PlatformTransferIdAlreadyUsedError`
           content:
             application/json:
               schema:
@@ -10370,7 +11268,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreatePlatformOrderTransferError'
         '409':
-          description: '* `PlatformTransferAlreadyExistsError`'
+          description: |-
+            * `PlatformTransferAlreadyExistsError`
+            * `PlatformTransferIdAlreadyUsedError`
           content:
             application/json:
               schema:
@@ -11105,7 +12005,79 @@ components:
         error:
           type: string
           title: 조회 실패 시 에러 메시지
+        verificationId:
+          type: string
+          title: 조회 결과 ID
+          description: 거래처 생성/수정 시 사업자 정보 조회 결과를 재사용하기 위한 ID입니다. 조회 성공 시에만 설정됩니다.
       x-portone-title: 사업자등록 정보조회 결과
+    B2bCertificate:
+      title: B2bCertificate
+      type: object
+      required:
+        - registeredAt
+        - expiredAt
+        - issuerName
+        - subjectName
+        - certificateType
+        - oid
+        - registrantContactName
+        - registrantContactId
+      properties:
+        registeredAt:
+          type: string
+          format: date-time
+          title: 등록일시
+        expiredAt:
+          type: string
+          format: date-time
+          title: 만료일시
+        issuerName:
+          type: string
+          title: 발행자명
+        subjectName:
+          type: string
+          title: 본인명
+        certificateType:
+          $ref: '#/components/schemas/B2bCertificateType'
+          title: 인증서 타입
+        oid:
+          type: string
+          title: OID
+        registrantContactName:
+          type: string
+          title: 등록 담당자 성명
+        registrantContactId:
+          type: string
+          title: 등록 담당자 ID
+    B2bCertificateType:
+      title: 인증서 타입
+      description: 인증서 타입
+      type: string
+      enum:
+        - E_TAX
+        - PORTONE
+        - ETC
+      x-portone-title: 인증서 타입
+      x-portone-enum:
+        E_TAX:
+          title: 전자세금용 공동인증서
+        PORTONE:
+          title: 특수목적용 공동인증서
+        ETC:
+          title: 기타
+    B2bCertificateUnregisteredError:
+      title: 인증서가 등록되어 있지 않은 경우
+      description: 인증서가 등록되어 있지 않은 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 인증서가 등록되어 있지 않은 경우
+      x-portone-status-code: 404
     B2bCompanyStateBusinessStatus:
       title: 영업 상태
       description: 영업 상태
@@ -11122,6 +12094,544 @@ components:
           title: 폐업
         SUSPENDED:
           title: 휴업
+    B2bCounterparty:
+      title: 거래처
+      description: |-
+        거래처
+
+        B2B 거래처 정보입니다.
+      type: object
+      required:
+        - id
+        - graphqlId
+        - isForTest
+        - brn
+        - companyName
+        - representativeName
+        - contact
+        - additionalContacts
+        - ntsConnectionStatus
+      properties:
+        id:
+          type: string
+          title: 거래처 고유 아이디
+        graphqlId:
+          type: string
+        isForTest:
+          type: boolean
+          title: 테스트 모드 여부
+        brn:
+          type: string
+          title: 사업자등록번호
+          description: '`-` 없이 숫자로만 구성됩니다.'
+        companyName:
+          type: string
+          title: 상호명
+        representativeName:
+          type: string
+          title: 대표자 성명
+        address:
+          type: string
+          title: 주소
+        businessType:
+          type: string
+          title: 업태
+        businessClass:
+          type: string
+          title: 업종
+        contact:
+          $ref: '#/components/schemas/B2bCounterpartyContact'
+          title: 담당자 정보
+        additionalContacts:
+          title: 추가 담당자 목록
+          type: array
+          items:
+            $ref: '#/components/schemas/B2bCounterpartyContact'
+          description: 최대 5명까지 등록할 수 있습니다.
+        memo:
+          type: string
+          title: 메모
+        ntsConnectionStatus:
+          $ref: '#/components/schemas/B2bNtsConnectionStatus'
+          title: 국세청 연동 상태
+        ntsConnectedAt:
+          type: string
+          format: date-time
+          title: 국세청 연동 시각
+        ntsConnectionFailedReason:
+          type: string
+          title: 국세청 연동 실패 사유
+        partnerId:
+          type: string
+          title: 파트너 연동 ID
+          description: 파트너 연동 거래처인 경우에만 존재합니다.
+        businessStatus:
+          $ref: '#/components/schemas/B2bCounterpartyBusinessStatus'
+          title: 휴폐업 상태
+        businessStatusCheckedAt:
+          type: string
+          format: date-time
+          title: 휴폐업 상태 확인 시각
+        businessStatusVerification:
+          $ref: '#/components/schemas/B2bCounterpartyVerification'
+          title: 휴폐업 상태 검증 정보
+        businessInfoVerification:
+          $ref: '#/components/schemas/B2bCounterpartyVerification'
+          title: 사업자 정보 검증 정보
+        appliedAt:
+          type: string
+          format: date-time
+          title: 적용 시각
+      x-portone-title: 거래처
+      x-portone-description: B2B 거래처 정보입니다.
+    B2bCounterpartyBrnInvalidError:
+      title: 사업자등록번호가 유효하지 않은 경우
+      description: 사업자등록번호가 유효하지 않은 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 사업자등록번호가 유효하지 않은 경우
+      x-portone-status-code: 400
+    B2bCounterpartyBrnModificationNotAllowedError:
+      title: 사업자등록번호 수정이 허용되지 않는 경우
+      description: |-
+        사업자등록번호 수정이 허용되지 않는 경우
+
+        거래처의 사업자등록번호는 수정할 수 없습니다.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 사업자등록번호 수정이 허용되지 않는 경우
+      x-portone-description: 거래처의 사업자등록번호는 수정할 수 없습니다.
+      x-portone-status-code: 400
+    B2bCounterpartyBusinessStatus:
+      title: 거래처 휴폐업 상태
+      description: 거래처 휴폐업 상태
+      type: string
+      enum:
+        - UNKNOWN
+        - IN_BUSINESS
+        - CLOSED
+        - SUSPENDED
+        - NOT_FOUND
+        - CHECK_PENDING
+        - CHECK_FAILED
+      x-portone-title: 거래처 휴폐업 상태
+      x-portone-enum:
+        SUSPENDED:
+          title: 휴업
+        IN_BUSINESS:
+          title: 영업중
+        CHECK_PENDING:
+          title: 조회 대기
+          description: 일괄 등록 시 조회 대기 상태입니다.
+        NOT_FOUND:
+          title: 사업체 미등록
+        UNKNOWN:
+          title: 미조회
+        CLOSED:
+          title: 폐업
+        CHECK_FAILED:
+          title: 조회 실패
+    B2bCounterpartyContact:
+      title: 거래처 담당자 정보
+      description: 거래처 담당자 정보
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          title: 담당자 성명
+        phoneNumber:
+          type: string
+          title: 담당자 전화번호
+        email:
+          type: string
+          title: 담당자 이메일
+        memo:
+          type: string
+          title: 담당자 메모
+      x-portone-title: 거래처 담당자 정보
+    B2bCounterpartyContactInput:
+      title: 거래처 담당자 입력 정보
+      description: 거래처 담당자 입력 정보
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          title: 담당자 성명
+        phoneNumber:
+          type: string
+          title: 담당자 전화번호
+        email:
+          type: string
+          title: 담당자 이메일
+        memo:
+          type: string
+          title: 담당자 메모
+      x-portone-title: 거래처 담당자 입력 정보
+    B2bCounterpartyCreateOptions:
+      title: 거래처 생성 옵션
+      description: 거래처 생성 옵션
+      type: object
+      properties:
+        checkBusinessInfo:
+          type: boolean
+          title: 사업자 정보 조회 여부
+          description: true인 경우 사업자 정보를 조회하여 거래처에 반영합니다.
+        checkBusinessStatus:
+          type: boolean
+          title: 휴폐업 상태 조회 여부
+          description: true인 경우 휴폐업 상태를 조회하여 거래처에 반영합니다.
+        businessInfoVerificationId:
+          type: string
+          title: 사업자 정보 조회 결과 ID
+          description: 이전에 조회한 사업자 정보 조회 결과의 ID를 입력하면 재조회 없이 해당 결과를 사용합니다.
+        businessStatusVerificationId:
+          type: string
+          title: 휴폐업 상태 조회 결과 ID
+          description: 이전에 조회한 휴폐업 상태 조회 결과의 ID를 입력하면 재조회 없이 해당 결과를 사용합니다.
+      x-portone-title: 거래처 생성 옵션
+    B2bCounterpartyFilter:
+      title: 거래처 검색 필터
+      description: 거래처 검색 필터
+      type: object
+      properties:
+        id:
+          type: string
+          title: 거래처 ID
+          description: prefix 검색
+        brn:
+          type: string
+          title: 사업자등록번호
+        companyName:
+          type: string
+          title: 거래처명
+          description: 포함 검색
+        representativeName:
+          type: string
+          title: 대표자명
+        contactName:
+          type: string
+          title: 담당자 이름
+        contactPhone:
+          type: string
+          title: 담당자 전화번호
+        contactEmail:
+          type: string
+          title: 담당자 이메일
+        businessStatuses:
+          title: 휴폐업 상태
+          type: array
+          items:
+            $ref: '#/components/schemas/B2bCounterpartyBusinessStatus'
+        ntsConnectionStatuses:
+          title: 국세청 연동 상태
+          type: array
+          items:
+            $ref: '#/components/schemas/B2bNtsConnectionStatus'
+        counterpartyIds:
+          type: array
+          items:
+            type: string
+          title: 거래처 ID 목록
+          description: 특정 ID 목록으로 필터링
+      x-portone-title: 거래처 검색 필터
+    B2bCounterpartyIdAlreadyExistsError:
+      title: 거래처 ID가 이미 사용중인 경우
+      description: 거래처 ID가 이미 사용중인 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 거래처 ID가 이미 사용중인 경우
+      x-portone-status-code: 409
+    B2bCounterpartyInput:
+      title: 거래처 입력 정보
+      description: 거래처 입력 정보
+      type: object
+      required:
+        - brn
+      properties:
+        brn:
+          type: string
+          title: 사업자등록번호
+          description: '`-` 없이 숫자로만 구성됩니다.'
+        name:
+          type: string
+          title: 거래처명
+        representativeName:
+          type: string
+          title: 대표자 성명
+        address:
+          type: string
+          title: 주소
+        businessType:
+          type: string
+          title: 업태
+        businessClass:
+          type: string
+          title: 업종
+        contact:
+          $ref: '#/components/schemas/B2bCounterpartyContactInput'
+          title: 담당자 정보
+        additionalContacts:
+          title: 추가 담당자 목록
+          type: array
+          items:
+            $ref: '#/components/schemas/B2bCounterpartyContactInput'
+          description: 최대 5명까지 등록할 수 있습니다.
+        memo:
+          type: string
+          title: 메모
+      x-portone-title: 거래처 입력 정보
+    B2bCounterpartyMissingRequiredFieldsError:
+      title: 필수 입력 항목이 누락된 경우
+      description: |-
+        필수 입력 항목이 누락된 경우
+
+        거래처 생성/수정 시 필수 입력 항목이 누락되었습니다.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 필수 입력 항목이 누락된 경우
+      x-portone-description: 거래처 생성/수정 시 필수 입력 항목이 누락되었습니다.
+      x-portone-status-code: 400
+    B2bCounterpartyNotFoundError:
+      title: 거래처가 존재하지 않는 경우
+      description: 거래처가 존재하지 않는 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+        counterpartyId:
+          type: string
+      x-portone-title: 거래처가 존재하지 않는 경우
+      x-portone-status-code: 404
+    B2bCounterpartyNtsConnectionFailedError:
+      title: 국세청 연동에 실패한 경우
+      description: 국세청 연동에 실패한 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 국세청 연동에 실패한 경우
+      x-portone-status-code: 502
+    B2bCounterpartyNtsNotConnectedError:
+      title: 국세청에 연동되어 있지 않은 경우
+      description: 국세청에 연동되어 있지 않은 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+        brn:
+          type: string
+        counterpartyId:
+          type: string
+      x-portone-title: 국세청에 연동되어 있지 않은 경우
+      x-portone-status-code: 400
+    B2bCounterpartyOngoingTaxInvoiceExistsError:
+      title: 진행 중인 세금계산서가 존재하여 거래처를 삭제할 수 없는 경우
+      description: 진행 중인 세금계산서가 존재하여 거래처를 삭제할 수 없는 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 진행 중인 세금계산서가 존재하여 거래처를 삭제할 수 없는 경우
+      x-portone-status-code: 409
+    B2bCounterpartyPartnerNotConnectableError:
+      title: 파트너 연동 거래처는 국세청 연동이 허용되지 않는 경우
+      description: |-
+        파트너 연동 거래처는 국세청 연동이 허용되지 않는 경우
+
+        파트너와 연동된 거래처는 국세청 연동을 직접 수행할 수 없습니다.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 파트너 연동 거래처는 국세청 연동이 허용되지 않는 경우
+      x-portone-description: 파트너와 연동된 거래처는 국세청 연동을 직접 수행할 수 없습니다.
+      x-portone-status-code: 403
+    B2bCounterpartyPartnerNotDeletableError:
+      title: 파트너 연동 거래처는 삭제할 수 없는 경우
+      description: |-
+        파트너 연동 거래처는 삭제할 수 없는 경우
+
+        파트너와 연동된 거래처는 직접 삭제할 수 없습니다.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 파트너 연동 거래처는 삭제할 수 없는 경우
+      x-portone-description: 파트너와 연동된 거래처는 직접 삭제할 수 없습니다.
+      x-portone-status-code: 403
+    B2bCounterpartyPartnerNotUpdatableError:
+      title: 파트너 연동 거래처는 수정할 수 없는 경우
+      description: |-
+        파트너 연동 거래처는 수정할 수 없는 경우
+
+        파트너와 연동된 거래처는 직접 수정할 수 없습니다.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 파트너 연동 거래처는 수정할 수 없는 경우
+      x-portone-description: 파트너와 연동된 거래처는 직접 수정할 수 없습니다.
+      x-portone-status-code: 403
+    B2bCounterpartySelfOriginBrnMismatchError:
+      title: 자사 사업자등록번호와 동일한 거래처를 생성할 수 없는 경우
+      description: 자사 사업자등록번호와 동일한 거래처를 생성할 수 없는 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 자사 사업자등록번호와 동일한 거래처를 생성할 수 없는 경우
+      x-portone-status-code: 400
+    B2bCounterpartyTooManyAdditionalContactsError:
+      title: 추가 담당자가 너무 많은 경우
+      description: |-
+        추가 담당자가 너무 많은 경우
+
+        추가 담당자는 최대 5명까지 등록할 수 있습니다.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 추가 담당자가 너무 많은 경우
+      x-portone-description: 추가 담당자는 최대 5명까지 등록할 수 있습니다.
+      x-portone-status-code: 400
+    B2bCounterpartyVerification:
+      title: 거래처 검증 정보
+      description: 거래처 검증 정보
+      type: object
+      required:
+        - id
+        - checkedAt
+      properties:
+        id:
+          type: string
+          title: 외부 API 사용 ID
+        checkedAt:
+          type: string
+          format: date-time
+          title: 검증 시각
+      x-portone-title: 거래처 검증 정보
+    B2bCounterpartyVerificationBrnMismatchError:
+      title: 검증 결과의 사업자등록번호가 일치하지 않는 경우
+      description: 검증 결과의 사업자등록번호가 일치하지 않는 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 검증 결과의 사업자등록번호가 일치하지 않는 경우
+      x-portone-status-code: 400
+    B2bCounterpartyVerificationInvalidError:
+      title: 검증 결과가 유효하지 않은 경우
+      description: 검증 결과가 유효하지 않은 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 검증 결과가 유효하지 않은 경우
+      x-portone-status-code: 400
+    B2bCounterpartyVerificationNotFoundError:
+      title: 검증 결과를 찾을 수 없는 경우
+      description: |-
+        검증 결과를 찾을 수 없는 경우
+
+        사업자 정보 검증 결과를 찾을 수 없습니다.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 검증 결과를 찾을 수 없는 경우
+      x-portone-description: 사업자 정보 검증 결과를 찾을 수 없습니다.
+      x-portone-status-code: 404
+    B2bCounterpartyVerificationTypeMismatchError:
+      title: 검증 유형이 일치하지 않는 경우
+      description: 검증 유형이 일치하지 않는 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 검증 유형이 일치하지 않는 경우
+      x-portone-status-code: 400
     B2bDocumentKeyCannotBeChangedError:
       title: 문서번호 수정이 요청된 경우
       description: 문서번호 수정이 요청된 경우
@@ -11213,6 +12723,28 @@ components:
           type: string
       x-portone-title: B2B 기능이 활성화되지 않은 경우
       x-portone-status-code: 403
+    B2bNtsConnectionStatus:
+      title: 국세청 연동 상태
+      description: 국세청 연동 상태
+      type: string
+      enum:
+        - NOT_CONNECTED
+        - PENDING_CONNECT
+        - CONNECTED
+        - PENDING_DISCONNECT
+        - ERROR
+      x-portone-title: 국세청 연동 상태
+      x-portone-enum:
+        ERROR:
+          title: 연동 오류
+        PENDING_CONNECT:
+          title: 연동 대기
+        CONNECTED:
+          title: 연동 됨
+        NOT_CONNECTED:
+          title: 연동 안 됨
+        PENDING_DISCONNECT:
+          title: 연동 해제 대기
     B2bOriginalTaxInvoiceNotFoundError:
       title: 원본 세금계산서가 존재하지 않은 경우
       description: 원본 세금계산서가 존재하지 않은 경우
@@ -11236,6 +12768,10 @@ components:
         type:
           type: string
         message:
+          type: string
+        brn:
+          type: string
+        counterpartyId:
           type: string
       x-portone-title: 공급받는자가 존재하지 않은 경우
       x-portone-status-code: 404
@@ -11265,6 +12801,10 @@ components:
         type:
           type: string
         message:
+          type: string
+        brn:
+          type: string
+        counterpartyId:
           type: string
       x-portone-title: 공급자가 존재하지 않은 경우
       x-portone-status-code: 404
@@ -11402,7 +12942,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/B2bTaxInvoiceAdditionalContact'
-          description: 최대 3개
+          description: 최대 5명
         memo:
           type: string
           title: 메모
@@ -11460,6 +13000,9 @@ components:
         email:
           type: string
           title: 이메일
+        phoneNumber:
+          type: string
+          title: 전화번호
       x-portone-title: 추가 담당자
     B2bTaxInvoiceAttachment:
       title: 세금계산서 첨부파일
@@ -11497,16 +13040,14 @@ components:
     B2bTaxInvoiceCompany:
       title: B2bTaxInvoiceCompany
       type: object
-      required:
-        - brn
-        - name
-        - representativeName
-        - contact
       properties:
         brn:
           type: string
           title: 사업자등록번호
           description: '`-`를 제외한 10자리'
+        counterpartyId:
+          type: string
+          title: 거래처 ID
         taxRegistrationId:
           type: string
           title: 종사업자 식별 번호
@@ -11581,7 +13122,6 @@ components:
         - totalSupplyAmount
         - totalTaxAmount
         - totalAmount
-        - supplier
         - recipient
       properties:
         taxationType:
@@ -11676,7 +13216,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/B2bTaxInvoiceAdditionalContact'
-          description: 최대 3개
+          description: 최대 5명
+        useCounterpartyAdditionalContacts:
+          type: boolean
+          title: 거래처 추가 담당자 사용 여부
+          description: >-
+            true인 경우 거래처의 추가 담당자를 세금계산서 추가 담당자로 사용합니다. additional_contacts가 직접
+            지정된 경우 무시됩니다.
       x-portone-title: 세금계산서 생성 요청 정보
     B2bTaxInvoiceIssuanceType:
       title: 발행 유형
@@ -12015,6 +13561,8 @@ components:
         - SENDING_FAILED
         - REQUEST_REFUSED
         - ISSUANCE_CANCELLED
+        - CANCEL_PENDING
+        - SENDING_PENDING
       x-portone-enum:
         BEFORE_SENDING:
           title: 전송전
@@ -12026,10 +13574,14 @@ components:
           title: 발행 대기
         REQUEST_REFUSED:
           title: 공급자의 발행거부
+        SENDING_PENDING:
+          title: 국세청 전송 대기
         ISSUED:
           title: 발행완료
         SENDING_COMPLETED:
           title: 전송완료
+        CANCEL_PENDING:
+          title: 발행취소 대기
         DRAFT_PENDING:
           title: 임시저장 대기
         SENDING_FAILED:
@@ -12123,6 +13675,9 @@ components:
         supplierDocumentKey:
           type: string
           title: 공급자 문서번호
+        supplierCounterpartyId:
+          type: string
+          title: 공급자 거래처 아이디
         recipientBrn:
           type: string
           title: 공급받는자 사업자등록번호
@@ -12135,6 +13690,9 @@ components:
         recipientDocumentKey:
           type: string
           title: 공급받는자 문서번호
+        recipientCounterpartyId:
+          type: string
+          title: 공급받는자 거래처 아이디
         recipientBusinessStatus:
           $ref: '#/components/schemas/B2bCompanyStateBusinessStatus'
           title: 공급받는자 영업 상태
@@ -14747,6 +16305,79 @@ components:
           format: date-time
           title: 가상계좌 말소 시점
       x-portone-title: 가상계좌 말소 성공 응답
+    CompletePlatformPayoutByPartnerSettlementIdsBody:
+      title: CompletePlatformPayoutByPartnerSettlementIdsBody
+      type: object
+      required:
+        - bulkPayoutId
+        - partnerSettlementIds
+      properties:
+        bulkPayoutId:
+          type: string
+        name:
+          type: string
+        partnerSettlementIds:
+          type: array
+          items:
+            type: string
+        completedAt:
+          description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
+          type: string
+          format: date
+          x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
+        isForTest:
+          type: boolean
+          description: >-
+            Query Parameter의 test에 값이 제공된 경우 Query Parameter의 test를 사용하고 해당 값은
+            무시됩니다.
+
+            Query Parameter의 test와 Request Body의 isForTest에 모두 값이 제공되지 않으면 기본값인
+            false로 적용됩니다.
+    CompletePlatformPayoutByPartnerSettlementIdsError:
+      title: CompletePlatformPayoutByPartnerSettlementIdsError
+      oneOf:
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/PlatformBulkPayoutIdAlreadyExistsError'
+        - $ref: '#/components/schemas/PlatformDuplicatedPartnerSettlementIdsError'
+        - $ref: '#/components/schemas/PlatformNegativePayoutAmountPartnersError'
+        - $ref: '#/components/schemas/PlatformNoSelectedPartnerSettlementsError'
+        - $ref: '#/components/schemas/PlatformNonPayablePartnerSettlementsError'
+        - $ref: '#/components/schemas/PlatformNotEnabledError'
+        - $ref: '#/components/schemas/PlatformPartnerSettlementsNotFoundError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          PLATFORM_BULK_PAYOUT_ID_ALREADY_EXISTS: '#/components/schemas/PlatformBulkPayoutIdAlreadyExistsError'
+          PLATFORM_CURRENCY_NOT_SUPPORTED: '#/components/schemas/PlatformNegativePayoutAmountPartnersError'
+          PLATFORM_DUPLICATED_PARTNER_SETTLEMENT_IDS: '#/components/schemas/PlatformDuplicatedPartnerSettlementIdsError'
+          PLATFORM_NON_PAYABLE_PARTNER_SETTLEMENTS: '#/components/schemas/PlatformNonPayablePartnerSettlementsError'
+          PLATFORM_NOT_ENABLED: '#/components/schemas/PlatformNotEnabledError'
+          PLATFORM_NO_SELECTED_PARTNER_SETTLEMENTS: '#/components/schemas/PlatformNoSelectedPartnerSettlementsError'
+          PLATFORM_PARTNER_SETTLEMENTS_NOT_FOUND: '#/components/schemas/PlatformPartnerSettlementsNotFoundError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    CompletePlatformPayoutByPartnerSettlementIdsResponse:
+      title: 일괄 지급 완료 처리 결과
+      description: 일괄 지급 완료 처리 결과
+      type: object
+      required:
+        - payoutCount
+        - partnerSettlementCount
+      properties:
+        bulkPayoutId:
+          type: string
+        bulkPayoutGraphqlId:
+          type: string
+        payoutCount:
+          type: integer
+          format: int32
+        partnerSettlementCount:
+          type: integer
+          format: int32
+      x-portone-title: 일괄 지급 완료 처리 결과
     ConfirmBillingKeyBody:
       title: 빌링키 발급 승인 입력 정보
       description: 빌링키 발급 승인 입력 정보
@@ -15085,21 +16716,21 @@ components:
           format: date-time
           title: 결제 완료 시점
       x-portone-title: 결제 수동 승인 완료된 결제 건 요약 정보
-    ConnectBulkPartnerMemberCompanyBody:
-      title: 파트너 일괄 국세청 연동 요청 정보
+    ConnectBulkPartnerCounterpartyBody:
+      title: 파트너 일괄 거래처 연동 요청 정보
       description: |-
-        파트너 일괄 국세청 연동 요청 정보
+        파트너 일괄 거래처 연동 요청 정보
 
-        파트너들을 일괄 국세청 연동합니다.
+        파트너들을 일괄 거래처 연동합니다.
       type: object
       properties:
         filter:
           $ref: '#/components/schemas/PlatformPartnerFilterInput'
-          title: 일괄 국세청 연동할 파트너 조건 필터
-      x-portone-title: 파트너 일괄 국세청 연동 요청 정보
-      x-portone-description: 파트너들을 일괄 국세청 연동합니다.
-    ConnectBulkPartnerMemberCompanyError:
-      title: ConnectBulkPartnerMemberCompanyError
+          title: 일괄 거래처 연동할 파트너 조건 필터
+      x-portone-title: 파트너 일괄 거래처 연동 요청 정보
+      x-portone-description: 파트너들을 일괄 거래처 연동합니다.
+    ConnectBulkPartnerCounterpartyError:
+      title: ConnectBulkPartnerCounterpartyError
       oneOf:
         - $ref: '#/components/schemas/ForbiddenError'
         - $ref: '#/components/schemas/InvalidRequestError'
@@ -15120,24 +16751,24 @@ components:
           PLATFORM_PARTNER_NOT_FOUND: '#/components/schemas/PlatformPartnerNotFoundError'
           PLATFORM_TARGET_PARTNER_NOT_FOUND: '#/components/schemas/PlatformTargetPartnerNotFoundError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
-    ConnectBulkPartnerMemberCompanyResponse:
-      title: 파트너 일괄 국세청 연동 응답
-      description: 파트너 일괄 국세청 연동 응답
+    ConnectBulkPartnerCounterpartyResponse:
+      title: 파트너 일괄 거래처 연동 응답
+      description: 파트너 일괄 거래처 연동 응답
       type: object
       required:
         - bulkTask
       properties:
         bulkTask:
           $ref: '#/components/schemas/PlatformBulkTask'
-      x-portone-title: 파트너 일괄 국세청 연동 응답
-    ConnectPartnerMemberCompanyError:
-      title: ConnectPartnerMemberCompanyError
+      x-portone-title: 파트너 일괄 거래처 연동 응답
+    ConnectPartnerCounterpartyError:
+      title: ConnectPartnerCounterpartyError
       oneOf:
         - $ref: '#/components/schemas/ForbiddenError'
         - $ref: '#/components/schemas/InvalidRequestError'
         - $ref: '#/components/schemas/PlatformBtxNotEnabledError'
+        - $ref: '#/components/schemas/PlatformCounterpartyNotConnectableStatusError'
         - $ref: '#/components/schemas/PlatformExternalApiFailedError'
-        - $ref: '#/components/schemas/PlatformMemberCompanyNotConnectableStatusError'
         - $ref: '#/components/schemas/PlatformNotEnabledError'
         - $ref: '#/components/schemas/PlatformPartnerNotFoundError'
         - $ref: '#/components/schemas/PlatformPartnerScheduleExistsError'
@@ -15150,24 +16781,24 @@ components:
           FORBIDDEN: '#/components/schemas/ForbiddenError'
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
           PLATFORM_BTX_NOT_ENABLED: '#/components/schemas/PlatformBtxNotEnabledError'
+          PLATFORM_COUNTERPARTY_NOT_CONNECTABLE_STATUS: '#/components/schemas/PlatformCounterpartyNotConnectableStatusError'
           PLATFORM_EXTERNAL_API_FAILED: '#/components/schemas/PlatformExternalApiFailedError'
-          PLATFORM_MEMBER_COMPANY_NOT_CONNECTABLE_STATUS: '#/components/schemas/PlatformMemberCompanyNotConnectableStatusError'
           PLATFORM_NOT_ENABLED: '#/components/schemas/PlatformNotEnabledError'
           PLATFORM_PARTNER_NOT_FOUND: '#/components/schemas/PlatformPartnerNotFoundError'
           PLATFORM_PARTNER_SCHEDULE_EXISTS: '#/components/schemas/PlatformPartnerScheduleExistsError'
           PLATFORM_PARTNER_TAXATION_TYPE_IS_SIMPLE: '#/components/schemas/PlatformPartnerTaxationTypeIsSimpleError'
           PLATFORM_PARTNER_TYPE_IS_NOT_BUSINESS: '#/components/schemas/PlatformPartnerTypeIsNotBusinessError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
-    ConnectPartnerMemberCompanyResponse:
-      title: 파트너 국세청 연동 응답
-      description: 파트너 국세청 연동 응답
+    ConnectPartnerCounterpartyResponse:
+      title: 파트너 거래처 연동 응답
+      description: 파트너 거래처 연동 응답
       type: object
       required:
         - partner
       properties:
         partner:
           $ref: '#/components/schemas/PlatformPartner'
-      x-portone-title: 파트너 국세청 연동 응답
+      x-portone-title: 파트너 거래처 연동 응답
     ConvenienceStoreBrand:
       title: 편의점 브랜드
       description: 편의점 브랜드
@@ -15944,6 +17575,73 @@ components:
           title: Germany
         SR:
           title: Suriname
+    CreateB2bCounterpartyBody:
+      title: 거래처 생성 요청 정보
+      description: 거래처 생성 요청 정보
+      type: object
+      required:
+        - counterparty
+      properties:
+        counterpartyId:
+          type: string
+          title: 거래처 아이디
+          description: 입력하지 않으면 임의의 ID가 채번됩니다.
+        counterparty:
+          $ref: '#/components/schemas/B2bCounterpartyInput'
+          title: 거래처 정보
+        options:
+          $ref: '#/components/schemas/B2bCounterpartyCreateOptions'
+          title: 거래처 생성 옵션
+      x-portone-title: 거래처 생성 요청 정보
+    CreateB2bCounterpartyError:
+      title: CreateB2bCounterpartyError
+      oneOf:
+        - $ref: '#/components/schemas/B2bCounterpartyBrnInvalidError'
+        - $ref: '#/components/schemas/B2bCounterpartyIdAlreadyExistsError'
+        - $ref: '#/components/schemas/B2bCounterpartyMissingRequiredFieldsError'
+        - $ref: '#/components/schemas/B2bCounterpartyNtsConnectionFailedError'
+        - $ref: '#/components/schemas/B2bCounterpartyPartnerNotConnectableError'
+        - $ref: '#/components/schemas/B2bCounterpartySelfOriginBrnMismatchError'
+        - $ref: '#/components/schemas/B2bCounterpartyTooManyAdditionalContactsError'
+        - $ref: '#/components/schemas/B2bCounterpartyVerificationBrnMismatchError'
+        - $ref: '#/components/schemas/B2bCounterpartyVerificationInvalidError'
+        - $ref: '#/components/schemas/B2bCounterpartyVerificationNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyVerificationTypeMismatchError'
+        - $ref: '#/components/schemas/B2bExternalServiceError'
+        - $ref: '#/components/schemas/B2bNotEnabledError'
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          B2B_COUNTERPARTY_BRN_INVALID: '#/components/schemas/B2bCounterpartyBrnInvalidError'
+          B2B_COUNTERPARTY_ID_ALREADY_EXISTS: '#/components/schemas/B2bCounterpartyIdAlreadyExistsError'
+          B2B_COUNTERPARTY_MISSING_REQUIRED_FIELDS: '#/components/schemas/B2bCounterpartyMissingRequiredFieldsError'
+          B2B_COUNTERPARTY_NTS_CONNECTION_FAILED: '#/components/schemas/B2bCounterpartyNtsConnectionFailedError'
+          B2B_COUNTERPARTY_PARTNER_NOT_CONNECTABLE: '#/components/schemas/B2bCounterpartyPartnerNotConnectableError'
+          B2B_COUNTERPARTY_SELF_ORIGIN_BRN_MISMATCH: '#/components/schemas/B2bCounterpartySelfOriginBrnMismatchError'
+          B2B_COUNTERPARTY_TOO_MANY_ADDITIONAL_CONTACTS: '#/components/schemas/B2bCounterpartyTooManyAdditionalContactsError'
+          B2B_COUNTERPARTY_VERIFICATION_BRN_MISMATCH: '#/components/schemas/B2bCounterpartyVerificationBrnMismatchError'
+          B2B_COUNTERPARTY_VERIFICATION_INVALID: '#/components/schemas/B2bCounterpartyVerificationInvalidError'
+          B2B_COUNTERPARTY_VERIFICATION_NOT_FOUND: '#/components/schemas/B2bCounterpartyVerificationNotFoundError'
+          B2B_COUNTERPARTY_VERIFICATION_TYPE_MISMATCH: '#/components/schemas/B2bCounterpartyVerificationTypeMismatchError'
+          B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
+          B2B_NOT_ENABLED: '#/components/schemas/B2bNotEnabledError'
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    CreateB2bCounterpartyResponse:
+      title: 거래처 생성 응답 정보
+      description: 거래처 생성 응답 정보
+      type: object
+      required:
+        - counterparty
+      properties:
+        counterparty:
+          $ref: '#/components/schemas/B2bCounterparty'
+          title: 거래처 정보
+      x-portone-title: 거래처 생성 응답 정보
     CreateB2bFileUploadUrlBody:
       title: 파일 업로드 URL 생성 요청 정보
       description: 파일 업로드 URL 생성 요청 정보
@@ -16268,14 +17966,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlatformUserDefinedPropertyKeyValue'
+        id:
+          type: string
+          title: 생성할 정산건 아이디
+          description: 명시하지 않으면 id 가 임의로 생성됩니다.
+        settlementCurrency:
+          $ref: '#/components/schemas/Currency'
+          title: 정산 통화
       x-portone-title: 수기 정산건 생성을 위한 입력 정보
     CreatePlatformManualTransferError:
       title: CreatePlatformManualTransferError
       oneOf:
         - $ref: '#/components/schemas/ForbiddenError'
         - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/PlatformCurrencyNotSupportedError'
         - $ref: '#/components/schemas/PlatformNotEnabledError'
         - $ref: '#/components/schemas/PlatformPartnerNotFoundError'
+        - $ref: '#/components/schemas/PlatformTransferIdAlreadyUsedError'
         - $ref: '#/components/schemas/PlatformUserDefinedPropertyNotFoundError'
         - $ref: '#/components/schemas/UnauthorizedError'
       discriminator:
@@ -16283,8 +17990,10 @@ components:
         mapping:
           FORBIDDEN: '#/components/schemas/ForbiddenError'
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          PLATFORM_CURRENCY_NOT_SUPPORTED: '#/components/schemas/PlatformCurrencyNotSupportedError'
           PLATFORM_NOT_ENABLED: '#/components/schemas/PlatformNotEnabledError'
           PLATFORM_PARTNER_NOT_FOUND: '#/components/schemas/PlatformPartnerNotFoundError'
+          PLATFORM_TRANSFER_ID_ALREADY_USED: '#/components/schemas/PlatformTransferIdAlreadyUsedError'
           PLATFORM_USER_DEFINED_PROPERTY_NOT_FOUND: '#/components/schemas/PlatformUserDefinedPropertyNotFoundError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
     CreatePlatformOrderCancelTransferBody:
@@ -16299,6 +18008,8 @@ components:
         하나의 payment에 여러 개의 정산 건이 존재하는 경우에는 transferId를 필수로 입력해야 합니다.
 
         transferId를 입력한 경우 (partnerId, paymentId)는 생략 가능합니다.
+
+        id를 입력한 경우 생성될 취소 정산건 아이디로 사용됩니다.
       type: object
       required:
         - cancellationId
@@ -16366,6 +18077,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlatformUserDefinedPropertyKeyValue'
+        id:
+          type: string
+          title: 생성할 취소 정산건 아이디
+          description: 명시하지 않으면 id 가 임의로 생성됩니다.
       x-portone-title: 주문 취소 정산 등록을 위한 입력 정보
       x-portone-description: >-
         하나의 payment에 하나의 정산 건만 존재하는 경우에는 (partnerId, paymentId)로 취소 정산을 등록하실 수
@@ -16374,6 +18089,8 @@ components:
         하나의 payment에 여러 개의 정산 건이 존재하는 경우에는 transferId를 필수로 입력해야 합니다.
 
         transferId를 입력한 경우 (partnerId, paymentId)는 생략 가능합니다.
+
+        id를 입력한 경우 생성될 취소 정산건 아이디로 사용됩니다.
     CreatePlatformOrderCancelTransferBodyDiscount:
       title: 할인 정보
       description: 할인 정보
@@ -16484,6 +18201,7 @@ components:
         - $ref: '#/components/schemas/PlatformTransferAlreadyExistsError'
         - $ref: >-
             #/components/schemas/PlatformTransferDiscountSharePolicyNotFoundError
+        - $ref: '#/components/schemas/PlatformTransferIdAlreadyUsedError'
         - $ref: '#/components/schemas/PlatformTransferNotFoundError'
         - $ref: '#/components/schemas/PlatformUserDefinedPropertyNotFoundError'
         - $ref: '#/components/schemas/UnauthorizedError'
@@ -16516,6 +18234,7 @@ components:
           PLATFORM_TRANSFER_ALREADY_EXISTS: '#/components/schemas/PlatformTransferAlreadyExistsError'
           PLATFORM_TRANSFER_DISCOUNT_SHARE_POLICY_NOT_FOUND: >-
             #/components/schemas/PlatformTransferDiscountSharePolicyNotFoundError
+          PLATFORM_TRANSFER_ID_ALREADY_USED: '#/components/schemas/PlatformTransferIdAlreadyUsedError'
           PLATFORM_TRANSFER_NOT_FOUND: '#/components/schemas/PlatformTransferNotFoundError'
           PLATFORM_USER_DEFINED_PROPERTY_NOT_FOUND: '#/components/schemas/PlatformUserDefinedPropertyNotFoundError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
@@ -16597,6 +18316,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlatformUserDefinedPropertyKeyValue'
+        id:
+          type: string
+          title: 생성할 정산건 아이디
+          description: 명시하지 않으면 id 가 임의로 생성됩니다.
       x-portone-title: 주문 정산건 생성을 위한 입력 정보
     CreatePlatformOrderTransferBodyAdditionalFee:
       title: 추가 수수료 정보
@@ -16752,6 +18475,7 @@ components:
         - $ref: >-
             #/components/schemas/PlatformSettlementTaxFreeAmountExceededPortOnePaymentError
         - $ref: '#/components/schemas/PlatformTransferAlreadyExistsError'
+        - $ref: '#/components/schemas/PlatformTransferIdAlreadyUsedError'
         - $ref: '#/components/schemas/PlatformUserDefinedPropertyNotFoundError'
         - $ref: '#/components/schemas/UnauthorizedError'
       discriminator:
@@ -16782,6 +18506,7 @@ components:
           PLATFORM_SETTLEMENT_TAX_FREE_AMOUNT_EXCEEDED_PORT_ONE_PAYMENT: >-
             #/components/schemas/PlatformSettlementTaxFreeAmountExceededPortOnePaymentError
           PLATFORM_TRANSFER_ALREADY_EXISTS: '#/components/schemas/PlatformTransferAlreadyExistsError'
+          PLATFORM_TRANSFER_ID_ALREADY_USED: '#/components/schemas/PlatformTransferIdAlreadyUsedError'
           PLATFORM_USER_DEFINED_PROPERTY_NOT_FOUND: '#/components/schemas/PlatformUserDefinedPropertyNotFoundError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
     CreatePlatformPartnerBody:
@@ -17785,6 +19510,38 @@ components:
           title: 소수점 이하 자릿수
           description: '소수점 숫자의 소수점 이하 자릿수를 저장합니다. 기본값은 0입니다. 예를 들어, 123.45의 경우 2가 저장됩니다.'
       x-portone-title: BigDecimal 타입
+    DeleteB2bCounterpartyBody:
+      title: 거래처 삭제 요청
+      description: 거래처 삭제 요청
+      type: object
+      x-portone-title: 거래처 삭제 요청
+    DeleteB2bCounterpartyError:
+      title: DeleteB2bCounterpartyError
+      oneOf:
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyOngoingTaxInvoiceExistsError'
+        - $ref: '#/components/schemas/B2bCounterpartyPartnerNotDeletableError'
+        - $ref: '#/components/schemas/B2bExternalServiceError'
+        - $ref: '#/components/schemas/B2bNotEnabledError'
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_ONGOING_TAX_INVOICE_EXISTS: '#/components/schemas/B2bCounterpartyOngoingTaxInvoiceExistsError'
+          B2B_COUNTERPARTY_PARTNER_NOT_DELETABLE: '#/components/schemas/B2bCounterpartyPartnerNotDeletableError'
+          B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
+          B2B_NOT_ENABLED: '#/components/schemas/B2bNotEnabledError'
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    DeleteB2bCounterpartyResponse:
+      title: 거래처 삭제 응답
+      description: 거래처 삭제 응답
+      type: object
+      x-portone-title: 거래처 삭제 응답
     DeleteB2bTaxInvoiceAttachmentError:
       title: DeleteB2bTaxInvoiceAttachmentError
       oneOf:
@@ -17868,6 +19625,51 @@ components:
           format: date-time
           title: 빌링키 삭제 완료 시점
       x-portone-title: 빌링키 삭제 성공 응답
+    DeletePlatformPartnerSettlementsBody:
+      title: DeletePlatformPartnerSettlementsBody
+      type: object
+      required:
+        - partnerSettlementIds
+      properties:
+        partnerSettlementIds:
+          type: array
+          items:
+            type: string
+        isForTest:
+          type: boolean
+          description: >-
+            Query Parameter의 test에 값이 제공된 경우 Query Parameter의 test를 사용하고 해당 값은
+            무시됩니다.
+
+            Query Parameter의 test와 Request Body의 isForTest에 모두 값이 제공되지 않으면 기본값인
+            false로 적용됩니다.
+    DeletePlatformPartnerSettlementsError:
+      title: DeletePlatformPartnerSettlementsError
+      oneOf:
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/PlatformNonDeletablePartnerSettlementsError'
+        - $ref: '#/components/schemas/PlatformNotEnabledError'
+        - $ref: '#/components/schemas/PlatformPartnerSettlementsNotFoundError'
+        - $ref: >-
+            #/components/schemas/PlatformReferencedCancelOrderTransfersExistError
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          PLATFORM_NON_DELETABLE_PARTNER_SETTLEMENTS: '#/components/schemas/PlatformNonDeletablePartnerSettlementsError'
+          PLATFORM_NOT_ENABLED: '#/components/schemas/PlatformNotEnabledError'
+          PLATFORM_PARTNER_SETTLEMENTS_NOT_FOUND: '#/components/schemas/PlatformPartnerSettlementsNotFoundError'
+          PLATFORM_REFERENCED_CANCEL_ORDER_TRANSFERS_EXIST: >-
+            #/components/schemas/PlatformReferencedCancelOrderTransfersExistError
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    DeletePlatformPartnerSettlementsResponse:
+      title: 정산내역 삭제 결과
+      description: 정산내역 삭제 결과
+      type: object
+      x-portone-title: 정산내역 삭제 결과
     DeletePlatformTransferError:
       title: DeletePlatformTransferError
       oneOf:
@@ -17990,21 +19792,21 @@ components:
           format: date-time
           title: 배송등록 처리 일자
       x-portone-title: 배송 완료
-    DisconnectBulkPartnerMemberCompanyBody:
-      title: 파트너 일괄 국세청 연동 해제 요청 정보
+    DisconnectBulkPartnerCounterpartyBody:
+      title: 파트너 일괄 거래처 연동 해제 요청 정보
       description: |-
-        파트너 일괄 국세청 연동 해제 요청 정보
+        파트너 일괄 거래처 연동 해제 요청 정보
 
-        파트너들을 일괄 국세청 연동 해제합니다.
+        파트너들을 일괄 거래처 연동 해제합니다.
       type: object
       properties:
         filter:
           $ref: '#/components/schemas/PlatformPartnerFilterInput'
-          title: 일괄 국세청 연동 해제할 파트너 조건 필터
-      x-portone-title: 파트너 일괄 국세청 연동 해제 요청 정보
-      x-portone-description: 파트너들을 일괄 국세청 연동 해제합니다.
-    DisconnectBulkPartnerMemberCompanyError:
-      title: DisconnectBulkPartnerMemberCompanyError
+          title: 일괄 거래처 연동 해제할 파트너 조건 필터
+      x-portone-title: 파트너 일괄 거래처 연동 해제 요청 정보
+      x-portone-description: 파트너들을 일괄 거래처 연동 해제합니다.
+    DisconnectBulkPartnerCounterpartyError:
+      title: DisconnectBulkPartnerCounterpartyError
       oneOf:
         - $ref: '#/components/schemas/ForbiddenError'
         - $ref: '#/components/schemas/InvalidRequestError'
@@ -18025,24 +19827,24 @@ components:
           PLATFORM_PARTNER_NOT_FOUND: '#/components/schemas/PlatformPartnerNotFoundError'
           PLATFORM_TARGET_PARTNER_NOT_FOUND: '#/components/schemas/PlatformTargetPartnerNotFoundError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
-    DisconnectBulkPartnerMemberCompanyResponse:
-      title: 파트너 일괄 국세청 연동 해제 응답
-      description: 파트너 일괄 국세청 연동 해제 응답
+    DisconnectBulkPartnerCounterpartyResponse:
+      title: 파트너 일괄 거래처 연동 해제 응답
+      description: 파트너 일괄 거래처 연동 해제 응답
       type: object
       required:
         - bulkTask
       properties:
         bulkTask:
           $ref: '#/components/schemas/PlatformBulkTask'
-      x-portone-title: 파트너 일괄 국세청 연동 해제 응답
-    DisconnectPartnerMemberCompanyError:
-      title: DisconnectPartnerMemberCompanyError
+      x-portone-title: 파트너 일괄 거래처 연동 해제 응답
+    DisconnectPartnerCounterpartyError:
+      title: DisconnectPartnerCounterpartyError
       oneOf:
         - $ref: '#/components/schemas/ForbiddenError'
         - $ref: '#/components/schemas/InvalidRequestError'
         - $ref: '#/components/schemas/PlatformBtxNotEnabledError'
+        - $ref: '#/components/schemas/PlatformCounterpartyNotConnectedError'
         - $ref: '#/components/schemas/PlatformExternalApiFailedError'
-        - $ref: '#/components/schemas/PlatformMemberCompanyNotConnectedError'
         - $ref: '#/components/schemas/PlatformNotEnabledError'
         - $ref: '#/components/schemas/PlatformOngoingTaxInvoiceExistsError'
         - $ref: '#/components/schemas/PlatformPartnerNotFoundError'
@@ -18055,24 +19857,24 @@ components:
           FORBIDDEN: '#/components/schemas/ForbiddenError'
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
           PLATFORM_BTX_NOT_ENABLED: '#/components/schemas/PlatformBtxNotEnabledError'
+          PLATFORM_COUNTERPARTY_NOT_CONNECTED: '#/components/schemas/PlatformCounterpartyNotConnectedError'
           PLATFORM_EXTERNAL_API_FAILED: '#/components/schemas/PlatformExternalApiFailedError'
-          PLATFORM_MEMBER_COMPANY_NOT_CONNECTED: '#/components/schemas/PlatformMemberCompanyNotConnectedError'
           PLATFORM_NOT_ENABLED: '#/components/schemas/PlatformNotEnabledError'
           PLATFORM_ONGOING_TAX_INVOICE_EXISTS: '#/components/schemas/PlatformOngoingTaxInvoiceExistsError'
           PLATFORM_PARTNER_NOT_FOUND: '#/components/schemas/PlatformPartnerNotFoundError'
           PLATFORM_PARTNER_TAXATION_TYPE_IS_SIMPLE: '#/components/schemas/PlatformPartnerTaxationTypeIsSimpleError'
           PLATFORM_PARTNER_TYPE_IS_NOT_BUSINESS: '#/components/schemas/PlatformPartnerTypeIsNotBusinessError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
-    DisconnectPartnerMemberCompanyResponse:
-      title: 파트너 국세청 연동 해제 응답
-      description: 파트너 국세청 연동 해제 응답
+    DisconnectPartnerCounterpartyResponse:
+      title: 파트너 거래처 연동 해제 응답
+      description: 파트너 거래처 연동 해제 응답
       type: object
       required:
         - partner
       properties:
         partner:
           $ref: '#/components/schemas/PlatformPartner'
-      x-portone-title: 파트너 국세청 연동 해제 응답
+      x-portone-title: 파트너 거래처 연동 해제 응답
     DiscountAmountExceedsTotalAmountError:
       title: 프로모션 할인 금액이 결제 시도 금액 이상인 경우
       description: 프로모션 할인 금액이 결제 시도 금액 이상인 경우
@@ -18141,6 +19943,10 @@ components:
             $ref: '#/components/schemas/TaxInvoicesSheetField'
         test:
           type: boolean
+        sort:
+          $ref: '#/components/schemas/B2bTaxInvoiceSortInput'
+          title: 정렬 조건
+          description: 미입력 시 상태 업데이트 일시 내림차순 정렬됩니다.
     DownloadB2bTaxInvoicesSheetError:
       title: DownloadB2bTaxInvoicesSheetError
       oneOf:
@@ -18221,12 +20027,18 @@ components:
         memo:
           type: string
           title: 메모
+        createRecipientCounterparty:
+          type: boolean
+          title: 공급받는자 거래처 생성 여부
+          description: true인 경우 공급받는자 정보로 거래처를 자동 생성합니다.
       x-portone-title: 세금계산서 임시 저장 정보
     DraftB2bTaxInvoiceError:
       title: DraftB2bTaxInvoiceError
       oneOf:
         - $ref: '#/components/schemas/B2BCannotChangeTaxTypeError'
         - $ref: '#/components/schemas/B2BTaxInvoiceStatusNotSendingCompletedError'
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
         - $ref: '#/components/schemas/B2bExternalServiceError'
         - $ref: '#/components/schemas/B2bIdAlreadyExistsError'
         - $ref: '#/components/schemas/B2bIssuanceTypeMismatchError'
@@ -18247,6 +20059,8 @@ components:
         propertyName: type
         mapping:
           B2B_CANNOT_CHANGE_TAX_TYPE: '#/components/schemas/B2BCannotChangeTaxTypeError'
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_NTS_NOT_CONNECTED: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
           B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
           B2B_ID_ALREADY_EXISTS: '#/components/schemas/B2bIdAlreadyExistsError'
           B2B_ISSUANCE_TYPE_MISMATCH: '#/components/schemas/B2bIssuanceTypeMismatchError'
@@ -18326,42 +20140,72 @@ components:
         - AUPAY
         - MERPAY
         - MONEYTREE
+        - KPLUS
+        - TINABA
+        - BILL_EASE
+        - KREDIVO
+        - RABBIT_LINE_PAY
+        - ALIPAY_HK
+        - AKULAKU_PAY_LATER
+        - BOOST
+        - BPI
+        - DANA
+        - G_CASH
+        - HIPAY
+        - MPAY
+        - TOUCH_N_GO
+        - TRUE_MONEY
       x-portone-title: 간편 결제사
       x-portone-enum:
+        ALIPAY_HK: {}
         MIR: {}
-        SMILEPAY: {}
-        KLARNA: {}
         NAVERPAY: {}
-        CHAI: {}
         MONEYTREE: {}
         GRABPAY: {}
         TOSS_BRANDPAY: {}
-        LGPAY: {}
         JKOPAY: {}
         SHOPEEPAY: {}
+        BOOST: {}
         ALIPAY: {}
         LPAY: {}
         DBARAI: {}
         KB_APP: {}
         LINEPAY: {}
         PAYCO: {}
+        HIPAY: {}
+        BILL_EASE: {}
+        SMILEPAY: {}
+        TINABA: {}
+        KLARNA: {}
+        RABBIT_LINE_PAY: {}
+        KREDIVO: {}
+        CHAI: {}
         PINPAY: {}
         WECHAT: {}
+        KPLUS: {}
         TMONEY: {}
         TOSSPAY: {}
         SSGPAY: {}
         MERPAY: {}
         PAYPAL: {}
+        G_CASH: {}
+        LGPAY: {}
         APPLEPAY: {}
         HYPHEN: {}
         AUPAY: {}
         SAMSUNGPAY: {}
+        DANA: {}
+        TOUCH_N_GO: {}
         KPAY: {}
         AMAZONPAY: {}
+        BPI: {}
+        TRUE_MONEY: {}
         SKPAY: {}
+        AKULAKU_PAY_LATER: {}
         RAKUTENPAY: {}
         PAYPAY: {}
         KAKAOPAY: {}
+        MPAY: {}
     FailedIdentityVerification:
       title: 실패한 본인인증 내역
       description: 실패한 본인인증 내역
@@ -19042,6 +20886,122 @@ components:
           items:
             $ref: '#/components/schemas/B2bBusinessInfoResult'
       x-portone-title: 사업자등록 정보 조회 성공 응답
+    GetB2bCounterpartiesBody:
+      title: 거래처 검색 요청 정보
+      description: 거래처 검색 요청 정보
+      type: object
+      properties:
+        page:
+          $ref: '#/components/schemas/PageInput'
+          title: 페이지 정보
+        filter:
+          $ref: '#/components/schemas/B2bCounterpartyFilter'
+          title: 검색 필터
+      x-portone-title: 거래처 검색 요청 정보
+    GetB2bCounterpartiesError:
+      title: GetB2bCounterpartiesError
+      oneOf:
+        - $ref: '#/components/schemas/B2bExternalServiceError'
+        - $ref: '#/components/schemas/B2bNotEnabledError'
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
+          B2B_NOT_ENABLED: '#/components/schemas/B2bNotEnabledError'
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    GetB2bCounterpartiesResponse:
+      title: 거래처 검색 성공 응답
+      description: 거래처 검색 성공 응답
+      type: object
+      required:
+        - page
+        - items
+      properties:
+        page:
+          $ref: '#/components/schemas/PageInfo'
+          title: 페이지 정보
+        items:
+          title: 거래처 목록
+          type: array
+          items:
+            $ref: '#/components/schemas/B2bCounterparty'
+      x-portone-title: 거래처 검색 성공 응답
+    GetB2bCounterpartyCertificateError:
+      title: GetB2bCounterpartyCertificateError
+      oneOf:
+        - $ref: '#/components/schemas/B2bCertificateUnregisteredError'
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
+        - $ref: '#/components/schemas/B2bExternalServiceError'
+        - $ref: '#/components/schemas/B2bNotEnabledError'
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          B2B_CERTIFICATE_UNREGISTERED: '#/components/schemas/B2bCertificateUnregisteredError'
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_NTS_NOT_CONNECTED: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
+          B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
+          B2B_NOT_ENABLED: '#/components/schemas/B2bNotEnabledError'
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    GetB2bCounterpartyCertificateRegistrationUrlError:
+      title: GetB2bCounterpartyCertificateRegistrationUrlError
+      oneOf:
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
+        - $ref: '#/components/schemas/B2bExternalServiceError'
+        - $ref: '#/components/schemas/B2bNotEnabledError'
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_NTS_NOT_CONNECTED: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
+          B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
+          B2B_NOT_ENABLED: '#/components/schemas/B2bNotEnabledError'
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    GetB2bCounterpartyCertificateRegistrationUrlResponse:
+      title: 인증서 등록 URL 조회 응답 정보
+      description: 인증서 등록 URL 조회 응답 정보
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          title: 인증서 등록 URL
+      x-portone-title: 인증서 등록 URL 조회 응답 정보
+    GetB2bCounterpartyError:
+      title: GetB2bCounterpartyError
+      oneOf:
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bExternalServiceError'
+        - $ref: '#/components/schemas/B2bNotEnabledError'
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
+          B2B_NOT_ENABLED: '#/components/schemas/B2bNotEnabledError'
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
     GetB2bTaxInvoiceAttachmentsError:
       title: GetB2bTaxInvoiceAttachmentsError
       oneOf:
@@ -19268,6 +21228,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/B2bTaxInvoicePurposeType'
+        counterpartyId:
+          type: string
+          title: 거래처 ID
+          description: 거래처 ID로 필터링합니다. 공급자 또는 공급받는자 거래처 ID에 대해 조회합니다.
+        includeBrnMatch:
+          type: boolean
+          title: 거래처 사업자등록번호 매칭 포함 여부
+          description: counterpartyId 조건과 함께 거래처의 사업자등록번호 매칭 조건을 추가할지 여부입니다.
       x-portone-title: 세금계산서 다건 조회 필터
     GetB2bTaxInvoicesBodyPrimaryFilter:
       title: 상위 필터
@@ -21322,12 +23290,18 @@ components:
         modification:
           $ref: '#/components/schemas/B2bTaxInvoiceModificationCreateBody'
           title: 수정 세금계산서 입력 정보
+        createRecipientCounterparty:
+          type: boolean
+          title: 공급받는자 거래처 생성 여부
+          description: true인 경우 공급받는자 정보로 거래처를 자동 생성합니다.
       x-portone-title: 세금계산서 즉시 정발행 요청 정보
     IssueB2bTaxInvoiceImmediatelyError:
       title: IssueB2bTaxInvoiceImmediatelyError
       oneOf:
         - $ref: '#/components/schemas/B2BCannotChangeTaxTypeError'
         - $ref: '#/components/schemas/B2BTaxInvoiceStatusNotSendingCompletedError'
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
         - $ref: '#/components/schemas/B2bExternalServiceError'
         - $ref: '#/components/schemas/B2bIdAlreadyExistsError'
         - $ref: '#/components/schemas/B2bIssuanceTypeMismatchError'
@@ -21348,6 +23322,8 @@ components:
         propertyName: type
         mapping:
           B2B_CANNOT_CHANGE_TAX_TYPE: '#/components/schemas/B2BCannotChangeTaxTypeError'
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_NTS_NOT_CONNECTED: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
           B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
           B2B_ID_ALREADY_EXISTS: '#/components/schemas/B2bIdAlreadyExistsError'
           B2B_ISSUANCE_TYPE_MISMATCH: '#/components/schemas/B2bIssuanceTypeMismatchError'
@@ -25213,6 +27189,7 @@ components:
         - PAYLETTER_GLOBAL
         - MOBILIANS_V2
         - TRIPLE_A
+        - KICC_V2
       x-portone-title: PG사 결제 모듈
       x-portone-enum:
         KICC: {}
@@ -25259,6 +27236,7 @@ components:
         HYPHEN: {}
         TRIPLE_A: {}
         KPN: {}
+        KICC_V2: {}
         INICIS_V2: {}
         KCP_V2: {}
         INICIS_UNIFIED: {}
@@ -25806,6 +27784,47 @@ components:
           type: string
       x-portone-title: 보관된 파트너들을 예약 업데이트하려고 하는 경우
       x-portone-status-code: 409
+    PlatformBankAccountDetail:
+      title: 계좌 상세 정보
+      description: 계좌 상세 정보
+      type: object
+      required:
+        - accountNumber
+        - bank
+        - provider
+      properties:
+        accountNumber:
+          type: string
+          title: 계좌번호
+        bank:
+          $ref: '#/components/schemas/Bank'
+          title: 은행
+        provider:
+          $ref: '#/components/schemas/PlatformBankAccountProvider'
+          title: 제공자
+        holder:
+          type: string
+          title: 예금주명
+      x-portone-title: 계좌 상세 정보
+    PlatformBankAccountProvider:
+      title: 제공자
+      description: 제공자
+      type: string
+      enum:
+        - HYPHEN_DATA
+        - HYPHEN_FIRM
+        - DOZN
+        - MOCK
+      x-portone-title: 제공자
+      x-portone-enum:
+        HYPHEN_DATA:
+          title: 하이픈 데이터
+        HYPHEN_FIRM:
+          title: 하이픈 펌뱅킹
+        DOZN:
+          title: 더즌
+        MOCK:
+          title: 모의
     PlatformBtxNotEnabledError:
       title: BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
       description: BTX 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
@@ -26018,6 +28037,19 @@ components:
         bulkPayoutId:
           type: string
           title: 일괄 지급 아이디
+    PlatformBulkPayoutIdAlreadyExistsError:
+      title: 일괄 지급 아이디가 이미 존재하는 경우
+      description: 일괄 지급 아이디가 이미 존재하는 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 일괄 지급 아이디가 이미 존재하는 경우
+      x-portone-status-code: 409
     PlatformBulkPayoutStats:
       title: PlatformBulkPayoutStats
       type: object
@@ -26643,6 +28675,32 @@ components:
         message:
           type: string
       x-portone-status-code: 404
+    PlatformCounterpartyNotConnectableStatusError:
+      title: 파트너 거래처 연동 상태가 연동 가능한 상태가 아닌 경우
+      description: 파트너 거래처 연동 상태가 연동 가능한 상태가 아닌 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 파트너 거래처 연동 상태가 연동 가능한 상태가 아닌 경우
+      x-portone-status-code: 400
+    PlatformCounterpartyNotConnectedError:
+      title: 파트너가 거래처로 연동 되어있지 않은 경우
+      description: 파트너가 거래처로 연동 되어있지 않은 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 파트너가 거래처로 연동 되어있지 않은 경우
+      x-portone-status-code: 400
     PlatformCurrencyNotSupportedError:
       title: 지원 되지 않는 통화를 선택한 경우
       description: 지원 되지 않는 통화를 선택한 경우
@@ -26664,6 +28722,7 @@ components:
         - id
         - bankAccountId
         - bankAccountGraphqlId
+        - bankAccount
         - currency
         - amount
         - createdAt
@@ -26684,6 +28743,9 @@ components:
           title: 입금 계좌 아이디
         bankAccountGraphqlId:
           type: string
+        bankAccount:
+          $ref: '#/components/schemas/PlatformBankAccountDetail'
+          title: 입금 계좌 정보
         currency:
           $ref: '#/components/schemas/Currency'
           title: 통화
@@ -26897,6 +28959,19 @@ components:
         message:
           type: string
       x-portone-status-code: 409
+    PlatformDuplicatedPartnerSettlementIdsError:
+      title: 선택된 정산건 아이디에 중복이 있는 경우
+      description: 선택된 정산건 아이디에 중복이 있는 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 선택된 정산건 아이디에 중복이 있는 경우
+      x-portone-status-code: 400
     PlatformExternalApiFailedError:
       title: 외부 api 오류
       description: 외부 api 오류
@@ -27092,6 +29167,7 @@ components:
           title: 정산 통화
         payoutId:
           type: string
+          description: 더 이상 사용되지 않는 값입니다.
         payoutGraphqlId:
           type: string
         isForTest:
@@ -27228,9 +29304,9 @@ components:
           type: string
       x-portone-title: 연동 사업자로 연동된 파트너들을 예약 수정하려고 시도한 경우
       x-portone-status-code: 409
-    PlatformMemberCompanyNotConnectableStatusError:
-      title: 파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우
-      description: 파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우
+    PlatformNegativePayoutAmountPartnersError:
+      title: 지급 금액의 총합이 음수인 파트너가 존재하는 경우
+      description: 지급 금액의 총합이 음수인 파트너가 존재하는 경우
       type: object
       required:
         - type
@@ -27239,11 +29315,11 @@ components:
           type: string
         message:
           type: string
-      x-portone-title: 파트너 연동 사업자 연동 상태가 연동 가능한 상태가 아닌 경우
+      x-portone-title: 지급 금액의 총합이 음수인 파트너가 존재하는 경우
       x-portone-status-code: 400
-    PlatformMemberCompanyNotConnectedError:
-      title: 파트너가 연동 사업자로 연동 되어있지 않은 경우
-      description: 파트너가 연동 사업자로 연동 되어있지 않은 경우
+    PlatformNoSelectedPartnerSettlementsError:
+      title: 선택된 정산건이 없는 경우
+      description: 선택된 정산건이 없는 경우
       type: object
       required:
         - type
@@ -27252,7 +29328,53 @@ components:
           type: string
         message:
           type: string
-      x-portone-title: 파트너가 연동 사업자로 연동 되어있지 않은 경우
+      x-portone-title: 선택된 정산건이 없는 경우
+      x-portone-status-code: 400
+    PlatformNonDeletablePartnerSettlementsError:
+      title: 삭제할 수 없는 정산건이 포함된 경우
+      description: 삭제할 수 없는 정산건이 포함된 경우
+      type: object
+      required:
+        - type
+        - ids
+        - graphqlIds
+      properties:
+        type:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+        graphqlIds:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+      x-portone-title: 삭제할 수 없는 정산건이 포함된 경우
+      x-portone-status-code: 400
+    PlatformNonPayablePartnerSettlementsError:
+      title: 지급할 수 없는 정산건이 포함된 경우
+      description: 지급할 수 없는 정산건이 포함된 경우
+      type: object
+      required:
+        - type
+        - ids
+        - graphqlIds
+      properties:
+        type:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+        graphqlIds:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+      x-portone-title: 지급할 수 없는 정산건이 포함된 경우
       x-portone-status-code: 400
     PlatformNotEnabledError:
       title: 플랫폼 기능이 활성화되지 않아 요청을 처리할 수 없는 경우
@@ -27344,6 +29466,7 @@ components:
           title: 정산 통화
         payoutId:
           type: string
+          description: 더 이상 사용되지 않는 값입니다.
         payoutGraphqlId:
           type: string
         isForTest:
@@ -27618,6 +29741,7 @@ components:
           title: 정산 통화
         payoutId:
           type: string
+          description: 더 이상 사용되지 않는 값입니다.
         payoutGraphqlId:
           type: string
         isForTest:
@@ -28189,6 +30313,10 @@ components:
         status:
           $ref: '#/components/schemas/PlatformPartnerSettlementStatus'
           title: 정산 상태
+        statusUpdatedAt:
+          type: string
+          format: date-time
+          title: 상태 업데이트 일시
         memo:
           type: string
           title: 메모
@@ -28274,6 +30402,10 @@ components:
         status:
           $ref: '#/components/schemas/PlatformPartnerSettlementStatus'
           title: 정산 상태
+        statusUpdatedAt:
+          type: string
+          format: date-time
+          title: 상태 업데이트 일시
         memo:
           type: string
           title: 메모
@@ -28327,6 +30459,10 @@ components:
         status:
           $ref: '#/components/schemas/PlatformPartnerSettlementStatus'
           title: 정산 상태
+        statusUpdatedAt:
+          type: string
+          format: date-time
+          title: 상태 업데이트 일시
         memo:
           type: string
           title: 메모
@@ -28461,6 +30597,7 @@ components:
         - PAYOUT_SCHEDULED
         - PAYOUT_PREPARED
         - PAYOUT_WITHHELD
+        - PAYOUT_EXCLUDED
         - PAYOUT_FAILED
         - IN_PAYOUT
         - PAID_OUT
@@ -28478,6 +30615,8 @@ components:
           title: 지급 예약
         PAYOUT_WITHHELD:
           title: 지급 보류
+        PAYOUT_EXCLUDED:
+          title: 지급 제외
         PAID_OUT:
           title: 지급 완료
         PAYOUT_PREPARED:
@@ -28491,6 +30630,7 @@ components:
         - payoutScheduled
         - payoutPrepared
         - payoutWithheld
+        - payoutExcluded
         - payoutFailed
         - payoutCancelled
         - payoutConfirmed
@@ -28504,6 +30644,9 @@ components:
           type: integer
           format: int64
         payoutWithheld:
+          type: integer
+          format: int64
+        payoutExcluded:
           type: integer
           format: int64
         payoutFailed:
@@ -28537,6 +30680,29 @@ components:
           title: 주문 정산
         ORDER_CANCEL:
           title: 주문 취소 정산
+    PlatformPartnerSettlementsNotFoundError:
+      title: 요청한 정산건 목록을 찾을 수 없는 경우
+      description: 요청한 정산건 목록을 찾을 수 없는 경우
+      type: object
+      required:
+        - type
+        - ids
+        - graphqlIds
+      properties:
+        type:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+        graphqlIds:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+      x-portone-title: 요청한 정산건 목록을 찾을 수 없는 경우
+      x-portone-status-code: 404
     PlatformPartnerStatus:
       title: 플랫폼 파트너 상태
       description: 플랫폼 파트너 상태
@@ -29265,25 +31431,33 @@ components:
         - REQUEST_CANCELLED
         - REQUEST_REFUSED
         - ISSUED
+        - ISSUE_PENDING
+        - ISSUE_FAILED
         - ISSUANCE_CANCELLED
+        - CANCEL_PENDING
         - BEFORE_SENDING
         - WAITING_SENDING
         - SENDING
+        - SENDING_PENDING
         - SENDING_COMPLETED
         - SENDING_FAILED
       x-portone-enum:
         BEFORE_SENDING: {}
         DRAFTED: {}
         REQUEST_CANCELLED: {}
+        ISSUE_PENDING: {}
         REQUEST_REFUSED: {}
-        REQUESTED: {}
+        SENDING_PENDING: {}
         SENDING_COMPLETED: {}
+        CANCEL_PENDING: {}
         DRAFT_PENDING: {}
         SENDING_FAILED: {}
         REQUEST_FAILED: {}
         SENDING: {}
         WAITING_SENDING: {}
         ISSUANCE_CANCELLED: {}
+        ISSUE_FAILED: {}
+        REQUESTED: {}
         ISSUED: {}
         NONE: {}
         DRAFT_FAILED: {}
@@ -29373,6 +31547,24 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/PlatformUserDefinedPropertyValue'
+    PlatformReferencedCancelOrderTransfersExistError:
+      title: 취소 정산건이 참조 중인 정산건이 포함된 경우
+      description: 취소 정산건이 참조 중인 정산건이 포함된 경우
+      type: object
+      required:
+        - type
+        - ids
+      properties:
+        type:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+      x-portone-title: 취소 정산건이 참조 중인 정산건이 포함된 경우
+      x-portone-status-code: 400
     PlatformSetting:
       title: 플랫폼 설정
       description: 플랫폼 설정
@@ -29983,6 +32175,10 @@ components:
           items:
             $ref: '#/components/schemas/PlatformTransferStatus'
           description: 하나 이상의 값이 존재하는 경우 해당 리스트에 포함되는 정산 상태인 정산건만 조회합니다.
+        userDefinedProperty:
+          $ref: '#/components/schemas/PlatformTransferPropertyExactMatchInput'
+          title: 사용자 정의 속성 exact match
+          description: 사용자 정의 속성의 key와 value가 정확히 일치하는 정산건만 조회합니다.
         keyword:
           $ref: '#/components/schemas/PlatformTransferFilterInputKeyword'
           title: 검색 키워드
@@ -30040,6 +32236,17 @@ components:
           description: 해당 값과 일치하는 지급건에 연관된 정산건만 조회합니다.
       x-portone-title: 정산건 검색 키워드 입력 정보
       x-portone-description: '검색 키워드 적용을 위한 옵션으로, 명시된 키워드를 포함하는 정산건만 조회합니다. 하나의 하위 필드에만 값을 명시하여 요청합니다.'
+    PlatformTransferIdAlreadyUsedError:
+      title: PlatformTransferIdAlreadyUsedError
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-status-code: 409
     PlatformTransferNonDeletableStatusError:
       title: PlatformTransferNonDeletableStatusError
       type: object
@@ -30062,6 +32269,21 @@ components:
         message:
           type: string
       x-portone-status-code: 404
+    PlatformTransferPropertyExactMatchInput:
+      title: 사용자 정의 속성 key/value exact match
+      description: 사용자 정의 속성 key/value exact match
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          title: 키
+        value:
+          type: string
+          title: 값
+      x-portone-title: 사용자 정의 속성 key/value exact match
     PlatformTransferStatus:
       title: 정산 상태
       description: 정산 상태
@@ -30072,10 +32294,13 @@ components:
         - SETTLED
         - IN_PAYOUT
         - PAID_OUT
+        - PAYOUT_CONFIRMED
       x-portone-title: 정산 상태
       x-portone-enum:
         SETTLED:
           title: 정산 완료
+        PAYOUT_CONFIRMED:
+          title: 지급 확정
         SCHEDULED:
           title: 정산 예약
         PAID_OUT:
@@ -30252,6 +32477,7 @@ components:
         - id
         - bankAccountId
         - bankAccountGraphqlId
+        - bankAccount
         - currency
         - depositBank
         - depositAccountNumber
@@ -30275,6 +32501,9 @@ components:
           title: 출금 계좌 아이디
         bankAccountGraphqlId:
           type: string
+        bankAccount:
+          $ref: '#/components/schemas/PlatformBankAccountDetail'
+          title: 출금 계좌 정보
         sequenceNumber:
           type: integer
           format: int32
@@ -31414,6 +33643,8 @@ components:
       oneOf:
         - $ref: '#/components/schemas/B2BCannotChangeTaxTypeError'
         - $ref: '#/components/schemas/B2BTaxInvoiceStatusNotSendingCompletedError'
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
         - $ref: '#/components/schemas/B2bExternalServiceError'
         - $ref: '#/components/schemas/B2bIdAlreadyExistsError'
         - $ref: '#/components/schemas/B2bIssuanceTypeMismatchError'
@@ -31434,6 +33665,8 @@ components:
         propertyName: type
         mapping:
           B2B_CANNOT_CHANGE_TAX_TYPE: '#/components/schemas/B2BCannotChangeTaxTypeError'
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_NTS_NOT_CONNECTED: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
           B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
           B2B_ID_ALREADY_EXISTS: '#/components/schemas/B2bIdAlreadyExistsError'
           B2B_ISSUANCE_TYPE_MISMATCH: '#/components/schemas/B2bIssuanceTypeMismatchError'
@@ -33015,8 +35248,9 @@ components:
         - ISSUANCE_DUE_DATE
         - TAXATION_TYPE
         - PURPOSE_TYPE
-        - PARTNER_NAME
-        - PARTNER_BRN
+        - SUPPLIER_COMPANY_NAME
+        - SUPPLIER_BRN
+        - SUPPLIER_REPRESENTATIVE_NAME
         - TOTAL_AMOUNT
         - TOTAL_SUPPLY_AMOUNT
         - TOTAL_TAX_AMOUNT
@@ -33029,6 +35263,11 @@ components:
         - PLAIN_ID
         - SUPPLIER_DOCUMENT_KEY
         - RECIPIENT_DOCUMENT_KEY
+        - RECIPIENT_COMPANY_NAME
+        - RECIPIENT_BRN
+        - RECIPIENT_REPRESENTATIVE_NAME
+        - SUPPLIER_COUNTERPARTY_ID
+        - RECIPIENT_COUNTERPARTY_ID
         - PAYOUT_ID
         - ITEMS
       x-portone-title: 다운로드 할 시트 컬럼
@@ -33039,28 +35278,22 @@ components:
           title: 공급가액
         STATUS_UPDATED_AT:
           title: 상태 업데이트 일시
-        PARTNER_BRN:
-          title: 거래처 사업자등록번호
+        RECIPIENT_COMPANY_NAME:
+          title: 공급받는자 상호
         DOCUMENT_MODIFICATION_TYPE:
           title: 문서형태
-        IS_DELAYED:
-          title: 지연발행
         STATUS:
           title: 상태
         MEMO:
           title: 관리용 메모
         REQUESTED_AT:
           title: 발행요청일시
+        RECIPIENT_COUNTERPARTY_ID:
+          title: 공급받는자 거래처 아이디
         RECIPIENT_DOCUMENT_KEY:
           title: 공급받는자 문서번호
-        PLAIN_ID:
-          title: 세금계산서 아이디
-        ISSUED_AT:
-          title: 발행완료일시
-        TOTAL_TAX_AMOUNT:
-          title: 세액
-        TOTAL_AMOUNT:
-          title: 합계금액
+        SUPPLIER_COMPANY_NAME:
+          title: 공급자 상호
         TAXATION_TYPE:
           title: 과세형태
         ITEMS:
@@ -33069,16 +35302,34 @@ components:
           title: 작성일자
         ISSUANCE_DUE_DATE:
           title: 발행마감일
+        IS_DELAYED:
+          title: 지연발행
+        SUPPLIER_REPRESENTATIVE_NAME:
+          title: 공급자 대표자명
         ISSUANCE_TYPE:
           title: 발행유형
         PAYOUT_ID:
           title: 지급 아이디
-        PARTNER_NAME:
-          title: 거래처 회사명
         PURPOSE_TYPE:
           title: 영수/청구
         SUPPLIER_DOCUMENT_KEY:
           title: 공급자 문서번호
+        SUPPLIER_BRN:
+          title: 공급자 사업자등록번호
+        PLAIN_ID:
+          title: 세금계산서 아이디
+        RECIPIENT_BRN:
+          title: 공급받는자 사업자등록번호
+        ISSUED_AT:
+          title: 발행완료일시
+        RECIPIENT_REPRESENTATIVE_NAME:
+          title: 공급받는자 대표자명
+        TOTAL_TAX_AMOUNT:
+          title: 세액
+        SUPPLIER_COUNTERPARTY_ID:
+          title: 공급자 거래처 아이디
+        TOTAL_AMOUNT:
+          title: 합계금액
         CANCEL_REASON:
           title: 취소사유
         BULK_TAX_INVOICE_ID:
@@ -33123,6 +35374,66 @@ components:
           type: string
       x-portone-title: 인증 정보가 올바르지 않은 경우
       x-portone-status-code: 401
+    UpdateB2bCounterpartyBody:
+      title: 거래처 정보 수정 요청
+      description: 거래처 정보 수정 요청
+      type: object
+      required:
+        - counterparty
+      properties:
+        counterparty:
+          $ref: '#/components/schemas/B2bCounterpartyInput'
+          title: 거래처 정보
+        options:
+          $ref: '#/components/schemas/B2bCounterpartyCreateOptions'
+          title: 확인 옵션
+          description: 사업자 정보 및 휴폐업 상태 조회 옵션입니다.
+      x-portone-title: 거래처 정보 수정 요청
+    UpdateB2bCounterpartyError:
+      title: UpdateB2bCounterpartyError
+      oneOf:
+        - $ref: '#/components/schemas/B2bCounterpartyBrnModificationNotAllowedError'
+        - $ref: '#/components/schemas/B2bCounterpartyMissingRequiredFieldsError'
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyPartnerNotUpdatableError'
+        - $ref: '#/components/schemas/B2bCounterpartyTooManyAdditionalContactsError'
+        - $ref: '#/components/schemas/B2bCounterpartyVerificationBrnMismatchError'
+        - $ref: '#/components/schemas/B2bCounterpartyVerificationInvalidError'
+        - $ref: '#/components/schemas/B2bCounterpartyVerificationNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyVerificationTypeMismatchError'
+        - $ref: '#/components/schemas/B2bExternalServiceError'
+        - $ref: '#/components/schemas/B2bNotEnabledError'
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          B2B_COUNTERPARTY_BRN_MODIFICATION_NOT_ALLOWED: '#/components/schemas/B2bCounterpartyBrnModificationNotAllowedError'
+          B2B_COUNTERPARTY_MISSING_REQUIRED_FIELDS: '#/components/schemas/B2bCounterpartyMissingRequiredFieldsError'
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_PARTNER_NOT_UPDATABLE: '#/components/schemas/B2bCounterpartyPartnerNotUpdatableError'
+          B2B_COUNTERPARTY_TOO_MANY_ADDITIONAL_CONTACTS: '#/components/schemas/B2bCounterpartyTooManyAdditionalContactsError'
+          B2B_COUNTERPARTY_VERIFICATION_BRN_MISMATCH: '#/components/schemas/B2bCounterpartyVerificationBrnMismatchError'
+          B2B_COUNTERPARTY_VERIFICATION_INVALID: '#/components/schemas/B2bCounterpartyVerificationInvalidError'
+          B2B_COUNTERPARTY_VERIFICATION_NOT_FOUND: '#/components/schemas/B2bCounterpartyVerificationNotFoundError'
+          B2B_COUNTERPARTY_VERIFICATION_TYPE_MISMATCH: '#/components/schemas/B2bCounterpartyVerificationTypeMismatchError'
+          B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
+          B2B_NOT_ENABLED: '#/components/schemas/B2bNotEnabledError'
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    UpdateB2bCounterpartyResponse:
+      title: 거래처 정보 수정 응답
+      description: 거래처 정보 수정 응답
+      type: object
+      required:
+        - counterparty
+      properties:
+        counterparty:
+          $ref: '#/components/schemas/B2bCounterparty'
+          title: 거래처 정보
+      x-portone-title: 거래처 정보 수정 응답
     UpdateB2bTaxInvoiceDraftBody:
       title: 세금계산서 임시저장 수정 정보
       description: 세금계산서 임시저장 수정 정보
@@ -33154,6 +35465,8 @@ components:
       oneOf:
         - $ref: '#/components/schemas/B2BCannotChangeTaxTypeError'
         - $ref: '#/components/schemas/B2BTaxInvoiceStatusNotSendingCompletedError'
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
         - $ref: '#/components/schemas/B2bDocumentKeyCannotBeChangedError'
         - $ref: '#/components/schemas/B2bExternalServiceError'
         - $ref: '#/components/schemas/B2bIdAlreadyExistsError'
@@ -33176,6 +35489,8 @@ components:
         propertyName: type
         mapping:
           B2B_CANNOT_CHANGE_TAX_TYPE: '#/components/schemas/B2BCannotChangeTaxTypeError'
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_NTS_NOT_CONNECTED: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
           B2B_DOCUMENT_KEY_CANNOT_BE_CHANGED: '#/components/schemas/B2bDocumentKeyCannotBeChangedError'
           B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
           B2B_ID_ALREADY_EXISTS: '#/components/schemas/B2bIdAlreadyExistsError'
@@ -33613,6 +35928,39 @@ components:
         setting:
           $ref: '#/components/schemas/PlatformSetting'
       x-portone-title: 플랫폼 설정 업데이트 결과
+    ValidateB2bCounterpartyCertificateError:
+      title: ValidateB2bCounterpartyCertificateError
+      oneOf:
+        - $ref: '#/components/schemas/B2bCertificateUnregisteredError'
+        - $ref: '#/components/schemas/B2bCounterpartyNotFoundError'
+        - $ref: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
+        - $ref: '#/components/schemas/B2bExternalServiceError'
+        - $ref: '#/components/schemas/B2bNotEnabledError'
+        - $ref: '#/components/schemas/ForbiddenError'
+        - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/UnauthorizedError'
+      discriminator:
+        propertyName: type
+        mapping:
+          B2B_CERTIFICATE_UNREGISTERED: '#/components/schemas/B2bCertificateUnregisteredError'
+          B2B_COUNTERPARTY_NOT_FOUND: '#/components/schemas/B2bCounterpartyNotFoundError'
+          B2B_COUNTERPARTY_NTS_NOT_CONNECTED: '#/components/schemas/B2bCounterpartyNtsNotConnectedError'
+          B2B_EXTERNAL_SERVICE: '#/components/schemas/B2bExternalServiceError'
+          B2B_NOT_ENABLED: '#/components/schemas/B2bNotEnabledError'
+          FORBIDDEN: '#/components/schemas/ForbiddenError'
+          INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    ValidateB2bCounterpartyCertificateResponse:
+      title: 인증서 유효성 검증 응답 정보
+      description: 인증서 유효성 검증 응답 정보
+      type: object
+      required:
+        - isValid
+      properties:
+        isValid:
+          type: boolean
+          title: 인증서 유효 여부
+      x-portone-title: 인증서 유효성 검증 응답 정보
     VerifiedIdentityVerification:
       title: 완료된 본인인증 내역
       description: 완료된 본인인증 내역
@@ -33985,6 +36333,9 @@ x-portone-categories:
     title: 세금계산서 API
     description: 세금계산서 API 기능을 제공합니다.
     children:
+      - id: b2b.counterparty
+        title: 거래처 관련 API
+        description: 거래처 관련 API 기능을 제공합니다.
       - id: b2b.taxInvoice
         title: 세금계산서 발행 관련 API
         description: 세금계산서 발행 관련 API 기능을 제공합니다.
