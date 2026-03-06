@@ -52,7 +52,9 @@ export function Docs(props: ParentProps) {
   const doc = createAsync(() => loadDoc(contentName(), fullSlug()), {
     deferStream: true,
   });
-  const frontmatter = createMemo(() => doc()?.frontmatter as DocsEntry);
+  const frontmatter = createMemo(
+    () => doc()?.frontmatter as DocsEntry | undefined,
+  );
 
   const interactiveDocs = createAsync(
     () => loadInteractiveDocs(location.pathname),
@@ -80,7 +82,7 @@ export function Docs(props: ParentProps) {
           return {
             "@type": "ListItem" as const,
             position: i + 1,
-            name: isLast ? frontmatter().title : segment,
+            name: isLast ? frontmatter()?.title : segment,
             item: `https://developers.portone.io${path}`,
           };
         });
@@ -91,7 +93,7 @@ export function Docs(props: ParentProps) {
     return {
       "@context": "https://schema.org",
       "@type": "TechArticle",
-      headline: frontmatter().title,
+      headline: frontmatter()?.title,
       description: frontmatter()?.description,
       url: `https://developers.portone.io/${contentName()}/${params()?.lang}/${params()?.slug}`,
       image: `https://developers.portone.io/${contentName()}/${params()?.lang}/${params()?.slug}.png`,
