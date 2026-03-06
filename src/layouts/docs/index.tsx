@@ -61,6 +61,43 @@ export function Docs(props: ParentProps) {
     },
   );
 
+  const breadcrumbListJsonLd = createMemo(() => {
+    const paramsInner = params();
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: (() => {
+        if (!paramsInner) return [];
+        const segments = [
+          contentName(),
+          paramsInner.lang,
+          ...paramsInner.slug.split("/"),
+        ];
+        let path = "";
+        return segments.map((segment, i) => {
+          path += `/${segment}`;
+          const isLast = i === segments.length - 1;
+          return {
+            "@type": "ListItem" as const,
+            position: i + 1,
+            name: isLast ? frontmatter().title : segment,
+            item: `https://developers.portone.io${path}`,
+          };
+        });
+      })(),
+    } satisfies WithContext<BreadcrumbList>;
+  });
+  const techArticleJsonLd = createMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      headline: frontmatter().title,
+      description: frontmatter()?.description,
+      url: `https://developers.portone.io/${contentName()}/${params()?.lang}/${params()?.slug}`,
+      image: `https://developers.portone.io/${contentName()}/${params()?.lang}/${params()?.slug}.png`,
+      publisher: organizationJsonLd,
+    } satisfies WithContext<TechArticle>;
+  });
   return (
     <div class="flex">
       <Show when={params()}>
@@ -99,45 +136,8 @@ export function Docs(props: ParentProps) {
                       ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
                       docsEntry={frontmatter()}
                     />
-                    <JsonLd
-                      data={
-                        {
-                          "@context": "https://schema.org",
-                          "@type": "TechArticle",
-                          headline: frontmatter().title,
-                          description: frontmatter().description,
-                          url: `https://developers.portone.io/${contentName()}/${params().lang}/${params().slug}`,
-                          image: `https://developers.portone.io/${contentName()}/${params().lang}/${params().slug}.png`,
-                          publisher: organizationJsonLd,
-                        } satisfies WithContext<TechArticle>
-                      }
-                    />
-                    <JsonLd
-                      data={
-                        {
-                          "@context": "https://schema.org",
-                          "@type": "BreadcrumbList",
-                          itemListElement: (() => {
-                            const segments = [
-                              contentName(),
-                              params().lang,
-                              ...params().slug.split("/"),
-                            ];
-                            let path = "";
-                            return segments.map((segment, i) => {
-                              path += `/${segment}`;
-                              const isLast = i === segments.length - 1;
-                              return {
-                                "@type": "ListItem" as const,
-                                position: i + 1,
-                                name: isLast ? frontmatter().title : segment,
-                                item: `https://developers.portone.io${path}`,
-                              };
-                            });
-                          })(),
-                        } satisfies WithContext<BreadcrumbList>
-                      }
-                    />
+                    <JsonLd data={techArticleJsonLd()} />
+                    <JsonLd data={breadcrumbListJsonLd()} />
                     <Switch
                       fallback={
                         <DefaultLayout
