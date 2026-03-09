@@ -45,7 +45,7 @@ export default function Gnb(props: Props) {
 
   const subNavs: Nav[] = [
     {
-      link: "/opi/ko",
+      link: "/opi/ko/readme",
       label: "원 페이먼트 인프라",
       // TODO: Phase 2
       // dropdownItems: [
