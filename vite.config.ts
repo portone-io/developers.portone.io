@@ -89,8 +89,9 @@ export default defineConfig({
     nitroV2Plugin({
       preset: "vercel",
       prerender: {
-        routes: ["/blog/rss.xml"],
+        routes: ["/", "/blog/rss.xml"],
         crawlLinks: true,
+        concurrency: 4,
       },
       rollupConfig: {
         external: ["monaco-editor"],
