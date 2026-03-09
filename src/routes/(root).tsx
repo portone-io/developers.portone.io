@@ -27,7 +27,7 @@ const navAsMenuPaths = ["/blog", "/release-notes"];
 
 export const route = {
   preload: ({ location }) => {
-    preloadDocs(location.pathname);
+    void preloadDocs(location.pathname);
   },
 } satisfies RouteDefinition;
 
