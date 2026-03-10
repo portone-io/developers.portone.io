@@ -25,7 +25,7 @@ export const defaultVisitor = {
     }
     if (operation.requestBody) {
       this.visitRequestRef(
-        operation.requestBody.content["application/json"].schema.$ref || "",
+        operation.requestBody.content["application/json"]?.schema?.$ref || "",
       );
     }
     for (const statusCode in operation.responses) {

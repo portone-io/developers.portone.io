@@ -365,7 +365,13 @@ export function crawlRefs(
   }
   let currentRef: string;
   while ((currentRef = queue.shift()!)) {
-    const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, currentRef));
+    const rawTypeDef = getTypeDefByRef(schema, currentRef);
+    if (rawTypeDef.allOf) {
+      for (const item of rawTypeDef.allOf) {
+        if (item.$ref) push(item.$ref);
+      }
+    }
+    const typeDef = resolveTypeDef(schema, rawTypeDef);
     typeDefRefsCrawler.visitTypeDef(typeDef);
   }
   return Array.from(result);
