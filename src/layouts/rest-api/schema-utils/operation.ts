@@ -1,11 +1,11 @@
-import type { Endpoint } from "./endpoint";
+import type { Endpoint } from "./endpoint.ts";
 import {
   bakeProperties,
   followRef,
   getTypeDefByRef,
   type Property,
   type TypeDef,
-} from "./type-def";
+} from "./type-def.ts";
 
 export interface Operation {
   operationId?: string | undefined;

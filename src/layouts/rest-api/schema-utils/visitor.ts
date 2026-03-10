@@ -1,5 +1,5 @@
-import type { Operation, Parameter, Response } from "./operation";
-import type { Property, ResponseProperty, TypeDef } from "./type-def";
+import type { Operation, Parameter, Response } from "./operation.ts";
+import type { Property, ResponseProperty, TypeDef } from "./type-def.ts";
 
 export type Visitor = {
   -readonly [key in keyof typeof defaultVisitor]: (typeof defaultVisitor)[key];
