@@ -145,6 +145,7 @@ async function generate(watch = false) {
 
   await writeIndex(collections, outDir);
   await writeThumbnail(collections, path.join(outDir, "client"));
+  await writeTitleMap(collections, path.join(outDir, "client"));
   if (!watch) return () => {};
 
   const subscriptions = await Promise.all(
@@ -176,11 +177,15 @@ async function generate(watch = false) {
               collection = newCollection;
               await writeCollection(name, collection, outDir);
               await writeIndex(collections, outDir);
+              await writeThumbnail(collections, path.join(outDir, "client"));
+              await writeTitleMap(collections, path.join(outDir, "client"));
             } else {
               for (const [slug, entry] of newCollection.entries) {
                 collection.entries.set(slug, entry);
               }
               await writeCollection(name, collection, outDir);
+              await writeThumbnail(collections, path.join(outDir, "client"));
+              await writeTitleMap(collections, path.join(outDir, "client"));
             }
           },
         );
@@ -272,6 +277,35 @@ ${[...collections.values()]
 
   await fs.mkdir(outDir, { recursive: true });
   await fs.writeFile(path.join(outDir, "thumbnail.ts"), content);
+}
+
+async function writeTitleMap(
+  collections: Map<string, Collection>,
+  outDir: string,
+) {
+  const docsCollections = ["opi", "sdk", "platform"];
+  const entries: [string, string][] = [];
+
+  for (const name of docsCollections) {
+    const collection = collections.get(name);
+    if (!collection) continue;
+
+    for (const entry of collection.entries.values()) {
+      const frontmatter = entry.frontmatter as { title?: string };
+      if (!frontmatter.title) continue;
+
+      entries.push([`/${name}/${entry.slug}`, frontmatter.title]);
+    }
+  }
+
+  const content = `// @vinxi-ignore-style-collection
+/* eslint-disable */
+
+export const titleMap: Record<string, string> = ${JSON.stringify(Object.fromEntries(entries))};
+`;
+
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.writeFile(path.join(outDir, "titleMap.ts"), content);
 }
 
 if (process.argv[2] === "watch") {
