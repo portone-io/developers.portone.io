@@ -42,7 +42,7 @@ export type YamlNavMenuItem =
 type YamlNavMenuPageSugar = string;
 interface YamlNavMenuPage {
   slug: string;
-  items: YamlNavMenuItem[];
+  items?: YamlNavMenuItem[];
   systemVersion?: SystemVersion;
 }
 interface YamlNavMenuExternalPage {
