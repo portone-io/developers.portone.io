@@ -1,12 +1,7 @@
-import {
-  cache,
-  createAsync,
-  type RouteDefinition,
-  useLocation,
-} from "@solidjs/router";
+import { useLocation } from "@solidjs/router";
 import { format } from "date-fns";
 import type { Article, WithContext } from "schema-dts";
-import { createMemo, type JSXElement, Show } from "solid-js";
+import { createMemo, createResource, type JSXElement, Show } from "solid-js";
 
 import { NotFoundError } from "~/components/404";
 import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
@@ -14,31 +9,27 @@ import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import Banner from "~/components/release-note/Banner";
 import Footer from "~/components/release-note/Footer";
+import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
 import {
   getReleaseNoteDescription,
   getReleaseNoteTitle,
 } from "~/misc/releaseNote";
 
-const loadNote = cache(async (slug: string) => {
-  "use server";
-  const { releaseNotes } = await import("#content");
-  if (!(slug in releaseNotes)) throw new NotFoundError();
-  return releaseNotes[slug as keyof typeof releaseNotes];
-}, "release-notes/note");
-
-export const route = {
-  preload: ({ location }) => {
-    const slug = getSlug(location.pathname);
-    if (slug) void loadNote(slug);
-  },
-} satisfies RouteDefinition;
-
-const getSlug = (path: string) => path.replace(/^\/release-notes\//, "");
-
 export default function NoteLayout(props: { children: JSXElement }) {
   const location = useLocation();
-  const slug = createMemo(() => getSlug(location.pathname));
-  const note = createAsync(() => loadNote(slug()), { deferStream: true });
+  const slug = createMemo(() => {
+    const parsedFullSlug = parseDocsFullSlug(location.pathname);
+    if (!parsedFullSlug) throw new NotFoundError();
+    return parsedFullSlug[1];
+  });
+  const [note] = createResource(
+    () => ["release-notes", slug()] as const,
+    async ([contentName, slug]) => {
+      const result = await loadDoc(contentName, slug);
+      if (!result) throw new NotFoundError();
+      return result;
+    },
+  );
 
   return (
     <Show when={note()}>

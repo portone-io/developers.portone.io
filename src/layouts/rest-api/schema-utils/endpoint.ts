@@ -3,8 +3,8 @@ import {
   flatCategories,
   getCategories,
   type Tag,
-} from "./category";
-import { getOperation, type Operation } from "./operation";
+} from "./category.ts";
+import { getOperation, type Operation } from "./operation.ts";
 
 export interface Endpoint {
   method: string; // get, post ...

@@ -1,6 +1,6 @@
-import type { CategoryEndpointsPair } from "./endpoint";
-import type { Operation, Parameter } from "./operation";
-import { defaultVisitor, type Visitor } from "./visitor";
+import type { CategoryEndpointsPair } from "./endpoint.ts";
+import type { Operation, Parameter } from "./operation.ts";
+import { defaultVisitor, type Visitor } from "./visitor.ts";
 
 export interface TypeDef {
   $ref?: string | undefined;
@@ -312,6 +312,8 @@ export function crawlRefs(
       }
     },
     visitRequestRef(ref) {
+      if (!ref) return;
+      result.add(ref);
       const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, ref));
       rootPropertyRefsCrawler.visitTypeDef(typeDef);
     },
@@ -363,7 +365,13 @@ export function crawlRefs(
   }
   let currentRef: string;
   while ((currentRef = queue.shift()!)) {
-    const typeDef = resolveTypeDef(schema, getTypeDefByRef(schema, currentRef));
+    const rawTypeDef = getTypeDefByRef(schema, currentRef);
+    if (rawTypeDef.allOf) {
+      for (const item of rawTypeDef.allOf) {
+        if (item.$ref) push(item.$ref);
+      }
+    }
+    const typeDef = resolveTypeDef(schema, rawTypeDef);
     typeDefRefsCrawler.visitTypeDef(typeDef);
   }
   return Array.from(result);

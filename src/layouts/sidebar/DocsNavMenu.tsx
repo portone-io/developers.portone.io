@@ -1,6 +1,7 @@
-import { cache, createAsync, useLocation } from "@solidjs/router";
-import { createMemo, For, Show } from "solid-js";
+import { useLocation } from "@solidjs/router";
+import { For, Show } from "solid-js";
 
+import { navMenu } from "#navMenu";
 import { PgSelect } from "~/components/PgSelect";
 import type { DocsEntry } from "~/content/config";
 import { useSystemVersion } from "~/state/system-version";
@@ -18,20 +19,11 @@ interface Props {
   slug: string;
 }
 
-const getNavMenuItems = cache(async (lang: Lang, nav: string) => {
-  "use server";
-
-  const { navMenu } = await import("~/state/server-only/nav");
-  return navMenu[lang][nav as keyof (typeof navMenu)[Lang]] || [];
-}, "nav/menu-items");
-
 export default function DocsNavMenu(props: Props) {
   const { systemVersion } = useSystemVersion();
   const location = useLocation();
-  const memoizedLang = createMemo(() => props.lang);
-  const navMenuItems = createAsync(() =>
-    getNavMenuItems(memoizedLang(), props.nav),
-  );
+  const navMenuItems = () =>
+    navMenu.ko[props.nav as keyof typeof navMenu.ko] || [];
 
   return (
     <LeftSidebar>

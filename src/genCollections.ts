@@ -22,6 +22,12 @@ import type {
   Import,
   parseFrontmatter,
 } from "./content/config.ts";
+import type { NavMenuItem, NavMenuPage } from "./state/nav.ts";
+import type {
+  SystemVersion,
+  YamlNavMenuItem,
+  YamlNavMenuToplevelItem,
+} from "./type.ts";
 import { generateSlug } from "./utils/slugs.ts";
 
 type Collection = {
@@ -39,12 +45,21 @@ type CollectionEntry = {
 
 type ParseFrontmatter = typeof parseFrontmatter;
 
+const docsNavNames = ["opi", "sdk", "platform"] as const;
+type DocsNavName = (typeof docsNavNames)[number];
+
 export type Heading = {
   title: string;
   id: string;
   depth: number;
   children: Heading[];
 };
+
+type NavMenuFrontmatter = {
+  title?: string;
+};
+
+type NavMenuFrontmatters = Record<string, NavMenuFrontmatter>;
 
 const cwd = process.cwd();
 
@@ -145,6 +160,8 @@ async function generate(watch = false) {
 
   await writeIndex(collections, outDir);
   await writeThumbnail(collections, path.join(outDir, "client"));
+  await writeTitleMap(collections, path.join(outDir, "client"));
+  await writeNavMenu(collections, path.join(outDir, "client"));
   if (!watch) return () => {};
 
   const subscriptions = await Promise.all(
@@ -176,11 +193,17 @@ async function generate(watch = false) {
               collection = newCollection;
               await writeCollection(name, collection, outDir);
               await writeIndex(collections, outDir);
+              await writeThumbnail(collections, path.join(outDir, "client"));
+              await writeTitleMap(collections, path.join(outDir, "client"));
+              await writeNavMenu(collections, path.join(outDir, "client"));
             } else {
               for (const [slug, entry] of newCollection.entries) {
                 collection.entries.set(slug, entry);
               }
               await writeCollection(name, collection, outDir);
+              await writeThumbnail(collections, path.join(outDir, "client"));
+              await writeTitleMap(collections, path.join(outDir, "client"));
+              await writeNavMenu(collections, path.join(outDir, "client"));
             }
           },
         );
@@ -272,6 +295,156 @@ ${[...collections.values()]
 
   await fs.mkdir(outDir, { recursive: true });
   await fs.writeFile(path.join(outDir, "thumbnail.ts"), content);
+}
+
+async function writeTitleMap(
+  collections: Map<string, Collection>,
+  outDir: string,
+) {
+  const entries: [string, string][] = [];
+
+  for (const name of docsNavNames) {
+    const collection = collections.get(name);
+    if (!collection) continue;
+
+    for (const entry of collection.entries.values()) {
+      const frontmatter = entry.frontmatter as { title?: string };
+      if (!frontmatter.title) continue;
+
+      entries.push([`/${name}/${entry.slug}`, frontmatter.title]);
+    }
+  }
+
+  const content = `// @vinxi-ignore-style-collection
+/* eslint-disable */
+
+export const titleMap: Record<string, string> = ${JSON.stringify(Object.fromEntries(entries))};
+`;
+
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.writeFile(path.join(outDir, "titleMap.ts"), content);
+}
+
+async function writeNavMenu(
+  collections: Map<string, Collection>,
+  outDir: string,
+) {
+  const navYamlPaths: Record<DocsNavName, string> = {
+    opi: "src/routes/(root)/opi/ko/_nav.yaml",
+    sdk: "src/routes/(root)/sdk/ko/_nav.yaml",
+    platform: "src/routes/(root)/platform/ko/_nav.yaml",
+  };
+
+  const navMenuEntries = await Promise.all(
+    docsNavNames.map(async (name) => {
+      const yaml = jsYaml.load(
+        await fs.readFile(navYamlPaths[name], "utf-8"),
+      ) as YamlNavMenuToplevelItem[];
+      const frontmatters = getNavFrontmatters(collections.get(name));
+      return [name, toNavMenuItems(name, yaml, frontmatters)] as const;
+    }),
+  );
+
+  const navMenu = {
+    ko: Object.fromEntries(navMenuEntries),
+  };
+
+  const content = `// @vinxi-ignore-style-collection
+/* eslint-disable */
+
+import type { NavMenuItem } from "~/state/nav";
+import type { Lang } from "~/type";
+
+type DocsNavName = "opi" | "sdk" | "platform";
+
+export const navMenu = ${JSON.stringify(navMenu)} satisfies Record<Lang, Record<DocsNavName, NavMenuItem[]>>;
+`;
+
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.writeFile(path.join(outDir, "navMenu.ts"), content);
+}
+
+function getNavFrontmatters(collection?: Collection): NavMenuFrontmatters {
+  if (!collection) return {};
+
+  return [...collection.entries.values()].reduce((acc, entry) => {
+    acc[`/${entry.slug}`] = (entry.frontmatter ?? {}) as NavMenuFrontmatter;
+    return acc;
+  }, {} as NavMenuFrontmatters);
+}
+
+function toNavMenuItems(
+  baseDir: DocsNavName,
+  yaml: YamlNavMenuToplevelItem[] | YamlNavMenuItem[],
+  frontmatters: NavMenuFrontmatters,
+  systemVersion?: SystemVersion,
+): NavMenuItem[] {
+  return yaml.map((item) => {
+    if (item === "===") {
+      return {
+        type: "page",
+        path: "===",
+        title: "",
+        items: [],
+        systemVersion,
+      };
+    }
+
+    if (typeof item === "string") {
+      return {
+        type: "page",
+        path: `/${baseDir}${item}`,
+        title: frontmatters[item]?.title || "",
+        items: [],
+        systemVersion,
+      };
+    } else if ("slug" in item) {
+      const nextSystemVersion = item.systemVersion || systemVersion;
+      return {
+        type: "page",
+        path: `/${baseDir}${item.slug}`,
+        title: frontmatters[item.slug]?.title || "",
+        items: item.items
+          ? (toNavMenuItems(
+              baseDir,
+              item.items,
+              frontmatters,
+              nextSystemVersion,
+            ) as NavMenuPage[])
+          : [],
+        systemVersion: nextSystemVersion,
+      };
+    } else if ("href" in item) {
+      const nextSystemVersion = item.systemVersion || systemVersion;
+      return {
+        type: "page",
+        path: `/${baseDir}${item.href}`,
+        title: item.label,
+        items: item.items
+          ? (toNavMenuItems(
+              baseDir,
+              item.items,
+              frontmatters,
+              nextSystemVersion,
+            ) as NavMenuPage[])
+          : [],
+        systemVersion: nextSystemVersion,
+      };
+    } else {
+      const nextSystemVersion = item.systemVersion || systemVersion;
+      return {
+        type: "group",
+        label: item.label,
+        items: toNavMenuItems(
+          baseDir,
+          item.items,
+          frontmatters,
+          nextSystemVersion,
+        ) as NavMenuPage[],
+        systemVersion: nextSystemVersion,
+      };
+    }
+  });
 }
 
 if (process.argv[2] === "watch") {

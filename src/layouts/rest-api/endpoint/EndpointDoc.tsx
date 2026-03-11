@@ -1,10 +1,8 @@
 import { Collapsible } from "@kobalte/core/collapsible";
 import { createMemo, For, type JSXElement, Show } from "solid-js";
-import { Dynamic } from "solid-js/web";
 
 import Parameter from "~/components/parameter/Parameter";
 import { prose } from "~/components/prose";
-import { toMDXModule } from "~/misc/md";
 
 import { ReqPropertiesDoc, TypeDefDoc } from "../category/type-def";
 import { type Endpoint, getEndpointRepr } from "../schema-utils/endpoint";
@@ -284,9 +282,10 @@ function ResponseDoc(props: ResponseDocProps) {
           return (
             <ReqRes title="200 Ok">
               <Show when={schemata.response.description}>
-                <prose.p class="text-slate-11 mb-2 text-sm">
-                  {schemata.response.description}
-                </prose.p>
+                <div
+                  innerHTML={schemata.response.description}
+                  class="text-slate-11 mb-2 text-sm"
+                />
               </Show>
               <Show when={schemata.schema}>
                 {(typeDef) => (
@@ -317,9 +316,10 @@ function ResponseDoc(props: ResponseDocProps) {
           return (
             <ReqRes title={title}>
               <Show when={schemata.response.description}>
-                <prose.p class="text-slate-11 mb-2 text-sm">
-                  {schemata.response.description}
-                </prose.p>
+                <div
+                  innerHTML={schemata.response.description}
+                  class="text-slate-11 mb-2 text-sm"
+                />
               </Show>
               <Show when={schemata.schema}>
                 {(typeDef) => (
@@ -367,17 +367,13 @@ interface ReqResProps {
   children: JSXElement;
 }
 function ReqRes(props: ReqResProps) {
-  const description = createMemo(() => {
-    const markdown = props.description;
-    return markdown == null ? markdown : toMDXModule(markdown);
-  });
   return (
     <Parameter flatten>
       <Show when={props.title}>
         <div class="mb-1 inline-flex gap-2 text-xs">
           <h4 class="shrink-0 font-bold uppercase">{props.title}</h4>
-          <Show when={description()}>
-            {(description) => <Dynamic component={description()} />}
+          <Show when={props.description}>
+            {(description) => <span innerHTML={description()} />}
           </Show>
         </div>
       </Show>

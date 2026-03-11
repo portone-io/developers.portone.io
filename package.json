@@ -5,12 +5,13 @@
 	"license": "AGPL-3.0-or-later",
 	"repository": "https://github.com/portone-io/developers.portone.io",
 	"scripts": {
-		"prepare": "pnpm update-schema && pnpm gen-collections",
-		"dev": "pnpm update-schema && concurrently -k \"vite dev\" \"pnpm gen-collections watch\"",
-		"build": "pnpm update-schema && pnpm gen-collections && pnpm llms-txt && pnpm docs-for-llms && pnpm sitemap && vite build",
+		"prepare": "pnpm update-schema && pnpm gen-rest-api-schema && pnpm gen-collections",
+		"dev": "pnpm update-schema && pnpm gen-rest-api-schema && concurrently -k \"vite dev\" \"pnpm gen-collections watch\"",
+		"build": "pnpm update-schema && pnpm gen-rest-api-schema && pnpm gen-collections && pnpm llms-txt && pnpm docs-for-llms && pnpm sitemap && vite build",
 		"sitemap": "node scripts/sitemap/index.ts",
 		"check": "pnpm update-schema && pnpm lint",
 		"gen-collections": "node src/genCollections.ts",
+		"gen-rest-api-schema": "node src/build/gen-rest-api-schema.ts",
 		"update-schema": "pnpm run --filter @portone-io/browser-sdk-mdx-codegen start",
 		"llms-txt": "node scripts/llms-txt/index.ts",
 		"docs-for-llms": "node scripts/docs-for-llms/index.ts",
@@ -22,6 +23,8 @@
 	},
 	"imports": {
 		"#content": "./src/content/__generated__/index.ts",
+		"#navMenu": "./src/content/__generated__/client/navMenu.ts",
+		"#titleMap": "./src/content/__generated__/client/titleMap.ts",
 		"#thumbnail": "./src/content/__generated__/client/thumbnail.ts",
 		"#server-only": {
 			"browser": "./src/misc/server-only/browserError.ts",

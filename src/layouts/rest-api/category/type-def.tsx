@@ -8,12 +8,10 @@ import {
   Show,
   Switch,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
 import { match, P } from "ts-pattern";
 
 import Parameter from "~/components/parameter/Parameter";
 import { prose } from "~/components/prose";
-import { toMDXModule } from "~/misc/md";
 
 import { interleave } from "..";
 import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
@@ -664,13 +662,9 @@ interface DescriptionDocProps {
   typeDef: TypeDef | Property;
 }
 function DescriptionDoc(props: DescriptionDocProps) {
-  const rawDescription = createMemo(
+  const description = createMemo(
     () => props.typeDef["x-portone-description"] ?? props.typeDef.description,
   );
-  const description = createMemo(() => {
-    const markdown = rawDescription();
-    return markdown == null ? markdown : toMDXModule(markdown);
-  });
   const summary = createMemo(
     () => props.typeDef["x-portone-summary"] ?? props.typeDef.summary,
   );
@@ -678,7 +672,7 @@ function DescriptionDoc(props: DescriptionDocProps) {
   return (
     <Switch>
       <Match when={description()}>
-        {(description) => <Dynamic component={description()} />}
+        {(description) => <div innerHTML={description()} />}
       </Match>
       <Match when={summary()}>
         <prose.p>{summary()}</prose.p>

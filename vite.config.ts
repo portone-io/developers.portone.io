@@ -15,8 +15,11 @@ import unocss from "unocss/vite";
 import { defineConfig } from "vite";
 import { imagetools } from "vite-imagetools";
 
+import { sdkParameterTransform } from "./src/build/vite-plugin-sdk-parameter-transform.ts";
+
 export default defineConfig({
   plugins: [
+    sdkParameterTransform(),
     {
       enforce: "pre",
       ...mdx({
@@ -86,7 +89,9 @@ export default defineConfig({
     nitroV2Plugin({
       preset: "vercel",
       prerender: {
-        routes: ["/blog/rss.xml"],
+        routes: ["/", "/blog/rss.xml"],
+        crawlLinks: true,
+        concurrency: 4,
       },
       rollupConfig: {
         external: ["monaco-editor"],
