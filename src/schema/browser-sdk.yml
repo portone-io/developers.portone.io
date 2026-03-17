@@ -35,8 +35,10 @@ flags:
     description: 페이레터해외결제
   triple_a:
     description: Triple-A
+  kicc:
+    description: 한국정보통신
   paymentwall:
-    description: Paymentwall
+    description: 페이먼트월
 resources:
   entity:
     Address:
@@ -2023,7 +2025,7 @@ resources:
             - Triple-A
         TR_TR:
           description: |
-            터키어
+            튀르키예어
             - 페이먼트월
         SV_SE:
           description: |
@@ -2531,6 +2533,14 @@ resources:
         <PgSection pgName={(name) => name === 'mobilians'}>
         모빌리언스에서 최대 255바이트까지 입력할 수 있습니다.
         모빌리언스 상품권결제에서 최대 50bytes까지 입력할 수 있습니다.
+        </PgSection>
+    PaymentOrderDescription:
+      type: string
+      description: |
+        **주문 상세 내용**
+
+        <PgSection pgName={(name) => name === 'kicc'}>
+        알리페이 플러스를 통해 결제 시 필수로 요구됩니다.
         </PgSection>
     PaymentTotalAmount:
       type: integer
@@ -3770,6 +3780,10 @@ resources:
               description: |
                 **KSNET 간편결제 다이렉트 여부**
               optional: true
+            sndKakaopayType:
+              type: resourceRef
+              $ref: '#/resources/entity/bypass/payment/KsnetSndKakaopayType'
+              optional: true
         PaypalV2:
           type: object
           name: PaypalV2PaymentBypass
@@ -4412,6 +4426,15 @@ resources:
                 간편 결제 미표시
           description: |
             간편 결제 표시 구분
+        KsnetSndKakaopayType:
+          type: enum
+          variants:
+            'CARD':
+              description: 카드 결제만 허용
+            'MONEY':
+              description: 카카오머니 결제만 허용
+          description: |
+            카드 결제창에서 카카오페이 결제시 허용할 결제수단
         SmartroV2SkinColor:
           type: enum
           variants:
@@ -5257,7 +5280,7 @@ resources:
             country_code:
               type: string
               description: |
-                **국가 코드**
+                **국가 코드 (ISO 3166 두 자리)**
               optional: true
       PaymentBypass:
         type: object
@@ -6392,6 +6415,13 @@ resources:
         orderName:
           type: resourceRef
           $ref: '#/resources/entity/PaymentOrderName'
+        orderDetail:
+          type: resourceRef
+          optional: true
+          $ref: '#/resources/entity/PaymentOrderDescription'
+          flagOptions:
+            kicc:
+              visible: true
         totalAmount:
           type: resourceRef
           $ref: '#/resources/entity/PaymentTotalAmount'
@@ -6589,8 +6619,7 @@ resources:
           optional: true
         alipayPlus:
           type: resourceRef
-          $ref: "#/resources/request/PaymentRequestUnionAlipayPlus"
-          optional: true
+          $ref: '#/resources/request/PaymentRequestUnionAlipayPlus'
     IssueBillingKeyRequestUnionCard:
       type: object
       properties:
@@ -7016,7 +7045,7 @@ resources:
       properties:
         easyPayProvider:
           type: resourceRef
-          $ref: "#/resources/entity/EasyPayProvider"
+          $ref: '#/entity/EasyPayProvider'
           optional: true
           description: |
             **간편결제 UI 직접 호출**
