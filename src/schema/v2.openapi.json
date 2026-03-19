@@ -8077,6 +8077,80 @@
         }
       }
     },
+    "/paymentwall/delivery/confirm": {
+      "post": {
+        "summary": "페이먼트월 배송 정보 등록",
+        "description": "페이먼트월 배송 정보 등록\n\n배송 정보를 페이먼트월에 등록합니다.\n등록된 배송 정보는 차지백 발생 시 고객사의 상품 배송 완료 증빙 자료로 활용되므로, 반드시 연동해야 합니다.",
+        "operationId": "confirmPaymentwallDelivery",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "400": {
+            "description": "* `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `PaymentNotFoundError`: 결제 건이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "pgSpecific",
+        "x-portone-title": "페이먼트월 배송 정보 등록",
+        "x-portone-description": "배송 정보를 페이먼트월에 등록합니다.\n등록된 배송 정보는 차지백 발생 시 고객사의 상품 배송 완료 증빙 자료로 활용되므로, 반드시 연동해야 합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/ConfirmPaymentwallDeliveryError"
+        }
+      }
+    },
     "/platform/account-transfers": {
       "get": {
         "summary": "이체 내역 다건 조회",
@@ -21885,6 +21959,150 @@
           }
         }
       },
+      "ConfirmPaymentwallDeliveryBody": {
+        "title": "페이먼트월 배송 정보 등록 입력 정보",
+        "description": "페이먼트월 배송 정보 등록 입력 정보",
+        "type": "object",
+        "required": [
+          "transactionId",
+          "deliveryType",
+          "deliveryStatus",
+          "estimatedDeliveryDatetime",
+          "estimatedUpdateDatetime",
+          "refundable",
+          "details",
+          "shippingAddressEmail"
+        ],
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "title": "결제 건 포트원 채번 아이디"
+          },
+          "deliveryType": {
+            "$ref": "#/components/schemas/PaymentwallDeliveryType",
+            "title": "배송 유형"
+          },
+          "deliveryStatus": {
+            "$ref": "#/components/schemas/PaymentwallDeliveryStatus",
+            "title": "배송 상태"
+          },
+          "estimatedDeliveryDatetime": {
+            "type": "string",
+            "format": "date-time",
+            "title": "배송 완료 예상 일시",
+            "description": "배송 유형이 DIGITAL인 경우 현재 시각을 입력해도 무방합니다."
+          },
+          "estimatedUpdateDatetime": {
+            "type": "string",
+            "format": "date-time",
+            "title": "배송 상태 업데이트 예정 일시",
+            "description": "배송 유형이 DIGITAL인 경우 현재 시각을 입력해도 무방합니다."
+          },
+          "reason": {
+            "type": "string",
+            "title": "상태 변경 사유"
+          },
+          "refundable": {
+            "type": "boolean",
+            "title": "환불 가능 여부"
+          },
+          "details": {
+            "type": "string",
+            "title": "상세 설명"
+          },
+          "shippingAddressEmail": {
+            "type": "string",
+            "title": "고객 이메일 주소"
+          },
+          "carrierTrackingId": {
+            "type": "string",
+            "title": "운송장 번호",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "carrierType": {
+            "type": "string",
+            "title": "운송사 이름",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressCountry": {
+            "$ref": "#/components/schemas/Country",
+            "title": "수신자 국가",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressCity": {
+            "type": "string",
+            "title": "수신자 도시",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressZip": {
+            "type": "string",
+            "title": "수신자 우편번호",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressState": {
+            "type": "string",
+            "title": "수신자 주",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressStreet": {
+            "type": "string",
+            "title": "수신자 도로명 주소",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressPhone": {
+            "type": "string",
+            "title": "수신자 전화번호",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressFirstname": {
+            "type": "string",
+            "title": "수신자 이름",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "shippingAddressLastname": {
+            "type": "string",
+            "title": "수신자 성",
+            "description": "배송 유형이 PHYSICAL인 경우 필수입니다."
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "배송 증빙 첨부 파일 URL 목록",
+            "description": "배송 증빙 자료의 URL(이미지 등)을 입력합니다. 증빙 자료를 제공하기 어려운 경우 생략할 수 있습니다."
+          }
+        },
+        "x-portone-title": "페이먼트월 배송 정보 등록 입력 정보"
+      },
+      "ConfirmPaymentwallDeliveryError": {
+        "title": "ConfirmPaymentwallDeliveryError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/InvalidRequestError"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "PAYMENT_NOT_FOUND": "#/components/schemas/PaymentNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ConfirmPaymentwallDeliveryResponse": {
+        "title": "페이먼트월 배송 정보 등록 성공 응답",
+        "description": "페이먼트월 배송 정보 등록 성공 응답",
+        "type": "object",
+        "x-portone-title": "페이먼트월 배송 정보 등록 성공 응답"
+      },
       "ConfirmedBillingKeyIssueAndPaySummary": {
         "title": "빌링키 발급 및 초회 결제 수동 승인 완료 응답",
         "description": "빌링키 발급 및 초회 결제 수동 승인 완료 응답",
@@ -26706,13 +26924,20 @@
           "HIPAY",
           "MPAY",
           "TOUCH_N_GO",
-          "TRUE_MONEY"
+          "TRUE_MONEY",
+          "DOKU_WALLET",
+          "JENIUS_PAY",
+          "OVO",
+          "MAYA",
+          "QRIS",
+          "THAI_QR"
         ],
         "x-portone-title": "간편 결제사",
         "x-portone-enum": {
           "ALIPAY_HK": {},
           "MIR": {},
           "NAVERPAY": {},
+          "QRIS": {},
           "MONEYTREE": {},
           "GRABPAY": {},
           "TOSS_BRANDPAY": {},
@@ -26727,20 +26952,25 @@
           "PAYCO": {},
           "HIPAY": {},
           "BILL_EASE": {},
+          "DOKU_WALLET": {},
           "SMILEPAY": {},
           "TINABA": {},
           "KLARNA": {},
+          "JENIUS_PAY": {},
           "RABBIT_LINE_PAY": {},
+          "THAI_QR": {},
           "KREDIVO": {},
           "CHAI": {},
           "PINPAY": {},
           "WECHAT": {},
           "KPLUS": {},
+          "MAYA": {},
           "TMONEY": {},
           "TOSSPAY": {},
           "SSGPAY": {},
           "MERPAY": {},
           "PAYPAL": {},
+          "OVO": {},
           "G_CASH": {},
           "LGPAY": {},
           "APPLEPAY": {},
@@ -35933,6 +36163,46 @@
           }
         },
         "x-portone-title": "결제 건 및 커서 정보"
+      },
+      "PaymentwallDeliveryStatus": {
+        "title": "페이먼트월 배송 상태",
+        "description": "페이먼트월 배송 상태",
+        "type": "string",
+        "enum": [
+          "ORDER_PLACED",
+          "ORDER_SHIPPED",
+          "DELIVERED"
+        ],
+        "x-portone-title": "페이먼트월 배송 상태",
+        "x-portone-enum": {
+          "ORDER_PLACED": {
+            "title": "주문 접수"
+          },
+          "ORDER_SHIPPED": {
+            "title": "배송 중"
+          },
+          "DELIVERED": {
+            "title": "배송 완료"
+          }
+        }
+      },
+      "PaymentwallDeliveryType": {
+        "title": "페이먼트월 배송 유형",
+        "description": "페이먼트월 배송 유형",
+        "type": "string",
+        "enum": [
+          "DIGITAL",
+          "PHYSICAL"
+        ],
+        "x-portone-title": "페이먼트월 배송 유형",
+        "x-portone-enum": {
+          "DIGITAL": {
+            "title": "디지털"
+          },
+          "PHYSICAL": {
+            "title": "실물"
+          }
+        }
       },
       "PendingPaymentSchedule": {
         "title": "결제 완료 대기 상태",
