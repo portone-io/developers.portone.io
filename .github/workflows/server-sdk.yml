@@ -7,34 +7,42 @@ on:
       - "src/schema/v2.openapi.json"
   workflow_dispatch: {}
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     name: Sync OpenAPI to Server SDK
+    environment: sdk-sync
     permissions:
-      contents: write
-      pull-requests: write
+      # Required to checkout the repository
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          path: devcenter
+          persist-credentials: false
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           repository: portone-io/server-sdk
           path: sdk
           ref: main
           token: ${{ secrets.SDK_REPO_TOKEN }}
+          persist-credentials: false
 
       - name: Create new branch
         run: git checkout -b chore/openapi
         working-directory: sdk
 
       - name: Copy OpenAPI schema
-        run: cp devcenter/src/schema/v2.openapi.json sdk/codegen/openapi.json
+        run: cp src/schema/v2.openapi.json sdk/codegen/openapi.json
 
       - name: Install Deno
-        uses: denoland/setup-deno@v2
+        uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282 # v2
         with:
           deno-version: v2.x
 
@@ -44,7 +52,7 @@ jobs:
         working-directory: sdk/codegen
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
           cache: "npm"
@@ -55,7 +63,7 @@ jobs:
         working-directory: sdk/javascript
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           enable-cache: true
           working-directory: "sdk/python"
@@ -74,14 +82,19 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           git commit -m "chore: update OpenAPI schema"
+          git remote set-url origin "https://x-access-token:${SDK_REPO_TOKEN}@github.com/portone-io/server-sdk.git"
+          git push -f origin chore/openapi
         working-directory: sdk
+        env:
+          SDK_REPO_TOKEN: ${{ secrets.SDK_REPO_TOKEN }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          path: sdk
-          title: "chore: update OpenAPI schema"
-          body: "OpenAPI 스키마가 업데이트되어 자동으로 생성된 PR입니다."
-          branch: chore/openapi
-          base: main
-          token: ${{ secrets.SDK_REPO_TOKEN }}
+        run: |
+          gh pr create \
+            --repo portone-io/server-sdk \
+            --title "chore: update OpenAPI schema" \
+            --body "OpenAPI 스키마가 업데이트되어 자동으로 생성된 PR입니다." \
+            --base main \
+            --head chore/openapi
+        env:
+          GH_TOKEN: ${{ secrets.SDK_REPO_TOKEN }}
