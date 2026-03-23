@@ -99,7 +99,7 @@ KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 
         cvs: {
           payment_deadline: {
             valid_hours: 48,
-            due_date: "2026-04-01 23:59:59",
+            due_date: "2026-04-01T23:59:59Z",
           },
         },
         bypass: {
@@ -264,11 +264,13 @@ KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 
 
       - card?: object
 
+        **카드 결제 시 파라미터**
+
         <Parameter.Details>
           - display?: object
 
             <Parameter.Details>
-              - card\_quota?: number
+              - card\_quota?: number[]
 
                 **카드 할부 개월수 리스트**
 
@@ -276,6 +278,33 @@ KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 
 
                 - `[]`: 할부개월 수로 일시불만 노출
                 - `[3, 5, 6]`: 할부개월 수로 일시불 및 3, 5, 6개월 노출
+
+            </Parameter.Details>
+        </Parameter.Details>
+
+      - cvs?: object
+
+        **편의점 결제 시 파라미터**
+
+        <Parameter.Details>
+          - payment_deadline?: object
+
+            **지불 기한**
+
+            편의점 결제 이용 시 아래 `valid_hours`, `due_date` 두 파라미터 중 하나는 필수입니다.
+
+            <Parameter.Details>
+              - valid_hours?: integer
+
+                **유효 시간**
+
+                이니시스 일본결제의 경우 일시불, 3, 5, 6, 10, 12개월만 지정 가능합니다.
+
+              - due_date?: string
+
+                **만료 시점**
+
+                시간은 ISO8601 형식으로 입력해야 합니다.
 
             </Parameter.Details>
         </Parameter.Details>
@@ -310,6 +339,12 @@ KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 
                     - `blue4`
                     - `blue5`
                     - `blue6`
+
+                  - logoUrl?: string
+
+                    **가맹점 로고 이미지 URL**
+
+                    69\*20 픽셀 크기의 이미지 URL
                 </Parameter.Details>
             </Parameter.Details>
         </Parameter.Details>
@@ -368,8 +403,8 @@ KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 
 
         **결제수단 구분코드**
 
-        - card (카드)
-        - paypay (PayPay)
+        - `card` (카드)
+        - `paypay` (PayPay)
 
       - merchant\_uid: string
 
@@ -411,8 +446,6 @@ KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 
 
         **주문자 이메일**
 
-        편의점 결제 시 해당 메일로 입금 요청 메일이 발송됩니다.
-
       - buyer\_tel?: string
 
         **주문자 연락처**
@@ -423,7 +456,7 @@ KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 
           - display?: object
 
             <Parameter.Details>
-              - card\_quota?: number
+              - card\_quota?: number[]
 
                 **카드 할부 개월수 리스트**
 
@@ -465,6 +498,12 @@ KSNET 결제창을 호출할 수 있습니다. **결제결과**는 PC의 경우 
                     - `blue4`
                     - `blue5`
                     - `blue6`
+
+                  - logoUrl?: string
+
+                    **가맹점 로고 이미지 URL**
+
+                    69\*20 픽셀 크기의 이미지 URL
                 </Parameter.Details>
             </Parameter.Details>
         </Parameter.Details>
