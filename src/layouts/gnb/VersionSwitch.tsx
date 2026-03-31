@@ -47,9 +47,15 @@ export function VersionSwitch(props: VersionSwitchProps) {
               ["/opi/", "/sdk/"].some((path) =>
                 location.pathname.startsWith(path),
               )
-            )
-              return;
-            else navigate("/");
+            ) {
+              if (
+                props.docData?.targetVersions &&
+                !props.docData.targetVersions.includes(newVersion)
+              ) {
+                const match = location.pathname.match(/^\/(\w+)\/(\w+)\//);
+                navigate(match ? `/${match[1]}/${match[2]}/readme` : "/");
+              }
+            } else navigate("/");
           }}
           class={clsx(
             "flex cursor-pointer select-none overflow-hidden whitespace-pre rounded-md bg-slate-1 p-1 text-center text-[13px] text-slate-5 font-medium leading-[15.6px] <md:p-.5",
