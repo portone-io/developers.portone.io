@@ -24,9 +24,7 @@ export function navigateAfterVersionSwitch(options: {
 
   if (mappedPath) {
     navigate(mappedPath);
-  } else if (
-    ["/opi/", "/sdk/"].some((path) => pathname.startsWith(path))
-  ) {
+  } else if (["/opi/", "/sdk/"].some((path) => pathname.startsWith(path))) {
     if (targetVersions && !targetVersions.includes(newVersion)) {
       const match = pathname.match(/^\/(\w+)\/(\w+)\//);
       navigate(match ? `/${match[1]}/${match[2]}` : "/");
