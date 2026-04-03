@@ -28,7 +28,10 @@ const getExplicitApiSystemVersion = (
 const getExplicitDocsSystemVersion = (
   pathname: string,
 ): SystemVersion | undefined => {
-  const versions = versionMap[pathname];
+  const normalizedPathname = pathname.endsWith("/")
+    ? pathname.slice(0, -1)
+    : pathname;
+  const versions = versionMap[normalizedPathname];
   if (versions?.length === 1) return versions[0];
   return undefined;
 };

@@ -53,7 +53,7 @@ export function VersionSwitch(props: VersionSwitchProps) {
                 !props.docData.targetVersions.includes(newVersion)
               ) {
                 const match = location.pathname.match(/^\/(\w+)\/(\w+)\//);
-                navigate(match ? `/${match[1]}/${match[2]}/readme` : "/");
+                navigate(match ? `/${match[1]}/${match[2]}` : "/");
               }
             } else navigate("/");
           }}
