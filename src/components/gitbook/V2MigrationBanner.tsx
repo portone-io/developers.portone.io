@@ -22,9 +22,9 @@ const messages: Record<
   }
 > = {
   ko: {
-    v1Only: "이 문서는 V1 전용입니다.",
-    recommendV2: "최신 V2 버전 사용을 권장합니다.",
-    viewV2Doc: "V2 문서 보기",
+    v1Only: "이 문서는 V1(구 아임포트) 연동 고객사 대상입니다.",
+    recommendV2: "신규 연동의 경우 V2 버전 사용을 권장합니다.",
+    viewV2Doc: "V2로 이동하기",
   },
 };
 
@@ -37,9 +37,9 @@ export default function V2MigrationBanner(props: Props): JSXElement {
   return (
     <Show when={systemVersion() === "v1"}>
       <Hint style="info">
-        <div class="flex flex-col gap-2">
-          <p>
-            <strong>{msg().v1Only}</strong> {msg().recommendV2}
+        <div class="flex flex-col items-start gap-2">
+          <p class="text-[15px] text-slate-900 font-medium">
+            {msg().v1Only} {msg().recommendV2}
           </p>
           <button
             type="button"
@@ -56,7 +56,7 @@ export default function V2MigrationBanner(props: Props): JSXElement {
                 targetVersions: props.targetVersions,
               });
             }}
-            class="inline-flex items-center gap-1 text-blue-600 font-500 hover:text-blue-700"
+            class="inline-flex items-center gap-1 gap-1 border border-slate-300 rounded-md bg-white px-[12px] py-[7px] text-[13px]"
           >
             {msg().viewV2Doc}
             <span class="i-ic-baseline-arrow-forward"></span>
