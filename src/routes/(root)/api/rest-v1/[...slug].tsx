@@ -5,14 +5,7 @@ import {
   useNavigate,
   useParams,
 } from "@solidjs/router";
-import {
-  createEffect,
-  createMemo,
-  Match,
-  onMount,
-  Show,
-  Switch,
-} from "solid-js";
+import { createEffect, createMemo, Match, Show, Switch } from "solid-js";
 
 import V2MigrationBanner from "~/components/gitbook/V2MigrationBanner";
 import Hint from "~/components/Hint";
@@ -29,7 +22,6 @@ import {
   loadOverviewData,
 } from "~/layouts/rest-api/schema-utils/load-schema";
 import BackwardCompatibilityContent from "~/routes/(root)/api/backward-compatibility.mdx";
-import { useSystemVersion } from "~/state/system-version";
 
 import V1Auth from "./_components/v1auth.mdx";
 
@@ -48,15 +40,10 @@ export const route = {
 } satisfies RouteDefinition;
 
 export default function ApiV1Docs() {
-  const { setSystemVersion } = useSystemVersion();
   const params = useParams<{ slug: string }>();
   const currentSection = createMemo(() => params.slug || "overview");
   const navData = createAsync(() => Promise.resolve(loadNavData("v1")), {
     deferStream: true,
-  });
-
-  onMount(() => {
-    setSystemVersion("v1");
   });
 
   const canonicalUrl = createMemo(

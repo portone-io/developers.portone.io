@@ -4,15 +4,19 @@ import {
   createEffect,
   createResource,
   type JSXElement,
+  untrack,
   useContext,
 } from "solid-js";
 import Cookies from "universal-cookie";
 
 import { SystemVersion } from "~/type";
 
+import { defaultSystemVersion } from "./constants";
 import { determineServerSystemVersion } from "./determineSystemVersion";
-
-export const defaultSystemVersion = "v2" as SystemVersion;
+import {
+  resolveSystemVersion,
+  shouldSyncSystemVersionQuery,
+} from "./resolveSystemVersion";
 
 const SystemVersionContext = createContext({
   systemVersion: () => defaultSystemVersion,
@@ -31,16 +35,30 @@ export function SystemVersionProvider(props: { children: JSXElement }) {
   const isRouting = useIsRouting();
 
   createEffect(() => {
+    const pathname = location.pathname;
+    const queryVersion = params.v;
+    const fallbackVersion = untrack(systemVersion);
+
+    const resolved = resolveSystemVersion({
+      pathname,
+      queryVersion,
+      fallbackVersion,
+    });
+    if (resolved !== untrack(systemVersion)) {
+      setSystemVersion(resolved);
+    }
+  });
+
+  createEffect(() => {
+    const pathname = location.pathname;
     const v = systemVersion();
     const cookies = new Cookies(null, { path: "/" });
     cookies.set("systemVersion", v);
 
-    void params.v; // subscribe to params
     if (
       !isRouting() &&
-      [/^\/docs\//, /^\/api\//, /^\/opi\//].some((regex) =>
-        regex.test(location.pathname),
-      )
+      shouldSyncSystemVersionQuery(pathname) &&
+      params.v !== v
     ) {
       setParams({ v }, { replace: true });
     }

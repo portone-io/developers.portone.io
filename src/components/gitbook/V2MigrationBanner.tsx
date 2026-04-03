@@ -4,15 +4,13 @@ import { createMemo, type JSXElement, Show, startTransition } from "solid-js";
 import Hint from "~/components/Hint";
 import type { DocsEntry } from "~/content/config";
 import { useSystemVersion } from "~/state/system-version";
-import type { Lang } from "~/type";
-
-const pathMappings = {
-  "/api/rest-v1": "/api/rest-v2",
-};
+import { navigateAfterVersionSwitch } from "~/state/system-version/navigate";
+import type { Lang, SystemVersion } from "~/type";
 
 interface Props {
   lang: Lang;
   versionVariants?: DocsEntry["versionVariants"];
+  targetVersions?: SystemVersion[];
 }
 
 const messages: Record<
@@ -50,19 +48,13 @@ export default function V2MigrationBanner(props: Props): JSXElement {
                 setSystemVersion("v2");
               });
 
-              const mappedPath =
-                Object.entries(pathMappings).find(([from]) =>
-                  location.pathname.startsWith(from),
-                )?.[1] ??
-                (props.versionVariants?.v2 && props.versionVariants.v2);
-              if (mappedPath) navigate(mappedPath);
-              else if (
-                ["/opi/", "/sdk/"].some((path) =>
-                  location.pathname.startsWith(path),
-                )
-              )
-                return;
-              else navigate("/");
+              navigateAfterVersionSwitch({
+                pathname: location.pathname,
+                newVersion: "v2",
+                navigate,
+                versionVariants: props.versionVariants,
+                targetVersions: props.targetVersions,
+              });
             }}
             class="inline-flex items-center gap-1 text-blue-600 font-500 hover:text-blue-700"
           >

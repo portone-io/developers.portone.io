@@ -161,6 +161,7 @@ async function generate(watch = false) {
   await writeIndex(collections, outDir);
   await writeThumbnail(collections, path.join(outDir, "client"));
   await writeTitleMap(collections, path.join(outDir, "client"));
+  await writeVersionMap(collections, path.join(outDir, "client"));
   await writeNavMenu(collections, path.join(outDir, "client"));
   if (!watch) return () => {};
 
@@ -195,6 +196,7 @@ async function generate(watch = false) {
               await writeIndex(collections, outDir);
               await writeThumbnail(collections, path.join(outDir, "client"));
               await writeTitleMap(collections, path.join(outDir, "client"));
+              await writeVersionMap(collections, path.join(outDir, "client"));
               await writeNavMenu(collections, path.join(outDir, "client"));
             } else {
               for (const [slug, entry] of newCollection.entries) {
@@ -203,6 +205,7 @@ async function generate(watch = false) {
               await writeCollection(name, collection, outDir);
               await writeThumbnail(collections, path.join(outDir, "client"));
               await writeTitleMap(collections, path.join(outDir, "client"));
+              await writeVersionMap(collections, path.join(outDir, "client"));
               await writeNavMenu(collections, path.join(outDir, "client"));
             }
           },
@@ -323,6 +326,37 @@ export const titleMap: Record<string, string> = ${JSON.stringify(Object.fromEntr
 
   await fs.mkdir(outDir, { recursive: true });
   await fs.writeFile(path.join(outDir, "titleMap.ts"), content);
+}
+
+async function writeVersionMap(
+  collections: Map<string, Collection>,
+  outDir: string,
+) {
+  const entries: [string, SystemVersion[]][] = [];
+
+  for (const name of docsNavNames) {
+    const collection = collections.get(name);
+    if (!collection) continue;
+
+    for (const entry of collection.entries.values()) {
+      const frontmatter = entry.frontmatter as {
+        targetVersions?: SystemVersion[];
+      };
+      if (!frontmatter.targetVersions) continue;
+      entries.push([`/${name}/${entry.slug}`, frontmatter.targetVersions]);
+    }
+  }
+
+  const content = `// @vinxi-ignore-style-collection
+/* eslint-disable */
+
+import type { SystemVersion } from "~/type";
+
+export const versionMap: Record<string, SystemVersion[]> = ${JSON.stringify(Object.fromEntries(entries))};
+`;
+
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.writeFile(path.join(outDir, "versionMap.ts"), content);
 }
 
 async function writeNavMenu(
