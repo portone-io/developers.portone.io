@@ -205,6 +205,7 @@ const DefaultLayout = (
           <V2MigrationBanner
             lang={props.params.lang}
             versionVariants={props.frontmatter.versionVariants}
+            targetVersions={props.frontmatter.targetVersions}
           />
         </Show>
         <MDXProvider components={prose}>{props.children}</MDXProvider>
