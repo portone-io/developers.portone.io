@@ -44,8 +44,8 @@ SDK 없이 연동할 경우 WebView를 직접 구성해야 합니다.
 
 ### 웹 결제와의 차이점
 
-웹 브라우저에서는 `PortOne.requestPayment()`의 Promise 반환값으로 결과를 받을 수 있지만,
-모바일 WebView에서는 **리다이렉트 방식**을 사용해야 합니다.
+`PortOne.requestPayment()`는 결제창이 뜨기 전에 발생하는 오류(파라미터 형식 오류, 네트워크 통신 실패 등)를 Promise에서 throw합니다.
+이는 모바일 WebView에서도 동일하지만, 결제 결과는 웹 브라우저와 달리 **리다이렉트 방식**으로 받아야 합니다.
 
 ```typescript
 PortOne.requestPayment({
@@ -238,6 +238,29 @@ OS 정책상 실행 가능한 외부 앱을 사전에 선언해야 하며, **이
         </intent>
       </queries>
     </manifest>
+    ```
+
+    앱이 외부 결제 앱에서 복귀할 수 있도록 커스텀 URL scheme도 등록합니다.
+    결제를 시작하는 Activity의 `intent-filter`에 앱의 URL scheme을 추가합니다.
+
+    ```xml title="AndroidManifest.xml"
+    <application ...>
+      <activity
+        android:name=".MainActivity"
+        android:launchMode="singleTask"
+        android:exported="true">
+        <intent-filter>
+          <action android:name="android.intent.action.MAIN" />
+          <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        <intent-filter>
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="myapp" />
+        </intent-filter>
+      </activity>
+    </application>
     ```
   </Tabs.Tab>
 
