@@ -115,7 +115,9 @@ export function Category(props: CategoryProps) {
   return (
     <section id={props.section} class="flex flex-col scroll-mt-5.2rem">
       <div>
-        <prose.h2 ref={headingRef}>{props.title}</prose.h2>
+        <prose.h2 ref={headingRef} data-search-category>
+          {props.title}
+        </prose.h2>
       </div>
       {descriptionElement()}
       <div class="my-10 flex flex-col gap-4">{collapsibleEndpointList()}</div>

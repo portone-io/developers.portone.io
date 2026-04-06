@@ -189,6 +189,7 @@ const DefaultLayout = (
   }>,
 ) => {
   const { targetVersions } = props.frontmatter;
+
   return (
     <div class="min-w-0 flex flex-1 justify-center gap-5">
       <article class="mb-40 mt-4 min-w-0 flex shrink-1 basis-200 flex-col pl-5 text-slate-7 <lg:pl-4 <lg:pr-4">
@@ -204,6 +205,7 @@ const DefaultLayout = (
           <V2MigrationBanner
             lang={props.params.lang}
             versionVariants={props.frontmatter.versionVariants}
+            targetVersions={props.frontmatter.targetVersions}
           />
         </Show>
         <MDXProvider components={prose}>{props.children}</MDXProvider>

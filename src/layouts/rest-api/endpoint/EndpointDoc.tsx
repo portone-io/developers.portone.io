@@ -82,7 +82,11 @@ export default function EndpointDoc(props: EndpointDocProps) {
       </prose.h3>
       <MethodLine method={props.endpoint.method} path={props.endpoint.path} />
       <Show when={description()}>
-        <div class="text-sm text-slate-5" innerHTML={description()} />
+        <div
+          data-search-description
+          class="text-sm text-slate-5"
+          innerHTML={description()}
+        />
       </Show>
     </div>
   );
@@ -93,7 +97,11 @@ export default function EndpointDoc(props: EndpointDocProps) {
       left={() => (
         <div class="flex flex-col gap-6">
           <Show when={description() && !props.collapsible}>
-            <div class="p-2 text-sm" innerHTML={description()} />
+            <div
+              data-search-description
+              class="p-2 text-sm"
+              innerHTML={description()}
+            />
           </Show>
           <RequestDoc
             basepath={props.basepath}
@@ -155,7 +163,10 @@ export interface MethodLineProps {
 }
 export function MethodLine(props: MethodLineProps) {
   return (
-    <span class="inline-flex items-center self-start gap-1 rounded-full bg-slate-1 pr-2 text-xs opacity-70">
+    <span
+      data-search-method
+      class="inline-flex items-center self-start gap-1 rounded-full bg-slate-1 pr-2 text-xs opacity-70"
+    >
       <MethodBadge method={props.method} />
       <span class="ml-1 font-normal font-mono">{props.path}</span>
     </span>
