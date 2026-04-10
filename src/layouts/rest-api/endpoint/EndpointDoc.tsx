@@ -38,20 +38,20 @@ export default function EndpointDoc(props: EndpointDocProps) {
   const endpointId = createMemo(() => getEndpointRepr(props.endpoint));
 
   const header = () => (
-    <div class="grid mb-4 items-center gap-y-4 lg:grid-cols-2">
+    <div class="mb-4 grid items-center gap-y-4 lg:grid-cols-2">
       <div class="flex items-center lg:order-last lg:justify-end">
         <MethodLine method={props.endpoint.method} path={props.endpoint.path} />
       </div>
-      <prose.h3 id={endpointId()} class="!mt-0 target:text-orange-5">
+      <prose.h3 id={endpointId()} class="target:text-orange-5 !mt-0">
         <div class="flex items-center gap-2">
           <span>{props.endpoint.title}</span>
           <Show when={props.endpoint.deprecated}>
-            <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
+            <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
               deprecated
             </span>
           </Show>
           <Show when={props.endpoint.unstable}>
-            <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
+            <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
               unstable
             </span>
           </Show>
@@ -64,17 +64,17 @@ export default function EndpointDoc(props: EndpointDocProps) {
     <div class="flex flex-col gap-1">
       <prose.h3
         id={endpointId()}
-        class="!mb-0 !mt-0 !text-base target:text-orange-5"
+        class="target:text-orange-5 !mt-0 !mb-0 !text-base"
       >
         <div class="flex items-center gap-2">
           <span>{props.endpoint.title}</span>
           <Show when={props.endpoint.deprecated}>
-            <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
+            <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
               deprecated
             </span>
           </Show>
           <Show when={props.endpoint.unstable}>
-            <span class="rounded bg-slate-1 px-2 text-sm uppercase opacity-70">
+            <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
               unstable
             </span>
           </Show>
@@ -84,7 +84,7 @@ export default function EndpointDoc(props: EndpointDocProps) {
       <Show when={description()}>
         <div
           data-search-description
-          class="text-sm text-slate-5"
+          class="text-slate-5 text-sm"
           innerHTML={description()}
         />
       </Show>
@@ -139,15 +139,15 @@ export default function EndpointDoc(props: EndpointDocProps) {
       <Collapsible
         open={props.open}
         onOpenChange={props.onOpenChange}
-        class="flex flex-col [&[data-expanded]_.chevron]:(transform-origin-c transform-rotate-90)"
+        class="flex flex-col [&[data-expanded]_.chevron]:origin-center [&[data-expanded]_.chevron]:rotate-90"
       >
         <Collapsible.Trigger
           as="a"
           href={`#${encodeURIComponent(endpointId())}`}
           class="relative w-full cursor-pointer text-left"
         >
-          <div class="chevron absolute top-1 h-4 w-4 transition-transform -left-4">
-            <i class="i-ic-sharp-chevron-right inline-block h-4 w-4 text-slate-4" />
+          <div class="chevron absolute top-1 -left-4 h-4 w-4 transition-transform">
+            <i class="icon-[ic--sharp-chevron-right] text-slate-4 inline-block h-4 w-4" />
           </div>
           {collapsibleHeader()}
         </Collapsible.Trigger>
@@ -165,10 +165,10 @@ export function MethodLine(props: MethodLineProps) {
   return (
     <span
       data-search-method
-      class="inline-flex items-center self-start gap-1 rounded-full bg-slate-1 pr-2 text-xs opacity-70"
+      class="bg-slate-1 inline-flex items-center gap-1 self-start rounded-full pr-2 text-xs opacity-70"
     >
       <MethodBadge method={props.method} />
-      <span class="ml-1 font-normal font-mono">{props.path}</span>
+      <span class="ml-1 font-mono font-normal">{props.path}</span>
     </span>
   );
 }
@@ -227,11 +227,11 @@ function RequestDoc(props: RequestDocProps) {
     <Show
       when={showPath || showQuery || showBody}
       fallback={
-        <div class="text-xs text-slate-5 font-bold">요청 인자 없음</div>
+        <div class="text-slate-5 text-xs font-bold">요청 인자 없음</div>
       }
     >
       <div class="flex flex-col gap-2">
-        <prose.h4 class="border-b pb-1 !mt-0">Request</prose.h4>
+        <prose.h4 class="!mt-0 border-b pb-1">Request</prose.h4>
         <Show when={isQueryOrBody()}>
           <prose.h5 class="text-slate-5">
             body를 쿼리 문자열에 포함시켜 보낼 수 있습니다.{" "}
@@ -286,7 +286,7 @@ function ResponseDoc(props: ResponseDocProps) {
 
   return (
     <div class="flex flex-col gap-2">
-      <prose.h4 class="border-b pb-1 !mt-0">Response</prose.h4>
+      <prose.h4 class="!mt-0 border-b pb-1">Response</prose.h4>
       <Show when={successResponse()}>
         {(response) => {
           const [_statusCode, schemata] = response();

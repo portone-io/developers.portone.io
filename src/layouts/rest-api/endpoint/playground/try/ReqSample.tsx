@@ -81,7 +81,7 @@ export default function ReqSample(props: ReqSampleProps) {
           <span class="flex-shrink-0">Request Sample</span>
           <div class="flex-shrink-0">
             <select
-              class="rounded-l bg-slate-1 px-2 py-1 font-medium"
+              class="bg-slate-1 rounded-l px-2 py-1 font-medium"
               value={targetKey()}
               onChange={(e) => {
                 setTargetKey(String(e.currentTarget.value));
@@ -92,7 +92,7 @@ export default function ReqSample(props: ReqSampleProps) {
               </For>
             </select>
             <select
-              class="rounded-r bg-slate-1 px-2 py-1 font-medium"
+              class="bg-slate-1 rounded-r px-2 py-1 font-medium"
               value={clientKey()}
               onChange={(e) => setClientKey(String(e.currentTarget.value))}
             >
@@ -106,7 +106,7 @@ export default function ReqSample(props: ReqSampleProps) {
     >
       <Show
         when={snippet()}
-        fallback={<span class="text-xs text-slate-4">N/A</span>}
+        fallback={<span class="text-slate-4 text-xs">N/A</span>}
       >
         {(snippet) => (
           <MonacoEditor

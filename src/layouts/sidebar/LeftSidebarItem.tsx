@@ -80,14 +80,14 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
             <LinkTitle title={props.title} isActive={props.isActive} />
           </A>
           <button
-            class="h-full flex items-center p-2"
+            class="flex h-full items-center p-2"
             onClick={() => setIsOpen((prev) => !prev)}
           >
             <i
               class="inline-block"
               classList={{
-                "i-ic-baseline-keyboard-arrow-down": isOpen(),
-                "i-ic-baseline-keyboard-arrow-right": !isOpen(),
+                "icon-[ic--baseline-keyboard-arrow-down]": isOpen(),
+                "icon-[ic--baseline-keyboard-arrow-right]": !isOpen(),
               }}
             />
           </button>
@@ -112,7 +112,7 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
                           class={clsx(
                             "pl-2",
                             isActive() &&
-                              "before:pointer-events-none before:absolute before:inset-y-0 before:right-0 before:block before:w-[1px] before:bg-portone before:content-[''] before:-left-[1px]",
+                              "before:bg-portone before:pointer-events-none before:absolute before:inset-y-0 before:right-0 before:-left-[1px] before:block before:w-[1px] before:content-['']",
                           )}
                         >
                           <LeftSidebarItem {...item} />
@@ -204,7 +204,7 @@ export function LinkTitle(props: LinkTitleProps) {
         </Show>
       </span>
       <Show when={props.isExternal}>
-        <i class="i-ic-baseline-open-in-new inline-block opacity-70" />
+        <i class="icon-[ic--baseline-open-in-new] inline-block opacity-70" />
       </Show>
     </span>
   );

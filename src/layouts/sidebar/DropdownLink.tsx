@@ -26,9 +26,9 @@ export default function DropdownLink(props: DropdownLinkProps) {
   const [showItems, setShowItems] = createSignal(false);
 
   return (
-    <div class="relative h-full w-full flex flex-col cursor-default">
+    <div class="relative flex h-full w-full cursor-default flex-col">
       <button
-        class="flex flex-1 items-center gap-2 border-1 border-slate-3 rounded-6px p-2 px-4 text-slate-600"
+        class="border-slate-3 flex flex-1 items-center gap-2 rounded-[6px] border p-2 px-4 text-slate-600"
         onClick={() => setShowItems((prev) => !prev)}
       >
         <span>
@@ -39,23 +39,23 @@ export default function DropdownLink(props: DropdownLinkProps) {
         <i
           class="text-xl"
           classList={{
-            "i-ic-baseline-keyboard-arrow-up": showItems(),
-            "i-ic-baseline-keyboard-arrow-down": !showItems(),
+            "icon-[ic--baseline-keyboard-arrow-up]": showItems(),
+            "icon-[ic--baseline-keyboard-arrow-down]": !showItems(),
           }}
         ></i>
       </button>
-      <div class="relative w-full z-dropdown-link">
+      <div class="z-dropdown-link relative w-full">
         <Show when={showItems()}>
-          <div class="absolute w-full flex flex-col border bg-white py-2 shadow-lg">
+          <div class="absolute flex w-full flex-col border bg-white py-2 shadow-lg">
             <For each={props.items}>
               {(item) => (
                 <A
-                  class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
+                  class="hover:bg-slate-1 inline-flex items-center gap-2 px-4 py-2"
                   href={item.link}
                 >
                   <i
                     class={clsx(
-                      "i-ic-baseline-check",
+                      "icon-[ic--baseline-check]",
                       props.pathname.startsWith(item.link) || "opacity-0",
                     )}
                   />

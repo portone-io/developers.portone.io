@@ -14,23 +14,23 @@ export function CodeIcon(props: CodeIconProps) {
     switch (ext()) {
       case "tsx":
       case "jsx":
-        return "i-vscode-icons-file-type-reactjs";
+        return "icon-[vscode-icons--file-type-reactjs]";
       case "ts":
-        return "i-vscode-icons-file-type-typescript";
+        return "icon-[vscode-icons--file-type-typescript]";
       case "js":
-        return "i-vscode-icons-file-type-js";
+        return "icon-[vscode-icons--file-type-js]";
       case "json":
-        return "i-vscode-icons-file-type-json";
+        return "icon-[vscode-icons--file-type-json]";
       case "css":
-        return "i-vscode-icons-file-type-css";
+        return "icon-[vscode-icons--file-type-css]";
       case "html":
-        return "i-vscode-icons-file-type-html";
+        return "icon-[vscode-icons--file-type-html]";
       case "py":
-        return "i-vscode-icons-file-type-python";
+        return "icon-[vscode-icons--file-type-python]";
       case "kt":
-        return "i-vscode-icons-file-type-kotlin";
+        return "icon-[vscode-icons--file-type-kotlin]";
       default:
-        return "i-vscode-icons-default-file";
+        return "icon-[vscode-icons--default-file]";
     }
   });
 

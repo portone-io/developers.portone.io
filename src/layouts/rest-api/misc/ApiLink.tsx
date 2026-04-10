@@ -19,7 +19,7 @@ export default function ApiLink({
   const href = `${basepath}/${section}#${encodeURIComponent(id)}`;
   return (
     <a
-      class="border-b-2 transition-colors hover:border-orange-2 hover:text-orange-5"
+      class="hover:border-orange-2 hover:text-orange-5 border-b-2 transition-colors"
       href={href}
     >
       {apiName && <strong>{apiName} </strong>}

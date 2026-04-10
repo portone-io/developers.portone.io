@@ -23,13 +23,13 @@ export default function Hint(props: ParentProps<Props>) {
     () =>
       `shrink-0 text-2xl ${
         props.style === "info"
-          ? "i-ic-outline-info text-blue-600"
+          ? "icon-[ic--outline-info] text-blue-600"
           : props.style === "warning"
-            ? "i-ic-outline-warning text-orange-7"
+            ? "icon-[ic--outline-warning] text-orange-7"
             : props.style === "success"
-              ? "i-ic-sharp-check-circle-outline text-green-6"
+              ? "icon-[ic--sharp-check-circle-outline] text-green-6"
               : props.style === "danger"
-                ? "i-ic-outline-warning text-red-6"
+                ? "icon-[ic--outline-warning] text-red-6"
                 : ""
       }`,
   );

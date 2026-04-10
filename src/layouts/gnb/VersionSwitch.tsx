@@ -41,7 +41,7 @@ export function VersionSwitch(props: VersionSwitchProps) {
             });
           }}
           class={clsx(
-            "flex cursor-pointer select-none overflow-hidden whitespace-pre rounded-md bg-slate-1 p-1 text-center text-[13px] text-slate-5 font-medium leading-[15.6px] <md:p-.5",
+            "bg-slate-1 text-slate-5 flex cursor-pointer overflow-hidden rounded-md p-1 text-center text-[13px] leading-[15.6px] font-medium whitespace-pre select-none max-md:p-0.5",
             props.class,
           )}
         >
@@ -57,7 +57,7 @@ function getVersionClass(
   thisVersion: SystemVersion,
   systemVersion: SystemVersion,
 ) {
-  return `px-2 py-1 <md:py-.5 <md:px-2 flex-1 rounded-[4px] ${
+  return `px-2 py-1 max-md:py-0.5 max-md:px-2 flex-1 rounded-[4px] ${
     systemVersion === thisVersion ? "bg-portone text-white" : ""
   }`;
 }

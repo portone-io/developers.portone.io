@@ -11,7 +11,7 @@ export default function ResExample({ example }: ResExampleProps) {
       {example ? (
         <JsonViewer jsonText={JSON.stringify(example, null, 2) + "\n"} />
       ) : (
-        <span class="p-4 text-xs text-slate-4 font-bold">N/A</span>
+        <span class="text-slate-4 p-4 text-xs font-bold">N/A</span>
       )}
     </Card>
   );

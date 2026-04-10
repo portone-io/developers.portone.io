@@ -22,7 +22,7 @@ export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
     props.onChange(newReqHeader);
   }
   return (
-    <div class="absolute h-full w-full flex flex-col gap-1 overflow-y-scroll">
+    <div class="absolute flex h-full w-full flex-col gap-1 overflow-y-scroll">
       <div class="sticky top-0 grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
         <div class="bg-slate-1 px-2 py-1">Key</div>
         <div class="bg-slate-1 px-2 py-1">Value</div>
@@ -32,31 +32,31 @@ export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
         {({ key: [key, setKey], value: [value, setValue] }, index) => (
           <div class="grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
             <input
-              class="w-full border border-slate-2 px-2 py-1"
+              class="border-slate-2 w-full border px-2 py-1"
               value={key()}
               onInput={(e) => {
                 setKey(e.currentTarget.value);
               }}
             />
             <input
-              class="w-full border border-slate-2 px-2 py-1"
+              class="border-slate-2 w-full border px-2 py-1"
               value={value()}
               onInput={(e) => setValue(e.currentTarget.value)}
             />
             <button
-              class="inline-flex items-center text-lg text-slate-3 hover:text-slate-7"
+              class="text-slate-3 hover:text-slate-7 inline-flex items-center text-lg"
               onClick={() => delReqHeader(index())}
             >
-              <i class="i-ic-twotone-delete-forever" />
+              <i class="icon-[ic--twotone-delete-forever]" />
             </button>
           </div>
         )}
       </For>
       <button
-        class="sticky bottom-0 mr-1.75rem inline-flex items-center justify-center bg-slate-1 py-1 text-lg opacity-50 hover:opacity-100"
+        class="mr-1.75rem bg-slate-1 sticky bottom-0 inline-flex items-center justify-center py-1 text-lg opacity-50 hover:opacity-100"
         onClick={addReqHeader}
       >
-        <i class="i-ic-baseline-plus" />
+        <i class="icon-[ic--baseline-plus]" />
       </button>
     </div>
   );

@@ -112,7 +112,7 @@ export default function TableOfContents(props: Props) {
   });
 
   return (
-    <ul class="m-0 flex flex-col list-none gap-1 p-0">
+    <ul class="m-0 flex list-none flex-col gap-1 p-0">
       <For each={headings()}>
         {(heading) => (
           <Item
@@ -145,7 +145,7 @@ function Item(props: {
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "block break-keep py-1 text-[14px] font-medium leading-5",
+          "block py-1 text-[14px] leading-5 font-medium break-keep",
           props.isActive ? "text-slate-8" : "text-slate-4",
         )}
       >
@@ -194,9 +194,9 @@ function SubItem(props: {
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "transition-[padding-top,padding-bottom] block break-keep py-1 text-[14px] font-medium leading-5 duration-300 hover:text-portone",
+          "hover:text-portone block py-1 text-[14px] leading-5 font-medium break-keep transition-[padding-top,padding-bottom] duration-300",
           props.isActive
-            ? "py-8px text-portone"
+            ? "text-portone py-[8px]"
             : props.isParentActive
               ? "text-slate-4"
               : "text-slate-3",
@@ -214,7 +214,7 @@ function SubItem(props: {
         </div>
       </a>
       <Show when={props.heading.children.length > 0}>
-        <ul class="transition-[padding-left] m-0 block list-none p-0 duration-300">
+        <ul class="m-0 block list-none p-0 transition-[padding-left] duration-300">
           <For each={props.heading.children}>
             {(heading) => (
               <SubItem

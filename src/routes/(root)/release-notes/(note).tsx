@@ -57,7 +57,7 @@ export default function NoteLayout(props: { children: JSXElement }) {
             <Metadata title={title()} ogType="article" />
             <JsonLd data={articleJsonLd()} />
             <prose.h1>{title()}</prose.h1>
-            <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
+            <p class="text-gray my-4 text-[18px] leading-[28.8px] font-[400]">
               {description()}
             </p>
             <Banner />

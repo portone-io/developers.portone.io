@@ -126,7 +126,7 @@ export default function Req(props: ReqProps) {
         <>
           <span>Request</span>
           <button
-            class="border border-slate-2 rounded bg-slate-1 px-4 font-bold active:bg-white hover:bg-slate-2"
+            class="border-slate-2 bg-slate-1 hover:bg-slate-2 rounded border px-4 font-bold active:bg-white"
             onClick={() =>
               props.execute(async () => {
                 const headers = kvListToObject(reqHeader());
@@ -165,7 +165,7 @@ export default function Req(props: ReqProps) {
         </>
       }
     >
-      <div class="grid grid-rows-[auto_minmax(0,1fr)] flex-1 gap-3 p-4">
+      <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-3 p-4">
         <Tabs
           tabs={[
             reqPathParams().params.length && pathTab,

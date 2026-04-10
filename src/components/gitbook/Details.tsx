@@ -31,7 +31,7 @@ export default function Details(
       open={open()}
       onOpenChange={setOpen}
       class={clsx(
-        "group/details my-4 border rounded-md [&[data-expanded]>button>.chevron]:(transform-origin-c transform-rotate-90) hover:border-orange",
+        "group/details hover:border-orange my-4 rounded-md border [&[data-expanded]>button>.chevron]:origin-center [&[data-expanded]>button>.chevron]:rotate-90",
         locals.class,
       )}
     >
@@ -49,12 +49,12 @@ Details.Summary = function DetailsSummary(
     <Collapsible.Trigger
       {...others}
       class={clsx(
-        "w-full flex cursor-pointer items-center gap-3 border-l-4 border-l-transparent px-4 py-2",
+        "flex w-full cursor-pointer items-center gap-3 border-l-4 border-l-transparent px-4 py-2",
         locals.class,
       )}
     >
       <div class="chevron h-5 w-5 transition-transform" role="img">
-        <i class="i-ic-sharp-chevron-right inline-block group-hover/details:text-orange"></i>
+        <i class="icon-[ic--sharp-chevron-right] group-hover/details:text-orange inline-block"></i>
       </div>
       <div class="my-2">{locals.children}</div>
     </Collapsible.Trigger>
@@ -69,7 +69,7 @@ Details.Content = function DetailsContent(
   return (
     <Collapsible.Content {...others} class={clsx(locals.class)}>
       <Suspense>
-        <div class="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-l-4 border-l-transparent px-4 pb-2 -mt-2">
+        <div class="-mt-2 grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-l-4 border-l-transparent px-4 pb-2">
           <div class="h-5 w-5"></div>
           <div class="w-full">{props.children}</div>
         </div>

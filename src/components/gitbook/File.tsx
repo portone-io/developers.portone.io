@@ -15,8 +15,8 @@ export default function File(props: Props) {
   return (
     <div>
       <a href={props.src} download={filename()} target="_blank">
-        <div class="m-4 flex items-center gap-4 border rounded bg-white p-4 transition-transform hover:translate-y-[-2px] hover:text-orange-5 hover:drop-shadow-[0_12px_13px_rgba(0,0,0,0.02)]">
-          <i class="i-ic-baseline-download text-2xl" role="img"></i>
+        <div class="hover:text-orange-5 m-4 flex items-center gap-4 rounded border bg-white p-4 transition-transform hover:translate-y-[-2px] hover:drop-shadow-[0_12px_13px_rgba(0,0,0,0.02)]">
+          <i class="icon-[ic--baseline-download] text-2xl" role="img"></i>
           {props.captionInside ?? filename()}
         </div>
       </a>

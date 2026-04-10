@@ -45,15 +45,15 @@ export default function Tabs(
       class={clsx("my-4 flex flex-col rounded-md", locals.class)}
       defaultValue={untrack(childrenTitles)[0]}
     >
-      <TabsImpl.List class="flex -mb-px">
+      <TabsImpl.List class="-mb-px flex">
         <For each={childrenTitles()}>
           {(title) => (
             <TabsImpl.Trigger
               value={title}
               class={clsx(
                 "border px-4 py-2 text-sm",
-                "data-[selected]:(shrink-0 border-b-white bg-white z-selected-tab)",
-                "[&:not([data-selected])]:(shrink overflow-hidden text-ellipsis whitespace-nowrap bg-slate-1 text-slate)",
+                "data-[selected]:z-selected-tab data-[selected]:shrink-0 data-[selected]:border-b-white data-[selected]:bg-white",
+                "[&:not([data-selected])]:bg-slate-1 [&:not([data-selected])]:text-slate [&:not([data-selected])]:shrink [&:not([data-selected])]:overflow-hidden [&:not([data-selected])]:text-ellipsis [&:not([data-selected])]:whitespace-nowrap",
               )}
             >
               {title}
@@ -65,7 +65,7 @@ export default function Tabs(
         {(title) => (
           <TabsImpl.Content
             value={title}
-            class="border rounded-md rounded-tl-none px-6 py-4 [&:not([data-selected])]:hidden"
+            class="rounded-md rounded-tl-none border px-6 py-4 [&:not([data-selected])]:hidden"
             forceMount
           >
             {children.get(title)?.()}

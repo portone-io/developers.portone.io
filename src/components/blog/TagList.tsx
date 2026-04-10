@@ -17,19 +17,21 @@ export default function TagList(props: Props) {
       >
         <i
           class={clsx(
-            "i-ic-baseline-label inline-block text-slate-4",
-            props.variant === "compact" ? "h-18px text-base" : "h-18px text-lg",
+            "icon-[ic--baseline-label] text-slate-4 inline-block",
+            props.variant === "compact"
+              ? "h-[18px] text-base"
+              : "h-[18px] text-lg",
           )}
         />
         <ul
           class={clsx(
-            "m-0 flex flex-row flex-wrap list-none p-0",
+            "m-0 flex list-none flex-row flex-wrap p-0",
             props.variant === "compact" ? "gap-x-2 gap-y-1" : "gap-x-3 gap-y-2",
           )}
         >
           <For each={props.tags}>
             {(tag) => (
-              <li class="text-slate-4 leading-18px transition-colors hover:text-slate-5">
+              <li class="text-slate-4 hover:text-slate-5 leading-[18px] transition-colors">
                 <a href={`/blog/tags/${encodeURIComponent(tag)}`}>{tag}</a>
               </li>
             )}

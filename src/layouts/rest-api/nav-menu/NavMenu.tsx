@@ -41,23 +41,23 @@ export default function NavMenu(props: Props) {
 
   return (
     <LeftSidebar>
-      <div class="pr-4 pt-5">
+      <div class="pt-5 pr-4">
         <div class="md:hidden">
           <DropdownLink
             pathname={location.pathname}
             items={getDropdownLinks(systemVersion())}
           />
-          <div class="my-4 h-1px bg-slate-200"></div>
+          <div class="my-4 h-[1px] bg-slate-200"></div>
         </div>
       </div>
-      <div class="pb-1 pl-2 pr-6">
+      <div class="pr-6 pb-1 pl-2">
         <VersionSwitch />
       </div>
-      <div class="px-2 pb-2 pt-3 text-lg font-bold">{props.title}</div>
+      <div class="px-2 pt-3 pb-2 text-lg font-bold">{props.title}</div>
       <hr class="mx-4" />
       <nav
         id="nav-menu"
-        class="scrollbar-thin flex flex-1 flex-col gap-2 overflow-y-scroll p-2 text-sm text-slate-6"
+        class="scrollbar-thin text-slate-6 flex flex-1 flex-col gap-2 overflow-y-scroll p-2 text-sm"
       >
         <For each={items()}>
           {(item) => {
@@ -125,7 +125,7 @@ function TopLevelItem(props: TopLevelItemProps) {
     <div>
       <div
         class={clsx(
-          "flex rounded-1.5 tracking-tight hover:bg-slate-1",
+          "hover:bg-slate-1 flex rounded-[0.375rem] tracking-tight",
           props.id === props.currentSection &&
             "bg-slate-1 text-orange-5 font-bold",
         )}
@@ -137,14 +137,14 @@ function TopLevelItem(props: TopLevelItemProps) {
         />
         <Show when={visibleChildren()?.length}>
           <button
-            class="h-full flex items-center p-2"
+            class="flex h-full items-center p-2"
             onClick={() => setIsOpen(!isOpen())}
           >
             <i
               class="inline-block"
               classList={{
-                "i-ic-baseline-keyboard-arrow-right": !isOpen(),
-                "i-ic-baseline-keyboard-arrow-down": isOpen(),
+                "icon-[ic--baseline-keyboard-arrow-right]": !isOpen(),
+                "icon-[ic--baseline-keyboard-arrow-down]": isOpen(),
               }}
             />
           </button>
@@ -183,7 +183,7 @@ function ChildItem(props: ChildItemProps) {
   return (
     <div
       class={clsx(
-        "rounded-1.5 tracking-tight hover:bg-slate-1",
+        "hover:bg-slate-1 rounded-[0.375rem] tracking-tight",
         props.id === props.currentSection &&
           "bg-slate-1 text-orange-5 font-bold",
       )}

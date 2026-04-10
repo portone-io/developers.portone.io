@@ -94,43 +94,43 @@ export default function PostsLayout(props: { children: JSXElement }) {
               ogImageSlug={`blog/posts/${slug()}.png`}
             />
             <JsonLd data={blogPostingJsonLd()} />
-            <div class="mx-auto max-w-[1150px] break-keep pb-50 [&_a]:break-keep">
-              <article class="w-full flex flex-col gap-6 text-17px text-slate-7 <lg:mx-auto md:my-4">
-                <div class="mx-auto max-w-[800px] w-full flex flex-col gap-3 px-4 lg:max-w-none md:px-6">
+            <div class="mx-auto max-w-[1150px] pb-50 break-keep [&_a]:break-keep">
+              <article class="text-slate-7 flex w-full flex-col gap-6 text-[17px] max-lg:mx-auto md:my-4">
+                <div class="mx-auto flex w-full max-w-[800px] flex-col gap-3 px-4 md:px-6 lg:max-w-none">
                   <a
                     href="/blog"
-                    class="mb-4 w-fit flex items-center gap-1 text-sm text-slate-5 font-medium transition-colors hover:text-slate-7"
+                    class="text-slate-5 hover:text-slate-7 mb-4 flex w-fit items-center gap-1 text-sm font-medium transition-colors"
                   >
-                    <i class="i-material-symbols-arrow-left-alt inline-block"></i>
+                    <i class="icon-[material-symbols--arrow-left-alt] inline-block"></i>
                     블로그 목록
                   </a>
-                  <h1 class="break-keep text-balance text-3xl font-bold leading-[1.4]">
+                  <h1 class="text-3xl leading-[1.4] font-bold text-balance break-keep">
                     {post().frontmatter.title}
                   </h1>
                   <div class="flex items-center gap-3">
                     <Show when={post().author}>
                       {(author) => (
-                        <dl class="flex shrink-0 items-center gap-4 <md:py-2">
+                        <dl class="flex shrink-0 items-center gap-4 max-md:py-2">
                           <div class="flex justify-evenly gap-3 whitespace-nowrap">
-                            <dt class="text-lg text-slate-8 font-semibold">
+                            <dt class="text-slate-8 text-lg font-semibold">
                               {author().name}
                             </dt>
-                            <dd class="text-lg text-slate-5">
+                            <dd class="text-slate-5 text-lg">
                               {author().role}
                             </dd>
                           </div>
                         </dl>
                       )}
                     </Show>
-                    <div class="h-16px w-1px bg-slate-3"></div>
-                    <div class="text-lg text-slate-4">
+                    <div class="h-16px bg-slate-3 w-[1px]"></div>
+                    <div class="text-slate-4 text-lg">
                       {format(post().frontmatter.date, "MMM d, yyyy")}
                     </div>
                   </div>
                 </div>
                 <div class="flex justify-between gap-9">
-                  <div class="max-w-[800px] min-w-0 flex flex-col gap-3 px-4 <lg:mx-auto md:px-6">
-                    <div class={clsx(styles.body, "break-keep text-slate-7")}>
+                  <div class="flex max-w-[800px] min-w-0 flex-col gap-3 px-4 max-lg:mx-auto md:px-6">
+                    <div class={clsx(styles.body, "text-slate-7 break-keep")}>
                       <MDXProvider components={prose}>
                         {props.children}
                       </MDXProvider>
@@ -149,25 +149,25 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                 alt={`Avatar image of ${author().name}`}
                                 width={64}
                                 height={64}
-                                class="h-16 w-16 rounded-full bg-slate-2"
+                                class="bg-slate-2 h-16 w-16 rounded-full"
                               />
                             </ProfileImage>
                           </div>
-                          <div class="flex flex-col gap-4.5">
+                          <div class="flex flex-col gap-[1.125rem]">
                             <div class="flex items-center gap-3">
-                              <div class="text-lg text-slate-7 font-medium">
+                              <div class="text-slate-7 text-lg font-medium">
                                 {author().name}
                               </div>
-                              <div class="text-base text-slate-4 font-medium">
+                              <div class="text-slate-4 text-base font-medium">
                                 {author().role}
                               </div>
                             </div>
                             <p>{author().bio}</p>
                             {(author().contacts?.length ?? 0) > 0 && (
-                              <ul class="m-0 flex flex-row list-none gap-6 p-0 text-2xl">
+                              <ul class="m-0 flex list-none flex-row gap-6 p-0 text-2xl">
                                 <For each={author().contacts}>
                                   {(contact) => (
-                                    <li class="text-slate-4 transition-colors hover:text-slate-5">
+                                    <li class="text-slate-4 hover:text-slate-5 transition-colors">
                                       {match(contact)
                                         .with(
                                           { github: P.string },
@@ -175,7 +175,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                             <a
                                               href={github}
                                               aria-label={`GitHub account of ${author().name}`}
-                                              class="i-simple-icons-github inline-block"
+                                              class="icon-[simple-icons--github] inline-block"
                                             />
                                           ),
                                         )
@@ -185,7 +185,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                             <a
                                               href={twitter}
                                               aria-label={`Twitter account of ${author().name}`}
-                                              class="i-simple-icons-x inline-block"
+                                              class="icon-[simple-icons--x] inline-block"
                                             />
                                           ),
                                         )
@@ -195,7 +195,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                             <a
                                               href={facebook}
                                               aria-label={`Facebook page of ${author().name}`}
-                                              class="i-simple-icons-facebook inline-block"
+                                              class="icon-[simple-icons--facebook] inline-block"
                                             />
                                           ),
                                         )
@@ -205,7 +205,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                             <a
                                               href={linkedin}
                                               aria-label={`LinkedIn page of ${author().name}`}
-                                              class="i-simple-icons-linkedin inline-block"
+                                              class="icon-[simple-icons--linkedin] inline-block"
                                             />
                                           ),
                                         )
@@ -215,7 +215,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                             <a
                                               href={medium}
                                               aria-label={`Medium blog of ${author().name}`}
-                                              class="i-simple-icons-medium inline-block"
+                                              class="icon-[simple-icons--medium] inline-block"
                                             />
                                           ),
                                         )
@@ -225,7 +225,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                             <a
                                               href={hashnode}
                                               aria-label={`Hashnode blog of ${author().name}`}
-                                              class="i-simple-icons-hashnode inline-block"
+                                              class="icon-[simple-icons--hashnode] inline-block"
                                             />
                                           ),
                                         )
@@ -235,7 +235,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                             <a
                                               href={tistory}
                                               aria-label={`Tistory blog of ${author().name}`}
-                                              class="i-simple-icons-tistory inline-block"
+                                              class="icon-[simple-icons--tistory] inline-block"
                                             />
                                           ),
                                         )
@@ -251,9 +251,9 @@ export default function PostsLayout(props: { children: JSXElement }) {
                     </Show>
                     <hr />
                   </div>
-                  <aside class="mx-4 hidden max-w-300px min-w-250px flex-shrink-0 lg:block">
+                  <aside class="mx-4 hidden max-w-[300px] min-w-[250px] flex-shrink-0 lg:block">
                     <div class="sticky top-14 overflow-hidden py-4">
-                      <div class="my-2 text-sm text-slate-8 font-medium">
+                      <div class="text-slate-8 my-2 text-sm font-medium">
                         목차
                       </div>
                       <TableOfContents
@@ -265,7 +265,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                 </div>
               </article>
               <div class="my-16 flex flex-col gap-6 px-4">
-                <h2 class="text-1.375rem text-slate-5 font-semibold">
+                <h2 class="text-slate-5 text-[1.375rem] font-semibold">
                   최신 글 보기
                 </h2>
                 <PostList posts={latestPosts() ?? []} />
