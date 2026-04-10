@@ -53,7 +53,7 @@ export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
         )}
       </For>
       <button
-        class="mr-1.75rem bg-slate-1 sticky bottom-0 inline-flex items-center justify-center py-1 text-lg opacity-50 hover:opacity-100"
+        class="bg-slate-1 sticky bottom-0 mr-[1.75rem] inline-flex items-center justify-center py-1 text-lg opacity-50 hover:opacity-100"
         onClick={addReqHeader}
       >
         <i class="icon-[ic--baseline-plus]" />

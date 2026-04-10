@@ -113,7 +113,7 @@ export function Category(props: CategoryProps) {
   );
 
   return (
-    <section id={props.section} class="scroll-mt-5.2rem flex flex-col">
+    <section id={props.section} class="flex scroll-mt-[5.2rem] flex-col">
       <div>
         <prose.h2 ref={headingRef} data-search-category>
           {props.title}
