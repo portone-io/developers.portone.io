@@ -1,8 +1,10 @@
 import clsx from "clsx";
 import { type JSX, type JSXElement, splitProps } from "solid-js";
 
-export interface CardProps
-  extends Omit<JSX.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface CardProps extends Omit<
+  JSX.HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   title?: JSXElement;
   titleClass?: string;
 }
