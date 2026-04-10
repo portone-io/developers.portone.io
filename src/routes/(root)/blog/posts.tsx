@@ -1,6 +1,6 @@
 import {
-  cache,
   createAsync,
+  query,
   type RouteDefinition,
   useLocation,
 } from "@solidjs/router";
@@ -24,7 +24,7 @@ import { loadLatestPosts } from "./(list)";
 import styles from "./posts.module.css";
 
 const toSlug = (path: string) => path.replace(/^\/blog\/posts\//, "");
-const loadPost = cache(async (slug: string) => {
+const loadPost = query(async (slug: string) => {
   "use server";
 
   const { blog } = await import("#content");
@@ -32,7 +32,7 @@ const loadPost = cache(async (slug: string) => {
   return blog[slug as keyof typeof blog];
 }, "blog/post");
 
-const loadAuthor = cache(async (authorId: string) => {
+const loadAuthor = query(async (authorId: string) => {
   "use server";
 
   const { default: authors } = await import("./posts/_authors.yaml");

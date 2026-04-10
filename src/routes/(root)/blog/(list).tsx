@@ -1,5 +1,5 @@
 import { Link } from "@solidjs/meta";
-import { cache } from "@solidjs/router";
+import { query } from "@solidjs/router";
 import type { Blog, WithContext } from "schema-dts";
 import type { JSXElement } from "solid-js";
 
@@ -17,7 +17,7 @@ const blogJsonLd: WithContext<Blog> = {
   publisher: organizationJsonLd,
 };
 
-export const loadLatestPosts = cache(async () => {
+export const loadLatestPosts = query(async () => {
   "use server";
 
   const { blog } = await import("#content");
