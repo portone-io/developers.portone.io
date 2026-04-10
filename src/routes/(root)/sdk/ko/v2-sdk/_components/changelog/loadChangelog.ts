@@ -1,6 +1,5 @@
 "use server";
 
-import { query } from "@solidjs/router";
 import type { Root } from "mdast";
 import rehypeStringify from "rehype-stringify";
 import remarkGfm from "remark-gfm";
@@ -10,7 +9,7 @@ import type { Plugin } from "unified";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
-export const loadChangelog = query(async () => {
+export const loadChangelog = async () => {
   "use server";
   const response = await fetch(
     "https://api.github.com/repos/portone-io/browser-sdk/contents/packages/browser-sdk/CHANGELOG.md",
@@ -52,4 +51,4 @@ export const loadChangelog = query(async () => {
     .use(rehypeStringify)
     .process(content);
   return html.value as string;
-}, "docs/v2-payments/v2-sdk/changelog");
+};
