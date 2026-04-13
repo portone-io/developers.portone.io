@@ -49,7 +49,7 @@ function NotFoundPage() {
           </span>
         </div>
         <button
-          class="active:bg-portone focus:text-portone hover:text-portone flex items-center gap-1 rounded-md border border-gray-300 bg-[rgb(255_255_255_/_4%)] px-4 py-3 transition-colors hover:bg-[rgb(255_255_255_/16%)] focus:bg-[rgb(255_255_255_/16%)] active:text-white"
+          class="flex items-center gap-1 rounded-md border border-gray-300 bg-[rgb(255_255_255_/_4%)] px-4 py-3 transition-colors hover:bg-[rgb(255_255_255_/16%)] hover:text-portone focus:bg-[rgb(255_255_255_/16%)] focus:text-portone active:bg-portone active:text-white"
           onClick={() => navigate(-1)}
         >
           <i class="icon-[ic--baseline-arrow-back] text-lg"></i>

@@ -78,14 +78,14 @@ export function ParameterHover(props: ParameterHoverProps) {
         <HoverCard.Trigger
           as="span"
           class={clsx(
-            "data-[expanded]:bg-blue-1 justify-self-start",
+            "justify-self-start data-[expanded]:bg-blue-1",
             props.class,
           )}
         >
           {props.children}
         </HoverCard.Trigger>
         <HoverCard.Portal mount={document.querySelector("article")!}>
-          <HoverCard.Content class="max-h-xs z-parameter-hover grid max-w-sm overflow-auto rounded-md border bg-white p-4 shadow-sm [&::-webkit-scrollbar]:hidden">
+          <HoverCard.Content class="max-h-xs z-parameter-hover grid max-w-sm overflow-auto rounded-md border bg-white p-4 shadow-xs [&::-webkit-scrollbar]:hidden">
             <Parameter flatten forceDepth={2}>
               {props.content()}
             </Parameter>

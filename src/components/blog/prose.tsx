@@ -105,7 +105,7 @@ export function a(props: JSX.HTMLAttributes<HTMLAnchorElement>) {
   return (
     <a
       {...others}
-      class={clsx("hover:text-slate-9 cursor-pointer underline", locals.class)}
+      class={clsx("cursor-pointer underline hover:text-slate-9", locals.class)}
     >
       {locals.children}
     </a>

@@ -501,7 +501,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
         >
           <Parameter.Type>
             <a
-              class="text-purple-5 hover:text-portone inline-block underline-offset-4 transition-colors hover:underline"
+              class="inline-block text-purple-5 underline-offset-4 transition-colors hover:text-portone hover:underline"
               href={href()}
               data-norefresh
             >

@@ -12,7 +12,7 @@ export default function YouTube(props: Props) {
         src={`https://www.youtube.com/embed/${props.videoId}`}
       ></iframe>
       {props.caption && (
-        <p class="text-gray my-2 text-center text-sm">{props.caption}</p>
+        <p class="my-2 text-center text-sm text-gray">{props.caption}</p>
       )}
     </div>
   );

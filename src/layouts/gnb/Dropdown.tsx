@@ -69,7 +69,7 @@ export default function Dropdown(props: DropdownProps) {
       >
         {(link) => (
           <A
-            class="text-slate-9 data-[active]:text-portone hover:text-slate-5 inline-flex items-center rounded-md text-sm font-medium"
+            class="inline-flex items-center rounded-md text-sm font-medium text-slate-9 hover:text-slate-5 data-[active]:text-portone"
             bool:data-active={isActive() || hasActiveItem()}
             href={link()}
           >
@@ -85,7 +85,7 @@ export default function Dropdown(props: DropdownProps) {
               {(item) => {
                 return (
                   <A
-                    class="text-slate-9 data-[active]:text-portone hover:text-slate-5 inline-flex items-center gap-2 px-2 py-2.5 text-sm"
+                    class="inline-flex items-center gap-2 px-2 py-2.5 text-sm text-slate-9 hover:text-slate-5 data-[active]:text-portone"
                     bool:data-active={item.isActive}
                     data-system-version={item.systemVersion}
                     href={item.link ?? "#"}

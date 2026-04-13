@@ -74,7 +74,7 @@ export function PgSelect(props: PgSelectProps) {
         const optionInfo = createMemo(() => PgOptions[props.item.rawValue]);
         return (
           <Select.Item
-            class="data-[disabled]:text-slate-5 flex cursor-default gap-1.5 rounded-md px-1 py-1.5 text-[#09090B] [&:not([data-disabled])]:hover:bg-[#F3F4F6]"
+            class="flex cursor-default gap-1.5 rounded-md px-1 py-1.5 text-[#09090B] data-[disabled]:text-slate-5 [&:not([data-disabled])]:hover:bg-[#F3F4F6]"
             item={props.item}
           >
             <div class="flex w-5 items-center">

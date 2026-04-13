@@ -192,11 +192,11 @@ const DefaultLayout = (
 
   return (
     <div class="flex min-w-0 flex-1 justify-center gap-5">
-      <article class="text-slate-7 mt-4 mb-40 flex min-w-0 shrink-1 basis-200 flex-col pl-5 max-lg:pr-4 max-lg:pl-4">
+      <article class="mt-4 mb-40 flex min-w-0 shrink-1 basis-200 flex-col pl-5 text-slate-7 max-lg:pr-4 max-lg:pl-4">
         <div class="mb-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
           <Show when={props.frontmatter.description}>
-            <p class="text-gray my-4 text-[18px] leading-[28.8px] font-[400]">
+            <p class="my-4 text-[18px] leading-[28.8px] font-[400] text-gray">
               {props.frontmatter.description}
             </p>
           </Show>

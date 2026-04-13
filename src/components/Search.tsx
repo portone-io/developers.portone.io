@@ -118,7 +118,7 @@ export default function Search() {
       }}
     >
       <KobalteSearch.Control class="relative">
-        <KobalteSearch.Input class="w-full rounded-lg border border-gray-300 px-4 py-3 transition-all duration-200 outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500" />
+        <KobalteSearch.Input class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-hidden transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500" />
         <KobalteSearch.Indicator class="absolute top-1/2 right-3 -translate-y-1/2 transform">
           <KobalteSearch.Icon>
             <i class="icon-[ic--baseline-search] block h-5 w-5 text-gray-400"></i>

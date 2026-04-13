@@ -17,7 +17,7 @@ export default function TagList(props: Props) {
       >
         <i
           class={clsx(
-            "icon-[ic--baseline-label] text-slate-4 inline-block",
+            "icon-[ic--baseline-label] inline-block text-slate-4",
             props.variant === "compact"
               ? "h-[18px] text-base"
               : "h-[18px] text-lg",
@@ -31,7 +31,7 @@ export default function TagList(props: Props) {
         >
           <For each={props.tags}>
             {(tag) => (
-              <li class="text-slate-4 hover:text-slate-5 leading-[18px] transition-colors">
+              <li class="leading-[18px] text-slate-4 transition-colors hover:text-slate-5">
                 <a href={`/blog/tags/${encodeURIComponent(tag)}`}>{tag}</a>
               </li>
             )}

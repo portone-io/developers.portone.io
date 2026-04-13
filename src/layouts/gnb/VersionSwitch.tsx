@@ -41,7 +41,7 @@ export function VersionSwitch(props: VersionSwitchProps) {
             });
           }}
           class={clsx(
-            "bg-slate-1 text-slate-5 flex cursor-pointer overflow-hidden rounded-md p-1 text-center text-[13px] leading-[15.6px] font-medium whitespace-pre select-none max-md:p-0.5",
+            "flex cursor-pointer overflow-hidden rounded-md bg-slate-1 p-1 text-center text-[13px] leading-[15.6px] font-medium whitespace-pre text-slate-5 select-none max-md:p-0.5",
             props.class,
           )}
         >

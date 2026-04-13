@@ -18,7 +18,7 @@ export default function Swagger(props: Props) {
       <Details.Summary>
         <div>
           <MethodBadge method={props.method} />
-          <span class="text-gray ml-2 text-sm">
+          <span class="ml-2 text-sm text-gray">
             <span>{props.baseUrl}</span>
             <span class="font-bold text-black">{props.path}</span>
           </span>

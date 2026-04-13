@@ -17,7 +17,7 @@ export interface RestApiOverviewProps {
 export function RestApiOverview(props: RestApiOverviewProps) {
   return (
     <div class="flex flex-1 justify-center">
-      <article class="text-slate-7 m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10">
+      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-slate-7">
         <section id="overview" class="flex scroll-mt-[5.2rem] flex-col">
           <prose.h1>{props.title}</prose.h1>
           {props.children}
@@ -30,16 +30,16 @@ export function RestApiOverview(props: RestApiOverviewProps) {
               {(group) => (
                 <A
                   href={`${props.basepath}/${group.category.id}`}
-                  class="border-slate-2 hover:border-orange-3 flex flex-col gap-2 rounded-lg border p-4 transition-colors hover:bg-orange-50/30"
+                  class="flex flex-col gap-2 rounded-lg border border-slate-2 p-4 transition-colors hover:border-orange-3 hover:bg-orange-50/30"
                 >
-                  <div class="text-slate-8 text-base font-bold">
+                  <div class="text-base font-bold text-slate-8">
                     {group.category.title}
                   </div>
                   <div
-                    class="text-slate-5 line-clamp-2 text-sm"
+                    class="line-clamp-2 text-sm text-slate-5"
                     innerHTML={group.category.description}
                   />
-                  <div class="text-slate-4 text-xs">
+                  <div class="text-xs text-slate-4">
                     {group.endpointCount}개의 엔드포인트
                   </div>
                 </A>
@@ -63,7 +63,7 @@ export interface RestApiCategoryProps {
 export function RestApiCategory(props: RestApiCategoryProps) {
   return (
     <div class="flex flex-1 justify-center">
-      <article class="text-slate-7 m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10">
+      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-slate-7">
         <Category
           basepath={props.basepath}
           apiHost={props.apiHost}

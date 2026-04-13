@@ -43,7 +43,7 @@ export function PayMethodSelect(props: PayMethodSelectProps) {
       disallowEmptySelection
       itemComponent={(props) => (
         <Select.Item
-          class="data-[disabled]:text-slate-5 flex cursor-default gap-1.5 rounded-md px-1 py-1.5 text-[#09090B] [&:not([data-disabled])]:hover:bg-[#F3F4F6]"
+          class="flex cursor-default gap-1.5 rounded-md px-1 py-1.5 text-[#09090B] data-[disabled]:text-slate-5 [&:not([data-disabled])]:hover:bg-[#F3F4F6]"
           item={props.item}
         >
           <div class="flex w-5 items-center">
@@ -63,7 +63,7 @@ export function PayMethodSelect(props: PayMethodSelectProps) {
       >
         <Select.Value<
           PayMethod | undefined
-        > class="text-slate-9 text-sm font-medium">
+        > class="text-sm font-medium text-slate-9">
           {(state) => {
             const selectedOption = createMemo(
               () =>
@@ -77,7 +77,7 @@ export function PayMethodSelect(props: PayMethodSelectProps) {
             );
           }}
         </Select.Value>
-        <Select.Icon class="data-[closed]:icon-[ic--baseline-keyboard-arrow-down] data-[expanded]:icon-[ic--baseline-keyboard-arrow-up] flex items-center text-xl"></Select.Icon>
+        <Select.Icon class="flex items-center text-xl data-[closed]:icon-[ic--baseline-keyboard-arrow-down] data-[expanded]:icon-[ic--baseline-keyboard-arrow-up]"></Select.Icon>
       </Select.Trigger>
       <Select.Portal>
         <Select.Content class="z-dropdown-link rounded-md border bg-white p-3 shadow-md">

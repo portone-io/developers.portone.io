@@ -31,7 +31,7 @@ export default function Details(
       open={open()}
       onOpenChange={setOpen}
       class={clsx(
-        "group/details hover:border-orange my-4 rounded-md border [&[data-expanded]>button>.chevron]:origin-center [&[data-expanded]>button>.chevron]:rotate-90",
+        "group/details my-4 rounded-md border hover:border-orange [&[data-expanded]>button>.chevron]:origin-center [&[data-expanded]>button>.chevron]:rotate-90",
         locals.class,
       )}
     >
@@ -54,7 +54,7 @@ Details.Summary = function DetailsSummary(
       )}
     >
       <div class="chevron h-5 w-5 transition-transform" role="img">
-        <i class="icon-[ic--sharp-chevron-right] group-hover/details:text-orange inline-block"></i>
+        <i class="icon-[ic--sharp-chevron-right] inline-block group-hover/details:text-orange"></i>
       </div>
       <div class="my-2">{locals.children}</div>
     </Collapsible.Trigger>

@@ -32,19 +32,19 @@ export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
         {({ key: [key, setKey], value: [value, setValue] }, index) => (
           <div class="grid grid-cols-[1fr_1fr_1.5rem] gap-1 text-sm">
             <input
-              class="border-slate-2 w-full border px-2 py-1"
+              class="w-full border border-slate-2 px-2 py-1"
               value={key()}
               onInput={(e) => {
                 setKey(e.currentTarget.value);
               }}
             />
             <input
-              class="border-slate-2 w-full border px-2 py-1"
+              class="w-full border border-slate-2 px-2 py-1"
               value={value()}
               onInput={(e) => setValue(e.currentTarget.value)}
             />
             <button
-              class="text-slate-3 hover:text-slate-7 inline-flex items-center text-lg"
+              class="inline-flex items-center text-lg text-slate-3 hover:text-slate-7"
               onClick={() => delReqHeader(index())}
             >
               <i class="icon-[ic--twotone-delete-forever]" />
@@ -53,7 +53,7 @@ export default function RequestHeaderEditor(props: RequestHeaderEditorProps) {
         )}
       </For>
       <button
-        class="bg-slate-1 sticky bottom-0 mr-[1.75rem] inline-flex items-center justify-center py-1 text-lg opacity-50 hover:opacity-100"
+        class="sticky bottom-0 mr-[1.75rem] inline-flex items-center justify-center bg-slate-1 py-1 text-lg opacity-50 hover:opacity-100"
         onClick={addReqHeader}
       >
         <i class="icon-[ic--baseline-plus]" />

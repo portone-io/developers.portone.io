@@ -80,14 +80,14 @@ export function Preview() {
 
   const Checkout = () => (
     <>
-      <div class="bg-slate-1 flex h-20 w-20 rounded-md p-3">
+      <div class="flex h-20 w-20 rounded-md bg-slate-1 p-3">
         <Picture picture={dummyImg} alt="상품 이미지" />
       </div>
       <div class="flex flex-col">
-        <span class="text-slate-6 text-[17px] leading-[30.6px] font-medium">
+        <span class="text-[17px] leading-[30.6px] font-medium text-slate-6">
           신발
         </span>
-        <span class="text-slate-6 text-[18px] leading-[27px] font-medium">
+        <span class="text-[18px] leading-[27px] font-medium text-slate-6">
           1,000원
         </span>
       </div>
@@ -95,18 +95,18 @@ export function Preview() {
   );
 
   return (
-    <div class="bg-slate-1 flex flex-col gap-2 rounded-b-lg p-2">
+    <div class="flex flex-col gap-2 rounded-b-lg bg-slate-1 p-2">
       <div class="flex items-center gap-3 rounded-lg bg-slate-50">
         <Switch fallback={<Checkout />}>
           <Match when={paymentStatus().status === "PENDING"}>결제 중...</Match>
           <Match when={paymentStatus().status === "PAID"}>
-            <div class="bg-green-5 flex h-12 w-12 items-center justify-center rounded-full">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-5">
               <i class="icon-[mdi--check-bold] text-2xl text-white" />
             </div>
             <span class="text-lg font-semibold">결제가 완료되었습니다.</span>
           </Match>
           <Match when={paymentStatus().status === "FAILED"}>
-            <div class="bg-red-5 flex h-12 w-12 items-center justify-center rounded-full">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-5">
               <i class="icon-[mdi--close-bold] text-2xl text-white" />
             </div>
             <span class="text-lg font-semibold">결제에 실패했습니다.</span>
@@ -118,7 +118,7 @@ export function Preview() {
           disabled={isChannelUnavailable()}
           onClick={() => void requestPayment()}
           type="button"
-          class="bg-portone flex justify-center rounded-md px-4 py-2 disabled:opacity-50"
+          class="flex justify-center rounded-md bg-portone px-4 py-2 disabled:opacity-50"
         >
           <span class="text-[15px] leading-[1.375rem] font-medium text-white">
             결제
@@ -127,7 +127,7 @@ export function Preview() {
         <button
           onClick={() => void reload()}
           type="button"
-          class="bg-slate-3 flex items-center justify-center gap-1 rounded-md px-4 py-2"
+          class="flex items-center justify-center gap-1 rounded-md bg-slate-3 px-4 py-2"
         >
           <i class="icon-[mdi--reload]" />
           <span class="text-[15px] leading-[1.375rem] font-medium text-[#1F2937]">

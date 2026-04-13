@@ -34,7 +34,7 @@ export default function PostListItem(props: Props) {
               alt={`Avatar image of ${author?.name ?? props.entry.author}`}
               width={48}
               height={48}
-              class="bg-slate-2 rounded-full"
+              class="rounded-full bg-slate-2"
             />
           </ProfileImage>
         </div>
@@ -44,10 +44,10 @@ export default function PostListItem(props: Props) {
           href={`/blog/posts/${props.slug}`}
           class="flex h-full flex-col justify-between gap-2"
         >
-          <span class="text-slate-7 text-[19px] font-semibold">
+          <span class="text-[19px] font-semibold text-slate-7">
             {props.entry.title}
             <Show when={props.entry.draft}>
-              <span class="text-slate-5 text-lg leading-[1.4] font-normal">
+              <span class="text-lg leading-[1.4] font-normal text-slate-5">
                 (Draft)
               </span>
             </Show>

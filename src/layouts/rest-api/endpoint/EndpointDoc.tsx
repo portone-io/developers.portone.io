@@ -42,16 +42,16 @@ export default function EndpointDoc(props: EndpointDocProps) {
       <div class="flex items-center lg:order-last lg:justify-end">
         <MethodLine method={props.endpoint.method} path={props.endpoint.path} />
       </div>
-      <prose.h3 id={endpointId()} class="target:text-orange-5 !mt-0">
+      <prose.h3 id={endpointId()} class="!mt-0 target:text-orange-5">
         <div class="flex items-center gap-2">
           <span>{props.endpoint.title}</span>
           <Show when={props.endpoint.deprecated}>
-            <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+            <span class="rounded-sm bg-slate-1 px-2 text-sm uppercase opacity-70">
               deprecated
             </span>
           </Show>
           <Show when={props.endpoint.unstable}>
-            <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+            <span class="rounded-sm bg-slate-1 px-2 text-sm uppercase opacity-70">
               unstable
             </span>
           </Show>
@@ -64,17 +64,17 @@ export default function EndpointDoc(props: EndpointDocProps) {
     <div class="flex flex-col gap-1">
       <prose.h3
         id={endpointId()}
-        class="target:text-orange-5 !mt-0 !mb-0 !text-base"
+        class="!mt-0 !mb-0 !text-base target:text-orange-5"
       >
         <div class="flex items-center gap-2">
           <span>{props.endpoint.title}</span>
           <Show when={props.endpoint.deprecated}>
-            <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+            <span class="rounded-sm bg-slate-1 px-2 text-sm uppercase opacity-70">
               deprecated
             </span>
           </Show>
           <Show when={props.endpoint.unstable}>
-            <span class="bg-slate-1 rounded px-2 text-sm uppercase opacity-70">
+            <span class="rounded-sm bg-slate-1 px-2 text-sm uppercase opacity-70">
               unstable
             </span>
           </Show>
@@ -84,7 +84,7 @@ export default function EndpointDoc(props: EndpointDocProps) {
       <Show when={description()}>
         <div
           data-search-description
-          class="text-slate-5 text-sm"
+          class="text-sm text-slate-5"
           innerHTML={description()}
         />
       </Show>
@@ -147,7 +147,7 @@ export default function EndpointDoc(props: EndpointDocProps) {
           class="relative w-full cursor-pointer text-left"
         >
           <div class="chevron absolute top-1 -left-4 h-4 w-4 transition-transform">
-            <i class="icon-[ic--sharp-chevron-right] text-slate-4 inline-block h-4 w-4" />
+            <i class="icon-[ic--sharp-chevron-right] inline-block h-4 w-4 text-slate-4" />
           </div>
           {collapsibleHeader()}
         </Collapsible.Trigger>
@@ -165,7 +165,7 @@ export function MethodLine(props: MethodLineProps) {
   return (
     <span
       data-search-method
-      class="bg-slate-1 inline-flex items-center gap-1 self-start rounded-full pr-2 text-xs opacity-70"
+      class="inline-flex items-center gap-1 self-start rounded-full bg-slate-1 pr-2 text-xs opacity-70"
     >
       <MethodBadge method={props.method} />
       <span class="ml-1 font-mono font-normal">{props.path}</span>
@@ -227,7 +227,7 @@ function RequestDoc(props: RequestDocProps) {
     <Show
       when={showPath || showQuery || showBody}
       fallback={
-        <div class="text-slate-5 text-xs font-bold">요청 인자 없음</div>
+        <div class="text-xs font-bold text-slate-5">요청 인자 없음</div>
       }
     >
       <div class="flex flex-col gap-2">
@@ -295,7 +295,7 @@ function ResponseDoc(props: ResponseDocProps) {
               <Show when={schemata.response.description}>
                 <div
                   innerHTML={schemata.response.description}
-                  class="text-slate-11 mb-2 text-sm"
+                  class="mb-2 text-sm text-slate-5"
                 />
               </Show>
               <Show when={schemata.schema}>
@@ -329,7 +329,7 @@ function ResponseDoc(props: ResponseDocProps) {
               <Show when={schemata.response.description}>
                 <div
                   innerHTML={schemata.response.description}
-                  class="text-slate-11 mb-2 text-sm"
+                  class="mb-2 text-sm text-slate-5"
                 />
               </Show>
               <Show when={schemata.schema}>
@@ -381,7 +381,7 @@ function ReqRes(props: ReqResProps) {
   return (
     <Parameter flatten>
       <Show when={props.title}>
-        <div class="mb-1 inline-flex gap-2 text-xs">
+        <div class="inline-flex gap-2 text-xs">
           <h4 class="shrink-0 font-bold uppercase">{props.title}</h4>
           <Show when={props.description}>
             {(description) => <span innerHTML={description()} />}

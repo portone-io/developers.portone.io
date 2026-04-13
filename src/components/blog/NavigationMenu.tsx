@@ -56,10 +56,10 @@ export default function NavigationMenu(props: Props) {
           {Object.entries(navMap).map(([path, tag]) => (
             <li
               class={clsx(
-                "hover:text-slate-9 text-[1.125rem] transition-colors duration-200",
-                "max-lg:text-slate-9 max-lg:hover:bg-slate-1 max-lg:flex max-lg:items-center max-lg:gap-3 max-lg:rounded-md max-lg:px-1 max-lg:py-2",
+                "text-[1.125rem] transition-colors duration-200 hover:text-slate-9",
+                "max-lg:flex max-lg:items-center max-lg:gap-3 max-lg:rounded-md max-lg:px-1 max-lg:py-2 max-lg:text-slate-9 max-lg:hover:bg-slate-1",
                 props.activeTag === tag
-                  ? "lg:text-slate-9 lg:font-semibold"
+                  ? "lg:font-semibold lg:text-slate-9"
                   : "lg:text-slate-4",
                 path === "/blog" && "max-lg:!hidden",
               )}

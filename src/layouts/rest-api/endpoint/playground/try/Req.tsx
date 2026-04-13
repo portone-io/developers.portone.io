@@ -126,7 +126,7 @@ export default function Req(props: ReqProps) {
         <>
           <span>Request</span>
           <button
-            class="border-slate-2 bg-slate-1 hover:bg-slate-2 rounded border px-4 font-bold active:bg-white"
+            class="rounded-sm border border-slate-2 bg-slate-1 px-4 font-bold hover:bg-slate-2 active:bg-white"
             onClick={() =>
               props.execute(async () => {
                 const headers = kvListToObject(reqHeader());

@@ -51,7 +51,7 @@ export default function BlogListLayout(props: { children: JSXElement }) {
       />
       <div class="mx-auto my-4 flex min-h-full max-w-[1148px] flex-col gap-10 px-5 pb-50 break-keep">
         <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-          <h1 class="text-slate-8 text-[2rem] font-semibold break-keep lg:text-[2.5rem]">
+          <h1 class="text-[2rem] font-semibold break-keep text-slate-8 lg:text-[2.5rem]">
             <a href="/blog">PortOne 기술 블로그</a>
           </h1>
         </div>

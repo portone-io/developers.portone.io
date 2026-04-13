@@ -45,7 +45,7 @@ export default function DocsNavMenu(props: Props) {
         </div>
         <Show when={props.docData.targetPg === "dynamic"}>
           <section class="grid grid-cols-[auto_1fr] items-center justify-center pr-2 pb-1 pl-2">
-            <div class="text-slate-5 rounded-md text-xs font-medium">
+            <div class="rounded-md text-xs font-medium text-slate-5">
               결제대행사
             </div>
             <PgSelect />

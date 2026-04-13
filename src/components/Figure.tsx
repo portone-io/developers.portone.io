@@ -33,7 +33,7 @@ export default function Figure(props: Props) {
         />
       )}
       <Show when={props.caption}>
-        <figcaption class="text-slate-5 text-sm">{props.caption}</figcaption>
+        <figcaption class="text-sm text-slate-5">{props.caption}</figcaption>
       </Show>
     </figure>
   );

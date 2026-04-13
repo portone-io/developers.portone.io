@@ -112,7 +112,7 @@ function FolderLink(props: NavMenuPage & { isActive: boolean }) {
                           class={clsx(
                             "pl-2",
                             isActive() &&
-                              "before:bg-portone before:pointer-events-none before:absolute before:inset-y-0 before:right-0 before:-left-[1px] before:block before:w-[1px] before:content-['']",
+                              "before:pointer-events-none before:absolute before:inset-y-0 before:right-0 before:-left-[1px] before:block before:w-[1px] before:bg-portone before:content-['']",
                           )}
                         >
                           <LeftSidebarItem {...item} />
@@ -172,7 +172,7 @@ export function JustLink(props: JustLinkProps) {
 }
 
 export function getLinkStyle(isActive: boolean): string {
-  return `px-2 block text-sm rounded ${
+  return `px-2 block text-sm rounded-sm ${
     isActive
       ? "font-medium text-portone hover:bg-orange-1"
       : "text-slate-500 hover:bg-slate-1"

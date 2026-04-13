@@ -57,7 +57,7 @@ export default function NavMenu(props: Props) {
       <hr class="mx-4" />
       <nav
         id="nav-menu"
-        class="scrollbar-thin text-slate-6 flex flex-1 flex-col gap-2 overflow-y-scroll p-2 text-sm"
+        class="scrollbar-thin flex flex-1 flex-col gap-2 overflow-y-scroll p-2 text-sm text-slate-6"
       >
         <For each={items()}>
           {(item) => {
@@ -125,9 +125,9 @@ function TopLevelItem(props: TopLevelItemProps) {
     <div>
       <div
         class={clsx(
-          "hover:bg-slate-1 flex rounded-[0.375rem] tracking-tight",
+          "flex rounded-[0.375rem] tracking-tight hover:bg-slate-1",
           props.id === props.currentSection &&
-            "bg-slate-1 text-orange-5 font-bold",
+            "bg-slate-1 font-bold text-orange-5",
         )}
       >
         <NavMenuLink
@@ -183,9 +183,9 @@ function ChildItem(props: ChildItemProps) {
   return (
     <div
       class={clsx(
-        "hover:bg-slate-1 rounded-[0.375rem] tracking-tight",
+        "rounded-[0.375rem] tracking-tight hover:bg-slate-1",
         props.id === props.currentSection &&
-          "bg-slate-1 text-orange-5 font-bold",
+          "bg-slate-1 font-bold text-orange-5",
       )}
     >
       <NavMenuLink

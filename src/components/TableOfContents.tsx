@@ -194,9 +194,9 @@ function SubItem(props: {
       <a
         href={`#${props.heading.id}`}
         class={clsx(
-          "hover:text-portone block py-1 text-[14px] leading-5 font-medium break-keep transition-[padding-top,padding-bottom] duration-300",
+          "block py-1 text-[14px] leading-5 font-medium break-keep transition-[padding-top,padding-bottom] duration-300 hover:text-portone",
           props.isActive
-            ? "text-portone py-[8px]"
+            ? "py-[8px] text-portone"
             : props.isParentActive
               ? "text-slate-4"
               : "text-slate-3",

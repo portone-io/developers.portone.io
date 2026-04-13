@@ -13,7 +13,7 @@ export default function SchemaDownloadButton(props: SchemaDownloadButtonProps) {
         download={props.download}
         target="_blank"
         href={props.href}
-        class="bg-slate-1 hover:bg-slate-2 inline-flex items-center gap-2 rounded p-2 pr-3 font-bold"
+        class="inline-flex items-center gap-2 rounded-sm bg-slate-1 p-2 pr-3 font-bold hover:bg-slate-2"
       >
         <i class="icon-[ic--baseline-download] text-xl" />
         {props.label}
@@ -28,7 +28,7 @@ export interface PostmanGuideProps {
 }
 export function PostmanGuide(props: PostmanGuideProps) {
   return (
-    <span class="text-slate-5 text-sm">
+    <span class="text-sm text-slate-5">
       <a href={props.href} target="_blank" class="hover:underline">
         Postman 등에서 import하여 활용
       </a>

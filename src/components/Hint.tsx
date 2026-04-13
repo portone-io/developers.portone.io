@@ -7,7 +7,7 @@ interface Props {
 export default function Hint(props: ParentProps<Props>) {
   const cls = createMemo(
     () =>
-      `my-4 p-4 flex gap-3 rounded border-l-4 bg-slate-1 ${
+      `my-4 p-4 flex gap-3 rounded-sm border-l-4 bg-slate-1 ${
         props.style === "info"
           ? "border-blue-600"
           : props.style === "warning"

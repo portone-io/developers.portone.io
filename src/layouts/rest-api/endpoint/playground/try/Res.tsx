@@ -23,7 +23,7 @@ export default function Res(props: ResProps) {
       <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-1 p-4">
         <Show
           when={props.res}
-          fallback={<span class="text-slate-4 text-xs font-bold">N/A</span>}
+          fallback={<span class="text-xs font-bold text-slate-4">N/A</span>}
         >
           {(res) => {
             const bodyJsonText = createMemo(
