@@ -66,7 +66,7 @@ export function CodeRenderer() {
         <CodeTabs />
         <button
           ref={copyButtonRef!}
-          class="icon-[mdi--content-copy] h-5 w-5 rounded-md p-1 text-xl text-slate-4 data-[copied]:icon-[mdi--check] data-[copied]:text-green-5 [&:not([data-copied])]:hover:text-slate-1"
+          class="icon-[mdi--content-copy] h-5 w-5 rounded-md p-1 text-xl text-slate-4 data-copied:icon-[mdi--check] data-copied:text-green-5 [&:not([data-copied])]:hover:text-slate-1"
           onPointerLeave={() => {
             delete copyButtonRef!.dataset.copied;
           }}
@@ -84,7 +84,7 @@ export function CodeRenderer() {
       <div
         ref={rendererRef!}
         innerHTML={code()}
-        class="overflow-auto text-xs [&_code]:[counter-increment:step_0] [&_code]:[counter-reset:step] [&_code_.line]:before:mr-6 [&_code_.line]:before:inline-block [&_code_.line]:before:w-4 [&_code_.line]:before:text-right [&_code_.line]:before:text-slate-5 [&_code_.line]:before:[content:counter(step)] [&_code_.line]:before:[counter-increment:step]"
+        class="overflow-auto text-xs [&_code]:[counter-increment:step_0] [&_code]:[counter-reset:step] [&_code_.line]:before:mr-6 [&_code_.line]:before:inline-block [&_code_.line]:before:w-4 [&_code_.line]:before:text-right [&_code_.line]:before:text-slate-5 [&_code_.line]:before:content-[counter(step)] [&_code_.line]:before:[counter-increment:step]"
       />
     </div>
   );
