@@ -33,7 +33,7 @@ export default function DocsNavMenu(props: Props) {
             pathname={location.pathname}
             items={getDropdownLinks(systemVersion())}
           />
-          <div class="my-4 h-[1px] bg-slate-200"></div>
+          <div class="my-4 h-[1px] bg-border-default"></div>
         </div>
       </div>
       <nav
@@ -45,7 +45,7 @@ export default function DocsNavMenu(props: Props) {
         </div>
         <Show when={props.docData.targetPg === "dynamic"}>
           <section class="grid grid-cols-[auto_1fr] items-center justify-center pr-2 pb-1 pl-2">
-            <div class="rounded-md text-xs font-medium text-slate-5">
+            <div class="rounded-md text-xs font-medium text-text-tertiary">
               결제대행사
             </div>
             <PgSelect />

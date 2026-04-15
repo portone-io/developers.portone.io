@@ -8,7 +8,7 @@ const MobileMenuButton = () => {
   return (
     <div class="flex h-full justify-end md:hidden">
       <button
-        class="px-4"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md text-text-primary transition-colors hover:bg-surface-muted"
         onClick={() => setSidebarOpen(!untrack(sidebarOpen))}
       >
         <i

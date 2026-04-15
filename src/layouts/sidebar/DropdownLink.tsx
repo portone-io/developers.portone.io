@@ -28,7 +28,7 @@ export default function DropdownLink(props: DropdownLinkProps) {
   return (
     <div class="relative flex h-full w-full cursor-default flex-col">
       <button
-        class="flex flex-1 items-center gap-2 rounded-[6px] border border-slate-3 p-2 px-4 text-slate-600"
+        class="flex flex-1 items-center gap-2 rounded-[6px] border border-border-default bg-surface p-2 px-4 text-text-secondary"
         onClick={() => setShowItems((prev) => !prev)}
       >
         <span>
@@ -46,11 +46,11 @@ export default function DropdownLink(props: DropdownLinkProps) {
       </button>
       <div class="relative z-dropdown-link w-full">
         <Show when={showItems()}>
-          <div class="absolute flex w-full flex-col border bg-white py-2 shadow-lg">
+          <div class="absolute flex w-full flex-col border border-border-default bg-surface-elevated py-2 shadow-[0_18px_40px_rgba(15,23,42,0.16)] dark:shadow-[0_18px_40px_rgba(2,6,23,0.45)]">
             <For each={props.items}>
               {(item) => (
                 <A
-                  class="inline-flex items-center gap-2 px-4 py-2 hover:bg-slate-1"
+                  class="inline-flex items-center gap-2 px-4 py-2 text-text-primary hover:bg-surface-muted"
                   href={item.link}
                 >
                   <i

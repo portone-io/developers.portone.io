@@ -8,7 +8,10 @@ let highlighterPromise: Promise<Highlighter> | null = null;
 export function initHighlighter(): Promise<Highlighter> {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighterCore({
-      themes: [import("shiki/themes/one-dark-pro.mjs")],
+      themes: [
+        import("shiki/themes/github-light.mjs"),
+        import("shiki/themes/one-dark-pro.mjs"),
+      ],
       langs: [
         import("shiki/langs/javascript.mjs"),
         import("shiki/langs/html.mjs"),

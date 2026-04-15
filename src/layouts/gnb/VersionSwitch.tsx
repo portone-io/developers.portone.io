@@ -41,7 +41,7 @@ export function VersionSwitch(props: VersionSwitchProps) {
             });
           }}
           class={clsx(
-            "flex cursor-pointer overflow-hidden rounded-md bg-slate-1 p-1 text-center text-[13px] leading-[15.6px] font-medium whitespace-pre text-slate-5 select-none max-md:p-0.5",
+            "flex cursor-pointer overflow-hidden rounded-md bg-surface-muted p-1 text-center text-[13px] leading-[15.6px] font-medium whitespace-pre text-text-tertiary select-none max-md:p-0.5",
             props.class,
           )}
         >
@@ -58,6 +58,8 @@ function getVersionClass(
   systemVersion: SystemVersion,
 ) {
   return `px-2 py-1 max-md:py-0.5 max-md:px-2 flex-1 rounded-[4px] ${
-    systemVersion === thisVersion ? "bg-portone text-white" : ""
+    systemVersion === thisVersion
+      ? "bg-portone text-white"
+      : "hover:bg-surface-elevated"
   }`;
 }

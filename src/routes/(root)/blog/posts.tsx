@@ -95,11 +95,11 @@ export default function PostsLayout(props: { children: JSXElement }) {
             />
             <JsonLd data={blogPostingJsonLd()} />
             <div class="mx-auto max-w-[1150px] pb-50 break-keep [&_a]:break-keep">
-              <article class="flex w-full flex-col gap-6 text-[17px] text-slate-7 max-lg:mx-auto md:my-4">
+              <article class="flex w-full flex-col gap-6 text-[17px] text-text-secondary max-lg:mx-auto md:my-4">
                 <div class="mx-auto flex w-full max-w-[800px] flex-col gap-3 px-4 md:px-6 lg:max-w-none">
                   <a
                     href="/blog"
-                    class="mb-4 flex w-fit items-center gap-1 text-sm font-medium text-slate-5 transition-colors hover:text-slate-7"
+                    class="mb-4 flex w-fit items-center gap-1 text-sm font-medium text-text-tertiary transition-colors hover:text-text-primary"
                   >
                     <i class="icon-[material-symbols--arrow-left-alt] inline-block"></i>
                     블로그 목록
@@ -112,25 +112,30 @@ export default function PostsLayout(props: { children: JSXElement }) {
                       {(author) => (
                         <dl class="flex shrink-0 items-center gap-4 max-md:py-2">
                           <div class="flex justify-evenly gap-3 whitespace-nowrap">
-                            <dt class="text-lg font-semibold text-slate-8">
+                            <dt class="text-lg font-semibold text-text-primary">
                               {author().name}
                             </dt>
-                            <dd class="text-lg text-slate-5">
+                            <dd class="text-lg text-text-tertiary">
                               {author().role}
                             </dd>
                           </div>
                         </dl>
                       )}
                     </Show>
-                    <div class="h-4 w-[1px] bg-slate-3"></div>
-                    <div class="text-lg text-slate-4">
+                    <div class="h-4 w-[1px] bg-border-default"></div>
+                    <div class="text-lg text-slate-400 dark:text-slate-500">
                       {format(post().frontmatter.date, "MMM d, yyyy")}
                     </div>
                   </div>
                 </div>
                 <div class="flex justify-between gap-9">
                   <div class="flex max-w-[800px] min-w-0 flex-col gap-3 px-4 max-lg:mx-auto md:px-6">
-                    <div class={clsx(styles.body, "break-keep text-slate-7")}>
+                    <div
+                      class={clsx(
+                        styles.body,
+                        "break-keep text-text-secondary",
+                      )}
+                    >
                       <MDXProvider components={prose}>
                         {props.children}
                       </MDXProvider>
@@ -149,16 +154,16 @@ export default function PostsLayout(props: { children: JSXElement }) {
                                 alt={`Avatar image of ${author().name}`}
                                 width={64}
                                 height={64}
-                                class="h-16 w-16 rounded-full bg-slate-2"
+                                class="h-16 w-16 rounded-full bg-surface-muted"
                               />
                             </ProfileImage>
                           </div>
                           <div class="flex flex-col gap-[1.125rem]">
                             <div class="flex items-center gap-3">
-                              <div class="text-lg font-medium text-slate-7">
+                              <div class="text-lg font-medium text-text-primary">
                                 {author().name}
                               </div>
-                              <div class="text-base font-medium text-slate-4">
+                              <div class="text-base font-medium text-text-tertiary">
                                 {author().role}
                               </div>
                             </div>
@@ -167,7 +172,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                               <ul class="m-0 flex list-none flex-row gap-6 p-0 text-2xl">
                                 <For each={author().contacts}>
                                   {(contact) => (
-                                    <li class="text-slate-4 transition-colors hover:text-slate-5">
+                                    <li class="text-text-tertiary transition-colors hover:text-text-primary">
                                       {match(contact)
                                         .with(
                                           { github: P.string },
@@ -253,7 +258,7 @@ export default function PostsLayout(props: { children: JSXElement }) {
                   </div>
                   <aside class="mx-4 hidden max-w-[300px] min-w-[250px] shrink-0 lg:block">
                     <div class="sticky top-14 overflow-hidden py-4">
-                      <div class="my-2 text-sm font-medium text-slate-8">
+                      <div class="my-2 text-sm font-medium text-text-primary">
                         목차
                       </div>
                       <TableOfContents

@@ -16,6 +16,7 @@ import { Show, Suspense } from "solid-js";
 
 import { NotFoundBoundary } from "./components/404";
 import Trackers from "./layouts/trackers/Trackers";
+import { ThemeProvider } from "./state/theme";
 
 const SentryRouter = withSentryRouterRouting(Router);
 
@@ -45,18 +46,23 @@ export default function App() {
     <SentryRouter
       root={(props) => (
         <MetaProvider>
-          <Title>PortOne 개발자센터</Title>
-          <Meta charset="utf-8" />
-          <Meta name="viewport" content="width=device-width,initial-scale=1" />
-          <Link rel="icon" type="image/png" href="/favicon.png" />
-          <Trackers />
-          <ViteErrorHandler />
-          <Show when={isDesktop()}>
-            <Chatbot />
-          </Show>
-          <Suspense>
-            <NotFoundBoundary>{props.children}</NotFoundBoundary>
-          </Suspense>
+          <ThemeProvider>
+            <Title>PortOne 개발자센터</Title>
+            <Meta charset="utf-8" />
+            <Meta
+              name="viewport"
+              content="width=device-width,initial-scale=1"
+            />
+            <Link rel="icon" type="image/png" href="/favicon.png" />
+            <Trackers />
+            <ViteErrorHandler />
+            <Show when={isDesktop()}>
+              <Chatbot />
+            </Show>
+            <Suspense>
+              <NotFoundBoundary>{props.children}</NotFoundBoundary>
+            </Suspense>
+          </ThemeProvider>
         </MetaProvider>
       )}
     >

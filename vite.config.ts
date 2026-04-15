@@ -33,7 +33,10 @@ export default defineConfig({
           [
             rehypeShiki,
             {
-              theme: "github-light",
+              themes: {
+                light: "github-light",
+                dark: "one-dark-pro",
+              },
               fallbackLanguage: "text",
               defaultLanguage: "text",
               transformers: [

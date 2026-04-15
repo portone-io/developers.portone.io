@@ -47,17 +47,19 @@ export default function NavMenu(props: Props) {
             pathname={location.pathname}
             items={getDropdownLinks(systemVersion())}
           />
-          <div class="my-4 h-[1px] bg-slate-200"></div>
+          <div class="my-4 h-[1px] bg-border-default"></div>
         </div>
       </div>
       <div class="pr-6 pb-1 pl-2">
         <VersionSwitch />
       </div>
-      <div class="px-2 pt-3 pb-2 text-lg font-bold">{props.title}</div>
-      <hr class="mx-4" />
+      <div class="px-2 pt-3 pb-2 text-lg font-bold text-text-primary">
+        {props.title}
+      </div>
+      <hr class="mx-4 border-border-default" />
       <nav
         id="nav-menu"
-        class="scrollbar-thin flex flex-1 flex-col gap-2 overflow-y-scroll p-2 text-sm text-slate-6"
+        class="scrollbar-thin flex flex-1 flex-col gap-2 overflow-y-scroll p-2 text-sm text-text-secondary"
       >
         <For each={items()}>
           {(item) => {
@@ -125,9 +127,9 @@ function TopLevelItem(props: TopLevelItemProps) {
     <div>
       <div
         class={clsx(
-          "flex rounded-[0.375rem] tracking-tight hover:bg-slate-1",
+          "flex rounded-[0.375rem] tracking-tight hover:bg-surface-muted",
           props.id === props.currentSection &&
-            "bg-slate-1 font-bold text-orange-5",
+            "bg-surface-muted font-bold text-orange-5",
         )}
       >
         <NavMenuLink
@@ -152,7 +154,7 @@ function TopLevelItem(props: TopLevelItemProps) {
       </div>
       <Show when={visibleChildren()?.length}>
         <div
-          class="mt-2 flex-col gap-2 border-l pl-2.5"
+          class="mt-2 flex-col gap-2 border-l border-border-default pl-2.5"
           classList={{ flex: isOpen(), hidden: !isOpen() }}
         >
           <For each={visibleChildren()}>
@@ -183,9 +185,9 @@ function ChildItem(props: ChildItemProps) {
   return (
     <div
       class={clsx(
-        "rounded-[0.375rem] tracking-tight hover:bg-slate-1",
+        "rounded-[0.375rem] tracking-tight hover:bg-surface-muted",
         props.id === props.currentSection &&
-          "bg-slate-1 font-bold text-orange-5",
+          "bg-surface-muted font-bold text-orange-5",
       )}
     >
       <NavMenuLink

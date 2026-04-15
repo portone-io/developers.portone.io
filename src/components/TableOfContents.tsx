@@ -146,7 +146,7 @@ function Item(props: {
         href={`#${props.heading.id}`}
         class={clsx(
           "block py-1 text-[14px] leading-5 font-medium break-keep",
-          props.isActive ? "text-slate-8" : "text-slate-4",
+          props.isActive ? "text-text-primary" : "text-text-tertiary",
         )}
       >
         {props.heading.title}
@@ -198,8 +198,8 @@ function SubItem(props: {
           props.isActive
             ? "py-[8px] text-portone"
             : props.isParentActive
-              ? "text-slate-4"
-              : "text-slate-3",
+              ? "text-text-tertiary"
+              : "text-slate-400 dark:text-slate-500",
           props.depth > 1 ? "font-normal" : "font-medium",
         )}
         style={{ "padding-left": `${12 * props.depth}px` }}

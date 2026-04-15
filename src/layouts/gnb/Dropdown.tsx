@@ -69,7 +69,7 @@ export default function Dropdown(props: DropdownProps) {
       >
         {(link) => (
           <A
-            class="inline-flex items-center rounded-md text-sm font-medium text-slate-9 hover:text-slate-5 data-[active]:text-portone"
+            class="inline-flex items-center rounded-md text-sm font-medium text-text-primary hover:text-text-secondary data-[active]:text-portone"
             bool:data-active={isActive() || hasActiveItem()}
             href={link()}
           >
@@ -80,12 +80,12 @@ export default function Dropdown(props: DropdownProps) {
       </Show>
       <Show when={showItems() && items() && items().length > 0}>
         <div class="relative w-full max-md:hidden">
-          <div class="absolute flex w-max min-w-30 flex-col gap-0.5 rounded-lg border bg-white p-2 shadow-lg">
+          <div class="absolute flex w-max min-w-30 flex-col gap-0.5 rounded-lg border border-border-default bg-surface-elevated p-2 shadow-[0_18px_40px_rgba(15,23,42,0.16)] dark:shadow-[0_18px_40px_rgba(2,6,23,0.45)]">
             <For each={items()}>
               {(item) => {
                 return (
                   <A
-                    class="inline-flex items-center gap-2 px-2 py-2.5 text-sm text-slate-9 hover:text-slate-5 data-[active]:text-portone"
+                    class="inline-flex items-center gap-2 rounded-md px-2 py-2.5 text-sm text-text-primary hover:bg-surface-muted hover:text-text-secondary data-[active]:text-portone"
                     bool:data-active={item.isActive}
                     data-system-version={item.systemVersion}
                     href={item.link ?? "#"}

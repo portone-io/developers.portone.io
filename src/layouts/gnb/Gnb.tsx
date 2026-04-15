@@ -6,6 +6,7 @@ import { createMemo, For, Show, untrack } from "solid-js";
 import Dropdown, { type DropdownItem } from "~/layouts/gnb/Dropdown";
 import Logo from "~/layouts/gnb/Logo";
 import MobileMenuButton from "~/layouts/gnb/MobileMenuButton";
+import ThemeToggle from "~/layouts/gnb/ThemeToggle";
 import { useSidebarContext } from "~/layouts/sidebar/context";
 import { useSystemVersion } from "~/state/system-version";
 import type { Lang, SystemVersion } from "~/type";
@@ -141,18 +142,18 @@ export default function Gnb(props: Props) {
         `}
       </style>
       <div class="h-14 md:h-26">
-        <div class="fixed z-gnb h-[inherit] w-full bg-white">
+        <div class="fixed z-gnb h-[inherit] w-full bg-surface shadow-[0_1px_0_0_var(--color-border-default)]">
           <header
             data-selected-system-version={systemVersion()}
             class="mx-auto flex h-[inherit] w-full max-w-8xl flex-col px-4 sm:px-6 md:px-8 lg:px-10"
           >
-            <div class="z-gnb-body grid h-14 grid-cols-2 items-center gap-6 border-b bg-white md:grid-cols-[auto_1fr_auto]">
+            <div class="z-gnb-body grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 border-b border-border-default bg-surface md:grid-cols-[auto_1fr_auto_auto] md:gap-6">
               <A
-                class="inline-flex h-full items-center"
+                class="inline-flex h-full items-center text-text-primary"
                 href={`/opi/${props.lang}`}
               >
                 <div class="flex items-center gap-2">
-                  <Logo class="w-22" width={88} />
+                  <Logo class="w-22 fill-current" width={88} />
                   <span class="break-keep">{t()["developers"]}</span>
                 </div>
               </A>
@@ -172,9 +173,12 @@ export default function Gnb(props: Props) {
                   )}
                 </For>
               </div>
-              <MobileMenuButton />
+              <div class="flex items-center justify-end gap-2">
+                <ThemeToggle />
+                <MobileMenuButton />
+              </div>
             </div>
-            <div class="z-gnb-body hidden h-12 items-center gap-5 border-b bg-white md:flex">
+            <div class="z-gnb-body hidden h-12 items-center gap-5 border-b border-border-default bg-surface md:flex">
               <div class="flex items-center gap-0.5">
                 <For each={subNavs()}>
                   {(nav) => (
@@ -205,8 +209,9 @@ export default function Gnb(props: Props) {
                 return (
                   <div
                     class={clsx(
-                      "absolute inset-x-0 bottom-0 flex transform flex-col items-start gap-6 rounded-b-md bg-white px-12 py-6 transition-transform duration-300 md:hidden",
-                      sidebarContext.get() && "translate-y-full shadow-lg",
+                      "absolute inset-x-0 bottom-0 flex transform flex-col items-start gap-6 rounded-b-md border border-border-default bg-surface-elevated px-12 py-6 transition-transform duration-300 md:hidden",
+                      sidebarContext.get() &&
+                        "translate-y-full shadow-[0_20px_45px_rgba(15,23,42,0.16)] dark:shadow-[0_20px_45px_rgba(2,6,23,0.5)]",
                     )}
                   >
                     <For each={navs()}>

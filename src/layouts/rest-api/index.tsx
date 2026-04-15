@@ -17,7 +17,7 @@ export interface RestApiOverviewProps {
 export function RestApiOverview(props: RestApiOverviewProps) {
   return (
     <div class="flex flex-1 justify-center">
-      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-slate-7">
+      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-text-secondary">
         <section id="overview" class="flex scroll-mt-[5.2rem] flex-col">
           <prose.h1>{props.title}</prose.h1>
           {props.children}
@@ -30,16 +30,16 @@ export function RestApiOverview(props: RestApiOverviewProps) {
               {(group) => (
                 <A
                   href={`${props.basepath}/${group.category.id}`}
-                  class="flex flex-col gap-2 rounded-lg border border-slate-2 p-4 transition-colors hover:border-orange-3 hover:bg-orange-50/30"
+                  class="flex flex-col gap-2 rounded-lg border border-border-default bg-surface p-4 transition-colors hover:border-orange-3 hover:bg-orange-50/30 dark:hover:bg-orange-1/10"
                 >
-                  <div class="text-base font-bold text-slate-8">
+                  <div class="text-base font-bold text-text-primary">
                     {group.category.title}
                   </div>
                   <div
-                    class="line-clamp-2 text-sm text-slate-5"
+                    class="line-clamp-2 text-sm text-text-tertiary"
                     innerHTML={group.category.description}
                   />
-                  <div class="text-xs text-slate-4">
+                  <div class="text-xs text-slate-400 dark:text-slate-500">
                     {group.endpointCount}개의 엔드포인트
                   </div>
                 </A>
@@ -63,7 +63,7 @@ export interface RestApiCategoryProps {
 export function RestApiCategory(props: RestApiCategoryProps) {
   return (
     <div class="flex flex-1 justify-center">
-      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-slate-7">
+      <article class="m-4 mb-16 flex shrink-1 basis-300 flex-col pb-10 text-text-secondary">
         <Category
           basepath={props.basepath}
           apiHost={props.apiHost}

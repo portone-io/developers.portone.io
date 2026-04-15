@@ -176,7 +176,7 @@ function blockquote(props: JSX.IntrinsicElements["blockquote"]) {
   return (
     <blockquote
       {...rest}
-      class={clsx("my-2 border-l-4 pl-4", local.class)}
+      class={clsx("my-2 border-l-4 border-border-default pl-4", local.class)}
       style={styles.blockquote}
     >
       {local.children}
