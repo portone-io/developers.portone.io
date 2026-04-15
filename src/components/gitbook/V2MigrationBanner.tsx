@@ -38,7 +38,7 @@ export default function V2MigrationBanner(props: Props): JSXElement {
     <Show when={systemVersion() === "v1"}>
       <Hint style="info">
         <div class="flex flex-col items-start gap-2">
-          <p class="text-[15px] text-slate-900 font-medium">
+          <p class="text-[15px] font-medium text-slate-900">
             {msg().v1Only} {msg().recommendV2}
           </p>
           <button
@@ -56,10 +56,10 @@ export default function V2MigrationBanner(props: Props): JSXElement {
                 targetVersions: props.targetVersions,
               });
             }}
-            class="inline-flex items-center gap-1 gap-1 border border-slate-300 rounded-md bg-white px-[12px] py-[7px] text-[13px]"
+            class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-[12px] py-[7px] text-[13px]"
           >
             {msg().viewV2Doc}
-            <span class="i-ic-baseline-arrow-forward"></span>
+            <span class="icon-[ic--baseline-arrow-forward]"></span>
           </button>
         </div>
       </Hint>

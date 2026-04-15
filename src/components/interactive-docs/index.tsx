@@ -143,7 +143,7 @@ export function createInteractiveDoc<
         ref={ref!}
         onClick={handleClick}
         data-section={props.section}
-        class="cursor-pointer border-l-5 border-white rounded px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF8F5] [&:not([data-active])]:hover:border-slate-2"
+        class="cursor-pointer rounded-sm border-l-[5px] border-white px-[19px] py-4 data-[active]:border-[#FC7D46] data-[active]:bg-[#FFF8F5] [&:not([data-active])]:hover:border-slate-2"
       >
         {props.children}
       </div>
@@ -215,10 +215,10 @@ export function createInteractiveDoc<
           }
         >
           <Switch.Input />
-          <Switch.Control class="h-6 w-11 inline-flex items-center border border-[hsl(240_5%_84%)] rounded-xl bg-[hsl(240_6%_90%)] px-.5 transition-[background-color] transition-duration-250 data-[checked]:border-portone data-[checked]:bg-portone">
-            <Switch.Thumb class="h-5 w-5 rounded-2.5 bg-white transition-transform transition-duration-250 data-[checked]:transform-translate-x-[calc(100%-1px)]" />
+          <Switch.Control class="inline-flex h-6 w-11 items-center rounded-xl border border-[hsl(240_5%_84%)] bg-[hsl(240_6%_90%)] px-0.5 transition-[background-color] duration-[250ms] data-[checked]:border-portone data-[checked]:bg-portone">
+            <Switch.Thumb class="h-5 w-5 rounded-[0.625rem] bg-white transition-transform duration-[250ms] data-[checked]:translate-x-[calc(100%-1px)]" />
           </Switch.Control>
-          <Switch.Label class="ml-2 select-none text-[17px] font-medium leading-[30.6px] tracking-[-0.001em]">
+          <Switch.Label class="ml-2 text-[17px] leading-[30.6px] font-medium tracking-[-0.001em] select-none">
             {props.label}
           </Switch.Label>
         </Switch>

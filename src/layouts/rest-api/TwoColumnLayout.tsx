@@ -23,27 +23,28 @@ export default function TwoColumnLayout(_props: TwoColumnLayoutProps) {
     _props,
   );
   const smallRight = createMemo(() => props.smallRight ?? !props.right);
+  const gapClass = createMemo(() =>
+    props.gap === 2 ? "gap-2" : props.gap === 6 ? "gap-6" : "gap-4",
+  );
+  const breakpointClass = createMemo(() => {
+    if (props.bp === "md") {
+      return smallRight() ? "md:grid-cols-[3fr_2fr]" : "md:grid-cols-2";
+    }
+    return smallRight() ? "lg:grid-cols-[3fr_2fr]" : "lg:grid-cols-2";
+  });
+  const stickyClass = createMemo(() => {
+    if (!props.stickyRight) return props.rightClass;
+    return props.bp === "md"
+      ? `md:sticky top-20 h-max ${props.rightClass}`
+      : `lg:sticky top-20 h-max ${props.rightClass}`;
+  });
 
   return (
     <div
-      class={`gap-${props.gap} relative grid ${props.bp}:${
-        smallRight() ? "grid-cols-[3fr_2fr]" : "grid-cols-2"
-      }  ${props.class}`}
+      class={`${gapClass()} relative grid ${breakpointClass()} ${props.class}`}
     >
       <div class={props.leftClass}>{props.left()}</div>
-      <div
-        class={
-          props.stickyRight
-            ? `${props.bp}:sticky top-20 h-max ${props.rightClass}`
-            : props.rightClass
-        }
-      >
-        {props.right()}
-      </div>
+      <div class={stickyClass()}>{props.right()}</div>
     </div>
   );
 }
-
-// Ensure tailwind compilation
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-("gap-2 gap-4 gap-6 md:grid-cols-2 md:grid-cols-[3fr_2fr] lg:grid-cols-2 lg:grid-cols-[3fr_2fr]");

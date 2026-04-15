@@ -44,12 +44,12 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
   );
 
   return (
-    <section id="type-def" class="flex flex-col scroll-mt-5.2rem">
+    <section id="type-def" class="flex scroll-mt-[5.2rem] flex-col">
       <prose.h2>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
-      <div class="grid-flow-rows grid mt-10 gap-4 lg:grid-cols-2">
+      <div class="grid-flow-rows mt-10 grid gap-4 lg:grid-cols-2">
         <For each={typeDefPropsList()}>
           {(property) => (
             <Parameter flatten id={property.name}>

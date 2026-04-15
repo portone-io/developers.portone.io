@@ -21,10 +21,10 @@ export function InteractiveDocs(
   const { selectedLanguage, pgOptions } = useInteractiveDocs();
   const isHybridSelected = createMemo(() => !Array.isArray(selectedLanguage()));
   return (
-    <div class="grid grid-cols-[1fr_1.2fr] grid-rows-[auto_1fr] flex-1 gap-y-2">
-      <div class="sticky top-55px col-span-2 min-h-12 flex flex-wrap items-center gap-3 from-white bg-gradient-to-r px-6 z-sticky-layout md:top-26">
+    <div class="grid flex-1 grid-cols-[1fr_1.2fr] grid-rows-[auto_1fr] gap-y-2">
+      <div class="sticky top-[55px] z-sticky-layout col-span-2 flex min-h-12 flex-wrap items-center gap-3 bg-gradient-to-r from-white px-6 md:top-26">
         <section class="flex flex-row items-center">
-          <div class="rounded-md text-xs text-slate-5 font-medium">
+          <div class="rounded-md text-xs font-medium text-slate-5">
             결제대행사
           </div>
           <PgSelect
@@ -32,7 +32,7 @@ export function InteractiveDocs(
           />
         </section>
         <section class="flex flex-row items-center">
-          <div class="rounded-md text-xs text-slate-5 font-medium">
+          <div class="rounded-md text-xs font-medium text-slate-5">
             결제수단
           </div>
           <PayMethodSelect />
@@ -42,7 +42,7 @@ export function InteractiveDocs(
           <LanguageSelect languages={"backend"} title="Backend" />
         </Show>
       </div>
-      <article class="mb-40 min-w-0 flex shrink-1 basis-200 flex-col text-slate-7 [&>*:not([data-section])]:ml-6">
+      <article class="mb-40 flex min-w-0 shrink-1 basis-200 flex-col text-slate-7 [&>*:not([data-section])]:ml-6">
         <div class="mb-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
         </div>

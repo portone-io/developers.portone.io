@@ -78,7 +78,10 @@ export default function Parameter(props: ParameterProps) {
   return (
     <div
       id={props.id}
-      class={clsx("parameter text-sm text-slate-5 space-y-3", props.class)}
+      class={clsx(
+        "parameter flex flex-col gap-3 text-sm text-slate-5",
+        props.class,
+      )}
     >
       <ProseContext.Provider value={{ styles: proseStyles }}>
         <ParameterContext.Provider
@@ -162,14 +165,14 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
           <Collapsible.Trigger as="button" class="h-4 w-4">
             <i
               class={clsx(
-                "i-ic-sharp-chevron-right inline-block h-4 w-4",
-                expanded() && "transform-rotate-90",
+                "icon-[ic--sharp-chevron-right] inline-block h-4 w-4",
+                expanded() && "rotate-90",
               )}
             ></i>
           </Collapsible.Trigger>
         </Show>
       </div>
-      <div class="grid col-start-2 row-start-1 row-end-3 grid-rows-subgrid">
+      <div class="col-start-2 row-start-1 row-end-3 grid grid-rows-subgrid">
         <ParameterDeclaration
           class="row-start-1"
           ident={others.ident}
@@ -183,7 +186,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
       </div>
       <Collapsible.Content
         as={Parameter}
-        class="grid col-start-2 row-start-3 col-end-3 mt-3 b-l"
+        class="col-start-2 col-end-3 row-start-3 mt-3 grid border-l"
       >
         <For each={detailKeyArray()}>{(key) => details.get(key)?.()}</For>
       </Collapsible.Content>

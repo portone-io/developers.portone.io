@@ -5,7 +5,6 @@ import {
 } from "@portone-io/lint-local-links-valid";
 import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsEslintParser from "@typescript-eslint/parser";
-import unocss from "@unocss/eslint-plugin";
 import * as parserPlain from "eslint-parser-plain";
 import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
@@ -152,10 +151,6 @@ export default [
       ...tsRules,
       "@typescript-eslint/no-unused-vars": "off",
     },
-  },
-  {
-    plugins: { unocss },
-    rules: { "unocss/order": "error" },
   },
   {
     plugins: { "simple-import-sort": sortImports },

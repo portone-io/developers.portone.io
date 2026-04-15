@@ -19,20 +19,20 @@ function RightSidebar(_props: RightSidebarProps) {
   );
 
   return (
-    <div class="hidden min-w-0 w-55 shrink-0 text-slate-7 lg:block">
+    <div class="hidden w-55 min-w-0 shrink-0 text-slate-7 lg:block">
       <Show when={true}>
-        <nav class="fixed h-[calc(100%-56px)] w-inherit overflow-y-auto px-2 py-[28px]">
-          <h2 class="my-2 text-sm text-slate-8 font-medium">
+        <nav class="fixed h-[calc(100%-56px)] w-[inherit] overflow-y-auto px-2 py-[28px]">
+          <h2 class="my-2 text-sm font-medium text-slate-8">
             {t(props.lang, "toc")}
           </h2>
           <TableOfContents theme="aside" headings={props.headings} />
-          <h2 class="my-2 mt-4 text-sm text-slate-8 font-medium">
+          <h2 class="my-2 mt-4 text-sm font-medium text-slate-8">
             {t(props.lang, "contribute")}
           </h2>
           <ul>
             <SidebarItem
               href={`${props.editThisPagePrefix}/${props.file}`}
-              icon="i-ic-baseline-edit"
+              icon="icon-[ic--baseline-edit]"
               label={t(props.lang, "edit-this-page")}
             />
           </ul>
@@ -63,7 +63,7 @@ function SidebarItem(props: LinkProps) {
           document.getElementById(slug)?.scrollIntoView({ behavior: "smooth" });
         }}
       >
-        <div class="overflow-hidden text-ellipsis whitespace-nowrap rounded-sm px-2 py-1 text-.8125rem text-slate-4 leading-5 hover:text-portone">
+        <div class="overflow-hidden rounded-xs px-2 py-1 text-[0.8125rem] leading-5 text-ellipsis whitespace-nowrap text-slate-4 hover:text-portone">
           <Show when={props.icon}>
             <>
               <i

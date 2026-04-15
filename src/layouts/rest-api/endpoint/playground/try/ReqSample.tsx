@@ -77,9 +77,9 @@ export default function ReqSample(props: ReqSampleProps) {
   return (
     <Card
       title={
-        <div class="flex flex-grow flex-wrap items-center justify-between gap-3">
-          <span class="flex-shrink-0">Request Sample</span>
-          <div class="flex-shrink-0">
+        <div class="flex grow flex-wrap items-center justify-between gap-3">
+          <span class="shrink-0">Request Sample</span>
+          <div class="shrink-0">
             <select
               class="rounded-l bg-slate-1 px-2 py-1 font-medium"
               value={targetKey()}

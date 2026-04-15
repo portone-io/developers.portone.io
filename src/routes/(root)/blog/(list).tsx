@@ -49,9 +49,9 @@ export default function BlogListLayout(props: { children: JSXElement }) {
         title="PortOne 기술 블로그"
         href="https://developers.portone.io/blog/rss.xml"
       />
-      <div class="mx-auto my-4 max-w-1148px min-h-full flex flex-col gap-10 break-keep px-5 pb-50">
+      <div class="mx-auto my-4 flex min-h-full max-w-[1148px] flex-col gap-10 px-5 pb-50 break-keep">
         <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-          <h1 class="break-keep text-8 text-slate-8 font-semibold lg:text-10">
+          <h1 class="text-[2rem] font-semibold break-keep text-slate-8 lg:text-[2.5rem]">
             <a href="/blog">PortOne 기술 블로그</a>
           </h1>
         </div>

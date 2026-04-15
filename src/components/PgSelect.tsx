@@ -77,9 +77,9 @@ export function PgSelect(props: PgSelectProps) {
             class="flex cursor-default gap-1.5 rounded-md px-1 py-1.5 text-[#09090B] data-[disabled]:text-slate-5 [&:not([data-disabled])]:hover:bg-[#F3F4F6]"
             item={props.item}
           >
-            <div class="w-5 flex items-center">
+            <div class="flex w-5 items-center">
               <Select.ItemIndicator class="flex">
-                <i class="i-ic-round-check inline-block" />
+                <i class="icon-[ic--round-check] inline-block" />
               </Select.ItemIndicator>
             </div>
             <img
@@ -100,7 +100,7 @@ export function PgSelect(props: PgSelectProps) {
       >
         <Select.Value<
           PaymentGateway | undefined
-        > class="text-sm text-[#09090B] font-medium">
+        > class="text-sm font-medium text-[#09090B]">
           {(state) => {
             const selectedOption = createMemo(
               () =>
@@ -120,12 +120,12 @@ export function PgSelect(props: PgSelectProps) {
           }}
         </Select.Value>
         <Select.Icon class="flex items-center">
-          <i class="i-ic-baseline-keyboard-arrow-down inline-block text-xl" />
+          <i class="icon-[ic--baseline-keyboard-arrow-down] inline-block text-xl" />
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Content class="max-h-md overflow-y-auto border rounded-md bg-white p-1.5 shadow-md z-dropdown-link">
-          <Select.Listbox class="flex flex-col gap-.5" />
+        <Select.Content class="max-h-md z-dropdown-link overflow-y-auto rounded-md border bg-white p-1.5 shadow-md">
+          <Select.Listbox class="flex flex-col gap-0.5" />
         </Select.Content>
       </Select.Portal>
     </Select>

@@ -20,7 +20,7 @@ export default function Swagger(props: Props) {
           <MethodBadge method={props.method} />
           <span class="ml-2 text-sm text-gray">
             <span>{props.baseUrl}</span>
-            <span class="text-black font-bold">{props.path}</span>
+            <span class="font-bold text-black">{props.path}</span>
           </span>
         </div>
         <div class="mt-3 font-bold">

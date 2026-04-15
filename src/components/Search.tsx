@@ -64,7 +64,9 @@ const extractTermsFromPage = (): SearchResult[] => {
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = createSignal("");
-  const [fuse, setFuse] = createSignal<Fuse<SearchResult>>(new Fuse([]));
+  const [fuse, setFuse] = createSignal<Fuse<SearchResult>>(
+    new Fuse<SearchResult>([]),
+  );
   const [searchResult] = createResource<SearchResult[], string>(
     searchTerm,
     (term) =>
@@ -102,9 +104,9 @@ export default function Search() {
         return (
           <KobalteSearch.Item
             item={props.item}
-            class="grid grid-rows-[auto_auto_auto] gap-1 border-b border-gray-100 rounded-md px-5 py-3 text-left transition-colors duration-150 last:border-b-0 hover:bg-gray-50"
+            class="grid grid-rows-[auto_auto_auto] gap-1 rounded-md border-b border-gray-100 px-5 py-3 text-left transition-colors duration-150 last:border-b-0 hover:bg-gray-50"
           >
-            <KobalteSearch.ItemLabel class="text-gray-900 font-medium">
+            <KobalteSearch.ItemLabel class="font-medium text-gray-900">
               {props.item.rawValue.title}
             </KobalteSearch.ItemLabel>
             <KobalteSearch.ItemDescription class="text-sm text-gray-600">
@@ -118,17 +120,17 @@ export default function Search() {
       }}
     >
       <KobalteSearch.Control class="relative">
-        <KobalteSearch.Input class="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500" />
-        <KobalteSearch.Indicator class="absolute right-3 top-1/2 transform -translate-y-1/2">
+        <KobalteSearch.Input class="w-full rounded-lg border border-gray-300 px-4 py-3 outline-hidden transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500" />
+        <KobalteSearch.Indicator class="absolute top-1/2 right-3 -translate-y-1/2 transform">
           <KobalteSearch.Icon>
-            <i class="i-ic-baseline-search block h-5 w-5 text-gray-400"></i>
+            <i class="icon-[ic--baseline-search] block h-5 w-5 text-gray-400"></i>
           </KobalteSearch.Icon>
         </KobalteSearch.Indicator>
       </KobalteSearch.Control>
 
       <KobalteSearch.Portal>
         <KobalteSearch.Content
-          class="mt-2 max-h-96 max-w-[var(--kb-popper-anchor-width)] overflow-y-auto border border-gray-200 rounded-lg bg-white shadow-lg z-sticky-layout"
+          class="z-sticky-layout mt-2 max-h-96 max-w-[var(--kb-popper-anchor-width)] overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
           <Switch>

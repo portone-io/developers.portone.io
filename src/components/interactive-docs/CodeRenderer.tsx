@@ -62,11 +62,11 @@ export function CodeRenderer() {
 
   return (
     <div class="grid grid-rows-[min-content_1fr] gap-y-2 overflow-auto rounded-t-xl bg-slate-8 pb-2">
-      <div class="grid grid-cols-[1fr_min-content] h-12 items-center gap-2 rounded-lg bg-slate-7 p-2">
+      <div class="grid h-12 grid-cols-[1fr_min-content] items-center gap-2 rounded-lg bg-slate-7 p-2">
         <CodeTabs />
         <button
           ref={copyButtonRef!}
-          class="i-mdi-content-copy data-[copied]:i-mdi-check h-5 w-5 rounded-md p-1 text-xl text-slate-4 data-[copied]:text-green-5 [&:not([data-copied])]:hover:text-slate-1"
+          class="icon-[mdi--content-copy] h-5 w-5 rounded-md p-1 text-xl text-slate-4 data-copied:icon-[mdi--check] data-copied:text-green-5 [&:not([data-copied])]:hover:text-slate-1"
           onPointerLeave={() => {
             delete copyButtonRef!.dataset.copied;
           }}
@@ -84,7 +84,7 @@ export function CodeRenderer() {
       <div
         ref={rendererRef!}
         innerHTML={code()}
-        class="overflow-auto text-xs [&_code]:[counter-increment:step_0] [&_code]:[counter-reset:step] [&_code_.line]:before:[content:counter(step)] [&_code_.line]:before:[counter-increment:step] [&_code_.line]:before:mr-6 [&_code_.line]:before:inline-block [&_code_.line]:before:w-4 [&_code_.line]:before:text-right [&_code_.line]:before:text-slate-5"
+        class="overflow-auto text-xs [&_code]:[counter-increment:step_0] [&_code]:[counter-reset:step] [&_code_.line]:before:mr-6 [&_code_.line]:before:inline-block [&_code_.line]:before:w-4 [&_code_.line]:before:text-right [&_code_.line]:before:text-slate-5 [&_code_.line]:before:content-[counter(step)] [&_code_.line]:before:[counter-increment:step]"
       />
     </div>
   );

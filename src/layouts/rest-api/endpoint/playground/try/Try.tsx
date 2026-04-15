@@ -37,7 +37,7 @@ export default function Try(props: TryProps) {
   );
   return (
     <div
-      class="grid grid-rows-[auto_1fr] flex-1 gap-3"
+      class="grid flex-1 grid-rows-[auto_1fr] gap-3"
       classList={{
         "pointer-events-none": waiting(),
         "opacity-50": waiting(),
@@ -51,7 +51,7 @@ export default function Try(props: TryProps) {
             id: "request",
             label: "request",
             render: () => (
-              <div class="grid grid-rows-2 h-full gap-3">
+              <div class="grid h-full grid-rows-2 gap-3">
                 <Req
                   {...props}
                   harRequest={harRequest()}
@@ -82,7 +82,7 @@ export default function Try(props: TryProps) {
             id: "response",
             label: "response",
             render: () => (
-              <div class="grid grid-rows-2 h-full gap-3">
+              <div class="grid h-full grid-rows-2 gap-3">
                 <Show when={err()} fallback={<ResComponent res={res()} />}>
                   <Err>{err()}</Err>
                 </Show>

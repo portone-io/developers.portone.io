@@ -27,31 +27,31 @@ export default function DocsNavMenu(props: Props) {
 
   return (
     <LeftSidebar>
-      <div class="pr-4 pt-5">
+      <div class="pt-5 pr-4">
         <div class="md:hidden">
           <DropdownLink
             pathname={location.pathname}
             items={getDropdownLinks(systemVersion())}
           />
-          <div class="my-4 h-1px bg-slate-200"></div>
+          <div class="my-4 h-[1px] bg-slate-200"></div>
         </div>
       </div>
       <nav
         id="nav-menu"
         class="scrollbar-thin relative flex-1 overflow-y-scroll"
       >
-        <div class="pb-1 pl-2 pr-6">
+        <div class="pr-6 pb-1 pl-2">
           <VersionSwitch docData={props.docData} />
         </div>
         <Show when={props.docData.targetPg === "dynamic"}>
-          <section class="grid grid-cols-[auto_1fr] items-center justify-center pb-1 pl-2 pr-2">
-            <div class="rounded-md text-xs text-slate-5 font-medium">
+          <section class="grid grid-cols-[auto_1fr] items-center justify-center pr-2 pb-1 pl-2">
+            <div class="rounded-md text-xs font-medium text-slate-5">
               결제대행사
             </div>
             <PgSelect />
           </section>
         </Show>
-        <ul class="flex flex-col gap-1 pb-4 pr-4">
+        <ul class="flex flex-col gap-1 pr-4 pb-4">
           <For each={navMenuItems()}>
             {(item) => {
               if (item.type === "group") {

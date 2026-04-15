@@ -141,14 +141,14 @@ export default function Gnb(props: Props) {
         `}
       </style>
       <div class="h-14 md:h-26">
-        <div class="fixed h-inherit w-full bg-white z-gnb">
+        <div class="fixed z-gnb h-[inherit] w-full bg-white">
           <header
             data-selected-system-version={systemVersion()}
-            class="mx-auto h-inherit max-w-8xl w-full flex flex-col px-4 lg:px-10 md:px-8 sm:px-6"
+            class="mx-auto flex h-[inherit] w-full max-w-8xl flex-col px-4 sm:px-6 md:px-8 lg:px-10"
           >
-            <div class="grid grid-cols-2 h-14 items-center gap-6 border-b bg-white z-gnb-body md:grid-cols-[auto_1fr_auto]">
+            <div class="z-gnb-body grid h-14 grid-cols-2 items-center gap-6 border-b bg-white md:grid-cols-[auto_1fr_auto]">
               <A
-                class="h-full inline-flex items-center"
+                class="inline-flex h-full items-center"
                 href={`/opi/${props.lang}`}
               >
                 <div class="flex items-center gap-2">
@@ -174,8 +174,8 @@ export default function Gnb(props: Props) {
               </div>
               <MobileMenuButton />
             </div>
-            <div class="hidden h-12 items-center gap-5 border-b bg-white z-gnb-body md:flex">
-              <div class="flex items-center gap-.5">
+            <div class="z-gnb-body hidden h-12 items-center gap-5 border-b bg-white md:flex">
+              <div class="flex items-center gap-0.5">
                 <For each={subNavs()}>
                   {(nav) => (
                     <Dropdown
@@ -205,7 +205,7 @@ export default function Gnb(props: Props) {
                 return (
                   <div
                     class={clsx(
-                      "absolute inset-x-0 bottom-0 flex flex-col transform items-start gap-6 rounded-b-md bg-white px-12 py-6 transition-transform duration-300 md:hidden",
+                      "absolute inset-x-0 bottom-0 flex transform flex-col items-start gap-6 rounded-b-md bg-white px-12 py-6 transition-transform duration-300 md:hidden",
                       sidebarContext.get() && "translate-y-full shadow-lg",
                     )}
                   >

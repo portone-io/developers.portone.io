@@ -24,5 +24,5 @@ export default function SearchButton() {
     });
   });
 
-  return <div id="algolia-search-button" class="max-w-100 flex flex-1" />;
+  return <div id="algolia-search-button" class="flex max-w-[25rem] flex-1" />;
 }

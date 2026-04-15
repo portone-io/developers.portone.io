@@ -43,7 +43,7 @@ export default function LatestPostsList() {
     <Show when={posts()}>
       {(posts) => (
         <>
-          <h2 class="text-1.375rem text-slate-5 font-semibold">{tag()}</h2>
+          <h2 class="text-[1.375rem] font-semibold text-slate-5">{tag()}</h2>
           <PostList posts={posts()} />
         </>
       )}

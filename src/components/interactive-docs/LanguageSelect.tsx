@@ -75,14 +75,14 @@ export default function LanguageSelect(props: LanguageSelectProps) {
       value={value()}
       onChange={handleChange}
     >
-      <div class="rounded-md text-xs text-slate-5 font-medium">
+      <div class="rounded-md text-xs font-medium text-slate-5">
         {props.title}
       </div>
       <For each={languagesValue()}>
         {(language) => (
           <ToggleGroup.Item
             value={language}
-            class="cursor-pointer border border-slate-3 rounded-md px-2.5 py-.75 text-xs text-slate-9 font-medium data-[pressed]:border-portone data-[pressed]:text-portone [&:not([data-pressed])]:hover:border-slate-4 [&:not([data-pressed])]:hover:bg-slate-4"
+            class="cursor-pointer rounded-md border border-slate-3 px-2.5 py-[3px] text-xs font-medium text-slate-9 data-[pressed]:border-portone data-[pressed]:text-portone [&:not([data-pressed])]:hover:border-slate-4 [&:not([data-pressed])]:hover:bg-slate-4"
           >
             {language.replaceAll("_", " ")}
           </ToggleGroup.Item>

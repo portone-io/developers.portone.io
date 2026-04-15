@@ -6,7 +6,7 @@ const MobileMenuButton = () => {
   const { get: sidebarOpen, set: setSidebarOpen } = useSidebarContext();
 
   return (
-    <div class="h-full flex justify-end md:hidden">
+    <div class="flex h-full justify-end md:hidden">
       <button
         class="px-4"
         onClick={() => setSidebarOpen(!untrack(sidebarOpen))}
@@ -14,8 +14,8 @@ const MobileMenuButton = () => {
         <i
           class="block text-2xl"
           classList={{
-            "i-ic-baseline-close": sidebarOpen(),
-            "i-ic-baseline-menu": !sidebarOpen(),
+            "icon-[ic--baseline-close]": sidebarOpen(),
+            "icon-[ic--baseline-menu]": !sidebarOpen(),
           }}
         />
       </button>

@@ -38,7 +38,7 @@ export default function Layout(props: Props) {
   return (
     <SystemVersionProvider>
       <SidebarProvider>
-        <div class="h-full flex flex-col">
+        <div class="flex h-full flex-col">
           <Gnb
             lang={lang()}
             navAsMenu={navAsMenuPaths.some((path) =>
@@ -47,7 +47,7 @@ export default function Layout(props: Props) {
           />
           <SidebarBackground />
           <JsonLd data={websiteJsonLd} />
-          <main class="mx-auto max-w-8xl min-h-0 w-full flex-1 lg:px-10 md:px-8 sm:px-6">
+          <main class="mx-auto min-h-0 w-full max-w-8xl flex-1 sm:px-6 md:px-8 lg:px-10">
             {props.children}
           </main>
         </div>
