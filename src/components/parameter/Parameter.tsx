@@ -78,7 +78,10 @@ export default function Parameter(props: ParameterProps) {
   return (
     <div
       id={props.id}
-      class={clsx("parameter space-y-3 text-sm text-slate-5", props.class)}
+      class={clsx(
+        "parameter flex flex-col gap-3 text-sm text-slate-5",
+        props.class,
+      )}
     >
       <ProseContext.Provider value={{ styles: proseStyles }}>
         <ParameterContext.Provider
