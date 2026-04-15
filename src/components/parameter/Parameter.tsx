@@ -183,7 +183,7 @@ Parameter.TypeDef = function TypeDef(props: TypeDefProps) {
       </div>
       <Collapsible.Content
         as={Parameter}
-        class="b-l col-start-2 col-end-3 row-start-3 mt-3 grid"
+        class="col-start-2 col-end-3 row-start-3 mt-3 grid border-l"
       >
         <For each={detailKeyArray()}>{(key) => details.get(key)?.()}</For>
       </Collapsible.Content>
