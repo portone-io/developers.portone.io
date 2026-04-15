@@ -7,7 +7,7 @@ export function h1(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h1
       {...others}
       class={clsx(
-        "mt-[12px] mb-[12px] text-[1.875rem] leading-[1.15] font-[600] tracking-[-.021em] first:mt-0 last:mb-0",
+        "mt-[12px] mb-[12px] text-[1.875rem] leading-[1.15] font-semibold tracking-[-.021em] first:mt-0 last:mb-0",
         locals.class,
       )}
     >
@@ -22,7 +22,7 @@ export function h2(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h2
       {...others}
       class={clsx(
-        "my-8 text-2xl leading-[1.7] font-[600] tracking-[-.02em]",
+        "my-8 text-2xl leading-[1.7] font-semibold tracking-[-.02em]",
         locals.class,
       )}
     >
@@ -37,7 +37,7 @@ export function h3(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h3
       {...others}
       class={clsx(
-        "my-8 text-[1.375rem] leading-[1.7] font-[600] tracking-[-.018em]",
+        "my-8 text-[1.375rem] leading-[1.7] font-semibold tracking-[-.018em]",
         locals.class,
       )}
     >
@@ -52,7 +52,7 @@ export function h4(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h4
       {...others}
       class={clsx(
-        "my-3 text-[1.125rem] leading-[1.7] font-[600] tracking-[-.014em]",
+        "my-3 text-[1.125rem] leading-[1.7] font-semibold tracking-[-.014em]",
         locals.class,
       )}
     >

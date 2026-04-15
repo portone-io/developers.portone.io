@@ -196,7 +196,7 @@ const DefaultLayout = (
         <div class="mb-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
           <Show when={props.frontmatter.description}>
-            <p class="my-4 text-[18px] leading-[28.8px] font-[400] text-gray">
+            <p class="my-4 text-[18px] leading-[28.8px] font-normal text-gray">
               {props.frontmatter.description}
             </p>
           </Show>

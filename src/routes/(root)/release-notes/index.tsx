@@ -32,7 +32,7 @@ export default function ReleaseNoteIndex() {
       <Metadata title="포트원 릴리즈노트" />
       <JsonLd data={releaseNotesJsonLd} />
       <prose.h1>포트원 릴리즈노트</prose.h1>
-      <p class="my-4 text-[18px] leading-[28.8px] font-[400] text-gray">
+      <p class="my-4 text-[18px] leading-[28.8px] font-normal text-gray">
         포트원의 업데이트 소식을 전해드립니다.
       </p>
       <Banner />
