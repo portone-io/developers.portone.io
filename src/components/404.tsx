@@ -40,7 +40,7 @@ function NotFoundPage() {
         alt="PortOne"
         class="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div class="gap-3xl relative flex h-full flex-col items-center justify-center text-white">
+      <div class="relative flex h-full flex-col items-center justify-center gap-3xl text-white">
         <div class="flex flex-col items-center gap-2.5">
           <Picture picture={portoneLogoWhite} alt="PortOne" class="w-40" />
           <span class="text-7xl font-bold tracking-[0.08em]">404</span>
