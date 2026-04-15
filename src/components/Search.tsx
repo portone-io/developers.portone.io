@@ -64,7 +64,9 @@ const extractTermsFromPage = (): SearchResult[] => {
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = createSignal("");
-  const [fuse, setFuse] = createSignal<Fuse<SearchResult>>(new Fuse([]));
+  const [fuse, setFuse] = createSignal<Fuse<SearchResult>>(
+    new Fuse<SearchResult>([]),
+  );
   const [searchResult] = createResource<SearchResult[], string>(
     searchTerm,
     (term) =>
