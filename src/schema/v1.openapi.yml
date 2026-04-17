@@ -1868,6 +1868,117 @@ paths:
       x-portone-supported-pgs:
         - kcp_quick
       x-portone-category: pg.kcpquick
+  /kcpquick/payment/autopay:
+    post:
+      tags:
+        - kcpquick
+      summary: KCP 퀵페이 자동결제 API
+      description: >-
+        KCP 퀵페이에 등록된 자동결제 키를 이용하여 결제를 요청합니다. 자동결제 준비(prepare) → 결제 승인(approve)
+        2단계로 처리됩니다.
+      operationId: payWithAutoPaymentKey
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: customer_uid
+          in: formData
+          description: 자동결제에 사용할 빌링키(customer_uid)
+          required: true
+          type: string
+          x-portone-name: 빌링키
+          x-portone-description: 자동결제에 사용할 빌링키(customer_uid)
+        - name: merchant_uid
+          in: formData
+          description: 결제 요청할 거래의 고객사 주문번호
+          required: true
+          type: string
+          maxLength: 40
+          x-portone-name: 고객사 주문번호
+          x-portone-description: 결제 요청할 거래의 고객사 주문번호
+        - name: name
+          in: formData
+          description: 결제 요청할 거래의 주문명(상품명)
+          required: true
+          type: string
+          maxLength: 40
+          x-portone-name: 주문명
+          x-portone-description: 결제 요청할 거래의 주문명(상품명)
+        - name: buyer_name
+          in: formData
+          description: 주문자 이름
+          required: true
+          type: string
+          maxLength: 20
+          x-portone-name: 주문자명
+          x-portone-description: 주문자 이름
+        - name: amount
+          in: formData
+          description: 결제 요청할 금액
+          required: true
+          type: integer
+          x-portone-name: 결제금액
+          x-portone-description: 결제 요청할 금액
+        - name: notice_url
+          in: formData
+          description: 결제 승인 성공 후 결과를 수신할 웹훅 URL
+          required: false
+          type: string
+          x-portone-name: 결제 결과 수신 웹훅 URL
+          x-portone-description: 결제 승인 성공 후 결과를 수신할 웹훅 URL
+      responses:
+        '200':
+          description: 응답
+          schema:
+            $ref: '#/definitions/PaymentResponse'
+        '401':
+          description: 인증 Token이 전달되지 않았거나 유효하지 않은 경우
+      x-portone-supported-pgs:
+        - kcp_quick
+      x-portone-category: pg.kcpquick
+  '/kcpquick/autopay/{customer_uid}':
+    delete:
+      tags:
+        - kcpquick
+      summary: KCP 퀵페이 자동결제 키 삭제 API
+      description: KCP 퀵페이에 등록된 자동결제 키를 삭제합니다.
+      operationId: deleteAutoPayKey
+      produces:
+        - application/json
+      parameters:
+        - name: customer_uid
+          in: path
+          description: 삭제할 자동결제 키에 연결된 빌링키(customer_uid)
+          required: true
+          type: string
+          x-portone-name: 빌링키
+          x-portone-description: 삭제할 자동결제 키에 연결된 빌링키(customer_uid)
+      responses:
+        '200':
+          description: 정상 삭제
+          schema:
+            properties:
+              code:
+                type: integer
+                example: 0
+              message:
+                type: string
+                example: 자동결제 키가 정상적으로 삭제되었습니다.
+              response:
+                properties:
+                  customer_uid:
+                    description: 삭제된 자동결제 키의 빌링키
+                    type: string
+        '401':
+          description: 인증 Token이 전달되지 않았거나 유효하지 않은 경우
+        '404':
+          description: 등록된 빌링키 또는 자동결제 키를 찾을 수 없는 경우
+        '500':
+          description: 자동결제 키 삭제 처리 중 오류가 발생한 경우
+      x-portone-supported-pgs:
+        - kcp_quick
+      x-portone-category: pg.kcpquick
   '/kcpquick/members/{member_id}/fido/release':
     post:
       tags:
@@ -5635,7 +5746,7 @@ paths:
           in: formData
           description: >-
             카드할부개월수. 2 이상의 integer 할부개월수 적용 <br>(결제금액 50,000원 이상 한정, default =
-            0(일시불)) 
+            0(일시불))
           required: false
           type: integer
           x-portone-name: 카드할부개월수
@@ -7364,7 +7475,7 @@ paths:
           in: formData
           description: >-
             고정식 가상계좌 발급 시, pg사로부터 전달받은 가상계좌 번호 <br> (필수 : 스마트로 - 신모듈, 헥토파이낸셜)
-            (**사용을 위해 PG사와 협의 필요**) 
+            (**사용을 위해 PG사와 협의 필요**)
           required: false
           type: string
           x-portone-name: 고정 가상 계좌 번호
