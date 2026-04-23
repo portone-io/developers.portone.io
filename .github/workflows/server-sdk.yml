@@ -51,20 +51,8 @@ jobs:
 
       - name: Generate SDK code
         run: |
-          deno run -A main.ts js && deno run -A main.ts py && deno run -A main.ts jvm
+          deno fmt sdk/codegen/openapi.json && deno run -A main.ts js && deno run -A main.ts py && deno run -A main.ts jvm
         working-directory: sdk/codegen
-
-      - name: Add empty changeset for JavaScript changes
-        run: |
-          if git diff --quiet -- javascript; then
-            exit 0
-          fi
-
-          cat <<'EOF' > javascript/.changeset/openapi-sync.md
-          ---
-          ---
-          EOF
-        working-directory: sdk
 
       - name: Install Python
         uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
@@ -83,6 +71,18 @@ jobs:
       - name: Format Python code
         run: uv run ruff format
         working-directory: sdk/python
+
+      - name: Add empty changeset for JavaScript changes
+        run: |
+          if git diff --quiet -- javascript; then
+            exit 0
+          fi
+
+          cat <<'EOF' > javascript/.changeset/openapi-sync.md
+          ---
+          ---
+          EOF
+        working-directory: sdk
 
       - name: Detect changes
         id: changes
