@@ -18,24 +18,27 @@ jobs:
     runs-on: ubuntu-latest
     name: Sync OpenAPI to Server SDK
     environment: sdk-sync
+    env:
+      SDK_REPO: portone-io/server-sdk
+      SYNC_BRANCH: chore/openapi
     permissions:
       # Required to checkout the repository
       contents: read
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          repository: portone-io/server-sdk
+          repository: ${{ env.SDK_REPO }}
           path: sdk
           ref: main
           token: ${{ secrets.SDK_REPO_TOKEN }}
           persist-credentials: false
 
       - name: Create new branch
-        run: git checkout -b chore/openapi
+        run: git checkout -B "$SYNC_BRANCH"
         working-directory: sdk
 
       - name: Copy OpenAPI schema
@@ -51,22 +54,27 @@ jobs:
           deno run -A main.ts js && deno run -A main.ts py && deno run -A main.ts jvm
         working-directory: sdk/codegen
 
-      - name: Install Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 24
-          cache: "npm"
-          cache-dependency-path: "sdk/javascript/pnpm-lock.yaml"
+      - name: Add empty changeset for JavaScript changes
+        run: |
+          if git diff --quiet -- javascript; then
+            exit 0
+          fi
 
-      - name: Add empty changeset
-        run: npx @changesets/cli add --empty
-        working-directory: sdk/javascript
+          cat <<'EOF' > javascript/.changeset/openapi-sync.md
+          ---
+          ---
+          EOF
+        working-directory: sdk
+
+      - name: Install Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+        with:
+          python-version: "3.9"
 
       - name: Install uv
         uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
         with:
           enable-cache: true
-          working-directory: "sdk/python"
 
       - name: Install dependencies
         run: uv sync --dev
@@ -76,25 +84,58 @@ jobs:
         run: uv run ruff format
         working-directory: sdk/python
 
-      - name: Commit and push changes
+      - name: Detect changes
+        id: changes
         run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+        working-directory: sdk
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          set -euo pipefail
+
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add .
+          git add -A
           git commit -m "chore: update OpenAPI schema"
-          git remote set-url origin "https://x-access-token:${SDK_REPO_TOKEN}@github.com/portone-io/server-sdk.git"
-          git push -f origin chore/openapi
+          git remote set-url origin "https://x-access-token:${SDK_REPO_TOKEN}@github.com/${SDK_REPO}.git"
+          git push --force-with-lease origin "$SYNC_BRANCH"
         working-directory: sdk
         env:
           SDK_REPO_TOKEN: ${{ secrets.SDK_REPO_TOKEN }}
 
-      - name: Create Pull Request
+      - name: Create or update Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
         run: |
+          set -euo pipefail
+
+          pr_number="$(gh pr list \
+            --repo "$SDK_REPO" \
+            --head "$SYNC_BRANCH" \
+            --base main \
+            --state open \
+            --json number \
+            --jq '.[0].number')"
+
+          if [ -n "$pr_number" ]; then
+            gh pr edit "$pr_number" \
+              --repo "$SDK_REPO" \
+              --title "chore: update OpenAPI schema" \
+              --body "OpenAPI 스키마가 업데이트되어 자동으로 생성된 PR입니다."
+            exit 0
+          fi
+
           gh pr create \
-            --repo portone-io/server-sdk \
+            --repo "$SDK_REPO" \
             --title "chore: update OpenAPI schema" \
             --body "OpenAPI 스키마가 업데이트되어 자동으로 생성된 PR입니다." \
             --base main \
-            --head chore/openapi
+            --head "$SYNC_BRANCH"
         env:
           GH_TOKEN: ${{ secrets.SDK_REPO_TOKEN }}
