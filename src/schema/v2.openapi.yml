@@ -4682,6 +4682,8 @@ paths:
 
             * `CancelTaxAmountExceedsCancellableTaxAmountError`: 취소 과세 금액이 취소
             가능한 과세 금액을 초과한 경우
+
+            * `MaxCancelCountReachedError`: 취소 시도 횟수가 초과된 경우
           content:
             application/json:
               schema:
@@ -15050,6 +15052,7 @@ components:
         - $ref: '#/components/schemas/CancellableAmountConsistencyBrokenError'
         - $ref: '#/components/schemas/ForbiddenError'
         - $ref: '#/components/schemas/InvalidRequestError'
+        - $ref: '#/components/schemas/MaxCancelCountReachedError'
         - $ref: '#/components/schemas/NegativePromotionAdjustedCancelAmountError'
         - $ref: '#/components/schemas/PaymentAlreadyCancelledError'
         - $ref: '#/components/schemas/PaymentNotFoundError'
@@ -15069,6 +15072,7 @@ components:
             #/components/schemas/CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError
           FORBIDDEN: '#/components/schemas/ForbiddenError'
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
+          MAX_CANCEL_COUNT_REACHED: '#/components/schemas/MaxCancelCountReachedError'
           NEGATIVE_PROMOTION_ADJUSTED_CANCEL_AMOUNT: '#/components/schemas/NegativePromotionAdjustedCancelAmountError'
           PAYMENT_ALREADY_CANCELLED: '#/components/schemas/PaymentAlreadyCancelledError'
           PAYMENT_NOT_FOUND: '#/components/schemas/PaymentNotFoundError'
@@ -20388,11 +20392,11 @@ components:
         - MAYA
         - QRIS
         - THAI_QR
+        - GOOGLE_PAY
       x-portone-title: 간편 결제사
       x-portone-enum:
         ALIPAY_HK: {}
         MIR: {}
-        NAVERPAY: {}
         QRIS: {}
         MONEYTREE: {}
         GRABPAY: {}
@@ -20415,6 +20419,8 @@ components:
         JENIUS_PAY: {}
         RABBIT_LINE_PAY: {}
         THAI_QR: {}
+        NAVERPAY: {}
+        GOOGLE_PAY: {}
         KREDIVO: {}
         CHAI: {}
         PINPAY: {}
@@ -22012,7 +22018,9 @@ components:
         page:
           $ref: '#/components/schemas/PageInput'
           title: 요청할 페이지 정보
-          description: '미 입력 시 number: 0, size: 10 으로 기본값이 적용됩니다.'
+          description: >-
+            미 입력 시 number = 0, size = 10 으로 기본값이 적용됩니다. (number + 1) * size가
+            60,000을 초과할 수 없습니다.
         filter:
           $ref: '#/components/schemas/PaymentFilterInput'
           title: 조회할 결제 건 조건 필터
@@ -24140,6 +24148,19 @@ components:
       type: object
       additionalProperties:
         $ref: '#/components/schemas/B2bBulkTaxInvoiceStat'
+    MaxCancelCountReachedError:
+      title: 취소 시도 횟수가 초과된 경우
+      description: 취소 시도 횟수가 초과된 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 취소 시도 횟수가 초과된 경우
+      x-portone-status-code: 409
     MaxTransactionCountReachedError:
       title: 결제 혹은 본인인증 시도 횟수가 최대에 도달한 경우
       description: 결제 혹은 본인인증 시도 횟수가 최대에 도달한 경우
@@ -26697,6 +26718,7 @@ components:
         - CREATED_AT
         - TIME_TO_PAY
         - COMPLETED_AT
+        - STATUS_TIMESTAMP
       x-portone-title: 결제 예약 건 정렬 기준
       x-portone-enum:
         CREATED_AT:
@@ -27520,6 +27542,7 @@ components:
         - MOBILIANS_V2
         - TRIPLE_A
         - KICC_V2
+        - HECTO_GLOBAL
       x-portone-title: PG사 결제 모듈
       x-portone-enum:
         KICC: {}
@@ -27528,7 +27551,6 @@ components:
         SMARTRO_V2: {}
         CHAI: {}
         NICE_V2: {}
-        PAYPAL_V2: {}
         KAKAO: {}
         DANAL: {}
         KAKAOPAY: {}
@@ -27564,6 +27586,8 @@ components:
         MOBILIANS: {}
         UPLUS: {}
         HYPHEN: {}
+        PAYPAL_V2: {}
+        HECTO_GLOBAL: {}
         TRIPLE_A: {}
         KPN: {}
         KICC_V2: {}
