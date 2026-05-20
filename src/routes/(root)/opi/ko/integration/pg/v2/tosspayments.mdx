@@ -211,6 +211,7 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
       - L페이 : `LPAY`
       - 토스페이 : `TOSSPAY`
       - 애플페이 : `APPLEPAY`
+      - 페이팔 : `PAYPAL`
 
 - `giftCertificate`
   - `giftCertificateType`
@@ -224,7 +225,22 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
   - 토스페이먼츠를 사용하는 경우 영문 대소문자, 숫자, 특수문자(-,\_)만 허용되며, 6자 이상 64자 이하만 가능합니다.
 
 - `currency`
-  - 토스페이먼츠의 경우 원화 결제만 지원하므로 `KRW` 이외의 값을 넣으면 에러를 리턴합니다.
+  - 토스페이먼츠의 경우 원화(`KRW`) 결제가 기본이며, 페이팔 결제에선 `USD`만 허용됩니다. 그 외 통화는 에러를 리턴합니다.
+
+- `country`
+  - PayPal 결제 시 필수입니다. ISO 3166-1 alpha-2 국가 코드
+
+- `products`
+  - PayPal 결제에서 선택 입력 항목이지만, 포함할 경우 아래 모든 항목이 필수입니다.
+    - `id` (string): 상품 ID
+    - `name` (string): 상품명
+    - `amount` (number): 상품 단위 가격. USD의 경우 최소 단위(센트) 기준 정수로 입력합니다. (예: `$2.99` → `299`)
+    - `quantity` (number): 상품 수량
+  - 다음 항목은 선택 입력입니다.
+    - `code` (string): 상품 코드
+    - `tag` (string): 상품 태그
+    - `link` (string): 상품 판매 URL
+    - `description` (string): 상품 설명.
 
 - `isCulturalExpense`
   - 문화비(도서, 공연, 박물관 등) 지출 여부를 구분하고자 할 때 파라미터를 입력하여 사용할 수 있습니다.
@@ -258,6 +274,35 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
       {
         "tosspayments": {
           "useInternationalCardOnly": true
+        }
+      }
+      ```
+
+    - `paypal` — 페이팔 결제 전용 bypass
+
+      - `shipping` — PayPal Seller Protection 자격 충족용 배송 정보 (`fullName`, `address.{country, line1, line2, area1, area2, postalCode}`)
+      - `setTransactionContext` — PayPal Set Transaction Context (STC) 자유 JSON 객체. 부정 거래/리스크 평가용
+
+      ```json
+      {
+        "tosspayments": {
+          "paypal": {
+            "shipping": {
+              "fullName": "John Smith",
+              "address": {
+                "country": "US",
+                "line1": "706 E Alisal St",
+                "area1": "CA",
+                "area2": "Salinas",
+                "postalCode": "93905"
+              }
+            },
+            "setTransactionContext": {
+              "sender_account_id": "10000600",
+              "sender_email": "john@example.com",
+              "sender_country_code": "US"
+            }
+          }
         }
       }
       ```
@@ -501,6 +546,119 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
 
 - 일부 간편결제 사 (ex. 토스페이, L페이 등)의 경우 해당 간편결제사 정책에 따라 고정 할부 개월수
   파라미터를 입력해도 해당 할부 개월 수와 일시불이 동시에 표기되는 경우가 있습니다.
+
+### PayPal (해외 간편 결제)
+
+토스페이먼츠 PayPal은 해외 결제 전용으로, `payMethod = "EASY_PAY"` + `easyPay.easyPayProvider = "EASY_PAY_PROVIDER_PAYPAL"` 조합으로 호출합니다.
+판매자 보호(Seller Protection) 및 PayPal 위험 관리(STC) 요건을 충족하도록 일부 파라미터의 추가 입력이 권장됩니다.
+자세한 내용은 [토스페이먼츠 PayPal 가이드](https://docs.tosspayments.com/guides/paypal)를 함께 참고하세요.
+
+#### 사전 계약
+
+- 토스페이먼츠와 PayPal 결제 사용을 위한 사전 계약이 필요합니다.
+- 가맹점이 PayPal 계정을 보유해야 하며, 토스페이먼츠 콘솔에서 PayPal 결제수단을 활성화해야 합니다.
+
+#### 필수 파라미터
+
+- `currency`: `"CURRENCY_USD"` (KRW로 호출 시 결제 거부)
+- `country`: ISO 3166-1 alpha-2 국가 코드 (예: `"COUNTRY_US"`). 미입력 시 결제 거부.
+  - 구매자의 결제 국가를 의미하며, PayPal의 transaction context country로 송출됩니다.
+- `customer.email`: PayPal 청구/알림용
+- `customer.fullName` 또는 `customer.firstName`+`customer.lastName`: PayPal 결제창 표시용
+- `totalAmount`: USD 최소 단위(센트) 기준 정수 (`$29.99` → `2999`)
+
+#### 판매자 보호 (Seller Protection)
+
+PayPal Seller Protection 자격 충족을 위해 **`products`**(상품 목록)와 **`bypass.tosspayments.paypal.shipping`**(배송지)을 함께 전달하는 것을 권장합니다.
+
+```typescript
+PortOne.requestPayment({
+  storeId: "store-...",
+  channelKey: "channel-key-...",
+  paymentId: "payment-...",
+  orderName: "Blue Widget Bundle",
+  totalAmount: 4499,
+  currency: "CURRENCY_USD",
+  country: "COUNTRY_US",
+  payMethod: "EASY_PAY",
+  easyPay: { easyPayProvider: "EASY_PAY_PROVIDER_PAYPAL" },
+  customer: {
+    fullName: "John Smith",
+    email: "john@example.com",
+  },
+  // 상품 목록은 top-level products 로 전달 (PayPal items[]로 자동 매핑)
+  products: [
+    {
+      id: "sku-blue-widget",
+      name: "Blue Widget",
+      amount: 2999,
+      quantity: 1,
+      description: "Standard blue widget — 1 ea", // PayPal items[].description으로 송출
+    },
+    {
+      id: "sku-red-hat",
+      name: "Red Hat",
+      amount: 1500,
+      quantity: 1,
+    },
+  ],
+  bypass: {
+    tosspayments: {
+      paypal: {
+        // 배송 정보 (PayPal Seller Protection 자격 충족용)
+        shipping: {
+          fullName: "John Smith",
+          address: {
+            country: "US",
+            line1: "706 E Alisal St",
+            line2: "Suite 200",
+            area1: "CA",      // 주/도
+            area2: "Salinas", // 도시
+            postalCode: "93905",
+          },
+        },
+      },
+    },
+  },
+});
+```
+
+- `products[].description`을 명시하면 PayPal `items[].description`으로 그대로 송출됩니다. 미지정 시 PayPal로 description 필드는 전송되지 않습니다.
+- 디지털 상품이나 배송이 없는 결제는 `shipping`을 생략할 수 있으나, 이 경우 PayPal Seller Protection 적용 범위가 줄어들 수 있습니다.
+
+#### 위험 관리 — Set Transaction Context (STC)
+
+부정 거래 평가를 위해 `bypass.tosspayments.paypal.setTransactionContext` 에 PayPal STC 키 JSON 객체를 전달할 수 있습니다.
+
+```typescript
+bypass: {
+  tosspayments: {
+    paypal: {
+      setTransactionContext: {
+        sender_account_id: "10000600",
+        sender_email: "john@example.com",
+        sender_country_code: "US",
+        sender_create_date: "2024-01-15T08:00:00Z",
+        // ... 업종별 권장 키
+      },
+    },
+  },
+}
+```
+
+업종별 권장 STC 키 정의는 [PayPal STC 가이드](https://static.tosspayments.com/public/STC.pdf)와 [토스페이먼츠 PayPal 가이드](https://docs.tosspayments.com/guides/paypal#%ED%8C%90%EB%A7%A4%EC%9E%90-%EB%B3%B4%ED%98%B8-%EB%B0%8F-%EC%9C%84%ED%97%98-%EA%B4%80%EB%A6%AC-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0)를 참고하세요.
+
+#### 취소
+
+- 전체 취소는 일반 결제와 동일하게 `POST /payments/{paymentId}/cancel` 호출로 처리됩니다.
+- **부분 취소**의 경우 PayPal은 통화 정보를 요구하므로, 포트원에서 자동으로 `currency` 필드를 토스페이먼츠 cancel API에 송출합니다. 가맹점은 별도 처리 없이 부분 취소를 호출하면 됩니다.
+- 응답 통화는 토스페이먼츠 cancel 응답의 `currency` 필드를 기반으로 처리됩니다.
+
+#### 유의사항
+
+- 결제 창은 `page` 모듈로 호출됩니다. 별도의 popup/iframe 옵션을 지정해도 PayPal 흐름은 자체 페이지로 렌더링됩니다.
+- 빌링키 발급은 지원하지 않습니다 (단건 결제만 가능).
+- 토스페이먼츠 테스트 MID로 PayPal을 호출하면 정상 동작하지 않을 수 있습니다. 실제 사전 계약된 MID에서 테스트하세요.
 
 ### 기타
 
