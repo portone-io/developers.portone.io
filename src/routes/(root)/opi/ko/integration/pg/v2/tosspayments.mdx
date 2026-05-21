@@ -148,42 +148,57 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
 <Parameter flatten>
   - storeId: string
 
+    **상점 ID**
+
     고객사의 상점을 식별하는 고유한 값입니다.
 
   - paymentId: string
+
+    **결제 ID**
 
     고객사가 채번하는 주문 고유 번호로 매번 고유하게 채번되어야 합니다.
 
   - orderName: string
 
-    주문명으로 고객사에서 자유롭게 입력합니다.
+    **주문명**
+
+    고객사에서 자유롭게 입력합니다.
 
   - channelKey: string
+
+    **채널 키**
 
     콘솔의 결제 연동 메뉴에 표시되는 채널 키를 입력해야 합니다.
 
   - totalAmount: number
 
-    결제 금액으로 결제를 원하는 통화(currency)별 scale factor(소수점 몇번째 자리까지 유효한지)를 고려한 number 형식만 허용됩니다.
+    **결제 금액**
+
+    결제를 원하는 통화(`currency`)별 scale factor(소수점 몇 번째 자리까지 유효한지)를 고려한 정수로 입력합니다.
 
   - currency: string
 
-    결제통화로 원화 결제를 원할 시 `KRW`로 입력해야 합니다.
+    **결제 통화**
+
+    원화 결제를 원할 시 `KRW`로 입력합니다.
 
   - payMethod: string
 
-    결제수단을 구분하는 코드로 원하는 결제수단 값을 입력해야 합니다.
+    **결제수단 코드**
+
+    결제수단을 구분하는 코드입니다. 원하는 결제수단 값을 입력해야 합니다.
 </Parameter>
 
 ## 유의할 파라미터 - SDK
 
 ### 결제/빌링키 발급 공통
 
-- `windowType`
+<Parameter flatten>
+  - windowType?: object
 
-  - 토스페이먼츠의 경우 PC는 `IFRAME`, mobile은 `REDIRECTION`만 지원되며 이외의 다른 방식으로 결제창을 호출할 경우 에러를 리턴합니다.
+    **결제창 호출 방식**
 
-  - `windowType` 파라미터를 채우지 않을 경우 자동으로 아래와 같이 세팅됩니다.
+    토스페이먼츠의 경우 PC는 `IFRAME`, mobile은 `REDIRECTION`만 지원되며 이외의 다른 방식으로 결제창을 호출할 경우 에러를 리턴합니다. 파라미터를 채우지 않을 경우 자동으로 아래와 같이 세팅됩니다.
 
     ```json
     {
@@ -192,53 +207,107 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
     }
     ```
 
-- `locale`
-  - 토스페이먼츠의 경우 `KO_KR`만 지원합니다. 이외의 값을 넣어도 무시됩니다.
+  - locale?: string
 
-- `redirectUrl`
-  - 모바일 환경에서 결제 요청 시 `REDIRECTION` 타입이므로, 필수로 입력해야 합니다.
+    **결제창 언어**
+
+    토스페이먼츠의 경우 `KO_KR`만 지원합니다. 이외의 값을 넣어도 무시됩니다.
+
+  - redirectUrl?: string
+
+    **결제 후 리다이렉트 URL**
+
+    모바일 환경에서 결제 요청 시 `REDIRECTION` 타입이므로, 필수로 입력해야 합니다.
+</Parameter>
 
 ### 결제 (`requestPayment`)
 
-- `easyPay`
-  - `easyPayProvider`
-    - 간편결제 결제 요청 시, 사용하고자 하는 간편 결제사에 따라 아래 목록을 참고하여 `easyPayProvider` 파라미터를 입력해야 합니다.
-      - 페이코 : `PAYCO`
-      - 삼성페이 : `SAMSUNGPAY`
-      - SSG페이 : `SSGPAY`
-      - 카카오페이 : `KAKAOPAY`
-      - 네이버페이 : `NAVERPAY`
-      - L페이 : `LPAY`
-      - 토스페이 : `TOSSPAY`
-      - 애플페이 : `APPLEPAY`
-      - 페이팔 : `PAYPAL`
+<Parameter flatten>
+  - easyPay?: object
 
-- `giftCertificate`
-  - `giftCertificateType`
+    **간편결제 파라미터**
 
-  - 상품권 결제 요청 시, 사용하고자 하는 상품권 종류에 따라 아래 목록을 참고하여 `giftCertificateType` 파라미터를 입력해야 합니다.
-    - 도서문화상품권 : `BOOKNLIFE`
-    - 스마트문상 ((구)게임문화상품권) : `SMART_MUNSANG`
-    - 컬쳐랜드 문화상품권 : `CULTURELAND`
+    <Parameter.Details>
+      - easyPayProvider?: string
 
-- `paymentId`
-  - 토스페이먼츠를 사용하는 경우 영문 대소문자, 숫자, 특수문자(-,\_)만 허용되며, 6자 이상 64자 이하만 가능합니다.
+        **간편결제사**
 
-- `currency`
-  - 토스페이먼츠의 경우 원화(`KRW`) 결제가 기본이며, 페이팔 결제에선 `USD`만 허용됩니다. 그 외 통화는 에러를 리턴합니다.
+        간편결제 결제 요청 시, 사용하고자 하는 간편 결제사에 따라 아래 값 중 하나를 입력합니다.
+        - 페이코 : `PAYCO`
+        - 삼성페이 : `SAMSUNGPAY`
+        - SSG페이 : `SSGPAY`
+        - 카카오페이 : `KAKAOPAY`
+        - 네이버페이 : `NAVERPAY`
+        - L페이 : `LPAY`
+        - 토스페이 : `TOSSPAY`
+        - 애플페이 : `APPLEPAY`
+        - 페이팔 : `PAYPAL`
+    </Parameter.Details>
 
-- `country`
-  - 페이팔 결제 시 필수입니다. ISO 3166-1 alpha-2 국가 코드
+  - giftCertificate?: object
 
-- `products`
-  - 페이팔 결제 시 구매 상품 상세 정보입니다. 항목 자체는 선택 입력이나, 입력하는 경우 아래 필드는 SDK 타입 정의에 따라 채워야 합니다.
-    - `id` : 상품 ID. 각 항목을 고유하게 식별하는 값입니다.
-    - `name` : 상품명
-    - `amount` : 상품 단위 가격. 정수로 입력하며, 해외 통화는 [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html)의 최소 단위(minor unit)를 기준으로 합니다. (예: USD는 100배 — `$2.99` → `299`)
-    - `quantity` : 상품 수량
-    - `description` : 상품 설명
+    **상품권 결제 파라미터**
 
-  - 각 상품의 `amount × quantity` 합계는 `totalAmount`와 반드시 일치해야 하며, 일치하지 않으면 에러가 리턴되고 결제창이 호출되지 않습니다.
+    <Parameter.Details>
+      - giftCertificateType?: string
+
+        **상품권 종류**
+
+        상품권 결제 요청 시, 사용하고자 하는 상품권 종류에 따라 아래 값 중 하나를 입력합니다.
+        - 도서문화상품권 : `BOOKNLIFE`
+        - 스마트문상 ((구)게임문화상품권) : `SMART_MUNSANG`
+        - 컬쳐랜드 문화상품권 : `CULTURELAND`
+    </Parameter.Details>
+
+  - paymentId: string
+
+    **결제 ID**
+
+    토스페이먼츠를 사용하는 경우 영문 대소문자, 숫자, 특수문자(`-`, `_`)만 허용되며, 6자 이상 64자 이하만 가능합니다.
+
+  - currency: string
+
+    **결제통화**
+
+    토스페이먼츠의 경우 원화(`KRW`) 결제가 기본이며, 페이팔 결제에선 `USD`만 허용됩니다. 그 외 통화는 에러를 리턴합니다.
+
+  - country?: string
+
+    **국가 코드**
+
+    페이팔 결제 시 필수입니다. ISO 3166-1 alpha-2 형식의 국가 코드를 입력합니다.
+
+  - products?: object\[]
+
+    **구매 상품 상세 정보**
+
+    페이팔 결제 시 사용합니다. 각 상품의 `amount × quantity` 합계는 `totalAmount`와 반드시 일치해야 하며, 일치하지 않으면 에러가 리턴되고 결제창이 호출되지 않습니다.
+
+    <Parameter.Details>
+      - id: string
+
+        **상품 ID**
+
+        각 항목을 고유하게 식별하는 값입니다.
+
+      - name: string
+
+        **상품명**
+
+      - amount: number
+
+        **상품 단위 가격**
+
+        정수로 입력합니다. 해외 통화의 경우 [ISO 4217](https://www.iso.org/iso-4217-currency-codes.html)의 최소 단위(minor unit)를 기준으로 합니다. (예: USD는 100배 — `$2.99` → `299`)
+
+      - quantity: number
+
+        **상품 수량**
+
+      - description?: string
+
+        **상품 설명**
+    </Parameter.Details>
 
     ```json
     [
@@ -259,118 +328,161 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
     ]
     ```
 
-- `isCulturalExpense`
-  - 문화비(도서, 공연, 박물관 등) 지출 여부를 구분하고자 할 때 파라미터를 입력하여 사용할 수 있습니다.
+  - isCulturalExpense?: boolean
 
-- `card.installment.monthOption.fixedMonth`
-  - 토스페이먼츠의 경우 현대카드는 1만원, 그 외는 5만원 이상 결제에 대해서만 적용됩니다.
+    **문화비 지출 여부**
 
-- `bypass`
+    문화비(도서, 공연, 박물관 등) 지출 여부를 구분하고자 할 때 입력합니다.
 
-  - 토스페이먼츠에서는 아래의 파라미터를 지원합니다.
+  - card?: object
 
-  - `tosspayments`
+    **카드 결제 파라미터**
 
-    - `discountCode`
+    <Parameter.Details>
+      - installment?: object
 
-      - 토스페이먼츠와 고객사 간의 계약에 따라 프로모션을 적용할 수 있습니다.
+        **할부 결제 옵션**
 
-      ```json
-      {
-        "tosspayments": {
-          "discountCode": "즉시 할인 코드(카드사 고유 번호)"
-        }
-      }
-      ```
+        <Parameter.Details>
+          - monthOption?: object
 
-    - `useInternationalCardOnly`
+            **할부 개월 옵션**
 
-      - 해외 카드로만 결제가 가능하도록 설정할 수 있습니다.
+            <Parameter.Details>
+              - fixedMonth?: number
 
-      ```json
-      {
-        "tosspayments": {
-          "useInternationalCardOnly": true
-        }
-      }
-      ```
+                **고정 할부 개월수**
 
-    - `paypal`
+                토스페이먼츠의 경우 현대카드는 1만원, 그 외는 5만원 이상 결제에 대해서만 적용됩니다.
+            </Parameter.Details>
+        </Parameter.Details>
+    </Parameter.Details>
 
-      - 페이팔 결제 전용 파라미터입니다. 자세한 사용 방법은 [페이팔 (해외 간편 결제)](#페이팔-해외-간편-결제) 섹션을 참고하세요.
+  - bypass?: object
 
-      - `shipping`
+    **결제대행사 전용 파라미터**
 
-        - 페이팔 Seller Protection 자격 충족을 위한 배송 정보입니다.
+    토스페이먼츠에서는 아래의 파라미터를 지원합니다.
 
-        - `fullName`
+    <Parameter.Details>
+      - tosspayments?: object
 
-          - 수령인 이름. 페이팔 측 배송 정보로 송출되어 결제창/배송 라벨에 표시됩니다.
+        **토스페이먼츠 전용 bypass 컨테이너**
 
-        - `address`
+        <Parameter.Details>
+          - discountCode?: string
 
-          - 배송지 주소 객체. 아래 하위 필드를 포함합니다.
+            **즉시 할인 코드**
 
-          - `country`
+            토스페이먼츠와 고객사 간의 계약에 따라 프로모션을 적용할 때 사용합니다. 카드사 고유 번호를 입력합니다.
 
-            - 배송지 국가의 ISO 3166-1 alpha-2 코드입니다. (예: 미국 `"US"`, 한국 `"KR"`) `address` 객체를 전달할 경우 반드시 입력해야 합니다.
+          - useInternationalCardOnly?: boolean
 
-          - `line1`
+            **해외 카드 전용 결제 여부**
 
-            - 주소의 첫 번째 줄. 도로명/번지 등 기본 주소를 입력합니다. (예: `"706 E Alisal St"`)
+            `true`로 설정하면 해외 카드로만 결제가 가능하도록 제한합니다.
 
-          - `line2`
+          - paypal?: object
 
-            - 주소의 두 번째 줄. 동·호수, 빌딩명 등 상세 주소를 입력합니다. (예: `"Suite 200"`)
+            **페이팔 결제 전용 파라미터**
 
-          - `area1`
+            자세한 사용 방법은 [페이팔 (해외 간편 결제)](#페이팔-해외-간편-결제) 섹션을 참고하세요.
 
-            - 주(state) / 도(province) / 광역시 등 국가별 상위 행정구역을 입력합니다. (예: 미국 캘리포니아주 `"CA"`)
+            <Parameter.Details>
+              - shipping?: object
 
-          - `area2`
+                **배송 정보**
 
-            - 도시(city) 명을 입력합니다. (예: `"Salinas"`) 필수 입력 값입니다.
+                페이팔 Seller Protection 자격 충족을 위해 권장되는 배송지 정보입니다.
 
-          - `postalCode`
+                <Parameter.Details>
+                  - fullName?: string
 
-            - 우편번호. 중국, 일본, 프랑스, 독일 등 페이팔이 요구하는 일부 국가에서는 필수이며, 그 외 국가에서는 선택입니다.
+                    **수령인 이름**
 
-        ```json
-        {
-          "tosspayments": {
-            "paypal": {
-              "shipping": {
-                "fullName": "John Smith",
-                "address": {
-                  "country": "US",
-                  "line1": "706 E Alisal St",
-                  "area1": "CA",
-                  "area2": "Salinas",
-                  "postalCode": "93905"
-                }
-              }
+                    페이팔 결제창/배송 라벨에 표시됩니다.
+
+                  - address?: object
+
+                    **배송지 주소**
+
+                    <Parameter.Details>
+                      - country: string
+
+                        **국가 코드**
+
+                        ISO 3166-1 alpha-2 형식의 국가 코드를 입력합니다. (예: 미국 `"US"`, 한국 `"KR"`)
+                        `address` 객체를 전달할 경우 반드시 입력해야 합니다.
+
+                      - line1?: string
+
+                        **주소 첫 번째 줄**
+
+                        도로명/번지 등 기본 주소를 입력합니다. (예: `"706 E Alisal St"`)
+
+                      - line2?: string
+
+                        **주소 두 번째 줄**
+
+                        동·호수, 빌딩명 등 상세 주소를 입력합니다. (예: `"Suite 200"`)
+
+                      - area1?: string
+
+                        **상위 행정구역**
+
+                        주(state) / 도(province) / 광역시 등 국가별 상위 행정구역을 입력합니다. (예: 미국 캘리포니아주 `"CA"`)
+
+                      - area2: string
+
+                        **도시(city) 명**
+
+                        도시명을 입력합니다. (예: `"Salinas"`)
+
+                      - postalCode?: string
+
+                        **우편번호**
+
+                        중국, 일본, 프랑스, 독일 등 페이팔이 요구하는 일부 국가에서는 필수이며, 그 외 국가에서는 선택입니다.
+                    </Parameter.Details>
+                </Parameter.Details>
+
+              - setTransactionContext?: object
+
+                **Set Transaction Context (STC)**
+
+                페이팔의 부정 거래·결제 취소·환불 등 리스크 관리에 활용되는 자유 JSON 객체입니다. 결제 거래의 안전성과 신뢰성 확보를 위해 반드시 전달해야 합니다.
+
+                업종별 권장 STC 키 정의는 [페이팔 STC 가이드](https://static.tosspayments.com/public/STC.pdf)를 참고해 업종(industry)에 맞는 파라미터를 추가합니다. 문서 표의 `Data Field Name` 컬럼 값을 객체의 key로, 같은 행의 `Description`에 부합하는 값을 객체의 value로 입력합니다.
+            </Parameter.Details>
+        </Parameter.Details>
+    </Parameter.Details>
+
+    ```json
+    {
+      "tosspayments": {
+        "discountCode": "즉시 할인 코드(카드사 고유 번호)",
+        "useInternationalCardOnly": true,
+        "paypal": {
+          "shipping": {
+            "fullName": "John Smith",
+            "address": {
+              "country": "US",
+              "line1": "706 E Alisal St",
+              "area1": "CA",
+              "area2": "Salinas",
+              "postalCode": "93905"
             }
+          },
+          "setTransactionContext": {
+            "sender_account_id": "10000600",
+            "sender_email": "john@example.com",
+            "sender_country_code": "US"
           }
         }
-        ```
-
-      - `setTransactionContext`
-
-        - 페이팔 Set Transaction Context (STC). 부정 거래/리스크 평가를 위한 자유 JSON 객체이며, 업종별 권장 STC 키 정의는 [페이팔 STC 가이드](https://static.tosspayments.com/public/STC.pdf)를 참고하세요.
-
-        ```json
-        {
-          "tosspayments": {
-            "paypal": {
-              "setTransactionContext": {
-                "sender_account_id": "10000600",
-                "sender_email": "john@example.com",
-                "sender_country_code": "US"
-              }
-            }
-          }
-        }
-        ```
+      }
+    }
+    ```
+</Parameter>
 
 ### 빌링키 발급 (`requestIssueBillingKey`)
 
@@ -621,7 +733,6 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
 #### 사전 계약
 
 - 토스페이먼츠와 페이팔 결제 사용을 위한 사전 계약이 필요합니다.
-- 고객사가 페이팔 계정을 보유해야 하며, 토스페이먼츠 콘솔에서 페이팔 결제수단을 활성화해야 합니다.
 
 #### 페이팔 샌드박스 계정
 
@@ -635,16 +746,55 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
 
 #### 필수 파라미터
 
-- `currency`: `"USD"` (KRW로 호출 시 결제 거부)
+<Parameter flatten>
+  - currency: string
 
-- `country`: ISO 3166-1 alpha-2 국가 코드 (예: `"US"`). 미입력 시 결제 거부.
-  - 구매자의 결제 국가를 입력합니다.
+    **결제 통화**
 
-- `customer.email`: 페이팔 청구/알림용
+    `"USD"`만 허용됩니다. KRW로 호출 시 결제가 거부됩니다.
 
-- `customer.fullName` 또는 `customer.firstName`+`customer.lastName`: 페이팔 결제창 표시용
+  - country: string
 
-- `totalAmount`: USD 최소 단위(센트) 기준 정수 (`$29.99` → `2999`)
+    **국가 코드**
+
+    ISO 3166-1 alpha-2 형식의 국가 코드를 입력합니다. (예: `"US"`) 구매자의 결제 국가를 의미하며, 미입력 시 결제가 거부됩니다.
+
+  - totalAmount: number
+
+    **결제 금액**
+
+    USD 최소 단위(센트) 기준 정수로 입력합니다. (예: `$29.99` → `2999`)
+
+  - customer: object
+
+    **고객 정보**
+
+    <Parameter.Details>
+      - email: string
+
+        **구매자 이메일**
+
+        페이팔 청구·알림 발송에 사용됩니다.
+
+      - fullName?: string
+
+        **구매자 이름**
+
+        페이팔 결제창에 표시됩니다. `fullName`이 없는 경우 `firstName`+`lastName` 조합으로 대체할 수 있습니다.
+
+      - firstName?: string
+
+        **구매자 이름 (성+이름 분리 시 이름)**
+
+        `fullName`이 없는 경우 `lastName`과 함께 입력합니다.
+
+      - lastName?: string
+
+        **구매자 성 (성+이름 분리 시 성)**
+
+        `fullName`이 없는 경우 `firstName`과 함께 입력합니다.
+    </Parameter.Details>
+</Parameter>
 
 #### 판매자 보호 (Seller Protection)
 
@@ -652,30 +802,55 @@ import image5 from "../_assets/tosspayments/tosspayments_5.png";
 
 ##### `bypass.tosspayments.paypal.shipping` 하위 필드
 
-- `fullName` (string, 선택)
-  - 수령인 이름. 페이팔 결제창/배송 라벨에 표시됩니다.
+<Parameter flatten>
+  - fullName?: string
 
-- `address` (object, 선택)
-  - 배송지 주소 객체. 아래 하위 필드를 포함합니다.
+    **수령인 이름**
 
-  - `country` (string, **필수**)
-    - 배송지 국가의 ISO 3166-1 alpha-2 코드 (예: 미국 `"US"`, 한국 `"KR"`).
-    - `address` 객체를 전달할 경우 반드시 입력해야 합니다.
+    페이팔 결제창/배송 라벨에 표시됩니다.
 
-  - `line1` (string, 선택)
-    - 주소의 첫 번째 줄. 도로명/번지 등 기본 주소를 입력합니다. (예: `"706 E Alisal St"`)
+  - address?: object
 
-  - `line2` (string, 선택)
-    - 주소의 두 번째 줄. 동·호수, 빌딩명 등 상세 주소를 입력합니다. (예: `"Suite 200"`)
+    **배송지 주소**
 
-  - `area1` (string, 선택)
-    - 주(state) / 도(province) / 광역시 등 국가별 상위 행정구역. (예: 미국 캘리포니아주 `"CA"`)
+    <Parameter.Details>
+      - country: string
 
-  - `area2` (string, **필수**)
-    - 도시(city) 명. (예: `"Salinas"`)
+        **국가 코드**
 
-  - `postalCode` (string, 조건부 필수)
-    - 우편번호. 중국, 일본, 프랑스, 독일 등 페이팔이 요구하는 일부 국가에서는 필수이며, 그 외 국가에서는 선택입니다.
+        배송지 국가의 ISO 3166-1 alpha-2 코드를 입력합니다. (예: 미국 `"US"`, 한국 `"KR"`) `address` 객체를 전달할 경우 반드시 입력해야 합니다.
+
+      - line1?: string
+
+        **주소 첫 번째 줄**
+
+        도로명/번지 등 기본 주소를 입력합니다. (예: `"706 E Alisal St"`)
+
+      - line2?: string
+
+        **주소 두 번째 줄**
+
+        동·호수, 빌딩명 등 상세 주소를 입력합니다. (예: `"Suite 200"`)
+
+      - area1?: string
+
+        **상위 행정구역**
+
+        주(state) / 도(province) / 광역시 등 국가별 상위 행정구역을 입력합니다. (예: 미국 캘리포니아주 `"CA"`)
+
+      - area2: string
+
+        **도시(city) 명**
+
+        도시명을 입력합니다. (예: `"Salinas"`)
+
+      - postalCode?: string
+
+        **우편번호**
+
+        중국, 일본, 프랑스, 독일 등 페이팔이 요구하는 일부 국가에서는 필수이며, 그 외 국가에서는 선택입니다.
+    </Parameter.Details>
+</Parameter>
 
 > 항목별 형식·국가별 필수 여부는 페이팔/토스페이먼츠 정책을 따릅니다. 위 파라미터를 전달하면 페이팔에서 제공하는 판매자 보호(Seller Protection)를 받을 수 있으므로 반드시 함께 전달하는 것을 권장합니다.
 
