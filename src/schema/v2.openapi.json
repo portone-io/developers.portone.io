@@ -6198,7 +6198,7 @@
             }
           },
           "409": {
-            "description": "* `PaymentNotPaidError`: 결제가 완료되지 않은 경우\n* `PaymentAlreadyCancelledError`: 결제가 이미 취소된 경우\n* `CancellableAmountConsistencyBrokenError`: 취소 가능 잔액 검증에 실패한 경우\n* `CancelAmountExceedsCancellableAmountError`: 결제 취소 금액이 취소 가능 금액을 초과한 경우\n* `SumOfPartsExceedsCancelAmountError`: 면세 금액 등 하위 항목들의 합이 전체 취소 금액을 초과한 경우\n* `CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError`: 취소 면세 금액이 취소 가능한 면세 금액을 초과한 경우\n* `CancelTaxAmountExceedsCancellableTaxAmountError`: 취소 과세 금액이 취소 가능한 과세 금액을 초과한 경우",
+            "description": "* `PaymentNotPaidError`: 결제가 완료되지 않은 경우\n* `PaymentAlreadyCancelledError`: 결제가 이미 취소된 경우\n* `CancellableAmountConsistencyBrokenError`: 취소 가능 잔액 검증에 실패한 경우\n* `CancelAmountExceedsCancellableAmountError`: 결제 취소 금액이 취소 가능 금액을 초과한 경우\n* `SumOfPartsExceedsCancelAmountError`: 면세 금액 등 하위 항목들의 합이 전체 취소 금액을 초과한 경우\n* `CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError`: 취소 면세 금액이 취소 가능한 면세 금액을 초과한 경우\n* `CancelTaxAmountExceedsCancellableTaxAmountError`: 취소 과세 금액이 취소 가능한 과세 금액을 초과한 경우\n* `MaxCancelCountReachedError`: 취소 시도 횟수가 초과된 경우",
             "content": {
               "application/json": {
                 "schema": {
@@ -19651,6 +19651,9 @@
             "$ref": "#/components/schemas/InvalidRequestError"
           },
           {
+            "$ref": "#/components/schemas/MaxCancelCountReachedError"
+          },
+          {
             "$ref": "#/components/schemas/NegativePromotionAdjustedCancelAmountError"
           },
           {
@@ -19684,6 +19687,7 @@
             "CANCEL_TAX_FREE_AMOUNT_EXCEEDS_CANCELLABLE_TAX_FREE_AMOUNT": "#/components/schemas/CancelTaxFreeAmountExceedsCancellableTaxFreeAmountError",
             "FORBIDDEN": "#/components/schemas/ForbiddenError",
             "INVALID_REQUEST": "#/components/schemas/InvalidRequestError",
+            "MAX_CANCEL_COUNT_REACHED": "#/components/schemas/MaxCancelCountReachedError",
             "NEGATIVE_PROMOTION_ADJUSTED_CANCEL_AMOUNT": "#/components/schemas/NegativePromotionAdjustedCancelAmountError",
             "PAYMENT_ALREADY_CANCELLED": "#/components/schemas/PaymentAlreadyCancelledError",
             "PAYMENT_NOT_FOUND": "#/components/schemas/PaymentNotFoundError",
@@ -26993,13 +26997,13 @@
           "OVO",
           "MAYA",
           "QRIS",
-          "THAI_QR"
+          "THAI_QR",
+          "GOOGLE_PAY"
         ],
         "x-portone-title": "간편 결제사",
         "x-portone-enum": {
           "ALIPAY_HK": {},
           "MIR": {},
-          "NAVERPAY": {},
           "QRIS": {},
           "MONEYTREE": {},
           "GRABPAY": {},
@@ -27022,6 +27026,8 @@
           "JENIUS_PAY": {},
           "RABBIT_LINE_PAY": {},
           "THAI_QR": {},
+          "NAVERPAY": {},
+          "GOOGLE_PAY": {},
           "KREDIVO": {},
           "CHAI": {},
           "PINPAY": {},
@@ -29321,7 +29327,7 @@
           "page": {
             "$ref": "#/components/schemas/PageInput",
             "title": "요청할 페이지 정보",
-            "description": "미 입력 시 number: 0, size: 10 으로 기본값이 적용됩니다."
+            "description": "미 입력 시 number = 0, size = 10 으로 기본값이 적용됩니다. (number + 1) * size가 60,000을 초과할 수 없습니다."
           },
           "filter": {
             "$ref": "#/components/schemas/PaymentFilterInput",
@@ -32342,6 +32348,24 @@
         "additionalProperties": {
           "$ref": "#/components/schemas/B2bBulkTaxInvoiceStat"
         }
+      },
+      "MaxCancelCountReachedError": {
+        "title": "취소 시도 횟수가 초과된 경우",
+        "description": "취소 시도 횟수가 초과된 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "취소 시도 횟수가 초과된 경우",
+        "x-portone-status-code": 409
       },
       "MaxTransactionCountReachedError": {
         "title": "결제 혹은 본인인증 시도 횟수가 최대에 도달한 경우",
@@ -35799,7 +35823,8 @@
         "enum": [
           "CREATED_AT",
           "TIME_TO_PAY",
-          "COMPLETED_AT"
+          "COMPLETED_AT",
+          "STATUS_TIMESTAMP"
         ],
         "x-portone-title": "결제 예약 건 정렬 기준",
         "x-portone-enum": {
@@ -36775,7 +36800,8 @@
           "PAYLETTER_GLOBAL",
           "MOBILIANS_V2",
           "TRIPLE_A",
-          "KICC_V2"
+          "KICC_V2",
+          "HECTO_GLOBAL"
         ],
         "x-portone-title": "PG사 결제 모듈",
         "x-portone-enum": {
@@ -36785,7 +36811,6 @@
           "SMARTRO_V2": {},
           "CHAI": {},
           "NICE_V2": {},
-          "PAYPAL_V2": {},
           "KAKAO": {},
           "DANAL": {},
           "KAKAOPAY": {},
@@ -36821,6 +36846,8 @@
           "MOBILIANS": {},
           "UPLUS": {},
           "HYPHEN": {},
+          "PAYPAL_V2": {},
+          "HECTO_GLOBAL": {},
           "TRIPLE_A": {},
           "KPN": {},
           "KICC_V2": {},
