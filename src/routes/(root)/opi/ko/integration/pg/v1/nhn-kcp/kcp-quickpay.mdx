@@ -363,6 +363,41 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
   </Tabs.Tab>
 </Tabs>
 
+<Tabs>
+  <Tabs.Tab title="선불머니 현장결제 상세내역 조회 요청">
+    선불머니 현장결제 상세내역 조회 페이지를 호출합니다.
+
+    <Hint style="warning">
+      - 선불머니 현장결제 상세내역 조회 요청은 포트원 거래내역이 생성되지 않습니다.
+      - 조회 요청이 성공하는 경우 거래상세내역 페이지로 이동하며, 실패하는 경우 callback이 호출됩니다.
+    </Hint>
+
+    ```ts
+    IMP.request_pay(
+      {
+        channelKey: "channel-key-test", // 선불머니 현장거래가 발생한 채널키
+        bypass: {
+          kcpQuick: {
+            actionType: "PrepaidOfflinePaymentInfo",
+            memberID: "use_your_unique_id", // 선불머니 현장거래 결제 유저 ID
+            prepaidOfflinePaymentInfoRequest: {
+              tradeId: "20260414000006584",
+              tradeNo: "202604140000006583",
+              point: 9000,
+              useDt: "20260414093305",
+              btid: "TEST1234567890123",
+            },
+          },
+        },
+      },
+      function (rsp) {
+        // 조회 요청이 실패하는 경우에만 callback이 호출됩니다.
+      },
+    );
+    ```
+  </Tabs.Tab>
+</Tabs>
+
 <Hint style="info">
   퀵페이의 경우 m\_redirect\_url시 다음과 같이 4개의 파라미터가 Query String으로 전달됩니다.
 
@@ -463,6 +498,8 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
             - PrepaidLimitRaise: 선불머니 보유한도 상향 요청 (사전 협의 필요)
             - PrepaidKYC: 선불머니 고객 확인 재이행 (사전 협의 필요)
             - PrepaidAuth: 선불머니 결제 인증 (사전 협의 필요)
+            - PrepaidOfflineUse: 선불머니 현장결제 요청 (바코드 결제 요청)
+            - PrepaidOfflinePaymentInfo: 선불머니 현장결제 상세내역 조회
 
           - encryptedCI: string
 
@@ -524,6 +561,32 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
 
             - true : 자동결제 Key 발급
             - false : 자동결제 Key 미발급 (default)
+
+          - prepaidOfflinePaymentInfoRequest?: object
+
+            **선불머니 현장결제 내역 상세 조회 요청**
+            - tradeId: string
+
+              **선불머니 거래내역조회 응답의 tradeId**
+
+            - tradeNo: string
+
+              **KCP 거래 고유번호**
+
+            - point: number
+
+              **결제 금액 (사용된 선불머니 금액)**
+
+            - useDt: string
+
+              **선불머니 거래일시**
+
+            - btid: string
+
+              **고객사 생성 거래 등록번호**
+
+              거래 상세 조회 요청 시 고객사에서 `btid` 값을 생성하여 전달해 주시기 바랍니다.
+              전달해 주신 `btid` 값으로 KCP에서 고객사 서버를 호출하여 유효성 검증이 진행됩니다.
         </Parameter.Details>
     </Parameter.Details>
 </Parameter>
