@@ -2453,10 +2453,11 @@
         ],
         "responses": {
           "200": {
-            "description": "정상 해제",
+            "description": "해제 요청 처리됨. code가 0이면 성공, 0이 아니면 해제 실패이며 error에 KCP 원본 코드/메시지가 전달됩니다.",
             "schema": {
               "properties": {
                 "code": {
+                  "description": "0이면 성공, 0이 아니면 해제 실패",
                   "type": "integer",
                   "example": 0
                 },
@@ -2465,12 +2466,30 @@
                   "example": "생체인증 사용이 정상적으로 해제되었습니다."
                 },
                 "response": {
+                  "description": "성공 시에만 전달",
                   "properties": {
                     "member_id": {
                       "description": "생체인증 해제된 회원 ID",
                       "type": "string"
                     }
-                  }
+                  },
+                  "type": "object"
+                },
+                "error": {
+                  "description": "해제 실패 시에만 전달되는 KCP 원본 응답",
+                  "properties": {
+                    "code": {
+                      "description": "KCP 응답 코드",
+                      "type": "string",
+                      "example": "C210"
+                    },
+                    "message": {
+                      "description": "KCP 응답 메시지",
+                      "type": "string",
+                      "example": "등록된 거래가 없습니다."
+                    }
+                  },
+                  "type": "object"
                 }
               }
             }
@@ -2481,11 +2500,8 @@
           "401": {
             "description": "인증 Token이 전달되지 않았거나 유효하지 않은 경우"
           },
-          "404": {
-            "description": "생체인증 해제 대상 회원을 찾을 수 없는 경우"
-          },
           "500": {
-            "description": "KCP 생체인증 해제 처리 중 오류가 발생한 경우"
+            "description": "KCP 생체인증 해제 통신 중 오류가 발생한 경우"
           }
         },
         "x-portone-supported-pgs": [
