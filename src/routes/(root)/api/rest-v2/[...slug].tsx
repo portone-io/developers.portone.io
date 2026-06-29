@@ -7,6 +7,7 @@ import {
 } from "@solidjs/router";
 import { createEffect, createMemo, Match, Show, Switch } from "solid-js";
 
+import Hint from "~/components/Hint";
 import { prose } from "~/components/prose";
 import { RestApiCategory, RestApiOverview } from "~/layouts/rest-api";
 import createSectionDescriptionProps from "~/layouts/rest-api/misc/createSectionDescriptionProps";
@@ -130,6 +131,25 @@ function V2Overview() {
               </code>
             </li>
           </ul>
+          <Hint style="info">
+            <prose.p>
+              <strong>
+                <code>MY_API_SECRET</code> 자리에는 포트원 관리자콘솔 내
+                결제연동 탭에서 발급한 V2 API Secret을 넣어주세요.
+              </strong>
+            </prose.p>
+            <prose.p>
+              콘솔 채널 설정에 입력하는 PG사 시크릿(Secret Key, OTP 등)은 API
+              인증 용도로 사용할 수 없습니다. PG사 시크릿을 이 헤더에 넣으면{" "}
+              <code>401 Unauthorized</code> 오류가 발생하므로, 포트원
+              관리자콘솔에서 발급한 V2 API Secret 값이 맞는지 확인해 주세요.
+              발급 방법은{" "}
+              <prose.a href="/opi/ko/integration/ready/readme?v=v2#4-2-v2-api-secret-발급하기">
+                V2 API Secret 발급하기
+              </prose.a>
+              를 참고해 주세요.
+            </prose.p>
+          </Hint>
           <prose.h3 id="get-with-body">
             GET 요청 시 body 대신 query 사용하기
           </prose.h3>
