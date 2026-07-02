@@ -100,8 +100,24 @@ export function bakeProperties(
     const resolvedProperty = resolveTypeDef(schema, property);
     const type = $ref ? getTypenameByRef($ref) : resolvedProperty.type;
     const required = resolvedDef.required?.includes?.(name);
+    // OAS 3.1 / JSON Schema 2020-12 carve-out: a $ref'd property's own annotations win over the referenced schema's (3.0 would ignore them).
+    const localAnnotations: Partial<Property> = {};
+    for (const key of [
+      "title",
+      "summary",
+      "description",
+      "deprecated",
+      "x-portone-title",
+      "x-portone-summary",
+      "x-portone-description",
+    ] as const satisfies readonly (keyof Property)[]) {
+      const value = property[key];
+      if (value !== undefined)
+        (localAnnotations as Record<string, unknown>)[key] = value;
+    }
     return {
       ...resolvedProperty,
+      ...localAnnotations,
       $ref,
       type,
       name,
