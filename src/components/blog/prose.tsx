@@ -1,6 +1,8 @@
 import { clsx } from "clsx";
 import { type JSX, splitProps } from "solid-js";
 
+import ProseAnchor from "~/components/ProseAnchor";
+
 export function h1(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
   const [locals, others] = splitProps(props, ["class", "children"]);
   return (
@@ -100,15 +102,14 @@ export function p(props: JSX.HTMLAttributes<HTMLParagraphElement>) {
   );
 }
 
-export function a(props: JSX.HTMLAttributes<HTMLAnchorElement>) {
-  const [locals, others] = splitProps(props, ["class", "children"]);
+export function a(props: JSX.IntrinsicElements["a"]) {
+  const [locals, others] = splitProps(props, ["class"]);
+
   return (
-    <a
+    <ProseAnchor
       {...others}
       class={clsx("cursor-pointer underline hover:text-slate-9", locals.class)}
-    >
-      {locals.children}
-    </a>
+    />
   );
 }
 
