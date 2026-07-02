@@ -1,13 +1,7 @@
-import { A } from "@solidjs/router";
 import { clsx } from "clsx";
-import {
-  createContext,
-  createMemo,
-  type JSX,
-  splitProps,
-  useContext,
-} from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { createContext, type JSX, splitProps, useContext } from "solid-js";
+
+import ProseAnchor from "~/components/ProseAnchor";
 
 export const ProseContext = createContext<{
   styles: Partial<
@@ -141,32 +135,17 @@ function p(props: JSX.IntrinsicElements["p"]) {
 
 function a(props: JSX.IntrinsicElements["a"]) {
   const { styles } = useContext(ProseContext);
-  const [local, others] = splitProps(props, ["children", "class", "href"]);
-
-  const cls = createMemo(() => {
-    return clsx(
-      "cursor-pointer text-orange-5 hover:text-orange-7 hover:underline",
-      local.class,
-    );
-  });
-
-  const isExternalLink = createMemo(() => {
-    if (!local.href) return false;
-    return /^(mailto|tel):/i.test(local.href);
-  });
-
-  const component = createMemo(() => (isExternalLink() ? "a" : A));
+  const [local, others] = splitProps(props, ["class"]);
 
   return (
-    <Dynamic
-      component={component()}
+    <ProseAnchor
       {...others}
-      href={local.href ?? "#"}
-      class={cls()}
+      class={clsx(
+        "cursor-pointer text-orange-5 hover:text-orange-7 hover:underline",
+        local.class,
+      )}
       style={styles.a}
-    >
-      {local.children}
-    </Dynamic>
+    />
   );
 }
 
