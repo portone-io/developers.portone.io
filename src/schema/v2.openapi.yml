@@ -3492,19 +3492,43 @@ paths:
       x-portone-error:
         $ref: '#/components/schemas/IssueCashReceiptError'
   /checkout-profiles/evaluate:
-    post:
-      summary: 체크아웃 프로파일에서 결제 수단 목록 조회
+    get:
+      summary: 체크아웃 프로필에서 결제 수단 목록 조회
       description: |-
-        체크아웃 프로파일에서 결제 수단 목록 조회
+        체크아웃 프로필에서 결제 수단 목록 조회
 
         주어진 금액 및 국가에서 사용 가능한 결제 수단 목록을 반환
       operationId: evaluateCheckoutProfile
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EvaluateCheckoutProfileBody'
-        required: true
+      parameters:
+        - name: profileKey
+          in: query
+          description: 프로필 키
+          required: true
+          schema:
+            type: string
+          x-portone-title: 프로필 키
+        - name: country
+          in: query
+          description: 국가
+          required: true
+          schema:
+            $ref: '#/components/schemas/Country'
+          x-portone-title: 국가
+        - name: currency
+          in: query
+          description: 통화
+          required: true
+          schema:
+            $ref: '#/components/schemas/Currency'
+          x-portone-title: 통화
+        - name: amount
+          in: query
+          description: 결제 금액
+          required: true
+          schema:
+            type: integer
+            format: int64
+          x-portone-title: 결제 금액
       responses:
         '200':
           description: 성공 응답
@@ -3520,13 +3544,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/EvaluateCheckoutProfileError'
         '404':
-          description: '* `ProfileSettingsNotFoundError`: 프로파일 설정이 존재하지 않는 경우'
+          description: '* `ProfileSettingsNotFoundError`: 프로필 설정이 존재하지 않는 경우'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/EvaluateCheckoutProfileError'
       x-portone-category: checkoutProfile
-      x-portone-title: 체크아웃 프로파일에서 결제 수단 목록 조회
+      x-portone-title: 체크아웃 프로필에서 결제 수단 목록 조회
       x-portone-description: 주어진 금액 및 국가에서 사용 가능한 결제 수단 목록을 반환
       x-portone-error:
         $ref: '#/components/schemas/EvaluateCheckoutProfileError'
@@ -11279,9 +11303,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateManualTransferResponse'
         '400':
-          description: |-
+          description: >-
             * `InvalidRequestError`: 요청된 입력 정보가 유효하지 않은 경우
+
             * `PlatformCurrencyNotSupportedError`: 지원 되지 않는 통화를 선택한 경우
+
+            * `PlatformNegativeAmountNotAllowedError`: 정산 건별 옵션이 켜진 플랫폼에서 음수 금액
+            수기 정산 생성을 시도한 경우
           content:
             application/json:
               schema:
@@ -15626,6 +15654,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -15822,6 +15856,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -15962,6 +16002,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -16349,6 +16395,19 @@ components:
         NO_RECEIPT:
           title: 미발행
           description: PG사 설정에 따라 PG사가 자동으로 자진발급 처리할 수 있습니다.
+    CashReceiptIssuanceStatus:
+      title: 현금영수증 발행여부
+      description: 현금영수증 발행여부
+      type: string
+      enum:
+        - ISSUED
+        - NOT_ISSUED
+      x-portone-title: 현금영수증 발행여부
+      x-portone-enum:
+        ISSUED:
+          title: 발행 완료
+        NOT_ISSUED:
+          title: 미발행
     CashReceiptNotFoundError:
       title: 현금영수증이 존재하지 않는 경우
       description: 현금영수증이 존재하지 않는 경우
@@ -18288,7 +18347,7 @@ components:
           title: 결제 건 아이디
         profileKey:
           type: string
-          title: 프로파일 키
+          title: 프로필 키
         paymentMethod:
           $ref: '#/components/schemas/CheckoutPaymentMethod'
           title: 결제 수단 지정
@@ -18370,6 +18429,9 @@ components:
           type: string
           title: 사용자 지정 데이터
           description: 결제 완료 후 결제 건 조회에서도 확인할 수 있습니다.
+        colors:
+          $ref: '#/components/schemas/PaymentSessionColors'
+          title: 체크아웃 페이지 색 설정
         ttlSeconds:
           type: integer
           format: int64
@@ -18632,6 +18694,7 @@ components:
         - $ref: '#/components/schemas/ForbiddenError'
         - $ref: '#/components/schemas/InvalidRequestError'
         - $ref: '#/components/schemas/PlatformCurrencyNotSupportedError'
+        - $ref: '#/components/schemas/PlatformNegativeAmountNotAllowedError'
         - $ref: '#/components/schemas/PlatformNotEnabledError'
         - $ref: '#/components/schemas/PlatformPartnerNotFoundError'
         - $ref: '#/components/schemas/PlatformTransferIdAlreadyUsedError'
@@ -18643,6 +18706,7 @@ components:
           FORBIDDEN: '#/components/schemas/ForbiddenError'
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
           PLATFORM_CURRENCY_NOT_SUPPORTED: '#/components/schemas/PlatformCurrencyNotSupportedError'
+          PLATFORM_NEGATIVE_AMOUNT_NOT_ALLOWED: '#/components/schemas/PlatformNegativeAmountNotAllowedError'
           PLATFORM_NOT_ENABLED: '#/components/schemas/PlatformNotEnabledError'
           PLATFORM_PARTNER_NOT_FOUND: '#/components/schemas/PlatformPartnerNotFoundError'
           PLATFORM_TRANSFER_ID_ALREADY_USED: '#/components/schemas/PlatformTransferIdAlreadyUsedError'
@@ -19415,8 +19479,8 @@ components:
             $ref: '#/components/schemas/PlatformPartner'
       x-portone-title: 파트너 다건 생성 성공 응답
     Currency:
-      title: 통화 단위
-      description: 통화 단위
+      title: 통화
+      description: 통화
       type: string
       enum:
         - KRW
@@ -19600,7 +19664,7 @@ components:
         - ZAR
         - ZMW
         - ZWL
-      x-portone-title: 통화 단위
+      x-portone-title: 통화
       x-portone-enum:
         OMR:
           title: Rial Omani
@@ -20815,11 +20879,11 @@ components:
         - MAYA
         - QRIS
         - THAI_QR
+        - GOOGLE_PAY
       x-portone-title: 간편 결제사
       x-portone-enum:
         ALIPAY_HK: {}
         MIR: {}
-        NAVERPAY: {}
         QRIS: {}
         MONEYTREE: {}
         GRABPAY: {}
@@ -20842,6 +20906,8 @@ components:
         JENIUS_PAY: {}
         RABBIT_LINE_PAY: {}
         THAI_QR: {}
+        NAVERPAY: {}
+        GOOGLE_PAY: {}
         KREDIVO: {}
         CHAI: {}
         PINPAY: {}
@@ -20872,30 +20938,6 @@ components:
         PAYPAY: {}
         KAKAOPAY: {}
         MPAY: {}
-    EvaluateCheckoutProfileBody:
-      title: 프로파일 평가 요청
-      description: 프로파일 평가 요청
-      type: object
-      required:
-        - profileKey
-        - country
-        - currency
-        - amount
-      properties:
-        profileKey:
-          type: string
-          title: 프로파일 키
-        country:
-          $ref: '#/components/schemas/Country'
-          title: 국가
-        currency:
-          $ref: '#/components/schemas/Currency'
-          title: 통화
-        amount:
-          type: integer
-          format: int64
-          title: 결제 금액
-      x-portone-title: 프로파일 평가 요청
     EvaluateCheckoutProfileError:
       title: EvaluateCheckoutProfileError
       oneOf:
@@ -20907,8 +20949,8 @@ components:
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
           PROFILE_SETTINGS_NOT_FOUND: '#/components/schemas/ProfileSettingsNotFoundError'
     EvaluateCheckoutProfileResponse:
-      title: 체크아웃 프로파일 평가 성공 응답
-      description: 체크아웃 프로파일 평가 성공 응답
+      title: 체크아웃 프로필 평가 성공 응답
+      description: 체크아웃 프로필 평가 성공 응답
       type: object
       properties:
         methods:
@@ -20922,7 +20964,7 @@ components:
               title: 결제수단
             channelKey:
               title: 채널 키
-      x-portone-title: 체크아웃 프로파일 평가 성공 응답
+      x-portone-title: 체크아웃 프로필 평가 성공 응답
     EvaluatedCheckoutMethod:
       title: 결제 수단
       description: 결제 수단
@@ -24979,6 +25021,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -25106,6 +25154,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -25250,6 +25304,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -25380,6 +25440,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -25502,6 +25568,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -25642,6 +25714,12 @@ components:
         cashReceipt:
           $ref: '#/components/schemas/PaymentCashReceipt'
           title: 현금영수증
+        cashReceiptIssuanceStatus:
+          $ref: '#/components/schemas/CashReceiptIssuanceStatus'
+          title: 현금영수증 발행여부
+          description: |-
+            승인 시점에 확인된 발행여부입니다.
+            발행번호 없이 발행여부만 제공 가능한 경우, ISSUED이면서 cashReceipt가 존재하지 않을 수 있습니다.
         receiptUrl:
           type: string
           title: 거래 영수증 URL
@@ -27318,7 +27396,7 @@ components:
           title: 결제 건 아이디
         profileKey:
           type: string
-          title: 프로파일 키
+          title: 프로필 키
         paymentMethod:
           $ref: '#/components/schemas/CheckoutPaymentMethod'
           title: 결제 수단 지정
@@ -27400,6 +27478,9 @@ components:
           type: string
           title: 사용자 지정 데이터
           description: 결제 완료 후 결제 건 조회에서도 확인할 수 있습니다.
+        colors:
+          $ref: '#/components/schemas/PaymentSessionColors'
+          title: 체크아웃 페이지 색 설정
         createdAt:
           type: string
           format: date-time
@@ -27424,6 +27505,21 @@ components:
           type: string
           title: 약관 URL
       x-portone-title: 결제 세션 약관
+    PaymentSessionColors:
+      title: 체크아웃 페이지 색 설정
+      description: 체크아웃 페이지 색 설정
+      type: object
+      properties:
+        primary:
+          type: string
+          title: 주 색상
+        primaryHover:
+          type: string
+          title: 호버 주 색상
+        primaryLight:
+          type: string
+          title: 밝은 주 색상
+      x-portone-title: 체크아웃 페이지 색 설정
     PaymentSessionProduct:
       title: 결제 세션 주문 항목
       description: 결제 세션 주문 항목
@@ -28241,6 +28337,7 @@ components:
         - TRIPLE_A
         - KICC_V2
         - INNOPAY
+        - HECTO_GLOBAL
       x-portone-title: PG사 결제 모듈
       x-portone-enum:
         KICC: {}
@@ -28249,7 +28346,6 @@ components:
         SMARTRO_V2: {}
         CHAI: {}
         NICE_V2: {}
-        PAYPAL_V2: {}
         KAKAO: {}
         DANAL: {}
         KAKAOPAY: {}
@@ -28286,6 +28382,8 @@ components:
         MOBILIANS: {}
         UPLUS: {}
         HYPHEN: {}
+        PAYPAL_V2: {}
+        HECTO_GLOBAL: {}
         TRIPLE_A: {}
         KPN: {}
         KICC_V2: {}
@@ -30382,6 +30480,19 @@ components:
           type: string
       x-portone-title: 연동 사업자로 연동된 파트너들을 예약 수정하려고 시도한 경우
       x-portone-status-code: 409
+    PlatformNegativeAmountNotAllowedError:
+      title: 정산 건별 옵션이 켜진 플랫폼에서 음수 금액 수기 정산 생성을 시도한 경우
+      description: 정산 건별 옵션이 켜진 플랫폼에서 음수 금액 수기 정산 생성을 시도한 경우
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+      x-portone-title: 정산 건별 옵션이 켜진 플랫폼에서 음수 금액 수기 정산 생성을 시도한 경우
+      x-portone-status-code: 400
     PlatformNegativePayoutAmountPartnersError:
       title: 지급 금액의 총합이 음수인 파트너가 존재하는 경우
       description: 지급 금액의 총합이 음수인 파트너가 존재하는 경우
@@ -31199,7 +31310,7 @@ components:
             $ref: '#/components/schemas/Bank'
           description: '하나 이상의 값이 존재하는 경우,  해당 리스트에 포함되는 계좌 은행을 가진 파트너만 조회합니다.'
         accountCurrencies:
-          title: 통화 단위
+          title: 통화
           type: array
           items:
             $ref: '#/components/schemas/Currency'
@@ -31650,7 +31761,7 @@ components:
           items:
             type: string
         settlementCurrencies:
-          title: 통화 단위
+          title: 통화
           type: array
           items:
             $ref: '#/components/schemas/Currency'
@@ -32666,6 +32777,7 @@ components:
         - deductWht
         - settlementAmountType
         - isForTest
+        - manualSettlementPerTransfer
       properties:
         defaultWithdrawalMemo:
           type: string
@@ -32687,6 +32799,9 @@ components:
           title: 정산 금액 취급 기준
         isForTest:
           type: boolean
+        manualSettlementPerTransfer:
+          type: boolean
+          title: 수기정산을 정산 건별로 정산내역/지급내역으로 생성
       x-portone-title: 플랫폼 설정
     PlatformSettlementAmountExceededError:
       title: 정산 가능한 금액을 초과한 경우
@@ -33709,7 +33824,7 @@ components:
           title: 결제 면세 금액
         currency:
           $ref: '#/components/schemas/Currency'
-          title: 통화 단위
+          title: 통화
       x-portone-title: 결제 정보 사전 등록 입력 정보
     PreRegisterPaymentError:
       title: PreRegisterPaymentError
@@ -33731,8 +33846,8 @@ components:
       type: object
       x-portone-title: 결제 사전 등록 성공 응답
     ProfileSettingsNotFoundError:
-      title: 프로파일 설정이 존재하지 않는 경우
-      description: 프로파일 설정이 존재하지 않는 경우
+      title: 프로필 설정이 존재하지 않는 경우
+      description: 프로필 설정이 존재하지 않는 경우
       type: object
       required:
         - type
@@ -33741,7 +33856,7 @@ components:
           type: string
         message:
           type: string
-      x-portone-title: 프로파일 설정이 존재하지 않는 경우
+      x-portone-title: 프로필 설정이 존재하지 않는 경우
       x-portone-status-code: 404
     Promotion:
       title: 프로모션
@@ -34306,9 +34421,11 @@ components:
         - KIWOOMPAY
         - PAYMENTWALL
         - INNOPAY
+        - GALAXIA
       x-portone-enum:
         PAYMENTWALL: {}
         HECTO: {}
+        GALAXIA: {}
         TOSSPAY: {}
         INICIS: {}
         PAYPAL: {}
@@ -37045,6 +37162,9 @@ components:
         settlementAmountType:
           $ref: '#/components/schemas/SettlementAmountType'
           title: 정산 금액 취급 기준
+        manualSettlementPerTransfer:
+          type: boolean
+          title: 수기정산을 정산 건별로 정산내역/지급내역으로 생성
       x-portone-title: 플랫폼 설정 업데이트를 위한 입력 정보
     UpdatePlatformSettingError:
       title: UpdatePlatformSettingError
@@ -37530,8 +37650,11 @@ x-portone-categories:
     title: 결제 세션 API
     description: 결제 세션 생성 및 관리 API. 호스티드 체크아웃에 사용됩니다.
   - id: checkoutProfile
-    title: 체크아웃 프로파일 API
-    description: 체크아웃 프로파일에서 결제 수단 목록을 조회하기 위한 API.
+    title: 체크아웃 프로필 API
+    description: 체크아웃 프로필에서 결제 수단 목록을 조회하기 위한 API.
+  - id: ap
+    title: AP API
+    description: AP 기능을 제공합니다.
   - id: common
     title: 공통 API
     description: 공통 API 기능을 제공합니다.
