@@ -122,12 +122,15 @@ function processDescriptions(obj: unknown): unknown {
   if (obj == null || typeof obj !== "object") return obj;
   if (Array.isArray(obj)) return obj.map(processDescriptions);
 
+  const source = obj as Record<string, unknown>;
+  const title = getSchemaTitle(source);
   const result: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(obj)) {
+  for (const [key, value] of Object.entries(source)) {
     if (
       (key === "description" || key === "x-portone-description") &&
       typeof value === "string"
     ) {
+      if (title && value.trim() === title.trim()) continue;
       result[key] = markdownToHtml(value);
       continue;
     }
@@ -139,6 +142,11 @@ function processDescriptions(obj: unknown): unknown {
   }
 
   return result;
+}
+
+function getSchemaTitle(obj: Record<string, unknown>): string | undefined {
+  const title = obj["x-portone-title"] ?? obj.title ?? obj["x-portone-name"];
+  return typeof title === "string" ? title : undefined;
 }
 
 function buildMinimalSchema(
