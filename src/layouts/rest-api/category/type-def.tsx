@@ -662,13 +662,6 @@ interface DescriptionDocProps {
   typeDef: TypeDef | Property;
 }
 function DescriptionDoc(props: DescriptionDocProps) {
-  const title = createMemo(
-    () =>
-      props.typeDef["x-portone-title"] ||
-      props.typeDef.title ||
-      props.typeDef["x-portone-name"] ||
-      "",
-  );
   const description = createMemo(
     () => props.typeDef["x-portone-description"] ?? props.typeDef.description,
   );
@@ -678,9 +671,7 @@ function DescriptionDoc(props: DescriptionDocProps) {
 
   return (
     <Switch>
-      <Match
-        when={description() !== title() ? description() : undefined}
-      >
+      <Match when={description()}>
         {(description) => <div innerHTML={description()} />}
       </Match>
       <Match when={summary()}>
