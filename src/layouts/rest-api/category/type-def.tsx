@@ -662,21 +662,71 @@ interface DescriptionDocProps {
   typeDef: TypeDef | Property;
 }
 function DescriptionDoc(props: DescriptionDocProps) {
+  const title = createMemo(
+    () =>
+      props.typeDef["x-portone-title"] ||
+      props.typeDef.title ||
+      props.typeDef["x-portone-name"] ||
+      "",
+  );
   const description = createMemo(
     () => props.typeDef["x-portone-description"] ?? props.typeDef.description,
   );
+  const shouldRenderDescription = createMemo(() => {
+    const currentDescription = description();
+    if (!currentDescription) return false;
+    const currentTitle = title();
+    if (!currentTitle) return true;
+    return (
+      normalizeDescriptionText(currentDescription) !==
+      normalizeDescriptionText(currentTitle)
+    );
+  });
   const summary = createMemo(
     () => props.typeDef["x-portone-summary"] ?? props.typeDef.summary,
   );
 
   return (
     <Switch>
-      <Match when={description()}>
+      <Match when={shouldRenderDescription() ? description() : undefined}>
         {(description) => <div innerHTML={description()} />}
       </Match>
       <Match when={summary()}>
         <prose.p>{summary()}</prose.p>
       </Match>
     </Switch>
+  );
+}
+
+function normalizeDescriptionText(description: string): string {
+  return decodeHtmlEntities(description.replace(/<[^>]*>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function decodeHtmlEntities(value: string): string {
+  return value.replace(
+    /&(#(\d+)|#x([\da-f]+)|amp|lt|gt|quot|apos|nbsp);/gi,
+    (entity, _body: string, decimal: string, hex: string) => {
+      if (decimal) return String.fromCodePoint(Number(decimal));
+      if (hex) return String.fromCodePoint(Number.parseInt(hex, 16));
+
+      switch (entity.toLowerCase()) {
+        case "&amp;":
+          return "&";
+        case "&lt;":
+          return "<";
+        case "&gt;":
+          return ">";
+        case "&quot;":
+          return '"';
+        case "&apos;":
+          return "'";
+        case "&nbsp;":
+          return " ";
+        default:
+          return entity;
+      }
+    },
   );
 }
