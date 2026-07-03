@@ -338,7 +338,7 @@ function PropertyDoc(_props: PropertyDocProps) {
         </>
       }
     >
-      <Show when={title()}>
+      <Show when={title() !== props.name ? title() : undefined}>
         <strong>{title()}</strong>
       </Show>
       {props.children}
