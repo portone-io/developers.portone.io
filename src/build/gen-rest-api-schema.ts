@@ -123,7 +123,7 @@ function processDescriptions(obj: unknown): unknown {
   if (Array.isArray(obj)) return obj.map(processDescriptions);
 
   const source = obj as Record<string, unknown>;
-  const title = getSchemaTitle(source);
+  const title = source.title;
   const result: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(source)) {
     if (
@@ -142,11 +142,6 @@ function processDescriptions(obj: unknown): unknown {
   }
 
   return result;
-}
-
-function getSchemaTitle(obj: Record<string, unknown>): string | undefined {
-  const title = obj["x-portone-title"] ?? obj.title ?? obj["x-portone-name"];
-  return typeof title === "string" ? title : undefined;
 }
 
 function buildMinimalSchema(
