@@ -679,9 +679,7 @@ function DescriptionDoc(props: DescriptionDocProps) {
   return (
     <Switch>
       <Match
-        when={
-          description()?.trim() !== title().trim() ? description() : undefined
-        }
+        when={description() !== title() ? description() : undefined}
       >
         {(description) => <div innerHTML={description()} />}
       </Match>

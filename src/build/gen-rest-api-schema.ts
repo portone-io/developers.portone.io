@@ -130,7 +130,7 @@ function processDescriptions(obj: unknown): unknown {
       (key === "description" || key === "x-portone-description") &&
       typeof value === "string"
     ) {
-      if (title && value.trim() === title.trim()) continue;
+      if (value === title) continue;
       result[key] = markdownToHtml(value);
       continue;
     }
