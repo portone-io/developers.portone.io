@@ -562,6 +562,15 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
             - true : 자동결제 Key 발급
             - false : 자동결제 Key 미발급 (default)
 
+          - sdkVersion?: string
+
+            **퀵페이 SDK 버전 식별자**
+
+            로드할 KCP 퀵페이 SDK(`qpay_web.js`)의 버전을 지정합니다.
+
+            - 입력하지 않으면 채널에 설정된 기본 버전이 사용됩니다.
+            - 영문자, 숫자, `_`, `-` 조합만 허용되며, 그 외 형식의 값을 입력하면 요청이 실패합니다.
+
           - prepaidOfflinePaymentInfoRequest?: object
 
             **선불머니 현장결제 내역 상세 조회 요청**
@@ -719,6 +728,40 @@ KCP 퀵페이 기준으로 작성한 예시 코드는 아래와 같습니다.
     - `PrepaidAuth`: 선불머니 결제 인증
 
     거래사전 등록 API를 호출하지 않은 상태에서 선불머니 기능을 요청하는 경우 에러가 발생할 수 있으니 유의하시기 바랍니다.
+  </Details.Content>
+</Details>
+
+<Details>
+  <Details.Summary>생체인증(FIDO) 및 SDK 버전 지정 안내</Details.Summary>
+
+  <Details.Content>
+    생체인증(FIDO) 등록(actionType:`RegisterFido`)을 비롯한 일부 기능은 특정 버전의 퀵페이 SDK(`qpay_web.js`)에서만 동작합니다.
+    이 경우 KCP와 사전 협의 후 전달받은 SDK 버전 식별자를 `bypass.kcpQuick.sdkVersion`에 입력하여 해당 버전의 SDK를 로드할 수 있습니다.
+
+    ```ts
+    IMP.request_pay(
+      {
+        channelKey: "{콘솔 내 연동 정보의 채널키}",
+        merchant_uid: "order_no_0001",
+        name: "생체인증 등록",
+        bypass: {
+          kcpQuick: {
+            actionType: "RegisterFido",
+            encryptedCI: "encrypted_ci",
+            memberID: "use_your_unique_id",
+            sdkVersion: "kcp_provided_version", // KCP와 협의하여 전달받은 값
+          },
+        },
+        m_redirect_url: "https://redirection.url",
+      },
+      function (rsp) {
+        // callback 로직
+      },
+    );
+    ```
+
+    `sdkVersion`을 입력하지 않으면 채널에 설정된 기본 버전이 사용됩니다.
+    허용되지 않는 형식(영문자, 숫자, `_`, `-` 외)의 값을 입력하면 요청이 실패하니 유의하시기 바랍니다.
   </Details.Content>
 </Details>
 
