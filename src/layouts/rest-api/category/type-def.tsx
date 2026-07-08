@@ -8,13 +8,10 @@ import {
   Show,
   Switch,
 } from "solid-js";
-import { Dynamic } from "solid-js/web";
 import { match, P } from "ts-pattern";
 
 import Parameter from "~/components/parameter/Parameter";
 import { prose } from "~/components/prose";
-import { toMDXModule } from "~/misc/md";
-import { expandAndScrollTo, useExpand } from "~/state/rest-api/expand-section";
 
 import { interleave } from "..";
 import type { CategoryEndpointsPair } from "../schema-utils/endpoint";
@@ -31,20 +28,12 @@ import {
   resolveTypeDef,
   type TypeDef,
 } from "../schema-utils/type-def";
-import Expand from "./Expand";
-
 export interface TypeDefinitionsProps {
   basepath: string; // e.g. "/api/rest-v1"
-  initialExpand?: boolean;
   endpointGroups: CategoryEndpointsPair[];
   schema: unknown;
 }
 export function TypeDefinitions(props: TypeDefinitionsProps) {
-  const { expand, onToggle } = useExpand(
-    "type-def",
-    () => !!props.initialExpand,
-  );
-  let headingRef: HTMLHeadingElement | undefined;
   const typeDefPropsList = createMemo(() =>
     crawlRefs(props.schema, props.endpointGroups)
       .sort()
@@ -55,61 +44,27 @@ export function TypeDefinitions(props: TypeDefinitionsProps) {
   );
 
   return (
-    <section id="type-def" class="flex flex-col scroll-mt-5.2rem">
-      <prose.h2 ref={headingRef}>타입 정의</prose.h2>
+    <section id="type-def" class="flex scroll-mt-[5.2rem] flex-col">
+      <prose.h2>타입 정의</prose.h2>
       <div class="mt-4">
         API 요청/응답의 각 필드에서 사용되는 타입 정의들을 확인할 수 있습니다
       </div>
-      <div class="grid-flow-rows grid mt-4 gap-x-4 gap-y-1 border border-slate-3 rounded-lg bg-slate-1 px-6 py-4 text-xs lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+      <div class="grid-flow-rows mt-10 grid gap-4 lg:grid-cols-2">
         <For each={typeDefPropsList()}>
-          {(property) => {
-            const href = `${props.basepath}/type-def#${property.name}`;
-            return (
-              <a
-                class="underline-offset-4 transition-colors hover:text-orange-5 hover:underline"
-                href={href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  expandAndScrollTo({
-                    section: "type-def",
-                    href,
-                    id: property.name,
-                  });
-                }}
-                data-norefresh
-              >
-                {property.name}
-              </a>
-            );
-          }}
+          {(property) => (
+            <Parameter flatten id={property.name}>
+              <PropertyDoc
+                basepath={props.basepath}
+                schema={props.schema}
+                name={property.name}
+                property={property.typeDef}
+                showNested={1}
+                required
+              />
+            </Parameter>
+          )}
         </For>
       </div>
-      <Expand
-        class="mt-20"
-        title="타입 정의"
-        expand={expand()}
-        onToggle={onToggle}
-        onCollapse={() => {
-          headingRef?.scrollIntoView({ behavior: "smooth" });
-        }}
-      >
-        <div class="grid-flow-rows grid gap-4 lg:grid-cols-2">
-          <For each={typeDefPropsList()}>
-            {(property) => (
-              <Parameter flatten id={property.name}>
-                <PropertyDoc
-                  basepath={props.basepath}
-                  schema={props.schema}
-                  name={property.name}
-                  property={property.typeDef}
-                  showNested={1}
-                  required
-                />
-              </Parameter>
-            )}
-          </For>
-        </div>
-      </Expand>
     </section>
   );
 }
@@ -383,7 +338,7 @@ function PropertyDoc(_props: PropertyDocProps) {
         </>
       }
     >
-      <Show when={title()}>
+      <Show when={title() !== props.name ? title() : undefined}>
         <strong>{title()}</strong>
       </Show>
       {props.children}
@@ -442,7 +397,7 @@ function TypeReprDoc(props: TypeReprDocProps) {
     () => typeRepr()[0]?.toUpperCase() === typeRepr()[0],
   );
   const typeName = createMemo(() => typeRepr().replace("[]", ""));
-  const href = createMemo(() => `${props.basepath}/type-def#${typeName()}`);
+  const href = createMemo(() => `#${typeName()}`);
   const format = createMemo(
     on(typeDef, (typeDef): JSXElement => {
       if (typeof typeDef === "string" || !("format" in typeDef)) return null;
@@ -548,14 +503,6 @@ function TypeReprDoc(props: TypeReprDocProps) {
             <a
               class="inline-block text-purple-5 underline-offset-4 transition-colors hover:text-portone hover:underline"
               href={href()}
-              onClick={(e) => {
-                e.preventDefault();
-                expandAndScrollTo({
-                  section: "type-def",
-                  href: href(),
-                  id: typeName(),
-                });
-              }}
               data-norefresh
             >
               {typeRepr()}
@@ -715,13 +662,9 @@ interface DescriptionDocProps {
   typeDef: TypeDef | Property;
 }
 function DescriptionDoc(props: DescriptionDocProps) {
-  const rawDescription = createMemo(
+  const description = createMemo(
     () => props.typeDef["x-portone-description"] ?? props.typeDef.description,
   );
-  const description = createMemo(() => {
-    const markdown = rawDescription();
-    return markdown == null ? markdown : toMDXModule(markdown);
-  });
   const summary = createMemo(
     () => props.typeDef["x-portone-summary"] ?? props.typeDef.summary,
   );
@@ -729,7 +672,7 @@ function DescriptionDoc(props: DescriptionDocProps) {
   return (
     <Switch>
       <Match when={description()}>
-        {(description) => <Dynamic component={description()} />}
+        {(description) => <div innerHTML={description()} />}
       </Match>
       <Match when={summary()}>
         <prose.p>{summary()}</prose.p>

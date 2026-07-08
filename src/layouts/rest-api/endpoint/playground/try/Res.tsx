@@ -20,10 +20,10 @@ export default function Res(props: ResProps) {
 
   return (
     <Card titleClass="bg-slate-1" title={title()}>
-      <div class="grid grid-rows-[auto_minmax(0,1fr)] flex-1 gap-1 p-4">
+      <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-1 p-4">
         <Show
           when={props.res}
-          fallback={<span class="text-xs text-slate-4 font-bold">N/A</span>}
+          fallback={<span class="text-xs font-bold text-slate-4">N/A</span>}
         >
           {(res) => {
             const bodyJsonText = createMemo(

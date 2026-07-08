@@ -57,7 +57,7 @@ export default function Dropdown(props: DropdownProps) {
 
   return (
     <div
-      class="relative inline-flex flex-col cursor-default items-center"
+      class="relative inline-flex cursor-default flex-col items-center"
       onMouseEnter={() => setShowItems(true)}
       onMouseLeave={() => setShowItems(false)}
     >
@@ -69,7 +69,7 @@ export default function Dropdown(props: DropdownProps) {
       >
         {(link) => (
           <A
-            class="inline-flex items-center rounded-md text-sm text-slate-9 font-medium data-[active]:text-portone hover:text-slate-5"
+            class="inline-flex items-center rounded-md text-sm font-medium text-slate-9 hover:text-slate-5 data-[active]:text-portone"
             bool:data-active={isActive() || hasActiveItem()}
             href={link()}
           >
@@ -79,13 +79,13 @@ export default function Dropdown(props: DropdownProps) {
         )}
       </Show>
       <Show when={showItems() && items() && items().length > 0}>
-        <div class="relative w-full <md:hidden">
-          <div class="absolute min-w-30 w-max flex flex-col gap-.5 border rounded-lg bg-white p-2 shadow-lg">
+        <div class="relative w-full max-md:hidden">
+          <div class="absolute flex w-max min-w-30 flex-col gap-0.5 rounded-lg border bg-white p-2 shadow-lg">
             <For each={items()}>
               {(item) => {
                 return (
                   <A
-                    class="inline-flex items-center gap-2 px-2 py-2.5 text-sm text-slate-9 data-[active]:text-portone hover:text-slate-5"
+                    class="inline-flex items-center gap-2 px-2 py-2.5 text-sm text-slate-9 hover:text-slate-5 data-[active]:text-portone"
                     bool:data-active={item.isActive}
                     data-system-version={item.systemVersion}
                     href={item.link ?? "#"}
@@ -93,7 +93,7 @@ export default function Dropdown(props: DropdownProps) {
                   >
                     {item.label}
                     {item.isExternalLink && (
-                      <i class="i-ic-baseline-launch opacity-40" />
+                      <i class="icon-[ic--baseline-launch] opacity-40" />
                     )}
                   </A>
                 );

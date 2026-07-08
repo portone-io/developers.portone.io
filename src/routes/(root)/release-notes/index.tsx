@@ -1,11 +1,22 @@
 import { createAsync, type RouteDefinition } from "@solidjs/router";
 import { format } from "date-fns";
+import type { WebPage, WithContext } from "schema-dts";
 import { For, Show } from "solid-js";
 
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import Banner from "~/components/release-note/Banner";
 import { getReleaseNotes } from "~/misc/releaseNote";
+
+const releaseNotesJsonLd: WithContext<WebPage> = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "포트원 릴리즈노트",
+  description: "포트원의 업데이트 소식을 전해드립니다.",
+  url: "https://developers.portone.io/release-notes",
+  publisher: organizationJsonLd,
+};
 
 export const route = {
   preload: () => {
@@ -19,8 +30,9 @@ export default function ReleaseNoteIndex() {
   return (
     <>
       <Metadata title="포트원 릴리즈노트" />
+      <JsonLd data={releaseNotesJsonLd} />
       <prose.h1>포트원 릴리즈노트</prose.h1>
-      <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
+      <p class="my-4 text-[18px] leading-[28.8px] font-normal text-gray">
         포트원의 업데이트 소식을 전해드립니다.
       </p>
       <Banner />
@@ -38,7 +50,7 @@ export default function ReleaseNoteIndex() {
               }
             >
               {([title, notes]) => (
-                <section class="my-4 flex-1 whitespace-nowrap pr-4">
+                <section class="my-4 flex-1 pr-4 whitespace-nowrap">
                   <prose.h3>{title}</prose.h3>
                   <ul>
                     <For each={notes.slice(0, 3)}>

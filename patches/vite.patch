@@ -1,0 +1,64 @@
+vite의 client.d.ts와 src/files.d.ts 간 타입 충돌을 해소하기 위한 패치
+vite/client.d.ts는 이미지 확장자 모듈들을 `string` default export로 선언하지만,
+이 레포에서는 vite-imagetools를 사용하기 위해 src/files.d.ts에서
+동일 확장자들을 `Picture` 타입으로 재선언함
+TypeScript는 ambient 모듈의 default export 타입 재선언(module augmentation)을
+허용하지 않기 때문에, 충돌을 피하려면 업스트림 선언을 제거하는 수밖에 없음
+
+대상 확장자: png, jpg, jpeg, gif, svg, webp, avif
+(bmp, jfif, pjpeg, pjp, ico, cur는 files.d.ts에서 재선언하지 않으므로 유지)
+
+References:
+  - src/files.d.ts
+  - patches/vite-imagetools.patch
+
+diff --git a/client.d.ts b/client.d.ts
+index e807d61414c5c71b82c248fa1c924d243597b5f0..d704b709f8425039ae5ff3239637dbb9b5b37775 100644
+--- a/client.d.ts
++++ b/client.d.ts
+@@ -61,18 +61,6 @@ declare module '*.bmp' {
+   const src: string
+   export default src
+ }
+-declare module '*.png' {
+-  const src: string
+-  export default src
+-}
+-declare module '*.jpg' {
+-  const src: string
+-  export default src
+-}
+-declare module '*.jpeg' {
+-  const src: string
+-  export default src
+-}
+ declare module '*.jfif' {
+   const src: string
+   export default src
+@@ -85,26 +73,10 @@ declare module '*.pjp' {
+   const src: string
+   export default src
+ }
+-declare module '*.gif' {
+-  const src: string
+-  export default src
+-}
+-declare module '*.svg' {
+-  const src: string
+-  export default src
+-}
+ declare module '*.ico' {
+   const src: string
+   export default src
+ }
+-declare module '*.webp' {
+-  const src: string
+-  export default src
+-}
+-declare module '*.avif' {
+-  const src: string
+-  export default src
+-}
+ declare module '*.cur' {
+   const src: string
+   export default src

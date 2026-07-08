@@ -1,6 +1,7 @@
-import { cache, createAsync, useLocation } from "@solidjs/router";
-import { createMemo, For, Show } from "solid-js";
+import { useLocation } from "@solidjs/router";
+import { For, Show } from "solid-js";
 
+import { navMenu } from "#navMenu";
 import { PgSelect } from "~/components/PgSelect";
 import type { DocsEntry } from "~/content/config";
 import { useSystemVersion } from "~/state/system-version";
@@ -18,48 +19,39 @@ interface Props {
   slug: string;
 }
 
-const getNavMenuItems = cache(async (lang: Lang, nav: string) => {
-  "use server";
-
-  const { navMenu } = await import("~/state/server-only/nav");
-  return navMenu[lang][nav as keyof (typeof navMenu)[Lang]] || [];
-}, "nav/menu-items");
-
 export default function DocsNavMenu(props: Props) {
   const { systemVersion } = useSystemVersion();
   const location = useLocation();
-  const memoizedLang = createMemo(() => props.lang);
-  const navMenuItems = createAsync(() =>
-    getNavMenuItems(memoizedLang(), props.nav),
-  );
+  const navMenuItems = () =>
+    navMenu.ko[props.nav as keyof typeof navMenu.ko] || [];
 
   return (
     <LeftSidebar>
-      <div class="pr-4 pt-5">
+      <div class="pt-5 pr-4">
         <div class="md:hidden">
           <DropdownLink
             pathname={location.pathname}
             items={getDropdownLinks(systemVersion())}
           />
-          <div class="my-4 h-1px bg-slate-200"></div>
+          <div class="my-4 h-[1px] bg-slate-200"></div>
         </div>
       </div>
       <nav
         id="nav-menu"
         class="scrollbar-thin relative flex-1 overflow-y-scroll"
       >
-        <div class="pb-1 pl-2 pr-6">
+        <div class="pr-6 pb-1 pl-2">
           <VersionSwitch docData={props.docData} />
         </div>
         <Show when={props.docData.targetPg === "dynamic"}>
-          <section class="grid grid-cols-[auto_1fr] items-center justify-center pb-1 pl-2 pr-2">
-            <div class="rounded-md text-xs text-slate-5 font-medium">
+          <section class="grid grid-cols-[auto_1fr] items-center justify-center pr-2 pb-1 pl-2">
+            <div class="rounded-md text-xs font-medium text-slate-5">
               결제대행사
             </div>
             <PgSelect />
           </section>
         </Show>
-        <ul class="flex flex-col gap-1 pb-4 pr-4">
+        <ul class="flex flex-col gap-1 pr-4 pb-4">
           <For each={navMenuItems()}>
             {(item) => {
               if (item.type === "group") {

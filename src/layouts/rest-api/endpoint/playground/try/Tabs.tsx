@@ -25,7 +25,7 @@ export function Tabs<Id extends string>(props: TabsProps<Id>) {
   );
   return (
     <>
-      <div class="flex gap-3 text-14px">
+      <div class="flex gap-3 text-[14px]">
         <For each={tabs()}>
           {(tab) => {
             const active = createMemo(() => currTabId().get() === tab.id);

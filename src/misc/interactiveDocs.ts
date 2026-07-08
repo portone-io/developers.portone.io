@@ -4,7 +4,7 @@ import type { InteractiveDocsInit } from "~/state/interactive-docs";
 
 import type { DocsContentName } from "./docs";
 
-export const getInteractiveDocs = query(
+export const loadInteractiveDocs = query(
   async (contentName: DocsContentName, fullSlug: string) => {
     "use server";
 

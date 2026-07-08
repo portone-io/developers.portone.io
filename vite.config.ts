@@ -7,16 +7,20 @@ import yaml from "@rollup/plugin-yaml";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import { solidStart } from "@solidjs/start/config";
-import { nitroV2Plugin } from "@solidjs/vite-plugin-nitro-2";
+import tailwindcss from "@tailwindcss/vite";
+import { nitro } from "nitro/vite";
 import rehypeSlug from "rehype-slug";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
-import unocss from "unocss/vite";
 import { defineConfig } from "vite";
 import { imagetools } from "vite-imagetools";
 
+import { sdkParameterTransform } from "./src/build/vite-plugin-sdk-parameter-transform.ts";
+
 export default defineConfig({
   plugins: [
+    tailwindcss(),
+    sdkParameterTransform(),
     {
       enforce: "pre",
       ...mdx({
@@ -75,7 +79,6 @@ export default defineConfig({
         ],
       }),
     },
-    unocss(),
     solidStart({
       // middleware: "./src/middleware.ts",
       extensions: ["ts", "tsx", "mdx"],
@@ -83,7 +86,7 @@ export default defineConfig({
         exclude: ["./src/misc/opengraph/**/*"],
       },
     }),
-    nitroV2Plugin({
+    nitro({
       preset: "vercel",
       prerender: {
         routes: ["/blog/rss.xml"],

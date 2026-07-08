@@ -13,17 +13,17 @@ export default function Footer(props: Props) {
       <table class="border-separate self-start">
         <tbody>
           <tr>
-            <th class="bg-orange-5 px-4 text-white font-bold">일반 문의</th>
+            <th class="bg-orange-5 px-4 font-bold text-white">일반 문의</th>
             <td class="px-4">cs@portone.io</td>
           </tr>
           <tr>
-            <th class="bg-orange-5 px-4 text-white font-bold">기술지원 문의</th>
+            <th class="bg-orange-5 px-4 font-bold text-white">기술지원 문의</th>
             <td class="px-4">tech.support@portone.io</td>
           </tr>
         </tbody>
       </table>
       <p>
-        <a class="text-orange-5" href="https://portone.io/korea/ko/service">
+        <a class="text-orange-5" href="https://portone.io">
           포트원 서비스 더 알아보기 →
         </a>
       </p>

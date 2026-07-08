@@ -5,7 +5,6 @@ import {
 } from "@portone-io/lint-local-links-valid";
 import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsEslintParser from "@typescript-eslint/parser";
-import unocss from "@unocss/eslint-plugin";
 import * as parserPlain from "eslint-parser-plain";
 import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
@@ -13,7 +12,7 @@ import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
 import { readFileSync } from "fs";
 import { load } from "js-yaml";
-import YAMLParser from "yaml-eslint-parser";
+import * as YAMLParser from "yaml-eslint-parser";
 
 const redirects = load(
   readFileSync("src/routes/(root)/docs/_redir.yaml", "utf8"),
@@ -49,10 +48,16 @@ export default [
       ".vinxi",
       ".output",
       "packages/**/dist",
+      ".nitro",
+      ".solid-start",
     ],
   },
   {
     ...eslint.configs.recommended,
+    rules: {
+      ...eslint.configs.recommended.rules,
+      "no-unassigned-vars": "off",
+    },
     ignores: ["**/*.mdx/*"],
   },
   {
@@ -146,10 +151,6 @@ export default [
       ...tsRules,
       "@typescript-eslint/no-unused-vars": "off",
     },
-  },
-  {
-    plugins: { unocss },
-    rules: { "unocss/order": "error" },
   },
   {
     plugins: { "simple-import-sort": sortImports },

@@ -1,13 +1,7 @@
-import { A } from "@solidjs/router";
 import { clsx } from "clsx";
-import {
-  createContext,
-  createMemo,
-  type JSX,
-  splitProps,
-  useContext,
-} from "solid-js";
-import { Dynamic } from "solid-js/web";
+import { createContext, type JSX, splitProps, useContext } from "solid-js";
+
+import ProseAnchor from "~/components/ProseAnchor";
 
 export const ProseContext = createContext<{
   styles: Partial<
@@ -27,7 +21,7 @@ function h1(props: JSX.IntrinsicElements["h1"]) {
     <h1
       {...rest}
       class={clsx(
-        "mb-12px mt-12px text-6 font-500 leading-[28.8px] tracking-[-.021em] first:mt-0 last:mb-0",
+        "mt-[12px] mb-[12px] text-[1.5rem] leading-[28.8px] font-medium tracking-[-.021em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h1}
@@ -44,7 +38,7 @@ function h2(props: JSX.IntrinsicElements["h2"]) {
     <h2
       {...rest}
       class={clsx(
-        "mb-12px mt-12px text-5 font-500 leading-[24px] tracking-[-.02em] first:mt-0 last:mb-0",
+        "mt-[12px] text-[1.25rem] leading-[24px] font-medium tracking-[-.02em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h2}
@@ -61,7 +55,7 @@ function h3(props: JSX.IntrinsicElements["h3"]) {
     <h3
       {...rest}
       class={clsx(
-        "mb-12px mt-12px text-[18px] font-500 leading-[22px] tracking-[-.018em] first:mt-0 last:mb-0",
+        "mt-[12px] mb-[12px] text-[18px] leading-[22px] font-medium tracking-[-.018em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h3}
@@ -78,7 +72,7 @@ function h4(props: JSX.IntrinsicElements["h4"]) {
     <h4
       {...rest}
       class={clsx(
-        "mb-8px mt-8px text-[15px] font-500 leading-5 tracking-[-.014em] first:mt-0 last:mb-0",
+        "mt-[8px] mb-[8px] text-[15px] leading-5 font-medium tracking-[-.014em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h4}
@@ -95,7 +89,7 @@ function h5(props: JSX.IntrinsicElements["h5"]) {
     <h5
       {...rest}
       class={clsx(
-        "mb-8px mt-8px text-.875rem font-medium leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
+        "mt-[8px] mb-[8px] text-[0.875rem] leading-[1.4] font-medium tracking-[-.006em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h5}
@@ -112,7 +106,7 @@ function h6(props: JSX.IntrinsicElements["h6"]) {
     <h6
       {...rest}
       class={clsx(
-        "mb-8px mt-8px text-.875rem font-medium leading-[1.4] tracking-[-.006em] first:mt-0 last:mb-0",
+        "mt-[8px] mb-[8px] text-[0.875rem] leading-[1.4] font-medium tracking-[-.006em] first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.h6}
@@ -129,7 +123,7 @@ function p(props: JSX.IntrinsicElements["p"]) {
     <p
       {...rest}
       class={clsx(
-        "mb-8px mt-8px font-400 leading-5 first:mt-0 last:mb-0",
+        "mt-[8px] mb-[8px] leading-5 font-normal first:mt-0 last:mb-0",
         local.class,
       )}
       style={styles.p}
@@ -141,32 +135,17 @@ function p(props: JSX.IntrinsicElements["p"]) {
 
 function a(props: JSX.IntrinsicElements["a"]) {
   const { styles } = useContext(ProseContext);
-  const [local, others] = splitProps(props, ["children", "class", "href"]);
-
-  const cls = createMemo(() => {
-    return clsx(
-      "cursor-pointer text-orange-5 hover:text-orange-7 hover:underline",
-      local.class,
-    );
-  });
-
-  const isExternalLink = createMemo(() => {
-    if (!local.href) return false;
-    return /^(mailto|tel):/i.test(local.href);
-  });
-
-  const component = createMemo(() => (isExternalLink() ? "a" : A));
+  const [local, others] = splitProps(props, ["class"]);
 
   return (
-    <Dynamic
-      component={component()}
+    <ProseAnchor
       {...others}
-      href={local.href ?? "#"}
-      class={cls()}
+      class={clsx(
+        "cursor-pointer text-orange-5 hover:text-orange-7 hover:underline",
+        local.class,
+      )}
       style={styles.a}
-    >
-      {local.children}
-    </Dynamic>
+    />
   );
 }
 

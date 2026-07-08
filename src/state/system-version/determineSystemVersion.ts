@@ -5,20 +5,19 @@ import { getRequestEvent } from "solid-js/web";
 
 import type { SystemVersion } from "~/type";
 
-import { defaultSystemVersion } from ".";
+import { defaultSystemVersion } from "./constants";
+import { resolveSystemVersion } from "./resolveSystemVersion";
 
-const parseSystemVersion = (value: unknown) => {
-  return ["v1", "v2"].includes(value as string)
-    ? (value as SystemVersion)
-    : defaultSystemVersion;
+export const determineServerSystemVersion = (): SystemVersion => {
+  const event = getRequestEvent();
+  if (!event) return defaultSystemVersion;
+  const { v: searchValue } = getQuery(event.nativeEvent);
+  const cookieValue = getCookie(event.nativeEvent, "systemVersion");
+  const pathname = new URL(event.request.url).pathname;
+
+  return resolveSystemVersion({
+    pathname,
+    queryVersion: searchValue,
+    fallbackVersion: cookieValue,
+  });
 };
-
-export const determineServerSystemVersion =
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async (): Promise<SystemVersion> => {
-    const event = getRequestEvent();
-    if (!event) return defaultSystemVersion;
-    const { v: searchValue } = getQuery(event.nativeEvent);
-    const cookieValue = getCookie(event.nativeEvent, "systemVersion");
-    return parseSystemVersion(searchValue || cookieValue);
-  };

@@ -1,13 +1,15 @@
 import { clsx } from "clsx";
 import { type JSX, splitProps } from "solid-js";
 
+import ProseAnchor from "~/components/ProseAnchor";
+
 export function h1(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
   const [locals, others] = splitProps(props, ["class", "children"]);
   return (
     <h1
       {...others}
       class={clsx(
-        "mb-12px mt-12px text-1.875rem font-600 leading-[1.15] tracking-[-.021em] first:mt-0 last:mb-0",
+        "mt-[12px] mb-[12px] text-[1.875rem] leading-[1.15] font-semibold tracking-[-.021em] first:mt-0 last:mb-0",
         locals.class,
       )}
     >
@@ -22,7 +24,7 @@ export function h2(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h2
       {...others}
       class={clsx(
-        "my-8 text-2xl font-600 leading-[1.7] tracking-[-.02em]",
+        "my-8 text-2xl leading-[1.7] font-semibold tracking-[-.02em]",
         locals.class,
       )}
     >
@@ -37,7 +39,7 @@ export function h3(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h3
       {...others}
       class={clsx(
-        "my-8 text-1.375rem font-600 leading-[1.7] tracking-[-.018em]",
+        "my-8 text-[1.375rem] leading-[1.7] font-semibold tracking-[-.018em]",
         locals.class,
       )}
     >
@@ -52,7 +54,7 @@ export function h4(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h4
       {...others}
       class={clsx(
-        "my-3 text-1.125rem font-600 leading-[1.7] tracking-[-.014em]",
+        "my-3 text-[1.125rem] leading-[1.7] font-semibold tracking-[-.014em]",
         locals.class,
       )}
     >
@@ -67,7 +69,7 @@ export function h5(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h5
       {...others}
       class={clsx(
-        "my-3 text-.875rem font-medium leading-[1.7] tracking-[-.006em]",
+        "my-3 text-[0.875rem] leading-[1.7] font-medium tracking-[-.006em]",
         locals.class,
       )}
     >
@@ -82,7 +84,7 @@ export function h6(props: JSX.HTMLAttributes<HTMLHeadingElement>) {
     <h6
       {...others}
       class={clsx(
-        "my-3 text-.875rem font-medium leading-[1.7] tracking-[-.006em]",
+        "my-3 text-[0.875rem] leading-[1.7] font-medium tracking-[-.006em]",
         locals.class,
       )}
     >
@@ -100,15 +102,14 @@ export function p(props: JSX.HTMLAttributes<HTMLParagraphElement>) {
   );
 }
 
-export function a(props: JSX.HTMLAttributes<HTMLAnchorElement>) {
-  const [locals, others] = splitProps(props, ["class", "children"]);
+export function a(props: JSX.IntrinsicElements["a"]) {
+  const [locals, others] = splitProps(props, ["class"]);
+
   return (
-    <a
+    <ProseAnchor
       {...others}
       class={clsx("cursor-pointer underline hover:text-slate-9", locals.class)}
-    >
-      {locals.children}
-    </a>
+    />
   );
 }
 

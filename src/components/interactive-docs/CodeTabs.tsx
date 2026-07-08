@@ -19,9 +19,9 @@ export function CodeTabs() {
     <Tabs
       value={selectedTab() ?? undefined}
       onChange={handleTabChange}
-      class="w-full flex overflow-x-hidden"
+      class="flex w-full overflow-x-hidden"
     >
-      <Tabs.List class="w-full flex flex-nowrap gap-2 overflow-x-auto whitespace-nowrap">
+      <Tabs.List class="flex w-full flex-nowrap gap-2 overflow-x-auto whitespace-nowrap">
         <For each={tabs()}>
           {(tab) => {
             let tabRef: HTMLElement;
@@ -43,7 +43,7 @@ export function CodeTabs() {
                 value={tab.fileName}
               >
                 <CodeIcon fileName={tab.fileName} />
-                <span class={clsx("text-xs font-medium leading-6")}>
+                <span class={clsx("text-xs leading-6 font-medium")}>
                   {tab.fileName}
                 </span>
               </Tabs.Trigger>

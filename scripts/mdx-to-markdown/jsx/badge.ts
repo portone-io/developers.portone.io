@@ -4,7 +4,7 @@
  */
 export function handleBadgeComponent(componentName: string) {
   // 컴포넌트 이름에 따라 적절한 텍스트 선택
-  let badgeText = "";
+  let badgeText: string | undefined;
   switch (componentName) {
     case "PaymentV1":
       badgeText = "결제 모듈 V1";

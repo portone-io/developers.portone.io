@@ -17,18 +17,18 @@ function NoteFolder(props: FolderProps) {
   return (
     <div>
       <button
-        class={clsx("w-full flex pr-0", getLinkStyle(false))}
+        class={clsx("flex w-full pr-0", getLinkStyle(false))}
         onClick={() => setOpen((prev) => !prev)}
       >
         <div class="grow">
           <LinkTitle title={props.title} isActive={false} />
         </div>
-        <div class="h-full flex items-center p-2">
+        <div class="flex h-full items-center p-2">
           <i
             class="inline-block"
             classList={{
-              "i-ic-baseline-keyboard-arrow-down": open(),
-              "i-ic-baseline-keyboard-arrow-right": !open(),
+              "icon-[ic--baseline-keyboard-arrow-down]": open(),
+              "icon-[ic--baseline-keyboard-arrow-right]": !open(),
             }}
           />
         </div>

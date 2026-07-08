@@ -1,10 +1,25 @@
-import { cache, redirect } from "@solidjs/router";
+import { query, redirect } from "@solidjs/router";
 import { match } from "ts-pattern";
 
-import { NotFoundError } from "~/components/404";
-
-export const DocsContentName = ["opi", "sdk", "platform"] as const;
+export const DocsContentName = [
+  "opi",
+  "sdk",
+  "platform",
+  "release-notes",
+] as const;
 export type DocsContentName = (typeof DocsContentName)[number];
+type ContentModule = typeof import("#content");
+type DocsCollectionMap = {
+  opi: ContentModule["opi"];
+  sdk: ContentModule["sdk"];
+  platform: ContentModule["platform"];
+  "release-notes": ContentModule["releaseNotes"];
+};
+
+export type LoadedDocByContentName<T extends DocsContentName> =
+  T extends DocsContentName
+    ? DocsCollectionMap[T][keyof DocsCollectionMap[T]] | undefined
+    : never;
 
 export const parseDocsFullSlug = (
   pathname: string,
@@ -25,7 +40,7 @@ const loadOpiDoc = async (fullSlug: string) => {
   if (!fullSlug.includes("/")) return redirect(`/opi/${fullSlug}/readme`, 302);
 
   const { opi } = await import("#content");
-  if (!(fullSlug in opi)) throw new NotFoundError();
+  if (!(fullSlug in opi)) return;
 
   return opi[fullSlug as keyof typeof opi];
 };
@@ -37,9 +52,18 @@ const loadSdkDoc = async (fullSlug: string) => {
   if (!fullSlug.includes("/")) return redirect(`/sdk/${fullSlug}/readme`, 302);
 
   const { sdk } = await import("#content");
-  if (!(fullSlug in sdk)) throw new NotFoundError();
+  if (!(fullSlug in sdk)) return;
 
   return sdk[fullSlug as keyof typeof sdk];
+};
+
+const loadReleaseNote = async (fullSlug: string) => {
+  "use server";
+
+  const { releaseNotes } = await import("#content");
+  if (!(fullSlug in releaseNotes)) return;
+
+  return releaseNotes[fullSlug as keyof typeof releaseNotes];
 };
 
 const loadPlatformDoc = async (fullSlug: string) => {
@@ -57,12 +81,12 @@ const loadPlatformDoc = async (fullSlug: string) => {
     return redirect(`/platform/${fullSlug}/readme`, 302);
 
   const { platform } = await import("#content");
-  if (!(fullSlug in platform)) throw new NotFoundError();
+  if (!(fullSlug in platform)) return;
 
   return platform[fullSlug as keyof typeof platform];
 };
 
-export const loadDoc = cache(
+const loadDocQuery = query(
   async (contentName: DocsContentName, fullSlug: string) => {
     "use server";
 
@@ -70,7 +94,42 @@ export const loadDoc = cache(
       .with("opi", () => loadOpiDoc(fullSlug))
       .with("sdk", () => loadSdkDoc(fullSlug))
       .with("platform", () => loadPlatformDoc(fullSlug))
-      .exhaustive();
+      .with("release-notes", () => loadReleaseNote(fullSlug))
+      .otherwise(() => undefined);
   },
   "docs/content",
 );
+
+type LoadDoc = {
+  (
+    contentName: "opi",
+    fullSlug: string,
+  ): Promise<LoadedDocByContentName<"opi">>;
+  (
+    contentName: "sdk",
+    fullSlug: string,
+  ): Promise<LoadedDocByContentName<"sdk">>;
+  (
+    contentName: "platform",
+    fullSlug: string,
+  ): Promise<LoadedDocByContentName<"platform">>;
+  (
+    contentName: "release-notes",
+    fullSlug: string,
+  ): Promise<LoadedDocByContentName<"release-notes">>;
+  (
+    contentName: DocsContentName,
+    fullSlug: string,
+  ): Promise<LoadedDocByContentName<DocsContentName>>;
+  keyFor: typeof loadDocQuery.keyFor;
+  key: typeof loadDocQuery.key;
+};
+
+export const loadDoc = Object.assign(
+  (contentName: DocsContentName, fullSlug: string) =>
+    loadDocQuery(contentName, fullSlug),
+  {
+    keyFor: loadDocQuery.keyFor,
+    key: loadDocQuery.key,
+  },
+) as LoadDoc;

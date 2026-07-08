@@ -4,12 +4,8 @@ import { createMemo, Show, startTransition } from "solid-js";
 
 import type { DocsEntry } from "~/content/config";
 import { useSystemVersion } from "~/state/system-version";
+import { navigateAfterVersionSwitch } from "~/state/system-version/navigate";
 import type { SystemVersion } from "~/type";
-
-const pathMappings = {
-  "/api/rest-v1": "/api/rest-v2",
-  "/api/rest-v2": "/api/rest-v1",
-};
 
 const hiddenPaths = ["/release-notes", "/blog", "/platform"];
 
@@ -36,23 +32,16 @@ export function VersionSwitch(props: VersionSwitchProps) {
               setSystemVersion(newVersion);
             });
 
-            const mappedPath =
-              Object.entries(pathMappings).find(([from]) =>
-                location.pathname.startsWith(from),
-              )?.[1] ??
-              (props.docData?.versionVariants?.[newVersion] &&
-                props.docData.versionVariants[newVersion]);
-            if (mappedPath) navigate(mappedPath);
-            else if (
-              ["/opi/", "/sdk/"].some((path) =>
-                location.pathname.startsWith(path),
-              )
-            )
-              return;
-            else navigate("/");
+            navigateAfterVersionSwitch({
+              pathname: location.pathname,
+              newVersion,
+              navigate,
+              versionVariants: props.docData?.versionVariants,
+              targetVersions: props.docData?.targetVersions,
+            });
           }}
           class={clsx(
-            "flex cursor-pointer select-none overflow-hidden whitespace-pre rounded-md bg-slate-1 p-1 text-center text-[13px] text-slate-5 font-medium leading-[15.6px] <md:p-.5",
+            "flex cursor-pointer overflow-hidden rounded-md bg-slate-1 p-1 text-center text-[13px] leading-[15.6px] font-medium whitespace-pre text-slate-5 select-none max-md:p-0.5",
             props.class,
           )}
         >
@@ -68,7 +57,7 @@ function getVersionClass(
   thisVersion: SystemVersion,
   systemVersion: SystemVersion,
 ) {
-  return `px-2 py-1 <md:py-.5 <md:px-2 flex-1 rounded-[4px] ${
+  return `px-2 py-1 max-md:py-0.5 max-md:px-2 flex-1 rounded-[4px] ${
     systemVersion === thisVersion ? "bg-portone text-white" : ""
   }`;
 }

@@ -1,6 +1,6 @@
 import {
-  cache,
   createAsync,
+  query,
   type RouteDefinition,
   useParams,
 } from "@solidjs/router";
@@ -9,7 +9,7 @@ import { createMemo, Show } from "solid-js";
 import PostList from "~/components/blog/PostList/PostList";
 import type { BlogEntry } from "~/content/config";
 
-const loadPosts = cache(async (tag: string) => {
+const loadPosts = query(async (tag: string) => {
   "use server";
 
   const { blog } = await import("#content");
@@ -43,7 +43,7 @@ export default function LatestPostsList() {
     <Show when={posts()}>
       {(posts) => (
         <>
-          <h2 class="text-1.375rem text-slate-5 font-semibold">{tag()}</h2>
+          <h2 class="text-[1.375rem] font-semibold text-slate-5">{tag()}</h2>
           <PostList posts={posts()} />
         </>
       )}

@@ -3,8 +3,8 @@ import {
   flatCategories,
   getCategories,
   type Tag,
-} from "./category";
-import { getOperation, type Operation } from "./operation";
+} from "./category.ts";
+import { getOperation, type Operation } from "./operation.ts";
 
 export interface Endpoint {
   method: string; // get, post ...
@@ -67,6 +67,28 @@ export function getEndpointRepr({
   path,
 }: Pick<Endpoint, "method" | "path">): string {
   return `${method} ${path}`;
+}
+
+export function getEmptyCategoryIds(
+  schema: unknown,
+  endpoints?: Endpoint[],
+): Set<string> {
+  const eps = endpoints ?? getEveryEndpoints(schema);
+  const usedCategoryIds = new Set<string>();
+  for (const endpoint of eps) {
+    const operation = getOperation(schema, endpoint);
+    const categoryId =
+      operation["x-portone-category"] || operation.tags?.[0] || "";
+    if (categoryId) usedCategoryIds.add(categoryId);
+  }
+  const allCategories = flatCategories(getCategories(schema));
+  const emptyIds = new Set<string>();
+  for (const category of allCategories) {
+    if (!usedCategoryIds.has(category.id)) {
+      emptyIds.add(category.id);
+    }
+  }
+  return emptyIds;
 }
 
 export function getEveryEndpoints(schema: unknown): Endpoint[] {

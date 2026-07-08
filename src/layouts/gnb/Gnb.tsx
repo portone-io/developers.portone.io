@@ -43,9 +43,9 @@ export default function Gnb(props: Props) {
   const serverSystemVersion = untrack(systemVersion);
   const sidebarContext = useSidebarContext();
 
-  const subNavs: Nav[] = [
+  const subNavs = createMemo<Nav[]>(() => [
     {
-      link: "/opi/ko",
+      link: `/opi/ko/readme?v=${systemVersion()}`,
       label: "원 페이먼트 인프라",
       // TODO: Phase 2
       // dropdownItems: [
@@ -61,7 +61,7 @@ export default function Gnb(props: Props) {
       // ],
     },
     {
-      link: "/platform",
+      link: "/platform/ko/readme",
       label: "파트너 정산 자동화",
       // TODO: Phase 2
       // dropdownItems: [
@@ -75,7 +75,7 @@ export default function Gnb(props: Props) {
     },
     {
       label: "API & SDK",
-      link: { v1: "/api/rest-v1", v2: "/api/rest-v2" },
+      link: { v1: "/api/rest-v1?v=v1", v2: "/api/rest-v2?v=v2" },
       activeLink: ["/sdk/ko"],
       dropdownItems: [
         {
@@ -113,7 +113,7 @@ export default function Gnb(props: Props) {
         },
       ],
     },
-  ];
+  ]);
 
   const topNavs = [
     {
@@ -141,14 +141,14 @@ export default function Gnb(props: Props) {
         `}
       </style>
       <div class="h-14 md:h-26">
-        <div class="fixed h-inherit w-full bg-white z-gnb">
+        <div class="fixed z-gnb h-[inherit] w-full bg-white">
           <header
             data-selected-system-version={systemVersion()}
-            class="mx-auto h-inherit max-w-8xl w-full flex flex-col px-4 lg:px-10 md:px-8 sm:px-6"
+            class="mx-auto flex h-[inherit] w-full max-w-8xl flex-col px-4 sm:px-6 md:px-8 lg:px-10"
           >
-            <div class="grid grid-cols-2 h-14 items-center gap-6 border-b bg-white z-gnb-body md:grid-cols-[auto_1fr_auto]">
+            <div class="z-gnb-body grid h-14 grid-cols-2 items-center gap-6 border-b bg-white md:grid-cols-[auto_1fr_auto]">
               <A
-                class="h-full inline-flex items-center"
+                class="inline-flex h-full items-center"
                 href={`/opi/${props.lang}`}
               >
                 <div class="flex items-center gap-2">
@@ -174,9 +174,9 @@ export default function Gnb(props: Props) {
               </div>
               <MobileMenuButton />
             </div>
-            <div class="hidden h-12 items-center gap-5 border-b bg-white z-gnb-body md:flex">
-              <div class="flex items-center gap-.5">
-                <For each={subNavs}>
+            <div class="z-gnb-body hidden h-12 items-center gap-5 border-b bg-white md:flex">
+              <div class="flex items-center gap-0.5">
+                <For each={subNavs()}>
                   {(nav) => (
                     <Dropdown
                       serverSystemVersion={serverSystemVersion}
@@ -193,7 +193,7 @@ export default function Gnb(props: Props) {
             <Show when={props.navAsMenu}>
               {(_) => {
                 const navs = createMemo<Nav[]>(() => [
-                  ...subNavs,
+                  ...subNavs(),
                   {
                     label: "리소스",
                     dropdownItems: topNavs.map((nav) => ({
@@ -205,7 +205,7 @@ export default function Gnb(props: Props) {
                 return (
                   <div
                     class={clsx(
-                      "absolute inset-x-0 bottom-0 flex flex-col transform items-start gap-6 rounded-b-md bg-white px-12 py-6 transition-transform duration-300 md:hidden",
+                      "absolute inset-x-0 bottom-0 flex transform flex-col items-start gap-6 rounded-b-md bg-white px-12 py-6 transition-transform duration-300 md:hidden",
                       sidebarContext.get() && "translate-y-full shadow-lg",
                     )}
                   >

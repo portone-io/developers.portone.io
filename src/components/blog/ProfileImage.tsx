@@ -29,7 +29,7 @@ export default function ProfileImage(props: Props) {
       {props.children}
       <div
         ref={overlayRef}
-        class="absolute inset-0 block rounded-full bg-#ccc opacity-100 transition-opacity duration-0.1s ease-in-out content-empty"
+        class="absolute inset-0 block rounded-full bg-[#ccc] opacity-100 transition-opacity duration-100 ease-in-out"
         classList={{ "!opacity-0": loaded() }}
       />
     </div>

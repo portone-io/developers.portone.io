@@ -1,3 +1,5 @@
+"use server";
+
 import { AsyncLocalStorage } from "node:async_hooks";
 import { readFile } from "node:fs/promises";
 import * as path from "node:path";

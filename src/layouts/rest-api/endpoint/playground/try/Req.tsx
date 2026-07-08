@@ -126,7 +126,7 @@ export default function Req(props: ReqProps) {
         <>
           <span>Request</span>
           <button
-            class="border border-slate-2 rounded bg-slate-1 px-4 font-bold active:bg-white hover:bg-slate-2"
+            class="rounded-sm border border-slate-2 bg-slate-1 px-4 font-bold hover:bg-slate-2 active:bg-white"
             onClick={() =>
               props.execute(async () => {
                 const headers = kvListToObject(reqHeader());
@@ -165,7 +165,7 @@ export default function Req(props: ReqProps) {
         </>
       }
     >
-      <div class="grid grid-rows-[auto_minmax(0,1fr)] flex-1 gap-3 p-4">
+      <div class="grid flex-1 grid-rows-[auto_minmax(0,1fr)] gap-3 p-4">
         <Tabs
           tabs={[
             reqPathParams().params.length && pathTab,
@@ -253,7 +253,9 @@ function parseReqJson(json: string, part: RequestPart): unknown {
     return json5.parse(json);
   } catch (err) {
     const Part = part[0]?.toUpperCase() + part.slice(1);
-    throw new Error(`${Part}가 올바르지 않습니다.\n${(err as Error).message}`);
+    throw new Error(`${Part}가 올바르지 않습니다.\n${(err as Error).message}`, {
+      cause: err,
+    });
   }
 }
 

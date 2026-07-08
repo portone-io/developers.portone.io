@@ -1,6 +1,8 @@
 import { createAsync, useLocation } from "@solidjs/router";
+import type { BreadcrumbList, TechArticle, WithContext } from "schema-dts";
 import {
   createMemo,
+  createResource,
   createSignal,
   Match,
   type ParentProps,
@@ -11,25 +13,27 @@ import { MDXProvider } from "solid-mdx";
 
 import { NotFoundError } from "~/components/404";
 import V2MigrationBanner from "~/components/gitbook/V2MigrationBanner";
+import JsonLd, { organizationJsonLd } from "~/components/JsonLd";
 import Metadata from "~/components/Metadata";
 import { prose } from "~/components/prose";
 import type { DocsEntry } from "~/content/config";
 import DocsNavMenu from "~/layouts/sidebar/DocsNavMenu";
 import RightSidebar from "~/layouts/sidebar/RightSidebar";
 import { loadDoc, parseDocsFullSlug } from "~/misc/docs";
-import { getInteractiveDocs } from "~/misc/interactiveDocs";
+import { loadInteractiveDocs } from "~/misc/interactiveDocs";
 import { InteractiveDocsProvider } from "~/state/interactive-docs";
 import { PaymentGatewayProvider } from "~/state/payment-gateway";
 import { Lang, PaymentGateway } from "~/type";
 
 import { InteractiveDocs } from "./InteractiveDocs";
 
-const loadInteractiveDocs = async (pathname: string) => {
+export function preloadDocs(pathname: string) {
   const parsedFullSlug = parseDocsFullSlug(pathname);
   if (!parsedFullSlug) return;
   const [contentName, fullSlug] = parsedFullSlug;
-  return getInteractiveDocs(contentName, fullSlug);
-};
+  void loadDoc(contentName, fullSlug);
+  void loadInteractiveDocs(contentName, fullSlug);
+}
 
 export function Docs(props: ParentProps) {
   const location = useLocation();
@@ -47,18 +51,60 @@ export function Docs(props: ParentProps) {
     const slug = parts.slice(1).join("/");
     return { lang, slug };
   });
-  const doc = createAsync(() => loadDoc(contentName(), fullSlug()), {
-    deferStream: true,
-  });
+  const [doc] = createResource(
+    () => [contentName(), fullSlug()] as const,
+    async ([contentName, fullSlug]) => {
+      const result = await loadDoc(contentName, fullSlug);
+      if (!result) throw new NotFoundError();
+      return result;
+    },
+  );
   const frontmatter = createMemo(() => doc()?.frontmatter as DocsEntry);
 
   const interactiveDocs = createAsync(
-    () => loadInteractiveDocs(location.pathname),
+    () => loadInteractiveDocs(contentName(), fullSlug()),
     {
       deferStream: true,
     },
   );
 
+  const breadcrumbListJsonLd = createMemo(() => {
+    const paramsInner = params();
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: (() => {
+        if (!paramsInner) return [];
+        const segments = [
+          contentName(),
+          paramsInner.lang,
+          ...paramsInner.slug.split("/"),
+        ];
+        let path = "";
+        return segments.map((segment, i) => {
+          path += `/${segment}`;
+          const isLast = i === segments.length - 1;
+          return {
+            "@type": "ListItem" as const,
+            position: i + 1,
+            name: isLast ? frontmatter()?.title : segment,
+            item: `https://developers.portone.io${path}`,
+          };
+        });
+      })(),
+    } satisfies WithContext<BreadcrumbList>;
+  });
+  const techArticleJsonLd = createMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      headline: frontmatter()?.title,
+      description: frontmatter()?.description,
+      url: `https://developers.portone.io/${contentName()}/${params()?.lang}/${params()?.slug}`,
+      image: `https://developers.portone.io/${contentName()}/${params()?.lang}/${params()?.slug}.png`,
+      publisher: organizationJsonLd,
+    } satisfies WithContext<TechArticle>;
+  });
   return (
     <div class="flex">
       <Show when={params()}>
@@ -97,6 +143,8 @@ export function Docs(props: ParentProps) {
                       ogImageSlug={`${contentName()}/${params().lang}/${params().slug}.png`}
                       docsEntry={frontmatter()}
                     />
+                    <JsonLd data={techArticleJsonLd()} />
+                    <JsonLd data={breadcrumbListJsonLd()} />
                     <Switch
                       fallback={
                         <DefaultLayout
@@ -141,19 +189,24 @@ const DefaultLayout = (
   }>,
 ) => {
   const { targetVersions } = props.frontmatter;
+
   return (
-    <div class="min-w-0 flex flex-1 justify-center gap-5">
-      <article class="mb-40 mt-4 min-w-0 flex shrink-1 basis-200 flex-col pl-5 text-slate-7 <lg:pl-4 <lg:pr-4">
+    <div class="flex min-w-0 flex-1 justify-center gap-5">
+      <article class="mt-4 mb-40 flex min-w-0 shrink-1 basis-200 flex-col pl-5 text-slate-7 max-lg:pr-4 max-lg:pl-4">
         <div class="mb-6">
           <prose.h1 id="overview">{props.frontmatter.title}</prose.h1>
           <Show when={props.frontmatter.description}>
-            <p class="my-4 text-[18px] text-gray font-400 leading-[28.8px]">
+            <p class="my-4 text-[18px] leading-[28.8px] font-normal text-gray">
               {props.frontmatter.description}
             </p>
           </Show>
         </div>
         <Show when={targetVersions}>
-          <V2MigrationBanner lang={props.params.lang} />
+          <V2MigrationBanner
+            lang={props.params.lang}
+            versionVariants={props.frontmatter.versionVariants}
+            targetVersions={props.frontmatter.targetVersions}
+          />
         </Show>
         <MDXProvider components={prose}>{props.children}</MDXProvider>
       </article>

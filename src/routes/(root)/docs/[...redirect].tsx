@@ -1,7 +1,7 @@
 import {NotFoundError} from "~/components/404.tsx";
-import {cache, createAsync, Navigate, useParams} from "@solidjs/router";
+import {query, createAsync, Navigate, useParams} from "@solidjs/router";
 
-const loadRedirection = cache(async (slug: string) => {
+const loadRedirection = query(async (slug: string) => {
   "use server";
 
   const { default: redirYaml } = await import(
