@@ -41,9 +41,18 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
 - **가상계좌에 결제 금액이 입금**되었을 때 - (status : `paid`)
 - **예약결제가 시도**되었을 때 - (status : `paid` or `failed`)
 - **관리자 콘솔에서 결제 취소**되었을 때 - (status : `cancelled`)
+- **[결제취소 API](/api/rest-v1/payment?v=v1#post%20%2Fpayments%2Fcancel) 요청 시 `enable_webhook` 파라미터를 `true`로 설정하여 결제 취소**되었을 때 - (status : `cancelled`)
 
 <Hint style="danger">
   **결제 실패 시에는 웹훅이 호출되지 않아요!**
+</Hint>
+
+<Hint style="info">
+  **결제취소 API를 통한 취소는 기본적으로 웹훅을 전송하지 않아요!**
+
+  [결제취소 API](/api/rest-v1/payment?v=v1#post%20%2Fpayments%2Fcancel)를 통한 취소는 기본적으로 고객사로 웹훅을 전송하지 않습니다.
+  취소 성공 시 취소 통보 웹훅을 수신하고 싶다면 취소 요청 시 `enable_webhook` 파라미터를 `true`로 설정해 주세요.
+  단, 결제 시 웹훅을 사용한 결제건에 한해 전송됩니다.
 </Hint>
 
 <Hint style="info">
