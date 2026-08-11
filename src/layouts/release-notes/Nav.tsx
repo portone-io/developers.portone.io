@@ -9,6 +9,7 @@ interface Props {
   consoleNotes: ReleaseNote[];
   apiSdkNotes: ReleaseNote[];
   platformNotes: ReleaseNote[];
+  splitNotes: ReleaseNote[];
 }
 
 export default function Nav(props: Props) {
@@ -33,6 +34,11 @@ export default function Nav(props: Props) {
         <NoteList
           notes={props.platformNotes}
           title="파트너 정산 자동화"
+          activeSlug={activeSlug()}
+        />
+        <NoteList
+          notes={props.splitNotes}
+          title="해외 인플루언서 정산 자동화"
           activeSlug={activeSlug()}
         />
       </ul>

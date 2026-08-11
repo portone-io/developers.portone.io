@@ -32,6 +32,7 @@ export default function ReleaseNotesLayout(props: Props) {
                 consoleNotes={notes().consoleNotes}
                 apiSdkNotes={notes().apiSdkNotes}
                 platformNotes={notes().platformNotes}
+                splitNotes={notes().splitNotes}
               />
             )}
           </Show>

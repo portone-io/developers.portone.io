@@ -23,6 +23,10 @@ const getReleaseNoteLabel = (slug: string) =>
       (v) => v.startsWith("platform"),
       () => "파트너 정산 자동화",
     )
+    .when(
+      (v) => v.startsWith("split"),
+      () => "해외 인플루언서 정산 자동화",
+    )
     .run();
 
 export const getReleaseNoteTitle = (releasedAt: Date, slug: string) =>
@@ -50,13 +54,15 @@ export const getReleaseNotes = query(async () => {
   const apiSdkNotes: ReleaseNote[] = [];
   const consoleNotes: ReleaseNote[] = [];
   const platformNotes: ReleaseNote[] = [];
+  const splitNotes: ReleaseNote[] = [];
   for (const [slug, { frontmatter: entry }] of Object.entries(releaseNotes)) {
     if (slug.startsWith("api-sdk")) apiSdkNotes.push({ slug, entry });
     else if (slug.startsWith("console")) consoleNotes.push({ slug, entry });
     else if (slug.startsWith("platform")) platformNotes.push({ slug, entry });
+    else if (slug.startsWith("split")) splitNotes.push({ slug, entry });
   }
-  for (const notes of [apiSdkNotes, consoleNotes, platformNotes]) {
+  for (const notes of [apiSdkNotes, consoleNotes, platformNotes, splitNotes]) {
     notes.sort((a, b) => (a.slug > b.slug ? -1 : 1));
   }
-  return { apiSdkNotes, consoleNotes, platformNotes };
+  return { apiSdkNotes, consoleNotes, platformNotes, splitNotes };
 }, "release-notes");
