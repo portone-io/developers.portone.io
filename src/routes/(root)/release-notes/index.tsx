@@ -46,6 +46,7 @@ export default function ReleaseNoteIndex() {
                   ["관리자콘솔", notes().consoleNotes],
                   ["API / SDK", notes().apiSdkNotes],
                   ["파트너 정산 자동화", notes().platformNotes],
+                  ["해외 인플루언서 정산 자동화", notes().splitNotes],
                 ] as const
               }
             >
