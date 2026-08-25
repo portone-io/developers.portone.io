@@ -12,11 +12,11 @@ import Parameter from "~/components/parameter/Parameter";
 - [결제대행사 채널 설정하기](/opi/ko/integration/ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
 - 해외 결제(위챗페이 / 알리페이 플러스)를 이용하시려면 [이지페이(KICC) 해외결제](/opi/ko/integration/pg/v2/kicc-v2-global) 문서를 참고해 주세요.
 
-## 가능한 결제수단
+## 가능한 결제 수단
 
-- **결제창 일반결제**
+- **결제창 일반 결제**
 
-  `payMethod` 파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
+  `payMethod` 파라미터를 결제 수단에 따라 아래와 같이 설정해야 합니다.
 
   - 신용카드: `CARD`
   - 실시간 계좌이체: `TRANSFER`
@@ -24,9 +24,9 @@ import Parameter from "~/components/parameter/Parameter";
   - 휴대폰 소액결제: `MOBILE`
   - 간편결제: `EASY_PAY`
 
-- **결제창 빌링키 발급**
+- **결제창을 통한 빌링키 발급**
 
-  `billingKeyMethod` 파라미터를 발급수단에 따라 아래와 같이 설정해야 합니다.
+  `billingKeyMethod` 파라미터를 발급 수단에 따라 아래와 같이 설정해야 합니다.
 
   - 카드: `CARD`
   - 네이버페이: `EASY_PAY`
@@ -39,9 +39,9 @@ import Parameter from "~/components/parameter/Parameter";
 ## SDK 결제 요청하기
 
 결제 요청 시에는 `requestPayment` 함수를 호출해야 합니다.
-`channelKey` 파라미터에 결제 채널 연동 시 생성된 채널 키값을 지정하여 이지페이(KICC) 채널 사용을 명시해주세요.
+`channelKey`에 이지페이(KICC) 채널의 채널 키를 입력해 주세요.
 
-이지페이(KICC) 카드 결제 기준으로 작성한 예시 코드는 아래와 같습니다.
+아래는 이지페이(KICC) 카드 결제 요청 예시입니다.
 
 <Tabs>
   <Tabs.Tab title="SDK 결제 요청">
@@ -50,8 +50,8 @@ import Parameter from "~/components/parameter/Parameter";
 
     function requestPayment() {
       PortOne.requestPayment({
-        storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec", // 고객사 storeId로 변경해주세요.
-        channelKey: "channel-key-9987cb87-6458-4888-b94e-68d9a2da896d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
+        storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec", // 고객사 storeId로 변경해 주세요.
+        channelKey: "channel-key-9987cb87-6458-4888-b94e-68d9a2da896d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해 주세요.
         paymentId: `payment-${crypto.randomUUID()}`,
         orderName: "나이키 와플 트레이너 2 SD",
         totalAmount: 1000,
@@ -82,7 +82,7 @@ import Parameter from "~/components/parameter/Parameter";
 
     **고객사 주문 고유 번호**
 
-    - 고객사에서 매번 고유하게 채번해야 합니다.
+    - 고객사에서 매번 고유한 값으로 생성해야 합니다.
     - 이지페이(KICC)의 경우 영문 대소문자, 숫자, 하이픈(`-`), 밑줄(`_`)만 사용하여 **40자 이내**로 입력해야 합니다.
 
   - orderName: string
@@ -105,9 +105,9 @@ import Parameter from "~/components/parameter/Parameter";
 
   - payMethod: string
 
-    **결제수단**
+    **결제 수단**
 
-    결제 호출 시 결제수단을 지정할 때 사용됩니다.
+    결제 호출 시 결제 수단을 지정할 때 사용됩니다.
 
     - 신용카드: `CARD`
     - 실시간 계좌이체: `TRANSFER`
@@ -261,9 +261,24 @@ import Parameter from "~/components/parameter/Parameter";
 
         **상점 부담 무이자 할부 사용 여부**
 
+        상점 부담 무이자 할부는 고객사가 할부 수수료를 부담하는 방식입니다.
+        상점 부담 무이자 할부를 설정하려면 카드사별 할부 개월 수를 입력해 주세요.
+
+        `true`로 설정하는 경우 다음 조건을 모두 충족해야 합니다.
+
+        - `card.cardCompany` 또는 `card.availableCards`에 무이자를 적용할 카드사를 하나 이상 입력합니다.
+        - 선택한 카드사마다 해당 `card.installment.freeInstallmentPlans` 항목을 입력합니다.
+        - 각 `freeInstallmentPlans.months` 배열에 할부 개월 수를 하나 이상 입력합니다.
+
+        필요한 값을 누락하면 이지페이(KICC)가 거래등록 요청을 거절하므로 결제창이 열리지 않습니다.
+
       - useCardPoint?: boolean
 
         **카드사 포인트 사용 여부**
+
+        `true`로 설정하는 경우 `card.cardCompany` 또는 `card.availableCards`에 카드사를 하나 이상
+        입력해야 합니다. 선택한 모든 카드사에 카드사 포인트 사용 설정이 적용됩니다.
+        카드사를 입력하지 않으면 이지페이(KICC)가 거래등록 요청을 거절하므로 결제창이 열리지 않습니다.
 
       - installment?: object
 
@@ -272,19 +287,19 @@ import Parameter from "~/components/parameter/Parameter";
         <Parameter.Details>
           - monthOption?: object
 
-            **할부 개월수 설정**
+            **할부 개월 수 설정**
 
             `fixedMonth`와 `availableMonthList` 중 하나만 입력하며, 두 값 모두 결제창에 노출할
-            할부 개월수 목록으로 전달됩니다.
+            할부 개월 수 목록으로 전달됩니다.
 
             <Parameter.Details>
               - fixedMonth?: number
 
-                **고정 할부 개월수**
+                **고정 할부 개월 수**
 
               - availableMonthList?: number\[]
 
-                **구매자가 선택할 수 있는 할부 개월수 목록**
+                **구매자가 선택할 수 있는 할부 개월 수 목록**
             </Parameter.Details>
 
           - freeInstallmentPlans?: object\[]
@@ -298,7 +313,7 @@ import Parameter from "~/components/parameter/Parameter";
 
               - months: number\[]
 
-                **무이자 할부를 제공하는 개월수**
+                **무이자 할부를 제공하는 개월 수**
             </Parameter.Details>
         </Parameter.Details>
     </Parameter.Details>
@@ -328,6 +343,11 @@ import Parameter from "~/components/parameter/Parameter";
       - useFreeInterestFromMall?: boolean
 
         **상점 부담 무이자 할부 사용 여부**
+
+        상점 부담 무이자 할부를 설정하려면 카드사별 할부 개월 수를 입력해 주세요.
+        `true`로 설정하는 경우에도 카드 결제와 동일하게 대상 카드사마다 할부 개월 수를 하나 이상
+        입력해야 합니다. 필요한 값을 누락하면 이지페이(KICC)가 거래등록 요청을 거절하므로
+        결제창이 열리지 않습니다.
 
       - installment?: object
 
@@ -421,8 +441,8 @@ import Parameter from "~/components/parameter/Parameter";
 
     function requestIssueBillingKey() {
       PortOne.requestIssueBillingKey({
-        storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec", // 고객사 storeId로 변경해주세요.
-        channelKey: "channel-key-9987cb87-6458-4888-b94e-68d9a2da896d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
+        storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec", // 고객사 storeId로 변경해 주세요.
+        channelKey: "channel-key-9987cb87-6458-4888-b94e-68d9a2da896d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해 주세요.
         billingKeyMethod: "CARD",
         issueId: `issue-${crypto.randomUUID()}`,
         issueName: "정기결제 카드 등록",
@@ -437,8 +457,8 @@ import Parameter from "~/components/parameter/Parameter";
 
     function requestIssueBillingKey() {
       PortOne.requestIssueBillingKey({
-        storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec", // 고객사 storeId로 변경해주세요.
-        channelKey: "channel-key-9987cb87-6458-4888-b94e-68d9a2da896d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
+        storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec", // 고객사 storeId로 변경해 주세요.
+        channelKey: "channel-key-9987cb87-6458-4888-b94e-68d9a2da896d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해 주세요.
         billingKeyMethod: "EASY_PAY",
         issueId: `issue-${crypto.randomUUID()}`,
         issueName: "네이버페이 정기결제 등록",
@@ -457,7 +477,7 @@ import Parameter from "~/components/parameter/Parameter";
 <Parameter flatten>
   - billingKeyMethod: string
 
-    **빌링키 발급수단**
+    **빌링키 발급 수단**
 
     - 카드: `CARD`
     - 네이버페이: `EASY_PAY`
@@ -672,7 +692,7 @@ import Parameter from "~/components/parameter/Parameter";
 
   - installmentMonth?: number
 
-    **카드 할부 개월수**
+    **카드 할부 개월 수**
 
     카드 빌링키 결제에서만 사용할 수 있습니다.
 
@@ -715,6 +735,19 @@ import Parameter from "~/components/parameter/Parameter";
 
 ## 연동 유의사항
 
+### 지원하지 않는 일반 결제 파라미터
+
+이지페이(KICC) 일반 결제는 아래 파라미터를 지원하지 않습니다. 입력해도 결제 요청에 반영되지 않습니다.
+
+- 카드: `card.useAppCardOnly`, `card.useInstallment`, `card.cardPromotion`
+
+- 간편결제: `easyPay.availablePayMethods`, `easyPay.cashReceiptType`, `easyPay.useInstallment`,
+  `easyPay.customerIdentifier`, `easyPay.useCardPoint`
+
+- 가상계좌: `virtualAccount.fixedOption`, `virtualAccount.cashReceipt`
+
+- 실시간 계좌이체: `transfer.bankCode`, `transfer.cashReceiptType`, `transfer.customerIdentifier`
+
 ### 에스크로 유의사항
 
 - 에스크로는 **실시간 계좌이체와 가상계좌 결제에서만** 지원합니다.
@@ -722,7 +755,9 @@ import Parameter from "~/components/parameter/Parameter";
 - `isEscrow`를 `true`로 설정하는 경우 아래 정보를 모두 입력해야 합니다.
 
   - `customer.fullName`, `customer.phoneNumber`, `customer.email`
-  - `products`: 1개 이상 20개 이하이며 상품 금액의 합계가 `totalAmount`와 같아야 합니다.
+
+  - `products`: 1개 이상 20개 이하이며 각 상품의 단가와 수량을 곱한 금액의 합계가
+    `totalAmount`와 같아야 합니다.
 
 - 에스크로 결제 건은 **부분 취소가 불가능**하며 전액 취소만 지원합니다.
 
