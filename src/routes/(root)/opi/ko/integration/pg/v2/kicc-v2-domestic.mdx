@@ -216,6 +216,9 @@ import Parameter from "~/components/parameter/Parameter";
     **에스크로 사용 여부**
 
     실시간 계좌이체와 가상계좌 결제에서만 사용할 수 있습니다.
+    `true`로 설정하는 경우 구매자 이름(`customer.fullName` 또는 `customer.firstName`과
+    `customer.lastName`), `customer.phoneNumber`, `customer.email`, `products`를 모두
+    입력해야 합니다.
 
   - card?: object
 
@@ -404,7 +407,8 @@ import Parameter from "~/components/parameter/Parameter";
 
     **상품 정보**
 
-    에스크로 결제 시 필수입니다.
+    에스크로 결제 시 필수이며 1개 이상 20개 이하로 입력해야 합니다.
+    각 상품의 단가(`amount`)와 수량(`quantity`)을 곱한 금액의 합계가 `totalAmount`와 같아야 합니다.
 
     <Parameter.Details>
       - id: string
@@ -733,41 +737,29 @@ import Parameter from "~/components/parameter/Parameter";
     </Parameter.Details>
 </Parameter>
 
-## 연동 유의사항
+## API 지원 기능
 
-### 지원하지 않는 일반결제 파라미터
+- 카드 및 네이버페이 빌링키 결제
+- 예약 결제
+- 빌링키 삭제
+- 결제 취소
+- 에스크로 배송 정보 등록, 수정
+- 현금영수증 발급, 조회, 취소
 
-이지페이(KICC) 일반결제는 아래 파라미터를 지원하지 않습니다. 입력해도 결제 요청에 반영되지 않습니다.
+### 에스크로 API 유의사항
 
-- 카드: `card.useAppCardOnly`, `card.useInstallment`, `card.cardPromotion`
+- 배송 정보 등록 및 수정 시 물류회사(`logistics.company`)는 필수이며, 송장 번호
+  (`logistics.invoiceNumber`)는 EUC-KR 기준 30Byte 이내로 입력해야 합니다.
 
-- 간편결제: `easyPay.availablePayMethods`, `easyPay.cashReceiptType`, `easyPay.useInstallment`,
-  `easyPay.customerIdentifier`, `easyPay.useCardPoint`
+- 이지페이(KICC)는 아래 물류회사만 지원합니다.
 
-- 가상계좌: `virtualAccount.fixedOption`, `virtualAccount.cashReceipt`
-
-- 실시간 계좌이체: `transfer.bankCode`, `transfer.cashReceiptType`, `transfer.customerIdentifier`
-
-### 에스크로 유의사항
-
-- 에스크로는 **실시간 계좌이체와 가상계좌 결제에서만** 지원합니다.
-
-- `isEscrow`를 `true`로 설정하는 경우 아래 정보를 모두 입력해야 합니다.
-
-  - `customer.fullName`, `customer.phoneNumber`, `customer.email`
-
-  - `products`: 1개 이상 20개 이하이며 각 상품의 단가와 수량을 곱한 금액의 합계가
-    `totalAmount`와 같아야 합니다.
-
-- 에스크로 결제 건은 **부분 취소가 불가능**하며 전액 취소만 지원합니다.
-
-- 배송 정보 등록 및 수정 시 택배사 코드(`carrier`)는 필수이며, 송장 번호는 EUC-KR 기준 30Byte
-  이내로 입력해야 합니다. 지원하는 택배사는 아래와 같습니다.
-
-  - CJ대한통운(`CJGLS`), 사가와(`SAGAWA`), 옐로우캡(`YELLOWCAP`), 로젠(`KGB`), 드림택배(`DONGBU`),
-    우체국(`EPOST`), 한진(`HANJIN`), 현대(`HYUNDAI`), 하나로(`HANARO`), 기타(`ETC`)
-
-- 에스크로 **구매 확정 API는 지원하지 않습니다.**
+  - CJ대한통운: `CJ`
+  - 롯데글로벌로지스: `LOTTE`
+  - 로젠택배: `LOGEN`
+  - 동원로엑스: `DONGWON`
+  - 우체국: `POST`
+  - 한진택배: `HANJIN`
+  - 기타: `ETC`
 
 ### 현금영수증 API 유의사항
 
@@ -787,7 +779,6 @@ import Parameter from "~/components/parameter/Parameter";
 
 - `customer.name`은 EUC-KR 기준 20Byte까지, `orderName`은 50Byte까지만 전달됩니다.
 
-- 과세 금액을 입력하는 경우에만 복합과세 정보가 이지페이(KICC)로 전달됩니다.
+### 결제 취소 API 유의사항
 
-- 현금영수증 취소 시 취소 금액은 발급 금액 이하여야 하며, 세금 관련 금액을 입력하는 경우
-  과세 · 면세 · 부가세 금액을 모두 입력해야 합니다.
+- 에스크로 결제 건은 **부분 취소가 불가능**하며 전액 취소만 지원합니다.
