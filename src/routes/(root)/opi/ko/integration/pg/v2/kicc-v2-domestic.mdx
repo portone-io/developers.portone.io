@@ -206,6 +206,7 @@ import Parameter from "~/components/parameter/Parameter";
     **결제창 언어**
 
     이지페이(KICC)는 아래 언어를 지원합니다. 그 외 값을 입력하면 이지페이(KICC) 기본 언어로 열립니다.
+    카드사, 간편결제사 또는 통신사의 결제창을 직접 호출하는 경우에는 `locale` 설정이 적용되지 않습니다.
 
     - 한국어: `KO_KR`
     - 영어: `EN_US`
@@ -264,6 +265,7 @@ import Parameter from "~/components/parameter/Parameter";
         **노출을 허용할 카드사 목록**
 
         `cardCompany`와 동일한 값을 사용합니다.
+        `cardCompany`를 입력하면 `availableCards` 대신 해당 카드사만 사용됩니다.
 
       - useFreeInterestFromMall?: boolean
 
@@ -272,6 +274,9 @@ import Parameter from "~/components/parameter/Parameter";
       - useCardPoint?: boolean
 
         **카드사 포인트 사용 여부**
+
+        `true`로 설정하면 결제창에서 카드사 포인트 사용 여부를 선택할 수 있습니다.
+        다만, 결제 응답의 `cardPointUsed`로 실제 포인트 사용 여부를 확인할 수 없습니다.
 
       - installment?: object
 
@@ -319,6 +324,8 @@ import Parameter from "~/components/parameter/Parameter";
 
         **간편결제사**
 
+        간편결제 시 필수이며, 지정한 간편결제사의 결제창을 엽니다.
+
         - 카카오페이: `KAKAOPAY`
         - 네이버페이: `NAVERPAY`
         - 토스페이: `TOSSPAY`
@@ -331,6 +338,16 @@ import Parameter from "~/components/parameter/Parameter";
         **노출을 허용할 카드사 목록**
 
         `card.cardCompany`와 동일한 값을 사용합니다.
+        입력하는 경우 한 곳만 지정할 수 있습니다.
+
+      - availablePayMethods?: string\[]
+
+        **노출을 허용할 결제수단의 종류**
+
+        네이버페이 결제 시 아래 값을 입력할 수 있습니다.
+
+        - 네이버페이 카드: `CARD`
+        - 네이버페이 포인트/머니: `CHARGE` 또는 `MONEY`
 
       - useFreeInterestFromMall?: boolean
 
@@ -368,6 +385,23 @@ import Parameter from "~/components/parameter/Parameter";
 
             시간은 RFC 3339 date-time 형식으로 입력해야 합니다.
         </Parameter.Details>
+    </Parameter.Details>
+
+  - mobile?: object
+
+    **휴대폰 소액결제 설정**
+
+    <Parameter.Details>
+      - carrier?: string
+
+        **통신사 다이렉트 호출**
+
+        입력하면 지정한 통신사의 결제창을 엽니다.
+
+        - SK텔레콤: `SKT`
+        - KT: `KT`
+        - LG U+: `LGU`
+        - SK 세븐모바일: `SK7`
     </Parameter.Details>
 
   - products?: object\[]
@@ -724,7 +758,7 @@ import Parameter from "~/components/parameter/Parameter";
 - 예약 결제
 - 빌링키 삭제
 - 결제 취소
-- 에스크로 배송 정보 등록, 수정, 조회, 구매 확정
+- 에스크로 배송 정보 등록
 - 현금영수증 발급, 조회, 취소
 - 가상계좌 말소
 
@@ -734,8 +768,17 @@ import Parameter from "~/components/parameter/Parameter";
 
 ### 에스크로 API 유의사항
 
-- 배송 정보 등록 및 수정 시 물류회사(`logistics.company`)는 필수입니다.
+- 이지페이(KICC)는 에스크로 배송 정보 등록만 지원합니다. 배송 정보 수정 및 조회와 구매 확정은
+  지원하지 않습니다.
+
+- 배송 정보 등록 시 물류회사(`logistics.company`)는 필수입니다.
   송장 번호(`logistics.invoiceNumber`)는 30바이트 이내로 입력해야 합니다.
+
+- 배송 정보를 등록하면 이지페이(KICC)가 결제 요청 시 입력한 `customer.email`로 물품 수령 확인
+  메일을 발송합니다.
+
+- 구매자가 메일에서 물품 수령을 확인하거나 반품을 요청한 뒤에는 포트원 콘솔과 결제 취소 API에서
+  취소할 수 없습니다. 환불 등 후속 처리는 이지페이(KICC)에 문의해 주세요.
 
 - 이지페이(KICC)는 아래 물류회사만 지원합니다.
 
@@ -784,3 +827,7 @@ import Parameter from "~/components/parameter/Parameter";
 #### 에스크로
 
 - 에스크로 결제는 부분 취소할 수 없으며 전액 취소만 지원합니다.
+
+#### 취소 영수증
+
+- 이지페이(KICC) 국내 결제를 취소하면 응답에 취소 영수증 URL인 `receiptUrl`이 포함됩니다.
