@@ -9,40 +9,22 @@ import Parameter from "~/components/parameter/Parameter";
 
 ## 채널 설정하기
 
-- [결제대행사 채널 설정하기](/opi/ko/integration/ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
-- 해외 결제(위챗페이 / 알리페이 플러스)를 이용하시려면 [이지페이(KICC) 해외결제](/opi/ko/integration/pg/v2/kicc-v2-global) 문서를 참고해 주세요.
+- [결제대행사 채널 설정하기](/opi/ko/integration/ready/readme#3-결제대행사-채널-설정하기)를 참고해 채널을 설정합니다.
+- 위챗페이나 알리페이 플러스를 이용하려면 [이지페이(KICC) 해외결제](/opi/ko/integration/pg/v2/kicc-v2-global)를 참고해 주세요.
 
-## 가능한 결제수단
+## 지원 결제수단
 
-- **결제창 일반결제**
-
-  `payMethod` 파라미터를 결제수단에 따라 아래와 같이 설정해야 합니다.
-
-  - 신용카드: `CARD`
-  - 실시간 계좌이체: `TRANSFER`
-  - 가상계좌: `VIRTUAL_ACCOUNT`
-  - 휴대폰 소액결제: `MOBILE`
-  - 간편결제: `EASY_PAY`
-
-- **결제창을 통한 빌링키 발급**
-
-  `billingKeyMethod` 파라미터를 발급 수단에 따라 아래와 같이 설정해야 합니다.
-
-  - 카드: `CARD`
-  - 네이버페이: `EASY_PAY`
-
-- **API 빌링키 결제**
-
-  결제창으로 발급한 빌링키를 이용하여 `POST /payments/{paymentId}/billing-key` 또는
-  `POST /payments/{paymentId}/schedule`로 결제할 수 있습니다.
+- 결제창 일반결제: 신용카드, 실시간 계좌이체, 가상계좌, 휴대폰 소액결제, 간편결제
+- 결제창 빌링키 발급: 카드, 네이버페이
+- API 빌링키 결제: 결제창에서 발급한 빌링키를 사용한 일반결제, 예약 결제, 반복 결제
 
 ## SDK 결제 요청하기
 
-결제 요청 시에는 `requestPayment` 함수를 호출해야 합니다.
-`channelKey`에 이지페이(KICC) 채널의 채널 키를 입력해 주세요.
+결제하려면 `requestPayment` 함수를 호출합니다.
+`channelKey`에는 콘솔에서 채널을 연동할 때 생성된 이지페이(KICC) 채널 키를 입력해 주세요.
 이 문서에서 안내하는 바이트 길이는 EUC-KR 인코딩을 기준으로 합니다.
 
-아래는 이지페이(KICC) 카드 결제 요청 예시입니다.
+이지페이(KICC) 카드 결제 요청 예시는 다음과 같습니다.
 
 <Tabs>
   <Tabs.Tab title="SDK 결제 요청">
@@ -71,32 +53,32 @@ import Parameter from "~/components/parameter/Parameter";
 
     **상점 아이디**
 
-    포트원 계정에 생성된 상점을 식별하는 고유한 값으로 관리자 콘솔에서 확인할 수 있습니다.
+    포트원 계정에 생성된 상점을 식별하는 고유 값입니다. 관리자 콘솔에서 확인할 수 있습니다.
 
   - channelKey: string
 
     **채널 키**
 
-    콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키로 호출하고자 하는 채널을 지정합니다.
+    콘솔에서 채널을 연동할 때 생성된 키로 결제에 사용할 채널을 지정합니다.
 
   - paymentId: string
 
     **고객사 주문 고유 번호**
 
-    - 고객사에서 매번 고유한 값으로 생성해야 합니다.
-    - 이지페이(KICC)의 경우 영문 대소문자, 숫자, 하이픈(`-`), 밑줄(`_`)만 사용하여 **40자 이내**로 입력해야 합니다.
+    결제 건마다 고유하게 생성해야 합니다. 영문 대소문자, 숫자, 하이픈(`-`), 밑줄(`_`)만 사용하여
+    **40자 이내**로 입력해 주세요.
 
   - orderName: string
 
     **주문명**
 
-    이지페이(KICC)에는 **50바이트**까지만 전달됩니다.
+    **50바이트**까지만 전달됩니다.
 
   - totalAmount: number
 
     **결제 금액**
 
-    결제 금액으로 통화(currency)별 scale factor를 고려한 number 형식만 허용됩니다.
+    결제 통화(`currency`)의 scale factor를 반영한 정수로 입력합니다.
 
   - currency: string
 
@@ -138,14 +120,14 @@ import Parameter from "~/components/parameter/Parameter";
 
         **구매자 이름**
 
-        `firstName`을 입력하는 경우 `lastName`도 필수로 입력해야 합니다. `fullName`이 없고,
-        `firstName`과 `lastName`이 존재하는 경우 `{firstName} {lastName}`이 구매자 이름으로 전달됩니다.
+        `lastName`과 함께 입력해야 합니다. `fullName` 없이 두 값을 입력하면
+        `{firstName} {lastName}`이 구매자 이름으로 전달됩니다.
 
       - lastName?: string
 
         **구매자 성**
 
-        `lastName`을 입력하는 경우 `firstName`도 필수로 입력해야 합니다.
+        `firstName`과 함께 입력해야 합니다.
 
       - phoneNumber?: string
 
@@ -205,8 +187,8 @@ import Parameter from "~/components/parameter/Parameter";
 
     **결제창 언어**
 
-    이지페이(KICC)는 아래 언어를 지원합니다. 그 외 값을 입력하면 이지페이(KICC) 기본 언어로 열립니다.
-    카드사, 간편결제사 또는 통신사의 결제창을 직접 호출하는 경우에는 `locale` 설정이 적용되지 않습니다.
+    지원하는 언어는 다음과 같습니다. 지원하지 않는 값을 입력하면 기본 언어로 열립니다.
+    카드사, 간편결제사 또는 통신사의 결제창을 바로 호출하면 `locale` 설정이 적용되지 않습니다.
 
     - 한국어: `KO_KR`
     - 영어: `EN_US`
@@ -219,7 +201,7 @@ import Parameter from "~/components/parameter/Parameter";
 
     실시간 계좌이체와 가상계좌 결제에서만 사용할 수 있습니다.
 
-    `true`로 설정하는 경우 아래 정보를 모두 입력해야 합니다.
+    `true`로 설정하면 다음 정보를 모두 입력해야 합니다.
 
     - 구매자 이름: `customer.fullName` 또는 `customer.firstName`과 `customer.lastName`
     - 구매자 연락처: `customer.phoneNumber`
@@ -233,9 +215,9 @@ import Parameter from "~/components/parameter/Parameter";
     <Parameter.Details>
       - cardCompany?: string
 
-        **카드사 다이렉트 호출**
+        **카드사**
 
-        지원 카드사는 아래와 같습니다.
+        지정한 카드사의 결제창을 바로 엽니다.
 
         - 신한카드: `SHINHAN_CARD`
         - 삼성카드: `SAMSUNG_CARD`
@@ -265,7 +247,7 @@ import Parameter from "~/components/parameter/Parameter";
         **노출을 허용할 카드사 목록**
 
         `cardCompany`와 동일한 값을 사용합니다.
-        `cardCompany`를 입력하면 `availableCards` 대신 해당 카드사만 사용됩니다.
+        `cardCompany`를 입력하면 `availableCards`는 무시되고 지정한 카드사만 사용됩니다.
 
       - useFreeInterestFromMall?: boolean
 
@@ -338,13 +320,13 @@ import Parameter from "~/components/parameter/Parameter";
         **노출을 허용할 카드사 목록**
 
         `card.cardCompany`와 동일한 값을 사용합니다.
-        입력하는 경우 한 곳만 지정할 수 있습니다.
+        카드사 1곳만 입력할 수 있습니다.
 
       - availablePayMethods?: string\[]
 
-        **노출을 허용할 결제수단의 종류**
+        **노출할 결제수단**
 
-        네이버페이 결제 시 아래 값을 입력할 수 있습니다.
+        네이버페이 결제 시 다음 값을 입력할 수 있습니다.
 
         - 네이버페이 카드: `CARD`
         - 네이버페이 포인트/머니: `CHARGE` 또는 `MONEY`
@@ -370,20 +352,20 @@ import Parameter from "~/components/parameter/Parameter";
         **입금 기한**
 
         가상계좌 결제 시 필수로 입력하며, `validHours`와 `dueDate` 중 하나만 입력합니다.
-        입력한 값은 KST 기준 날짜(`YYYYMMDD`)와 시각(`HHmmss`)으로 변환되어 전달됩니다.
+        입력한 값을 KST 기준 날짜(`YYYYMMDD`)와 시각(`HHmmss`)으로 변환해 전달합니다.
 
         <Parameter.Details>
           - validHours?: number
 
             **유효 시간**
 
-            예) `3`을 입력하면 지금으로부터 3시간 후가 입금 기한으로 지정됩니다.
+            예를 들어 `3`을 입력하면 지금부터 3시간 후가 입금 기한으로 지정됩니다.
 
           - dueDate?: string
 
             **만료 시각**
 
-            시간은 RFC 3339 date-time 형식으로 입력해야 합니다.
+            RFC 3339의 date-time 형식으로 입력해야 합니다.
         </Parameter.Details>
     </Parameter.Details>
 
@@ -394,9 +376,9 @@ import Parameter from "~/components/parameter/Parameter";
     <Parameter.Details>
       - carrier?: string
 
-        **통신사 다이렉트 호출**
+        **통신사**
 
-        입력하면 지정한 통신사의 결제창을 엽니다.
+        지정한 통신사의 결제창을 바로 엽니다.
 
         - SK텔레콤: `SKT`
         - KT: `KT`
@@ -408,7 +390,7 @@ import Parameter from "~/components/parameter/Parameter";
 
     **상품 정보**
 
-    에스크로 결제 시 필수이며 1개 이상 20개 이하로 입력해야 합니다.
+    에스크로 결제 시 필수이며, 상품을 1개 이상 20개 이하로 입력해야 합니다.
     각 상품의 단가(`amount`)와 수량(`quantity`)을 곱한 금액의 합계가 `totalAmount`와 같아야 합니다.
 
     <Parameter.Details>
@@ -439,28 +421,28 @@ import Parameter from "~/components/parameter/Parameter";
 #### 상점 부담 무이자 할부
 
 `card.useFreeInterestFromMall` 또는 `easyPay.useFreeInterestFromMall`을 `true`로 설정할 때는
-아래 조건을 모두 충족해야 합니다.
+다음 조건을 모두 충족해야 합니다.
 
-- `card.cardCompany`, `card.availableCards`, `easyPay.availableCards` 중 결제수단에 해당하는
-  파라미터에 무이자를 적용할 카드사를 한 곳 이상 입력해야 합니다.
+- `card.cardCompany`, `card.availableCards`, `easyPay.availableCards` 중 결제수단에 맞는
+  파라미터에 무이자를 적용할 카드사를 1곳 이상 입력해야 합니다.
 
 - 선택한 모든 카드사에 대응하는 `installment.freeInstallmentPlans` 항목을 입력해야 합니다.
 
-- 각 `freeInstallmentPlans.months` 배열에 할부 개월을 한 개 이상 입력해야 합니다. 빈 배열은 허용되지 않습니다.
+- 각 `freeInstallmentPlans.months` 배열에는 할부 개월 수를 1개 이상 입력해야 합니다. 빈 배열은 허용되지 않습니다.
 
 조건을 충족하지 않으면 결제창 호출 전에 오류가 반환됩니다.
 
 #### 카드사 포인트
 
 `card.useCardPoint`를 `true`로 설정할 때는 `card.cardCompany` 또는 `card.availableCards`에
-카드사를 한 곳 이상 입력해야 합니다. `card.availableCards`를 사용하면 목록에 포함된 모든 카드사에
+카드사를 1곳 이상 입력해야 합니다. `card.availableCards`를 사용하면 목록에 포함된 모든 카드사에
 카드사 포인트 사용 설정이 적용됩니다.
 
 대상 카드사를 입력하지 않으면 결제창 호출 전에 오류가 반환됩니다.
 
 ## 결제창 빌링키 발급
 
-빌링키 발급 요청 시에는 `requestIssueBillingKey` 함수를 호출해야 합니다.
+빌링키를 발급하려면 `requestIssueBillingKey` 함수를 호출합니다.
 이지페이(KICC)는 카드와 네이버페이 빌링키 발급을 지원합니다.
 
 <Tabs>
@@ -515,58 +497,46 @@ import Parameter from "~/components/parameter/Parameter";
 
     **빌링키 발급 건 고유 ID**
 
-    - 이지페이(KICC)의 경우 **필수 입력**입니다.
-    - 1바이트 이상 40바이트 이하로 입력해야 합니다.
+    **필수 입력**이며, 1바이트 이상 40바이트 이하로 입력해야 합니다.
 
   - issueName: string
 
     **빌링키 발급 시 결제창에 표시되는 제목**
 
-    - 이지페이(KICC)의 경우 **필수 입력**입니다.
-    - 1바이트 이상 50바이트 이하로 입력해야 합니다.
+    **필수 입력**이며, 1바이트 이상 50바이트 이하로 입력해야 합니다.
 
   - customer?: object
 
     **고객 정보**
 
     카드 빌링키 발급 시에만 이지페이(KICC)로 전달됩니다.
+    각 항목의 입력 규칙은 SDK 결제 요청의 `customer`와 같습니다.
 
     <Parameter.Details>
       - fullName?: string
 
         **구매자 전체 이름**
 
-        20바이트 이내로 입력해야 합니다.
-
       - firstName?: string
 
         **구매자 이름**
-
-        `firstName`을 입력하는 경우 `lastName`도 필수로 입력해야 합니다. `fullName`이 없고,
-        `firstName`과 `lastName`이 존재하는 경우 `{firstName} {lastName}`이 구매자 이름으로 전달됩니다.
 
       - lastName?: string
 
         **구매자 성**
 
-        `lastName`을 입력하는 경우 `firstName`도 필수로 입력해야 합니다.
-
       - phoneNumber?: string
 
         **구매자 연락처**
 
-        숫자만 사용하여 11자 이내로 입력해야 합니다.
-
       - email?: string
 
         **구매자 이메일**
-
-        50자 이내의 이메일 형식이어야 합니다.
     </Parameter.Details>
 
   - easyPay?: object
 
-    **간편결제 정보**
+    **간편결제 설정**
 
     <Parameter.Details>
       - easyPayProvider: string
@@ -577,7 +547,7 @@ import Parameter from "~/components/parameter/Parameter";
 
       - availablePayMethods: string\[]
 
-        **노출을 허용할 결제수단의 종류**
+        **노출할 결제수단**
 
         네이버페이 빌링키 발급 시 **필수 입력**이며, 첫 번째 값만 사용됩니다.
 
@@ -588,25 +558,20 @@ import Parameter from "~/components/parameter/Parameter";
 
         **노출을 허용할 카드사 목록**
 
-        `card.cardCompany`와 동일한 값을 사용합니다.
+        SDK 결제 요청의 `card.cardCompany`와 동일한 값을 사용합니다.
     </Parameter.Details>
 
   - locale?: string
 
     **결제창 언어**
 
-    카드 빌링키 발급 시에만 전달되며 아래 언어를 지원합니다.
-
-    - 한국어: `KO_KR`
-    - 영어: `EN_US`
-    - 일본어: `JA_JP`
-    - 중국어: `ZH_CN` 또는 `ZH_TW`
+    카드 빌링키 발급 시에만 전달됩니다. SDK 결제 요청의 `locale`과 동일한 값을 지원합니다.
 </Parameter>
 
 ## API 빌링키 결제 요청하기
 
 발급된 빌링키로 결제하려면 `POST /payments/{paymentId}/billing-key`를 호출합니다.
-예약·반복 결제는 `POST /payments/{paymentId}/schedule`을 이용합니다.
+예약 결제와 반복 결제는 `POST /payments/{paymentId}/schedule`을 이용합니다.
 
 <Tabs>
   <Tabs.Tab title="API 빌링키 결제 요청">
@@ -641,7 +606,7 @@ import Parameter from "~/components/parameter/Parameter";
 
     **결제에 사용할 빌링키**
 
-    이지페이(KICC)는 결제창으로 발급한 카드 빌링키와 네이버페이 빌링키를 지원합니다.
+    결제창에서 발급한 카드 또는 네이버페이 빌링키를 입력합니다.
 
   - orderName: string
 
@@ -723,8 +688,8 @@ import Parameter from "~/components/parameter/Parameter";
 
     **현금영수증 정보**
 
-    네이버페이 빌링키 결제에서만 사용할 수 있습니다. 발급 유형, 사용자 식별 번호, 사용자 식별 번호
-    유형을 **모두 입력해야** 이지페이(KICC)로 전달됩니다.
+    네이버페이 빌링키 결제에서만 사용할 수 있습니다. `type`, `customerIdentityNumber`,
+    `customerIdentityNumberType`을 **모두 입력해야** 이지페이(KICC)로 전달됩니다.
 
     <Parameter.Details>
       - type: string
@@ -752,9 +717,9 @@ import Parameter from "~/components/parameter/Parameter";
 
 ## API 지원 기능
 
-이지페이(KICC)는 포트원 V2 API를 통해 아래 기능을 지원합니다.
+이지페이(KICC)는 포트원 V2 API에서 다음 기능을 지원합니다.
 
-- 카드 및 네이버페이 빌링키 결제
+- 카드와 네이버페이 빌링키 결제
 - 예약 결제
 - 빌링키 삭제
 - 결제 취소
@@ -764,14 +729,13 @@ import Parameter from "~/components/parameter/Parameter";
 
 ### 빌링키 결제 API 유의사항
 
-- 이지페이(KICC)는 빌링키 결제 시 할부를 지원하지 않으며, 항상 일시불로 결제됩니다.
+이지페이(KICC)는 빌링키 결제 시 할부를 지원하지 않으며 항상 일시불로 결제됩니다.
 
 ### 에스크로 API 유의사항
 
-- 이지페이(KICC)는 에스크로 배송 정보 등록만 지원합니다. 배송 정보 수정 및 조회와 구매 확정은
-  지원하지 않습니다.
+- 에스크로 배송 정보는 등록만 지원합니다. 배송 정보 수정, 조회, 구매 확정은 지원하지 않습니다.
 
-- 배송 정보 등록 시 물류회사(`logistics.company`)는 필수입니다.
+- 배송 정보 등록 시 물류 회사(`logistics.company`)는 필수입니다.
   송장 번호(`logistics.invoiceNumber`)는 30바이트 이내로 입력해야 합니다.
 
 - 배송 정보를 등록하면 이지페이(KICC)가 결제 요청 시 입력한 `customer.email`로 물품 수령 확인
@@ -780,7 +744,7 @@ import Parameter from "~/components/parameter/Parameter";
 - 구매자가 메일에서 물품 수령을 확인하거나 반품을 요청한 뒤에는 포트원 콘솔과 결제 취소 API에서
   취소할 수 없습니다. 환불 등 후속 처리는 이지페이(KICC)에 문의해 주세요.
 
-- 이지페이(KICC)는 아래 물류회사만 지원합니다.
+- 지원하는 물류 회사는 다음과 같습니다.
 
   - CJ대한통운: `CJ`
   - 롯데글로벌로지스: `LOTTE`
@@ -792,9 +756,9 @@ import Parameter from "~/components/parameter/Parameter";
 
 ### 현금영수증 API 유의사항
 
-- 이지페이(KICC)를 통해 포트원 외부 결제 건의 현금영수증 발급 및 취소를 지원합니다.
+- 포트원 외부 결제 건도 현금영수증을 발급하거나 취소할 수 있습니다.
 
-- 현금영수증 발급 시 아래 파라미터는 필수입니다.
+- 현금영수증 발급 시 다음 파라미터는 필수입니다.
 
   - `amount.vat`: 부가세 금액
   - `customer.identityNumberType`: 식별 정보 유형 (`CARD`, `PHONE`, `BUSINESS`)
@@ -812,22 +776,22 @@ import Parameter from "~/components/parameter/Parameter";
 
 #### 비동기 취소
 
-가상계좌 입금 후 환불과 휴대폰 소액결제 익월 환불은 이지페이(KICC)가 요청을 접수한 뒤 환불이
-이루어지는 **비동기 방식**으로 처리됩니다. 휴대폰 소액결제 당월 환불과 그 외 결제수단은 실시간으로
-취소됩니다.
+가상계좌 입금 후 환불과 휴대폰 소액결제 익월 환불은 **비동기 방식**으로 처리됩니다.
+이지페이(KICC)가 취소 요청을 접수한 뒤 실제 환불을 처리합니다. 휴대폰 소액결제 당월 환불과
+그 외 결제수단은 실시간으로 취소됩니다.
 
 - 응답의 `status`가 `REQUESTED`(취소 요청)로 반환되며, 이 시점에는 취소가 확정되지 않습니다.
-  응답만으로 주문 상태를 취소로 변경하지 않도록 유의해 주세요.
+  응답만 보고 주문 상태를 취소로 변경하지 마세요.
 
 - 환불이 완료되면 포트원이 결제 취소 웹훅을 발송하므로 **웹훅 연동은 필수**입니다.
 
-- 환불 계좌(`refundAccount`)를 필수로 입력해야 하며, 환불 금액은 요청일 다음 날(D+1)에 해당 계좌로
+- 환불 계좌(`refundAccount`)를 필수로 입력해야 하며, 환불 금액은 요청일 다음 날(D+1)에 입력한 계좌로
   입금됩니다.
 
 #### 에스크로
 
-- 에스크로 결제는 부분 취소할 수 없으며 전액 취소만 지원합니다.
+에스크로 결제는 부분 취소할 수 없으며 전액 취소만 지원합니다.
 
 #### 취소 영수증
 
-- 이지페이(KICC) 국내 결제를 취소하면 응답에 취소 영수증 URL인 `receiptUrl`이 포함됩니다.
+이지페이(KICC) 국내결제를 취소하면 응답의 `receiptUrl`에서 취소 영수증 URL을 확인할 수 있습니다.
