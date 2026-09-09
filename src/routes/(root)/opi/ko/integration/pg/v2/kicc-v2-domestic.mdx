@@ -432,7 +432,7 @@ import Parameter from "~/components/parameter/Parameter";
 
 조건을 충족하지 않으면 결제창 호출 전에 오류가 반환됩니다.
 
-카드사를 지정하는 단독형 카드 결제와 국내 간편결제는 일반 할부와 무이자 할부 모두
+카드사를 지정하는 단독형 카드 결제는 일반 할부와 무이자 할부 모두
 **할부 개월 수를 하나만 지정**해야 합니다. `monthOption.fixedMonth`를 사용하거나
 `monthOption.availableMonthList`에 값 하나를 입력해 주세요.
 
@@ -443,6 +443,20 @@ import Parameter from "~/components/parameter/Parameter";
 
 - 포트원은 무이자 조회 API를 호출하지 않습니다. 무이자를 사용할 수 없는 가맹점에서 요청하면
   결제가 거절되며, 일반 할부로 자동 전환되지 않습니다.
+
+국내 간편결제는 간편결제창에서 할부 개월 수를 선택하므로 일반 할부 목록과 무이자 목록을
+별도로 지정합니다.
+
+- `easyPay.installment.monthOption.availableMonthList`에 `[0, 2, 3, 6]`처럼 여러 개월을
+  입력할 수 있습니다. `0`은 일시불입니다. 일반 할부 목록을 생략하거나 빈 배열을 입력하면
+  PG에 등록된 설정을 사용합니다.
+
+- 무이자를 적용하려면 `easyPay.availableCards`에 카드사 하나를 지정하고,
+  같은 카드사의 `easyPay.installment.freeInstallmentPlans`를 입력해 주세요.
+  `months`에는 무이자를 적용할 개월 수를 1개 이상 입력해야 합니다.
+
+- 무이자 계획이 있으면 가맹점 부담 무이자로 요청합니다. 일반 할부 목록은 무이자 목록으로
+  대체하지 않고 별도로 전달합니다.
 
 #### 카드사 포인트
 
