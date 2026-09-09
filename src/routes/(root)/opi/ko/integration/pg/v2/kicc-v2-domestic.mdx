@@ -421,17 +421,28 @@ import Parameter from "~/components/parameter/Parameter";
 
 #### 상점 부담 무이자 할부
 
-`card.useFreeInterestFromMall` 또는 `easyPay.useFreeInterestFromMall`을 `true`로 설정할 때는
+카드사를 지정하지 않는 통합형 카드 결제는 결제창에서 카드와 할부 개월 수를 선택합니다.
+`card.useFreeInterestFromMall`을 `true`로 설정하거나, 이 값을 생략하고
+`installment.freeInstallmentPlans`를 입력하면 상점 부담 무이자 할부가 적용됩니다.
 다음 조건을 모두 충족해야 합니다.
 
-- `card.cardCompany`, `card.availableCards`, `easyPay.availableCards` 중 결제수단에 맞는
-  파라미터에 무이자를 적용할 카드사를 1곳 이상 입력해야 합니다.
-
+- `card.availableCards`에 무이자를 적용할 카드사를 1곳 이상 입력해야 합니다.
 - 선택한 모든 카드사에 대응하는 `installment.freeInstallmentPlans` 항목을 입력해야 합니다.
-
 - 각 `freeInstallmentPlans.months` 배열에는 할부 개월 수를 1개 이상 입력해야 합니다. 빈 배열은 허용되지 않습니다.
 
 조건을 충족하지 않으면 결제창 호출 전에 오류가 반환됩니다.
+
+카드사를 지정하는 단독형 카드 결제와 국내 간편결제는 일반 할부와 무이자 할부 모두
+**할부 개월 수를 하나만 지정**해야 합니다. `monthOption.fixedMonth`를 사용하거나
+`monthOption.availableMonthList`에 값 하나를 입력해 주세요.
+
+- 무이자를 적용하려면 `installment.freeInstallmentPlans`에 카드사 하나와 개월 수 하나를 입력해 주세요.
+  지정한 카드사와 무이자 계획의 카드사는 같아야 합니다.
+
+- 단독형은 무이자 계획에 입력한 개월 수를 우선 적용하며, 이 계획이 있으면 무이자로 요청합니다.
+
+- 포트원은 무이자 조회 API를 호출하지 않습니다. 무이자를 사용할 수 없는 가맹점에서 요청하면
+  결제가 거절되며, 일반 할부로 자동 전환되지 않습니다.
 
 #### 카드사 포인트
 
@@ -734,7 +745,10 @@ import Parameter from "~/components/parameter/Parameter";
 
 ### 에스크로 API 유의사항
 
-- 에스크로 배송 정보는 등록만 지원합니다. 배송 정보 수정, 조회, 구매 확정은 지원하지 않습니다.
+- 에스크로 배송 정보는 등록만 지원합니다. 배송 정보 수정과 조회 API는 지원하지 않습니다.
+
+- **구매 확정은 구매자에게 발송된 이지페이(KICC) 메일에서만 진행할 수 있습니다.**
+  포트원의 구매 확정 API로는 처리할 수 없습니다.
 
 - 배송 정보 등록 시 물류 회사(`logistics.company`)는 필수입니다.
   송장 번호(`logistics.invoiceNumber`)는 30바이트 이내로 입력해야 합니다.
