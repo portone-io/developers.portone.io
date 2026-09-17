@@ -157,6 +157,24 @@ import Details from "~/components/gitbook/Details";
 
     페이팔 RT 버튼을 커스터마이징 하기 위한 파라미터입니다. 자세한 내용은 [페이팔에서 제공하는 문서](http://developer.paypal.com/sdk/js/reference/#link-style)를 참고하세요.
 
+    ### `bypass.paypal_v2.enable-funding` / `bypass.paypal_v2.disable-funding`
+
+    렌더링할(또는 제외할) 페이팔 버튼 종류를 comma(,) separated string으로 지정합니다. 사용 가능한 버튼 종류는 [페이팔에서 제공하는 문서](https://developer.paypal.com/sdk/js/configuration/#enable-funding)를 참고하세요.
+
+    - 빌링키 발급에서는 카드 게스트 결제가 지원되지 않아 `card` 버튼은 항상 제외되며, `disable-funding`에 전달한 값은 `card`와 병합됩니다.
+    - 페이팔 정책상 빌링키 발급(billing agreement)에서는 Pay Later 버튼과 Venmo가 지원되지 않습니다. `enable-funding`으로 지정해도 렌더링되지 않을 수 있습니다.
+    - 미국 등 일부 국가에서 접속하면 PayPal 버튼 아래에 PayPal Credit 버튼이 함께 렌더링됩니다. 이를 제외하려면 `disable-funding`에 `credit,paylater`를 전달하세요.
+
+    ```json
+    {
+      "bypass": {
+        "paypal_v2": {
+          "disable-funding": "credit,paylater" // 결과적으로 card,credit,paylater 버튼이 제외됩니다
+        }
+      }
+    }
+    ```
+
     ### `bypass.paypal_v2.shipping_address`
 
     페이팔은 기본적으로 구매자가 페이팔에 가입할때 입력 한 배송 정보를 빌링키 발급 창에 자동으로 입력해줍니다. 만약 이 배송 정보를 override하고 싶다면 shipping\_address 파라미터에 override할 주소를 입력하고 shipping\_address.recipient\_name에 override할 수령인 이름을 입력하면 됩니다.

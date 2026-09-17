@@ -1680,6 +1680,34 @@ STC 기능을 사용하기 위해 다음 정보를 확인해 주세요.
 
                 해당 파라미터를 사용하시기 위해서는 `bypass.paypal_v2.style.layout`을 horizontal로 지정해야 사용하실 수 있습니다.
 
+              - enable-funding?: string
+
+                **렌더링할 페이팔 버튼 종류 지정**
+
+                - 버튼 종류를 comma(,) separated string으로 지정합니다. 사용 가능한 버튼 종류는 [페이팔에서 제공하는 문서](https://developer.paypal.com/sdk/js/configuration/#enable-funding)를 참고하세요.
+                - 페이팔 정책상 빌링키 발급(billing agreement)에서는 Pay Later 버튼과 Venmo가 지원되지 않아, 지정해도 렌더링되지 않을 수 있습니다.
+
+              - disable-funding?: string
+
+                **렌더링에서 제외할 페이팔 버튼 종류 지정**
+
+                - 버튼 종류를 comma(,) separated string으로 지정하면 해당 버튼을 제외하고 렌더링됩니다.
+                - 빌링키 발급에서는 카드 게스트 결제가 지원되지 않아 `card` 버튼은 항상 제외되며, 전달한 값은 `card`와 병합됩니다.
+                - 미국 등 일부 국가에서 접속하면 PayPal 버튼 아래에 PayPal Credit 버튼이 함께 렌더링됩니다. 이를 제외하려면 `credit,paylater`를 전달하세요.
+
+                ```ts title="예시 코드"
+                PortOne.loadIssueBillingKeyUI(
+                  {
+                    //...중략
+                    bypass: {
+                      paypal_v2: {
+                        "disable-funding": "credit,paylater", // 결과적으로 card,credit,paylater 버튼이 제외됩니다
+                      },
+                    },
+                  }, //콜백 함수
+                );
+                ```
+
               - shipping\_address?: object
 
                 **주문 상품의 배송 주소**
