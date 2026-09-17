@@ -157,18 +157,31 @@ import Details from "~/components/gitbook/Details";
 
     페이팔 RT 버튼을 커스터마이징 하기 위한 파라미터입니다. 자세한 내용은 [페이팔에서 제공하는 문서](http://developer.paypal.com/sdk/js/reference/#link-style)를 참고하세요.
 
-    ### `bypass.paypal_v2.enable-funding` / `bypass.paypal_v2.disable-funding`
+    ### `bypass.paypal_v2.enable-funding`
 
-    렌더링할(또는 제외할) 페이팔 버튼 종류를 comma(,) separated string으로 지정합니다. 사용 가능한 버튼 종류는 [페이팔에서 제공하는 문서](https://developer.paypal.com/sdk/js/configuration/#enable-funding)를 참고하세요.
-
-    - 빌링키 발급에서는 카드 게스트 결제가 지원되지 않아 `card` 버튼은 항상 제외되며, `disable-funding`에 전달한 값은 `card`와 병합됩니다.
-    - 미국 등 일부 국가에서 접속하면 PayPal 버튼 아래에 PayPal Credit 버튼이 함께 렌더링됩니다. 이를 제외하려면 `disable-funding`에 `credit,paylater`를 전달하세요.
+    렌더링할 페이팔 빌링키 발급 버튼을 지정하는 파라미터입니다. 결제 버튼 종류를 comma(,) separated string으로 지정하여 빌링키 발급창을 호출하는 경우 해당 버튼을 포함하여 렌더링됩니다.
 
     ```json
     {
       "bypass": {
         "paypal_v2": {
-          "disable-funding": "credit,paylater" // 결과적으로 card,credit,paylater 버튼이 제외됩니다
+          "enable-funding": "paylater"
+        }
+      }
+    }
+    ```
+
+    ### `bypass.paypal_v2.disable-funding`
+
+    렌더링에서 제외할 페이팔 빌링키 발급 버튼을 지정하는 파라미터입니다. 결제 버튼 종류를 comma(,) separated string으로 지정하여 빌링키 발급창을 호출하는 경우 해당 버튼을 제외하고 렌더링됩니다. 사용 가능한 버튼 종류는 `enable-funding`에서 제공하는 버튼 종류와 동일합니다.
+
+    빌링키 발급에서는 `card` 버튼이 항상 제외되며, 전달한 값은 `card`와 함께 적용됩니다.
+
+    ```json
+    {
+      "bypass": {
+        "paypal_v2": {
+          "disable-funding": "credit,paylater"
         }
       }
     }
