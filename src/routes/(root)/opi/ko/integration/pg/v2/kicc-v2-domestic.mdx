@@ -9,15 +9,15 @@ import Parameter from "~/components/parameter/Parameter";
 
 ## 채널 설정하기
 
-- [결제대행사 채널 설정하기](/opi/ko/integration/ready/readme#3-결제대행사-채널-설정하기)를 참고해 채널을 설정합니다.
-- 국내결제 승인, 취소 및 에스크로 상태 변경 통보를 수신하려면 이지페이(KICC)에 웹훅 URL로 `https://tx-gateway-service.prod.iamport.co/kicc-v2/domestic`을 등록해 주세요.
-- 위챗페이, 알리페이 플러스, 라인페이를 이용하려면 [이지페이(KICC) 해외결제](/opi/ko/integration/pg/v2/kicc-v2-global)를 참고해 주세요.
+- [결제대행사 채널 설정하기](/opi/ko/integration/ready/readme#3-결제대행사-채널-설정하기) 페이지의 내용을 참고하여 채널 설정을 진행합니다.
+  V2 결제 모듈을 사용하시려면 이지페이(KICC) 신모듈로 연동하셔야 합니다.
 
-## 지원 결제수단
+## 가능한 결제수단
 
 - 결제창 일반결제: 신용카드, 실시간 계좌이체, 가상계좌, 휴대폰 소액결제, 간편결제
 - 결제창 빌링키 발급: 카드, 네이버페이
 - API 빌링키 결제: 결제창에서 발급한 빌링키를 사용한 일반결제, 예약 결제, 반복 결제
+- 위챗페이, 알리페이 플러스, 라인페이 등 해외 결제수단은 [이지페이(KICC) 해외결제](/opi/ko/integration/pg/v2/kicc-v2-global)를 참고해 주세요.
 
 ## SDK 결제 요청하기
 
@@ -104,13 +104,6 @@ import Parameter from "~/components/parameter/Parameter";
     **고객 정보**
 
     <Parameter.Details>
-      - customerId?: string
-
-        **고객사에서 관리하는 고객 고유 번호**
-
-        에스크로 결제 시 수취인 ID로 전달되며, 50바이트 이내로 입력해야 합니다.
-        그 외 결제에서는 이지페이(KICC)로 전달되지 않습니다.
-
       - fullName?: string
 
         **구매자 전체 이름**
@@ -134,7 +127,7 @@ import Parameter from "~/components/parameter/Parameter";
 
         **구매자 연락처**
 
-        숫자만 사용하여 11자 이내로 입력해야 합니다.
+        11자 이내로 입력해야 합니다.
 
       - email?: string
 
@@ -250,16 +243,11 @@ import Parameter from "~/components/parameter/Parameter";
         `cardCompany`와 동일한 값을 사용합니다.
         `cardCompany`를 입력하면 `availableCards`는 무시되고 지정한 카드사만 사용됩니다.
 
-      - useFreeInterestFromMall?: boolean
-
-        **통합형 카드 결제의 상점 부담 무이자 할부 사용 여부**
-
       - useCardPoint?: boolean
 
         **카드사 포인트 사용 여부**
 
         `true`로 설정하면 결제창에서 카드사 포인트 사용 여부를 선택할 수 있습니다.
-        다만, 결제 응답의 `cardPointUsed`로 실제 포인트 사용 여부를 확인할 수 없습니다.
 
       - installment?: object
 
@@ -330,7 +318,7 @@ import Parameter from "~/components/parameter/Parameter";
         네이버페이 결제 시 다음 값을 입력할 수 있습니다.
 
         - 네이버페이 카드: `CARD`
-        - 네이버페이 포인트/머니: `CHARGE` 또는 `MONEY`
+        - 네이버페이 포인트/머니: `CHARGE`
 
       - installment?: object
 
@@ -413,57 +401,27 @@ import Parameter from "~/components/parameter/Parameter";
     </Parameter.Details>
 </Parameter>
 
-### 결제창 유형
-
-PC에서 카드사 지정 결제, 간편결제, 통신사 지정 휴대폰 결제는 `windowType.pc`를 `POPUP`으로 설정해야 합니다.
-`IFRAME`으로 요청하면 결제 준비 단계에서 오류가 반환됩니다.
-
-```javascript
-windowType: {
-  pc: "POPUP",
-}
-```
-
 ### 카드 결제 유의사항
 
-#### 상점 부담 무이자 할부
+#### 무이자 할부
 
-카드사를 지정하지 않는 통합형 카드 결제는 결제창에서 카드와 할부 개월 수를 선택합니다.
-`card.useFreeInterestFromMall`을 `true`로 설정하거나, 이 값을 생략하고
-`installment.freeInstallmentPlans`를 입력하면 상점 부담 무이자 할부가 적용됩니다.
-다음 조건을 모두 충족해야 합니다.
+`installment.freeInstallmentPlans`에 카드사와 무이자 개월 수를 지정하면 상점 부담 무이자 할부가 적용됩니다.
+`card.cardCompany`로 카드사를 다이렉트 호출하는지에 따라 입력 방법이 다릅니다.
 
-- `card.availableCards`에 무이자를 적용할 카드사를 1곳 이상 입력해야 합니다.
-- 선택한 모든 카드사에 대응하는 `installment.freeInstallmentPlans` 항목을 입력해야 합니다.
-- 각 `freeInstallmentPlans.months` 배열에는 할부 개월 수를 1개 이상 입력해야 합니다. 빈 배열은 허용되지 않습니다.
+**카드사 다이렉트 호출을 사용하지 않는 경우**
 
-조건을 충족하지 않으면 결제창 호출 전에 오류가 반환됩니다.
+- 무이자 할부나 카드사 포인트(`card.useCardPoint`)를 사용하려면 `card.availableCards`에 대상 카드사를 지정합니다.
+- 무이자 할부는 `card.availableCards`의 카드사별로 `card.installment.freeInstallmentPlans`에 무이자 개월 수를 지정합니다.
 
-카드사를 지정하는 단독형 카드 결제는 일반 할부와 무이자 할부 모두
-**할부 개월 수를 하나만 지정**해야 합니다. `monthOption.fixedMonth`를 사용하거나
-`monthOption.availableMonthList`에 값 하나를 입력해 주세요.
+**카드사 다이렉트 호출(`card.cardCompany`)을 사용하는 경우**
 
-- 무이자를 적용하려면 `installment.freeInstallmentPlans`에 카드사 하나와 개월 수 하나를 입력해 주세요.
-  지정한 카드사와 무이자 계획의 카드사는 같아야 합니다.
+- 할부 개월 수는 `card.installment.monthOption`에 한 개만 지정합니다.
+- 무이자 할부는 `card.installment.freeInstallmentPlans`에 지정하며, 다이렉트 호출한 카드사·개월 수와 일치해야 합니다.
 
-- 단독형은 무이자 계획에 입력한 개월 수를 우선 적용하며, 이 계획이 있으면 무이자로 요청합니다.
+**간편결제(`easyPay`)**
 
-- 포트원은 무이자 조회 API를 호출하지 않습니다. 무이자를 사용할 수 없는 가맹점에서 요청하면
-  결제가 거절되며, 일반 할부로 자동 전환되지 않습니다.
-
-국내 간편결제는 간편결제창에서 할부 개월 수를 선택하므로 일반 할부 목록과 무이자 목록을
-별도로 지정합니다.
-
-- `easyPay.installment.monthOption.availableMonthList`에 `[0, 2, 3, 6]`처럼 여러 개월을
-  입력할 수 있습니다. `0`은 일시불입니다. 일반 할부 목록을 생략하거나 빈 배열을 입력하면
-  PG에 등록된 설정을 사용합니다.
-
-- 무이자를 적용하려면 `easyPay.availableCards`에 카드사 하나를 지정하고,
-  같은 카드사의 `easyPay.installment.freeInstallmentPlans`를 입력해 주세요.
-  `months`에는 무이자를 적용할 개월 수를 1개 이상 입력해야 합니다.
-
-- 무이자 계획이 있으면 가맹점 부담 무이자로 요청합니다. 일반 할부 목록은 무이자 목록으로
-  대체하지 않고 별도로 전달합니다.
+- 할부 개월 수는 `easyPay.installment.monthOption`에 지정하며, 간편결제창에서 선택합니다.
+- 무이자 할부는 `easyPay.availableCards`에 카드사를 지정하고, `easyPay.installment.freeInstallmentPlans`에 해당 카드사의 무이자 개월 수를 지정합니다.
 
 #### 카드사 포인트
 
@@ -792,7 +750,7 @@ windowType: {
 
 ### 현금영수증 API 유의사항
 
-- 포트원 외부 결제 건도 현금영수증을 발급하거나 취소할 수 있습니다.
+- 포트원을 거치지 않고 결제한 건에 대해서도 현금영수증을 발급하거나 취소할 수 있습니다.
 
 - 현금영수증 발급 시 다음 파라미터는 필수입니다.
 
@@ -819,15 +777,12 @@ windowType: {
 - 응답의 `status`가 `REQUESTED`(취소 요청)로 반환되며, 이 시점에는 취소가 확정되지 않습니다.
   응답만 보고 주문 상태를 취소로 변경하지 마세요.
 
-- 환불이 완료되면 포트원이 결제 취소 웹훅을 발송하므로 **웹훅 연동은 필수**입니다.
+- 취소, 가상계좌 입금, 에스크로 상태 변경 통보를 받으려면 이지페이(KICC)에 웹훅 URL로
+  `https://tx-gateway-service.prod.iamport.co/kicc-v2/domestic`을 등록해야 합니다.
 
 - 환불 계좌(`refundAccount`)를 필수로 입력해야 하며, 환불 금액은 요청일의 다음 영업일에 입력한 계좌로
   입금됩니다.
 
 #### 에스크로
 
-에스크로 결제는 부분 취소할 수 없으며 전액 취소만 지원합니다.
-
-#### 취소 영수증
-
-이지페이(KICC) 국내결제를 취소하면 응답의 `receiptUrl`에서 취소 영수증 URL을 확인할 수 있습니다.
+- 에스크로 결제는 부분 취소할 수 없으며 전액 취소만 지원합니다.
