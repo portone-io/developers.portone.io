@@ -1552,7 +1552,7 @@
           "200": {
             "description": "정상 조회",
             "schema": {
-              "$ref": "#/definitions/EscrowLogisResponse"
+              "$ref": "#/definitions/EscrowLogisGetResponse"
             }
           },
           "400": {
@@ -1693,7 +1693,6 @@
         },
         "x-portone-supported-pgs": [
           "html5_inicis",
-          "kcp",
           "daou",
           "ksnet",
           "smartro_v2",
@@ -1706,7 +1705,7 @@
           "escrow.logis"
         ],
         "summary": "배송정보 단건등록 API",
-        "description": "에스크로 결제 건에 대한 배송정보 등록(2-depth의 json으로 Request Body가 구성되어야 합니다)<br><br>\n     logis는 하위 필드가 모두 필수입니다.<br>sender, receiver의 각 세부 항목은 PG사마다 필수 여부가 모두 다릅니다.<br><br>\n     <h4>지원되는 PG사</h4><ul> <li>KG이니시스</li> <li>NHN KCP</li> <li>키움페이(구 다우, 페이조아)(다우테이타)</li> <li>KSNET</li>  <li>스마트로 - 신모듈(PG사와의 사전 계약이 반드시 필요합니다.)</li><li>(신) 나이스페이</li><li>웰컴페이먼츠</li></ul>",
+        "description": "에스크로 결제 건에 대한 배송정보 등록(2-depth의 json으로 Request Body가 구성되어야 합니다)<br><br>\n     logis는 하위 필드가 모두 필수입니다.<br>sender, receiver의 각 세부 항목은 PG사마다 필수 여부가 모두 다릅니다.<br><br>\n     <h4>지원되는 PG사</h4><ul> <li>KG이니시스</li> <li>NHN KCP (등록만 가능하며, 배송정보 단건수정 API로 수정할 수 없습니다.)</li> <li>키움페이(구 다우, 페이조아)(다우테이타)</li> <li>KSNET</li>  <li>스마트로 - 신모듈(PG사와의 사전 계약이 반드시 필요합니다.)</li><li>(신) 나이스페이 (등록만 가능하며, 배송정보 단건수정 API로 수정할 수 없습니다.)</li><li>웰컴페이먼츠</li></ul>",
         "operationId": "escrow_logis_save",
         "consumes": [
           "application/json",
@@ -1842,7 +1841,7 @@
           "ksnet": {
             "description": "<p>KSNET에서 일반 에스크로, 배송 에스크로 두 가지 유형의 에스크로를 제공합니다. 포트원을 통해 KSNET 에스크로를 사용하려는 경우 반드시 <strong>배송 에스크로</strong> 설정이 되어 있어야 합니다.</p>\n<p>또한 에스크로 거래는 30분 ~ 1시간 뒤 <a href=\"https://ksta.ksnet.co.kr/ui/tsk/ath01/cob/athcob01m0.jsp\" rel=\"noopener noreferrer\">ksta.ksnet.co.kr</a> -&gt; PG 거래내역 -&gt; 배송 에스크로 거래조회에서 확인이 가능합니다. 에스크로 정보 수정의 경우도 등록이 완료된 이후부터 가능합니다.</p>\n"
           },
-          "nice_V2": {
+          "nice_v2": {
             "description": "<p>API로 에스크로 배송 정보 등록은 가능하지만 PUT 배송정보 단건수정 API로 수정은 <span>불가능</span>합니다.</p>\n"
           }
         }
@@ -8930,10 +8929,10 @@
           "x-portone-description": "에스크로 결제건의 송장번호"
         },
         "sent_at": {
-          "description": "발송일시 UNIX TIMESTAMP",
-          "type": "integer",
+          "description": "발송일시. YYYY-MM-DD HH:mm:ss 형식(KST)의 문자열 (예: 2026-09-22 14:30:00)<br>\n예외<br>\n- html5_inicis, kcp, daou: 요청 시 전달한 logis.sent_at 값(UNIX timestamp)을 그대로 반환하므로 integer (예: 1790055000)<br>\n- daou에서 logis.sent_at 생략 시: 배송정보 등록 시각을 YYYY-MM-DD HH:mm:ss 형식(KST)의 문자열로 반환",
+          "type": "string",
           "x-portone-name": "발송 시각",
-          "x-portone-description": "에스크로 결제건의 배송 발송 시각 UNIX timestamp"
+          "x-portone-description": "에스크로 결제건의 배송 발송 시각입니다. <code>YYYY-MM-DD HH:mm:ss</code> 형식(KST)의 문자열로 반환됩니다. (예: <code>2026-09-22 14:30:00</code>)<br>\n다음 PG사는 예외입니다.\n<ul>\n<li><code>html5_inicis</code>, <code>kcp</code>, <code>daou</code>: 요청 시 전달한 <code>logis.sent_at</code> 값(UNIX timestamp)을 변환 없이 그대로 반환하므로 integer입니다. (예: <code>1790055000</code>)</li>\n<li><code>daou</code>에서 <code>logis.sent_at</code>을 생략한 경우: 배송정보 등록 시각을 <code>YYYY-MM-DD HH:mm:ss</code> 형식(KST)의 문자열로 반환합니다.</li>\n</ul>"
         },
         "applied_at": {
           "description": "배송정보 등록일시 UNIX TIMESTAMP",
@@ -8953,6 +8952,48 @@
           "properties": {
             "response": {
               "$ref": "#/definitions/EscrowLogisAnnotation"
+            }
+          }
+        }
+      ]
+    },
+    "EscrowLogisGetAnnotation": {
+      "required": [
+        "company",
+        "invoice",
+        "applied_at"
+      ],
+      "properties": {
+        "company": {
+          "description": "택배사코드",
+          "type": "string",
+          "x-portone-name": "택배사코드",
+          "x-portone-description": "에스크로 결제건의 택배사 코드"
+        },
+        "invoice": {
+          "description": "송장번호",
+          "type": "string",
+          "x-portone-name": "송장번호",
+          "x-portone-description": "에스크로 결제건의 송장번호"
+        },
+        "applied_at": {
+          "description": "배송정보 등록일시 (YYYY-MM-DD HH:mm:ss, KST)",
+          "type": "string",
+          "x-portone-name": "등록 시각",
+          "x-portone-description": "에스크로 결제건의 배송 정보 등록 시각 (YYYY-MM-DD HH:mm:ss, KST)"
+        }
+      }
+    },
+    "EscrowLogisGetResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResponseAnnotation"
+        },
+        {
+          "description": "등록된 에스크로 배송 정보. 바로 아래 EscrowLogisGet structure를 확인하세요",
+          "properties": {
+            "response": {
+              "$ref": "#/definitions/EscrowLogisGetAnnotation"
             }
           }
         }
@@ -9065,15 +9106,18 @@
     "EscrowLogisReceiverAnnotation": {
       "properties": {
         "name": {
-          "description": "받는 분 성함(필수 : KG이니시스, 스마트로 - 신모듈)",
+          "description": "받는 분 성함(필수 : KG이니시스, 스마트로 - 신모듈, 키움페이(구 다우, 페이조아))",
           "type": "string",
           "x-portone-name": "성함",
-          "x-portone-description": "배송을 받는 수신자의 성함",
+          "x-portone-description": "배송을 받는 수신자의 성함 (필수: <code>html5_inicis</code>, <code>smartro_v2</code>, <code>daou</code>)",
           "x-portone-per-pg": {
             "html5_inicis": {
               "required": true
             },
             "smartro_v2": {
+              "required": true
+            },
+            "daou": {
               "required": true
             }
           }
@@ -9184,7 +9228,7 @@
           "description": "수령일시(필수: 키움페이(구 다우, 페이조아) / 예: YYYYMMDD)",
           "type": "string",
           "x-portone-name": "수령 시각",
-          "x-portone-description": "에스크로 결제건의 배송 수령 시각 UNIX timestamp",
+          "x-portone-description": "에스크로 결제건의 배송 수령일 (<code>YYYYMMDD</code> 형식, 예: <code>20260922</code>)",
           "x-portone-per-pg": {
             "daou": {
               "required": true
