@@ -94,7 +94,6 @@ export function Category(props: CategoryProps) {
               basepath={props.basepath}
               schema={props.schema}
               endpoint={endpoint}
-              collapsible
               open={openStates()[id()]}
               onOpenChange={(open) => setEndpointOpen(id(), open)}
               renderRightFn={({ schema, endpoint, operation }) => (
