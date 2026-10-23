@@ -11,7 +11,7 @@ export default code<{
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" type="text/css" href="/index.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>포트원 결제연동 샘플</title>
