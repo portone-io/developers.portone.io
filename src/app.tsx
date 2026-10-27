@@ -48,7 +48,7 @@ export default function App() {
           <Title>PortOne 개발자센터</Title>
           <Meta charset="utf-8" />
           <Meta name="viewport" content="width=device-width,initial-scale=1" />
-          <Link rel="icon" type="image/png" href="/favicon.png" />
+          <Link rel="icon" type="image/svg+xml" href="/favicon.svg" />
           <Trackers />
           <ViteErrorHandler />
           <Show when={isDesktop()}>

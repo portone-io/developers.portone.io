@@ -12,6 +12,10 @@ import {
 } from "../layouts/rest-api/schema-utils/endpoint.ts";
 import { crawlRefs } from "../layouts/rest-api/schema-utils/type-def.ts";
 import { markdownToHtml } from "../misc/server-md.ts";
+import {
+  buildOperationLinkMap,
+  rewriteLegacyApiLinks,
+} from "./rest-api-legacy-links.ts";
 
 type RestApiVersion = "v1" | "v2";
 
@@ -56,7 +60,16 @@ async function generate() {
 async function generateVersion(version: RestApiVersion) {
   const schema = await loadSchema(version);
   const processedSchema =
-    version === "v2" ? processDescriptions(schema) : schema;
+    version === "v2"
+      ? processDescriptions(schema)
+      : rewriteLegacyApiLinks(
+          schema,
+          buildOperationLinkMap(
+            schema,
+            groupEndpointsByCategory(schema, getEveryEndpoints(schema)),
+            "/api/rest-v1",
+          ),
+        );
 
   const categories = getCategories(processedSchema);
   const everyEndpoints = getEveryEndpoints(processedSchema);

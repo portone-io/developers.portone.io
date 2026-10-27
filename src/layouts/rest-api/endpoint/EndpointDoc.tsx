@@ -24,7 +24,6 @@ export interface EndpointDocProps {
   schema: unknown;
   endpoint: Endpoint;
   renderRightFn?: RenderRightFn;
-  collapsible?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -38,29 +37,6 @@ export default function EndpointDoc(props: EndpointDocProps) {
   const endpointId = createMemo(() => getEndpointRepr(props.endpoint));
 
   const header = () => (
-    <div class="mb-4 grid items-center gap-y-4 lg:grid-cols-2">
-      <div class="flex items-center lg:order-last lg:justify-end">
-        <MethodLine method={props.endpoint.method} path={props.endpoint.path} />
-      </div>
-      <prose.h3 id={endpointId()} class="!mt-0 target:text-orange-5">
-        <div class="flex items-center gap-2">
-          <span>{props.endpoint.title}</span>
-          <Show when={props.endpoint.deprecated}>
-            <span class="rounded-sm bg-slate-1 px-2 text-sm uppercase opacity-70">
-              deprecated
-            </span>
-          </Show>
-          <Show when={props.endpoint.unstable}>
-            <span class="rounded-sm bg-slate-1 px-2 text-sm uppercase opacity-70">
-              unstable
-            </span>
-          </Show>
-        </div>
-      </prose.h3>
-    </div>
-  );
-
-  const collapsibleHeader = () => (
     <div class="flex flex-col gap-1">
       <prose.h3
         id={endpointId()}
@@ -81,13 +57,6 @@ export default function EndpointDoc(props: EndpointDocProps) {
         </div>
       </prose.h3>
       <MethodLine method={props.endpoint.method} path={props.endpoint.path} />
-      <Show when={description()}>
-        <div
-          data-search-description
-          class="text-sm text-slate-5"
-          innerHTML={description()}
-        />
-      </Show>
     </div>
   );
 
@@ -96,13 +65,6 @@ export default function EndpointDoc(props: EndpointDocProps) {
       gap={6}
       left={() => (
         <div class="flex flex-col gap-6">
-          <Show when={description() && !props.collapsible}>
-            <div
-              data-search-description
-              class="p-2 text-sm"
-              innerHTML={description()}
-            />
-          </Show>
           <RequestDoc
             basepath={props.basepath}
             schema={props.schema}
@@ -127,33 +89,30 @@ export default function EndpointDoc(props: EndpointDocProps) {
   );
 
   return (
-    <Show
-      when={props.collapsible}
-      fallback={
-        <div class="flex flex-col">
-          {header()}
-          {content()}
-        </div>
-      }
+    <Collapsible
+      open={props.open}
+      onOpenChange={props.onOpenChange}
+      class="flex flex-col [&[data-expanded]_.chevron]:origin-center [&[data-expanded]_.chevron]:rotate-90"
     >
-      <Collapsible
-        open={props.open}
-        onOpenChange={props.onOpenChange}
-        class="flex flex-col [&[data-expanded]_.chevron]:origin-center [&[data-expanded]_.chevron]:rotate-90"
+      <Collapsible.Trigger
+        as="a"
+        href={`#${encodeURIComponent(endpointId())}`}
+        class="relative w-full cursor-pointer text-left"
       >
-        <Collapsible.Trigger
-          as="a"
-          href={`#${encodeURIComponent(endpointId())}`}
-          class="relative w-full cursor-pointer text-left"
-        >
-          <div class="chevron absolute top-1 -left-4 h-4 w-4 transition-transform">
-            <i class="icon-[ic--sharp-chevron-right] inline-block h-4 w-4 text-slate-4" />
-          </div>
-          {collapsibleHeader()}
-        </Collapsible.Trigger>
-        <Collapsible.Content class="mt-4">{content()}</Collapsible.Content>
-      </Collapsible>
-    </Show>
+        <div class="chevron absolute top-1 -left-4 h-4 w-4 transition-transform">
+          <i class="icon-[ic--sharp-chevron-right] inline-block h-4 w-4 text-slate-4" />
+        </div>
+        {header()}
+      </Collapsible.Trigger>
+      <Show when={description()}>
+        <div
+          data-search-description
+          class="mt-1 text-sm text-slate-5 [&_a]:text-orange-5 [&_a]:hover:underline"
+          innerHTML={description()}
+        />
+      </Show>
+      <Collapsible.Content class="mt-4">{content()}</Collapsible.Content>
+    </Collapsible>
   );
 }
 

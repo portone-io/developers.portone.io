@@ -28,13 +28,13 @@ export function RestApiOverview(props: RestApiOverviewProps) {
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <For each={props.groups}>
               {(group) => (
-                <A
-                  href={`${props.basepath}/${group.category.id}`}
-                  class="flex flex-col gap-2 rounded-lg border border-slate-2 p-4 transition-colors hover:border-orange-3 hover:bg-orange-50/30"
-                >
-                  <div class="text-base font-bold text-slate-8">
+                <div class="relative flex flex-col gap-2 rounded-lg border border-slate-2 p-4 transition-colors hover:border-orange-3 hover:bg-orange-50/30 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-orange-3">
+                  <A
+                    href={`${props.basepath}/${group.category.id}`}
+                    class="text-base font-bold text-slate-8 after:absolute after:inset-0 focus-visible:outline-none"
+                  >
                     {group.category.title}
-                  </div>
+                  </A>
                   <div
                     class="line-clamp-2 text-sm text-slate-5"
                     innerHTML={group.category.description}
@@ -42,7 +42,7 @@ export function RestApiOverview(props: RestApiOverviewProps) {
                   <div class="text-xs text-slate-4">
                     {group.endpointCount}개의 엔드포인트
                   </div>
-                </A>
+                </div>
               )}
             </For>
           </div>
