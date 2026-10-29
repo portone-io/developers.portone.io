@@ -1,10 +1,9 @@
 ---
 title: 구독 결제 연동하기
-description: 구독 등록 SDK로 결제수단 등록과 첫 회차 결제를 한 번에 처리하는 방법과, 빌링키로 구독을 직접 등록하는 방법을 안내합니다.
+description: 구독 등록 SDK로 결제수단 등록과 첫 회차 결제를 한 번에 처리하고, 웹훅과 조회 API로 결과를 확인하는 방법을 안내합니다.
 targetVersions: ["v2"]
 ---
 
-import Details from "~/components/gitbook/Details";
 import Tabs from "~/components/gitbook/Tabs";
 import Hint from "~/components/Hint";
 import Parameter from "~/components/parameter/Parameter";
@@ -16,14 +15,21 @@ import Parameter from "~/components/parameter/Parameter";
 1. **상품 등록**: 구독에 담을 상품을 등록합니다. 상품은 한 번 만들어 두고 여러 구독에서 사용합니다.
 2. **구독 사전 등록**: 고객과 구독 항목을 담아 구독을 미리 만듭니다. 결제수단이 없으므로 구독은 `INCOMPLETE` 상태이며 청구되지 않습니다.
 3. **구독 등록 SDK 호출**: 사전 등록한 구독 아이디로 `requestSubscriptionRegistration`을 호출합니다. 고객이 결제창에서 결제수단을 등록하면 그 시각부터 구독이 시작되고 첫 회차를 결제합니다.
-4. **결과 확인**: SDK 응답과 구독 결제 웹훅으로 첫 회차 결제 결과를 확인합니다.
+4. **결과 확인**: 고객사 서버에서 구독 조회 API로 첫 회차 결제 결과를 확인합니다.
+5. **웹훅 처리**: 구독 결제 웹훅을 검증하고, 조회 API로 최신 상태를 가져와 서비스 제공 여부를 반영합니다.
 
-이후 회차는 포트원이 청구 예정 시각마다 인보이스를 만들어 자동으로 결제합니다.
+이후 회차는 포트원이 청구 예정 시각마다 인보이스를 만들어 자동으로 결제하고, 결과를 웹훅으로 알려 줍니다.
+
+<Hint style="info">
+  이미 발급받은 빌링키로 구독을 등록하려면 [빌링키로 구독 등록하기](/opi/ko/extra/subscription/billing-key)를 참고해 주세요.
+  기존 빌링키 정기결제를 구독 결제로 옮기거나, 청구 시작일을 미래로 정할 때 사용합니다.
+</Hint>
 
 <Hint style="info">
   모든 API 요청에는 `Authorization: PortOne {API_SECRET}` 헤더가 필요합니다.
   결제가 일어날 수 있는 요청(고객 등록, 구독 생성, 수동 청구, 결제 재시도 등)에는 `Idempotency-Key` 헤더를 함께 보내는 것을 권장합니다.
   같은 키로 3시간 안에 다시 요청하면 처음 응답을 그대로 돌려줍니다.
+  따라서 **서로 다른 요청에 같은 멱등 키를 사용해서는 안 됩니다.** 호출한 API나 요청 본문이 달라도 두 번째 요청은 처리되지 않고 첫 요청의 응답을 그대로 받습니다.
 </Hint>
 
 ## 1. 상품 등록하기
@@ -274,6 +280,29 @@ SDK는 **첫 회차 결제까지 성공했을 때만** 성공으로 응답합니
   구독이 `ACTIVE`이면 결제수단 등록과 첫 회차 결제가 끝난 것입니다.
 </Hint>
 
+SDK 응답 값은 브라우저를 거쳐 오므로 그대로 믿지 말고, 고객사 서버에서 [구독 조회 API](/api/rest-v2/subscription.subscription)(`GET /subscriptions/{subscriptionId}`)로 상태를 확인합니다.
+
+```ts title="Express"
+app.post("/api/subscription/complete", async (req, res) => {
+  const { subscriptionId } = req.body;
+  // 사전 등록 때 저장해 둔 구독인지, 로그인한 고객의 구독인지 먼저 확인해 주세요.
+
+  const response = await fetch(
+    `https://api.portone.io/subscriptions/${encodeURIComponent(subscriptionId)}`,
+    { headers: { Authorization: `PortOne ${process.env.PORTONE_API_SECRET}` } },
+  );
+  if (!response.ok) throw new Error(`구독 조회 실패: ${await response.text()}`);
+  const { subscription } = await response.json();
+
+  if (subscription.status === "ACTIVE") {
+    // 결제수단 등록과 첫 회차 결제가 끝났습니다. 서비스를 제공합니다.
+    return res.status(200).json({ status: "ACTIVE" });
+  }
+  // 아직 INCOMPLETE 입니다. 결과가 뒤늦게 확정되면 웹훅으로 알려 드립니다.
+  res.status(200).json({ status: subscription.status });
+});
+```
+
 |상황                              |구독 상태   |처리 방법                                                                                                                 |
 |----------------------------------|------------|--------------------------------------------------------------------------------------------------------------------------|
 |첫 회차 결제 성공                 |`ACTIVE`    |서비스를 제공합니다. `Subscription.Activated`, `Invoice.Paid` 웹훅이 발송됩니다.                                          |
@@ -284,6 +313,124 @@ SDK는 **첫 회차 결제까지 성공했을 때만** 성공으로 응답합니
 <Hint style="info">
   구독 등록 SDK로 발급한 빌링키와 첫 회차 결제에는 기존 빌링키 발급·결제 웹훅 대신 구독 결제 웹훅이 발송됩니다.
   웹훅 종류는 [구독 결제 웹훅](/opi/ko/extra/subscription/webhook)을 참고해 주세요.
+</Hint>
+
+## 5. 웹훅 처리하기
+
+첫 회차 이후의 회차는 고객이 결제창에 들어오지 않고 포트원이 자동으로 결제하므로, 결과는 웹훅으로만 받을 수 있습니다.
+웹훅을 받으면 아래 순서로 처리합니다.
+
+1. **서명 검증**: 포트원이 보낸 웹훅인지 확인합니다. 방법은 [V2 결제 웹훅](/opi/ko/integration/webhook/readme-v2)과 같습니다.
+2. **조회 API로 상세 확인**: 웹훅 본문(`data`)에는 바뀐 대상의 아이디만 담깁니다. 금액, 상태, 실패 사유 같은 상세 내용은 각 조회 API로 가져와 판단합니다.
+3. **고객사 데이터 반영**: 조회한 최신 상태를 기준으로 서비스 제공·연장·중단을 처리하고 `200`으로 응답합니다.
+
+|웹훅            |본문의 아이디                              |상세 조회 API                                                                             |
+|----------------|-------------------------------------------|------------------------------------------------------------------------------------------|
+|`Customer.*`    |`customerId`                               |[구독 고객 조회](/api/rest-v2/subscription.customer)(`GET /customers/{customerId}`)       |
+|`Subscription.*`|`subscriptionId`, `customerId`             |[구독 조회](/api/rest-v2/subscription.subscription)(`GET /subscriptions/{subscriptionId}`)|
+|`Invoice.*`     |`invoiceId`, `subscriptionId`, `customerId`|[인보이스 조회](/api/rest-v2/subscription.invoice)(`GET /invoices/{invoiceId}`)           |
+
+```ts title="Express"
+import * as PortOne from "@portone/server-sdk";
+import bodyParser from "body-parser";
+import express from "express";
+
+const app = express();
+
+async function getPortOne(path) {
+  const response = await fetch(`https://api.portone.io${path}`, {
+    headers: { Authorization: `PortOne ${process.env.PORTONE_API_SECRET}` },
+  });
+  if (!response.ok) throw new Error(`조회 실패: ${await response.text()}`);
+  return response.json();
+}
+
+// 웹훅 검증 시 텍스트로 된 body가 필요합니다.
+app.use("/portone-webhook", bodyParser.text({ type: "application/json" }));
+
+app.post("/portone-webhook", async (req, res) => {
+  // 1. 서명을 검증합니다. 실패하면 WebhookVerificationError가 발생합니다.
+  try {
+    await PortOne.Webhook.verify(
+      process.env.PORTONE_WEBHOOK_SECRET,
+      req.body,
+      req.headers,
+    );
+  } catch (e) {
+    if (e instanceof PortOne.Webhook.WebhookVerificationError) {
+      return res.status(400).end();
+    }
+    throw e;
+  }
+
+  const { type, data } = JSON.parse(req.body);
+
+  // 2. 아이디로 최신 상태를 조회해 판단합니다.
+  switch (type) {
+    case "Invoice.Paid": {
+      const { invoice } = await getPortOne(
+        `/invoices/${encodeURIComponent(data.invoiceId)}`,
+      );
+      if (invoice.status === "PAID" || invoice.status === "PAID_MANUALLY") {
+        // 3. 해당 회차의 서비스를 제공·연장합니다.
+        // 같은 웹훅이 다시 올 수 있으므로 invoice.id 기준으로 한 번만 처리해 주세요.
+      }
+      break;
+    }
+    case "Invoice.PaymentFailed": {
+      const { invoice } = await getPortOne(
+        `/invoices/${encodeURIComponent(data.invoiceId)}`,
+      );
+      if (invoice.status === "FAILED") {
+        // invoice.payment?.failure 로 실패 사유를 확인하고 고객에게 결제수단 변경을 안내합니다.
+      }
+      break;
+    }
+    case "Subscription.Ended": {
+      const { subscription } = await getPortOne(
+        `/subscriptions/${encodeURIComponent(data.subscriptionId)}`,
+      );
+      if (subscription.status === "ENDED") {
+        // 서비스 제공을 종료합니다.
+      }
+      break;
+    }
+    // 그 밖의 웹훅은 필요한 것만 골라 처리합니다.
+  }
+
+  res.status(200).end();
+});
+```
+
+웹훅 종류와 발송 시점은 [구독 결제 웹훅](/opi/ko/extra/subscription/webhook)을 참고해 주세요.
+
+## 6. 테스트 결제하기
+
+테스트 채널로 구독을 등록하면 실제 결제 없이 전체 흐름을 확인할 수 있습니다.
+
+1. **테스트 채널로 구독 등록**: 3단계의 `channelKey`에 테스트 채널 키를 넣어 구독 등록 SDK를 호출합니다. 이때 등록된 고객은 테스트 고객이 됩니다.
+2. **웹훅 수신 확인**: 테스트 고객의 웹훅은 관리자 콘솔의 **테스트 환경 웹훅 주소**로 발송됩니다. 5단계의 처리 코드가 `Subscription.Activated`, `Invoice.Paid`를 받는지 확인합니다.
+3. **다음 회차 바로 청구**: 청구일까지 기다리지 않고 [테스트 구독 즉시 청구 API](/api/rest-v2/subscription.subscription)(`POST /subscriptions/{subscriptionId}/charge-test`)로 다음 회차를 지금 청구해 정기 회차 결제와 웹훅을 확인합니다.
+4. **결제 실패 확인**: 같은 API에 `simulateFailure: true`를 넣으면 결제대행사에 요청하지 않고 결제 실패로 처리합니다. `Invoice.PaymentFailed` 웹훅과 [결제 재시도](/opi/ko/extra/subscription/management#결제-실패-처리하기) 흐름을 확인할 수 있습니다.
+
+```ts
+await fetch(
+  `https://api.portone.io/subscriptions/${encodeURIComponent(subscriptionId)}/charge-test`,
+  {
+    method: "POST",
+    headers: {
+      Authorization: `PortOne ${PORTONE_API_SECRET}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ simulateFailure: false }), // true 면 결제 실패로 처리합니다.
+  },
+);
+```
+
+<Hint style="warning">
+  고객은 처음 등록한 빌링키의 채널에 따라 테스트 고객 또는 실결제 고객이 되며, 이후 바뀌지 않습니다.
+  같은 고객에게 다른 모드의 빌링키를 등록할 수 없으므로 테스트와 실결제에는 고객 아이디를 나눠 사용해 주세요.
+  테스트 구독 즉시 청구 API는 테스트 고객의 구독에만 사용할 수 있습니다.
 </Hint>
 
 ## 지원 결제대행사
@@ -308,7 +455,7 @@ SDK는 **첫 회차 결제까지 성공했을 때만** 성공으로 응답합니
 단, **엑심베이**와 **페이레터 해외결제**는 결제창 한 번으로 빌링키 발급과 첫 회차 결제를 함께 처리합니다(**등록과 함께 결제**).
 고객사는 어느 방식이든 같은 함수로 호출하며, 포트원이 채널을 보고 방식을 정합니다.
 
-목록에 없는 결제대행사는 구독 등록 SDK를 지원하지 않습니다. 아래 [빌링키로 직접 등록하기](#빌링키로-직접-등록하기) 방법을 사용해 주세요.
+목록에 없는 결제대행사는 구독 등록 SDK를 지원하지 않습니다. [빌링키로 구독 등록하기](/opi/ko/extra/subscription/billing-key) 방법을 사용해 주세요.
 
 ### 유의사항
 
@@ -316,42 +463,3 @@ SDK는 **첫 회차 결제까지 성공했을 때만** 성공으로 응답합니
 - 첫 회차 인보이스가 결제 실패(`FAILED`) 상태인 구독은 엑심베이, 페이레터 해외결제 채널로 다시 등록할 수 없습니다. 다른 채널로 다시 등록하거나 결제 재시도 API로 다시 결제해 주세요.
 - 엑심베이는 구독 결제 옵션의 언어(`paymentOptions.locale`)가 필수입니다.
 - 스마트로, 나이스정보통신, 웰컴페이먼츠는 `issueId`를 꼭 전달해 주세요.
-
-## 빌링키로 직접 등록하기
-
-청구 시작일을 미래로 정하거나, 구독 등록 SDK를 지원하지 않는 결제대행사를 사용하는 경우 아래 순서로 구독을 만듭니다.
-
-1. **빌링키 발급**: [빌링키 발급](/opi/ko/integration/start/v2/billing/issue) 가이드에 따라 결제창(`requestIssueBillingKey`) 또는 API로 빌링키를 발급합니다.
-2. **고객 등록**: [구독 고객 등록 API](/api/rest-v2/subscription.customer)(`POST /customers`)로 빌링키와 함께 고객을 등록합니다. `subscription` 필드를 함께 보내면 구독까지 한 번에 만들 수 있습니다.
-3. **구독 생성**: 이미 등록된 고객에게 구독을 추가할 때는 [구독 생성 API](/api/rest-v2/subscription.subscription)(`POST /subscriptions`)를 사용합니다. `billStartDate`로 청구 시작일을 정할 수 있으며, 오늘이면 첫 회차를 즉시 결제합니다.
-
-```ts
-await fetch("https://api.portone.io/customers", {
-  method: "POST",
-  headers: {
-    Authorization: `PortOne ${PORTONE_API_SECRET}`,
-    "Content-Type": "application/json",
-    "Idempotency-Key": crypto.randomUUID(),
-  },
-  body: JSON.stringify({
-    id: "customer-1234",
-    name: "홍길동",
-    billingKey: "billing-key-...", // 발급받은 빌링키
-    subscription: {
-      items: [{ productId: "prd_english", quantity: 1 }],
-      billStartDate: "2026-12-01",
-    },
-  }),
-});
-```
-
-<Details>
-  <Details.Summary>결제수단을 바꾸려면</Details.Summary>
-
-  <Details.Content>
-    새 빌링키를 발급받아 구독 고객 등록 API로 다시 등록하면 고객의 빌링키가 교체됩니다.
-    고객의 모든 구독이 다음 회차부터 새 빌링키로 결제됩니다.
-
-    이전 빌링키는 자동으로 삭제하지 않습니다. 더 이상 쓰지 않는다면 빌링키 삭제 API로 직접 삭제해 주세요.
-  </Details.Content>
-</Details>

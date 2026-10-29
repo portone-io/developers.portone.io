@@ -34,7 +34,23 @@ API로 직접 바꾼 경우에도 웹훅이 발송됩니다.
 }
 ```
 
-`data`에는 바뀐 대상의 아이디만 담깁니다. 최신 상태는 조회 API로 확인해 주세요.
+`data`에는 바뀐 대상의 아이디만 담깁니다. 고객 웹훅은 `customerId`, 구독 웹훅은 `subscriptionId`와 `customerId`, 인보이스 웹훅은 `invoiceId`, `subscriptionId`, `customerId`를 담습니다.
+
+## 웹훅 처리 방법
+
+웹훅은 무엇이 바뀌었는지만 알려 줍니다. 각 이벤트를 받으면 **조회 API로 상세 내용을 가져와** 그 결과를 기준으로 처리해 주세요.
+금액, 상태, 결제 실패 사유 같은 상세 정보는 웹훅 본문에 없으며, 조회 API의 응답이 가장 최신 상태입니다.
+
+|웹훅            |상세 조회 API                                                                             |
+|----------------|------------------------------------------------------------------------------------------|
+|`Customer.*`    |[구독 고객 조회](/api/rest-v2/subscription.customer)(`GET /customers/{customerId}`)       |
+|`Subscription.*`|[구독 조회](/api/rest-v2/subscription.subscription)(`GET /subscriptions/{subscriptionId}`)|
+|`Invoice.*`     |[인보이스 조회](/api/rest-v2/subscription.invoice)(`GET /invoices/{invoiceId}`)           |
+
+- 같은 웹훅이 두 번 이상 도착할 수 있습니다. 인보이스 아이디 등으로 이미 처리한 건인지 확인해 한 번만 반영해 주세요.
+- 처리에 성공하면 `200`으로 응답해 주세요.
+
+서명 검증부터 조회까지 이어지는 예시 코드는 [웹훅 처리하기](/opi/ko/extra/subscription/integration#5-웹훅-처리하기)를 참고해 주세요.
 
 ## 웹훅 종류
 
