@@ -14,7 +14,7 @@ import Parameter from "~/components/parameter/Parameter";
 
 1. **상품 등록**: 구독에 담을 상품을 등록합니다. 상품은 한 번 만들어 두고 여러 구독에서 사용합니다.
 2. **구독 사전 등록**: 고객과 구독 항목을 담아 구독을 미리 만듭니다. 결제수단이 없으므로 구독은 `INCOMPLETE` 상태이며 청구되지 않습니다.
-3. **구독 등록 SDK 호출**: 사전 등록한 구독 아이디로 `requestSubscriptionRegistration`을 호출합니다. 고객이 결제창에서 결제수단을 등록하면 그 시각부터 구독이 시작되고 첫 회차를 결제합니다.
+3. **구독 등록 SDK 호출**: 사전 등록한 구독 아이디와 구독 등록 비밀값으로 `requestSubscriptionRegistration`을 호출합니다. 고객이 결제창에서 결제수단을 등록하면 그 시각부터 구독이 시작되고 첫 회차를 결제합니다.
 4. **결과 확인**: 고객사 서버에서 구독 조회 API로 첫 회차 결제 결과를 확인합니다.
 5. **웹훅 처리**: 구독 결제 웹훅을 검증하고, 조회 API로 최신 상태를 가져와 서비스 제공 여부를 반영합니다.
 
@@ -87,8 +87,8 @@ const response = await fetch(
     }),
   },
 );
-const { subscription } = await response.json();
-// subscription.id 를 브라우저로 전달해 구독 등록 SDK를 호출합니다.
+const { subscription, registrationSecret } = await response.json();
+// subscription.id 와 registrationSecret 을 결제 페이지 응답 본문으로 브라우저에 전달해 구독 등록 SDK를 호출합니다.
 ```
 
 ### 주요 파라미터
@@ -122,14 +122,14 @@ const { subscription } = await response.json();
 
     **구독 종료일**
 
-    `yyyy-MM-dd` 형식입니다. 다음 청구 예정일이 이 날짜를 넘으면 청구하지 않고 종료합니다. 미입력 시 무기한입니다.
+    `yyyy-MM-dd` 형식입니다. 구독이 끝나는 날로, 오늘보다 뒤여야 합니다. 이날과 그 뒤로는 청구하지 않고 이날 구독을 종료하며, 이날부터는 구독 등록 SDK를 호출할 수 없습니다. 미입력 시 무기한입니다.
 
   - paymentOptions?: object
 
     **결제 옵션**
 
     언어, 상품 유형, 할부 개월 수, 결제대행사별 추가 파라미터(`bypass`) 등 매 회차 결제 요청에 그대로 실을 값입니다.
-    구독을 만들 때만 정할 수 있고 구독 수정으로는 바꿀 수 없습니다.
+    할부 개월 수는 0 이상이어야 합니다. 만든 뒤에는 [구독 수정 API](/api/rest-v2/subscription.subscription)로 필드별로 고칠 수 있습니다.
 
   - sendInvoiceEmail?: boolean
 
@@ -150,6 +150,12 @@ const { subscription } = await response.json();
   이 값들은 구독 등록 SDK로 결제수단이 등록된 시각을 기준으로 정해집니다.
 </Hint>
 
+<Hint style="warning">
+  응답의 `registrationSecret`은 구독 등록 SDK를 호출할 때 함께 넘기는 비밀값입니다.
+  이 응답에서만 받을 수 있고 다시 조회할 수 없으니 결제 페이지 응답 본문으로 브라우저에 전달해 주세요. URL에 넣지 마세요.
+  잃어버렸다면 구독을 해지하고 다시 사전 등록해 주세요. 구독이 시작(`ACTIVE`)되면 더는 쓸 수 없습니다.
+</Hint>
+
 ## 3. 구독 등록 SDK 호출하기
 
 브라우저에서 `requestSubscriptionRegistration` 함수를 호출합니다.
@@ -164,6 +170,7 @@ const { subscription } = await response.json();
       storeId: "store-4ff4af41-85e3-4559-8eb8-0d08a2c6ceec", // 고객사 storeId로 변경해주세요.
       channelKey: "channel-key-3b37819a-1c72-4deb-a245-8c810af5403d", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
       subscriptionId: "subscription-0193c1a2", // 구독 사전 등록 API 응답의 구독 아이디
+      registrationSecret, // 구독 사전 등록 API 응답의 registrationSecret
       billingKeyMethod: "CARD",
       redirectUrl: "https://example.com/subscription-redirect", // 모바일 등 리디렉션 방식에서 결과를 받을 주소
     });
@@ -208,6 +215,12 @@ const { subscription } = await response.json();
     **구독 아이디**
 
     구독 사전 등록 API로 만든 구독의 아이디입니다.
+
+  - registrationSecret: string
+
+    **구독 등록 비밀값**
+
+    구독 사전 등록 API 응답의 `registrationSecret`입니다. 구독 아이디와 맞지 않으면 구독 등록 창이 열리지 않습니다.
 
   - billingKeyMethod?: string
 
@@ -306,7 +319,7 @@ app.post("/api/subscription/complete", async (req, res) => {
 |상황                              |구독 상태   |처리 방법                                                                                                                 |
 |----------------------------------|------------|--------------------------------------------------------------------------------------------------------------------------|
 |첫 회차 결제 성공                 |`ACTIVE`    |서비스를 제공합니다. `Subscription.Activated`, `Invoice.Paid` 웹훅이 발송됩니다.                                          |
-|결제창 이탈, 결제수단 등록 실패   |`INCOMPLETE`|같은 구독 아이디로 구독 등록 SDK를 다시 호출할 수 있습니다.                                                               |
+|결제창 이탈, 결제수단 등록 실패   |`INCOMPLETE`|같은 구독 아이디와 비밀값으로 구독 등록 SDK를 다시 호출할 수 있습니다.                                                    |
 |결제수단 등록 후 첫 회차 결제 실패|`INCOMPLETE`|다른 결제수단으로 구독 등록 SDK를 다시 호출하거나, [결제 재시도 API](/api/rest-v2/subscription.invoice)로 다시 결제합니다.|
 |결과 미확정                       |`INCOMPLETE`|포트원이 결제 상태를 확인해 정리합니다. 완료되면 `Invoice.Paid` 웹훅이 발송됩니다.                                        |
 
@@ -461,5 +474,5 @@ await fetch(
 
 - 엑심베이, 페이레터 해외결제는 첫 회차 금액이 0원이면 사용할 수 없습니다.
 - 첫 회차 인보이스가 결제 실패(`FAILED`) 상태인 구독은 엑심베이, 페이레터 해외결제 채널로 다시 등록할 수 없습니다. 다른 채널로 다시 등록하거나 결제 재시도 API로 다시 결제해 주세요.
-- 엑심베이는 구독 결제 옵션의 언어(`paymentOptions.locale`)가 필수입니다.
+- 엑심베이는 구독 결제 옵션의 언어(`paymentOptions.locale`)가 필수입니다. 사전 등록 때 넣지 않았다면 구독 등록 SDK를 호출하기 전에 구독 수정 API로 넣어 주세요.
 - 스마트로, 나이스정보통신, 웰컴페이먼츠는 `issueId`를 꼭 전달해 주세요.
