@@ -3685,7 +3685,8 @@ paths:
 
             * `SubscriptionProductBillingPausedError`: 구독 상품의 청구가 중지된 경우
 
-            * `SubscriptionIntervalMismatchError`: 담긴 정기 상품들의 청구 주기가 다른 경우
+            * `SubscriptionIntervalMismatchError`: 담긴 정기 상품들의 청구 주기가 서로 다르거나,
+            시작한 구독의 청구 주기와 다른 경우
 
             * `SubscriptionCurrencyMismatchError`: 담긴 상품들의 통화가 다른 경우
 
@@ -4242,10 +4243,12 @@ paths:
         $ref: '#/components/schemas/GetSubscriptionDiscountError'
     patch:
       summary: 구독 할인 수정
-      description: |-
+      description: >-
         구독 할인 수정
 
-        구독 할인의 이름과 적용 마감일을 수정합니다. 할인 조건은 생성 후 바꿀 수 없으므로 조건을 바꾸려면 새 할인을 만들어야 합니다.
+
+        구독 할인의 이름을 수정합니다. 적용 마감일이 지난 할인도 이름은 바꿀 수 있습니다. 할인 조건과 적용 마감일은 생성 후 바꿀 수
+        없으므로 바꾸려면 새 할인을 만들어야 합니다.
       operationId: updateSubscriptionDiscount
       parameters:
         - name: discountId
@@ -4297,7 +4300,9 @@ paths:
                 $ref: '#/components/schemas/UpdateSubscriptionDiscountError'
       x-portone-category: subscription.discount
       x-portone-title: 구독 할인 수정
-      x-portone-description: 구독 할인의 이름과 적용 마감일을 수정합니다. 할인 조건은 생성 후 바꿀 수 없으므로 조건을 바꾸려면 새 할인을 만들어야 합니다.
+      x-portone-description: >-
+        구독 할인의 이름을 수정합니다. 적용 마감일이 지난 할인도 이름은 바꿀 수 있습니다. 할인 조건과 적용 마감일은 생성 후 바꿀 수
+        없으므로 바꾸려면 새 할인을 만들어야 합니다.
       x-portone-error:
         $ref: '#/components/schemas/UpdateSubscriptionDiscountError'
   '/discounts/{discountId}/archive':
@@ -14176,7 +14181,8 @@ paths:
 
             * `SubscriptionProductBillingPausedError`: 구독 상품의 청구가 중지된 경우
 
-            * `SubscriptionIntervalMismatchError`: 담긴 정기 상품들의 청구 주기가 다른 경우
+            * `SubscriptionIntervalMismatchError`: 담긴 정기 상품들의 청구 주기가 서로 다르거나,
+            시작한 구독의 청구 주기와 다른 경우
 
             * `SubscriptionCurrencyMismatchError`: 담긴 상품들의 통화가 다른 경우
 
@@ -14263,7 +14269,8 @@ paths:
 
             * `SubscriptionProductBillingPausedError`: 구독 상품의 청구가 중지된 경우
 
-            * `SubscriptionIntervalMismatchError`: 담긴 정기 상품들의 청구 주기가 다른 경우
+            * `SubscriptionIntervalMismatchError`: 담긴 정기 상품들의 청구 주기가 서로 다르거나,
+            시작한 구독의 청구 주기와 다른 경우
 
             * `SubscriptionCurrencyMismatchError`: 담긴 상품들의 통화가 다른 경우
 
@@ -14414,7 +14421,8 @@ paths:
 
             * `SubscriptionProductBillingPausedError`: 구독 상품의 청구가 중지된 경우
 
-            * `SubscriptionIntervalMismatchError`: 담긴 정기 상품들의 청구 주기가 다른 경우
+            * `SubscriptionIntervalMismatchError`: 담긴 정기 상품들의 청구 주기가 서로 다르거나,
+            시작한 구독의 청구 주기와 다른 경우
 
             * `SubscriptionCustomerEmailRequiredError`: 인보이스 메일을 보내려는데 구독 고객의
             이메일이 없는 경우
@@ -23058,7 +23066,7 @@ components:
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
           title: 청구 시작일
         endDate:
-          description: 청구 시작일과 같거나 뒤여야 합니다. 미입력 시 무기한입니다.
+          description: '구독이 끝나는 날로, 청구 시작일보다 뒤여야 합니다. 이날과 그 뒤로는 청구하지 않습니다. 미입력 시 무기한입니다.'
           type: string
           format: date
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
@@ -38716,7 +38724,7 @@ components:
             $ref: '#/components/schemas/SubscriptionDiscountApplication'
           description: 할인마다 적용 범위와 지속 방식을 정합니다.
         endDate:
-          description: 오늘과 같거나 뒤여야 합니다. 미입력 시 무기한입니다.
+          description: '구독이 끝나는 날로, 오늘보다 뒤여야 합니다. 이날이 되면 구독 등록을 할 수 없습니다. 미입력 시 무기한입니다.'
           type: string
           format: date
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
@@ -38784,6 +38792,7 @@ components:
       required:
         - subscription
         - customer
+        - registrationSecret
       properties:
         subscription:
           $ref: '#/components/schemas/Subscription'
@@ -38791,6 +38800,12 @@ components:
         customer:
           $ref: '#/components/schemas/SubscriptionCustomer'
           title: 구독 고객
+        registrationSecret:
+          type: string
+          title: 구독 등록 비밀값
+          description: >-
+            구독 등록 결제창을 열 때 subscriptionId와 함께 넘깁니다. 이 응답에서만 받을 수 있고 다시 조회할 수
+            없으니, 결제 페이지 응답 본문으로 브라우저에 전달해 주세요. URL에 넣지 마세요.
       x-portone-title: 구독 사전 등록 성공 응답
     PreviewSubscriptionInvoiceError:
       title: PreviewSubscriptionInvoiceError
@@ -41576,7 +41591,7 @@ components:
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
           title: 청구 시작일
         endDate:
-          description: 다음 청구 예정일이 이 날짜를 넘으면 청구하지 않고 종료합니다. 없으면 무기한입니다.
+          description: '구독이 끝나는 날입니다. 이날과 그 뒤로는 청구하지 않고, 이날이 되면 구독을 종료합니다. 없으면 무기한입니다.'
           type: string
           format: date
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
@@ -41791,6 +41806,10 @@ components:
           type: string
           title: 현재 빌링키
           description: 해지하면 없어집니다.
+        billingKeyMethod:
+          $ref: '#/components/schemas/SubscriptionCustomerBillingKeyMethod'
+          title: 현재 빌링키의 결제수단
+          description: 빌링키가 없으면 없습니다.
         card:
           $ref: '#/components/schemas/SubscriptionCustomerCard'
           title: 현재 빌링키의 카드
@@ -41861,7 +41880,7 @@ components:
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
           title: 청구 시작일
         endDate:
-          description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
+          description: '구독이 끝나는 날로, 청구 시작일보다 뒤여야 합니다. 이날과 그 뒤로는 청구하지 않습니다. 미입력 시 무기한입니다.'
           type: string
           format: date
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
@@ -42328,8 +42347,8 @@ components:
           description: 단위가 월이고 값이 1이면 한 달에 한 번 청구합니다.
       x-portone-title: 구독 주기
     SubscriptionIntervalMismatchError:
-      title: 담긴 정기 상품들의 청구 주기가 다른 경우
-      description: 담긴 정기 상품들의 청구 주기가 다른 경우
+      title: '담긴 정기 상품들의 청구 주기가 서로 다르거나, 시작한 구독의 청구 주기와 다른 경우'
+      description: '담긴 정기 상품들의 청구 주기가 서로 다르거나, 시작한 구독의 청구 주기와 다른 경우'
       type: object
       required:
         - type
@@ -42338,7 +42357,7 @@ components:
           type: string
         message:
           type: string
-      x-portone-title: 담긴 정기 상품들의 청구 주기가 다른 경우
+      x-portone-title: '담긴 정기 상품들의 청구 주기가 서로 다르거나, 시작한 구독의 청구 주기와 다른 경우'
       x-portone-status-code: 409
     SubscriptionIntervalUnit:
       title: 구독 주기 단위
@@ -42610,6 +42629,7 @@ components:
         koKr:
           $ref: '#/components/schemas/SubscriptionInvoiceEmailSender'
           title: 한국어
+          description: 상호(companyName)는 필수입니다. 나머지 필드는 선택입니다.
         enUs:
           $ref: '#/components/schemas/SubscriptionInvoiceEmailSender'
           title: 영어
@@ -44600,9 +44620,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SubscriptionItem'
-          description: 전체 교체입니다. 추가·삭제·수량 변경을 한 번에 보냅니다. 정기 과금 상품이 하나 이상 있어야 합니다.
+          description: >-
+            전체 교체입니다. 추가·삭제·수량 변경을 한 번에 보냅니다. 정기 과금 상품이 하나 이상 있어야 하고, 담긴 정기 상품들의
+            청구 주기가 같아야 합니다. 시작한 구독은 청구 주기가 다른 정기 상품으로 바꿀 수 없고, 사전 등록 상태(구독 등록
+            전)에서는 새 상품의 청구 주기를 따릅니다.
         endDate:
-          description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
+          description: '구독이 끝나는 날로, 오늘보다 뒤여야 합니다. 이날과 그 뒤로는 청구하지 않습니다. null을 보내면 무기한이 됩니다.'
           type: string
           format: date
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
@@ -44612,8 +44635,8 @@ components:
           title: 인보이스 메일 발송 여부
         nextBillingDate:
           description: >-
-            정기결제일을 옮깁니다. 오늘보다 뒤이고 종료일 이내여야 하며, 지정한 날짜가 새 청구 기준일이 됩니다. 기준 시각과 회차
-            번호는 유지됩니다. 사전 등록한 구독은 구독 등록 전에 지정할 수 없습니다.
+            정기결제일을 옮깁니다. 오늘보다 뒤이고 종료일보다 앞이어야 하며, 지정한 날짜가 새 청구 기준일이 됩니다. 기준 시각과
+            회차 번호는 유지됩니다. 사전 등록한 구독은 구독 등록 전에 지정할 수 없습니다.
           type: string
           format: date
           x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
@@ -44622,6 +44645,12 @@ components:
           $ref: '#/components/schemas/Map_String'
           title: 사용자 정의 데이터
           description: 입력한 값으로 전체를 교체합니다.
+        paymentOptions:
+          $ref: '#/components/schemas/UpdateSubscriptionBodyPaymentOptions'
+          title: 결제 옵션
+          description: >-
+            입력한 필드만 고치고, null을 보낸 필드는 지웁니다. 다음 결제와 실패한 인보이스의 재시도부터 반영됩니다. 고객에게
+            등록된 결제수단이 있으면 고친 값으로 결제할 수 있는지 미리 확인하고, 결제할 수 없으면 수정하지 않습니다.
         memo:
           type: string
           title: 메모
@@ -44697,12 +44726,6 @@ components:
         name:
           type: string
           title: 할인명
-        redeemBy:
-          description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
-          type: string
-          format: date
-          x-portone-description: '날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.'
-          title: 적용 마감일
       x-portone-title: 구독 할인 수정 입력 정보
     UpdateSubscriptionDiscountError:
       title: UpdateSubscriptionDiscountError
@@ -44788,7 +44811,10 @@ components:
       x-portone-title: 인보이스 메일 템플릿 수정 입력 정보
     UpdateSubscriptionInvoiceEmailTemplateBodySender:
       title: 인보이스 메일 발신자 정보 수정 입력
-      description: 인보이스 메일 발신자 정보 수정 입력
+      description: |-
+        인보이스 메일 발신자 정보 수정 입력
+
+        입력한 필드만 고칩니다. null을 보내면 그 필드를 지웁니다.
       type: object
       properties:
         companyName:
@@ -44810,6 +44836,7 @@ components:
           type: string
           title: 전화번호
       x-portone-title: 인보이스 메일 발신자 정보 수정 입력
+      x-portone-description: 입력한 필드만 고칩니다. null을 보내면 그 필드를 지웁니다.
     UpdateSubscriptionInvoiceEmailTemplateBodySenders:
       title: 메일 언어별 발신자 정보 수정 입력
       description: |-
@@ -44822,6 +44849,7 @@ components:
           $ref: >-
             #/components/schemas/UpdateSubscriptionInvoiceEmailTemplateBodySender
           title: 한국어
+          description: null로 지울 수 없습니다. 상호(companyName)는 필수입니다.
         enUs:
           $ref: >-
             #/components/schemas/UpdateSubscriptionInvoiceEmailTemplateBodySender
@@ -45286,6 +45314,55 @@ components:
           FORBIDDEN: '#/components/schemas/ForbiddenError'
           INVALID_REQUEST: '#/components/schemas/InvalidRequestError'
           UNAUTHORIZED: '#/components/schemas/UnauthorizedError'
+    SubscriptionCustomerBillingKeyMethod:
+      title: 구독 고객 빌링키 결제수단
+      description: 구독 고객 빌링키 결제수단
+      type: string
+      enum:
+        - CARD
+        - PAYPAL
+      x-portone-title: 구독 고객 빌링키 결제수단
+      x-portone-enum:
+        CARD:
+          title: 카드
+        PAYPAL:
+          title: 페이팔
+    UpdateSubscriptionBodyPaymentOptions:
+      title: 구독 결제 옵션 수정 입력
+      description: |-
+        구독 결제 옵션 수정 입력
+
+        입력한 필드만 고칩니다. null을 보내면 그 필드를 지웁니다.
+      type: object
+      properties:
+        locale:
+          $ref: '#/components/schemas/Locale'
+          title: 결제 시 사용할 언어
+          description: 엑심베이의 경우 필수 입력입니다.
+        productType:
+          $ref: '#/components/schemas/PaymentProductType'
+          title: 상품 유형
+        installmentMonth:
+          type: integer
+          format: int32
+          title: 할부 개월 수
+        useFreeInterestFromMerchant:
+          type: boolean
+          title: 무이자 할부 이자를 고객사가 부담할지 여부
+        useCardPoint:
+          type: boolean
+          title: 카드 포인트 사용 여부
+        country:
+          $ref: '#/components/schemas/Country'
+          title: 결제 국가
+        bypass:
+          type: object
+          title: PG사별 추가 파라미터 ("PG사별 연동 가이드" 참고)
+        customData:
+          type: string
+          title: 사용자 지정 데이터
+      x-portone-title: 구독 결제 옵션 수정 입력
+      x-portone-description: 입력한 필드만 고칩니다. null을 보내면 그 필드를 지웁니다.
   securitySchemes:
     bearerJwt:
       type: http
