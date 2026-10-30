@@ -1,5 +1,5 @@
 import opengraphMainBg from "~/../public/opengraph-main-bg.png?base64";
-import portoneLogoText from "~/../public/portone-logo-text.png?base64";
+import portoneLogoText from "~/assets/portone-logo-white.png?base64";
 
 export default function Main({ siteName }: { siteName?: string | undefined }) {
   return (
