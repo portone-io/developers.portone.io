@@ -11,7 +11,7 @@ import ksnetLogo from "~/assets/pg-circle/ksnet.png";
 import naverLogo from "~/assets/pg-circle/naver.png";
 import niceLogo from "~/assets/pg-circle/nice.png";
 import payletterLogo from "~/assets/pg-circle/payletter.png";
-import portoneLogo from "~/assets/pg-circle/portone.png";
+import portoneLogo from "~/assets/pg-circle/portone.svg";
 import smartroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
 import tripleALogo from "~/assets/pg-circle/triple-a.png";
