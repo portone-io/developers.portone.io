@@ -4743,7 +4743,7 @@ paths:
       description: |-
         본인인증 내역 다건 조회
 
-        주어진 조건에 맞는 본인인증 내역들을 페이지 기반으로 조회합니다.
+        주어진 조건에 맞는 본인인증 내역들을 페이지 기반으로 조회합니다. 이용시 tech.support@portone.io에 이용 목적과 기간을 보내 주세요.
       operationId: getIdentityVerifications
       parameters:
         - name: requestBody
@@ -4793,7 +4793,7 @@ paths:
         - portOne: []
       x-portone-category: identityVerification
       x-portone-title: 본인인증 내역 다건 조회
-      x-portone-description: 주어진 조건에 맞는 본인인증 내역들을 페이지 기반으로 조회합니다.
+      x-portone-description: 주어진 조건에 맞는 본인인증 내역들을 페이지 기반으로 조회합니다. 이용시 tech.support@portone.io에 이용 목적과 기간을 보내 주세요.
       x-portone-error:
         $ref: '#/components/schemas/GetIdentityVerificationsError'
   /invoice-email-templates:
@@ -11403,7 +11403,7 @@ paths:
       description: |-
         파트너 거래처 연동
 
-        파트너를 거래처에 연동합니다.
+        파트너를 거래처에 연동합니다. 팝빌 자동 가입이 진행되니 거래처 연동 전 파트너에게 안내가 필요합니다.
       operationId: connectPartnerCounterparty
       parameters:
         - name: id
@@ -11499,7 +11499,7 @@ paths:
         - portOne: []
       x-portone-category: platform.partner
       x-portone-title: 파트너 거래처 연동
-      x-portone-description: 파트너를 거래처에 연동합니다.
+      x-portone-description: 파트너를 거래처에 연동합니다. 팝빌 자동 가입이 진행되니 거래처 연동 전 파트너에게 안내가 필요합니다.
       x-portone-error:
         $ref: '#/components/schemas/ConnectPartnerCounterpartyError'
   /platform/partners/counterparty-connect:
@@ -11508,7 +11508,7 @@ paths:
       description: |-
         파트너 일괄 거래처 연동
 
-        파트너들을 일괄 거래처 연동합니다.
+        파트너들을 일괄 거래처 연동합니다. 팝빌 자동 가입이 진행되니 거래처 연동 전 파트너에게 안내가 필요합니다.
       operationId: connectBulkPartnerCounterparty
       parameters:
         - name: test
@@ -11584,7 +11584,7 @@ paths:
         - portOne: []
       x-portone-category: platform.partner
       x-portone-title: 파트너 일괄 거래처 연동
-      x-portone-description: 파트너들을 일괄 거래처 연동합니다.
+      x-portone-description: 파트너들을 일괄 거래처 연동합니다. 팝빌 자동 가입이 진행되니 거래처 연동 전 파트너에게 안내가 필요합니다.
       x-portone-error:
         $ref: '#/components/schemas/ConnectBulkPartnerCounterpartyError'
   '/platform/partners/counterparty-disconnect/{id}':
@@ -19871,6 +19871,10 @@ components:
           type: string
           title: 사용자 식별 번호
           description: 미발행 유형 선택 시 입력하지 않습니다.
+        customerIdentityNumberType:
+          $ref: '#/components/schemas/IssueCashReceiptCustomerInputIdentityNumberType'
+          title: 사용자 식별 번호 유형
+          description: 사용자 식별 번호가 어떤 종류의 번호인지 명시합니다.
       x-portone-title: 현금영수증 입력 정보
     CashReceiptInputType:
       title: 입력 시 발급 유형
@@ -20221,10 +20225,12 @@ components:
         - MERPAY
         - CRYPTO
         - APPLE_PAY
+        - LINE_PAY
       x-portone-title: 결제 수단
       x-portone-enum:
         PAY_PAY: {}
         ALIPAY_HK: {}
+        LINE_PAY: {}
         PAY_PAL: {}
         WE_CHAT_PAY: {}
         UNION_PAY: {}
@@ -20834,14 +20840,14 @@ components:
       description: |-
         파트너 일괄 거래처 연동 요청 정보
 
-        파트너들을 일괄 거래처 연동합니다.
+        파트너들을 일괄 거래처 연동합니다. 팝빌 자동 가입이 진행되니 거래처 연동 전 파트너에게 안내가 필요합니다.
       type: object
       properties:
         filter:
           $ref: '#/components/schemas/PlatformPartnerFilterInput'
           title: 일괄 거래처 연동할 파트너 조건 필터
       x-portone-title: 파트너 일괄 거래처 연동 요청 정보
-      x-portone-description: 파트너들을 일괄 거래처 연동합니다.
+      x-portone-description: 파트너들을 일괄 거래처 연동합니다. 팝빌 자동 가입이 진행되니 거래처 연동 전 파트너에게 안내가 필요합니다.
     ConnectBulkPartnerCounterpartyError:
       title: ConnectBulkPartnerCounterpartyError
       oneOf:
@@ -24956,7 +24962,7 @@ components:
         - QRIS
         - THAI_QR
         - GOOGLE_PAY
-        - ROCKETPAY
+        - ROCKET_PAY
       x-portone-title: 간편 결제사
       x-portone-enum:
         ALIPAY_HK: {}
@@ -24966,13 +24972,13 @@ components:
         GRABPAY: {}
         TOSS_BRANDPAY: {}
         JKOPAY: {}
+        ROCKET_PAY: {}
         SHOPEEPAY: {}
         BOOST: {}
         ALIPAY: {}
         LPAY: {}
         DBARAI: {}
         KB_APP: {}
-        ROCKETPAY: {}
         LINEPAY: {}
         PAYCO: {}
         HIPAY: {}
@@ -33185,6 +33191,7 @@ components:
         - KICC_V2
         - INNOPAY
         - HECTO_GLOBAL
+        - PAYLETTER
       x-portone-title: PG사 결제 모듈
       x-portone-enum:
         KICC: {}
@@ -33203,6 +33210,7 @@ components:
         SMARTRO: {}
         PAYLETTER_GLOBAL: {}
         PAYCO: {}
+        PAYLETTER: {}
         SMILEPAY: {}
         PAYMENTWALL: {}
         NAVERPAY: {}
