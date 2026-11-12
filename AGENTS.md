@@ -31,6 +31,7 @@
 
 ## Commit & Pull Request Guidelines
 - Match existing history: short imperative subjects, optionally prefixed (`docs:`, `feat:`, `fix:`, `refactor:`, `chore:`), with issue refs when relevant (for example, `(#1005)`).
+- Treat commit subjects and bodies as public-facing. Omit context about internal services that does not need to be public, including service names, internal URLs, architecture, and operational details. Describe the change and its rationale in terms relevant to public readers without exposing internal-only motivations or dependencies.
 - Keep one logical change per commit.
 - PRs should include purpose, impacted paths, and validation steps (`pnpm check` minimum; include `pnpm test` for code changes).
 - CODEOWNERS routes review to `@portone-io/dx-chapter`; docs/release-note content may require additional owner review.
