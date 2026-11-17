@@ -9,7 +9,7 @@
 - Keep content assets next to MDX in `_assets/` directories (for example, release note images under dated folders).
 
 ## Build, Test, and Development Commands
-- `pnpm install`: install workspace dependencies (Node `24.x` required).
+- `pnpm install`: install workspace dependencies.
 - `pnpm dev`: start local development server (`http://localhost:3000`) with schema/collection watchers.
 - `pnpm build`: run full production pipeline (schema update, collection generation, LLM docs, sitemap, Vite build).
 - `pnpm check`: run lint gate used by CI.
