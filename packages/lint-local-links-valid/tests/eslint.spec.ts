@@ -42,7 +42,7 @@ ruleTester.run("_redir.yaml", redirRule as unknown as Rule.RuleModule, {
       filename: redirYamlPath,
       errors: [
         {
-          message: `파일을 찾을 수 없습니다: ${path.resolve(__dirname, "__fixtures__/a/c")}`,
+          message: "파일을 찾을 수 없습니다: /a/c",
           line: 2,
           endLine: 3,
           column: 11,
@@ -90,28 +90,12 @@ ruleTester.run("_nav.yaml", navRule as unknown as Rule.RuleModule, {
           systemVersion: v1
           items:
             - slug: /a/b/c
-            - slug: /a/b/c/d
+            - slug: /a/b/c#section
               items:
-                - slug: /a/b/c/e
-                  items:
-                    - /a/b/c/f
-                    - /a/b/g
-                - /a/h
-                - /a/i
+                - /a/b/c?v=v1
+                - https://example.com/a/b/d
       `,
       filename: navYamlPath,
-      options: [
-        {
-          redirects: {
-            "/a/b/c/d": "/a/b/c",
-            "/a/b/c/e": "/a/b/c",
-            "/a/b/c/f": "/a/b/c",
-            "/a/b/g": "/a/b/c",
-            "/a/h": "/a/b/c",
-            "/a/i": "/a/b/c",
-          },
-        },
-      ],
     },
   ],
   invalid: [
@@ -124,7 +108,7 @@ ruleTester.run("_nav.yaml", navRule as unknown as Rule.RuleModule, {
       `,
       errors: [
         {
-          message: `파일을 찾을 수 없습니다: ${path.resolve(__dirname, "__fixtures__/a/b/d")}`,
+          message: "파일을 찾을 수 없습니다: /a/b/d",
           line: 5,
           endLine: 5,
           column: 21,
