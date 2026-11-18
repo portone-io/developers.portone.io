@@ -1,5 +1,5 @@
 import opengraphBlogBg from "~/../public/opengraph-blog-bg.png?base64";
-import portoneLogoText from "~/../public/portone-logo-text.png?base64";
+import portoneLogoText from "~/assets/portone-logo-white.png?base64";
 
 export interface BlogPostProps {
   title: string;
