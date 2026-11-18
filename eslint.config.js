@@ -1,8 +1,5 @@
 import eslint from "@eslint/js";
-import {
-  navLintLocalLinksValid,
-  redirLintLocalLinksValid,
-} from "@portone-io/lint-local-links-valid";
+import { eslintPlugin as localLinksValid } from "@portone-io/lint-local-links-valid";
 import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsEslintParser from "@typescript-eslint/parser";
 import * as parserPlain from "eslint-parser-plain";
@@ -10,16 +7,6 @@ import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
 import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
-import { readFileSync } from "fs";
-import { load } from "js-yaml";
-import * as YAMLParser from "yaml-eslint-parser";
-
-const redirects = load(
-  readFileSync("src/routes/(root)/docs/_redir.yaml", "utf8"),
-);
-if (!Array.isArray(redirects)) {
-  throw new Error("Expected an array of redirects");
-}
 
 /** @type {import("eslint").Linter.RulesRecord} */
 const tsRules = {
@@ -44,6 +31,7 @@ export default [
       "dist",
       ".vercel",
       "src/routes/(root)/docs/**/*",
+      "!src/routes/(root)/docs/_redir.yaml",
       "src/components/parameter/__generated__/**/*",
       ".vinxi",
       ".output",
@@ -160,19 +148,16 @@ export default [
     },
   },
   {
-    files: ["**/_redir.yaml", "**/_nav.yaml"],
-    ignores: [],
-    plugins: {
-      redir: redirLintLocalLinksValid,
-      nav: navLintLocalLinksValid,
-    },
-    languageOptions: {
-      parser: YAMLParser,
-    },
-    rules: {
-      "redir/local-links-valid": "error",
-      "nav/local-links-valid": "error",
-    },
+    files: ["**/_nav.yaml"],
+    languageOptions: { parser: parserPlain },
+    plugins: { "local-links-valid": localLinksValid },
+    rules: { "local-links-valid/nav": "error" },
+  },
+  {
+    files: ["**/_redir.yaml"],
+    languageOptions: { parser: parserPlain },
+    plugins: { "local-links-valid": localLinksValid },
+    rules: { "local-links-valid/redir": "error" },
   },
   {
     files: ["**/__generated__/**/*"],
