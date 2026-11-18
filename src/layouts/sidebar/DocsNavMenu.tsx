@@ -38,7 +38,7 @@ export default function DocsNavMenu(props: Props) {
       </div>
       <nav
         id="nav-menu"
-        class="scrollbar-thin relative flex-1 overflow-y-scroll"
+        class="relative flex-1 scrollbar-thin overflow-y-scroll"
       >
         <div class="pr-6 pb-1 pl-2">
           <VersionSwitch docData={props.docData} />

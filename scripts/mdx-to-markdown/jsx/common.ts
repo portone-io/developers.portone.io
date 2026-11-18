@@ -40,7 +40,7 @@ export function unwrapJsxNode(
   if (!node.children || node.children.length === 0) {
     // Nothing to keep, remove this node from the AST
     return {
-      ast: { type: "root", children: [] } as Root,
+      ast: { type: "root", children: [] },
       unhandledTags: new Set(),
     };
   }

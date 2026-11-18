@@ -402,7 +402,7 @@ function getNavFrontmatters(collection?: Collection): NavMenuFrontmatters {
   if (!collection) return {};
 
   return [...collection.entries.values()].reduce((acc, entry) => {
-    acc[`/${entry.slug}`] = (entry.frontmatter ?? {}) as NavMenuFrontmatter;
+    acc[`/${entry.slug}`] = entry.frontmatter ?? {};
     return acc;
   }, {} as NavMenuFrontmatters);
 }

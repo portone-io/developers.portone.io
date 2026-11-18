@@ -1,4 +1,3 @@
-import type { Html, Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 import { describe, expect, it, vi } from "vitest";
@@ -24,7 +23,7 @@ describe("replaceToHtml", () => {
     expect(result.ast).toEqual({
       type: "html",
       value: "<hr />",
-    } as Html);
+    });
     expect(result.unhandledTags.size).toBe(0);
     expect(mockTransformRecursively).not.toHaveBeenCalled();
   });
@@ -63,7 +62,7 @@ describe("replaceToHtml", () => {
     expect(result.ast).toEqual({
       type: "html",
       value: '<div class="container" id="main-content" disabled />',
-    } as Html);
+    });
     expect(result.unhandledTags.size).toBe(0);
     expect(mockTransformRecursively).not.toHaveBeenCalled();
   });
@@ -121,7 +120,7 @@ describe("replaceToHtml", () => {
           value: "</div>",
         },
       ],
-    } as Root);
+    });
     expect(result.unhandledTags.size).toBe(0);
     expect(mockTransformRecursively).toHaveBeenCalledTimes(1);
   });
@@ -150,7 +149,7 @@ describe("replaceToHtml", () => {
     expect(result.ast).toEqual({
       type: "html",
       value: '<div title="Example with &quot;quotes&quot;" />',
-    } as Html);
+    });
     expect(result.unhandledTags.size).toBe(0);
   });
 

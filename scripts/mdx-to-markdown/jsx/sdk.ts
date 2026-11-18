@@ -100,7 +100,7 @@ export function handleSDKParameterComponent(
     ast: {
       type: "root",
       children: [parameterLine],
-    } as Root,
+    },
     unhandledTags: new Set<string>(),
   };
 }

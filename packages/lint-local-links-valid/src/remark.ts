@@ -31,7 +31,7 @@ export const remarkLintLocalLinksValid = lintRule(
   "remark-lint:local-links-valid",
   (tree, file, options: Partial<Options>) => {
     const workingFile = path.resolve(file.cwd, file.history[0] ?? "");
-    const checkLink = initLinter(workingFile, options as Options);
+    const checkLink = initLinter(workingFile, options);
     visit(tree, (node) => {
       if (node.type === "yaml" && "value" in node) {
         try {

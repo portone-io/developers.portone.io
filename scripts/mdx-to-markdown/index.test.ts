@@ -35,7 +35,7 @@ function createAstWithLink(url: string, text: string = "link text"): Root {
 function extractLinks(ast: Node): Link[] {
   const links: Link[] = [];
   visit(ast, "link", (node) => {
-    links.push(node as Link);
+    links.push(node);
   });
   return links;
 }

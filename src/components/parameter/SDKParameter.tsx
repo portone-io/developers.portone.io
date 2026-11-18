@@ -9,11 +9,7 @@ interface SDKParameterProps {
   optional?: boolean;
   /** default: `full` */
   mode?:
-    | "full"
-    | "type-only"
-    | "ident-only"
-    | "ident-and-type"
-    | "details-only";
+    "full" | "type-only" | "ident-only" | "ident-and-type" | "details-only";
 }
 
 export function SDKParameter(props: SDKParameterProps) {
