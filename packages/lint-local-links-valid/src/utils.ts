@@ -1,12 +1,7 @@
 import path from "node:path";
 
 export function isLocalLink(url: string): boolean {
-  try {
-    new URL(url);
-  } catch {
-    return true;
-  }
-  return false;
+  return !URL.canParse(url);
 }
 
 export function resolveRedirect(

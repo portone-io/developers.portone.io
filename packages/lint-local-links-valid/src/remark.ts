@@ -117,19 +117,30 @@ export const remarkLintLocalLinksValid = lintRule(
     });
   },
 );
+const redirectsCache = new WeakMap<Partial<Options>, Map<string, string>>();
+
+function getRedirects(options: Partial<Options>) {
+  let redirects = redirectsCache.get(options);
+  if (!redirects) {
+    redirects = new Map(
+      Object.entries(options.redirects ?? {}).map(([from, to]) => {
+        return [String(from), String(to)].map((link) =>
+          isLocalLink(link) ? `/${link}` : link,
+        );
+      }) as [string, string][],
+    );
+    redirectsCache.set(options, redirects);
+  }
+  return redirects;
+}
+
 const initLinter = (workingFile: string, options: Partial<Options>) => {
   if (!options.baseDir) {
     throw new Error("Missing required option `baseDir`");
   }
   const baseDir = path.resolve(options.baseDir);
   const excludePaths = options.excludePaths ?? [];
-  const redirects = new Map(
-    Object.entries(options.redirects ?? {}).map(([from, to]) => {
-      return [String(from), String(to)].map((link) =>
-        isLocalLink(link) ? `/${link}` : link,
-      );
-    }) as [string, string][],
-  );
+  const redirects = getRedirects(options);
   const workingPath = resolvePathname(path.relative(baseDir, workingFile));
   return function checkLink(
     link: string,
