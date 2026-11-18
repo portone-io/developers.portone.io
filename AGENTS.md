@@ -23,7 +23,7 @@
 - Follow `.editorconfig`: 2-space indentation, LF line endings, final newline.
 - TypeScript strict mode is enabled; prefer `~/*` imports for `src` modules.
 - oxlint + oxfmt + ESLint (MDX/YAML only) + remark-lint are authoritative; keep imports sorted and Tailwind utilities in enforced order (oxfmt sorts both).
-- MDX is linted by ESLint with `eslint-plugin-mdx`: remark-lint rules from `.remarkrc.js`, oxfmt formatting of code blocks (`@portone-io/lint-code-block-format`), typescript-eslint on TypeScript code blocks, sorted imports, and undefined/unused component imports.
+- MDX is linted by ESLint with `eslint-plugin-mdx`: remark-lint rules from `.remarkrc.ts`, oxfmt formatting of code blocks (`@portone-io/lint-code-block-format`), typescript-eslint on TypeScript code blocks, sorted imports, and undefined/unused component imports.
 - In MDX, prefer semantic markdown and import local images from `_assets/` instead of hard-coded URL paths.
 - Use date-based names for release notes: `YYYY-MM-DD.mdx`.
 

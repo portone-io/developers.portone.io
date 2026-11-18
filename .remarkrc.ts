@@ -1,18 +1,14 @@
-// @ts-check
-
 import { readFileSync } from "node:fs";
 
 import { remarkLintLocalLinksValid } from "@portone-io/lint-local-links-valid";
 import { remarkLintNoJamo } from "@portone-io/lint-no-jamo";
 import { load } from "js-yaml";
 import stringWidth from "string-width";
+import { z } from "zod";
 
-const redirects = load(
-  readFileSync("./src/routes/(root)/docs/_redir.yaml", "utf8"),
-);
-if (!Array.isArray(redirects)) {
-  throw new Error("Expected an array of redirects");
-}
+const redirects = z
+  .array(z.object({ old: z.string(), new: z.string() }))
+  .parse(load(readFileSync("./src/routes/(root)/docs/_redir.yaml", "utf8")));
 
 export default {
   plugins: [
@@ -79,7 +75,7 @@ export default {
           redirects.map((redir) => {
             const { old: from, new: to } = redir;
             return [prefix(from), to];
-            function prefix(str) {
+            function prefix(str: string) {
               if (str.startsWith("/")) {
                 return "docs" + str;
               }
