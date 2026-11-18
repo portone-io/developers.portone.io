@@ -11,7 +11,9 @@ import { visit } from "unist-util-visit";
  * import하지 않은 컴포넌트나 사용하지 않는 import를 찾기 위해 사용합니다.
  */
 export function buildScopeSource(tree: Root, source: string): string {
-  const buffer = source.split("").map((ch) => (ch === "\n" ? "\n" : " "));
+  const buffer: string[] = source
+    .split("")
+    .map((ch) => (ch === "\n" ? "\n" : " "));
   const written = new Uint8Array(source.length);
 
   const isFree = (index: number) =>

@@ -94,7 +94,13 @@ async function lintFiles(paths: string[]): Promise<LintResult[]> {
   const virtualFiles: VirtualFile[] = [];
   const owners = new Map<
     string,
-    { file: VFile; toPoint: (line: number, column: number) => object }
+    {
+      file: VFile;
+      toPoint: (
+        line: number,
+        column: number,
+      ) => { line: number; column: number };
+    }
   >();
   results.forEach(({ file, tree }, index) => {
     if (!tree) return;
@@ -147,7 +153,7 @@ async function lintWithRemark(filePath: string): Promise<LintResult> {
     return { file, tree };
   } catch (error) {
     const message = file.message("MDX를 처리할 수 없습니다", {
-      cause: error,
+      cause: toError(error),
       ruleId: "parse-error",
       source: "lint-mdx",
     });
@@ -195,4 +201,8 @@ async function fixFiles(results: LintResult[]) {
     }
   }
   return fixedPaths;
+}
+
+function toError(error: unknown) {
+  return error instanceof Error ? error : new Error(String(error));
 }

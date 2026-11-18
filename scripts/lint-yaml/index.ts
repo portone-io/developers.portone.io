@@ -48,7 +48,7 @@ const files = await Promise.all(
       }
     } catch (error) {
       const message = file.message("YAML을 처리할 수 없습니다", {
-        cause: error,
+        cause: error instanceof Error ? error : new Error(String(error)),
         ruleId: "parse-error",
         source: "lint-yaml",
       });
