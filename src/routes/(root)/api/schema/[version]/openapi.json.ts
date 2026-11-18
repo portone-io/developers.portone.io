@@ -21,7 +21,7 @@ const schemaMap = new Promise<Map<string, string>>((res) =>
 );
 
 export const GET: APIHandler = async ({ params }): Promise<Response> => {
-  const version = params.version as string | undefined;
+  const version = params.version;
   const schema = (await schemaMap).get(version ?? "");
   if (!schema) return new Response(null, { status: 404 });
 

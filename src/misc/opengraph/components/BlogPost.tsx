@@ -20,6 +20,7 @@ export default function BlogPost({
       style={{
         width: "1200px",
         height: "630px",
+        boxSizing: "border-box",
         display: "flex",
         flexDirection: "column",
         gap: "58px",

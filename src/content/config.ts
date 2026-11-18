@@ -97,11 +97,6 @@ const ReleaseNoteEntry = z.object({
 });
 export type ReleaseNoteEntry = z.infer<typeof ReleaseNoteEntry>;
 
-const ApiSectionDescriptionEntry = z.object({});
-export type ApiSectionDescriptionEntry = z.infer<
-  typeof ApiSectionDescriptionEntry
->;
-
 export const config = {
   opi: {
     path: "src/routes/(root)/opi",

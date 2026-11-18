@@ -80,7 +80,7 @@ export function processV1Openapi(schema: any): any {
   // 빈 paths 제거
   if (schema.paths) {
     for (const [key, value] of Object.entries(schema.paths)) {
-      if (value == null || Object.keys(value as any).length === 0) {
+      if (value == null || Object.keys(value).length === 0) {
         delete schema.paths[key];
       }
     }

@@ -1,4 +1,4 @@
-import yaml from "js-yaml";
+import { dump } from "js-yaml";
 import type { Root, Text } from "mdast";
 import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
@@ -71,7 +71,7 @@ export function transformAstForMarkdown(
 export function frontmatterToString(frontmatter: Frontmatter): string {
   // thumbnail 필드를 제외한 프론트매터 생성
   const { thumbnail: _thumbnail, ...filteredFrontmatter } = frontmatter;
-  return `---\n${yaml.dump(filteredFrontmatter)}---`;
+  return `---\n${dump(filteredFrontmatter)}---`;
 }
 
 /**

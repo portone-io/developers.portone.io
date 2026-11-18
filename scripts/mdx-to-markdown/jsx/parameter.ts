@@ -89,7 +89,7 @@ export function handleParameterTypeDefComponent(
       ast: {
         type: "root",
         children: [parameterLine],
-      } as Root,
+      },
       unhandledTags,
     };
   } else {
@@ -104,7 +104,7 @@ export function handleParameterTypeDefComponent(
       ast: {
         type: "root",
         children: [parameterLine],
-      } as Root,
+      },
       unhandledTags,
     };
   }

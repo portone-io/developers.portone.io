@@ -2,7 +2,6 @@ import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import yaml from "js-yaml";
 import type { Literal, Root } from "mdast";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
@@ -12,6 +11,7 @@ import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
 import { generateSlug as originalGenerateSlug } from "../../src/utils/slugs.ts";
+import { loadYaml } from "../../src/utils/yaml.ts";
 import { collectAllImportedElements, type Import } from "./jsx/imports.ts";
 
 // 프로젝트 경로 설정
@@ -72,7 +72,7 @@ export async function parseMdxFile(filePath: string): Promise<MdxParseResult> {
       // 프론트매터 추출
       visit(tree, "yaml", (node: Literal) => {
         try {
-          const parsedFrontmatter = yaml.load(node.value);
+          const parsedFrontmatter = loadYaml(node.value);
 
           // 프론트매터가 존재하는 경우에만 할당
           if (parsedFrontmatter && typeof parsedFrontmatter === "object") {

@@ -2,7 +2,7 @@ import path from "node:path";
 
 import { type Rule, RuleTester } from "eslint";
 import * as vitest from "vitest";
-import YAMLParser from "yaml-eslint-parser";
+import * as YAMLParser from "yaml-eslint-parser";
 
 import { rule as navRule } from "../src/eslint/nav.ts";
 import { rule as redirRule } from "../src/eslint/redir.ts";

@@ -1,4 +1,4 @@
-import type { Paragraph, Root } from "mdast";
+import type { Root } from "mdast";
 import type { MdxJsxFlowElement, MdxJsxTextElement } from "mdast-util-mdx";
 import type { Node } from "unist";
 
@@ -70,7 +70,7 @@ export function handleConditionComponent(
               value: `<!-- CONDITIONAL CONTENT${conditionText} START -->`,
             },
           ],
-        } as Paragraph,
+        },
         // 내부 컴포넌트들
         ...newChildren,
         {
@@ -81,7 +81,7 @@ export function handleConditionComponent(
               value: `<!-- CONDITIONAL CONTENT${conditionText} END -->`,
             },
           ],
-        } as Paragraph,
+        },
       ],
     } as Root;
 

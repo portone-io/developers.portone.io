@@ -65,26 +65,24 @@ export default function PostsLayout(props: { children: JSXElement }) {
     <Show when={post()}>
       {(post) => {
         const { title, description } = post().frontmatter;
-        const blogPostingJsonLd = createMemo(
-          (): WithContext<BlogPosting> => ({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: title,
-            description,
-            datePublished: post().frontmatter.date.toISOString(),
-            image: `https://developers.portone.io/blog/posts/${slug()}.png`,
-            url: `https://developers.portone.io/blog/posts/${slug()}`,
-            keywords: post().frontmatter.tags,
-            ...(post().author && {
-              author: {
-                "@type": "Person",
-                name: post().author!.name,
-                jobTitle: post().author!.role,
-              },
-            }),
-            publisher: organizationJsonLd,
+        const blogPostingJsonLd = createMemo((): WithContext<BlogPosting> => ({
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          headline: title,
+          description,
+          datePublished: post().frontmatter.date.toISOString(),
+          image: `https://developers.portone.io/blog/posts/${slug()}.png`,
+          url: `https://developers.portone.io/blog/posts/${slug()}`,
+          keywords: post().frontmatter.tags,
+          ...(post().author && {
+            author: {
+              "@type": "Person",
+              name: post().author!.name,
+              jobTitle: post().author!.role,
+            },
           }),
-        );
+          publisher: organizationJsonLd,
+        }));
         return (
           <>
             <Metadata

@@ -1,9 +1,11 @@
 import type { JSXElement } from "solid-js";
 
 type SectionDescriptionProps<T extends Record<string, unknown>> = {
-  [K in keyof T & `section:${string}` as K extends `section:${infer U}`
-    ? U
-    : never]: T[K];
+  [
+    K in keyof T & `section:${string}` as K extends `section:${infer U}`
+      ? U
+      : never
+  ]: T[K];
 } & {};
 
 export default function createSectionDescriptionProps<

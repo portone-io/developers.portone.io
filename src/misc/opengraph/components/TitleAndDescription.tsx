@@ -14,6 +14,7 @@ export default function TitleAndDescription({
       style={{
         width: "1200px",
         height: "630px",
+        boxSizing: "border-box",
         display: "flex",
         flexDirection: "column",
         gap: "12px",

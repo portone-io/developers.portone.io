@@ -16,11 +16,9 @@ import Picture from "~/components/Picture";
 import { useInteractiveDocs } from "~/state/interactive-docs";
 
 import { createPaymentRequest } from "./request";
-import type { Params } from "./type";
 
 export function Preview() {
-  const { params: _params, paymentGateway } = useInteractiveDocs();
-  const params = _params as Params;
+  const { params, paymentGateway } = useInteractiveDocs();
 
   const [paymentStatus, setPaymentStatus] = createSignal<{
     status: "IDLE" | "PENDING" | "PAID" | "FAILED";

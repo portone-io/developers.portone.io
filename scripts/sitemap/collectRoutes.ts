@@ -3,9 +3,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import fastGlob from "fast-glob";
-import yaml from "js-yaml";
 
 import { generateSlug } from "../../src/utils/slugs.ts";
+import { loadYaml } from "../../src/utils/yaml.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, "../..");
@@ -27,7 +27,7 @@ async function readFrontmatter(
     const content = await readFile(join(rootDir, filePath), "utf-8");
     const match = /^---\n([\s\S]*?)\n---/.exec(content);
     if (!match?.[1]) return {};
-    return (yaml.load(match[1]) ?? {}) as Record<string, unknown>;
+    return (loadYaml(match[1]) ?? {}) as Record<string, unknown>;
   } catch (error) {
     console.warn(
       `'${filePath}'의 frontmatter를 파싱하는 중 오류가 발생했습니다:`,

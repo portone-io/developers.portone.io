@@ -57,7 +57,7 @@ export default function NavMenu(props: Props) {
       <hr class="mx-4" />
       <nav
         id="nav-menu"
-        class="scrollbar-thin flex flex-1 flex-col gap-2 overflow-y-scroll p-2 text-sm text-slate-6"
+        class="flex flex-1 scrollbar-thin flex-col gap-2 overflow-y-scroll p-2 text-sm text-slate-6"
       >
         <For each={items()}>
           {(item) => {

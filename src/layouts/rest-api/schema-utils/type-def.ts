@@ -123,7 +123,7 @@ export function bakeProperties(
       name,
       required,
       example: example?.[name],
-    } as BakedProperty;
+    };
   });
 }
 
@@ -257,7 +257,7 @@ export function followRef(
   ) {
     return followRef(schema, curr.items);
   }
-  return curr as TypeDef;
+  return curr;
 }
 
 export function getTypeDefByRef(schema: unknown, $ref: string): TypeDef {
