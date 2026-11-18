@@ -11,6 +11,7 @@ import { astToMarkdownString } from "../mdx-to-markdown/index.ts";
 import { type MdxParseResult } from "../mdx-to-markdown/mdx-parser.ts";
 import {
   categorizeSlugs,
+  isPublicSlug,
   PATH_PREFIXES,
   saveMarkdownFiles,
 } from "../mdx-to-markdown/utils.ts";
@@ -39,10 +40,10 @@ export async function generateDocsForLlms(
   fileParseMap: Record<string, MdxParseResult>,
   transformedAstMap: Record<string, Root>,
 ): Promise<string> {
-  // fileParseMap에서 slug 추출
-  const slugs = Object.keys(fileParseMap)
-    // _components로 다른 마크다운 파일에서 사용된 것들 제외하기
-    .filter((slug) => !slug.includes("_components"));
+  // fileParseMap에서 slug 추출 (_components, unlisted 문서 제외)
+  const slugs = Object.keys(fileParseMap).filter((slug) =>
+    isPublicSlug(slug, fileParseMap),
+  );
 
   // docs-for-llms 디렉토리 생성
   await mkdir(docsForLlmsDir, { recursive: true });

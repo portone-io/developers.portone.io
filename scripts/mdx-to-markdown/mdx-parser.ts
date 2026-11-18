@@ -26,6 +26,7 @@ export type Frontmatter = {
   date?: string;
   tags?: string[];
   targetVersions?: string[];
+  unlisted?: boolean;
   [key: string]: unknown; // 기타 알려지지 않은 필드를 위한 인덱스 시그니처
 };
 

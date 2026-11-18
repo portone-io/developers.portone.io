@@ -20,22 +20,20 @@ const EXCLUDE_PATTERNS = [
   /(^|\/)_/,
 ];
 
-/**
- * MDX 파일에서 frontmatter를 파싱하여 draft 여부를 확인
- */
-async function isDraft(filePath: string): Promise<boolean> {
+async function readFrontmatter(
+  filePath: string,
+): Promise<Record<string, unknown>> {
   try {
     const content = await readFile(join(rootDir, filePath), "utf-8");
     const match = /^---\n([\s\S]*?)\n---/.exec(content);
-    if (!match?.[1]) return false;
-    const frontmatter = yaml.load(match[1]) as Record<string, unknown>;
-    return frontmatter.draft === true;
+    if (!match?.[1]) return {};
+    return (yaml.load(match[1]) ?? {}) as Record<string, unknown>;
   } catch (error) {
     console.warn(
       `'${filePath}'의 frontmatter를 파싱하는 중 오류가 발생했습니다:`,
       error,
     );
-    return false;
+    return {};
   }
 }
 
@@ -59,8 +57,12 @@ export async function collectRoutes(): Promise<string[]> {
     // 제외 패턴 검사
     if (EXCLUDE_PATTERNS.some((pattern) => pattern.test(slug))) continue;
 
+    const frontmatter = await readFrontmatter(filePath);
+
     // 블로그 draft 포스트 제외
-    if (slug.startsWith("blog/posts/") && (await isDraft(filePath))) continue;
+    if (slug.startsWith("blog/posts/") && frontmatter.draft === true) continue;
+
+    if (frontmatter.unlisted === true) continue;
 
     urls.add(`/${slug}`);
   }

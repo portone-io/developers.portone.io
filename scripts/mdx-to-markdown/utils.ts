@@ -21,6 +21,14 @@ export const PATH_PREFIXES = {
   PLATFORM: "platform/",
 };
 
+export function isPublicSlug(
+  slug: string,
+  fileParseMap: Record<string, MdxParseResult>,
+): boolean {
+  if (slug.includes("_components")) return false;
+  return fileParseMap[slug]?.frontmatter.unlisted !== true;
+}
+
 /**
  * 모든 MDX 파일을 파싱하고 결과를 맵으로 반환하는 함수
  * @returns 파일 경로(slug)와 파싱 결과를 매핑한 객체
@@ -114,9 +122,9 @@ export async function saveMarkdownFiles(
   transformedAstMap: Record<string, Root>,
   outputDir: string,
 ): Promise<void> {
-  const slugs = Object.keys(transformedAstMap)
-    // _components로 다른 마크다운 파일에서 사용된 것들 제외하기
-    .filter((slug) => !slug.includes("_components"));
+  const slugs = Object.keys(transformedAstMap).filter((slug) =>
+    isPublicSlug(slug, fileParseMap),
+  );
 
   // 각 변환된 AST를 마크다운 파일로 저장
   for (const slug of slugs) {
