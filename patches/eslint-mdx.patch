@@ -1,0 +1,55 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index b400bec571012e640ea0f6495b03afbb10136da9..0000000000000000000000000000000000000000
+diff --git a/lib/sync.js b/lib/sync.js
+index f5b65f7143b74b13a457550e13f4580c91efa5d4..2b5c5b26bff1e1c5f4fe3c83920d902ef8c6cefb 100644
+--- a/lib/sync.js
++++ b/lib/sync.js
+@@ -1,4 +1,20 @@
+ import { createSyncFn } from 'synckit';
+ import { cjsRequire } from './helpers.js';
+-export const performSyncWork = createSyncFn(cjsRequire.resolve('./worker.js'));
++const syncWork = createSyncFn(cjsRequire.resolve('./worker.js'));
++let reusable;
++const getReuseKey = ({ filePath, code, isMdx, ignoreRemarkConfig, remarkConfigPath }) => JSON.stringify([filePath, code, isMdx, ignoreRemarkConfig, remarkConfigPath]);
++export const performSyncWork = ({ reuse, ...options }) => {
++    if (options.process) {
++        return syncWork(options);
++    }
++    const key = getReuseKey(options);
++    if (reusable?.key === key) {
++        const { result } = reusable;
++        reusable = undefined;
++        return result;
++    }
++    const result = syncWork(options);
++    reusable = reuse ? { key, result } : undefined;
++    return result;
++};
+ //# sourceMappingURL=sync.js.map
+diff --git a/lib/worker.js b/lib/worker.js
+index 3bd222bf11da808857c218f70fb6904df68ae74d..ba51d6246358779511d1771164dc13d593492dec 100644
+--- a/lib/worker.js
++++ b/lib/worker.js
+@@ -289,8 +289,9 @@ runAsWorker(async ({ filePath, code, cwd, isMdx, process, ignoreRemarkConfig, ig
+             };
+         }
+         const file = new VFile(fileOptions);
++        let tree;
+         try {
+-            await processor.process(file);
++            tree = await processor.run(processor.parse(file), file);
+         }
+         catch (err) {
+             const error = err;
+@@ -300,7 +301,9 @@ runAsWorker(async ({ filePath, code, cwd, isMdx, process, ignoreRemarkConfig, ig
+         }
+         return {
+             messages: file.messages.map(message => extractProperties(message)),
+-            content: file.toString(),
++            content: tree && file.messages.length > 0
++                ? processor.stringify(tree, file)
++                : code,
+         };
+     }
+     if (!tokTypes) {
