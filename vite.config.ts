@@ -4,6 +4,7 @@ import path from "node:path";
 import mdx from "@mdx-js/rollup";
 import remarkParamTree from "@portone-io/remark-param-tree";
 import yaml from "@rollup/plugin-yaml";
+import { sentrySolidStart } from "@sentry/solidstart/vite";
 import rehypeShiki, { type RehypeShikiOptions } from "@shikijs/rehype";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import { solidStart } from "@solidjs/start/config";
@@ -86,8 +87,12 @@ export default defineConfig({
         exclude: ["./src/misc/opengraph/**/*"],
       },
     }),
+    sentrySolidStart({ sourcemaps: { disable: true } }),
     nitro({
       preset: "vercel",
+      plugins: ["./src/instrument.server.ts"],
+      // Bundle the Sentry plugin so Nitro can resolve its virtual imports.
+      noExternals: ["@sentry/nitro"],
       prerender: {
         routes: ["/blog/rss.xml"],
       },
