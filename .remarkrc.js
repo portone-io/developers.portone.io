@@ -2,6 +2,7 @@
 
 import { readFileSync } from "node:fs";
 
+import { remarkLintCodeBlockFormat } from "@portone-io/lint-code-block-format";
 import { remarkLintLocalLinksValid } from "@portone-io/lint-local-links-valid";
 import { remarkLintNoJamo } from "@portone-io/lint-no-jamo";
 import { load } from "js-yaml";
@@ -13,6 +14,13 @@ const redirects = load(
 if (!Array.isArray(redirects)) {
   throw new Error("Expected an array of redirects");
 }
+
+// 코드 블록은 JS/TS 파일과 같은 oxfmt 설정으로 포맷합니다.
+const {
+  $schema: _schema,
+  ignorePatterns: _ignorePatterns,
+  ...formatOptions
+} = JSON.parse(readFileSync("./.oxfmtrc.json", "utf8"));
 
 export default {
   plugins: [
@@ -90,6 +98,7 @@ export default {
       },
     ],
     [remarkLintNoJamo],
+    [remarkLintCodeBlockFormat, { formatOptions }],
   ],
   settings: {
     bullet: "-",
