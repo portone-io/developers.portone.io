@@ -15,9 +15,12 @@
 		"update-schema": "pnpm run --filter @portone-io/browser-sdk-mdx-codegen start",
 		"llms-txt": "node scripts/llms-txt/index.ts",
 		"docs-for-llms": "node scripts/docs-for-llms/index.ts",
-		"lint:fix": "eslint --fix .",
-		"lint": "eslint .",
-		"eslint": "eslint",
+		"lint": "pnpm lint:js && pnpm lint:format && pnpm lint:yaml && pnpm lint:mdx",
+		"lint:fix": "oxlint --fix && oxfmt && pnpm lint:yaml && node scripts/lint-mdx/index.ts --fix",
+		"lint:js": "oxlint",
+		"lint:format": "oxfmt --check",
+		"lint:yaml": "node scripts/lint-yaml/index.ts",
+		"lint:mdx": "node scripts/lint-mdx/index.ts",
 		"test": "vitest run --config vitest.config.ts",
 		"test:watch": "vitest --config vitest.config.ts"
 	},
@@ -33,7 +36,6 @@
 	},
 	"dependencies": {
 		"@docsearch/js": "^4.7.1",
-		"@eslint/js": "^10.0.1",
 		"@iconify-json/ic": "^1.2.4",
 		"@iconify-json/material-symbols": "^1.2.100",
 		"@iconify-json/mdi": "^1.2.3",
@@ -71,20 +73,11 @@
 		"@types/node": "catalog:",
 		"@types/react": "^19.3.0",
 		"@types/unist": "^3.0.3",
-		"@typescript-eslint/eslint-plugin": "^8.73.0",
-		"@typescript-eslint/parser": "^8.73.0",
 		"@vercel/config": "^0.14.1",
 		"@vinxi/plugin-mdx": "^3.7.2",
 		"clsx": "^2.1.1",
 		"concurrently": "^10.0.7",
 		"date-fns": "^4.4.0",
-		"eslint": "^10.15.0",
-		"eslint-config-prettier": "^10.1.8",
-		"eslint-parser-plain": "^0.1.1",
-		"eslint-plugin-mdx": "^3.10.1",
-		"eslint-plugin-prettier": "^5.5.7",
-		"eslint-plugin-react": "^7.37.5",
-		"eslint-plugin-simple-import-sort": "^14.0.0",
 		"fast-diff": "^1.3.0",
 		"fast-glob": "catalog:",
 		"fast-xml-parser": "^5.12.1",
@@ -104,8 +97,6 @@
 		"oxlint": "^1.94.0",
 		"oxlint-tsgolint": "^7.0.2007",
 		"pretendard": "^1.3.9",
-		"prettier": "^3.10.1",
-		"prettier-plugin-tailwindcss": "^0.8.1",
 		"rehype-slug": "^6.0.0",
 		"rehype-stringify": "^10.0.1",
 		"remark-frontmatter": "catalog:",
@@ -182,14 +173,7 @@
 		"vite": "catalog:",
 		"vite-imagetools": "^12.0.2",
 		"vitest": "catalog:",
-		"yaml-eslint-parser": "catalog:",
 		"zod": "^4.6.7"
-	},
-	"prettier": {
-		"plugins": [
-			"prettier-plugin-tailwindcss"
-		],
-		"tailwindStylesheet": "./src/styles/tailwind.css"
 	},
 	"packageManager": "pnpm@11.18.0+sha512.33d83c77da82f49fba836925c6f1b841181ec3132b670639bd012f7075f5c7cf634c5f870147c19aae7478fac01df09d8892e880454896edd23ee9b33757563c",
 	"engines": {
