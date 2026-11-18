@@ -91,6 +91,8 @@ export default defineConfig({
     nitro({
       preset: "vercel",
       plugins: ["./src/instrument.server.ts"],
+      // Bundle the Sentry plugin so Nitro can resolve its virtual imports.
+      noExternals: ["@sentry/nitro"],
       prerender: {
         routes: ["/blog/rss.xml"],
       },
