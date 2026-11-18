@@ -1,4 +1,7 @@
+import { readFileSync } from "node:fs";
+
 import eslint from "@eslint/js";
+import codeBlockFormat from "@portone-io/lint-code-block-format";
 import { eslintPlugin as localLinksValid } from "@portone-io/lint-local-links-valid";
 import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsEslintParser from "@typescript-eslint/parser";
@@ -7,6 +10,11 @@ import * as mdx from "eslint-plugin-mdx";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
 import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
+
+const formatOptions = JSON.parse(readFileSync("./.oxfmtrc.json", "utf8"));
+delete formatOptions.$schema;
+delete formatOptions.ignorePatterns;
+delete formatOptions.sortTailwindcss;
 
 /** @type {import("eslint").Linter.RulesRecord} */
 const tsRules = {
@@ -92,17 +100,8 @@ export default [
   },
   prettierRecommended,
   {
-    files: ["**/*.mdx/*.{json,yaml,yml,html,css,graphql,md,vue}"],
-    languageOptions: {
-      parser: {
-        meta: {
-          name: "eslint-parser-plain",
-        },
-        ...parserPlain,
-      },
-      ...prettierRecommended.languageOptions,
-    },
-    ...prettierRecommended,
+    files: ["**/*.mdx/*.{json,html,css,graphql}"],
+    languageOptions: { parser: parserPlain },
   },
   {
     ...mdx.flat,
@@ -119,10 +118,6 @@ export default [
     processor: await mdx.createRemarkProcessor({
       lintCodeBlocks: true,
     }),
-  },
-  {
-    files: ["**/*.mdx/*"],
-    rules: { "prettier/prettier": "error" },
   },
   {
     files: ["**/*.mdx/*.{ts,tsx}"],
@@ -158,6 +153,19 @@ export default [
     languageOptions: { parser: parserPlain },
     plugins: { "local-links-valid": localLinksValid },
     rules: { "local-links-valid/redir": "error" },
+  },
+  {
+    files: ["**/*.mdx/*"],
+    rules: {
+      "prettier/prettier": "off",
+      "simple-import-sort/imports": "off",
+      "simple-import-sort/exports": "off",
+    },
+  },
+  {
+    files: ["**/*.mdx/*.{ts,tsx,js,json,html,css,graphql}"],
+    plugins: { "code-block": codeBlockFormat },
+    rules: { "code-block/format": ["error", { formatOptions }] },
   },
   {
     files: ["**/__generated__/**/*"],

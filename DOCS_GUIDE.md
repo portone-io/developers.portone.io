@@ -165,26 +165,22 @@ import logo from "./_assets/tosspayments-logo.png";
 
 ### 코드 블럭에 올바른 언어 이름 사용하기
 
-개발자센터의 마크다운 코드 블럭은 [Prettier][]에 의해 포매팅되며,
+개발자센터의 마크다운 코드 블럭은 [oxfmt][]에 의해 포매팅되며,
 [Shiki][]에 의해 하이라이팅됩니다. 가급적이면 두 툴링을 모두 지원하는 언어를 사용하여
 코드 블럭을 작성해 주세요.
 
-- [Prettier에서 지원되는 언어 확인하기](https://prettier.io/docs/en/)
+- 포매팅되는 언어: `ts`, `typescript`, `tsx`, `js`, `javascript`, `json`, `html`, `css`, `graphql`
 - [Shiki에서 지원되는 언어 목록](https://shiki.matsu.io/languages)
 
-Prettier의 경우 플러그인을 통해 언어 지원을 추가할 수 있으니,
-만약 사용하시려는 언어에 대한 플러그인을 추가하기 원하신다면
+`ts`, `typescript`, `tsx` 코드 블럭은 ESLint로도 검사됩니다.
+그 밖의 언어로 작성된 코드 블럭은 포매팅되지 않습니다.
+포매팅이나 검사 대상 언어를 추가하기 원하신다면
 슬랙의 `#chapter-dx` 채널 또는 [GitHub Discussions][]를 통해 문의해 주세요.
 
-사용하시는 언어가 Prettier에 의해 지원됨에도 정상적으로 포매팅이 이뤄지지 않을 경우,
-다음을 의심해볼 수 있습니다.
+코드 블럭에 문법 오류가 있으면 포매팅이 이뤄지지 않고 `Parsing error` 또는 `코드 블록을 파싱할 수 없습니다` 오류가 발생합니다.
+문법 오류를 수정해주세요.
 
-- 문법 오류가 있어 정상적으로 포매팅이 이뤄지지 않고 있을 수 있습니다.
-  문법 오류를 수정해주세요.
-- `eslint-plugin-mdx`가 언어 이름을 정상적으로 파싱하지 못할 수 있습니다.
-  슬랙의 `#chapter-dx` 채널 또는 [GitHub Discussions][]를 통해 문의해 주세요.
-
-[Prettier]: https://prettier.io
+[oxfmt]: https://oxc.rs/docs/guide/usage/formatter
 [Shiki]: https://shiki.matsu.io
 
 ### 중복된 내용의 문서 작성 최소화하기
