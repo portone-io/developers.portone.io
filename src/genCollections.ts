@@ -5,7 +5,6 @@ import { subscribe } from "@parcel/watcher";
 import remarkParamTree from "@portone-io/remark-param-tree";
 import fastGlob from "fast-glob";
 import Slugger from "github-slugger";
-import jsYaml from "js-yaml";
 import type { Root } from "mdast";
 import { toString } from "mdast-util-to-string";
 import remarkFrontmatter from "remark-frontmatter";
@@ -29,6 +28,7 @@ import type {
   YamlNavMenuToplevelItem,
 } from "./type.ts";
 import { generateSlug } from "./utils/slugs.ts";
+import { loadYaml } from "./utils/yaml.ts";
 
 type Collection = {
   files: Set<string>;
@@ -113,7 +113,7 @@ async function parseMdx(
     .use(function () {
       return function (_, file) {
         const match = file.toString().match(/^---\n([\s\S]*?)\n---\n/);
-        file.data.frontmatter = match?.[1] ? jsYaml.load(match[1]) : {};
+        file.data.frontmatter = match?.[1] ? loadYaml(match[1]) : {};
       };
     })
     .process(content);
@@ -371,7 +371,7 @@ async function writeNavMenu(
 
   const navMenuEntries = await Promise.all(
     docsNavNames.map(async (name) => {
-      const yaml = jsYaml.load(
+      const yaml = loadYaml(
         await fs.readFile(navYamlPaths[name], "utf-8"),
       ) as YamlNavMenuToplevelItem[];
       const frontmatters = getNavFrontmatters(collections.get(name));
