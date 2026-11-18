@@ -1,5 +1,5 @@
 import opengraphDocsBg from "~/../public/opengraph-docs-bg.png?base64";
-import portoneLogoText from "~/../public/portone-logo-text.png?base64";
+import portoneLogoWhite from "~/assets/portone-logo-white.png?base64";
 
 export interface TitleAndDescriptionProps {
   title?: string;
@@ -69,7 +69,7 @@ export default function TitleAndDescription({
         }}
       >
         <img
-          src={`data:image/png;base64,${portoneLogoText}`}
+          src={`data:image/png;base64,${portoneLogoWhite}`}
           style={{ width: "180px" }}
         />
         개발자센터
