@@ -5,6 +5,7 @@
 - `src/components` and `src/layouts` hold reusable Solid/MDX UI building blocks.
 - `scripts/` contains build-time generators such as `sitemap`, `llms-txt`, `docs-for-llms`, and `mdx-to-markdown`.
 - `packages/*` contains workspace utilities (custom lint rules, remark plugins, schema/code generators).
+- `eslint.config.ts` lints only MDX and `_nav.yaml`/`_redir.yaml`; JS/TS is linted by oxlint.
 - Generated files live in `src/content/__generated__` and `src/components/parameter/__generated__`; do not edit these manually.
 - Keep content assets next to MDX in `_assets/` directories (for example, release note images under dated folders).
 
@@ -14,13 +15,15 @@
 - `pnpm build`: run full production pipeline (schema update, collection generation, LLM docs, sitemap, Vite build).
 - `pnpm check`: run lint gate used by CI.
 - `pnpm lint:fix`: auto-fix lint/style issues where possible.
+- `pnpm lint:js`, `pnpm lint:format`, `pnpm lint:docs`: run each lint step on its own (oxlint, oxfmt, ESLint for MDX/YAML).
 - `pnpm test`: run Vitest suites in `src/` and `scripts/`.
 - `pnpm test:watch`: run tests in watch mode during local iteration.
 
 ## Coding Style & Naming Conventions
 - Follow `.editorconfig`: 2-space indentation, LF line endings, final newline.
 - TypeScript strict mode is enabled; prefer `~/*` imports for `src` modules.
-- ESLint + Prettier + remark-lint are authoritative; keep imports sorted and UnoCSS utilities in enforced order.
+- oxlint + oxfmt + ESLint (MDX/YAML only) + remark-lint are authoritative; keep imports sorted and Tailwind utilities in enforced order (oxfmt sorts both).
+- MDX is linted by ESLint with `eslint-plugin-mdx`: remark-lint rules from `.remarkrc.js`, oxfmt formatting of code blocks (`@portone-io/lint-code-block-format`), typescript-eslint on TypeScript code blocks, sorted imports, and undefined/unused component imports.
 - In MDX, prefer semantic markdown and import local images from `_assets/` instead of hard-coded URL paths.
 - Use date-based names for release notes: `YYYY-MM-DD.mdx`.
 

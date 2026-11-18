@@ -36,7 +36,9 @@ export type YamlNavMenuToplevelItem =
   | YamlNavMenuExternalPage
   | YamlNavMenuGroup;
 export type YamlNavMenuItem =
-  YamlNavMenuPageSugar | YamlNavMenuPage | YamlNavMenuExternalPage;
+  | YamlNavMenuPageSugar
+  | YamlNavMenuPage
+  | YamlNavMenuExternalPage;
 type YamlNavMenuPageSugar = string;
 interface YamlNavMenuPage {
   slug: string;

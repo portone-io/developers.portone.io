@@ -6,9 +6,13 @@
 
 ## 에디터 환경 구성하기
 
-개발자센터의 문서는 ESLint와 Prettier, remark-lint를 통해 포매팅과 린팅이 이뤄집니다.
+개발자센터의 문서는 [ESLint](https://eslint.org)와 [remark-lint](https://github.com/remarkjs/remark-lint), [oxfmt][]를 통해 포매팅과 린팅이 이뤄집니다.
 [각 툴에 맞는 VSCode 확장](./.vscode/extensions.json)이 저장소에 설정돼있으니
 가급적 VSCode에서 저장소 추천 에디터 확장을 전부 설치하고 문서 수정을 부탁드립니다.
+ESLint 확장을 설치하면 MDX 문서와 `_nav.yaml`, `_redir.yaml`의 오류가 에디터에 바로 표시되며,
+MDX 문서는 저장할 때 자동으로 수정됩니다.
+
+터미널에서는 `pnpm lint:docs`로 검사하고, `pnpm lint:fix`로 자동 수정할 수 있습니다.
 
 ## 컴포넌트 활용하기
 
