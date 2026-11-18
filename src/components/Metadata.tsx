@@ -120,6 +120,9 @@ export default function Metadata(_props: Props) {
         <Meta name="description" content={props.description} />
         <Meta property="og:description" content={props.description} />
       </Show>
+      <Show when={props.docsEntry?.unlisted}>
+        <Meta name="robots" content="noindex" />
+      </Show>
       <Link rel="canonical" href={canonicalUrl()} />
       <Show when={alternateUrl()}>
         <Link rel="alternate" href={alternateUrl()} />
