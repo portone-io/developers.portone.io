@@ -1,8 +1,5 @@
 import path from "node:path";
 
-import type { Rule } from "eslint";
-import type { AST } from "yaml-eslint-parser";
-
 export function isLocalLink(url: string): boolean {
   try {
     new URL(url);
@@ -53,50 +50,4 @@ export function isFileExists(
   if (!files.has(pathname)) {
     message(`파일을 찾을 수 없습니다: ${pathname}`);
   }
-}
-
-type YAMLNodeType = AST.YAMLNode["type"];
-type YAMLNodeOf<T extends YAMLNodeType> = Extract<AST.YAMLNode, { type: T }>;
-
-/**
- * YAML AST 노드 타입별 ESLint rule listener입니다.
- *
- * eslint-plugin-yml v2부터 내부 타입(`lib/types`)을 공개하지 않으므로,
- * yaml-eslint-parser의 AST 노드 타입에서 직접 생성합니다.
- */
-export type RuleListener = {
-  [T in YAMLNodeType]?: (node: YAMLNodeOf<T>) => void;
-} & {
-  [T in YAMLNodeType as `${T}:exit`]?: (node: YAMLNodeOf<T>) => void;
-} & {
-  [key: string]: ((node: never) => void) | undefined;
-};
-
-export interface RuleModule {
-  meta: Rule.RuleMetaData;
-  create(context: Rule.RuleContext): RuleListener;
-}
-
-export function isYAMLDocument(
-  node: AST.YAMLNode | null | undefined,
-): node is AST.YAMLDocument {
-  return node !== null && node !== undefined && node.type === "YAMLDocument";
-}
-
-export function isYAMLScalar(
-  node: AST.YAMLNode | null | undefined,
-): node is AST.YAMLScalar {
-  return node !== null && node !== undefined && node.type === "YAMLScalar";
-}
-
-export function isYAMLPair(
-  node: AST.YAMLNode | null | undefined,
-): node is AST.YAMLPair {
-  return node !== null && node !== undefined && node.type === "YAMLPair";
-}
-
-export function isYAMLSequence(
-  node: AST.YAMLNode | null | undefined,
-): node is AST.YAMLSequence {
-  return node !== null && node !== undefined && node.type === "YAMLSequence";
 }

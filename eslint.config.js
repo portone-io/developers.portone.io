@@ -1,8 +1,4 @@
 import eslint from "@eslint/js";
-import {
-  navLintLocalLinksValid,
-  redirLintLocalLinksValid,
-} from "@portone-io/lint-local-links-valid";
 import tsEslintPlugin from "@typescript-eslint/eslint-plugin";
 import tsEslintParser from "@typescript-eslint/parser";
 import * as parserPlain from "eslint-parser-plain";
@@ -12,7 +8,6 @@ import react from "eslint-plugin-react";
 import sortImports from "eslint-plugin-simple-import-sort";
 import { readFileSync } from "fs";
 import { load } from "js-yaml";
-import * as YAMLParser from "yaml-eslint-parser";
 
 const redirects = load(
   readFileSync("src/routes/(root)/docs/_redir.yaml", "utf8"),
@@ -157,21 +152,6 @@ export default [
     rules: {
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
-    },
-  },
-  {
-    files: ["**/_redir.yaml", "**/_nav.yaml"],
-    ignores: [],
-    plugins: {
-      redir: redirLintLocalLinksValid,
-      nav: navLintLocalLinksValid,
-    },
-    languageOptions: {
-      parser: YAMLParser,
-    },
-    rules: {
-      "redir/local-links-valid": "error",
-      "nav/local-links-valid": "error",
     },
   },
   {

@@ -16,11 +16,9 @@ if (!Array.isArray(redirects)) {
 }
 
 // 코드 블록은 JS/TS 파일과 같은 oxfmt 설정으로 포맷합니다.
-const {
-  $schema: _schema,
-  ignorePatterns: _ignorePatterns,
-  ...formatOptions
-} = JSON.parse(readFileSync("./.oxfmtrc.json", "utf8"));
+const formatOptions = JSON.parse(readFileSync("./.oxfmtrc.json", "utf8"));
+delete formatOptions.$schema;
+delete formatOptions.ignorePatterns;
 
 export default {
   plugins: [
