@@ -6,14 +6,9 @@ versionVariants:
   v1: /opi/ko/integration/webhook/readme-v1
 ---
 
-import Figure from "~/components/Figure";
 import Details from "~/components/gitbook/Details";
 import Tabs from "~/components/gitbook/Tabs";
 import Hint from "~/components/Hint";
-
-import image2 from "./_assets/webhook-secret-1.png";
-import image3 from "./_assets/webhook-secret-2.png";
-import image0 from "./_assets/webhook-setting.png";
 
 ## 웹훅(Webhook) 이란?
 
@@ -157,15 +152,11 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
 
 웹훅을 통해 결제 정보를 통보받을 URL을 설정하는 과정은 다음과 같습니다.
 
-<Figure src={image0} />
+- 포트원 관리자 콘솔 내 \[결제 연동] → \[연동 정보] → [결제알림(Webhook) 관리](https://admin.portone.io/integration-v2/manage/webhook) 탭을 선택합니다.
 
-- 포트원 관리자 콘솔 내 \[결제 연동] → \[연동 관리] → **\[결제알림(Webhook) 관리]** 탭을 선택합니다.
+- 탭 상단에서 **\[V2 실연동]** 또는 **\[V2 테스트]** 를 선택합니다. (연동 환경에 따라 웹훅 URL을 각각 다르게 설정할 수 있습니다.)
 
-- \[웹훅 버전] 항목에서 **\[결제모듈 V2]** 를 선택합니다.
-
-- \[설정 모드] 항목에서 \[실연동] 또는 \[테스트]를 선택합니다. (연동 환경에 따라 웹훅 URL을 각각 다르게 설정할 수 있습니다.)
-
-- **Endpoint URL**에 웹훅 데이터를 수신할 URL을 입력합니다.
+- **웹훅 URL**에 웹훅 데이터를 수신할 URL을 입력합니다.
 
 - **Content Type**을 설정합니다. `Content Type`은 `application/json` 또는
   `application/x-www-form-urlencoded` 중 하나로 설정할 수 있습니다.
@@ -176,7 +167,7 @@ Webhook을 활용하면 커스텀 기능이나 다른 애플리케이션과 연�
 
 <Hint style="info">
   `호출 테스트` 버튼을 클릭하면 저장된 URL로 테스트 웹훅이 발송됩니다. 이를 통해 올바른 URL과 Content-Type을 지정했는지 테스트할 수 있습니다.
-  콘솔 내 화면에서 Endpoint URL 변경 후 저장하지 않은 채 호출테스트를 시도하시면 이전에 저장된 주소로 발송되오니 주의하시길 바랍니다.
+  콘솔 내 화면에서 웹훅 URL 변경 후 저장하지 않은 채 호출테스트를 시도하시면 이전에 저장된 주소로 발송되오니 주의하시길 바랍니다.
 </Hint>
 
 <Hint style="info">
@@ -222,12 +213,9 @@ PortOne.requestPayment({
 
 ### 1. 웹훅 시크릿 발급하기
 
-<Figure src={image2} />
-
-- 포트원 관리자 콘솔 내 \[결제 연동] → \[연동 관리] → **\[결제알림(Webhook) 관리]** 탭을 선택합니다.
-- \[웹훅 버전] 항목에서 **\[결제모듈 V2]** 를 선택합니다.
-- \[설정 모드] 항목에서 \[실연동] 또는 \[테스트]를 선택합니다. (연동 환경에 따라 웹훅 시크릿을 각각 발급할 수 있습니다.)
-- 우측 하단의 **\[웹훅 시크릿 발급]** 버튼을 클릭합니다.
+- 포트원 관리자 콘솔 내 \[결제 연동] → \[연동 정보] → [결제알림(Webhook) 관리](https://admin.portone.io/integration-v2/manage/webhook) 탭을 선택합니다.
+- 탭 상단에서 **\[V2 실연동]** 또는 **\[V2 테스트]** 를 선택합니다. (연동 환경에 따라 웹훅 시크릿을 각각 발급할 수 있습니다.)
+- 웹훅 설정 아래의 웹훅 시크릿 영역에서 **\[웹훅 시크릿 발급]** 버튼을 클릭한 뒤, 확인 창에서 \[발급]을 클릭합니다.
 
 ### 2. 시크릿을 이용해 signature 검사하기
 
@@ -447,8 +435,6 @@ Server SDK 사용을 원치 않으시거나 SDK가 지원되지 않는 언어를
 
 - 고객사 서버 코드에서 사용되고 있던 시크릿을 새로 발급한 시크릿으로 교체합니다.
   (시크릿은 기밀 정보이므로 어플리케이션 내에 하드코딩하지 않고 환경 변수로 관리하시는 것을 권장합니다.)
-
-<Figure src={image3} />
 
 - 더 이상 기존 시크릿이 고객사 서버에서 사용되지 않는 것을 확인한 후, 콘솔에서 기존 시크릿을 만료시킵니다.
 
