@@ -11,7 +11,7 @@ import ksnetLogo from "~/assets/pg-circle/ksnet.png";
 import naverLogo from "~/assets/pg-circle/naver.png";
 import niceLogo from "~/assets/pg-circle/nice.png";
 import payletterLogo from "~/assets/pg-circle/payletter.png";
-import portoneLogo from "~/assets/pg-circle/portone.svg";
+import portoneLogo from "~/assets/pg-circle/portone.svg?url";
 import smartroLogo from "~/assets/pg-circle/smartro.png";
 import tossLogo from "~/assets/pg-circle/toss.png";
 import tripleALogo from "~/assets/pg-circle/triple-a.png";
@@ -21,7 +21,7 @@ import type { PaymentGateway } from "~/type";
 
 export type PgSelectOption = {
   label: string;
-  icon: VitePicture;
+  icon: VitePicture | string;
 };
 
 export const PgOptions = {
@@ -43,6 +43,10 @@ export const PgOptions = {
   payletter_global: { label: "페이레터해외결제", icon: payletterLogo },
   triple_a: { label: "Triple-A", icon: tripleALogo },
 } as const satisfies Record<PaymentGateway | "all", PgSelectOption>;
+
+function iconSrc(icon: PgSelectOption["icon"]) {
+  return typeof icon === "string" ? icon : icon.img.src;
+}
 
 interface PgSelectProps {
   class?: string;
@@ -83,7 +87,7 @@ export function PgSelect(props: PgSelectProps) {
               </Select.ItemIndicator>
             </div>
             <img
-              src={optionInfo().icon.img.src}
+              src={iconSrc(optionInfo().icon)}
               alt={optionInfo().label}
               class="h-5 w-5 rounded-full"
             />
@@ -110,7 +114,7 @@ export function PgSelect(props: PgSelectProps) {
             return (
               <div class="flex gap-1.5">
                 <img
-                  src={PgOptions[selectedOption()].icon.img.src}
+                  src={iconSrc(PgOptions[selectedOption()].icon)}
                   alt={PgOptions[selectedOption()].label}
                   class="h-5 w-5 rounded-full"
                 />
