@@ -19864,6 +19864,890 @@
           "$ref": "#/components/schemas/RefreshTokenError"
         }
       }
+    },
+    "/ap/contracts": {
+      "get": {
+        "summary": "계약 다건 조회",
+        "description": "계약 다건 조회\n\n계약 목록을 등록순으로 조회합니다.",
+        "operationId": "getApContracts",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractsBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetApContractsBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 계약 목록과 페이지 정보를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractsResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 계약 목록과 페이지 정보를 반환합니다."
+          },
+          "400": {
+            "description": "* `ApInvalidInputError`: 입력값이 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractsError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractsError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractsError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "계약 다건 조회",
+        "x-portone-description": "계약 목록을 등록순으로 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetApContractsError"
+        }
+      },
+      "post": {
+        "summary": "계약 등록",
+        "description": "계약 등록\n\n계약을 등록합니다.",
+        "operationId": "createApContract",
+        "requestBody": {
+          "description": "계약 등록 입력 정보",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApContractBody"
+              }
+            }
+          },
+          "required": true,
+          "x-portone-title": "계약 등록 입력 정보"
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 등록된 계약을 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApContractResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 등록된 계약을 반환합니다."
+          },
+          "400": {
+            "description": "* `ApInvalidInputError`: 입력값이 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApContractError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApContractError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `InfluencerNotFoundError`: 요청된 인플루언서가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "계약 등록",
+        "x-portone-description": "계약을 등록합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreateApContractError"
+        }
+      }
+    },
+    "/ap/contracts/{contractId}": {
+      "get": {
+        "summary": "계약 단건 조회",
+        "description": "계약 단건 조회\n\n계약을 조회합니다.",
+        "operationId": "getApContract",
+        "parameters": [
+          {
+            "name": "contractId",
+            "in": "path",
+            "description": "계약 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "계약 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 계약을 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 계약을 반환합니다."
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `ApContractNotFoundError`: 요청된 계약이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "계약 단건 조회",
+        "x-portone-description": "계약을 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetApContractError"
+        }
+      },
+      "put": {
+        "summary": "계약 수정",
+        "description": "계약 수정\n\n계약을 수정합니다. 인플루언서는 바꿀 수 없고, 입력하지 않은 선택 항목은 지워집니다.\n지급대기, 지급요청, 지급확정 상태의 계약만 수정할 수 있고, 지급확정 계약을 수정하면 지급요청 상태로 바뀝니다.",
+        "operationId": "updateApContract",
+        "parameters": [
+          {
+            "name": "contractId",
+            "in": "path",
+            "description": "계약 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "계약 아이디"
+          }
+        ],
+        "requestBody": {
+          "description": "계약 수정 입력 정보",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApContractBody"
+              }
+            }
+          },
+          "required": true,
+          "x-portone-title": "계약 수정 입력 정보"
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 수정된 계약을 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApContractResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 수정된 계약을 반환합니다."
+          },
+          "400": {
+            "description": "* `ApInvalidInputError`: 입력값이 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApContractError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApContractError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `ApContractNotFoundError`: 요청된 계약이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApContractError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `ApContractNotEditableError`: 계약이 수정 불가능한 상태인 경우\n* `InfluencerNotSubmittedError`: 인플루언서가 수취인 입력 폼을 제출하지 않은 경우\n* `ApTooManyDeletedCustomFieldValuesError`: 삭제된 커스텀 필드 정의의 값이 최대 개수를 초과한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "계약 수정",
+        "x-portone-description": "계약을 수정합니다. 인플루언서는 바꿀 수 없고, 입력하지 않은 선택 항목은 지워집니다.\n지급대기, 지급요청, 지급확정 상태의 계약만 수정할 수 있고, 지급확정 계약을 수정하면 지급요청 상태로 바뀝니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdateApContractError"
+        }
+      },
+      "delete": {
+        "summary": "계약 삭제",
+        "description": "계약 삭제\n\n계약을 삭제합니다. 지급대기 상태의 계약만 삭제할 수 있습니다.",
+        "operationId": "deleteApContract",
+        "parameters": [
+          {
+            "name": "contractId",
+            "in": "path",
+            "description": "계약 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "계약 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApContractResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApContractError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApContractError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `ApContractNotFoundError`: 요청된 계약이 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApContractError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `ApContractNotDeletableError`: 계약이 삭제할 수 없는 상태인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApContractError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "계약 삭제",
+        "x-portone-description": "계약을 삭제합니다. 지급대기 상태의 계약만 삭제할 수 있습니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DeleteApContractError"
+        }
+      }
+    },
+    "/ap/influencers": {
+      "get": {
+        "summary": "인플루언서 다건 조회",
+        "description": "인플루언서 다건 조회\n\n인플루언서 목록을 등록순으로 조회합니다.",
+        "operationId": "getApInfluencers",
+        "parameters": [
+          {
+            "name": "requestBody",
+            "in": "query",
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencersBody"
+                }
+              }
+            },
+            "x-portone-query-or-body": {
+              "enabled": true,
+              "required": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetApInfluencersBody"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 인플루언서 목록과 페이지 정보를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencersResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 인플루언서 목록과 페이지 정보를 반환합니다."
+          },
+          "400": {
+            "description": "* `ApInvalidInputError`: 입력값이 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencersError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencersError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencersError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "인플루언서 다건 조회",
+        "x-portone-description": "인플루언서 목록을 등록순으로 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetApInfluencersError"
+        }
+      },
+      "post": {
+        "summary": "인플루언서 등록",
+        "description": "인플루언서 등록\n\n인플루언서를 등록합니다.",
+        "operationId": "createApInfluencer",
+        "requestBody": {
+          "description": "인플루언서 등록 입력 정보",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApInfluencerBody"
+              }
+            }
+          },
+          "required": true,
+          "x-portone-title": "인플루언서 등록 입력 정보"
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 등록된 인플루언서를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApInfluencerResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 등록된 인플루언서를 반환합니다."
+          },
+          "400": {
+            "description": "* `ApInvalidInputError`: 입력값이 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApInfluencerError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApInfluencerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApInfluencerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "인플루언서 등록",
+        "x-portone-description": "인플루언서를 등록합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/CreateApInfluencerError"
+        }
+      }
+    },
+    "/ap/influencers/{influencerId}": {
+      "get": {
+        "summary": "인플루언서 단건 조회",
+        "description": "인플루언서 단건 조회\n\n인플루언서를 조회합니다.",
+        "operationId": "getApInfluencer",
+        "parameters": [
+          {
+            "name": "influencerId",
+            "in": "path",
+            "description": "인플루언서 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "인플루언서 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 인플루언서를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencerResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 인플루언서를 반환합니다."
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencerError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `InfluencerNotFoundError`: 요청된 인플루언서가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApInfluencerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "인플루언서 단건 조회",
+        "x-portone-description": "인플루언서를 조회합니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/GetApInfluencerError"
+        }
+      },
+      "put": {
+        "summary": "인플루언서 수정",
+        "description": "인플루언서 수정\n\n인플루언서를 수정합니다. 이름은 바꿀 수 없고, 채널을 뺀 나머지 선택 항목은 입력하지 않으면 지워집니다.\n통화나 지급 방식을 바꾸면 지급정보를 다시 받아야 합니다. 지급요청이나 지급확정 상태의 계약이 있으면 바꿀 수 없습니다.",
+        "operationId": "updateApInfluencer",
+        "parameters": [
+          {
+            "name": "influencerId",
+            "in": "path",
+            "description": "인플루언서 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "인플루언서 아이디"
+          }
+        ],
+        "requestBody": {
+          "description": "인플루언서 수정 입력 정보",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApInfluencerBody"
+              }
+            }
+          },
+          "required": true,
+          "x-portone-title": "인플루언서 수정 입력 정보"
+        },
+        "responses": {
+          "200": {
+            "description": "성공 응답으로 수정된 인플루언서를 반환합니다.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApInfluencerResponse"
+                }
+              }
+            },
+            "x-portone-description": "성공 응답으로 수정된 인플루언서를 반환합니다."
+          },
+          "400": {
+            "description": "* `ApInvalidInputError`: 입력값이 유효하지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApInfluencerError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApInfluencerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApInfluencerError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `InfluencerNotFoundError`: 요청된 인플루언서가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApInfluencerError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `ApTooManyDeletedCustomFieldValuesError`: 삭제된 커스텀 필드 정의의 값이 최대 개수를 초과한 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApInfluencerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "인플루언서 수정",
+        "x-portone-description": "인플루언서를 수정합니다. 이름은 바꿀 수 없고, 채널을 뺀 나머지 선택 항목은 입력하지 않으면 지워집니다.\n통화나 지급 방식을 바꾸면 지급정보를 다시 받아야 합니다. 지급요청이나 지급확정 상태의 계약이 있으면 바꿀 수 없습니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/UpdateApInfluencerError"
+        }
+      },
+      "delete": {
+        "summary": "인플루언서 삭제",
+        "description": "인플루언서 삭제\n\n인플루언서를 삭제합니다. 계약이 있는 인플루언서는 삭제할 수 없습니다.",
+        "operationId": "deleteApInfluencer",
+        "parameters": [
+          {
+            "name": "influencerId",
+            "in": "path",
+            "description": "인플루언서 아이디",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-portone-title": "인플루언서 아이디"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "성공 응답",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApInfluencerResponse"
+                }
+              }
+            },
+            "x-portone-title": "성공 응답"
+          },
+          "401": {
+            "description": "* `UnauthorizedError`: 인증 정보가 올바르지 않은 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApInfluencerError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "* `ForbiddenError`: 요청이 거절된 경우\n* `ApApiNotEnabledError`: API 사용이 허용되지 않은 워크스페이스인 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApInfluencerError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "* `InfluencerNotFoundError`: 요청된 인플루언서가 존재하지 않는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApInfluencerError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "* `InfluencerHasContractError`: 인플루언서에 연결된 계약이 존재하는 경우",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApInfluencerError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerJwt": []
+          },
+          {
+            "portOne": []
+          }
+        ],
+        "x-portone-category": "ap",
+        "x-portone-unstable": true,
+        "x-portone-title": "인플루언서 삭제",
+        "x-portone-description": "인플루언서를 삭제합니다. 계약이 있는 인플루언서는 삭제할 수 없습니다.",
+        "x-portone-error": {
+          "$ref": "#/components/schemas/DeleteApInfluencerError"
+        }
+      }
     }
   },
   "components": {
@@ -61169,6 +62053,2013 @@
         },
         "x-portone-title": "구독 결제 옵션 수정 입력",
         "x-portone-description": "입력한 필드만 고칩니다. null을 보내면 그 필드를 지웁니다."
+      },
+      "GetApContractsBody": {
+        "title": "계약 다건 조회 입력 정보",
+        "description": "계약 다건 조회 입력 정보",
+        "type": "object",
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/PageInput",
+            "title": "페이지 정보",
+            "description": "페이지 번호는 0부터 시작합니다. 크기는 1~20이고, 입력하지 않으면 10입니다."
+          }
+        },
+        "x-portone-title": "계약 다건 조회 입력 정보"
+      },
+      "GetApContractsResponse": {
+        "title": "계약 다건 조회 성공 응답",
+        "description": "계약 다건 조회 성공 응답",
+        "type": "object",
+        "required": [
+          "items",
+          "page"
+        ],
+        "properties": {
+          "items": {
+            "title": "조회된 계약 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApApiContract"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInfo",
+            "title": "페이지 정보"
+          }
+        },
+        "x-portone-title": "계약 다건 조회 성공 응답"
+      },
+      "ApApiContract": {
+        "title": "계약",
+        "description": "계약",
+        "type": "object",
+        "required": [
+          "id",
+          "influencerId",
+          "amount",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "계약 아이디"
+          },
+          "influencerId": {
+            "type": "string",
+            "title": "인플루언서 아이디"
+          },
+          "name": {
+            "type": "string",
+            "title": "계약명"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "계약 금액",
+            "description": "인플루언서 통화의 최소 단위(ISO 4217 minor unit) 정수입니다. 예: 6 USD는 600, 6000 KRW는 6000."
+          },
+          "periodStart": {
+            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "계약 시작일"
+          },
+          "periodEnd": {
+            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "계약 종료일"
+          },
+          "scheduledPaymentDate": {
+            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "지급 예정일"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ApContractContent",
+            "title": "콘텐츠 정보"
+          },
+          "memo": {
+            "type": "string",
+            "title": "메모"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PayoutStatus",
+            "title": "지급 상태"
+          }
+        },
+        "x-portone-title": "계약"
+      },
+      "ApContractContent": {
+        "title": "계약 콘텐츠 정보",
+        "description": "계약 콘텐츠 정보",
+        "type": "object",
+        "required": [
+          "urls"
+        ],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "title": "콘텐츠 수"
+          },
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "콘텐츠 URL 목록"
+          }
+        },
+        "x-portone-title": "계약 콘텐츠 정보"
+      },
+      "PayoutStatus": {
+        "title": "지급 상태",
+        "description": "지급 상태",
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "REQUESTED",
+          "CONFIRMED",
+          "PROCESSING",
+          "CANCELLED",
+          "SUCCESS",
+          "FAILED"
+        ],
+        "x-portone-title": "지급 상태",
+        "x-portone-enum": {
+          "CONFIRMED": {
+            "title": "지급 확정"
+          },
+          "CANCELLED": {
+            "title": "지급 취소"
+          },
+          "SUCCESS": {
+            "title": "지급 완료"
+          },
+          "PROCESSING": {
+            "title": "지급중"
+          },
+          "PENDING": {
+            "title": "지급 미요청"
+          },
+          "REQUESTED": {
+            "title": "지급 요청"
+          },
+          "FAILED": {
+            "title": "지급 실패"
+          }
+        }
+      },
+      "GetApContractsError": {
+        "title": "GetApContractsError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ApInvalidInputError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "AP_INVALID_INPUT": "#/components/schemas/ApInvalidInputError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ApApiNotEnabledError": {
+        "title": "API 사용이 허용되지 않은 워크스페이스인 경우",
+        "description": "API 사용이 허용되지 않은 워크스페이스인 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "API 사용이 허용되지 않은 워크스페이스인 경우",
+        "x-portone-status-code": 403
+      },
+      "ApInvalidInputError": {
+        "title": "입력값이 유효하지 않은 경우",
+        "description": "입력값이 유효하지 않은 경우",
+        "type": "object",
+        "required": [
+          "type",
+          "violations"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "violations": {
+            "title": "검증 실패 항목",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApInvalidInputViolation"
+            }
+          }
+        },
+        "x-portone-title": "입력값이 유효하지 않은 경우",
+        "x-portone-status-code": 400
+      },
+      "ApInvalidInputViolation": {
+        "title": "입력값 검증 실패 항목",
+        "description": "입력값 검증 실패 항목",
+        "type": "object",
+        "required": [
+          "field",
+          "message"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "title": "필드"
+          },
+          "message": {
+            "type": "string",
+            "title": "실패 사유"
+          }
+        },
+        "x-portone-title": "입력값 검증 실패 항목"
+      },
+      "CreateApContractBody": {
+        "title": "계약 등록 입력 정보",
+        "description": "계약 등록 입력 정보\n\n날짜는 한국 시간 기준입니다.",
+        "type": "object",
+        "required": [
+          "influencerId",
+          "amount"
+        ],
+        "properties": {
+          "influencerId": {
+            "type": "string",
+            "title": "인플루언서 아이디"
+          },
+          "name": {
+            "type": "string",
+            "title": "계약명"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "계약 금액",
+            "description": "인플루언서 통화의 최소 단위(ISO 4217 minor unit) 정수입니다. 예: 6 USD는 600, 6000 KRW는 6000. 0보다 커야 합니다."
+          },
+          "periodStart": {
+            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "계약 시작일"
+          },
+          "periodEnd": {
+            "description": "계약 시작일보다 앞설 수 없습니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "계약 종료일"
+          },
+          "scheduledPaymentDate": {
+            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "지급 예정일"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ApContractContentInput",
+            "title": "콘텐츠 정보"
+          },
+          "memo": {
+            "type": "string",
+            "title": "메모"
+          }
+        },
+        "x-portone-title": "계약 등록 입력 정보",
+        "x-portone-description": "날짜는 한국 시간 기준입니다."
+      },
+      "ApContractContentInput": {
+        "title": "계약 콘텐츠 입력 정보",
+        "description": "계약 콘텐츠 입력 정보",
+        "type": "object",
+        "required": [
+          "urls"
+        ],
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "title": "콘텐츠 수"
+          },
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "title": "콘텐츠 URL 목록"
+          }
+        },
+        "x-portone-title": "계약 콘텐츠 입력 정보"
+      },
+      "CreateApContractResponse": {
+        "title": "계약 등록 성공 응답",
+        "description": "계약 등록 성공 응답",
+        "type": "object",
+        "required": [
+          "contract"
+        ],
+        "properties": {
+          "contract": {
+            "$ref": "#/components/schemas/ApApiContract",
+            "title": "등록된 계약"
+          }
+        },
+        "x-portone-title": "계약 등록 성공 응답"
+      },
+      "CreateApContractError": {
+        "title": "CreateApContractError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ApInvalidInputError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InfluencerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "AP_INVALID_INPUT": "#/components/schemas/ApInvalidInputError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INFLUENCER_NOT_FOUND": "#/components/schemas/InfluencerNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "InfluencerNotFoundError": {
+        "title": "요청된 인플루언서가 존재하지 않는 경우",
+        "description": "요청된 인플루언서가 존재하지 않는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "요청된 인플루언서가 존재하지 않는 경우",
+        "x-portone-status-code": 404
+      },
+      "GetApContractResponse": {
+        "title": "계약 단건 조회 성공 응답",
+        "description": "계약 단건 조회 성공 응답",
+        "type": "object",
+        "required": [
+          "contract"
+        ],
+        "properties": {
+          "contract": {
+            "$ref": "#/components/schemas/ApApiContract",
+            "title": "계약"
+          }
+        },
+        "x-portone-title": "계약 단건 조회 성공 응답"
+      },
+      "GetApContractError": {
+        "title": "GetApContractError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ApContractNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "AP_CONTRACT_NOT_FOUND": "#/components/schemas/ApContractNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ApContractNotFoundError": {
+        "title": "요청된 계약이 존재하지 않는 경우",
+        "description": "요청된 계약이 존재하지 않는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "요청된 계약이 존재하지 않는 경우",
+        "x-portone-status-code": 404
+      },
+      "UpdateApContractBody": {
+        "title": "계약 수정 입력 정보",
+        "description": "계약 수정 입력 정보\n\n날짜는 한국 시간 기준입니다.",
+        "type": "object",
+        "required": [
+          "amount"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "계약명"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64",
+            "title": "계약 금액",
+            "description": "인플루언서 통화의 최소 단위(ISO 4217 minor unit) 정수입니다. 예: 6 USD는 600, 6000 KRW는 6000. 0보다 커야 합니다."
+          },
+          "periodStart": {
+            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "계약 시작일"
+          },
+          "periodEnd": {
+            "description": "계약 시작일보다 앞설 수 없습니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "계약 종료일"
+          },
+          "scheduledPaymentDate": {
+            "description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "type": "string",
+            "format": "date",
+            "x-portone-description": "날짜를 나타내는 문자열로, `yyyy-MM-dd` 형식을 따릅니다.",
+            "title": "지급 예정일"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ApContractContentInput",
+            "title": "콘텐츠 정보"
+          },
+          "memo": {
+            "type": "string",
+            "title": "메모"
+          }
+        },
+        "x-portone-title": "계약 수정 입력 정보",
+        "x-portone-description": "날짜는 한국 시간 기준입니다."
+      },
+      "UpdateApContractResponse": {
+        "title": "계약 수정 성공 응답",
+        "description": "계약 수정 성공 응답",
+        "type": "object",
+        "required": [
+          "contract"
+        ],
+        "properties": {
+          "contract": {
+            "$ref": "#/components/schemas/ApApiContract",
+            "title": "수정된 계약"
+          }
+        },
+        "x-portone-title": "계약 수정 성공 응답"
+      },
+      "UpdateApContractError": {
+        "title": "UpdateApContractError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ApContractNotEditableError"
+          },
+          {
+            "$ref": "#/components/schemas/ApContractNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ApInvalidInputError"
+          },
+          {
+            "$ref": "#/components/schemas/ApTooManyDeletedCustomFieldValuesError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InfluencerNotSubmittedError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "AP_CONTRACT_NOT_EDITABLE": "#/components/schemas/ApContractNotEditableError",
+            "AP_CONTRACT_NOT_FOUND": "#/components/schemas/ApContractNotFoundError",
+            "AP_INVALID_INPUT": "#/components/schemas/ApInvalidInputError",
+            "AP_TOO_MANY_DELETED_CUSTOM_FIELD_VALUES": "#/components/schemas/ApTooManyDeletedCustomFieldValuesError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INFLUENCER_NOT_SUBMITTED": "#/components/schemas/InfluencerNotSubmittedError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ApContractNotEditableError": {
+        "title": "계약이 수정 불가능한 상태인 경우",
+        "description": "계약이 수정 불가능한 상태인 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "계약이 수정 불가능한 상태인 경우",
+        "x-portone-status-code": 409
+      },
+      "ApTooManyDeletedCustomFieldValuesError": {
+        "title": "삭제된 커스텀 필드 정의의 값이 최대 개수를 초과한 경우",
+        "description": "삭제된 커스텀 필드 정의의 값이 최대 개수를 초과한 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "삭제된 커스텀 필드 정의의 값이 최대 개수를 초과한 경우",
+        "x-portone-status-code": 409
+      },
+      "InfluencerNotSubmittedError": {
+        "title": "인플루언서가 수취인 입력 폼을 제출하지 않은 경우",
+        "description": "인플루언서가 수취인 입력 폼을 제출하지 않은 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "인플루언서가 수취인 입력 폼을 제출하지 않은 경우",
+        "x-portone-status-code": 409
+      },
+      "DeleteApContractResponse": {
+        "title": "계약 삭제 성공 응답",
+        "description": "계약 삭제 성공 응답",
+        "type": "object",
+        "x-portone-title": "계약 삭제 성공 응답"
+      },
+      "DeleteApContractError": {
+        "title": "DeleteApContractError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ApContractNotDeletableError"
+          },
+          {
+            "$ref": "#/components/schemas/ApContractNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "AP_CONTRACT_NOT_DELETABLE": "#/components/schemas/ApContractNotDeletableError",
+            "AP_CONTRACT_NOT_FOUND": "#/components/schemas/ApContractNotFoundError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "ApContractNotDeletableError": {
+        "title": "계약이 삭제할 수 없는 상태인 경우",
+        "description": "계약이 삭제할 수 없는 상태인 경우\n\n지급대기 상태의 계약만 삭제할 수 있습니다.",
+        "type": "object",
+        "required": [
+          "type",
+          "status"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PayoutStatus",
+            "title": "현재 지급 상태"
+          }
+        },
+        "x-portone-title": "계약이 삭제할 수 없는 상태인 경우",
+        "x-portone-description": "지급대기 상태의 계약만 삭제할 수 있습니다.",
+        "x-portone-status-code": 409
+      },
+      "GetApInfluencersBody": {
+        "title": "인플루언서 다건 조회 입력 정보",
+        "description": "인플루언서 다건 조회 입력 정보",
+        "type": "object",
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/PageInput",
+            "title": "페이지 정보",
+            "description": "페이지 번호는 0부터 시작합니다. 크기는 1~20이고, 입력하지 않으면 10입니다."
+          }
+        },
+        "x-portone-title": "인플루언서 다건 조회 입력 정보"
+      },
+      "GetApInfluencersResponse": {
+        "title": "인플루언서 다건 조회 성공 응답",
+        "description": "인플루언서 다건 조회 성공 응답",
+        "type": "object",
+        "required": [
+          "items",
+          "page"
+        ],
+        "properties": {
+          "items": {
+            "title": "조회된 인플루언서 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApApiInfluencer"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageInfo",
+            "title": "페이지 정보"
+          }
+        },
+        "x-portone-title": "인플루언서 다건 조회 성공 응답"
+      },
+      "ApApiInfluencer": {
+        "title": "인플루언서",
+        "description": "인플루언서",
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "channels",
+          "country",
+          "entityType",
+          "status",
+          "remittanceMethod"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "인플루언서 아이디"
+          },
+          "name": {
+            "type": "string",
+            "title": "인플루언서 이름"
+          },
+          "channels": {
+            "title": "채널 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApApiInfluencerChannel"
+            }
+          },
+          "email": {
+            "type": "string",
+            "title": "이메일"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "전화번호"
+          },
+          "country": {
+            "$ref": "#/components/schemas/InfluencerCountry",
+            "title": "국가"
+          },
+          "entityType": {
+            "$ref": "#/components/schemas/ApAccountHolderType",
+            "title": "수취인 유형"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/ApCurrency",
+            "title": "통화"
+          },
+          "memo": {
+            "type": "string",
+            "title": "메모"
+          },
+          "status": {
+            "$ref": "#/components/schemas/InfluencerStatus",
+            "title": "지급정보 상태"
+          },
+          "remittanceMethod": {
+            "$ref": "#/components/schemas/RemittanceMethod",
+            "title": "지급 방식"
+          },
+          "transferMethod": {
+            "$ref": "#/components/schemas/TransferMethod",
+            "title": "계좌 송금 방식",
+            "description": "지급 방식이 계좌 송금일 때만 있습니다."
+          }
+        },
+        "x-portone-title": "인플루언서"
+      },
+      "ApApiInfluencerChannel": {
+        "title": "인플루언서 플랫폼 채널",
+        "description": "인플루언서 플랫폼 채널",
+        "type": "object",
+        "required": [
+          "id",
+          "platform",
+          "profileUrl"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "채널 아이디"
+          },
+          "platform": {
+            "$ref": "#/components/schemas/InfluencerPlatform",
+            "title": "플랫폼"
+          },
+          "profileUrl": {
+            "type": "string",
+            "title": "프로필 URL"
+          }
+        },
+        "x-portone-title": "인플루언서 플랫폼 채널"
+      },
+      "InfluencerPlatform": {
+        "title": "인플루언서 플랫폼",
+        "description": "인플루언서 플랫폼",
+        "type": "string",
+        "enum": [
+          "YOUTUBE",
+          "INSTAGRAM",
+          "TIKTOK",
+          "X",
+          "FACEBOOK"
+        ],
+        "x-portone-title": "인플루언서 플랫폼",
+        "x-portone-enum": {
+          "X": {},
+          "FACEBOOK": {},
+          "TIKTOK": {},
+          "INSTAGRAM": {},
+          "YOUTUBE": {}
+        }
+      },
+      "InfluencerCountry": {
+        "title": "인플루언서 국가",
+        "description": "인플루언서 국가",
+        "type": "string",
+        "enum": [
+          "US",
+          "KR",
+          "JP",
+          "CN",
+          "SG",
+          "AD",
+          "AE",
+          "AF",
+          "AG",
+          "AI",
+          "AL",
+          "AM",
+          "AO",
+          "AQ",
+          "AR",
+          "AS",
+          "AT",
+          "AU",
+          "AW",
+          "AX",
+          "AZ",
+          "BA",
+          "BB",
+          "BD",
+          "BE",
+          "BF",
+          "BG",
+          "BH",
+          "BI",
+          "BJ",
+          "BL",
+          "BM",
+          "BN",
+          "BO",
+          "BQ",
+          "BR",
+          "BS",
+          "BT",
+          "BV",
+          "BW",
+          "BY",
+          "BZ",
+          "CA",
+          "CC",
+          "CD",
+          "CF",
+          "CG",
+          "CH",
+          "CI",
+          "CK",
+          "CL",
+          "CM",
+          "CO",
+          "CR",
+          "CU",
+          "CV",
+          "CW",
+          "CX",
+          "CY",
+          "CZ",
+          "DE",
+          "DJ",
+          "DK",
+          "DM",
+          "DO",
+          "DZ",
+          "EC",
+          "EE",
+          "EG",
+          "EH",
+          "ER",
+          "ES",
+          "ET",
+          "FI",
+          "FJ",
+          "FK",
+          "FM",
+          "FO",
+          "FR",
+          "GA",
+          "GB",
+          "GD",
+          "GE",
+          "GF",
+          "GG",
+          "GH",
+          "GI",
+          "GL",
+          "GM",
+          "GN",
+          "GP",
+          "GQ",
+          "GR",
+          "GS",
+          "GT",
+          "GU",
+          "GW",
+          "GY",
+          "HK",
+          "HM",
+          "HN",
+          "HR",
+          "HT",
+          "HU",
+          "IC",
+          "ID",
+          "IE",
+          "IL",
+          "IM",
+          "IN",
+          "IO",
+          "IQ",
+          "IR",
+          "IS",
+          "IT",
+          "JE",
+          "JM",
+          "JO",
+          "KE",
+          "KG",
+          "KH",
+          "KI",
+          "KM",
+          "KN",
+          "KP",
+          "KW",
+          "KY",
+          "KZ",
+          "LA",
+          "LB",
+          "LC",
+          "LI",
+          "LK",
+          "LR",
+          "LS",
+          "LT",
+          "LU",
+          "LV",
+          "LY",
+          "MA",
+          "MC",
+          "MD",
+          "ME",
+          "MF",
+          "MG",
+          "MH",
+          "MK",
+          "ML",
+          "MM",
+          "MN",
+          "MO",
+          "MP",
+          "MQ",
+          "MR",
+          "MS",
+          "MT",
+          "MU",
+          "MV",
+          "MW",
+          "MX",
+          "MY",
+          "MZ",
+          "NA",
+          "NC",
+          "NE",
+          "NF",
+          "NG",
+          "NI",
+          "NL",
+          "NO",
+          "NP",
+          "NR",
+          "NU",
+          "NZ",
+          "OM",
+          "PA",
+          "PE",
+          "PF",
+          "PG",
+          "PH",
+          "PK",
+          "PL",
+          "PM",
+          "PN",
+          "PR",
+          "PS",
+          "PT",
+          "PW",
+          "PY",
+          "QA",
+          "RE",
+          "RO",
+          "RS",
+          "RU",
+          "RW",
+          "SA",
+          "SB",
+          "SC",
+          "SD",
+          "SE",
+          "SH",
+          "SI",
+          "SJ",
+          "SK",
+          "SL",
+          "SM",
+          "SN",
+          "SO",
+          "SR",
+          "SS",
+          "ST",
+          "SV",
+          "SX",
+          "SY",
+          "SZ",
+          "TC",
+          "TD",
+          "TF",
+          "TG",
+          "TH",
+          "TJ",
+          "TK",
+          "TL",
+          "TM",
+          "TN",
+          "TO",
+          "TR",
+          "TT",
+          "TV",
+          "TW",
+          "TZ",
+          "UA",
+          "UG",
+          "UM",
+          "UY",
+          "UZ",
+          "VA",
+          "VC",
+          "VE",
+          "VG",
+          "VI",
+          "VN",
+          "VU",
+          "WF",
+          "WS",
+          "XK",
+          "YE",
+          "YT",
+          "ZA",
+          "ZM",
+          "ZW"
+        ],
+        "x-portone-title": "인플루언서 국가",
+        "x-portone-enum": {
+          "CV": {},
+          "MA": {},
+          "AO": {},
+          "VN": {},
+          "IN": {},
+          "KW": {},
+          "ML": {},
+          "ID": {},
+          "JE": {},
+          "HM": {},
+          "EG": {},
+          "BG": {},
+          "SG": {},
+          "SV": {},
+          "BD": {},
+          "TC": {},
+          "TH": {},
+          "AT": {},
+          "GQ": {},
+          "TR": {},
+          "HT": {},
+          "UM": {},
+          "MH": {},
+          "MY": {},
+          "RU": {},
+          "NI": {},
+          "BZ": {},
+          "KP": {},
+          "VE": {},
+          "IL": {},
+          "GD": {},
+          "GI": {},
+          "TN": {},
+          "DM": {},
+          "MO": {},
+          "PR": {},
+          "NF": {},
+          "TW": {},
+          "KN": {},
+          "PH": {},
+          "WF": {},
+          "JO": {},
+          "ME": {},
+          "ES": {},
+          "AZ": {},
+          "MR": {},
+          "SM": {},
+          "BL": {},
+          "PK": {},
+          "NZ": {},
+          "GP": {},
+          "NA": {},
+          "JM": {},
+          "AX": {},
+          "CM": {},
+          "US": {},
+          "GU": {},
+          "SB": {},
+          "MV": {},
+          "SI": {},
+          "CW": {},
+          "BH": {},
+          "VG": {},
+          "HK": {},
+          "SD": {},
+          "AD": {},
+          "RO": {},
+          "LU": {},
+          "VC": {},
+          "FO": {},
+          "GL": {},
+          "BW": {},
+          "CF": {},
+          "CI": {},
+          "KG": {},
+          "BV": {},
+          "KY": {},
+          "LY": {},
+          "MM": {},
+          "MZ": {},
+          "IR": {},
+          "EH": {},
+          "IQ": {},
+          "BB": {},
+          "SZ": {},
+          "IE": {},
+          "FK": {},
+          "NP": {},
+          "BE": {},
+          "AU": {},
+          "TZ": {},
+          "UY": {},
+          "SA": {},
+          "ZW": {},
+          "MD": {},
+          "HU": {},
+          "PG": {},
+          "AF": {},
+          "MU": {},
+          "SL": {},
+          "GT": {},
+          "BO": {},
+          "TM": {},
+          "NE": {},
+          "CL": {},
+          "FI": {},
+          "MN": {},
+          "NO": {},
+          "GG": {},
+          "EE": {},
+          "KM": {},
+          "LT": {},
+          "ER": {},
+          "SH": {},
+          "SY": {},
+          "LC": {},
+          "CC": {},
+          "PL": {},
+          "CH": {},
+          "ST": {},
+          "NG": {},
+          "TF": {},
+          "KI": {},
+          "LV": {},
+          "UG": {},
+          "CY": {},
+          "MW": {},
+          "CG": {},
+          "MF": {},
+          "PM": {},
+          "IS": {},
+          "BI": {},
+          "TK": {},
+          "SE": {},
+          "AE": {},
+          "KZ": {},
+          "LB": {},
+          "AR": {},
+          "GS": {},
+          "BF": {},
+          "DJ": {},
+          "BA": {},
+          "SJ": {},
+          "FR": {},
+          "GM": {},
+          "HR": {},
+          "BS": {},
+          "RS": {},
+          "WS": {},
+          "GB": {},
+          "LS": {},
+          "UZ": {},
+          "PF": {},
+          "AG": {},
+          "GW": {},
+          "FJ": {},
+          "CO": {},
+          "ZM": {},
+          "AQ": {},
+          "GF": {},
+          "NU": {},
+          "BN": {},
+          "RW": {},
+          "PT": {},
+          "SO": {},
+          "MT": {},
+          "PW": {},
+          "KH": {},
+          "SX": {},
+          "TJ": {},
+          "KR": {},
+          "SS": {},
+          "PY": {},
+          "AM": {},
+          "MC": {},
+          "CX": {},
+          "TT": {},
+          "UA": {},
+          "LI": {},
+          "BR": {},
+          "PA": {},
+          "MQ": {},
+          "NR": {},
+          "PN": {},
+          "GA": {},
+          "TG": {},
+          "FM": {},
+          "GN": {},
+          "YT": {},
+          "CD": {},
+          "MG": {},
+          "AI": {},
+          "YE": {},
+          "HN": {},
+          "IT": {},
+          "RE": {},
+          "DO": {},
+          "IO": {},
+          "GR": {},
+          "AS": {},
+          "ZA": {},
+          "GY": {},
+          "BY": {},
+          "LK": {},
+          "BT": {},
+          "OM": {},
+          "CK": {},
+          "KE": {},
+          "CZ": {},
+          "GH": {},
+          "MX": {},
+          "SK": {},
+          "MK": {},
+          "IC": {},
+          "DZ": {},
+          "QA": {},
+          "CU": {},
+          "BJ": {},
+          "LA": {},
+          "TL": {},
+          "DK": {},
+          "VI": {},
+          "NL": {},
+          "CA": {},
+          "BM": {},
+          "JP": {},
+          "AW": {},
+          "TO": {},
+          "CN": {},
+          "VU": {},
+          "AL": {},
+          "ET": {},
+          "IM": {},
+          "SN": {},
+          "PE": {},
+          "BQ": {},
+          "XK": {},
+          "NC": {},
+          "MP": {},
+          "GE": {},
+          "CR": {},
+          "VA": {},
+          "PS": {},
+          "EC": {},
+          "TV": {},
+          "LR": {},
+          "MS": {},
+          "TD": {},
+          "SC": {},
+          "DE": {},
+          "SR": {}
+        }
+      },
+      "ApAccountHolderType": {
+        "title": "수취인 계좌 소유자 유형",
+        "description": "수취인 계좌 소유자 유형",
+        "type": "string",
+        "enum": [
+          "BUSINESS",
+          "INDIVIDUAL"
+        ],
+        "x-portone-title": "수취인 계좌 소유자 유형",
+        "x-portone-enum": {
+          "BUSINESS": {},
+          "INDIVIDUAL": {}
+        }
+      },
+      "ApCurrency": {
+        "title": "통화",
+        "description": "통화",
+        "type": "string",
+        "enum": [
+          "KRW",
+          "USD",
+          "JPY",
+          "EUR",
+          "CNY",
+          "AUD",
+          "THB",
+          "HKD",
+          "GBP",
+          "AED",
+          "ALL",
+          "AMD",
+          "AOA",
+          "ARS",
+          "AZN",
+          "BAM",
+          "BBD",
+          "BDT",
+          "BGN",
+          "BHD",
+          "BOB",
+          "BRL",
+          "BSD",
+          "BWP",
+          "BZD",
+          "CAD",
+          "CHF",
+          "CLP",
+          "COP",
+          "CRC",
+          "CZK",
+          "DKK",
+          "DOP",
+          "DZD",
+          "EGP",
+          "FJD",
+          "GEL",
+          "GHS",
+          "GMD",
+          "GTQ",
+          "GYD",
+          "HNL",
+          "HUF",
+          "IDR",
+          "ILS",
+          "INR",
+          "ISK",
+          "JMD",
+          "JOD",
+          "KES",
+          "KGS",
+          "KWD",
+          "KZT",
+          "LKR",
+          "LSL",
+          "MAD",
+          "MGA",
+          "MUR",
+          "MWK",
+          "MXN",
+          "MYR",
+          "NAD",
+          "NGN",
+          "NIO",
+          "NOK",
+          "NPR",
+          "NZD",
+          "OMR",
+          "PEN",
+          "PHP",
+          "PKR",
+          "PLN",
+          "PYG",
+          "QAR",
+          "RON",
+          "RSD",
+          "RWF",
+          "SAR",
+          "SCR",
+          "SEK",
+          "SGD",
+          "TND",
+          "TRY",
+          "TTD",
+          "TZS",
+          "UYU",
+          "VND",
+          "XAF",
+          "XOF",
+          "ZAR",
+          "ZMW"
+        ],
+        "x-portone-title": "통화",
+        "x-portone-enum": {
+          "TND": {},
+          "JOD": {},
+          "JPY": {},
+          "NZD": {},
+          "BAM": {},
+          "OMR": {},
+          "BBD": {},
+          "PLN": {},
+          "PKR": {},
+          "MUR": {},
+          "XAF": {},
+          "SAR": {},
+          "CAD": {},
+          "HKD": {},
+          "PYG": {},
+          "MGA": {},
+          "AUD": {},
+          "AMD": {},
+          "SEK": {},
+          "TRY": {},
+          "KES": {},
+          "GEL": {},
+          "GTQ": {},
+          "TZS": {},
+          "ALL": {},
+          "BRL": {},
+          "KRW": {},
+          "PEN": {},
+          "DOP": {},
+          "BDT": {},
+          "LKR": {},
+          "FJD": {},
+          "LSL": {},
+          "BSD": {},
+          "QAR": {},
+          "CZK": {},
+          "BGN": {},
+          "JMD": {},
+          "ZMW": {},
+          "UYU": {},
+          "NPR": {},
+          "EGP": {},
+          "AZN": {},
+          "CLP": {},
+          "SCR": {},
+          "VND": {},
+          "GBP": {},
+          "DZD": {},
+          "MXN": {},
+          "THB": {},
+          "ISK": {},
+          "SGD": {},
+          "MWK": {},
+          "KZT": {},
+          "CRC": {},
+          "NGN": {},
+          "AED": {},
+          "CHF": {},
+          "RWF": {},
+          "INR": {},
+          "XOF": {},
+          "CNY": {},
+          "PHP": {},
+          "RON": {},
+          "COP": {},
+          "DKK": {},
+          "GMD": {},
+          "TTD": {},
+          "BWP": {},
+          "ARS": {},
+          "HUF": {},
+          "MYR": {},
+          "USD": {},
+          "MAD": {},
+          "BOB": {},
+          "GYD": {},
+          "BHD": {},
+          "HNL": {},
+          "KGS": {},
+          "AOA": {},
+          "BZD": {},
+          "IDR": {},
+          "NIO": {},
+          "GHS": {},
+          "RSD": {},
+          "ILS": {},
+          "NOK": {},
+          "KWD": {},
+          "NAD": {},
+          "EUR": {},
+          "ZAR": {}
+        }
+      },
+      "InfluencerStatus": {
+        "title": "인플루언서 상태",
+        "description": "인플루언서 상태",
+        "type": "string",
+        "enum": [
+          "NOT_SUBMITTED",
+          "SUBMITTING",
+          "SUBMITTED"
+        ],
+        "x-portone-title": "인플루언서 상태",
+        "x-portone-enum": {
+          "NOT_SUBMITTED": {
+            "title": "폼 미제출"
+          },
+          "SUBMITTING": {
+            "title": "폼 제출 중"
+          },
+          "SUBMITTED": {
+            "title": "폼 제출 완료"
+          }
+        }
+      },
+      "RemittanceMethod": {
+        "title": "지급 방식",
+        "description": "지급 방식",
+        "type": "string",
+        "enum": [
+          "BANK_ACCOUNT",
+          "PAYPAL"
+        ],
+        "x-portone-title": "지급 방식",
+        "x-portone-enum": {
+          "BANK_ACCOUNT": {},
+          "PAYPAL": {}
+        }
+      },
+      "TransferMethod": {
+        "title": "계좌 송금 방식",
+        "description": "계좌 송금 방식",
+        "type": "string",
+        "enum": [
+          "LOCAL",
+          "SWIFT"
+        ],
+        "x-portone-title": "계좌 송금 방식",
+        "x-portone-enum": {
+          "LOCAL": {
+            "title": "현지 은행 송금"
+          },
+          "SWIFT": {
+            "title": "SWIFT 송금"
+          }
+        }
+      },
+      "GetApInfluencersError": {
+        "title": "GetApInfluencersError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ApInvalidInputError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "AP_INVALID_INPUT": "#/components/schemas/ApInvalidInputError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "CreateApInfluencerBody": {
+        "title": "인플루언서 등록 입력 정보",
+        "description": "인플루언서 등록 입력 정보",
+        "type": "object",
+        "required": [
+          "name",
+          "country",
+          "entityType",
+          "currency",
+          "remittanceMethod"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "인플루언서 이름",
+            "description": "워크스페이스 안에서 유일해야 합니다."
+          },
+          "channels": {
+            "title": "채널 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InfluencerChannelInput"
+            },
+            "description": "첫 번째 채널이 대표 채널입니다."
+          },
+          "email": {
+            "type": "string",
+            "title": "이메일"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "전화번호"
+          },
+          "country": {
+            "$ref": "#/components/schemas/InfluencerCountry",
+            "title": "국가"
+          },
+          "entityType": {
+            "$ref": "#/components/schemas/ApAccountHolderType",
+            "title": "수취인 유형"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/ApCurrency",
+            "title": "통화"
+          },
+          "memo": {
+            "type": "string",
+            "title": "메모"
+          },
+          "remittanceMethod": {
+            "$ref": "#/components/schemas/RemittanceMethod",
+            "title": "지급 방식"
+          },
+          "transferMethod": {
+            "$ref": "#/components/schemas/TransferMethod",
+            "title": "계좌 송금 방식",
+            "description": "지급 방식이 계좌 송금일 때만 씁니다. 입력하지 않으면 국가와 통화로 정합니다."
+          }
+        },
+        "x-portone-title": "인플루언서 등록 입력 정보"
+      },
+      "InfluencerChannelInput": {
+        "title": "인플루언서 플랫폼 채널 입력 정보",
+        "description": "인플루언서 플랫폼 채널 입력 정보",
+        "type": "object",
+        "required": [
+          "platform",
+          "profileUrl"
+        ],
+        "properties": {
+          "platform": {
+            "$ref": "#/components/schemas/InfluencerPlatform",
+            "title": "플랫폼"
+          },
+          "profileUrl": {
+            "type": "string",
+            "title": "프로필 URL",
+            "description": "플랫폼별로 아래 형식만 받습니다. `https://`는 생략할 수 있고, 끝의 `/`는 무시합니다.\n\n- YOUTUBE: `https://www.youtube.com/@{계정}`\n- INSTAGRAM: `https://www.instagram.com/{계정}`\n- TIKTOK: `https://www.tiktok.com/@{계정}`\n- X: `https://x.com/{계정}`\n- FACEBOOK: `https://www.facebook.com/{계정}`"
+          }
+        },
+        "x-portone-title": "인플루언서 플랫폼 채널 입력 정보"
+      },
+      "CreateApInfluencerResponse": {
+        "title": "인플루언서 등록 성공 응답",
+        "description": "인플루언서 등록 성공 응답",
+        "type": "object",
+        "required": [
+          "influencer"
+        ],
+        "properties": {
+          "influencer": {
+            "$ref": "#/components/schemas/ApApiInfluencer",
+            "title": "등록된 인플루언서"
+          }
+        },
+        "x-portone-title": "인플루언서 등록 성공 응답"
+      },
+      "CreateApInfluencerError": {
+        "title": "CreateApInfluencerError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ApInvalidInputError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "AP_INVALID_INPUT": "#/components/schemas/ApInvalidInputError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "GetApInfluencerResponse": {
+        "title": "인플루언서 단건 조회 성공 응답",
+        "description": "인플루언서 단건 조회 성공 응답",
+        "type": "object",
+        "required": [
+          "influencer"
+        ],
+        "properties": {
+          "influencer": {
+            "$ref": "#/components/schemas/ApApiInfluencer",
+            "title": "인플루언서"
+          }
+        },
+        "x-portone-title": "인플루언서 단건 조회 성공 응답"
+      },
+      "GetApInfluencerError": {
+        "title": "GetApInfluencerError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InfluencerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INFLUENCER_NOT_FOUND": "#/components/schemas/InfluencerNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "UpdateApInfluencerBody": {
+        "title": "인플루언서 수정 입력 정보",
+        "description": "인플루언서 수정 입력 정보",
+        "type": "object",
+        "required": [
+          "country",
+          "entityType",
+          "currency",
+          "remittanceMethod"
+        ],
+        "properties": {
+          "channelOperations": {
+            "title": "채널 변경 목록",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InfluencerChannelOperationInput"
+            },
+            "description": "넣지 않은 기존 채널은 그대로 둡니다. 새 채널은 목록 끝에 추가됩니다."
+          },
+          "email": {
+            "type": "string",
+            "title": "이메일"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "전화번호"
+          },
+          "country": {
+            "$ref": "#/components/schemas/InfluencerCountry",
+            "title": "국가"
+          },
+          "entityType": {
+            "$ref": "#/components/schemas/ApAccountHolderType",
+            "title": "수취인 유형"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/ApCurrency",
+            "title": "통화"
+          },
+          "memo": {
+            "type": "string",
+            "title": "메모"
+          },
+          "remittanceMethod": {
+            "$ref": "#/components/schemas/RemittanceMethod",
+            "title": "지급 방식"
+          },
+          "transferMethod": {
+            "$ref": "#/components/schemas/TransferMethod",
+            "title": "계좌 송금 방식",
+            "description": "지급 방식이 계좌 송금일 때만 씁니다. 입력하지 않으면 국가와 통화로 정합니다."
+          }
+        },
+        "x-portone-title": "인플루언서 수정 입력 정보"
+      },
+      "InfluencerChannelOperationInput": {
+        "title": "인플루언서 플랫폼 채널 변경 입력 정보",
+        "description": "인플루언서 플랫폼 채널 변경 입력 정보\n\ncreate, update, delete 중 하나만 입력해야 합니다.",
+        "type": "object",
+        "properties": {
+          "create": {
+            "$ref": "#/components/schemas/InfluencerChannelInput",
+            "title": "채널 등록 정보"
+          },
+          "update": {
+            "$ref": "#/components/schemas/InfluencerChannelUpdateInput",
+            "title": "채널 수정 정보"
+          },
+          "delete": {
+            "$ref": "#/components/schemas/InfluencerChannelDeleteInput",
+            "title": "채널 삭제 정보"
+          }
+        },
+        "x-portone-title": "인플루언서 플랫폼 채널 변경 입력 정보",
+        "x-portone-description": "create, update, delete 중 하나만 입력해야 합니다."
+      },
+      "InfluencerChannelUpdateInput": {
+        "title": "인플루언서 플랫폼 채널 수정 입력 정보",
+        "description": "인플루언서 플랫폼 채널 수정 입력 정보",
+        "type": "object",
+        "required": [
+          "id",
+          "platform",
+          "profileUrl"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "채널 아이디"
+          },
+          "platform": {
+            "$ref": "#/components/schemas/InfluencerPlatform",
+            "title": "플랫폼"
+          },
+          "profileUrl": {
+            "type": "string",
+            "title": "프로필 URL",
+            "description": "플랫폼별로 아래 형식만 받습니다. `https://`는 생략할 수 있고, 끝의 `/`는 무시합니다.\n\n- YOUTUBE: `https://www.youtube.com/@{계정}`\n- INSTAGRAM: `https://www.instagram.com/{계정}`\n- TIKTOK: `https://www.tiktok.com/@{계정}`\n- X: `https://x.com/{계정}`\n- FACEBOOK: `https://www.facebook.com/{계정}`"
+          }
+        },
+        "x-portone-title": "인플루언서 플랫폼 채널 수정 입력 정보"
+      },
+      "InfluencerChannelDeleteInput": {
+        "title": "인플루언서 플랫폼 채널 삭제 입력 정보",
+        "description": "인플루언서 플랫폼 채널 삭제 입력 정보",
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "채널 아이디"
+          }
+        },
+        "x-portone-title": "인플루언서 플랫폼 채널 삭제 입력 정보"
+      },
+      "UpdateApInfluencerResponse": {
+        "title": "인플루언서 수정 성공 응답",
+        "description": "인플루언서 수정 성공 응답",
+        "type": "object",
+        "required": [
+          "influencer"
+        ],
+        "properties": {
+          "influencer": {
+            "$ref": "#/components/schemas/ApApiInfluencer",
+            "title": "수정된 인플루언서"
+          }
+        },
+        "x-portone-title": "인플루언서 수정 성공 응답"
+      },
+      "UpdateApInfluencerError": {
+        "title": "UpdateApInfluencerError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ApInvalidInputError"
+          },
+          {
+            "$ref": "#/components/schemas/ApTooManyDeletedCustomFieldValuesError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InfluencerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "AP_INVALID_INPUT": "#/components/schemas/ApInvalidInputError",
+            "AP_TOO_MANY_DELETED_CUSTOM_FIELD_VALUES": "#/components/schemas/ApTooManyDeletedCustomFieldValuesError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INFLUENCER_NOT_FOUND": "#/components/schemas/InfluencerNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "DeleteApInfluencerResponse": {
+        "title": "인플루언서 삭제 성공 응답",
+        "description": "인플루언서 삭제 성공 응답",
+        "type": "object",
+        "x-portone-title": "인플루언서 삭제 성공 응답"
+      },
+      "DeleteApInfluencerError": {
+        "title": "DeleteApInfluencerError",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ApApiNotEnabledError"
+          },
+          {
+            "$ref": "#/components/schemas/ForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/InfluencerHasContractError"
+          },
+          {
+            "$ref": "#/components/schemas/InfluencerNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "AP_API_NOT_ENABLED": "#/components/schemas/ApApiNotEnabledError",
+            "FORBIDDEN": "#/components/schemas/ForbiddenError",
+            "INFLUENCER_HAS_CONTRACT": "#/components/schemas/InfluencerHasContractError",
+            "INFLUENCER_NOT_FOUND": "#/components/schemas/InfluencerNotFoundError",
+            "UNAUTHORIZED": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      },
+      "InfluencerHasContractError": {
+        "title": "인플루언서에 연결된 계약이 존재하는 경우",
+        "description": "인플루언서에 연결된 계약이 존재하는 경우",
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "x-portone-title": "인플루언서에 연결된 계약이 존재하는 경우",
+        "x-portone-status-code": 409
       }
     },
     "securitySchemes": {
@@ -61360,8 +64251,8 @@
     },
     {
       "id": "ap",
-      "title": "AP API",
-      "description": "AP 기능을 제공합니다."
+      "title": "Split API",
+      "description": "Split 기능을 제공합니다."
     },
     {
       "id": "common",
