@@ -10,6 +10,17 @@ versionVariants:
 
 현재는 Android, iOS, React Native, Flutter를 지원하고 있습니다.
 
+## 외부 앱 실행 설정
+
+아래는 결제·본인인증 중 카드사 앱 등 **외부 앱을 여는 설정**입니다. 외부 앱에서 고객사 앱으로 돌아오는 데 사용하는 `appScheme`과 복귀용 URL 스킴 등록은 별도입니다. 결제수단에서 복귀용 스킴을 요구하면 해당 설정을 유지하세요.
+
+- **Android SDK**: 설치 여부를 먼저 조회하지 않고 앱을 실행합니다. 외부 앱 실행만을 위해 고객사 앱에 `<queries>`를 추가할 필요는 없습니다. SDK의 라이브러리 매니페스트에는 `<queries>`가 포함되어 있습니다.
+- **iOS SDK**: 외부 앱을 열기 전에 `canOpenURL()`로 조회합니다. 사용하는 결제·본인인증 앱의 스킴을 SDK 안내에 따라 고객사 앱의 `Info.plist`에 있는 `LSApplicationQueriesSchemes`에 등록하세요.
+- **React Native SDK** (`@portone/react-native-sdk` 0.8.0 이상): 외부 앱 실행용 `<queries>`와 `LSApplicationQueriesSchemes`가 필요하지 않습니다. 이 설정을 추가하던 Expo 플러그인 항목도 제거할 수 있습니다.
+- **Flutter SDK** (`portone_flutter` 1.0.4 이상): Android와 iOS 모두 외부 앱을 먼저 열고, 실패하면 설치 링크가 있는 경우 스토어를 엽니다. 외부 앱 실행용 `<queries>`와 `LSApplicationQueriesSchemes`가 필요하지 않습니다.
+
+앱의 다른 기능에서 외부 앱 설치 여부를 조회한다면 해당 조회 설정은 유지하세요. SDK 없이 WebView를 직접 구현하는 방법은 [모바일 앱 결제 연동](/opi/ko/extra/mobile-payment/readme-v2)을 참고하세요.
+
 ## Android SDK
 
 Android 네이티브 환경에서 사용 가능한 SDK입니다. 해당 Git 레포지토리의 README.md 파일을 참고하여 사용하실 수 있습니다.
