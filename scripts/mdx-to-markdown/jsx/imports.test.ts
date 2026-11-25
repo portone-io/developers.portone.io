@@ -42,6 +42,7 @@ describe("collectAllImportedElementNames", () => {
               body: [
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportDefaultSpecifier",
@@ -92,6 +93,7 @@ describe("collectAllImportedElementNames", () => {
               body: [
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportSpecifier",
@@ -161,6 +163,7 @@ describe("collectAllImportedElementNames", () => {
               body: [
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportSpecifier",
@@ -215,6 +218,7 @@ describe("collectAllImportedElementNames", () => {
               body: [
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportNamespaceSpecifier",
@@ -266,6 +270,7 @@ describe("collectAllImportedElementNames", () => {
               body: [
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportDefaultSpecifier",
@@ -305,6 +310,7 @@ describe("collectAllImportedElementNames", () => {
                 },
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportNamespaceSpecifier",
@@ -369,6 +375,7 @@ describe("collectAllImportedElementNames", () => {
               body: [
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportDefaultSpecifier",
@@ -386,6 +393,7 @@ describe("collectAllImportedElementNames", () => {
                 },
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportSpecifier",
@@ -407,6 +415,7 @@ describe("collectAllImportedElementNames", () => {
                 },
                 {
                   type: "ImportDeclaration",
+                  attributes: [],
                   specifiers: [
                     {
                       type: "ImportNamespaceSpecifier",

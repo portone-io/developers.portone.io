@@ -1,3 +1,5 @@
+/** @jsxImportSource ~/misc/opengraph/jsx */
+
 import opengraphBlogBg from "~/../public/opengraph-blog-bg.png?base64";
 import portoneLogoText from "~/assets/portone-logo-white.png?base64";
 

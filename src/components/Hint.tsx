@@ -1,7 +1,8 @@
 import { createMemo, type ParentProps } from "solid-js";
 
 interface Props {
-  style: "info" | "warning" | "success" | "danger";
+  /** Omit for a neutral box without an icon. */
+  style?: "info" | "warning" | "success" | "danger";
 }
 
 export default function Hint(props: ParentProps<Props>) {

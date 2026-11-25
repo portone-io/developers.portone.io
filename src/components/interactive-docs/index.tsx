@@ -18,7 +18,10 @@ import {
 import type { SetStoreFunction } from "solid-js/store";
 import { match, P } from "ts-pattern";
 
-import { Condition as GlobalCondition } from "~/components/Condition";
+import {
+  Condition as GlobalCondition,
+  type ConditionProps,
+} from "~/components/Condition";
 import type { DefaultParams } from "~/components/interactive-docs/code";
 import {
   type CodeExample,
@@ -66,7 +69,7 @@ export function createInteractiveDoc<
   InteractiveDoc: ParentComponent;
   Section: ParentComponent<{ section?: Sections }>;
   Condition: ParentComponent<{
-    pgName?: (paymentGateway: PaymentGateway) => boolean;
+    pgName?: ConditionProps["flag"];
     when?: (params: Params) => boolean;
     language?:
       | `frontend/${FrontendLanguage}`
@@ -151,7 +154,7 @@ export function createInteractiveDoc<
   };
   const Condition = (
     props: ParentProps<{
-      pgName?: (paymentGateway: PaymentGateway) => boolean;
+      pgName?: ConditionProps["flag"];
       when?: (params: Params) => boolean;
       language?:
         | `frontend/${FrontendLanguage}`

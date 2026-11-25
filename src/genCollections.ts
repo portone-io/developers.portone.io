@@ -391,7 +391,7 @@ import type { Lang } from "~/type";
 
 type DocsNavName = "opi" | "sdk" | "platform";
 
-export const navMenu = ${JSON.stringify(navMenu)} satisfies Record<Lang, Record<DocsNavName, NavMenuItem[]>>;
+export const navMenu: Record<Lang, Record<DocsNavName, NavMenuItem[]>> = ${JSON.stringify(navMenu)};
 `;
 
   await fs.mkdir(outDir, { recursive: true });

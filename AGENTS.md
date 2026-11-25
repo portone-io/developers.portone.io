@@ -13,9 +13,10 @@
 - `pnpm install`: install workspace dependencies.
 - `pnpm dev`: start local development server (`http://localhost:3000`) with schema/collection watchers.
 - `pnpm build`: run full production pipeline (schema update, collection generation, LLM docs, sitemap, Vite build).
-- `pnpm check`: run lint gate used by CI.
+- `pnpm check`: run the lint and type checks used by CI.
 - `pnpm lint:fix`: auto-fix lint/style issues where possible.
 - `pnpm lint:js`, `pnpm lint:format`, `pnpm lint:docs`: run each lint step on its own (oxlint, oxfmt, ESLint for MDX/YAML).
+- `pnpm lint:types`: type-check the site, MDX documents, OpenGraph renderer, and workspace packages.
 - `pnpm test`: run Vitest suites in `src/` and `scripts/`.
 - `pnpm test:watch`: run tests in watch mode during local iteration.
 

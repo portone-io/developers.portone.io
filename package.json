@@ -7,19 +7,20 @@
 	"scripts": {
 		"prepare": "pnpm update-schema && pnpm gen-rest-api-schema && pnpm gen-collections",
 		"dev": "pnpm update-schema && pnpm gen-rest-api-schema && concurrently -k \"vite dev\" \"pnpm gen-collections watch\"",
-		"build": "pnpm update-schema && pnpm gen-rest-api-schema && pnpm gen-collections && pnpm llms-txt && pnpm docs-for-llms && pnpm sitemap && vite build",
+		"build": "pnpm prepare && pnpm llms-txt && pnpm docs-for-llms && pnpm sitemap && vite build",
 		"sitemap": "node scripts/sitemap/index.ts",
-		"check": "pnpm update-schema && pnpm lint",
+		"check": "pnpm prepare && pnpm lint",
 		"gen-collections": "node src/genCollections.ts",
 		"gen-rest-api-schema": "node src/build/gen-rest-api-schema.ts",
 		"update-schema": "pnpm run --filter @portone-io/browser-sdk-mdx-codegen start",
 		"llms-txt": "node scripts/llms-txt/index.ts",
 		"docs-for-llms": "node scripts/docs-for-llms/index.ts",
-		"lint": "concurrently --group --names js,format,docs \"pnpm:lint:js\" \"pnpm:lint:format\" \"pnpm:lint:docs\"",
+		"lint": "concurrently --group --names js,format,docs,types \"pnpm:lint:js\" \"pnpm:lint:format\" \"pnpm:lint:docs\" \"pnpm:lint:types\"",
 		"lint:fix": "concurrently --group --names js,docs \"oxlint --fix && oxfmt --threads=1\" \"eslint --fix --concurrency=auto\"",
 		"lint:js": "oxlint",
 		"lint:format": "oxfmt --check --threads=1",
 		"lint:docs": "eslint --concurrency=auto",
+		"lint:types": "mdx-tsc -p . && tsc -p src/misc/opengraph && pnpm --filter \"./packages/**\" exec tsc -p .",
 		"test": "vitest run --config vitest.config.ts",
 		"test:watch": "vitest --config vitest.config.ts"
 	},
@@ -182,6 +183,7 @@
 		"node": "24.x || 26.x"
 	},
 	"devDependencies": {
+		"mdx-tsc": "^0.3.0",
 		"schema-dts": "^2.1.0"
 	}
 }

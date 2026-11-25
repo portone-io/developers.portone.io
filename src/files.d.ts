@@ -93,3 +93,8 @@ declare module "*.svg" {
   const picture: Picture;
   export default picture;
 }
+
+declare module "*?base64" {
+  const base64: string;
+  export default base64;
+}

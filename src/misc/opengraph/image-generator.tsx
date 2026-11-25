@@ -1,3 +1,5 @@
+/** @jsxImportSource ~/misc/opengraph/jsx */
+
 import satori from "satori";
 import sharp from "sharp";
 
@@ -34,7 +36,7 @@ export async function generate({
   profileImage,
   title,
   description,
-}: GenerateConfig): Promise<Buffer> {
+}: GenerateConfig): Promise<Buffer<ArrayBuffer>> {
   const svg = await satori(
     name && profileImage ? (
       <BlogPost

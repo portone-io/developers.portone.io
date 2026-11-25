@@ -129,7 +129,7 @@ function transformLinks(ast: Root, useMarkdownLinks: boolean = true): void {
     if (url.startsWith("/")) {
       // URL 파싱 (쿼리 파라미터와 해시 프래그먼트 처리)
       const urlParts = url.split(/[?#]/);
-      const path = urlParts[0];
+      const path = urlParts[0] ?? "";
       const queryAndHash = url.substring(path.length);
 
       // 기본 URL에 경로 추가

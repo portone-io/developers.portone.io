@@ -584,7 +584,7 @@ export function generateParameter({
   writer.writeLine("}");
   writer.writeLine("");
 
-  writer.writeLine("export function Type(props: TypeDefProps) {");
+  writer.writeLine("export function Type(_props: TypeDefProps) {");
   writer.indent();
   writer.writeLine("return (");
   writer.indent();
@@ -600,7 +600,7 @@ export function generateParameter({
       { type: "array" },
       () => {
         writer.writeLine(
-          "<Parameter.Hover content={() => <TypeDef {...props} />}>",
+          "<Parameter.Hover content={() => <TypeDef {..._props} />}>",
         );
         writer.indent();
         writer.writeLine("<Parameter.Type>");
@@ -639,7 +639,7 @@ export function generateParameter({
   writer.writeLine("}");
   writer.writeLine("");
 
-  writer.writeLine("export function Details(props: TypeDefProps) {");
+  writer.writeLine("export function Details(_props: TypeDefProps) {");
   writer.indent();
   writer.writeLine("return (<>");
   writer.indent();

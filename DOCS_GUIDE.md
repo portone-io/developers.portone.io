@@ -12,7 +12,8 @@
 ESLint 확장을 설치하면 MDX 문서와 `_nav.yaml`, `_redir.yaml`의 오류가 에디터에 바로 표시되며,
 MDX 문서는 저장할 때 자동으로 수정됩니다.
 
-터미널에서는 `pnpm lint:docs`로 검사하고, `pnpm lint:fix`로 자동 수정할 수 있습니다.
+터미널에서는 `pnpm lint:docs`로 문서 형식을 검사하고, `pnpm lint:fix`로 자동 수정할 수 있습니다.
+MDX에서 사용한 컴포넌트의 속성과 표현식은 `pnpm lint:types`로 검사할 수 있습니다.
 
 ## 컴포넌트 활용하기
 
