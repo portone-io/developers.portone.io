@@ -191,6 +191,18 @@ KG이니시스 기준으로 작성한 예시 코드는 아래와 같습니다.
         - KG이니시스의 PC 결제의 경우 필수로 입력해야 합니다. (모바일인 경우에는 optional)
     </Parameter.Details>
 
+  - card?: object
+
+    **카드 결제 설정**
+
+    <Parameter.Details>
+      - useCardPointOnly?: boolean
+
+        **카드 포인트 전용 결제창 호출 여부**
+
+        `true`로 설정하면 KG이니시스의 카드통합포인트 결제창을 바로 호출합니다. 자세한 내용은 아래 유의사항을 참고해주세요.
+    </Parameter.Details>
+
   - bypass?: oneof object
 
     **PG사 결제창 호출 시 PG사로 그대로 bypass할 파라미터들의 모음**
@@ -445,6 +457,30 @@ KG이니시스 기준으로 작성한 예시 코드는 아래와 같습니다.
   <Details.Content>
     KG이니시스의 경우 **포트원에서 관리하는 카드사 중 토스뱅크를 제외한 모든 카드사를 지원**합니다. 포트원에서 관리하는 카드사 목록을 확인하시려면
     [JS SDK 결제요청 파라미터](/sdk/ko/v2-sdk/payment-request) 페이지에서 `card` -> `cardCompany` 필드 설명을 참고해주세요.
+  </Details.Content>
+</Details>
+
+<Details>
+  <Details.Summary>카드통합포인트 결제창을 바로 호출할 수 있습니다.</Details.Summary>
+
+  <Details.Content>
+    KG이니시스의 카드통합포인트는 구매자가 여러 카드사의 포인트로 결제하는 서비스입니다. 카드 결제창에서 구매자가 직접 선택할 수 있으며,
+    `card.useCardPointOnly` 파라미터를 `true`로 설정하면 카드통합포인트 결제창을 바로 호출할 수 있습니다.
+
+    ```javascript
+    PortOne.requestPayment({
+      // ... 생략
+      payMethod: "CARD",
+      card: {
+        useCardPointOnly: true,
+      },
+    });
+    ```
+
+    - `payMethod`가 `CARD`인 경우에만 적용됩니다.
+    - 카드 결제 중에 포인트를 함께 사용하도록 하는 `card.useCardPoint`와는 다른 파라미터입니다.
+    - 카드통합포인트로 결제한 건은 카드 결제로 처리되며, 결제 조회 시 카드번호, 카드사, 할부 개월 수, 승인번호 등 카드 상세 정보가 포함되지 않습니다.
+    - KG이니시스의 카드통합포인트 서비스를 이용할 수 있는 상점에서만 사용할 수 있습니다.
   </Details.Content>
 </Details>
 
